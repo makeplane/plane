@@ -1,7 +1,4 @@
-import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
-// lib
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import {
   PeekOverviewHeader,
@@ -9,26 +6,24 @@ import {
   PeekOverviewIssueDetails,
   PeekOverviewIssueProperties,
 } from "components/issues/peek-overview";
-// types
-import { IIssue } from "types/issue";
-import { RootStore } from "store/root";
+
+import { Loader } from "components/ui/loader";
+import { IIssue } from "types";
 
 type Props = {
   handleClose: () => void;
-  issueDetails: IIssue;
+  issueDetails: IIssue | undefined;
 };
 
 export const SidePeekView: React.FC<Props> = observer((props) => {
   const { handleClose, issueDetails } = props;
-
-  const { project: projectStore } = useMobxStore();
 
   return (
     <div className="h-full w-full flex flex-col overflow-hidden">
       <div className="w-full p-5">
         <PeekOverviewHeader handleClose={handleClose} issueDetails={issueDetails} />
       </div>
-      {issueDetails && (
+      {issueDetails ? (
         <div className="h-full w-full px-6 overflow-y-auto">
           {/* issue title and description */}
           <div className="w-full">
@@ -41,12 +36,19 @@ export const SidePeekView: React.FC<Props> = observer((props) => {
           {/* divider */}
           <div className="h-[1] w-full border-t border-custom-border-200 my-5" />
           {/* issue activity/comments */}
-          {projectStore?.deploySettings?.comments && (
-            <div className="w-full pb-5">
-              <PeekOverviewIssueActivity issueDetails={issueDetails} />
-            </div>
-          )}
+          <div className="w-full pb-5">
+            <PeekOverviewIssueActivity issueDetails={issueDetails} />
+          </div>
         </div>
+      ) : (
+        <Loader className="px-6">
+          <Loader.Item height="30px" />
+          <div className="space-y-2 mt-3">
+            <Loader.Item height="20px" width="70%" />
+            <Loader.Item height="20px" width="60%" />
+            <Loader.Item height="20px" width="60%" />
+          </div>
+        </Loader>
       )}
     </div>
   );

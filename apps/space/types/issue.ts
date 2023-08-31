@@ -29,17 +29,26 @@ export interface IIssueGroup {
 
 export interface IIssue {
   id: string;
-  sequence_id: number;
-  name: string;
+  comments: Comment[];
   description_html: string;
+  label_details: any;
+  name: string;
+  priority: TIssuePriorityKey | null;
   project: string;
   project_detail: any;
-  priority: TIssuePriorityKey | null;
+  reactions: IIssueReaction[];
+  sequence_id: number;
+  start_date: any;
   state: string;
   state_detail: any;
-  label_details: any;
   target_date: any;
-  start_date: any;
+  votes: {
+    issue: string;
+    vote: -1 | 1;
+    workspace: string;
+    project: string;
+    actor: string;
+  }[];
 }
 
 export interface IIssueState {
@@ -66,7 +75,6 @@ export interface Comment {
   created_at: Date;
   updated_at: Date;
   comment_stripped: string;
-  comment_json: any;
   comment_html: string;
   attachments: any[];
   access: string;
@@ -76,6 +84,13 @@ export interface Comment {
   workspace: string;
   issue: string;
   actor: string;
+}
+
+export interface IIssueReaction {
+  actor_detail: ActorDetail;
+  id: string;
+  issue: string;
+  reaction: string;
 }
 
 export interface ActorDetail {

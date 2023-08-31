@@ -23,13 +23,13 @@ export const IssueListView = observer(() => {
             <IssueListHeader state={_state} />
             {issueStore.getFilteredIssuesByState(_state.id) &&
             issueStore.getFilteredIssuesByState(_state.id).length > 0 ? (
-              <div className="divide-y">
+              <div className="divide-y divide-custom-border-200">
                 {issueStore.getFilteredIssuesByState(_state.id).map((_issue: IIssue) => (
                   <IssueListBlock key={_issue.id} issue={_issue} />
                 ))}
               </div>
             ) : (
-              <div className="px-9 py-3.5 text-sm text-custom-text-200 bg-custom-background-100">
+              <div className="px-6 py-3.5 text-sm text-custom-text-200 bg-custom-background-100">
                 No Issues are available.
               </div>
             )}

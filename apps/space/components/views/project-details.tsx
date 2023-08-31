@@ -23,8 +23,6 @@ export const ProjectDetailsView = observer(() => {
     user: userStore,
   }: RootStore = useMobxStore();
 
-  const activeIssueId = issueDetailStore.peekId;
-
   useEffect(() => {
     if (!userStore.currentUser) {
       userStore.fetchCurrentUser();
@@ -48,23 +46,9 @@ export const ProjectDetailsView = observer(() => {
     }
   }, [peekId, issueDetailStore, project_slug, workspace_slug]);
 
-  const handlePeekClose = () => {
-    issueDetailStore.setPeekId(null);
-    router.replace(
-      {
-        pathname: `/${workspace_slug?.toString()}/${project_slug}`,
-        query: {
-          ...(board && { board: board.toString() }),
-        },
-      },
-      undefined,
-      { shallow: true }
-    );
-  };
-
   return (
     <div className="relative w-full h-full overflow-hidden">
-      {workspace_slug && <IssuePeekOverview isOpen={Boolean(activeIssueId)} onClose={handlePeekClose} />}
+      {workspace_slug && <IssuePeekOverview />}
 
       {issueStore?.loader && !issueStore.issues ? (
         <div className="text-sm text-center py-10 text-custom-text-100">Loading...</div>
@@ -79,9 +63,7 @@ export const ProjectDetailsView = observer(() => {
               <>
                 {projectStore?.activeBoard === "list" && (
                   <div className="relative w-full h-full overflow-y-auto">
-                    <div className="mx-auto px-4">
-                      <IssueListView />
-                    </div>
+                    <IssueListView />
                   </div>
                 )}
                 {projectStore?.activeBoard === "kanban" && (

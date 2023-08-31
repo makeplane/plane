@@ -10,17 +10,16 @@ import {
   PeekOverviewIssueProperties,
 } from "components/issues/peek-overview";
 // types
-import { IIssue } from "types/issue";
+import { Loader } from "components/ui/loader";
+import { IIssue } from "types";
 
 type Props = {
   handleClose: () => void;
-  issueDetails: IIssue;
+  issueDetails: IIssue | undefined;
 };
 
 export const FullScreenPeekView: React.FC<Props> = observer((props) => {
   const { handleClose, issueDetails } = props;
-
-  const { issueDetails: issueDetailStore } = useMobxStore();
 
   return (
     <div className="h-full w-full grid grid-cols-10 divide-x divide-custom-border-200 overflow-hidden">
@@ -28,23 +27,43 @@ export const FullScreenPeekView: React.FC<Props> = observer((props) => {
         <div className="w-full p-5">
           <PeekOverviewHeader handleClose={handleClose} issueDetails={issueDetails} />
         </div>
-        <div className="h-full w-full px-6 overflow-y-auto">
-          {/* issue title and description */}
-          <div className="w-full">
-            <PeekOverviewIssueDetails issueDetails={issueDetails} />
+        {issueDetails ? (
+          <div className="h-full w-full px-6 overflow-y-auto">
+            {/* issue title and description */}
+            <div className="w-full">
+              <PeekOverviewIssueDetails issueDetails={issueDetails} />
+            </div>
+            {/* divider */}
+            <div className="h-[1] w-full border-t border-custom-border-200 my-5" />
+            {/* issue activity/comments */}
+            <div className="w-full pb-5">
+              <PeekOverviewIssueActivity issueDetails={issueDetails} />
+            </div>
           </div>
-          {/* divider */}
-          <div className="h-[1] w-full border-t border-custom-border-200 my-5" />
-          {/* issue activity/comments */}
-          <div className="w-full">
-            <PeekOverviewIssueActivity issueDetails={issueDetails} />
-          </div>
-        </div>
+        ) : (
+          <Loader className="px-6">
+            <Loader.Item height="30px" />
+            <div className="space-y-2 mt-3">
+              <Loader.Item height="20px" width="70%" />
+              <Loader.Item height="20px" width="60%" />
+              <Loader.Item height="20px" width="60%" />
+            </div>
+          </Loader>
+        )}
       </div>
       <div className="col-span-3 h-full w-full overflow-y-auto">
         {/* issue properties */}
         <div className="w-full px-6 py-5">
-          <PeekOverviewIssueProperties issueDetails={issueDetails} mode="full" />
+          {issueDetails ? (
+            <PeekOverviewIssueProperties issueDetails={issueDetails} />
+          ) : (
+            <Loader className="mt-11 space-y-4">
+              <Loader.Item height="30px" />
+              <Loader.Item height="30px" />
+              <Loader.Item height="30px" />
+              <Loader.Item height="30px" />
+            </Loader>
+          )}
         </div>
       </div>
     </div>

@@ -6,7 +6,6 @@ import { mutate } from "swr";
 
 // components
 import {
-  IssuePeekOverview,
   ViewAssigneeSelect,
   ViewDueDateSelect,
   ViewEstimateSelect,
@@ -75,9 +74,6 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
   nestingLevel,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-
-  // issue peek overview
-  const [issuePeekOverview, setIssuePeekOverview] = useState(false);
 
   const router = useRouter();
 
@@ -161,6 +157,15 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
     [workspaceSlug, projectId, cycleId, moduleId, viewId, params, user]
   );
 
+  const openPeekOverview = () => {
+    const { query } = router;
+
+    router.push({
+      pathname: router.pathname,
+      query: { ...query, peekIssue: issue.id },
+    });
+  };
+
   const handleCopyText = () => {
     const originURL =
       typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
@@ -183,15 +188,6 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
 
   return (
     <>
-      <IssuePeekOverview
-        handleDeleteIssue={() => handleDeleteIssue(issue)}
-        handleUpdateIssue={async (formData) => partialUpdateIssue(formData, issue)}
-        issue={issue}
-        isOpen={issuePeekOverview}
-        onClose={() => setIssuePeekOverview(false)}
-        workspaceSlug={workspaceSlug?.toString() ?? ""}
-        readOnly={isNotAllowed}
-      />
       <div
         className="relative group grid auto-rows-[minmax(44px,1fr)] hover:rounded-sm hover:bg-custom-background-80 border-b border-custom-border-200 w-full min-w-max"
         style={{ gridTemplateColumns }}
@@ -280,7 +276,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
           <button
             type="button"
             className="truncate text-custom-text-100 text-left cursor-pointer w-full text-[0.825rem]"
-            onClick={() => setIssuePeekOverview(true)}
+            onClick={openPeekOverview}
           >
             {issue.name}
           </button>

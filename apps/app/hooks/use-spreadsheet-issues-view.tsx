@@ -43,10 +43,12 @@ const useSpreadsheetIssuesView = () => {
     type: filters?.type ? filters?.type : undefined,
     labels: filters?.labels ? filters?.labels.join(",") : undefined,
     created_by: filters?.created_by ? filters?.created_by.join(",") : undefined,
+    start_date: filters?.start_date ? filters?.start_date.join(",") : undefined,
+    target_date: filters?.target_date ? filters?.target_date.join(",") : undefined,
     sub_issue: "false",
   };
 
-  const { data: projectSpreadsheetIssues } = useSWR(
+  const { data: projectSpreadsheetIssues, mutate: mutateProjectSpreadsheetIssues } = useSWR(
     workspaceSlug && projectId
       ? PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params)
       : null,
@@ -56,7 +58,7 @@ const useSpreadsheetIssuesView = () => {
       : null
   );
 
-  const { data: cycleSpreadsheetIssues } = useSWR(
+  const { data: cycleSpreadsheetIssues, mutate: mutateCycleSpreadsheetIssues } = useSWR(
     workspaceSlug && projectId && cycleId
       ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), params)
       : null,
@@ -71,7 +73,7 @@ const useSpreadsheetIssuesView = () => {
       : null
   );
 
-  const { data: moduleSpreadsheetIssues } = useSWR(
+  const { data: moduleSpreadsheetIssues, mutate: mutateModuleSpreadsheetIssues } = useSWR(
     workspaceSlug && projectId && moduleId
       ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), params)
       : null,
@@ -86,7 +88,7 @@ const useSpreadsheetIssuesView = () => {
       : null
   );
 
-  const { data: viewSpreadsheetIssues } = useSWR(
+  const { data: viewSpreadsheetIssues, mutate: mutateViewSpreadsheetIssues } = useSWR(
     workspaceSlug && projectId && viewId && params ? VIEW_ISSUES(viewId.toString(), params) : null,
     workspaceSlug && projectId && viewId && params
       ? () =>
@@ -104,6 +106,13 @@ const useSpreadsheetIssuesView = () => {
 
   return {
     issueView,
+    mutateIssues: cycleId
+      ? mutateCycleSpreadsheetIssues
+      : moduleId
+      ? mutateModuleSpreadsheetIssues
+      : viewId
+      ? mutateViewSpreadsheetIssues
+      : mutateProjectSpreadsheetIssues,
     spreadsheetIssues: spreadsheetIssues ?? [],
     orderBy,
     setOrderBy,

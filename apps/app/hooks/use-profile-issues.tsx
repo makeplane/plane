@@ -71,8 +71,23 @@ const useProfileIssues = (workspaceSlug: string | undefined, userId: string | un
         allIssues: userProfileIssues,
       };
 
+    if (groupByProperty === "state_detail.group") {
+      return userProfileIssues
+        ? Object.assign(
+            {
+              backlog: [],
+              unstarted: [],
+              started: [],
+              completed: [],
+              cancelled: [],
+            },
+            userProfileIssues
+          )
+        : undefined;
+    }
+
     return userProfileIssues;
-  }, [userProfileIssues]);
+  }, [groupByProperty, userProfileIssues]);
 
   useEffect(() => {
     if (!userId || !filters) return;

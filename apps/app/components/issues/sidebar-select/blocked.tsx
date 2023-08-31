@@ -18,7 +18,6 @@ type Props = {
   issueId?: string;
   submitChanges: (formData: Partial<IIssue>) => void;
   watch: UseFormWatch<IIssue>;
-  userAuth: UserAuth;
   disabled?: boolean;
 };
 
@@ -26,7 +25,6 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
   issueId,
   submitChanges,
   watch,
-  userAuth,
   disabled = false,
 }) => {
   const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
@@ -72,8 +70,6 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
     });
     handleClose();
   };
-
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
 
   return (
     <>
@@ -128,11 +124,11 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
           </div>
           <button
             type="button"
-            className={`flex w-full text-custom-text-200 ${
-              isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
-            } items-center justify-between gap-1 rounded-md border border-custom-border-200 px-2 py-1 text-xs shadow-sm duration-300 focus:outline-none`}
+            className={`bg-custom-background-80 text-xs rounded px-2.5 py-0.5 ${
+              disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
+            }`}
             onClick={() => setIsBlockedModalOpen(true)}
-            disabled={isNotAllowed}
+            disabled={disabled}
           >
             Select issues
           </button>

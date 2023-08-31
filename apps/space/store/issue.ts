@@ -22,6 +22,7 @@ export interface IIssueStore {
   issueService: any;
   // actions
   fetchPublicIssues: (workspace_slug: string, project_slug: string, params: any) => void;
+  getCountOfIssuesByState: (state: string) => number;
   getFilteredIssuesByState: (state: string) => IIssue[];
 }
 
@@ -89,6 +90,11 @@ class IssueStore implements IIssueStore {
       this.error = error;
     }
   };
+
+  // computed
+  getCountOfIssuesByState(state_id: string): number {
+    return this.issues?.filter((issue) => issue.state == state_id).length || 0;
+  }
 
   getFilteredIssuesByState = (state_id: string): IIssue[] | [] =>
     this.issues?.filter((issue) => issue.state == state_id) || [];
