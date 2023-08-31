@@ -36,6 +36,7 @@ export interface IUser {
   theme: ICustomTheme;
   updated_at: readonly Date;
   username: string;
+  user_timezone: string;
 
   [...rest: string]: any;
 }

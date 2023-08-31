@@ -1,6 +1,9 @@
 import React, { Fragment } from "react";
+
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
+// icons
+import { Icon } from "components/ui";
 
 export const CustomPopover = ({
   children,
@@ -16,18 +19,14 @@ export const CustomPopover = ({
       {({ open }) => (
         <>
           <Popover.Button
-            className={`${
-              open ? "" : ""
-            }  relative flex items-center gap-1 border border-custom-border-300 shadow-sm p-1 px-2 ring-0 outline-none`}
+            className={`${open ? "" : ""}  relative flex items-center gap-1 ring-0 outline-none`}
           >
-            <div className="text-sm font-medium">
-              {label ? label : placeholder ? placeholder : "Select"}
-            </div>
-            <div className="w-[20px] h-[20px] relative flex justify-center items-center">
+            <div className="text-sm">{label ?? placeholder}</div>
+            <div className="w-5 h-5 grid place-items-center">
               {!open ? (
-                <span className="material-symbols-rounded text-[20px]">expand_more</span>
+                <Icon iconName="expand_more" className="!text-base" />
               ) : (
-                <span className="material-symbols-rounded text-[20px]">expand_less</span>
+                <Icon iconName="expand_less" className="!text-base" />
               )}
             </div>
           </Popover.Button>
@@ -41,8 +40,8 @@ export const CustomPopover = ({
             leaveFrom="opacity-100 translate-y-0"
             leaveTo="opacity-0 translate-y-1"
           >
-            <Popover.Panel className="absolute right-0 z-[9999]">
-              <div className="overflow-hidden rounded-sm border border-custom-border-300 mt-1 overflow-y-auto bg-custom-background-90 shadow-lg focus:outline-none">
+            <Popover.Panel className="absolute right-0 z-10 mt-1 min-w-[150px]">
+              <div className="overflow-hidden rounded border border-custom-border-300 mt-1 overflow-y-auto bg-custom-background-90 shadow-custom-shadow-2xs focus:outline-none">
                 {children}
               </div>
             </Popover.Panel>

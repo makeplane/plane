@@ -1,24 +1,41 @@
+# Python imports
+import zoneinfo
+
 # Django imports
 from django.urls import resolve
 from django.conf import settings
-
+from django.utils import timezone
 # Third part imports
+
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.exceptions import APIException
 from rest_framework.views import APIView
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import NotFound
 from sentry_sdk import capture_exception
 from django_filters.rest_framework import DjangoFilterBackend
 
 # Module imports
-from plane.db.models import Workspace, Project
 from plane.utils.paginator import BasePaginator
 
 
-class BaseViewSet(ModelViewSet, BasePaginator):
+class TimezoneMixin:
+    """
+    This enables timezone conversion according
+    to the user set timezone
+    """
+    def initial(self, request, *args, **kwargs):
+        super().initial(request, *args, **kwargs)
+        if request.user.is_authenticated:
+            timezone.activate(zoneinfo.ZoneInfo(request.user.user_timezone))
+        else:
+            timezone.deactivate()
+
+
+
+
+class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
 
     model = None
 
@@ -67,7 +84,7 @@ class BaseViewSet(ModelViewSet, BasePaginator):
             return self.kwargs.get("pk", None)
 
 
-class BaseAPIView(APIView, BasePaginator):
+class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
 
     permission_classes = [
         IsAuthenticated,

@@ -18,7 +18,7 @@ export const SidebarPrioritySelect: React.FC<Props> = ({ value, onChange, disabl
     customButton={
       <button
         type="button"
-        className={`flex items-center gap-1.5 text-left text-sm capitalize rounded px-2.5 py-0.5 ${
+        className={`flex items-center gap-1.5 text-left text-xs capitalize rounded px-2.5 py-0.5 ${
           value === "urgent"
             ? "border-red-500/20 bg-red-500/20 text-red-500"
             : value === "high"

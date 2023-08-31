@@ -12,24 +12,40 @@ import { IssueBlockDueDate } from "components/issues/board-views/block-due-date"
 // interfaces
 import { IIssue } from "types/issue";
 import { RootStore } from "store/root";
+import { useRouter } from "next/router";
 
 export const IssueListBlock = observer(({ issue }: { issue: IIssue }) => {
-  const store: RootStore = useMobxStore();
+  const { project: projectStore, issueDetails: issueDetailStore }: RootStore = useMobxStore();
 
-  const { issue: issueStore } = store;
+  // router
+  const router = useRouter();
+  const { workspace_slug, project_slug, board } = router.query;
+
+  const handleBlockClick = () => {
+    issueDetailStore.setPeekId(issue.id);
+    router.replace(
+      {
+        pathname: `/${workspace_slug?.toString()}/${project_slug}`,
+        query: {
+          board: board?.toString(),
+          peekId: issue.id,
+        },
+      },
+      undefined,
+      { shallow: true }
+    );
+    // router.push(`/${workspace_slug?.toString()}/${project_slug}?board=${board?.toString()}&peekId=${issue.id}`);
+  };
 
   return (
     <div className="py-3 px-4 h-[118px] flex flex-col gap-1.5 bg-custom-background-100 rounded shadow-custom-shadow-sm border-[0.5px] border-custom-border-200">
       {/* id */}
       <div className="text-xs text-custom-text-300 break-words">
-        {store?.project?.project?.identifier}-{issue?.sequence_id}
+        {projectStore?.project?.identifier}-{issue?.sequence_id}
       </div>
 
       {/* name */}
-      <h6
-        onClick={() => issueStore?.setActivePeekOverviewIssueId(issue?.id)}
-        className="text-sm font-medium break-words line-clamp-2 cursor-pointer"
-      >
+      <h6 onClick={handleBlockClick} className="text-sm font-medium break-words line-clamp-2 cursor-pointer">
         {issue.name}
       </h6>
 

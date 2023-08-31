@@ -3,6 +3,7 @@ import { makeObservable, observable, action, runInAction } from "mobx";
 import { RootStore } from "./root";
 // services
 import IssueService from "services/issue.service";
+import { IIssue } from "types";
 
 export type IPeekMode = "side" | "modal" | "full";
 
@@ -12,14 +13,16 @@ export interface IIssueDetailStore {
   // peek info
   peekId: string | null;
   peekMode: IPeekMode;
-  details: any;
+  details: {
+    [key: string]: IIssue;
+  };
   // peek actions
   setPeekId: (issueId: string | null) => void;
   setPeekMode: (mode: IPeekMode) => void;
   // issue details
   fetchIssueDetails: (workspaceId: string, projectId: string, issueId: string) => void;
   // issue comments
-  addIssueComment: (workspaceId: string, projectId: string, issueId: string, data: any) => void;
+  addIssueComment: (workspaceId: string, projectId: string, issueId: string, data: any) => Promise<void>;
   deleteIssueComment: (workspaceId: string, projectId: string, issueId: string) => void;
   // issue reactions
   addIssueReaction: (workspaceId: string, projectId: string, issueId: string) => void;
@@ -34,7 +37,9 @@ class IssueDetailStore implements IssueDetailStore {
   error: any = null;
   peekId: string | null = null;
   peekMode: IPeekMode = "side";
-  details: any = {};
+  details: {
+    [key: string]: IIssue;
+  } = {};
   issueService: any;
   rootStore: RootStore;
 

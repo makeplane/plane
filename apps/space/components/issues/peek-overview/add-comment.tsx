@@ -14,7 +14,6 @@ import { Comment } from "types";
 import { TipTapEditor } from "components/tiptap";
 
 const defaultValues: Partial<Comment> = {
-  comment_json: "",
   comment_html: "",
 };
 
@@ -37,7 +36,7 @@ export const AddComment: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspace_slug, project_slug } = router.query as { workspace_slug: string; project_slug: string };
 
-  const { issue: issueStore, user: userStore, issueDetails: issueDetailStore } = useMobxStore();
+  const { user: userStore, issueDetails: issueDetailStore } = useMobxStore();
 
   const issueId = issueDetailStore.peekId;
 
@@ -46,15 +45,7 @@ export const AddComment: React.FC<Props> = observer((props) => {
   const { setToastAlert } = useToast();
 
   const onSubmit = async (formData: Comment) => {
-    if (
-      !workspace_slug ||
-      !project_slug ||
-      !issueId ||
-      isSubmitting ||
-      !formData.comment_html ||
-      !formData.comment_json
-    )
-      return;
+    if (!workspace_slug || !project_slug || !issueId || isSubmitting || !formData.comment_html) return;
 
     await issueDetailStore
       .addIssueComment(workspace_slug, project_slug, issueId, formData)
@@ -90,7 +81,6 @@ export const AddComment: React.FC<Props> = observer((props) => {
               debouncedUpdatesEnabled={false}
               onChange={(comment_json: Object, comment_html: string) => {
                 onChange(comment_html);
-                setValue("comment_json", comment_json);
               }}
             />
           )}

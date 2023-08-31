@@ -29,6 +29,7 @@ export interface IIssueGroup {
 
 export interface IIssue {
   id: string;
+  comments: Comment[];
   description_html: string;
   label_details: any;
   name: string;
@@ -73,7 +74,6 @@ export interface Comment {
   created_at: Date;
   updated_at: Date;
   comment_stripped: string;
-  comment_json: any;
   comment_html: string;
   attachments: any[];
   access: string;

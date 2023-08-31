@@ -50,7 +50,7 @@ export const IssueListBlock: FC<{ issue: IIssue }> = observer((props) => {
           {projectStore?.project?.identifier}-{issue?.sequence_id}
         </div>
         {/* name */}
-        <div onClick={handleBlockClick} className="font-medium text-sm truncate flex-grow">
+        <div onClick={handleBlockClick} className="font-medium text-sm truncate flex-grow cursor-pointer">
           {issue.name}
         </div>
       </div>

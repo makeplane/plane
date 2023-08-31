@@ -16,7 +16,7 @@ export const PeekOverviewIssueActivity: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspace_slug } = router.query;
 
-  const { issueDetails: issueDetailStore, user: userStore } = useMobxStore();
+  const { issueDetails: issueDetailStore, project: projectStore, user: userStore } = useMobxStore();
 
   const comments = issueDetailStore.details[issueDetailStore.peekId || ""]?.comments || [];
 
@@ -30,9 +30,11 @@ export const PeekOverviewIssueActivity: React.FC<Props> = observer((props) => {
               <CommentCard key={comment.id} comment={comment} workspaceSlug={workspace_slug?.toString()} />
             ))}
           </div>
-          <div className="mt-4">
-            <AddComment disabled={!userStore.currentUser} />
-          </div>
+          {projectStore.deploySettings?.comments && (
+            <div className="mt-4">
+              <AddComment disabled={!userStore.currentUser} />
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -476,10 +476,12 @@ class IssueVote(ProjectBaseModel):
         choices=(
             (-1, "DOWNVOTE"),
             (1, "UPVOTE"),
-        )
+        ),
+        default=1,
     )
+
     class Meta:
-        unique_together = ["issue", "actor"]
+        unique_together = ["issue", "actor", "vote"]
         verbose_name = "Issue Vote"
         verbose_name_plural = "Issue Votes"
         db_table = "issue_votes"

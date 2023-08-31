@@ -4,21 +4,11 @@ import { RootStore } from "./root";
 // services
 import ProjectServices from "services/project-publish.service";
 
-export type IProjectPublishSettingsViewKeys =
-  | "list"
-  | "gantt"
-  | "kanban"
-  | "calendar"
-  | "spreadsheet"
-  | string;
+export type TProjectPublishViews = "list" | "gantt" | "kanban" | "calendar" | "spreadsheet";
 
-export interface IProjectPublishSettingsViews {
-  list: boolean;
-  gantt: boolean;
-  kanban: boolean;
-  calendar: boolean;
-  spreadsheet: boolean;
-}
+export type TProjectPublishViewsSettings = {
+  [key in TProjectPublishViews]: boolean;
+};
 
 export interface IProjectPublishSettings {
   id?: string;
@@ -26,8 +16,8 @@ export interface IProjectPublishSettings {
   comments: boolean;
   reactions: boolean;
   votes: boolean;
-  views: IProjectPublishSettingsViews;
-  inbox: null;
+  views: TProjectPublishViewsSettings;
+  inbox: string | null;
 }
 
 export interface IProjectPublishStore {

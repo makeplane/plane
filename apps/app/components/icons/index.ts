@@ -27,6 +27,7 @@ export * from "./started-state-icon";
 export * from "./layer-diagonal-icon";
 export * from "./lock-icon";
 export * from "./menu-icon";
+export * from "./module";
 export * from "./pencil-scribble-icon";
 export * from "./plus-icon";
 export * from "./person-running-icon";

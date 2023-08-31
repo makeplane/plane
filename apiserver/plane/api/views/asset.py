@@ -18,10 +18,21 @@ class FileAssetEndpoint(BaseAPIView):
     """
 
     def get(self, request, workspace_id, asset_key):
-        asset_key = str(workspace_id) + "/" + asset_key
-        files = FileAsset.objects.filter(asset=asset_key)
-        serializer = FileAssetSerializer(files, context={"request": request}, many=True)
-        return Response(serializer.data)
+        try:
+            asset_key = str(workspace_id) + "/" + asset_key
+            files = FileAsset.objects.filter(asset=asset_key)
+            if files.exists():
+                serializer = FileAssetSerializer(files, context={"request": request}, many=True)
+                return Response({"data": serializer.data, "status": True}, status=status.HTTP_200_OK)
+            else:
+                return Response({"error": "Asset key does not exist", "status": False}, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
 
     def post(self, request, slug):
         try:
@@ -68,11 +79,16 @@ class UserAssetsEndpoint(BaseAPIView):
     def get(self, request, asset_key):
         try:
             files = FileAsset.objects.filter(asset=asset_key, created_by=request.user)
-            serializer = FileAssetSerializer(files, context={"request": request})
-            return Response(serializer.data)
-        except FileAsset.DoesNotExist:
+            if files.exists():
+                serializer = FileAssetSerializer(files, context={"request": request})
+                return Response({"data": serializer.data, "status": True}, status=status.HTTP_200_OK)
+            else:
+                return Response({"error": "Asset key does not exist", "status": False}, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
             return Response(
-                {"error": "File Asset does not exist"}, status=status.HTTP_404_NOT_FOUND
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
     def post(self, request):
