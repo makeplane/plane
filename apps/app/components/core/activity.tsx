@@ -353,6 +353,28 @@ const activityDetails: {
             .
           </>
         );
+      else if (activity.verb === "updated")
+        return (
+          <>
+            updated the{" "}
+            <a
+              href={`${activity.old_value}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+            >
+              link
+              <Icon iconName="launch" className="!text-xs" />
+            </a>
+            {showIssue && (
+              <>
+                {" "}
+                from <IssueLink activity={activity} />
+              </>
+            )}
+            .
+          </>
+        );
       else
         return (
           <>
