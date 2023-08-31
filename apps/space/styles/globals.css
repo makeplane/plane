@@ -205,15 +205,30 @@
   }
 }
 
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: rgba(var(--color-background-100));
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: rgba(var(--color-background-80));
+}
+
 .hide-vertical-scrollbar::-webkit-scrollbar {
-  width: 0;
+  width: 0 !important;
 }
 
 .hide-horizontal-scrollbar::-webkit-scrollbar {
-  height: 0;
+  height: 0 !important;
 }
 
 .hide-both-scrollbars::-webkit-scrollbar {
-  height: 0;
-  width: 0;
+  height: 0 !important;
+  width: 0 !important;
 }

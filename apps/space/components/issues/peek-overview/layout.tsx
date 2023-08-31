@@ -78,7 +78,7 @@ export const IssuePeekOverview: React.FC<Props> = observer((props) => {
                 leaveFrom="translate-x-0"
                 leaveTo="translate-x-full"
               >
-                <Dialog.Panel className="absolute z-20 bg-custom-background-100 top-0 right-0 h-full w-1/2 shadow-custom-shadow-md">
+                <Dialog.Panel className="absolute z-20 bg-custom-background-100 top-0 right-0 h-full w-1/2 shadow-custom-shadow-sm">
                   <SidePeekView handleClose={handleClose} issueDetails={issueDetails} />
                 </Dialog.Panel>
               </Transition.Child>

@@ -43,7 +43,7 @@ export const IssueListBlock: FC<{ issue: IIssue }> = observer((props) => {
   const totalDownVotes = issue.votes.filter((v) => v.vote === -1);
 
   return (
-    <div className="flex items-center px-6 py-3.5 relative gap-10 border-b border-custom-border-200 bg-custom-background-100 last:border-b-0">
+    <div className="flex items-center px-6 py-3.5 relative gap-10 bg-custom-background-100">
       <div className="relative flex items-center gap-5 w-full flex-grow overflow-hidden">
         {/* id */}
         <div className="flex-shrink-0 text-sm text-custom-text-300">
