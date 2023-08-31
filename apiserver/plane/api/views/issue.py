@@ -337,7 +337,7 @@ class UserWorkSpaceIssues(BaseAPIView):
 
             issue_queryset = (
                 Issue.issue_objects.filter(
-                    (Q(assignees__in=[request.user]) | Q(created_by=request.user)),
+                    (Q(assignees__in=[request.user]) | Q(created_by=request.user) | Q(issue_subscribers__subscriber=request.user)),
                     workspace__slug=slug,
                 )
                 .annotate(
