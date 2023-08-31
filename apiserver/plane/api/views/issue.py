@@ -2146,7 +2146,8 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
             issues = IssuePublicSerializer(issue_queryset, many=True).data
 
             states = State.objects.filter(
-                workspace__slug=slug, project_id=project_id
+                ~Q(name="Triage"),
+                workspace__slug=slug, project_id=project_id,
             ).values("name", "group", "color", "id")
 
             labels = Label.objects.filter(
