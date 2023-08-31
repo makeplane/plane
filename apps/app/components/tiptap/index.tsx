@@ -76,8 +76,8 @@ const Tiptap = (props: ITipTapRichTextEditor) => {
 
   const editorClassNames = `relative w-full max-w-full sm:rounded-lg mt-2 p-3 relative focus:outline-none rounded-md
       ${noBorder ? "" : "border border-custom-border-200"} ${
-        borderOnFocus ? "focus:border border-custom-border-300" : "focus:border-0"
-      } ${customClassName}`;
+    borderOnFocus ? "focus:border border-custom-border-300" : "focus:border-0"
+  } ${customClassName}`;
 
   if (!editor) return null;
   editorRef.current = editor;
@@ -93,7 +93,7 @@ const Tiptap = (props: ITipTapRichTextEditor) => {
       {editor && <EditorBubbleMenu editor={editor} />}
       <div className={`${editorContentCustomClassNames}`}>
         <EditorContent editor={editor} />
-        {editor?.isActive("table") && <TableMenu editor={editor} />}
+        <TableMenu editor={editor} />
         {editor?.isActive("image") && <ImageResizer editor={editor} />}
       </div>
     </div>
