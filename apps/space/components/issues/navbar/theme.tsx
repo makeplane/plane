@@ -33,11 +33,11 @@ export const NavbarTheme = observer(() => {
       className="relative w-[28px] h-[28px] flex justify-center rounded-md items-center rounded-sm cursor-pointer bg-custom-background-100 hover:bg-custom-background-200 hover:bg-custom-background-200/60 text-custom-text-100 transition-all"
       onClick={handleTheme}
     >
-      {theme === "light" ? (
+      {/* {theme === "light" ? (
         <span className={`material-symbols-rounded text-[18px]`}>dark_mode</span>
       ) : (
         <span className={`material-symbols-rounded text-[18px]`}>light_mode</span>
-      )}
+      )} */}
     </div>
   );
 });

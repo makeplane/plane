@@ -40,7 +40,7 @@ export interface IIssueStore {
 }
 
 class IssueStore {
-  currentIssueBoardView: TIssueBoardKeys | null = null;
+  currentIssueBoardView: TIssueBoardKeys | null = "list";
 
   loader: boolean = false;
   error: any | null = null;

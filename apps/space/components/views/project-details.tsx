@@ -55,9 +55,7 @@ export const ProjectDetailsView = () => {
               <>
                 {issueStore?.currentIssueBoardView === "list" && (
                   <div className="relative w-full h-full overflow-y-auto">
-                    <div className="mx-auto px-4">
-                      <IssueListView />
-                    </div>
+                    <IssueListView />
                   </div>
                 )}
                 {issueStore?.currentIssueBoardView === "kanban" && (

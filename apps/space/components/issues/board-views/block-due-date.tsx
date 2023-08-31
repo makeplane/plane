@@ -1,7 +1,7 @@
 "use client";
 
 // helpers
-import { renderDateFormat } from "constants/helpers";
+import { renderFullDate } from "constants/helpers";
 
 export const findHowManyDaysLeft = (date: string | Date) => {
   const today = new Date();
@@ -24,9 +24,11 @@ const validDate = (date: any, state: string): string => {
 
 export const IssueBlockDueDate = ({ due_date, state }: any) => (
   <div
-    className={`h-[24px] rounded-md flex px-2.5 py-1 items-center border border-custom-border-100 gap-1 text-custom-text-100 text-xs font-medium 
-    ${validDate(due_date, state)}`}
+    className={`rounded flex px-2.5 py-1 items-center border-[0.5px] border-custom-border-100 gap-1 text-custom-text-100 text-xs ${validDate(
+      due_date,
+      state
+    )}`}
   >
-    {renderDateFormat(due_date)}
+    {renderFullDate(due_date)}
   </div>
 );

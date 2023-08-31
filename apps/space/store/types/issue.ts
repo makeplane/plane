@@ -29,17 +29,24 @@ export interface IIssueGroup {
 
 export interface IIssue {
   id: string;
-  sequence_id: number;
-  name: string;
   description_html: string;
+  label_details: any;
+  name: string;
+  priority: TIssuePriorityKey | null;
   project: string;
   project_detail: any;
-  priority: TIssuePriorityKey | null;
+  sequence_id: number;
+  start_date: any;
   state: string;
   state_detail: any;
-  label_details: any;
   target_date: any;
-  start_date: any;
+  votes: {
+    issue: string;
+    vote: -1 | 1;
+    workspace: string;
+    project: string;
+    actor: string;
+  }[];
 }
 
 export interface IIssueState {
