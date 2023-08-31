@@ -10,6 +10,16 @@ server {
     access_log /var/log/nginx/access.log;
 
     client_max_body_size ${FILE_SIZE_LIMIT};
+    location /admin/ {
+        proxy_pass http://planebackend:8000/admin/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+    location /static/ {
+        proxy_pass http://planebackend:8000/static/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
 
     location / {
         proxy_pass http://planefrontend:3000/;       
