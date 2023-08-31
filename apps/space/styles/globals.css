@@ -204,3 +204,16 @@
     --color-sidebar-border-400: var(--color-border-100); /* strong sidebar border- 2 */
   }
 }
+
+.hide-vertical-scrollbar::-webkit-scrollbar {
+  width: 0;
+}
+
+.hide-horizontal-scrollbar::-webkit-scrollbar {
+  height: 0;
+}
+
+.hide-both-scrollbars::-webkit-scrollbar {
+  height: 0;
+  width: 0;
+}

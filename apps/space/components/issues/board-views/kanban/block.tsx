@@ -19,22 +19,22 @@ export const IssueListBlock = observer(({ issue }: { issue: IIssue }) => {
   const { issue: issueStore } = store;
 
   return (
-    <div className="p-3.5 h-[118px] flex flex-col justify-between bg-custom-background-100 space-y-2 rounded shadow">
+    <div className="py-3 px-4 h-[118px] flex flex-col gap-1.5 bg-custom-background-100 rounded shadow-custom-shadow-sm border-[0.5px] border-custom-border-200">
       {/* id */}
-      <div className="flex-shrink-0 text-xs font-medium text-custom-text-200 w-[60px]">
+      <div className="text-xs text-custom-text-300 break-words">
         {store?.project?.project?.identifier}-{issue?.sequence_id}
       </div>
 
       {/* name */}
-      <div
+      <h6
         onClick={() => issueStore?.setActivePeekOverviewIssueId(issue?.id)}
-        className="text-custom-text-100 text-sm font-medium h-full break-words line-clamp-2 cursor-pointer"
+        className="text-sm font-medium break-words line-clamp-2 cursor-pointer"
       >
         {issue.name}
-      </div>
+      </h6>
 
-      {/* priority */}
-      <div className="relative flex flex-wrap items-center gap-2 w-full">
+      <div className="relative flex-grow flex items-end gap-2 w-full overflow-x-scroll hide-horizontal-scrollbar">
+        {/* priority */}
         {issue?.priority && (
           <div className="flex-shrink-0">
             <IssueBlockPriority priority={issue?.priority} />
@@ -44,12 +44,6 @@ export const IssueListBlock = observer(({ issue }: { issue: IIssue }) => {
         {issue?.state_detail && (
           <div className="flex-shrink-0">
             <IssueBlockState state={issue?.state_detail} />
-          </div>
-        )}
-        {/* labels */}
-        {issue?.label_details && issue?.label_details.length > 0 && (
-          <div className="flex-shrink-0">
-            <IssueBlockLabels labels={issue?.label_details} />
           </div>
         )}
         {/* due date */}

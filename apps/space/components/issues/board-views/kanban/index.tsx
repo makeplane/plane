@@ -23,10 +23,10 @@ export const IssueKanbanView = observer(() => {
             <div className="flex-shrink-0">
               <IssueListHeader state={_state} />
             </div>
-            <div className="w-full h-full overflow-hidden overflow-y-auto">
+            <div className="w-full h-full overflow-hidden overflow-y-auto hide-vertical-scrollbar">
               {store.issue.getFilteredIssuesByState(_state.id) &&
               store.issue.getFilteredIssuesByState(_state.id).length > 0 ? (
-                <div className="space-y-3 pb-2">
+                <div className="space-y-3 pb-2 px-2">
                   {store.issue.getFilteredIssuesByState(_state.id).map((_issue: IIssue) => (
                     <IssueListBlock key={_issue.id} issue={_issue} />
                   ))}

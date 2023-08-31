@@ -19,7 +19,7 @@ export const IssueListHeader = observer(({ state }: { state: IIssueState }) => {
 
   return (
     <div className="px-6 py-2 flex items-center">
-      <div className="w-7 h-7 flex justify-center items-center">
+      <div className="w-4 h-4 flex justify-center items-center">
         <stateGroup.icon />
       </div>
       <div className="font-semibold capitalize ml-2 mr-3">{state?.name}</div>
