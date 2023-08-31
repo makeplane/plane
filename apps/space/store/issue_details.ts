@@ -25,11 +25,11 @@ export interface IIssueDetailStore {
   addIssueComment: (workspaceId: string, projectId: string, issueId: string, data: any) => Promise<void>;
   deleteIssueComment: (workspaceId: string, projectId: string, issueId: string) => void;
   // issue reactions
-  addIssueReaction: (workspaceId: string, projectId: string, issueId: string) => void;
-  removeIssueReaction: (workspaceId: string, projectId: string, issueId: string) => void;
+  addIssueReaction: (workspaceId: string, projectId: string, issueId: string, data: any) => void;
+  removeIssueReaction: (workspaceId: string, projectId: string, issueId: string, data: any) => void;
   // issue votes
-  addIssueVote: (workspaceId: string, projectId: string, issueId: string) => void;
-  removeIssueVote: (workspaceId: string, projectId: string, issueId: string) => void;
+  addIssueVote: (workspaceId: string, projectId: string, issueId: string, data: { vote: 1 | -1 }) => Promise<void>;
+  removeIssueVote: (workspaceId: string, projectId: string, issueId: string) => Promise<void>;
 }
 
 class IssueDetailStore implements IssueDetailStore {
@@ -155,10 +155,10 @@ class IssueDetailStore implements IssueDetailStore {
     }
   };
 
-  addIssueReaction = async () => {
+  addIssueReaction = async (workspaceSlug: string, projectId: string, issueId: string, data: any) => {
     try {
       const issueVoteResponse = await this.issueService.createIssueReaction(workspaceSlug, projectId, issueId, data);
-      // const issueDetails = await this.issueService.fetchIssueDetails(workspaceSlug, projectId, issueId);
+      const issueDetails = await this.issueService.getIssueById(workspaceSlug, projectId, issueId);
 
       if (issueVoteResponse) {
         runInAction(() => {
@@ -175,12 +175,12 @@ class IssueDetailStore implements IssueDetailStore {
     }
   };
 
-  removeIssueReaction = async () => {
+  removeIssueReaction = async (workspaceSlug: string, projectId: string, issueId: string, data: any) => {
     try {
       const issueVoteResponse = await this.issueService.deleteIssueReaction(workspaceSlug, projectId, issueId, data);
-      // const issueDetails = await this.issueService.fetchIssueDetails(workspaceSlug, projectId, issueId);
+      const issueDetails = await this.issueService.getIssueById(workspaceSlug, projectId, issueId);
 
-      if (issueVoteResponse) {
+      if (issueVoteResponse && issueDetails) {
         runInAction(() => {
           this.details = {
             ...this.details,
@@ -198,7 +198,7 @@ class IssueDetailStore implements IssueDetailStore {
   addIssueVote = async (workspaceSlug: string, projectId: string, issueId: string, data: { vote: 1 | -1 }) => {
     try {
       const issueVoteResponse = await this.issueService.createIssueVote(workspaceSlug, projectId, issueId, data);
-      // const issueDetails = await this.issueService.fetchIssueDetails(workspaceSlug, projectId, issueId);
+      const issueDetails = await this.issueService.getIssueById(workspaceSlug, projectId, issueId);
 
       if (issueVoteResponse) {
         runInAction(() => {
@@ -217,8 +217,8 @@ class IssueDetailStore implements IssueDetailStore {
 
   removeIssueVote = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
-      const issueVoteResponse = await this.issueService.deleteIssueVote(workspaceSlug, projectId, issueId, data);
-      // const issueDetails = await this.issueService.fetchIssueDetails(workspaceSlug, projectId, issueId);
+      const issueVoteResponse = await this.issueService.deleteIssueVote(workspaceSlug, projectId, issueId);
+      const issueDetails = await this.issueService.getIssueById(workspaceSlug, projectId, issueId);
 
       if (issueVoteResponse) {
         runInAction(() => {

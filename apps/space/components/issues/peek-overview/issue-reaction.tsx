@@ -3,6 +3,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 
 export const IssueReactions: React.FC = () => {
   const { project: projectStore } = useMobxStore();
+
   return (
     <div className="flex gap-3 items-center mt-4">
       {projectStore?.deploySettings?.votes && (

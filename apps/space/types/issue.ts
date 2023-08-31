@@ -36,6 +36,7 @@ export interface IIssue {
   priority: TIssuePriorityKey | null;
   project: string;
   project_detail: any;
+  reactions: IIssueReaction[];
   sequence_id: number;
   start_date: any;
   state: string;
@@ -83,6 +84,13 @@ export interface Comment {
   workspace: string;
   issue: string;
   actor: string;
+}
+
+export interface IIssueReaction {
+  actor_detail: ActorDetail;
+  id: string;
+  issue: string;
+  reaction: string;
 }
 
 export interface ActorDetail {
