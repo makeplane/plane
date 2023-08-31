@@ -43,6 +43,8 @@ services:
                                 NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
                                 NEXT_PUBLIC_DEPLOY_URL: http://localhost/spaces
                 restart: always
+                ports:
+                        - 3000:3000
                 command: /usr/local/bin/start.sh apps/app/server.js app
                 env_file:
                         - .env
@@ -68,6 +70,8 @@ services:
                         dockerfile: Dockerfile.api
                 restart: always
                 command: ./bin/takeoff
+                ports:
+                        - 8000:8000
                 env_file:
                         - .env
                 environment:
@@ -139,6 +143,8 @@ services:
                         - uploads:/export
                 env_file:
                         - .env
+                ports:
+                        - 9000:9000
                 environment:
                         MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
                         MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
