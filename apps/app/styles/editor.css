@@ -144,7 +144,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
     height: 20px;
     border-radius: 50%;
     border: 3px solid rgba(var(--color-text-200));
-    border-top-color: rgba(var(--color-text-800)); 
+    border-top-color: rgba(var(--color-text-800));
     animation: spinning 0.6s linear infinite;
   }
 }
@@ -160,16 +160,13 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
     border-collapse: collapse;
     table-layout: fixed;
     margin: 0;
-    margin-bottom: 1.5rem;
-    margin-top: 1.5rem;
-    border: 2px solid rgb(var(--color-border-100));
+    border: 1px solid rgb(var(--color-border-200));
     width: 100%;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
 
     td,
     th {
       min-width: 1em;
-      border: 2px solid rgb(var(--color-border-400));
+      border: 1px solid rgb(var(--color-border-200));
       padding: 10px 15px;
       vertical-align: top;
       box-sizing: border-box;
@@ -183,8 +180,8 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
 
     th {
       font-weight: bold;
-      text-align: left; 
-      background-color: rgb(var(--color-primary-300));
+      text-align: left;
+      background-color: rgb(var(--color-primary-100));
     }
 
     td:hover {
@@ -195,7 +192,10 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
       z-index: 2;
       position: absolute;
       content: "";
-      left: 0; right: 0; top: 0; bottom: 0;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
       background-color: rgba(var(--color-primary-300), 0.1);
       pointer-events: none;
     }
@@ -222,8 +222,8 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
 }
 
 .ProseMirror table * p {
-   padding: 0px 1px;
-   margin: 6px 2px;
+  padding: 0px 1px;
+  margin: 6px 2px;
 }
 
 .ProseMirror table * .is-empty::before {
