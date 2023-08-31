@@ -27,7 +27,7 @@ export const PeekOverviewIssueActivity: React.FC<Props> = observer((props) => {
         <div className="mt-4">
           <div className="space-y-4">
             {comments.map((comment: any) => (
-              <CommentCard comment={comment} workspaceSlug={workspace_slug?.toString()} />
+              <CommentCard key={comment.id} comment={comment} workspaceSlug={workspace_slug?.toString()} />
             ))}
           </div>
           <div className="mt-4">
