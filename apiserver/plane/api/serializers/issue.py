@@ -680,7 +680,7 @@ class IssueLiteSerializer(BaseSerializer):
 class IssuePublicSerializer(BaseSerializer):
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
     state_detail = StateLiteSerializer(read_only=True, source="state")
-    issue_reactions = IssueReactionLiteSerializer(read_only=True, many=True)
+    reactions = IssueReactionLiteSerializer(read_only=True, many=True, source="issue_reactions")
     votes = IssueVoteSerializer(read_only=True, many=True)
 
     class Meta:
@@ -697,10 +697,11 @@ class IssuePublicSerializer(BaseSerializer):
             "workspace",
             "priority",
             "target_date",
-            "issue_reactions",
+            "reactions",
             "votes",
         ]
         read_only_fields = fields
+
 
 
 class IssueSubscriberSerializer(BaseSerializer):
