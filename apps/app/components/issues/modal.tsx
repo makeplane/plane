@@ -93,7 +93,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
   if (cycleId) prePopulateData = { ...prePopulateData, cycle: cycleId as string };
   if (moduleId) prePopulateData = { ...prePopulateData, module: moduleId as string };
-  if (router.asPath.includes("my-issues"))
+  if (router.asPath.includes("my-issues") || router.asPath.includes("assigned"))
     prePopulateData = {
       ...prePopulateData,
       assignees: [...(prePopulateData?.assignees ?? []), user?.id ?? ""],
