@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
-
+from django.contrib.auth.admin import UserAdmin
 from .models import User, Workspace, WorkspaceMember, WorkspaceMemberInvite, Team, TeamMember, WorkspaceTheme, Project, ProjectMemberInvite, ProjectMember, ProjectIdentifier, ProjectFavorite, ProjectDeployBoard, ProjectPublicMember, Issue, IssueBlocker, IssueAssignee, IssueLink, IssueAttachment, IssueActivity, IssueComment, IssueProperty, Label, IssueLabel, IssueSequence, IssueSubscriber, IssueReaction, CommentReaction, IssueVote, FileAsset, SocialLoginConnection, State, Cycle, CycleIssue, CycleFavorite, IssueView, IssueViewFavorite, Module, ModuleMember, ModuleIssue, ModuleLink, ModuleFavorite, APIToken, Integration, WorkspaceIntegration, GithubRepository, GithubRepositorySync, GithubIssueSync, GithubCommentSync, SlackProjectSync, Importer, Page, PageBlock, PageFavorite, PageLabel, Estimate, EstimatePoint, Inbox, InboxIssue, AnalyticView, Notification, ExporterHistory
 
 
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(UserAdmin):
     list_display = (
         'password',
         'last_login',
