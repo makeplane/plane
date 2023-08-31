@@ -159,22 +159,22 @@ services:
                         - plane-minio
 
         # Comment this if you already have a reverse proxy running
-        plane-proxy:
-                container_name: planeproxy
-                build:
-                        context: ./nginx
-                        dockerfile: Dockerfile
-                restart: always
-                ports:
-                        - ${NGINX_PORT}:80
-                env_file:
-                        - .env
-                environment:
-                        FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
-                        BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
-                depends_on:
-                        - plane-web
-                        - plane-api
+        # plane-proxy:
+        #         container_name: planeproxy
+        #         build:
+        #                 context: ./nginx
+        #                 dockerfile: Dockerfile
+        #         restart: always
+        #         ports:
+        #                 - ${NGINX_PORT}:80
+        #         env_file:
+        #                 - .env
+        #         environment:
+        #                 FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
+        #                 BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+        #         depends_on:
+        #                 - plane-web
+        #                 - plane-api
 
 volumes:
         pgdata:
