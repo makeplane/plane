@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
@@ -18,20 +18,19 @@ export const IssuePeekOverview: React.FC<Props> = observer((props) => {
   const { isOpen, onClose } = props;
   // router
   const router = useRouter();
-  const { workspace_slug, project_slug } = router.query;
+  const { workspace_slug, project_slug, peekId } = router.query;
   // store
-  const { issueDetails: issueDetailStore } = useMobxStore();
+  const { issueDetails: issueDetailStore, issue: issueStore } = useMobxStore();
 
-  const issueDetails = issueDetailStore.peekId ? issueDetailStore.details[issueDetailStore.peekId] : null;
-  console.log("issueDetails", issueDetails);
+  const issueDetails = issueDetailStore.peekId && peekId ? issueDetailStore.details[peekId.toString()] : null;
 
   useEffect(() => {
-    if (workspace_slug && project_slug && issueDetailStore.peekId) {
+    if (workspace_slug && project_slug && peekId && issueStore.issues && issueStore.issues.length > 0) {
       if (!issueDetails) {
-        issueDetailStore.fetchIssueDetails(workspace_slug.toString(), project_slug.toString(), issueDetailStore.peekId);
+        issueDetailStore.fetchIssueDetails(workspace_slug.toString(), project_slug.toString(), peekId.toString());
       }
     }
-  }, [workspace_slug, project_slug, issueDetailStore, issueDetails]);
+  }, [workspace_slug, project_slug, issueDetailStore, issueDetails, peekId, issueStore.issues]);
 
   const handleClose = () => {
     onClose();

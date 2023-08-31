@@ -1,6 +1,5 @@
-"use client";
-
-// mobx react lite
+import { FC } from "react";
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // components
 import { IssueBlockPriority } from "components/issues/board-views/block-priority";
@@ -11,10 +10,32 @@ import { IssueBlockDueDate } from "components/issues/board-views/block-due-date"
 import { useMobxStore } from "lib/mobx/store-provider";
 // interfaces
 import { IIssue } from "types/issue";
+// store
 import { RootStore } from "store/root";
 
-export const IssueListBlock = observer(({ issue }: { issue: IIssue }) => {
-  const { issue: issueStore, project: projectStore, issueDetails: issueDetailStore }: RootStore = useMobxStore();
+export const IssueListBlock: FC<{ issue: IIssue }> = observer((props) => {
+  const { issue } = props;
+  // store
+  const { project: projectStore, issueDetails: issueDetailStore }: RootStore = useMobxStore();
+  // router
+  const router = useRouter();
+  const { workspace_slug, project_slug, board } = router.query;
+
+  const handleBlockClick = () => {
+    issueDetailStore.setPeekId(issue.id);
+    router.replace(
+      {
+        pathname: `/${workspace_slug?.toString()}/${project_slug}`,
+        query: {
+          board: board?.toString(),
+          peekId: issue.id,
+        },
+      },
+      undefined,
+      { shallow: true }
+    );
+    // router.push(`/${workspace_slug?.toString()}/${project_slug}?board=${board?.toString()}&peekId=${issue.id}`);
+  };
 
   return (
     <div className="flex items-center px-9 py-3.5 relative gap-10 border-b border-custom-border-200 bg-custom-background-100 last:border-b-0">
@@ -25,12 +46,7 @@ export const IssueListBlock = observer(({ issue }: { issue: IIssue }) => {
         </div>
         {/* name */}
         <div className="h-full line-clamp-1 w-full overflow-ellipsis cursor-pointer">
-          <p
-            onClick={() => {
-              issueDetailStore.setPeekId(issue.id);
-            }}
-            className="text-[0.825rem] font-medium text-sm truncate text-custom-text-100"
-          >
+          <p onClick={handleBlockClick} className="text-[0.825rem] font-medium text-sm truncate text-custom-text-100">
             {issue.name}
           </p>
         </div>

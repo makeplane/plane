@@ -13,10 +13,20 @@ export interface IIssueDetailStore {
   peekId: string | null;
   peekMode: IPeekMode;
   details: any;
-  // actions
+  // peek actions
   setPeekId: (issueId: string | null) => void;
   setPeekMode: (mode: IPeekMode) => void;
+  // issue details
   fetchIssueDetails: (workspaceId: string, projectId: string, issueId: string) => void;
+  // issue comments
+  addIssueComment: (workspaceId: string, projectId: string, issueId: string, data: any) => void;
+  deleteIssueComment: (workspaceId: string, projectId: string, issueId: string) => void;
+  // issue reactions
+  addIssueReaction: (workspaceId: string, projectId: string, issueId: string) => void;
+  removeIssueReaction: (workspaceId: string, projectId: string, issueId: string) => void;
+  // issue votes
+  addIssueVote: (workspaceId: string, projectId: string, issueId: string) => void;
+  removeIssueVote: (workspaceId: string, projectId: string, issueId: string) => void;
 }
 
 class IssueDetailStore implements IssueDetailStore {
@@ -59,9 +69,7 @@ class IssueDetailStore implements IssueDetailStore {
       this.error = null;
 
       const issueDetails = this.rootStore.issue.issues?.find((i) => i.id === issueId);
-      const reactionsResponse = await this.issueService.getIssueReactions(workspaceSlug, projectId, issueId);
       const commentsResponse = await this.issueService.getIssueComments(workspaceSlug, projectId, issueId);
-      const votesResponse = await this.issueService.getIssueVotes(workspaceSlug, projectId, issueId);
 
       if (issueDetails) {
         runInAction(() => {
@@ -70,8 +78,6 @@ class IssueDetailStore implements IssueDetailStore {
             [issueId]: {
               ...issueDetails,
               comments: commentsResponse,
-              reactions: reactionsResponse,
-              votes: votesResponse,
             },
           };
         });
@@ -79,20 +85,148 @@ class IssueDetailStore implements IssueDetailStore {
     } catch (error) {
       this.loader = false;
       this.error = error;
+    }
+  };
 
+  addIssueComment = async (workspaceSlug: string, projectId: string, issueId: string, data: any) => {
+    try {
       const issueDetails = this.rootStore.issue.issues?.find((i) => i.id === issueId);
+      const issueCommentResponse = await this.issueService.createIssueComment(workspaceSlug, projectId, issueId, data);
+      console.log("issueCommentResponse", issueCommentResponse);
+      if (issueDetails) {
+        runInAction(() => {
+          this.details = {
+            ...this.details,
+            [issueId]: {
+              ...issueDetails,
+              comments: [...this.details[issueId].comments, issueCommentResponse],
+            },
+          };
+        });
+      }
+      return issueCommentResponse;
+    } catch (error) {
+      console.log("Failed to add issue comment");
+      throw error;
+    }
+  };
 
-      runInAction(() => {
-        this.details = {
-          ...this.details,
-          [issueId]: {
-            ...issueDetails,
-            comments: [],
-            reactions: [],
-            votes: [],
-          },
-        };
-      });
+  updateIssueComment = async (workspaceSlug: string, projectId: string, issueId: string, data: any) => {
+    try {
+      const issueVoteResponse = await this.issueService.updateIssueComment(workspaceSlug, projectId, issueId, data);
+      if (issueVoteResponse) {
+        runInAction(() => {
+          this.details = {
+            ...this.details,
+            [issueId]: {
+              ...issueDetails,
+              comments: commentsResponse,
+            },
+          };
+        });
+      }
+    } catch (error) {
+      console.log("Failed to add issue comment");
+    }
+  };
+
+  deleteIssueComment = async () => {
+    try {
+      const issueVoteResponse = await this.issueService.deleteIssueComment(workspaceSlug, projectId, issueId, data);
+      // const issueDetails = await this.issueService.fetchIssueDetails(workspaceSlug, projectId, issueId);
+
+      if (issueVoteResponse) {
+        runInAction(() => {
+          this.details = {
+            ...this.details,
+            [issueId]: {
+              ...issueDetails,
+            },
+          };
+        });
+      }
+    } catch (error) {
+      console.log("Failed to add issue vote");
+    }
+  };
+
+  addIssueReaction = async () => {
+    try {
+      const issueVoteResponse = await this.issueService.createIssueReaction(workspaceSlug, projectId, issueId, data);
+      // const issueDetails = await this.issueService.fetchIssueDetails(workspaceSlug, projectId, issueId);
+
+      if (issueVoteResponse) {
+        runInAction(() => {
+          this.details = {
+            ...this.details,
+            [issueId]: {
+              ...issueDetails,
+            },
+          };
+        });
+      }
+    } catch (error) {
+      console.log("Failed to add issue vote");
+    }
+  };
+
+  removeIssueReaction = async () => {
+    try {
+      const issueVoteResponse = await this.issueService.deleteIssueReaction(workspaceSlug, projectId, issueId, data);
+      // const issueDetails = await this.issueService.fetchIssueDetails(workspaceSlug, projectId, issueId);
+
+      if (issueVoteResponse) {
+        runInAction(() => {
+          this.details = {
+            ...this.details,
+            [issueId]: {
+              ...issueDetails,
+            },
+          };
+        });
+      }
+    } catch (error) {
+      console.log("Failed to add issue vote");
+    }
+  };
+
+  addIssueVote = async (workspaceSlug: string, projectId: string, issueId: string, data: { vote: 1 | -1 }) => {
+    try {
+      const issueVoteResponse = await this.issueService.createIssueVote(workspaceSlug, projectId, issueId, data);
+      // const issueDetails = await this.issueService.fetchIssueDetails(workspaceSlug, projectId, issueId);
+
+      if (issueVoteResponse) {
+        runInAction(() => {
+          this.details = {
+            ...this.details,
+            [issueId]: {
+              ...issueDetails,
+            },
+          };
+        });
+      }
+    } catch (error) {
+      console.log("Failed to add issue vote");
+    }
+  };
+
+  removeIssueVote = async (workspaceSlug: string, projectId: string, issueId: string) => {
+    try {
+      const issueVoteResponse = await this.issueService.deleteIssueVote(workspaceSlug, projectId, issueId, data);
+      // const issueDetails = await this.issueService.fetchIssueDetails(workspaceSlug, projectId, issueId);
+
+      if (issueVoteResponse) {
+        runInAction(() => {
+          this.details = {
+            ...this.details,
+            [issueId]: {
+              ...issueDetails,
+            },
+          };
+        });
+      }
+    } catch (error) {
+      console.log("Failed to remove issue vote");
     }
   };
 }

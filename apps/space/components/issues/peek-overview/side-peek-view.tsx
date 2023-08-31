@@ -11,6 +11,7 @@ import {
 } from "components/issues/peek-overview";
 // types
 import { IIssue } from "types/issue";
+import { RootStore } from "store/root";
 
 type Props = {
   handleClose: () => void;
@@ -19,6 +20,8 @@ type Props = {
 
 export const SidePeekView: React.FC<Props> = observer((props) => {
   const { handleClose, issueDetails } = props;
+
+  const { project: projectStore } = useMobxStore();
 
   return (
     <div className="h-full w-full flex flex-col overflow-hidden">
@@ -38,9 +41,11 @@ export const SidePeekView: React.FC<Props> = observer((props) => {
           {/* divider */}
           <div className="h-[1] w-full border-t border-custom-border-200 my-5" />
           {/* issue activity/comments */}
-          <div className="w-full pb-5">
-            <PeekOverviewIssueActivity issueDetails={issueDetails} />
-          </div>
+          {projectStore?.deploySettings?.comments && (
+            <div className="w-full pb-5">
+              <PeekOverviewIssueActivity issueDetails={issueDetails} />
+            </div>
+          )}
         </div>
       )}
     </div>

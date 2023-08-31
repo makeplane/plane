@@ -1,6 +1,4 @@
-"use client";
-
-// mobx react lite
+import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 // components
 import { IssueListHeader } from "components/issues/board-views/list/header";
@@ -9,11 +7,13 @@ import { IssueListBlock } from "components/issues/board-views/list/block";
 import { IIssueState, IIssue } from "types/issue";
 // mobx hook
 import { useMobxStore } from "lib/mobx/store-provider";
+// store
 import { RootStore } from "store/root";
+import { useRouter } from "next/router";
 
 export const IssueListView = observer(() => {
   const { issue: issueStore }: RootStore = useMobxStore();
-  console.log("issueStore", issueStore.states);
+
   return (
     <>
       {issueStore?.states &&

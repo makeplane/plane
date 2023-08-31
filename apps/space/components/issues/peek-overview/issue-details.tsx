@@ -1,4 +1,3 @@
-// components
 import { IssueReactions } from "components/issues/peek-overview";
 // types
 import { IIssue } from "types";

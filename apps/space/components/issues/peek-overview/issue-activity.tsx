@@ -14,25 +14,24 @@ type Props = {
 
 export const PeekOverviewIssueActivity: React.FC<Props> = observer((props) => {
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspace_slug } = router.query;
 
   const { issueDetails: issueDetailStore, user: userStore } = useMobxStore();
 
-  const issueId = issueDetailStore?.peekId;
-  const comments = issueDetailStore?.details[issueId ?? ""]?.comments ?? [];
+  const comments = issueDetailStore.details[issueDetailStore.peekId || ""]?.comments || [];
 
   return (
     <div>
       <h4 className="font-medium">Activity</h4>
-      {workspaceSlug && (
+      {workspace_slug && (
         <div className="mt-4">
           <div className="space-y-4">
             {comments.map((comment: any) => (
-              <CommentCard comment={comment} workspaceSlug={workspaceSlug?.toString()} />
+              <CommentCard comment={comment} workspaceSlug={workspace_slug?.toString()} />
             ))}
           </div>
           <div className="mt-4">
-            <AddComment disabled={!userStore.currentUser} issueId={issueId} />
+            <AddComment disabled={!userStore.currentUser} />
           </div>
         </div>
       )}

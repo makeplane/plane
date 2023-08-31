@@ -10,7 +10,7 @@ export interface IProjectStore {
   error: any | null;
   workspace: IWorkspace | null;
   project: IProject | null;
-  projectDeploySettings: IProjectSettings | null;
+  deploySettings: IProjectSettings | null;
   viewOptions: any;
   activeBoard: string | null;
   fetchProjectSettings: (workspace_slug: string, project_slug: string) => Promise<void>;
@@ -23,7 +23,7 @@ class ProjectStore implements IProjectStore {
   // data
   workspace: IWorkspace | null = null;
   project: IProject | null = null;
-  projectDeploySettings: IProjectSettings | null = null;
+  deploySettings: IProjectSettings | null = null;
   viewOptions: any = null;
   activeBoard: string | null = null;
   // root store
@@ -39,7 +39,7 @@ class ProjectStore implements IProjectStore {
       // observable
       workspace: observable.ref,
       project: observable.ref,
-      projectDeploySettings: observable.ref,
+      deploySettings: observable.ref,
       viewOptions: observable.ref,
       activeBoard: observable.ref,
       // actions
@@ -63,10 +63,12 @@ class ProjectStore implements IProjectStore {
         const _project: IProject = { ...response?.project_details };
         const _workspace: IWorkspace = { ...response?.workspace_detail };
         const _viewOptions = { ...response?.views };
+        const _deploySettings = { ...response };
         runInAction(() => {
           this.project = _project;
           this.workspace = _workspace;
           this.viewOptions = _viewOptions;
+          this.deploySettings = _deploySettings;
           this.loader = false;
         });
       }

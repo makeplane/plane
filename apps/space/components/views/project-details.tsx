@@ -14,11 +14,22 @@ import { useMobxStore } from "lib/mobx/store-provider";
 
 export const ProjectDetailsView = observer(() => {
   const router = useRouter();
-  const { workspace_slug, project_slug, states, labels, priorities } = router.query;
+  const { workspace_slug, project_slug, states, labels, priorities, board, peekId } = router.query;
 
-  const { issue: issueStore, project: projectStore, issueDetails: issueDetailStore }: RootStore = useMobxStore();
+  const {
+    issue: issueStore,
+    project: projectStore,
+    issueDetails: issueDetailStore,
+    user: userStore,
+  }: RootStore = useMobxStore();
 
   const activeIssueId = issueDetailStore.peekId;
+
+  useEffect(() => {
+    if (!userStore.currentUser) {
+      userStore.fetchCurrentUser();
+    }
+  }, [userStore]);
 
   useEffect(() => {
     if (workspace_slug && project_slug) {
@@ -31,11 +42,29 @@ export const ProjectDetailsView = observer(() => {
     }
   }, [workspace_slug, project_slug, issueStore, states, labels, priorities]);
 
+  useEffect(() => {
+    if (peekId && workspace_slug && project_slug) {
+      issueDetailStore.setPeekId(peekId.toString());
+    }
+  }, [peekId, issueDetailStore, project_slug, workspace_slug]);
+
+  const handlePeekClose = () => {
+    issueDetailStore.setPeekId(null);
+    router.replace(
+      {
+        pathname: `/${workspace_slug?.toString()}/${project_slug}`,
+        query: {
+          ...(board && { board: board.toString() }),
+        },
+      },
+      undefined,
+      { shallow: true }
+    );
+  };
+
   return (
     <div className="relative w-full h-full overflow-hidden">
-      {workspace_slug && (
-        <IssuePeekOverview isOpen={Boolean(activeIssueId)} onClose={() => issueDetailStore.setPeekId(null)} />
-      )}
+      {workspace_slug && <IssuePeekOverview isOpen={Boolean(activeIssueId)} onClose={handlePeekClose} />}
 
       {issueStore?.loader && !issueStore.issues ? (
         <div className="text-sm text-center py-10 text-custom-text-100">Loading...</div>
