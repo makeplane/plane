@@ -38,7 +38,6 @@ const HomePage = () => {
       router.push(`/onboarding?next_path=${next_path}`);
       return;
     }
-    console.log("hello");
     router.push(next_path.toString());
   };
 

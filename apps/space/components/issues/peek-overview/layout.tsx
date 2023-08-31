@@ -19,7 +19,7 @@ export const IssuePeekOverview: React.FC<Props> = observer((props) => {
 
   // router
   const router = useRouter();
-  const { workspace_slug, project_slug, peekId } = router.query;
+  const { workspace_slug, project_slug, peekId, board } = router.query;
   // store
   const { issueDetails: issueDetailStore, issue: issueStore } = useMobxStore();
 
@@ -34,14 +34,13 @@ export const IssuePeekOverview: React.FC<Props> = observer((props) => {
   }, [workspace_slug, project_slug, issueDetailStore, issueDetails, peekId, issueStore.issues]);
 
   const handleClose = () => {
-    const { query } = router;
-    delete query.peekId;
-
     issueDetailStore.setPeekId(null);
     router.replace(
       {
         pathname: `/${workspace_slug?.toString()}/${project_slug}`,
-        query,
+        query: {
+          board,
+        },
       },
       undefined,
       { shallow: true }

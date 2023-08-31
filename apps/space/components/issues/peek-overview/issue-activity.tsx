@@ -20,6 +20,8 @@ export const PeekOverviewIssueActivity: React.FC<Props> = observer((props) => {
 
   const comments = issueDetailStore.details[issueDetailStore.peekId || ""]?.comments || [];
 
+  console.log("comments", comments);
+
   return (
     <div>
       <h4 className="font-medium">Activity</h4>

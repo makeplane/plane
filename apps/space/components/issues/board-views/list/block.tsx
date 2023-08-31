@@ -56,15 +56,18 @@ export const IssueListBlock: FC<{ issue: IIssue }> = observer((props) => {
       </div>
 
       <div className="inline-flex flex-shrink-0 items-center gap-2 text-xs">
-        {/* upvotes */}
-        <div className="flex-shrink-0">
-          <IssueBlockUpVotes number={totalUpVotes.length} />
-        </div>
-
-        {/* downotes */}
-        <div className="flex-shrink-0">
-          <IssueBlockDownVotes number={totalDownVotes.length} />
-        </div>
+        {projectStore.deploySettings?.votes && (
+          <>
+            {/* upvotes */}
+            <div className="flex-shrink-0">
+              <IssueBlockUpVotes number={totalUpVotes.length} />
+            </div>
+            {/* downotes */}
+            <div className="flex-shrink-0">
+              <IssueBlockDownVotes number={totalDownVotes.length} />
+            </div>
+          </>
+        )}
 
         {/* priority */}
         {issue?.priority && (

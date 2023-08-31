@@ -30,7 +30,7 @@ export const SidePeekView: React.FC<Props> = observer((props) => {
             <PeekOverviewIssueDetails issueDetails={issueDetails} />
           </div>
           {/* issue properties */}
-          <div className="w-full mt-10">
+          <div className="w-full mt-6">
             <PeekOverviewIssueProperties issueDetails={issueDetails} />
           </div>
           {/* divider */}

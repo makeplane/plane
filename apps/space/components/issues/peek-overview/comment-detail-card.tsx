@@ -1,22 +1,16 @@
 import React, { useEffect, useState, useRef } from "react";
-
-// react-hook-form
-import { useForm } from "react-hook-form";
-
-// mobx
+import { useForm, Controller } from "react-hook-form";
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-
-// headless ui
 import { Menu, Transition } from "@headlessui/react";
-
+// lib
+import { useMobxStore } from "lib/mobx/store-provider";
 // icons
 import { ChatBubbleLeftEllipsisIcon, CheckIcon, XMarkIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
-
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
 import { Comment } from "types";
+// components
 import { TipTapEditor } from "components/tiptap";
 
 type Props = {
@@ -26,51 +20,37 @@ type Props = {
 
 export const CommentCard: React.FC<Props> = observer((props) => {
   const { comment, workspaceSlug } = props;
-
-  const { user: userStore, issue: issueStore } = useMobxStore();
-
-  const editorRef = useRef<any>(null);
-  const showEditorRef = useRef<any>(null);
-
+  // store
+  const { user: userStore, issue: issueStore, issueDetails: issueDetailStore } = useMobxStore();
+  // states
   const [isEditing, setIsEditing] = useState(false);
 
   const {
     formState: { isSubmitting },
     handleSubmit,
     setFocus,
-    watch,
-    setValue,
-  } = useForm<Comment>({
-    defaultValues: comment,
+    control,
+  } = useForm<any>({
+    defaultValues: { comment_html: comment.comment_html },
   });
 
   const handleDelete = async () => {
-    if (!workspaceSlug || !issueStore.activePeekOverviewIssueId) return;
+    if (!workspaceSlug || !issueDetailStore.peekId) return;
 
-    await issueStore.deleteIssueCommentAsync(
-      workspaceSlug,
-      comment.project,
-      issueStore.activePeekOverviewIssueId,
-      comment.id
-    );
+    await issueDetailStore.deleteIssueComment(workspaceSlug, comment.project, issueDetailStore.peekId, comment.id);
   };
 
   const handleCommentUpdate = async (formData: Comment) => {
-    if (!workspaceSlug || !issueStore.activePeekOverviewIssueId) return;
+    if (!workspaceSlug || !issueDetailStore.peekId) return;
 
-    const response = await issueStore.updateIssueCommentAsync(
+    console.log("formData", formData);
+    const response = await issueDetailStore.updateIssueComment(
       workspaceSlug,
       comment.project,
-      issueStore.activePeekOverviewIssueId,
+      issueDetailStore.peekId,
       comment.id,
       formData
     );
-
-    if (response) {
-      editorRef.current?.setEditorValue(response.comment_html);
-      showEditorRef.current?.setEditorValue(response.comment_html);
-    }
-
     setIsEditing(false);
   };
 
@@ -82,6 +62,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
     <div className="relative flex items-start space-x-3">
       <div className="relative px-1">
         {comment.actor_detail.avatar && comment.actor_detail.avatar !== "" ? (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={comment.actor_detail.avatar}
             alt={
@@ -118,16 +99,20 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}
           >
             <div>
-              <TipTapEditor
-                workspaceSlug={workspaceSlug as string}
-                ref={editorRef}
-                value={watch("comment_html")}
-                debouncedUpdatesEnabled={false}
-                customClassName="min-h-[50px] p-3 shadow-sm"
-                onChange={(comment_json: Object, comment_html: string) => {
-                  setValue("comment_json", comment_json);
-                  setValue("comment_html", comment_html);
-                }}
+              <Controller
+                control={control}
+                name="comment_html"
+                render={({ field: { onChange, value } }) => (
+                  <TipTapEditor
+                    workspaceSlug={workspaceSlug as string}
+                    value={value}
+                    debouncedUpdatesEnabled={false}
+                    customClassName="min-h-[50px] p-3 shadow-sm"
+                    onChange={(comment_json: Object, comment_html: string) => {
+                      onChange(comment_html);
+                    }}
+                  />
+                )}
               />
             </div>
             <div className="flex gap-1 self-end">
@@ -149,8 +134,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
             <TipTapEditor
-              workspaceSlug={workspaceSlug as string}
-              ref={showEditorRef}
+              workspaceSlug={workspaceSlug.toString()}
               value={comment.comment_html}
               editable={false}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"

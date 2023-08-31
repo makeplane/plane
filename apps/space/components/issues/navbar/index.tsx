@@ -1,16 +1,16 @@
+import { useEffect } from "react";
 import Image from "next/image";
+import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 // components
 import { NavbarSearch } from "./search";
 import { NavbarIssueBoardView } from "./issue-board-view";
 import { NavbarIssueFilter } from "./issue-filter";
 import { NavbarTheme } from "./theme";
-// mobx react lite
-import { observer } from "mobx-react-lite";
-// mobx
+// lib
 import { useMobxStore } from "lib/mobx/store-provider";
+// store
 import { RootStore } from "store/root";
-import { useEffect } from "react";
-import { useRouter } from "next/router";
 
 const renderEmoji = (emoji: string | { name: string; color: string }) => {
   if (!emoji) return;
@@ -39,7 +39,6 @@ const IssueNavbar = observer(() => {
   useEffect(() => {
     if (workspace_slug && projectStore) {
       if (board) {
-        console.log("setting");
         projectStore.setActiveBoard(board.toString());
       } else {
         router.push(`/${workspace_slug}/${project_slug}?board=list`);
