@@ -3,24 +3,23 @@ import { Disclosure } from "@headlessui/react";
 // import { getStateGroupIcon } from "components/icons";
 // hooks
 import useToast from "hooks/use-toast";
-// components
-import { TPeekOverviewModes } from "components/issues/peek-overview";
 // icons
 import { Icon } from "components/ui";
 import { copyTextToClipboard, addSpaceIfCamelCase } from "helpers/string.helper";
-
 // types
-import { IIssue } from "store/types";
-
+import { IIssue } from "types";
 // constants
 import { issueGroupFilter, issuePriorityFilter } from "constants/data";
 import { useEffect } from "react";
 import { renderDateFormat } from "constants/helpers";
+import { IPeekMode } from "store/issue_details";
+import { useRouter } from "next/router";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
-  issue: IIssue;
-  mode: TPeekOverviewModes;
-  workspaceSlug: string;
+  issueDetails: IIssue;
+  mode?: IPeekMode;
 };
 
 const validDate = (date: any, state: string): string => {
@@ -35,11 +34,16 @@ const validDate = (date: any, state: string): string => {
   }
 };
 
-export const PeekOverviewIssueProperties: React.FC<Props> = ({ issue, mode, workspaceSlug }) => {
+export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mode }) => {
   const { setToastAlert } = useToast();
 
-  const startDate = issue.start_date;
-  const targetDate = issue.target_date;
+  const { issueDetails: issueDetailStore }: RootStore = useMobxStore();
+
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
+  const startDate = issueDetails.start_date;
+  const targetDate = issueDetails.target_date;
 
   const minDate = startDate ? new Date(startDate) : null;
   minDate?.setDate(minDate.getDate());
@@ -47,15 +51,17 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issue, mode, work
   const maxDate = targetDate ? new Date(targetDate) : null;
   maxDate?.setDate(maxDate.getDate());
 
-  const state = issue.state_detail;
+  const state = issueDetails.state_detail;
   const stateGroup = issueGroupFilter(state.group);
 
-  const priority = issue.priority ? issuePriorityFilter(issue.priority) : null;
+  const priority = issueDetails.priority ? issuePriorityFilter(issueDetails.priority) : null;
 
   const handleCopyLink = () => {
     const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
-    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`).then(() => {
+    copyTextToClipboard(
+      `${originURL}/${workspaceSlug}/projects/${issueDetails.project}/issues/${issueDetails.id}`
+    ).then(() => {
       setToastAlert({
         type: "success",
         title: "Link copied!",
@@ -70,7 +76,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issue, mode, work
         <div className="flex justify-between gap-2 pb-3">
           <h6 className="flex items-center gap-2 font-medium">
             {/* {getStateGroupIcon(issue.state_detail.group, "16", "16", issue.state_detail.color)} */}
-            {issue.project_detail.identifier}-{issue.sequence_id}
+            {issueDetails.project_detail.identifier}-{issueDetails.sequence_id}
           </h6>
           <div className="flex items-center gap-2">
             <button type="button" onClick={handleCopyLink} className="-rotate-45">
@@ -131,12 +137,12 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issue, mode, work
             <span className="flex-grow truncate">Due date</span>
           </div>
           <div>
-            {issue.target_date ? (
+            {issueDetails.target_date ? (
               <div
                 className={`h-[24px] rounded-md flex px-2.5 py-1 items-center border border-custom-border-100 gap-1 text-custom-text-100 text-xs font-medium 
-                ${validDate(issue.target_date, state)}`}
+                ${validDate(issueDetails.target_date, state)}`}
               >
-                {renderDateFormat(issue.target_date)}
+                {renderDateFormat(issueDetails.target_date)}
               </div>
             ) : (
               <span className="text-custom-text-200">Empty</span>

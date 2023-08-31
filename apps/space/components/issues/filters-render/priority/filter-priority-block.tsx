@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 // mobx hook
 import { useMobxStore } from "lib/mobx/store-provider";
 // interfaces
-import { IIssuePriorityFilters } from "store/types/issue";
+import { IIssuePriorityFilters } from "types/issue";
 
 export const RenderIssuePriority = observer(({ priority }: { priority: IIssuePriorityFilters }) => {
   const store = useMobxStore();

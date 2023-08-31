@@ -3,7 +3,7 @@ import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import Head from "next/head";
 // types
-import { TIssueBoardKeys } from "store/types";
+import { TIssueBoardKeys } from "types";
 import ProjectLayout from "layouts/project-layout";
 import { ProjectDetailsView } from "components/views/project-details";
 

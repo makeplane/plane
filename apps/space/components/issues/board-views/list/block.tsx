@@ -1,6 +1,5 @@
-"use client";
-
-// mobx react lite
+import { FC } from "react";
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // components
 import { IssueBlockPriority } from "components/issues/board-views/block-priority";
@@ -12,11 +11,33 @@ import { IssueBlockDownVotes } from "components/issues/board-views/block-downvot
 // mobx hook
 import { useMobxStore } from "lib/mobx/store-provider";
 // interfaces
-import { IIssue } from "store/types/issue";
+import { IIssue } from "types/issue";
+// store
 import { RootStore } from "store/root";
 
-export const IssueListBlock = observer(({ issue }: { issue: IIssue }) => {
-  const store: RootStore = useMobxStore();
+export const IssueListBlock: FC<{ issue: IIssue }> = observer((props) => {
+  const { issue } = props;
+  // store
+  const { project: projectStore, issueDetails: issueDetailStore }: RootStore = useMobxStore();
+  // router
+  const router = useRouter();
+  const { workspace_slug, project_slug, board } = router.query;
+
+  const handleBlockClick = () => {
+    issueDetailStore.setPeekId(issue.id);
+    router.replace(
+      {
+        pathname: `/${workspace_slug?.toString()}/${project_slug}`,
+        query: {
+          board: board?.toString(),
+          peekId: issue.id,
+        },
+      },
+      undefined,
+      { shallow: true }
+    );
+    // router.push(`/${workspace_slug?.toString()}/${project_slug}?board=${board?.toString()}&peekId=${issue.id}`);
+  };
 
   const totalUpVotes = issue.votes.filter((v) => v.vote === 1);
   const totalDownVotes = issue.votes.filter((v) => v.vote === -1);
@@ -26,15 +47,12 @@ export const IssueListBlock = observer(({ issue }: { issue: IIssue }) => {
       <div className="relative flex items-center gap-5 w-full flex-grow overflow-hidden">
         {/* id */}
         <div className="flex-shrink-0 text-sm text-custom-text-300">
-          {store?.project?.project?.identifier}-{issue?.sequence_id}
+          {projectStore?.project?.identifier}-{issue?.sequence_id}
         </div>
         {/* name */}
-        <p
-          onClick={() => store.issue.setActivePeekOverviewIssueId(issue.id)}
-          className="font-medium text-sm truncate flex-grow"
-        >
+        <div onClick={handleBlockClick} className="font-medium text-sm truncate flex-grow">
           {issue.name}
-        </p>
+        </div>
       </div>
 
       <div className="inline-flex flex-shrink-0 items-center gap-2 text-xs">

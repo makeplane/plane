@@ -16,14 +16,8 @@ import { ChatBubbleLeftEllipsisIcon, CheckIcon, XMarkIcon, EllipsisVerticalIcon 
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
-import { Comment } from "store/types";
-import Tiptap, { ITiptapRichTextEditor } from "components/tiptap";
-
-const TiptapEditor = React.forwardRef<ITiptapRichTextEditor, ITiptapRichTextEditor>((props, ref) => (
-  <Tiptap {...props} forwardedRef={ref} />
-));
-
-TiptapEditor.displayName = "TiptapEditor";
+import { Comment } from "types";
+import { TipTapEditor } from "components/tiptap";
 
 type Props = {
   workspaceSlug: string;
@@ -124,7 +118,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}
           >
             <div>
-              <TiptapEditor
+              <TipTapEditor
                 workspaceSlug={workspaceSlug as string}
                 ref={editorRef}
                 value={watch("comment_html")}
@@ -154,7 +148,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             </div>
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
-            <TiptapEditor
+            <TipTapEditor
               workspaceSlug={workspaceSlug as string}
               ref={showEditorRef}
               value={comment.comment_html}

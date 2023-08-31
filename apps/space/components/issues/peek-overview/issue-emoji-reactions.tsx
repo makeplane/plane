@@ -9,22 +9,21 @@ import { groupReactions, renderEmoji } from "helpers/emoji.helper";
 import { ReactionSelector } from "components/ui";
 
 export const IssueEmojiReactions: React.FC = observer(() => {
+  // router
   const router = useRouter();
-
   const { workspace_slug, project_slug } = router.query as { workspace_slug: string; project_slug: string };
-
-  const { user: userStore, issue: issueStore } = useMobxStore();
+  // store
+  const { user: userStore, issue: issueStore, issueDetails: issueDetailsStore } = useMobxStore();
 
   const user = userStore?.currentUser;
-  const issueId = issueStore.activePeekOverviewIssueId;
-
-  const reactions = issueId ? issueStore.issue_detail[issueId]?.reactions || [] : [];
+  const issueId = issueDetailsStore.peekId;
+  const reactions = issueId ? issueDetailsStore.details[issueId]?.reactions || [] : [];
   const groupedReactions = groupReactions(reactions, "reaction");
 
   const handleReactionClick = (reactionHexa: string) => {
     if (!workspace_slug || !project_slug || !issueId) return;
 
-    const userReaction = reactions?.find((r) => r.created_by === user?.id && r.reaction === reactionHexa);
+    const userReaction = reactions?.find((r: any) => r.created_by === user?.id && r.reaction === reactionHexa);
 
     if (userReaction)
       issueStore.deleteIssueReactionAsync(workspace_slug, userReaction.project, userReaction.issue, reactionHexa);
@@ -33,12 +32,6 @@ export const IssueEmojiReactions: React.FC = observer(() => {
         reaction: reactionHexa,
       });
   };
-
-  useEffect(() => {
-    if (user) return;
-
-    userStore.getUserAsync();
-  }, [user, userStore]);
 
   return (
     <>
@@ -63,7 +56,7 @@ export const IssueEmojiReactions: React.FC = observer(() => {
               }}
               key={reaction}
               className={`flex items-center gap-1 text-custom-text-100 text-sm h-full px-2 py-1 rounded-md border ${
-                reactions?.some((r) => r.actor === user?.id && r.reaction === reaction)
+                reactions?.some((r: any) => r.actor === user?.id && r.reaction === reaction)
                   ? "bg-custom-primary-100/10 border-custom-primary-100"
                   : "bg-custom-background-80 border-transparent"
               }`}
@@ -71,7 +64,7 @@ export const IssueEmojiReactions: React.FC = observer(() => {
               <span>{renderEmoji(reaction)}</span>
               <span
                 className={
-                  reactions?.some((r) => r.actor === user?.id && r.reaction === reaction)
+                  reactions?.some((r: any) => r.actor === user?.id && r.reaction === reaction)
                     ? "text-custom-primary-100"
                     : ""
                 }

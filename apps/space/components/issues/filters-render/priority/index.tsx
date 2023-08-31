@@ -6,7 +6,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { RenderIssuePriority } from "./filter-priority-block";
 // interfaces
-import { IIssuePriorityFilters } from "store/types/issue";
+import { IIssuePriorityFilters } from "types/issue";
 // constants
 import { issuePriorityFilters } from "constants/data";
 

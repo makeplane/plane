@@ -10,7 +10,7 @@ import { IssueBlockState } from "components/issues/board-views/block-state";
 import { IssueBlockLabels } from "components/issues/board-views/block-labels";
 import { IssueBlockDueDate } from "components/issues/board-views/block-due-date";
 // interfaces
-import { IIssue } from "store/types/issue";
+import { IIssue } from "types/issue";
 import { RootStore } from "store/root";
 
 export const IssueListBlock = observer(({ issue }: { issue: IIssue }) => {

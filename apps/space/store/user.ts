@@ -2,8 +2,11 @@
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // service
 import UserService from "services/user.service";
-// types
-import { IUserStore } from "./types";
+
+export interface IUserStore {
+  currentUser: any | null;
+  fetchCurrentUser: () => void;
+}
 
 class UserStore implements IUserStore {
   currentUser: any | null = null;
@@ -42,7 +45,7 @@ class UserStore implements IUserStore {
       return;
     }
 
-    this.getUserAsync()
+    this.fetchCurrentUser()
       .then(() => {
         if (!this.currentUser) {
           const currentPath = window.location.pathname;
@@ -55,7 +58,7 @@ class UserStore implements IUserStore {
       });
   };
 
-  getUserAsync = async () => {
+  fetchCurrentUser = async () => {
     try {
       const response = await this.userService.currentUser();
       if (response) {
@@ -64,10 +67,7 @@ class UserStore implements IUserStore {
         });
       }
     } catch (error) {
-      console.error("error", error);
-      runInAction(() => {
-        // render error actions
-      });
+      console.error("Failed to fetch current user", error);
     }
   };
 }

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // components
@@ -10,15 +11,25 @@ import { IssuePeekOverview } from "components/issues/peek-overview";
 // mobx store
 import { RootStore } from "store/root";
 import { useMobxStore } from "lib/mobx/store-provider";
-import { useEffect } from "react";
 
-export const ProjectDetailsView = () => {
+export const ProjectDetailsView = observer(() => {
   const router = useRouter();
-  const { workspace_slug, project_slug, states, labels, priorities } = router.query;
+  const { workspace_slug, project_slug, states, labels, priorities, board, peekId } = router.query;
 
-  const { issue: issueStore }: RootStore = useMobxStore();
+  const {
+    issue: issueStore,
+    project: projectStore,
+    issueDetails: issueDetailStore,
+    user: userStore,
+  }: RootStore = useMobxStore();
 
-  const activeIssueId = issueStore.activePeekOverviewIssueId;
+  const activeIssueId = issueDetailStore.peekId;
+
+  useEffect(() => {
+    if (!userStore.currentUser) {
+      userStore.fetchCurrentUser();
+    }
+  }, [userStore]);
 
   useEffect(() => {
     if (workspace_slug && project_slug) {
@@ -31,16 +42,29 @@ export const ProjectDetailsView = () => {
     }
   }, [workspace_slug, project_slug, issueStore, states, labels, priorities]);
 
+  useEffect(() => {
+    if (peekId && workspace_slug && project_slug) {
+      issueDetailStore.setPeekId(peekId.toString());
+    }
+  }, [peekId, issueDetailStore, project_slug, workspace_slug]);
+
+  const handlePeekClose = () => {
+    issueDetailStore.setPeekId(null);
+    router.replace(
+      {
+        pathname: `/${workspace_slug?.toString()}/${project_slug}`,
+        query: {
+          ...(board && { board: board.toString() }),
+        },
+      },
+      undefined,
+      { shallow: true }
+    );
+  };
+
   return (
     <div className="relative w-full h-full overflow-hidden">
-      {workspace_slug && (
-        <IssuePeekOverview
-          isOpen={Boolean(activeIssueId)}
-          onClose={() => issueStore.setActivePeekOverviewIssueId(null)}
-          issue={issueStore?.issues?.find((_issue) => _issue.id === activeIssueId) || null}
-          workspaceSlug={workspace_slug.toString()}
-        />
-      )}
+      {workspace_slug && <IssuePeekOverview isOpen={Boolean(activeIssueId)} onClose={handlePeekClose} />}
 
       {issueStore?.loader && !issueStore.issues ? (
         <div className="text-sm text-center py-10 text-custom-text-100">Loading...</div>
@@ -51,21 +75,21 @@ export const ProjectDetailsView = () => {
               Something went wrong.
             </div>
           ) : (
-            issueStore?.currentIssueBoardView && (
+            projectStore?.activeBoard && (
               <>
-                {issueStore?.currentIssueBoardView === "list" && (
+                {projectStore?.activeBoard === "list" && (
                   <div className="relative w-full h-full overflow-y-auto">
                     <IssueListView />
                   </div>
                 )}
-                {issueStore?.currentIssueBoardView === "kanban" && (
+                {projectStore?.activeBoard === "kanban" && (
                   <div className="relative w-full h-full mx-auto px-9 py-5">
                     <IssueKanbanView />
                   </div>
                 )}
-                {issueStore?.currentIssueBoardView === "calendar" && <IssueCalendarView />}
-                {issueStore?.currentIssueBoardView === "spreadsheet" && <IssueSpreadsheetView />}
-                {issueStore?.currentIssueBoardView === "gantt" && <IssueGanttView />}
+                {projectStore?.activeBoard === "calendar" && <IssueCalendarView />}
+                {projectStore?.activeBoard === "spreadsheet" && <IssueSpreadsheetView />}
+                {projectStore?.activeBoard === "gantt" && <IssueGanttView />}
               </>
             )
           )}
@@ -73,4 +97,4 @@ export const ProjectDetailsView = () => {
       )}
     </div>
   );
-};
+});

@@ -6,7 +6,7 @@ import { observer } from "mobx-react-lite";
 import { IssueListHeader } from "components/issues/board-views/kanban/header";
 import { IssueListBlock } from "components/issues/board-views/kanban/block";
 // interfaces
-import { IIssueState, IIssue } from "store/types/issue";
+import { IIssueState, IIssue } from "types/issue";
 // mobx hook
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";

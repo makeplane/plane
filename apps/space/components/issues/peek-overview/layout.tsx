@@ -1,41 +1,47 @@
-import React, { useState } from "react";
-
-// headless ui
+import React, { useEffect, useMemo } from "react";
+import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
+import { observer } from "mobx-react-lite";
+// components
 import { FullScreenPeekView, SidePeekView } from "components/issues/peek-overview";
-
 // types
-import type { IIssue } from "store/types";
+import type { IIssue } from "types/issue";
+// lib
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
-  issue: IIssue | null;
   isOpen: boolean;
   onClose: () => void;
-  workspaceSlug: string;
 };
 
-export type TPeekOverviewModes = "side" | "modal" | "full";
+export const IssuePeekOverview: React.FC<Props> = observer((props) => {
+  const { isOpen, onClose } = props;
+  // router
+  const router = useRouter();
+  const { workspace_slug, project_slug, peekId } = router.query;
+  // store
+  const { issueDetails: issueDetailStore, issue: issueStore } = useMobxStore();
 
-export const IssuePeekOverview: React.FC<Props> = ({
-  issue,
-  isOpen,
-  onClose,
-  workspaceSlug,
-}) => {
-  const [peekOverviewMode, setPeekOverviewMode] = useState<TPeekOverviewModes>("side");
+  const issueDetails = issueDetailStore.peekId && peekId ? issueDetailStore.details[peekId.toString()] : null;
+
+  useEffect(() => {
+    if (workspace_slug && project_slug && peekId && issueStore.issues && issueStore.issues.length > 0) {
+      if (!issueDetails) {
+        issueDetailStore.fetchIssueDetails(workspace_slug.toString(), project_slug.toString(), peekId.toString());
+      }
+    }
+  }, [workspace_slug, project_slug, issueDetailStore, issueDetails, peekId, issueStore.issues]);
 
   const handleClose = () => {
     onClose();
-    setPeekOverviewMode("side");
+    issueDetailStore.setPeekMode("side");
   };
-
-  if (!issue || !isOpen) return null;
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
         {/* add backdrop conditionally */}
-        {(peekOverviewMode === "modal" || peekOverviewMode === "full") && (
+        {(issueDetailStore.peekMode === "modal" || issueDetailStore.peekMode === "full") && (
           <Transition.Child
             as={React.Fragment}
             enter="ease-out duration-300"
@@ -61,32 +67,18 @@ export const IssuePeekOverview: React.FC<Props> = ({
             >
               <Dialog.Panel
                 className={`absolute z-20 bg-custom-background-100 ${
-                  peekOverviewMode === "side"
+                  issueDetailStore.peekMode === "side"
                     ? "top-0 right-0 h-full w-1/2 shadow-custom-shadow-md"
-                    : peekOverviewMode === "modal"
+                    : issueDetailStore.peekMode === "modal"
                     ? "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[70%] w-3/5 rounded-lg shadow-custom-shadow-xl"
                     : "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[95%] w-[95%] rounded-lg shadow-custom-shadow-xl"
                 }`}
               >
-                {(peekOverviewMode === "side" || peekOverviewMode === "modal") && (
-                  <SidePeekView
-                    handleClose={handleClose}
-                    issueId={issue.id}
-                    projectId={issue.project}
-                    mode={peekOverviewMode}
-                    setMode={(mode) => setPeekOverviewMode(mode)}
-                    workspaceSlug={workspaceSlug}
-                  />
+                {(issueDetailStore.peekMode === "side" || issueDetailStore.peekMode === "modal") && (
+                  <SidePeekView handleClose={handleClose} issueDetails={issueDetails} />
                 )}
-                {peekOverviewMode === "full" && (
-                  <FullScreenPeekView
-                    issueId={issue.id}
-                    workspaceSlug={workspaceSlug}
-                    projectId={issue.project}
-                    handleClose={handleClose}
-                    mode={peekOverviewMode}
-                    setMode={(mode) => setPeekOverviewMode(mode)}
-                  />
+                {issueDetailStore.peekMode === "full" && (
+                  <FullScreenPeekView handleClose={handleClose} issueDetails={issueDetails} />
                 )}
               </Dialog.Panel>
             </Transition.Child>
@@ -95,4 +87,4 @@ export const IssuePeekOverview: React.FC<Props> = ({
       </Dialog>
     </Transition.Root>
   );
-};
+});

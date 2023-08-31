@@ -39,9 +39,11 @@ const IssueNavbar = observer(() => {
   useEffect(() => {
     if (workspace_slug && projectStore) {
       if (board) {
+        console.log("setting");
         projectStore.setActiveBoard(board.toString());
       } else {
         router.push(`/${workspace_slug}/${project_slug}?board=list`);
+        projectStore.setActiveBoard("list");
       }
     }
   }, [board, router, projectStore, workspace_slug, project_slug]);

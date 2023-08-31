@@ -3,7 +3,7 @@
 // mobx react lite
 import { observer } from "mobx-react-lite";
 // interfaces
-import { IIssueState } from "store/types/issue";
+import { IIssueState } from "types/issue";
 // constants
 import { issueGroupFilter } from "constants/data";
 // mobx hook
