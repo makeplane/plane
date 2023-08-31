@@ -34,9 +34,16 @@ type Props = {
   handleClose: () => void;
   data: IIssue | null;
   user: ICurrentUserResponse | undefined;
+  onSubmit?: () => Promise<void>;
 };
 
-export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, user }) => {
+export const DeleteIssueModal: React.FC<Props> = ({
+  isOpen,
+  handleClose,
+  data,
+  user,
+  onSubmit,
+}) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
@@ -129,6 +136,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
         console.log(error);
         setIsDeleteLoading(false);
       });
+    if (onSubmit) await onSubmit();
   };
 
   const handleArchivedIssueDeletion = async () => {
