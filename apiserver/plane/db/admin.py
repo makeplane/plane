@@ -1,78 +1,132 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
+from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import User, Workspace, WorkspaceMember, WorkspaceMemberInvite, Team, TeamMember, WorkspaceTheme, Project, ProjectMemberInvite, ProjectMember, ProjectIdentifier, ProjectFavorite, ProjectDeployBoard, ProjectPublicMember, Issue, IssueBlocker, IssueAssignee, IssueLink, IssueAttachment, IssueActivity, IssueComment, IssueProperty, Label, IssueLabel, IssueSequence, IssueSubscriber, IssueReaction, CommentReaction, IssueVote, FileAsset, SocialLoginConnection, State, Cycle, CycleIssue, CycleFavorite, IssueView, IssueViewFavorite, Module, ModuleMember, ModuleIssue, ModuleLink, ModuleFavorite, APIToken, Integration, WorkspaceIntegration, GithubRepository, GithubRepositorySync, GithubIssueSync, GithubCommentSync, SlackProjectSync, Importer, Page, PageBlock, PageFavorite, PageLabel, Estimate, EstimatePoint, Inbox, InboxIssue, AnalyticView, Notification, ExporterHistory
 
-
 @admin.register(User)
-class UserAdmin(UserAdmin):
-    list_display = (
-        'username',
-        'mobile_number',
-        'email',
-        'first_name',
-        'last_name',
-         'last_login',
-        'avatar',
-        'cover_image',
-        'date_joined',
-        'created_at',
-        'updated_at',
-        'last_location',
-        'created_location',
-        'is_superuser',
-        'is_managed',
-        'is_password_expired',
-        'is_active',
-        'is_staff',
-        'is_email_verified',
-        'is_password_autoset',
-        'is_onboarded',
-        'token',
-        'billing_address_country',
-        'billing_address',
-        'has_billing_address',
-        'user_timezone',
-        'last_active',
-        'last_login_time',
-        'last_logout_time',
-        'last_login_ip',
-        'last_logout_ip',
-        'last_login_medium',
-        'last_login_uagent',
-        'token_updated_at',
-        'last_workspace_id',
-        'my_issues_prop',
-        'role',
-        'is_bot',
-        'theme',
-        'display_name',
-        'is_tour_completed',
-        'onboarding_step',
+class UserAdmin(BaseUserAdmin):
+    fieldsets = (
+        (None, {"fields": ("username", "password")}),
+        (_("Personal info"), {
+            "fields": (
+                "first_name",
+                "last_name", 
+                "display_name",
+                "email",
+                "mobile_number",
+                "avatar",
+                "cover_image",
+                )
+            }
+        ),
+        (_("Extra info"), {
+            "fields": (
+                "is_email_verified",
+                "theme", 
+                "role",
+                "created_location",
+                "last_location",
+                "is_managed",
+                "is_password_expired",
+                "is_onboarded",
+                "is_bot",
+                "token",
+                
+                )
+            }
+        ),
+        (_("Billing info"), {
+            "fields": (
+                "billing_address_country",
+                "billing_address",
+                "has_billing_address"
+                )
+            }
+        ),
+        (
+            _("Permissions"),
+            {
+                "fields": (
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                    "groups",
+                    "user_permissions",
+                ),
+            },
+        ),
+        # (_("Important dates"), {"fields": ("last_login", "date_joined")}),
     )
-    list_filter = (
-        'last_login',
-        'date_joined',
-        'created_at',
-        'updated_at',
-        'is_superuser',
-        'is_managed',
-        'is_password_expired',
-        'is_active',
-        'is_staff',
-        'is_email_verified',
-        'is_password_autoset',
-        'is_onboarded',
-        'has_billing_address',
-        'last_active',
-        'last_login_time',
-        'last_logout_time',
-        'token_updated_at',
-        'is_bot',
-        'is_tour_completed',
-    )
-    raw_id_fields = ('groups', 'user_permissions')
-    date_hierarchy = 'created_at'
+
+    # fieldsets = BaseUserAdmin.fieldsets
+    # list_display = (
+    #     'username',
+    #     'mobile_number',
+    #     'email',
+    #     'first_name',
+    #     'last_name',
+    #     'last_login',
+    #     'avatar',
+    #     'cover_image',
+    #     'date_joined',
+    #     'created_at',
+    #     'updated_at',
+    #     'last_location',
+    #     'created_location',
+    #     'is_superuser',
+    #     'is_managed',
+    #     'is_password_expired',
+    #     'is_active',
+    #     'is_staff',
+    #     'is_email_verified',
+    #     'is_password_autoset',
+    #     'is_onboarded',
+    #     'token',
+    #     'billing_address_country',
+    #     'billing_address',
+    #     'has_billing_address',
+    #     'user_timezone',
+    #     'last_active',
+    #     'last_login_time',
+    #     'last_logout_time',
+    #     'last_login_ip',
+    #     'last_logout_ip',
+    #     'last_login_medium',
+    #     'last_login_uagent',
+    #     'token_updated_at',
+    #     'last_workspace_id',
+    #     'my_issues_prop',
+    #     'role',
+    #     'is_bot',
+    #     'theme',
+    #     'display_name',
+    #     'is_tour_completed',
+    #     'onboarding_step',
+    # )
+    # list_filter = (
+    #     'last_login',
+    #     'date_joined',
+    #     'created_at',
+    #     'updated_at',
+    #     'is_superuser',
+    #     'is_managed',
+    #     'is_password_expired',
+    #     'is_active',
+    #     'is_staff',
+    #     'is_email_verified',
+    #     'is_password_autoset',
+    #     'is_onboarded',
+    #     'has_billing_address',
+    #     'last_active',
+    #     'last_login_time',
+    #     'last_logout_time',
+    #     'token_updated_at',
+    #     'is_bot',
+    #     'is_tour_completed',
+    # )
+    # raw_id_fields = ('groups', 'user_permissions')
+    # date_hierarchy = 'created_at'
 
 
 @admin.register(Workspace)
