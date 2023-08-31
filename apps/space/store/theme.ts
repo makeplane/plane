@@ -1,7 +1,7 @@
 // mobx
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // types
-import { IThemeStore } from "../types";
+import { IThemeStore } from "types/theme";
 
 class ThemeStore implements IThemeStore {
   theme: "light" | "dark" = "light";

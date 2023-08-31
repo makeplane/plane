@@ -13,12 +13,12 @@ export const RenderIssuePriority = observer(({ priority }: { priority: IIssuePri
   const { workspace_slug, project_slug } = router.query as { workspace_slug: string; project_slug: string };
 
   const removePriorityFromFilter = () => {
-    router.replace(
-      store.issue.getURLDefinition(workspace_slug, project_slug, {
-        key: "priority",
-        value: priority?.key,
-      })
-    );
+    // router.replace(
+    //   store.issue.getURLDefinition(workspace_slug, project_slug, {
+    //     key: "priority",
+    //     value: priority?.key,
+    //   })
+    // );
   };
 
   return (

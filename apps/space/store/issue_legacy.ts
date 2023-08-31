@@ -3,8 +3,7 @@ import { observable, action, computed, makeObservable, runInAction, reaction } f
 // service
 import IssueService from "services/issue.service";
 // types
-import { IssueDetailType, TIssueBoardKeys } from "types/issue";
-import { IIssue, IIssueState, IIssueLabel } from "../types";
+import { IssueDetailType, TIssueBoardKeys, IIssueLabel, IIssueState, IIssue } from "types/issue";
 
 export interface IIssueStore {
   currentIssueBoardView: TIssueBoardKeys | null;

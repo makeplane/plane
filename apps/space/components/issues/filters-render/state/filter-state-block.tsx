@@ -17,12 +17,12 @@ export const RenderIssueState = observer(({ state }: { state: IIssueState }) => 
   const stateGroup = issueGroupFilter(state.group);
 
   const removeStateFromFilter = () => {
-    router.replace(
-      store.issue.getURLDefinition(workspace_slug, project_slug, {
-        key: "state",
-        value: state?.id,
-      })
-    );
+    // router.replace(
+    //   store.issue.getURLDefinition(workspace_slug, project_slug, {
+    //     key: "state",
+    //     value: state?.id,
+    //   })
+    // );
   };
 
   if (stateGroup === null) return <></>;

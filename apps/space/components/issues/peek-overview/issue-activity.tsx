@@ -6,7 +6,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CommentCard, AddComment } from "components/issues/peek-overview";
 // types
-import { IIssue } from "types";
+import { IIssue } from "types/issue";
 
 type Props = {
   issueDetails: IIssue;

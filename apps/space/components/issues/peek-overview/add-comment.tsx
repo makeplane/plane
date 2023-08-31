@@ -9,7 +9,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { SecondaryButton } from "components/ui";
 // types
-import { Comment } from "types";
+import { Comment } from "types/issue";
 // components
 import { TipTapEditor } from "components/tiptap";
 

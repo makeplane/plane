@@ -3,7 +3,7 @@ import { observable, action, makeObservable, runInAction } from "mobx";
 // service
 import ProjectService from "services/project.service";
 // types
-import { IWorkspace, IProject, IProjectSettings } from "../types";
+import { IWorkspace, IProject, IProjectSettings } from "types/project";
 
 export interface IProjectStore {
   loader: boolean;

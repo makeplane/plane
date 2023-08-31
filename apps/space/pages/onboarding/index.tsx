@@ -24,7 +24,7 @@ const OnBoardingPage = () => {
     const user = userStore?.currentUser;
 
     if (!user) {
-      userStore.getUserAsync();
+      userStore.fetchCurrentUser();
     }
   }, [userStore]);
 

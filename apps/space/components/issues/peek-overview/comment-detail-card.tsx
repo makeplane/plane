@@ -9,7 +9,7 @@ import { ChatBubbleLeftEllipsisIcon, CheckIcon, XMarkIcon, EllipsisVerticalIcon 
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
-import { Comment } from "types";
+import { Comment } from "types/issue";
 // components
 import { TipTapEditor } from "components/tiptap";
 

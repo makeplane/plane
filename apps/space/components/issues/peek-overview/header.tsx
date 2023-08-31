@@ -12,7 +12,7 @@ import { RootStore } from "store/root";
 // lib
 import { useMobxStore } from "lib/mobx/store-provider";
 // types
-import { IIssue } from "types";
+import { IIssue } from "types/issue";
 
 type Props = {
   handleClose: () => void;

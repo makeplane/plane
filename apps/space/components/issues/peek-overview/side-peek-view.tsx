@@ -8,7 +8,7 @@ import {
 } from "components/issues/peek-overview";
 
 import { Loader } from "components/ui/loader";
-import { IIssue } from "types";
+import { IIssue } from "types/issue";
 
 type Props = {
   handleClose: () => void;

@@ -3,7 +3,7 @@ import { makeObservable, observable, action, runInAction } from "mobx";
 import { RootStore } from "./root";
 // services
 import IssueService from "services/issue.service";
-import { IIssue } from "types";
+import { IIssue } from "types/issue";
 
 export type IPeekMode = "side" | "modal" | "full";
 

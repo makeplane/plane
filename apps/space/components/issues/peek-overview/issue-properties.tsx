@@ -7,7 +7,7 @@ import useToast from "hooks/use-toast";
 import { Icon } from "components/ui";
 import { copyTextToClipboard, addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssue } from "types";
+import { IIssue } from "types/issue";
 // constants
 import { issueGroupFilter, issuePriorityFilter } from "constants/data";
 import { useEffect } from "react";

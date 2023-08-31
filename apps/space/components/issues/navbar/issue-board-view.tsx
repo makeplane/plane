@@ -2,8 +2,6 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // constants
 import { issueViews } from "constants/data";
-// interfaces
-import { TIssueBoardKeys } from "types";
 // mobx
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
