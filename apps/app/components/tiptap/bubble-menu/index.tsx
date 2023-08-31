@@ -77,14 +77,14 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
       {...bubbleMenuProps}
       className="flex w-fit divide-x divide-custom-border-300 rounded border border-custom-border-300 bg-custom-background-100 shadow-xl"
     >
-      <NodeSelector
+      {!props.editor.isActive("table") && <NodeSelector
         editor={props.editor!}
         isOpen={isNodeSelectorOpen}
         setIsOpen={() => {
           setIsNodeSelectorOpen(!isNodeSelectorOpen);
           setIsLinkSelectorOpen(false);
         }}
-      />
+      />}
       <LinkSelector
         editor={props.editor!!}
         isOpen={isLinkSelectorOpen}
