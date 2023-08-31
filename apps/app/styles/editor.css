@@ -30,6 +30,10 @@
   }
 }
 
+.ProseMirror-gapcursor:after {
+  border-top: 1px solid rgb(var(--color-text-100)) !important;
+}
+
 /* Custom TODO list checkboxes – shoutout to this awesome tutorial: https://moderncss.dev/pure-css-custom-checkbox-style/ */
 
 ul[data-type="taskList"] li > label {
@@ -149,4 +153,79 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   to {
     transform: rotate(360deg);
   }
+}
+
+#tiptap-container {
+  table {
+    border-collapse: collapse;
+    table-layout: fixed;
+    margin: 0;
+    margin-bottom: 1.5rem;
+    margin-top: 1.5rem;
+    border: 2px solid rgb(var(--color-border-100));
+    width: 100%;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+
+    td,
+    th {
+      min-width: 1em;
+      border: 2px solid rgb(var(--color-border-400));
+      padding: 10px 15px;
+      vertical-align: top;
+      box-sizing: border-box;
+      position: relative;
+      transition: background-color 0.3s ease;
+
+      > * {
+        margin-bottom: 0;
+      }
+    }
+
+    th {
+      font-weight: bold;
+      text-align: left; 
+      background-color: rgb(var(--color-primary-300));
+    }
+
+    td:hover {
+      background-color: rgba(var(--color-primary-300), 0.1);
+    }
+
+    .selectedCell:after {
+      z-index: 2;
+      position: absolute;
+      content: "";
+      left: 0; right: 0; top: 0; bottom: 0;
+      background-color: rgba(var(--color-primary-300), 0.1);
+      pointer-events: none;
+    }
+
+    .column-resize-handle {
+      position: absolute;
+      right: -2px;
+      top: 0;
+      bottom: -2px;
+      width: 2px;
+      background-color: rgb(var(--color-primary-400));
+      pointer-events: none;
+    }
+  }
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.resize-cursor {
+  cursor: ew-resize;
+  cursor: col-resize;
+}
+
+.ProseMirror table * p {
+   padding: 0px 1px;
+   margin: 6px 2px;
+}
+
+.ProseMirror table * .is-empty::before {
+  opacity: 0;
 }

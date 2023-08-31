@@ -16,6 +16,7 @@ const TrackImageDeletionPlugin = () =>
         oldState.doc.descendants((oldNode, oldPos) => {
           if (oldNode.type.name !== 'image') return;
 
+          if (oldPos < 0 || oldPos > newState.doc.content.size) return;
           if (!newState.doc.resolve(oldPos).parent) return;
           const newNode = newState.doc.nodeAt(oldPos);
 
@@ -28,7 +29,6 @@ const TrackImageDeletionPlugin = () =>
                 nodeExists = true;
               }
             });
-
             if (!nodeExists) {
               removedImages.push(oldNode as ProseMirrorNode);
             }
