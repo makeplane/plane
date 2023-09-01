@@ -5,6 +5,7 @@ import { TiptapExtensions } from "./extensions";
 import { TiptapEditorProps } from "./props";
 import { useImperativeHandle, useRef, forwardRef } from "react";
 import { ImageResizer } from "./extensions/image-resize";
+import { TableMenu } from "./table-menu";
 
 export interface ITipTapRichTextEditor {
   value: string;
@@ -75,8 +76,8 @@ const Tiptap = (props: ITipTapRichTextEditor) => {
 
   const editorClassNames = `relative w-full max-w-full sm:rounded-lg mt-2 p-3 relative focus:outline-none rounded-md
       ${noBorder ? "" : "border border-custom-border-200"} ${
-        borderOnFocus ? "focus:border border-custom-border-300" : "focus:border-0"
-      } ${customClassName}`;
+    borderOnFocus ? "focus:border border-custom-border-300" : "focus:border-0"
+  } ${customClassName}`;
 
   if (!editor) return null;
   editorRef.current = editor;
@@ -92,6 +93,7 @@ const Tiptap = (props: ITipTapRichTextEditor) => {
       {editor && <EditorBubbleMenu editor={editor} />}
       <div className={`${editorContentCustomClassNames}`}>
         <EditorContent editor={editor} />
+        <TableMenu editor={editor} />
         {editor?.isActive("image") && <ImageResizer editor={editor} />}
       </div>
     </div>
