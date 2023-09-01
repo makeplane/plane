@@ -31,6 +31,8 @@ import {
   CompletedStateIcon,
 } from "components/icons";
 import { StarIcon } from "@heroicons/react/24/outline";
+// components
+import { ViewIssueLabel } from "components/issues";
 // helpers
 import {
   getDateRangeStatus,
@@ -477,27 +479,7 @@ export const ActiveCycleDetails: React.FC = () => {
                         >
                           {getPriorityIcon(issue.priority, "text-sm")}
                         </div>
-                        {issue.label_details.length > 0 ? (
-                          <div className="flex flex-wrap gap-1">
-                            {issue.label_details.map((label) => (
-                              <span
-                                key={label.id}
-                                className="group flex items-center gap-1 rounded-2xl border border-custom-border-200 px-2 py-0.5 text-xs text-custom-text-200"
-                              >
-                                <span
-                                  className="h-1.5 w-1.5  rounded-full"
-                                  style={{
-                                    backgroundColor:
-                                      label?.color && label.color !== "" ? label.color : "#000",
-                                  }}
-                                />
-                                {label.name}
-                              </span>
-                            ))}
-                          </div>
-                        ) : (
-                          ""
-                        )}
+                        <ViewIssueLabel labelDetails={issue.label_details} maxRender={2} />
                         <div className={`flex items-center gap-2 text-custom-text-200`}>
                           {issue.assignees &&
                           issue.assignees.length > 0 &&

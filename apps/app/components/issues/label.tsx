@@ -6,16 +6,16 @@ import { Tooltip } from "components/ui";
 import { IIssue } from "types";
 
 type Props = {
-  issue: IIssue;
+  labelDetails: any[];
   maxRender?: number;
 };
 
-export const ViewIssueLabel: React.FC<Props> = ({ issue, maxRender = 1 }) => (
+export const ViewIssueLabel: React.FC<Props> = ({ labelDetails, maxRender = 1 }) => (
   <>
-    {issue.label_details.length > 0 ? (
-      issue.label_details.length <= maxRender ? (
+    {labelDetails.length > 0 ? (
+      labelDetails.length <= maxRender ? (
         <>
-          {issue.label_details.map((label, index) => (
+          {labelDetails.map((label) => (
             <div
               key={label.id}
               className="flex cursor-default items-center flex-shrink-0 rounded-md border border-custom-border-300 px-2.5 py-1 text-xs shadow-sm"
@@ -39,11 +39,11 @@ export const ViewIssueLabel: React.FC<Props> = ({ issue, maxRender = 1 }) => (
           <Tooltip
             position="top"
             tooltipHeading="Labels"
-            tooltipContent={issue.label_details.map((l) => l.name).join(", ")}
+            tooltipContent={labelDetails.map((l) => l.name).join(", ")}
           >
             <div className="flex items-center gap-1.5 text-custom-text-200">
               <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
-              {`${issue.label_details.length} Labels`}
+              {`${labelDetails.length} Labels`}
             </div>
           </Tooltip>
         </div>

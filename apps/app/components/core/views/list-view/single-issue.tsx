@@ -279,7 +279,7 @@ export const SingleListIssue: React.FC<Props> = ({
               isNotAllowed={isNotAllowed}
             />
           )}
-          {properties.labels && <ViewIssueLabel issue={issue} maxRender={3} />}
+          {properties.labels && <ViewIssueLabel labelDetails={issue.label_details} maxRender={3} />}
           {properties.assignee && (
             <ViewAssigneeSelect
               issue={issue}
