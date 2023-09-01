@@ -116,11 +116,12 @@ class IssuesStore {
     const originalIssue = { ...this.issues[issueId] };
 
     // immediately update the issue in the store
-    const updatedIssue = { ...originalIssue, ...issueForm };
+    const updatedIssue = { ...this.issues[issueId], ...issueForm };
+    if (updatedIssue.assignees_list) updatedIssue.assignees = updatedIssue.assignees_list;
 
     try {
       runInAction(() => {
-        this.issues[issueId] = updatedIssue;
+        this.issues[issueId] = { ...updatedIssue };
       });
 
       // make a patch request to update the issue
