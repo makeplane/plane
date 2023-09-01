@@ -441,7 +441,10 @@ export const ActiveCycleDetails: React.FC = () => {
                   issues.map((issue) => (
                     <div
                       key={issue.id}
-                      className="flex flex-wrap rounded-md items-center justify-between gap-2 border border-custom-border-200 bg-custom-background-90 px-3 py-1.5"
+                      onClick={() =>
+                        router.push(`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`)
+                      }
+                      className="flex flex-wrap cursor-pointer rounded-md items-center justify-between gap-2 border border-custom-border-200 bg-custom-background-90 px-3 py-1.5"
                     >
                       <div className="flex flex-col gap-1">
                         <div>
