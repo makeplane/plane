@@ -56,27 +56,29 @@ export const SidebarModuleSelect: React.FC<Props> = ({
   return (
     <CustomSelect
       customButton={
-        <Tooltip
-          position="left"
-          tooltipContent={`${
-            modules?.find((m) => m.id === issueModule?.module)?.name ?? "No module"
-          }`}
-        >
-          <button
-            type="button"
-            className={`bg-custom-background-80 text-xs rounded px-2.5 py-0.5 w-full flex ${
-              disabled ? "cursor-not-allowed" : ""
+        <div>
+          <Tooltip
+            position="left"
+            tooltipContent={`${
+              modules?.find((m) => m.id === issueModule?.module)?.name ?? "No module"
             }`}
           >
-            <span
-              className={`truncate ${
-                issueModule ? "text-custom-text-100" : "text-custom-text-200"
+            <button
+              type="button"
+              className={`bg-custom-background-80 text-xs rounded px-2.5 py-0.5 w-full flex ${
+                disabled ? "cursor-not-allowed" : ""
               }`}
             >
-              {modules?.find((m) => m.id === issueModule?.module)?.name ?? "No module"}
-            </span>
-          </button>
-        </Tooltip>
+              <span
+                className={`truncate ${
+                  issueModule ? "text-custom-text-100" : "text-custom-text-200"
+                }`}
+              >
+                {modules?.find((m) => m.id === issueModule?.module)?.name ?? "No module"}
+              </span>
+            </button>
+          </Tooltip>
+        </div>
       }
       value={issueModule ? issueModule.module_detail?.id : null}
       onChange={(value: any) => {

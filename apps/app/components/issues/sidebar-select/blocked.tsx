@@ -124,7 +124,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
           </div>
           <button
             type="button"
-            className={`bg-custom-background-80 text-xs rounded px-2.5 py-0.5 ${
+            className={`bg-custom-background-80 text-xs text-custom-text-200 rounded px-2.5 py-0.5 ${
               disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
             }`}
             onClick={() => setIsBlockedModalOpen(true)}
