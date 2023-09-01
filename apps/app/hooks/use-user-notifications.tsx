@@ -299,6 +299,7 @@ const useUserNotification = () => {
       })
       .finally(() => {
         notificationMutate();
+        mutateNotificationCount();
       });
   };
 
