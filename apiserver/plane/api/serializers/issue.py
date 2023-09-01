@@ -514,6 +514,9 @@ class IssueAttachmentSerializer(BaseSerializer):
 
 
 class IssueReactionSerializer(BaseSerializer):
+    
+    actor_detail = UserLiteSerializer(read_only=True, source="actor")
+    
     class Meta:
         model = IssueReaction
         fields = "__all__"
@@ -522,19 +525,6 @@ class IssueReactionSerializer(BaseSerializer):
             "project",
             "issue",
             "actor",
-        ]
-
-
-class IssueReactionLiteSerializer(BaseSerializer):
-    actor_detail = UserLiteSerializer(read_only=True, source="actor")
-
-    class Meta:
-        model = IssueReaction
-        fields = [
-            "id",
-            "reaction",
-            "issue",
-            "actor_detail",
         ]
 
 
