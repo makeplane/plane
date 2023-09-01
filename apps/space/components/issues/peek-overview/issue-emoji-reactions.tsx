@@ -24,9 +24,7 @@ export const IssueEmojiReactions: React.FC = observer(() => {
     if (!workspace_slug || !project_slug || !issueId) return;
     const userReaction = reactions?.find((r) => r.actor_detail.id === user?.id && r.reaction === reactionHex);
     if (userReaction) return;
-    issueDetailsStore.addIssueReaction(workspace_slug.toString(), project_slug.toString(), issueId, {
-      reaction: reactionHex,
-    });
+    issueDetailsStore.addIssueReaction(workspace_slug.toString(), project_slug.toString(), issueId, reactionHex);
   };
 
   const handleReactionClick = (reactionHex: string) => {
@@ -57,6 +55,7 @@ export const IssueEmojiReactions: React.FC = observer(() => {
           if (reactions.length > 0)
             return (
               <Tooltip
+                key={reaction}
                 tooltipContent={
                   <div>
                     {reactions
@@ -74,7 +73,6 @@ export const IssueEmojiReactions: React.FC = observer(() => {
                       handleReactionClick(reaction);
                     });
                   }}
-                  key={reaction}
                   className={`flex items-center gap-1 text-custom-text-100 text-sm h-full px-2 py-1 rounded-md ${
                     reactions?.some((r) => r.actor_detail.id === user?.id && r.reaction === reaction)
                       ? "bg-custom-primary-100/10"

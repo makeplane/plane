@@ -47,7 +47,7 @@ export const PeekOverviewIssueActivity: React.FC<Props> = observer((props) => {
               )}
             </>
           ) : (
-            <div className="bg-custom-background-80 px-2 py-2.5 flex items-center justify-between gap-2 border border-custom-border-300 rounded">
+            <div className="bg-custom-background-80 px-2 py-2.5 flex items-center justify-between gap-2 border border-custom-border-300 rounded mt-4">
               <p className="flex gap-2 text-sm text-custom-text-200 break-words overflow-hidden">
                 <Icon iconName="lock" className="!text-sm" />
                 Sign in to add your comment

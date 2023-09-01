@@ -481,7 +481,7 @@ class IssueVote(ProjectBaseModel):
     )
 
     class Meta:
-        unique_together = ["issue", "actor", "vote"]
+        unique_together = ["issue", "actor",]
         verbose_name = "Issue Vote"
         verbose_name_plural = "Issue Votes"
         db_table = "issue_votes"
