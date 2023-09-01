@@ -514,6 +514,9 @@ class IssueAttachmentSerializer(BaseSerializer):
 
 
 class IssueReactionSerializer(BaseSerializer):
+    
+    actor_detail = UserLiteSerializer(read_only=True, source="actor")
+    
     class Meta:
         model = IssueReaction
         fields = "__all__"
@@ -522,19 +525,6 @@ class IssueReactionSerializer(BaseSerializer):
             "project",
             "issue",
             "actor",
-        ]
-
-
-class IssueReactionLiteSerializer(BaseSerializer):
-    actor_detail = UserLiteSerializer(read_only=True, source="actor")
-
-    class Meta:
-        model = IssueReaction
-        fields = [
-            "id",
-            "reaction",
-            "issue",
-            "actor_detail",
         ]
 
 
@@ -633,7 +623,7 @@ class IssueSerializer(BaseSerializer):
     issue_link = IssueLinkSerializer(read_only=True, many=True)
     issue_attachment = IssueAttachmentSerializer(read_only=True, many=True)
     sub_issues_count = serializers.IntegerField(read_only=True)
-    issue_reactions = IssueReactionLiteSerializer(read_only=True, many=True)
+    issue_reactions = IssueReactionSerializer(read_only=True, many=True)
 
     class Meta:
         model = Issue
@@ -659,7 +649,7 @@ class IssueLiteSerializer(BaseSerializer):
     module_id = serializers.UUIDField(read_only=True)
     attachment_count = serializers.IntegerField(read_only=True)
     link_count = serializers.IntegerField(read_only=True)
-    issue_reactions = IssueReactionLiteSerializer(read_only=True, many=True)
+    issue_reactions = IssueReactionSerializer(read_only=True, many=True)
 
     class Meta:
         model = Issue
@@ -680,7 +670,7 @@ class IssueLiteSerializer(BaseSerializer):
 class IssuePublicSerializer(BaseSerializer):
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
     state_detail = StateLiteSerializer(read_only=True, source="state")
-    reactions = IssueReactionLiteSerializer(read_only=True, many=True, source="issue_reactions")
+    reactions = IssueReactionSerializer(read_only=True, many=True, source="issue_reactions")
     votes = IssueVoteSerializer(read_only=True, many=True)
 
     class Meta:
