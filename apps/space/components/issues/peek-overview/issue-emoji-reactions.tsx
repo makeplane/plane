@@ -7,7 +7,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // helpers
 import { groupReactions, renderEmoji } from "helpers/emoji.helper";
 // components
-import { ReactionSelector } from "components/ui";
+import { ReactionSelector, Tooltip } from "components/ui";
 import { useEffect } from "react";
 
 export const IssueEmojiReactions: React.FC = observer(() => {
@@ -21,6 +21,8 @@ export const IssueEmojiReactions: React.FC = observer(() => {
   const issueId = issueDetailsStore.peekId;
   const reactions = issueId ? issueDetailsStore.details[issueId]?.reactions || [] : [];
   const groupedReactions = groupReactions(reactions, "reaction");
+
+  console.log("groupedReactions", groupedReactions);
 
   const handleReactionClick = (reactionHex: string) => {
     if (!workspace_slug || !project_slug || !issueId) return;
@@ -54,39 +56,55 @@ export const IssueEmojiReactions: React.FC = observer(() => {
             handleReactionClick(value);
           });
         }}
+        size="md"
       />
+      <div className="flex items-center gap-2 flex-wrap">
+        {Object.keys(groupedReactions || {}).map((reaction) => {
+          const reactions = groupedReactions?.[reaction] ?? [];
+          const REACTIONS_LIMIT = 1000;
 
-      {Object.keys(groupedReactions || {}).map(
-        (reaction) =>
-          groupedReactions?.[reaction]?.length &&
-          groupedReactions[reaction].length > 0 && (
-            <button
-              type="button"
-              onClick={() => {
-                userStore.requiredLogin(() => {
-                  handleReactionClick(reaction);
-                });
-              }}
-              key={reaction}
-              className={`flex items-center gap-1 text-custom-text-100 text-sm h-full px-2 py-1 rounded-md border ${
-                reactions?.some((r) => r.actor_detail.id === user?.id && r.reaction === reaction)
-                  ? "bg-custom-primary-100/10 border-custom-primary-100"
-                  : "bg-custom-background-80 border-transparent"
-              }`}
-            >
-              <span>{renderEmoji(reaction)}</span>
-              <span
-                className={
-                  reactions?.some((r) => r.actor_detail.id === user?.id && r.reaction === reaction)
-                    ? "text-custom-primary-100"
-                    : ""
+          if (reactions.length > 0)
+            return (
+              <Tooltip
+                tooltipContent={
+                  <div>
+                    {reactions
+                      .map((r) => r.actor_detail.display_name)
+                      .splice(0, REACTIONS_LIMIT)
+                      .join(", ")}
+                    {reactions.length > REACTIONS_LIMIT && " and " + (reactions.length - REACTIONS_LIMIT) + " more"}
+                  </div>
                 }
               >
-                {groupedReactions?.[reaction].length}{" "}
-              </span>
-            </button>
-          )
-      )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    userStore.requiredLogin(() => {
+                      handleReactionClick(reaction);
+                    });
+                  }}
+                  key={reaction}
+                  className={`flex items-center gap-1 text-custom-text-100 text-sm h-full px-2 py-1 rounded-md ${
+                    reactions?.some((r) => r.actor_detail.id === user?.id && r.reaction === reaction)
+                      ? "bg-custom-primary-100/10"
+                      : "bg-custom-background-80"
+                  }`}
+                >
+                  <span>{renderEmoji(reaction)}</span>
+                  <span
+                    className={
+                      reactions?.some((r) => r.actor_detail.id === user?.id && r.reaction === reaction)
+                        ? "text-custom-primary-100"
+                        : ""
+                    }
+                  >
+                    {groupedReactions?.[reaction].length}{" "}
+                  </span>
+                </button>
+              </Tooltip>
+            );
+        })}
+      </div>
     </>
   );
 });
