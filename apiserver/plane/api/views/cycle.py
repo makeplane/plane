@@ -194,7 +194,7 @@ class CycleViewSet(BaseViewSet):
                         .annotate(display_name=F("assignees__display_name"))
                         .annotate(assignee_id=F("assignees__id"))
                         .annotate(avatar=F("assignees__avatar"))
-                        .values("first_name", "last_name", "assignee_id", "avatar")
+                        .values("display_name", "assignee_id", "avatar")
                         .annotate(total_issues=Count("assignee_id"))
                         .annotate(
                             completed_issues=Count(
@@ -208,7 +208,7 @@ class CycleViewSet(BaseViewSet):
                                 filter=Q(completed_at__isnull=True),
                             )
                         )
-                        .order_by("first_name", "last_name")
+                        .order_by("display_name")
                     )
 
                     label_distribution = (
