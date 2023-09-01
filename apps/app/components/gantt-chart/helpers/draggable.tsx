@@ -73,8 +73,10 @@ export const ChartDraggable: React.FC<Props> = ({
   };
 
   // handle block resize from the left end
-  const handleBlockLeftResize = () => {
+  const handleBlockLeftResize = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (!currentViewData || !resizableRef.current || !block.position) return;
+
+    if (e.button !== 0) return;
 
     const resizableDiv = resizableRef.current;
 
@@ -126,8 +128,10 @@ export const ChartDraggable: React.FC<Props> = ({
   };
 
   // handle block resize from the right end
-  const handleBlockRightResize = () => {
+  const handleBlockRightResize = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (!currentViewData || !resizableRef.current || !block.position) return;
+
+    if (e.button !== 0) return;
 
     const resizableDiv = resizableRef.current;
 
@@ -172,6 +176,8 @@ export const ChartDraggable: React.FC<Props> = ({
   // handle block x-axis move
   const handleBlockMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (!enableBlockMove || !currentViewData || !resizableRef.current || !block.position) return;
+
+    if (e.button !== 0) return;
 
     e.preventDefault();
     e.stopPropagation();
@@ -266,7 +272,7 @@ export const ChartDraggable: React.FC<Props> = ({
       <div
         id={`block-${block.id}`}
         ref={resizableRef}
-        className="relative group cursor-pointer font-medium rounded shadow-sm h-full inline-flex items-center transition-all"
+        className="relative group cursor-pointer font-medium h-full inline-flex items-center transition-all"
         style={{
           marginLeft: `${block.position?.marginLeft}px`,
           width: `${block.position?.width}px`,

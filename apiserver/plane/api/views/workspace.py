@@ -1100,7 +1100,6 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
             created_issues = (
                 Issue.issue_objects.filter(
                     workspace__slug=slug,
-                    assignees__in=[user_id],
                     project__project_projectmember__member=request.user,
                     created_by_id=user_id,
                 )
@@ -1198,6 +1197,7 @@ class WorkspaceUserActivityEndpoint(BaseAPIView):
             projects = request.query_params.getlist("project", [])
 
             queryset = IssueActivity.objects.filter(
+                ~Q(field__in=["comment", "vote", "reaction"]),
                 workspace__slug=slug,
                 project__project_projectmember__member=request.user,
                 actor=user_id,

@@ -15,6 +15,7 @@ import {
   MinusSquare,
   CheckSquare,
   ImageIcon,
+  Table,
 } from "lucide-react";
 import { startImageUpload } from "../plugins/upload-image";
 import { cn } from "../utils";
@@ -46,6 +47,9 @@ const Command = Extension.create({
     return [
       Suggestion({
         editor: this.editor,
+        allow({ editor }) {
+          return !editor.isActive("table");
+        },
         ...this.options.suggestion,
       }),
     ];
@@ -115,6 +119,15 @@ const getSuggestionItems = (workspaceSlug: string, setIsSubmitting?: (isSubmitti
       icon: <MinusSquare size={18} />,
       command: ({ editor, range }: CommandProps) => {
         editor.chain().focus().deleteRange(range).setHorizontalRule().run();
+      },
+    },
+    {
+      title: "Table",
+      description: "Create a Table",
+      searchTerms: ["table", "cell", "db", "data", "tabular"],
+      icon: <Table size={18} />,
+      command: ({ editor, range }: CommandProps) => {
+        editor.chain().focus().deleteRange(range).insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
       },
     },
     {

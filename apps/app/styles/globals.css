@@ -355,3 +355,7 @@ body {
 .bp4-overlay-content {
   z-index: 555 !important;
 }
+
+.disable-scroll {
+  overflow: hidden !important;
+}

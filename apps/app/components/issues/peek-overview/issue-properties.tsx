@@ -1,6 +1,11 @@
+// mobx
+import { observer } from "mobx-react-lite";
 // headless ui
 import { Disclosure } from "@headlessui/react";
 import { getStateGroupIcon } from "components/icons";
+// hooks
+import useToast from "hooks/use-toast";
+import useUser from "hooks/use-user";
 // components
 import {
   SidebarAssigneeSelect,
@@ -9,27 +14,27 @@ import {
   SidebarStateSelect,
   TPeekOverviewModes,
 } from "components/issues";
-// icons
+// ui
 import { CustomDatePicker, Icon } from "components/ui";
+// helpers
 import { copyTextToClipboard } from "helpers/string.helper";
-import useToast from "hooks/use-toast";
 // types
 import { IIssue } from "types";
 
 type Props = {
   handleDeleteIssue: () => void;
+  handleUpdateIssue: (formData: Partial<IIssue>) => Promise<void>;
   issue: IIssue;
   mode: TPeekOverviewModes;
-  onChange: (issueProperty: Partial<IIssue>) => void;
   readOnly: boolean;
   workspaceSlug: string;
 };
 
 export const PeekOverviewIssueProperties: React.FC<Props> = ({
   handleDeleteIssue,
+  handleUpdateIssue,
   issue,
   mode,
-  onChange,
   readOnly,
   workspaceSlug,
 }) => {
@@ -86,7 +91,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
           <div className="w-3/4">
             <SidebarStateSelect
               value={issue.state}
-              onChange={(val: string) => onChange({ state: val })}
+              onChange={(val: string) => handleUpdateIssue({ state: val })}
               disabled={readOnly}
             />
           </div>
@@ -99,7 +104,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
           <div className="w-3/4">
             <SidebarAssigneeSelect
               value={issue.assignees_list}
-              onChange={(val: string[]) => onChange({ assignees_list: val })}
+              onChange={(val: string[]) => handleUpdateIssue({ assignees_list: val })}
               disabled={readOnly}
             />
           </div>
@@ -112,7 +117,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
           <div className="w-3/4">
             <SidebarPrioritySelect
               value={issue.priority}
-              onChange={(val: string) => onChange({ priority: val })}
+              onChange={(val: string) => handleUpdateIssue({ priority: val })}
               disabled={readOnly}
             />
           </div>
@@ -128,7 +133,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
                 placeholder="Start date"
                 value={issue.start_date}
                 onChange={(val) =>
-                  onChange({
+                  handleUpdateIssue({
                     start_date: val,
                   })
                 }
@@ -153,7 +158,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
                 placeholder="Due date"
                 value={issue.target_date}
                 onChange={(val) =>
-                  onChange({
+                  handleUpdateIssue({
                     target_date: val,
                   })
                 }
@@ -175,7 +180,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
           <div className="w-3/4">
             <SidebarEstimateSelect
               value={issue.estimate_point}
-              onChange={(val: number | null) => onChange({ estimate_point: val })}
+              onChange={(val: number | null) =>handleUpdateIssue({ estimate_point: val })}
               disabled={readOnly}
             />
           </div>

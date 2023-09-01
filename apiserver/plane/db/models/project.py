@@ -254,3 +254,18 @@ class ProjectDeployBoard(ProjectBaseModel):
     def __str__(self):
         """Return project and anchor"""
         return f"{self.anchor} <{self.project.name}>"
+
+
+class ProjectPublicMember(ProjectBaseModel):
+    member = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="public_project_members",
+    )
+
+    class Meta:
+        unique_together = ["project", "member"]
+        verbose_name = "Project Public Member"
+        verbose_name_plural = "Project Public Members"
+        db_table = "project_public_members"
+        ordering = ("-created_at",)

@@ -1,107 +1,184 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
+import { useRouter } from "next/router";
+
+// mobx
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
+// hooks
+import useUser from "hooks/use-user";
+// components
 import { FullScreenPeekView, SidePeekView } from "components/issues";
 // types
 import { IIssue } from "types";
 
 type Props = {
-  handleDeleteIssue: () => void;
-  handleUpdateIssue: (issue: Partial<IIssue>) => Promise<void>;
-  issue: IIssue | null;
-  isOpen: boolean;
-  onClose: () => void;
-  workspaceSlug: string;
+  handleMutation: () => void;
+  projectId: string;
   readOnly: boolean;
+  workspaceSlug: string;
 };
 
 export type TPeekOverviewModes = "side" | "modal" | "full";
 
-export const IssuePeekOverview: React.FC<Props> = ({
-  handleDeleteIssue,
-  handleUpdateIssue,
-  issue,
-  isOpen,
-  onClose,
-  workspaceSlug,
-  readOnly,
-}) => {
-  const [peekOverviewMode, setPeekOverviewMode] = useState<TPeekOverviewModes>("side");
+export const IssuePeekOverview: React.FC<Props> = observer(
+  ({ handleMutation, projectId, readOnly, workspaceSlug }) => {
+    const [isSidePeekOpen, setIsSidePeekOpen] = useState(false);
+    const [isModalPeekOpen, setIsModalPeekOpen] = useState(false);
+    const [peekOverviewMode, setPeekOverviewMode] = useState<TPeekOverviewModes>("side");
 
-  const handleClose = () => {
-    onClose();
-    setPeekOverviewMode("side");
-  };
+    const router = useRouter();
+    const { peekIssue } = router.query;
 
-  if (!issue || !isOpen) return null;
+    const { issues: issuesStore } = useMobxStore();
+    const { deleteIssue, getIssueById, issues, updateIssue } = issuesStore;
 
-  return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={handleClose}>
-        {/* add backdrop conditionally */}
-        {(peekOverviewMode === "modal" || peekOverviewMode === "full") && (
-          <Transition.Child
-            as={React.Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
-          </Transition.Child>
-        )}
-        <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="relative h-full w-full">
+    const issue = issues[peekIssue?.toString() ?? ""];
+
+    const { user } = useUser();
+
+    const handleClose = () => {
+      const { query } = router;
+      delete query.peekIssue;
+
+      router.push({
+        pathname: router.pathname,
+        query: { ...query },
+      });
+    };
+
+    const handleUpdateIssue = async (formData: Partial<IIssue>) => {
+      if (!issue || !user) return;
+
+      await updateIssue(workspaceSlug, projectId, issue.id, formData, user);
+      handleMutation();
+    };
+
+    const handleDeleteIssue = async () => {
+      if (!issue || !user) return;
+
+      await deleteIssue(workspaceSlug, projectId, issue.id, user);
+      handleMutation();
+
+      handleClose();
+    };
+
+    useEffect(() => {
+      if (!peekIssue) return;
+
+      getIssueById(workspaceSlug, projectId, peekIssue.toString());
+    }, [getIssueById, peekIssue, projectId, workspaceSlug]);
+
+    useEffect(() => {
+      if (peekIssue) {
+        if (peekOverviewMode === "side") {
+          setIsSidePeekOpen(true);
+          setIsModalPeekOpen(false);
+        } else {
+          setIsModalPeekOpen(true);
+          setIsSidePeekOpen(false);
+        }
+      } else {
+        console.log("Triggered");
+        setIsSidePeekOpen(false);
+        setIsModalPeekOpen(false);
+      }
+    }, [peekIssue, peekOverviewMode]);
+
+    return (
+      <>
+        <Transition.Root appear show={isSidePeekOpen} as={React.Fragment}>
+          <Dialog as="div" className="relative z-20" onClose={handleClose}>
+            <div className="fixed inset-0 z-20 overflow-y-auto">
+              <div className="relative h-full w-full">
+                <Transition.Child
+                  as={React.Fragment}
+                  enter="transition-transform duration-300"
+                  enterFrom="translate-x-full"
+                  enterTo="translate-x-0"
+                  leave="transition-transform duration-200"
+                  leaveFrom="translate-x-0"
+                  leaveTo="translate-x-full"
+                >
+                  <Dialog.Panel className="absolute z-20 bg-custom-background-100 top-0 right-0 h-full w-1/2 shadow-custom-shadow-md">
+                    <SidePeekView
+                      handleClose={handleClose}
+                      handleDeleteIssue={handleDeleteIssue}
+                      handleUpdateIssue={handleUpdateIssue}
+                      issue={issue}
+                      mode={peekOverviewMode}
+                      readOnly={readOnly}
+                      setMode={(mode) => setPeekOverviewMode(mode)}
+                      workspaceSlug={workspaceSlug}
+                    />
+                  </Dialog.Panel>
+                </Transition.Child>
+              </div>
+            </div>
+          </Dialog>
+        </Transition.Root>
+        <Transition.Root appear show={isModalPeekOpen} as={React.Fragment}>
+          <Dialog as="div" className="relative z-20" onClose={handleClose}>
             <Transition.Child
               as={React.Fragment}
               enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
               leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
             >
-              <Dialog.Panel
-                className={`absolute z-20 bg-custom-background-100 ${
-                  peekOverviewMode === "side"
-                    ? "top-0 right-0 h-full w-1/2 shadow-custom-shadow-md"
-                    : peekOverviewMode === "modal"
-                    ? "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[70%] w-3/5 rounded-lg shadow-custom-shadow-xl"
-                    : "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[95%] w-[95%] rounded-lg shadow-custom-shadow-xl"
-                }`}
-              >
-                {(peekOverviewMode === "side" || peekOverviewMode === "modal") && (
-                  <SidePeekView
-                    handleClose={handleClose}
-                    handleDeleteIssue={handleDeleteIssue}
-                    handleUpdateIssue={handleUpdateIssue}
-                    issue={issue}
-                    mode={peekOverviewMode}
-                    readOnly={readOnly}
-                    setMode={(mode) => setPeekOverviewMode(mode)}
-                    workspaceSlug={workspaceSlug}
-                  />
-                )}
-                {peekOverviewMode === "full" && (
-                  <FullScreenPeekView
-                    handleClose={handleClose}
-                    handleDeleteIssue={handleDeleteIssue}
-                    handleUpdateIssue={handleUpdateIssue}
-                    issue={issue}
-                    mode={peekOverviewMode}
-                    readOnly={readOnly}
-                    setMode={(mode) => setPeekOverviewMode(mode)}
-                    workspaceSlug={workspaceSlug}
-                  />
-                )}
-              </Dialog.Panel>
+              <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
             </Transition.Child>
-          </div>
-        </div>
-      </Dialog>
-    </Transition.Root>
-  );
-};
+            <div className="fixed inset-0 z-20 overflow-y-auto">
+              <div className="relative h-full w-full">
+                <Transition.Child
+                  as={React.Fragment}
+                  enter="ease-out duration-300"
+                  enterFrom="opacity-0"
+                  enterTo="opacity-100"
+                  leave="ease-in duration-200"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0"
+                >
+                  <Dialog.Panel
+                    className={`absolute z-20 bg-custom-background-100 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg shadow-custom-shadow-xl transition-all duration-300 ${
+                      peekOverviewMode === "modal" ? "h-[70%] w-3/5" : "h-[95%] w-[95%]"
+                    }`}
+                  >
+                    {peekOverviewMode === "modal" && (
+                      <SidePeekView
+                        handleClose={handleClose}
+                        handleDeleteIssue={handleDeleteIssue}
+                        handleUpdateIssue={handleUpdateIssue}
+                        issue={issue}
+                        mode={peekOverviewMode}
+                        readOnly={readOnly}
+                        setMode={(mode) => setPeekOverviewMode(mode)}
+                        workspaceSlug={workspaceSlug}
+                      />
+                    )}
+                    {peekOverviewMode === "full" && (
+                      <FullScreenPeekView
+                        handleClose={handleClose}
+                        handleDeleteIssue={handleDeleteIssue}
+                        handleUpdateIssue={handleUpdateIssue}
+                        issue={issue}
+                        mode={peekOverviewMode}
+                        readOnly={readOnly}
+                        setMode={(mode) => setPeekOverviewMode(mode)}
+                        workspaceSlug={workspaceSlug}
+                      />
+                    )}
+                  </Dialog.Panel>
+                </Transition.Child>
+              </div>
+            </div>
+          </Dialog>
+        </Transition.Root>
+      </>
+    );
+  }
+);
