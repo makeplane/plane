@@ -18,10 +18,8 @@
   "devDependencies": {
     "eslint-config-custom": "*",
     "prettier": "latest",
-    "turbo": "latest"
-  },
-  "packageManager": "yarn@1.22.19",
-  "dependencies": {
+    "turbo": "latest",
     "husky": "^8.0.3"
-  }
+  },
+  "packageManager": "yarn@1.22.19"
 }
