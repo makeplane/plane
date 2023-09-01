@@ -33,7 +33,6 @@ type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data: IIssue | null;
-  onSubmit?: () => Promise<void>;
   user: ICurrentUserResponse | undefined;
   onSubmit?: () => Promise<void>;
 };
