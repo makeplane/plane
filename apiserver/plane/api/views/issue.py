@@ -29,7 +29,7 @@ from django.db import IntegrityError
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from sentry_sdk import capture_exception
 
 # Module imports
@@ -1507,7 +1507,7 @@ class CommentReactionViewSet(BaseViewSet):
                     {
                         "reaction": str(reaction_code),
                         "identifier": str(comment_reaction.id),
-                        "comment_id": str(comment_id)
+                        "comment_id": str(comment_id),
                     }
                 ),
             )
@@ -1534,6 +1534,18 @@ class IssueCommentPublicViewSet(BaseViewSet):
         "issue__id",
         "workspace__id",
     ]
+
+    def get_permissions(self):
+        if self.action in ["list", "retrieve"]:
+            self.permission_classes = [
+                AllowAny,
+            ]
+        else:
+            self.permission_classes = [
+                IsAuthenticated,
+            ]
+
+        return super(IssueCommentPublicViewSet, self).get_permissions()
 
     def get_queryset(self):
         project_deploy_board = ProjectDeployBoard.objects.get(
@@ -1744,7 +1756,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
                     issue_id=str(self.kwargs.get("issue_id", None)),
                     project_id=str(self.kwargs.get("project_id", None)),
                     current_instance=None,
-                )    
+                )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except ProjectDeployBoard.DoesNotExist:
@@ -1858,7 +1870,7 @@ class CommentReactionPublicViewSet(BaseViewSet):
                     issue_id=None,
                     project_id=str(self.kwargs.get("project_id", None)),
                     current_instance=None,
-                )    
+                )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except IssueComment.DoesNotExist:
@@ -1906,7 +1918,7 @@ class CommentReactionPublicViewSet(BaseViewSet):
                     {
                         "reaction": str(reaction_code),
                         "identifier": str(comment_reaction.id),
-                        "comment_id": str(comment_id)
+                        "comment_id": str(comment_id),
                     }
                 ),
             )
@@ -1956,13 +1968,13 @@ class IssueVotePublicViewSet(BaseViewSet):
             issue_vote.vote = request.data.get("vote", 1)
             issue_vote.save()
             issue_activity.delay(
-                    type="issue_vote.activity.created",
-                    requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
-                    actor_id=str(self.request.user.id),
-                    issue_id=str(self.kwargs.get("issue_id", None)),
-                    project_id=str(self.kwargs.get("project_id", None)),
-                    current_instance=None,
-                )
+                type="issue_vote.activity.created",
+                requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("issue_id", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=None,
+            )
             serializer = IssueVoteSerializer(issue_vote)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception as e:
@@ -2265,4 +2277,3 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
