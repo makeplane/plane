@@ -103,7 +103,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
           </div>
           <div className="w-3/4">
             <SidebarAssigneeSelect
-              value={issue.assignees_list}
+              value={issue.assignees}
               onChange={(val: string[]) => handleUpdateIssue({ assignees_list: val })}
               disabled={readOnly}
             />
