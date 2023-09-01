@@ -51,6 +51,7 @@ from plane.api.views import (
     WorkspaceUserProfileEndpoint,
     WorkspaceUserProfileIssuesEndpoint,
     WorkspaceLabelsEndpoint,
+    LeaveWorkspaceEndpoint,
     ## End Workspaces
     # File Assets
     FileAssetEndpoint,
@@ -68,6 +69,7 @@ from plane.api.views import (
     UserProjectInvitationsViewset,
     ProjectIdentifierEndpoint,
     ProjectFavoritesViewSet,
+    LeaveProjectEndpoint,
     ## End Projects
     # Issues
     IssueViewSet,
@@ -441,6 +443,11 @@ urlpatterns = [
         WorkspaceLabelsEndpoint.as_view(),
         name="workspace-labels",
     ),
+    path(
+        "workspaces/<str:slug>/members/leave/",
+        LeaveWorkspaceEndpoint.as_view(),
+        name="workspace-labels",
+    ),
     ## End Workspaces ##
     # Projects
     path(
@@ -552,6 +559,11 @@ urlpatterns = [
                 "delete": "destroy",
             }
         ),
+        name="project",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/members/leave/",
+        LeaveProjectEndpoint.as_view(),
         name="project",
     ),
     # End Projects

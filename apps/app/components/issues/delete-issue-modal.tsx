@@ -33,6 +33,7 @@ type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data: IIssue | null;
+  onSubmit?: () => Promise<void>;
   user: ICurrentUserResponse | undefined;
   onSubmit?: () => Promise<void>;
 };
@@ -122,6 +123,8 @@ export const DeleteIssueModal: React.FC<Props> = ({
           else if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
           else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(data.project, params));
         }
+
+        if (onSubmit) onSubmit();
 
         handleClose();
         setToastAlert({

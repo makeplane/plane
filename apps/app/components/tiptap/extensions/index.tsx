@@ -13,6 +13,7 @@ import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { lowlight } from "lowlight/lib/core";
 import SlashCommand from "../slash-command";
 import { InputRule } from "@tiptap/core";
+import Gapcursor from '@tiptap/extension-gapcursor'
 
 import ts from "highlight.js/lib/languages/typescript";
 
@@ -20,6 +21,10 @@ import "highlight.js/styles/github-dark.css";
 import UniqueID from "@tiptap-pro/extension-unique-id";
 import UpdatedImage from "./updated-image";
 import isValidHttpUrl from "../bubble-menu/utils/link-validator";
+import { CustomTableCell } from "./table/table-cell";
+import { Table } from "./table/table";
+import { TableHeader } from "./table/table-header";
+import { TableRow } from "@tiptap/extension-table-row";
 
 lowlight.registerLanguage("ts", ts);
 
@@ -55,7 +60,7 @@ export const TiptapExtensions = (workspaceSlug: string, setIsSubmitting?: (isSub
     codeBlock: false,
     horizontalRule: false,
     dropcursor: {
-      color: "#DBEAFE",
+      color: "rgba(var(--color-text-100))",
       width: 2,
     },
     gapcursor: false,
@@ -86,6 +91,7 @@ export const TiptapExtensions = (workspaceSlug: string, setIsSubmitting?: (isSub
       class: "mb-6 border-t border-custom-border-300",
     },
   }),
+  Gapcursor,
   TiptapLink.configure({
     protocols: ["http", "https"],
     validate: (url) => isValidHttpUrl(url),
@@ -103,6 +109,9 @@ export const TiptapExtensions = (workspaceSlug: string, setIsSubmitting?: (isSub
     placeholder: ({ node }) => {
       if (node.type.name === "heading") {
         return `Heading ${node.attrs.level}`;
+      }
+      if (node.type.name === "image" || node.type.name === "table") {
+        return ""
       }
 
       return "Press '/' for commands...";
@@ -134,4 +143,8 @@ export const TiptapExtensions = (workspaceSlug: string, setIsSubmitting?: (isSub
     html: true,
     transformCopiedText: true,
   }),
+  Table,
+  TableHeader,
+  CustomTableCell,
+  TableRow
 ];

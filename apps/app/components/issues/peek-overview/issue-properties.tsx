@@ -103,7 +103,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
           </div>
           <div className="w-3/4">
             <SidebarAssigneeSelect
-              value={issue.assignees_list}
+              value={issue.assignees}
               onChange={(val: string[]) => handleUpdateIssue({ assignees_list: val })}
               disabled={readOnly}
             />
@@ -128,23 +128,18 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
             <span className="flex-grow truncate">Start date</span>
           </div>
           <div>
-            {issue.start_date ? (
-              <CustomDatePicker
-                placeholder="Start date"
-                value={issue.start_date}
-                onChange={(val) =>
-                  handleUpdateIssue({
-                    start_date: val,
-                  })
-                }
-                className="bg-custom-background-100"
-                wrapperClassName="w-full"
-                maxDate={maxDate ?? undefined}
-                disabled={readOnly}
-              />
-            ) : (
-              <span className="text-custom-text-200">Empty</span>
-            )}
+            <CustomDatePicker
+              placeholder="Select start date"
+              value={issue.start_date}
+              onChange={(val) =>
+                handleUpdateIssue({
+                  start_date: val,
+                })
+              }
+              className="bg-custom-background-80 border-none"
+              maxDate={maxDate ?? undefined}
+              disabled={readOnly}
+            />
           </div>
         </div>
         <div className="flex items-center gap-2 text-sm">
@@ -153,23 +148,18 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
             <span className="flex-grow truncate">Due date</span>
           </div>
           <div>
-            {issue.target_date ? (
-              <CustomDatePicker
-                placeholder="Due date"
-                value={issue.target_date}
-                onChange={(val) =>
-                  handleUpdateIssue({
-                    target_date: val,
-                  })
-                }
-                className="bg-custom-background-100"
-                wrapperClassName="w-full"
-                minDate={minDate ?? undefined}
-                disabled={readOnly}
-              />
-            ) : (
-              <span className="text-custom-text-200">Empty</span>
-            )}
+            <CustomDatePicker
+              placeholder="Select due date"
+              value={issue.target_date}
+              onChange={(val) =>
+                handleUpdateIssue({
+                  target_date: val,
+                })
+              }
+              className="bg-custom-background-80 border-none"
+              minDate={minDate ?? undefined}
+              disabled={readOnly}
+            />
           </div>
         </div>
         {/* <div className="flex items-center gap-2 text-sm">
