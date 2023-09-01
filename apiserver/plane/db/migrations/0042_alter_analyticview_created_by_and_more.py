@@ -32,18 +32,10 @@ class Migration(migrations.Migration):
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
         migrations.RunPython(update_user_timezones),
-        migrations.AlterUniqueTogether(
-            name='issuevote',
-            unique_together=set(),
-        ),
         migrations.AlterField(
             model_name='issuevote',
             name='vote',
             field=models.IntegerField(choices=[(-1, 'DOWNVOTE'), (1, 'UPVOTE')], default=1),
-        ),
-        migrations.AlterUniqueTogether(
-            name='issuevote',
-            unique_together={('issue', 'actor', 'vote')},
         ),
         migrations.CreateModel(
             name='ProjectPublicMember',
