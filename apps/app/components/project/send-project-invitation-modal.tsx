@@ -218,7 +218,7 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
                                           }
                                         </div>
                                       ) : (
-                                        <div>Select co-worker&rsquo;s email</div>
+                                        <div>Select co-worker</div>
                                       )}
                                       <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
                                     </button>

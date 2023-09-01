@@ -27,7 +27,7 @@ export const SidebarPrioritySelect: React.FC<Props> = ({ value, onChange, disabl
             ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
             : value === "low"
             ? "border-green-500/20 bg-green-500/20 text-green-500"
-            : "bg-custom-background-80 border-custom-border-200"
+            : "bg-custom-background-80 border-custom-border-200 text-custom-text-200"
         }`}
       >
         <span className="grid place-items-center -my-1">
