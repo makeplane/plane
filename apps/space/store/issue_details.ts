@@ -137,11 +137,10 @@ class IssueDetailStore implements IssueDetailStore {
         commentId,
         data
       );
-      //   const issueComments = await this.issueService.getIssueComments(workspaceSlug, projectId, issueId);
 
       if (issueCommentUpdateResponse) {
+        const remainingComments = this.details[issueId].comments.filter((com) => com.id != commentId);
         runInAction(() => {
-          const remainingComments = this.details[issueId].comments.filter((com) => com.id === commentId);
           this.details = {
             ...this.details,
             [issueId]: {
@@ -159,25 +158,17 @@ class IssueDetailStore implements IssueDetailStore {
 
   deleteIssueComment = async (workspaceSlug: string, projectId: string, issueId: string, comment_id: string) => {
     try {
-      const issueVoteResponse = await this.issueService.deleteIssueComment(
-        workspaceSlug,
-        projectId,
-        issueId,
-        comment_id
-      );
-      const issueComments = await this.issueService.getIssueComments(workspaceSlug, projectId, issueId);
-
-      if (issueVoteResponse) {
-        runInAction(() => {
-          this.details = {
-            ...this.details,
-            [issueId]: {
-              ...this.details[issueId],
-              comments: issueComments,
-            },
-          };
-        });
-      }
+      await this.issueService.deleteIssueComment(workspaceSlug, projectId, issueId, comment_id);
+      const remainingComments = this.details[issueId].comments.filter((c) => c.id != comment_id);
+      runInAction(() => {
+        this.details = {
+          ...this.details,
+          [issueId]: {
+            ...this.details[issueId],
+            comments: remainingComments,
+          },
+        };
+      });
     } catch (error) {
       console.log("Failed to add issue vote");
     }

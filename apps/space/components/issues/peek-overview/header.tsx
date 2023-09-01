@@ -64,7 +64,7 @@ export const PeekOverviewHeader: React.FC<Props> = (props) => {
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-4">
           {issueDetailStore.peekMode === "side" && (
-            <button type="button" onClick={handleClose}>
+            <button type="button" onClick={handleClose} autoFocus={false}>
               <East
                 sx={{
                   fontSize: "14px",

@@ -21,42 +21,28 @@ type Props = {
 export const CommentCard: React.FC<Props> = observer((props) => {
   const { comment, workspaceSlug } = props;
   // store
-  const { user: userStore, issue: issueStore, issueDetails: issueDetailStore } = useMobxStore();
+  const { user: userStore, issueDetails: issueDetailStore } = useMobxStore();
   // states
   const [isEditing, setIsEditing] = useState(false);
 
   const {
     formState: { isSubmitting },
     handleSubmit,
-    setFocus,
     control,
   } = useForm<any>({
     defaultValues: { comment_html: comment.comment_html },
   });
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!workspaceSlug || !issueDetailStore.peekId) return;
-
-    await issueDetailStore.deleteIssueComment(workspaceSlug, comment.project, issueDetailStore.peekId, comment.id);
+    issueDetailStore.deleteIssueComment(workspaceSlug, comment.project, issueDetailStore.peekId, comment.id);
   };
 
   const handleCommentUpdate = async (formData: Comment) => {
     if (!workspaceSlug || !issueDetailStore.peekId) return;
-
-    console.log("formData", formData);
-    const response = await issueDetailStore.updateIssueComment(
-      workspaceSlug,
-      comment.project,
-      issueDetailStore.peekId,
-      comment.id,
-      formData
-    );
+    issueDetailStore.updateIssueComment(workspaceSlug, comment.project, issueDetailStore.peekId, comment.id, formData);
     setIsEditing(false);
   };
-
-  useEffect(() => {
-    isEditing && setFocus("comment_html");
-  }, [isEditing, setFocus]);
 
   return (
     <div className="relative flex items-start space-x-3">
@@ -133,6 +119,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             </div>
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
+            {comment.comment_html}
             <TipTapEditor
               workspaceSlug={workspaceSlug.toString()}
               value={comment.comment_html}
@@ -185,9 +172,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                   <div className="py-1">
                     <button
                       type="button"
-                      onClick={() => {
-                        handleDelete();
-                      }}
+                      onClick={handleDelete}
                       className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80 ${
                         active ? "bg-custom-background-80" : ""
                       }`}
