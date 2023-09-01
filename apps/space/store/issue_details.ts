@@ -33,7 +33,7 @@ export interface IIssueDetailStore {
   deleteIssueComment: (workspaceId: string, projectId: string, issueId: string, comment_id: string) => void;
   // issue reactions
   addIssueReaction: (workspaceId: string, projectId: string, issueId: string, data: any) => void;
-  removeIssueReaction: (workspaceId: string, projectId: string, issueId: string, data: any) => void;
+  removeIssueReaction: (workspaceId: string, projectId: string, issueId: string, reactionId: string) => void;
   // issue votes
   addIssueVote: (workspaceId: string, projectId: string, issueId: string, data: { vote: 1 | -1 }) => Promise<void>;
   removeIssueVote: (workspaceId: string, projectId: string, issueId: string) => Promise<void>;
@@ -177,14 +177,14 @@ class IssueDetailStore implements IssueDetailStore {
   addIssueReaction = async (workspaceSlug: string, projectId: string, issueId: string, data: any) => {
     try {
       const issueVoteResponse = await this.issueService.createIssueReaction(workspaceSlug, projectId, issueId, data);
-      const issueDetails = await this.issueService.getIssueById(workspaceSlug, projectId, issueId);
 
       if (issueVoteResponse) {
         runInAction(() => {
           this.details = {
             ...this.details,
             [issueId]: {
-              ...issueDetails,
+              ...this.details[issueId],
+              reactions: [...this.details[issueId].reactions, issueVoteResponse],
             },
           };
         });
@@ -194,23 +194,24 @@ class IssueDetailStore implements IssueDetailStore {
     }
   };
 
-  removeIssueReaction = async (workspaceSlug: string, projectId: string, issueId: string, data: any) => {
+  removeIssueReaction = async (workspaceSlug: string, projectId: string, issueId: string, reactionId: string) => {
     try {
-      const issueVoteResponse = await this.issueService.deleteIssueReaction(workspaceSlug, projectId, issueId, data);
-      const issueDetails = await this.issueService.getIssueById(workspaceSlug, projectId, issueId);
+      await this.issueService.deleteIssueReaction(workspaceSlug, projectId, issueId, reactionId);
+      const reactions = await this.issueService.getIssueReactions(workspaceSlug, projectId, issueId);
 
-      if (issueVoteResponse && issueDetails) {
+      if (reactions) {
         runInAction(() => {
           this.details = {
             ...this.details,
             [issueId]: {
-              ...issueDetails,
+              ...this.details[issueId],
+              reactions: reactions,
             },
           };
         });
       }
     } catch (error) {
-      console.log("Failed to add issue vote");
+      console.log("Failed to remove issue reaction");
     }
   };
 

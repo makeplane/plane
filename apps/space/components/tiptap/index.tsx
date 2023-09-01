@@ -37,7 +37,6 @@ const Tiptap = (props: ITipTapRichTextEditor) => {
     borderOnFocus,
     customClassName,
   } = props;
-  console.log("tiptap_value", value);
   const editor = useEditor({
     editable: editable ?? true,
     editorProps: TiptapEditorProps(workspaceSlug, setIsSubmitting),

@@ -119,7 +119,6 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             </div>
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
-            {comment.comment_html}
             <TipTapEditor
               workspaceSlug={workspaceSlug.toString()}
               value={comment.comment_html}
