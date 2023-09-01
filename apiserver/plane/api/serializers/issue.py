@@ -559,6 +559,9 @@ class CommentReactionSerializer(BaseSerializer):
 
 
 class IssueVoteSerializer(BaseSerializer):
+
+    actor_detail = UserLiteSerializer(read_only=True, source="actor")
+
     class Meta:
         model = IssueVote
         fields = ["issue", "vote", "workspace_id", "project_id", "actor"]
