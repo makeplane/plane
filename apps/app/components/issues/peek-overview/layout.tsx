@@ -81,7 +81,6 @@ export const IssuePeekOverview: React.FC<Props> = observer(
           setIsSidePeekOpen(false);
         }
       } else {
-        console.log("Triggered");
         setIsSidePeekOpen(false);
         setIsModalPeekOpen(false);
       }
@@ -90,32 +89,30 @@ export const IssuePeekOverview: React.FC<Props> = observer(
     return (
       <>
         <Transition.Root appear show={isSidePeekOpen} as={React.Fragment}>
-          <Dialog as="div" className="relative z-20" onClose={handleClose}>
-            <div className="fixed inset-0 z-20 overflow-y-auto">
-              <div className="relative h-full w-full">
-                <Transition.Child
-                  as={React.Fragment}
-                  enter="transition-transform duration-300"
-                  enterFrom="translate-x-full"
-                  enterTo="translate-x-0"
-                  leave="transition-transform duration-200"
-                  leaveFrom="translate-x-0"
-                  leaveTo="translate-x-full"
-                >
-                  <Dialog.Panel className="absolute z-20 bg-custom-background-100 top-0 right-0 h-full w-1/2 shadow-custom-shadow-md">
-                    <SidePeekView
-                      handleClose={handleClose}
-                      handleDeleteIssue={handleDeleteIssue}
-                      handleUpdateIssue={handleUpdateIssue}
-                      issue={issue}
-                      mode={peekOverviewMode}
-                      readOnly={readOnly}
-                      setMode={(mode) => setPeekOverviewMode(mode)}
-                      workspaceSlug={workspaceSlug}
-                    />
-                  </Dialog.Panel>
-                </Transition.Child>
-              </div>
+          <Dialog as={React.Fragment} onClose={handleClose}>
+            <div className="fixed inset-0 z-20 h-full w-full overflow-y-auto">
+              <Transition.Child
+                as={React.Fragment}
+                enter="transition-transform duration-300"
+                enterFrom="translate-x-full"
+                enterTo="translate-x-0"
+                leave="transition-transform duration-200"
+                leaveFrom="translate-x-0"
+                leaveTo="translate-x-full"
+              >
+                <Dialog.Panel className="fixed z-20 bg-custom-background-100 top-0 right-0 h-full w-1/2 shadow-custom-shadow-md">
+                  <SidePeekView
+                    handleClose={handleClose}
+                    handleDeleteIssue={handleDeleteIssue}
+                    handleUpdateIssue={handleUpdateIssue}
+                    issue={issue}
+                    mode={peekOverviewMode}
+                    readOnly={readOnly}
+                    setMode={(mode) => setPeekOverviewMode(mode)}
+                    workspaceSlug={workspaceSlug}
+                  />
+                </Dialog.Panel>
+              </Transition.Child>
             </div>
           </Dialog>
         </Transition.Root>
