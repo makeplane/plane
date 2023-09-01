@@ -48,6 +48,7 @@ export interface IIssue {
     workspace: string;
     project: string;
     actor: string;
+    actor_detail: ActorDetail;
   }[];
 }
 
@@ -94,12 +95,12 @@ export interface IIssueReaction {
 }
 
 export interface ActorDetail {
-  id: string;
-  first_name: string;
-  last_name: string;
   avatar: string;
-  is_bot: boolean;
   display_name: string;
+  first_name: string;
+  id: string;
+  is_bot: boolean;
+  last_name: string;
 }
 
 export interface IssueDetail {
