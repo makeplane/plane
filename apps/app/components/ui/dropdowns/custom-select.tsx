@@ -41,7 +41,7 @@ const CustomSelect = ({
   >
     <>
       {customButton ? (
-        <Listbox.Button as="div">{customButton}</Listbox.Button>
+        <Listbox.Button as={React.Fragment}>{customButton}</Listbox.Button>
       ) : (
         <Listbox.Button
           type="button"

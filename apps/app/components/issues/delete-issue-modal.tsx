@@ -33,10 +33,17 @@ type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data: IIssue | null;
+  onSubmit?: () => Promise<void>;
   user: ICurrentUserResponse | undefined;
 };
 
-export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, user }) => {
+export const DeleteIssueModal: React.FC<Props> = ({
+  isOpen,
+  handleClose,
+  data,
+  onSubmit,
+  user,
+}) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
@@ -115,6 +122,8 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, u
           else if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
           else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(data.project, params));
         }
+
+        if (onSubmit) onSubmit();
 
         handleClose();
         setToastAlert({

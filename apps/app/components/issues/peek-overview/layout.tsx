@@ -11,7 +11,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // hooks
 import useUser from "hooks/use-user";
 // components
-import { FullScreenPeekView, SidePeekView } from "components/issues";
+import { DeleteIssueModal, FullScreenPeekView, SidePeekView } from "components/issues";
 // types
 import { IIssue } from "types";
 // fetch-keys
@@ -31,6 +31,7 @@ export const IssuePeekOverview: React.FC<Props> = observer(
     const [isSidePeekOpen, setIsSidePeekOpen] = useState(false);
     const [isModalPeekOpen, setIsModalPeekOpen] = useState(false);
     const [peekOverviewMode, setPeekOverviewMode] = useState<TPeekOverviewModes>("side");
+    const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
     const router = useRouter();
     const { peekIssue } = router.query;
@@ -92,6 +93,13 @@ export const IssuePeekOverview: React.FC<Props> = observer(
 
     return (
       <>
+        <DeleteIssueModal
+          isOpen={deleteIssueModal}
+          handleClose={() => setDeleteIssueModal(false)}
+          data={issue ? { ...issue } : null}
+          onSubmit={handleDeleteIssue}
+          user={user}
+        />
         <Transition.Root appear show={isSidePeekOpen} as={React.Fragment}>
           <Dialog as="div" className="relative z-20" onClose={handleClose}>
             <div className="fixed inset-0 z-20 h-full w-full overflow-y-auto">
@@ -107,7 +115,7 @@ export const IssuePeekOverview: React.FC<Props> = observer(
                 <Dialog.Panel className="fixed z-20 bg-custom-background-100 top-0 right-0 h-full w-1/2 shadow-custom-shadow-md">
                   <SidePeekView
                     handleClose={handleClose}
-                    handleDeleteIssue={handleDeleteIssue}
+                    handleDeleteIssue={() => setDeleteIssueModal(true)}
                     handleUpdateIssue={handleUpdateIssue}
                     issue={issue}
                     mode={peekOverviewMode}
@@ -151,7 +159,7 @@ export const IssuePeekOverview: React.FC<Props> = observer(
                   {peekOverviewMode === "modal" && (
                     <SidePeekView
                       handleClose={handleClose}
-                      handleDeleteIssue={handleDeleteIssue}
+                      handleDeleteIssue={() => setDeleteIssueModal(true)}
                       handleUpdateIssue={handleUpdateIssue}
                       issue={issue}
                       mode={peekOverviewMode}
@@ -163,7 +171,7 @@ export const IssuePeekOverview: React.FC<Props> = observer(
                   {peekOverviewMode === "full" && (
                     <FullScreenPeekView
                       handleClose={handleClose}
-                      handleDeleteIssue={handleDeleteIssue}
+                      handleDeleteIssue={() => setDeleteIssueModal(true)}
                       handleUpdateIssue={handleUpdateIssue}
                       issue={issue}
                       mode={peekOverviewMode}
