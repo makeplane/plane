@@ -1,12 +1,13 @@
+import { useImperativeHandle, useRef, forwardRef, useEffect } from "react";
 import { useEditor, EditorContent, Editor } from "@tiptap/react";
 import { useDebouncedCallback } from "use-debounce";
+// components
 import { EditorBubbleMenu } from "./bubble-menu";
 import { TiptapExtensions } from "./extensions";
 import { TiptapEditorProps } from "./props";
-import { useImperativeHandle, useRef } from "react";
 import { ImageResizer } from "./extensions/image-resize";
 
-export interface ITiptapRichTextEditor {
+export interface ITipTapRichTextEditor {
   value: string;
   noBorder?: boolean;
   borderOnFocus?: boolean;
@@ -21,7 +22,7 @@ export interface ITiptapRichTextEditor {
   debouncedUpdatesEnabled?: boolean;
 }
 
-const Tiptap = (props: ITiptapRichTextEditor) => {
+const Tiptap = (props: ITipTapRichTextEditor) => {
   const {
     onChange,
     debouncedUpdatesEnabled,
@@ -36,7 +37,7 @@ const Tiptap = (props: ITiptapRichTextEditor) => {
     borderOnFocus,
     customClassName,
   } = props;
-
+  console.log("tiptap_value", value);
   const editor = useEditor({
     editable: editable ?? true,
     editorProps: TiptapEditorProps(workspaceSlug, setIsSubmitting),
@@ -53,6 +54,12 @@ const Tiptap = (props: ITiptapRichTextEditor) => {
       }
     },
   });
+
+  useEffect(() => {
+    if (editor) {
+      editor.commands.setContent(value);
+    }
+  }, [value]);
 
   const editorRef: React.MutableRefObject<Editor | null> = useRef(null);
 
@@ -73,9 +80,10 @@ const Tiptap = (props: ITiptapRichTextEditor) => {
     }, 500);
   }, 1000);
 
-  const editorClassNames = `relative w-full max-w-screen-lg sm:rounded-lg mt-2 p-3 relative focus:outline-none rounded-md
-      ${noBorder ? "" : "border border-custom-border-200"} ${borderOnFocus ? "focus:border border-custom-border-300" : "focus:border-0"
-    } ${customClassName}`;
+  const editorClassNames = `relative w-full max-w-full sm:rounded-lg mt-2 p-3 relative focus:outline-none rounded-md
+      ${noBorder ? "" : "border border-custom-border-200"} ${
+    borderOnFocus ? "focus:border border-custom-border-300" : "focus:border-0"
+  } ${customClassName}`;
 
   if (!editor) return null;
   editorRef.current = editor;
@@ -97,4 +105,10 @@ const Tiptap = (props: ITiptapRichTextEditor) => {
   );
 };
 
-export default Tiptap;
+const TipTapEditor = forwardRef<ITipTapRichTextEditor, ITipTapRichTextEditor>((props, ref) => (
+  <Tiptap {...props} forwardedRef={ref} />
+));
+
+TipTapEditor.displayName = "TipTapEditor";
+
+export { TipTapEditor };

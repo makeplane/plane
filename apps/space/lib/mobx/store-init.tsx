@@ -20,11 +20,11 @@ const MobxStoreInit = () => {
     else localStorage.setItem("app_theme", _theme && _theme != "light" ? "dark" : "light");
   }, [store?.theme]);
 
-  useEffect(() => {
-    store.issue.userSelectedLabels = labels || [];
-    store.issue.userSelectedPriorities = priorities || [];
-    store.issue.userSelectedStates = states || [];
-  }, [store.issue]);
+  // useEffect(() => {
+  //   store.issue.userSelectedLabels = labels || [];
+  //   store.issue.userSelectedPriorities = priorities || [];
+  //   store.issue.userSelectedStates = states || [];
+  // }, [store.issue]);
 
   return <></>;
 };

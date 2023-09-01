@@ -1,156 +1,50 @@
-import { useEffect, useState } from "react";
+import useSWR from "swr";
+import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-// mobx
-import { observer } from "mobx-react-lite";
-// components
-import { IssueListView } from "components/issues/board-views/list";
-import { IssueKanbanView } from "components/issues/board-views/kanban";
-import { IssueCalendarView } from "components/issues/board-views/calendar";
-import { IssueSpreadsheetView } from "components/issues/board-views/spreadsheet";
-import { IssueGanttView } from "components/issues/board-views/gantt";
-import { IssuePeekOverview } from "components/issues/peek-overview";
-// mobx store
-import { RootStore } from "store/root";
-import { useMobxStore } from "lib/mobx/store-provider";
-// types
-import { TIssueBoardKeys } from "store/types";
+import Head from "next/head";
+/// layouts
 import ProjectLayout from "layouts/project-layout";
+// components
+import { ProjectDetailsView } from "components/views/project-details";
+// lib
+import { useMobxStore } from "lib/mobx/store-provider";
 
-const WorkspaceProjectPage = () => {
-  const store: RootStore = useMobxStore();
+const WorkspaceProjectPage = (props: any) => {
+  const SITE_TITLE = props?.project_settings?.project_details?.name || "Plane | Deploy";
 
   const router = useRouter();
+  const { workspace_slug, project_slug, states, labels, priorities } = router.query;
 
-  const activeIssueId = store.issue.activePeekOverviewIssueId;
+  const { project: projectStore, issue: issueStore } = useMobxStore();
 
-  const { workspace_slug, project_slug, board, states, labels, priorities } = router.query as {
-    workspace_slug: string;
-    project_slug: string;
-    board: TIssueBoardKeys;
-    states: string[];
-    labels: string[];
-    priorities: string[];
-  };
-
-  // updating default board view when we are in the issues page
-  useEffect(() => {
-    if (workspace_slug && project_slug && store?.project?.workspaceProjectSettings) {
-      const workspacePRojectSettingViews = store?.project?.workspaceProjectSettings?.views;
-      const userAccessViews: TIssueBoardKeys[] = [];
-
-      Object.keys(workspacePRojectSettingViews).filter((_key) => {
-        if (_key === "list" && workspacePRojectSettingViews.list === true) userAccessViews.push(_key);
-        if (_key === "kanban" && workspacePRojectSettingViews.kanban === true) userAccessViews.push(_key);
-        if (_key === "calendar" && workspacePRojectSettingViews.calendar === true) userAccessViews.push(_key);
-        if (_key === "spreadsheet" && workspacePRojectSettingViews.spreadsheet === true) userAccessViews.push(_key);
-        if (_key === "gantt" && workspacePRojectSettingViews.gantt === true) userAccessViews.push(_key);
-      });
-
-      let url = `/${workspace_slug}/${project_slug}`;
-      let _board = board;
-
-      if (userAccessViews && userAccessViews.length > 0) {
-        if (!board) {
-          store.issue.setCurrentIssueBoardView(userAccessViews[0]);
-          _board = userAccessViews[0];
-        } else {
-          if (userAccessViews.includes(board)) {
-            if (store.issue.currentIssueBoardView === null) store.issue.setCurrentIssueBoardView(board);
-            else {
-              if (board === store.issue.currentIssueBoardView) {
-                _board = board;
-              } else {
-                _board = board;
-                store.issue.setCurrentIssueBoardView(board);
-              }
-            }
-          } else {
-            store.issue.setCurrentIssueBoardView(userAccessViews[0]);
-            _board = userAccessViews[0];
-          }
-        }
-      }
-
-      _board = _board || "list";
-      url = `${url}?board=${_board}`;
-
-      if (states) url = `${url}&states=${states}`;
-      if (labels) url = `${url}&labels=${labels}`;
-      if (priorities) url = `${url}&priorities=${priorities}`;
-
-      url = decodeURIComponent(url);
-
-      router.replace(url);
+  useSWR("REVALIDATE_ALL", () => {
+    if (workspace_slug && project_slug) {
+      projectStore.fetchProjectSettings(workspace_slug.toString(), project_slug.toString());
+      const params = {
+        state: states || null,
+        labels: labels || null,
+        priority: priorities || null,
+      };
+      issueStore.fetchPublicIssues(workspace_slug.toString(), project_slug.toString(), params);
     }
-  }, [
-    workspace_slug,
-    project_slug,
-    board,
-    router,
-    store?.issue,
-    store?.project?.workspaceProjectSettings,
-    states,
-    labels,
-    priorities,
-  ]);
-
-  useEffect(() => {
-    if (!workspace_slug || !project_slug) return;
-
-    const params = {
-      state: states || null,
-      labels: labels || null,
-      priority: priorities || null,
-    };
-
-    store?.project?.getProjectSettingsAsync(workspace_slug, project_slug);
-    store?.issue?.getIssuesAsync(workspace_slug, project_slug, params);
-  }, [workspace_slug, project_slug, store?.project, store?.issue, states, labels, priorities]);
+  });
 
   return (
     <ProjectLayout>
-      <div className="relative w-full h-full overflow-hidden">
-        <IssuePeekOverview
-          isOpen={Boolean(activeIssueId)}
-          onClose={() => store.issue.setActivePeekOverviewIssueId(null)}
-          issue={store?.issue?.issues?.find((_issue) => _issue.id === activeIssueId) || null}
-          workspaceSlug={workspace_slug}
-        />
-
-        {store?.issue?.loader && !store.issue.issues ? (
-          <div className="text-sm text-center py-10 text-custom-text-100">Loading...</div>
-        ) : (
-          <>
-            {store?.issue?.error ? (
-              <div className="text-sm text-center py-10  bg-custom-background-200 text-custom-text-100">
-                Something went wrong.
-              </div>
-            ) : (
-              store?.issue?.currentIssueBoardView && (
-                <>
-                  {store?.issue?.currentIssueBoardView === "list" && (
-                    <div className="relative w-full h-full overflow-y-auto">
-                      <div className="mx-auto px-4">
-                        <IssueListView />
-                      </div>
-                    </div>
-                  )}
-                  {store?.issue?.currentIssueBoardView === "kanban" && (
-                    <div className="relative w-full h-full mx-auto px-9 py-5">
-                      <IssueKanbanView />
-                    </div>
-                  )}
-                  {store?.issue?.currentIssueBoardView === "calendar" && <IssueCalendarView />}
-                  {store?.issue?.currentIssueBoardView === "spreadsheet" && <IssueSpreadsheetView />}
-                  {store?.issue?.currentIssueBoardView === "gantt" && <IssueGanttView />}
-                </>
-              )
-            )}
-          </>
-        )}
-      </div>
+      <Head>
+        <title>{SITE_TITLE}</title>
+      </Head>
+      <ProjectDetailsView />
     </ProjectLayout>
   );
 };
 
-export default observer(WorkspaceProjectPage);
+// export const getServerSideProps: GetServerSideProps<any> = async ({ query: { workspace_slug, project_slug } }) => {
+//   const res = await fetch(
+//     `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/public/workspaces/${workspace_slug}/project-boards/${project_slug}/settings/`
+//   );
+//   const project_settings = await res.json();
+//   return { props: { project_settings } };
+// };
+
+export default WorkspaceProjectPage;

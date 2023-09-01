@@ -9,28 +9,20 @@ import useToast from "hooks/use-toast";
 // ui
 import { SecondaryButton } from "components/ui";
 // types
-import { Comment } from "store/types";
+import { Comment } from "types/issue";
 // components
-import Tiptap, { ITiptapRichTextEditor } from "components/tiptap";
-
-const TiptapEditor = React.forwardRef<ITiptapRichTextEditor, ITiptapRichTextEditor>((props, ref) => (
-  <Tiptap {...props} forwardedRef={ref} />
-));
-
-TiptapEditor.displayName = "TiptapEditor";
+import { TipTapEditor } from "components/tiptap";
 
 const defaultValues: Partial<Comment> = {
-  comment_json: "",
   comment_html: "",
 };
 
 type Props = {
-  issueId: string | null;
   disabled?: boolean;
 };
 
 export const AddComment: React.FC<Props> = observer((props) => {
-  const { issueId, disabled = false } = props;
+  const { disabled = false } = props;
 
   const {
     handleSubmit,
@@ -44,25 +36,19 @@ export const AddComment: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspace_slug, project_slug } = router.query as { workspace_slug: string; project_slug: string };
 
-  const { issue: issueStore, user: userStore } = useMobxStore();
+  const { user: userStore, issueDetails: issueDetailStore } = useMobxStore();
+
+  const issueId = issueDetailStore.peekId;
 
   const editorRef = useRef<any>(null);
 
   const { setToastAlert } = useToast();
 
   const onSubmit = async (formData: Comment) => {
-    if (
-      !workspace_slug ||
-      !project_slug ||
-      !issueId ||
-      isSubmitting ||
-      !formData.comment_html ||
-      !formData.comment_json
-    )
-      return;
+    if (!workspace_slug || !project_slug || !issueId || isSubmitting || !formData.comment_html) return;
 
-    await issueStore
-      .createIssueCommentAsync(workspace_slug, project_slug, issueId, formData)
+    await issueDetailStore
+      .addIssueComment(workspace_slug, project_slug, issueId, formData)
       .then(() => {
         reset(defaultValues);
         editorRef.current?.clearEditor();
@@ -83,7 +69,7 @@ export const AddComment: React.FC<Props> = observer((props) => {
           name="comment_html"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <TiptapEditor
+            <TipTapEditor
               workspaceSlug={workspace_slug as string}
               ref={editorRef}
               value={
@@ -95,7 +81,6 @@ export const AddComment: React.FC<Props> = observer((props) => {
               debouncedUpdatesEnabled={false}
               onChange={(comment_json: Object, comment_html: string) => {
                 onChange(comment_html);
-                setValue("comment_json", comment_json);
               }}
             />
           )}

@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 // mobx hook
 import { useMobxStore } from "lib/mobx/store-provider";
 // interfaces
-import { IIssueState } from "store/types/issue";
+import { IIssueState } from "types/issue";
 // constants
 import { issueGroupFilter } from "constants/data";
 
@@ -17,12 +17,12 @@ export const RenderIssueState = observer(({ state }: { state: IIssueState }) => 
   const stateGroup = issueGroupFilter(state.group);
 
   const removeStateFromFilter = () => {
-    router.replace(
-      store.issue.getURLDefinition(workspace_slug, project_slug, {
-        key: "state",
-        value: state?.id,
-      })
-    );
+    // router.replace(
+    //   store.issue.getURLDefinition(workspace_slug, project_slug, {
+    //     key: "state",
+    //     value: state?.id,
+    //   })
+    // );
   };
 
   if (stateGroup === null) return <></>;

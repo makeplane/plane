@@ -81,7 +81,6 @@ export const IssuePeekOverview: React.FC<Props> = observer(
           setIsSidePeekOpen(false);
         }
       } else {
-        console.log("Triggered");
         setIsSidePeekOpen(false);
         setIsModalPeekOpen(false);
       }

@@ -7,7 +7,7 @@ import {
   TIssueGroupKey,
   IIssuePriorityFilters,
   IIssueGroup,
-} from "store/types/issue";
+} from "types/issue";
 // icons
 import {
   BacklogStateIcon,
@@ -18,69 +18,49 @@ import {
 } from "components/icons";
 
 // all issue views
-export const issueViews: IIssueBoardViews[] = [
-  {
-    key: "list",
+export const issueViews: any = {
+  list: {
     title: "List View",
     icon: "format_list_bulleted",
     className: "",
   },
-  {
-    key: "kanban",
+  kanban: {
     title: "Board View",
     icon: "grid_view",
     className: "",
   },
-  // {
-  //   key: "calendar",
-  //   title: "Calendar View",
-  //   icon: "calendar_month",
-  //   className: "",
-  // },
-  // {
-  //   key: "spreadsheet",
-  //   title: "Spreadsheet View",
-  //   icon: "table_chart",
-  //   className: "",
-  // },
-  // {
-  //   key: "gantt",
-  //   title: "Gantt Chart View",
-  //   icon: "waterfall_chart",
-  //   className: "rotate-90",
-  // },
-];
+};
 
 // issue priority filters
 export const issuePriorityFilters: IIssuePriorityFilters[] = [
   {
     key: "urgent",
     title: "Urgent",
-    className: "bg-red-500/10 text-red-500",
+    className: "bg-red-500 border-red-500 text-white",
     icon: "error",
   },
   {
     key: "high",
     title: "High",
-    className: "bg-orange-500/10 text-orange-500",
+    className: "text-orange-500 border-custom-border-300",
     icon: "signal_cellular_alt",
   },
   {
     key: "medium",
     title: "Medium",
-    className: "bg-yellow-500/10 text-yellow-500",
+    className: "text-yellow-500 border-custom-border-300",
     icon: "signal_cellular_alt_2_bar",
   },
   {
     key: "low",
     title: "Low",
-    className: "bg-green-500/10 text-green-500",
+    className: "text-green-500 border-custom-border-300",
     icon: "signal_cellular_alt_1_bar",
   },
   {
     key: "none",
     title: "None",
-    className: "bg-gray-500/10 text-gray-500",
+    className: "text-gray-500 border-custom-border-300",
     icon: "block",
   },
 ];

@@ -1,5 +1,6 @@
-import { useEffect } from "react";
 import { useRouter } from "next/router";
+
+// mobx
 import { observer } from "mobx-react-lite";
 // lib
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -7,37 +8,42 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { groupReactions, renderEmoji } from "helpers/emoji.helper";
 // components
 import { ReactionSelector } from "components/ui";
+import { useEffect } from "react";
 
 export const IssueEmojiReactions: React.FC = observer(() => {
+  // router
   const router = useRouter();
-
-  const { workspace_slug, project_slug } = router.query as { workspace_slug: string; project_slug: string };
-
-  const { user: userStore, issue: issueStore } = useMobxStore();
+  const { workspace_slug, project_slug } = router.query;
+  // store
+  const { user: userStore, issueDetails: issueDetailsStore } = useMobxStore();
 
   const user = userStore?.currentUser;
-  const issueId = issueStore.activePeekOverviewIssueId;
-
-  const reactions = issueId ? issueStore.issue_detail[issueId]?.reactions || [] : [];
+  const issueId = issueDetailsStore.peekId;
+  const reactions = issueId ? issueDetailsStore.details[issueId]?.reactions || [] : [];
   const groupedReactions = groupReactions(reactions, "reaction");
 
-  const handleReactionClick = (reactionHexa: string) => {
+  const handleReactionClick = (reactionHex: string) => {
     if (!workspace_slug || !project_slug || !issueId) return;
 
-    const userReaction = reactions?.find((r) => r.created_by === user?.id && r.reaction === reactionHexa);
+    const userReaction = reactions?.find((r) => r.actor_detail.id === user?.id && r.reaction === reactionHex);
 
     if (userReaction)
-      issueStore.deleteIssueReactionAsync(workspace_slug, userReaction.project, userReaction.issue, reactionHexa);
+      issueDetailsStore.removeIssueReaction(
+        workspace_slug.toString(),
+        project_slug.toString(),
+        userReaction.issue,
+        reactionHex
+      );
     else
-      issueStore.createIssueReactionAsync(workspace_slug, project_slug, issueId, {
-        reaction: reactionHexa,
+      issueDetailsStore.addIssueReaction(workspace_slug.toString(), project_slug.toString(), issueId, {
+        reaction: reactionHex,
       });
   };
 
   useEffect(() => {
     if (user) return;
 
-    userStore.getUserAsync();
+    userStore.fetchCurrentUser();
   }, [user, userStore]);
 
   return (
@@ -63,7 +69,7 @@ export const IssueEmojiReactions: React.FC = observer(() => {
               }}
               key={reaction}
               className={`flex items-center gap-1 text-custom-text-100 text-sm h-full px-2 py-1 rounded-md border ${
-                reactions?.some((r) => r.actor === user?.id && r.reaction === reaction)
+                reactions?.some((r) => r.actor_detail.id === user?.id && r.reaction === reaction)
                   ? "bg-custom-primary-100/10 border-custom-primary-100"
                   : "bg-custom-background-80 border-transparent"
               }`}
@@ -71,7 +77,7 @@ export const IssueEmojiReactions: React.FC = observer(() => {
               <span>{renderEmoji(reaction)}</span>
               <span
                 className={
-                  reactions?.some((r) => r.actor === user?.id && r.reaction === reaction)
+                  reactions?.some((r) => r.actor_detail.id === user?.id && r.reaction === reaction)
                     ? "text-custom-primary-100"
                     : ""
                 }

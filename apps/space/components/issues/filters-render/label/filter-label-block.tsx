@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 // mobx hook
 import { useMobxStore } from "lib/mobx/store-provider";
 // interfaces
-import { IIssueLabel } from "store/types/issue";
+import { IIssueLabel } from "types/issue";
 
 export const RenderIssueLabel = observer(({ label }: { label: IIssueLabel }) => {
   const store = useMobxStore();
@@ -13,12 +13,12 @@ export const RenderIssueLabel = observer(({ label }: { label: IIssueLabel }) => 
   const { workspace_slug, project_slug } = router.query as { workspace_slug: string; project_slug: string };
 
   const removeLabelFromFilter = () => {
-    router.replace(
-      store.issue.getURLDefinition(workspace_slug, project_slug, {
-        key: "label",
-        value: label?.id,
-      })
-    );
+    // router.replace(
+    //   store.issue.getURLDefinition(workspace_slug, project_slug, {
+    //     key: "label",
+    //     value: label?.id,
+    //   })
+    // );
   };
 
   return (

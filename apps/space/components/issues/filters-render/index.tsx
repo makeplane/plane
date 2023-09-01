@@ -16,25 +16,25 @@ const IssueFilter = observer(() => {
   const { workspace_slug, project_slug } = router.query as { workspace_slug: string; project_slug: string };
 
   const clearAllFilters = () => {
-    router.replace(
-      store.issue.getURLDefinition(workspace_slug, project_slug, {
-        key: "all",
-        removeAll: true,
-      })
-    );
+    // router.replace(
+    //   store.issue.getURLDefinition(workspace_slug, project_slug, {
+    //     key: "all",
+    //     removeAll: true,
+    //   })
+    // );
   };
 
-  if (store.issue.getIfFiltersIsEmpty()) return null;
+  // if (store.issue.getIfFiltersIsEmpty()) return null;
 
   return (
     <div className="flex-shrink-0 min-h-[50px] h-auto py-1.5 border-b border-custom-border-200 relative flex items-center shadow-md bg-whiate select-none">
       <div className="px-5 flex justify-start items-center flex-wrap gap-2 text-sm">
         {/* state */}
-        {store.issue.checkIfFilterExistsForKey("state") && <IssueStateFilter />}
+        {/* {store.issue.checkIfFilterExistsForKey("state") && <IssueStateFilter />} */}
         {/* labels */}
-        {store.issue.checkIfFilterExistsForKey("label") && <IssueLabelFilter />}
+        {/* {store.issue.checkIfFilterExistsForKey("label") && <IssueLabelFilter />} */}
         {/* priority */}
-        {store.issue.checkIfFilterExistsForKey("priority") && <IssuePriorityFilter />}
+        {/* {store.issue.checkIfFilterExistsForKey("priority") && <IssuePriorityFilter />} */}
         {/* clear all filters */}
         <div
           className="flex items-center gap-2 border border-custom-border-200 px-2 py-1 cursor-pointer text-xs rounded-full"

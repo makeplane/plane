@@ -3,15 +3,29 @@ import { observable, action, makeObservable, runInAction } from "mobx";
 // service
 import ProjectService from "services/project.service";
 // types
-import { IProjectStore, IWorkspace, IProject, IProjectSettings } from "./types";
+import { IWorkspace, IProject, IProjectSettings } from "types/project";
+
+export interface IProjectStore {
+  loader: boolean;
+  error: any | null;
+  workspace: IWorkspace | null;
+  project: IProject | null;
+  deploySettings: IProjectSettings | null;
+  viewOptions: any;
+  activeBoard: string | null;
+  fetchProjectSettings: (workspace_slug: string, project_slug: string) => Promise<void>;
+  setActiveBoard: (value: string) => void;
+}
 
 class ProjectStore implements IProjectStore {
   loader: boolean = false;
   error: any | null = null;
-
+  // data
   workspace: IWorkspace | null = null;
   project: IProject | null = null;
-  workspaceProjectSettings: IProjectSettings | null = null;
+  deploySettings: IProjectSettings | null = null;
+  viewOptions: any = null;
+  activeBoard: string | null = null;
   // root store
   rootStore;
   // service
@@ -19,14 +33,18 @@ class ProjectStore implements IProjectStore {
 
   constructor(_rootStore: any | null = null) {
     makeObservable(this, {
+      // loaders and error observables
+      loader: observable,
+      error: observable.ref,
       // observable
       workspace: observable.ref,
       project: observable.ref,
-      workspaceProjectSettings: observable.ref,
-      loader: observable,
-      error: observable.ref,
-      // action
-      getProjectSettingsAsync: action,
+      deploySettings: observable.ref,
+      viewOptions: observable.ref,
+      activeBoard: observable.ref,
+      // actions
+      fetchProjectSettings: action,
+      setActiveBoard: action,
       // computed
     });
 
@@ -34,26 +52,23 @@ class ProjectStore implements IProjectStore {
     this.projectService = new ProjectService();
   }
 
-  getProjectSettingsAsync = async (workspace_slug: string, project_slug: string) => {
+  fetchProjectSettings = async (workspace_slug: string, project_slug: string) => {
     try {
       this.loader = true;
       this.error = null;
 
-      const response = await this.projectService.getProjectSettingsAsync(workspace_slug, project_slug);
+      const response = await this.projectService.getProjectSettings(workspace_slug, project_slug);
 
       if (response) {
         const _project: IProject = { ...response?.project_details };
         const _workspace: IWorkspace = { ...response?.workspace_detail };
-        const _workspaceProjectSettings: IProjectSettings = {
-          comments: response?.comments,
-          reactions: response?.reactions,
-          votes: response?.votes,
-          views: { ...response?.views },
-        };
+        const _viewOptions = { ...response?.views };
+        const _deploySettings = { ...response };
         runInAction(() => {
           this.project = _project;
           this.workspace = _workspace;
-          this.workspaceProjectSettings = _workspaceProjectSettings;
+          this.viewOptions = _viewOptions;
+          this.deploySettings = _deploySettings;
           this.loader = false;
         });
       }
@@ -63,6 +78,10 @@ class ProjectStore implements IProjectStore {
       this.error = error;
       return error;
     }
+  };
+
+  setActiveBoard = (boardValue: string) => {
+    this.activeBoard = boardValue;
   };
 }
 
