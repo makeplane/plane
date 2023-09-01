@@ -2,32 +2,55 @@
 
 // mobx react lite
 import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
+
 // components
 import { IssueBlockPriority } from "components/issues/board-views/block-priority";
 import { IssueBlockState } from "components/issues/board-views/block-state";
 import { IssueBlockLabels } from "components/issues/board-views/block-labels";
 import { IssueBlockDueDate } from "components/issues/board-views/block-due-date";
-// mobx hook
-import { useMobxStore } from "lib/mobx/store-provider";
 // interfaces
-import { IIssue } from "store/types/issue";
+import { IIssue } from "types/issue";
 import { RootStore } from "store/root";
+import { useRouter } from "next/router";
 
-export const IssueListBlock = ({ issue }: { issue: IIssue }) => {
-  const store: RootStore = useMobxStore();
+export const IssueListBlock = observer(({ issue }: { issue: IIssue }) => {
+  const { project: projectStore, issueDetails: issueDetailStore }: RootStore = useMobxStore();
+
+  // router
+  const router = useRouter();
+  const { workspace_slug, project_slug, board } = router.query;
+
+  const handleBlockClick = () => {
+    issueDetailStore.setPeekId(issue.id);
+    router.replace(
+      {
+        pathname: `/${workspace_slug?.toString()}/${project_slug}`,
+        query: {
+          board: board?.toString(),
+          peekId: issue.id,
+        },
+      },
+      undefined,
+      { shallow: true }
+    );
+    // router.push(`/${workspace_slug?.toString()}/${project_slug}?board=${board?.toString()}&peekId=${issue.id}`);
+  };
 
   return (
-    <div className="p-2 px-3 bg-white space-y-2 rounded-sm shadow">
+    <div className="py-3 px-4 h-[118px] flex flex-col gap-1.5 bg-custom-background-100 rounded shadow-custom-shadow-sm border-[0.5px] border-custom-border-200">
       {/* id */}
-      <div className="flex-shrink-0 text-sm text-gray-600 w-[60px]">
-        {store?.project?.project?.identifier}-{issue?.sequence_id}
+      <div className="text-xs text-custom-text-300 break-words">
+        {projectStore?.project?.identifier}-{issue?.sequence_id}
       </div>
 
       {/* name */}
-      <div className="font-medium text-gray-800 h-full line-clamp-2">{issue.name}</div>
+      <h6 onClick={handleBlockClick} className="text-sm font-medium break-words line-clamp-2 cursor-pointer">
+        {issue.name}
+      </h6>
 
-      {/* priority */}
-      <div className="relative flex flex-wrap items-center gap-2 w-full">
+      <div className="relative flex-grow flex items-end gap-2 w-full overflow-x-scroll hide-horizontal-scrollbar">
+        {/* priority */}
         {issue?.priority && (
           <div className="flex-shrink-0">
             <IssueBlockPriority priority={issue?.priority} />
@@ -39,12 +62,6 @@ export const IssueListBlock = ({ issue }: { issue: IIssue }) => {
             <IssueBlockState state={issue?.state_detail} />
           </div>
         )}
-        {/* labels */}
-        {issue?.label_details && issue?.label_details.length > 0 && (
-          <div className="flex-shrink-0">
-            <IssueBlockLabels labels={issue?.label_details} />
-          </div>
-        )}
         {/* due date */}
         {issue?.target_date && (
           <div className="flex-shrink-0">
@@ -54,4 +71,4 @@ export const IssueListBlock = ({ issue }: { issue: IIssue }) => {
       </div>
     </div>
   );
-};
+});

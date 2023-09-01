@@ -248,6 +248,9 @@ export const ProfileIssuesView = () => {
         isOpen={deleteIssueModal}
         data={issueToDelete}
         user={user}
+        onSubmit={async () => {
+          mutateProfileIssues();
+        }}
       />
       {areFiltersApplied && (
         <>
@@ -263,6 +266,7 @@ export const ProfileIssuesView = () => {
                   labels: null,
                   priority: null,
                   state_group: null,
+                  start_date: null,
                   target_date: null,
                   type: null,
                 })

@@ -22,8 +22,6 @@ const shortcuts = [
       { keys: "↓", description: "Move down" },
       { keys: "←", description: "Move left" },
       { keys: "→", description: "Move right" },
-      { keys: "Enter", description: "Select" },
-      { keys: "Esc", description: "Close" },
     ],
   },
   {

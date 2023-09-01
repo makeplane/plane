@@ -181,7 +181,7 @@ const WorkspaceSettings: NextPage = () => {
       <div className="p-8">
         <SettingsHeader />
         {activeWorkspace ? (
-          <div className="space-y-8 sm:space-y-12">
+          <div className="space-y-8 sm:space-y-12 opacity-60">
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
                 <h4 className="text-lg font-semibold">Logo</h4>
@@ -191,7 +191,11 @@ const WorkspaceSettings: NextPage = () => {
               </div>
               <div className="col-span-12 sm:col-span-6">
                 <div className="flex items-center gap-4">
-                  <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
+                  <button
+                    type="button"
+                    onClick={() => setIsImageUploadModalOpen(true)}
+                    disabled={!isAdmin}
+                  >
                     {watch("logo") && watch("logo") !== null && watch("logo") !== "" ? (
                       <div className="relative mx-auto flex h-12 w-12">
                         <img
@@ -206,23 +210,25 @@ const WorkspaceSettings: NextPage = () => {
                       </div>
                     )}
                   </button>
-                  <div className="flex gap-4">
-                    <SecondaryButton
-                      onClick={() => {
-                        setIsImageUploadModalOpen(true);
-                      }}
-                    >
-                      {isImageUploading ? "Uploading..." : "Upload"}
-                    </SecondaryButton>
-                    {activeWorkspace.logo && activeWorkspace.logo !== "" && (
-                      <DangerButton
-                        onClick={() => handleDelete(activeWorkspace.logo)}
-                        loading={isImageRemoving}
+                  {isAdmin && (
+                    <div className="flex gap-4">
+                      <SecondaryButton
+                        onClick={() => {
+                          setIsImageUploadModalOpen(true);
+                        }}
                       >
-                        {isImageRemoving ? "Removing..." : "Remove"}
-                      </DangerButton>
-                    )}
-                  </div>
+                        {isImageUploading ? "Uploading..." : "Upload"}
+                      </SecondaryButton>
+                      {activeWorkspace.logo && activeWorkspace.logo !== "" && (
+                        <DangerButton
+                          onClick={() => handleDelete(activeWorkspace.logo)}
+                          loading={isImageRemoving}
+                        >
+                          {isImageRemoving ? "Removing..." : "Remove"}
+                        </DangerButton>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -288,6 +294,7 @@ const WorkspaceSettings: NextPage = () => {
                       message: "Workspace name should not exceed 80 characters",
                     },
                   }}
+                  disabled={!isAdmin}
                 />
               </div>
             </div>
@@ -309,6 +316,7 @@ const WorkspaceSettings: NextPage = () => {
                       }
                       width="w-full"
                       input
+                      disabled={!isAdmin}
                     >
                       {ORGANIZATION_SIZE?.map((item) => (
                         <CustomSelect.Option key={item} value={item}>
@@ -320,32 +328,35 @@ const WorkspaceSettings: NextPage = () => {
                 />
               </div>
             </div>
-            <div className="sm:text-right">
-              <SecondaryButton
-                onClick={handleSubmit(onSubmit)}
-                loading={isSubmitting}
-                disabled={!isAdmin}
-              >
-                {isSubmitting ? "Updating..." : "Update Workspace"}
-              </SecondaryButton>
-            </div>
-            {memberDetails?.role === 20 && (
-              <div className="grid grid-cols-12 gap-4 sm:gap-16">
-                <div className="col-span-12 sm:col-span-6">
-                  <h4 className="text-lg font-semibold">Danger Zone</h4>
-                  <p className="text-sm text-custom-text-200">
-                    The danger zone of the workspace delete page is a critical area that requires
-                    careful consideration and attention. When deleting a workspace, all of the data
-                    and resources within that workspace will be permanently removed and cannot be
-                    recovered.
-                  </p>
+
+            {isAdmin && (
+              <>
+                <div className="sm:text-right">
+                  <SecondaryButton
+                    onClick={handleSubmit(onSubmit)}
+                    loading={isSubmitting}
+                    disabled={!isAdmin}
+                  >
+                    {isSubmitting ? "Updating..." : "Update Workspace"}
+                  </SecondaryButton>
                 </div>
-                <div className="col-span-12 sm:col-span-6">
-                  <DangerButton onClick={() => setIsOpen(true)} outline>
-                    Delete the workspace
-                  </DangerButton>
+                <div className="grid grid-cols-12 gap-4 sm:gap-16">
+                  <div className="col-span-12 sm:col-span-6">
+                    <h4 className="text-lg font-semibold">Danger Zone</h4>
+                    <p className="text-sm text-custom-text-200">
+                      The danger zone of the workspace delete page is a critical area that requires
+                      careful consideration and attention. When deleting a workspace, all of the
+                      data and resources within that workspace will be permanently removed and
+                      cannot be recovered.
+                    </p>
+                  </div>
+                  <div className="col-span-12 sm:col-span-6">
+                    <DangerButton onClick={() => setIsOpen(true)} outline>
+                      Delete the workspace
+                    </DangerButton>
+                  </div>
                 </div>
-              </div>
+              </>
             )}
           </div>
         ) : (

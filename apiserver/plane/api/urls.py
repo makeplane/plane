@@ -51,6 +51,7 @@ from plane.api.views import (
     WorkspaceUserProfileEndpoint,
     WorkspaceUserProfileIssuesEndpoint,
     WorkspaceLabelsEndpoint,
+    LeaveWorkspaceEndpoint,
     ## End Workspaces
     # File Assets
     FileAssetEndpoint,
@@ -68,6 +69,7 @@ from plane.api.views import (
     UserProjectInvitationsViewset,
     ProjectIdentifierEndpoint,
     ProjectFavoritesViewSet,
+    LeaveProjectEndpoint,
     ## End Projects
     # Issues
     IssueViewSet,
@@ -89,7 +91,6 @@ from plane.api.views import (
     IssueCommentPublicViewSet,
     IssueReactionViewSet,
     CommentReactionViewSet,
-    ExportIssuesEndpoint,
     ## End Issues
     # States
     StateViewSet,
@@ -165,16 +166,23 @@ from plane.api.views import (
     # Notification
     NotificationViewSet,
     UnreadNotificationEndpoint,
+    MarkAllReadNotificationViewSet,
     ## End Notification
     # Public Boards
     ProjectDeployBoardViewSet,
-    ProjectDeployBoardIssuesPublicEndpoint,
+    ProjectIssuesPublicEndpoint,
     ProjectDeployBoardPublicSettingsEndpoint,
     IssueReactionPublicViewSet,
     CommentReactionPublicViewSet,
     InboxIssuePublicViewSet,
     IssueVotePublicViewSet,
+    WorkspaceProjectDeployBoardEndpoint,
+    IssueRetrievePublicEndpoint,
     ## End Public Boards
+    ## Exporter
+    ExportIssuesEndpoint,
+    ## End Exporter
+
 )
 
 
@@ -231,7 +239,7 @@ urlpatterns = [
         UpdateUserTourCompletedEndpoint.as_view(),
         name="user-tour",
     ),
-    path("users/activities/", UserActivityEndpoint.as_view(), name="user-activities"),
+    path("users/workspaces/<str:slug>/activities/", UserActivityEndpoint.as_view(), name="user-activities"),
     # user workspaces
     path(
         "users/me/workspaces/",
@@ -435,6 +443,11 @@ urlpatterns = [
         WorkspaceLabelsEndpoint.as_view(),
         name="workspace-labels",
     ),
+    path(
+        "workspaces/<str:slug>/members/leave/",
+        LeaveWorkspaceEndpoint.as_view(),
+        name="workspace-labels",
+    ),
     ## End Workspaces ##
     # Projects
     path(
@@ -546,6 +559,11 @@ urlpatterns = [
                 "delete": "destroy",
             }
         ),
+        name="project",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/members/leave/",
+        LeaveProjectEndpoint.as_view(),
         name="project",
     ),
     # End Projects
@@ -1490,6 +1508,15 @@ urlpatterns = [
         UnreadNotificationEndpoint.as_view(),
         name="unread-notifications",
     ),
+    path(
+        "workspaces/<str:slug>/users/notifications/mark-all-read/",
+        MarkAllReadNotificationViewSet.as_view(
+            {
+                "post": "create",
+            }
+        ),
+        name="mark-all-read-notifications",
+    ),
     ## End Notification
     # Public Boards
     path(
@@ -1520,8 +1547,13 @@ urlpatterns = [
     ),
     path(
         "public/workspaces/<str:slug>/project-boards/<uuid:project_id>/issues/",
-        ProjectDeployBoardIssuesPublicEndpoint.as_view(),
+        ProjectIssuesPublicEndpoint.as_view(),
         name="project-deploy-board",
+    ),
+    path(
+        "public/workspaces/<str:slug>/project-boards/<uuid:project_id>/issues/<uuid:issue_id>/",
+        IssueRetrievePublicEndpoint.as_view(),
+        name="workspace-project-boards",
     ),
     path(
         "public/workspaces/<str:slug>/project-boards/<uuid:project_id>/issues/<uuid:issue_id>/comments/",
@@ -1613,6 +1645,11 @@ urlpatterns = [
             }
         ),
         name="issue-vote-project-board",
+    ),
+    path(
+        "public/workspaces/<str:slug>/project-boards/",
+        WorkspaceProjectDeployBoardEndpoint.as_view(),
+        name="workspace-project-boards",
     ),
     ## End Public Boards
 ]

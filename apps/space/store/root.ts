@@ -2,24 +2,22 @@
 import { enableStaticRendering } from "mobx-react-lite";
 // store imports
 import UserStore from "./user";
-import ThemeStore from "./theme";
-import IssueStore from "./issue";
-import ProjectStore from "./project";
-// types
-import { IIssueStore, IProjectStore, IThemeStore, IUserStore } from "./types";
+import IssueStore, { IIssueStore } from "./issue";
+import ProjectStore, { IProjectStore } from "./project";
+import IssueDetailStore, { IIssueDetailStore } from "./issue_details";
 
 enableStaticRendering(typeof window === "undefined");
 
 export class RootStore {
-  user: IUserStore;
-  theme: IThemeStore;
+  user: UserStore;
   issue: IIssueStore;
+  issueDetails: IIssueDetailStore;
   project: IProjectStore;
 
   constructor() {
     this.user = new UserStore(this);
-    this.theme = new ThemeStore(this);
     this.issue = new IssueStore(this);
     this.project = new ProjectStore(this);
+    this.issueDetails = new IssueDetailStore(this);
   }
 }

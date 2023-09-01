@@ -478,6 +478,7 @@ export const IssuesView: React.FC<Props> = ({
                   labels: null,
                   priority: null,
                   state: null,
+                  start_date: null,
                   target_date: null,
                   type: null,
                 })
@@ -513,7 +514,8 @@ export const IssuesView: React.FC<Props> = ({
         dragDisabled={
           selectedGroup === "created_by" ||
           selectedGroup === "labels" ||
-          selectedGroup === "state_detail.group"
+          selectedGroup === "state_detail.group" ||
+          selectedGroup === "assignees"
         }
         emptyState={{
           title: cycleId
@@ -546,7 +548,7 @@ export const IssuesView: React.FC<Props> = ({
         }}
         handleOnDragEnd={handleOnDragEnd}
         handleIssueAction={handleIssueAction}
-        openIssuesListModal={openIssuesListModal ? openIssuesListModal : null}
+        openIssuesListModal={openIssuesListModal ?? null}
         removeIssue={cycleId ? removeIssueFromCycle : moduleId ? removeIssueFromModule : null}
         trashBox={trashBox}
         setTrashBox={setTrashBox}

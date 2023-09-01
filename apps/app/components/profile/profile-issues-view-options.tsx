@@ -115,14 +115,11 @@ export const ProfileIssuesViewOptions: React.FC = () => {
         onSelect={(option) => {
           const key = option.key as keyof typeof filters;
 
-          if (key === "target_date") {
-            const valueExists = checkIfArraysHaveSameElements(
-              filters?.target_date ?? [],
-              option.value
-            );
+          if (key === "start_date" || key === "target_date") {
+            const valueExists = checkIfArraysHaveSameElements(filters?.[key] ?? [], option.value);
 
             setFilters({
-              target_date: valueExists ? null : option.value,
+              [key]: valueExists ? null : option.value,
             });
           } else {
             const valueExists = filters[key]?.includes(option.value);
@@ -152,7 +149,7 @@ export const ProfileIssuesViewOptions: React.FC = () => {
                   : "text-custom-sidebar-text-200"
               }`}
             >
-              View
+              Display
               <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
             </Popover.Button>
 
@@ -186,7 +183,11 @@ export const ProfileIssuesViewOptions: React.FC = () => {
                             >
                               {GROUP_BY_OPTIONS.map((option) => {
                                 if (issueView === "kanban" && option.key === null) return null;
-                                if (option.key === "state" || option.key === "created_by")
+                                if (
+                                  option.key === "state" ||
+                                  option.key === "created_by" ||
+                                  option.key === "assignees"
+                                )
                                   return null;
 
                                 return (

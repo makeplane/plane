@@ -183,14 +183,11 @@ const GeneralSettings: NextPage = () => {
         data={projectDetails ?? null}
         isOpen={Boolean(selectProject)}
         onClose={() => setSelectedProject(null)}
-        onSuccess={() => {
-          router.push(`/${workspaceSlug}/projects`);
-        }}
         user={user}
       />
       <form onSubmit={handleSubmit(onSubmit)} className="p-8">
         <SettingsHeader />
-        <div className="space-y-8 sm:space-y-12">
+        <div className="space-y-8 sm:space-y-12 opacity-60">
           <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-lg font-semibold">Icon & Name</h4>
@@ -209,6 +206,7 @@ const GeneralSettings: NextPage = () => {
                         label={value ? renderEmoji(value) : "Icon"}
                         value={value}
                         onChange={onChange}
+                        disabled={!isAdmin}
                       />
                     )}
                   />
@@ -228,6 +226,7 @@ const GeneralSettings: NextPage = () => {
                   validations={{
                     required: "Name is required",
                   }}
+                  disabled={!isAdmin}
                 />
               ) : (
                 <Loader>
@@ -251,6 +250,7 @@ const GeneralSettings: NextPage = () => {
                   placeholder="Enter project description"
                   validations={{}}
                   className="min-h-[46px] text-sm"
+                  disabled={!isAdmin}
                 />
               ) : (
                 <Loader className="w-full">
@@ -282,6 +282,7 @@ const GeneralSettings: NextPage = () => {
                           setValue("cover_image", imageUrl);
                         }}
                         value={watch("cover_image")}
+                        disabled={!isAdmin}
                       />
                     </div>
                   </div>
@@ -322,6 +323,7 @@ const GeneralSettings: NextPage = () => {
                       message: "Identifier must at most be of 5 characters",
                     },
                   }}
+                  disabled={!isAdmin}
                 />
               ) : (
                 <Loader>
@@ -346,6 +348,7 @@ const GeneralSettings: NextPage = () => {
                       onChange={onChange}
                       label={currentNetwork?.label ?? "Select network"}
                       input
+                      disabled={!isAdmin}
                     >
                       {NETWORK_CHOICES.map((network) => (
                         <CustomSelect.Option key={network.key} value={network.key}>
@@ -362,44 +365,48 @@ const GeneralSettings: NextPage = () => {
               )}
             </div>
           </div>
-          <div className="sm:text-right">
-            {projectDetails ? (
-              <SecondaryButton type="submit" loading={isSubmitting} disabled={!isAdmin}>
-                {isSubmitting ? "Updating Project..." : "Update Project"}
-              </SecondaryButton>
-            ) : (
-              <Loader className="mt-2 w-full">
-                <Loader.Item height="34px" width="100px" />
-              </Loader>
-            )}
-          </div>
-          {memberDetails?.role === 20 && (
-            <div className="grid grid-cols-12 gap-4 sm:gap-16">
-              <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold">Danger Zone</h4>
-                <p className="text-sm text-custom-text-200">
-                  The danger zone of the project delete page is a critical area that requires
-                  careful consideration and attention. When deleting a project, all of the data and
-                  resources within that project will be permanently removed and cannot be recovered.
-                </p>
-              </div>
-              <div className="col-span-12 sm:col-span-6">
+
+          {isAdmin && (
+            <>
+              <div className="sm:text-right">
                 {projectDetails ? (
-                  <div>
-                    <DangerButton
-                      onClick={() => setSelectedProject(projectDetails.id ?? null)}
-                      outline
-                    >
-                      Delete Project
-                    </DangerButton>
-                  </div>
+                  <SecondaryButton type="submit" loading={isSubmitting} disabled={!isAdmin}>
+                    {isSubmitting ? "Updating Project..." : "Update Project"}
+                  </SecondaryButton>
                 ) : (
                   <Loader className="mt-2 w-full">
-                    <Loader.Item height="46px" width="100px" />
+                    <Loader.Item height="34px" width="100px" />
                   </Loader>
                 )}
               </div>
-            </div>
+              <div className="grid grid-cols-12 gap-4 sm:gap-16">
+                <div className="col-span-12 sm:col-span-6">
+                  <h4 className="text-lg font-semibold">Danger Zone</h4>
+                  <p className="text-sm text-custom-text-200">
+                    The danger zone of the project delete page is a critical area that requires
+                    careful consideration and attention. When deleting a project, all of the data
+                    and resources within that project will be permanently removed and cannot be
+                    recovered.
+                  </p>
+                </div>
+                <div className="col-span-12 sm:col-span-6">
+                  {projectDetails ? (
+                    <div>
+                      <DangerButton
+                        onClick={() => setSelectedProject(projectDetails.id ?? null)}
+                        outline
+                      >
+                        Delete Project
+                      </DangerButton>
+                    </div>
+                  ) : (
+                    <Loader className="mt-2 w-full">
+                      <Loader.Item height="46px" width="100px" />
+                    </Loader>
+                  )}
+                </div>
+              </div>
+            </>
           )}
         </div>
       </form>

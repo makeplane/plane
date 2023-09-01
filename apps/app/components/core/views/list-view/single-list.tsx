@@ -60,6 +60,7 @@ export const SingleList: React.FC<Props> = ({
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
   const isArchivedIssues = router.pathname.includes("archived-issues");
+  const isSubscribedIssues = router.pathname.includes("subscribed");
 
   const type = cycleId ? "cycle" : moduleId ? "module" : "issue";
 
@@ -94,9 +95,10 @@ export const SingleList: React.FC<Props> = ({
       case "project":
         title = projects?.find((p) => p.id === groupTitle)?.name ?? "None";
         break;
+      case "assignees":
       case "created_by":
         const member = members?.find((member) => member.member.id === groupTitle)?.member;
-        title = member?.display_name ?? "";
+        title = member ? member.display_name : "None";
         break;
     }
 
@@ -137,9 +139,10 @@ export const SingleList: React.FC<Props> = ({
           />
         );
         break;
+      case "assignees":
       case "created_by":
         const member = members?.find((member) => member.member.id === groupTitle)?.member;
-        icon = <Avatar user={member} height="24px" width="24px" fontSize="12px" />;
+        icon = member ? <Avatar user={member} height="24px" width="24px" fontSize="12px" /> : <></>;
 
         break;
     }
@@ -178,13 +181,15 @@ export const SingleList: React.FC<Props> = ({
             {isArchivedIssues ? (
               ""
             ) : type === "issue" ? (
-              <button
-                type="button"
-                className="p-1  text-custom-text-200 hover:bg-custom-background-80"
-                onClick={addIssueToGroup}
-              >
-                <PlusIcon className="h-4 w-4" />
-              </button>
+              !isSubscribedIssues && (
+                <button
+                  type="button"
+                  className="p-1  text-custom-text-200 hover:bg-custom-background-80"
+                  onClick={addIssueToGroup}
+                >
+                  <PlusIcon className="h-4 w-4" />
+                </button>
+              )
             ) : disableUserActions ? (
               ""
             ) : (

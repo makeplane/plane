@@ -1,28 +1,25 @@
 "use client";
 
+// next theme
+import { useTheme } from "next-themes";
+
 // mobx react lite
 import { observer } from "mobx-react-lite";
-// mobx
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
 
 export const NavbarTheme = observer(() => {
-  const store: RootStore = useMobxStore();
+  const { setTheme, theme } = useTheme();
 
   const handleTheme = () => {
-    store?.theme?.setTheme(store?.theme?.theme === "light" ? "dark" : "light");
+    setTheme(theme === "light" ? "dark" : "light");
   };
 
   return (
-    <div
-      className="relative w-[28px] h-[28px] flex justify-center items-center rounded-sm cursor-pointer bg-gray-100 hover:bg-gray-200 hover:bg-gray-200/60 text-gray-600 transition-all"
+    <button
+      type="button"
       onClick={handleTheme}
+      className="relative w-7 h-7 grid place-items-center bg-custom-background-100 hover:bg-custom-background-80 text-custom-text-100 rounded"
     >
-      {store?.theme?.theme === "light" ? (
-        <span className={`material-symbols-rounded text-[18px]`}>dark_mode</span>
-      ) : (
-        <span className={`material-symbols-rounded text-[18px]`}>light_mode</span>
-      )}
-    </div>
+      <span className="material-symbols-rounded text-sm">{theme === "light" ? "dark_mode" : "light_mode"}</span>
+    </button>
   );
 });

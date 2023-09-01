@@ -14,13 +14,8 @@ import inboxServices from "services/inbox.service";
 import useInboxView from "hooks/use-inbox-view";
 import useUserAuth from "hooks/use-user-auth";
 // components
-import {
-  AddComment,
-  IssueActivitySection,
-  IssueDescriptionForm,
-  IssueDetailsSidebar,
-  IssueReaction,
-} from "components/issues";
+import { IssueDescriptionForm, IssueDetailsSidebar, IssueReaction } from "components/issues";
+import { InboxIssueActivity } from "components/inbox";
 // ui
 import { Loader } from "components/ui";
 // icons
@@ -42,7 +37,6 @@ import { INBOX_ISSUES, INBOX_ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "cons
 
 const defaultValues = {
   name: "",
-  description: "",
   description_html: "",
   estimate_point: null,
   assignees_list: [],
@@ -296,7 +290,6 @@ export const InboxMainContent: React.FC = () => {
                 workspaceSlug={workspaceSlug as string}
                 issue={{
                   name: issueDetails.name,
-                  description: issueDetails.description,
                   description_html: issueDetails.description_html,
                 }}
                 handleFormSubmit={submitChanges}
@@ -312,11 +305,7 @@ export const InboxMainContent: React.FC = () => {
               issueId={issueDetails.id}
             />
 
-            <div className="space-y-5">
-              <h3 className="text-lg text-custom-text-100">Comments/Activity</h3>
-              <IssueActivitySection issueId={issueDetails.id} user={user} />
-              <AddComment issueId={issueDetails.id} user={user} />
-            </div>
+            <InboxIssueActivity issueDetails={issueDetails} />
           </div>
 
           <div className="basis-1/3 space-y-5 border-custom-border-200 p-5">

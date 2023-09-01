@@ -1,7 +1,7 @@
 import React from "react";
 
 // components
-import { Icon, Tooltip } from "components/ui";
+import { CustomMenu, Icon, Tooltip } from "components/ui";
 // helpers
 import { getNumberCount } from "helpers/string.helper";
 
@@ -21,6 +21,7 @@ type NotificationHeaderProps = {
   setArchived: React.Dispatch<React.SetStateAction<boolean>>;
   setReadNotification: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedTab: React.Dispatch<React.SetStateAction<NotificationType>>;
+  markAllNotificationsAsRead: () => Promise<void>;
 };
 
 export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => {
@@ -37,6 +38,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
     setArchived,
     setReadNotification,
     setSelectedTab,
+    markAllNotificationsAsRead,
   } = props;
 
   const notificationTabs: Array<{
@@ -88,33 +90,51 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
               <Icon iconName="filter_list" />
             </button>
           </Tooltip>
-          <Tooltip tooltipContent="Snoozed notifications">
-            <button
-              type="button"
+          <CustomMenu
+            customButton={
+              <div className="grid place-items-center ">
+                <Icon iconName="more_vert" />
+              </div>
+            }
+          >
+            <CustomMenu.MenuItem renderAs="button" onClick={markAllNotificationsAsRead}>
+              <div className="flex items-center gap-2">
+                <Icon iconName="done_all" />
+                Mark all as read
+              </div>
+            </CustomMenu.MenuItem>
+            <CustomMenu.MenuItem
+              renderAs="button"
               onClick={() => {
                 setArchived(false);
                 setReadNotification(false);
                 setSnoozed((prev) => !prev);
               }}
             >
-              <Icon iconName="schedule" />
-            </button>
-          </Tooltip>
-          <Tooltip tooltipContent="Archived notifications">
-            <button
-              type="button"
+              <div className="flex items-center gap-2">
+                <Icon iconName="schedule" />
+                Show snoozed
+              </div>
+            </CustomMenu.MenuItem>
+            <CustomMenu.MenuItem
+              renderAs="button"
               onClick={() => {
                 setSnoozed(false);
                 setReadNotification(false);
                 setArchived((prev) => !prev);
               }}
             >
-              <Icon iconName="archive" />
+              <div className="flex items-center gap-2">
+                <Icon iconName="archive" />
+                Show archived
+              </div>
+            </CustomMenu.MenuItem>
+          </CustomMenu>
+          <Tooltip tooltipContent="Close">
+            <button type="button" onClick={() => closePopover()}>
+              <Icon iconName="close" />
             </button>
           </Tooltip>
-          <button type="button" onClick={() => closePopover()}>
-            <Icon iconName="close" />
-          </button>
         </div>
       </div>
       <div className="border-b border-custom-border-300 w-full px-5 mt-5">

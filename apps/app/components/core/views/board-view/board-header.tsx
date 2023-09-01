@@ -12,7 +12,7 @@ import useProjects from "hooks/use-projects";
 // component
 import { Avatar, Icon } from "components/ui";
 // icons
-import { ArrowsPointingInIcon, ArrowsPointingOutIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { PlusIcon } from "@heroicons/react/24/outline";
 import { getPriorityIcon, getStateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
@@ -29,6 +29,7 @@ type Props = {
   isCollapsed: boolean;
   setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
   disableUserActions: boolean;
+  disableAddIssue: boolean;
   viewProps: IIssueViewProps;
 };
 
@@ -39,6 +40,7 @@ export const BoardHeader: React.FC<Props> = ({
   isCollapsed,
   setIsCollapsed,
   disableUserActions,
+  disableAddIssue,
   viewProps,
 }) => {
   const router = useRouter();
@@ -56,10 +58,10 @@ export const BoardHeader: React.FC<Props> = ({
   );
 
   const { data: members } = useSWR(
-    workspaceSlug && projectId && selectedGroup === "created_by"
+    workspaceSlug && projectId && (selectedGroup === "created_by" || selectedGroup === "assignees")
       ? PROJECT_MEMBERS(projectId.toString())
       : null,
-    workspaceSlug && projectId && selectedGroup === "created_by"
+    workspaceSlug && projectId && (selectedGroup === "created_by" || selectedGroup === "assignees")
       ? () => projectService.projectMembers(workspaceSlug.toString(), projectId.toString())
       : null
   );
@@ -79,9 +81,11 @@ export const BoardHeader: React.FC<Props> = ({
       case "project":
         title = projects?.find((p) => p.id === groupTitle)?.name ?? "None";
         break;
+      case "assignees":
       case "created_by":
         const member = members?.find((member) => member.member.id === groupTitle)?.member;
-        title = member?.display_name ?? "";
+        title = member ? member.display_name : "None";
+
         break;
     }
 
@@ -122,9 +126,10 @@ export const BoardHeader: React.FC<Props> = ({
           />
         );
         break;
+      case "assignees":
       case "created_by":
         const member = members?.find((member) => member.member.id === groupTitle)?.member;
-        icon = <Avatar user={member} height="24px" width="24px" fontSize="12px" />;
+        icon = member ? <Avatar user={member} height="24px" width="24px" fontSize="12px" /> : <></>;
 
         break;
     }
@@ -178,7 +183,7 @@ export const BoardHeader: React.FC<Props> = ({
             <Icon iconName="open_in_full" className="text-base font-medium text-custom-text-900" />
           )}
         </button>
-        {!disableUserActions && selectedGroup !== "created_by" && (
+        {!disableAddIssue && !disableUserActions && selectedGroup !== "created_by" && (
           <button
             type="button"
             className="grid h-7 w-7 place-items-center rounded p-1 text-custom-text-200 outline-none duration-300 hover:bg-custom-background-80"

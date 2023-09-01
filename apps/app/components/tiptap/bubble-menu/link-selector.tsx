@@ -6,7 +6,7 @@ import isValidHttpUrl from "./utils/link-validator";
 interface LinkSelectorProps {
   editor: Editor;
   isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
+  setIsOpen: Dispatch<SetStateAction<boolean>>
 }
 
 
@@ -52,7 +52,8 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen 
           className="fixed top-full z-[99999] mt-1 flex w-60 overflow-hidden rounded border border-custom-border-300 bg-custom-background-100 dow-xl animate-in fade-in slide-in-from-top-1"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              e.preventDefault(); onLinkSubmit();
+              e.preventDefault();
+              onLinkSubmit();
             }
           }}
         >

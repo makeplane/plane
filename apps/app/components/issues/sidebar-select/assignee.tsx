@@ -9,26 +9,16 @@ import projectService from "services/project.service";
 // ui
 import { CustomSearchSelect } from "components/ui";
 import { AssigneesList, Avatar } from "components/ui/avatar";
-// icons
-import { UserGroupIcon } from "@heroicons/react/24/outline";
-// types
-import { UserAuth } from "types";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
   value: string[];
   onChange: (val: string[]) => void;
-  userAuth: UserAuth;
   disabled?: boolean;
 };
 
-export const SidebarAssigneeSelect: React.FC<Props> = ({
-  value,
-  onChange,
-  userAuth,
-  disabled = false,
-}) => {
+export const SidebarAssigneeSelect: React.FC<Props> = ({ value, onChange, disabled = false }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -50,36 +40,30 @@ export const SidebarAssigneeSelect: React.FC<Props> = ({
     ),
   }));
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disabled;
-
   return (
-    <div className="flex flex-wrap items-center py-2">
-      <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-        <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
-        <p>Assignees</p>
-      </div>
-      <div className="sm:basis-1/2">
-        <CustomSearchSelect
-          value={value}
-          label={
-            <div className="flex items-center gap-2 text-custom-text-200">
-              {value && value.length > 0 && Array.isArray(value) ? (
-                <div className="-my-0.5 flex items-center justify-center gap-2">
-                  <AssigneesList userIds={value} length={3} showLength={false} />
-                  <span className="text-custom-text-100">{value.length} Assignees</span>
-                </div>
-              ) : (
-                "No assignees"
-              )}
+    <CustomSearchSelect
+      value={value}
+      customButton={
+        <>
+          {value && value.length > 0 && Array.isArray(value) ? (
+            <div className="-my-0.5 flex items-center gap-2">
+              <AssigneesList userIds={value} length={3} showLength={false} />
+              <span className="text-custom-text-100 text-xs">{value.length} Assignees</span>
             </div>
-          }
-          options={options}
-          onChange={onChange}
-          position="right"
-          multiple
-          disabled={isNotAllowed}
-        />
-      </div>
-    </div>
+          ) : (
+            <button
+              type="button"
+              className="bg-custom-background-80 px-2.5 py-0.5 text-xs rounded text-custom-text-200"
+            >
+              No assignees
+            </button>
+          )}
+        </>
+      }
+      options={options}
+      onChange={onChange}
+      multiple
+      disabled={disabled}
+    />
   );
 };

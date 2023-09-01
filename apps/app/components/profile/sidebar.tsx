@@ -3,8 +3,6 @@ import Link from "next/link";
 
 import useSWR from "swr";
 
-// next-themes
-import { useTheme } from "next-themes";
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
 // services
@@ -24,8 +22,6 @@ import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
 export const ProfileSidebar = () => {
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
-
-  const { theme } = useTheme();
 
   const { user } = useUser();
 
@@ -56,15 +52,7 @@ export const ProfileSidebar = () => {
   ];
 
   return (
-    <div
-      className="flex-shrink-0 md:h-full w-full md:w-80 overflow-y-auto"
-      style={{
-        boxShadow:
-          theme === "light"
-            ? "0px 1px 4px 0px rgba(0, 0, 0, 0.01), 0px 4px 8px 0px rgba(0, 0, 0, 0.02), 0px 1px 12px 0px rgba(0, 0, 0, 0.12)"
-            : "0px 0px 4px 0px rgba(0, 0, 0, 0.20), 0px 2px 6px 0px rgba(0, 0, 0, 0.50)",
-      }}
-    >
+    <div className="flex-shrink-0 md:h-full w-full md:w-80 overflow-y-auto shadow-custom-shadow-sm">
       {userProjectsData ? (
         <>
           <div className="relative h-32">
@@ -127,12 +115,11 @@ export const ProfileSidebar = () => {
                   project.assigned_issues +
                   project.pending_issues +
                   project.completed_issues;
-                const totalAssignedIssues = totalIssues - project.created_issues;
 
                 const completedIssuePercentage =
-                  totalAssignedIssues === 0
+                  project.assigned_issues === 0
                     ? 0
-                    : Math.round((project.completed_issues / totalAssignedIssues) * 100);
+                    : Math.round((project.completed_issues / project.assigned_issues) * 100);
 
                 return (
                   <Disclosure
@@ -162,19 +149,21 @@ export const ProfileSidebar = () => {
                             </div>
                           </div>
                           <div className="flex-shrink-0 flex items-center gap-2">
-                            <Tooltip tooltipContent="Completion percentage" position="left">
-                              <div
-                                className={`px-1 py-0.5 text-xs font-medium rounded ${
-                                  completedIssuePercentage <= 35
-                                    ? "bg-red-500/10 text-red-500"
-                                    : completedIssuePercentage <= 70
-                                    ? "bg-yellow-500/10 text-yellow-500"
-                                    : "bg-green-500/10 text-green-500"
-                                }`}
-                              >
-                                {completedIssuePercentage}%
-                              </div>
-                            </Tooltip>
+                            {project.assigned_issues > 0 && (
+                              <Tooltip tooltipContent="Completion percentage" position="left">
+                                <div
+                                  className={`px-1 py-0.5 text-xs font-medium rounded ${
+                                    completedIssuePercentage <= 35
+                                      ? "bg-red-500/10 text-red-500"
+                                      : completedIssuePercentage <= 70
+                                      ? "bg-yellow-500/10 text-yellow-500"
+                                      : "bg-green-500/10 text-green-500"
+                                  }`}
+                                >
+                                  {completedIssuePercentage}%
+                                </div>
+                              </Tooltip>
+                            )}
                             <Icon iconName="arrow_drop_down" className="!text-lg" />
                           </div>
                         </Disclosure.Button>

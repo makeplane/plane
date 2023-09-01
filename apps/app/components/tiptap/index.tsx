@@ -3,10 +3,11 @@ import { useDebouncedCallback } from "use-debounce";
 import { EditorBubbleMenu } from "./bubble-menu";
 import { TiptapExtensions } from "./extensions";
 import { TiptapEditorProps } from "./props";
-import { useImperativeHandle, useRef } from "react";
+import { useImperativeHandle, useRef, forwardRef } from "react";
 import { ImageResizer } from "./extensions/image-resize";
+import { TableMenu } from "./table-menu";
 
-export interface ITiptapRichTextEditor {
+export interface ITipTapRichTextEditor {
   value: string;
   noBorder?: boolean;
   borderOnFocus?: boolean;
@@ -21,7 +22,7 @@ export interface ITiptapRichTextEditor {
   debouncedUpdatesEnabled?: boolean;
 }
 
-const Tiptap = (props: ITiptapRichTextEditor) => {
+const Tiptap = (props: ITipTapRichTextEditor) => {
   const {
     onChange,
     debouncedUpdatesEnabled,
@@ -73,9 +74,10 @@ const Tiptap = (props: ITiptapRichTextEditor) => {
     }, 500);
   }, 1000);
 
-  const editorClassNames = `relative w-full max-w-screen-lg sm:rounded-lg mt-2 p-3 relative focus:outline-none rounded-md
-      ${noBorder ? "" : "border border-custom-border-200"} ${borderOnFocus ? "focus:border border-custom-border-300" : "focus:border-0"
-    } ${customClassName}`;
+  const editorClassNames = `relative w-full max-w-full sm:rounded-lg mt-2 p-3 relative focus:outline-none rounded-md
+      ${noBorder ? "" : "border border-custom-border-200"} ${
+    borderOnFocus ? "focus:border border-custom-border-300" : "focus:border-0"
+  } ${customClassName}`;
 
   if (!editor) return null;
   editorRef.current = editor;
@@ -91,10 +93,17 @@ const Tiptap = (props: ITiptapRichTextEditor) => {
       {editor && <EditorBubbleMenu editor={editor} />}
       <div className={`${editorContentCustomClassNames}`}>
         <EditorContent editor={editor} />
+        <TableMenu editor={editor} />
         {editor?.isActive("image") && <ImageResizer editor={editor} />}
       </div>
     </div>
   );
 };
 
-export default Tiptap;
+const TipTapEditor = forwardRef<ITipTapRichTextEditor, ITipTapRichTextEditor>((props, ref) => (
+  <Tiptap {...props} forwardedRef={ref} />
+));
+
+TipTapEditor.displayName = "TipTapEditor";
+
+export { TipTapEditor };

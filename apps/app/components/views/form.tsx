@@ -94,6 +94,7 @@ export const ViewForm: React.FC<Props> = ({
       labels: null,
       priority: null,
       state: null,
+      start_date: null,
       target_date: null,
       type: null,
     });
@@ -155,14 +156,15 @@ export const ViewForm: React.FC<Props> = ({
               onSelect={(option) => {
                 const key = option.key as keyof typeof filters;
 
-                if (key === "target_date") {
+                if (key === "start_date" || key === "target_date") {
                   const valueExists = checkIfArraysHaveSameElements(
-                    filters?.target_date ?? [],
+                    filters?.[key] ?? [],
                     option.value
                   );
 
                   setValue("query", {
-                    target_date: valueExists ? null : option.value,
+                    ...filters,
+                    [key]: valueExists ? null : option.value,
                   } as IQuery);
                 } else {
                   if (!filters?.[key]?.includes(option.value))

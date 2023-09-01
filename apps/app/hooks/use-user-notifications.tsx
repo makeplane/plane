@@ -9,17 +9,22 @@ import useSWRInfinite from "swr/infinite";
 // services
 import userNotificationServices from "services/notifications.service";
 
+// hooks
+import useToast from "./use-toast";
+
 // fetch-keys
 import { UNREAD_NOTIFICATIONS_COUNT, getPaginatedNotificationKey } from "constants/fetch-keys";
 
 // type
-import type { NotificationType, NotificationCount } from "types";
+import type { NotificationType, NotificationCount, IMarkAllAsReadPayload } from "types";
 
 const PER_PAGE = 30;
 
 const useUserNotification = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const { setToastAlert } = useToast();
 
   const [snoozed, setSnoozed] = useState<boolean>(false);
   const [archived, setArchived] = useState<boolean>(false);
@@ -274,6 +279,30 @@ const useUserNotification = () => {
     }
   };
 
+  const markAllNotificationsAsRead = async () => {
+    if (!workspaceSlug) return;
+
+    let markAsReadParams: IMarkAllAsReadPayload;
+
+    if (snoozed) markAsReadParams = { archived: false, snoozed: true };
+    else if (archived) markAsReadParams = { archived: true, snoozed: false };
+    else markAsReadParams = { archived: false, snoozed: false, type: selectedTab };
+
+    await userNotificationServices
+      .markAllNotificationsAsRead(workspaceSlug.toString(), markAsReadParams)
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Something went wrong. Please try again.",
+        });
+      })
+      .finally(() => {
+        notificationMutate();
+        mutateNotificationCount();
+      });
+  };
+
   return {
     notifications,
     notificationMutate,
@@ -304,6 +333,7 @@ const useUserNotification = () => {
     isRefreshing,
     setFetchNotifications,
     markNotificationAsRead,
+    markAllNotificationsAsRead,
   };
 };
 

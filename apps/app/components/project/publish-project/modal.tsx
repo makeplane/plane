@@ -1,28 +1,38 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 // next imports
 import { useRouter } from "next/router";
 // react-hook-form
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // ui components
-import { ToggleSwitch, PrimaryButton, SecondaryButton } from "components/ui";
+import { ToggleSwitch, PrimaryButton, SecondaryButton, Icon, DangerButton } from "components/ui";
 import { CustomPopover } from "./popover";
 // mobx react lite
 import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
-import { IProjectPublishSettingsViews } from "store/project-publish";
+import { IProjectPublishSettings, TProjectPublishViews } from "store/project-publish";
 // hooks
 import useToast from "hooks/use-toast";
 import useProjectDetails from "hooks/use-project-details";
+import useUser from "hooks/use-user";
 
 type Props = {
   // user: ICurrentUserResponse | undefined;
 };
 
-const defaultValues: Partial<any> = {
+type FormData = {
+  id: string | null;
+  comments: boolean;
+  reactions: boolean;
+  votes: boolean;
+  inbox: string | null;
+  views: TProjectPublishViews[];
+};
+
+const defaultValues: FormData = {
   id: null,
   comments: false,
   reactions: false,
@@ -31,70 +41,73 @@ const defaultValues: Partial<any> = {
   views: ["list", "kanban"],
 };
 
-const viewOptions = [
-  { key: "list", value: "List" },
-  { key: "kanban", value: "Kanban" },
-  // { key: "calendar", value: "Calendar" },
-  // { key: "gantt", value: "Gantt" },
-  // { key: "spreadsheet", value: "Spreadsheet" },
+const viewOptions: {
+  key: TProjectPublishViews;
+  label: string;
+}[] = [
+  { key: "list", label: "List" },
+  { key: "kanban", label: "Kanban" },
+  // { key: "calendar", label: "Calendar" },
+  // { key: "gantt", label: "Gantt" },
+  // { key: "spreadsheet", label: "Spreadsheet" },
 ];
 
 export const PublishProjectModal: React.FC<Props> = observer(() => {
-  const store: RootStore = useMobxStore();
-  const { projectPublish } = store;
+  const [isUnpublishing, setIsUnpublishing] = useState(false);
+  const [isUpdateRequired, setIsUpdateRequired] = useState(false);
 
-  const { projectDetails, mutateProjectDetails } = useProjectDetails();
-
-  const { setToastAlert } = useToast();
-  const handleToastAlert = (title: string, type: string, message: string) => {
-    setToastAlert({
-      title: title || "Title",
-      type: "error" || "warning",
-      message: message || "Message",
-    });
-  };
-
-  const { NEXT_PUBLIC_DEPLOY_URL } = process.env;
-  const plane_deploy_url = NEXT_PUBLIC_DEPLOY_URL
-    ? NEXT_PUBLIC_DEPLOY_URL
-    : "http://localhost:3001";
+  const plane_deploy_url = process.env.NEXT_PUBLIC_DEPLOY_URL ?? "http://localhost:4000";
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
+  const store: RootStore = useMobxStore();
+  const { projectPublish } = store;
+
+  const { user } = useUser();
+
+  const { mutateProjectDetails } = useProjectDetails();
+
+  const { setToastAlert } = useToast();
+
   const {
-    formState: { errors, isSubmitting },
+    control,
+    formState: { isSubmitting },
+    getValues,
     handleSubmit,
     reset,
     watch,
-    setValue,
-  } = useForm<any>({
+  } = useForm<FormData>({
     defaultValues,
-    reValidateMode: "onChange",
   });
 
   const handleClose = () => {
     projectPublish.handleProjectModal(null);
+
+    setIsUpdateRequired(false);
     reset({ ...defaultValues });
   };
 
+  // prefill form with the saved settings if the project is already published
   useEffect(() => {
     if (
       projectPublish.projectPublishSettings &&
-      projectPublish.projectPublishSettings != "not-initialized"
+      projectPublish.projectPublishSettings !== "not-initialized"
     ) {
-      let userBoards: string[] = [];
+      let userBoards: TProjectPublishViews[] = [];
+
       if (projectPublish.projectPublishSettings?.views) {
-        const _views: IProjectPublishSettingsViews | null =
-          projectPublish.projectPublishSettings?.views || null;
-        if (_views != null) {
-          if (_views.list) userBoards.push("list");
-          if (_views.kanban) userBoards.push("kanban");
-          if (_views.calendar) userBoards.push("calendar");
-          if (_views.gantt) userBoards.push("gantt");
-          if (_views.spreadsheet) userBoards.push("spreadsheet");
-          userBoards = userBoards && userBoards.length > 0 ? userBoards : ["list"];
-        }
+        const savedViews = projectPublish.projectPublishSettings?.views;
+
+        if (!savedViews) return;
+
+        if (savedViews.list) userBoards.push("list");
+        if (savedViews.kanban) userBoards.push("kanban");
+        if (savedViews.calendar) userBoards.push("calendar");
+        if (savedViews.gantt) userBoards.push("gantt");
+        if (savedViews.spreadsheet) userBoards.push("spreadsheet");
+
+        userBoards = userBoards && userBoards.length > 0 ? userBoards : ["list"];
       }
 
       const updatedData = {
@@ -105,98 +118,74 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
         inbox: projectPublish.projectPublishSettings?.inbox || null,
         views: userBoards,
       };
+
       reset({ ...updatedData });
     }
   }, [reset, projectPublish.projectPublishSettings]);
 
+  // fetch publish settings
   useEffect(() => {
+    if (!workspaceSlug) return;
+
     if (
       projectPublish.projectPublishModal &&
-      workspaceSlug &&
-      projectPublish.project_id != null &&
+      projectPublish.project_id !== null &&
       projectPublish?.projectPublishSettings === "not-initialized"
     ) {
       projectPublish.getProjectSettingsAsync(
-        workspaceSlug as string,
-        projectPublish.project_id as string,
+        workspaceSlug.toString(),
+        projectPublish.project_id,
         null
       );
     }
   }, [workspaceSlug, projectPublish, projectPublish.projectPublishModal]);
 
-  const onSettingsPublish = async (formData: any) => {
-    if (formData.views && formData.views.length > 0) {
-      const payload = {
-        comments: formData.comments || false,
-        reactions: formData.reactions || false,
-        votes: formData.votes || false,
-        inbox: formData.inbox || null,
-        views: {
-          list: formData.views.includes("list") || false,
-          kanban: formData.views.includes("kanban") || false,
-          calendar: formData.views.includes("calendar") || false,
-          gantt: formData.views.includes("gantt") || false,
-          spreadsheet: formData.views.includes("spreadsheet") || false,
-        },
-      };
+  const handlePublishProject = async (payload: IProjectPublishSettings) => {
+    if (!workspaceSlug || !user) return;
 
-      const _workspaceSlug = workspaceSlug;
-      const _projectId = projectPublish.project_id;
-
-      return projectPublish
-        .createProjectSettingsAsync(_workspaceSlug as string, _projectId as string, payload, null)
-        .then((response) => {
-          mutateProjectDetails();
-          handleClose();
-          console.log("_projectId", _projectId);
-          if (_projectId)
-            window.open(`${plane_deploy_url}/${_workspaceSlug}/${_projectId}`, "_blank");
-          return response;
-        })
-        .catch((error) => {
-          console.error("error", error);
-          return error;
-        });
-    } else {
-      handleToastAlert("Missing fields", "warning", "Please select at least one view to publish");
-    }
-  };
-
-  const onSettingsUpdate = async (key: string, value: any) => {
-    const payload = {
-      comments: key === "comments" ? value : watch("comments"),
-      reactions: key === "reactions" ? value : watch("reactions"),
-      votes: key === "votes" ? value : watch("votes"),
-      inbox: key === "inbox" ? value : watch("inbox"),
-      views:
-        key === "views"
-          ? {
-              list: value.includes("list") ? true : false,
-              kanban: value.includes("kanban") ? true : false,
-              calendar: value.includes("calendar") ? true : false,
-              gantt: value.includes("gantt") ? true : false,
-              spreadsheet: value.includes("spreadsheet") ? true : false,
-            }
-          : {
-              list: watch("views").includes("list") ? true : false,
-              kanban: watch("views").includes("kanban") ? true : false,
-              calendar: watch("views").includes("calendar") ? true : false,
-              gantt: watch("views").includes("gantt") ? true : false,
-              spreadsheet: watch("views").includes("spreadsheet") ? true : false,
-            },
-    };
+    const projectId = projectPublish.project_id;
 
     return projectPublish
-      .updateProjectSettingsAsync(
-        workspaceSlug as string,
-        projectPublish.project_id as string,
-        watch("id"),
+      .createProjectSettingsAsync(
+        workspaceSlug.toString(),
+        projectId?.toString() ?? "",
         payload,
-        null
+        user
       )
       .then((response) => {
         mutateProjectDetails();
+        handleClose();
+        if (projectId) window.open(`${plane_deploy_url}/${workspaceSlug}/${projectId}`, "_blank");
         return response;
+      })
+      .catch((error) => {
+        console.error("error", error);
+        return error;
+      });
+  };
+
+  const handleUpdatePublishSettings = async (payload: IProjectPublishSettings) => {
+    if (!workspaceSlug || !user) return;
+
+    await projectPublish
+      .updateProjectSettingsAsync(
+        workspaceSlug.toString(),
+        projectPublish.project_id?.toString() ?? "",
+        payload.id ?? "",
+        payload,
+        user
+      )
+      .then((res) => {
+        mutateProjectDetails();
+
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Publish settings updated successfully!",
+        });
+
+        handleClose();
+        return res;
       })
       .catch((error) => {
         console.log("error", error);
@@ -204,27 +193,30 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
       });
   };
 
-  const onSettingsUnPublish = async (formData: any) =>
+  const handleUnpublishProject = async (publishId: string) => {
+    if (!workspaceSlug || !publishId) return;
+
+    setIsUnpublishing(true);
+
     projectPublish
       .deleteProjectSettingsAsync(
-        workspaceSlug as string,
+        workspaceSlug.toString(),
         projectPublish.project_id as string,
-        formData?.id,
+        publishId,
         null
       )
-      .then((response) => {
+      .then((res) => {
         mutateProjectDetails();
-        reset({ ...defaultValues });
+
         handleClose();
-        return response;
+        return res;
       })
-      .catch((error) => {
-        console.error("error", error);
-        return error;
-      });
+      .catch((err) => err)
+      .finally(() => setIsUnpublishing(false));
+  };
 
   const CopyLinkToClipboard = ({ copy_link }: { copy_link: string }) => {
-    const [status, setStatus] = React.useState(false);
+    const [status, setStatus] = useState(false);
 
     const copyText = () => {
       navigator.clipboard.writeText(copy_link);
@@ -242,6 +234,68 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
         {status ? "Copied" : "Copy Link"}
       </div>
     );
+  };
+
+  const handleFormSubmit = async (formData: FormData) => {
+    if (!formData.views || formData.views.length === 0) {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Please select at least one view layout to publish the project.",
+      });
+      return;
+    }
+
+    const payload = {
+      comments: formData.comments,
+      reactions: formData.reactions,
+      votes: formData.votes,
+      inbox: formData.inbox,
+      views: {
+        list: formData.views.includes("list"),
+        kanban: formData.views.includes("kanban"),
+        calendar: formData.views.includes("calendar"),
+        gantt: formData.views.includes("gantt"),
+        spreadsheet: formData.views.includes("spreadsheet"),
+      },
+    };
+
+    if (watch("id")) await handleUpdatePublishSettings({ id: watch("id") ?? "", ...payload });
+    else await handlePublishProject(payload);
+  };
+
+  // check if an update is required or not
+  const checkIfUpdateIsRequired = () => {
+    if (
+      !projectPublish.projectPublishSettings ||
+      projectPublish.projectPublishSettings === "not-initialized"
+    )
+      return;
+
+    const currentSettings = projectPublish.projectPublishSettings as IProjectPublishSettings;
+    const newSettings = getValues();
+
+    if (
+      currentSettings.comments !== newSettings.comments ||
+      currentSettings.reactions !== newSettings.reactions ||
+      currentSettings.votes !== newSettings.votes
+    ) {
+      setIsUpdateRequired(true);
+      return;
+    }
+
+    let viewCheckFlag = 0;
+    viewOptions.forEach((option) => {
+      if (currentSettings.views[option.key] !== newSettings.views.includes(option.key))
+        viewCheckFlag++;
+    });
+
+    if (viewCheckFlag !== 0) {
+      setIsUpdateRequired(true);
+      return;
+    }
+
+    setIsUpdateRequired(false);
   };
 
   return (
@@ -270,200 +324,190 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="transform rounded-lg bg-custom-background-100 border border-custom-border-100 text-left shadow-xl transition-all w-full sm:w-3/5 lg:w-1/2 xl:w-2/5 space-y-4">
-                {/* heading */}
-                <div className="p-3 px-4 pb-0 flex gap-2 justify-between items-center">
-                  <div className="font-medium text-xl">Publish</div>
-                  {projectPublish.loader && (
-                    <div className="text-xs text-custom-text-400">Changes saved</div>
-                  )}
-                  <div
-                    className="hover:bg-custom-background-90 w-[30px] h-[30px] rounded flex justify-center items-center cursor-pointer transition-all"
-                    onClick={handleClose}
-                  >
-                    <span className="material-symbols-rounded text-[16px]">close</span>
-                  </div>
-                </div>
-
-                {/* content */}
-                <div className="space-y-3">
-                  {watch("id") && (
-                    <div className="flex items-center gap-1 px-4 text-custom-primary-100">
-                      <div className="w-[20px] h-[20px] overflow-hidden flex items-center">
-                        <span className="material-symbols-rounded text-[18px]">
-                          radio_button_checked
-                        </span>
-                      </div>
-                      <div className="text-sm">This project is live on web</div>
-                    </div>
-                  )}
-
-                  <div className="mx-4 border border-custom-border-100 bg-custom-background-90 rounded p-3 py-2 relative flex gap-2 items-center">
-                    <div className="relative line-clamp-1 overflow-hidden w-full text-sm">
-                      {`${plane_deploy_url}/${workspaceSlug}/${projectPublish.project_id}`}
-                    </div>
-                    <div className="flex-shrink-0 relative flex items-center gap-1">
-                      <a
-                        href={`${plane_deploy_url}/${workspaceSlug}/${projectPublish.project_id}`}
-                        target="_blank"
-                        rel="noreferrer"
+              <Dialog.Panel className="transform rounded-lg bg-custom-background-100 border border-custom-border-100 text-left shadow-xl transition-all w-full sm:w-3/5 lg:w-1/2 xl:w-2/5 ">
+                <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
+                  {/* heading */}
+                  <div className="px-6 pt-4 flex items-center justify-between gap-2">
+                    <h5 className="font-semibold text-xl inline-block">Publish</h5>
+                    {watch("id") && (
+                      <DangerButton
+                        onClick={() => handleUnpublishProject(watch("id") ?? "")}
+                        className="!px-2 !py-1.5"
+                        loading={isUnpublishing}
                       >
-                        <div className="border border-custom-border-100 bg-custom-background-100 w-[30px] h-[30px] rounded flex justify-center items-center hover:bg-custom-background-90 cursor-pointer">
-                          <span className="material-symbols-rounded text-[16px]">open_in_new</span>
-                        </div>
-                      </a>
-                      <CopyLinkToClipboard
-                        copy_link={`${plane_deploy_url}/${workspaceSlug}/${projectPublish.project_id}`}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-3 px-4">
-                    <div className="relative flex justify-between items-center gap-2">
-                      <div className="text-custom-text-100">Views</div>
-                      <div>
-                        <CustomPopover
-                          label={
-                            watch("views") && watch("views").length > 0
-                              ? viewOptions
-                                  .filter(
-                                    (_view) => watch("views").includes(_view.key) && _view.value
-                                  )
-                                  .map((_view) => _view.value)
-                                  .join(", ")
-                              : ``
-                          }
-                          placeholder="Select views"
-                        >
-                          <>
-                            {viewOptions &&
-                              viewOptions.length > 0 &&
-                              viewOptions.map((_view) => (
-                                <div
-                                  key={_view.value}
-                                  className={`relative flex items-center gap-2 justify-between p-1 m-1 px-2 cursor-pointer rounded-sm text-custom-text-200 ${
-                                    watch("views").includes(_view.key)
-                                      ? `bg-custom-background-80 text-custom-text-100`
-                                      : `hover:bg-custom-background-80 hover:text-custom-text-100`
-                                  }`}
-                                  onClick={() => {
-                                    const _views =
-                                      watch("views") && watch("views").length > 0
-                                        ? watch("views").includes(_view?.key)
-                                          ? watch("views").filter((_o: string) => _o !== _view?.key)
-                                          : [...watch("views"), _view?.key]
-                                        : [_view?.key];
-                                    setValue("views", _views);
-                                    if (watch("id") != null) onSettingsUpdate("views", _views);
-                                  }}
-                                >
-                                  <div className="text-sm">{_view.value}</div>
-                                  <div
-                                    className={`w-[18px] h-[18px] relative flex justify-center items-center`}
-                                  >
-                                    {watch("views") &&
-                                      watch("views").length > 0 &&
-                                      watch("views").includes(_view.key) && (
-                                        <span className="material-symbols-rounded text-[18px]">
-                                          done
-                                        </span>
-                                      )}
-                                  </div>
-                                </div>
-                              ))}
-                          </>
-                        </CustomPopover>
-                      </div>
-                    </div>
-
-                    {/* <div className="relative flex justify-between items-center gap-2">
-                      <div className="text-custom-text-100">Allow comments</div>
-                      <div>
-                        <ToggleSwitch
-                          value={watch("comments") ?? false}
-                          onChange={() => {
-                            const _comments = !watch("comments");
-                            setValue("comments", _comments);
-                            if (watch("id") != null) onSettingsUpdate("comments", _comments);
-                          }}
-                          size="sm"
-                        />
-                      </div>
-                    </div> */}
-
-                    {/* <div className="relative flex justify-between items-center gap-2">
-                      <div className="text-custom-text-100">Allow reactions</div>
-                      <div>
-                        <ToggleSwitch
-                          value={watch("reactions") ?? false}
-                          onChange={() => {
-                            const _reactions = !watch("reactions");
-                            setValue("reactions", _reactions);
-                            if (watch("id") != null) onSettingsUpdate("reactions", _reactions);
-                          }}
-                          size="sm"
-                        />
-                      </div>
-                    </div> */}
-
-                    {/* <div className="relative flex justify-between items-center gap-2">
-                      <div className="text-custom-text-100">Allow Voting</div>
-                      <div>
-                        <ToggleSwitch
-                          value={watch("votes") ?? false}
-                          onChange={() => {
-                            const _votes = !watch("votes");
-                            setValue("votes", _votes);
-                            if (watch("id") != null) onSettingsUpdate("votes", _votes);
-                          }}
-                          size="sm"
-                        />
-                      </div>
-                    </div> */}
-
-                    {/* <div className="relative flex justify-between items-center gap-2">
-                      <div className="text-custom-text-100">Allow issue proposals</div>
-                      <div>
-                        <ToggleSwitch
-                          value={watch("inbox") ?? false}
-                          onChange={() => {
-                            setValue("inbox", !watch("inbox"));
-                          }}
-                          size="sm"
-                        />
-                      </div>
-                    </div> */}
-                  </div>
-                </div>
-
-                {/* modal handlers */}
-                <div className="border-t border-custom-border-300 p-3 px-4 relative flex justify-between items-center">
-                  <div className="flex items-center gap-1 text-custom-text-300">
-                    <div className="w-[20px] h-[20px] overflow-hidden flex items-center">
-                      <span className="material-symbols-rounded text-[18px]">public</span>
-                    </div>
-                    <div className="text-sm">Anyone with the link can access</div>
-                  </div>
-                  <div className="relative flex items-center gap-2">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    {watch("id") != null ? (
-                      <PrimaryButton
-                        outline
-                        onClick={handleSubmit(onSettingsUnPublish)}
-                        disabled={isSubmitting}
-                      >
-                        {isSubmitting ? "Unpublishing..." : "Unpublish"}
-                      </PrimaryButton>
-                    ) : (
-                      <PrimaryButton
-                        onClick={handleSubmit(onSettingsPublish)}
-                        disabled={isSubmitting}
-                      >
-                        {isSubmitting ? "Publishing..." : "Publish"}
-                      </PrimaryButton>
+                        {isUnpublishing ? "Unpublishing..." : "Unpublish"}
+                      </DangerButton>
                     )}
                   </div>
-                </div>
+
+                  {/* content */}
+                  <div className="space-y-3 px-6">
+                    <div className="border border-custom-border-100 bg-custom-background-80 rounded-md px-3 py-2 relative flex gap-2 items-center">
+                      <div className="truncate flex-grow text-sm">
+                        {`${plane_deploy_url}/${workspaceSlug}/${projectPublish.project_id}`}
+                      </div>
+                      <div className="flex-shrink-0 relative flex items-center gap-1">
+                        <CopyLinkToClipboard
+                          copy_link={`${plane_deploy_url}/${workspaceSlug}/${projectPublish.project_id}`}
+                        />
+                      </div>
+                    </div>
+
+                    {watch("id") && (
+                      <div className="flex items-center gap-1 text-custom-primary-100">
+                        <div className="w-5 h-5 overflow-hidden flex items-center">
+                          <Icon iconName="radio_button_checked" className="!text-lg" />
+                        </div>
+                        <div className="text-sm">This project is live on web</div>
+                      </div>
+                    )}
+
+                    <div className="space-y-4">
+                      <div className="relative flex justify-between items-center gap-2">
+                        <div className="text-sm">Views</div>
+                        <Controller
+                          control={control}
+                          name="views"
+                          render={({ field: { onChange, value } }) => (
+                            <CustomPopover
+                              label={
+                                value.length > 0
+                                  ? viewOptions
+                                      .filter((v) => value.includes(v.key))
+                                      .map((v) => v.label)
+                                      .join(", ")
+                                  : ``
+                              }
+                              placeholder="Select views"
+                            >
+                              <>
+                                {viewOptions.map((option) => (
+                                  <div
+                                    key={option.key}
+                                    className={`relative flex items-center gap-2 justify-between p-1 m-1 px-2 cursor-pointer rounded-sm text-custom-text-200 ${
+                                      value.includes(option.key)
+                                        ? "bg-custom-background-80 text-custom-text-100"
+                                        : "hover:bg-custom-background-80 hover:text-custom-text-100"
+                                    }`}
+                                    onClick={() => {
+                                      const _views =
+                                        value.length > 0
+                                          ? value.includes(option.key)
+                                            ? value.filter((_o: string) => _o !== option.key)
+                                            : [...value, option.key]
+                                          : [option.key];
+
+                                      if (_views.length === 0) return;
+
+                                      onChange(_views);
+                                      checkIfUpdateIsRequired();
+                                    }}
+                                  >
+                                    <div className="text-sm">{option.label}</div>
+                                    <div
+                                      className={`w-[18px] h-[18px] relative flex justify-center items-center`}
+                                    >
+                                      {value.length > 0 && value.includes(option.key) && (
+                                        <Icon iconName="done" className="!text-lg" />
+                                      )}
+                                    </div>
+                                  </div>
+                                ))}
+                              </>
+                            </CustomPopover>
+                          )}
+                        />
+                      </div>
+
+                      <div className="relative flex justify-between items-center gap-2">
+                        <div className="text-sm">Allow comments</div>
+                        <Controller
+                          control={control}
+                          name="comments"
+                          render={({ field: { onChange, value } }) => (
+                            <ToggleSwitch
+                              value={value}
+                              onChange={(val) => {
+                                onChange(val);
+                                checkIfUpdateIsRequired();
+                              }}
+                              size="sm"
+                            />
+                          )}
+                        />
+                      </div>
+                      <div className="relative flex justify-between items-center gap-2">
+                        <div className="text-sm">Allow reactions</div>
+                        <Controller
+                          control={control}
+                          name="reactions"
+                          render={({ field: { onChange, value } }) => (
+                            <ToggleSwitch
+                              value={value}
+                              onChange={(val) => {
+                                onChange(val);
+                                checkIfUpdateIsRequired();
+                              }}
+                              size="sm"
+                            />
+                          )}
+                        />
+                      </div>
+                      <div className="relative flex justify-between items-center gap-2">
+                        <div className="text-sm">Allow voting</div>
+                        <Controller
+                          control={control}
+                          name="votes"
+                          render={({ field: { onChange, value } }) => (
+                            <ToggleSwitch
+                              value={value}
+                              onChange={(val) => {
+                                onChange(val);
+                                checkIfUpdateIsRequired();
+                              }}
+                              size="sm"
+                            />
+                          )}
+                        />
+                      </div>
+
+                      {/* <div className="relative flex justify-between items-center gap-2">
+                      <div className="text-sm">Allow issue proposals</div>
+                      <Controller
+                        control={control}
+                        name="inbox"
+                        render={({ field: { onChange, value } }) => (
+                          <ToggleSwitch value={value} onChange={onChange} size="sm" />
+                        )}
+                      />
+                    </div> */}
+                    </div>
+                  </div>
+
+                  {/* modal handlers */}
+                  <div className="border-t border-custom-border-200 px-6 py-5 relative flex justify-between items-center">
+                    <div className="flex items-center gap-1 text-custom-text-400 text-sm">
+                      <Icon iconName="public" className="!text-base" />
+                      <div className="text-sm">Anyone with the link can access</div>
+                    </div>
+                    <div className="relative flex items-center gap-2">
+                      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                      {watch("id") ? (
+                        <>
+                          {isUpdateRequired && (
+                            <PrimaryButton type="submit" loading={isSubmitting}>
+                              {isSubmitting ? "Updating..." : "Update settings"}
+                            </PrimaryButton>
+                          )}
+                        </>
+                      ) : (
+                        <PrimaryButton type="submit" loading={isSubmitting}>
+                          {isSubmitting ? "Publishing..." : "Publish"}
+                        </PrimaryButton>
+                      )}
+                    </div>
+                  </div>
+                </form>
               </Dialog.Panel>
             </Transition.Child>
           </div>

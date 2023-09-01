@@ -198,6 +198,7 @@ export interface IIssueActivity {
 }
 
 export interface IIssueComment extends IIssueActivity {
+  access: "EXTERNAL" | "INTERNAL";
   comment_html: string;
   comment_json: any;
   comment_stripped: string;
@@ -215,6 +216,7 @@ export interface IIssueLite {
 export interface IIssueFilterOptions {
   type: "active" | "backlog" | null;
   assignees: string[] | null;
+  start_date: string[] | null;
   target_date: string[] | null;
   state: string[] | null;
   state_group: TStateGroups[] | null;
@@ -233,6 +235,7 @@ export type TIssueGroupByOptions =
   | "created_by"
   | "state_detail.group"
   | "project"
+  | "assignees"
   | null;
 
 export type TIssueOrderByOptions =
@@ -249,7 +252,9 @@ export type TIssueOrderByOptions =
   | "target_date"
   | "-target_date"
   | "estimate__point"
-  | "-estimate__point";
+  | "-estimate__point"
+  | "start_date"
+  | "-start_date";
 
 export interface IIssueViewOptions {
   group_by: TIssueGroupByOptions;
