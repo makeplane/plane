@@ -1,54 +1,63 @@
-"use client";
-
-// next imports
-import { useRouter, useParams } from "next/navigation";
-// mobx react lite
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // constants
 import { issueViews } from "constants/data";
-// interfaces
-import { TIssueBoardKeys } from "store/types";
 // mobx
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 
 export const NavbarIssueBoardView = observer(() => {
-  const store: RootStore = useMobxStore();
+  const { project: projectStore, issue: issueStore }: RootStore = useMobxStore();
 
   const router = useRouter();
-  const routerParams = useParams();
+  const { workspace_slug, project_slug } = router.query as { workspace_slug: string; project_slug: string };
 
-  const { workspace_slug, project_slug } = routerParams as { workspace_slug: string; project_slug: string };
-
-  const handleCurrentBoardView = (boardView: TIssueBoardKeys) => {
-    store?.issue?.setCurrentIssueBoardView(boardView);
-    router.replace(`/${workspace_slug}/${project_slug}?board=${boardView}`);
+  const handleCurrentBoardView = (boardView: string) => {
+    projectStore.setActiveBoard(boardView);
+    router.push(
+      `/${workspace_slug}/${project_slug}?board=${boardView}${
+        issueStore?.filteredLabels && issueStore?.filteredLabels.length > 0
+          ? `&labels=${issueStore?.filteredLabels.join(",")}`
+          : ""
+      }${
+        issueStore?.filteredPriorities && issueStore?.filteredPriorities.length > 0
+          ? `&priorities=${issueStore?.filteredPriorities.join(",")}`
+          : ""
+      }${
+        issueStore?.filteredStates && issueStore?.filteredStates.length > 0
+          ? `&states=${issueStore?.filteredStates.join(",")}`
+          : ""
+      }`
+    );
   };
 
   return (
     <>
-      {store?.project?.workspaceProjectSettings &&
-        issueViews &&
-        issueViews.length > 0 &&
-        issueViews.map(
-          (_view) =>
-            store?.project?.workspaceProjectSettings?.views[_view?.key] && (
+      {projectStore?.viewOptions &&
+        Object.keys(projectStore?.viewOptions).map((viewKey: string) => {
+          if (projectStore?.viewOptions[viewKey]) {
+            return (
               <div
-                key={_view?.key}
-                className={`w-[28px] h-[28px] flex justify-center items-center rounded-sm cursor-pointer text-gray-500 ${
-                  _view?.key === store?.issue?.currentIssueBoardView
-                    ? `bg-gray-200/60 text-gray-800`
-                    : `hover:bg-gray-200/60 text-gray-600`
+                key={viewKey}
+                className={`w-[28px] h-[28px] flex justify-center items-center rounded-sm cursor-pointer ${
+                  viewKey === projectStore?.activeBoard
+                    ? `bg-custom-background-80 text-custom-text-200`
+                    : `hover:bg-custom-background-80 text-custom-text-300`
                 }`}
-                onClick={() => handleCurrentBoardView(_view?.key)}
-                title={_view?.title}
+                onClick={() => handleCurrentBoardView(viewKey)}
+                title={viewKey}
               >
-                <span className={`material-symbols-rounded text-[18px] ${_view?.className ? _view?.className : ``}`}>
-                  {_view?.icon}
+                <span
+                  className={`material-symbols-rounded text-[18px] ${
+                    issueViews[viewKey]?.className ? issueViews[viewKey]?.className : ``
+                  }`}
+                >
+                  {issueViews[viewKey]?.icon}
                 </span>
               </div>
-            )
-        )}
+            );
+          }
+        })}
     </>
   );
 });

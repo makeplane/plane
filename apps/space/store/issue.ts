@@ -1,72 +1,78 @@
-// mobx
-import { observable, action, computed, makeObservable, runInAction } from "mobx";
-// service
+import { observable, action, computed, makeObservable, runInAction, reaction } from "mobx";
+// services
 import IssueService from "services/issue.service";
+// store
+import { RootStore } from "./root";
 // types
-import { TIssueBoardKeys } from "store/types/issue";
-import { IIssueStore, IIssue, IIssueState, IIssueLabel } from "./types";
+// import { IssueDetailType, TIssueBoardKeys } from "types/issue";
+import { IIssue, IIssueState, IIssueLabel } from "types/issue";
+
+export interface IIssueStore {
+  loader: boolean;
+  error: any;
+  // issue options
+  issues: IIssue[] | null;
+  states: IIssueState[] | null;
+  labels: IIssueLabel[] | null;
+  // filtering
+  filteredStates: string[];
+  filteredLabels: string[];
+  filteredPriorities: string[];
+  // service
+  issueService: any;
+  // actions
+  fetchPublicIssues: (workspace_slug: string, project_slug: string, params: any) => void;
+  getCountOfIssuesByState: (state: string) => number;
+  getFilteredIssuesByState: (state: string) => IIssue[];
+}
 
 class IssueStore implements IIssueStore {
-  currentIssueBoardView: TIssueBoardKeys | null = null;
-
   loader: boolean = false;
   error: any | null = null;
 
-  states: IIssueState[] | null = null;
-  labels: IIssueLabel[] | null = null;
-  issues: IIssue[] | null = null;
+  states: IIssueState[] | null = [];
+  labels: IIssueLabel[] | null = [];
 
-  userSelectedStates: string[] = [];
-  userSelectedLabels: string[] = [];
-  // root store
-  rootStore;
-  // service
-  issueService;
+  filteredStates: string[] = [];
+  filteredLabels: string[] = [];
+  filteredPriorities: string[] = [];
+
+  issues: IIssue[] | null = [];
+  issue_detail: any = {};
+
+  rootStore: RootStore;
+  issueService: any;
 
   constructor(_rootStore: any) {
     makeObservable(this, {
       // observable
-      currentIssueBoardView: observable,
-
       loader: observable,
       error: observable,
-
+      // issue options
       states: observable.ref,
       labels: observable.ref,
+      // filtering
+      filteredStates: observable.ref,
+      filteredLabels: observable.ref,
+      filteredPriorities: observable.ref,
+      // issues
       issues: observable.ref,
-
-      userSelectedStates: observable,
-      userSelectedLabels: observable,
-      // action
-      setCurrentIssueBoardView: action,
-      getIssuesAsync: action,
-      // computed
+      issue_detail: observable.ref,
+      // actions
+      fetchPublicIssues: action,
+      getFilteredIssuesByState: action,
     });
 
     this.rootStore = _rootStore;
     this.issueService = new IssueService();
   }
 
-  // computed
-  getCountOfIssuesByState(state_id: string): number {
-    return this.issues?.filter((issue) => issue.state == state_id).length || 0;
-  }
-
-  getFilteredIssuesByState(state_id: string): IIssue[] | [] {
-    return this.issues?.filter((issue) => issue.state == state_id) || [];
-  }
-
-  // action
-  setCurrentIssueBoardView = async (view: TIssueBoardKeys) => {
-    this.currentIssueBoardView = view;
-  };
-
-  getIssuesAsync = async (workspace_slug: string, project_slug: string) => {
+  fetchPublicIssues = async (workspaceSlug: string, projectId: string, params: any) => {
     try {
       this.loader = true;
       this.error = null;
 
-      const response = await this.issueService.getPublicIssues(workspace_slug, project_slug);
+      const response = await this.issueService.getPublicIssues(workspaceSlug, projectId, params);
 
       if (response) {
         const _states: IIssueState[] = [...response?.states];
@@ -78,14 +84,20 @@ class IssueStore implements IIssueStore {
           this.issues = _issues;
           this.loader = false;
         });
-        return response;
       }
     } catch (error) {
       this.loader = false;
       this.error = error;
-      return error;
     }
   };
+
+  // computed
+  getCountOfIssuesByState(state_id: string): number {
+    return this.issues?.filter((issue) => issue.state == state_id).length || 0;
+  }
+
+  getFilteredIssuesByState = (state_id: string): IIssue[] | [] =>
+    this.issues?.filter((issue) => issue.state == state_id) || [];
 }
 
 export default IssueStore;

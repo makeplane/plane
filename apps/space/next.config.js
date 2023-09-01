@@ -6,7 +6,6 @@ const nextConfig = {
   swcMinify: true,
   experimental: {
     outputFileTracingRoot: path.join(__dirname, "../../"),
-    appDir: true,
   },
   output: "standalone",
 };

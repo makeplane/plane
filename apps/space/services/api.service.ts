@@ -90,6 +90,16 @@ abstract class APIService {
     });
   }
 
+  mediaUpload(url: string, data = {}, config = {}): Promise<any> {
+    return axios({
+      method: "post",
+      url: this.baseURL + url,
+      data,
+      headers: this.getAccessToken() ? { ...this.getHeaders(), "Content-Type": "multipart/form-data" } : {},
+      ...config,
+    });
+  }
+
   request(config = {}) {
     return axios(config);
   }

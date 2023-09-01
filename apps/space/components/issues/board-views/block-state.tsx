@@ -8,11 +8,11 @@ export const IssueBlockState = ({ state }: any) => {
 
   if (stateGroup === null) return <></>;
   return (
-    <div
-      className={`h-[24px] rounded-sm flex px-1 items-center border ${stateGroup?.className} gap-1 !bg-transparent !text-gray-700`}
-    >
-      <stateGroup.icon />
-      <div className="text-sm">{state?.name}</div>
+    <div className="flex items-center justify-between gap-1 w-full rounded shadow-sm border-[0.5px] border-custom-border-300 duration-300 focus:outline-none px-2.5 py-1 text-xs cursor-pointer hover:bg-custom-background-80">
+      <div className="flex items-center cursor-pointer w-full gap-1.5 text-custom-text-200">
+        <stateGroup.icon />
+        <div className="text-xs">{state?.name}</div>
+      </div>
     </div>
   );
 };
