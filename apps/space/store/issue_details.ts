@@ -89,7 +89,7 @@ class IssueDetailStore implements IssueDetailStore {
           this.details = {
             ...this.details,
             [issueId]: {
-              ...issueDetails,
+              ...(this.details[issueId] ?? issueDetails),
               comments: commentsResponse,
             },
           };
