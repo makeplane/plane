@@ -5,6 +5,8 @@ import { observer } from "mobx-react-lite";
 // components
 import { IssueListHeader } from "components/issues/board-views/kanban/header";
 import { IssueListBlock } from "components/issues/board-views/kanban/block";
+// ui
+import { Icon } from "components/ui";
 // interfaces
 import { IIssueState, IIssue } from "types/issue";
 // mobx hook
@@ -32,8 +34,9 @@ export const IssueKanbanView = observer(() => {
                   ))}
                 </div>
               ) : (
-                <div className="relative w-full h-full flex justify-center items-center p-10 text-center text-sm text-custom-text-200">
-                  No Issues are available.
+                <div className="flex justify-center items-center gap-2 pt-10 text-center text-sm text-custom-text-200 font-medium">
+                  <Icon iconName="stack" />
+                  No issues in this state
                 </div>
               )}
             </div>

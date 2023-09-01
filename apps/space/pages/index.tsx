@@ -126,7 +126,7 @@ const HomePage = () => {
                 </div>
                 <div className="flex flex-col items-center justify-center gap-4 pt-7 sm:w-[360px] mx-auto overflow-hidden">
                   <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
-                  <GithubLoginButton handleSignIn={handleGitHubSignIn} />
+                  {/* <GithubLoginButton handleSignIn={handleGitHubSignIn} /> */}
                 </div>
               </div>
             </>
