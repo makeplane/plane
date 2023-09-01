@@ -350,7 +350,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
               />
             )}
             {properties.labels && issue.labels.length > 0 && (
-              <ViewIssueLabel issue={issue} maxRender={2} />
+              <ViewIssueLabel labelDetails={issue.label_details} maxRender={2} />
             )}
             {properties.assignee && (
               <ViewAssigneeSelect

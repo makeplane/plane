@@ -248,6 +248,9 @@ export const ProfileIssuesView = () => {
         isOpen={deleteIssueModal}
         data={issueToDelete}
         user={user}
+        onSubmit={async () => {
+          mutateProfileIssues();
+        }}
       />
       {areFiltersApplied && (
         <>

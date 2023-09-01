@@ -53,6 +53,8 @@ export const SingleBoard: React.FC<Props> = ({
   const router = useRouter();
   const { cycleId, moduleId } = router.query;
 
+  const isSubscribedIssues = router.pathname.includes("subscribed");
+
   const type = cycleId ? "cycle" : moduleId ? "module" : "issue";
 
   // Check if it has at least 4 tickets since it is enough to accommodate the Calendar height
@@ -70,6 +72,7 @@ export const SingleBoard: React.FC<Props> = ({
         isCollapsed={isCollapsed}
         setIsCollapsed={setIsCollapsed}
         disableUserActions={disableUserActions}
+        disableAddIssue={isSubscribedIssues}
         viewProps={viewProps}
       />
       {isCollapsed && (
@@ -150,41 +153,41 @@ export const SingleBoard: React.FC<Props> = ({
               </div>
               {selectedGroup !== "created_by" && (
                 <div>
-                  {type === "issue" ? (
-                    <button
-                      type="button"
-                      className="flex items-center gap-2 font-medium text-custom-primary outline-none p-1"
-                      onClick={addIssueToGroup}
-                    >
-                      <PlusIcon className="h-4 w-4" />
-                      Add Issue
-                    </button>
-                  ) : (
-                    !disableUserActions && (
-                      <CustomMenu
-                        customButton={
-                          <button
-                            type="button"
-                            className="flex items-center gap-2 font-medium text-custom-primary outline-none whitespace-nowrap"
-                          >
-                            <PlusIcon className="h-4 w-4" />
-                            Add Issue
-                          </button>
-                        }
-                        position="left"
-                        noBorder
-                      >
-                        <CustomMenu.MenuItem onClick={addIssueToGroup}>
-                          Create new
-                        </CustomMenu.MenuItem>
-                        {openIssuesListModal && (
-                          <CustomMenu.MenuItem onClick={openIssuesListModal}>
-                            Add an existing issue
+                  {type === "issue"
+                    ? !isSubscribedIssues && (
+                        <button
+                          type="button"
+                          className="flex items-center gap-2 font-medium text-custom-primary outline-none p-1"
+                          onClick={addIssueToGroup}
+                        >
+                          <PlusIcon className="h-4 w-4" />
+                          Add Issue
+                        </button>
+                      )
+                    : !disableUserActions && (
+                        <CustomMenu
+                          customButton={
+                            <button
+                              type="button"
+                              className="flex items-center gap-2 font-medium text-custom-primary outline-none whitespace-nowrap"
+                            >
+                              <PlusIcon className="h-4 w-4" />
+                              Add Issue
+                            </button>
+                          }
+                          position="left"
+                          noBorder
+                        >
+                          <CustomMenu.MenuItem onClick={addIssueToGroup}>
+                            Create new
                           </CustomMenu.MenuItem>
-                        )}
-                      </CustomMenu>
-                    )
-                  )}
+                          {openIssuesListModal && (
+                            <CustomMenu.MenuItem onClick={openIssuesListModal}>
+                              Add an existing issue
+                            </CustomMenu.MenuItem>
+                          )}
+                        </CustomMenu>
+                      )}
                 </div>
               )}
             </div>

@@ -29,6 +29,7 @@ type Props = {
   isCollapsed: boolean;
   setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
   disableUserActions: boolean;
+  disableAddIssue: boolean;
   viewProps: IIssueViewProps;
 };
 
@@ -39,6 +40,7 @@ export const BoardHeader: React.FC<Props> = ({
   isCollapsed,
   setIsCollapsed,
   disableUserActions,
+  disableAddIssue,
   viewProps,
 }) => {
   const router = useRouter();
@@ -181,7 +183,7 @@ export const BoardHeader: React.FC<Props> = ({
             <Icon iconName="open_in_full" className="text-base font-medium text-custom-text-900" />
           )}
         </button>
-        {!disableUserActions && selectedGroup !== "created_by" && (
+        {!disableAddIssue && !disableUserActions && selectedGroup !== "created_by" && (
           <button
             type="button"
             className="grid h-7 w-7 place-items-center rounded p-1 text-custom-text-200 outline-none duration-300 hover:bg-custom-background-80"

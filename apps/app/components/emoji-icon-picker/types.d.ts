@@ -10,4 +10,5 @@ export type Props = {
         }
   ) => void;
   onIconColorChange?: (data: any) => void;
+  disabled?: boolean;
 };

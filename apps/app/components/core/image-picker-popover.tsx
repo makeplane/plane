@@ -40,9 +40,15 @@ type Props = {
   label: string | React.ReactNode;
   value: string | null;
   onChange: (data: string) => void;
+  disabled?: boolean;
 };
 
-export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) => {
+export const ImagePickerPopover: React.FC<Props> = ({
+  label,
+  value,
+  onChange,
+  disabled = false,
+}) => {
   const ref = useRef<HTMLDivElement>(null);
 
   const router = useRouter();
@@ -117,6 +123,7 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
       <Popover.Button
         className="rounded-md border border-custom-border-300 bg-custom-background-100 px-2 py-1 text-xs text-custom-text-200 hover:text-custom-text-100"
         onClick={() => setIsOpen((prev) => !prev)}
+        disabled={disabled}
       >
         {label}
       </Popover.Button>

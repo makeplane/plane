@@ -158,7 +158,7 @@ export const IssuesFilterView: React.FC = () => {
                   : "text-custom-sidebar-text-200"
               }`}
             >
-              View
+              Display
               <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
             </Popover.Button>
 

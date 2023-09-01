@@ -234,6 +234,9 @@ export const MyIssuesView: React.FC<Props> = ({
         isOpen={deleteIssueModal}
         data={issueToDelete}
         user={user}
+        onSubmit={async () => {
+          mutateMyIssues();
+        }}
       />
       {areFiltersApplied && (
         <>

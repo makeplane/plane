@@ -60,6 +60,7 @@ export const SingleList: React.FC<Props> = ({
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
   const isArchivedIssues = router.pathname.includes("archived-issues");
+  const isSubscribedIssues = router.pathname.includes("subscribed");
 
   const type = cycleId ? "cycle" : moduleId ? "module" : "issue";
 
@@ -180,13 +181,15 @@ export const SingleList: React.FC<Props> = ({
             {isArchivedIssues ? (
               ""
             ) : type === "issue" ? (
-              <button
-                type="button"
-                className="p-1  text-custom-text-200 hover:bg-custom-background-80"
-                onClick={addIssueToGroup}
-              >
-                <PlusIcon className="h-4 w-4" />
-              </button>
+              !isSubscribedIssues && (
+                <button
+                  type="button"
+                  className="p-1  text-custom-text-200 hover:bg-custom-background-80"
+                  onClick={addIssueToGroup}
+                >
+                  <PlusIcon className="h-4 w-4" />
+                </button>
+              )
             ) : disableUserActions ? (
               ""
             ) : (

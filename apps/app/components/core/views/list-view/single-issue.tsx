@@ -36,9 +36,21 @@ import { LayerDiagonalIcon } from "components/icons";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { handleIssuesMutation } from "constants/issue";
 // types
-import { ICurrentUserResponse, IIssue, IIssueViewProps, ISubIssueResponse, UserAuth } from "types";
+import {
+  ICurrentUserResponse,
+  IIssue,
+  IIssueViewProps,
+  ISubIssueResponse,
+  IUserProfileProjectSegregation,
+  UserAuth,
+} from "types";
 // fetch-keys
-import { CYCLE_DETAILS, MODULE_DETAILS, SUB_ISSUES } from "constants/fetch-keys";
+import {
+  CYCLE_DETAILS,
+  MODULE_DETAILS,
+  SUB_ISSUES,
+  USER_PROFILE_PROJECT_SEGREGATION,
+} from "constants/fetch-keys";
 
 type Props = {
   type?: string;
@@ -74,7 +86,7 @@ export const SingleListIssue: React.FC<Props> = ({
   const [contextMenuPosition, setContextMenuPosition] = useState<React.MouseEvent | null>(null);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, userId } = router.query;
   const isArchivedIssues = router.pathname.includes("archived-issues");
 
   const { setToastAlert } = useToast();
@@ -126,6 +138,11 @@ export const SingleListIssue: React.FC<Props> = ({
         .then(() => {
           mutateIssues();
 
+          if (userId)
+            mutate<IUserProfileProjectSegregation>(
+              USER_PROFILE_PROJECT_SEGREGATION(workspaceSlug.toString(), userId.toString())
+            );
+
           if (cycleId) mutate(CYCLE_DETAILS(cycleId as string));
           if (moduleId) mutate(MODULE_DETAILS(moduleId as string));
         });
@@ -134,6 +151,7 @@ export const SingleListIssue: React.FC<Props> = ({
       workspaceSlug,
       cycleId,
       moduleId,
+      userId,
       groupTitle,
       index,
       selectedGroup,
@@ -261,7 +279,7 @@ export const SingleListIssue: React.FC<Props> = ({
               isNotAllowed={isNotAllowed}
             />
           )}
-          {properties.labels && <ViewIssueLabel issue={issue} maxRender={3} />}
+          {properties.labels && <ViewIssueLabel labelDetails={issue.label_details} maxRender={3} />}
           {properties.assignee && (
             <ViewAssigneeSelect
               issue={issue}

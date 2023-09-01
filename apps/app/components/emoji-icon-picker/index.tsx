@@ -23,7 +23,13 @@ const tabOptions = [
   },
 ];
 
-const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange, onIconColorChange }) => {
+const EmojiIconPicker: React.FC<Props> = ({
+  label,
+  value,
+  onChange,
+  onIconColorChange,
+  disabled = false,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [openColorPicker, setOpenColorPicker] = useState(false);
   const [activeColor, setActiveColor] = useState<string>("rgb(var(--color-text-200))");
@@ -40,7 +46,11 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange, onIconColorC
 
   return (
     <Popover className="relative z-[1]">
-      <Popover.Button onClick={() => setIsOpen((prev) => !prev)} className="outline-none">
+      <Popover.Button
+        onClick={() => setIsOpen((prev) => !prev)}
+        className="outline-none"
+        disabled={disabled}
+      >
         {label}
       </Popover.Button>
       <Transition
