@@ -62,23 +62,27 @@ export const SidebarCycleSelect: React.FC<Props> = ({
   return (
     <CustomSelect
       customButton={
-        <Tooltip
-          position="left"
-          tooltipContent={`${issueCycle ? issueCycle.cycle_detail.name : "No cycle"}`}
-        >
-          <button
-            type="button"
-            className={`bg-custom-background-80 text-xs rounded px-2.5 py-0.5 w-full flex ${
-              disabled ? "cursor-not-allowed" : ""
-            }`}
+        <div>
+          <Tooltip
+            position="left"
+            tooltipContent={`${issueCycle ? issueCycle.cycle_detail.name : "No cycle"}`}
           >
-            <span
-              className={`truncate ${issueCycle ? "text-custom-text-100" : "text-custom-text-200"}`}
+            <button
+              type="button"
+              className={`bg-custom-background-80 text-xs rounded px-2.5 py-0.5 w-full flex ${
+                disabled ? "cursor-not-allowed" : ""
+              }`}
             >
-              {issueCycle ? issueCycle.cycle_detail.name : "No cycle"}
-            </span>
-          </button>
-        </Tooltip>
+              <span
+                className={`truncate ${
+                  issueCycle ? "text-custom-text-100" : "text-custom-text-200"
+                }`}
+              >
+                {issueCycle ? issueCycle.cycle_detail.name : "No cycle"}
+              </span>
+            </button>
+          </Tooltip>
+        </div>
       }
       value={issueCycle ? issueCycle.cycle_detail.id : null}
       onChange={(value: any) => {
