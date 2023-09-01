@@ -1,12 +1,17 @@
 import { useEffect } from "react";
+
+import Link from "next/link";
 import Image from "next/image";
-import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
+
+// mobx
+import { observer } from "mobx-react-lite";
 // components
 import { NavbarSearch } from "./search";
 import { NavbarIssueBoardView } from "./issue-board-view";
-import { NavbarIssueFilter } from "./issue-filter";
 import { NavbarTheme } from "./theme";
+// ui
+import { PrimaryButton } from "components/ui";
 // lib
 import { useMobxStore } from "lib/mobx/store-provider";
 // store
@@ -25,10 +30,12 @@ const renderEmoji = (emoji: string | { name: string; color: string }) => {
 };
 
 const IssueNavbar = observer(() => {
-  const { project: projectStore }: RootStore = useMobxStore();
+  const { project: projectStore, user: userStore }: RootStore = useMobxStore();
   // router
   const router = useRouter();
   const { workspace_slug, project_slug, board } = router.query;
+
+  const user = userStore?.currentUser;
 
   useEffect(() => {
     if (workspace_slug && project_slug) {
@@ -77,6 +84,32 @@ const IssueNavbar = observer(() => {
       <div className="flex-shrink-0 relative">
         <NavbarTheme />
       </div>
+
+      {user ? (
+        <div className="border border-custom-border-200 rounded flex items-center gap-2 p-2">
+          {user.avatar && user.avatar !== "" ? (
+            <div className="h-5 w-5 rounded-full">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={user.avatar} alt={user.display_name ?? ""} className="rounded-full" />
+            </div>
+          ) : (
+            <div className="bg-custom-background-80 h-5 w-5 rounded-full grid place-items-center text-[10px] capitalize">
+              {(user.display_name ?? "A")[0]}
+            </div>
+          )}
+          <h6 className="text-xs font-medium">{user.display_name}</h6>
+        </div>
+      ) : (
+        <div className="flex-shrink-0">
+          <Link href={`/?next_path=${router.asPath}`}>
+            <a>
+              <PrimaryButton className="flex-shrink-0" outline>
+                Sign in
+              </PrimaryButton>
+            </a>
+          </Link>
+        </div>
+      )}
     </div>
   );
 });

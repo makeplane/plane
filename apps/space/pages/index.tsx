@@ -17,7 +17,7 @@ const HomePage = () => {
   const { user: userStore } = useMobxStore();
 
   const router = useRouter();
-  const { next_path = "/" } = router.query;
+  const { next_path } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -38,7 +38,7 @@ const HomePage = () => {
       router.push(`/onboarding?next_path=${next_path}`);
       return;
     }
-    router.push(next_path.toString());
+    router.push((next_path ?? "/").toString());
   };
 
   const handleGoogleSignIn = async ({ clientId, credential }: any) => {
