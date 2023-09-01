@@ -1374,6 +1374,13 @@
   dependencies:
     "@babel/runtime" "^7.22.10"
 
+"@mui/icons-material@^5.14.7":
+  version "5.14.7"
+  resolved "https://registry.yarnpkg.com/@mui/icons-material/-/icons-material-5.14.7.tgz#d7f6bd188fe38adf35c89d9343b8a529c2306383"
+  integrity sha512-mWp4DwMa8c1Gx9yOEtPgxM4b+e6hAbtZyzfSubdBwrnEE6G5D2rbAJ5MB+If6kfI48JaYaJ5j8+zAdmZLuZc0A==
+  dependencies:
+    "@babel/runtime" "^7.22.10"
+
 "@mui/material@^5.14.1":
   version "5.14.6"
   resolved "https://registry.yarnpkg.com/@mui/material/-/material-5.14.6.tgz#12cbb716a7f70859764be310bb9b2f5ffc0da818"
