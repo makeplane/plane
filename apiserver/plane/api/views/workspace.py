@@ -1498,7 +1498,7 @@ class LeaveWorkspaceEndpoint(BaseAPIView):
                     {
                         "error": "You cannot leave the workspace since you are the only admin of the workspace you should delete the workspace"
                     },
-                    status=status.HTTP_400,
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
             # Delete the member from workspace
             workspace_member.delete()

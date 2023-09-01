@@ -617,7 +617,7 @@ class ProjectMemberViewSet(BaseViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except ProjectMember.DoesNotExist:
             return Response(
-                {"error": "Project Member does not exist"}, status=status.HTTP_400
+                {"error": "Project Member does not exist"}, status=status.HTTP_400_BAD_REQUEST
             )
         except Exception as e:
             capture_exception(e)
@@ -1194,7 +1194,7 @@ class LeaveProjectEndpoint(BaseAPIView):
                     {
                         "error": "You cannot leave the project since you are the only admin of the project you should delete the project"
                     },
-                    status=status.HTTP_400,
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
             # Delete the member from workspace
             project_member.delete()
