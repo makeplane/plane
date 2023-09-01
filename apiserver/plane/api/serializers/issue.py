@@ -549,9 +549,12 @@ class CommentReactionSerializer(BaseSerializer):
 
 
 class IssueVoteSerializer(BaseSerializer):
+
+    actor_detail = UserLiteSerializer(read_only=True, source="actor")
+
     class Meta:
         model = IssueVote
-        fields = ["issue", "vote", "workspace_id", "project_id", "actor"]
+        fields = ["issue", "vote", "workspace", "project", "actor", "actor_detail"]
         read_only_fields = fields
 
 
