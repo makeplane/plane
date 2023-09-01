@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
+import { mutate } from "swr";
 // mobx
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -13,6 +14,8 @@ import useUser from "hooks/use-user";
 import { FullScreenPeekView, SidePeekView } from "components/issues";
 // types
 import { IIssue } from "types";
+// fetch-keys
+import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 type Props = {
   handleMutation: () => void;
@@ -53,6 +56,7 @@ export const IssuePeekOverview: React.FC<Props> = observer(
       if (!issue || !user) return;
 
       await updateIssue(workspaceSlug, projectId, issue.id, formData, user);
+      mutate(PROJECT_ISSUES_ACTIVITY(issue.id));
       handleMutation();
     };
 

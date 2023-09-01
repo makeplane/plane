@@ -51,7 +51,10 @@ export const SidebarAssigneeSelect: React.FC<Props> = ({ value, onChange, disabl
               <span className="text-custom-text-100 text-xs">{value.length} Assignees</span>
             </div>
           ) : (
-            <button type="button" className="bg-custom-background-80 px-2.5 py-0.5 text-xs rounded">
+            <button
+              type="button"
+              className="bg-custom-background-80 px-2.5 py-0.5 text-xs rounded text-custom-text-200"
+            >
               No assignees
             </button>
           )}
