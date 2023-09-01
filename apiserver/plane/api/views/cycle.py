@@ -191,8 +191,7 @@ class CycleViewSet(BaseViewSet):
                             workspace__slug=slug,
                             project_id=project_id,
                         )
-                        .annotate(first_name=F("assignees__first_name"))
-                        .annotate(last_name=F("assignees__last_name"))
+                        .annotate(display_name=F("assignees__display_name"))
                         .annotate(assignee_id=F("assignees__id"))
                         .annotate(avatar=F("assignees__avatar"))
                         .values("first_name", "last_name", "assignee_id", "avatar")
