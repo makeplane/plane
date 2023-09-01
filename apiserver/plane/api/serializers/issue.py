@@ -564,7 +564,7 @@ class IssueVoteSerializer(BaseSerializer):
 
     class Meta:
         model = IssueVote
-        fields = ["issue", "vote", "workspace_id", "project_id", "actor"]
+        fields = ["issue", "vote", "workspace_id", "project_id", "actor", "actor_detail"]
         read_only_fields = fields
 
 
