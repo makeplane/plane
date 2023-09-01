@@ -3,7 +3,7 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-
+import uuid
 
 def update_user_timezones(apps, schema_editor):
     UserModel = apps.get_model("db", "User")
