@@ -237,10 +237,10 @@ class IssueDetailStore implements IssueDetailStore {
 
   removeIssueVote = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
-      const issueVoteResponse = await this.issueService.deleteIssueVote(workspaceSlug, projectId, issueId);
+      await this.issueService.deleteIssueVote(workspaceSlug, projectId, issueId);
       const issueDetails = await this.issueService.getIssueById(workspaceSlug, projectId, issueId);
 
-      if (issueVoteResponse) {
+      if (issueDetails) {
         runInAction(() => {
           this.details = {
             ...this.details,
