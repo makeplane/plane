@@ -2,6 +2,10 @@ import { useState, useEffect } from "react";
 import { Rows, Columns, ToggleRight } from "lucide-react";
 import { cn } from "../utils";
 import { Tooltip } from "components/ui";
+import InsertLeftTableIcon from "./InsertLeftTableIcon";
+import InsertRightTableIcon from "./InsertRightTableIcon";
+import InsertTopTableIcon from "./InsertTopTableIcon";
+import InsertBottomTableIcon from "./InsertBottomTableIcon";
 
 interface TableMenuItem {
   command: () => void;
@@ -24,13 +28,25 @@ export const TableMenu = ({ editor }: { editor: any }) => {
   const items: TableMenuItem[] = [
     {
       command: () => editor.chain().focus().addColumnBefore().run(),
-      icon: Columns,
+      icon: InsertLeftTableIcon,
+      key: "insert-column-left",
+      name: "Insert 1 column left",
+    },
+    {
+      command: () => editor.chain().focus().addColumnAfter().run(),
+      icon: InsertRightTableIcon,
       key: "insert-column-right",
       name: "Insert 1 column right",
     },
     {
+      command: () => editor.chain().focus().addRowBefore().run(),
+      icon: InsertTopTableIcon,
+      key: "insert-row-above",
+      name: "Insert 1 row above",
+    },
+    {
       command: () => editor.chain().focus().addRowAfter().run(),
-      icon: Rows,
+      icon: InsertBottomTableIcon,
       key: "insert-row-below",
       name: "Insert 1 row below",
     },
@@ -99,9 +115,8 @@ export const TableMenu = ({ editor }: { editor: any }) => {
 
   return (
     <section
-      className={`fixed left-1/2 transform -translate-x-1/2 overflow-hidden rounded border border-custom-border-300 bg-custom-background-100 shadow-custom-shadow-sm p-1 ${
-        isOpen ? "block" : "hidden"
-      }`}
+      className={`fixed left-1/2 transform -translate-x-1/2 overflow-hidden rounded border border-custom-border-300 bg-custom-background-100 shadow-custom-shadow-sm p-1 ${isOpen ? "block" : "hidden"
+        }`}
       style={{
         bottom: `calc(100vh - ${tableLocation.bottom + 45}px)`,
         left: `${tableLocation.left}px`,
