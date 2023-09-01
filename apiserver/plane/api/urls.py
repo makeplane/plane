@@ -563,11 +563,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/members/leave/",
-        LeaveProjectEndpoint.as_view(
-            {
-                "delete": "destroy",
-            }
-        ),
+        LeaveProjectEndpoint.as_view(),
         name="project",
     ),
     # End Projects
