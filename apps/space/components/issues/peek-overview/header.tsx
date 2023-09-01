@@ -70,7 +70,7 @@ export const PeekOverviewHeader: React.FC<Props> = (props) => {
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-4">
           {issueDetailStore.peekMode === "side" && (
-            <button type="button" onClick={handleClose} autoFocus={false}>
+            <button type="button" onClick={handleClose}>
               <East
                 sx={{
                   fontSize: "14px",
@@ -134,7 +134,7 @@ export const PeekOverviewHeader: React.FC<Props> = (props) => {
         </div>
         {(issueDetailStore.peekMode === "side" || issueDetailStore.peekMode === "modal") && (
           <div className="flex items-center gap-2 flex-shrink-0">
-            <button type="button" onClick={handleCopyLink} className="-rotate-45">
+            <button type="button" onClick={handleCopyLink} className="-rotate-45 focus:outline-none" tabIndex={1}>
               <Icon iconName="link" />
             </button>
           </div>

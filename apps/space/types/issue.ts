@@ -42,14 +42,7 @@ export interface IIssue {
   state: string;
   state_detail: any;
   target_date: any;
-  votes: {
-    issue: string;
-    vote: -1 | 1;
-    workspace: string;
-    project: string;
-    actor: string;
-    actor_detail: ActorDetail;
-  }[];
+  votes: IVote[];
 }
 
 export interface IIssueState {
@@ -63,6 +56,15 @@ export interface IIssueLabel {
   id: string;
   name: string;
   color: string;
+}
+
+export interface IVote {
+  issue: string;
+  vote: -1 | 1;
+  workspace: string;
+  project: string;
+  actor: string;
+  actor_detail: ActorDetail;
 }
 
 export interface Comment {
@@ -95,12 +97,12 @@ export interface IIssueReaction {
 }
 
 export interface ActorDetail {
-  avatar: string;
-  display_name: string;
-  first_name: string;
-  id: string;
-  is_bot: boolean;
-  last_name: string;
+  avatar?: string;
+  display_name?: string;
+  first_name?: string;
+  id?: string;
+  is_bot?: boolean;
+  last_name?: string;
 }
 
 export interface IssueDetail {

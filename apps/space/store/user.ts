@@ -2,14 +2,18 @@
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // service
 import UserService from "services/user.service";
+import { ActorDetail } from "types/issue";
+// types
+import { IUser } from "types/user";
 
 export interface IUserStore {
   currentUser: any | null;
   fetchCurrentUser: () => void;
+  currentActor: () => any;
 }
 
 class UserStore implements IUserStore {
-  currentUser: any | null = null;
+  currentUser: IUser | null = null;
   // root store
   rootStore;
   // service
@@ -22,6 +26,7 @@ class UserStore implements IUserStore {
       // actions
       setCurrentUser: action,
       // computed
+      currentActor: computed,
     });
     this.rootStore = _rootStore;
     this.userService = new UserService();
@@ -32,6 +37,17 @@ class UserStore implements IUserStore {
       this.currentUser = { ...user };
     });
   };
+
+  get currentActor(): any {
+    return {
+      avatar: this.currentUser?.avatar,
+      display_name: this.currentUser?.display_name,
+      first_name: this.currentUser?.first_name,
+      id: this.currentUser?.id,
+      is_bot: false,
+      last_name: this.currentUser?.last_name,
+    };
+  }
 
   /**
    *
