@@ -272,7 +272,7 @@ export const ChartDraggable: React.FC<Props> = ({
       <div
         id={`block-${block.id}`}
         ref={resizableRef}
-        className="relative group cursor-pointer font-medium rounded shadow-sm h-full inline-flex items-center transition-all"
+        className="relative group cursor-pointer font-medium h-full inline-flex items-center transition-all"
         style={{
           marginLeft: `${block.position?.marginLeft}px`,
           width: `${block.position?.width}px`,
