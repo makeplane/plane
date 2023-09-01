@@ -1,15 +1,19 @@
-import { useState, useEffect, useRef } from "react";
-import { observer } from "mobx-react-lite";
+import { useState, useEffect } from "react";
+
 import { useRouter } from "next/router";
+
+// mobx
+import { observer } from "mobx-react-lite";
 // lib
 import { useMobxStore } from "lib/mobx/store-provider";
+import { Tooltip } from "components/ui";
 
 export const IssueVotes: React.FC = observer(() => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const router = useRouter();
 
-  const { workspace_slug, project_slug } = router.query as { workspace_slug: string; project_slug: string };
+  const { workspace_slug, project_slug } = router.query;
 
   const { user: userStore, issueDetails: issueDetailsStore } = useMobxStore();
 
@@ -18,11 +22,11 @@ export const IssueVotes: React.FC = observer(() => {
 
   const votes = issueId ? issueDetailsStore.details[issueId]?.votes : [];
 
-  const upVoteCount = votes?.filter((vote) => vote.vote === 1).length || 0;
-  const downVoteCount = votes?.filter((vote) => vote.vote === -1).length || 0;
+  const allUpVotes = votes?.filter((vote) => vote.vote === 1);
+  const allDownVotes = votes?.filter((vote) => vote.vote === -1);
 
-  const isUpVotedByUser = votes?.some((vote) => vote.actor === user?.id && vote.vote === 1);
-  const isDownVotedByUser = votes?.some((vote) => vote.actor === user?.id && vote.vote === -1);
+  const isUpVotedByUser = allUpVotes?.some((vote) => vote.actor === user?.id);
+  const isDownVotedByUser = allDownVotes?.some((vote) => vote.actor === user?.id);
 
   const handleVote = async (e: any, voteValue: 1 | -1) => {
     if (!workspace_slug || !project_slug || !issueId) return;
@@ -31,9 +35,10 @@ export const IssueVotes: React.FC = observer(() => {
 
     const actionPerformed = votes?.find((vote) => vote.actor === user?.id && vote.vote === voteValue);
 
-    if (actionPerformed) await issueDetailsStore.removeIssueVote(workspace_slug, project_slug, issueId);
+    if (actionPerformed)
+      await issueDetailsStore.removeIssueVote(workspace_slug.toString(), project_slug.toString(), issueId);
     else
-      await issueDetailsStore.addIssueVote(workspace_slug, project_slug, issueId, {
+      await issueDetailsStore.addIssueVote(workspace_slug.toString(), project_slug.toString(), issueId, {
         vote: voteValue,
       });
 
@@ -46,43 +51,79 @@ export const IssueVotes: React.FC = observer(() => {
     userStore.fetchCurrentUser();
   }, [user, userStore]);
 
+  const VOTES_LIMIT = 1000;
+
   return (
     <div className="flex gap-2 items-center">
       {/* upvote button 👇 */}
-      <button
-        type="button"
-        disabled={isSubmitting}
-        onClick={(e) => {
-          userStore.requiredLogin(() => {
-            handleVote(e, 1);
-          });
-        }}
-        className={`flex items-center justify-center overflow-hidden px-2 gap-x-1 border rounded focus:outline-none ${
-          isUpVotedByUser ? "border-custom-primary-200 text-custom-primary-200" : "border-custom-border-300"
-        }`}
+      <Tooltip
+        tooltipContent={
+          <div>
+            {allUpVotes.length > 0 ? (
+              <>
+                {allUpVotes
+                  .map((r) => r.actor_detail.display_name)
+                  .splice(0, VOTES_LIMIT)
+                  .join(", ")}
+                {allUpVotes.length > VOTES_LIMIT && " and " + (allUpVotes.length - VOTES_LIMIT) + " more"}
+              </>
+            ) : (
+              "No upvotes yet"
+            )}
+          </div>
+        }
       >
-        <span className="material-symbols-rounded text-base !p-0 !m-0 text-custom-text-300">arrow_upward_alt</span>
-        <span className="text-sm font-normal transition-opacity ease-in-out">{upVoteCount}</span>
-      </button>
+        <button
+          type="button"
+          disabled={isSubmitting}
+          onClick={(e) => {
+            userStore.requiredLogin(() => {
+              handleVote(e, 1);
+            });
+          }}
+          className={`flex items-center justify-center overflow-hidden px-2 gap-x-1 border rounded focus:outline-none ${
+            isUpVotedByUser ? "border-custom-primary-200 text-custom-primary-200" : "border-custom-border-300"
+          }`}
+        >
+          <span className="material-symbols-rounded text-base !p-0 !m-0">arrow_upward_alt</span>
+          <span className="text-sm font-normal transition-opacity ease-in-out">{allUpVotes.length}</span>
+        </button>
+      </Tooltip>
 
       {/* downvote button 👇 */}
-      <button
-        type="button"
-        disabled={isSubmitting}
-        onClick={(e) => {
-          userStore.requiredLogin(() => {
-            handleVote(e, -1);
-          });
-        }}
-        className={`flex items-center justify-center overflow-hidden px-2 gap-x-1 border rounded focus:outline-none ${
-          isDownVotedByUser ? "border-red-600 text-red-600" : "border-custom-border-300"
-        }`}
+      <Tooltip
+        tooltipContent={
+          <div>
+            {allDownVotes.length > 0 ? (
+              <>
+                {allDownVotes
+                  .map((r) => r.actor_detail.display_name)
+                  .splice(0, VOTES_LIMIT)
+                  .join(", ")}
+                {allDownVotes.length > VOTES_LIMIT && " and " + (allDownVotes.length - VOTES_LIMIT) + " more"}
+              </>
+            ) : (
+              "No downvotes yet"
+            )}
+          </div>
+        }
       >
-        <span className="material-symbols-rounded text-base !p-0 !m-0 rotate-180 text-custom-text-300">
-          arrow_upward_alt
-        </span>
-        <span className="text-sm font-normal transition-opacity ease-in-out">{downVoteCount}</span>
-      </button>
+        <button
+          type="button"
+          disabled={isSubmitting}
+          onClick={(e) => {
+            userStore.requiredLogin(() => {
+              handleVote(e, -1);
+            });
+          }}
+          className={`flex items-center justify-center overflow-hidden px-2 gap-x-1 border rounded focus:outline-none ${
+            isDownVotedByUser ? "border-red-600 text-red-600" : "border-custom-border-300"
+          }`}
+        >
+          <span className="material-symbols-rounded text-base !p-0 !m-0">arrow_downward_alt</span>
+          <span className="text-sm font-normal transition-opacity ease-in-out">{allDownVotes.length}</span>
+        </button>
+      </Tooltip>
     </div>
   );
 });

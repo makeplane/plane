@@ -1,9 +1,15 @@
+import React from "react";
+
 import { useRouter } from "next/router";
-import { ArrowRightAlt, CloseFullscreen, East, OpenInFull } from "@mui/icons-material";
+
+// headless ui
+import { Listbox, Transition } from "@headlessui/react";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
 import { Icon } from "components/ui";
+// icons
+import { East } from "@mui/icons-material";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // store
@@ -72,37 +78,59 @@ export const PeekOverviewHeader: React.FC<Props> = (props) => {
               />
             </button>
           )}
-          {/* <Link href={`/${workspaceSlug}/projects/${issue?.project}/issues/${issue?.id}`}>
-            <a>
-              <OpenInFull
-                sx={{
-                  fontSize: "14px",
-                }}
-              />
-            </a>
-          </Link> */}
-          {/* <CustomSelect
-            value={mode}
-            onChange={(val: TPeekOverviewModes) => setMode(val)}
-            customButton={
-              <button type="button" className={`grid place-items-center ${mode === "full" ? "rotate-45" : ""}`}>
-                <Icon iconName={peekModes.find((m) => m.key === mode)?.icon ?? ""} />
-              </button>
-            }
-            position="left"
+          <Listbox
+            as="div"
+            value={issueDetailStore.peekMode}
+            onChange={(val) => issueDetailStore.setPeekMode(val)}
+            className="relative flex-shrink-0 text-left"
           >
-            {peekModes.map((mode) => (
-              <CustomSelect.Option key={mode.key} value={mode.key}>
-                <div className="flex items-center gap-1.5">
-                  <Icon
-                    iconName={mode.icon}
-                    className={`!text-base flex-shrink-0 -my-1 ${mode.key === "full" ? "rotate-45" : ""}`}
-                  />
-                  {mode.label}
+            <Listbox.Button
+              className={`grid place-items-center ${issueDetailStore.peekMode === "full" ? "rotate-45" : ""}`}
+            >
+              <Icon iconName={peekModes.find((m) => m.key === issueDetailStore.peekMode)?.icon ?? ""} />
+            </Listbox.Button>
+
+            <Transition
+              as={React.Fragment}
+              enter="transition ease-out duration-100"
+              enterFrom="transform opacity-0 scale-95"
+              enterTo="transform opacity-100 scale-100"
+              leave="transition ease-in duration-75"
+              leaveFrom="transform opacity-100 scale-100"
+              leaveTo="transform opacity-0 scale-95"
+            >
+              <Listbox.Options className="absolute z-10 border border-custom-border-300 mt-1 overflow-y-auto rounded-md bg-custom-background-90 text-xs shadow-lg focus:outline-none left-0 origin-top-left min-w-[8rem] whitespace-nowrap">
+                <div className="space-y-1 p-2">
+                  {peekModes.map((mode) => (
+                    <Listbox.Option
+                      key={mode.key}
+                      value={mode.key}
+                      className={({ active, selected }) =>
+                        `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
+                          active || selected ? "bg-custom-background-80" : ""
+                        } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                      }
+                    >
+                      {({ selected }) => (
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1.5">
+                              <Icon
+                                iconName={mode.icon}
+                                className={`!text-base flex-shrink-0 -my-1 ${mode.key === "full" ? "rotate-45" : ""}`}
+                              />
+                              {mode.label}
+                            </div>
+                          </div>
+                          {selected && <Icon iconName="done" />}
+                        </div>
+                      )}
+                    </Listbox.Option>
+                  ))}
                 </div>
-              </CustomSelect.Option>
-            ))}
-          </CustomSelect> */}
+              </Listbox.Options>
+            </Transition>
+          </Listbox>
         </div>
         {(issueDetailStore.peekMode === "side" || issueDetailStore.peekMode === "modal") && (
           <div className="flex items-center gap-2 flex-shrink-0">
