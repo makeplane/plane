@@ -28,8 +28,9 @@ class UserStore implements IUserStore {
   }
 
   setCurrentUser = (user: any) => {
-    // TODO: destructure user object
-    this.currentUser = user;
+    runInAction(() => {
+      this.currentUser = { ...user };
+    });
   };
 
   /**
