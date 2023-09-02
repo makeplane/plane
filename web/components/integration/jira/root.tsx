@@ -31,7 +31,7 @@ import {
   jiraFormDefaultValues,
   TJiraIntegrationSteps,
   IJiraIntegrationData,
-} from "./";
+} from ".";
 
 import JiraLogo from "public/services/jira.png";
 

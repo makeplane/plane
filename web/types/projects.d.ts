@@ -8,7 +8,7 @@ import type {
   TIssueOrderByOptions,
   TIssueViewOptions,
   TStateGroups,
-} from "./";
+} from ".";
 
 export interface IProject {
   archive_in: number;

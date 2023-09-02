@@ -20,7 +20,7 @@ import { IJiraImporterForm, IJiraMetadata } from "types";
 // components
 import { Spinner, ToggleSwitch } from "components/ui";
 
-import type { IJiraIntegrationData, TJiraIntegrationSteps } from "./";
+import type { IJiraIntegrationData, TJiraIntegrationSteps } from ".";
 
 type Props = {
   setCurrentStep: React.Dispatch<React.SetStateAction<IJiraIntegrationData>>;

@@ -7,7 +7,7 @@ import {
   NestedKeyOf,
   Properties,
   TStateGroups,
-} from "./";
+} from ".";
 
 export interface IUser {
   avatar: string;
