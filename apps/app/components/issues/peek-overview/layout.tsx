@@ -151,35 +151,37 @@ export const IssuePeekOverview: React.FC<Props> = observer(
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
               >
-                <Dialog.Panel
-                  className={`fixed z-20 bg-custom-background-100 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg shadow-custom-shadow-xl transition-all duration-300 ${
-                    peekOverviewMode === "modal" ? "h-[70%] w-3/5" : "h-[95%] w-[95%]"
-                  }`}
-                >
-                  {peekOverviewMode === "modal" && (
-                    <SidePeekView
-                      handleClose={handleClose}
-                      handleDeleteIssue={() => setDeleteIssueModal(true)}
-                      handleUpdateIssue={handleUpdateIssue}
-                      issue={issue}
-                      mode={peekOverviewMode}
-                      readOnly={readOnly}
-                      setMode={(mode) => setPeekOverviewMode(mode)}
-                      workspaceSlug={workspaceSlug}
-                    />
-                  )}
-                  {peekOverviewMode === "full" && (
-                    <FullScreenPeekView
-                      handleClose={handleClose}
-                      handleDeleteIssue={() => setDeleteIssueModal(true)}
-                      handleUpdateIssue={handleUpdateIssue}
-                      issue={issue}
-                      mode={peekOverviewMode}
-                      readOnly={readOnly}
-                      setMode={(mode) => setPeekOverviewMode(mode)}
-                      workspaceSlug={workspaceSlug}
-                    />
-                  )}
+                <Dialog.Panel>
+                  <div
+                    className={`fixed z-20 bg-custom-background-100 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg shadow-custom-shadow-xl transition-all duration-300 ${
+                      peekOverviewMode === "modal" ? "h-[70%] w-3/5" : "h-[95%] w-[95%]"
+                    }`}
+                  >
+                    {peekOverviewMode === "modal" && (
+                      <SidePeekView
+                        handleClose={handleClose}
+                        handleDeleteIssue={() => setDeleteIssueModal(true)}
+                        handleUpdateIssue={handleUpdateIssue}
+                        issue={issue}
+                        mode={peekOverviewMode}
+                        readOnly={readOnly}
+                        setMode={(mode) => setPeekOverviewMode(mode)}
+                        workspaceSlug={workspaceSlug}
+                      />
+                    )}
+                    {peekOverviewMode === "full" && (
+                      <FullScreenPeekView
+                        handleClose={handleClose}
+                        handleDeleteIssue={() => setDeleteIssueModal(true)}
+                        handleUpdateIssue={handleUpdateIssue}
+                        issue={issue}
+                        mode={peekOverviewMode}
+                        readOnly={readOnly}
+                        setMode={(mode) => setPeekOverviewMode(mode)}
+                        workspaceSlug={workspaceSlug}
+                      />
+                    )}
+                  </div>
                 </Dialog.Panel>
               </Transition.Child>
             </div>
