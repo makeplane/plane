@@ -1,12 +1,13 @@
 // next imports
 import Image from "next/image";
+import notFoundImage from "public/404.svg"
 
 const Custom404Error = () => (
   <div className="relative w-screen min-h-screen h-full flex justify-center items-center py-5">
     <div className="max-w-[700px] space-y-5">
       <div className="flex items-center flex-col gap-3 text-center">
         <div className="relative w-[240px] h-[240px]">
-          <Image src={`/404.svg`} layout="fill" alt="404- Page not found" />
+          <Image src={notFoundImage} layout="fill" alt="404- Page not found" />
         </div>
         <div className="text-xl font-medium">Oops! Something went wrong.</div>
         <div className="text-sm text-custom-text-200">

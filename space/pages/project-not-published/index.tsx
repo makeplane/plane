@@ -1,12 +1,13 @@
 // next imports
 import Image from "next/image";
+import projectNotPublishedImage from "public/project-not-published.svg"
 
 const CustomProjectNotPublishedError = () => (
   <div className="relative w-screen min-h-screen h-full flex justify-center items-center py-5">
     <div className="max-w-[700px] space-y-5">
       <div className="flex items-center flex-col gap-3 text-center">
         <div className="relative w-[240px] h-[240px]">
-          <Image src={`/project-not-published.svg`} layout="fill" alt="404- Page not found" />
+          <Image src={projectNotPublishedImage} layout="fill" alt="404- Page not found" />
         </div>
         <div className="text-xl font-medium">
           Oops! The page you{`'`}re looking for isn{`'`}t live at the moment.
