@@ -7,7 +7,7 @@ ENV NEXT_PUBLIC_API_BASE_URL=http://NEXT_PUBLIC_API_BASE_URL_PLACEHOLDER
 RUN yarn global add turbo
 COPY . .
 
-RUN turbo prune --scope=app --docker
+RUN turbo prune --scope=web --docker
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM node:18-alpine AS installer
