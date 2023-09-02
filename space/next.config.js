@@ -7,7 +7,7 @@ const nextConfig = withImages({
   reactStrictMode: false,
   swcMinify: true,
   experimental: {
-    outputFileTracingRoot: path.join(__dirname, "../../"),
+    outputFileTracingRoot: path.join(__dirname, "../"),
   },
   output: "standalone",
 });
