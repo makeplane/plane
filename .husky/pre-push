@@ -3,8 +3,8 @@
 
 changed_files=$(git diff --name-only HEAD~1)
 
-app_changed=$(echo "$changed_files" | grep -E '^apps/app/' || true)
-space_changed=$(echo "$changed_files" | grep -E '^apps/space/' || true)
+app_changed=$(echo "$changed_files" | grep -E '^web/' || true)
+space_changed=$(echo "$changed_files" | grep -E '^space/' || true)
 echo $app_changed
 echo $space_changed
 
