@@ -40,6 +40,7 @@ services:
                         context: .
                         dockerfile: ./apps/app/Dockerfile.web
                         args:
+                                DOCKER_BUILDKIT: 1
                                 NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
                                 NEXT_PUBLIC_DEPLOY_URL: http://localhost/spaces
                 restart: always
@@ -47,31 +48,54 @@ services:
                 env_file:
                         - .env
                 environment:
-                        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
-                        NEXT_PUBLIC_DEPLOY_URL: ${NEXT_PUBLIC_DEPLOY_URL}
-                        NEXT_PUBLIC_GOOGLE_CLIENTID: "0"
-                        NEXT_PUBLIC_GITHUB_APP_NAME: "0"
-                        NEXT_PUBLIC_GITHUB_ID: "0"
-                        NEXT_PUBLIC_SENTRY_DSN: "0"
-                        NEXT_PUBLIC_ENABLE_OAUTH: "0"
-                        NEXT_PUBLIC_ENABLE_SENTRY: "0"
-                        NEXT_PUBLIC_ENABLE_SESSION_RECORDER: "0"
-                        NEXT_PUBLIC_TRACK_EVENTS: "0"
+                        - NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
+                        - NEXT_PUBLIC_DEPLOY_URL=${NEXT_PUBLIC_DEPLOY_URL}
+                        - NEXT_PUBLIC_GOOGLE_CLIENTID="0"
+                        - NEXT_PUBLIC_GITHUB_APP_NAME="0"
+                        - NEXT_PUBLIC_GITHUB_ID="0"
+                        - NEXT_PUBLIC_SENTRY_DSN="0"
+                        - NEXT_PUBLIC_ENABLE_OAUTH="0"
+                        - NEXT_PUBLIC_ENABLE_SENTRY="0"
+                        - NEXT_PUBLIC_ENABLE_SESSION_RECORDER="0"
+                        - NEXT_PUBLIC_TRACK_EVENTS="0"
                 depends_on:
                         - plane-api
                         - plane-worker
+
+        plane-deploy:
+                 container_name: planedeploy
+                 build:
+                         context: .
+                         dockerfile: ./apps/space/Dockerfile.space
+                         args:
+                                DOCKER_BUILDKIT: 1
+                                NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+                 restart: always
+                 command: /usr/local/bin/start.sh apps/space/server.js space
+                 env_file:
+                         - .env
+                 environment:
+                         - NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
+                 depends_on:
+                         - plane-api
+                         - plane-worker
+                         - plane-web
 
         plane-api:
                 container_name: planebackend
                 build:
                         context: ./apiserver
                         dockerfile: Dockerfile.api
+                        args:
+                                DOCKER_BUILDKIT: 1
                 restart: always
                 command: ./bin/takeoff
                 env_file:
                         - .env
                 environment:
                         <<: *api-and-worker-env
+                ports:
+                   - 8000:8000
                 depends_on:
                         - plane-db
                         - plane-redis
@@ -81,6 +105,8 @@ services:
                 build:
                         context: ./apiserver
                         dockerfile: Dockerfile.api
+                        args:
+                                DOCKER_BUILDKIT: 1
                 restart: always
                 command: ./bin/worker
                 env_file:
@@ -97,6 +123,8 @@ services:
                 build:
                         context: ./apiserver
                         dockerfile: Dockerfile.api
+                        args:
+                                DOCKER_BUILDKIT: 1
                 restart: always
                 command: ./bin/beat
                 env_file:
@@ -158,6 +186,8 @@ services:
                 build:
                         context: ./nginx
                         dockerfile: Dockerfile
+                        args:
+                                DOCKER_BUILDKIT: 1
                 restart: always
                 ports:
                         - ${NGINX_PORT}:80
