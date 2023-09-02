@@ -7,16 +7,19 @@
     "packages/*"
   ],
   "scripts": {
+    "prepare": "husky install",
     "build": "turbo run build",
     "dev": "turbo run dev",
     "start": "turbo run start",
     "lint": "turbo run lint",
     "clean": "turbo run clean"
   },
+
   "devDependencies": {
     "eslint-config-custom": "*",
     "prettier": "latest",
-    "turbo": "latest"
+    "turbo": "latest",
+    "husky": "^8.0.3"
   },
   "packageManager": "yarn@1.22.19"
 }
