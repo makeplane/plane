@@ -52,6 +52,7 @@ COPY --from=installer /app/apps/space/package.json .
 COPY --from=installer --chown=captain:plane /app/apps/space/.next/standalone ./
 
 COPY --from=installer --chown=captain:plane /app/apps/space/.next ./apps/space/.next
+COPY --from=installer --chown=captain:plane /app/apps/space/public ./apps/space/public
 
 ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL \
