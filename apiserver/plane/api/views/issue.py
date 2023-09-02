@@ -21,7 +21,7 @@ from django.db.models import (
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
-from django.db.models.functions import Coalesce
+from django.db import IntegrityError
 from django.conf import settings
 
 # Third Party imports
@@ -1993,6 +1993,8 @@ class IssueVotePublicViewSet(BaseViewSet):
             )
             serializer = IssueVoteSerializer(issue_vote)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except IntegrityError:
+            return Response({"error": "Reaction already exists"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             capture_exception(e)
             return Response(
