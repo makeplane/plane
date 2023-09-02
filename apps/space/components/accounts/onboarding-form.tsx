@@ -61,7 +61,7 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
       .updateMe(payload)
       .then((response) => {
         userStore.setCurrentUser(response);
-        router.push(next_path?.toString() || "/");
+        router.push(next_path?.toString() || "/", next_path?.toString() || "/");
         setToastAlert({
           type: "success",
           title: "Success!",

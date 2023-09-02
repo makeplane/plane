@@ -1,8 +1,7 @@
 import React, { useEffect } from "react";
 import Image from "next/image";
 // assets
-import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
-import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
+import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.svg";
 // mobx
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 // assets
-import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
+import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.svg";
 // mobx
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -35,10 +35,10 @@ const HomePage = () => {
     userStore.setCurrentUser(response?.user);
 
     if (!isOnboarded) {
-      router.push(`/onboarding?next_path=${next_path}`);
+      router.push(`/onboarding?next_path=${next_path}`, `/onboarding?next_path=${next_path}`);
       return;
     }
-    router.push(next_path.toString());
+    router.push(next_path.toString(), next_path.toString());
   };
 
   const handleGoogleSignIn = async ({ clientId, credential }: any) => {

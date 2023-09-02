@@ -42,7 +42,8 @@ export const IssuePeekOverview: React.FC<Props> = observer((props) => {
           board,
         },
       },
-      undefined,
+      // eslint-disable-next-line turbo/no-undeclared-env-vars
+      `/${workspace_slug?.toString()}/${project_slug}`,
       { shallow: true }
     );
   };

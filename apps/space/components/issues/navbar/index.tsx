@@ -41,7 +41,7 @@ const IssueNavbar = observer(() => {
       if (board) {
         projectStore.setActiveBoard(board.toString());
       } else {
-        router.push(`/${workspace_slug}/${project_slug}?board=list`);
+        router.push(`/[workspace_slug]/[project_slug]?board=list`, `/${workspace_slug}/${project_slug}?board=list`);
         projectStore.setActiveBoard("list");
       }
     }

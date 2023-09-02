@@ -5,8 +5,8 @@ import { useRouter } from "next/router";
 // next-themes
 import { useTheme } from "next-themes";
 // images
-import githubBlackImage from "/public/logos/github-black.png";
-import githubWhiteImage from "/public/logos/github-white.png";
+import githubBlackImage from "public/logos/github-black.svg";
+import githubWhiteImage from "public/logos/github-white.svg";
 
 export interface GithubLoginButtonProps {
   handleSignIn: React.Dispatch<string>;
