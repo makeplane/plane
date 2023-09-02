@@ -21,7 +21,7 @@ from django.db.models import (
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
-from django.db.models.functions import Coalesce
+from django.db import IntegrityError
 from django.conf import settings
 
 # Third Party imports
@@ -1545,32 +1545,35 @@ class IssueCommentPublicViewSet(BaseViewSet):
         return super(IssueCommentPublicViewSet, self).get_permissions()
 
     def get_queryset(self):
-        project_deploy_board = ProjectDeployBoard.objects.get(
-            workspace__slug=self.kwargs.get("slug"),
-            project_id=self.kwargs.get("project_id"),
-        )
-        if project_deploy_board.comments:
-            return self.filter_queryset(
-                super()
-                .get_queryset()
-                .filter(workspace__slug=self.kwargs.get("slug"))
-                .filter(issue_id=self.kwargs.get("issue_id"))
-                .filter(access="EXTERNAL")
-                .select_related("project")
-                .select_related("workspace")
-                .select_related("issue")
-                .annotate(
-                    is_member=Exists(
-                        ProjectMember.objects.filter(
-                            workspace__slug=self.kwargs.get("slug"),
-                            project_id=self.kwargs.get("project_id"),
-                            member_id=self.request.user.id,
+        try:
+            project_deploy_board = ProjectDeployBoard.objects.get(
+                workspace__slug=self.kwargs.get("slug"),
+                project_id=self.kwargs.get("project_id"),
+            )
+            if project_deploy_board.comments:
+                return self.filter_queryset(
+                    super()
+                    .get_queryset()
+                    .filter(workspace__slug=self.kwargs.get("slug"))
+                    .filter(issue_id=self.kwargs.get("issue_id"))
+                    .filter(access="EXTERNAL")
+                    .select_related("project")
+                    .select_related("workspace")
+                    .select_related("issue")
+                    .annotate(
+                        is_member=Exists(
+                            ProjectMember.objects.filter(
+                                workspace__slug=self.kwargs.get("slug"),
+                                project_id=self.kwargs.get("project_id"),
+                                member_id=self.request.user.id,
+                            )
                         )
                     )
+                    .distinct()
                 )
-                .distinct()
-            )
-        else:
+            else:
+                return IssueComment.objects.none()
+        except ProjectDeployBoard.DoesNotExist:
             return IssueComment.objects.none()
 
     def create(self, request, slug, project_id, issue_id):
@@ -1703,21 +1706,24 @@ class IssueReactionPublicViewSet(BaseViewSet):
     model = IssueReaction
 
     def get_queryset(self):
-        project_deploy_board = ProjectDeployBoard.objects.get(
-            workspace__slug=self.kwargs.get("slug"),
-            project_id=self.kwargs.get("project_id"),
-        )
-        if project_deploy_board.reactions:
-            return (
-                super()
-                .get_queryset()
-                .filter(workspace__slug=self.kwargs.get("slug"))
-                .filter(project_id=self.kwargs.get("project_id"))
-                .filter(issue_id=self.kwargs.get("issue_id"))
-                .order_by("-created_at")
-                .distinct()
+        try:
+            project_deploy_board = ProjectDeployBoard.objects.get(
+                workspace__slug=self.kwargs.get("slug"),
+                project_id=self.kwargs.get("project_id"),
             )
-        else:
+            if project_deploy_board.reactions:
+                return (
+                    super()
+                    .get_queryset()
+                    .filter(workspace__slug=self.kwargs.get("slug"))
+                    .filter(project_id=self.kwargs.get("project_id"))
+                    .filter(issue_id=self.kwargs.get("issue_id"))
+                    .order_by("-created_at")
+                    .distinct()
+                )
+            else:
+                return IssueReaction.objects.none()
+        except ProjectDeployBoard.DoesNotExist:
             return IssueReaction.objects.none()
 
     def create(self, request, slug, project_id, issue_id):
@@ -1818,21 +1824,24 @@ class CommentReactionPublicViewSet(BaseViewSet):
     model = CommentReaction
 
     def get_queryset(self):
-        project_deploy_board = ProjectDeployBoard.objects.get(
-            workspace__slug=self.kwargs.get("slug"),
-            project_id=self.kwargs.get("project_id"),
-        )
-        if project_deploy_board.reactions:
-            return (
-                super()
-                .get_queryset()
-                .filter(workspace__slug=self.kwargs.get("slug"))
-                .filter(project_id=self.kwargs.get("project_id"))
-                .filter(comment_id=self.kwargs.get("comment_id"))
-                .order_by("-created_at")
-                .distinct()
+        try:
+            project_deploy_board = ProjectDeployBoard.objects.get(
+                workspace__slug=self.kwargs.get("slug"),
+                project_id=self.kwargs.get("project_id"),
             )
-        else:
+            if project_deploy_board.reactions:
+                return (
+                    super()
+                    .get_queryset()
+                    .filter(workspace__slug=self.kwargs.get("slug"))
+                    .filter(project_id=self.kwargs.get("project_id"))
+                    .filter(comment_id=self.kwargs.get("comment_id"))
+                    .order_by("-created_at")
+                    .distinct()
+                )
+            else:
+                return CommentReaction.objects.none()
+        except ProjectDeployBoard.DoesNotExist:
             return CommentReaction.objects.none()
 
     def create(self, request, slug, project_id, comment_id):
@@ -1939,13 +1948,23 @@ class IssueVotePublicViewSet(BaseViewSet):
     serializer_class = IssueVoteSerializer
 
     def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(project_id=self.kwargs.get("project_id"))
-        )
+        try:
+            project_deploy_board = ProjectDeployBoard.objects.get(
+                workspace__slug=self.kwargs.get("slug"),
+                project_id=self.kwargs.get("project_id"),
+            )
+            if project_deploy_board.votes:
+                return (
+                    super()
+                    .get_queryset()
+                    .filter(issue_id=self.kwargs.get("issue_id"))
+                    .filter(workspace__slug=self.kwargs.get("slug"))
+                    .filter(project_id=self.kwargs.get("project_id"))
+                )
+            else:
+                return IssueVote.objects.none()
+        except ProjectDeployBoard.DoesNotExist:
+            return IssueVote.objects.none()
 
     def create(self, request, slug, project_id, issue_id):
         try:
@@ -1974,6 +1993,8 @@ class IssueVotePublicViewSet(BaseViewSet):
             )
             serializer = IssueVoteSerializer(issue_vote)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except IntegrityError:
+            return Response({"error": "Reaction already exists"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             capture_exception(e)
             return Response(
