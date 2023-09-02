@@ -3,7 +3,8 @@
   "license": "AGPL-3.0",
   "private": true,
   "workspaces": [
-    "apps/*",
+    "web",
+    "space",
     "packages/*"
   ],
   "scripts": {
