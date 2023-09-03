@@ -1,5 +1,5 @@
 import { Plugin, PluginKey } from "@tiptap/pm/state";
-import { Node as ProseMirrorNode } from '@tiptap/pm/model';
+import { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import fileService from "services/file.service";
 
 const deleteKey = new PluginKey("delete-image");
@@ -14,13 +14,13 @@ const TrackImageDeletionPlugin = () =>
         const removedImages: ProseMirrorNode[] = [];
 
         oldState.doc.descendants((oldNode, oldPos) => {
-          if (oldNode.type.name !== 'image') return;
+          if (oldNode.type.name !== "image") return;
 
           if (!newState.doc.resolve(oldPos).parent) return;
           const newNode = newState.doc.nodeAt(oldPos);
 
           // Check if the node has been deleted or replaced
-          if (!newNode || newNode.type.name !== 'image') {
+          if (!newNode || newNode.type.name !== "image") {
             // Check if the node still exists elsewhere in the document
             let nodeExists = false;
             newState.doc.descendants((node) => {

@@ -1,6 +1,6 @@
 // next imports
 import Image from "next/image";
-import notFoundImage from "public/404.svg"
+import notFoundImage from "public/404.svg";
 
 const Custom404Error = () => (
   <div className="relative w-screen min-h-screen h-full flex justify-center items-center py-5">

@@ -51,7 +51,7 @@ export const CommandPalette: React.FC = observer(() => {
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
     workspaceSlug && projectId && issueId
       ? () =>
-        issuesService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
+          issuesService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
       : null
   );
 
@@ -89,37 +89,37 @@ export const CommandPalette: React.FC = observer(() => {
       )
         return;
 
-        if (cmdClicked) {
-          if (keyPressed === "k") {
-            e.preventDefault();
-            setIsPaletteOpen(true);
-          } else if (keyPressed === "c" && altKey) {
-            e.preventDefault();
-            copyIssueUrlToClipboard();
-          } else if (keyPressed === "b") {
-            e.preventDefault();
-            store.theme.setSidebarCollapsed(!store?.theme?.sidebarCollapsed);
-          }
-        } else {
-          if (keyPressed === "c") {
-            setIsIssueModalOpen(true);
-          } else if (keyPressed === "p") {
-            setIsProjectModalOpen(true);
-          } else if (keyPressed === "v") {
-            setIsCreateViewModalOpen(true);
-          } else if (keyPressed === "d") {
-            setIsCreateUpdatePageModalOpen(true);
-          } else if (keyPressed === "h") {
-            setIsShortcutsModalOpen(true);
-          } else if (keyPressed === "q") {
-            setIsCreateCycleModalOpen(true);
-          } else if (keyPressed === "m") {
-            setIsCreateModuleModalOpen(true);
-          } else if (keyPressed === "backspace" || keyPressed === "delete") {
-            e.preventDefault();
-            setIsBulkDeleteIssuesModalOpen(true);
-          }
+      if (cmdClicked) {
+        if (keyPressed === "k") {
+          e.preventDefault();
+          setIsPaletteOpen(true);
+        } else if (keyPressed === "c" && altKey) {
+          e.preventDefault();
+          copyIssueUrlToClipboard();
+        } else if (keyPressed === "b") {
+          e.preventDefault();
+          store.theme.setSidebarCollapsed(!store?.theme?.sidebarCollapsed);
         }
+      } else {
+        if (keyPressed === "c") {
+          setIsIssueModalOpen(true);
+        } else if (keyPressed === "p") {
+          setIsProjectModalOpen(true);
+        } else if (keyPressed === "v") {
+          setIsCreateViewModalOpen(true);
+        } else if (keyPressed === "d") {
+          setIsCreateUpdatePageModalOpen(true);
+        } else if (keyPressed === "h") {
+          setIsShortcutsModalOpen(true);
+        } else if (keyPressed === "q") {
+          setIsCreateCycleModalOpen(true);
+        } else if (keyPressed === "m") {
+          setIsCreateModuleModalOpen(true);
+        } else if (keyPressed === "backspace" || keyPressed === "delete") {
+          e.preventDefault();
+          setIsBulkDeleteIssuesModalOpen(true);
+        }
+      }
     },
     [copyIssueUrlToClipboard]
   );
@@ -196,4 +196,4 @@ export const CommandPalette: React.FC = observer(() => {
       />
     </>
   );
-})
+});

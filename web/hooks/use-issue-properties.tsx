@@ -68,7 +68,7 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
             ({
               ...prev,
               properties: { ...prev?.properties, [key]: !prev?.properties?.[key] },
-            } as IssuePriorities),
+            }) as IssuePriorities,
           false
         );
         if (Object.keys(issueProperties).length > 0) {

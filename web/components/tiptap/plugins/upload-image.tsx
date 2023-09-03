@@ -22,10 +22,7 @@ const UploadImagesPlugin = () =>
           const placeholder = document.createElement("div");
           placeholder.setAttribute("class", "img-placeholder");
           const image = document.createElement("img");
-          image.setAttribute(
-            "class",
-            "opacity-10 rounded-lg border border-custom-border-300",
-          );
+          image.setAttribute("class", "opacity-10 rounded-lg border border-custom-border-300");
           image.src = src;
           placeholder.appendChild(image);
           const deco = Decoration.widget(pos + 1, placeholder, {
@@ -57,7 +54,13 @@ function findPlaceholder(state: EditorState, id: {}) {
   return found.length ? found[0].from : null;
 }
 
-export async function startImageUpload(file: File, view: EditorView, pos: number, workspaceSlug: string, setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void) {
+export async function startImageUpload(
+  file: File,
+  view: EditorView,
+  pos: number,
+  workspaceSlug: string,
+  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
+) {
   if (!file.type.includes("image/")) {
     return;
   }
@@ -83,7 +86,7 @@ export async function startImageUpload(file: File, view: EditorView, pos: number
   if (!workspaceSlug) {
     return;
   }
-  setIsSubmitting?.("submitting")
+  setIsSubmitting?.("submitting");
   const src = await UploadImageHandler(file, workspaceSlug);
   const { schema } = view.state;
   pos = findPlaceholder(view.state, id);

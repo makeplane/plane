@@ -115,8 +115,9 @@ export const TableMenu = ({ editor }: { editor: any }) => {
 
   return (
     <section
-      className={`fixed left-1/2 transform -translate-x-1/2 overflow-hidden rounded border border-custom-border-300 bg-custom-background-100 shadow-custom-shadow-sm p-1 ${isOpen ? "block" : "hidden"
-        }`}
+      className={`fixed left-1/2 transform -translate-x-1/2 overflow-hidden rounded border border-custom-border-300 bg-custom-background-100 shadow-custom-shadow-sm p-1 ${
+        isOpen ? "block" : "hidden"
+      }`}
       style={{
         bottom: `calc(100vh - ${tableLocation.bottom + 45}px)`,
         left: `${tableLocation.left}px`,

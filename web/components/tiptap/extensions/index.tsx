@@ -13,7 +13,7 @@ import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { lowlight } from "lowlight/lib/core";
 import SlashCommand from "../slash-command";
 import { InputRule } from "@tiptap/core";
-import Gapcursor from '@tiptap/extension-gapcursor'
+import Gapcursor from "@tiptap/extension-gapcursor";
 
 import ts from "highlight.js/lib/languages/typescript";
 
@@ -28,7 +28,10 @@ import { TableRow } from "@tiptap/extension-table-row";
 
 lowlight.registerLanguage("ts", ts);
 
-export const TiptapExtensions = (workspaceSlug: string, setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void) => [
+export const TiptapExtensions = (
+  workspaceSlug: string,
+  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
+) => [
   StarterKit.configure({
     bulletList: {
       HTMLAttributes: {
@@ -111,7 +114,7 @@ export const TiptapExtensions = (workspaceSlug: string, setIsSubmitting?: (isSub
         return `Heading ${node.attrs.level}`;
       }
       if (node.type.name === "image" || node.type.name === "table") {
-        return ""
+        return "";
       }
 
       return "Press '/' for commands...";
@@ -146,5 +149,5 @@ export const TiptapExtensions = (workspaceSlug: string, setIsSubmitting?: (isSub
   Table,
   TableHeader,
   CustomTableCell,
-  TableRow
+  TableRow,
 ];

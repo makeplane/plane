@@ -221,17 +221,16 @@ class ProjectIssuesServices extends APIService {
       metadata: any;
       title: string;
       url: string;
-    },
-
+    }
   ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-links/${linkId}/`,
       data
     )
-    .then((response) => response?.data)
-    .catch((error) => {
-      throw error?.response;
-    });
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
   }
 
   async deleteModuleLink(

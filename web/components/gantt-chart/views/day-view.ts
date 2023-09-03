@@ -72,7 +72,12 @@ export const getAllDaysInMonth = (month: number, year: number) => {
       dayData: weeks[date.getDay()],
       weekNumber: getWeekNumberByDate(date),
       title: `${weeks[date.getDay()].shortTitle} ${_day + 1}`,
-      today: currentDate.getFullYear() === year && currentDate.getMonth() === month && currentDate.getDate() === (_day + 1) ? true : false,
+      today:
+        currentDate.getFullYear() === year &&
+        currentDate.getMonth() === month &&
+        currentDate.getDate() === _day + 1
+          ? true
+          : false,
     });
   });
 
@@ -180,7 +185,10 @@ export const generateMonthDataByYear = (
       renderPayload.push(generateMonthDataByMonth(currentMonth, currentYear));
     }
 
-  const scrollWidth = ((renderPayload.map((monthData: any) => monthData.children.length)).reduce((partialSum: number, a: number) => partialSum + a, 0)) * monthPayload.data.width;
+  const scrollWidth =
+    renderPayload
+      .map((monthData: any) => monthData.children.length)
+      .reduce((partialSum: number, a: number) => partialSum + a, 0) * monthPayload.data.width;
 
   return { state: renderState, payload: renderPayload, scrollWidth: scrollWidth };
 };

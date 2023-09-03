@@ -210,7 +210,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
         <Tooltip tooltipContent="Snooze">
           <div>
             <CustomMenu
-              menuButtonOnClick={(e: { stopPropagation: () => void; }) => {
+              menuButtonOnClick={(e: { stopPropagation: () => void }) => {
                 e.stopPropagation();
               }}
               customButton={

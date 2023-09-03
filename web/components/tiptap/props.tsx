@@ -2,7 +2,10 @@ import { EditorProps } from "@tiptap/pm/view";
 import { startImageUpload } from "./plugins/upload-image";
 import { findTableAncestor } from "./table-menu";
 
-export function TiptapEditorProps(workspaceSlug: string, setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void): EditorProps {
+export function TiptapEditorProps(
+  workspaceSlug: string,
+  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
+): EditorProps {
   return {
     attributes: {
       class: `prose prose-brand max-w-full prose-headings:font-display font-default focus:outline-none`,
@@ -28,11 +31,7 @@ export function TiptapEditorProps(workspaceSlug: string, setIsSubmitting?: (isSu
           }
         }
       }
-      if (
-        event.clipboardData &&
-        event.clipboardData.files &&
-        event.clipboardData.files[0]
-      ) {
+      if (event.clipboardData && event.clipboardData.files && event.clipboardData.files[0]) {
         event.preventDefault();
         const file = event.clipboardData.files[0];
         const pos = view.state.selection.from;
@@ -51,12 +50,7 @@ export function TiptapEditorProps(workspaceSlug: string, setIsSubmitting?: (isSu
           }
         }
       }
-      if (
-        !moved &&
-        event.dataTransfer &&
-        event.dataTransfer.files &&
-        event.dataTransfer.files[0]
-      ) {
+      if (!moved && event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
         event.preventDefault();
         const file = event.dataTransfer.files[0];
         const coordinates = view.posAtCoords({

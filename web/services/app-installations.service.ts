@@ -17,7 +17,12 @@ class AppInstallationsService extends APIService {
       });
   }
 
-  async addSlackChannel(workspaceSlug: string, projectId: string, integrationId: string | null | undefined, data: any): Promise<any> {
+  async addSlackChannel(
+    workspaceSlug: string,
+    projectId: string,
+    integrationId: string | null | undefined,
+    data: any
+  ): Promise<any> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/workspace-integrations/${integrationId}/project-slack-sync/`,
       data
@@ -28,7 +33,11 @@ class AppInstallationsService extends APIService {
       });
   }
 
-  async getSlackChannelDetail(workspaceSlug: string, projectId: string, integrationId: string | null | undefined): Promise<any> {
+  async getSlackChannelDetail(
+    workspaceSlug: string,
+    projectId: string,
+    integrationId: string | null | undefined
+  ): Promise<any> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/workspace-integrations/${integrationId}/project-slack-sync/`
     )
@@ -38,7 +47,12 @@ class AppInstallationsService extends APIService {
       });
   }
 
-  async removeSlackChannel(workspaceSlug: string, projectId: string, integrationId: string | null | undefined, slackSyncId: string | undefined): Promise<any> {
+  async removeSlackChannel(
+    workspaceSlug: string,
+    projectId: string,
+    integrationId: string | null | undefined,
+    slackSyncId: string | undefined
+  ): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/workspace-integrations/${integrationId}/project-slack-sync/${slackSyncId}`
     )

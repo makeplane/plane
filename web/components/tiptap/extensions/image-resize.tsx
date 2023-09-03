@@ -3,9 +3,7 @@ import Moveable from "react-moveable";
 
 export const ImageResizer = ({ editor }: { editor: Editor }) => {
   const updateMediaSize = () => {
-    const imageInfo = document.querySelector(
-      ".ProseMirror-selectednode",
-    ) as HTMLImageElement;
+    const imageInfo = document.querySelector(".ProseMirror-selectednode") as HTMLImageElement;
     if (imageInfo) {
       const selection = editor.state.selection;
       editor.commands.setImage({
@@ -28,13 +26,7 @@ export const ImageResizer = ({ editor }: { editor: Editor }) => {
         keepRatio={true}
         resizable={true}
         throttleResize={0}
-        onResize={({
-          target,
-          width,
-          height,
-          delta,
-        }:
-          any) => {
+        onResize={({ target, width, height, delta }: any) => {
           delta[0] && (target!.style.width = `${width}px`);
           delta[1] && (target!.style.height = `${height}px`);
         }}
@@ -43,15 +35,10 @@ export const ImageResizer = ({ editor }: { editor: Editor }) => {
         }}
         scalable={true}
         renderDirections={["w", "e"]}
-        onScale={({
-          target,
-          transform,
-        }:
-          any) => {
+        onScale={({ target, transform }: any) => {
           target!.style.transform = transform;
         }}
       />
     </>
   );
 };
-

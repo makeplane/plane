@@ -1,6 +1,6 @@
 // next imports
 import Image from "next/image";
-import projectNotPublishedImage from "public/project-not-published.svg"
+import projectNotPublishedImage from "public/project-not-published.svg";
 
 const CustomProjectNotPublishedError = () => (
   <div className="relative w-screen min-h-screen h-full flex justify-center items-center py-5">

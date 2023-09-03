@@ -10,7 +10,7 @@ const UpdatedImage = Image.extend({
     return {
       ...this.parent?.(),
       width: {
-        default: '35%',
+        default: "35%",
       },
       height: {
         default: null,

@@ -18,6 +18,6 @@ export default async function handleSlackAuthorize(req: NextApiRequest, res: Nex
   });
 
   // if (response?.data?.ok)
-    res.status(200).json(response.data);
+  res.status(200).json(response.data);
   // else res.status(404).json(response.data);
 }

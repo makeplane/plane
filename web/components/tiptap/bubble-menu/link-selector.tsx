@@ -6,9 +6,8 @@ import isValidHttpUrl from "./utils/link-validator";
 interface LinkSelectorProps {
   editor: Editor;
   isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
-
 
 export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen }) => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -76,7 +75,9 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen 
               <Trash className="h-4 w-4" />
             </button>
           ) : (
-            <button className="flex items-center rounded-sm p-1 text-custom-text-300 transition-all hover:bg-custom-background-90" type="button"
+            <button
+              className="flex items-center rounded-sm p-1 text-custom-text-300 transition-all hover:bg-custom-background-90"
+              type="button"
               onClick={() => {
                 onLinkSubmit();
               }}

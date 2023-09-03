@@ -9,7 +9,6 @@ interface LinkSelectorProps {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-
 export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -52,7 +51,8 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen 
           className="fixed top-full z-[99999] mt-1 flex w-60 overflow-hidden rounded border border-custom-border-300 bg-custom-background-100 dow-xl animate-in fade-in slide-in-from-top-1"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              e.preventDefault(); onLinkSubmit();
+              e.preventDefault();
+              onLinkSubmit();
             }
           }}
         >
@@ -75,7 +75,9 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen 
               <Trash className="h-4 w-4" />
             </button>
           ) : (
-            <button className="flex items-center rounded-sm p-1 text-custom-text-300 transition-all hover:bg-custom-background-90" type="button"
+            <button
+              className="flex items-center rounded-sm p-1 text-custom-text-300 transition-all hover:bg-custom-background-90"
+              type="button"
               onClick={() => {
                 onLinkSubmit();
               }}
