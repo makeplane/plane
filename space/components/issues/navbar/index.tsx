@@ -44,15 +44,19 @@ const IssueNavbar = observer(() => {
   }, [projectStore, workspace_slug, project_slug]);
 
   useEffect(() => {
-    if (workspace_slug && projectStore) {
-      if (board) {
-        projectStore.setActiveBoard(board.toString());
-      } else {
-        router.push(`/${workspace_slug}/${project_slug}?board=list`);
-        projectStore.setActiveBoard("list");
+    if (workspace_slug && project_slug) {
+      if (!board) {
+        router.push({
+          pathname: `/${workspace_slug}/${project_slug}`,
+          query: {
+            board: "list",
+          },
+        });
+        return projectStore.setActiveBoard("list");
       }
+      projectStore.setActiveBoard(board.toString());
     }
-  }, [board, router, projectStore, workspace_slug, project_slug]);
+  }, [board, workspace_slug, project_slug]);
 
   return (
     <div className="px-5 relative w-full flex items-center gap-4">

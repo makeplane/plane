@@ -23,8 +23,7 @@ export const IssueListBlock = observer(({ issue }: { issue: IIssue }) => {
 
   const handleBlockClick = () => {
     issueDetailStore.setPeekId(issue.id);
-    router.replace(
-      `/[workspace_slug]/[project_slug]`,
+    router.push(
       {
         pathname: `/${workspace_slug?.toString()}/${project_slug}`,
         query: {
@@ -32,9 +31,9 @@ export const IssueListBlock = observer(({ issue }: { issue: IIssue }) => {
           peekId: issue.id,
         },
       },
+      undefined,
       { shallow: true }
     );
-    // router.push(`/${workspace_slug?.toString()}/${project_slug}?board=${board?.toString()}&peekId=${issue.id}`);
   };
 
   return (

@@ -14,21 +14,7 @@ export const NavbarIssueBoardView = observer(() => {
 
   const handleCurrentBoardView = (boardView: string) => {
     projectStore.setActiveBoard(boardView);
-    router.push(
-      `/${workspace_slug}/${project_slug}?board=${boardView}${
-        issueStore?.filteredLabels && issueStore?.filteredLabels.length > 0
-          ? `&labels=${issueStore?.filteredLabels.join(",")}`
-          : ""
-      }${
-        issueStore?.filteredPriorities && issueStore?.filteredPriorities.length > 0
-          ? `&priorities=${issueStore?.filteredPriorities.join(",")}`
-          : ""
-      }${
-        issueStore?.filteredStates && issueStore?.filteredStates.length > 0
-          ? `&states=${issueStore?.filteredStates.join(",")}`
-          : ""
-      }`
-    );
+    router.push(`/${workspace_slug}/${project_slug}?board=${boardView}`);
   };
 
   return (
