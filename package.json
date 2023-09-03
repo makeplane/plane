@@ -3,7 +3,8 @@
   "license": "AGPL-3.0",
   "private": true,
   "workspaces": [
-    "apps/*",
+    "web",
+    "space",
     "packages/*"
   ],
   "scripts": {
@@ -12,9 +13,9 @@
     "dev": "turbo run dev",
     "start": "turbo run start",
     "lint": "turbo run lint",
-    "clean": "turbo run clean"
+    "clean": "turbo run clean",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
-
   "devDependencies": {
     "eslint-config-custom": "*",
     "prettier": "latest",
