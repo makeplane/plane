@@ -106,17 +106,19 @@ export const IssuePeekOverview: React.FC<Props> = observer((props) => {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Dialog.Panel
-                className={`fixed z-20 bg-custom-background-100 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg shadow-custom-shadow-xl transition-all duration-300 ${
-                  issueDetailStore.peekMode === "modal" ? "h-[70%] w-3/5" : "h-[95%] w-[95%]"
-                }`}
-              >
-                {issueDetailStore.peekMode === "modal" && (
-                  <SidePeekView handleClose={handleClose} issueDetails={issueDetails} />
-                )}
-                {issueDetailStore.peekMode === "full" && (
-                  <FullScreenPeekView handleClose={handleClose} issueDetails={issueDetails} />
-                )}
+              <Dialog.Panel>
+                <div
+                  className={`fixed z-20 bg-custom-background-100 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg shadow-custom-shadow-xl transition-all duration-300 ${
+                    issueDetailStore.peekMode === "modal" ? "h-[70%] w-3/5" : "h-[95%] w-[95%]"
+                  }`}
+                >
+                  {issueDetailStore.peekMode === "modal" && (
+                    <SidePeekView handleClose={handleClose} issueDetails={issueDetails} />
+                  )}
+                  {issueDetailStore.peekMode === "full" && (
+                    <FullScreenPeekView handleClose={handleClose} issueDetails={issueDetails} />
+                  )}
+                </div>
               </Dialog.Panel>
             </Transition.Child>
           </div>
