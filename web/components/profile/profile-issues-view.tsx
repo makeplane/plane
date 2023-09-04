@@ -301,6 +301,7 @@ export const ProfileIssuesView = () => {
         handleIssueAction={handleIssueAction}
         openIssuesListModal={null}
         removeIssue={null}
+        disableAddIssueOption={disableAddIssueOption}
         trashBox={trashBox}
         setTrashBox={setTrashBox}
         viewProps={{

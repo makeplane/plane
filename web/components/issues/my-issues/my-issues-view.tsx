@@ -300,6 +300,7 @@ export const MyIssuesView: React.FC<Props> = ({
         handleIssueAction={handleIssueAction}
         openIssuesListModal={openIssuesListModal ? openIssuesListModal : null}
         removeIssue={null}
+        disableAddIssueOption={disableAddIssueOption}
         trashBox={trashBox}
         setTrashBox={setTrashBox}
         viewProps={{
