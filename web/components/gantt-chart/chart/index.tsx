@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 // icons
 import { ArrowsPointingInIcon, ArrowsPointingOutIcon } from "@heroicons/react/20/solid";
 // components
@@ -24,6 +24,7 @@ import {
   getNumberOfDaysBetweenTwoDatesInQuarter,
   getNumberOfDaysBetweenTwoDatesInYear,
   getMonthChartItemPositionWidthInMonth,
+  getYearChartItemPositionWidthInYear,
 } from "../views";
 // types
 import { ChartDataType, IBlockUpdateData, IGanttBlock, TGanttViews } from "../types";
@@ -70,18 +71,26 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   const { currentView, currentViewData, renderView, dispatch, allViews, updateScrollLeft } =
     useChart();
 
-  const renderBlockStructure = (view: any, blocks: IGanttBlock[] | null) =>
-    blocks && blocks.length > 0
-      ? blocks.map((block: any) => ({
-          ...block,
-          position: getMonthChartItemPositionWidthInMonth(view, block),
-        }))
-      : [];
+  const renderBlockStructure = useCallback(
+    (view: any, blocks: IGanttBlock[] | null): IGanttBlock[] =>
+      blocks && blocks.length > 0
+        ? blocks.map((block: any) => ({
+            ...block,
+            position:
+              currentView === "month"
+                ? getMonthChartItemPositionWidthInMonth(view, block)
+                : currentView === "year"
+                ? getYearChartItemPositionWidthInYear(view, block)
+                : { marginLeft: 0, width: 0 },
+          }))
+        : [],
+    [currentView]
+  );
 
   useEffect(() => {
     if (currentViewData && blocks)
       setChartBlocks(() => renderBlockStructure(currentViewData, blocks));
-  }, [currentViewData, blocks]);
+  }, [blocks, currentViewData, renderBlockStructure]);
 
   // blocks state management ends
 
@@ -186,8 +195,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
       daysDifference = getNumberOfDaysBetweenTwoDatesInMonth(currentState.data.startDate, date);
     // if (currentView === "quarter")
     //   daysDifference = getNumberOfDaysBetweenTwoDatesInQuarter(currentState.data.startDate, date);
-    // if (currentView === "year")
-    //   daysDifference = getNumberOfDaysBetweenTwoDatesInYear(currentState.data.startDate, date);
+    if (currentView === "year")
+      daysDifference = getNumberOfDaysBetweenTwoDatesInYear(currentState.data.startDate, date);
 
     scrollWidth =
       daysDifference * currentState.data.width - (clientVisibleWidth / 2 - currentState.data.width);

@@ -1,5 +1,5 @@
 // types
-import { ChartDataType } from "../types";
+import { ChartDataType, IGanttBlock } from "../types";
 // data
 import { weeks, months } from "../data";
 // helpers
@@ -137,4 +137,44 @@ export const getNumberOfDaysBetweenTwoDatesInYear = (startDate: Date, endDate: D
   weeksDifference = Math.floor(diffDays / 7);
 
   return weeksDifference;
+};
+
+// calc item scroll position and width
+export const getYearChartItemPositionWidthInYear = (
+  chartData: ChartDataType,
+  itemData: IGanttBlock
+) => {
+  let scrollPosition: number = 0;
+  let scrollWidth: number = 0;
+
+  const { startDate } = chartData.data;
+  const { start_date: itemStartDate, target_date: itemTargetDate } = itemData;
+
+  startDate.setHours(0, 0, 0, 0);
+  itemStartDate.setHours(0, 0, 0, 0);
+  itemTargetDate.setHours(0, 0, 0, 0);
+
+  // position code starts
+  const positionTimeDifference: number = startDate.getTime() - itemStartDate.getTime();
+  const positionDaysDifference: number = Math.abs(
+    Math.floor(positionTimeDifference / (1000 * 60 * 60 * 24))
+  );
+  scrollPosition = positionDaysDifference * chartData.data.width;
+
+  var diffMonths = (itemStartDate.getFullYear() - startDate.getFullYear()) * 12;
+  diffMonths -= startDate.getMonth();
+  diffMonths += itemStartDate.getMonth();
+
+  scrollPosition = scrollPosition + diffMonths;
+  // position code ends
+
+  // width code starts
+  const widthTimeDifference: number = itemStartDate.getTime() - itemTargetDate.getTime();
+  const widthDaysDifference: number = Math.abs(
+    Math.floor(widthTimeDifference / (1000 * 60 * 60 * 24))
+  );
+  scrollWidth = (widthDaysDifference + 1) * chartData.data.width + 1;
+  // width code ends
+
+  return { marginLeft: scrollPosition, width: scrollWidth };
 };
