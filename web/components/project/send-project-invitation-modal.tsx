@@ -85,7 +85,8 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
   });
 
   const uninvitedPeople = people?.filter((person) => {
-    const isInvited = members?.find((member) => member.display_name === person.member.display_name);
+    const isInvited = members?.find((member) => member.memberId === person.member.id);
+
     return !isInvited;
   });
 
@@ -143,7 +144,7 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
     content: (
       <div className="flex items-center gap-2">
         <Avatar user={person.member} />
-        {person.member.display_name}
+        {person.member.display_name} ({person.member.first_name + " " + person.member.last_name})
       </div>
     ),
   }));

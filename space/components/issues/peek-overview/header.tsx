@@ -1,7 +1,5 @@
 import React from "react";
 
-import { useRouter } from "next/router";
-
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // hooks
@@ -48,15 +46,12 @@ export const PeekOverviewHeader: React.FC<Props> = (props) => {
 
   const { issueDetails: issueDetailStore }: RootStore = useMobxStore();
 
-  const router = useRouter();
-  const { workspace_slug } = router.query;
-
   const { setToastAlert } = useToast();
 
   const handleCopyLink = () => {
-    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const urlToCopy = window.location.href;
 
-    copyTextToClipboard(`${originURL}/${workspace_slug}/projects/${issueDetails?.project}/`).then(() => {
+    copyTextToClipboard(urlToCopy).then(() => {
       setToastAlert({
         type: "success",
         title: "Link copied!",

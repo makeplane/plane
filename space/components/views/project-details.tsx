@@ -55,7 +55,7 @@ export const ProjectDetailsView = observer(() => {
       ) : (
         <>
           {issueStore?.error ? (
-            <div className="text-sm text-center py-10  bg-custom-background-200 text-custom-text-100">
+            <div className="text-sm text-center py-10 bg-custom-background-200 text-custom-text-100">
               Something went wrong.
             </div>
           ) : (
@@ -67,7 +67,7 @@ export const ProjectDetailsView = observer(() => {
                   </div>
                 )}
                 {projectStore?.activeBoard === "kanban" && (
-                  <div className="relative w-full h-full mx-auto px-9 py-5">
+                  <div className="relative w-full h-full mx-auto p-5">
                     <IssueKanbanView />
                   </div>
                 )}

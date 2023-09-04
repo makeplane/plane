@@ -8,6 +8,7 @@ import { KeyedMutator } from "swr";
 import cyclesService from "services/cycles.service";
 // hooks
 import useUser from "hooks/use-user";
+import useProjectDetails from "hooks/use-project-details";
 // components
 import { GanttChartRoot, IBlockUpdateData } from "components/gantt-chart";
 import { CycleGanttBlock, CycleGanttSidebarBlock } from "components/cycles";
@@ -24,6 +25,7 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles, mutateCycles }) =>
   const { workspaceSlug } = router.query;
 
   const { user } = useUser();
+  const { projectDetails } = useProjectDetails();
 
   const handleCycleUpdate = (cycle: ICycle, payload: IBlockUpdateData) => {
     if (!workspaceSlug || !user) return;
@@ -71,6 +73,8 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles, mutateCycles }) =>
           }))
       : [];
 
+  const isAllowed = projectDetails?.member_role === 20 || projectDetails?.member_role === 15;
+
   return (
     <div className="w-full h-full overflow-y-auto">
       <GanttChartRoot
@@ -83,6 +87,7 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles, mutateCycles }) =>
         enableBlockLeftResize={false}
         enableBlockRightResize={false}
         enableBlockMove={false}
+        enableReorder={isAllowed}
       />
     </div>
   );

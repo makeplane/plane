@@ -35,7 +35,8 @@ type ProjectEventType =
   | "CREATE_PROJECT"
   | "UPDATE_PROJECT"
   | "DELETE_PROJECT"
-  | "PROJECT_MEMBER_INVITE";
+  | "PROJECT_MEMBER_INVITE"
+  | "PROJECT_MEMBER_LEAVE";
 
 type IssueEventType = "ISSUE_CREATE" | "ISSUE_UPDATE" | "ISSUE_DELETE";
 
@@ -163,7 +164,11 @@ class TrackEventServices extends APIService {
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
     let payload: any;
-    if (eventName !== "DELETE_PROJECT" && eventName !== "PROJECT_MEMBER_INVITE")
+    if (
+      eventName !== "DELETE_PROJECT" &&
+      eventName !== "PROJECT_MEMBER_INVITE" &&
+      eventName !== "PROJECT_MEMBER_LEAVE"
+    )
       payload = {
         workspaceId: data?.workspace_detail?.id,
         workspaceName: data?.workspace_detail?.name,

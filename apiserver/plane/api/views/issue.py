@@ -17,6 +17,7 @@ from django.db.models import (
     When,
     Exists,
     Max,
+    IntegerField,
 )
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.decorators import method_decorator
@@ -337,7 +338,11 @@ class UserWorkSpaceIssues(BaseAPIView):
 
             issue_queryset = (
                 Issue.issue_objects.filter(
-                    (Q(assignees__in=[request.user]) | Q(created_by=request.user) | Q(issue_subscribers__subscriber=request.user)),
+                    (
+                        Q(assignees__in=[request.user])
+                        | Q(created_by=request.user)
+                        | Q(issue_subscribers__subscriber=request.user)
+                    ),
                     workspace__slug=slug,
                 )
                 .annotate(
@@ -1994,7 +1999,9 @@ class IssueVotePublicViewSet(BaseViewSet):
             serializer = IssueVoteSerializer(issue_vote)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except IntegrityError:
-            return Response({"error": "Reaction already exists"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Reaction already exists"}, status=status.HTTP_400_BAD_REQUEST
+            )
         except Exception as e:
             capture_exception(e)
             return Response(
@@ -2172,9 +2179,32 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
 
             issues = IssuePublicSerializer(issue_queryset, many=True).data
 
-            states = State.objects.filter(
-                workspace__slug=slug, project_id=project_id
-            ).values("name", "group", "color", "id")
+            state_group_order = [
+                "backlog",
+                "unstarted",
+                "started",
+                "completed",
+                "cancelled",
+            ]
+
+            states = (
+                State.objects.filter(
+                    workspace__slug=slug,
+                    project_id=project_id,
+                )
+                .annotate(
+                    custom_order=Case(
+                        *[
+                            When(group=value, then=Value(index))
+                            for index, value in enumerate(state_group_order)
+                        ],
+                        default=Value(len(state_group_order)),
+                        output_field=IntegerField(),
+                    ),
+                )
+                .values("name", "group", "color", "id")
+                .order_by("custom_order", "sequence")
+            )
 
             labels = Label.objects.filter(
                 workspace__slug=slug, project_id=project_id

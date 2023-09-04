@@ -21,7 +21,8 @@ export interface IProjectPublishSettings {
 }
 
 export interface IProjectPublishStore {
-  loader: boolean;
+  generalLoader: boolean;
+  fetchSettingsLoader: boolean;
   error: any | null;
 
   projectPublishModal: boolean;
@@ -35,7 +36,7 @@ export interface IProjectPublishStore {
     project_slug: string,
     user: any
   ) => Promise<void>;
-  createProjectSettingsAsync: (
+  publishProject: (
     workspace_slug: string,
     project_slug: string,
     data: IProjectPublishSettings,
@@ -48,7 +49,7 @@ export interface IProjectPublishStore {
     data: IProjectPublishSettings,
     user: any
   ) => Promise<void>;
-  deleteProjectSettingsAsync: (
+  unPublishProject: (
     workspace_slug: string,
     project_slug: string,
     project_publish_id: string,
@@ -57,7 +58,8 @@ export interface IProjectPublishStore {
 }
 
 class ProjectPublishStore implements IProjectPublishStore {
-  loader: boolean = false;
+  generalLoader: boolean = false;
+  fetchSettingsLoader: boolean = false;
   error: any | null = null;
 
   projectPublishModal: boolean = false;
@@ -72,7 +74,8 @@ class ProjectPublishStore implements IProjectPublishStore {
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observable
-      loader: observable,
+      generalLoader: observable,
+      fetchSettingsLoader: observable,
       error: observable,
 
       projectPublishModal: observable,
@@ -80,6 +83,10 @@ class ProjectPublishStore implements IProjectPublishStore {
       projectPublishSettings: observable.ref,
       // action
       handleProjectModal: action,
+      getProjectSettingsAsync: action,
+      publishProject: action,
+      updateProjectSettingsAsync: action,
+      unPublishProject: action,
       // computed
     });
 
@@ -100,7 +107,7 @@ class ProjectPublishStore implements IProjectPublishStore {
 
   getProjectSettingsAsync = async (workspace_slug: string, project_slug: string, user: any) => {
     try {
-      this.loader = true;
+      this.fetchSettingsLoader = true;
       this.error = null;
 
       const response = await this.projectPublishService.getProjectSettingsAsync(
@@ -128,30 +135,30 @@ class ProjectPublishStore implements IProjectPublishStore {
 
         runInAction(() => {
           this.projectPublishSettings = _projectPublishSettings;
-          this.loader = false;
+          this.fetchSettingsLoader = false;
           this.error = null;
         });
       } else {
         this.projectPublishSettings = "not-initialized";
-        this.loader = false;
+        this.fetchSettingsLoader = false;
         this.error = null;
       }
       return response;
     } catch (error) {
-      this.loader = false;
+      this.fetchSettingsLoader = false;
       this.error = error;
       return error;
     }
   };
 
-  createProjectSettingsAsync = async (
+  publishProject = async (
     workspace_slug: string,
     project_slug: string,
     data: IProjectPublishSettings,
     user: any
   ) => {
     try {
-      this.loader = true;
+      this.generalLoader = true;
       this.error = null;
 
       const response = await this.projectPublishService.createProjectSettingsAsync(
@@ -174,14 +181,14 @@ class ProjectPublishStore implements IProjectPublishStore {
 
         runInAction(() => {
           this.projectPublishSettings = _projectPublishSettings;
-          this.loader = false;
+          this.generalLoader = false;
           this.error = null;
         });
 
         return response;
       }
     } catch (error) {
-      this.loader = false;
+      this.generalLoader = false;
       this.error = error;
       return error;
     }
@@ -195,7 +202,7 @@ class ProjectPublishStore implements IProjectPublishStore {
     user: any
   ) => {
     try {
-      this.loader = true;
+      this.generalLoader = true;
       this.error = null;
 
       const response = await this.projectPublishService.updateProjectSettingsAsync(
@@ -219,27 +226,27 @@ class ProjectPublishStore implements IProjectPublishStore {
 
         runInAction(() => {
           this.projectPublishSettings = _projectPublishSettings;
-          this.loader = false;
+          this.generalLoader = false;
           this.error = null;
         });
 
         return response;
       }
     } catch (error) {
-      this.loader = false;
+      this.generalLoader = false;
       this.error = error;
       return error;
     }
   };
 
-  deleteProjectSettingsAsync = async (
+  unPublishProject = async (
     workspace_slug: string,
     project_slug: string,
     project_publish_id: string,
     user: any
   ) => {
     try {
-      this.loader = true;
+      this.generalLoader = true;
       this.error = null;
 
       const response = await this.projectPublishService.deleteProjectSettingsAsync(
@@ -251,13 +258,13 @@ class ProjectPublishStore implements IProjectPublishStore {
 
       runInAction(() => {
         this.projectPublishSettings = "not-initialized";
-        this.loader = false;
+        this.generalLoader = false;
         this.error = null;
       });
 
       return response;
     } catch (error) {
-      this.loader = false;
+      this.generalLoader = false;
       this.error = error;
       return error;
     }

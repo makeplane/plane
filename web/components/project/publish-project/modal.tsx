@@ -6,7 +6,14 @@ import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // ui components
-import { ToggleSwitch, PrimaryButton, SecondaryButton, Icon, DangerButton } from "components/ui";
+import {
+  ToggleSwitch,
+  PrimaryButton,
+  SecondaryButton,
+  Icon,
+  DangerButton,
+  Loader,
+} from "components/ui";
 import { CustomPopover } from "./popover";
 // mobx react lite
 import { observer } from "mobx-react-lite";
@@ -146,22 +153,14 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
     const projectId = projectPublish.project_id;
 
     return projectPublish
-      .createProjectSettingsAsync(
-        workspaceSlug.toString(),
-        projectId?.toString() ?? "",
-        payload,
-        user
-      )
-      .then((response) => {
+      .publishProject(workspaceSlug.toString(), projectId?.toString() ?? "", payload, user)
+      .then((res) => {
         mutateProjectDetails();
         handleClose();
         if (projectId) window.open(`${plane_deploy_url}/${workspaceSlug}/${projectId}`, "_blank");
-        return response;
+        return res;
       })
-      .catch((error) => {
-        console.error("error", error);
-        return error;
-      });
+      .catch((err) => err);
   };
 
   const handleUpdatePublishSettings = async (payload: IProjectPublishSettings) => {
@@ -199,7 +198,7 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
     setIsUnpublishing(true);
 
     projectPublish
-      .deleteProjectSettingsAsync(
+      .unPublishProject(
         workspaceSlug.toString(),
         projectPublish.project_id as string,
         publishId,
@@ -329,7 +328,7 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
                   {/* heading */}
                   <div className="px-6 pt-4 flex items-center justify-between gap-2">
                     <h5 className="font-semibold text-xl inline-block">Publish</h5>
-                    {watch("id") && (
+                    {projectPublish.projectPublishSettings !== "not-initialized" && (
                       <DangerButton
                         onClick={() => handleUnpublishProject(watch("id") ?? "")}
                         className="!px-2 !py-1.5"
@@ -341,137 +340,145 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
                   </div>
 
                   {/* content */}
-                  <div className="space-y-3 px-6">
-                    <div className="border border-custom-border-100 bg-custom-background-80 rounded-md px-3 py-2 relative flex gap-2 items-center">
-                      <div className="truncate flex-grow text-sm">
-                        {`${plane_deploy_url}/${workspaceSlug}/${projectPublish.project_id}`}
-                      </div>
-                      <div className="flex-shrink-0 relative flex items-center gap-1">
-                        <CopyLinkToClipboard
-                          copy_link={`${plane_deploy_url}/${workspaceSlug}/${projectPublish.project_id}`}
-                        />
-                      </div>
-                    </div>
+                  {projectPublish.fetchSettingsLoader ? (
+                    <Loader className="px-6 space-y-4">
+                      <Loader.Item height="30px" />
+                      <Loader.Item height="30px" />
+                      <Loader.Item height="30px" />
+                      <Loader.Item height="30px" />
+                    </Loader>
+                  ) : (
+                    <div className="px-6">
+                      {watch("id") && (
+                        <>
+                          <div className="border border-custom-border-100 bg-custom-background-80 rounded-md px-3 py-2 relative flex gap-2 items-center">
+                            <div className="truncate flex-grow text-sm">
+                              {`${plane_deploy_url}/${workspaceSlug}/${projectPublish.project_id}`}
+                            </div>
+                            <div className="flex-shrink-0 relative flex items-center gap-1">
+                              <CopyLinkToClipboard
+                                copy_link={`${plane_deploy_url}/${workspaceSlug}/${projectPublish.project_id}`}
+                              />
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1 text-custom-primary-100 mt-3">
+                            <div className="w-5 h-5 overflow-hidden flex items-center">
+                              <Icon iconName="radio_button_checked" className="!text-lg" />
+                            </div>
+                            <div className="text-sm">This project is live on web</div>
+                          </div>
+                        </>
+                      )}
 
-                    {watch("id") && (
-                      <div className="flex items-center gap-1 text-custom-primary-100">
-                        <div className="w-5 h-5 overflow-hidden flex items-center">
-                          <Icon iconName="radio_button_checked" className="!text-lg" />
-                        </div>
-                        <div className="text-sm">This project is live on web</div>
-                      </div>
-                    )}
-
-                    <div className="space-y-4">
-                      <div className="relative flex justify-between items-center gap-2">
-                        <div className="text-sm">Views</div>
-                        <Controller
-                          control={control}
-                          name="views"
-                          render={({ field: { onChange, value } }) => (
-                            <CustomPopover
-                              label={
-                                value.length > 0
-                                  ? viewOptions
-                                      .filter((v) => value.includes(v.key))
-                                      .map((v) => v.label)
-                                      .join(", ")
-                                  : ``
-                              }
-                              placeholder="Select views"
-                            >
-                              <>
-                                {viewOptions.map((option) => (
-                                  <div
-                                    key={option.key}
-                                    className={`relative flex items-center gap-2 justify-between p-1 m-1 px-2 cursor-pointer rounded-sm text-custom-text-200 ${
-                                      value.includes(option.key)
-                                        ? "bg-custom-background-80 text-custom-text-100"
-                                        : "hover:bg-custom-background-80 hover:text-custom-text-100"
-                                    }`}
-                                    onClick={() => {
-                                      const _views =
-                                        value.length > 0
-                                          ? value.includes(option.key)
-                                            ? value.filter((_o: string) => _o !== option.key)
-                                            : [...value, option.key]
-                                          : [option.key];
-
-                                      if (_views.length === 0) return;
-
-                                      onChange(_views);
-                                      checkIfUpdateIsRequired();
-                                    }}
-                                  >
-                                    <div className="text-sm">{option.label}</div>
+                      <div className="space-y-4 mt-6">
+                        <div className="relative flex justify-between items-center gap-2">
+                          <div className="text-sm">Views</div>
+                          <Controller
+                            control={control}
+                            name="views"
+                            render={({ field: { onChange, value } }) => (
+                              <CustomPopover
+                                label={
+                                  value.length > 0
+                                    ? viewOptions
+                                        .filter((v) => value.includes(v.key))
+                                        .map((v) => v.label)
+                                        .join(", ")
+                                    : ``
+                                }
+                                placeholder="Select views"
+                              >
+                                <>
+                                  {viewOptions.map((option) => (
                                     <div
-                                      className={`w-[18px] h-[18px] relative flex justify-center items-center`}
+                                      key={option.key}
+                                      className={`relative flex items-center gap-2 justify-between p-1 m-1 px-2 cursor-pointer rounded-sm text-custom-text-200 ${
+                                        value.includes(option.key)
+                                          ? "bg-custom-background-80 text-custom-text-100"
+                                          : "hover:bg-custom-background-80 hover:text-custom-text-100"
+                                      }`}
+                                      onClick={() => {
+                                        const _views =
+                                          value.length > 0
+                                            ? value.includes(option.key)
+                                              ? value.filter((_o: string) => _o !== option.key)
+                                              : [...value, option.key]
+                                            : [option.key];
+
+                                        if (_views.length === 0) return;
+
+                                        onChange(_views);
+                                        checkIfUpdateIsRequired();
+                                      }}
                                     >
-                                      {value.length > 0 && value.includes(option.key) && (
-                                        <Icon iconName="done" className="!text-lg" />
-                                      )}
+                                      <div className="text-sm">{option.label}</div>
+                                      <div
+                                        className={`w-[18px] h-[18px] relative flex justify-center items-center`}
+                                      >
+                                        {value.length > 0 && value.includes(option.key) && (
+                                          <Icon iconName="done" className="!text-lg" />
+                                        )}
+                                      </div>
                                     </div>
-                                  </div>
-                                ))}
-                              </>
-                            </CustomPopover>
-                          )}
-                        />
-                      </div>
+                                  ))}
+                                </>
+                              </CustomPopover>
+                            )}
+                          />
+                        </div>
+                        <div className="relative flex justify-between items-center gap-2">
+                          <div className="text-sm">Allow comments</div>
+                          <Controller
+                            control={control}
+                            name="comments"
+                            render={({ field: { onChange, value } }) => (
+                              <ToggleSwitch
+                                value={value}
+                                onChange={(val) => {
+                                  onChange(val);
+                                  checkIfUpdateIsRequired();
+                                }}
+                                size="sm"
+                              />
+                            )}
+                          />
+                        </div>
+                        <div className="relative flex justify-between items-center gap-2">
+                          <div className="text-sm">Allow reactions</div>
+                          <Controller
+                            control={control}
+                            name="reactions"
+                            render={({ field: { onChange, value } }) => (
+                              <ToggleSwitch
+                                value={value}
+                                onChange={(val) => {
+                                  onChange(val);
+                                  checkIfUpdateIsRequired();
+                                }}
+                                size="sm"
+                              />
+                            )}
+                          />
+                        </div>
+                        <div className="relative flex justify-between items-center gap-2">
+                          <div className="text-sm">Allow voting</div>
+                          <Controller
+                            control={control}
+                            name="votes"
+                            render={({ field: { onChange, value } }) => (
+                              <ToggleSwitch
+                                value={value}
+                                onChange={(val) => {
+                                  onChange(val);
+                                  checkIfUpdateIsRequired();
+                                }}
+                                size="sm"
+                              />
+                            )}
+                          />
+                        </div>
 
-                      <div className="relative flex justify-between items-center gap-2">
-                        <div className="text-sm">Allow comments</div>
-                        <Controller
-                          control={control}
-                          name="comments"
-                          render={({ field: { onChange, value } }) => (
-                            <ToggleSwitch
-                              value={value}
-                              onChange={(val) => {
-                                onChange(val);
-                                checkIfUpdateIsRequired();
-                              }}
-                              size="sm"
-                            />
-                          )}
-                        />
-                      </div>
-                      <div className="relative flex justify-between items-center gap-2">
-                        <div className="text-sm">Allow reactions</div>
-                        <Controller
-                          control={control}
-                          name="reactions"
-                          render={({ field: { onChange, value } }) => (
-                            <ToggleSwitch
-                              value={value}
-                              onChange={(val) => {
-                                onChange(val);
-                                checkIfUpdateIsRequired();
-                              }}
-                              size="sm"
-                            />
-                          )}
-                        />
-                      </div>
-                      <div className="relative flex justify-between items-center gap-2">
-                        <div className="text-sm">Allow voting</div>
-                        <Controller
-                          control={control}
-                          name="votes"
-                          render={({ field: { onChange, value } }) => (
-                            <ToggleSwitch
-                              value={value}
-                              onChange={(val) => {
-                                onChange(val);
-                                checkIfUpdateIsRequired();
-                              }}
-                              size="sm"
-                            />
-                          )}
-                        />
-                      </div>
-
-                      {/* <div className="relative flex justify-between items-center gap-2">
+                        {/* <div className="relative flex justify-between items-center gap-2">
                       <div className="text-sm">Allow issue proposals</div>
                       <Controller
                         control={control}
@@ -481,8 +488,9 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
                         )}
                       />
                     </div> */}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* modal handlers */}
                   <div className="border-t border-custom-border-200 px-6 py-5 relative flex justify-between items-center">
@@ -490,22 +498,24 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
                       <Icon iconName="public" className="!text-base" />
                       <div className="text-sm">Anyone with the link can access</div>
                     </div>
-                    <div className="relative flex items-center gap-2">
-                      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                      {watch("id") ? (
-                        <>
-                          {isUpdateRequired && (
-                            <PrimaryButton type="submit" loading={isSubmitting}>
-                              {isSubmitting ? "Updating..." : "Update settings"}
-                            </PrimaryButton>
-                          )}
-                        </>
-                      ) : (
-                        <PrimaryButton type="submit" loading={isSubmitting}>
-                          {isSubmitting ? "Publishing..." : "Publish"}
-                        </PrimaryButton>
-                      )}
-                    </div>
+                    {!projectPublish.fetchSettingsLoader && (
+                      <div className="relative flex items-center gap-2">
+                        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                        {watch("id") ? (
+                          <>
+                            {isUpdateRequired && (
+                              <PrimaryButton type="submit" loading={isSubmitting}>
+                                {isSubmitting ? "Updating..." : "Update settings"}
+                              </PrimaryButton>
+                            )}
+                          </>
+                        ) : (
+                          <PrimaryButton type="submit" loading={isSubmitting}>
+                            {isSubmitting ? "Publishing..." : "Publish"}
+                          </PrimaryButton>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </form>
               </Dialog.Panel>

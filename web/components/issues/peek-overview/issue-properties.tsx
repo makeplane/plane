@@ -50,12 +50,9 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
   maxDate?.setDate(maxDate.getDate());
 
   const handleCopyLink = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const urlToCopy = window.location.href;
 
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`
-    ).then(() => {
+    copyTextToClipboard(urlToCopy).then(() => {
       setToastAlert({
         type: "success",
         title: "Link copied!",
