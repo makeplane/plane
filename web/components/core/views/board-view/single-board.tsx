@@ -20,6 +20,7 @@ type Props = {
   addIssueToGroup: () => void;
   currentState?: IState | null;
   disableUserActions: boolean;
+  disableAddIssueOption?: boolean;
   dragDisabled: boolean;
   groupTitle: string;
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
@@ -36,6 +37,7 @@ export const SingleBoard: React.FC<Props> = ({
   currentState,
   groupTitle,
   disableUserActions,
+  disableAddIssueOption = false,
   dragDisabled,
   handleIssueAction,
   handleTrashBox,
@@ -52,8 +54,6 @@ export const SingleBoard: React.FC<Props> = ({
 
   const router = useRouter();
   const { cycleId, moduleId } = router.query;
-
-  const isSubscribedIssues = router.pathname.includes("subscribed");
 
   const type = cycleId ? "cycle" : moduleId ? "module" : "issue";
 
@@ -72,7 +72,7 @@ export const SingleBoard: React.FC<Props> = ({
         isCollapsed={isCollapsed}
         setIsCollapsed={setIsCollapsed}
         disableUserActions={disableUserActions}
-        disableAddIssue={isSubscribedIssues}
+        disableAddIssue={disableAddIssueOption}
         viewProps={viewProps}
       />
       {isCollapsed && (
@@ -154,7 +154,7 @@ export const SingleBoard: React.FC<Props> = ({
               {selectedGroup !== "created_by" && (
                 <div>
                   {type === "issue"
-                    ? !isSubscribedIssues && (
+                    ? !disableAddIssueOption && (
                         <button
                           type="button"
                           className="flex items-center gap-2 font-medium text-custom-primary outline-none p-1"
