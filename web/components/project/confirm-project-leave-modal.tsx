@@ -59,9 +59,6 @@ export const ConfirmProjectLeaveModal: React.FC = observer(() => {
     reset({ ...defaultValues });
   };
 
-  project?.projectLeaveDetails &&
-    console.log("project leave confirmation modal", project?.projectLeaveDetails);
-
   const onSubmit = async (data: any) => {
     if (data) {
       if (data.projectName === project?.projectLeaveDetails?.name) {
