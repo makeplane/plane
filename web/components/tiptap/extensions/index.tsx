@@ -32,122 +32,122 @@ export const TiptapExtensions = (
   workspaceSlug: string,
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
 ) => [
-  StarterKit.configure({
-    bulletList: {
-      HTMLAttributes: {
-        class: "list-disc list-outside leading-3 -mt-2",
+    StarterKit.configure({
+      bulletList: {
+        HTMLAttributes: {
+          class: "list-disc list-outside leading-3 -mt-2",
+        },
       },
-    },
-    orderedList: {
-      HTMLAttributes: {
-        class: "list-decimal list-outside leading-3 -mt-2",
+      orderedList: {
+        HTMLAttributes: {
+          class: "list-decimal list-outside leading-3 -mt-2",
+        },
       },
-    },
-    listItem: {
-      HTMLAttributes: {
-        class: "leading-normal -mb-2",
+      listItem: {
+        HTMLAttributes: {
+          class: "leading-normal -mb-2",
+        },
       },
-    },
-    blockquote: {
-      HTMLAttributes: {
-        class: "border-l-4 border-custom-border-300",
+      blockquote: {
+        HTMLAttributes: {
+          class: "border-l-4 border-custom-border-300",
+        },
       },
-    },
-    code: {
+      code: {
+        HTMLAttributes: {
+          class:
+            "rounded-md bg-custom-primary-30 mx-1 px-1 py-1 font-mono font-medium text-custom-text-1000",
+          spellcheck: "false",
+        },
+      },
+      codeBlock: false,
+      horizontalRule: false,
+      dropcursor: {
+        color: "rgba(var(--color-text-100))",
+        width: 2,
+      },
+      gapcursor: false,
+    }),
+    CodeBlockLowlight.configure({
+      lowlight,
+    }),
+    HorizontalRule.extend({
+      addInputRules() {
+        return [
+          new InputRule({
+            find: /^(?:---|—-|___\s|\*\*\*\s)$/,
+            handler: ({ state, range, commands }) => {
+              commands.splitBlock();
+
+              const attributes = {};
+              const { tr } = state;
+              const start = range.from;
+              const end = range.to;
+              // @ts-ignore
+              tr.replaceWith(start - 1, end, this.type.create(attributes));
+            },
+          }),
+        ];
+      },
+    }).configure({
+      HTMLAttributes: {
+        class: "mb-6 border-t border-custom-border-300",
+      },
+    }),
+    Gapcursor,
+    TiptapLink.configure({
+      protocols: ["http", "https"],
+      validate: (url) => isValidHttpUrl(url),
       HTMLAttributes: {
         class:
-          "rounded-md bg-custom-primary-30 mx-1 px-1 py-1 font-mono font-medium text-custom-text-1000",
-        spellcheck: "false",
+          "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
       },
-    },
-    codeBlock: false,
-    horizontalRule: false,
-    dropcursor: {
-      color: "rgba(var(--color-text-100))",
-      width: 2,
-    },
-    gapcursor: false,
-  }),
-  CodeBlockLowlight.configure({
-    lowlight,
-  }),
-  HorizontalRule.extend({
-    addInputRules() {
-      return [
-        new InputRule({
-          find: /^(?:---|—-|___\s|\*\*\*\s)$/,
-          handler: ({ state, range, commands }) => {
-            commands.splitBlock();
+    }),
+    UpdatedImage.configure({
+      HTMLAttributes: {
+        class: "rounded-lg border border-custom-border-300",
+      },
+    }),
+    Placeholder.configure({
+      placeholder: ({ node }) => {
+        if (node.type.name === "heading") {
+          return `Heading ${node.attrs.level}`;
+        }
+        if (node.type.name === "image" || node.type.name === "table") {
+          return "";
+        }
 
-            const attributes = {};
-            const { tr } = state;
-            const start = range.from;
-            const end = range.to;
-            // @ts-ignore
-            tr.replaceWith(start - 1, end, this.type.create(attributes));
-          },
-        }),
-      ];
-    },
-  }).configure({
-    HTMLAttributes: {
-      class: "mb-6 border-t border-custom-border-300",
-    },
-  }),
-  Gapcursor,
-  TiptapLink.configure({
-    protocols: ["http", "https"],
-    validate: (url) => isValidHttpUrl(url),
-    HTMLAttributes: {
-      class:
-        "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
-    },
-  }),
-  UpdatedImage.configure({
-    HTMLAttributes: {
-      class: "rounded-lg border border-custom-border-300",
-    },
-  }),
-  Placeholder.configure({
-    placeholder: ({ node }) => {
-      if (node.type.name === "heading") {
-        return `Heading ${node.attrs.level}`;
-      }
-      if (node.type.name === "image" || node.type.name === "table") {
-        return "";
-      }
-
-      return "Press '/' for commands...";
-    },
-    includeChildren: true,
-  }),
-  UniqueID.configure({
-    types: ["image"],
-  }),
-  SlashCommand(workspaceSlug, setIsSubmitting),
-  TiptapUnderline,
-  TextStyle,
-  Color,
-  Highlight.configure({
-    multicolor: true,
-  }),
-  TaskList.configure({
-    HTMLAttributes: {
-      class: "not-prose pl-2",
-    },
-  }),
-  TaskItem.configure({
-    HTMLAttributes: {
-      class: "flex items-start my-4",
-    },
-    nested: true,
-  }),
-  Markdown.configure({
-    html: true,
-    transformCopiedText: true,
-  }),
-  Table,
-  TableHeader,
-  CustomTableCell,
-  TableRow,
-];
+        return "Press '/' for commands...";
+      },
+      includeChildren: true,
+    }),
+    UniqueID.configure({
+      types: ["image"],
+    }),
+    SlashCommand(workspaceSlug, setIsSubmitting),
+    TiptapUnderline,
+    TextStyle,
+    Color,
+    Highlight.configure({
+      multicolor: true,
+    }),
+    TaskList.configure({
+      HTMLAttributes: {
+        class: "not-prose pl-2",
+      },
+    }),
+    TaskItem.configure({
+      HTMLAttributes: {
+        class: "flex items-start my-4",
+      },
+      nested: true,
+    }),
+    Markdown.configure({
+      html: true,
+      transformCopiedText: true,
+    }),
+    Table,
+    TableHeader,
+    CustomTableCell,
+    TableRow,
+  ];

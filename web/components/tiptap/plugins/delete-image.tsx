@@ -25,7 +25,7 @@ const TrackImageDeletionPlugin = () =>
             // Check if the node still exists elsewhere in the document
             let nodeExists = false;
             newState.doc.descendants((node) => {
-              if (node.attrs.id === oldNode.attrs.id) {
+              if (node.attrs.src === oldNode.attrs.src) {
                 nodeExists = true;
               }
             });
@@ -37,6 +37,7 @@ const TrackImageDeletionPlugin = () =>
 
         removedImages.forEach((node) => {
           const src = node.attrs.src;
+          console.log("Image deleted: ", src, node.attrs.id)
           onNodeDeleted(src);
         });
       });
