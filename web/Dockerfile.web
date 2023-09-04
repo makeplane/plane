@@ -15,6 +15,7 @@ FROM node:18-alpine AS installer
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+ARG NEXT_PUBLIC_DEPLOY_URL=http://localhost/spaces
 
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
@@ -29,11 +30,12 @@ COPY replace-env-vars.sh /usr/local/bin/
 USER root
 RUN chmod +x /usr/local/bin/replace-env-vars.sh
 
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL \
+    BUILT_NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL \
+    NEXT_PUBLIC_DEPLOY_URL=$NEXT_PUBLIC_DEPLOY_URL
+
 RUN yarn turbo run build --filter=web
 
-ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL \
-    BUILT_NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
-ENV NEXT_PUBLIC_DEPLOY_URL=${NEXT_PUBLIC_DEPLOY_URL}
 RUN /usr/local/bin/replace-env-vars.sh http://NEXT_PUBLIC_WEBAPP_URL_PLACEHOLDER ${NEXT_PUBLIC_API_BASE_URL} web
 
 FROM node:18-alpine AS runner
@@ -54,8 +56,11 @@ COPY --from=installer --chown=captain:plane /app/web/.next/standalone ./
 COPY --from=installer --chown=captain:plane /app/web/.next ./web/.next
 
 ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+ARG NEXT_PUBLIC_DEPLOY_URL=http://localhost/spaces
+
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL \
-    BUILT_NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+    BUILT_NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL \
+    NEXT_PUBLIC_DEPLOY_URL=$NEXT_PUBLIC_DEPLOY_URL
 
 USER root
 COPY replace-env-vars.sh /usr/local/bin/

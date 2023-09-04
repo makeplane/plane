@@ -39,6 +39,7 @@ type Props = {
   openIssuesListModal?: (() => void) | null;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
   disableUserActions: boolean;
+  disableAddIssueOption?: boolean;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
   viewProps: IIssueViewProps;
@@ -52,6 +53,7 @@ export const SingleList: React.FC<Props> = ({
   openIssuesListModal,
   removeIssue,
   disableUserActions,
+  disableAddIssueOption = false,
   user,
   userAuth,
   viewProps,
@@ -60,7 +62,6 @@ export const SingleList: React.FC<Props> = ({
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
   const isArchivedIssues = router.pathname.includes("archived-issues");
-  const isSubscribedIssues = router.pathname.includes("subscribed");
 
   const type = cycleId ? "cycle" : moduleId ? "module" : "issue";
 
@@ -181,7 +182,7 @@ export const SingleList: React.FC<Props> = ({
             {isArchivedIssues ? (
               ""
             ) : type === "issue" ? (
-              !isSubscribedIssues && (
+              !disableAddIssueOption && (
                 <button
                   type="button"
                   className="p-1  text-custom-text-200 hover:bg-custom-background-80"

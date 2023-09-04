@@ -11,6 +11,7 @@ type Props = {
   openIssuesListModal?: (() => void) | null;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
   disableUserActions: boolean;
+  disableAddIssueOption?: boolean;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
   viewProps: IIssueViewProps;
@@ -20,6 +21,7 @@ export const AllLists: React.FC<Props> = ({
   addIssueToGroup,
   handleIssueAction,
   disableUserActions,
+  disableAddIssueOption = false,
   openIssuesListModal,
   removeIssue,
   states,
@@ -49,6 +51,7 @@ export const AllLists: React.FC<Props> = ({
                 openIssuesListModal={openIssuesListModal}
                 removeIssue={removeIssue}
                 disableUserActions={disableUserActions}
+                disableAddIssueOption={disableAddIssueOption}
                 user={user}
                 userAuth={userAuth}
                 viewProps={viewProps}

@@ -10,6 +10,7 @@ import { ICurrentUserResponse, IIssue, IIssueViewProps, IState, UserAuth } from 
 type Props = {
   addIssueToGroup: (groupTitle: string) => void;
   disableUserActions: boolean;
+  disableAddIssueOption?: boolean;
   dragDisabled: boolean;
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
   handleTrashBox: (isDragging: boolean) => void;
@@ -24,6 +25,7 @@ type Props = {
 export const AllBoards: React.FC<Props> = ({
   addIssueToGroup,
   disableUserActions,
+  disableAddIssueOption = false,
   dragDisabled,
   handleIssueAction,
   handleTrashBox,
@@ -52,6 +54,7 @@ export const AllBoards: React.FC<Props> = ({
                 addIssueToGroup={() => addIssueToGroup(singleGroup)}
                 currentState={currentState}
                 disableUserActions={disableUserActions}
+                disableAddIssueOption={disableAddIssueOption}
                 dragDisabled={dragDisabled}
                 groupTitle={singleGroup}
                 handleIssueAction={handleIssueAction}

@@ -14,7 +14,7 @@ import { Icon, Loader, Tooltip } from "components/ui";
 // icons
 import { EditOutlined } from "@mui/icons-material";
 // helpers
-import { render12HourFormatTime, renderLongDetailDateFormat } from "helpers/date-time.helper";
+import { renderLongDetailDateFormat } from "helpers/date-time.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // fetch-keys
 import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
@@ -35,6 +35,16 @@ export const ProfileSidebar = () => {
       : null
   );
 
+  // Create a date object for the current time in the specified timezone
+  const currentTime = new Date();
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone: userProjectsData?.user_data.user_timezone,
+    hour12: false, // Use 24-hour format
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  const timeString = formatter.format(currentTime);
+
   const userDetails = [
     {
       label: "Joined on",
@@ -44,7 +54,7 @@ export const ProfileSidebar = () => {
       label: "Timezone",
       value: (
         <span>
-          {render12HourFormatTime(new Date())}{" "}
+          {timeString}{" "}
           <span className="text-custom-text-200">{userProjectsData?.user_data.user_timezone}</span>
         </span>
       ),

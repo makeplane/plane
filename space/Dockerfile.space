@@ -1,6 +1,5 @@
 FROM node:18-alpine AS builder
 RUN apk add --no-cache libc6-compat
-# Set working directory
 WORKDIR /app
 ENV NEXT_PUBLIC_API_BASE_URL=http://NEXT_PUBLIC_API_BASE_URL_PLACEHOLDER
 
@@ -9,37 +8,34 @@ COPY . .
 
 RUN turbo prune --scope=space --docker
 
-# Add lockfile and package.json's of isolated subworkspace
 FROM node:18-alpine AS installer
 
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 
-# First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/yarn.lock ./yarn.lock
 RUN yarn install --network-timeout 500000
 
-# Build the project
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 COPY replace-env-vars.sh /usr/local/bin/
 USER root
 RUN chmod +x /usr/local/bin/replace-env-vars.sh
 
-RUN yarn turbo run build --filter=space
+ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+ARG NEXT_PUBLIC_DEPLOY_WITH_NGINX=1
 
-ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL \
-    BUILT_NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL BUILT_NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL NEXT_PUBLIC_DEPLOY_WITH_NGINX=$NEXT_PUBLIC_DEPLOY_WITH_NGINX
+
+RUN yarn turbo run build --filter=space
 
 RUN /usr/local/bin/replace-env-vars.sh http://NEXT_PUBLIC_WEBAPP_URL_PLACEHOLDER ${NEXT_PUBLIC_API_BASE_URL} space
 
 FROM node:18-alpine AS runner
 WORKDIR /app
 
-# Don't run production as root
 RUN addgroup --system --gid 1001 plane
 RUN adduser --system --uid 1001 captain
 USER captain
@@ -47,16 +43,14 @@ USER captain
 COPY --from=installer /app/space/next.config.js .
 COPY --from=installer /app/space/package.json .
 
-# Automatically leverage output traces to reduce image sizß
-# https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=installer --chown=captain:plane /app/space/.next/standalone ./
 
 COPY --from=installer --chown=captain:plane /app/space/.next ./space/.next
 COPY --from=installer --chown=captain:plane /app/space/public ./space/public
 
 ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
-ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL \
-    BUILT_NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+ARG NEXT_PUBLIC_DEPLOY_WITH_NGINX=1
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL BUILT_NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL NEXT_PUBLIC_DEPLOY_WITH_NGINX=$NEXT_PUBLIC_DEPLOY_WITH_NGINX
 
 USER root
 COPY replace-env-vars.sh /usr/local/bin/
