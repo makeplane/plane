@@ -1,5 +1,9 @@
 import { useEffect } from "react";
+
+import Image from "next/image";
 import { useRouter } from "next/router";
+
+// mobx
 import { observer } from "mobx-react-lite";
 // components
 import { IssueListView } from "components/issues/board-views/list";
@@ -11,6 +15,8 @@ import { IssuePeekOverview } from "components/issues/peek-overview";
 // mobx store
 import { RootStore } from "store/root";
 import { useMobxStore } from "lib/mobx/store-provider";
+// assets
+import SomethingWentWrongImage from "public/something-went-wrong.svg";
 
 export const ProjectDetailsView = observer(() => {
   const router = useRouter();
@@ -55,8 +61,16 @@ export const ProjectDetailsView = observer(() => {
       ) : (
         <>
           {issueStore?.error ? (
-            <div className="text-sm text-center py-10 bg-custom-background-200 text-custom-text-100">
-              Something went wrong.
+            <div className="h-full w-full grid place-items-center p-6">
+              <div className="text-center">
+                <div className="h-52 w-52 bg-custom-background-80 rounded-full grid place-items-center mx-auto">
+                  <div className="h-32 w-32 grid place-items-center">
+                    <Image src={SomethingWentWrongImage} alt="Oops! Something went wrong" />
+                  </div>
+                </div>
+                <h1 className="text-3xl font-semibold mt-12">Oops! Something went wrong.</h1>
+                <p className="mt-4 text-custom-text-300">The public board does not exist. Please check the URL.</p>
+              </div>
             </div>
           ) : (
             projectStore?.activeBoard && (
