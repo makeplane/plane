@@ -35,6 +35,7 @@ export const ProjectSidebarList: FC = () => {
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [deleteProjectModal, setDeleteProjectModal] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<IProject | null>(null);
+  const [projectToLeaveId, setProjectToLeaveId] = useState<string | null>(null);
 
   // router
   const [isScrolled, setIsScrolled] = useState(false);
@@ -217,6 +218,7 @@ export const ProjectSidebarList: FC = () => {
                                     snapshot={snapshot}
                                     handleDeleteProject={() => handleDeleteProject(project)}
                                     handleCopyText={() => handleCopyText(project.id)}
+                                    handleProjectLeave={() => setProjectToLeaveId(project.id)}
                                     shortContextMenu
                                   />
                                 </div>
@@ -285,6 +287,7 @@ export const ProjectSidebarList: FC = () => {
                                       provided={provided}
                                       snapshot={snapshot}
                                       handleDeleteProject={() => handleDeleteProject(project)}
+                                      handleProjectLeave={() => setProjectToLeaveId(project.id)}
                                       handleCopyText={() => handleCopyText(project.id)}
                                     />
                                   </div>
