@@ -142,6 +142,30 @@ class ProjectServices extends APIService {
       });
   }
 
+  async leaveProject(
+    workspaceSlug: string,
+    projectId: string,
+    user: ICurrentUserResponse
+  ): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/leave/`)
+      .then((response) => {
+        if (trackEvent)
+          trackEventServices.trackProjectEvent(
+            "PROJECT_MEMBER_LEAVE",
+            {
+              workspaceSlug,
+              projectId,
+              ...response?.data,
+            },
+            user
+          );
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async joinProjects(data: any): Promise<any> {
     return this.post("/api/users/me/invitations/projects/", data)
       .then((response) => response?.data)
