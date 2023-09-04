@@ -9,6 +9,7 @@ import {
 } from "components/workspace";
 import { ProjectSidebarList } from "components/project";
 import { PublishProjectModal } from "components/project/publish-project/modal";
+import { ConfirmProjectLeaveModal } from "components/project/confirm-project-leave-modal";
 // mobx react lite
 import { observer } from "mobx-react-lite";
 // mobx store
@@ -38,7 +39,10 @@ const Sidebar: React.FC<SidebarProps> = observer(({ toggleSidebar, setToggleSide
         <ProjectSidebarList />
         <WorkspaceHelpSection setSidebarActive={setToggleSidebar} />
       </div>
+      {/* publish project modal */}
       <PublishProjectModal />
+      {/* project leave modal */}
+      <ConfirmProjectLeaveModal />
     </div>
   );
 });

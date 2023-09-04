@@ -1,21 +1,15 @@
-// headless ui
-import { Disclosure } from "@headlessui/react";
-// import { getStateGroupIcon } from "components/icons";
 // hooks
 import useToast from "hooks/use-toast";
 // icons
 import { Icon } from "components/ui";
 import { copyTextToClipboard, addSpaceIfCamelCase } from "helpers/string.helper";
+// helpers
+import { renderDateFormat } from "constants/helpers";
 // types
 import { IIssue } from "types/issue";
+import { IPeekMode } from "store/issue_details";
 // constants
 import { issueGroupFilter, issuePriorityFilter } from "constants/data";
-import { useEffect } from "react";
-import { renderDateFormat } from "constants/helpers";
-import { IPeekMode } from "store/issue_details";
-import { useRouter } from "next/router";
-import { RootStore } from "store/root";
-import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   issueDetails: IIssue;
@@ -37,11 +31,6 @@ const validDate = (date: any, state: string): string => {
 export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mode }) => {
   const { setToastAlert } = useToast();
 
-  const { issueDetails: issueDetailStore }: RootStore = useMobxStore();
-
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
   const startDate = issueDetails.start_date;
   const targetDate = issueDetails.target_date;
 
@@ -57,11 +46,9 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
   const priority = issueDetails.priority ? issuePriorityFilter(issueDetails.priority) : null;
 
   const handleCopyLink = () => {
-    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const urlToCopy = window.location.href;
 
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${issueDetails.project}/issues/${issueDetails.id}`
-    ).then(() => {
+    copyTextToClipboard(urlToCopy).then(() => {
       setToastAlert({
         type: "success",
         title: "Link copied!",
