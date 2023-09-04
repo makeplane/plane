@@ -3,7 +3,6 @@ import { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import fileService from "services/file.service";
 
 const deleteKey = new PluginKey("delete-image");
-
 const IMAGE_NODE_TYPE = "image";
 
 interface ImageNode extends ProseMirrorNode {
@@ -17,6 +16,13 @@ const TrackImageDeletionPlugin = (): Plugin =>
   new Plugin({
     key: deleteKey,
     appendTransaction: (transactions: readonly Transaction[], oldState: EditorState, newState: EditorState) => {
+      const newImageSources = new Set();
+      newState.doc.descendants((node) => {
+        if (node.type.name === IMAGE_NODE_TYPE) {
+          newImageSources.add(node.attrs.src);
+        }
+      });
+
       transactions.forEach((transaction) => {
         if (!transaction.docChanged) return;
 
@@ -31,14 +37,7 @@ const TrackImageDeletionPlugin = (): Plugin =>
 
           // Check if the node has been deleted or replaced
           if (!newNode || newNode.type.name !== IMAGE_NODE_TYPE) {
-            // Check if the node still exists elsewhere in the document
-            let nodeExists = false;
-            newState.doc.descendants((node) => {
-              if (node.attrs.src === oldNode.attrs.src) {
-                nodeExists = true;
-              }
-            });
-            if (!nodeExists) {
+            if (!newImageSources.has(oldNode.attrs.src)) {
               removedImages.push(oldNode as ImageNode);
             }
           }
