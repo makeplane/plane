@@ -62,7 +62,7 @@ jobs:
         uses: docker/build-push-action@v4.0.0
         with:
           context: .
-          file: ./apps/app/Dockerfile.web
+          file: ./web/Dockerfile.web
           platforms: linux/amd64
           tags: ${{ steps.metaFrontend.outputs.tags }}
           push: true
@@ -88,7 +88,7 @@ jobs:
         uses: docker/build-push-action@v4.0.0
         with:
           context: .
-          file: ./apps/space/Dockerfile.space
+          file: ./space/Dockerfile.space
           platforms: linux/amd64
           push: true
           tags: ${{ steps.metaDeploy.outputs.tags }}

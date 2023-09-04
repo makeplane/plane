@@ -29,9 +29,9 @@ jobs:
             apiserver:
               - apiserver/**
             web:
-              - apps/app/**
+              - web/**
             deploy:
-              - apps/space/**
+              - space/**
 
       - name: Setup .npmrc for repository
         run: |
@@ -40,15 +40,15 @@ jobs:
       - name: Build Plane's Main App
         if: steps.changed-files.outputs.web_any_changed == 'true'
         run: |
-          mv ./.npmrc ./apps/app
-          cd apps/app
+          mv ./.npmrc ./web
+          cd web
           yarn
           yarn build
 
       - name: Build Plane's Deploy App
         if: steps.changed-files.outputs.deploy_any_changed == 'true'
         run: |
-          cd apps/space
+          cd space
           yarn 
           yarn build
 
