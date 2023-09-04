@@ -38,7 +38,7 @@ services:
                 container_name: planefrontend
                 image: makeplane/plane-frontend:latest
                 restart: always
-                command: /usr/local/bin/start.sh web/server.js app
+                command: /usr/local/bin/start.sh web/server.js web
                 env_file:
                         - .env
                 environment:
