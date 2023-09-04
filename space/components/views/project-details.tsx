@@ -67,7 +67,7 @@ export const ProjectDetailsView = observer(() => {
                   </div>
                 )}
                 {projectStore?.activeBoard === "kanban" && (
-                  <div className="relative w-full h-full mx-auto px-9 py-5">
+                  <div className="relative w-full h-full mx-auto p-5">
                     <IssueKanbanView />
                   </div>
                 )}
