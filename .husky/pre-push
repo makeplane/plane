@@ -1,0 +1,23 @@
+#!/bin/sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+changed_files=$(git diff --name-only HEAD~1)
+
+web_changed=$(echo "$changed_files" | grep -E '^web/' || true)
+space_changed=$(echo "$changed_files" | grep -E '^space/' || true)
+echo $web_changed
+echo $space_changed
+
+if [ -n "$web_changed" ] && [ -n "$space_changed" ]; then
+    echo "Changes detected in both web and space. Building..."
+    yarn run lint
+    yarn run build
+elif [ -n "$web_changed" ]; then
+    echo "Changes detected in web app. Building..."
+    yarn run lint --filter=web
+    yarn run build --filter=web
+elif [ -n "$space_changed" ]; then
+    echo "Changes detected in space app. Building..."
+    yarn run lint --filter=space
+    yarn run build --filter=space
+fi
