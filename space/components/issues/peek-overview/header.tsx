@@ -54,9 +54,9 @@ export const PeekOverviewHeader: React.FC<Props> = (props) => {
   const { setToastAlert } = useToast();
 
   const handleCopyLink = () => {
-    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const urlToCopy = window.location.href;
 
-    copyTextToClipboard(`${originURL}/${workspace_slug}/projects/${issueDetails?.project}/`).then(() => {
+    copyTextToClipboard(urlToCopy).then(() => {
       setToastAlert({
         type: "success",
         title: "Link copied!",

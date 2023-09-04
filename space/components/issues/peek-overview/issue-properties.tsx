@@ -37,8 +37,6 @@ const validDate = (date: any, state: string): string => {
 export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mode }) => {
   const { setToastAlert } = useToast();
 
-  const { issueDetails: issueDetailStore }: RootStore = useMobxStore();
-
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -57,11 +55,9 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
   const priority = issueDetails.priority ? issuePriorityFilter(issueDetails.priority) : null;
 
   const handleCopyLink = () => {
-    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const urlToCopy = window.location.href;
 
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${issueDetails.project}/issues/${issueDetails.id}`
-    ).then(() => {
+    copyTextToClipboard(urlToCopy).then(() => {
       setToastAlert({
         type: "success",
         title: "Link copied!",
