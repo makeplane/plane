@@ -11,14 +11,8 @@ from django.db.models import (
     OuterRef,
     Func,
     F,
-    Max,
-    CharField,
     Func,
     Subquery,
-    Prefetch,
-    When,
-    Case,
-    Value,
 )
 from django.core.validators import validate_email
 from django.conf import settings
@@ -47,6 +41,7 @@ from plane.api.permissions import (
     ProjectBasePermission,
     ProjectEntityPermission,
     ProjectMemberPermission,
+    ProjectLitePermission,
 )
 
 from plane.db.models import (
@@ -71,16 +66,9 @@ from plane.db.models import (
     ModuleMember,
     Inbox,
     ProjectDeployBoard,
-    Issue,
-    IssueReaction,
-    IssueLink,
-    IssueAttachment,
-    Label,
 )
 
 from plane.bgtasks.project_invitation_task import project_invitation
-from plane.utils.grouper import group_results
-from plane.utils.issue_filters import issue_filters
 
 
 class ProjectViewSet(BaseViewSet):
@@ -629,7 +617,7 @@ class ProjectMemberViewSet(BaseViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except ProjectMember.DoesNotExist:
             return Response(
-                {"error": "Project Member does not exist"}, status=status.HTTP_400
+                {"error": "Project Member does not exist"}, status=status.HTTP_400_BAD_REQUEST
             )
         except Exception as e:
             capture_exception(e)
@@ -1144,8 +1132,9 @@ class ProjectDeployBoardPublicSettingsEndpoint(BaseAPIView):
 
 
 class WorkspaceProjectDeployBoardEndpoint(BaseAPIView):
-
-    permission_classes = [AllowAny,]
+    permission_classes = [
+        AllowAny,
+    ]
 
     def get(self, request, slug):
         try:
@@ -1170,6 +1159,51 @@ class WorkspaceProjectDeployBoardEndpoint(BaseAPIView):
             )
 
             return Response(projects, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class LeaveProjectEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectLitePermission,
+    ]
+
+    def delete(self, request, slug, project_id):
+        try:
+            project_member = ProjectMember.objects.get(
+                workspace__slug=slug,
+                member=request.user,
+                project_id=project_id,
+            )
+
+            # Only Admin case
+            if (
+                project_member.role == 20
+                and ProjectMember.objects.filter(
+                    workspace__slug=slug,
+                    role=20,
+                    project_id=project_id,
+                ).count()
+                == 1
+            ):
+                return Response(
+                    {
+                        "error": "You cannot leave the project since you are the only admin of the project you should delete the project"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            # Delete the member from workspace
+            project_member.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except ProjectMember.DoesNotExist:
+            return Response(
+                {"error": "Workspace member does not exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except Exception as e:
             capture_exception(e)
             return Response(

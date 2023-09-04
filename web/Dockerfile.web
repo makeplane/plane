@@ -1,0 +1,70 @@
+FROM node:18-alpine AS builder
+RUN apk add --no-cache libc6-compat
+# Set working directory
+WORKDIR /app
+ENV NEXT_PUBLIC_API_BASE_URL=http://NEXT_PUBLIC_API_BASE_URL_PLACEHOLDER
+
+RUN yarn global add turbo
+COPY . .
+
+RUN turbo prune --scope=web --docker
+
+# Add lockfile and package.json's of isolated subworkspace
+FROM node:18-alpine AS installer
+
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+
+# First install the dependencies (as they change less often)
+COPY .gitignore .gitignore
+COPY --from=builder /app/out/json/ .
+COPY --from=builder /app/out/yarn.lock ./yarn.lock
+RUN yarn install --network-timeout 500000
+
+# Build the project
+COPY --from=builder /app/out/full/ .
+COPY turbo.json turbo.json
+COPY replace-env-vars.sh /usr/local/bin/
+USER root
+RUN chmod +x /usr/local/bin/replace-env-vars.sh
+
+RUN yarn turbo run build --filter=web
+
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL \
+    BUILT_NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+ENV NEXT_PUBLIC_DEPLOY_URL=${NEXT_PUBLIC_DEPLOY_URL}
+RUN /usr/local/bin/replace-env-vars.sh http://NEXT_PUBLIC_WEBAPP_URL_PLACEHOLDER ${NEXT_PUBLIC_API_BASE_URL} web
+
+FROM node:18-alpine AS runner
+WORKDIR /app
+
+# Don't run production as root
+RUN addgroup --system --gid 1001 plane
+RUN adduser --system --uid 1001 captain
+USER captain
+
+COPY --from=installer /app/web/next.config.js .
+COPY --from=installer /app/web/package.json .
+
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=installer --chown=captain:plane /app/web/.next/standalone ./
+
+COPY --from=installer --chown=captain:plane /app/web/.next ./web/.next
+
+ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL \
+    BUILT_NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+
+USER root
+COPY replace-env-vars.sh /usr/local/bin/
+COPY start.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/replace-env-vars.sh
+RUN chmod +x /usr/local/bin/start.sh
+
+USER captain
+
+ENV NEXT_TELEMETRY_DISABLED 1
+
+EXPOSE 3000

@@ -293,7 +293,7 @@ class IssueComment(ProjectBaseModel):
     comment_json = models.JSONField(blank=True, default=dict)
     comment_html = models.TextField(blank=True, default="<p></p>")
     attachments = ArrayField(models.URLField(), size=10, blank=True, default=list)
-    issue = models.ForeignKey(Issue, on_delete=models.CASCADE)
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="issue_comments")
     # System can also create comment
     actor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -481,7 +481,7 @@ class IssueVote(ProjectBaseModel):
     )
 
     class Meta:
-        unique_together = ["issue", "actor", "vote"]
+        unique_together = ["issue", "actor",]
         verbose_name = "Issue Vote"
         verbose_name_plural = "Issue Votes"
         db_table = "issue_votes"

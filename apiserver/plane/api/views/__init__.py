@@ -16,6 +16,7 @@ from .project import (
     ProjectDeployBoardPublicSettingsEndpoint,
     ProjectMemberEndpoint,
     WorkspaceProjectDeployBoardEndpoint,
+    LeaveProjectEndpoint,
 )
 from .user import (
     UserEndpoint,
@@ -54,6 +55,7 @@ from .workspace import (
     WorkspaceUserProfileIssuesEndpoint,
     WorkspaceLabelsEndpoint,
     WorkspaceMembersEndpoint,
+    LeaveWorkspaceEndpoint,
 )
 from .state import StateViewSet
 from .view import IssueViewViewSet, ViewIssuesEndpoint, IssueViewFavoriteViewSet
