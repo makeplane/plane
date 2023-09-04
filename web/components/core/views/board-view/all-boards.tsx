@@ -36,6 +36,8 @@ export const AllBoards: React.FC<Props> = ({
 }) => {
   const { groupByProperty: selectedGroup, groupedIssues, showEmptyGroups } = viewProps;
 
+  console.log("viewProps", viewProps);
+
   return (
     <>
       {groupedIssues ? (
