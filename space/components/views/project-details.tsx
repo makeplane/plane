@@ -55,7 +55,7 @@ export const ProjectDetailsView = observer(() => {
       ) : (
         <>
           {issueStore?.error ? (
-            <div className="text-sm text-center py-10  bg-custom-background-200 text-custom-text-100">
+            <div className="text-sm text-center py-10 bg-custom-background-200 text-custom-text-100">
               Something went wrong.
             </div>
           ) : (
