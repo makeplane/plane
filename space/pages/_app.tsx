@@ -12,6 +12,8 @@ import MobxStoreInit from "lib/mobx/store-init";
 // constants
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, TWITTER_USER_NAME, SITE_KEYWORDS, SITE_TITLE } from "constants/seo";
 
+const prefix = parseInt(process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX || "0") === 0 ? "/" : "/spaces/";
+
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <MobxStoreProvider>
@@ -25,11 +27,11 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta property="og:description" content={SITE_DESCRIPTION} />
         <meta name="keywords" content={SITE_KEYWORDS} />
         <meta name="twitter:site" content={`@${TWITTER_USER_NAME}`} />
-        <link rel="apple-touch-icon" sizes="180x180" href="/spaces/favicon/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/spaces/favicon/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/spaces/favicon/favicon-16x16.png" />
-        <link rel="manifest" href="/spaces/site.webmanifest.json" />
-        <link rel="shortcut icon" href="/spaces/favicon/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href={`${prefix}favicon/apple-touch-icon.png`} />
+        <link rel="icon" type="image/png" sizes="32x32" href={`${prefix}favicon/favicon-32x32.png`} />
+        <link rel="icon" type="image/png" sizes="16x16" href={`${prefix}favicon/favicon-16x16.png`} />
+        <link rel="manifest" href={`${prefix}site.webmanifest.json`} />
+        <link rel="shortcut icon" href={`${prefix}favicon/favicon.ico`} />
       </Head>
       <ToastContextProvider>
         <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
