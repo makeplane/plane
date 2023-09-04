@@ -1,7 +1,5 @@
 import React from "react";
 
-import { useRouter } from "next/router";
-
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // hooks
@@ -47,9 +45,6 @@ export const PeekOverviewHeader: React.FC<Props> = (props) => {
   const { handleClose, issueDetails } = props;
 
   const { issueDetails: issueDetailStore }: RootStore = useMobxStore();
-
-  const router = useRouter();
-  const { workspace_slug } = router.query;
 
   const { setToastAlert } = useToast();
 
