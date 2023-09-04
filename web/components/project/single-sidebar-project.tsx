@@ -94,7 +94,7 @@ export const SingleSidebarProject: React.FC<Props> = observer((props) => {
   } = props;
 
   const store: RootStore = useMobxStore();
-  const { projectPublish } = store;
+  const { projectPublish, project: projectStore } = store;
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -103,7 +103,7 @@ export const SingleSidebarProject: React.FC<Props> = observer((props) => {
 
   const isAdmin = project.member_role === 20;
 
-  const isViewOrGuest = project.member_role === 10 || project.member_role === 5;
+  const isViewerOrGuest = project.member_role === 10 || project.member_role === 5;
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug) return;
@@ -297,11 +297,16 @@ export const SingleSidebarProject: React.FC<Props> = observer((props) => {
                   </div>
                 </CustomMenu.MenuItem>
 
-                {isViewOrGuest && (
+                {/* leave project */}
+                {isViewerOrGuest && (
                   <CustomMenu.MenuItem
-                    onClick={() => {
-                      handleProjectLeave();
-                    }}
+                    onClick={() =>
+                      projectStore.handleProjectLeaveModal({
+                        id: project?.id,
+                        name: project?.name,
+                        workspaceSlug: workspaceSlug as string,
+                      })
+                    }
                   >
                     <div className="flex items-center justify-start gap-2">
                       <Icon iconName="logout" className="!text-base !leading-4" />

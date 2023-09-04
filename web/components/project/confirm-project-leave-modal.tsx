@@ -1,46 +1,45 @@
 import React from "react";
-
+// next imports
 import { useRouter } from "next/router";
-
+// swr
 import { mutate } from "swr";
-
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import projectService from "services/project.service";
-// hooks
-import useToast from "hooks/use-toast";
-import useUser from "hooks/use-user";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { DangerButton, Input, SecondaryButton } from "components/ui";
-// types
-import type { ICurrentUserResponse, IProject } from "types";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
+// mobx react lite
+import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
+// hooks
+import useToast from "hooks/use-toast";
+import useUser from "hooks/use-user";
+// types
+import { IProject } from "types";
 
-type TConfirmProjectDeletionProps = {
-  isOpen: boolean;
-  onClose: () => void;
-  onSuccess?: () => void;
-  data: IProject | null;
+type FormData = {
+  projectName: string;
+  confirmLeave: string;
 };
 
-const defaultValues = {
+const defaultValues: FormData = {
   projectName: "",
   confirmLeave: "",
 };
 
-export const LeaveProjectConfirmationModal: React.FC<TConfirmProjectDeletionProps> = (props) => {
-  const { isOpen, data, onClose, onSuccess } = props;
-
+export const ConfirmProjectLeaveModal: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const projectId = data?.id;
+  const store: RootStore = useMobxStore();
+  const { project } = store;
 
   const { user } = useUser();
 
@@ -54,46 +53,68 @@ export const LeaveProjectConfirmationModal: React.FC<TConfirmProjectDeletionProp
     watch,
   } = useForm({ defaultValues });
 
-  const canLeave = watch("projectName") === data?.name && watch("confirmLeave") === "leave project";
-
   const handleClose = () => {
-    const timer = setTimeout(() => {
-      reset(defaultValues);
-      clearTimeout(timer);
-    }, 350);
+    project.handleProjectLeaveModal(null);
 
-    onClose();
+    reset({ ...defaultValues });
   };
 
-  const onSubmit = async () => {
-    if (!data || !workspaceSlug || !canLeave || !user) return;
+  project?.projectLeaveDetails &&
+    console.log("project leave confirmation modal", project?.projectLeaveDetails);
 
-    await projectService
-      .leaveProject(workspaceSlug.toString(), data.id, user)
-      .then(() => {
-        handleClose();
-
-        mutate<IProject[]>(
-          PROJECTS_LIST(workspaceSlug.toString(), { is_favorite: "all" }),
-          (prevData) => prevData?.filter((project: IProject) => project.id !== data.id),
-          false
-        );
-
-        if (onSuccess) onSuccess();
-
-        if (projectId && projectId === data.id) router.push(`/${workspaceSlug}/projects`);
-      })
-      .catch(() =>
+  const onSubmit = async (data: any) => {
+    if (data) {
+      if (data.projectName === project?.projectLeaveDetails?.name) {
+        if (data.confirmLeave === "Leave Project") {
+          return project
+            .leaveProject(
+              project.projectLeaveDetails.workspaceSlug.toString(),
+              project.projectLeaveDetails.id.toString(),
+              user
+            )
+            .then((res) => {
+              mutate<IProject[]>(
+                PROJECTS_LIST(project.projectLeaveDetails.workspaceSlug.toString(), {
+                  is_favorite: "all",
+                }),
+                (prevData) => prevData?.filter((project: IProject) => project.id !== data.id),
+                false
+              );
+              handleClose();
+              router.push(`/${workspaceSlug}/projects`);
+            })
+            .catch((err) => {
+              setToastAlert({
+                type: "error",
+                title: "Error!",
+                message: "Something went wrong please try again later.",
+              });
+            });
+        } else {
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Please confirm leaving the project by typing the 'Leave Project'.",
+          });
+        }
+      } else {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Something went wrong. Please try again later.",
-        })
-      );
+          message: "Please enter the project name as shown in the description.",
+        });
+      }
+    } else {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Please fill all fields.",
+      });
+    }
   };
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
+    <Transition.Root show={project.projectLeaveModal} as={React.Fragment}>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
           as={React.Fragment}
@@ -131,19 +152,22 @@ export const LeaveProjectConfirmationModal: React.FC<TConfirmProjectDeletionProp
                       <h3 className="text-xl font-medium 2xl:text-2xl">Leave Project</h3>
                     </span>
                   </div>
+
                   <span>
                     <p className="text-sm leading-7 text-custom-text-200">
-                      Are you sure you want to leave project{" "}
-                      <span className="break-words font-semibold">{data?.name}</span>? All of the
-                      data related to the project will be permanently removed. This action cannot be
-                      undone
+                      Are you sure you want to leave the project -
+                      <span className="font-medium text-custom-text-100">{` "${project?.projectLeaveDetails?.name}" `}</span>
+                      ? All of the issues associated with you will become inaccessible.
                     </p>
                   </span>
+
                   <div className="text-custom-text-200">
                     <p className="break-words text-sm ">
                       Enter the project name{" "}
-                      <span className="font-medium text-custom-text-100">{data?.name}</span> to
-                      continue:
+                      <span className="font-medium text-custom-text-100">
+                        {project?.projectLeaveDetails?.name}
+                      </span>{" "}
+                      to continue:
                     </p>
                     <Controller
                       control={control}
@@ -151,7 +175,7 @@ export const LeaveProjectConfirmationModal: React.FC<TConfirmProjectDeletionProp
                       render={({ field: { onChange, value } }) => (
                         <Input
                           type="text"
-                          placeholder="Project name"
+                          placeholder="Enter project name"
                           className="mt-2"
                           value={value}
                           onChange={onChange}
@@ -159,11 +183,11 @@ export const LeaveProjectConfirmationModal: React.FC<TConfirmProjectDeletionProp
                       )}
                     />
                   </div>
+
                   <div className="text-custom-text-200">
                     <p className="text-sm">
                       To confirm, type{" "}
-                      <span className="font-medium text-custom-text-100">delete my project</span>{" "}
-                      below:
+                      <span className="font-medium text-custom-text-100">Leave Project</span> below:
                     </p>
                     <Controller
                       control={control}
@@ -181,7 +205,7 @@ export const LeaveProjectConfirmationModal: React.FC<TConfirmProjectDeletionProp
                   </div>
                   <div className="flex justify-end gap-2">
                     <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <DangerButton type="submit" disabled={!canLeave} loading={isSubmitting}>
+                    <DangerButton type="submit" loading={isSubmitting}>
                       {isSubmitting ? "Leaving..." : "Leave Project"}
                     </DangerButton>
                   </div>
@@ -193,4 +217,4 @@ export const LeaveProjectConfirmationModal: React.FC<TConfirmProjectDeletionProp
       </Dialog>
     </Transition.Root>
   );
-};
+});
