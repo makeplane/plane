@@ -1,8 +1,6 @@
 import React from "react";
 // next imports
 import { useRouter } from "next/router";
-// swr
-import { mutate } from "swr";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // headless ui
@@ -21,6 +19,7 @@ import { RootStore } from "store/root";
 // hooks
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
+import useProjects from "hooks/use-projects";
 // types
 import { IProject } from "types";
 
@@ -42,6 +41,7 @@ export const ConfirmProjectLeaveModal: React.FC = observer(() => {
   const { project } = store;
 
   const { user } = useUser();
+  const { mutateProjects } = useProjects();
 
   const { setToastAlert } = useToast();
 
@@ -73,13 +73,7 @@ export const ConfirmProjectLeaveModal: React.FC = observer(() => {
               user
             )
             .then((res) => {
-              mutate<IProject[]>(
-                PROJECTS_LIST(project.projectLeaveDetails.workspaceSlug.toString(), {
-                  is_favorite: "all",
-                }),
-                (prevData) => prevData?.filter((project: IProject) => project.id !== data.id),
-                false
-              );
+              mutateProjects();
               handleClose();
               router.push(`/${workspaceSlug}/projects`);
             })
