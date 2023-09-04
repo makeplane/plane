@@ -15,6 +15,7 @@ from plane.db.models import (
     ProjectIdentifier,
     ProjectFavorite,
     ProjectDeployBoard,
+    ProjectPublicMember,
 )
 
 
@@ -112,7 +113,7 @@ class ProjectDetailSerializer(BaseSerializer):
 
 
 class ProjectMemberSerializer(BaseSerializer):
-    workspace = WorkSpaceSerializer(read_only=True)
+    workspace = WorkspaceLiteSerializer(read_only=True)
     project = ProjectLiteSerializer(read_only=True)
     member = UserLiteSerializer(read_only=True)
 
@@ -177,5 +178,17 @@ class ProjectDeployBoardSerializer(BaseSerializer):
         fields = "__all__"
         read_only_fields = [
             "workspace",
-            "project" "anchor",
+            "project", "anchor",
+        ]
+
+
+class ProjectPublicMemberSerializer(BaseSerializer):
+
+    class Meta:
+        model = ProjectPublicMember
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "member",
         ]
