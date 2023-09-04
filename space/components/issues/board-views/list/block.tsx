@@ -6,15 +6,12 @@ import { IssueBlockPriority } from "components/issues/board-views/block-priority
 import { IssueBlockState } from "components/issues/board-views/block-state";
 import { IssueBlockLabels } from "components/issues/board-views/block-labels";
 import { IssueBlockDueDate } from "components/issues/board-views/block-due-date";
-import { IssueBlockUpVotes } from "components/issues/board-views/block-upvotes";
-import { IssueBlockDownVotes } from "components/issues/board-views/block-downvotes";
 // mobx hook
 import { useMobxStore } from "lib/mobx/store-provider";
 // interfaces
 import { IIssue } from "types/issue";
 // store
 import { RootStore } from "store/root";
-import { IssueVotes } from "components/issues/peek-overview";
 
 export const IssueListBlock: FC<{ issue: IIssue }> = observer((props) => {
   const { issue } = props;
@@ -39,9 +36,6 @@ export const IssueListBlock: FC<{ issue: IIssue }> = observer((props) => {
     );
     // router.push(`/${workspace_slug?.toString()}/${project_slug}?board=${board?.toString()}&peekId=${issue.id}`);
   };
-
-  const totalUpVotes = issue.votes.filter((v) => v.vote === 1);
-  const totalDownVotes = issue.votes.filter((v) => v.vote === -1);
 
   return (
     <div className="flex items-center px-6 py-3.5 relative gap-10 bg-custom-background-100">
