@@ -1,7 +1,6 @@
 import { FC } from "react";
 
 import { useRouter } from "next/router";
-import Link from "next/link";
 
 import { KeyedMutator } from "swr";
 
@@ -9,6 +8,7 @@ import { KeyedMutator } from "swr";
 import modulesService from "services/modules.service";
 // hooks
 import useUser from "hooks/use-user";
+import useProjectDetails from "hooks/use-project-details";
 // components
 import { GanttChartRoot, IBlockUpdateData } from "components/gantt-chart";
 import { ModuleGanttBlock, ModuleGanttSidebarBlock } from "components/modules";
@@ -25,6 +25,7 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules })
   const { workspaceSlug } = router.query;
 
   const { user } = useUser();
+  const { projectDetails } = useProjectDetails();
 
   const handleModuleUpdate = (module: IModule, payload: IBlockUpdateData) => {
     if (!workspaceSlug || !user) return;
@@ -78,6 +79,8 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules })
           }))
       : [];
 
+  const isAllowed = projectDetails?.member_role === 20 || projectDetails?.member_role === 15;
+
   return (
     <div className="w-full h-full overflow-y-auto">
       <GanttChartRoot
@@ -87,6 +90,10 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules })
         blockUpdateHandler={(block, payload) => handleModuleUpdate(block, payload)}
         SidebarBlockRender={ModuleGanttSidebarBlock}
         BlockRender={ModuleGanttBlock}
+        enableBlockLeftResize={isAllowed}
+        enableBlockRightResize={isAllowed}
+        enableBlockMove={isAllowed}
+        enableReorder={isAllowed}
       />
     </div>
   );

@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import useGanttChartViewIssues from "hooks/gantt-chart/view-issues-view";
 import useUser from "hooks/use-user";
 import { updateGanttIssue } from "components/gantt-chart/hooks/block-update";
+import useProjectDetails from "hooks/use-project-details";
 // components
 import { GanttChartRoot, renderIssueBlocksStructure } from "components/gantt-chart";
 import { IssueGanttBlock, IssueGanttSidebarBlock } from "components/issues";
@@ -19,12 +20,15 @@ export const ViewIssuesGanttChartView: FC<Props> = ({}) => {
   const { workspaceSlug, projectId, viewId } = router.query;
 
   const { user } = useUser();
+  const { projectDetails } = useProjectDetails();
 
   const { ganttIssues, mutateGanttIssues } = useGanttChartViewIssues(
     workspaceSlug as string,
     projectId as string,
     viewId as string
   );
+
+  const isAllowed = projectDetails?.member_role === 20 || projectDetails?.member_role === 15;
 
   return (
     <div className="w-full h-full">
@@ -38,6 +42,10 @@ export const ViewIssuesGanttChartView: FC<Props> = ({}) => {
         }
         SidebarBlockRender={IssueGanttSidebarBlock}
         BlockRender={IssueGanttBlock}
+        enableBlockLeftResize={isAllowed}
+        enableBlockRightResize={isAllowed}
+        enableBlockMove={isAllowed}
+        enableReorder={isAllowed}
       />
     </div>
   );

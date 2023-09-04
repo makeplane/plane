@@ -7,6 +7,7 @@ import useIssuesView from "hooks/use-issues-view";
 import useUser from "hooks/use-user";
 import useGanttChartModuleIssues from "hooks/gantt-chart/module-issues-view";
 import { updateGanttIssue } from "components/gantt-chart/hooks/block-update";
+import useProjectDetails from "hooks/use-project-details";
 // components
 import { GanttChartRoot, renderIssueBlocksStructure } from "components/gantt-chart";
 import { IssueGanttBlock, IssueGanttSidebarBlock } from "components/issues";
@@ -22,12 +23,15 @@ export const ModuleIssuesGanttChartView: FC<Props> = ({}) => {
   const { orderBy } = useIssuesView();
 
   const { user } = useUser();
+  const { projectDetails } = useProjectDetails();
 
   const { ganttIssues, mutateGanttIssues } = useGanttChartModuleIssues(
     workspaceSlug as string,
     projectId as string,
     moduleId as string
   );
+
+  const isAllowed = projectDetails?.member_role === 20 || projectDetails?.member_role === 15;
 
   return (
     <div className="w-full h-full">
@@ -41,7 +45,10 @@ export const ModuleIssuesGanttChartView: FC<Props> = ({}) => {
         }
         SidebarBlockRender={IssueGanttSidebarBlock}
         BlockRender={IssueGanttBlock}
-        enableReorder={orderBy === "sort_order"}
+        enableBlockLeftResize={isAllowed}
+        enableBlockRightResize={isAllowed}
+        enableBlockMove={isAllowed}
+        enableReorder={orderBy === "sort_order" && isAllowed}
         bottomSpacing
       />
     </div>
