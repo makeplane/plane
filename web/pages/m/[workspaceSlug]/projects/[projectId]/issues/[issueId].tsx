@@ -14,7 +14,7 @@ import { useForm } from "react-hook-form";
 import issuesService from "services/issues.service";
 
 // fetch key
-import { M_ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
+import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 // hooks
 import useUser from "hooks/use-user";
@@ -66,9 +66,7 @@ const MobileWebViewIssueDetail = () => {
     mutate: mutateIssueDetails,
     error,
   } = useSWR(
-    workspaceSlug && projectId && issueId
-      ? M_ISSUE_DETAILS(workspaceSlug.toString(), projectId.toString(), issueId.toString())
-      : null,
+    workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId.toString()) : null,
     workspaceSlug && projectId && issueId
       ? () =>
           issuesService.retrieve(workspaceSlug.toString(), projectId.toString(), issueId.toString())
@@ -91,7 +89,7 @@ const MobileWebViewIssueDetail = () => {
       if (!workspaceSlug || !projectId || !issueId) return;
 
       mutate<IIssue>(
-        M_ISSUE_DETAILS(workspaceSlug.toString(), projectId.toString(), issueId.toString()),
+        ISSUE_DETAILS(issueId.toString()),
         (prevData) => {
           if (!prevData) return prevData;
 
@@ -161,7 +159,7 @@ const MobileWebViewIssueDetail = () => {
 
         <IssueAttachments allowed={isAllowed} />
 
-        <IssueLinks allowed={isAllowed} links={issueDetails?.issue_link} />
+        <IssueLinks allowed={isAllowed} issueDetails={issueDetails!} />
       </div>
     </DefaultLayout>
   );
