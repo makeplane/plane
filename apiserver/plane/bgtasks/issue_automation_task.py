@@ -64,21 +64,22 @@ def archive_old_issues():
                     issues_to_update.append(issue)
 
                 # Bulk Update the issues and log the activity
-                updated_issues = Issue.objects.bulk_update(
-                    issues_to_update, ["archived_at"], batch_size=100
-                )
-                [
-                    issue_activity.delay(
-                        type="issue.activity.updated",
-                        requested_data=json.dumps({"archived_at": str(issue.archived_at)}),
-                        actor_id=str(project.created_by_id),
-                        issue_id=issue.id,
-                        project_id=project_id,
-                        current_instance=None,
-                        subscriber=False,
+                if issues_to_update: 
+                    updated_issues = Issue.objects.bulk_update(
+                        issues_to_update, ["archived_at"], batch_size=100
                     )
-                    for issue in updated_issues
-                ]
+                    [
+                        issue_activity.delay(
+                            type="issue.activity.updated",
+                            requested_data=json.dumps({"archived_at": str(issue.archived_at)}),
+                            actor_id=str(project.created_by_id),
+                            issue_id=issue.id,
+                            project_id=project_id,
+                            current_instance=None,
+                            subscriber=False,
+                        )
+                        for issue in updated_issues
+                    ]
         return
     except Exception as e:
         if settings.DEBUG:
@@ -136,19 +137,20 @@ def close_old_issues():
                     issues_to_update.append(issue)
 
                 # Bulk Update the issues and log the activity
-                updated_issues = Issue.objects.bulk_update(issues_to_update, ["state"], batch_size=100)
-                [
-                    issue_activity.delay(
-                        type="issue.activity.updated",
-                        requested_data=json.dumps({"closed_to": str(issue.state_id)}),
-                        actor_id=str(project.created_by_id),
-                        issue_id=issue.id,
-                        project_id=project_id,
-                        current_instance=None,
-                        subscriber=False,
-                    )
-                    for issue in updated_issues
-                ]
+                if issues_to_update:
+                    updated_issues = Issue.objects.bulk_update(issues_to_update, ["state"], batch_size=100)
+                    [
+                        issue_activity.delay(
+                            type="issue.activity.updated",
+                            requested_data=json.dumps({"closed_to": str(issue.state_id)}),
+                            actor_id=str(project.created_by_id),
+                            issue_id=issue.id,
+                            project_id=project_id,
+                            current_instance=None,
+                            subscriber=False,
+                        )
+                        for issue in updated_issues
+                    ]
         return
     except Exception as e:
         if settings.DEBUG:
