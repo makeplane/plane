@@ -29,7 +29,13 @@ import { Label, WebViewModal } from "components/web-view";
 // types
 import type { IIssueAttachment } from "types";
 
-export const IssueAttachments: React.FC = () => {
+type Props = {
+  allowed: boolean;
+};
+
+export const IssueAttachments: React.FC<Props> = (props) => {
+  const { allowed } = props;
+
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
@@ -89,6 +95,7 @@ export const IssueAttachments: React.FC = () => {
   const { getRootProps } = useDropzone({
     onDrop,
     maxSize: 5 * 1024 * 1024,
+    disabled: !allowed || isLoading,
   });
 
   const { data: attachments } = useSWR<IIssueAttachment[]>(
@@ -109,7 +116,9 @@ export const IssueAttachments: React.FC = () => {
         <div className="space-y-6">
           <div
             {...getRootProps()}
-            className="border-b w-full py-2 text-custom-text-100 px-2 flex justify-between items-center"
+            className={`border-b w-full py-2 text-custom-text-100 px-2 flex justify-between items-center ${
+              !allowed || isLoading ? "cursor-not-allowed" : "cursor-pointer"
+            }`}
           >
             {isLoading ? (
               <p className="text-center">Uploading...</p>

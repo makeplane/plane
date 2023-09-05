@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // react hook forms
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 // services
 import issuesService from "services/issues.service";
@@ -18,41 +18,37 @@ import { M_ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 // hooks
 import useUser from "hooks/use-user";
-import { useProjectMyMembership } from "contexts/project-member.context";
+import useProjectMembers from "hooks/use-project-members";
 
 // layouts
 import DefaultLayout from "layouts/default-layout";
 
 // ui
-import { Spinner, Icon } from "components/ui";
+import { Spinner } from "components/ui";
 
 // components
 import {
-  StateSelect,
-  PrioritySelect,
   IssueWebViewForm,
   SubIssueList,
   IssueAttachments,
+  IssuePropertiesDetail,
+  IssueLinks,
 } from "components/web-view";
 
 // types
 import type { IIssue } from "types";
 
-const Label: React.FC<
-  React.DetailedHTMLProps<React.LabelHTMLAttributes<HTMLLabelElement>, HTMLLabelElement>
-> = (props) => (
-  <label className="block text-base font-medium mb-[5px]" {...props}>
-    {props.children}
-  </label>
-);
-
 const MobileWebViewIssueDetail = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
-  const { memberRole } = useProjectMyMembership();
+  const memberRole = useProjectMembers(
+    workspaceSlug as string,
+    projectId as string,
+    !!workspaceSlug && !!projectId
+  );
 
-  const isAllowed = memberRole.isMember || memberRole.isOwner;
+  const isAllowed = Boolean(memberRole.isMember || memberRole.isOwner);
 
   const { user } = useUser();
 
@@ -161,51 +157,11 @@ const MobileWebViewIssueDetail = () => {
 
         <SubIssueList issueDetails={issueDetails!} />
 
-        <div>
-          <Label>Details</Label>
-          <div className="space-y-2 mb-[6px]">
-            <div className="border border-custom-border-200 rounded-[4px] p-2 flex justify-between items-center">
-              <div className="flex items-center gap-1">
-                <Icon iconName="grid_view" />
-                <span className="text-sm text-custom-text-200">State</span>
-              </div>
-              <div>
-                <Controller
-                  control={control}
-                  name="state"
-                  render={({ field: { value } }) => (
-                    <StateSelect
-                      value={value}
-                      onChange={(val: string) => submitChanges({ state: val })}
-                    />
-                  )}
-                />
-              </div>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <div className="border border-custom-border-200 rounded-[4px] p-2 flex justify-between items-center">
-              <div className="flex items-center gap-1">
-                <Icon iconName="grid_view" />
-                <span className="text-sm text-custom-text-200">Priority</span>
-              </div>
-              <div>
-                <Controller
-                  control={control}
-                  name="priority"
-                  render={({ field: { value } }) => (
-                    <PrioritySelect
-                      value={value}
-                      onChange={(val: string) => submitChanges({ priority: val })}
-                    />
-                  )}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+        <IssuePropertiesDetail control={control} submitChanges={submitChanges} />
 
-        <IssueAttachments />
+        <IssueAttachments allowed={isAllowed} />
+
+        <IssueLinks allowed={isAllowed} links={issueDetails?.issue_link} />
       </div>
     </DefaultLayout>
   );

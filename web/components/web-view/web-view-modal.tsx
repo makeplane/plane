@@ -36,7 +36,7 @@ export const WebViewModal = (props: Props) => {
           <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-10 overflow-y-auto">
+        <div className="fixed bottom-0 left-0 w-full z-10 overflow-y-auto">
           <div className="flex min-h-full items-end justify-center text-center sm:items-center">
             <Transition.Child
               as={Fragment}
@@ -47,7 +47,7 @@ export const WebViewModal = (props: Props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-none rounded-tr-[4px] rounded-tl-[4px] bg-custom-background-100 p-6 text-left shadow-xl transition-all sm:my-8 w-full sm:p-6">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-none rounded-tr-[4px] rounded-tl-[4px] bg-custom-background-100 p-6 text-left shadow-xl transition-all sm:mt-8 w-full">
                 <div className="flex justify-between items-center w-full">
                   <Dialog.Title
                     as="h3"

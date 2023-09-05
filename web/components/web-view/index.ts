@@ -5,3 +5,6 @@ export * from "./issue-web-view-form";
 export * from "./label";
 export * from "./sub-issues";
 export * from "./issue-attachments";
+export * from "./issue-properties-detail";
+export * from "./issue-link-list";
+export * from "./create-update-link-form";
