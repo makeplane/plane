@@ -19,6 +19,7 @@ from .project import (
     ProjectIdentifier,
     ProjectFavorite,
     ProjectDeployBoard,
+    ProjectPublicMember,
 )
 
 from .issue import (

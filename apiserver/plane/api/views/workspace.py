@@ -1100,7 +1100,6 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
             created_issues = (
                 Issue.issue_objects.filter(
                     workspace__slug=slug,
-                    assignees__in=[user_id],
                     project__project_projectmember__member=request.user,
                     created_by_id=user_id,
                 )
@@ -1198,6 +1197,7 @@ class WorkspaceUserActivityEndpoint(BaseAPIView):
             projects = request.query_params.getlist("project", [])
 
             queryset = IssueActivity.objects.filter(
+                ~Q(field__in=["comment", "vote", "reaction"]),
                 workspace__slug=slug,
                 project__project_projectmember__member=request.user,
                 actor=user_id,
@@ -1467,6 +1467,47 @@ class WorkspaceMembersEndpoint(BaseAPIView):
             ).select_related("workspace", "member")
             serialzier = WorkSpaceMemberSerializer(workspace_members, many=True)
             return Response(serialzier.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class LeaveWorkspaceEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def delete(self, request, slug):
+        try:
+            workspace_member = WorkspaceMember.objects.get(
+                workspace__slug=slug, member=request.user
+            )
+
+            # Only Admin case
+            if (
+                workspace_member.role == 20
+                and WorkspaceMember.objects.filter(
+                    workspace__slug=slug, role=20
+                ).count()
+                == 1
+            ):
+                return Response(
+                    {
+                        "error": "You cannot leave the workspace since you are the only admin of the workspace you should delete the workspace"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            # Delete the member from workspace
+            workspace_member.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except WorkspaceMember.DoesNotExist:
+            return Response(
+                {"error": "Workspace member does not exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except Exception as e:
             capture_exception(e)
             return Response(
