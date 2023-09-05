@@ -5,8 +5,10 @@ import UserStore from "./user";
 import ThemeStore from "./theme";
 import ProjectStore, { IProjectStore } from "./project";
 import ProjectPublishStore, { IProjectPublishStore } from "./project-publish";
-import KanbanStore from "./kanban";
 import IssuesStore from "./issues";
+// issues views and filters
+import IssueFilterStore from "./issue-views/filters";
+import KanbanStore from "./issue-views/kanban";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -16,6 +18,7 @@ export class RootStore {
   project: IProjectStore;
   projectPublish: IProjectPublishStore;
   issues: IssuesStore;
+  issueFilters: IssueFilterStore;
   kanban: KanbanStore;
 
   constructor() {
@@ -24,6 +27,7 @@ export class RootStore {
     this.project = new ProjectStore(this);
     this.projectPublish = new ProjectPublishStore(this);
     this.issues = new IssuesStore(this);
+    this.issueFilters = new IssueFilterStore(this);
     this.kanban = new KanbanStore(this);
   }
 }
