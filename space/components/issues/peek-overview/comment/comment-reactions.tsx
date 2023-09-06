@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // ui
-import { ReactionSelector } from "components/ui";
+import { ReactionSelector, Tooltip } from "components/ui";
 // helpers
 import { groupReactions, renderEmoji } from "helpers/emoji.helper";
 
@@ -77,41 +77,55 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
         size="md"
       />
 
-      {Object.keys(groupedReactions || {}).map(
-        (reaction) =>
-          groupedReactions?.[reaction]?.length &&
-          groupedReactions[reaction].length > 0 && (
-            <button
-              type="button"
-              onClick={() => {
-                userStore.requiredLogin(() => {
-                  handleReactionClick(reaction);
-                });
-              }}
+      {Object.keys(groupedReactions || {}).map((reaction) => {
+        const reactions = groupedReactions?.[reaction] ?? [];
+        const REACTIONS_LIMIT = 1000;
+
+        if (reactions.length > 0)
+          return (
+            <Tooltip
               key={reaction}
-              className={`flex items-center gap-1 text-custom-text-100 text-sm h-full px-2 py-1 rounded-md ${
-                commentReactions?.some(
-                  (r) => r.actor_detail.id === userStore.currentUser?.id && r.reaction === reaction
-                )
-                  ? "bg-custom-primary-100/10"
-                  : "bg-custom-background-80"
-              }`}
+              tooltipContent={
+                <div>
+                  {reactions
+                    .map((r) => r.actor_detail.display_name)
+                    .splice(0, REACTIONS_LIMIT)
+                    .join(", ")}
+                  {reactions.length > REACTIONS_LIMIT && " and " + (reactions.length - REACTIONS_LIMIT) + " more"}
+                </div>
+              }
             >
-              <span>{renderEmoji(reaction)}</span>
-              <span
-                className={
+              <button
+                type="button"
+                onClick={() => {
+                  userStore.requiredLogin(() => {
+                    handleReactionClick(reaction);
+                  });
+                }}
+                className={`flex items-center gap-1 text-custom-text-100 text-sm h-full px-2 py-1 rounded-md ${
                   commentReactions?.some(
                     (r) => r.actor_detail.id === userStore.currentUser?.id && r.reaction === reaction
                   )
-                    ? "text-custom-primary-100"
-                    : ""
-                }
+                    ? "bg-custom-primary-100/10"
+                    : "bg-custom-background-80"
+                }`}
               >
-                {groupedReactions?.[reaction].length}{" "}
-              </span>
-            </button>
-          )
-      )}
+                <span>{renderEmoji(reaction)}</span>
+                <span
+                  className={
+                    commentReactions?.some(
+                      (r) => r.actor_detail.id === userStore.currentUser?.id && r.reaction === reaction
+                    )
+                      ? "text-custom-primary-100"
+                      : ""
+                  }
+                >
+                  {groupedReactions?.[reaction].length}{" "}
+                </span>
+              </button>
+            </Tooltip>
+          );
+      })}
     </div>
   );
 });
