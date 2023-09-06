@@ -68,25 +68,30 @@ export interface IVote {
 }
 
 export interface Comment {
-  id: string;
   actor_detail: ActorDetail;
-  issue_detail: IssueDetail;
-  project_detail: ProjectDetail;
-  workspace_detail: WorkspaceDetail;
-  comment_reactions: any[];
-  is_member: boolean;
-  created_at: Date;
-  updated_at: Date;
-  comment_stripped: string;
-  comment_html: string;
-  attachments: any[];
   access: string;
-  created_by: string;
-  updated_by: string;
-  project: string;
-  workspace: string;
-  issue: string;
   actor: string;
+  attachments: any[];
+  comment_html: string;
+  comment_reactions: {
+    actor_detail: ActorDetail;
+    comment: string;
+    id: string;
+    reaction: string;
+  }[];
+  comment_stripped: string;
+  created_at: Date;
+  created_by: string;
+  id: string;
+  is_member: boolean;
+  issue: string;
+  issue_detail: IssueDetail;
+  project: string;
+  project_detail: ProjectDetail;
+  updated_at: Date;
+  updated_by: string;
+  workspace: string;
+  workspace_detail: WorkspaceDetail;
 }
 
 export interface IIssueReaction {
