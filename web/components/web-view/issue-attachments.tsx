@@ -96,7 +96,7 @@ export const IssueAttachments: React.FC<Props> = (props) => {
     [issueId, projectId, setToastAlert, workspaceSlug]
   );
 
-  const { getRootProps } = useDropzone({
+  const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     maxSize: 5 * 1024 * 1024,
     disabled: !allowed || isLoading,
@@ -130,6 +130,7 @@ export const IssueAttachments: React.FC<Props> = (props) => {
               !allowed || isLoading ? "cursor-not-allowed" : "cursor-pointer"
             }`}
           >
+            <input {...getInputProps()} />
             {isLoading ? (
               <p className="text-center">Uploading...</p>
             ) : (
