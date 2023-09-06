@@ -33,6 +33,7 @@ import {
   IssueAttachments,
   IssuePropertiesDetail,
   IssueLinks,
+  IssueActivity,
 } from "components/web-view";
 
 // types
@@ -81,6 +82,10 @@ const MobileWebViewIssueDetail = () => {
       description: issueDetails.description,
       description_html: issueDetails.description_html,
       state: issueDetails.state,
+      assignees_list:
+        issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
+      labels_list: issueDetails.labels_list ?? issueDetails.labels,
+      labels: issueDetails.labels_list ?? issueDetails.labels,
     });
   }, [issueDetails, reset]);
 
@@ -160,6 +165,8 @@ const MobileWebViewIssueDetail = () => {
         <IssueAttachments allowed={isAllowed} />
 
         <IssueLinks allowed={isAllowed} issueDetails={issueDetails!} />
+
+        <IssueActivity allowed={isAllowed} issueDetails={issueDetails!} />
       </div>
     </DefaultLayout>
   );

@@ -8,3 +8,7 @@ export * from "./issue-attachments";
 export * from "./issue-properties-detail";
 export * from "./issue-link-list";
 export * from "./create-update-link-form";
+export * from "./issue-activity";
+export * from "./select-assignee";
+export * from "./select-estimate";
+export * from "./add-comment";
