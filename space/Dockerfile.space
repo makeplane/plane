@@ -20,7 +20,6 @@ RUN yarn install --network-timeout 500000
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 USER root
-RUN chmod +x /usr/local/bin/replace-env-vars.sh
 
 ENV NEXT_PUBLIC_DEPLOY_WITH_NGINX=1
 

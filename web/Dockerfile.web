@@ -44,7 +44,6 @@ COPY --from=installer --chown=captain:plane /app/web/.next/standalone ./
 COPY --from=installer --chown=captain:plane /app/web/.next ./web/.next
 
 USER root
-COPY replace-env-vars.sh /usr/local/bin/
 COPY start.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/start.sh
 
