@@ -156,12 +156,12 @@ export const getYearChartItemPositionWidthInYear = (
 
   // position code starts
   const positionTimeDifference: number = startDate.getTime() - itemStartDate.getTime();
-  const positionDaysDifference: number = Math.abs(
-    Math.floor(positionTimeDifference / (1000 * 60 * 60 * 24))
+  const positionWeeksDifference: number = Math.abs(
+    Math.floor(positionTimeDifference / (1000 * 60 * 60 * 24 * 7))
   );
-  scrollPosition = positionDaysDifference * chartData.data.width;
+  scrollPosition = positionWeeksDifference * chartData.data.width;
 
-  var diffMonths = (itemStartDate.getFullYear() - startDate.getFullYear()) * 12;
+  let diffMonths = (itemStartDate.getFullYear() - startDate.getFullYear()) * 12;
   diffMonths -= startDate.getMonth();
   diffMonths += itemStartDate.getMonth();
 
@@ -171,7 +171,7 @@ export const getYearChartItemPositionWidthInYear = (
   // width code starts
   const widthTimeDifference: number = itemStartDate.getTime() - itemTargetDate.getTime();
   const widthDaysDifference: number = Math.abs(
-    Math.floor(widthTimeDifference / (1000 * 60 * 60 * 24))
+    Math.floor(widthTimeDifference / (1000 * 60 * 60 * 24 * 7))
   );
   scrollWidth = (widthDaysDifference + 1) * chartData.data.width + 1;
   // width code ends

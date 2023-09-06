@@ -57,13 +57,14 @@ export const YearChartView: FC<any> = () => {
                       className="relative flex h-full flex-col overflow-hidden whitespace-nowrap"
                       style={{ width: `${currentViewData?.data.width}px` }}
                     >
-                      <div
+                      <div className="relative h-full w-full flex-1 flex justify-center">
+                        {/* <div
                         className={`relative h-full w-full flex-1 flex justify-center ${
                           ["sat", "sun"].includes(monthWeek?.dayData?.shortTitle || "")
                             ? `bg-custom-background-90`
                             : ``
                         }`}
-                      >
+                      > */}
                         {/* {monthDay?.today && (
                         <div className="absolute top-0 bottom-0 w-[1px] bg-red-500" />
                       )} */}
