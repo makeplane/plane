@@ -2,7 +2,8 @@
 import APIService from "services/api.service";
 import trackEventServices from "services/track-event.service";
 
-const { NEXT_PUBLIC_API_BASE_URL } = process.env;
+import getConfig from "next/config";
+const { publicRuntimeConfig: { NEXT_PUBLIC_API_BASE_URL } } = getConfig();
 
 // types
 import {

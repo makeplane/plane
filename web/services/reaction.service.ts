@@ -11,7 +11,8 @@ import type {
   IssueCommentReactionForm,
 } from "types";
 
-const { NEXT_PUBLIC_API_BASE_URL } = process.env;
+import getConfig from "next/config";
+const { publicRuntimeConfig: { NEXT_PUBLIC_API_BASE_URL } } = getConfig();
 
 const trackEvent =
   process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";

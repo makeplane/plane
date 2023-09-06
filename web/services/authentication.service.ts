@@ -2,7 +2,8 @@
 import APIService from "services/api.service";
 import { ICurrentUserResponse } from "types";
 
-const { NEXT_PUBLIC_API_BASE_URL } = process.env;
+import getConfig from "next/config";
+const { publicRuntimeConfig: { NEXT_PUBLIC_API_BASE_URL } } = getConfig();
 
 class AuthService extends APIService {
   constructor() {

@@ -1,11 +1,12 @@
 // services
+import getConfig from "next/config";
 import APIService from "services/api.service";
 import trackEventServices from "services/track-event.service";
 
 // types
 import { ICurrentUserResponse, IGptResponse } from "types";
 
-const { NEXT_PUBLIC_API_BASE_URL } = process.env;
+const { publicRuntimeConfig: { NEXT_PUBLIC_API_BASE_URL } } = getConfig();
 
 const trackEvent =
   process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
