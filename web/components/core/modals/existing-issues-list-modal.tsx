@@ -212,7 +212,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                             onClick={() => setIsWorkspaceLevel((prevData) => !prevData)}
                             className="flex-shrink-0"
                           >
-                            workspace level
+                            Workspace Level
                           </button>
                         </div>
                       </Tooltip>
