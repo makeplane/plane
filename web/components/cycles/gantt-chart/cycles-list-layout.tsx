@@ -63,7 +63,9 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles, mutateCycles }) =>
   const blockFormat = (blocks: ICycle[]) =>
     blocks && blocks.length > 0
       ? blocks
-          .filter((b) => b.start_date && b.end_date)
+          .filter(
+            (b) => b.start_date && b.end_date && new Date(b.start_date) <= new Date(b.end_date)
+          )
           .map((block) => ({
             data: block,
             id: block.id,
