@@ -1,5 +1,5 @@
 // react
-import React from "react";
+import React, { useEffect } from "react";
 
 // next
 import { useRouter } from "next/router";
@@ -14,7 +14,7 @@ import { useForm } from "react-hook-form";
 import issuesService from "services/issues.service";
 
 // fetch keys
-import { M_ISSUE_DETAILS } from "constants/fetch-keys";
+import { ISSUE_DETAILS } from "constants/fetch-keys";
 
 // hooks
 import useToast from "hooks/use-toast";
@@ -26,13 +26,14 @@ import { PrimaryButton, Input } from "components/ui";
 import type { linkDetails, IIssueLink } from "types";
 
 type Props = {
-  links?: linkDetails[];
+  isOpen: boolean;
   data?: linkDetails;
+  links?: linkDetails[];
   onSuccess: () => void;
 };
 
 export const CreateUpdateLinkForm: React.FC<Props> = (props) => {
-  const { data, links, onSuccess } = props;
+  const { isOpen, data, links, onSuccess } = props;
 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
@@ -42,6 +43,7 @@ export const CreateUpdateLinkForm: React.FC<Props> = (props) => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
@@ -49,6 +51,22 @@ export const CreateUpdateLinkForm: React.FC<Props> = (props) => {
       url: "",
     },
   });
+
+  useEffect(() => {
+    if (!data) return;
+    reset({
+      title: data.title,
+      url: data.url,
+    });
+  }, [data, reset]);
+
+  useEffect(() => {
+    if (!isOpen)
+      reset({
+        title: "",
+        url: "",
+      });
+  }, [isOpen, reset]);
 
   const onSubmit = async (formData: IIssueLink) => {
     if (!workspaceSlug || !projectId || !issueId) return;
@@ -65,9 +83,7 @@ export const CreateUpdateLinkForm: React.FC<Props> = (props) => {
         )
         .then(() => {
           onSuccess();
-          mutate(
-            M_ISSUE_DETAILS(workspaceSlug.toString(), projectId.toString(), issueId.toString())
-          );
+          mutate(ISSUE_DETAILS(issueId.toString()));
         })
         .catch((err) => {
           if (err?.status === 400)
@@ -95,7 +111,7 @@ export const CreateUpdateLinkForm: React.FC<Props> = (props) => {
       );
 
       mutate(
-        M_ISSUE_DETAILS(workspaceSlug.toString(), projectId.toString(), issueId.toString()),
+        ISSUE_DETAILS(issueId.toString()),
         (prevData) => ({ ...prevData, issue_link: updatedLinks }),
         false
       );
@@ -110,9 +126,7 @@ export const CreateUpdateLinkForm: React.FC<Props> = (props) => {
         )
         .then(() => {
           onSuccess();
-          mutate(
-            M_ISSUE_DETAILS(workspaceSlug.toString(), projectId.toString(), issueId.toString())
-          );
+          mutate(ISSUE_DETAILS(issueId.toString()));
         });
     }
   };
