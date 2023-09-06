@@ -116,7 +116,7 @@ class WorkSpaceViewSet(BaseViewSet):
         )
 
         issue_count = (
-            Issue.objects.filter(workspace=OuterRef("id"))
+            Issue.issue_objects.filter(workspace=OuterRef("id"))
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
@@ -203,7 +203,7 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             )
 
             issue_count = (
-                Issue.objects.filter(workspace=OuterRef("id"))
+                Issue.issue_objects.filter(workspace=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -1075,7 +1075,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
             priority_order = ["urgent", "high", "medium", "low", None]
 
             priority_distribution = (
-                Issue.objects.filter(
+                Issue.issue_objects.filter(
                     workspace__slug=slug,
                     assignees__in=[user_id],
                     project__project_projectmember__member=request.user,

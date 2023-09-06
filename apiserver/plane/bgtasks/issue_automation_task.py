@@ -32,7 +32,7 @@ def archive_old_issues():
             archive_in = project.archive_in
 
             # Get all the issues whose updated_at in less that the archive_in month
-            issues = Issue.objects.filter(
+            issues = Issue.issue_objects.filter(
                 Q(
                     project=project_id,
                     archived_at__isnull=True,
@@ -100,7 +100,7 @@ def close_old_issues():
             close_in = project.close_in
 
             # Get all the issues whose updated_at in less that the close_in month
-            issues = Issue.objects.filter(
+            issues = Issue.issue_objects.filter(
                 Q(
                     project=project_id,
                     archived_at__isnull=True,
