@@ -19,6 +19,7 @@ import { Input, PrimaryButton, Spinner } from "components/ui";
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // types
 import type { NextPage } from "next";
+import getConfig from "next/config";
 
 type FormData = {
   password: string;
@@ -27,6 +28,8 @@ type FormData = {
 
 const ResetPasswordPage: NextPage = () => {
   const [isLoading, setIsLoading] = useState(true);
+
+  const { publicRuntimeConfig: { NEXT_PUBLIC_ENABLE_OAUTH } } = getConfig();
 
   const router = useRouter();
   const { uidb64, token } = router.query;
@@ -85,7 +88,7 @@ const ResetPasswordPage: NextPage = () => {
   }, [setTheme]);
 
   useEffect(() => {
-    if (parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0")) router.push("/");
+    if (parseInt(NEXT_PUBLIC_ENABLE_OAUTH || "0")) router.push("/");
     else setIsLoading(false);
   }, [router]);
 

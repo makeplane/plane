@@ -18,6 +18,7 @@ import { EmailPasswordForm } from "components/account";
 import { Spinner } from "components/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
+import getConfig from "next/config";
 // types
 import type { NextPage } from "next";
 type EmailPasswordFormValues = {
@@ -28,6 +29,8 @@ type EmailPasswordFormValues = {
 
 const SignUp: NextPage = () => {
   const [isLoading, setIsLoading] = useState(true);
+
+  const { publicRuntimeConfig: { NEXT_PUBLIC_ENABLE_OAUTH } } = getConfig();
 
   const router = useRouter();
 
@@ -71,7 +74,7 @@ const SignUp: NextPage = () => {
   }, [setTheme]);
 
   useEffect(() => {
-    if (parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0")) router.push("/");
+    if (parseInt(NEXT_PUBLIC_ENABLE_OAUTH || "0")) router.push("/");
     else setIsLoading(false);
   }, [router]);
 

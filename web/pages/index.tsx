@@ -43,7 +43,7 @@ const HomePage: NextPage = observer(() => {
   const { setTheme } = useTheme();
 
   const {
-    publicRuntimeConfig: { PROJECT_API },
+    publicRuntimeConfig: { NEXT_PUBLIC_ENABLE_OAUTH },
   } = getConfig()
 
   const { isLoading, mutateUser } = useUserAuth("sign-in");
@@ -178,10 +178,10 @@ const HomePage: NextPage = observer(() => {
           </>
           <div className="grid place-items-center h-full overflow-y-auto py-5 px-7">
             <div>
-              {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
+              {parseInt(NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
                 <>
                   <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
-                    { `Sign in to ${PROJECT_API} Plane` }
+                    { `Sign in to Plane` }
                   </h1>
                   <div className="flex flex-col divide-y divide-custom-border-200">
                     <div className="pb-7">
@@ -197,7 +197,7 @@ const HomePage: NextPage = observer(() => {
                 <EmailPasswordForm onSubmit={handlePasswordSignIn} />
               )}
 
-              {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
+              {parseInt(NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
                 <p className="pt-16 text-custom-text-200 text-sm text-center">
                   By signing up, you agree to the{" "}
                   <a
