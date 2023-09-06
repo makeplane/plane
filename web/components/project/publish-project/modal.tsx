@@ -6,6 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // ui components
+import getConfig from "next/config";
 import {
   ToggleSwitch,
   PrimaryButton,
@@ -63,9 +64,11 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
   const [isUnpublishing, setIsUnpublishing] = useState(false);
   const [isUpdateRequired, setIsUpdateRequired] = useState(false);
 
-  const plane_deploy_url = process.env.NEXT_PUBLIC_DEPLOY_URL ?? "http://localhost:4000";
+  const { publicRuntimeConfig: { NEXT_PUBLIC_DEPLOY_URL } } = getConfig();
 
-  const router = useRouter();
+  const plane_deploy_url = NEXT_PUBLIC_DEPLOY_URL ?? "http://localhost:4000";
+
+  const router = useRouter()
   const { workspaceSlug } = router.query;
 
   const store: RootStore = useMobxStore();

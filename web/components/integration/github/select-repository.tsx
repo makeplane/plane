@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 
 import useSWRInfinite from "swr/infinite";
 
+import getConfig from "next/config";
+
 // services
 import projectService from "services/project.service";
 // ui
@@ -31,11 +33,13 @@ export const SelectRepository: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
+  const { publicRuntimeConfig: { NEXT_PUBLIC_API_BASE_URL } } = getConfig();
+
   const getKey = (pageIndex: number) => {
     if (!workspaceSlug || !integration) return;
 
     return `${
-      process.env.NEXT_PUBLIC_API_BASE_URL
+      NEXT_PUBLIC_API_BASE_URL
     }/api/workspaces/${workspaceSlug}/workspace-integrations/${
       integration.id
     }/github-repositories/?page=${++pageIndex}`;

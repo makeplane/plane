@@ -9,6 +9,10 @@ const extraImageDomains = (process.env.NEXT_PUBLIC_EXTRA_IMAGE_DOMAINS ?? "")
 const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
+  publicRuntimeConfig: {
+    NEXT_PUBLIC_DEPLOY_URL: process.env.NEXT_PUBLIC_DEPLOY_URL,
+    NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL
+  },
   images: {
     domains: [
       "vinci-web.s3.amazonaws.com",

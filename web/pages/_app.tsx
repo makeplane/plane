@@ -2,6 +2,7 @@
 import Head from "next/head";
 import dynamic from "next/dynamic";
 import Router from "next/router";
+import App, { AppContext, AppProps } from 'next/app'
 
 // themes
 import { ThemeProvider } from "next-themes";
@@ -20,8 +21,6 @@ import NProgress from "nprogress";
 import { UserProvider } from "contexts/user.context";
 import { ToastContextProvider } from "contexts/toast.context";
 import { ThemeContextProvider } from "contexts/theme.context";
-// types
-import type { AppProps } from "next/app";
 // constants
 import { THEMES } from "constants/themes";
 // constants
@@ -44,6 +43,12 @@ NProgress.configure({ showSpinner: false });
 Router.events.on("routeChangeStart", NProgress.start);
 Router.events.on("routeChangeError", NProgress.done);
 Router.events.on("routeChangeComplete", NProgress.done);
+
+MyApp.getInitialProps = async (appContext: AppContext) => {
+  const appProps = await App.getInitialProps(appContext)
+
+  return { ...appProps }
+}
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

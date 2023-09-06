@@ -29,6 +29,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // next themes
 import { useTheme } from "next-themes";
 import { IUser } from "types";
+import getConfig from "next/config";
 
 // types
 type EmailPasswordFormValues = {
@@ -40,6 +41,10 @@ type EmailPasswordFormValues = {
 const HomePage: NextPage = observer(() => {
   const store: any = useMobxStore();
   const { setTheme } = useTheme();
+
+  const {
+    publicRuntimeConfig: { PROJECT_API },
+  } = getConfig()
 
   const { isLoading, mutateUser } = useUserAuth("sign-in");
 
@@ -176,7 +181,7 @@ const HomePage: NextPage = observer(() => {
               {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
                 <>
                   <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
-                    Sign in to Plane
+                    { `Sign in to ${PROJECT_API} Plane` }
                   </h1>
                   <div className="flex flex-col divide-y divide-custom-border-200">
                     <div className="pb-7">

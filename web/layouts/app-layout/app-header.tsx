@@ -8,6 +8,8 @@ import { Tooltip } from "components/ui";
 // hooks
 import useProjectDetails from "hooks/use-project-details";
 
+import getConfig from "next/config";
+
 type Props = {
   breadcrumbs?: JSX.Element;
   left?: JSX.Element;
@@ -16,7 +18,7 @@ type Props = {
   noHeader: boolean;
 };
 
-const { NEXT_PUBLIC_DEPLOY_URL } = process.env;
+const { publicRuntimeConfig: { NEXT_PUBLIC_DEPLOY_URL } } = getConfig();
 const plane_deploy_url = NEXT_PUBLIC_DEPLOY_URL ? NEXT_PUBLIC_DEPLOY_URL : "http://localhost:3001";
 
 const Header: React.FC<Props> = ({ breadcrumbs, left, right, setToggleSidebar, noHeader }) => {
