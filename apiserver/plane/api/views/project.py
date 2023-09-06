@@ -924,8 +924,7 @@ class ProjectUserViewsEndpoint(BaseAPIView):
 
             project_member.save()
 
-            return Response(status=status.HTTP_200_OK)
-
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except Project.DoesNotExist:
             return Response(
                 {"error": "The requested resource does not exists"},
