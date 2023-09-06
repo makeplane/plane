@@ -2189,6 +2189,7 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
 
             states = (
                 State.objects.filter(
+                    ~Q(name="Triage"),
                     workspace__slug=slug,
                     project_id=project_id,
                 )
