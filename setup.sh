@@ -27,43 +27,38 @@ echo "@tiptap-pro:registry=https://registry.tiptap.dev/
 //registry.tiptap.dev/:_authToken=${authToken}" > .npmrc
 
 # Create .env files in the respective directories
-touch ./web/.env
-touch ./apiserver/.env
-touch ./space/.env
+cp ./web/.env.example ./web/.env
+cp ./space/.env.example ./space/.env
+cp ./apiserver/.env.example ./apiserver/.env
 
-# Initialize empty strings for each .env file
-webEnv=""
-apiEnv=""
-spaceEnv=""
+web_env=$(<./web/.env)
+api_env=$(<./apiserver/.env)
+space_env=$(<./space/.env)
 
-# Read the .env file line by line
 while IFS= read -r line
 do
-  # Check if the line is a comment
-  if [[ $line == \#* ]]; then
-    # Check which section we are in
-    if [[ $line == *Frontend* ]]; then
-      section="web"
-    elif [[ $line == *Backend* ]]; then
-      section="api"
-    elif [[ $line == *Space* ]]; then
-      section="space"
+  if [[ $line == *=* ]]; then
+    key=$(echo "$line" | cut -d'=' -f1)
+    value=$(echo "$line" | cut -d'=' -f2-)
+
+    if [[ $web_env == *"$key"* && $web_env != *"$value"* ]]; then
+      web_env=$(echo "$web_env" | sed "s#$key=.*#$line#")
     fi
-  else
-    # Add the line to the correct string
-    if [[ $section == "web" ]]; then
-      webEnv+="$line\n"
-    elif [[ $section == "api" ]]; then
-      apiEnv+="$line\n"
-    elif [[ $section == "space" ]]; then
-      spaceEnv+="$line\n"
+
+    if [[ $api_env == *"$key"* && $api_env != *"$value"* ]]; then
+      api_env=$(echo "$api_env" | sed "s#$key=.*#$line#")
+    fi
+
+    if [[ $space_env == *"$key"* && $space_env != *"$value"* ]]; then
+      space_env=$(echo "$space_env" | sed "s#$key=.*#$line#")
     fi
   fi
 done < .env
 
 # Write the strings to the respective .env files
-echo -e $webEnv > ./web/.env
-echo -e $apiEnv > ./apiserver/.env
-echo -e $spaceEnv > ./space/.env
+echo "$web_env" > ./web/.env
+echo "$api_env" > ./apiserver/.env
+echo "$space_env" > ./space/.env
+
 
 
