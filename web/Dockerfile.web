@@ -17,7 +17,6 @@ WORKDIR /app
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
-COPY ./web/.env .env
 COPY --from=builder /app/out/yarn.lock ./yarn.lock
 RUN yarn install --network-timeout 500000
 

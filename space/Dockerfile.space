@@ -19,13 +19,10 @@ RUN yarn install --network-timeout 500000
 
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
-COPY ./space/.env .env
-COPY replace-env-vars.sh /usr/local/bin/
 USER root
 RUN chmod +x /usr/local/bin/replace-env-vars.sh
 
-ARG NEXT_PUBLIC_DEPLOY_WITH_NGINX=1
-ENV NEXT_PUBLIC_DEPLOY_WITH_NGINX=$NEXT_PUBLIC_DEPLOY_WITH_NGINX
+ENV NEXT_PUBLIC_DEPLOY_WITH_NGINX=1
 
 RUN yarn turbo run build --filter=space
 
@@ -44,8 +41,7 @@ COPY --from=installer --chown=captain:plane /app/space/.next/standalone ./
 COPY --from=installer --chown=captain:plane /app/space/.next ./space/.next
 COPY --from=installer --chown=captain:plane /app/space/public ./space/public
 
-ARG NEXT_PUBLIC_DEPLOY_WITH_NGINX=1
-ENV NEXT_PUBLIC_DEPLOY_WITH_NGINX=$NEXT_PUBLIC_DEPLOY_WITH_NGINX
+ENV NEXT_PUBLIC_DEPLOY_WITH_NGINX=1
 
 USER root
 COPY start.sh /usr/local/bin/
