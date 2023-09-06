@@ -32,6 +32,20 @@ export interface IIssueDetailStore {
     data: any
   ) => Promise<any>;
   deleteIssueComment: (workspaceId: string, projectId: string, issueId: string, comment_id: string) => void;
+  addCommentReaction: (
+    workspaceId: string,
+    projectId: string,
+    issueId: string,
+    commentId: string,
+    reactionHex: string
+  ) => void;
+  removeCommentReaction: (
+    workspaceId: string,
+    projectId: string,
+    issueId: string,
+    commentId: string,
+    reactionHex: string
+  ) => void;
   // issue reactions
   addIssueReaction: (workspaceId: string, projectId: string, issueId: string, reactionHex: string) => void;
   removeIssueReaction: (workspaceId: string, projectId: string, issueId: string, reactionHex: string) => void;
@@ -61,8 +75,17 @@ class IssueDetailStore implements IssueDetailStore {
       details: observable.ref,
       // actions
       setPeekId: action,
-      fetchIssueDetails: action,
       setPeekMode: action,
+      fetchIssueDetails: action,
+      addIssueComment: action,
+      updateIssueComment: action,
+      deleteIssueComment: action,
+      addCommentReaction: action,
+      removeCommentReaction: action,
+      addIssueReaction: action,
+      removeIssueReaction: action,
+      addIssueVote: action,
+      removeIssueVote: action,
     });
     this.issueService = new IssueService();
     this.rootStore = _rootStore;
@@ -172,6 +195,94 @@ class IssueDetailStore implements IssueDetailStore {
       });
     } catch (error) {
       console.log("Failed to add issue vote");
+    }
+  };
+
+  addCommentReaction = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    commentId: string,
+    reactionHex: string
+  ) => {
+    const newReaction = {
+      id: uuidv4(),
+      comment: commentId,
+      reaction: reactionHex,
+      actor_detail: this.rootStore.user.currentActor,
+    };
+    const newComments = this.details[issueId].comments.map((comment) => ({
+      ...comment,
+      comment_reactions:
+        comment.id === commentId ? [...comment.comment_reactions, newReaction] : comment.comment_reactions,
+    }));
+
+    try {
+      runInAction(() => {
+        this.details = {
+          ...this.details,
+          [issueId]: {
+            ...this.details[issueId],
+            comments: [...newComments],
+          },
+        };
+      });
+
+      await this.issueService.createCommentReaction(workspaceSlug, projectId, commentId, {
+        reaction: reactionHex,
+      });
+    } catch (error) {
+      const issueComments = await this.issueService.getIssueComments(workspaceSlug, projectId, issueId);
+
+      runInAction(() => {
+        this.details = {
+          ...this.details,
+          [issueId]: {
+            ...this.details[issueId],
+            comments: issueComments,
+          },
+        };
+      });
+    }
+  };
+
+  removeCommentReaction = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    commentId: string,
+    reactionHex: string
+  ) => {
+    try {
+      const comment = this.details[issueId].comments.find((c) => c.id === commentId);
+      const newCommentReactions = comment?.comment_reactions.filter((r) => r.reaction !== reactionHex) ?? [];
+
+      runInAction(() => {
+        this.details = {
+          ...this.details,
+          [issueId]: {
+            ...this.details[issueId],
+            comments: this.details[issueId].comments.map((c) => ({
+              ...c,
+              comment_reactions: c.id === commentId ? newCommentReactions : c.comment_reactions,
+            })),
+          },
+        };
+      });
+
+      await this.issueService.deleteCommentReaction(workspaceSlug, projectId, commentId, reactionHex);
+    } catch (error) {
+      const issueComments = await this.issueService.getIssueComments(workspaceSlug, projectId, issueId);
+
+      runInAction(() => {
+        this.details = {
+          ...this.details,
+          [issueId]: {
+            ...this.details[issueId],
+            comments: issueComments,
+          },
+        };
+      });
     }
   };
 
