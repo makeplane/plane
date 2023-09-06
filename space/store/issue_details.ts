@@ -154,29 +154,32 @@ class IssueDetailStore implements IssueDetailStore {
     data: any
   ) => {
     try {
-      const issueCommentUpdateResponse = await this.issueService.updateIssueComment(
-        workspaceSlug,
-        projectId,
-        issueId,
-        commentId,
-        data
-      );
+      runInAction(() => {
+        this.details = {
+          ...this.details,
+          [issueId]: {
+            ...this.details[issueId],
+            comments: this.details[issueId].comments.map((c) => ({
+              ...c,
+              ...(c.id === commentId ? data : {}),
+            })),
+          },
+        };
+      });
 
-      if (issueCommentUpdateResponse) {
-        const remainingComments = this.details[issueId].comments.filter((com) => com.id != commentId);
-        runInAction(() => {
-          this.details = {
-            ...this.details,
-            [issueId]: {
-              ...this.details[issueId],
-              comments: [...remainingComments, issueCommentUpdateResponse],
-            },
-          };
-        });
-      }
-      return issueCommentUpdateResponse;
+      await this.issueService.updateIssueComment(workspaceSlug, projectId, issueId, commentId, data);
     } catch (error) {
-      console.log("Failed to add issue comment");
+      const issueComments = await this.issueService.getIssueComments(workspaceSlug, projectId, issueId);
+
+      runInAction(() => {
+        this.details = {
+          ...this.details,
+          [issueId]: {
+            ...this.details[issueId],
+            comments: issueComments,
+          },
+        };
+      });
     }
   };
 
