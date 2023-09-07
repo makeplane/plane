@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // icons
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { ChevronDown } from "lucide-react";
 
 // services
 import stateService from "services/state.service";
@@ -82,7 +82,7 @@ export const StateSelect: React.FC<Props> = (props) => {
         }
       >
         {selectedState?.name || "Select a state"}
-        <ChevronDownIcon className="w-5 h-5" />
+        <ChevronDown className="w-5 h-5" />
       </button>
     </>
   );

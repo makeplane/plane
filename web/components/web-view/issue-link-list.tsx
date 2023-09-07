@@ -12,7 +12,8 @@ import { mutate } from "swr";
 import issuesService from "services/issues.service";
 
 // icons
-import { LinkIcon, PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+// import { LinkIcon, PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { Link as LinkIcon, Plus, Pencil, X } from "lucide-react";
 
 // components
 import { Label, WebViewModal, CreateUpdateLinkForm } from "components/web-view";
@@ -108,7 +109,7 @@ export const IssueLinks: React.FC<Props> = (props) => {
                     setSelectedLink(link.id);
                   }}
                 >
-                  <PencilIcon className="w-5 h-5 text-custom-text-100" />
+                  <Pencil className="w-[18px] h-[18px] text-custom-text-400" />
                 </button>
                 <button
                   type="button"
@@ -116,7 +117,7 @@ export const IssueLinks: React.FC<Props> = (props) => {
                     handleDeleteLink(link.id);
                   }}
                 >
-                  <TrashIcon className="w-5 h-5 text-red-500 hover:bg-red-500/20" />
+                  <X className="w-[18px] h-[18px] text-custom-text-400" />
                 </button>
               </div>
             )}
@@ -128,7 +129,7 @@ export const IssueLinks: React.FC<Props> = (props) => {
           onClick={() => setIsOpen(true)}
           className="w-full !py-2 text-custom-text-300 !text-base flex items-center justify-center"
         >
-          <PlusIcon className="w-4 h-4 inline-block mr-1" />
+          <Plus className="w-[18px] h-[18px] inline-block mr-1" />
           <span>Add</span>
         </SecondaryButton>
       </div>

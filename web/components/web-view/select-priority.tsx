@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 
 // icons
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 // constants
 import { PRIORITIES } from "constants/project";
@@ -76,7 +76,7 @@ export const PrioritySelect: React.FC<Props> = (props) => {
         }
       >
         {value ? capitalizeFirstLetter(value) : "None"}
-        <ChevronDownIcon className="w-5 h-5" />
+        <ChevronDown className="w-5 h-5" />
       </button>
     </>
   );
