@@ -8,11 +8,19 @@ const nonValidatedRoutes = [
   "/reset-password",
   "/workspace-member-invitation",
   "/sign-up",
+  "/m/",
 ];
 
 const validateRouteCheck = (route: string): boolean => {
   let validationToggle = false;
-  const routeCheck = nonValidatedRoutes.find((_route: string) => _route === route);
+
+  let routeCheck = false;
+  nonValidatedRoutes.forEach((_route: string) => {
+    if (route.includes(_route)) {
+      routeCheck = true;
+    }
+  });
+
   if (routeCheck) validationToggle = true;
   return validationToggle;
 };
