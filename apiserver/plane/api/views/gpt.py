@@ -5,6 +5,8 @@ import requests
 from rest_framework.response import Response
 from rest_framework import status
 import openai
+import litellm
+from litellm import completion
 from sentry_sdk import capture_exception
 
 # Django imports
@@ -40,8 +42,8 @@ class GPTIntegrationEndpoint(BaseAPIView):
 
             final_text = task + "\n" + prompt
 
-            openai.api_key = settings.OPENAI_API_KEY
-            response = openai.ChatCompletion.create(
+            litellm.api_key = settings.OPENAI_API_KEY
+            response = completion(
                 model=settings.GPT_ENGINE,
                 messages=[{"role": "user", "content": final_text}],
                 temperature=0.7,
