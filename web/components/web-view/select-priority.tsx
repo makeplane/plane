@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 
 // icons
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon } from "lucide-react";
 
 // constants
 import { PRIORITIES } from "constants/project";
@@ -35,11 +35,16 @@ export const PrioritySelect: React.FC<Props> = (props) => {
         }}
       >
         <WebViewModal.Options
-          selectedOption={value}
           options={
             PRIORITIES?.map((priority) => ({
               label: priority ? capitalizeFirstLetter(priority) : "None",
               value: priority,
+              checked: priority === value,
+              onClick: () => {
+                setIsOpen(false);
+                if (disabled) return;
+                onChange(priority);
+              },
               icon: (
                 <span
                   className={`text-left text-xs capitalize rounded ${
@@ -57,11 +62,6 @@ export const PrioritySelect: React.FC<Props> = (props) => {
                   {getPriorityIcon(priority, "text-sm")}
                 </span>
               ),
-              onClick: () => {
-                setIsOpen(false);
-                if (disabled) return;
-                onChange(priority);
-              },
             })) || []
           }
         />

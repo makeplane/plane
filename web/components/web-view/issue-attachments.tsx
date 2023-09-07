@@ -21,10 +21,11 @@ import { ISSUE_ATTACHMENTS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys
 import useToast from "hooks/use-toast";
 
 // icons
-import { ChevronRightIcon } from "@heroicons/react/24/outline";
+import { ChevronRightIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 // components
 import { Label, WebViewModal } from "components/web-view";
+import { DeleteAttachmentModal } from "components/issues";
 
 // types
 import type { IIssueAttachment } from "types";
@@ -41,6 +42,9 @@ export const IssueAttachments: React.FC<Props> = (props) => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const [deleteAttachment, setDeleteAttachment] = useState<IIssueAttachment | null>(null);
+  const [attachmentDeleteModal, setAttachmentDeleteModal] = useState<boolean>(false);
 
   const { setToastAlert } = useToast();
 
@@ -92,7 +96,7 @@ export const IssueAttachments: React.FC<Props> = (props) => {
     [issueId, projectId, setToastAlert, workspaceSlug]
   );
 
-  const { getRootProps } = useDropzone({
+  const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     maxSize: 5 * 1024 * 1024,
     disabled: !allowed || isLoading,
@@ -112,6 +116,12 @@ export const IssueAttachments: React.FC<Props> = (props) => {
 
   return (
     <div>
+      <DeleteAttachmentModal
+        isOpen={allowed && attachmentDeleteModal}
+        setIsOpen={setAttachmentDeleteModal}
+        data={deleteAttachment}
+      />
+
       <WebViewModal isOpen={isOpen} onClose={() => setIsOpen(false)} modalTitle="Insert file">
         <div className="space-y-6">
           <div
@@ -120,6 +130,7 @@ export const IssueAttachments: React.FC<Props> = (props) => {
               !allowed || isLoading ? "cursor-not-allowed" : "cursor-pointer"
             }`}
           >
+            <input {...getInputProps()} />
             {isLoading ? (
               <p className="text-center">Uploading...</p>
             ) : (
@@ -144,6 +155,17 @@ export const IssueAttachments: React.FC<Props> = (props) => {
                 {attachment.attributes.name}
               </a>
             </Link>
+            {allowed && (
+              <button
+                type="button"
+                onClick={() => {
+                  setDeleteAttachment(attachment);
+                  setAttachmentDeleteModal(true);
+                }}
+              >
+                <XMarkIcon className="w-5 h-5 text-custom-text-100" />
+              </button>
+            )}
           </div>
         ))}
         <button

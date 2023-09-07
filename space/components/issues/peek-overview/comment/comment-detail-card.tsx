@@ -1,17 +1,22 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useForm, Controller } from "react-hook-form";
+import React, { useState } from "react";
+
+// mobx
 import { observer } from "mobx-react-lite";
+// react-hook-form
+import { useForm, Controller } from "react-hook-form";
+// headless ui
 import { Menu, Transition } from "@headlessui/react";
 // lib
 import { useMobxStore } from "lib/mobx/store-provider";
+// components
+import { TipTapEditor } from "components/tiptap";
+import { CommentReactions } from "components/issues/peek-overview";
 // icons
 import { ChatBubbleLeftEllipsisIcon, CheckIcon, XMarkIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
 import { Comment } from "types/issue";
-// components
-import { TipTapEditor } from "components/tiptap";
 
 type Props = {
   workspaceSlug: string;
@@ -76,7 +81,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             {comment.actor_detail.is_bot ? comment.actor_detail.first_name + " Bot" : comment.actor_detail.display_name}
           </div>
           <p className="mt-0.5 text-xs text-custom-text-200">
-            <>Commented {timeAgo(comment.created_at)}</>
+            <>commented {timeAgo(comment.created_at)}</>
           </p>
         </div>
         <div className="issue-comments-section p-0">
@@ -125,6 +130,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
               editable={false}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
             />
+            <CommentReactions commentId={comment.id} projectId={comment.project} />
           </div>
         </div>
       </div>
