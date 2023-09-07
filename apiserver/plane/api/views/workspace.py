@@ -532,7 +532,7 @@ class UserWorkspaceInvitationsEndpoint(BaseViewSet):
             # Delete joined workspace invites
             workspace_invitations.delete()
 
-            return Response(status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
             capture_exception(e)
             return Response(
@@ -846,7 +846,7 @@ class WorkspaceMemberUserViewsEndpoint(BaseAPIView):
             workspace_member.view_props = request.data.get("view_props", {})
             workspace_member.save()
 
-            return Response(status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except WorkspaceMember.DoesNotExist:
             return Response(
                 {"error": "User not a member of workspace"},

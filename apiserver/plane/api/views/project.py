@@ -482,7 +482,7 @@ class UserProjectInvitationsViewset(BaseViewSet):
             # Delete joined project invites
             project_invitations.delete()
 
-            return Response(status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
             capture_exception(e)
             return Response(
