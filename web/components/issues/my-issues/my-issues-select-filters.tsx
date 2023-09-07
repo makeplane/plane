@@ -61,8 +61,10 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
         <DateFilterModal
           title={dateFilterType.title}
           field={dateFilterType.type}
-          isOpen={isDateFilterModalOpen}
+          filters={filters as IIssueFilterOptions}
           handleClose={() => setIsDateFilterModalOpen(false)}
+          isOpen={isDateFilterModalOpen}
+          onSelect={onSelect}
         />
       )}
       <MultiLevelDropdown
