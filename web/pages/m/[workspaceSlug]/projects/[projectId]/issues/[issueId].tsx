@@ -38,7 +38,6 @@ import {
 
 // types
 import type { IIssue } from "types";
-import { GetServerSidePropsContext } from "next";
 
 const MobileWebViewIssueDetail = () => {
   const router = useRouter();
@@ -171,23 +170,6 @@ const MobileWebViewIssueDetail = () => {
       </div>
     </WebViewLayout>
   );
-};
-
-const getIfInWebview = (userAgent: NavigatorID["userAgent"]) => {
-  if (/iphone|ipod|ipad/.test(userAgent) || userAgent.includes("wv")) return true;
-  else return false;
-};
-
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-  const navigator = context.req.headers["user-agent"] || "";
-
-  const isWebView = getIfInWebview(navigator);
-
-  return {
-    props: {
-      isWebView,
-    },
-  };
 };
 
 export default MobileWebViewIssueDetail;

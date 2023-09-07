@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 // swr
 import useSWR from "swr";
 
@@ -23,8 +21,8 @@ const getIfInWebview = (userAgent: NavigatorID["userAgent"]) => {
   if (/iphone|ipod|ipad/.test(userAgent) || userAgent.includes("wv")) return true;
   else return false;
 };
+
 const useMobileDetect = () => {
-  useEffect(() => {}, []);
   const userAgent = typeof navigator === "undefined" ? "SSR" : navigator.userAgent;
   return getIfInWebview(userAgent);
 };
@@ -32,9 +30,7 @@ const useMobileDetect = () => {
 const WebViewLayout: React.FC<Props> = ({ children }) => {
   const { data: currentUser, error } = useSWR(CURRENT_USER, () => userService.currentUser());
 
-  const data = useMobileDetect();
-
-  console.log("data: ", data);
+  const isWebview = useMobileDetect();
 
   if (!currentUser && !error) {
     return (
@@ -49,7 +45,7 @@ const WebViewLayout: React.FC<Props> = ({ children }) => {
 
   return (
     <div className="h-screen w-full overflow-hidden bg-custom-background-100">
-      {error ? (
+      {error || !isWebview ? (
         <div className="flex flex-col items-center justify-center gap-y-3 h-full text-center text-custom-text-200">
           <AlertCircle size={64} />
           <h2 className="text-2xl font-semibold">You are not authorized to view this page.</h2>
