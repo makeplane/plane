@@ -44,7 +44,7 @@ const WebViewLayout: React.FC<Props> = ({ children }) => {
   }
 
   return (
-    <div className="h-screen w-full overflow-hidden bg-custom-background-100">
+    <div className="h-screen w-full bg-custom-background-100">
       {error || !isWebview ? (
         <div className="flex flex-col items-center justify-center gap-y-3 h-full text-center text-custom-text-200">
           <AlertCircle size={64} />
