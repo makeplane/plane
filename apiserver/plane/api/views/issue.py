@@ -1575,7 +1575,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                         )
                     )
                     .distinct()
-                )
+                ).order_by("created_at")
             else:
                 return IssueComment.objects.none()
         except ProjectDeployBoard.DoesNotExist:
