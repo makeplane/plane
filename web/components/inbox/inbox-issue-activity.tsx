@@ -38,7 +38,7 @@ export const InboxIssueActivity: React.FC<Props> = ({ issueDetails }) => {
       : null
   );
 
-  const handleCommentUpdate = async (comment: IIssueComment) => {
+  const handleCommentUpdate = async (commentId: string, data: Partial<IIssueComment>) => {
     if (!workspaceSlug || !projectId || !inboxIssueId) return;
 
     await issuesService
@@ -46,8 +46,8 @@ export const InboxIssueActivity: React.FC<Props> = ({ issueDetails }) => {
         workspaceSlug as string,
         projectId as string,
         inboxIssueId as string,
-        comment.id,
-        comment,
+        commentId,
+        data,
         user
       )
       .then(() => mutateIssueActivity());

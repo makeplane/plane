@@ -204,7 +204,7 @@ class ProjectIssuesServices extends APIService {
     projectId: string,
     issueId: string,
     commentId: string,
-    data: IIssueComment,
+    data: Partial<IIssueComment>,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
     return this.patch(
