@@ -44,7 +44,6 @@ export const IssueActivity: React.FC<Props> = (props) => {
   const { workspaceSlug, projectId, issueId } = router.query;
 
   const { user } = useUser();
-  const { setToastAlert } = useToast();
 
   const { data: issueActivities, mutate: mutateIssueActivity } = useSWR(
     workspaceSlug && projectId && issueId ? PROJECT_ISSUES_ACTIVITY(issueId.toString()) : null,
@@ -104,11 +103,14 @@ export const IssueActivity: React.FC<Props> = (props) => {
         mutate(PROJECT_ISSUES_ACTIVITY(issueDetails.id));
       })
       .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Comment could not be posted. Please try again.",
-        })
+        console.log(
+          "toast",
+          JSON.stringify({
+            type: "error",
+            title: "Error!",
+            message: "Comment could not be posted. Please try again.",
+          })
+        )
       );
   };
 

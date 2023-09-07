@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // icons
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { ChevronDown } from "lucide-react";
 
 // services
 import projectService from "services/project.service";
@@ -87,8 +87,7 @@ export const AssigneeSelect: React.FC<Props> = (props) => {
         ) : (
           "No assignees"
         )}
-        {/* {selectedAssignee?.member.display_name || "Select assignee"} */}
-        <ChevronDownIcon className="w-5 h-5" />
+        <ChevronDown className="w-5 h-5" />
       </button>
     </>
   );

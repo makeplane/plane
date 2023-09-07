@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 
 // icons
-import { ChevronDownIcon, PlayIcon } from "lucide-react";
+import { ChevronDown, PlayIcon } from "lucide-react";
 
 // hooks
 import useEstimateOption from "hooks/use-estimate-option";
@@ -76,7 +76,7 @@ export const EstimateSelect: React.FC<Props> = (props) => {
         ) : (
           "No estimate"
         )}
-        <ChevronDownIcon className="w-5 h-5" />
+        <ChevronDown className="w-5 h-5" />
       </button>
     </>
   );
