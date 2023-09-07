@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { X } from "lucide-react";
 
 // services
 import issuesService from "services/issues.service";
@@ -98,7 +98,7 @@ export const SubIssueList: React.FC<Props> = (props) => {
               <p className="text-sm font-normal">{subIssue.name}</p>
             </div>
             <button type="button" onClick={() => handleSubIssueRemove(subIssue)}>
-              <XMarkIcon className="w-5 h-5 text-custom-text-200" />
+              <X className="w-[18px] h-[18px] text-custom-text-400" />
             </button>
           </div>
         ))}

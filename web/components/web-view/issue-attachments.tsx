@@ -18,7 +18,7 @@ import { useDropzone } from "react-dropzone";
 import { ISSUE_ATTACHMENTS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 // icons
-import { ChevronRightIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { FileText, ChevronRight, X, Image as ImageIcon } from "lucide-react";
 
 // components
 import { Label, WebViewModal } from "components/web-view";
@@ -30,6 +30,8 @@ import type { IIssueAttachment } from "types";
 type Props = {
   allowed: boolean;
 };
+
+const isImage = (fileName: string) => /\.(gif|jpe?g|tiff?|png|webp|bmp)$/i.test(fileName);
 
 export const IssueAttachments: React.FC<Props> = (props) => {
   const { allowed } = props;
@@ -72,21 +74,27 @@ export const IssueAttachments: React.FC<Props> = (props) => {
             false
           );
           mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
-          console.log({
-            type: "success",
-            title: "Success!",
-            message: "File added successfully.",
-          });
+          console.log(
+            "toast",
+            JSON.stringify({
+              type: "success",
+              title: "Success!",
+              message: "File added successfully.",
+            })
+          );
           setIsOpen(false);
           setIsLoading(false);
         })
         .catch((err) => {
           setIsLoading(false);
-          console.log({
-            type: "error",
-            title: "error!",
-            message: "Something went wrong. please check file type & size (max 5 MB)",
-          });
+          console.log(
+            "toast",
+            JSON.stringify({
+              type: "error",
+              title: "error!",
+              message: "Something went wrong. please check file type & size (max 5 MB)",
+            })
+          );
         });
     },
     [issueId, projectId, workspaceSlug]
@@ -132,7 +140,7 @@ export const IssueAttachments: React.FC<Props> = (props) => {
             ) : (
               <>
                 <h3 className="text-lg">Upload</h3>
-                <ChevronRightIcon className="w-5 h-5" />
+                <ChevronRight className="w-5 h-5" />
               </>
             )}
           </div>
@@ -147,8 +155,13 @@ export const IssueAttachments: React.FC<Props> = (props) => {
             className="px-3 border border-custom-border-200 rounded-[4px] py-2 flex justify-between items-center bg-custom-background-100"
           >
             <Link href={attachment.asset}>
-              <a target="_blank" className="text-custom-text-200 truncate">
-                {attachment.attributes.name}
+              <a target="_blank" className="text-custom-text-200 truncate flex items-center">
+                {isImage(attachment.attributes.name) ? (
+                  <ImageIcon className="w-5 h-5 mr-2 flex-shrink-0 text-custom-text-400" />
+                ) : (
+                  <FileText className="w-5 h-5 mr-2 flex-shrink-0 text-custom-text-400" />
+                )}
+                <span className="truncate">{attachment.attributes.name}</span>
               </a>
             </Link>
             {allowed && (
@@ -159,7 +172,7 @@ export const IssueAttachments: React.FC<Props> = (props) => {
                   setAttachmentDeleteModal(true);
                 }}
               >
-                <XMarkIcon className="w-5 h-5 text-custom-text-100" />
+                <X className="w-[18px] h-[18px] text-custom-text-400" />
               </button>
             )}
           </div>
@@ -167,7 +180,7 @@ export const IssueAttachments: React.FC<Props> = (props) => {
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="bg-custom-primary-100/10 border border-dotted border-custom-primary-100 text-center py-2 w-full text-custom-primary-100"
+          className="bg-custom-primary-100/10 border border-dotted rounded-[4px] border-custom-primary-100 text-center py-2 w-full text-custom-primary-100"
         >
           Click to upload file here
         </button>

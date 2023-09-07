@@ -103,11 +103,14 @@ export const IssueActivity: React.FC<Props> = (props) => {
         mutate(PROJECT_ISSUES_ACTIVITY(issueDetails.id));
       })
       .catch(() =>
-        console.log({
-          type: "error",
-          title: "Error!",
-          message: "Comment could not be posted. Please try again.",
-        })
+        console.log(
+          "toast",
+          JSON.stringify({
+            type: "error",
+            title: "Error!",
+            message: "Comment could not be posted. Please try again.",
+          })
+        )
       );
   };
 

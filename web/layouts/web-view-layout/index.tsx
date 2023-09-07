@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 // swr
 import useSWR from "swr";
 
@@ -17,8 +19,22 @@ type Props = {
   children: React.ReactNode;
 };
 
+const getIfInWebview = (userAgent: NavigatorID["userAgent"]) => {
+  if (/iphone|ipod|ipad/.test(userAgent) || userAgent.includes("wv")) return true;
+  else return false;
+};
+const useMobileDetect = () => {
+  useEffect(() => {}, []);
+  const userAgent = typeof navigator === "undefined" ? "SSR" : navigator.userAgent;
+  return getIfInWebview(userAgent);
+};
+
 const WebViewLayout: React.FC<Props> = ({ children }) => {
   const { data: currentUser, error } = useSWR(CURRENT_USER, () => userService.currentUser());
+
+  const data = useMobileDetect();
+
+  console.log("data: ", data);
 
   if (!currentUser && !error) {
     return (
