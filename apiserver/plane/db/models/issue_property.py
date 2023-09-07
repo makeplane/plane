@@ -31,6 +31,7 @@ class IssueProperty(BaseModel):
             ("email", "email"),
             ("url", "url"),
             ("timestamp", "timestamp"),
+            ("option", "options"),
         )
     )
     is_required = models.BooleanField(default=False)

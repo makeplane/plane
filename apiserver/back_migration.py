@@ -11,6 +11,8 @@ from plane.db.models import (
     ProjectMember,
     Label,
     Integration,
+    IssueProperty,
+    IssuePropertyValue,
 )
 
 
@@ -218,6 +220,75 @@ def update_start_date():
             issue.start_date = issue.created_at.date()
             updated_issues.append(issue)
         Issue.objects.bulk_update(updated_issues, ["start_date"], batch_size=500)
+        print("Success")
+    except Exception as e:
+        print(e)
+        print("Failed")
+
+
+def move_field_data_from_issues():
+    def move_priority():
+        try:
+            return
+        except:
+            print(e)
+            return []
+
+    try:
+        issue_props = []
+        # Get all the projects
+        projects = Project.objects.all()
+
+        # Loop through all the projects
+        for project in projects:
+            # Create a custom object
+            issue_props.append(
+                IssueProperty(
+                    project_id=project.id,
+                    workspace_id=project.workspace_id,
+                    name="Task",
+                    description="This is the default object created by Plane for every project",
+                    type="entity",
+                    is_shared=False,
+                    is_default=True,
+                )
+            )
+        # Bulk create the default objects
+        issue_properties = IssueProperty.objects.bulk_create(
+            issue_props, batch_size=100
+        )
+
+        new_props = []
+        # Add issue properties
+        for issue_property in issue_properties:
+            # Create all the new property
+            # Priority - Single selects
+            issue_property = IssueProperty.objects.create(
+                parent=issue_property,
+                name="Priority",
+                description="The priority of the issue",
+                project_id=issue_property.project_id,
+                workspace_id=issue_property.workspace_id,
+                type="select",
+                is_multi=False,
+                is_shared=False,
+            )
+
+            # Create Child selects
+            IssueProperty.objects.bulk_create(
+                [
+                    IssueProperty(
+                        project_id=issue_property.project_id,
+                        workspace_id=issue_property.workspace_id,
+                        name=str(priority),
+                        type="option",
+                        is_multi=False,
+                        is_shared=False,
+                    )
+                    for priority in [None, "urgent", "high", "medium", "low"]
+                ],
+                batch_size=100,
+            )
         print("Success")
     except Exception as e:
         print(e)
