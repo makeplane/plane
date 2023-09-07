@@ -87,7 +87,6 @@ export const AssigneeSelect: React.FC<Props> = (props) => {
         ) : (
           "No assignees"
         )}
-        {/* {selectedAssignee?.member.display_name || "Select assignee"} */}
         <ChevronDownIcon className="w-5 h-5" />
       </button>
     </>

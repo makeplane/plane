@@ -21,7 +21,7 @@ import useUser from "hooks/use-user";
 import useProjectMembers from "hooks/use-project-members";
 
 // layouts
-import DefaultLayout from "layouts/default-layout";
+import WebViewLayout from "layouts/web-view-layout";
 
 // ui
 import { Spinner } from "components/ui";
@@ -128,25 +128,25 @@ const MobileWebViewIssueDetail = () => {
 
   if (!error && !issueDetails)
     return (
-      <DefaultLayout>
+      <WebViewLayout>
         <div className="px-4 py-2 h-full">
           <div className="h-full flex justify-center items-center">
             <Spinner />
             Loading...
           </div>
         </div>
-      </DefaultLayout>
+      </WebViewLayout>
     );
 
   if (error)
     return (
-      <DefaultLayout>
+      <WebViewLayout>
         <div className="px-4 py-2">{error?.response?.data || "Something went wrong"}</div>
-      </DefaultLayout>
+      </WebViewLayout>
     );
 
   return (
-    <DefaultLayout>
+    <WebViewLayout>
       <div className="px-6 py-2 h-full overflow-auto space-y-3">
         <IssueWebViewForm
           isAllowed={isAllowed}
@@ -168,7 +168,7 @@ const MobileWebViewIssueDetail = () => {
 
         <IssueActivity allowed={isAllowed} issueDetails={issueDetails!} />
       </div>
-    </DefaultLayout>
+    </WebViewLayout>
   );
 };
 

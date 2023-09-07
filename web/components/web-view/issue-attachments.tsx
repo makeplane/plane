@@ -17,9 +17,6 @@ import { useDropzone } from "react-dropzone";
 // fetch key
 import { ISSUE_ATTACHMENTS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
-// hooks
-import useToast from "hooks/use-toast";
-
 // icons
 import { ChevronRightIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
@@ -45,8 +42,6 @@ export const IssueAttachments: React.FC<Props> = (props) => {
 
   const [deleteAttachment, setDeleteAttachment] = useState<IIssueAttachment | null>(null);
   const [attachmentDeleteModal, setAttachmentDeleteModal] = useState<boolean>(false);
-
-  const { setToastAlert } = useToast();
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -77,23 +72,24 @@ export const IssueAttachments: React.FC<Props> = (props) => {
             false
           );
           mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
-          setToastAlert({
+          console.log({
             type: "success",
             title: "Success!",
             message: "File added successfully.",
           });
+          setIsOpen(false);
           setIsLoading(false);
         })
         .catch((err) => {
           setIsLoading(false);
-          setToastAlert({
+          console.log({
             type: "error",
             title: "error!",
             message: "Something went wrong. please check file type & size (max 5 MB)",
           });
         });
     },
-    [issueId, projectId, setToastAlert, workspaceSlug]
+    [issueId, projectId, workspaceSlug]
   );
 
   const { getRootProps, getInputProps } = useDropzone({

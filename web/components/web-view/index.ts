@@ -12,3 +12,6 @@ export * from "./issue-activity";
 export * from "./select-assignee";
 export * from "./select-estimate";
 export * from "./add-comment";
+export * from "./select-parent";
+export * from "./select-blocker";
+export * from "./select-blocked";
