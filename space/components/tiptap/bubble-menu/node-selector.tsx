@@ -28,7 +28,10 @@ export const NodeSelector: FC<NodeSelectorProps> = ({ editor, isOpen, setIsOpen 
       name: "Text",
       icon: TextIcon,
       command: () => editor.chain().focus().toggleNode("paragraph", "paragraph").run(),
-      isActive: () => editor.isActive("paragraph") && !editor.isActive("bulletList") && !editor.isActive("orderedList"),
+      isActive: () =>
+        editor.isActive("paragraph") &&
+        !editor.isActive("bulletList") &&
+        !editor.isActive("orderedList"),
     },
     {
       name: "H1",
@@ -69,7 +72,8 @@ export const NodeSelector: FC<NodeSelectorProps> = ({ editor, isOpen, setIsOpen 
     {
       name: "Quote",
       icon: TextQuote,
-      command: () => editor.chain().focus().toggleNode("paragraph", "paragraph").toggleBlockquote().run(),
+      command: () =>
+        editor.chain().focus().toggleNode("paragraph", "paragraph").toggleBlockquote().run(),
       isActive: () => editor.isActive("blockquote"),
     },
     {
