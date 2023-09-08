@@ -34,6 +34,7 @@ export const ImageResizer = ({ editor }: { editor: Editor }) => {
           updateMediaSize();
         }}
         scalable={true}
+        throttleScale={0}
         renderDirections={["w", "e"]}
         onScale={({ target, transform }: any) => {
           target!.style.transform = transform;

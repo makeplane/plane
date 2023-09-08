@@ -25,6 +25,9 @@ import { CustomTableCell } from "./table/table-cell";
 import { Table } from "./table/table";
 import { TableHeader } from "./table/table-header";
 import { TableRow } from "@tiptap/extension-table-row";
+import { Mentions } from "../mentions";
+import DragAndDrop from "./drag-and-drop";
+import CustomKeymap from "./keymap";
 
 lowlight.registerLanguage("ts", ts);
 
@@ -150,4 +153,7 @@ export const TiptapExtensions = (
     TableHeader,
     CustomTableCell,
     TableRow,
+    DragAndDrop,
+    CustomKeymap,
+    Mentions,
   ];

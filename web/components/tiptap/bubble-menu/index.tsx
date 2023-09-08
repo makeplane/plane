@@ -1,4 +1,4 @@
-import { BubbleMenu, BubbleMenuProps } from "@tiptap/react";
+import { BubbleMenu, BubbleMenuProps, isNodeSelection } from "@tiptap/react";
 import { FC, useState } from "react";
 import { BoldIcon, ItalicIcon, UnderlineIcon, StrikethroughIcon, CodeIcon } from "lucide-react";
 
@@ -51,14 +51,20 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
 
   const bubbleMenuProps: EditorBubbleMenuProps = {
     ...props,
-    shouldShow: ({ editor }) => {
+    shouldShow: ({ state, editor }) => {
+      const { selection } = state;
+      const { empty } = selection;
+
+      if (editor.isActive("image") || empty || isNodeSelection(selection)) {
+        return false;
+      }
       if (!editor.isEditable) {
         return false;
       }
       if (editor.isActive("image")) {
         return false;
       }
-      return editor.view.state.selection.content().size > 0;
+      return true;
     },
     tippyOptions: {
       moveTransition: "transform 0.15s ease-out",
