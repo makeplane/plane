@@ -130,7 +130,7 @@ export const allViewsWithData: ChartDataType[] = [
       startDate: new Date(),
       currentDate: new Date(),
       endDate: new Date(),
-      approxFilterRange: 10,
+      approxFilterRange: 6,
       width: 55, // it will preview week starting dates all months data and there is no limitation for preview ex: title (2, 9, 16, 23, 30)
     },
   },
