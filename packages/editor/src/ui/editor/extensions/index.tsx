@@ -9,22 +9,24 @@ import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import { Markdown } from "tiptap-markdown";
 import Highlight from "@tiptap/extension-highlight";
-import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-import { lowlight } from "lowlight/lib/core";
-import SlashCommand from "../slash-command";
 import { InputRule } from "@tiptap/core";
 import Gapcursor from "@tiptap/extension-gapcursor";
 
+//syntax highlighting
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import { lowlight } from "lowlight/lib/core";
 import ts from "highlight.js/lib/languages/typescript";
-
 import "highlight.js/styles/github-dark.css";
-// import UniqueID from "@tiptap-pro/extension-unique-id";
-import UpdatedImage from "./updated-image";
-import isValidHttpUrl from "../bubble-menu/utils/link-validator";
-import { CustomTableCell } from "./table/table-cell";
-import { Table } from "./table/table";
-import { TableHeader } from "./table/table-header";
+
+//table
+import { Table } from "@/ui/editor/extensions/table/table";
+import { TableHeader } from "@/ui/editor/extensions/table/table-header";
 import { TableRow } from "@tiptap/extension-table-row";
+import { CustomTableCell } from "@/ui/editor/extensions/table/table-cell";
+
+import UpdatedImage from "@/ui/editor/extensions/image/updated-image";
+import SlashCommand from "@/ui/editor/extensions/slash-command";
+import isValidHttpUrl from "@/lib/link-validator";
 
 lowlight.registerLanguage("ts", ts);
 
@@ -83,7 +85,6 @@ export const TiptapExtensions = (
               const { tr } = state;
               const start = range.from;
               const end = range.to;
-              // @ts-ignore
               tr.replaceWith(start - 1, end, this.type.create(attributes));
             },
           }),
@@ -121,9 +122,6 @@ export const TiptapExtensions = (
       },
       includeChildren: true,
     }),
-    // UniqueID.configure({
-    //   types: ["image"],
-    // }),
     SlashCommand(workspaceSlug, setIsSubmitting),
     TiptapUnderline,
     TextStyle,
