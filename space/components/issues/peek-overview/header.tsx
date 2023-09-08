@@ -1,5 +1,7 @@
 import React from "react";
 
+// mobx
+import { observer } from "mobx-react-lite";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // hooks
@@ -41,7 +43,7 @@ const peekModes: {
   },
 ];
 
-export const PeekOverviewHeader: React.FC<Props> = (props) => {
+export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
   const { handleClose, issueDetails } = props;
 
   const { issueDetails: issueDetailStore }: RootStore = useMobxStore();
@@ -137,4 +139,4 @@ export const PeekOverviewHeader: React.FC<Props> = (props) => {
       </div>
     </>
   );
-};
+});

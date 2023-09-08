@@ -39,6 +39,7 @@ services:
       context: .
       dockerfile: ./web/Dockerfile.web
       args:
+        DOCKER_BUILDKIT: 1
         NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
         NEXT_PUBLIC_DEPLOY_URL: http://localhost/spaces
     restart: always
@@ -67,6 +68,7 @@ services:
       dockerfile: ./space/Dockerfile.space
       args:
         DOCKER_BUILDKIT: 1
+        NEXT_PUBLIC_DEPLOY_WITH_NGINX: 1
         NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
     restart: always
     command: /usr/local/bin/start.sh space/server.js space
@@ -84,8 +86,12 @@ services:
     build:
       context: ./apiserver
       dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
     restart: always
     command: ./bin/takeoff
+    ports:
+      - 8000:8000
     env_file:
       - .env
     environment:
@@ -99,6 +105,8 @@ services:
     build:
       context: ./apiserver
       dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
     restart: always
     command: ./bin/worker
     env_file:
@@ -115,6 +123,8 @@ services:
     build:
       context: ./apiserver
       dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
     restart: always
     command: ./bin/beat
     env_file:

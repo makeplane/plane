@@ -187,7 +187,7 @@ const GeneralSettings: NextPage = () => {
       />
       <form onSubmit={handleSubmit(onSubmit)} className="p-8">
         <SettingsHeader />
-        <div className="space-y-8 sm:space-y-12 opacity-60">
+        <div className={`space-y-8 sm:space-y-12 ${isAdmin ? "" : "opacity-60"}`}>
           <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-lg font-semibold">Icon & Name</h4>

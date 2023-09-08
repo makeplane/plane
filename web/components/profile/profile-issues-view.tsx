@@ -223,6 +223,15 @@ export const ProfileIssuesView = () => {
     Object.keys(filtersToDisplay).length > 0 &&
     nullFilters.length !== Object.keys(filtersToDisplay).length;
 
+  const isSubscribedIssuesRoute = router.pathname.includes("subscribed");
+  const isMySubscribedIssues =
+    (filters.subscriber &&
+      filters.subscriber.length > 0 &&
+      router.pathname.includes("my-issues")) ??
+    false;
+
+  const disableAddIssueOption = isSubscribedIssuesRoute || isMySubscribedIssues;
+
   return (
     <>
       <CreateUpdateIssueModal
@@ -292,6 +301,7 @@ export const ProfileIssuesView = () => {
         handleIssueAction={handleIssueAction}
         openIssuesListModal={null}
         removeIssue={null}
+        disableAddIssueOption={disableAddIssueOption}
         trashBox={trashBox}
         setTrashBox={setTrashBox}
         viewProps={{

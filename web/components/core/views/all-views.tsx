@@ -53,6 +53,7 @@ type Props = {
   handleOnDragEnd: (result: DropResult) => Promise<void>;
   openIssuesListModal: (() => void) | null;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
+  disableAddIssueOption?: boolean;
   trashBox: boolean;
   setTrashBox: React.Dispatch<React.SetStateAction<boolean>>;
   viewProps: IIssueViewProps;
@@ -68,6 +69,7 @@ export const AllViews: React.FC<Props> = ({
   handleOnDragEnd,
   openIssuesListModal,
   removeIssue,
+  disableAddIssueOption = false,
   trashBox,
   setTrashBox,
   viewProps,
@@ -127,6 +129,7 @@ export const AllViews: React.FC<Props> = ({
                 openIssuesListModal={cycleId || moduleId ? openIssuesListModal : null}
                 removeIssue={removeIssue}
                 disableUserActions={disableUserActions}
+                disableAddIssueOption={disableAddIssueOption}
                 user={user}
                 userAuth={memberRole}
                 viewProps={viewProps}
@@ -135,6 +138,7 @@ export const AllViews: React.FC<Props> = ({
               <AllBoards
                 addIssueToGroup={addIssueToGroup}
                 disableUserActions={disableUserActions}
+                disableAddIssueOption={disableAddIssueOption}
                 dragDisabled={dragDisabled}
                 handleIssueAction={handleIssueAction}
                 handleTrashBox={handleTrashBox}

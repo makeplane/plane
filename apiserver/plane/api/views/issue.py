@@ -1575,7 +1575,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                         )
                     )
                     .distinct()
-                )
+                ).order_by("created_at")
             else:
                 return IssueComment.objects.none()
         except ProjectDeployBoard.DoesNotExist:
@@ -2100,6 +2100,12 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                         queryset=IssueReaction.objects.select_related("actor"),
                     )
                 )
+                .prefetch_related(
+                    Prefetch(
+                        "votes",
+                        queryset=IssueVote.objects.select_related("actor"),
+                    )
+                )
                 .filter(**filters)
                 .annotate(cycle_id=F("issue_cycle__cycle_id"))
                 .annotate(module_id=F("issue_module__module_id"))
@@ -2189,6 +2195,7 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
 
             states = (
                 State.objects.filter(
+                    ~Q(name="Triage"),
                     workspace__slug=slug,
                     project_id=project_id,
                 )

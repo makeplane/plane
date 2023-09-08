@@ -131,7 +131,7 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
                     type="button"
                     className={`flex items-center justify-between gap-1 w-full rounded-md border border-custom-border-300 shadow-sm duration-300 focus:outline-none px-3 py-2 text-sm`}
                   >
-                    <span className="text-custom-text-400">{value || "Select your role..."}</span>
+                    <span className={value ? "" : "text-custom-text-400"}>{value || "Select your role..."}</span>
                     <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
                   </Listbox.Button>
 

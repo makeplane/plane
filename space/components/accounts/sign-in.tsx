@@ -13,13 +13,12 @@ import useToast from "hooks/use-toast";
 // components
 import { EmailPasswordForm, GithubLoginButton, GoogleLoginButton, EmailCodeForm } from "components/accounts";
 // images
-import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.svg";
+import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
 export const SignInView = observer(() => {
   const { user: userStore } = useMobxStore();
 
   const router = useRouter();
-  const { next_path } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -34,13 +33,15 @@ export const SignInView = observer(() => {
   const onSignInSuccess = (response: any) => {
     const isOnboarded = response?.user?.onboarding_step?.profile_complete || false;
 
+    const nextPath = router.asPath.includes("next_path") ? router.asPath.split("/?next_path=")[1] : "/";
+
     userStore.setCurrentUser(response?.user);
 
     if (!isOnboarded) {
-      router.push(`/onboarding?next_path=${next_path}`);
+      router.push(`/onboarding?next_path=${nextPath}`);
       return;
     }
-    router.push((next_path ?? "/").toString());
+    router.push((nextPath ?? "/").toString());
   };
 
   const handleGoogleSignIn = async ({ clientId, credential }: any) => {

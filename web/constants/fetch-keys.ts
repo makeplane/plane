@@ -285,7 +285,9 @@ export const ANALYTICS = (workspaceSlug: string, params: IAnalyticsParams) =>
     params.segment
   }_${params.project?.toString()}`;
 export const DEFAULT_ANALYTICS = (workspaceSlug: string, params?: Partial<IAnalyticsParams>) =>
-  `DEFAULT_ANALYTICS_${workspaceSlug.toUpperCase()}_${params?.project?.toString()}_${params?.cycle}_${params?.module}`;
+  `DEFAULT_ANALYTICS_${workspaceSlug.toUpperCase()}_${params?.project?.toString()}_${
+    params?.cycle
+  }_${params?.module}`;
 
 // notifications
 export const USER_WORKSPACE_NOTIFICATIONS = (
