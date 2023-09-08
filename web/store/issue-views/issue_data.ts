@@ -1,25 +1,25 @@
 export const filtersPriority: { key: string; title: string }[] = [
-  { key: "", title: "Urgent" },
-  { key: "", title: "High" },
-  { key: "", title: "Medium" },
-  { key: "", title: "Low" },
-  { key: "", title: "None" },
+  { key: "urgent", title: "Urgent" },
+  { key: "high", title: "High" },
+  { key: "medium", title: "Medium" },
+  { key: "low", title: "Low" },
+  { key: "null", title: "None" },
 ];
 
 export const filtersStartDate = [
-  { key: "", title: "Last Week" },
-  { key: "", title: "2 weeks from now" },
-  { key: "", title: "1 month from now" },
-  { key: "", title: "2 months from now" },
-  { key: "", title: "Custom" },
+  { key: "last_week", title: "Last Week" },
+  { key: "2_weeks_from_now", title: "2 weeks from now" },
+  { key: "1_month_from_now", title: "1 month from now" },
+  { key: "2_months_from_now", title: "2 months from now" },
+  { key: "custom", title: "Custom" },
 ];
 
 export const filtersDueDate = [
-  { key: "", title: "Last Week" },
-  { key: "", title: "2 weeks from now" },
-  { key: "", title: "1 month from now" },
-  { key: "", title: "2 months from now" },
-  { key: "", title: "Custom" },
+  { key: "last_week", title: "Last Week" },
+  { key: "2_weeks_from_now", title: "2 weeks from now" },
+  { key: "1_month_from_now", title: "1 month from now" },
+  { key: "2_months_from_now", title: "2 months from now" },
+  { key: "custom", title: "Custom" },
 ];
 
 export const displayPropertyGroupBy = [

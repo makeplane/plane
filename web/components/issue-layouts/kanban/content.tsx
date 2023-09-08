@@ -22,22 +22,23 @@ export const IssueContent = ({ columnId, issues }: IssueContentProps) => {
               {(provided: any, snapshot: any) => (
                 <div
                   key={issue.id}
-                  className="p-2"
+                  className="p-1.5 hover:cursor-default"
                   {...provided.draggableProps}
                   {...provided.dragHandleProps}
                   ref={provided.innerRef}
                 >
                   <div
-                    className={`text-sm rounded p-2 px-3 bg-white shadow space-y-1 border border-transparent`}
+                    className={`min-h-[106px] text-sm rounded p-2 px-3 shadow-md space-y-[4px] border transition-all hover:cursor-grab ${
+                      snapshot.isDragging
+                        ? `border-blue-500 bg-blue-50`
+                        : `border-transparent bg-white`
+                    }`}
                   >
-                    <div className="text-xs line-clamp-1 text-gray-500 font-medium">
+                    <div className="text-xs line-clamp-1 text-gray-500">
                       ONE-{issue.sequence_id}-{issue.sort_order}
                     </div>
-                    <div className="line-clamp-2 h-[42px]">
-                      {issue.name} {issue.name} {issue.name} {issue.name} {issue.name} {issue.name}{" "}
-                      {issue.name} {issue.name}
-                    </div>
-                    <div>Footer</div>
+                    <div className="line-clamp-2 h-[40px] text-sm font-medium">{issue.name}</div>
+                    <div className="h-[22px]">Footer</div>
                   </div>
                 </div>
               )}

@@ -17,7 +17,7 @@ const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 const trackEvent =
   process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
 
-class UserService extends APIService {
+export class UserService extends APIService {
   constructor() {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
