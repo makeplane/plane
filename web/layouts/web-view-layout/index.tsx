@@ -18,7 +18,10 @@ type Props = {
 };
 
 const getIfInWebview = (userAgent: NavigatorID["userAgent"]) => {
-  if (/iphone|ipod|ipad/.test(userAgent) || userAgent.includes("wv")) return true;
+  const safari = /safari/.test(userAgent);
+
+  if (safari) return false;
+  else if (/iphone|ipod|ipad/.test(userAgent) || userAgent.includes("wv")) return true;
   else return false;
 };
 
