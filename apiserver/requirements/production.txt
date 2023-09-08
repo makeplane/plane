@@ -1,11 +1,11 @@
 -r base.txt
 
-dj-database-url==2.0.0
-gunicorn==20.1.0
+dj-database-url==2.1.0
+gunicorn==21.2.0
 whitenoise==6.5.0
-django-storages==1.13.2
-boto3==1.27.0
-django-anymail==10.0
+django-storages==1.14
+boto3==1.28.40
+django-anymail==10.1
 django-debug-toolbar==4.1.0
 gevent==23.7.0
 psycogreen==1.0.2

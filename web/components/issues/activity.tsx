@@ -15,14 +15,16 @@ import { IIssueActivity, IIssueComment } from "types";
 
 type Props = {
   activity: IIssueActivity[] | undefined;
-  handleCommentUpdate: (comment: IIssueComment) => Promise<void>;
+  handleCommentUpdate: (commentId: string, data: Partial<IIssueComment>) => Promise<void>;
   handleCommentDelete: (commentId: string) => Promise<void>;
+  showAccessSpecifier?: boolean;
 };
 
 export const IssueActivitySection: React.FC<Props> = ({
   activity,
   handleCommentUpdate,
   handleCommentDelete,
+  showAccessSpecifier = false,
 }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -131,10 +133,11 @@ export const IssueActivitySection: React.FC<Props> = ({
             return (
               <div key={activityItem.id} className="mt-4">
                 <CommentCard
-                  workspaceSlug={workspaceSlug as string}
                   comment={activityItem as IIssueComment}
-                  onSubmit={handleCommentUpdate}
                   handleCommentDeletion={handleCommentDelete}
+                  onSubmit={handleCommentUpdate}
+                  showAccessSpecifier={showAccessSpecifier}
+                  workspaceSlug={workspaceSlug as string}
                 />
               </div>
             );

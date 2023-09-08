@@ -1,5 +1,6 @@
 import { EditorProps } from "@tiptap/pm/view";
 import { startImageUpload } from "./plugins/upload-image";
+import { findTableAncestor } from "./table-menu";
 
 export function TiptapEditorProps(
   workspaceSlug: string,
@@ -21,6 +22,15 @@ export function TiptapEditorProps(
       },
     },
     handlePaste: (view, event) => {
+      if (typeof window !== "undefined") {
+        const selection: any = window?.getSelection();
+        if (selection.rangeCount !== 0) {
+          const range = selection.getRangeAt(0);
+          if (findTableAncestor(range.startContainer)) {
+            return;
+          }
+        }
+      }
       if (event.clipboardData && event.clipboardData.files && event.clipboardData.files[0]) {
         event.preventDefault();
         const file = event.clipboardData.files[0];
@@ -31,6 +41,15 @@ export function TiptapEditorProps(
       return false;
     },
     handleDrop: (view, event, _slice, moved) => {
+      if (typeof window !== "undefined") {
+        const selection: any = window?.getSelection();
+        if (selection.rangeCount !== 0) {
+          const range = selection.getRangeAt(0);
+          if (findTableAncestor(range.startContainer)) {
+            return;
+          }
+        }
+      }
       if (!moved && event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
         event.preventDefault();
         const file = event.dataTransfer.files[0];

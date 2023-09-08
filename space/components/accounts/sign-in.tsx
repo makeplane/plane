@@ -13,7 +13,7 @@ import useToast from "hooks/use-toast";
 // components
 import { EmailPasswordForm, GithubLoginButton, GoogleLoginButton, EmailCodeForm } from "components/accounts";
 // images
-import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.svg";
+import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 
 export const SignInView = observer(() => {
   const { user: userStore } = useMobxStore();
