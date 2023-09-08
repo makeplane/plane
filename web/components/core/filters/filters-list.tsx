@@ -2,7 +2,7 @@ import React from "react";
 
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { getPriorityIcon, getStateGroupIcon } from "components/icons";
+import { getPriorityIcon, StateGroupIcon } from "components/icons";
 // ui
 import { Avatar } from "components/ui";
 // helpers
@@ -71,12 +71,10 @@ export const FiltersList: React.FC<Props> = ({
                             }}
                           >
                             <span>
-                              {getStateGroupIcon(
-                                state?.group ?? "backlog",
-                                "12",
-                                "12",
-                                state?.color
-                              )}
+                              <StateGroupIcon
+                                stateGroup={state?.group ?? "backlog"}
+                                color={state?.color}
+                              />
                             </span>
                             <span>{state?.name ?? ""}</span>
                             <span
@@ -105,7 +103,9 @@ export const FiltersList: React.FC<Props> = ({
                               backgroundColor: `${STATE_GROUP_COLORS[group]}20`,
                             }}
                           >
-                            <span>{getStateGroupIcon(group, "16", "16")}</span>
+                            <span>
+                              <StateGroupIcon stateGroup={group} color={undefined} />
+                            </span>
                             <span>{group}</span>
                             <span
                               className="cursor-pointer"

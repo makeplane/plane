@@ -28,7 +28,7 @@ import {
   TriangleExclamationIcon,
   AlarmClockIcon,
   LayerDiagonalIcon,
-  CompletedStateIcon,
+  StateGroupIcon,
 } from "components/icons";
 import { StarIcon } from "@heroicons/react/24/outline";
 // components
@@ -385,8 +385,8 @@ export const ActiveCycleDetails: React.FC = () => {
                   <LayerDiagonalIcon className="h-4 w-4 flex-shrink-0" />
                   {cycle.total_issues} issues
                 </div>
-                <div className="flex gap-2">
-                  <CompletedStateIcon width={16} height={16} color="#438AF3" />
+                <div className="flex items-center gap-2">
+                  <StateGroupIcon stateGroup="completed" height="14px" width="14px" />
                   {cycle.completed_issues} issues
                 </div>
               </div>

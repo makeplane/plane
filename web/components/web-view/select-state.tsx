@@ -17,7 +17,7 @@ import stateService from "services/state.service";
 import { STATES_LIST } from "constants/fetch-keys";
 
 // components
-import { getStateGroupIcon } from "components/icons";
+import { StateGroupIcon } from "components/icons";
 import { WebViewModal } from "./web-view-modal";
 
 // helpers
@@ -62,7 +62,7 @@ export const StateSelect: React.FC<Props> = (props) => {
               label: state.name,
               value: state.id,
               checked: state.id === selectedState?.id,
-              icon: getStateGroupIcon(state.group, "16", "16", state.color),
+              icon: <StateGroupIcon stateGroup={state.group} color={state.color} />,
               onClick: () => {
                 setIsOpen(false);
                 if (disabled) return;
