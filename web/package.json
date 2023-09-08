@@ -103,6 +103,7 @@
     "prettier": "^2.8.7",
     "tailwindcss": "^3.1.6",
     "tsconfig": "*",
+    "tailwind-config": "*",
     "typescript": "4.7.4"
   },
   "resolutions": {
