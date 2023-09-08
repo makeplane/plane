@@ -35,7 +35,7 @@ import type { IInboxIssue, IIssue } from "types";
 // fetch-keys
 import { INBOX_ISSUES, INBOX_ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
-const defaultValues = {
+const defaultValues: Partial<IInboxIssue> = {
   name: "",
   description_html: "",
   estimate_point: null,

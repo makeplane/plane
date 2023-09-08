@@ -2,7 +2,7 @@ import React from "react";
 
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { getPriorityIcon, getStateGroupIcon } from "components/icons";
+import { PriorityIcon, getStateGroupIcon } from "components/icons";
 // ui
 import { Avatar } from "components/ui";
 // helpers
@@ -136,7 +136,9 @@ export const FiltersList: React.FC<Props> = ({
                               : "bg-custom-background-90 text-custom-text-200"
                           }`}
                         >
-                          <span>{getPriorityIcon(priority)}</span>
+                          <span>
+                            <PriorityIcon priority={priority} />
+                          </span>
                           <span>{priority === "null" ? "None" : priority}</span>
                           <span
                             className="cursor-pointer"

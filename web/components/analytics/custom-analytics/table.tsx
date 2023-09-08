@@ -1,13 +1,13 @@
 // nivo
 import { BarDatum } from "@nivo/bar";
 // icons
-import { getPriorityIcon } from "components/icons";
+import { PriorityIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // helpers
 import { generateBarColor, renderMonthAndYear } from "helpers/analytics.helper";
 // types
-import { IAnalyticsParams, IAnalyticsResponse } from "types";
+import { IAnalyticsParams, IAnalyticsResponse, TIssuePriorities } from "types";
 // constants
 import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES, DATE_KEYS } from "constants/analytics";
 
@@ -53,7 +53,7 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
                     >
                       <div className="flex items-center gap-2">
                         {params.segment === "priority" ? (
-                          getPriorityIcon(key)
+                          <PriorityIcon priority={key as TIssuePriorities} />
                         ) : (
                           <span
                             className="h-3 w-3 flex-shrink-0 rounded"
@@ -91,7 +91,7 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
                     }`}
                   >
                     {params.x_axis === "priority" ? (
-                      getPriorityIcon(`${item.name}`)
+                      <PriorityIcon priority={item.name as TIssuePriorities} />
                     ) : (
                       <span
                         className="h-3 w-3 rounded"
