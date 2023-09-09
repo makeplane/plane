@@ -75,6 +75,8 @@ services:
                 image: makeplane/plane-backend:latest
                 restart: always
                 command: ./bin/takeoff
+                ports:
+                        - 8000:8000
                 env_file:
                         - .env
                 environment:
