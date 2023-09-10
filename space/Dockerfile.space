@@ -21,7 +21,11 @@ COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 USER root
 
-ENV NEXT_PUBLIC_DEPLOY_WITH_NGINX=1
+ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+ARG NEXT_PUBLIC_DEPLOY_WITH_NGINX=1
+
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL 
+ENV NEXT_PUBLIC_DEPLOY_WITH_NGINX=$NEXT_PUBLIC_DEPLOY_WITH_NGINX
 
 RUN yarn turbo run build --filter=space
 
@@ -40,7 +44,11 @@ COPY --from=installer --chown=captain:plane /app/space/.next/standalone ./
 COPY --from=installer --chown=captain:plane /app/space/.next ./space/.next
 COPY --from=installer --chown=captain:plane /app/space/public ./space/public
 
-ENV NEXT_PUBLIC_DEPLOY_WITH_NGINX=1
+ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+ARG NEXT_PUBLIC_DEPLOY_WITH_NGINX=1
+
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL 
+ENV NEXT_PUBLIC_DEPLOY_WITH_NGINX=$NEXT_PUBLIC_DEPLOY_WITH_NGINX
 
 USER root
 COPY start.sh /usr/local/bin/

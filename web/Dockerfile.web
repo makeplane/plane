@@ -13,6 +13,7 @@ FROM node:18-alpine AS installer
 
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
+ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
@@ -24,6 +25,7 @@ RUN yarn install --network-timeout 500000
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 USER root
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 
 RUN yarn turbo run build --filter=web
 
@@ -42,6 +44,9 @@ COPY --from=installer /app/web/package.json .
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=installer --chown=captain:plane /app/web/.next/standalone ./
 COPY --from=installer --chown=captain:plane /app/web/.next ./web/.next
+
+ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 
 USER root
 COPY start.sh /usr/local/bin/
