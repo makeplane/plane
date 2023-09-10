@@ -21,7 +21,7 @@ COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 USER root
 
-ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+ARG NEXT_PUBLIC_API_BASE_URL=""
 ARG NEXT_PUBLIC_DEPLOY_WITH_NGINX=1
 
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL 
@@ -44,7 +44,7 @@ COPY --from=installer --chown=captain:plane /app/space/.next/standalone ./
 COPY --from=installer --chown=captain:plane /app/space/.next ./space/.next
 COPY --from=installer --chown=captain:plane /app/space/public ./space/public
 
-ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+ARG NEXT_PUBLIC_API_BASE_URL=""
 ARG NEXT_PUBLIC_DEPLOY_WITH_NGINX=1
 
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL 
