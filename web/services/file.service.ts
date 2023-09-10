@@ -29,7 +29,7 @@ interface UnSplashImageUrls {
 
 class FileServices extends APIService {
   constructor() {
-    super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
+    super(NEXT_PUBLIC_API_BASE_URL !== undefined ? NEXT_PUBLIC_API_BASE_URL : "http://localhost:8000");
   }
 
   async uploadFile(workspaceSlug: string, file: FormData): Promise<any> {

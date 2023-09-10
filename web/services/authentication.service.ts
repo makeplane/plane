@@ -6,7 +6,7 @@ const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
 class AuthService extends APIService {
   constructor() {
-    super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
+    super(NEXT_PUBLIC_API_BASE_URL !== undefined ? NEXT_PUBLIC_API_BASE_URL : "http://localhost:8000");
   }
 
   async emailLogin(data: any) {

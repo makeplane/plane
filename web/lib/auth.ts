@@ -9,7 +9,7 @@ export const requiredAuth = async (cookie?: string) => {
 
   if (!token) return null;
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.plane.so";
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL !== undefined ?  process.env.NEXT_PUBLIC_API_BASE_URL : "https://api.plane.so";
 
   let user: IUser | null = null;
 
@@ -41,7 +41,7 @@ export const requiredAdmin = async (workspaceSlug: string, projectId: string, co
   const cookies = convertCookieStringToObject(cookie);
   const token = cookies?.accessToken;
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.plane.so";
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL !== undefined ?  process.env.NEXT_PUBLIC_API_BASE_URL : "https://api.plane.so";
 
   let memberDetail: IProjectMember | null = null;
 
@@ -75,7 +75,7 @@ export const requiredWorkspaceAdmin = async (workspaceSlug: string, cookie?: str
   const cookies = convertCookieStringToObject(cookie);
   const token = cookies?.accessToken;
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.plane.so";
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL !== undefined ?  process.env.NEXT_PUBLIC_API_BASE_URL : "https://api.plane.so";
 
   let memberDetail: IWorkspaceMember | null = null;
 
@@ -119,7 +119,7 @@ export const homePageRedirect = async (cookie?: string) => {
 
   let workspaces: IWorkspace[] = [];
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.plane.so";
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL !== undefined ?  process.env.NEXT_PUBLIC_API_BASE_URL : "https://api.plane.so";
 
   const cookies = convertCookieStringToObject(cookie);
   const token = cookies?.accessToken;
