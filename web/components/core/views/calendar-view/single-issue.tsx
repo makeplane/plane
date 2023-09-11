@@ -22,8 +22,8 @@ import {
   ViewLabelSelect,
   ViewPrioritySelect,
   ViewStartDateSelect,
-  ViewStateSelect,
 } from "components/issues";
+import { StateSelect } from "components/states";
 // icons
 import { LinkIcon, PaperClipIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { LayerDiagonalIcon } from "components/icons";
@@ -222,12 +222,11 @@ export const SingleCalendarIssue: React.FC<Props> = ({
               />
             )}
             {properties.state && (
-              <ViewStateSelect
+              <StateSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
-                position="left"
-                className="max-w-full"
-                isNotAllowed={isNotAllowed}
+                noChevron
+                disabled={isNotAllowed}
                 user={user}
               />
             )}

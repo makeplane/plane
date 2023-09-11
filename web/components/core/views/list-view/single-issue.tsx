@@ -17,8 +17,8 @@ import {
   ViewIssueLabel,
   ViewPrioritySelect,
   ViewStartDateSelect,
-  ViewStateSelect,
 } from "components/issues";
+import { StateSelect } from "components/states";
 // ui
 import { Tooltip, CustomMenu, ContextMenu } from "components/ui";
 // icons
@@ -255,12 +255,12 @@ export const SingleListIssue: React.FC<Props> = ({
             />
           )}
           {properties.state && (
-            <ViewStateSelect
+            <StateSelect
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}
-              position="right"
+              noChevron
+              disabled={isNotAllowed}
               user={user}
-              isNotAllowed={isNotAllowed}
             />
           )}
           {properties.start_date && issue.start_date && (

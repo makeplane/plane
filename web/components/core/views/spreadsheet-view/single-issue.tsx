@@ -12,8 +12,8 @@ import {
   ViewIssueLabel,
   ViewPrioritySelect,
   ViewStartDateSelect,
-  ViewStateSelect,
 } from "components/issues";
+import { StateSelect } from "components/states";
 import { Popover2 } from "@blueprintjs/popover2";
 // icons
 import { Icon } from "components/ui";
@@ -283,15 +283,13 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         </div>
         {properties.state && (
           <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
-            <ViewStateSelect
+            <StateSelect
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}
-              position="left"
-              className="max-w-full"
-              tooltipPosition={tooltipPosition}
-              customButton
+              noChevron
+              noBorder
+              disabled={isNotAllowed}
               user={user}
-              isNotAllowed={isNotAllowed}
             />
           </div>
         )}
