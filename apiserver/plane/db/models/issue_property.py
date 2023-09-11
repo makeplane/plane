@@ -17,6 +17,8 @@ class IssueProperty(BaseModel):
     )
     name = models.CharField(max_length=255)
     display_name = models.CharField(max_length=255)
+    icon = models.CharField(max_length=255, blank=True, null=True)
+    color = models.CharField(max_length=20, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     type = models.CharField(
         choices=(
@@ -25,7 +27,7 @@ class IssueProperty(BaseModel):
             ("number", "number"),
             ("checkbox", "checkbox"),
             ("select", "select"),
-            ("mselect", "mselect"),
+            ("multi_select", "multi_select"),
             ("date", "date"),
             ("relation", "relation"),
             ("files", "files"),
@@ -38,7 +40,10 @@ class IssueProperty(BaseModel):
     is_required = models.BooleanField(default=False)
     sort_order = models.FloatField(default=65535)
     parent = models.ForeignKey(
-        "db.IssueProperty", on_delete=models.CASCADE, related_name="children", null=True,
+        "db.IssueProperty",
+        on_delete=models.CASCADE,
+        related_name="children",
+        null=True,
     )
     default_value = models.CharField(max_length=800, blank=True, null=True)
     is_shared = models.BooleanField(default=True)
@@ -71,17 +76,20 @@ class IssueProperty(BaseModel):
 
 
 class IssuePropertyValue(ProjectBaseModel):
+    TYPE_CHOICES = (
+        ("text", "text"),
+        ("uuid", "uuid"),
+    )
     issue_property = models.ForeignKey(
         IssueProperty, on_delete=models.CASCADE, related_name="property_values"
     )
     description = models.TextField(blank=True, null=True)
-    values = models.TextField(null=True, blank=True)
-    values_uuid = models.TextField(null=True, blank=True)
+    value = models.TextField(null=True, blank=True)
+    type = models.CharField(max_length=10, choices=TYPE_CHOICES)
     issue = models.ForeignKey(
         "db.Issue", on_delete=models.CASCADE, related_name="attribute_values"
     )
-
-
+ 
     class Meta:
         verbose_name = "IssuePropertyValue"
         verbose_name_plural = "IssuePropertyValues"

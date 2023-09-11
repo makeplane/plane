@@ -25,6 +25,7 @@ from plane.db.models import (
 from plane.api.permissions import WorkSpaceAdminPermission
 from plane.bgtasks.issue_property_task import issue_property_json_task
 
+
 def is_valid_uuid(uuid_string):
     try:
         uuid_obj = uuid.UUID(uuid_string)
@@ -116,12 +117,17 @@ class IssuePropertyValueViewSet(BaseViewSet):
             for issue_property in issue_properties:
                 prop_values = request_data.get(str(issue_property.id))
                 if issue_property.is_multi and isinstance(prop_values, list):
-                    if issue_property.type == "entity" or issue_property.type == "relation" or issue_property.type == "mselect":
+                    # Only for relation, multi select and select we will storing uuids
+                    if (
+                        issue_property.type == "relation"
+                        or issue_property.type == "multi_select"
+                        or issue_property.type == "select"
+                    ):
                         for prop_value in prop_values:
                             bulk_issue_props.append(
                                 IssuePropertyValue(
-                                    values_uuid=prop_value,
-                                    values=None,
+                                    value=prop_value,
+                                    type="uuid",
                                     issue_property=issue_property,
                                     project_id=project_id,
                                     workspace_id=workspace_id,
@@ -132,8 +138,8 @@ class IssuePropertyValueViewSet(BaseViewSet):
                         for prop_value in prop_values:
                             bulk_issue_props.append(
                                 IssuePropertyValue(
-                                    values_uuid=None,
-                                    values=None,
+                                    value=prop_value,
+                                    type="text",
                                     issue_property=issue_property,
                                     project_id=project_id,
                                     workspace_id=workspace_id,
@@ -141,34 +147,41 @@ class IssuePropertyValueViewSet(BaseViewSet):
                                 )
                             )
                 else:
-                    if issue_property.type == "entity" or issue_property.type == "relation" or issue_property.type == "mselect":
-                            bulk_issue_props.append(
-                                IssuePropertyValue(
-                                    values_uuid=prop_value,
-                                    values=None,
-                                    issue_property=issue_property,
-                                    project_id=project_id,
-                                    workspace_id=workspace_id,
-                                    issue_id=issue_id,
-                                )
+                    # Only for relation, multi select and select we will storing uuids
+                    if (
+                        issue_property.type == "relation"
+                        or issue_property.type == "multi_select"
+                        or issue_property.type == "select"
+                    ):
+                        bulk_issue_props.append(
+                            IssuePropertyValue(
+                                value=prop_value,
+                                type="uuid",
+                                issue_property=issue_property,
+                                project_id=project_id,
+                                workspace_id=workspace_id,
+                                issue_id=issue_id,
                             )
+                        )
                     else:
-                            bulk_issue_props.append(
-                                IssuePropertyValue(
-                                    values_uuid=None,
-                                    values=None,
-                                    issue_property=issue_property,
-                                    project_id=project_id,
-                                    workspace_id=workspace_id,
-                                    issue_id=issue_id,
-                                )
+                        bulk_issue_props.append(
+                            IssuePropertyValue(
+                                value=prop_value,
+                                type="text",
+                                issue_property=issue_property,
+                                project_id=project_id,
+                                workspace_id=workspace_id,
+                                issue_id=issue_id,
                             )
+                        )
 
             issue_property_values = IssuePropertyValue.objects.bulk_create(
                 bulk_issue_props, batch_size=100, ignore_conflicts=True
             )
             # Update the JSON for the issue property
-            issue_property_json_task.delay(slug=slug, project_id=project_id, issue_id=issue_id)
+            issue_property_json_task.delay(
+                slug=slug, project_id=project_id, issue_id=issue_id
+            )
             serilaizer = IssuePropertyValueSerializer(issue_property_values, many=True)
             return Response(serilaizer.data, status=status.HTTP_201_CREATED)
         except Project.DoesNotExist:
@@ -176,7 +189,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
                 {"error": "Project Does not exists"}, status=status.HTTP_400_BAD_REQUEST
             )
         except Exception as e:
-            print(e)
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
