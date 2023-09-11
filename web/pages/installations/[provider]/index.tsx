@@ -1,37 +1,20 @@
 import React, { useEffect } from "react";
 
-// services
-import appinstallationsService from "services/app-installations.service";
-
-import useToast from "hooks/use-toast";
-
-// components
-import { Spinner } from "components/ui";
-
 import { useRouter } from "next/router";
 
-interface IGithuPostInstallationProps {
-  installation_id: string;
-  setup_action: string;
-  state: string;
-  provider: string;
-  code: string;
-}
+// services
+import appInstallationsService from "services/app-installations.service";
+// ui
+import { Spinner } from "components/ui";
 
-// TODO:Change getServerSideProps to router.query
-const AppPostInstallation = ({
-  installation_id,
-  setup_action,
-  state,
-  provider,
-  code,
-}: IGithuPostInstallationProps) => {
-  const { setToastAlert } = useToast();
+const AppPostInstallation = () => {
+  const router = useRouter();
+  const { installation_id, setup_action, state, provider, code } = router.query;
 
   useEffect(() => {
     if (provider === "github" && state && installation_id) {
-      appinstallationsService
-        .addInstallationApp(state, provider, { installation_id })
+      appInstallationsService
+        .addInstallationApp(state.toString(), provider, { installation_id })
         .then(() => {
           window.opener = null;
           window.open("", "_self");
@@ -41,10 +24,10 @@ const AppPostInstallation = ({
           console.log(err);
         });
     } else if (provider === "slack" && state && code) {
-      appinstallationsService
-        .getSlackAuthDetails(code)
+      appInstallationsService
+        .getSlackAuthDetails(code.toString())
         .then((res) => {
-          const [workspaceSlug, projectId, integrationId] = state.split(",");
+          const [workspaceSlug, projectId, integrationId] = state.toString().split(",");
 
           if (!projectId) {
             const payload = {
@@ -53,8 +36,8 @@ const AppPostInstallation = ({
               },
             };
 
-            appinstallationsService
-              .addInstallationApp(state, provider, payload)
+            appInstallationsService
+              .addInstallationApp(state.toString(), provider, payload)
               .then((r) => {
                 window.opener = null;
                 window.open("", "_self");
@@ -73,7 +56,7 @@ const AppPostInstallation = ({
               team_name: res.team.name,
               scopes: res.scope,
             };
-            appinstallationsService
+            appInstallationsService
               .addSlackChannel(workspaceSlug, projectId, integrationId, payload)
               .then((r) => {
                 window.opener = null;
@@ -98,11 +81,5 @@ const AppPostInstallation = ({
     </div>
   );
 };
-
-export async function getServerSideProps(context: any) {
-  return {
-    props: context.query,
-  };
-}
 
 export default AppPostInstallation;

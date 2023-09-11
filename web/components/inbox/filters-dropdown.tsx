@@ -3,7 +3,7 @@ import useInboxView from "hooks/use-inbox-view";
 // ui
 import { MultiLevelDropdown } from "components/ui";
 // icons
-import { getPriorityIcon } from "components/icons";
+import { PriorityIcon } from "components/icons";
 // constants
 import { PRIORITIES } from "constants/project";
 import { INBOX_STATUS } from "constants/inbox";
@@ -42,7 +42,7 @@ export const FiltersDropdown: React.FC = () => {
               id: priority === null ? "null" : priority,
               label: (
                 <div className="flex items-center gap-2 capitalize">
-                  {getPriorityIcon(priority)} {priority ?? "None"}
+                  <PriorityIcon priority={priority} /> {priority ?? "None"}
                 </div>
               ),
               value: {

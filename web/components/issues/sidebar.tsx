@@ -401,7 +401,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                         render={({ field: { value } }) => (
                           <SidebarPrioritySelect
                             value={value}
-                            onChange={(val: string) => submitChanges({ priority: val })}
+                            onChange={(val) => submitChanges({ priority: val })}
                             disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
                           />
                         )}

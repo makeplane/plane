@@ -3,13 +3,15 @@ import React from "react";
 // ui
 import { CustomSelect } from "components/ui";
 // icons
-import { getPriorityIcon } from "components/icons/priority-icon";
+import { PriorityIcon } from "components/icons/priority-icon";
+// types
+import { TIssuePriorities } from "types";
 // constants
 import { PRIORITIES } from "constants/project";
 
 type Props = {
-  value: string | null;
-  onChange: (val: string) => void;
+  value: TIssuePriorities;
+  onChange: (val: TIssuePriorities) => void;
   disabled?: boolean;
 };
 
@@ -31,7 +33,7 @@ export const SidebarPrioritySelect: React.FC<Props> = ({ value, onChange, disabl
         }`}
       >
         <span className="grid place-items-center -my-1">
-          {getPriorityIcon(value ?? "None", "!text-sm")}
+          <PriorityIcon priority={value} className="!text-sm" />
         </span>
         <span>{value ?? "None"}</span>
       </button>
@@ -44,7 +46,7 @@ export const SidebarPrioritySelect: React.FC<Props> = ({ value, onChange, disabl
     {PRIORITIES.map((option) => (
       <CustomSelect.Option key={option} value={option} className="capitalize">
         <>
-          {getPriorityIcon(option, "text-sm")}
+          <PriorityIcon priority={option} className="text-sm" />
           {option ?? "None"}
         </>
       </CustomSelect.Option>
