@@ -25,12 +25,7 @@ const Editor: NextPage = () => {
 
   const isEditable = editable === "true";
 
-  const {
-    watch,
-    setValue,
-    control,
-    formState: { errors },
-  } = useForm({
+  const { watch, setValue, control } = useForm({
     defaultValues: {
       data: "",
       data_html: "",
@@ -39,11 +34,11 @@ const Editor: NextPage = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    if (!isEditable) return;
+    if (!router?.query?.["editable"]) return;
     setIsLoading(false);
     const data_html = Cookies.get("data_html");
     setValue("data_html", data_html ?? "");
-  }, [isEditable, setValue]);
+  }, [isEditable, setValue, router]);
 
   return (
     <WebViewLayout fullScreen={isLoading}>
