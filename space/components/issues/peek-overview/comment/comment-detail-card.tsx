@@ -3,7 +3,7 @@ import React, { useState } from "react";
 // mobx
 import { observer } from "mobx-react-lite";
 // react-hook-form
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Menu, Transition } from "@headlessui/react";
 // lib
@@ -34,10 +34,11 @@ export const CommentCard: React.FC<Props> = observer((props) => {
 
   const showEditorRef = React.useRef<any>(null);
   const {
+    control,
     formState: { isSubmitting },
     handleSubmit,
     watch,
-    setValue
+    setValue,
   } = useForm<any>({
     defaultValues: { comment_html: comment.comment_html },
   });
@@ -97,16 +98,21 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}
           >
             <div>
-              <TipTapEditor
-                workspaceSlug={workspaceSlug as string}
-                ref={editorRef}
-                value={watch("comment_html")}
-                debouncedUpdatesEnabled={false}
-                customClassName="min-h-[50px] p-3 shadow-sm"
-                onChange={(comment_json: Object, comment_html: string) => {
-                  setValue("comment_json", comment_json);
-                  setValue("comment_html", comment_html);
-                }}
+              <Controller
+                control={control}
+                name="comment_html"
+                render={({ field: { onChange, value } }) => (
+                  <TipTapEditor
+                    workspaceSlug={workspaceSlug as string}
+                    ref={editorRef}
+                    value={value}
+                    debouncedUpdatesEnabled={false}
+                    customClassName="min-h-[50px] p-3 shadow-sm"
+                    onChange={(comment_json: Object, comment_html: string) => {
+                      onChange(comment_html);
+                    }}
+                  />
+                )}
               />
             </div>
             <div className="flex gap-1 self-end">
@@ -143,7 +149,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
         <Menu as="div" className="relative w-min text-left">
           <Menu.Button
             type="button"
-            onClick={() => { }}
+            onClick={() => {}}
             className="relative grid place-items-center rounded p-1 text-custom-text-200 hover:text-custom-text-100 outline-none cursor-pointer hover:bg-custom-background-80"
           >
             <EllipsisVerticalIcon className="h-5 w-5 text-custom-text-200 duration-300" />
@@ -167,8 +173,9 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                       onClick={() => {
                         setIsEditing(true);
                       }}
-                      className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80 ${active ? "bg-custom-background-80" : ""
-                        }`}
+                      className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80 ${
+                        active ? "bg-custom-background-80" : ""
+                      }`}
                     >
                       Edit
                     </button>
@@ -181,8 +188,9 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                     <button
                       type="button"
                       onClick={handleDelete}
-                      className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80 ${active ? "bg-custom-background-80" : ""
-                        }`}
+                      className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80 ${
+                        active ? "bg-custom-background-80" : ""
+                      }`}
                     >
                       Delete
                     </button>
