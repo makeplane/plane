@@ -65,7 +65,7 @@ class Migration(migrations.Migration):
                             ("files", "files"),
                             ("email", "email"),
                             ("url", "url"),
-                            ("timestamp", "timestamp"),
+                            ("datetime", "datetime"),
                             ("option", "option"),
                         ]
                     ),
