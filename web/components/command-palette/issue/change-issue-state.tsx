@@ -1,22 +1,24 @@
-import { useRouter } from "next/router";
 import React, { Dispatch, SetStateAction, useCallback } from "react";
+
+import { useRouter } from "next/router";
+
 import useSWR, { mutate } from "swr";
 
 // cmdk
 import { Command } from "cmdk";
-// ui
-import { Spinner } from "components/ui";
-// helpers
-import { getStatesList } from "helpers/state.helper";
 // services
 import issuesService from "services/issues.service";
 import stateService from "services/state.service";
+// ui
+import { Spinner } from "components/ui";
+// icons
+import { CheckIcon, StateGroupIcon } from "components/icons";
+// helpers
+import { getStatesList } from "helpers/state.helper";
 // types
 import { ICurrentUserResponse, IIssue } from "types";
 // fetch keys
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY, STATES_LIST } from "constants/fetch-keys";
-// icons
-import { CheckIcon, getStateGroupIcon } from "components/icons";
 
 type Props = {
   setIsPaletteOpen: Dispatch<SetStateAction<boolean>>;
@@ -82,7 +84,12 @@ export const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen, issue, use
               className="focus:outline-none"
             >
               <div className="flex items-center space-x-3">
-                {getStateGroupIcon(state.group, "16", "16", state.color)}
+                <StateGroupIcon
+                  stateGroup={state.group}
+                  color={state.color}
+                  height="16px"
+                  width="16px"
+                />
                 <p>{state.name}</p>
               </div>
               <div>{state.id === issue.state && <CheckIcon className="h-3 w-3" />}</div>

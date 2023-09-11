@@ -2,9 +2,11 @@
 import useInboxView from "hooks/use-inbox-view";
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { getPriorityIcon } from "components/icons";
+import { PriorityIcon } from "components/icons";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
+// types
+import { TIssuePriorities } from "types";
 // constants
 import { INBOX_STATUS } from "constants/inbox";
 
@@ -48,7 +50,9 @@ export const InboxFiltersList = () => {
                               : "bg-custom-background-90 text-custom-text-200"
                           }`}
                         >
-                          <span>{getPriorityIcon(priority)}</span>
+                          <span>
+                            <PriorityIcon priority={priority as TIssuePriorities} />
+                          </span>
                           <button
                             type="button"
                             className="cursor-pointer"

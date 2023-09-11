@@ -77,7 +77,7 @@ export const IssueMainContent: React.FC<Props> = ({
       : null
   );
 
-  const handleCommentUpdate = async (comment: IIssueComment) => {
+  const handleCommentUpdate = async (commentId: string, data: Partial<IIssueComment>) => {
     if (!workspaceSlug || !projectId || !issueId) return;
 
     await issuesService
@@ -85,8 +85,8 @@ export const IssueMainContent: React.FC<Props> = ({
         workspaceSlug as string,
         projectId as string,
         issueId as string,
-        comment.id,
-        comment,
+        commentId,
+        data,
         user
       )
       .then(() => mutateIssueActivity());
@@ -222,6 +222,7 @@ export const IssueMainContent: React.FC<Props> = ({
           activity={issueActivity}
           handleCommentUpdate={handleCommentUpdate}
           handleCommentDelete={handleCommentDelete}
+          showAccessSpecifier={projectDetails && projectDetails.is_deployed}
         />
         <AddComment
           onSubmit={handleAddComment}

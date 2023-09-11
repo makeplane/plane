@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 // ui
 import { Tooltip } from "components/ui";
 // icons
-import { getStateGroupIcon } from "components/icons";
+import { StateGroupIcon } from "components/icons";
 // helpers
 import { findTotalDaysInRange, renderShortDate } from "helpers/date-time.helper";
 // types
@@ -52,7 +52,7 @@ export const IssueGanttSidebarBlock = ({ data }: { data: IIssue }) => {
       className="relative w-full flex items-center gap-2 h-full cursor-pointer"
       onClick={() => router.push(`/${workspaceSlug}/projects/${data?.project}/issues/${data?.id}`)}
     >
-      {getStateGroupIcon(data?.state_detail?.group, "14", "14", data?.state_detail?.color)}
+      <StateGroupIcon stateGroup={data?.state_detail?.group} color={data?.state_detail?.color} />
       <div className="text-xs text-custom-text-300 flex-shrink-0">
         {data?.project_detail?.identifier} {data?.sequence_id}
       </div>

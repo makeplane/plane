@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { EditorState, Plugin, PluginKey } from "@tiptap/pm/state";
 import { Decoration, DecorationSet, EditorView } from "@tiptap/pm/view";
 import fileService from "services/file.service";
@@ -46,7 +45,11 @@ export default UploadImagesPlugin;
 
 function findPlaceholder(state: EditorState, id: {}) {
   const decos = uploadKey.getState(state);
-  const found = decos.find(undefined, undefined, (spec: { id: number | undefined }) => spec.id == id);
+  const found = decos.find(
+    undefined,
+    undefined,
+    (spec: { id: number | undefined }) => spec.id == id
+  );
   return found.length ? found[0].from : null;
 }
 
@@ -58,8 +61,6 @@ export async function startImageUpload(
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
 ) {
   if (!file.type.includes("image/")) {
-    return;
-  } else if (file.size / 1024 / 1024 > 20) {
     return;
   }
 
@@ -93,7 +94,9 @@ export async function startImageUpload(
   const imageSrc = typeof src === "object" ? reader.result : src;
 
   const node = schema.nodes.image.create({ src: imageSrc });
-  const transaction = view.state.tr.replaceWith(pos, pos, node).setMeta(uploadKey, { remove: { id } });
+  const transaction = view.state.tr
+    .replaceWith(pos, pos, node)
+    .setMeta(uploadKey, { remove: { id } });
   view.dispatch(transaction);
 }
 
@@ -107,7 +110,9 @@ const UploadImageHandler = (file: File, workspaceSlug: string): Promise<string> 
     formData.append("attributes", JSON.stringify({}));
 
     return new Promise(async (resolve, reject) => {
-      const imageUrl = await fileService.uploadFile(workspaceSlug, formData).then((response) => response.asset);
+      const imageUrl = await fileService
+        .uploadFile(workspaceSlug, formData)
+        .then((response) => response.asset);
 
       const image = new Image();
       image.src = imageUrl;

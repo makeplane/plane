@@ -1,15 +1,11 @@
 import { Fragment } from "react";
 
-import { useRouter } from "next/router";
-
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // react-datepicker
 import DatePicker from "react-datepicker";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// hooks
-import useIssuesView from "hooks/use-issues-view";
 // components
 import { DateFilterSelect } from "./date-filter-select";
 // ui
@@ -23,8 +19,10 @@ import { IIssueFilterOptions } from "types";
 type Props = {
   title: string;
   field: keyof IIssueFilterOptions;
-  isOpen: boolean;
+  filters: IIssueFilterOptions;
   handleClose: () => void;
+  isOpen: boolean;
+  onSelect: (option: any) => void;
 };
 
 type TFormValues = {
@@ -39,12 +37,14 @@ const defaultValues: TFormValues = {
   date2: new Date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()),
 };
 
-export const DateFilterModal: React.FC<Props> = ({ title, field, isOpen, handleClose }) => {
-  const { filters, setFilters } = useIssuesView();
-
-  const router = useRouter();
-  const { viewId } = router.query;
-
+export const DateFilterModal: React.FC<Props> = ({
+  title,
+  field,
+  filters,
+  handleClose,
+  isOpen,
+  onSelect,
+}) => {
   const { handleSubmit, watch, control } = useForm<TFormValues>({
     defaultValues,
   });
@@ -53,10 +53,10 @@ export const DateFilterModal: React.FC<Props> = ({ title, field, isOpen, handleC
     const { filterType, date1, date2 } = formData;
 
     if (filterType === "range") {
-      setFilters(
-        { [field]: [`${renderDateFormat(date1)};after`, `${renderDateFormat(date2)};before`] },
-        !Boolean(viewId)
-      );
+      onSelect({
+        key: field,
+        value: [`${renderDateFormat(date1)};after`, `${renderDateFormat(date2)};before`],
+      });
     } else {
       const filteredArray = (filters?.[field] as string[])?.filter((item) => {
         if (item?.includes(filterType)) return false;
@@ -66,17 +66,12 @@ export const DateFilterModal: React.FC<Props> = ({ title, field, isOpen, handleC
 
       const filterOne = filteredArray && filteredArray?.length > 0 ? filteredArray[0] : null;
       if (filterOne)
-        setFilters(
-          { [field]: [filterOne, `${renderDateFormat(date1)};${filterType}`] },
-          !Boolean(viewId)
-        );
+        onSelect({ key: field, value: [filterOne, `${renderDateFormat(date1)};${filterType}`] });
       else
-        setFilters(
-          {
-            [field]: [`${renderDateFormat(date1)};${filterType}`],
-          },
-          !Boolean(viewId)
-        );
+        onSelect({
+          key: field,
+          value: [`${renderDateFormat(date1)};${filterType}`],
+        });
     }
     handleClose();
   };

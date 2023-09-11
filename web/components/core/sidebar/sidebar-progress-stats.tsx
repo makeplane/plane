@@ -15,6 +15,7 @@ import {
   TAssigneesDistribution,
   TCompletionChartDistribution,
   TLabelsDistribution,
+  TStateGroups,
 } from "types";
 // constants
 import { STATE_GROUP_COLORS } from "constants/state";
@@ -215,7 +216,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
                   <span
                     className="block h-3 w-3 rounded-full "
                     style={{
-                      backgroundColor: STATE_GROUP_COLORS[group],
+                      backgroundColor: STATE_GROUP_COLORS[group as TStateGroups],
                     }}
                   />
                   <span className="text-xs capitalize">{group}</span>
