@@ -9,7 +9,7 @@ import { CustomSearchSelect, CustomSelect, ToggleSwitch } from "components/ui";
 import { SelectMonthModal } from "components/automation";
 // icons
 import { ChevronDownIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
-import { getStateGroupIcon } from "components/icons";
+import { StateGroupIcon } from "components/icons";
 // services
 import stateService from "services/state.service";
 // constants
@@ -46,7 +46,7 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
       query: state.name,
       content: (
         <div className="flex items-center gap-2">
-          {getStateGroupIcon(state.group, "16", "16", state.color)}
+          <StateGroupIcon stateGroup={state.group} color={state.color} height="16px" width="16px" />
           {state.name}
         </div>
       ),
@@ -140,14 +140,19 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
                   label={
                     <div className="flex items-center gap-2">
                       {selectedOption ? (
-                        getStateGroupIcon(selectedOption.group, "16", "16", selectedOption.color)
+                        <StateGroupIcon
+                          stateGroup={selectedOption.group}
+                          color={selectedOption.color}
+                          height="16px"
+                          width="16px"
+                        />
                       ) : currentDefaultState ? (
-                        getStateGroupIcon(
-                          currentDefaultState.group,
-                          "16",
-                          "16",
-                          currentDefaultState.color
-                        )
+                        <StateGroupIcon
+                          stateGroup={currentDefaultState.group}
+                          color={currentDefaultState.color}
+                          height="16px"
+                          width="16px"
+                        />
                       ) : (
                         <Squares2X2Icon className="h-3.5 w-3.5 text-custom-text-200" />
                       )}

@@ -1,9 +1,7 @@
 // ui
 import { PieGraph } from "components/ui";
-// helpers
-import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
-import { IUserStateDistribution } from "types";
+import { IUserStateDistribution, TStateGroups } from "types";
 // constants
 import { STATE_GROUP_COLORS } from "constants/state";
 
@@ -23,7 +21,7 @@ export const IssuesPieChart: React.FC<Props> = ({ groupedIssues }) => (
                 id: cell.state_group,
                 label: cell.state_group,
                 value: cell.state_count,
-                color: STATE_GROUP_COLORS[cell.state_group.toLowerCase()],
+                color: STATE_GROUP_COLORS[cell.state_group.toLowerCase() as TStateGroups],
               })) ?? []
             }
             height="320px"

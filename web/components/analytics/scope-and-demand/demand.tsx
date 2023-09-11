@@ -1,7 +1,7 @@
 // icons
 import { PlayIcon } from "@heroicons/react/24/outline";
 // types
-import { IDefaultAnalyticsResponse } from "types";
+import { IDefaultAnalyticsResponse, TStateGroups } from "types";
 // constants
 import { STATE_GROUP_COLORS } from "constants/state";
 
@@ -27,7 +27,7 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
                 <span
                   className="h-2 w-2 rounded-full"
                   style={{
-                    backgroundColor: STATE_GROUP_COLORS[group.state_group],
+                    backgroundColor: STATE_GROUP_COLORS[group.state_group as TStateGroups],
                   }}
                 />
                 <h6 className="capitalize">{group.state_group}</h6>
@@ -42,7 +42,7 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
                 className="absolute top-0 left-0 h-1 rounded duration-300"
                 style={{
                   width: `${percentage}%`,
-                  backgroundColor: STATE_GROUP_COLORS[group.state_group],
+                  backgroundColor: STATE_GROUP_COLORS[group.state_group as TStateGroups],
                 }}
               />
             </div>

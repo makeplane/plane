@@ -15,7 +15,7 @@ import {
   PencilSquareIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { getStateGroupIcon } from "components/icons";
+import { StateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { groupBy, orderArrayBy } from "helpers/array.helper";
@@ -162,7 +162,7 @@ export const SingleState: React.FC<Props> = ({
   return (
     <div className="group flex items-center justify-between gap-2 border-custom-border-200 bg-custom-background-100 p-5 first:rounded-t-[10px] last:rounded-b-[10px]">
       <div className="flex items-center gap-3">
-        {getStateGroupIcon(state.group, "20", "20", state.color)}
+        <StateGroupIcon stateGroup={state.group} color={state.color} height="20px" width="20px" />
         <div>
           <h6 className="text-sm">{addSpaceIfCamelCase(state.name)}</h6>
           <p className="text-xs text-custom-text-200">{state.description}</p>
