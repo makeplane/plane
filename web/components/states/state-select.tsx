@@ -208,15 +208,15 @@ export const StateSelect: React.FC<Props> = ({
               <div className="fixed z-20 top-0 left-0 h-full w-full cursor-auto">
                 <Combobox.Options
                   ref={dropdownOptions}
-                  className={`absolute z-10 border border-custom-border-300 p-2 rounded-md bg-custom-background-90 text-xs shadow-lg focus:outline-none min-w-[8rem] whitespace-nowrap ${optionsClassName}`}
+                  className={`absolute z-10 border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-lg focus:outline-none w-48 whitespace-nowrap ${optionsClassName}`}
                 >
-                  <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] border-custom-border-200 bg-custom-background-90 px-2">
-                    <MagnifyingGlassIcon className="h-3 w-3 text-custom-text-200" />
+                  <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
+                    <MagnifyingGlassIcon className="h-3.5 w-3.5 text-custom-text-300" />
                     <Combobox.Input
                       className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
-                      placeholder="Type to search..."
+                      placeholder="Search"
                       displayValue={(assigned: any) => assigned?.name}
                     />
                   </div>
@@ -229,7 +229,7 @@ export const StateSelect: React.FC<Props> = ({
                             value={option.value}
                             className={({ active, selected }) =>
                               `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                                active || selected ? "bg-custom-background-80" : ""
+                                active && !selected ? "bg-custom-background-80" : ""
                               } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                             }
                           >
@@ -237,7 +237,9 @@ export const StateSelect: React.FC<Props> = ({
                               <>
                                 {option.content}
                                 <CheckIcon
-                                  className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`}
+                                  className={`h-3.5 w-3.5 ${
+                                    selected ? "opacity-100" : "opacity-0"
+                                  }`}
                                 />
                               </>
                             )}
