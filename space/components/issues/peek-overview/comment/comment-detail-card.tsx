@@ -37,8 +37,6 @@ export const CommentCard: React.FC<Props> = observer((props) => {
     control,
     formState: { isSubmitting },
     handleSubmit,
-    watch,
-    setValue,
   } = useForm<any>({
     defaultValues: { comment_html: comment.comment_html },
   });
