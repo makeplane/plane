@@ -44,7 +44,6 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
       {mode === "full" && (
         <div className="flex justify-between gap-2 pb-3">
           <h6 className="flex items-center gap-2 font-medium">
-            {/* {getStateGroupIcon(issue.state_detail.group, "16", "16", issue.state_detail.color)} */}
             {issueDetails.project_detail.identifier}-{issueDetails.sequence_id}
           </h6>
           <div className="flex items-center gap-2">

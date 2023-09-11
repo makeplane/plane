@@ -10,7 +10,7 @@ import trackEventServices from "services/track-event.service";
 // ui
 import { CustomSearchSelect, Tooltip } from "components/ui";
 // icons
-import { getStateGroupIcon } from "components/icons";
+import { StateGroupIcon } from "components/icons";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // types
@@ -59,7 +59,7 @@ export const ViewStateSelect: React.FC<Props> = ({
     query: state.name,
     content: (
       <div className="flex items-center gap-2">
-        {getStateGroupIcon(state.group, "16", "16", state.color)}
+        <StateGroupIcon stateGroup={state.group} color={state.color} />
         {state.name}
       </div>
     ),
@@ -75,8 +75,9 @@ export const ViewStateSelect: React.FC<Props> = ({
     >
       <div className="flex items-center cursor-pointer w-full gap-2 text-custom-text-200">
         <span className="h-3.5 w-3.5">
-          {selectedOption &&
-            getStateGroupIcon(selectedOption.group, "14", "14", selectedOption.color)}
+          {selectedOption && (
+            <StateGroupIcon stateGroup={selectedOption.group} color={selectedOption.color} />
+          )}
         </span>
         <span className="truncate">{selectedOption?.name ?? "State"}</span>
       </div>
