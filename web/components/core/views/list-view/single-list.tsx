@@ -15,7 +15,7 @@ import { SingleListIssue } from "components/core";
 import { Avatar, CustomMenu } from "components/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
-import { PriorityIcon, getStateGroupIcon } from "components/icons";
+import { PriorityIcon, StateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
@@ -27,10 +27,13 @@ import {
   IIssueViewProps,
   IState,
   TIssuePriorities,
+  TStateGroups,
   UserAuth,
 } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS } from "constants/fetch-keys";
+// constants
+import { STATE_GROUP_COLORS } from "constants/state";
 
 type Props = {
   currentState?: IState | null;
@@ -112,11 +115,24 @@ export const SingleList: React.FC<Props> = ({
 
     switch (selectedGroup) {
       case "state":
-        icon =
-          currentState && getStateGroupIcon(currentState.group, "16", "16", currentState.color);
+        icon = currentState && (
+          <StateGroupIcon
+            stateGroup={currentState.group}
+            color={currentState.color}
+            height="16px"
+            width="16px"
+          />
+        );
         break;
       case "state_detail.group":
-        icon = getStateGroupIcon(groupTitle as any, "16", "16");
+        icon = (
+          <StateGroupIcon
+            stateGroup={groupTitle as TStateGroups}
+            color={STATE_GROUP_COLORS[groupTitle as TStateGroups]}
+            height="16px"
+            width="16px"
+          />
+        );
         break;
       case "priority":
         icon = <PriorityIcon priority={groupTitle as TIssuePriorities} className="text-lg" />;

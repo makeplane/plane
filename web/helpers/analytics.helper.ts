@@ -3,7 +3,7 @@ import { BarDatum } from "@nivo/bar";
 // helpers
 import { capitalizeFirstLetter, generateRandomColor } from "helpers/string.helper";
 // types
-import { IAnalyticsData, IAnalyticsParams, IAnalyticsResponse } from "types";
+import { IAnalyticsData, IAnalyticsParams, IAnalyticsResponse, TStateGroups } from "types";
 // constants
 import { STATE_GROUP_COLORS } from "constants/state";
 import { MONTHS_LIST } from "constants/calendar";
@@ -72,7 +72,8 @@ export const generateBarColor = (
   if (params[type] === "state__name" || params[type] === "labels__name")
     color = analytics?.extras?.colors.find((c) => c.name === value)?.color;
 
-  if (params[type] === "state__group") color = STATE_GROUP_COLORS[value.toLowerCase()];
+  if (params[type] === "state__group")
+    color = STATE_GROUP_COLORS[value.toLowerCase() as TStateGroups];
 
   if (params[type] === "priority") {
     const priority = value.toLowerCase();

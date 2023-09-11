@@ -9,7 +9,7 @@ import stateService from "services/state.service";
 // ui
 import { Spinner, CustomSelect } from "components/ui";
 // icons
-import { getStateGroupIcon } from "components/icons";
+import { StateGroupIcon } from "components/icons";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
@@ -42,17 +42,12 @@ export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, disabled 
         <button type="button" className="bg-custom-background-80 text-xs rounded px-2.5 py-0.5">
           {selectedState ? (
             <div className="flex items-center gap-1.5 text-left text-custom-text-100">
-              {getStateGroupIcon(
-                selectedState?.group ?? "backlog",
-                "14",
-                "14",
-                selectedState?.color ?? ""
-              )}
+              <StateGroupIcon stateGroup={selectedState.group} color={selectedState.color} />
               {addSpaceIfCamelCase(selectedState?.name ?? "")}
             </div>
           ) : inboxIssueId ? (
             <div className="flex items-center gap-1.5 text-left text-custom-text-100">
-              {getStateGroupIcon("backlog", "14", "14", "#ff7700")}
+              <StateGroupIcon stateGroup="backlog" color="#ff7700" />
               Triage
             </div>
           ) : (
@@ -71,7 +66,7 @@ export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, disabled 
           states.map((state) => (
             <CustomSelect.Option key={state.id} value={state.id}>
               <>
-                {getStateGroupIcon(state.group, "16", "16", state.color)}
+                <StateGroupIcon stateGroup={state.group} color={state.color} />
                 {state.name}
               </>
             </CustomSelect.Option>

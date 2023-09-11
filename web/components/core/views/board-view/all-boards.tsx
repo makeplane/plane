@@ -1,7 +1,7 @@
 // components
 import { SingleBoard } from "components/core/views/board-view/single-board";
 // icons
-import { getStateGroupIcon } from "components/icons";
+import { StateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
@@ -82,8 +82,14 @@ export const AllBoards: React.FC<Props> = ({
                         className="flex items-center justify-between gap-2 rounded bg-custom-background-90 p-2 shadow"
                       >
                         <div className="flex items-center gap-2">
-                          {currentState &&
-                            getStateGroupIcon(currentState.group, "16", "16", currentState.color)}
+                          {currentState && (
+                            <StateGroupIcon
+                              stateGroup={currentState.group}
+                              color={currentState.color}
+                              height="16px"
+                              width="16px"
+                            />
+                          )}
                           <h4 className="text-sm capitalize">
                             {selectedGroup === "state"
                               ? addSpaceIfCamelCase(currentState?.name ?? "")
