@@ -56,12 +56,6 @@ const Tiptap = (props: ITipTapRichTextEditor) => {
     },
   });
 
-  useEffect(() => {
-    if (editor) {
-      editor.commands.setContent(value);
-    }
-  }, [value]);
-
   const editorRef: React.MutableRefObject<Editor | null> = useRef(null);
 
   useImperativeHandle(forwardedRef, () => ({
