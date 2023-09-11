@@ -102,7 +102,7 @@ export interface IIssue {
   name: string;
   parent: string | null;
   parent_detail: IIssueParent | null;
-  priority: string | null;
+  priority: TIssuePriorities;
   project: string;
   project_detail: IProjectLite;
   sequence_id: number;
@@ -294,3 +294,5 @@ export interface IIssueViewProps {
   properties: Properties;
   showEmptyGroups: boolean;
 }
+
+export type TIssuePriorities = "urgent" | "high" | "medium" | "low" | null;

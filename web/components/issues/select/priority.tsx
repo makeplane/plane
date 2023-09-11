@@ -3,12 +3,14 @@ import React from "react";
 // ui
 import { CustomSelect } from "components/ui";
 // icons
-import { getPriorityIcon } from "components/icons/priority-icon";
+import { PriorityIcon } from "components/icons/priority-icon";
+// types
+import { TIssuePriorities } from "types";
 // constants
 import { PRIORITIES } from "constants/project";
 
 type Props = {
-  value: string | null;
+  value: TIssuePriorities;
   onChange: (value: string) => void;
 };
 
@@ -18,7 +20,10 @@ export const IssuePrioritySelect: React.FC<Props> = ({ value, onChange }) => (
     label={
       <div className="flex items-center justify-center gap-2 text-xs">
         <span className="flex items-center">
-          {getPriorityIcon(value, `text-xs ${value ? "" : "text-custom-text-200"}`)}
+          <PriorityIcon
+            priority={value}
+            className={`text-xs ${value ? "" : "text-custom-text-200"}`}
+          />
         </span>
         <span className={`${value ? "" : "text-custom-text-200"} capitalize`}>
           {value ?? "Priority"}
@@ -32,7 +37,9 @@ export const IssuePrioritySelect: React.FC<Props> = ({ value, onChange }) => (
       <CustomSelect.Option key={priority} value={priority}>
         <div className="flex w-full justify-between gap-2 rounded">
           <div className="flex items-center justify-start gap-2">
-            <span>{getPriorityIcon(priority)}</span>
+            <span>
+              <PriorityIcon priority={priority} />
+            </span>
             <span className="capitalize">{priority ?? "None"}</span>
           </div>
         </div>

@@ -109,7 +109,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
               render={({ field: { value } }) => (
                 <PrioritySelect
                   value={value}
-                  onChange={(val: string) => submitChanges({ priority: val })}
+                  onChange={(val) => submitChanges({ priority: val })}
                 />
               )}
             />
