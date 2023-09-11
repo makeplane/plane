@@ -13,12 +13,12 @@ import useProjects from "hooks/use-projects";
 import { Avatar, Icon } from "components/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
-import { StateGroupIcon, getPriorityIcon } from "components/icons";
+import { PriorityIcon, StateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // types
-import { IIssueViewProps, IState, TStateGroups } from "types";
+import { IIssueViewProps, IState, TIssuePriorities, TStateGroups } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS } from "constants/fetch-keys";
 // constants
@@ -119,7 +119,7 @@ export const BoardHeader: React.FC<Props> = ({
         );
         break;
       case "priority":
-        icon = getPriorityIcon(groupTitle, "text-lg");
+        icon = <PriorityIcon priority={groupTitle as TIssuePriorities} className="text-lg" />;
         break;
       case "project":
         const project = projects?.find((p) => p.id === groupTitle);

@@ -18,7 +18,7 @@ import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
 // types
-import { IIssue, IIssueFilterOptions } from "types";
+import { IIssue, IIssueFilterOptions, TIssuePriorities } from "types";
 // fetch-keys
 import { USER_PROFILE_PROJECT_SEGREGATION, WORKSPACE_LABELS } from "constants/fetch-keys";
 
@@ -108,7 +108,7 @@ export const ProfileIssuesView = () => {
         const sourceGroup = source.droppableId;
         const destinationGroup = destination.droppableId;
 
-        draggedItem[groupByProperty] = destinationGroup;
+        draggedItem[groupByProperty] = destinationGroup as TIssuePriorities;
 
         mutateProfileIssues((prevData: any) => {
           if (!prevData) return prevData;

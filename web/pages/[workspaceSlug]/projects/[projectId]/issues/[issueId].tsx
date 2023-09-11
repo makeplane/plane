@@ -27,7 +27,7 @@ import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
 
-const defaultValues = {
+const defaultValues: Partial<IIssue> = {
   assignees_list: [],
   description: "",
   description_html: "",

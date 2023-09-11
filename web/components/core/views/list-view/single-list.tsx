@@ -15,7 +15,7 @@ import { SingleListIssue } from "components/core";
 import { Avatar, CustomMenu } from "components/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
-import { StateGroupIcon, getPriorityIcon } from "components/icons";
+import { PriorityIcon, StateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
@@ -26,6 +26,7 @@ import {
   IIssueLabels,
   IIssueViewProps,
   IState,
+  TIssuePriorities,
   TStateGroups,
   UserAuth,
 } from "types";
@@ -134,7 +135,7 @@ export const SingleList: React.FC<Props> = ({
         );
         break;
       case "priority":
-        icon = getPriorityIcon(groupTitle, "text-lg");
+        icon = <PriorityIcon priority={groupTitle as TIssuePriorities} className="text-lg" />;
         break;
       case "project":
         const project = projects?.find((p) => p.id === groupTitle);

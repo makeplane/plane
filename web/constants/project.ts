@@ -1,3 +1,5 @@
+import { TIssuePriorities } from "types";
+
 export const NETWORK_CHOICES: { key: 0 | 2; label: string; icon: string }[] = [
   {
     key: 0,
@@ -19,7 +21,7 @@ export const GROUP_CHOICES = {
   cancelled: "Cancelled",
 };
 
-export const PRIORITIES = ["urgent", "high", "medium", "low", null];
+export const PRIORITIES: TIssuePriorities[] = ["urgent", "high", "medium", "low", null];
 
 export const MONTHS = [
   "January",

@@ -19,7 +19,7 @@ import { ActiveCycleProgressStats } from "components/cycles";
 
 // icons
 import { CalendarDaysIcon } from "@heroicons/react/20/solid";
-import { getPriorityIcon } from "components/icons/priority-icon";
+import { PriorityIcon } from "components/icons/priority-icon";
 import {
   TargetIcon,
   ContrastIcon,
@@ -477,7 +477,7 @@ export const ActiveCycleDetails: React.FC = () => {
                               : "border-orange-500/20 bg-orange-500/20 text-orange-500"
                           }`}
                         >
-                          {getPriorityIcon(issue.priority, "text-sm")}
+                          <PriorityIcon priority={issue.priority} className="text-sm" />
                         </div>
                         <ViewIssueLabel labelDetails={issue.label_details} maxRender={2} />
                         <div className={`flex items-center gap-2 text-custom-text-200`}>

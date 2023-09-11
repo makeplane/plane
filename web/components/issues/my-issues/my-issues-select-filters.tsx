@@ -11,7 +11,7 @@ import { DateFilterModal } from "components/core";
 // ui
 import { MultiLevelDropdown } from "components/ui";
 // icons
-import { StateGroupIcon, getPriorityIcon } from "components/icons";
+import { PriorityIcon, StateGroupIcon } from "components/icons";
 // helpers
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 // types
@@ -83,7 +83,7 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
                 id: priority === null ? "null" : priority,
                 label: (
                   <div className="flex items-center gap-2 capitalize">
-                    {getPriorityIcon(priority)} {priority ?? "None"}
+                    <PriorityIcon priority={priority} /> {priority ?? "None"}
                   </div>
                 ),
                 value: {
