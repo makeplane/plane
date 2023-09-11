@@ -227,12 +227,111 @@ def update_start_date():
 
 
 def move_field_data_from_issues():
-    def move_priority():
+    # Move priority to field
+    def move_priority(issue_property):
         try:
+            # Priority - Single selects
+            parent = IssueProperty.objects.create(
+                parent=issue_property,
+                name="priority",
+                display_name="Priority",
+                description="The priority of the issue",
+                project_id=issue_property.project_id,
+                workspace_id=issue_property.workspace_id,
+                type="select",
+                is_multi=False,
+                is_shared=False,
+                default_value="None",
+            )
+
+            # Create Child selects
+            IssueProperty.objects.bulk_create(
+                [
+                    IssueProperty(
+                        project_id=issue_property.project_id,
+                        workspace_id=issue_property.workspace_id,
+                        name=str(priority),
+                        type="option",
+                        display_name=str(priority).capitalize(),
+                        is_multi=False,
+                        is_shared=False,
+                        parent=parent,
+                    )
+                    for priority in [None, "urgent", "high", "medium", "low"]
+                ],
+                batch_size=100,
+            )
             return
         except:
             print(e)
-            return []
+            return
+
+
+    def move_start_date(issue_property):
+        try:
+            _ = IssueProperty.objects.create(
+                project_id=issue_property.project_id,
+                workspace_id=issue_property.workspace_id,
+                name="start_date",
+                type="datetime",
+                is_multi=False,
+                is_shared=False,
+                parent=issue_property,
+                default_value=str(None),
+            )
+            return
+        except Exception as e:
+            print(e)
+            return
+
+
+    def move_target_date(issue_property):
+        try:
+            _ = IssueProperty.objects.create(
+                project_id=issue_property.project_id,
+                workspace_id=issue_property.workspace_id,
+                name="target_date",
+                type="datetime",
+                is_multi=False,
+                is_shared=False,
+                parent=issue_property,
+                default_value=str(None),
+            )
+            return
+        except Exception as e:
+            print(e)
+            return
+
+
+    def move_parent(issue_property):
+        try:
+            _ = IssueProperty.objects.create(
+                project_id=issue_property.project_id,
+                workspace_id=issue_property.workspace_id,
+                name="parent",
+                display_name="Parent",
+                type="relation",
+                parent=issue_property,
+                default_value=str(None),
+            )
+        except Exception as e:
+            print(e)
+            return
+
+
+    def move_estimate_point(issue_property):
+        try:
+            _ = IssueProperty.objects.create(
+                parent=issue_property,
+                project_id=issue_property.project_id,
+                workspace_id=issue_property.workspace_id,
+                name="estimate_point",
+                display_name="Estimate Point",
+                default_value=
+            )
+        except Exception as e:
+            print(e)
+            return
 
     try:
         issue_props = []
@@ -262,33 +361,19 @@ def move_field_data_from_issues():
         # Add issue properties
         for issue_property in issue_properties:
             # Create all the new property
-            # Priority - Single selects
-            issue_property = IssueProperty.objects.create(
-                parent=issue_property,
-                name="Priority",
-                description="The priority of the issue",
-                project_id=issue_property.project_id,
-                workspace_id=issue_property.workspace_id,
-                type="select",
-                is_multi=False,
-                is_shared=False,
-            )
+            FUNC_MAPPER = {
+                "priority": move_priority,
+                "estimate_point": move_estimate_point,
+                "start_date": move_start_date,
+                "target_date": move_target_date,
+                "parent": move_parent,
+                "estimate_point": move_estimate_point,
+            }
 
-            # Create Child selects
-            IssueProperty.objects.bulk_create(
-                [
-                    IssueProperty(
-                        project_id=issue_property.project_id,
-                        workspace_id=issue_property.workspace_id,
-                        name=str(priority),
-                        type="option",
-                        is_multi=False,
-                        is_shared=False,
-                    )
-                    for priority in [None, "urgent", "high", "medium", "low"]
-                ],
-                batch_size=100,
-            )
+            for item in FUNC_MAPPER.keys():
+                func = FUNC_MAPPER.get(item)
+                func(issue_property)
+
         print("Success")
     except Exception as e:
         print(e)

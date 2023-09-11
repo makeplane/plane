@@ -16,6 +16,7 @@ class IssueProperty(BaseModel):
         null=True,
     )
     name = models.CharField(max_length=255)
+    display_name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     type = models.CharField(
         choices=(
@@ -30,8 +31,8 @@ class IssueProperty(BaseModel):
             ("files", "files"),
             ("email", "email"),
             ("url", "url"),
-            ("timestamp", "timestamp"),
-            ("option", "options"),
+            ("datetime", "datetime"),
+            ("option", "option"),
         )
     )
     is_required = models.BooleanField(default=False)

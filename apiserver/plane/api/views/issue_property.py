@@ -52,7 +52,7 @@ class IssuePropertyViewSet(BaseViewSet):
         try:
             project_id = request.GET.get("project", False)
             issue_properties = self.get_queryset().filter(
-                parent__isnull=True, is_shared=True
+                parent__isnull=True,
             )
 
             if project_id:
