@@ -69,7 +69,10 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules })
   const blockFormat = (blocks: IModule[]) =>
     blocks && blocks.length > 0
       ? blocks
-          .filter((b) => b.start_date && b.target_date)
+          .filter(
+            (b) =>
+              b.start_date && b.target_date && new Date(b.start_date) <= new Date(b.target_date)
+          )
           .map((block) => ({
             data: block,
             id: block.id,

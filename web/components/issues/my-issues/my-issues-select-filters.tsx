@@ -11,11 +11,11 @@ import { DateFilterModal } from "components/core";
 // ui
 import { MultiLevelDropdown } from "components/ui";
 // icons
-import { getPriorityIcon, getStateGroupIcon } from "components/icons";
+import { PriorityIcon, StateGroupIcon } from "components/icons";
 // helpers
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 // types
-import { IIssueFilterOptions, IQuery } from "types";
+import { IIssueFilterOptions, IQuery, TStateGroups } from "types";
 // fetch-keys
 import { WORKSPACE_LABELS } from "constants/fetch-keys";
 // constants
@@ -61,8 +61,10 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
         <DateFilterModal
           title={dateFilterType.title}
           field={dateFilterType.type}
-          isOpen={isDateFilterModalOpen}
+          filters={filters as IIssueFilterOptions}
           handleClose={() => setIsDateFilterModalOpen(false)}
+          isOpen={isDateFilterModalOpen}
+          onSelect={onSelect}
         />
       )}
       <MultiLevelDropdown
@@ -81,7 +83,7 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
                 id: priority === null ? "null" : priority,
                 label: (
                   <div className="flex items-center gap-2 capitalize">
-                    {getPriorityIcon(priority)} {priority ?? "None"}
+                    <PriorityIcon priority={priority} /> {priority ?? "None"}
                   </div>
                 ),
                 value: {
@@ -102,7 +104,7 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
                 id: key,
                 label: (
                   <div className="flex items-center gap-2">
-                    {getStateGroupIcon(key as any, "16", "16")}{" "}
+                    <StateGroupIcon stateGroup={key as TStateGroups} />
                     {GROUP_CHOICES[key as keyof typeof GROUP_CHOICES]}
                   </div>
                 ),

@@ -29,7 +29,7 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import { getStatesList } from "helpers/state.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
-import { IIssue, IIssueFilterOptions, IState } from "types";
+import { IIssue, IIssueFilterOptions, IState, TIssuePriorities } from "types";
 // fetch-keys
 import {
   CYCLE_DETAILS,
@@ -184,7 +184,8 @@ export const IssuesView: React.FC<Props> = ({
           // if the issue is moved to a different group, then we will change the group of the
           // dragged item(or issue)
 
-          if (selectedGroup === "priority") draggedItem.priority = destinationGroup;
+          if (selectedGroup === "priority")
+            draggedItem.priority = destinationGroup as TIssuePriorities;
           else if (selectedGroup === "state") {
             draggedItem.state = destinationGroup;
             draggedItem.state_detail = states?.find((s) => s.id === destinationGroup) as IState;

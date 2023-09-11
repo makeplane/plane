@@ -1,17 +1,22 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useForm, Controller } from "react-hook-form";
+import React, { useState } from "react";
+
+// mobx
 import { observer } from "mobx-react-lite";
+// react-hook-form
+import { Controller, useForm } from "react-hook-form";
+// headless ui
 import { Menu, Transition } from "@headlessui/react";
 // lib
 import { useMobxStore } from "lib/mobx/store-provider";
+// components
+import { TipTapEditor } from "components/tiptap";
+import { CommentReactions } from "components/issues/peek-overview";
 // icons
 import { ChatBubbleLeftEllipsisIcon, CheckIcon, XMarkIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
 import { Comment } from "types/issue";
-// components
-import { TipTapEditor } from "components/tiptap";
 
 type Props = {
   workspaceSlug: string;
@@ -25,10 +30,13 @@ export const CommentCard: React.FC<Props> = observer((props) => {
   // states
   const [isEditing, setIsEditing] = useState(false);
 
+  const editorRef = React.useRef<any>(null);
+
+  const showEditorRef = React.useRef<any>(null);
   const {
+    control,
     formState: { isSubmitting },
     handleSubmit,
-    control,
   } = useForm<any>({
     defaultValues: { comment_html: comment.comment_html },
   });
@@ -42,6 +50,9 @@ export const CommentCard: React.FC<Props> = observer((props) => {
     if (!workspaceSlug || !issueDetailStore.peekId) return;
     issueDetailStore.updateIssueComment(workspaceSlug, comment.project, issueDetailStore.peekId, comment.id, formData);
     setIsEditing(false);
+
+    editorRef.current?.setEditorValue(formData.comment_html);
+    showEditorRef.current?.setEditorValue(formData.comment_html);
   };
 
   return (
@@ -76,7 +87,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             {comment.actor_detail.is_bot ? comment.actor_detail.first_name + " Bot" : comment.actor_detail.display_name}
           </div>
           <p className="mt-0.5 text-xs text-custom-text-200">
-            <>Commented {timeAgo(comment.created_at)}</>
+            <>commented {timeAgo(comment.created_at)}</>
           </p>
         </div>
         <div className="issue-comments-section p-0">
@@ -91,6 +102,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                 render={({ field: { onChange, value } }) => (
                   <TipTapEditor
                     workspaceSlug={workspaceSlug as string}
+                    ref={editorRef}
                     value={value}
                     debouncedUpdatesEnabled={false}
                     customClassName="min-h-[50px] p-3 shadow-sm"
@@ -120,11 +132,13 @@ export const CommentCard: React.FC<Props> = observer((props) => {
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
             <TipTapEditor
-              workspaceSlug={workspaceSlug.toString()}
+              workspaceSlug={workspaceSlug as string}
+              ref={showEditorRef}
               value={comment.comment_html}
               editable={false}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
             />
+            <CommentReactions commentId={comment.id} projectId={comment.project} />
           </div>
         </div>
       </div>

@@ -18,7 +18,7 @@ import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
 // types
-import { IIssue, IIssueFilterOptions } from "types";
+import { IIssue, IIssueFilterOptions, TIssuePriorities } from "types";
 // fetch-keys
 import { USER_ISSUES, WORKSPACE_LABELS } from "constants/fetch-keys";
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -96,7 +96,7 @@ export const MyIssuesView: React.FC<Props> = ({
         const sourceGroup = source.droppableId;
         const destinationGroup = destination.droppableId;
 
-        draggedItem[groupBy] = destinationGroup;
+        draggedItem[groupBy] = destinationGroup as TIssuePriorities;
 
         mutate<{
           [key: string]: IIssue[];
