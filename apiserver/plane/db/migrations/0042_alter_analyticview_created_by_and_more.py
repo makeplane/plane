@@ -3,7 +3,7 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-
+import uuid
 
 def update_user_timezones(apps, schema_editor):
     UserModel = apps.get_model("db", "User")
@@ -31,5 +31,30 @@ class Migration(migrations.Migration):
             name='title',
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
-        migrations.RunPython(update_user_timezones)
+        migrations.RunPython(update_user_timezones),
+        migrations.AlterField(
+            model_name='issuevote',
+            name='vote',
+            field=models.IntegerField(choices=[(-1, 'DOWNVOTE'), (1, 'UPVOTE')], default=1),
+        ),
+        migrations.CreateModel(
+            name='ProjectPublicMember',
+            fields=[
+                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
+                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Last Modified At')),
+                ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
+                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
+                ('member', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='public_project_members', to=settings.AUTH_USER_MODEL)),
+                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_%(class)s', to='db.project')),
+                ('updated_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_updated_by', to=settings.AUTH_USER_MODEL, verbose_name='Last Modified By')),
+                ('workspace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_%(class)s', to='db.workspace')),
+            ],
+            options={
+                'verbose_name': 'Project Public Member',
+                'verbose_name_plural': 'Project Public Members',
+                'db_table': 'project_public_members',
+                'ordering': ('-created_at',),
+                'unique_together': {('project', 'member')},
+            },
+        ),
     ]

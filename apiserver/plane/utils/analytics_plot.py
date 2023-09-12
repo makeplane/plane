@@ -96,7 +96,7 @@ def burndown_plot(queryset, slug, project_id, cycle_id=None, module_id=None):
         chart_data = {str(date): 0 for date in date_range}
 
         completed_issues_distribution = (
-            Issue.objects.filter(
+            Issue.issue_objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
                 issue_cycle__cycle_id=cycle_id,
@@ -118,7 +118,7 @@ def burndown_plot(queryset, slug, project_id, cycle_id=None, module_id=None):
         chart_data = {str(date): 0 for date in date_range}
 
         completed_issues_distribution = (
-            Issue.objects.filter(
+            Issue.issue_objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
                 issue_module__module_id=module_id,

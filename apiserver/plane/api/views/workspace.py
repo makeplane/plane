@@ -116,7 +116,7 @@ class WorkSpaceViewSet(BaseViewSet):
         )
 
         issue_count = (
-            Issue.objects.filter(workspace=OuterRef("id"))
+            Issue.issue_objects.filter(workspace=OuterRef("id"))
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")
@@ -203,7 +203,7 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             )
 
             issue_count = (
-                Issue.objects.filter(workspace=OuterRef("id"))
+                Issue.issue_objects.filter(workspace=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -532,7 +532,7 @@ class UserWorkspaceInvitationsEndpoint(BaseViewSet):
             # Delete joined workspace invites
             workspace_invitations.delete()
 
-            return Response(status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
             capture_exception(e)
             return Response(
@@ -846,7 +846,7 @@ class WorkspaceMemberUserViewsEndpoint(BaseAPIView):
             workspace_member.view_props = request.data.get("view_props", {})
             workspace_member.save()
 
-            return Response(status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except WorkspaceMember.DoesNotExist:
             return Response(
                 {"error": "User not a member of workspace"},
@@ -1075,7 +1075,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
             priority_order = ["urgent", "high", "medium", "low", None]
 
             priority_distribution = (
-                Issue.objects.filter(
+                Issue.issue_objects.filter(
                     workspace__slug=slug,
                     assignees__in=[user_id],
                     project__project_projectmember__member=request.user,
@@ -1467,6 +1467,47 @@ class WorkspaceMembersEndpoint(BaseAPIView):
             ).select_related("workspace", "member")
             serialzier = WorkSpaceMemberSerializer(workspace_members, many=True)
             return Response(serialzier.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class LeaveWorkspaceEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def delete(self, request, slug):
+        try:
+            workspace_member = WorkspaceMember.objects.get(
+                workspace__slug=slug, member=request.user
+            )
+
+            # Only Admin case
+            if (
+                workspace_member.role == 20
+                and WorkspaceMember.objects.filter(
+                    workspace__slug=slug, role=20
+                ).count()
+                == 1
+            ):
+                return Response(
+                    {
+                        "error": "You cannot leave the workspace since you are the only admin of the workspace you should delete the workspace"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            # Delete the member from workspace
+            workspace_member.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except WorkspaceMember.DoesNotExist:
+            return Response(
+                {"error": "Workspace member does not exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except Exception as e:
             capture_exception(e)
             return Response(

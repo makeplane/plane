@@ -191,11 +191,10 @@ class CycleViewSet(BaseViewSet):
                             workspace__slug=slug,
                             project_id=project_id,
                         )
-                        .annotate(first_name=F("assignees__first_name"))
-                        .annotate(last_name=F("assignees__last_name"))
+                        .annotate(display_name=F("assignees__display_name"))
                         .annotate(assignee_id=F("assignees__id"))
                         .annotate(avatar=F("assignees__avatar"))
-                        .values("first_name", "last_name", "assignee_id", "avatar")
+                        .values("display_name", "assignee_id", "avatar")
                         .annotate(total_issues=Count("assignee_id"))
                         .annotate(
                             completed_issues=Count(
@@ -209,7 +208,7 @@ class CycleViewSet(BaseViewSet):
                                 filter=Q(completed_at__isnull=True),
                             )
                         )
-                        .order_by("first_name", "last_name")
+                        .order_by("display_name")
                     )
 
                     label_distribution = (
@@ -334,13 +333,21 @@ class CycleViewSet(BaseViewSet):
                 workspace__slug=slug, project_id=project_id, pk=pk
             )
 
+            request_data = request.data
+
             if cycle.end_date is not None and cycle.end_date < timezone.now().date():
-                return Response(
-                    {
-                        "error": "The Cycle has already been completed so it cannot be edited"
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+                if "sort_order" in request_data:
+                    # Can only change sort order
+                    request_data = {
+                        "sort_order": request_data.get("sort_order", cycle.sort_order)
+                    }
+                else:
+                    return Response(
+                        {
+                            "error": "The Cycle has already been completed so it cannot be edited"
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
             serializer = CycleWriteSerializer(cycle, data=request.data, partial=True)
             if serializer.is_valid():
@@ -374,7 +381,9 @@ class CycleViewSet(BaseViewSet):
                 .annotate(assignee_id=F("assignees__id"))
                 .annotate(avatar=F("assignees__avatar"))
                 .annotate(display_name=F("assignees__display_name"))
-                .values("first_name", "last_name", "assignee_id", "avatar", "display_name")
+                .values(
+                    "first_name", "last_name", "assignee_id", "avatar", "display_name"
+                )
                 .annotate(total_issues=Count("assignee_id"))
                 .annotate(
                     completed_issues=Count(
@@ -710,7 +719,6 @@ class CycleDateCheckEndpoint(BaseAPIView):
 
 
 class CycleFavoriteViewSet(BaseViewSet):
-
     serializer_class = CycleFavoriteSerializer
     model = CycleFavorite
 
