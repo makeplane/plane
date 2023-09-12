@@ -2071,7 +2071,7 @@ class IssueRelationViewSet(BaseViewSet):
     def create(self, request, slug, project_id, issue_id):
         try:
             related_list = request.data.get("related_list", [])
-            Project = Project.objects.get(pk=project_id)
+            project = Project.objects.get(pk=project_id)
 
             issueRelation = IssueRelation.objects.bulk_create(
                 [
@@ -2080,7 +2080,7 @@ class IssueRelationViewSet(BaseViewSet):
                         related_issue_id=related_issue["related_issue"],
                         relation_type=related_issue["relation_type"],
                         project_id=project_id,
-                        workspace_id=Project.workspace.id,
+                        workspace_id=project.workspace_id,
                         created_by=request.user,
                         updated_by=request.user,
                     )
@@ -2118,7 +2118,7 @@ class IssueRelationViewSet(BaseViewSet):
         except Exception as e:
             capture_exception(e)
             return Response(
-                {"error": "Something went wrong please try again later", "e": str(e)},
+                {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
