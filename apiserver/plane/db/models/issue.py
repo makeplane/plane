@@ -181,7 +181,7 @@ class IssueBlocker(ProjectBaseModel):
 class IssueRelation(ProjectBaseModel):
     RELATION_CHOICES = (
         ("duplicate", "Duplicate"),
-        ("link", "Link"),
+        ("relates_to", "Relates To"),
         ("blocked_by", "Blocked By"),
     )
         
