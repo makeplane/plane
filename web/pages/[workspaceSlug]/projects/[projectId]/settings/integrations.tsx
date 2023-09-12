@@ -64,9 +64,9 @@ const ProjectIntegrations: NextPage = () => {
         </div>
         {workspaceIntegrations ? (
           workspaceIntegrations.length > 0 ? (
-            <section className="pr-9 py-8 space-y-8 overflow-y-auto">
+            <section className="pr-9 py-8 overflow-y-auto w-full">
               <IntegrationAndImportExportBanner bannerName="Integrations" />
-              <div className="space-y-5">
+              <div>
                 {workspaceIntegrations.map((integration) => (
                   <SingleIntegration
                     key={integration.integration_detail.id}
