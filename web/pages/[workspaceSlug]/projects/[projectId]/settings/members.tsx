@@ -19,7 +19,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
 import ConfirmProjectMemberRemove from "components/project/confirm-project-member-remove";
 import SendProjectInvitationModal from "components/project/send-project-invitation-modal";
-import { SettingsSidebar } from "components/project";
+import { MemberSelect, SettingsSidebar } from "components/project";
 // ui
 import {
   CustomMenu,
@@ -147,7 +147,7 @@ const MembersSettings: NextPage = () => {
 
     const payload: Partial<IProject> = {
       default_assignee: formData.default_assignee,
-      project_lead: formData.project_lead,
+      project_lead: formData.project_lead === "none" ? null : formData.project_lead,
     };
 
     await projectService
@@ -181,6 +181,36 @@ const MembersSettings: NextPage = () => {
         workspace: (projectDetails.workspace as IWorkspace).id,
       });
   }, [projectDetails, reset]);
+
+  const submitChanges = async (formData: Partial<IProject>) => {
+    if (!workspaceSlug || !projectId) return;
+
+    const payload: Partial<IProject> = {
+      default_assignee: formData.default_assignee === "none" ? null : formData.default_assignee,
+      project_lead: formData.project_lead === "none" ? null : formData.project_lead,
+    };
+
+    await projectService
+      .updateProject(workspaceSlug as string, projectId as string, payload, user)
+      .then((res) => {
+        mutate(PROJECT_DETAILS(projectId as string));
+
+        mutate(
+          PROJECTS_LIST(workspaceSlug as string, {
+            is_favorite: "all",
+          })
+        );
+
+        setToastAlert({
+          title: "Success",
+          type: "success",
+          message: "Project updated successfully",
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <ProjectAuthorizationWrapper
@@ -248,128 +278,58 @@ const MembersSettings: NextPage = () => {
           <SettingsSidebar />
         </div>
         <section className="pr-9 py-8 w-full">
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <h4 className="text-xl font-medium py-4 border-b border-custom-border-200">Defaults</h4>
-            <div className="flex flex-col gap-2 pb-4 w-full">
-              <div className="flex items-center py-8 gap-4 w-full">
-                <div className="flex flex-col gap-2 w-1/2">
-                  <h4 className="text-sm">Project Lead</h4>
-                  <div className="">
-                    {projectDetails ? (
-                      <Controller
-                        name="project_lead"
-                        control={control}
-                        render={({ field }) => (
-                          <CustomSelect
-                            {...field}
-                            label={
-                              people?.find((person) => person.member.id === field.value)?.member
-                                .display_name ?? (
-                                <span className="text-custom-text-200">Select lead</span>
-                              )
-                            }
-                            width="w-full"
-                            input
-                          >
-                            {people?.map((person) => (
-                              <CustomSelect.Option
-                                key={person.member.id}
-                                value={person.member.id}
-                                className="flex items-center gap-2"
-                              >
-                                <div className="flex items-center gap-2">
-                                  {person.member.avatar && person.member.avatar !== "" ? (
-                                    <div className="relative h-4 w-4">
-                                      <img
-                                        src={person.member.avatar}
-                                        className="absolute top-0 left-0 h-full w-full object-cover rounded-full"
-                                        alt="User Avatar"
-                                      />
-                                    </div>
-                                  ) : (
-                                    <div className="grid h-4 w-4 flex-shrink-0 place-items-center rounded-full bg-gray-700 capitalize text-white">
-                                      {person.member.display_name?.charAt(0)}
-                                    </div>
-                                  )}
-                                  {person.member.display_name}
-                                </div>
-                              </CustomSelect.Option>
-                            ))}
-                          </CustomSelect>
-                        )}
-                      />
-                    ) : (
-                      <Loader className="h-9 w-full">
-                        <Loader.Item width="100%" height="100%" />
-                      </Loader>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-2 w-1/2">
-                  <h4 className="text-sm">Default Assignee</h4>
-                  <div className="">
-                    {projectDetails ? (
-                      <Controller
-                        name="default_assignee"
-                        control={control}
-                        render={({ field }) => (
-                          <CustomSelect
-                            {...field}
-                            label={
-                              people?.find((p) => p.member.id === field.value)?.member
-                                .display_name ?? (
-                                <span className="text-custom-text-200">
-                                  Select default assignee
-                                </span>
-                              )
-                            }
-                            width="w-full"
-                            input
-                          >
-                            {people?.map((person) => (
-                              <CustomSelect.Option
-                                key={person.member.id}
-                                value={person.member.id}
-                                className="flex items-center gap-2"
-                              >
-                                <div className="flex items-center gap-2">
-                                  {person.member.avatar && person.member.avatar !== "" ? (
-                                    <div className="relative h-4 w-4">
-                                      <img
-                                        src={person.member.avatar}
-                                        className="absolute top-0 left-0 h-full w-full object-cover rounded-full"
-                                        alt="User Avatar"
-                                      />
-                                    </div>
-                                  ) : (
-                                    <div className="grid h-4 w-4 flex-shrink-0 place-items-center rounded-full bg-gray-700 capitalize text-white">
-                                      {person.member.display_name?.charAt(0)}
-                                    </div>
-                                  )}
-                                  {person.member.display_name}
-                                </div>
-                              </CustomSelect.Option>
-                            ))}
-                          </CustomSelect>
-                        )}
-                      />
-                    ) : (
-                      <Loader className="h-9 w-full">
-                        <Loader.Item width="100%" height="100%" />
-                      </Loader>
-                    )}
-                  </div>
+          <h4 className="text-xl font-medium py-4 border-b border-custom-border-200">Defaults</h4>
+          <div className="flex flex-col gap-2 pb-4 w-full">
+            <div className="flex items-center py-8 gap-4 w-full">
+              <div className="flex flex-col gap-2 w-1/2">
+                <h4 className="text-sm">Project Lead</h4>
+                <div className="">
+                  {projectDetails ? (
+                    <Controller
+                      control={control}
+                      name="project_lead"
+                      render={({ field: { value } }) => (
+                        <MemberSelect
+                          value={value}
+                          onChange={(val: string) => {
+                            submitChanges({ project_lead: val });
+                          }}
+                        />
+                      )}
+                    />
+                  ) : (
+                    <Loader className="h-9 w-full">
+                      <Loader.Item width="100%" height="100%" />
+                    </Loader>
+                  )}
                 </div>
               </div>
 
-              <div className="sm:text-right">
-                <SecondaryButton type="submit" loading={isSubmitting}>
-                  {isSubmitting ? "Updating Project..." : "Update Project"}
-                </SecondaryButton>
+              <div className="flex flex-col gap-2 w-1/2">
+                <h4 className="text-sm">Default Assignee</h4>
+                <div className="">
+                  {projectDetails ? (
+                    <Controller
+                      control={control}
+                      name="default_assignee"
+                      render={({ field: { value } }) => (
+                        <MemberSelect
+                          value={value}
+                          onChange={(val: string) => {
+                            submitChanges({ default_assignee: val });
+                          }}
+                        />
+                      )}
+                    />
+                  ) : (
+                    <Loader className="h-9 w-full">
+                      <Loader.Item width="100%" height="100%" />
+                    </Loader>
+                  )}
+                </div>
               </div>
             </div>
-          </form>
+          </div>
 
           <div className="flex items-center justify-between gap-4 mt-4 pb-4 border-b border-custom-border-200">
             <h4 className="text-xl font-medium border-b border-custom-border-100">Members</h4>
