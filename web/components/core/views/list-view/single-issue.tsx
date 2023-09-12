@@ -91,7 +91,7 @@ export const SingleListIssue: React.FC<Props> = ({
 
   const { setToastAlert } = useToast();
 
-  const { groupByProperty: selectedGroup, orderBy, properties, mutateIssues } = viewProps;
+  const { displayFilters, properties, mutateIssues } = viewProps;
 
   const partialUpdateIssue = useCallback(
     (formData: Partial<IIssue>, issue: IIssue) => {
@@ -124,9 +124,9 @@ export const SingleListIssue: React.FC<Props> = ({
             handleIssuesMutation(
               formData,
               groupTitle ?? "",
-              selectedGroup,
+              displayFilters?.group_by ?? null,
               index,
-              orderBy,
+              displayFilters?.order_by ?? "-created_at",
               prevData
             ),
           false
@@ -148,15 +148,14 @@ export const SingleListIssue: React.FC<Props> = ({
         });
     },
     [
+      displayFilters,
       workspaceSlug,
       cycleId,
       moduleId,
       userId,
       groupTitle,
       index,
-      selectedGroup,
       mutateIssues,
-      orderBy,
       user,
     ]
   );

@@ -93,7 +93,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
 
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
 
-  const { groupByProperty: selectedGroup, orderBy, properties, mutateIssues } = viewProps;
+  const { displayFilters, properties, mutateIssues } = viewProps;
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
@@ -131,9 +131,9 @@ export const SingleBoardIssue: React.FC<Props> = ({
             handleIssuesMutation(
               formData,
               groupTitle ?? "",
-              selectedGroup,
+              displayFilters?.group_by ?? null,
               index,
-              orderBy,
+              displayFilters?.order_by ?? "-created_at",
               prevData
             ),
           false
@@ -149,24 +149,14 @@ export const SingleBoardIssue: React.FC<Props> = ({
           if (moduleId) mutate(MODULE_DETAILS(moduleId as string));
         });
     },
-    [
-      workspaceSlug,
-      cycleId,
-      moduleId,
-      groupTitle,
-      index,
-      selectedGroup,
-      mutateIssues,
-      orderBy,
-      user,
-    ]
+    [displayFilters, workspaceSlug, cycleId, moduleId, groupTitle, index, mutateIssues, user]
   );
 
   const getStyle = (
     style: DraggingStyle | NotDraggingStyle | undefined,
     snapshot: DraggableStateSnapshot
   ) => {
-    if (orderBy === "sort_order") return style;
+    if (displayFilters?.order_by === "sort_order") return style;
     if (!snapshot.isDragging) return {};
     if (!snapshot.isDropAnimating) return style;
 

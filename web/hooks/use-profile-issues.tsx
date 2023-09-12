@@ -16,19 +16,11 @@ import { useWorkspaceMyMembership } from "contexts/workspace-member.context";
 
 const useProfileIssues = (workspaceSlug: string | undefined, userId: string | undefined) => {
   const {
-    issueView,
-    setIssueView,
-    groupByProperty,
-    setGroupByProperty,
-    orderBy,
-    setOrderBy,
-    showEmptyGroups,
-    setShowEmptyGroups,
-    showSubIssues,
-    setShowSubIssues,
+    display_filters: displayFilters,
+    setDisplayFilters,
     filters,
     setFilters,
-    properties,
+    display_properties: displayProperties,
     setProperties,
   } = useContext(profileIssuesContext);
 
@@ -39,14 +31,14 @@ const useProfileIssues = (workspaceSlug: string | undefined, userId: string | un
   const params: any = {
     assignees: filters?.assignees ? filters?.assignees.join(",") : undefined,
     created_by: filters?.created_by ? filters?.created_by.join(",") : undefined,
-    group_by: groupByProperty,
+    group_by: displayFilters.group_by,
     labels: filters?.labels ? filters?.labels.join(",") : undefined,
-    order_by: orderBy,
+    order_by: displayFilters.order_by,
     priority: filters?.priority ? filters?.priority.join(",") : undefined,
     state_group: filters?.state_group ? filters?.state_group.join(",") : undefined,
     start_date: filters?.start_date ? filters?.start_date.join(",") : undefined,
     target_date: filters?.target_date ? filters?.target_date.join(",") : undefined,
-    type: filters?.type ? filters?.type : undefined,
+    type: displayFilters?.type ? displayFilters?.type : undefined,
     subscriber: filters?.subscriber ? filters?.subscriber.join(",") : undefined,
   };
 
@@ -71,7 +63,7 @@ const useProfileIssues = (workspaceSlug: string | undefined, userId: string | un
         allIssues: userProfileIssues,
       };
 
-    if (groupByProperty === "state_detail.group") {
+    if (displayFilters.group_by === "state_detail.group") {
       return userProfileIssues
         ? Object.assign(
             {
@@ -87,7 +79,7 @@ const useProfileIssues = (workspaceSlug: string | undefined, userId: string | un
     }
 
     return userProfileIssues;
-  }, [groupByProperty, userProfileIssues]);
+  }, [displayFilters.group_by, userProfileIssues]);
 
   useEffect(() => {
     if (!userId || !filters) return;
@@ -120,19 +112,11 @@ const useProfileIssues = (workspaceSlug: string | undefined, userId: string | un
 
   return {
     groupedIssues,
-    issueView,
-    setIssueView,
-    groupByProperty,
-    setGroupByProperty,
-    orderBy,
-    setOrderBy,
-    showEmptyGroups,
-    setShowEmptyGroups,
-    showSubIssues,
-    setShowSubIssues,
+    displayFilters,
+    setDisplayFilters,
     filters,
     setFilters,
-    properties,
+    displayProperties,
     setProperties,
     isEmpty,
     mutateProfileIssues,

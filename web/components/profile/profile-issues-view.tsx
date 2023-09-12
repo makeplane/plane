@@ -50,14 +50,12 @@ export const ProfileIssuesView = () => {
   const {
     groupedIssues,
     mutateProfileIssues,
-    issueView,
-    groupByProperty,
-    orderBy,
+    displayFilters,
+    setDisplayFilters,
     isEmpty,
-    showEmptyGroups,
     filters,
     setFilters,
-    properties,
+    displayProperties,
     params,
   } = useProfileIssues(workspaceSlug?.toString(), userId?.toString());
 
@@ -92,7 +90,12 @@ export const ProfileIssuesView = () => {
     async (result: DropResult) => {
       setTrashBox(false);
 
-      if (!result.destination || !workspaceSlug || !groupedIssues || groupByProperty !== "priority")
+      if (
+        !result.destination ||
+        !workspaceSlug ||
+        !groupedIssues ||
+        displayFilters.group_by !== "priority"
+      )
         return;
 
       const { source, destination } = result;
@@ -108,7 +111,7 @@ export const ProfileIssuesView = () => {
         const sourceGroup = source.droppableId;
         const destinationGroup = destination.droppableId;
 
-        draggedItem[groupByProperty] = destinationGroup as TIssuePriorities;
+        draggedItem[displayFilters.group_by] = destinationGroup as TIssuePriorities;
 
         mutateProfileIssues((prevData: any) => {
           if (!prevData) return prevData;
@@ -121,8 +124,11 @@ export const ProfileIssuesView = () => {
 
           return {
             ...prevData,
-            [sourceGroup]: orderArrayBy(sourceGroupArray, orderBy),
-            [destinationGroup]: orderArrayBy(destinationGroupArray, orderBy),
+            [sourceGroup]: orderArrayBy(sourceGroupArray, displayFilters.order_by ?? "-created_at"),
+            [destinationGroup]: orderArrayBy(
+              destinationGroupArray,
+              displayFilters.order_by ?? "-created_at"
+            ),
           };
         }, false);
 
@@ -140,15 +146,7 @@ export const ProfileIssuesView = () => {
           .catch(() => mutateProfileIssues());
       }
     },
-    [
-      groupByProperty,
-      groupedIssues,
-      handleDeleteIssue,
-      mutateProfileIssues,
-      orderBy,
-      user,
-      workspaceSlug,
-    ]
+    [displayFilters, groupedIssues, handleDeleteIssue, mutateProfileIssues, user, workspaceSlug]
   );
 
   const addIssueToGroup = useCallback(
@@ -157,19 +155,19 @@ export const ProfileIssuesView = () => {
 
       let preloadedValue: string | string[] = groupTitle;
 
-      if (groupByProperty === "labels") {
+      if (displayFilters.group_by === "labels") {
         if (groupTitle === "None") preloadedValue = [];
         else preloadedValue = [groupTitle];
       }
 
-      if (groupByProperty)
+      if (displayFilters.group_by)
         setPreloadedData({
-          [groupByProperty]: preloadedValue,
+          [displayFilters.group_by]: preloadedValue,
           actionType: "createIssue",
         });
       else setPreloadedData({ actionType: "createIssue" });
     },
-    [setCreateIssueModal, setPreloadedData, groupByProperty]
+    [setCreateIssueModal, setPreloadedData, displayFilters.group_by]
   );
 
   const addIssueToDate = useCallback(
@@ -277,7 +275,6 @@ export const ProfileIssuesView = () => {
                   state_group: null,
                   start_date: null,
                   target_date: null,
-                  type: null,
                 })
               }
             />
@@ -289,7 +286,7 @@ export const ProfileIssuesView = () => {
         addIssueToDate={addIssueToDate}
         addIssueToGroup={addIssueToGroup}
         disableUserActions={false}
-        dragDisabled={groupByProperty !== "priority"}
+        dragDisabled={displayFilters.group_by !== "priority"}
         emptyState={{
           title: router.pathname.includes("assigned")
             ? `Issues assigned to ${profileData?.user_data.display_name} will appear here`
@@ -305,15 +302,12 @@ export const ProfileIssuesView = () => {
         trashBox={trashBox}
         setTrashBox={setTrashBox}
         viewProps={{
-          groupByProperty,
           groupedIssues,
+          displayFilters,
           isEmpty,
-          issueView,
           mutateIssues: mutateProfileIssues,
-          orderBy,
           params,
-          properties,
-          showEmptyGroups,
+          properties: displayProperties,
         }}
       />
     </>
