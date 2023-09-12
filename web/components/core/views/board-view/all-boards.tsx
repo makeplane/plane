@@ -36,7 +36,7 @@ export const AllBoards: React.FC<Props> = ({
   userAuth,
   viewProps,
 }) => {
-  const { groupByProperty: selectedGroup, groupedIssues, showEmptyGroups } = viewProps;
+  const { displayFilters, groupedIssues } = viewProps;
 
   console.log("viewProps", viewProps);
 
@@ -46,9 +46,12 @@ export const AllBoards: React.FC<Props> = ({
         <div className="horizontal-scroll-enable flex h-full gap-x-4 p-8">
           {Object.keys(groupedIssues).map((singleGroup, index) => {
             const currentState =
-              selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;
+              displayFilters?.group_by === "state"
+                ? states?.find((s) => s.id === singleGroup)
+                : null;
 
-            if (!showEmptyGroups && groupedIssues[singleGroup].length === 0) return null;
+            if (!displayFilters?.show_empty_groups && groupedIssues[singleGroup].length === 0)
+              return null;
 
             return (
               <SingleBoard
@@ -69,13 +72,15 @@ export const AllBoards: React.FC<Props> = ({
               />
             );
           })}
-          {!showEmptyGroups && (
+          {!displayFilters?.show_empty_groups && (
             <div className="h-full w-96 flex-shrink-0 space-y-2 p-1">
               <h2 className="text-lg font-semibold">Hidden groups</h2>
               <div className="space-y-3">
                 {Object.keys(groupedIssues).map((singleGroup, index) => {
                   const currentState =
-                    selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;
+                    displayFilters?.group_by === "state"
+                      ? states?.find((s) => s.id === singleGroup)
+                      : null;
 
                   if (groupedIssues[singleGroup].length === 0)
                     return (
@@ -93,7 +98,7 @@ export const AllBoards: React.FC<Props> = ({
                             />
                           )}
                           <h4 className="text-sm capitalize">
-                            {selectedGroup === "state"
+                            {displayFilters?.group_by === "state"
                               ? addSpaceIfCamelCase(currentState?.name ?? "")
                               : addSpaceIfCamelCase(singleGroup)}
                           </h4>

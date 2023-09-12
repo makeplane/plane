@@ -20,7 +20,7 @@ export const ModuleIssuesGanttChartView: FC<Props> = ({}) => {
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
 
-  const { orderBy } = useIssuesView();
+  const { displayFilters } = useIssuesView();
 
   const { user } = useUser();
   const { projectDetails } = useProjectDetails();
@@ -48,7 +48,7 @@ export const ModuleIssuesGanttChartView: FC<Props> = ({}) => {
         enableBlockLeftResize={isAllowed}
         enableBlockRightResize={isAllowed}
         enableBlockMove={isAllowed}
-        enableReorder={orderBy === "sort_order" && isAllowed}
+        enableReorder={displayFilters.order_by === "sort_order" && isAllowed}
         bottomSpacing
       />
     </div>

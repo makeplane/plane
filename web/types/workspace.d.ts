@@ -3,6 +3,7 @@ import type {
   IProjectMember,
   IUser,
   IUserMemberLite,
+  IWorkspaceViewProps,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
   TIssueViewOptions,
@@ -62,15 +63,6 @@ export type Properties = {
   created_on: boolean;
   updated_on: boolean;
 };
-
-export interface IWorkspaceViewProps {
-  properties: Properties;
-  issueView: TIssueViewOptions;
-  groupByProperty: TIssueGroupByOptions;
-  orderBy: TIssueOrderByOptions;
-  filters: Partial<IIssueFilterOptions>;
-  showEmptyGroups: boolean;
-}
 
 export interface IWorkspaceMember {
   readonly id: string;

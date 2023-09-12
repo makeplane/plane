@@ -34,7 +34,7 @@ export const ViewDueDateSelect: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { issueView } = useIssuesView();
+  const { displayFilters } = useIssuesView();
 
   const minDate = issue.start_date ? new Date(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
@@ -80,7 +80,9 @@ export const ViewDueDateSelect: React.FC<Props> = ({
             );
           }}
           className={`${issue?.target_date ? "w-[6.5rem]" : "w-[5rem] text-center"} ${
-            issueView === "kanban" ? "bg-custom-background-90" : "bg-custom-background-100"
+            displayFilters.layout === "kanban"
+              ? "bg-custom-background-90"
+              : "bg-custom-background-100"
           }`}
           minDate={minDate ?? undefined}
           noBorder={noBorder}
