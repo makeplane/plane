@@ -90,12 +90,14 @@ export const LayoutSelection = observer(() => {
   };
 
   return (
-    <div className="relative flex items-center p-1 rounded bg-gray-100 gap-[1px]">
+    <div className="relative flex items-center p-1 rounded gap-1 bg-custom-background-80">
       {layoutSelectionFilters.map((_layout) => (
         <div
           key={_layout?.key}
-          className={`w-[32px] h-[26px] rounded flex justify-center items-center cursor-pointer transition-all hover:bg-white overflow-hidden group ${
-            issueFilterStore?.issueLayout == _layout?.key ? `bg-white shadow shadow-gray-200` : ``
+          className={`w-[32px] h-[26px] rounded flex justify-center items-center cursor-pointer transition-all hover:bg-custom-background-100 overflow-hidden group ${
+            issueFilterStore?.issueLayout == _layout?.key
+              ? `bg-custom-background-100 shadow shadow-gray-200`
+              : ``
           }}`}
           onClick={() => handleLayoutSelection(_layout?.key)}
         >
@@ -104,8 +106,8 @@ export const LayoutSelection = observer(() => {
             strokeWidth={2}
             className={`${
               issueFilterStore?.issueLayout == _layout?.key
-                ? `text-gray-900`
-                : `text-gray-700 group-hover:text-gray-900`
+                ? `text-custom-text-100`
+                : `text-custom-text-100 group-hover:text-custom-text-200`
             }`}
           />
         </div>
