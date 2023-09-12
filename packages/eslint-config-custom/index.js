@@ -16,5 +16,6 @@ module.exports = {
     "no-duplicate-imports": "error",
     "arrow-body-style": ["error", "as-needed"],
     "react/self-closing-comp": ["error", { component: true, html: true }],
+    "@next/next/no-img-element": "off",
   },
 };
