@@ -11,7 +11,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // services
 import projectService from "services/project.service";
 // components
-import { DeleteProjectModal, SettingsHeader } from "components/project";
+import { DeleteProjectModal, SettingsSidebar } from "components/project";
 import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
 // hooks
@@ -185,229 +185,234 @@ const GeneralSettings: NextPage = () => {
         onClose={() => setSelectedProject(null)}
         user={user}
       />
-      <form onSubmit={handleSubmit(onSubmit)} className="p-8">
-        <SettingsHeader />
-        <div className={`space-y-8 sm:space-y-12 ${isAdmin ? "" : "opacity-60"}`}>
-          <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
-            <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold">Icon & Name</h4>
-              <p className="text-sm text-custom-text-200">
-                Select an icon and a name for your project.
-              </p>
-            </div>
-            <div className="col-span-12 flex gap-2 sm:col-span-6">
-              {projectDetails ? (
-                <div className="h-7 w-7 grid place-items-center">
-                  <Controller
-                    control={control}
-                    name="emoji_and_icon"
-                    render={({ field: { value, onChange } }) => (
-                      <EmojiIconPicker
-                        label={value ? renderEmoji(value) : "Icon"}
-                        value={value}
-                        onChange={onChange}
-                        disabled={!isAdmin}
-                      />
-                    )}
-                  />
-                </div>
-              ) : (
-                <Loader>
-                  <Loader.Item height="46px" width="46px" />
-                </Loader>
-              )}
-              {projectDetails ? (
-                <Input
-                  id="name"
-                  name="name"
-                  error={errors.name}
-                  register={register}
-                  placeholder="Project Name"
-                  validations={{
-                    required: "Name is required",
-                  }}
-                  disabled={!isAdmin}
-                />
-              ) : (
-                <Loader>
-                  <Loader.Item height="46px" width="225px" />
-                </Loader>
-              )}
-            </div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex flex-row gap-2">
+          <div className="w-80 py-8">
+            <SettingsSidebar />
           </div>
-          <div className="grid grid-cols-12 gap-4 sm:gap-16">
-            <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold">Description</h4>
-              <p className="text-sm text-custom-text-200">Give a description to your project.</p>
-            </div>
-            <div className="col-span-12 sm:col-span-6">
-              {projectDetails ? (
-                <TextArea
-                  id="description"
-                  name="description"
-                  error={errors.description}
-                  register={register}
-                  placeholder="Enter project description"
-                  validations={{}}
-                  className="min-h-[46px] text-sm"
-                  disabled={!isAdmin}
-                />
-              ) : (
-                <Loader className="w-full">
-                  <Loader.Item height="46px" width="full" />
-                </Loader>
-              )}
-            </div>
-          </div>
-          <div className="grid grid-cols-12 gap-4 sm:gap-16">
-            <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold">Cover Photo</h4>
-              <p className="text-sm text-custom-text-200">
-                Select your cover photo from the given library.
-              </p>
-            </div>
-            <div className="col-span-12 sm:col-span-6">
-              {watch("cover_image") ? (
-                <div className="h-32 w-full rounded border border-custom-border-200 p-1">
-                  <div className="relative h-full w-full rounded">
-                    <img
-                      src={watch("cover_image")!}
-                      className="absolute top-0 left-0 h-full w-full object-cover rounded"
-                      alt={projectDetails?.name ?? "Cover image"}
-                    />
-                    <div className="absolute bottom-0 flex w-full justify-end">
-                      <ImagePickerPopover
-                        label={"Change cover"}
-                        onChange={(imageUrl) => {
-                          setValue("cover_image", imageUrl);
-                        }}
-                        value={watch("cover_image")}
-                        disabled={!isAdmin}
-                      />
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <Loader className="w-full">
-                  <Loader.Item height="46px" width="full" />
-                </Loader>
-              )}
-            </div>
-          </div>
-          <div className="grid grid-cols-12 gap-4 sm:gap-16">
-            <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold">Identifier</h4>
-              <p className="text-sm text-custom-text-200">
-                Create a 1-6 characters{"'"} identifier for the project.
-              </p>
-            </div>
-            <div className="col-span-12 sm:col-span-6">
-              {projectDetails ? (
-                <Input
-                  id="identifier"
-                  name="identifier"
-                  error={errors.identifier}
-                  register={register}
-                  placeholder="Enter identifier"
-                  onChange={handleIdentifierChange}
-                  validations={{
-                    required: "Identifier is required",
-                    validate: (value) =>
-                      /^[A-Z0-9]+$/.test(value.toUpperCase()) || "Identifier must be in uppercase.",
-                    minLength: {
-                      value: 1,
-                      message: "Identifier must at least be of 1 character",
-                    },
-                    maxLength: {
-                      value: 5,
-                      message: "Identifier must at most be of 5 characters",
-                    },
-                  }}
-                  disabled={!isAdmin}
-                />
-              ) : (
-                <Loader>
-                  <Loader.Item height="46px" width="160px" />
-                </Loader>
-              )}
-            </div>
-          </div>
-          <div className="grid grid-cols-12 gap-4 sm:gap-16">
-            <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold">Network</h4>
-              <p className="text-sm text-custom-text-200">Select privacy type for the project.</p>
-            </div>
-            <div className="col-span-12 sm:col-span-6">
-              {projectDetails ? (
-                <Controller
-                  name="network"
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <CustomSelect
-                      value={value}
-                      onChange={onChange}
-                      label={currentNetwork?.label ?? "Select network"}
-                      input
-                      disabled={!isAdmin}
-                    >
-                      {NETWORK_CHOICES.map((network) => (
-                        <CustomSelect.Option key={network.key} value={network.key}>
-                          {network.label}
-                        </CustomSelect.Option>
-                      ))}
-                    </CustomSelect>
-                  )}
-                />
-              ) : (
-                <Loader className="w-full">
-                  <Loader.Item height="46px" width="160px" />
-                </Loader>
-              )}
-            </div>
-          </div>
-
-          {isAdmin && (
-            <>
-              <div className="sm:text-right">
+          <div className={`pr-9 py-8 space-y-8 sm:space-y-12 ${isAdmin ? "" : "opacity-60"}`}>
+            <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
+              <div className="col-span-12 sm:col-span-6">
+                <h4 className="text-lg font-semibold">Icon & Name</h4>
+                <p className="text-sm text-custom-text-200">
+                  Select an icon and a name for your project.
+                </p>
+              </div>
+              <div className="col-span-12 flex gap-2 sm:col-span-6">
                 {projectDetails ? (
-                  <SecondaryButton type="submit" loading={isSubmitting} disabled={!isAdmin}>
-                    {isSubmitting ? "Updating Project..." : "Update Project"}
-                  </SecondaryButton>
+                  <div className="h-7 w-7 grid place-items-center">
+                    <Controller
+                      control={control}
+                      name="emoji_and_icon"
+                      render={({ field: { value, onChange } }) => (
+                        <EmojiIconPicker
+                          label={value ? renderEmoji(value) : "Icon"}
+                          value={value}
+                          onChange={onChange}
+                          disabled={!isAdmin}
+                        />
+                      )}
+                    />
+                  </div>
                 ) : (
-                  <Loader className="mt-2 w-full">
-                    <Loader.Item height="34px" width="100px" />
+                  <Loader>
+                    <Loader.Item height="46px" width="46px" />
+                  </Loader>
+                )}
+                {projectDetails ? (
+                  <Input
+                    id="name"
+                    name="name"
+                    error={errors.name}
+                    register={register}
+                    placeholder="Project Name"
+                    validations={{
+                      required: "Name is required",
+                    }}
+                    disabled={!isAdmin}
+                  />
+                ) : (
+                  <Loader>
+                    <Loader.Item height="46px" width="225px" />
                   </Loader>
                 )}
               </div>
-              <div className="grid grid-cols-12 gap-4 sm:gap-16">
-                <div className="col-span-12 sm:col-span-6">
-                  <h4 className="text-lg font-semibold">Danger Zone</h4>
-                  <p className="text-sm text-custom-text-200">
-                    The danger zone of the project delete page is a critical area that requires
-                    careful consideration and attention. When deleting a project, all of the data
-                    and resources within that project will be permanently removed and cannot be
-                    recovered.
-                  </p>
-                </div>
-                <div className="col-span-12 sm:col-span-6">
-                  {projectDetails ? (
-                    <div>
-                      <DangerButton
-                        onClick={() => setSelectedProject(projectDetails.id ?? null)}
-                        outline
-                      >
-                        Delete Project
-                      </DangerButton>
+            </div>
+            <div className="grid grid-cols-12 gap-4 sm:gap-16">
+              <div className="col-span-12 sm:col-span-6">
+                <h4 className="text-lg font-semibold">Description</h4>
+                <p className="text-sm text-custom-text-200">Give a description to your project.</p>
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                {projectDetails ? (
+                  <TextArea
+                    id="description"
+                    name="description"
+                    error={errors.description}
+                    register={register}
+                    placeholder="Enter project description"
+                    validations={{}}
+                    className="min-h-[46px] text-sm"
+                    disabled={!isAdmin}
+                  />
+                ) : (
+                  <Loader className="w-full">
+                    <Loader.Item height="46px" width="full" />
+                  </Loader>
+                )}
+              </div>
+            </div>
+            <div className="grid grid-cols-12 gap-4 sm:gap-16">
+              <div className="col-span-12 sm:col-span-6">
+                <h4 className="text-lg font-semibold">Cover Photo</h4>
+                <p className="text-sm text-custom-text-200">
+                  Select your cover photo from the given library.
+                </p>
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                {watch("cover_image") ? (
+                  <div className="h-32 w-full rounded border border-custom-border-200 p-1">
+                    <div className="relative h-full w-full rounded">
+                      <img
+                        src={watch("cover_image")!}
+                        className="absolute top-0 left-0 h-full w-full object-cover rounded"
+                        alt={projectDetails?.name ?? "Cover image"}
+                      />
+                      <div className="absolute bottom-0 flex w-full justify-end">
+                        <ImagePickerPopover
+                          label={"Change cover"}
+                          onChange={(imageUrl) => {
+                            setValue("cover_image", imageUrl);
+                          }}
+                          value={watch("cover_image")}
+                          disabled={!isAdmin}
+                        />
+                      </div>
                     </div>
+                  </div>
+                ) : (
+                  <Loader className="w-full">
+                    <Loader.Item height="46px" width="full" />
+                  </Loader>
+                )}
+              </div>
+            </div>
+            <div className="grid grid-cols-12 gap-4 sm:gap-16">
+              <div className="col-span-12 sm:col-span-6">
+                <h4 className="text-lg font-semibold">Identifier</h4>
+                <p className="text-sm text-custom-text-200">
+                  Create a 1-6 characters{"'"} identifier for the project.
+                </p>
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                {projectDetails ? (
+                  <Input
+                    id="identifier"
+                    name="identifier"
+                    error={errors.identifier}
+                    register={register}
+                    placeholder="Enter identifier"
+                    onChange={handleIdentifierChange}
+                    validations={{
+                      required: "Identifier is required",
+                      validate: (value) =>
+                        /^[A-Z0-9]+$/.test(value.toUpperCase()) ||
+                        "Identifier must be in uppercase.",
+                      minLength: {
+                        value: 1,
+                        message: "Identifier must at least be of 1 character",
+                      },
+                      maxLength: {
+                        value: 5,
+                        message: "Identifier must at most be of 5 characters",
+                      },
+                    }}
+                    disabled={!isAdmin}
+                  />
+                ) : (
+                  <Loader>
+                    <Loader.Item height="46px" width="160px" />
+                  </Loader>
+                )}
+              </div>
+            </div>
+            <div className="grid grid-cols-12 gap-4 sm:gap-16">
+              <div className="col-span-12 sm:col-span-6">
+                <h4 className="text-lg font-semibold">Network</h4>
+                <p className="text-sm text-custom-text-200">Select privacy type for the project.</p>
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                {projectDetails ? (
+                  <Controller
+                    name="network"
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <CustomSelect
+                        value={value}
+                        onChange={onChange}
+                        label={currentNetwork?.label ?? "Select network"}
+                        input
+                        disabled={!isAdmin}
+                      >
+                        {NETWORK_CHOICES.map((network) => (
+                          <CustomSelect.Option key={network.key} value={network.key}>
+                            {network.label}
+                          </CustomSelect.Option>
+                        ))}
+                      </CustomSelect>
+                    )}
+                  />
+                ) : (
+                  <Loader className="w-full">
+                    <Loader.Item height="46px" width="160px" />
+                  </Loader>
+                )}
+              </div>
+            </div>
+
+            {isAdmin && (
+              <>
+                <div className="sm:text-right">
+                  {projectDetails ? (
+                    <SecondaryButton type="submit" loading={isSubmitting} disabled={!isAdmin}>
+                      {isSubmitting ? "Updating Project..." : "Update Project"}
+                    </SecondaryButton>
                   ) : (
                     <Loader className="mt-2 w-full">
-                      <Loader.Item height="46px" width="100px" />
+                      <Loader.Item height="34px" width="100px" />
                     </Loader>
                   )}
                 </div>
-              </div>
-            </>
-          )}
+                <div className="grid grid-cols-12 gap-4 sm:gap-16">
+                  <div className="col-span-12 sm:col-span-6">
+                    <h4 className="text-lg font-semibold">Danger Zone</h4>
+                    <p className="text-sm text-custom-text-200">
+                      The danger zone of the project delete page is a critical area that requires
+                      careful consideration and attention. When deleting a project, all of the data
+                      and resources within that project will be permanently removed and cannot be
+                      recovered.
+                    </p>
+                  </div>
+                  <div className="col-span-12 sm:col-span-6">
+                    {projectDetails ? (
+                      <div>
+                        <DangerButton
+                          onClick={() => setSelectedProject(projectDetails.id ?? null)}
+                          outline
+                        >
+                          Delete Project
+                        </DangerButton>
+                      </div>
+                    ) : (
+                      <Loader className="mt-2 w-full">
+                        <Loader.Item height="46px" width="100px" />
+                      </Loader>
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </form>
     </ProjectAuthorizationWrapper>

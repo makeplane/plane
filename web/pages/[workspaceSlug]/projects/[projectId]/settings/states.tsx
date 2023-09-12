@@ -18,7 +18,7 @@ import {
   SingleState,
   StateGroup,
 } from "components/states";
-import { SettingsHeader } from "components/project";
+import { SettingsSidebar } from "components/project";
 // ui
 import { Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -73,14 +73,12 @@ const StatesSettings: NextPage = () => {
           </Breadcrumbs>
         }
       >
-        <div className="p-8">
-          <SettingsHeader />
-          <div className="grid grid-cols-12 gap-10">
-            <div className="col-span-12 sm:col-span-5">
-              <h3 className="text-2xl font-semibold text-custom-text-100">States</h3>
-              <p className="text-custom-text-200">Manage the states of this project.</p>
-            </div>
-            <div className="col-span-12 space-y-8 sm:col-span-7">
+        <div className="flex flex-row gap-2">
+          <div className="w-80 py-8">
+            <SettingsSidebar />
+          </div>
+          <div className="pr-9 py-8 gap-10 w-full">
+            <div className="space-y-8">
               {states && projectDetails && orderedStateGroups ? (
                 Object.keys(orderedStateGroups).map((key) => {
                   if (orderedStateGroups[key].length !== 0)

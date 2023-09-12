@@ -13,7 +13,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // components
-import { SettingsHeader } from "components/project";
+import { SettingsSidebar } from "components/project";
 // ui
 import { SecondaryButton, ToggleSwitch } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -149,9 +149,11 @@ const FeaturesSettings: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      <div className="p-8">
-        <SettingsHeader />
-        <section className="space-y-5">
+      <div className="flex flex-row gap-2">
+        <div className="w-80 py-8">
+          <SettingsSidebar />
+        </div>
+        <section className="pr-9 py-8 space-y-5 w-full">
           <h3 className="text-2xl font-semibold">Features</h3>
           <div className="space-y-5">
             {featuresList.map((feature) => (

@@ -14,7 +14,7 @@ import projectService from "services/project.service";
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // components
-import { SettingsHeader } from "components/project";
+import { SettingsSidebar } from "components/project";
 // ui
 import { CustomSelect, Loader, SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -113,124 +113,130 @@ const ControlSettings: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="p-8">
-        <SettingsHeader />
-        <div className="space-y-8 sm:space-y-12">
-          <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
-            <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold">Project Lead</h4>
-              <p className="text-sm text-custom-text-200">Select the project leader.</p>
-            </div>
-            <div className="col-span-12 sm:col-span-6">
-              {projectDetails ? (
-                <Controller
-                  name="project_lead"
-                  control={control}
-                  render={({ field }) => (
-                    <CustomSelect
-                      {...field}
-                      label={
-                        people?.find((person) => person.member.id === field.value)?.member
-                          .display_name ?? <span className="text-custom-text-200">Select lead</span>
-                      }
-                      width="w-full"
-                      input
-                    >
-                      {people?.map((person) => (
-                        <CustomSelect.Option
-                          key={person.member.id}
-                          value={person.member.id}
-                          className="flex items-center gap-2"
-                        >
-                          <div className="flex items-center gap-2">
-                            {person.member.avatar && person.member.avatar !== "" ? (
-                              <div className="relative h-4 w-4">
-                                <img
-                                  src={person.member.avatar}
-                                  className="absolute top-0 left-0 h-full w-full object-cover rounded-full"
-                                  alt="User Avatar"
-                                />
-                              </div>
-                            ) : (
-                              <div className="grid h-4 w-4 flex-shrink-0 place-items-center rounded-full bg-gray-700 capitalize text-white">
-                                {person.member.display_name?.charAt(0)}
-                              </div>
-                            )}
-                            {person.member.display_name}
-                          </div>
-                        </CustomSelect.Option>
-                      ))}
-                    </CustomSelect>
-                  )}
-                />
-              ) : (
-                <Loader className="h-9 w-full">
-                  <Loader.Item width="100%" height="100%" />
-                </Loader>
-              )}
-            </div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex flex-row gap-2">
+          <div className="w-80 py-8">
+            <SettingsSidebar />
           </div>
-          <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
-            <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold">Default Assignee</h4>
-              <p className="text-sm text-custom-text-200">
-                Select the default assignee for the project.
-              </p>
+          <div className="pr-9 py-8 space-y-8 sm:space-y-12">
+            <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
+              <div className="col-span-12 sm:col-span-6">
+                <h4 className="text-lg font-semibold">Project Lead</h4>
+                <p className="text-sm text-custom-text-200">Select the project leader.</p>
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                {projectDetails ? (
+                  <Controller
+                    name="project_lead"
+                    control={control}
+                    render={({ field }) => (
+                      <CustomSelect
+                        {...field}
+                        label={
+                          people?.find((person) => person.member.id === field.value)?.member
+                            .display_name ?? (
+                            <span className="text-custom-text-200">Select lead</span>
+                          )
+                        }
+                        width="w-full"
+                        input
+                      >
+                        {people?.map((person) => (
+                          <CustomSelect.Option
+                            key={person.member.id}
+                            value={person.member.id}
+                            className="flex items-center gap-2"
+                          >
+                            <div className="flex items-center gap-2">
+                              {person.member.avatar && person.member.avatar !== "" ? (
+                                <div className="relative h-4 w-4">
+                                  <img
+                                    src={person.member.avatar}
+                                    className="absolute top-0 left-0 h-full w-full object-cover rounded-full"
+                                    alt="User Avatar"
+                                  />
+                                </div>
+                              ) : (
+                                <div className="grid h-4 w-4 flex-shrink-0 place-items-center rounded-full bg-gray-700 capitalize text-white">
+                                  {person.member.display_name?.charAt(0)}
+                                </div>
+                              )}
+                              {person.member.display_name}
+                            </div>
+                          </CustomSelect.Option>
+                        ))}
+                      </CustomSelect>
+                    )}
+                  />
+                ) : (
+                  <Loader className="h-9 w-full">
+                    <Loader.Item width="100%" height="100%" />
+                  </Loader>
+                )}
+              </div>
             </div>
-            <div className="col-span-12 sm:col-span-6">
-              {projectDetails ? (
-                <Controller
-                  name="default_assignee"
-                  control={control}
-                  render={({ field }) => (
-                    <CustomSelect
-                      {...field}
-                      label={
-                        people?.find((p) => p.member.id === field.value)?.member.display_name ?? (
-                          <span className="text-custom-text-200">Select default assignee</span>
-                        )
-                      }
-                      width="w-full"
-                      input
-                    >
-                      {people?.map((person) => (
-                        <CustomSelect.Option
-                          key={person.member.id}
-                          value={person.member.id}
-                          className="flex items-center gap-2"
-                        >
-                          <div className="flex items-center gap-2">
-                            {person.member.avatar && person.member.avatar !== "" ? (
-                              <div className="relative h-4 w-4">
-                                <img
-                                  src={person.member.avatar}
-                                  className="absolute top-0 left-0 h-full w-full object-cover rounded-full"
-                                  alt="User Avatar"
-                                />
-                              </div>
-                            ) : (
-                              <div className="grid h-4 w-4 flex-shrink-0 place-items-center rounded-full bg-gray-700 capitalize text-white">
-                                {person.member.display_name?.charAt(0)}
-                              </div>
-                            )}
-                            {person.member.display_name}
-                          </div>
-                        </CustomSelect.Option>
-                      ))}
-                    </CustomSelect>
-                  )}
-                />
-              ) : (
-                <Loader className="h-9 w-full">
-                  <Loader.Item width="100%" height="100%" />
-                </Loader>
-              )}
+            <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
+              <div className="col-span-12 sm:col-span-6">
+                <h4 className="text-lg font-semibold">Default Assignee</h4>
+                <p className="text-sm text-custom-text-200">
+                  Select the default assignee for the project.
+                </p>
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                {projectDetails ? (
+                  <Controller
+                    name="default_assignee"
+                    control={control}
+                    render={({ field }) => (
+                      <CustomSelect
+                        {...field}
+                        label={
+                          people?.find((p) => p.member.id === field.value)?.member.display_name ?? (
+                            <span className="text-custom-text-200">Select default assignee</span>
+                          )
+                        }
+                        width="w-full"
+                        input
+                      >
+                        {people?.map((person) => (
+                          <CustomSelect.Option
+                            key={person.member.id}
+                            value={person.member.id}
+                            className="flex items-center gap-2"
+                          >
+                            <div className="flex items-center gap-2">
+                              {person.member.avatar && person.member.avatar !== "" ? (
+                                <div className="relative h-4 w-4">
+                                  <img
+                                    src={person.member.avatar}
+                                    className="absolute top-0 left-0 h-full w-full object-cover rounded-full"
+                                    alt="User Avatar"
+                                  />
+                                </div>
+                              ) : (
+                                <div className="grid h-4 w-4 flex-shrink-0 place-items-center rounded-full bg-gray-700 capitalize text-white">
+                                  {person.member.display_name?.charAt(0)}
+                                </div>
+                              )}
+                              {person.member.display_name}
+                            </div>
+                          </CustomSelect.Option>
+                        ))}
+                      </CustomSelect>
+                    )}
+                  />
+                ) : (
+                  <Loader className="h-9 w-full">
+                    <Loader.Item width="100%" height="100%" />
+                  </Loader>
+                )}
+              </div>
             </div>
-          </div>
-          <div className="sm:text-right">
-            <SecondaryButton type="submit" loading={isSubmitting}>
-              {isSubmitting ? "Updating Project..." : "Update Project"}
-            </SecondaryButton>
+            <div className="sm:text-right">
+              <SecondaryButton type="submit" loading={isSubmitting}>
+                {isSubmitting ? "Updating Project..." : "Update Project"}
+              </SecondaryButton>
+            </div>
           </div>
         </div>
       </form>

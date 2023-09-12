@@ -18,7 +18,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
 import ConfirmProjectMemberRemove from "components/project/confirm-project-member-remove";
 import SendProjectInvitationModal from "components/project/send-project-invitation-modal";
-import { SettingsHeader } from "components/project";
+import { SettingsSidebar } from "components/project";
 // ui
 import { CustomMenu, CustomSelect, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -171,9 +171,11 @@ const MembersSettings: NextPage = () => {
         user={user}
         onSuccess={() => mutateMembers()}
       />
-      <div className="p-8">
-        <SettingsHeader />
-        <section className="space-y-5">
+      <div className="flex flex-row gap-2">
+        <div className="w-80 py-8">
+          <SettingsSidebar />
+        </div>
+        <section className="pr-9 py-8 space-y-5 w-full">
           <div className="flex items-end justify-between gap-4">
             <h3 className="text-2xl font-semibold">Members</h3>
             <button

@@ -19,7 +19,7 @@ import {
   SingleLabel,
   SingleLabelGroup,
 } from "components/labels";
-import { SettingsHeader } from "components/project";
+import { SettingsSidebar } from "components/project";
 // ui
 import { EmptyState, Loader, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -113,9 +113,11 @@ const LabelsSettings: NextPage = () => {
           </Breadcrumbs>
         }
       >
-        <div className="p-8">
-          <SettingsHeader />
-          <section className="grid grid-cols-12 gap-10">
+        <div className="flex flex-row gap-2">
+          <div className="w-80 py-8">
+            <SettingsSidebar />
+          </div>
+          <section className="pr-9 py-8 gap-10 w-full">
             <div className="col-span-12 sm:col-span-5">
               <h3 className="text-2xl font-semibold">Labels</h3>
               <p className="text-custom-text-200">Manage the labels of this project.</p>
