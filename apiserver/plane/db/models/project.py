@@ -91,6 +91,7 @@ class Project(BaseModel):
     default_state = models.ForeignKey(
         "db.State", on_delete=models.SET_NULL, null=True, related_name="default_state"
     )
+    default_object_settings = models.JSONField(null=True, blank=True)
 
     def __str__(self):
         """Return name of the project"""

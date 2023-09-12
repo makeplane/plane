@@ -1,8 +1,10 @@
 # Python imports
 import uuid
+import json
 
 # Django imports
 from django.db.models import Prefetch
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Third party imports
 from rest_framework.response import Response
@@ -10,7 +12,7 @@ from rest_framework import status
 from sentry_sdk import capture_exception
 
 # Module imports
-from .base import BaseViewSet, BaseAPIView
+from .base import BaseViewSet
 from plane.api.serializers import (
     IssuePropertySerializer,
     IssuePropertyValueSerializer,
@@ -21,9 +23,9 @@ from plane.db.models import (
     IssueProperty,
     IssuePropertyValue,
     Project,
+    Issue,
 )
 from plane.api.permissions import WorkSpaceAdminPermission
-from plane.bgtasks.issue_property_task import issue_property_json_task
 
 
 def is_valid_uuid(uuid_string):
@@ -113,6 +115,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
                 workspace__slug=slug,
             )
 
+            # This will be used to save the issue properties in bulk
             bulk_issue_props = []
             for issue_property in issue_properties:
                 prop_values = request_data.get(str(issue_property.id))
@@ -178,16 +181,76 @@ class IssuePropertyValueViewSet(BaseViewSet):
             issue_property_values = IssuePropertyValue.objects.bulk_create(
                 bulk_issue_props, batch_size=100, ignore_conflicts=True
             )
-            # Update the JSON for the issue property
-            issue_property_json_task.delay(
-                slug=slug, project_id=project_id, issue_id=issue_id
+
+            # Update the JSON column for faster reads
+            # This makes the writes a bit slow
+            # TODO: Find a better approach for faster reads
+            issue = Issue.objects.get(
+                pk=issue_id, workspace__slug=slug, project_id=project_id
             )
+            issue_properties = (
+                IssueProperty.objects.filter(
+                    workspace__slug=slug,
+                    property_values__project_id=project_id,
+                )
+                .prefetch_related("children")
+                .prefetch_related(
+                    Prefetch(
+                        "property_values",
+                        queryset=IssuePropertyValue.objects.filter(
+                            issue_id=issue_id,
+                            workspace__slug=slug,
+                            project_id=project_id,
+                        ),
+                    )
+                )
+                .distinct()
+            )
+            serializer_data = IssuePropertyReadSerializer(issue_properties, many=True)
+            issue.issue_properties = json.loads(
+                json.dumps(serializer_data.data, cls=DjangoJSONEncoder)
+            )
+            issue.save(update_fields=["issue_properties"])
+
             serilaizer = IssuePropertyValueSerializer(issue_property_values, many=True)
             return Response(serilaizer.data, status=status.HTTP_201_CREATED)
         except Project.DoesNotExist:
             return Response(
                 {"error": "Project Does not exists"}, status=status.HTTP_400_BAD_REQUEST
             )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def partial_update(self, request, slug, project_id, issue_id):
+        try:
+            request_data = request.data.get("issue_property_values", [])
+
+            issue_property_values = IssuePropertyValue.objects.filter(
+                issue_id=issue_id,
+                workspace__slug=slug,
+                project_id=project_id,
+            )
+            bulk_issue_prop_values = []
+            for issue_prop_value in request_data:
+                issue_property_value = [
+                    issue_value
+                    for issue_value in issue_property_values
+                    if str(issue_prop_value) == str(issue_value.pk)
+                ]
+
+                if issue_property_value:
+                    issue_property_value[0].value = request_data.get(issue_prop_value)
+                bulk_issue_prop_values.append(issue_property_value)
+
+            updated_issue_props = IssuePropertyValue.objects.bulk_update(
+                bulk_issue_prop_values, ["value"], batch_size=100, ignore_conflicts=True
+            )
+            serializer = IssuePropertyValueSerializer(updated_issue_props, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(
