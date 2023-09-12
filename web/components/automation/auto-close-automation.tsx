@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { useRouter } from "next/router";
 
 // component
-import { CustomSearchSelect, CustomSelect, ToggleSwitch } from "components/ui";
+import { CustomSearchSelect, CustomSelect, Icon, ToggleSwitch } from "components/ui";
 import { SelectMonthModal } from "components/automation";
 // icons
 import { ChevronDownIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
@@ -76,25 +76,28 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
         handleChange={handleChange}
       />
 
-      <div className="flex flex-col gap-7 px-6 py-5 rounded-[10px] border border-custom-border-300 bg-custom-background-90">
-        <div className="flex items-center justify-between gap-x-8 gap-y-2 ">
-          <div className="flex flex-col gap-2.5">
-            <h4 className="text-lg font-semibold">Auto-close inactive issues</h4>
-            <p className="text-sm text-custom-text-200">
-              Plane will automatically close the issues that have not been updated for the
-              configured time period.
+      <div className="flex items-center justify-between gap-x-8 gap-y-2 border-b border-custom-border-200 bg-custom-background-100 p-4">
+        <div className="flex items-start gap-3">
+          <div className="flex items-center justify-center p-2.5 rounded bg-custom-background-90">
+            <Icon iconName="archive" className="text-xl leading-5" />
+          </div>
+          <div className="">
+            <h4 className="text-sm font-medium">Auto-close issues</h4>
+            <p className="text-sm text-custom-text-200 tracking-tight">
+              Plane will automatically close issue that haven’t been completed or canceled.
             </p>
           </div>
-          <ToggleSwitch
-            value={projectDetails?.close_in !== 0}
-            onChange={() =>
-              projectDetails?.close_in === 0
-                ? handleChange({ close_in: 1, default_state: defaultState })
-                : handleChange({ close_in: 0, default_state: null })
-            }
-            size="sm"
-          />
         </div>
+        <ToggleSwitch
+          value={projectDetails?.close_in !== 0}
+          onChange={() =>
+            projectDetails?.close_in === 0
+              ? handleChange({ close_in: 1, default_state: defaultState })
+              : handleChange({ close_in: 0, default_state: null })
+          }
+          size="sm"
+        />
+
         {projectDetails?.close_in !== 0 && (
           <div className="flex flex-col gap-4 w-full">
             <div className="flex items-center justify-between gap-2 w-full">
