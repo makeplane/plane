@@ -15,10 +15,6 @@ export const SettingsSidebar = () => {
       href: `/${workspaceSlug}/projects/${projectId}/settings`,
     },
     {
-      label: "Control",
-      href: `/${workspaceSlug}/projects/${projectId}/settings/control`,
-    },
-    {
       label: "Members",
       href: `/${workspaceSlug}/projects/${projectId}/settings/members`,
     },

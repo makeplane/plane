@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { useRouter } from "next/router";
 import Link from "next/link";
 
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
 // services
 import projectService from "services/project.service";
@@ -13,6 +13,7 @@ import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
 import useProjectMembers from "hooks/use-project-members";
 import useProjectDetails from "hooks/use-project-details";
+import { Controller, useForm } from "react-hook-form";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
@@ -20,15 +21,27 @@ import ConfirmProjectMemberRemove from "components/project/confirm-project-membe
 import SendProjectInvitationModal from "components/project/send-project-invitation-modal";
 import { SettingsSidebar } from "components/project";
 // ui
-import { CustomMenu, CustomSelect, Loader } from "components/ui";
+import {
+  CustomMenu,
+  CustomSearchSelect,
+  CustomSelect,
+  Icon,
+  Loader,
+  PrimaryButton,
+  SecondaryButton,
+} from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
 import type { NextPage } from "next";
+import { IProject, IUserLite, IWorkspace } from "types";
 // fetch-keys
 import {
+  PROJECTS_LIST,
+  PROJECT_DETAILS,
   PROJECT_INVITATIONS_WITH_EMAIL,
+  PROJECT_MEMBERS,
   PROJECT_MEMBERS_WITH_EMAIL,
   WORKSPACE_DETAILS,
 } from "constants/fetch-keys";
@@ -36,6 +49,11 @@ import {
 import { ROLE } from "constants/workspace";
 // helper
 import { truncateText } from "helpers/string.helper";
+
+const defaultValues: Partial<IProject> = {
+  project_lead: null,
+  default_assignee: null,
+};
 
 const MembersSettings: NextPage = () => {
   const [inviteModal, setInviteModal] = useState(false);
@@ -55,9 +73,23 @@ const MembersSettings: NextPage = () => {
     Boolean(workspaceSlug && projectId)
   );
 
+  const {
+    handleSubmit,
+    reset,
+    control,
+    formState: { isSubmitting },
+  } = useForm<IProject>({ defaultValues });
+
   const { data: activeWorkspace } = useSWR(
     workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
     () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
+  );
+
+  const { data: people } = useSWR(
+    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
+      : null
   );
 
   const { data: projectMembers, mutate: mutateMembers } = useSWR(
@@ -109,6 +141,46 @@ const MembersSettings: NextPage = () => {
   const currentUser = projectMembers?.find((item) => item.member.id === user?.id);
 
   const handleProjectInvitationSuccess = () => {};
+
+  const onSubmit = async (formData: IProject) => {
+    if (!workspaceSlug || !projectId || !projectDetails) return;
+
+    const payload: Partial<IProject> = {
+      default_assignee: formData.default_assignee,
+      project_lead: formData.project_lead,
+    };
+
+    await projectService
+      .updateProject(workspaceSlug as string, projectId as string, payload, user)
+      .then((res) => {
+        mutate(PROJECT_DETAILS(projectId as string));
+
+        mutate(
+          PROJECTS_LIST(workspaceSlug as string, {
+            is_favorite: "all",
+          })
+        );
+
+        setToastAlert({
+          title: "Success",
+          type: "success",
+          message: "Project updated successfully",
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    if (projectDetails)
+      reset({
+        ...projectDetails,
+        default_assignee: projectDetails.default_assignee?.id ?? projectDetails.default_assignee,
+        project_lead: (projectDetails.project_lead as IUserLite)?.id ?? projectDetails.project_lead,
+        workspace: (projectDetails.workspace as IWorkspace).id,
+      });
+  }, [projectDetails, reset]);
 
   return (
     <ProjectAuthorizationWrapper
@@ -175,17 +247,133 @@ const MembersSettings: NextPage = () => {
         <div className="w-80 py-8">
           <SettingsSidebar />
         </div>
-        <section className="pr-9 py-8 space-y-5 w-full">
-          <div className="flex items-end justify-between gap-4">
-            <h3 className="text-2xl font-semibold">Members</h3>
-            <button
-              type="button"
-              className="flex items-center gap-2 text-custom-primary outline-none"
-              onClick={() => setInviteModal(true)}
-            >
-              <PlusIcon className="h-4 w-4" />
-              Add Member
-            </button>
+        <section className="pr-9 py-8 w-full">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <h4 className="text-xl font-medium py-4 border-b border-custom-border-200">Defaults</h4>
+            <div className="flex flex-col gap-2 pb-4 w-full">
+              <div className="flex items-center py-8 gap-4 w-full">
+                <div className="flex flex-col gap-2 w-1/2">
+                  <h4 className="text-sm">Project Lead</h4>
+                  <div className="">
+                    {projectDetails ? (
+                      <Controller
+                        name="project_lead"
+                        control={control}
+                        render={({ field }) => (
+                          <CustomSelect
+                            {...field}
+                            label={
+                              people?.find((person) => person.member.id === field.value)?.member
+                                .display_name ?? (
+                                <span className="text-custom-text-200">Select lead</span>
+                              )
+                            }
+                            width="w-full"
+                            input
+                          >
+                            {people?.map((person) => (
+                              <CustomSelect.Option
+                                key={person.member.id}
+                                value={person.member.id}
+                                className="flex items-center gap-2"
+                              >
+                                <div className="flex items-center gap-2">
+                                  {person.member.avatar && person.member.avatar !== "" ? (
+                                    <div className="relative h-4 w-4">
+                                      <img
+                                        src={person.member.avatar}
+                                        className="absolute top-0 left-0 h-full w-full object-cover rounded-full"
+                                        alt="User Avatar"
+                                      />
+                                    </div>
+                                  ) : (
+                                    <div className="grid h-4 w-4 flex-shrink-0 place-items-center rounded-full bg-gray-700 capitalize text-white">
+                                      {person.member.display_name?.charAt(0)}
+                                    </div>
+                                  )}
+                                  {person.member.display_name}
+                                </div>
+                              </CustomSelect.Option>
+                            ))}
+                          </CustomSelect>
+                        )}
+                      />
+                    ) : (
+                      <Loader className="h-9 w-full">
+                        <Loader.Item width="100%" height="100%" />
+                      </Loader>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2 w-1/2">
+                  <h4 className="text-sm">Default Assignee</h4>
+                  <div className="">
+                    {projectDetails ? (
+                      <Controller
+                        name="default_assignee"
+                        control={control}
+                        render={({ field }) => (
+                          <CustomSelect
+                            {...field}
+                            label={
+                              people?.find((p) => p.member.id === field.value)?.member
+                                .display_name ?? (
+                                <span className="text-custom-text-200">
+                                  Select default assignee
+                                </span>
+                              )
+                            }
+                            width="w-full"
+                            input
+                          >
+                            {people?.map((person) => (
+                              <CustomSelect.Option
+                                key={person.member.id}
+                                value={person.member.id}
+                                className="flex items-center gap-2"
+                              >
+                                <div className="flex items-center gap-2">
+                                  {person.member.avatar && person.member.avatar !== "" ? (
+                                    <div className="relative h-4 w-4">
+                                      <img
+                                        src={person.member.avatar}
+                                        className="absolute top-0 left-0 h-full w-full object-cover rounded-full"
+                                        alt="User Avatar"
+                                      />
+                                    </div>
+                                  ) : (
+                                    <div className="grid h-4 w-4 flex-shrink-0 place-items-center rounded-full bg-gray-700 capitalize text-white">
+                                      {person.member.display_name?.charAt(0)}
+                                    </div>
+                                  )}
+                                  {person.member.display_name}
+                                </div>
+                              </CustomSelect.Option>
+                            ))}
+                          </CustomSelect>
+                        )}
+                      />
+                    ) : (
+                      <Loader className="h-9 w-full">
+                        <Loader.Item width="100%" height="100%" />
+                      </Loader>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="sm:text-right">
+                <SecondaryButton type="submit" loading={isSubmitting}>
+                  {isSubmitting ? "Updating Project..." : "Update Project"}
+                </SecondaryButton>
+              </div>
+            </div>
+          </form>
+
+          <div className="flex items-center justify-between gap-4 mt-4 pb-4 border-b border-custom-border-200">
+            <h4 className="text-xl font-medium border-b border-custom-border-100">Members</h4>
+            <PrimaryButton onClick={() => setInviteModal(true)}>Add Member</PrimaryButton>
           </div>
           {!projectMembers || !projectInvitations ? (
             <Loader className="space-y-5">
@@ -195,10 +383,13 @@ const MembersSettings: NextPage = () => {
               <Loader.Item height="40px" />
             </Loader>
           ) : (
-            <div className="divide-y divide-custom-border-200 rounded-[10px] border border-custom-border-200 bg-custom-background-100 px-6">
+            <div className="divide-y divide-custom-border-200">
               {members.length > 0
                 ? members.map((member) => (
-                    <div key={member.id} className="flex items-center justify-between py-6">
+                    <div
+                      key={member.id}
+                      className="flex items-center justify-between px-3.5 py-[18px]"
+                    >
                       <div className="flex items-center gap-x-6 gap-y-2">
                         {member.avatar && member.avatar !== "" ? (
                           <div className="relative flex h-10 w-10 items-center justify-center rounded-lg p-4 capitalize text-white">
@@ -244,7 +435,14 @@ const MembersSettings: NextPage = () => {
                           </div>
                         )}
                         <CustomSelect
-                          label={ROLE[member.role as keyof typeof ROLE]}
+                          customButton={
+                            <button className="flex item-center gap-1">
+                              <span className="flex items-center text-sm font-medium">
+                                {ROLE[member.role as keyof typeof ROLE]}
+                              </span>
+                              <Icon iconName="expand_more" className="text-lg font-medium" />
+                            </button>
+                          }
                           value={member.role}
                           onChange={(value: 5 | 10 | 15 | 20 | undefined) => {
                             if (!activeWorkspace || !projectDetails) return;
