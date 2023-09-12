@@ -157,7 +157,7 @@ const FeaturesSettings: NextPage = () => {
           <SettingsSidebar />
         </div>
         <section className="pr-9 py-8 space-y-4 w-full">
-          <h3 className="text-xl font-medium">Features</h3>
+          <h3 className="text-xl font-medium pb-4 border-b border-custom-border-200">Features</h3>
           <div>
             {featuresList.map((feature) => (
               <div

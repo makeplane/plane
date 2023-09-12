@@ -18,7 +18,7 @@ import { SettingsSidebar } from "components/project";
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // ui
-import { EmptyState, Loader, SecondaryButton } from "components/ui";
+import { EmptyState, Loader, PrimaryButton, SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -129,21 +129,19 @@ const EstimatesSettings: NextPage = () => {
           <div className="w-80 py-8">
             <SettingsSidebar />
           </div>
-          <div className="pr-9 py-8 flex flex-col">
-            <section className="flex items-center justify-between">
-              <h3 className="text-2xl font-semibold">Estimates</h3>
+          <div className="pr-9 py-8 flex flex-col w-full">
+            <section className="flex items-center justify-between pb-4 border-b border-custom-border-200">
+              <h3 className="text-xl font-medium">Estimates</h3>
               <div className="col-span-12 space-y-5 sm:col-span-7">
                 <div className="flex items-center gap-2">
-                  <div
-                    className="flex cursor-pointer items-center gap-2 text-custom-primary-100 hover:text-custom-primary-200"
+                  <PrimaryButton
                     onClick={() => {
                       setEstimateToUpdate(undefined);
                       setEstimateFormOpen(true);
                     }}
                   >
-                    <PlusIcon className="h-4 w-4" />
-                    Create New Estimate
-                  </div>
+                    Add Estimate
+                  </PrimaryButton>
                   {projectDetails?.estimate && (
                     <SecondaryButton onClick={disableEstimates}>Disable Estimates</SecondaryButton>
                   )}
@@ -152,7 +150,7 @@ const EstimatesSettings: NextPage = () => {
             </section>
             {estimatesList ? (
               estimatesList.length > 0 ? (
-                <section className="h-full mt-5 divide-y divide-custom-border-200 rounded-xl border border-custom-border-200 bg-custom-background-100 px-6 overflow-y-auto">
+                <section className="h-full bg-custom-background-100 overflow-y-auto">
                   {estimatesList.map((estimate) => (
                     <SingleEstimate
                       key={estimate.id}
