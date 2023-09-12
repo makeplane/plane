@@ -196,7 +196,7 @@ const FeaturesSettings: NextPage = () => {
                       [feature.property]: !projectDetails?.[feature.property as keyof IProject],
                     });
                   }}
-                  size="sm"
+                  size="md"
                 />
               </div>
             ))}
