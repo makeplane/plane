@@ -1,3 +1,12 @@
+export type TStateGroup = "backlog" | "unstarted" | "started" | "completed" | "cancelled";
+export const issueStateGroupKeys: TStateGroup[] = [
+  "backlog",
+  "unstarted",
+  "started",
+  "completed",
+  "cancelled",
+];
+
 export const filtersPriority: { key: string; title: string }[] = [
   { key: "urgent", title: "Urgent" },
   { key: "high", title: "High" },
@@ -6,7 +15,7 @@ export const filtersPriority: { key: string; title: string }[] = [
   { key: "null", title: "None" },
 ];
 
-export const filterStateGroup: { key: string; title: string }[] = [
+export const filterStateGroup: { key: TStateGroup; title: string }[] = [
   { key: "backlog", title: "Backlog" },
   { key: "unstarted", title: "Unstarted" },
   { key: "started", title: "Started" },

@@ -19,9 +19,7 @@ import {
 } from "./issue_data";
 
 export type TIssueViews = "my_issues" | "issues" | "modules" | "views" | "cycles";
-
 export type TIssueLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt";
-
 export interface IIssueFilter {
   priority: string[] | undefined;
   state: string[] | undefined;
@@ -78,7 +76,7 @@ export interface IIssueRenderFilters {
       labels: any[];
       project_properties: {
         [key: string]: {
-          states: any[] | null;
+          states: any | null;
           labels: any[] | null;
           members: any[] | null;
         };
@@ -622,11 +620,6 @@ class IssueFilterStore implements IIssueFilterStore {
 
       const issuesStateResponse = await this.stateService.getStates(workspaceId, projectId);
       if (issuesStateResponse) {
-        const _states: any[] = [];
-        Object.keys(issuesStateResponse).map((state) => {
-          _states.push(...issuesStateResponse[state]);
-        });
-
         const _issuesStateResponse = {
           ...this.issueRenderFilters,
           workspace_properties: {
@@ -638,7 +631,7 @@ class IssueFilterStore implements IIssueFilterStore {
                 [projectId]: {
                   ...this.issueRenderFilters?.workspace_properties?.[workspaceId]
                     ?.project_properties?.[projectId],
-                  states: _states,
+                  states: issuesStateResponse,
                 },
               },
             },

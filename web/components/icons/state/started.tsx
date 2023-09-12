@@ -19,7 +19,7 @@ export const StateGroupStartedIcon: React.FC<Props> = ({
     viewBox="0 0 12 12"
     fill="none"
   >
-    <circle cx="6" cy="6" r="5.6" stroke={color} stroke-width="0.8" />
-    <circle cx="6" cy="6" r="3.35" stroke={color} stroke-width="0.8" stroke-dasharray="2.4 2.4" />
+    <circle cx="6" cy="6" r="5.6" stroke={color} strokeWidth="0.8" />
+    <circle cx="6" cy="6" r="3.35" stroke={color} strokeWidth="0.8" strokeDasharray="2.4 2.4" />
   </svg>
 );
