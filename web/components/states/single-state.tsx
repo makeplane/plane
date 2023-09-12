@@ -160,15 +160,15 @@ export const SingleState: React.FC<Props> = ({
   };
 
   return (
-    <div className="group flex items-center justify-between gap-2 border-custom-border-200 bg-custom-background-100 p-5 first:rounded-t-[10px] last:rounded-b-[10px]">
+    <div className="group flex items-center justify-between gap-2 border-custom-border-200 bg-custom-background-100 px-4 py-3 first:rounded-t-[10px] last:rounded-b-[10px]">
       <div className="flex items-center gap-3">
-        <StateGroupIcon stateGroup={state.group} color={state.color} height="20px" width="20px" />
+        <StateGroupIcon stateGroup={state.group} color={state.color} height="16px" width="16px" />
         <div>
           <h6 className="text-sm">{addSpaceIfCamelCase(state.name)}</h6>
           <p className="text-xs text-custom-text-200">{state.description}</p>
         </div>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="group flex items-center gap-2">
         {index !== 0 && (
           <button
             type="button"
@@ -200,12 +200,17 @@ export const SingleState: React.FC<Props> = ({
           </button>
         )}
 
-        <button type="button" className="grid place-items-center" onClick={handleEditState}>
-          <PencilSquareIcon className="h-4 w-4 text-custom-text-200" />
-        </button>
         <button
           type="button"
-          className={`${
+          className="grid place-items-center group-hover:opacity-100 opacity-0"
+          onClick={handleEditState}
+        >
+          <PencilSquareIcon className="h-4 w-4 text-custom-text-200" />
+        </button>
+
+        <button
+          type="button"
+          className={`group-hover:opacity-100 opacity-0 ${
             state.default || groupLength === 1 ? "cursor-not-allowed" : ""
           } grid place-items-center`}
           onClick={handleDeleteState}

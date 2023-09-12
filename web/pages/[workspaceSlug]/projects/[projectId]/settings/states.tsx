@@ -78,7 +78,8 @@ const StatesSettings: NextPage = () => {
             <SettingsSidebar />
           </div>
           <div className="pr-9 py-8 gap-10 w-full">
-            <div className="space-y-8">
+            <h3 className="text-xl font-medium pb-4 border-b border-custom-border-200">States</h3>
+            <div className="space-y-8 py-6">
               {states && projectDetails && orderedStateGroups ? (
                 Object.keys(orderedStateGroups).map((key) => {
                   if (orderedStateGroups[key].length !== 0)
@@ -88,11 +89,10 @@ const StatesSettings: NextPage = () => {
                           <h4 className="text-custom-text-200 capitalize">{key}</h4>
                           <button
                             type="button"
-                            className="flex items-center gap-2 text-custom-primary-100 hover:text-custom-primary-200 outline-none"
+                            className="flex items-center gap-2 text-custom-primary-100 px-2 hover:text-custom-primary-200 outline-none"
                             onClick={() => setActiveGroup(key as keyof StateGroup)}
                           >
                             <PlusIcon className="h-4 w-4" />
-                            Add
                           </button>
                         </div>
                         <div className="divide-y divide-custom-border-200 rounded-[10px] border border-custom-border-200">
