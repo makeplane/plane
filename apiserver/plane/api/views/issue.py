@@ -2076,7 +2076,7 @@ class IssueRelationViewSet(BaseViewSet):
             issueRelation = IssueRelation.objects.bulk_create(
                 [
                     IssueRelation(
-                        issue_id=issue_id,
+                        issue_id=related_issue["issue"],
                         related_issue_id=related_issue["related_issue"],
                         relation_type=related_issue["relation_type"],
                         project_id=project_id,

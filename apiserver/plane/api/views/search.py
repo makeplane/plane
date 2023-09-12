@@ -251,7 +251,8 @@ class IssueSearchEndpoint(BaseAPIView):
                 issue = Issue.issue_objects.get(pk=issue_id)
                 issues = issues.filter(
                     ~Q(pk=issue_id),
-                    ~Q(issue_related__related_issue=issue),
+                    ~Q(issue_related__issue=issue),
+                    ~Q(issue_relation__related_issue=issue),
                 )
             if sub_issue == "true" and issue_id:
                 issue = Issue.issue_objects.get(pk=issue_id)

@@ -1056,7 +1056,7 @@ def create_issue_relation_activity(
             issue = Issue.objects.get(pk=issue_relation.get("related_issue"))
             issue_activities.append(
                 IssueActivity(
-                    issue_id=issue_id,
+                    issue_id=issue_relation.get("issue"),
                     actor=actor,
                     verb="created",
                     old_value="",
@@ -1065,7 +1065,7 @@ def create_issue_relation_activity(
                     project=project,
                     workspace=project.workspace,
                     comment=f'added {issue_relation.get("relation_type")} relation',
-                    old_identifier=issue_id,
+                    old_identifier=issue_relation.get("issue"),
                 )
             )
 
@@ -1081,7 +1081,7 @@ def delete_issue_relation_activity(
         issue = Issue.objects.get(pk=current_instance.get("issue"))
         issue_activities.append(
             IssueActivity(
-                issue_id=issue_id,
+                issue_id=current_instance.get("issue"),
                 actor=actor,
                 verb="deleted",
                 old_value=f"{project.identifier}-{issue.sequence_id}",
@@ -1090,7 +1090,7 @@ def delete_issue_relation_activity(
                 project=project,
                 workspace=project.workspace,
                 comment=f'deleted the {current_instance.get("relation_type")} relation',
-                old_identifier=issue_id,
+                old_identifier=current_instance.get("issue"),
             )
         )
 
