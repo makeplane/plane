@@ -1,18 +1,16 @@
+import { API_BASE_URL } from "helpers/common.helper";
 // services
 import APIService from "services/api.service";
 import trackEventServices from "services/track-event.service";
-
 // types
 import { IPage, IPageBlock, RecentPagesResponse, IIssue, ICurrentUserResponse } from "types";
-
-const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
 const trackEvent =
   process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
 
 class PageServices extends APIService {
   constructor() {
-    super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
+    super(API_BASE_URL);
   }
 
   async createPage(
