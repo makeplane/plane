@@ -10,7 +10,7 @@ const trackEvent =
 // types
 import type { ICurrentUserResponse, IState, IStateResponse } from "types";
 
-class ProjectStateServices extends APIService {
+export class ProjectStateServices extends APIService {
   constructor() {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }

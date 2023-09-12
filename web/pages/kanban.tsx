@@ -3,6 +3,8 @@ import React from "react";
 import useSWR from "swr";
 // components
 import { IssueKanBanViewRoot } from "components/issue-layouts/kanban";
+import { LayoutSelection } from "components/issue-layouts/header/layout-filter";
+import { FilterSelection } from "components/issue-layouts/header/filters";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
@@ -15,21 +17,20 @@ const KanBanViewRoot = () => {
   const viewSlug: string = "1f66a767-00d1-422c-8f8f-6925282b7249";
 
   const store: RootStore = useMobxStore();
-  const { issueView: issueViewStore } = store;
+  const { issueFilters: issueFilterStore, issueView: issueViewStore } = store;
 
   React.useEffect(() => {
     const init = async () => {
       // my issues under a workspace
-      console.log("started--->");
+      // console.log("started--->");
       // await issueViewStore.getMyIssuesAsync(workspaceSlug, "my_issues", "list");
       // await issueViewStore.getMyIssuesAsync(workspaceSlug, "my_issues", "kanban");
       // await issueViewStore.getMyIssuesAsync(workspaceSlug, "my_issues", "calendar");
       // await issueViewStore.getMyIssuesAsync(workspaceSlug, "my_issues", "spreadsheet");
       // await issueViewStore.getMyIssuesAsync(workspaceSlug, "my_issues", "gantt");
-
       // project issues under and workspace and project
-      // await issueViewStore.getProjectIssuesAsync(workspaceSlug, projectSlug, "issues", "list");
-      await issueViewStore.getProjectIssuesAsync(workspaceSlug, projectSlug, "issues", "kanban");
+      await issueViewStore.getProjectIssuesAsync(workspaceSlug, projectSlug, "issues", "list");
+      // await issueViewStore.getProjectIssuesAsync(workspaceSlug, projectSlug, "issues", "kanban");
       // await issueViewStore.getProjectIssuesAsync(workspaceSlug, projectSlug, "issues", "calendar");
       // await issueViewStore.getProjectIssuesAsync(
       //   workspaceSlug,
@@ -38,7 +39,6 @@ const KanBanViewRoot = () => {
       //   "spreadsheet"
       // );
       // await issueViewStore.getProjectIssuesAsync(workspaceSlug, projectSlug, "issues", "gantt");
-
       // module issues under and workspace and project
       // await issueViewStore.getIssuesForModulesAsync(
       //   workspaceSlug,
@@ -75,7 +75,6 @@ const KanBanViewRoot = () => {
       //   "modules",
       //   "gantt"
       // );
-
       // cycle issues under and workspace and project
       // await issueViewStore.getIssuesForCyclesAsync(
       //   workspaceSlug,
@@ -112,7 +111,6 @@ const KanBanViewRoot = () => {
       //   "cycles",
       //   "gantt"
       // );
-
       // cycle issues under and workspace and project
       // await issueViewStore.getIssuesForViewsAsync(
       //   workspaceSlug,
@@ -149,8 +147,7 @@ const KanBanViewRoot = () => {
       //   "views",
       //   "gantt"
       // );
-
-      console.log("ended--->");
+      // console.log("ended--->");
     };
 
     init();
@@ -163,10 +160,21 @@ const KanBanViewRoot = () => {
           className="flex-shrink-0 h-[60px] border-b border-gray-200"
           // style={{ writingMode: "vertical-lr" }}
         >
-          Filter Header
+          <div className="w-full h-full p-2 px-5 relative flex justify-between items-center gap-2">
+            <div>
+              <div>Filter Header</div>
+            </div>
+            <div className="relative flex items-center gap-2">
+              <div>{/* <FilterSelection /> */}</div>
+              <div>
+                <LayoutSelection />
+              </div>
+            </div>
+          </div>
         </div>
         <div className="w-full h-full relative overflow-hidden">
-          <IssueKanBanViewRoot />
+          <FilterSelection />
+          {/* <IssueKanBanViewRoot /> */}
         </div>
       </div>
     </div>

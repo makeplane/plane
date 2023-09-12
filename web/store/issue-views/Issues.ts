@@ -121,14 +121,19 @@ class IssueViewStore implements IIssueViewStore {
   get getIssues() {
     if (this.issues != null) {
       const currentView: TIssueViews | null = this.rootStore.issueFilters.issueView;
-      const currentLayout: TIssueLayouts | null = this.rootStore.issueFilters.issueLayout;
       const currentWorkspaceId: string | null = this.rootStore.issueFilters.workspaceId;
       const currentProjectId: string | null = this.rootStore.issueFilters.projectId;
       const currentModuleId: string | null = this.rootStore.issueFilters.moduleId;
       const currentCycleId: string | null = this.rootStore.issueFilters.cycleId;
       const currentViewId: string | null = this.rootStore.issueFilters.viewId;
 
-      if (!currentView || !currentLayout || !currentWorkspaceId) return null;
+      if (!currentView || !currentWorkspaceId) return null;
+
+      const currentLayout: TIssueLayouts = currentProjectId
+        ? this.rootStore.issueFilters.issueFilters?.[currentWorkspaceId]
+            ?.project_issue_properties?.[currentProjectId]?.renderLayout
+        : this.rootStore.issueFilters.issueFilters?.[currentWorkspaceId]?.my_issue_properties
+            ?.renderLayout;
 
       if (currentView === "my_issues")
         return this.issues?.[currentWorkspaceId]?.my_issues?.[currentLayout];
@@ -149,6 +154,8 @@ class IssueViewStore implements IIssueViewStore {
           currentViewId
         ]?.[currentLayout];
     }
+
+    return null;
   }
 
   // fetching my issues
@@ -157,6 +164,7 @@ class IssueViewStore implements IIssueViewStore {
       this.loader = true;
       this.error = null;
 
+      await this.rootStore.issueFilters.getWorkspaceMyIssuesFilters(workspaceId);
       const filteredParams = this.rootStore.issueFilters.getComputedFilters(
         workspaceId,
         null,
@@ -189,7 +197,7 @@ class IssueViewStore implements IIssueViewStore {
 
       return issuesResponse;
     } catch (error) {
-      console.warn("error", error);
+      console.warn("error in fetching the my issues", error);
       this.loader = false;
       this.error = null;
       return error;
@@ -207,6 +215,7 @@ class IssueViewStore implements IIssueViewStore {
       this.loader = true;
       this.error = null;
 
+      await this.rootStore.issueFilters.getProjectIssueFilters(workspaceId, projectId);
       const filteredParams = this.rootStore.issueFilters.getComputedFilters(
         workspaceId,
         projectId,
@@ -249,7 +258,7 @@ class IssueViewStore implements IIssueViewStore {
 
       return issuesResponse;
     } catch (error) {
-      console.warn("error", error);
+      console.warn("error in fetching the project issues", error);
       this.loader = false;
       this.error = null;
       return error;
@@ -268,6 +277,11 @@ class IssueViewStore implements IIssueViewStore {
       this.loader = true;
       this.error = null;
 
+      await this.rootStore.issueFilters.getProjectIssueModuleFilters(
+        workspaceId,
+        projectId,
+        moduleId
+      );
       const filteredParams = this.rootStore.issueFilters.getComputedFilters(
         workspaceId,
         projectId,
@@ -314,7 +328,7 @@ class IssueViewStore implements IIssueViewStore {
 
       return issuesResponse;
     } catch (error) {
-      console.warn("error", error);
+      console.warn("error in fetching the project module issues", error);
       this.loader = false;
       this.error = null;
       return error;
@@ -333,6 +347,11 @@ class IssueViewStore implements IIssueViewStore {
       this.loader = true;
       this.error = null;
 
+      await this.rootStore.issueFilters.getProjectIssueCyclesFilters(
+        workspaceId,
+        projectId,
+        cycleId
+      );
       const filteredParams = this.rootStore.issueFilters.getComputedFilters(
         workspaceId,
         projectId,
@@ -379,7 +398,7 @@ class IssueViewStore implements IIssueViewStore {
 
       return issuesResponse;
     } catch (error) {
-      console.warn("error", error);
+      console.warn("error in fetching the project cycles issues", error);
       this.loader = false;
       this.error = null;
       return error;
@@ -398,6 +417,7 @@ class IssueViewStore implements IIssueViewStore {
       this.loader = true;
       this.error = null;
 
+      await this.rootStore.issueFilters.getProjectIssueViewsFilters(workspaceId, projectId, viewId);
       const filteredParams = this.rootStore.issueFilters.getComputedFilters(
         workspaceId,
         projectId,
@@ -443,7 +463,7 @@ class IssueViewStore implements IIssueViewStore {
 
       return issuesResponse;
     } catch (error) {
-      console.warn("error", error);
+      console.warn("error in fetching the project view issues", error);
       this.loader = false;
       this.error = null;
       return error;

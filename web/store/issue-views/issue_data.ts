@@ -6,7 +6,15 @@ export const filtersPriority: { key: string; title: string }[] = [
   { key: "null", title: "None" },
 ];
 
-export const filtersStartDate = [
+export const filterStateGroup: { key: string; title: string }[] = [
+  { key: "backlog", title: "Backlog" },
+  { key: "unstarted", title: "Unstarted" },
+  { key: "started", title: "Started" },
+  { key: "completed", title: "Completed" },
+  { key: "cancelled", title: "Cancelled" },
+];
+
+export const filtersStartDate: { key: string; title: string }[] = [
   { key: "last_week", title: "Last Week" },
   { key: "2_weeks_from_now", title: "2 weeks from now" },
   { key: "1_month_from_now", title: "1 month from now" },
@@ -14,7 +22,7 @@ export const filtersStartDate = [
   { key: "custom", title: "Custom" },
 ];
 
-export const filtersDueDate = [
+export const filtersDueDate: { key: string; title: string }[] = [
   { key: "last_week", title: "Last Week" },
   { key: "2_weeks_from_now", title: "2 weeks from now" },
   { key: "1_month_from_now", title: "1 month from now" },
@@ -22,16 +30,17 @@ export const filtersDueDate = [
   { key: "custom", title: "Custom" },
 ];
 
-export const displayPropertyGroupBy = [
+export const displayPropertyGroupBy: { key: string; title: string }[] = [
   { key: "state", title: "States" },
   { key: "state_detail.group", title: "State Groups" },
   { key: "priority", title: "Priority" },
+  { key: "Project", title: "project" }, // required this on my issues
   { key: "labels", title: "Labels" },
   { key: "assignees", title: "Assignees" },
   { key: "created_by", title: "Created By" },
 ];
 
-export const displayPropertyOrderBy = [
+export const displayPropertyOrderBy: { key: string; title: string }[] = [
   { key: "sort_order", title: "Manual" },
   { key: "created_at", title: "Last Created" },
   { key: "updated_at", title: "Last Updated" },
@@ -39,13 +48,13 @@ export const displayPropertyOrderBy = [
   { key: "priority", title: "Priority" },
 ];
 
-export const displayPropertyIssueType = [
+export const displayPropertyIssueType: { key: string; title: string }[] = [
   { key: "all", title: "All" },
   { key: "active", title: "Active Issues" },
   { key: "backlog", title: "Backlog Issues" },
 ];
 
-export const displayProperties = [
+export const displayProperties: { key: string; title: string }[] = [
   { key: "assignee", title: "Assignee" },
   { key: "start_date", title: "Start Date" },
   { key: "due_date", title: "Due Date" },

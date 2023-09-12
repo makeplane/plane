@@ -20,7 +20,7 @@ import {
 const trackEvent =
   process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
 
-class WorkspaceService extends APIService {
+export class WorkspaceService extends APIService {
   constructor() {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
