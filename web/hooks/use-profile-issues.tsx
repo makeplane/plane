@@ -31,9 +31,9 @@ const useProfileIssues = (workspaceSlug: string | undefined, userId: string | un
   const params: any = {
     assignees: filters?.assignees ? filters?.assignees.join(",") : undefined,
     created_by: filters?.created_by ? filters?.created_by.join(",") : undefined,
-    group_by: displayFilters.group_by,
+    group_by: displayFilters?.group_by,
     labels: filters?.labels ? filters?.labels.join(",") : undefined,
-    order_by: displayFilters.order_by,
+    order_by: displayFilters?.order_by,
     priority: filters?.priority ? filters?.priority.join(",") : undefined,
     state_group: filters?.state_group ? filters?.state_group.join(",") : undefined,
     start_date: filters?.start_date ? filters?.start_date.join(",") : undefined,
@@ -63,7 +63,7 @@ const useProfileIssues = (workspaceSlug: string | undefined, userId: string | un
         allIssues: userProfileIssues,
       };
 
-    if (displayFilters.group_by === "state_detail.group") {
+    if (displayFilters?.group_by === "state_detail.group") {
       return userProfileIssues
         ? Object.assign(
             {
@@ -79,7 +79,7 @@ const useProfileIssues = (workspaceSlug: string | undefined, userId: string | un
     }
 
     return userProfileIssues;
-  }, [displayFilters.group_by, userProfileIssues]);
+  }, [displayFilters?.group_by, userProfileIssues]);
 
   useEffect(() => {
     if (!userId || !filters) return;

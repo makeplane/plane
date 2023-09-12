@@ -138,7 +138,7 @@ export const ProfileIssuesContextProvider: React.FC<{ children: React.ReactNode 
       if (
         displayFilter.layout &&
         displayFilter.layout === "kanban" &&
-        state.display_filters.group_by === null
+        state.display_filters?.group_by === null
       ) {
         dispatch({
           type: "SET_DISPLAY_FILTERS",

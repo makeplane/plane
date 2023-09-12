@@ -501,7 +501,6 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
   }, [projectId, workspaceSlug, myViewProps]);
 
   useEffect(() => {
-    console.log("running");
     dispatch({
       type: "REHYDRATE_THEME",
       payload: {

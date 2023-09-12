@@ -57,7 +57,7 @@ export interface IProjectViewProps {
 }
 
 export interface IWorkspaceViewProps {
-  display_filters: IIssueDisplayFilterOptions;
-  display_properties: Properties;
+  display_filters: IIssueDisplayFilterOptions | undefined;
+  display_properties: Properties | undefined;
   filters: IIssueFilterOptions;
 }
