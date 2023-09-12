@@ -29,15 +29,15 @@ export type TIssueOrderByOptions =
   | "-start_date";
 
 export interface IIssueFilterOptions {
-  assignees: string[] | null;
-  created_by: string[] | null;
-  labels: string[] | null;
-  priority: string[] | null;
-  start_date: string[] | null;
-  state: string[] | null;
-  state_group: TStateGroups[] | null;
-  subscriber: string[] | null;
-  target_date: string[] | null;
+  assignees?: string[] | null;
+  created_by?: string[] | null;
+  labels?: string[] | null;
+  priority?: string[] | null;
+  start_date?: string[] | null;
+  state?: string[] | null;
+  state_group?: TStateGroups[] | null;
+  subscriber?: string[] | null;
+  target_date?: string[] | null;
 }
 
 export interface IIssueDisplayFilterOptions {
@@ -52,6 +52,12 @@ export interface IIssueDisplayFilterOptions {
 }
 
 export interface IProjectViewProps {
+  display_filters: IIssueDisplayFilterOptions | undefined;
   filters: IIssueFilterOptions;
+}
+
+export interface IWorkspaceViewProps {
   display_filters: IIssueDisplayFilterOptions;
+  display_properties: Properties;
+  filters: IIssueFilterOptions;
 }

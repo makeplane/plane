@@ -4,8 +4,6 @@ import useSWR from "swr";
 
 // services
 import projectService from "services/project.service";
-// hooks
-import useIssuesView from "hooks/use-issues-view";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // contexts
@@ -27,8 +25,6 @@ import { PROJECT_DETAILS } from "constants/fetch-keys";
 const ProjectArchivedIssues: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  const { showEmptyGroups, setShowEmptyGroups } = useIssuesView();
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,

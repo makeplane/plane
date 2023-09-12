@@ -15,6 +15,7 @@ import type {
   TIssueGroupByOptions,
   TIssueViewOptions,
   TIssueOrderByOptions,
+  IIssueDisplayFilterOptions,
 } from "types";
 
 export interface IIssueCycle {
@@ -235,19 +236,16 @@ export interface IIssueAttachment {
 
 export interface IIssueViewProps {
   groupedIssues: { [key: string]: IIssue[] } | undefined;
-  groupByProperty: TIssueGroupByOptions;
+  displayFilters: IIssueDisplayFilterOptions | undefined;
   isEmpty: boolean;
-  issueView: TIssueViewOptions;
   mutateIssues: KeyedMutator<
     | IIssue[]
     | {
         [key: string]: IIssue[];
       }
   >;
-  orderBy: TIssueOrderByOptions;
   params: any;
   properties: Properties;
-  showEmptyGroups: boolean;
 }
 
 export type TIssuePriorities = "urgent" | "high" | "medium" | "low" | null;
