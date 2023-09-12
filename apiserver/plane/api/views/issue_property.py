@@ -1,8 +1,10 @@
 # Python imports
 import uuid
 import json
+import datetime
 
 # Django imports
+from django.utils import timezone
 from django.db.models import Prefetch
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -24,6 +26,7 @@ from plane.db.models import (
     IssuePropertyValue,
     Project,
     Issue,
+    PropertyTransaction,
 )
 from plane.api.permissions import WorkSpaceAdminPermission
 
@@ -120,6 +123,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
             # This will be used to save the issue properties in bulk
             bulk_issue_props_create = []
             bulk_issue_props_update = []
+            bulk_issue_prop_transaction = []
             for issue_property in issue_properties:
                 prop_values = request_data.get(str(issue_property.id))
 
@@ -128,7 +132,8 @@ class IssuePropertyValueViewSet(BaseViewSet):
                     issue_prop_values = [
                         issue_prop_value
                         for issue_prop_value in issue_property_values
-                        if str(issue_property.id) == str(issue_prop_value.issue_property_id)
+                        if str(issue_property.id)
+                        == str(issue_prop_value.issue_property_id)
                     ]
 
                     # Already existing
@@ -136,6 +141,23 @@ class IssuePropertyValueViewSet(BaseViewSet):
                         for prop_value, issue_prop_value in zip(
                             prop_values, issue_prop_values
                         ):
+                            bulk_issue_prop_transaction.append(
+                                PropertyTransaction(
+                                    id=uuid.uuid4(),
+                                    workspace_id=workspace_id,
+                                    project_id=project_id,
+                                    property_id=issue_property.id,
+                                    property_value_id=issue_prop_value.id,
+                                    from_value=issue_prop_value.value,
+                                    to_value=prop_value,
+                                    entity="issue",
+                                    entity_uuid=issue_id,
+                                    epoch=(
+                                        datetime.datetime.timestamp(timezone.now())
+                                        * 1000
+                                    ),
+                                )
+                            )
                             issue_prop_value.value = prop_value
                             bulk_issue_props_update.append(issue_prop_value)
                     # Create new one
@@ -174,11 +196,28 @@ class IssuePropertyValueViewSet(BaseViewSet):
                     issue_prop_values = [
                         issue_prop_value
                         for issue_prop_value in issue_property_values
-                        if str(issue_property.id) == str(issue_prop_value.issue_property_id)
+                        if str(issue_property.id)
+                        == str(issue_prop_value.issue_property_id)
                     ]
 
                     # Already existing
                     if issue_prop_values:
+                        bulk_issue_prop_transaction.append(
+                            PropertyTransaction(
+                                id=uuid.uuid4(),
+                                workspace_id=workspace_id,
+                                project_id=project_id,
+                                property=issue_property,
+                                property_value=issue_prop_values[0],
+                                from_value=issue_prop_values[0].value,
+                                to_value=prop_value,
+                                entity="issue",
+                                entity_uuid=issue_id,
+                                epoch=(
+                                    datetime.datetime.timestamp(timezone.now()) * 1000
+                                ),
+                            )
+                        )
                         issue_prop_values[0].value = prop_values
                         bulk_issue_props_update.append(
                             issue_prop_values[0],
@@ -213,7 +252,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
                                 )
                             )
 
-            _ = IssuePropertyValue.objects.bulk_create(
+            new_values = IssuePropertyValue.objects.bulk_create(
                 bulk_issue_props_create,
                 batch_size=100,
                 ignore_conflicts=True,
@@ -222,6 +261,29 @@ class IssuePropertyValueViewSet(BaseViewSet):
                 bulk_issue_props_update,
                 ["value"],
                 batch_size=100,
+            )
+
+            # Update the bulk with new values also
+            for new_value in new_values:
+                bulk_issue_prop_transaction.append(
+                    PropertyTransaction(
+                        id=uuid.uuid4(),
+                        workspace_id=workspace_id,
+                        project_id=project_id,
+                        propert_id=new_value.issue_property_id,
+                        property_value=new_value,
+                        to_value=new_value.value,
+                        entity="issue",
+                        entity_uuid=issue_id,
+                        epoch=(datetime.datetime.timestamp(timezone.now()) * 1000),
+                    )
+                )
+
+            # Write the transaction table
+            _ = PropertyTransaction.objects.bulk_create(
+                bulk_issue_prop_transaction,
+                batch_size=100,
+                ignore_conflicts=True,
             )
 
             # Update the JSON column for faster reads
@@ -264,12 +326,12 @@ class IssuePropertyValueViewSet(BaseViewSet):
             return Response(
                 {"error": "Project Does not exists"}, status=status.HTTP_400_BAD_REQUEST
             )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        # except Exception as e:
+        #     capture_exception(e)
+        #     return Response(
+        #         {"error": "Something went wrong please try again later"},
+        #         status=status.HTTP_400_BAD_REQUEST,
+        #     )
 
     def partial_update(self, request, slug, project_id, issue_id):
         try:
