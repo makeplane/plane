@@ -14,7 +14,6 @@ echo -e "SECRET_KEY=\"$(tr -dc 'a-z0-9' < /dev/urandom | head -c50)\""  >> ./api
 
 if [ -n "$1" ]
 then
-    echo "hello"
     echo -e "\nNEXT_PUBLIC_API_BASE_URL=$1\nWEB_URL=$1"  >> ./web/.env
     echo -e "\nNEXT_PUBLIC_API_BASE_URL=$1\nWEB_URL=$1"  >> ./space/.env
 fi
