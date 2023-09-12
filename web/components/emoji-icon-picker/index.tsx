@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 // headless ui
 import { Tab, Transition, Popover } from "@headlessui/react";
 // react colors
 import { TwitterPicker } from "react-color";
+// hooks
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // types
 import { Props } from "./types";
 // emojis
@@ -36,6 +38,8 @@ const EmojiIconPicker: React.FC<Props> = ({
 
   const [recentEmojis, setRecentEmojis] = useState<string[]>([]);
 
+  const emojiPickerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     setRecentEmojis(getRecentEmojis());
   }, []);
@@ -43,6 +47,8 @@ const EmojiIconPicker: React.FC<Props> = ({
   useEffect(() => {
     if (!value || value?.length === 0) onChange(getRandomEmoji());
   }, [value, onChange]);
+
+  useOutsideClickDetector(emojiPickerRef, () => setIsOpen(false));
 
   return (
     <Popover className="relative z-[1]">
@@ -63,7 +69,10 @@ const EmojiIconPicker: React.FC<Props> = ({
         leaveTo="transform opacity-0 scale-95"
       >
         <Popover.Panel className="absolute z-10 mt-2 w-[250px] rounded-[4px] border border-custom-border-200 bg-custom-background-80 shadow-lg">
-          <div className="h-[230px] w-[250px] overflow-auto rounded-[4px] border border-custom-border-200 bg-custom-background-80 p-2 shadow-xl">
+          <div
+            ref={emojiPickerRef}
+            className="h-[230px] w-[250px] overflow-auto rounded-[4px] border border-custom-border-200 bg-custom-background-80 p-2 shadow-xl"
+          >
             <Tab.Group as="div" className="flex h-full w-full flex-col">
               <Tab.List className="flex-0 -mx-2 flex justify-around gap-1 p-1">
                 {tabOptions.map((tab) => (
