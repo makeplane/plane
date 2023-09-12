@@ -2,7 +2,12 @@
 from django.db import models
 
 # Module imports
+from plane.db.mixins import AuditModel
 from plane.db.models import ProjectBaseModel, BaseModel
+
+
+def convert_string(s):
+    return s.lower().replace(" ", "_")
 
 
 class IssueProperty(BaseModel):
@@ -62,6 +67,7 @@ class IssueProperty(BaseModel):
         return f"<{self.name} {self.type}>"
 
     def save(self, *args, **kwargs):
+        self.name = convert_string(self.display_name)
         if self._state.adding:
             largest_order = IssueProperty.objects.filter(
                 workspace=self.workspace
@@ -97,3 +103,38 @@ class IssuePropertyValue(ProjectBaseModel):
 
     def __str__(self):
         return f"<{str(self.issue_property.type)} {str(self.value)}>"
+
+
+class PropertyTransaction(AuditModel):
+    id = models.UUIDField(unique=True, editable=False, db_index=True, primary_key=True)
+    workspace = models.ForeignKey(
+        "db.Workspace", on_delete=models.CASCADE, related_name="property_transactions"
+    )
+    project = models.ForeignKey(
+        "db.Project", on_delete=models.CASCADE, related_name="property_transactions"
+    )
+    property = models.ForeignKey(
+        "db.IssueProperty",
+        on_delete=models.CASCADE,
+        related_name="transactions",
+    )
+    property_value = models.ForeignKey(
+        "db.IssuePropertyValue",
+        on_delete=models.CASCADE,
+        related_name="transactions",
+    )
+    from_value = models.TextField(blank=True)
+    to_value = models.TextField(blank=True)
+    entity = models.CharField(max_length=255)
+    entity_uuid = models.UUIDField()
+    epoch = models.FloatField()
+
+    class Meta:
+        verbose_name = "PropertyTransaction"
+        verbose_name_plural = "PropertyTransactions"
+        db_table = "property_transactions"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"<{str(self.issue_property.type)} {str(self.from_value)}>"
+
