@@ -77,7 +77,7 @@ export const AutoArchiveAutomation: React.FC<Props> = ({ projectDetails, handleC
                     className="flex w-full select-none items-center rounded px-1 py-1.5 text-custom-text-200 hover:bg-custom-background-80"
                     onClick={() => setmonthModal(true)}
                   >
-                    Customize Time Range
+                    Customise Time Range
                   </button>
                 </>
               </CustomSelect>
