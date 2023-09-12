@@ -2,88 +2,88 @@
 
 from django.db import migrations
 
-def workspace_member_props(old_json):
-    new_json = {
-            "filters": {
-                "priority": old_json["filters"]["priority"] if "priority" in old_json["filters"] else None,
-                "state": old_json["filters"]["state"] if "state" in old_json["filters"] else None,
-                "state_group": old_json["filters"]["state_group"] if "state_group" in old_json["filters"] else None,
-                "assignees": old_json["filters"]["assignees"] if "assignees" in old_json["filters"] else None,
-                "created_by": old_json["filters"]["created_by"] if "created_by" in old_json["filters"] else None,
-                "labels": old_json["filters"]["labels"] if "labels" in old_json["filters"] else None,
-                "start_date": old_json["filters"]["start_date"] if "start_date" in old_json["filters"] else None,
-                "target_date": old_json["filters"]["target_date"] if "target_date" in old_json["filters"] else None,
-                "subscriber": old_json["filters"]["subscriber"] if "subscriber" in old_json["filters"] else None,
-            },
-            "display_filters": {
-                "group_by": old_json["groupByProperty"] if "groupByProperty" in old_json else None,
-                "order_by": old_json["orderBy"] if "orderBy" in old_json else "-created_at",
-                "type": old_json["filters"]["type"] if "type" in old_json["filters"] else None,
-                "sub_issue": old_json["showSubIssues"] if "sub_issue" in old_json["filters"] else True,
-                "show_empty_groups": old_json["showEmptyGroups"] if "showEmptyGroups" in old_json else True,
-                "layout": old_json["issueView"] if "issueView" in old_json else "list",
-                "calendar_date_range": old_json["calendarDateRange"] if "calendarDateRange" in old_json else "",
-            },
-            "display_properties": {
-                "assignee": old_json["properties"]["assignee"] if "assignee" in old_json["properties"] else None,
-                "attachment_count": old_json["properties"]["attachment_count"] if "attachment_count" in old_json["properties"] else None,
-                "created_on": old_json["properties"]["created_on"] if "created_on" in old_json["properties"] else None,
-                "due_date": old_json["properties"]["due_date"] if "due_date" in old_json["properties"] else None,
-                "estimate": old_json["properties"]["estimate"] if "estimate" in old_json["properties"] else None,
-                "key": old_json["properties"]["key"] if "key" in old_json["properties"] else None,
-                "labels": old_json["properties"]["labels"] if "labels" in old_json["properties"] else None,
-                "link": old_json["properties"]["link"] if "link" in old_json["properties"] else None,
-                "priority": old_json["properties"]["priority"] if "priority" in old_json["properties"] else None,
-                "start_date": old_json["properties"]["start_date"] if "start_date" in old_json["properties"] else None,
-                "state": old_json["properties"]["state"] if "state" in old_json["properties"] else None,
-                "sub_issue_count": old_json["properties"]["sub_issue_count"] if "sub_issue_count" in old_json["properties"] else None,
-                "updated_on": old_json["properties"]["updated_on"] if "updated_on" in old_json["properties"] else None,
-            },
-    }
-    return new_json
-
-def project_member_props(old_json):
-    new_json = {
+def workspace_member_props(old_props):
+    new_props = {
         "filters": {
-            "priority": old_json["filters"]["priority"] if "priority" in old_json["filters"] else None,
-            "state": old_json["filters"]["state"] if "state" in old_json["filters"] else None,
-            "state_group": old_json["filters"]["state_group"] if "state_group" in old_json["filters"] else None,
-            "assignees": old_json["filters"]["assignees"] if "assignees" in old_json["filters"] else None,
-            "created_by": old_json["filters"]["created_by"] if "created_by" in old_json["filters"] else None,
-            "labels": old_json["filters"]["labels"] if "labels" in old_json["filters"] else None,
-            "start_date": old_json["filters"]["start_date"] if "start_date" in old_json["filters"] else None,
-            "target_date": old_json["filters"]["target_date"] if "target_date" in old_json["filters"] else None,
-            "subscriber": old_json["filters"]["subscriber"] if "subscriber" in old_json["filters"] else None,
+            "priority": old_props.get("filters", {}).get("priority", None),
+            "state": old_props.get("filters", {}).get("state", None),
+            "state_group": old_props.get("filters", {}).get("state_group", None),
+            "assignees": old_props.get("filters", {}).get("assignees", None),
+            "created_by": old_props.get("filters", {}).get("created_by", None),
+            "labels": old_props.get("filters", {}).get("labels", None),
+            "start_date": old_props.get("filters", {}).get("start_date", None),
+            "target_date": old_props.get("filters", {}).get("target_date", None),
+            "subscriber": old_props.get("filters", {}).get("subscriber", None),
         },
         "display_filters": {
-            "group_by": old_json["groupByProperty"] if "groupByProperty" in old_json else None,
-            "order_by": old_json["orderBy"] if "orderBy" in old_json else "-created_at",
-            "type": old_json["filters"]["type"] if "type" in old_json["filters"] else None,
-            "sub_issue": old_json["showSubIssues"] if "sub_issue" in old_json["filters"] else True,
-            "show_empty_groups": old_json["showEmptyGroups"] if "showEmptyGroups" in old_json else True,
-            "layout": old_json["issueView"] if "issueView" in old_json else "list",
-            "calendar_date_range": old_json["calendarDateRange"] if "calendarDateRange" in old_json else "",
+            "group_by": old_props.get("groupByProperty", None),
+            "order_by": old_props.get("orderBy", "-created_at"),
+            "type": old_props.get("filters", {}).get("type", None),
+            "sub_issue": old_props.get("showSubIssues", True),
+            "show_empty_groups": old_props.get("showEmptyGroups", True),
+            "layout": old_props.get("issueView", "list"),
+            "calendar_date_range": old_props.get("calendarDateRange", ""),
+        },
+        "display_properties": {
+            "assignee": old_props.get("properties", {}).get("assignee",None),
+            "attachment_count": old_props.get("properties", {}).get("attachment_count", None),
+            "created_on": old_props.get("properties", {}).get("created_on", None),
+            "due_date": old_props.get("properties", {}).get("due_date", None),
+            "estimate": old_props.get("properties", {}).get("estimate", None),
+            "key": old_props.get("properties", {}).get("key", None),
+            "labels": old_props.get("properties", {}).get("labels", None),
+            "link": old_props.get("properties", {}).get("link", None),
+            "priority": old_props.get("properties", {}).get("priority", None),
+            "start_date": old_props.get("properties", {}).get("start_date", None),
+            "state": old_props.get("properties", {}).get("state", None),
+            "sub_issue_count": old_props.get("properties", {}).get("sub_issue_count", None),
+            "updated_on": old_props.get("properties", {}).get("updated_on", None),
         },
     }
+    return new_props
 
-    return new_json
 
-def cycle_module_props(old_json):
-    new_json = {
+def project_member_props(old_props):
+    new_props = {
         "filters": {
-            "priority": old_json["filters"]["priority"] if "priority" in old_json["filters"] else None,
-            "state": old_json["filters"]["state"] if "state" in old_json["filters"] else None,
-            "state_group": old_json["filters"]["state_group"] if "state_group" in old_json["filters"] else None,
-            "assignees": old_json["filters"]["assignees"] if "assignees" in old_json["filters"] else None,
-            "created_by": old_json["filters"]["created_by"] if "created_by" in old_json["filters"] else None,
-            "labels": old_json["filters"]["labels"] if "labels" in old_json["filters"] else None,
-            "start_date": old_json["filters"]["start_date"] if "start_date" in old_json["filters"] else None,
-            "target_date": old_json["filters"]["target_date"] if "target_date" in old_json["filters"] else None,
-            "subscriber": old_json["filters"]["subscriber"] if "subscriber" in old_json["filters"] else None,
+            "priority": old_props.get("filters", {}).get("priority", None),
+            "state": old_props.get("filters", {}).get("state", None),
+            "state_group": old_props.get("filters", {}).get("state_group", None),
+            "assignees": old_props.get("filters", {}).get("assignees", None),
+            "created_by": old_props.get("filters", {}).get("created_by", None),
+            "labels": old_props.get("filters", {}).get("labels", None),
+            "start_date": old_props.get("filters", {}).get("start_date", None),
+            "target_date": old_props.get("filters", {}).get("target_date", None),
+            "subscriber": old_props.get("filters", {}).get("subscriber", None),
+        },
+        "display_filters": {
+            "group_by": old_props.get("groupByProperty", None),
+            "order_by": old_props.get("orderBy", "-created_at"),
+            "type": old_props.get("filters", {}).get("type", None),
+            "sub_issue": old_props.get("showSubIssues", True),
+            "show_empty_groups": old_props.get("showEmptyGroups", True),
+            "layout": old_props.get("issueView", "list"),
+            "calendar_date_range": old_props.get("calendarDateRange", ""),
         },
     }
+    return new_props
 
-    return new_json
+
+def cycle_module_props(old_props):
+    new_props = {
+        "filters": {
+            "priority": old_props.get("filters", {}).get("priority", None),
+            "state": old_props.get("filters", {}).get("state", None),
+            "state_group": old_props.get("filters", {}).get("state_group", None),
+            "assignees": old_props.get("filters", {}).get("assignees", None),
+            "created_by": old_props.get("filters", {}).get("created_by", None),
+            "labels": old_props.get("filters", {}).get("labels", None),
+            "start_date": old_props.get("filters", {}).get("start_date", None),
+            "target_date": old_props.get("filters", {}).get("target_date", None),
+            "subscriber": old_props.get("filters", {}).get("subscriber", None),
+        },
+    }
+    return new_props
      
 
 def update_workspace_member_view_props(apps, schema_editor):
