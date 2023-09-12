@@ -94,7 +94,7 @@ export const ProfileIssuesView = () => {
         !result.destination ||
         !workspaceSlug ||
         !groupedIssues ||
-        displayFilters.group_by !== "priority"
+        displayFilters?.group_by !== "priority"
       )
         return;
 
@@ -155,19 +155,19 @@ export const ProfileIssuesView = () => {
 
       let preloadedValue: string | string[] = groupTitle;
 
-      if (displayFilters.group_by === "labels") {
+      if (displayFilters?.group_by === "labels") {
         if (groupTitle === "None") preloadedValue = [];
         else preloadedValue = [groupTitle];
       }
 
-      if (displayFilters.group_by)
+      if (displayFilters?.group_by)
         setPreloadedData({
-          [displayFilters.group_by]: preloadedValue,
+          [displayFilters?.group_by]: preloadedValue,
           actionType: "createIssue",
         });
       else setPreloadedData({ actionType: "createIssue" });
     },
-    [setCreateIssueModal, setPreloadedData, displayFilters.group_by]
+    [setCreateIssueModal, setPreloadedData, displayFilters?.group_by]
   );
 
   const addIssueToDate = useCallback(
@@ -286,7 +286,7 @@ export const ProfileIssuesView = () => {
         addIssueToDate={addIssueToDate}
         addIssueToGroup={addIssueToGroup}
         disableUserActions={false}
-        dragDisabled={displayFilters.group_by !== "priority"}
+        dragDisabled={displayFilters?.group_by !== "priority"}
         emptyState={{
           title: router.pathname.includes("assigned")
             ? `Issues assigned to ${profileData?.user_data.display_name} will appear here`

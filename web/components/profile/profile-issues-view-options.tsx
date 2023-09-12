@@ -88,7 +88,7 @@ export const ProfileIssuesViewOptions: React.FC = () => {
             <button
               type="button"
               className={`grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80 duration-300 ${
-                displayFilters.layout === option.type
+                displayFilters?.layout === option.type
                   ? "bg-custom-sidebar-background-80"
                   : "text-custom-sidebar-text-200"
               }`}
@@ -159,25 +159,25 @@ export const ProfileIssuesViewOptions: React.FC = () => {
               <Popover.Panel className="absolute right-0 z-30 mt-1 w-screen max-w-xs transform rounded-lg border border-custom-border-200 bg-custom-background-90 p-3 shadow-lg">
                 <div className="relative divide-y-2 divide-custom-border-200">
                   <div className="space-y-4 pb-3 text-xs">
-                    {displayFilters.layout !== "calendar" &&
-                      displayFilters.layout !== "spreadsheet" && (
+                    {displayFilters?.layout !== "calendar" &&
+                      displayFilters?.layout !== "spreadsheet" && (
                         <>
                           <div className="flex items-center justify-between">
                             <h4 className="text-custom-text-200">Group by</h4>
                             <div className="w-28">
                               <CustomMenu
                                 label={
-                                  displayFilters.group_by === "project"
+                                  displayFilters?.group_by === "project"
                                     ? "Project"
                                     : GROUP_BY_OPTIONS.find(
-                                        (option) => option.key === displayFilters.group_by
+                                        (option) => option.key === displayFilters?.group_by
                                       )?.name ?? "Select"
                                 }
                                 className="!w-full"
                                 buttonClassName="w-full"
                               >
                                 {GROUP_BY_OPTIONS.map((option) => {
-                                  if (displayFilters.layout === "kanban" && option.key === null)
+                                  if (displayFilters?.layout === "kanban" && option.key === null)
                                     return null;
                                   if (
                                     option.key === "state" ||
@@ -204,7 +204,7 @@ export const ProfileIssuesViewOptions: React.FC = () => {
                               <CustomMenu
                                 label={
                                   ORDER_BY_OPTIONS.find(
-                                    (option) => option.key === displayFilters.order_by
+                                    (option) => option.key === displayFilters?.order_by
                                   )?.name ?? "Select"
                                 }
                                 className="!w-full"
@@ -212,7 +212,7 @@ export const ProfileIssuesViewOptions: React.FC = () => {
                               >
                                 {ORDER_BY_OPTIONS.map((option) => {
                                   if (
-                                    displayFilters.group_by === "priority" &&
+                                    displayFilters?.group_by === "priority" &&
                                     option.key === "priority"
                                   )
                                     return null;
@@ -262,17 +262,17 @@ export const ProfileIssuesViewOptions: React.FC = () => {
                       </div>
                     </div>
 
-                    {displayFilters.layout !== "calendar" &&
-                      displayFilters.layout !== "spreadsheet" && (
+                    {displayFilters?.layout !== "calendar" &&
+                      displayFilters?.layout !== "spreadsheet" && (
                         <>
                           <div className="flex items-center justify-between">
                             <h4 className="text-custom-text-200">Show empty states</h4>
                             <div className="w-28">
                               <ToggleSwitch
-                                value={displayFilters.show_empty_groups ?? true}
+                                value={displayFilters?.show_empty_groups ?? true}
                                 onChange={() =>
                                   setDisplayFilters({
-                                    show_empty_groups: !displayFilters.show_empty_groups,
+                                    show_empty_groups: !displayFilters?.show_empty_groups,
                                   })
                                 }
                               />
@@ -289,7 +289,7 @@ export const ProfileIssuesViewOptions: React.FC = () => {
                         if (key === "estimate" && !isEstimateActive) return null;
 
                         if (
-                          displayFilters.layout === "spreadsheet" &&
+                          displayFilters?.layout === "spreadsheet" &&
                           (key === "attachment_count" ||
                             key === "link" ||
                             key === "sub_issue_count")
@@ -297,7 +297,7 @@ export const ProfileIssuesViewOptions: React.FC = () => {
                           return null;
 
                         if (
-                          displayFilters.layout !== "spreadsheet" &&
+                          displayFilters?.layout !== "spreadsheet" &&
                           (key === "created_on" || key === "updated_on")
                         )
                           return null;

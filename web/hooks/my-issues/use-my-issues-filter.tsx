@@ -91,7 +91,7 @@ const useMyIssuesFilters = (workspaceSlug: string | undefined) => {
     [myWorkspace, workspaceSlug]
   );
 
-  const groupBy = (myWorkspace?.view_props ?? initialValues).display_filters.group_by;
+  const groupBy = (myWorkspace?.view_props ?? initialValues).display_filters?.group_by;
   const filters = (myWorkspace?.view_props ?? initialValues).filters;
 
   const setDisplayFilters = useCallback(
@@ -155,19 +155,19 @@ const useMyIssuesFilters = (workspaceSlug: string | undefined) => {
   }, [myWorkspace, workspaceSlug]);
 
   const newProperties: Properties = {
-    assignee: myWorkspace?.view_props.display_properties.assignee ?? true,
-    start_date: myWorkspace?.view_props.display_properties.start_date ?? true,
-    due_date: myWorkspace?.view_props.display_properties.due_date ?? true,
-    key: myWorkspace?.view_props.display_properties.key ?? true,
-    labels: myWorkspace?.view_props.display_properties.labels ?? true,
-    priority: myWorkspace?.view_props.display_properties.priority ?? true,
-    state: myWorkspace?.view_props.display_properties.state ?? true,
-    sub_issue_count: myWorkspace?.view_props.display_properties.sub_issue_count ?? true,
-    attachment_count: myWorkspace?.view_props.display_properties.attachment_count ?? true,
-    link: myWorkspace?.view_props.display_properties.link ?? true,
-    estimate: myWorkspace?.view_props.display_properties.estimate ?? true,
-    created_on: myWorkspace?.view_props.display_properties.created_on ?? true,
-    updated_on: myWorkspace?.view_props.display_properties.updated_on ?? true,
+    assignee: myWorkspace?.view_props.display_properties?.assignee ?? true,
+    start_date: myWorkspace?.view_props.display_properties?.start_date ?? true,
+    due_date: myWorkspace?.view_props.display_properties?.due_date ?? true,
+    key: myWorkspace?.view_props.display_properties?.key ?? true,
+    labels: myWorkspace?.view_props.display_properties?.labels ?? true,
+    priority: myWorkspace?.view_props.display_properties?.priority ?? true,
+    state: myWorkspace?.view_props.display_properties?.state ?? true,
+    sub_issue_count: myWorkspace?.view_props.display_properties?.sub_issue_count ?? true,
+    attachment_count: myWorkspace?.view_props.display_properties?.attachment_count ?? true,
+    link: myWorkspace?.view_props.display_properties?.link ?? true,
+    estimate: myWorkspace?.view_props.display_properties?.estimate ?? true,
+    created_on: myWorkspace?.view_props.display_properties?.created_on ?? true,
+    updated_on: myWorkspace?.view_props.display_properties?.updated_on ?? true,
   };
 
   return {
