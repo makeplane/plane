@@ -118,17 +118,18 @@ const LabelsSettings: NextPage = () => {
             <SettingsSidebar />
           </div>
           <section className="pr-9 py-8 gap-10 w-full">
-            <div className="col-span-12 sm:col-span-5">
-              <h3 className="text-2xl font-semibold">Labels</h3>
-              <p className="text-custom-text-200">Manage the labels of this project.</p>
-              <PrimaryButton onClick={newLabel} size="sm" className="mt-4">
-                <span className="flex items-center gap-2">
-                  <PlusIcon className="h-4 w-4" />
-                  New label
-                </span>
+            <div className="flex items-center justify-between pb-4 border-b border-custom-border-200">
+              <h3 className="text-xl font-medium">Labels</h3>
+
+              <PrimaryButton
+                onClick={newLabel}
+                size="sm"
+                className="flex items-center justify-center"
+              >
+                Add label
               </PrimaryButton>
             </div>
-            <div className="col-span-12 space-y-5 sm:col-span-7">
+            <div className="space-y-3 py-6">
               {labelForm && (
                 <CreateUpdateLabelInline
                   labelForm={labelForm}
