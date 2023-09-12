@@ -12,4 +12,4 @@ fi
 # Only perform action if $FROM and $TO are different.
 echo "Replacing all statically built instances of $FROM with this string $TO ."
 
-grep -R -la "${FROM}" apps/$DIRECTORY/.next | xargs -I{} sed -i "s|$FROM|$TO|g" "{}"
+grep -R -la "${FROM}" $DIRECTORY/.next | xargs -I{} sed -i "s|$FROM|$TO|g" "{}"
