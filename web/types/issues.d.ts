@@ -11,6 +11,10 @@ import type {
   IStateLite,
   TStateGroups,
   Properties,
+  IIssueFilterOptions,
+  TIssueGroupByOptions,
+  TIssueViewOptions,
+  TIssueOrderByOptions,
 } from "types";
 
 export interface IIssueCycle {
@@ -211,55 +215,6 @@ export interface IIssueLite {
   start_date?: string | null;
   target_date?: string | null;
   workspace__slug: string;
-}
-
-export interface IIssueFilterOptions {
-  type: "active" | "backlog" | null;
-  assignees: string[] | null;
-  start_date: string[] | null;
-  target_date: string[] | null;
-  state: string[] | null;
-  state_group: TStateGroups[] | null;
-  subscriber: string[] | null;
-  labels: string[] | null;
-  priority: string[] | null;
-  created_by: string[] | null;
-}
-
-export type TIssueViewOptions = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
-
-export type TIssueGroupByOptions =
-  | "state"
-  | "priority"
-  | "labels"
-  | "created_by"
-  | "state_detail.group"
-  | "project"
-  | "assignees"
-  | null;
-
-export type TIssueOrderByOptions =
-  | "-created_at"
-  | "-updated_at"
-  | "priority"
-  | "sort_order"
-  | "state__name"
-  | "-state__name"
-  | "assignees__name"
-  | "-assignees__name"
-  | "labels__name"
-  | "-labels__name"
-  | "target_date"
-  | "-target_date"
-  | "estimate__point"
-  | "-estimate__point"
-  | "start_date"
-  | "-start_date";
-
-export interface IIssueViewOptions {
-  group_by: TIssueGroupByOptions;
-  order_by: TIssueOrderByOptions;
-  filters: IIssueFilterOptions;
 }
 
 export interface IIssueAttachment {

@@ -8,7 +8,6 @@ import type {
   IIssueActivity,
   IIssueComment,
   IIssueLabels,
-  IIssueViewOptions,
   ISubIssueResponse,
 } from "types";
 
