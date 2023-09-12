@@ -96,4 +96,4 @@ class IssuePropertyValue(ProjectBaseModel):
         db_table = "issue_property_values"
 
     def __str__(self):
-        return f"<{str(self.issue_property.type)} {str(self.values)}>"
+        return f"<{str(self.issue_property.type)} {str(self.value)}>"

@@ -115,22 +115,85 @@ class IssuePropertyValueViewSet(BaseViewSet):
                 workspace__slug=slug,
             )
 
+            issue_property_values = IssuePropertyValue.objects.filter(issue_id=issue_id)
+
             # This will be used to save the issue properties in bulk
-            bulk_issue_props = []
+            bulk_issue_props_create = []
+            bulk_issue_props_update = []
             for issue_property in issue_properties:
                 prop_values = request_data.get(str(issue_property.id))
+
                 if issue_property.is_multi and isinstance(prop_values, list):
-                    # Only for relation, multi select and select we will storing uuids 
-                    # for rest all we will storing the string values
-                    if (
-                        issue_property.type == "relation"
-                        or issue_property.type == "multi_select"
-                        or issue_property.type == "select"
-                    ):
-                        for prop_value in prop_values:
-                            bulk_issue_props.append(
+                    # Check if the value already exists then update
+                    issue_prop_values = [
+                        issue_prop_value
+                        for issue_prop_value in issue_property_values
+                        if str(issue_property.id) == str(issue_prop_value.issue_property_id)
+                    ]
+
+                    # Already existing
+                    if issue_prop_values:
+                        for prop_value, issue_prop_value in zip(
+                            prop_values, issue_prop_values
+                        ):
+                            issue_prop_value.value = prop_value
+                            bulk_issue_props_update.append(issue_prop_value)
+                    # Create new one
+                    else:
+                        # Only for relation, multi select and select we will storing uuids
+                        # for rest all we will storing the string values
+                        if (
+                            issue_property.type == "relation"
+                            or issue_property.type == "multi_select"
+                            or issue_property.type == "select"
+                        ):
+                            for prop_value in prop_values:
+                                bulk_issue_props_create.append(
+                                    IssuePropertyValue(
+                                        value=prop_value,
+                                        type="uuid",
+                                        issue_property=issue_property,
+                                        project_id=project_id,
+                                        workspace_id=workspace_id,
+                                        issue_id=issue_id,
+                                    )
+                                )
+                        else:
+                            for prop_value in prop_values:
+                                bulk_issue_props_create.append(
+                                    IssuePropertyValue(
+                                        value=prop_value,
+                                        type="text",
+                                        issue_property=issue_property,
+                                        project_id=project_id,
+                                        workspace_id=workspace_id,
+                                        issue_id=issue_id,
+                                    )
+                                )
+                else:
+                    issue_prop_values = [
+                        issue_prop_value
+                        for issue_prop_value in issue_property_values
+                        if str(issue_property.id) == str(issue_prop_value.issue_property_id)
+                    ]
+
+                    # Already existing
+                    if issue_prop_values:
+                        issue_prop_values[0].value = prop_values
+                        bulk_issue_props_update.append(
+                            issue_prop_values[0],
+                        )
+                    # Non existent
+                    else:
+                        # Only for relation, multi select and select we will storing uuids
+                        if (
+                            issue_property.type == "relation"
+                            or issue_property.type == "multi_select"
+                            or issue_property.type == "select"
+                        ):
+                            bulk_issue_props_create.append(
                                 IssuePropertyValue(
-                                    value=prop_value,
+                                    value=prop_values,
                                     type="uuid",
                                     issue_property=issue_property,
                                     project_id=project_id,
@@ -138,11 +201,10 @@ class IssuePropertyValueViewSet(BaseViewSet):
                                     issue_id=issue_id,
                                 )
                             )
-                    else:
-                        for prop_value in prop_values:
-                            bulk_issue_props.append(
+                        else:
+                            bulk_issue_props_create.append(
                                 IssuePropertyValue(
-                                    value=prop_value,
+                                    value=prop_values,
                                     type="text",
                                     issue_property=issue_property,
                                     project_id=project_id,
@@ -150,37 +212,16 @@ class IssuePropertyValueViewSet(BaseViewSet):
                                     issue_id=issue_id,
                                 )
                             )
-                else:
-                    # Only for relation, multi select and select we will storing uuids
-                    if (
-                        issue_property.type == "relation"
-                        or issue_property.type == "multi_select"
-                        or issue_property.type == "select"
-                    ):
-                        bulk_issue_props.append(
-                            IssuePropertyValue(
-                                value=prop_values,
-                                type="uuid",
-                                issue_property=issue_property,
-                                project_id=project_id,
-                                workspace_id=workspace_id,
-                                issue_id=issue_id,
-                            )
-                        )
-                    else:
-                        bulk_issue_props.append(
-                            IssuePropertyValue(
-                                value=prop_values,
-                                type="text",
-                                issue_property=issue_property,
-                                project_id=project_id,
-                                workspace_id=workspace_id,
-                                issue_id=issue_id,
-                            )
-                        )
 
-            issue_property_values = IssuePropertyValue.objects.bulk_create(
-                bulk_issue_props, batch_size=100, ignore_conflicts=True
+            _ = IssuePropertyValue.objects.bulk_create(
+                bulk_issue_props_create,
+                batch_size=100,
+                ignore_conflicts=True,
+            )
+            _ = IssuePropertyValue.objects.bulk_update(
+                bulk_issue_props_update,
+                ["value"],
+                batch_size=100,
             )
 
             # Update the JSON column for faster reads
@@ -213,18 +254,22 @@ class IssuePropertyValueViewSet(BaseViewSet):
             )
             issue.save(update_fields=["issue_properties"])
 
+            issue_property_values = IssuePropertyValue.objects.filter(
+                workspace__slug=slug, project_id=project_id, issue_id=issue_id
+            ).select_related("issue_property")
+
             serilaizer = IssuePropertyValueSerializer(issue_property_values, many=True)
             return Response(serilaizer.data, status=status.HTTP_201_CREATED)
         except Project.DoesNotExist:
             return Response(
                 {"error": "Project Does not exists"}, status=status.HTTP_400_BAD_REQUEST
             )
-        # except Exception as e:
-        #     print(e)
-        #     return Response(
-        #         {"error": "Something went wrong please try again later"},
-        #         status=status.HTTP_400_BAD_REQUEST,
-        #     )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def partial_update(self, request, slug, project_id, issue_id):
         try:
