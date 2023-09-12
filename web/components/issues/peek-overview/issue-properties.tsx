@@ -2,7 +2,7 @@
 import { observer } from "mobx-react-lite";
 // headless ui
 import { Disclosure } from "@headlessui/react";
-import { getStateGroupIcon } from "components/icons";
+import { StateGroupIcon } from "components/icons";
 // hooks
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
@@ -19,7 +19,7 @@ import { CustomDatePicker, Icon } from "components/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import { IIssue } from "types";
+import { IIssue, TIssuePriorities } from "types";
 
 type Props = {
   handleDeleteIssue: () => void;
@@ -66,7 +66,10 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
       {mode === "full" && (
         <div className="flex justify-between gap-2 pb-3">
           <h6 className="flex items-center gap-2 font-medium">
-            {getStateGroupIcon(issue.state_detail.group, "16", "16", issue.state_detail.color)}
+            <StateGroupIcon
+              stateGroup={issue.state_detail.group}
+              color={issue.state_detail.color}
+            />
             {issue.project_detail.identifier}-{issue.sequence_id}
           </h6>
           <div className="flex items-center gap-2">
@@ -114,7 +117,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
           <div className="w-3/4">
             <SidebarPrioritySelect
               value={issue.priority}
-              onChange={(val: string) => handleUpdateIssue({ priority: val })}
+              onChange={(val) => handleUpdateIssue({ priority: val })}
               disabled={readOnly}
             />
           </div>

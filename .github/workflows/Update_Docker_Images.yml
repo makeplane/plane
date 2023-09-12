@@ -2,7 +2,7 @@ name: Update Docker Images for Plane on Release
 
 on:
   release:
-    types: [released]
+    types: [released, prereleased]
 
 jobs:
   build_push_backend:

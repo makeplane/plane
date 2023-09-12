@@ -2,18 +2,18 @@ import React from "react";
 
 import { useRouter } from "next/router";
 
+// services
+import trackEventServices from "services/track-event.service";
 // ui
 import { CustomSelect, Tooltip } from "components/ui";
 // icons
-import { getPriorityIcon } from "components/icons/priority-icon";
+import { PriorityIcon } from "components/icons/priority-icon";
+// helpers
+import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
-import { ICurrentUserResponse, IIssue } from "types";
+import { ICurrentUserResponse, IIssue, TIssuePriorities } from "types";
 // constants
 import { PRIORITIES } from "constants/project";
-// services
-import trackEventServices from "services/track-event.service";
-// helper
-import { capitalizeFirstLetter } from "helpers/string.helper";
 
 type Props = {
   issue: IIssue;
@@ -42,7 +42,7 @@ export const ViewPrioritySelect: React.FC<Props> = ({
   return (
     <CustomSelect
       value={issue.priority}
-      onChange={(data: string) => {
+      onChange={(data: TIssuePriorities) => {
         partialUpdateIssue({ priority: data }, issue);
         trackEventServices.trackIssuePartialPropertyUpdateEvent(
           {
@@ -77,9 +77,9 @@ export const ViewPrioritySelect: React.FC<Props> = ({
             position={tooltipPosition}
           >
             <span className="flex gap-1 items-center text-custom-text-200 text-xs">
-              {getPriorityIcon(
-                issue.priority && issue.priority !== "" ? issue.priority ?? "" : "None",
-                `text-sm ${
+              <PriorityIcon
+                priority={issue.priority}
+                className={`text-sm ${
                   issue.priority === "urgent"
                     ? "text-white"
                     : issue.priority === "high"
@@ -89,13 +89,9 @@ export const ViewPrioritySelect: React.FC<Props> = ({
                     : issue.priority === "low"
                     ? "text-green-500"
                     : "text-custom-text-200"
-                }`
-              )}
-              {noBorder
-                ? issue.priority && issue.priority !== ""
-                  ? capitalizeFirstLetter(issue.priority) ?? ""
-                  : "None"
-                : ""}
+                }`}
+              />
+              {noBorder ? capitalizeFirstLetter(issue.priority ?? "None") : ""}
             </span>
           </Tooltip>
         </button>
@@ -108,7 +104,7 @@ export const ViewPrioritySelect: React.FC<Props> = ({
       {PRIORITIES?.map((priority) => (
         <CustomSelect.Option key={priority} value={priority} className="capitalize">
           <>
-            {getPriorityIcon(priority, "text-sm")}
+            <PriorityIcon priority={priority} className="text-sm" />
             {priority ?? "None"}
           </>
         </CustomSelect.Option>

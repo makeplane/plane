@@ -15,3 +15,4 @@ export * from "./add-comment";
 export * from "./select-parent";
 export * from "./select-blocker";
 export * from "./select-blocked";
+export * from "./activity-message";

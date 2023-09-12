@@ -178,7 +178,7 @@ class IssueViewSet(BaseViewSet):
             filters = issue_filters(request.query_params, "GET")
 
             # Custom ordering for priority and state
-            priority_order = ["urgent", "high", "medium", "low", None]
+            priority_order = ["urgent", "high", "medium", "low", "none"]
             state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
 
             order_by_param = request.GET.get("order_by", "-created_at")
@@ -331,7 +331,7 @@ class UserWorkSpaceIssues(BaseAPIView):
         try:
             filters = issue_filters(request.query_params, "GET")
             # Custom ordering for priority and state
-            priority_order = ["urgent", "high", "medium", "low", None]
+            priority_order = ["urgent", "high", "medium", "low", "none"]
             state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
 
             order_by_param = request.GET.get("order_by", "-created_at")
@@ -1068,7 +1068,7 @@ class IssueArchiveViewSet(BaseViewSet):
             show_sub_issues = request.GET.get("show_sub_issues", "true")
 
             # Custom ordering for priority and state
-            priority_order = ["urgent", "high", "medium", "low", None]
+            priority_order = ["urgent", "high", "medium", "low", "none"]
             state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
 
             order_by_param = request.GET.get("order_by", "-created_at")
@@ -2078,7 +2078,7 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
             filters = issue_filters(request.query_params, "GET")
 
             # Custom ordering for priority and state
-            priority_order = ["urgent", "high", "medium", "low", None]
+            priority_order = ["urgent", "high", "medium", "low", "none"]
             state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
 
             order_by_param = request.GET.get("order_by", "-created_at")

@@ -85,7 +85,7 @@ services:
 
         plane-worker:
                 container_name: planebgworker
-                image: makeplane/plane-worker:latest
+                image: makeplane/plane-backend:latest
                 restart: always
                 command: ./bin/worker
                 env_file:
@@ -99,7 +99,7 @@ services:
 
         plane-beat-worker:
                 container_name: planebeatworker
-                image: makeplane/plane-worker:latest
+                image: makeplane/plane-backend:latest
                 restart: always
                 command: ./bin/beat
                 env_file:

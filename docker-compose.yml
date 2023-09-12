@@ -90,8 +90,6 @@ services:
         DOCKER_BUILDKIT: 1
     restart: always
     command: ./bin/takeoff
-    ports:
-      - 8000:8000
     env_file:
       - .env
     environment:

@@ -38,6 +38,7 @@ class Issue(ProjectBaseModel):
         ("high", "High"),
         ("medium", "Medium"),
         ("low", "Low"),
+        ("none", "None")
     )
     parent = models.ForeignKey(
         "self",
@@ -64,8 +65,7 @@ class Issue(ProjectBaseModel):
         max_length=30,
         choices=PRIORITY_CHOICES,
         verbose_name="Issue Priority",
-        null=True,
-        blank=True,
+        default="none",
     )
     start_date = models.DateField(null=True, blank=True)
     target_date = models.DateField(null=True, blank=True)

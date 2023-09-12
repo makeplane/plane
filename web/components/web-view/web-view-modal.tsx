@@ -63,7 +63,7 @@ export const WebViewModal = (props: Props) => {
                     <XMarkIcon className="w-6 h-6 text-custom-text-200" />
                   </button>
                 </div>
-                <div className="mt-6">{children}</div>
+                <div className="mt-6 max-h-60 overflow-auto">{children}</div>
               </Dialog.Panel>
             </Transition.Child>
           </div>
