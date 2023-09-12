@@ -120,7 +120,8 @@ class IssuePropertyValueViewSet(BaseViewSet):
             for issue_property in issue_properties:
                 prop_values = request_data.get(str(issue_property.id))
                 if issue_property.is_multi and isinstance(prop_values, list):
-                    # Only for relation, multi select and select we will storing uuids
+                    # Only for relation, multi select and select we will storing uuids 
+                    # for rest all we will storing the string values
                     if (
                         issue_property.type == "relation"
                         or issue_property.type == "multi_select"
@@ -158,7 +159,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
                     ):
                         bulk_issue_props.append(
                             IssuePropertyValue(
-                                value=prop_value,
+                                value=prop_values,
                                 type="uuid",
                                 issue_property=issue_property,
                                 project_id=project_id,
@@ -169,7 +170,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
                     else:
                         bulk_issue_props.append(
                             IssuePropertyValue(
-                                value=prop_value,
+                                value=prop_values,
                                 type="text",
                                 issue_property=issue_property,
                                 project_id=project_id,
@@ -218,12 +219,12 @@ class IssuePropertyValueViewSet(BaseViewSet):
             return Response(
                 {"error": "Project Does not exists"}, status=status.HTTP_400_BAD_REQUEST
             )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        # except Exception as e:
+        #     print(e)
+        #     return Response(
+        #         {"error": "Something went wrong please try again later"},
+        #         status=status.HTTP_400_BAD_REQUEST,
+        #     )
 
     def partial_update(self, request, slug, project_id, issue_id):
         try:
