@@ -9,8 +9,8 @@ import {
   StateGroupUnstartedIcon,
 } from "components/icons";
 // components
-import { FilterHeader } from "./filter-header";
-import { FilterCard } from "./filter-card";
+import { FilterHeader } from "../helpers/filter-header";
+import { FilterOption } from "../helpers/filter-option";
 // mobx react lite
 import { observer } from "mobx-react-lite";
 // mobx store
@@ -101,7 +101,7 @@ export const FilterStateGroup = observer(() => {
           {issueFilterStore?.issueRenderFilters?.state_group &&
             issueFilterStore?.issueRenderFilters?.state_group.length > 0 &&
             issueFilterStore?.issueRenderFilters?.state_group.map((_stateGroup) => (
-              <FilterCard
+              <FilterOption
                 key={_stateGroup?.key}
                 isChecked={false}
                 icon={<StateGroupIcons stateGroup={_stateGroup.key} />}

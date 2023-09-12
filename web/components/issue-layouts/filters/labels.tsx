@@ -2,8 +2,8 @@ import React from "react";
 // lucide icons
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 // components
-import { FilterHeader } from "./filter-header";
-import { FilterCard } from "./filter-card";
+import { FilterHeader } from "../helpers/filter-header";
+import { FilterOption } from "../helpers/filter-option";
 // mobx react lite
 import { observer } from "mobx-react-lite";
 // mobx store
@@ -34,7 +34,7 @@ export const FilterLabels = observer(() => {
           {issueFilterStore?.projectLabels &&
             issueFilterStore?.projectLabels.length > 0 &&
             issueFilterStore?.projectLabels.map((_label) => (
-              <FilterCard
+              <FilterOption
                 key={_label?.key}
                 isChecked={false}
                 icon={<LabelIcons color={_label.color} />}

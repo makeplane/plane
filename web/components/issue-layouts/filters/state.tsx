@@ -3,8 +3,8 @@ import React from "react";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 // components
 import { StateGroupIcons } from "./state-group";
-import { FilterHeader } from "./filter-header";
-import { FilterCard } from "./filter-card";
+import { FilterHeader } from "../helpers/filter-header";
+import { FilterOption } from "../helpers/filter-option";
 // mobx react lite
 import { observer } from "mobx-react-lite";
 // mobx store
@@ -34,7 +34,7 @@ export const FilterState = observer(() => {
               issueFilterStore?.projectStates[_stateGroup] &&
               issueFilterStore?.projectStates[_stateGroup].length > 0 &&
               issueFilterStore?.projectStates[_stateGroup].map((_state: any) => (
-                <FilterCard
+                <FilterOption
                   key={_state?.id}
                   isChecked={false}
                   icon={<StateGroupIcons stateGroup={_stateGroup} color={_state?.color} />}

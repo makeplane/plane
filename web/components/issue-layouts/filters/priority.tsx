@@ -2,8 +2,8 @@ import React from "react";
 // lucide icons
 import { AlertCircle, SignalHigh, SignalMedium, SignalLow, Ban, Check } from "lucide-react";
 // components
-import { FilterHeader } from "./filter-header";
-import { FilterCard } from "./filter-card";
+import { FilterHeader } from "../helpers/filter-header";
+import { FilterOption } from "../helpers/filter-option";
 // mobx react lite
 import { observer } from "mobx-react-lite";
 // mobx store
@@ -68,7 +68,7 @@ export const FilterPriority = observer(() => {
           {issueFilterStore?.issueRenderFilters?.priority &&
             issueFilterStore?.issueRenderFilters?.priority.length > 0 &&
             issueFilterStore?.issueRenderFilters?.priority.map((_priority) => (
-              <FilterCard
+              <FilterOption
                 key={_priority?.key}
                 isChecked={false}
                 icon={<PriorityIcons priority={_priority.key} />}

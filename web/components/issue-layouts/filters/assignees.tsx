@@ -2,16 +2,33 @@ import React from "react";
 // lucide icons
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 // components
-import { MemberIcons } from "./assignees";
-import { FilterHeader } from "./filter-header";
-import { FilterCard } from "./filter-card";
+import { FilterHeader } from "../helpers/filter-header";
+import { FilterOption } from "../helpers/filter-option";
 // mobx react lite
 import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 
-export const FilterCreatedBy = observer(() => {
+export const MemberIcons = ({
+  display_name,
+  avatar,
+}: {
+  display_name: string;
+  avatar: string | null;
+}) => (
+  <div className="flex-shrink-0 rounded-sm overflow-hidden w-[20px] h-[20px] flex justify-center items-center bg-custom-background-80">
+    {avatar ? (
+      <img src={avatar} alt={display_name || ""} className="" />
+    ) : (
+      <div className="text-[12px] w-full h-full flex justify-center items-center capitalize font-medium bg-gray-700 text-white">
+        {(display_name ?? "U")[0]}
+      </div>
+    )}
+  </div>
+);
+
+export const FilterAssignees = observer(() => {
   const store: RootStore = useMobxStore();
   const { issueFilters: issueFilterStore, issueView: issueStore } = store;
 
@@ -20,7 +37,7 @@ export const FilterCreatedBy = observer(() => {
   return (
     <div>
       <FilterHeader
-        title={"Created By"}
+        title={"Assignees"}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={setPreviewEnabled}
       />
@@ -29,8 +46,8 @@ export const FilterCreatedBy = observer(() => {
           {issueFilterStore?.projectMembers &&
             issueFilterStore?.projectMembers.length > 0 &&
             issueFilterStore?.projectMembers.map((_member) => (
-              <FilterCard
-                key={`create-by-${_member?.member?.id}`}
+              <FilterOption
+                key={`assignees-${_member?.member?.id}`}
                 isChecked={false}
                 icon={
                   <MemberIcons

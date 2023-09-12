@@ -3,8 +3,8 @@ import React from "react";
 import useSWR from "swr";
 // components
 import { IssueKanBanViewRoot } from "components/issue-layouts/kanban";
-import { LayoutSelection } from "components/issue-layouts/header/layout-filter";
-import { FilterSelection } from "components/issue-layouts/header/filters";
+import { LayoutSelection } from "components/issue-layouts/layout-selection";
+import { FilterSelection } from "components/issue-layouts/filters";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";

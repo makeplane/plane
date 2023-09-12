@@ -2,8 +2,8 @@ import React from "react";
 // lucide icons
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 // components
-import { FilterHeader } from "./filter-header";
-import { FilterCard } from "./filter-card";
+import { FilterHeader } from "../helpers/filter-header";
+import { FilterOption } from "../helpers/filter-option";
 // mobx react lite
 import { observer } from "mobx-react-lite";
 // mobx store
@@ -28,7 +28,12 @@ export const FilterStartDate = observer(() => {
           {issueFilterStore?.issueRenderFilters?.start_date &&
             issueFilterStore?.issueRenderFilters?.start_date.length > 0 &&
             issueFilterStore?.issueRenderFilters?.start_date.map((_startDate) => (
-              <FilterCard key={_startDate?.key} isChecked={false} title={_startDate.title} />
+              <FilterOption
+                key={_startDate?.key}
+                isChecked={false}
+                title={_startDate.title}
+                multiple={false}
+              />
             ))}
         </div>
       )}
