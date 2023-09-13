@@ -19,7 +19,7 @@ import useIssuesProperties from "hooks/use-issue-properties";
 import useProjectMembers from "hooks/use-project-members";
 // components
 import { FiltersList, AllViews } from "components/core";
-import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
+import { CreateUpdateIssueModal, DeleteIssueModal, IssuePeekOverview } from "components/issues";
 import { CreateUpdateViewModal } from "components/views";
 // ui
 import { PrimaryButton, SecondaryButton } from "components/ui";
@@ -462,6 +462,7 @@ export const IssuesView: React.FC<Props> = ({
         data={issueToDelete}
         user={user}
       />
+
       {areFiltersApplied && (
         <>
           <div className="flex items-center justify-between gap-2 px-5 pt-3 pb-0">

@@ -44,7 +44,7 @@ const useCalendarIssuesView = () => {
     target_date: displayFilters?.calendar_date_range,
   };
 
-  const { data: projectCalendarIssues } = useSWR(
+  const { data: projectCalendarIssues, mutate: mutateProjectCalendarIssues } = useSWR(
     workspaceSlug && projectId
       ? PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params)
       : null,
@@ -54,7 +54,7 @@ const useCalendarIssuesView = () => {
       : null
   );
 
-  const { data: cycleCalendarIssues } = useSWR(
+  const { data: cycleCalendarIssues, mutate: mutateCycleCalendarIssues } = useSWR(
     workspaceSlug && projectId && cycleId
       ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), params)
       : null,
@@ -69,7 +69,7 @@ const useCalendarIssuesView = () => {
       : null
   );
 
-  const { data: moduleCalendarIssues } = useSWR(
+  const { data: moduleCalendarIssues, mutate: mutateModuleCalendarIssues } = useSWR(
     workspaceSlug && projectId && moduleId
       ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), params)
       : null,
@@ -84,7 +84,7 @@ const useCalendarIssuesView = () => {
       : null
   );
 
-  const { data: viewCalendarIssues } = useSWR(
+  const { data: viewCalendarIssues, mutate: mutateViewCalendarIssues } = useSWR(
     workspaceSlug && projectId && viewId && params ? VIEW_ISSUES(viewId.toString(), params) : null,
     workspaceSlug && projectId && viewId && params
       ? () =>
@@ -104,6 +104,13 @@ const useCalendarIssuesView = () => {
     displayFilters,
     setDisplayFilters,
     calendarIssues: calendarIssues ?? [],
+    mutateIssues: cycleId
+      ? mutateCycleCalendarIssues
+      : moduleId
+      ? mutateModuleCalendarIssues
+      : viewId
+      ? mutateViewCalendarIssues
+      : mutateProjectCalendarIssues,
     filters,
     setFilters,
     params,

@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { mutate } from "swr";
@@ -58,6 +57,7 @@ type Props = {
   index: number;
   editIssue: () => void;
   makeIssueCopy: () => void;
+  handleMyIssueOpen?: (issue: IIssue) => void;
   removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
   handleTrashBox: (isDragging: boolean) => void;
@@ -75,6 +75,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
   index,
   editIssue,
   makeIssueCopy,
+  handleMyIssueOpen,
   removeIssue,
   groupTitle,
   handleDeleteIssue,
@@ -187,6 +188,17 @@ export const SingleBoardIssue: React.FC<Props> = ({
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 
+  const openPeekOverview = () => {
+    const { query } = router;
+
+    if (handleMyIssueOpen) handleMyIssueOpen(issue);
+
+    router.push({
+      pathname: router.pathname,
+      query: { ...query, peekIssue: issue.id },
+    });
+  };
+
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disableUserActions;
 
   return (
@@ -286,16 +298,22 @@ export const SingleBoardIssue: React.FC<Props> = ({
               )}
             </div>
           )}
-          <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
-            <a className="flex flex-col gap-1.5">
-              {properties.key && (
-                <div className="text-xs font-medium text-custom-text-200">
-                  {issue.project_detail.identifier}-{issue.sequence_id}
-                </div>
-              )}
-              <h5 className="text-sm break-words line-clamp-2">{issue.name}</h5>
-            </a>
-          </Link>
+
+          <div className="flex flex-col gap-1.5">
+            {properties.key && (
+              <div className="text-xs font-medium text-custom-text-200">
+                {issue.project_detail.identifier}-{issue.sequence_id}
+              </div>
+            )}
+            <button
+              type="button"
+              className="text-sm text-left break-words line-clamp-2"
+              onClick={openPeekOverview}
+            >
+              {issue.name}
+            </button>
+          </div>
+
           <div
             className={`flex items-center gap-2 text-xs ${
               isDropdownActive ? "" : "overflow-x-scroll"
