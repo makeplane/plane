@@ -248,4 +248,4 @@ export interface IIssueViewProps {
   properties: Properties;
 }
 
-export type TIssuePriorities = "urgent" | "high" | "medium" | "low" | null;
+export type TIssuePriorities = "urgent" | "high" | "medium" | "low" | "none";
