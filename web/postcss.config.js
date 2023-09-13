@@ -1,7 +1,1 @@
-module.exports = {
-  plugins: {
-    "tailwindcss/nesting": {},
-    tailwindcss: {},
-    autoprefixer: {},
-  },
-};
+module.exports = require("tailwind-config-custom/postcss.config");
