@@ -88,6 +88,7 @@ from .issue import (
     IssueVotePublicViewSet,
     IssueRetrievePublicEndpoint,
     ProjectIssuesPublicEndpoint,
+    IssueDraftViewSet,
 )
 
 from .auth_extended import (
