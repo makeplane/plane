@@ -104,7 +104,7 @@ export const SelectMonthModal: React.FC<Props> = ({
                       as="h3"
                       className="text-lg font-medium leading-6 text-custom-text-100"
                     >
-                      Customize Time Range
+                      Customise Time Range
                     </Dialog.Title>
                     <div className="mt-8 flex items-center gap-2">
                       <div className="flex w-full flex-col gap-1 justify-center">
