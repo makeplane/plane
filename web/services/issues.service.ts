@@ -149,6 +149,52 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
+  async createIssueRelation(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    user: ICurrentUserResponse,
+    data: {
+      related_list: Array<{
+        relation_type: "duplicate" | "relates_to" | "blocked_by";
+        related_issue: string;
+      }>;
+    }
+  ) {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-relation/`,
+      data
+    )
+      .then((response) => {
+        if (trackEvent)
+          trackEventServices.trackIssueRelationEvent(response.data, "ISSUE_RELATION_CREATE", user);
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async deleteIssueRelation(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    relationId: string,
+    user: ICurrentUserResponse
+  ) {
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-relation/${relationId}/`
+    )
+      .then((response) => {
+        if (trackEvent)
+          trackEventServices.trackIssueRelationEvent(response.data, "ISSUE_RELATION_DELETE", user);
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
   async createIssueProperties(workspaceSlug: string, projectId: string, data: any): Promise<any> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-properties/`,
