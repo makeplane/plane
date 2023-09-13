@@ -273,7 +273,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
                         id=uuid.uuid4(),
                         workspace_id=workspace_id,
                         project_id=project_id,
-                        propert_id=new_value.issue_property_id,
+                        property_id=new_value.issue_property_id,
                         property_value=new_value,
                         to_value=new_value.value,
                         entity="issue",
