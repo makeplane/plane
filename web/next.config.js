@@ -25,6 +25,13 @@ const nextConfig = {
     // this includes files from the monorepo base two directories up
     outputFileTracingRoot: path.join(__dirname, "../"),
   },
+  publicRuntimeConfig: {
+    unsplashEnabled: process.env.NEXT_PUBLIC_UNSPLASH_ENABLED,
+  },
+  serverRuntimeConfig: {
+    // TODO: remove NEXT_PUBLIC_ prefix from env variable
+    unsplashAccess: process.env.NEXT_PUBLIC_UNSPLASH_ACCESS,
+  },
 };
 
 if (parseInt(process.env.NEXT_PUBLIC_ENABLE_SENTRY || "0")) {

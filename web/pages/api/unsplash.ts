@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import getConfig from "next/config";
 
-// TODO: remove NEXT_PUBLIC_ prefix from env variable
-const unsplashKey = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS;
+const { serverRuntimeConfig } = getConfig();
+const unsplashKey = serverRuntimeConfig.unsplashAccess;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { query, page, per_page = 20 } = req.query;

@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 // next
 import Image from "next/image";
 import { useRouter } from "next/router";
+import getConfig from "next/config";
 
 // swr
 import useSWR from "swr";
@@ -21,9 +22,9 @@ import { Input, Spinner, PrimaryButton, SecondaryButton } from "components/ui";
 // hooks
 import useWorkspaceDetails from "hooks/use-workspace-details";
 
+const { publicRuntimeConfig } = getConfig();
 const unsplashEnabled =
-  process.env.NEXT_PUBLIC_UNSPLASH_ENABLED === "true" ||
-  process.env.NEXT_PUBLIC_UNSPLASH_ENABLED === "1";
+  publicRuntimeConfig.unsplashEnabled === "true" || publicRuntimeConfig.unsplashEnabled === "1";
 
 const tabOptions = [
   {
@@ -172,7 +173,7 @@ export const ImagePickerPopover: React.FC<Props> = ({
                   </div>
                   {images ? (
                     <div className="grid grid-cols-4 gap-4">
-                      {images.map((image) => (
+                      {Array.from(images).map((image) => (
                         <div
                           key={image.id}
                           className="relative col-span-2 aspect-video md:col-span-1"
