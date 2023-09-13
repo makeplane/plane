@@ -6,13 +6,15 @@ import { UseFormWatch } from "react-hook-form";
 // hooks
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
-// services
-import issuesService from "services/issues.service";
+// icons
+import { Copy } from "lucide-react";
 // components
 import { ExistingIssuesListModal } from "components/core";
+// services
+import issuesService from "services/issues.service";
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { BlockedIcon } from "components/icons";
+import { BlockerIcon } from "components/icons";
 // types
 import { BlockeIssueDetail, IIssue, ISearchIssueResponse, UserAuth } from "types";
 
@@ -23,13 +25,10 @@ type Props = {
   disabled?: boolean;
 };
 
-export const SidebarBlockedSelect: React.FC<Props> = ({
-  issueId,
-  submitChanges,
-  watch,
-  disabled = false,
-}) => {
-  const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
+export const SidebarDuplicateSelect: React.FC<Props> = (props) => {
+  const { issueId, submitChanges, watch, disabled = false } = props;
+
+  const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
 
   const { user } = useUser();
   const { setToastAlert } = useToast();
@@ -38,22 +37,22 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
   const { workspaceSlug, projectId } = router.query;
 
   const handleClose = () => {
-    setIsBlockedModalOpen(false);
+    setIsDuplicateModalOpen(false);
   };
 
   const onSubmit = async (data: ISearchIssueResponse[]) => {
     if (data.length === 0) {
       setToastAlert({
-        title: "Error",
         type: "error",
-        message: "Please select at least one issue",
+        title: "Error!",
+        message: "Please select at least one issue.",
       });
 
       return;
     }
 
-    const selectedIssues: { blocked_issue_detail: BlockeIssueDetail }[] = data.map((i) => ({
-      blocked_issue_detail: {
+    const selectedIssues: { blocker_issue_detail: BlockeIssueDetail }[] = data.map((i) => ({
+      blocker_issue_detail: {
         id: i.id,
         name: i.name,
         sequence_id: i.sequence_id,
@@ -72,47 +71,53 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
         related_list: [
           ...selectedIssues.map((issue) => ({
             issue: issueId as string,
-            relation_type: "blocked_by" as const,
-            related_issue_detail: issue.blocked_issue_detail,
-            related_issue: issue.blocked_issue_detail.id,
+            related_issue_detail: issue.blocker_issue_detail,
+            related_issue: issue.blocker_issue_detail.id,
+            relation_type: "duplicate" as const,
           })),
         ],
       })
       .then((response) => {
         submitChanges({
-          related_issues: [
-            ...watch("related_issues")?.filter((i) => i.relation_type !== "blocked_by"),
-            ...response,
-          ],
+          related_issues: [...watch("related_issues"), ...response.related_list],
         });
       });
 
     handleClose();
   };
 
-  const blockedByIssue = watch("related_issues")?.filter((i) => i.relation_type === "blocked_by");
+  const duplicateIssuesRelation = [
+    ...(watch("related_issues")?.filter((i) => i.relation_type === "duplicate") ?? []),
+    ...(watch("issue_relations") ?? [])
+      ?.filter((i) => i.relation_type === "duplicate")
+      .map((i) => ({
+        ...i,
+        related_issue_detail: i.issue_detail,
+        related_issue: i.issue_detail?.id,
+      })),
+  ];
 
   return (
     <>
       <ExistingIssuesListModal
-        isOpen={isBlockedModalOpen}
-        handleClose={() => setIsBlockedModalOpen(false)}
+        isOpen={isDuplicateModalOpen}
+        handleClose={() => setIsDuplicateModalOpen(false)}
         searchParams={{ blocker_blocked_by: true, issue_id: issueId }}
         handleOnSubmit={onSubmit}
         workspaceLevelToggle
       />
       <div className="flex flex-wrap items-start py-2">
         <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-          <BlockedIcon height={16} width={16} />
-          <p>Blocked by</p>
+          <Copy className="h-4 w-4 flex-shrink-0" />
+          <p>Duplicate</p>
         </div>
         <div className="space-y-1 sm:basis-1/2">
           <div className="flex flex-wrap gap-1">
-            {blockedByIssue && blockedByIssue.length > 0
-              ? blockedByIssue.map((relation) => (
+            {duplicateIssuesRelation && duplicateIssuesRelation.length > 0
+              ? duplicateIssuesRelation.map((relation) => (
                   <div
                     key={relation.related_issue_detail?.id}
-                    className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-1.5 py-0.5 text-xs text-red-500 duration-300 hover:border-red-500/20 hover:bg-red-500/20"
+                    className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-1.5 py-0.5 text-xs text-yellow-500 duration-300 hover:border-yellow-500/20 hover:bg-yellow-500/20"
                   >
                     <a
                       href={`/${workspaceSlug}/projects/${relation.related_issue_detail?.project_detail.id}/issues/${relation.related_issue_detail?.id}`}
@@ -120,19 +125,19 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
                       rel="noopener noreferrer"
                       className="flex items-center gap-1"
                     >
-                      <BlockedIcon height={10} width={10} />
+                      <BlockerIcon height={10} width={10} />
                       {`${relation.related_issue_detail?.project_detail.identifier}-${relation.related_issue_detail?.sequence_id}`}
                     </a>
                     <button
                       type="button"
                       className="opacity-0 duration-300 group-hover:opacity-100"
                       onClick={() => {
-                        const updatedRelations = watch("related_issues")?.filter(
-                          (i) => i.id !== relation.id
+                        const updatedBlockers = duplicateIssuesRelation.filter(
+                          (i) => i.related_issue_detail?.id !== relation.related_issue_detail?.id
                         );
 
                         submitChanges({
-                          related_issues: updatedRelations,
+                          related_issues: updatedBlockers,
                         });
 
                         if (!user) return;
@@ -157,7 +162,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
             className={`bg-custom-background-80 text-xs text-custom-text-200 rounded px-2.5 py-0.5 ${
               disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
             }`}
-            onClick={() => setIsBlockedModalOpen(true)}
+            onClick={() => setIsDuplicateModalOpen(true)}
             disabled={disabled}
           >
             Select issues

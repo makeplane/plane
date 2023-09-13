@@ -174,19 +174,19 @@ const useMyIssuesFilters = (workspaceSlug: string | undefined) => {
   }, [myWorkspace, workspaceSlug]);
 
   const newProperties: Properties = {
-    assignee: myWorkspace?.view_props.properties.assignee ?? true,
-    start_date: myWorkspace?.view_props.properties.start_date ?? true,
-    due_date: myWorkspace?.view_props.properties.due_date ?? true,
-    key: myWorkspace?.view_props.properties.key ?? true,
-    labels: myWorkspace?.view_props.properties.labels ?? true,
-    priority: myWorkspace?.view_props.properties.priority ?? true,
-    state: myWorkspace?.view_props.properties.state ?? true,
-    sub_issue_count: myWorkspace?.view_props.properties.sub_issue_count ?? true,
-    attachment_count: myWorkspace?.view_props.properties.attachment_count ?? true,
-    link: myWorkspace?.view_props.properties.link ?? true,
-    estimate: myWorkspace?.view_props.properties.estimate ?? true,
-    created_on: myWorkspace?.view_props.properties.created_on ?? true,
-    updated_on: myWorkspace?.view_props.properties.updated_on ?? true,
+    assignee: myWorkspace?.view_props?.properties?.assignee ?? true,
+    start_date: myWorkspace?.view_props?.properties?.start_date ?? true,
+    due_date: myWorkspace?.view_props?.properties?.due_date ?? true,
+    key: myWorkspace?.view_props?.properties?.key ?? true,
+    labels: myWorkspace?.view_props?.properties?.labels ?? true,
+    priority: myWorkspace?.view_props?.properties?.priority ?? true,
+    state: myWorkspace?.view_props?.properties?.state ?? true,
+    sub_issue_count: myWorkspace?.view_props?.properties?.sub_issue_count ?? true,
+    attachment_count: myWorkspace?.view_props?.properties?.attachment_count ?? true,
+    link: myWorkspace?.view_props?.properties?.link ?? true,
+    estimate: myWorkspace?.view_props?.properties?.estimate ?? true,
+    created_on: myWorkspace?.view_props?.properties?.created_on ?? true,
+    updated_on: myWorkspace?.view_props?.properties?.updated_on ?? true,
   };
 
   return {

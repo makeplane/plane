@@ -328,6 +328,22 @@ class TrackEventServices extends APIService {
     });
   }
 
+  async trackIssueRelationEvent(
+    data: any,
+    eventName: "ISSUE_RELATION_CREATE" | "ISSUE_RELATION_DELETE",
+    user: ICurrentUserResponse
+  ): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: data,
+        user: user,
+      },
+    });
+  }
+
   async trackIssueMovedToCycleOrModuleEvent(
     data: any,
     eventName:
