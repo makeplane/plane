@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 // hooks
 import useMyIssues from "hooks/my-issues/use-my-issues";
 import useIssuesView from "hooks/use-issues-view";
+import useProfileIssues from "hooks/use-profile-issues";
 // components
 import { SingleList } from "components/core/views/list-view/single-list";
 import { IssuePeekOverview } from "components/issues";
@@ -40,18 +41,26 @@ export const AllLists: React.FC<Props> = ({
   viewProps,
 }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, userId } = router.query;
+
+  const isProfileIssue =
+    router.pathname.includes("assigned") ||
+    router.pathname.includes("created") ||
+    router.pathname.includes("subscribed");
 
   const isMyIssue = router.pathname.includes("my-issues");
   const { mutateIssues } = useIssuesView();
   const { mutateMyIssues } = useMyIssues(workspaceSlug?.toString());
+  const { mutateProfileIssues } = useProfileIssues(workspaceSlug?.toString(), userId?.toString());
 
   const { displayFilters, groupedIssues } = viewProps;
 
   return (
     <>
       <IssuePeekOverview
-        handleMutation={() => (isMyIssue ? mutateMyIssues() : mutateIssues())}
+        handleMutation={() =>
+          isMyIssue ? mutateMyIssues() : isProfileIssue ? mutateProfileIssues() : mutateIssues()
+        }
         projectId={myIssueProjectId ? myIssueProjectId : projectId?.toString() ?? ""}
         workspaceSlug={workspaceSlug?.toString() ?? ""}
         readOnly={disableUserActions}
