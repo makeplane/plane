@@ -19,7 +19,7 @@ import { CustomDatePicker, Icon } from "components/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import { IIssue } from "types";
+import { IIssue, TIssuePriorities } from "types";
 
 type Props = {
   handleDeleteIssue: () => void;
@@ -117,7 +117,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
           <div className="w-3/4">
             <SidebarPrioritySelect
               value={issue.priority}
-              onChange={(val: string) => handleUpdateIssue({ priority: val })}
+              onChange={(val) => handleUpdateIssue({ priority: val })}
               disabled={readOnly}
             />
           </div>

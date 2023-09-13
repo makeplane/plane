@@ -22,25 +22,23 @@ import {
 
 const useSpreadsheetIssuesView = () => {
   const {
-    issueView,
-    orderBy,
-    setOrderBy,
+    display_filters: displayFilters,
+    setDisplayFilters,
     filters,
     setFilters,
     resetFilterToDefault,
     setNewFilterDefaultView,
-    setIssueView,
   } = useContext(issueViewContext);
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
   const params: any = {
-    order_by: orderBy,
+    order_by: displayFilters?.order_by,
     assignees: filters?.assignees ? filters?.assignees.join(",") : undefined,
     state: filters?.state ? filters?.state.join(",") : undefined,
     priority: filters?.priority ? filters?.priority.join(",") : undefined,
-    type: filters?.type ? filters?.type : undefined,
+    type: displayFilters?.type ? displayFilters?.type : undefined,
     labels: filters?.labels ? filters?.labels.join(",") : undefined,
     created_by: filters?.created_by ? filters?.created_by.join(",") : undefined,
     start_date: filters?.start_date ? filters?.start_date.join(",") : undefined,
@@ -105,7 +103,8 @@ const useSpreadsheetIssuesView = () => {
     : (projectSpreadsheetIssues as IIssue[]);
 
   return {
-    issueView,
+    displayFilters,
+    setDisplayFilters,
     mutateIssues: cycleId
       ? mutateCycleSpreadsheetIssues
       : moduleId
@@ -114,14 +113,11 @@ const useSpreadsheetIssuesView = () => {
       ? mutateViewSpreadsheetIssues
       : mutateProjectSpreadsheetIssues,
     spreadsheetIssues: spreadsheetIssues ?? [],
-    orderBy,
-    setOrderBy,
     filters,
     setFilters,
     params,
     resetFilterToDefault,
     setNewFilterDefaultView,
-    setIssueView,
   } as const;
 };
 

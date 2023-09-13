@@ -15,6 +15,7 @@ import { Spinner } from "components/ui";
 
 type Props = {
   children: React.ReactNode;
+  fullScreen?: boolean;
 };
 
 const getIfInWebview = (userAgent: NavigatorID["userAgent"]) => {
@@ -30,7 +31,7 @@ const useMobileDetect = () => {
   return getIfInWebview(userAgent);
 };
 
-const WebViewLayout: React.FC<Props> = ({ children }) => {
+const WebViewLayout: React.FC<Props> = ({ children, fullScreen = true }) => {
   const { data: currentUser, error } = useSWR(CURRENT_USER, () => userService.currentUser());
 
   const isWebview = useMobileDetect();
@@ -47,7 +48,7 @@ const WebViewLayout: React.FC<Props> = ({ children }) => {
   }
 
   return (
-    <div className="h-screen w-full bg-custom-background-100">
+    <div className={fullScreen ? "h-screen w-full bg-custom-background-100" : ""}>
       {error || !isWebview ? (
         <div className="flex flex-col items-center justify-center gap-y-3 h-full text-center text-custom-text-200">
           <AlertCircle size={64} />

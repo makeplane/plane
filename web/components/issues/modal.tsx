@@ -78,7 +78,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId, inboxId } = router.query;
 
-  const { issueView, params } = useIssuesView();
+  const { displayFilters, params } = useIssuesView();
   const { params: calendarParams } = useCalendarIssuesView();
   const { order_by, group_by, ...viewGanttParams } = params;
   const { params: inboxParams } = useInboxView();
@@ -247,13 +247,13 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           if (payload.module && payload.module !== "")
             await addIssueToModule(res.id, payload.module);
 
-          if (issueView === "calendar") mutate(calendarFetchKey);
-          if (issueView === "gantt_chart")
+          if (displayFilters.layout === "calendar") mutate(calendarFetchKey);
+          if (displayFilters.layout === "gantt_chart")
             mutate(ganttFetchKey, {
               start_target_date: true,
               order_by: "sort_order",
             });
-          if (issueView === "spreadsheet") mutate(spreadsheetFetchKey);
+          if (displayFilters.layout === "spreadsheet") mutate(spreadsheetFetchKey);
           if (groupedIssues) mutateMyIssues();
 
           setToastAlert({
@@ -285,8 +285,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         if (isUpdatingSingleIssue) {
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
         } else {
-          if (issueView === "calendar") mutate(calendarFetchKey);
-          if (issueView === "spreadsheet") mutate(spreadsheetFetchKey);
+          if (displayFilters.layout === "calendar") mutate(calendarFetchKey);
+          if (displayFilters.layout === "spreadsheet") mutate(spreadsheetFetchKey);
           if (payload.parent) mutate(SUB_ISSUES(payload.parent.toString()));
           mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
         }

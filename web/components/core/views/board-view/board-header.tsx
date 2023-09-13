@@ -13,12 +13,12 @@ import useProjects from "hooks/use-projects";
 import { Avatar, Icon } from "components/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
-import { StateGroupIcon, getPriorityIcon } from "components/icons";
+import { PriorityIcon, StateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // types
-import { IIssueViewProps, IState, TStateGroups } from "types";
+import { IIssueViewProps, IState, TIssuePriorities, TStateGroups } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS } from "constants/fetch-keys";
 // constants
@@ -48,22 +48,28 @@ export const BoardHeader: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { groupedIssues, groupByProperty: selectedGroup } = viewProps;
+  const { displayFilters, groupedIssues } = viewProps;
+
+  console.log("dF", displayFilters);
 
   const { data: issueLabels } = useSWR(
-    workspaceSlug && projectId && selectedGroup === "labels"
+    workspaceSlug && projectId && displayFilters?.group_by === "labels"
       ? PROJECT_ISSUE_LABELS(projectId.toString())
       : null,
-    workspaceSlug && projectId && selectedGroup === "labels"
+    workspaceSlug && projectId && displayFilters?.group_by === "labels"
       ? () => issuesService.getIssueLabels(workspaceSlug.toString(), projectId.toString())
       : null
   );
 
   const { data: members } = useSWR(
-    workspaceSlug && projectId && (selectedGroup === "created_by" || selectedGroup === "assignees")
+    workspaceSlug &&
+      projectId &&
+      (displayFilters?.group_by === "created_by" || displayFilters?.group_by === "assignees")
       ? PROJECT_MEMBERS(projectId.toString())
       : null,
-    workspaceSlug && projectId && (selectedGroup === "created_by" || selectedGroup === "assignees")
+    workspaceSlug &&
+      projectId &&
+      (displayFilters?.group_by === "created_by" || displayFilters?.group_by === "assignees")
       ? () => projectService.projectMembers(workspaceSlug.toString(), projectId.toString())
       : null
   );
@@ -73,7 +79,7 @@ export const BoardHeader: React.FC<Props> = ({
   const getGroupTitle = () => {
     let title = addSpaceIfCamelCase(groupTitle);
 
-    switch (selectedGroup) {
+    switch (displayFilters?.group_by) {
       case "state":
         title = addSpaceIfCamelCase(currentState?.name ?? "");
         break;
@@ -97,7 +103,7 @@ export const BoardHeader: React.FC<Props> = ({
   const getGroupIcon = () => {
     let icon;
 
-    switch (selectedGroup) {
+    switch (displayFilters?.group_by) {
       case "state":
         icon = currentState && (
           <StateGroupIcon
@@ -119,7 +125,7 @@ export const BoardHeader: React.FC<Props> = ({
         );
         break;
       case "priority":
-        icon = getPriorityIcon(groupTitle, "text-lg");
+        icon = <PriorityIcon priority={groupTitle as TIssuePriorities} className="text-lg" />;
         break;
       case "project":
         const project = projects?.find((p) => p.id === groupTitle);
@@ -167,7 +173,7 @@ export const BoardHeader: React.FC<Props> = ({
           <span className="flex items-center">{getGroupIcon()}</span>
           <h2
             className={`text-lg font-semibold truncate ${
-              selectedGroup === "created_by" ? "" : "capitalize"
+              displayFilters?.group_by === "created_by" ? "" : "capitalize"
             }`}
             style={{
               writingMode: isCollapsed ? "horizontal-tb" : "vertical-rl",
@@ -198,7 +204,7 @@ export const BoardHeader: React.FC<Props> = ({
             <Icon iconName="open_in_full" className="text-base font-medium text-custom-text-900" />
           )}
         </button>
-        {!disableAddIssue && !disableUserActions && selectedGroup !== "created_by" && (
+        {!disableAddIssue && !disableUserActions && displayFilters?.group_by !== "created_by" && (
           <button
             type="button"
             className="grid h-7 w-7 place-items-center rounded p-1 text-custom-text-200 outline-none duration-300 hover:bg-custom-background-80"

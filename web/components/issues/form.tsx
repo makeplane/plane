@@ -23,14 +23,7 @@ import {
 import { CreateStateModal } from "components/states";
 import { CreateLabelModal } from "components/labels";
 // ui
-import {
-  CustomMenu,
-  Input,
-  Loader,
-  PrimaryButton,
-  SecondaryButton,
-  ToggleSwitch,
-} from "components/ui";
+import { CustomMenu, Input, PrimaryButton, SecondaryButton, ToggleSwitch } from "components/ui";
 import { TipTapEditor } from "components/tiptap";
 // icons
 import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -52,7 +45,7 @@ const defaultValues: Partial<IIssue> = {
   estimate_point: null,
   state: "",
   parent: null,
-  priority: null,
+  priority: "none",
   assignees: [],
   assignees_list: [],
   labels: [],

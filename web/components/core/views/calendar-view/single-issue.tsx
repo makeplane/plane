@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
 
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { mutate } from "swr";
@@ -158,6 +157,15 @@ export const SingleCalendarIssue: React.FC<Props> = ({
     ? Object.values(properties).some((value) => value === true)
     : false;
 
+  const openPeekOverview = () => {
+    const { query } = router;
+
+    router.push({
+      pathname: router.pathname,
+      query: { ...query, peekIssue: issue.id },
+    });
+  };
+
   return (
     <div
       key={index}
@@ -193,23 +201,27 @@ export const SingleCalendarIssue: React.FC<Props> = ({
             </CustomMenu>
           </div>
         )}
-        <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
-          <a className="flex w-full cursor-pointer flex-col items-start justify-center gap-1.5">
-            {properties.key && (
-              <Tooltip
-                tooltipHeading="Issue ID"
-                tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
-              >
-                <span className="flex-shrink-0 text-xs text-custom-text-200">
-                  {issue.project_detail?.identifier}-{issue.sequence_id}
-                </span>
-              </Tooltip>
-            )}
-            <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
-              <span className="text-xs text-custom-text-100">{truncateText(issue.name, 25)}</span>
+
+        <button
+          type="button"
+          className="flex w-full cursor-pointer flex-col items-start justify-center gap-1.5"
+          onClick={openPeekOverview}
+        >
+          {properties.key && (
+            <Tooltip
+              tooltipHeading="Issue ID"
+              tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
+            >
+              <span className="flex-shrink-0 text-xs text-custom-text-200">
+                {issue.project_detail?.identifier}-{issue.sequence_id}
+              </span>
             </Tooltip>
-          </a>
-        </Link>
+          )}
+          <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
+            <span className="text-xs text-custom-text-100">{truncateText(issue.name, 25)}</span>
+          </Tooltip>
+        </button>
+
         {displayProperties && (
           <div className="relative mt-1.5 w-full flex flex-wrap items-center gap-2 text-xs">
             {properties.priority && (
