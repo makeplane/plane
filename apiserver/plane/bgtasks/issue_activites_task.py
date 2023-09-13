@@ -396,16 +396,33 @@ def track_assignees(
 def create_issue_activity(
     requested_data, current_instance, issue_id, project, actor, issue_activities
 ):
-    issue_activities.append(
-        IssueActivity(
-            issue_id=issue_id,
-            project=project,
-            workspace=project.workspace,
-            comment=f"created the issue",
-            verb="created",
-            actor=actor,
-        )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
     )
+    if(requested_data.get("is_draft") == True):
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                project=project,
+                workspace=project.workspace,
+                field="draft",
+                comment=f"drafted the issue",
+                verb="created",
+                actor=actor,
+                )
+            )
+    else:
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                project=project,
+                workspace=project.workspace,
+                comment=f"created the issue",
+                verb="created",
+                actor=actor,
+            )
+        )
 
 
 def track_estimate_points(
@@ -523,17 +540,30 @@ def update_issue_activity(
         json.loads(current_instance) if current_instance is not None else None
     )
 
-    for key in requested_data:
-        func = ISSUE_ACTIVITY_MAPPER.get(key, None)
-        if func is not None:
-            func(
-                requested_data,
-                current_instance,
-                issue_id,
-                project,
-                actor,
-                issue_activities,
+    if requested_data.get("is_draft") == True:
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                project=project,
+                workspace=project.workspace,
+                field="draft",
+                comment=f"updated the drafted issue",
+                verb="updated",
+                actor=actor,
+                )
             )
+    else:
+        for key in requested_data:
+            func = ISSUE_ACTIVITY_MAPPER.get(key, None)
+            if func is not None:
+                func(
+                    requested_data,
+                    current_instance,
+                    issue_id,
+                    project,
+                    actor,
+                    issue_activities,
+                )
 
 
 def delete_issue_activity(
