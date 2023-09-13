@@ -29,7 +29,7 @@ export const AllLists: React.FC<Props> = ({
   userAuth,
   viewProps,
 }) => {
-  const { groupByProperty: selectedGroup, groupedIssues, showEmptyGroups } = viewProps;
+  const { displayFilters, groupedIssues } = viewProps;
 
   return (
     <>
@@ -37,9 +37,12 @@ export const AllLists: React.FC<Props> = ({
         <div className="h-full overflow-y-auto">
           {Object.keys(groupedIssues).map((singleGroup) => {
             const currentState =
-              selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;
+              displayFilters?.group_by === "state"
+                ? states?.find((s) => s.id === singleGroup)
+                : null;
 
-            if (!showEmptyGroups && groupedIssues[singleGroup].length === 0) return null;
+            if (!displayFilters?.show_empty_groups && groupedIssues[singleGroup].length === 0)
+              return null;
 
             return (
               <SingleList

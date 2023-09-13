@@ -13,7 +13,7 @@ import useToast from "hooks/use-toast";
 // components
 import { EmailPasswordForm, GithubLoginButton, GoogleLoginButton, EmailCodeForm } from "components/accounts";
 // images
-import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
+const imagePrefix = process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX ? "/spaces/" : "";
 
 export const SignInView = observer(() => {
   const { user: userStore } = useMobxStore();
@@ -112,7 +112,7 @@ export const SignInView = observer(() => {
       <div className="fixed grid place-items-center bg-custom-background-100 sm:py-5 top-11 sm:top-12 left-7 sm:left-16 lg:left-28">
         <div className="grid place-items-center bg-custom-background-100">
           <div className="h-[30px] w-[30px]">
-            <Image src={BluePlaneLogoWithoutText} alt="Plane Logo" />
+            <img src={`${imagePrefix}/plane-logos/blue-without-text.png`} alt="Plane Logo" />
           </div>
         </div>
       </div>

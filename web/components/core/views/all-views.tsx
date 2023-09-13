@@ -80,7 +80,7 @@ export const AllViews: React.FC<Props> = ({
   const { user } = useUser();
   const { memberRole } = useProjectMyMembership();
 
-  const { groupedIssues, isEmpty, issueView } = viewProps;
+  const { groupedIssues, isEmpty, displayFilters } = viewProps;
 
   const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
@@ -117,11 +117,11 @@ export const AllViews: React.FC<Props> = ({
       </StrictModeDroppable>
       {groupedIssues ? (
         !isEmpty ||
-        issueView === "kanban" ||
-        issueView === "calendar" ||
-        issueView === "gantt_chart" ? (
+        displayFilters?.layout === "kanban" ||
+        displayFilters?.layout === "calendar" ||
+        displayFilters?.layout === "gantt_chart" ? (
           <>
-            {issueView === "list" ? (
+            {displayFilters?.layout === "list" ? (
               <AllLists
                 states={states}
                 addIssueToGroup={addIssueToGroup}
@@ -134,7 +134,7 @@ export const AllViews: React.FC<Props> = ({
                 userAuth={memberRole}
                 viewProps={viewProps}
               />
-            ) : issueView === "kanban" ? (
+            ) : displayFilters?.layout === "kanban" ? (
               <AllBoards
                 addIssueToGroup={addIssueToGroup}
                 disableUserActions={disableUserActions}
@@ -149,7 +149,7 @@ export const AllViews: React.FC<Props> = ({
                 userAuth={memberRole}
                 viewProps={viewProps}
               />
-            ) : issueView === "calendar" ? (
+            ) : displayFilters?.layout === "calendar" ? (
               <CalendarView
                 handleIssueAction={handleIssueAction}
                 addIssueToDate={addIssueToDate}
@@ -157,7 +157,7 @@ export const AllViews: React.FC<Props> = ({
                 user={user}
                 userAuth={memberRole}
               />
-            ) : issueView === "spreadsheet" ? (
+            ) : displayFilters?.layout === "spreadsheet" ? (
               <SpreadsheetView
                 handleIssueAction={handleIssueAction}
                 openIssuesListModal={cycleId || moduleId ? openIssuesListModal : null}
@@ -166,7 +166,7 @@ export const AllViews: React.FC<Props> = ({
                 userAuth={memberRole}
               />
             ) : (
-              issueView === "gantt_chart" && <GanttChartView />
+              displayFilters?.layout === "gantt_chart" && <GanttChartView />
             )}
           </>
         ) : router.pathname.includes("archived-issues") ? (
