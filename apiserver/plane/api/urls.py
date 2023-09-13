@@ -92,6 +92,7 @@ from plane.api.views import (
     IssueReactionViewSet,
     IssueRelationViewSet,
     CommentReactionViewSet,
+    IssueDraftViewSet,
     ## End Issues
     # States
     StateViewSet,
@@ -1031,6 +1032,27 @@ urlpatterns = [
         name="issue-relation",
     ),
     ## End Issue Relation
+    ## Issue Drafts
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-drafts/",
+        IssueDraftViewSet.as_view(
+            {
+                "get": "list",
+            }
+        ),
+        name="project-issue-draft",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-drafts/<uuid:pk>/",
+        IssueDraftViewSet.as_view(
+            {
+                "get": "retrieve",
+                "delete": "destroy",
+            }
+        ),
+        name="project-issue-draft",
+    ),
+    ## End Issue Drafts
     ## File Assets
     path(
         "workspaces/<str:slug>/file-assets/",

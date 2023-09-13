@@ -60,7 +60,7 @@ export const CalendarView: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
-  const { calendarIssues, params, setCalendarDateRange } = useCalendarIssuesView();
+  const { calendarIssues, params, setDisplayFilters } = useCalendarIssuesView();
 
   const totalDate = eachDayOfInterval({
     start: calendarDates.startDate,
@@ -152,18 +152,20 @@ export const CalendarView: React.FC<Props> = ({
       endDate,
     });
 
-    setCalendarDateRange(
-      `${renderDateFormat(startDate)};after,${renderDateFormat(endDate)};before`
-    );
+    setDisplayFilters({
+      calendar_date_range: `${renderDateFormat(startDate)};after,${renderDateFormat(
+        endDate
+      )};before`,
+    });
   };
 
   useEffect(() => {
-    setCalendarDateRange(
-      `${renderDateFormat(startOfWeek(currentDate))};after,${renderDateFormat(
+    setDisplayFilters({
+      calendar_date_range: `${renderDateFormat(startOfWeek(currentDate))};after,${renderDateFormat(
         lastDayOfWeek(currentDate)
-      )};before`
-    );
-  }, [currentDate]);
+      )};before`,
+    });
+  }, [currentDate, setDisplayFilters]);
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disableUserActions;
 

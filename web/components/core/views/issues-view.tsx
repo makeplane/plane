@@ -77,18 +77,8 @@ export const IssuesView: React.FC<Props> = ({
 
   const { setToastAlert } = useToast();
 
-  const {
-    groupedByIssues,
-    mutateIssues,
-    issueView,
-    groupByProperty: selectedGroup,
-    orderBy,
-    filters,
-    isEmpty,
-    setFilters,
-    params,
-    showEmptyGroups,
-  } = useIssuesView();
+  const { groupedByIssues, mutateIssues, displayFilters, filters, isEmpty, setFilters, params } =
+    useIssuesView();
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
   const { data: stateGroups } = useSWR(
@@ -129,7 +119,7 @@ export const IssuesView: React.FC<Props> = ({
       if (destination.droppableId === "trashBox") {
         handleDeleteIssue(draggedItem);
       } else {
-        if (orderBy === "sort_order") {
+        if (displayFilters.order_by === "sort_order") {
           let newSortOrder = draggedItem.sort_order;
 
           const destinationGroupArray = groupedByIssues[destination.droppableId];
@@ -177,16 +167,19 @@ export const IssuesView: React.FC<Props> = ({
 
         const destinationGroup = destination.droppableId; // destination group id
 
-        if (orderBy === "sort_order" || source.droppableId !== destination.droppableId) {
+        if (
+          displayFilters.order_by === "sort_order" ||
+          source.droppableId !== destination.droppableId
+        ) {
           // different group/column;
 
           // source.droppableId !== destination.droppableId -> even if order by is not sort_order,
           // if the issue is moved to a different group, then we will change the group of the
           // dragged item(or issue)
 
-          if (selectedGroup === "priority")
+          if (displayFilters.group_by === "priority")
             draggedItem.priority = destinationGroup as TIssuePriorities;
-          else if (selectedGroup === "state") {
+          else if (displayFilters.group_by === "state") {
             draggedItem.state = destinationGroup;
             draggedItem.state_detail = states?.find((s) => s.id === destinationGroup) as IState;
           }
@@ -213,8 +206,14 @@ export const IssuesView: React.FC<Props> = ({
 
             return {
               ...prevData,
-              [sourceGroup]: orderArrayBy(sourceGroupArray, orderBy),
-              [destinationGroup]: orderArrayBy(destinationGroupArray, orderBy),
+              [sourceGroup]: orderArrayBy(
+                sourceGroupArray,
+                displayFilters.order_by ?? "-created_at"
+              ),
+              [destinationGroup]: orderArrayBy(
+                destinationGroupArray,
+                displayFilters.order_by ?? "-created_at"
+              ),
             };
           },
           false
@@ -267,13 +266,13 @@ export const IssuesView: React.FC<Props> = ({
       }
     },
     [
+      displayFilters.group_by,
+      displayFilters.order_by,
       workspaceSlug,
       cycleId,
       moduleId,
       groupedByIssues,
       projectId,
-      selectedGroup,
-      orderBy,
       handleDeleteIssue,
       params,
       states,
@@ -287,19 +286,19 @@ export const IssuesView: React.FC<Props> = ({
 
       let preloadedValue: string | string[] = groupTitle;
 
-      if (selectedGroup === "labels") {
+      if (displayFilters.group_by === "labels") {
         if (groupTitle === "None") preloadedValue = [];
         else preloadedValue = [groupTitle];
       }
 
-      if (selectedGroup)
+      if (displayFilters.group_by)
         setPreloadedData({
-          [selectedGroup]: preloadedValue,
+          [displayFilters.group_by]: preloadedValue,
           actionType: "createIssue",
         });
       else setPreloadedData({ actionType: "createIssue" });
     },
-    [setCreateIssueModal, setPreloadedData, selectedGroup]
+    [displayFilters.group_by, setCreateIssueModal, setPreloadedData]
   );
 
   const addIssueToDate = useCallback(
@@ -352,7 +351,7 @@ export const IssuesView: React.FC<Props> = ({
         CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params),
         (prevData: any) => {
           if (!prevData) return prevData;
-          if (selectedGroup) {
+          if (displayFilters.group_by) {
             const filteredData: any = {};
             for (const key in prevData) {
               filteredData[key] = prevData[key].filter((item: any) => item.id !== issueId);
@@ -384,7 +383,7 @@ export const IssuesView: React.FC<Props> = ({
           console.log(e);
         });
     },
-    [workspaceSlug, projectId, cycleId, params, selectedGroup, setToastAlert]
+    [displayFilters.group_by, workspaceSlug, projectId, cycleId, params, setToastAlert]
   );
 
   const removeIssueFromModule = useCallback(
@@ -395,7 +394,7 @@ export const IssuesView: React.FC<Props> = ({
         MODULE_ISSUES_WITH_PARAMS(moduleId as string, params),
         (prevData: any) => {
           if (!prevData) return prevData;
-          if (selectedGroup) {
+          if (displayFilters.group_by) {
             const filteredData: any = {};
             for (const key in prevData) {
               filteredData[key] = prevData[key].filter((item: any) => item.id !== issueId);
@@ -427,7 +426,7 @@ export const IssuesView: React.FC<Props> = ({
           console.log(e);
         });
     },
-    [workspaceSlug, projectId, moduleId, params, selectedGroup, setToastAlert]
+    [displayFilters.group_by, workspaceSlug, projectId, moduleId, params, setToastAlert]
   );
 
   const nullFilters = Object.keys(filters).filter(
@@ -481,7 +480,6 @@ export const IssuesView: React.FC<Props> = ({
                   state: null,
                   start_date: null,
                   target_date: null,
-                  type: null,
                 })
               }
             />
@@ -513,10 +511,10 @@ export const IssuesView: React.FC<Props> = ({
         addIssueToGroup={addIssueToGroup}
         disableUserActions={disableUserActions}
         dragDisabled={
-          selectedGroup === "created_by" ||
-          selectedGroup === "labels" ||
-          selectedGroup === "state_detail.group" ||
-          selectedGroup === "assignees"
+          displayFilters.group_by === "created_by" ||
+          displayFilters.group_by === "labels" ||
+          displayFilters.group_by === "state_detail.group" ||
+          displayFilters.group_by === "assignees"
         }
         emptyState={{
           title: cycleId
@@ -554,15 +552,12 @@ export const IssuesView: React.FC<Props> = ({
         trashBox={trashBox}
         setTrashBox={setTrashBox}
         viewProps={{
-          groupByProperty: selectedGroup,
           groupedIssues: groupedByIssues,
+          displayFilters,
           isEmpty,
-          issueView,
           mutateIssues,
-          orderBy,
           params,
           properties,
-          showEmptyGroups,
         }}
       />
     </>

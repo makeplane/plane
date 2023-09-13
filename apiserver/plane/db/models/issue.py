@@ -29,6 +29,7 @@ class IssueManager(models.Manager):
                 | models.Q(issue_inbox__isnull=True)
             )
             .exclude(archived_at__isnull=False)
+            .exclude(is_draft=True)
         )
 
 
@@ -38,6 +39,7 @@ class Issue(ProjectBaseModel):
         ("high", "High"),
         ("medium", "Medium"),
         ("low", "Low"),
+        ("none", "None")
     )
     parent = models.ForeignKey(
         "self",
@@ -64,8 +66,7 @@ class Issue(ProjectBaseModel):
         max_length=30,
         choices=PRIORITY_CHOICES,
         verbose_name="Issue Priority",
-        null=True,
-        blank=True,
+        default="none",
     )
     start_date = models.DateField(null=True, blank=True)
     target_date = models.DateField(null=True, blank=True)
@@ -83,6 +84,7 @@ class Issue(ProjectBaseModel):
     sort_order = models.FloatField(default=65535)
     completed_at = models.DateTimeField(null=True)
     archived_at = models.DateField(null=True)
+    is_draft = models.BooleanField(default=False)
 
     objects = models.Manager()
     issue_objects = IssueManager()
