@@ -17,5 +17,6 @@ module.exports = {
     "arrow-body-style": ["error", "as-needed"],
     "react/self-closing-comp": ["error", { component: true, html: true }],
     "@next/next/no-img-element": "off",
+    "@typescript-eslint/no-unused-vars": ["warn"],
   },
 };
