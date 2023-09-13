@@ -19,9 +19,9 @@ export const ToggleSwitch: React.FC<Props> = (props) => {
       onChange={onChange}
       className={`relative flex-shrink-0 inline-flex ${
         size === "sm" ? "h-4 w-6" : size === "md" ? "h-5 w-8" : "h-6 w-10"
-      } flex-shrink-0 cursor-pointer rounded-full border border-custom-border-200 transition-colors duration-200 ease-in-out focus:outline-none bg-gray-700 ${
-        className || ""
-      }`}
+      } flex-shrink-0 cursor-pointer rounded-full border border-custom-border-200 transition-colors duration-200 ease-in-out focus:outline-none ${
+        value ? "bg-custom-primary-100" : "bg-gray-700"
+      } ${className || ""}`}
     >
       <span className="sr-only">{label}</span>
       <span
