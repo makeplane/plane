@@ -92,7 +92,7 @@ export const SingleIntegration: React.FC<Props> = ({ integration }) => {
   return (
     <>
       {integration && (
-        <div className="flex items-center justify-between gap-2 border-b border-custom-border-200 bg-custom-background-100 p-5">
+        <div className="flex items-center justify-between gap-2 border-b border-custom-border-200 bg-custom-background-100 px-4 py-6">
           <div className="flex items-start gap-4">
             <div className="h-10 w-10 flex-shrink-0">
               <Image

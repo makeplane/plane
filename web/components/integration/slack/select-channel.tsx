@@ -83,7 +83,7 @@ export const SelectChannel: React.FC<Props> = ({ integration }) => {
       {projectIntegration ? (
         <button
           type="button"
-          className={`relative inline-flex h-5 w-8 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none bg-gray-700`}
+          className={`relative inline-flex h-4 w-6 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none bg-gray-700`}
           role="switch"
           aria-checked
           onClick={() => {
@@ -92,8 +92,8 @@ export const SelectChannel: React.FC<Props> = ({ integration }) => {
         >
           <span
             aria-hidden="true"
-            className={`self-center inline-block h-3 w-3 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-              slackChannelAvailabilityToggle ? "translate-x-4" : "translate-x-0"
+            className={`self-center inline-block h-2 w-2 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+              slackChannelAvailabilityToggle ? "translate-x-3" : "translate-x-0"
             }`}
           />
         </button>
