@@ -30,6 +30,16 @@ def create_issue_relation(apps, schema_editor):
         capture_exception(e)
 
 
+def update_issue_priority_choice(apps, schema_editor):
+    IssueModel = apps.get_model("db", "Issue")
+    updated_issues = []
+    for obj in IssueModel.objects.all():
+        if obj.priority is None:
+            obj.priority = "none"
+        updated_issues.append(obj)
+    IssueModel.objects.bulk_update(updated_issues, ["priority"], batch_size=100)
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -59,5 +69,16 @@ class Migration(migrations.Migration):
                 'unique_together': {('issue', 'related_issue')},
             },
         ),
+        migrations.AddField(
+            model_name='issue',
+            name='is_draft',
+            field=models.BooleanField(default=False),
+        ),
+        migrations.AlterField(
+            model_name='issue',
+            name='priority',
+            field=models.CharField(choices=[('urgent', 'Urgent'), ('high', 'High'), ('medium', 'Medium'), ('low', 'Low'), ('none', 'None')], default='none', max_length=30, verbose_name='Issue Priority'),
+        ),
         migrations.RunPython(create_issue_relation),
+        migrations.RunPython(update_issue_priority_choice),
     ]
