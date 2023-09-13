@@ -453,9 +453,16 @@ class UserWorkSpaceIssues(BaseAPIView):
 
             ## Grouping the results
             group_by = request.GET.get("group_by", False)
+            sub_group_by = request.GET.get("sub_group_by", False)
+            if sub_group_by and sub_group_by == group_by:
+                return Response(
+                    {"error": "Group by and sub group by cannot be same"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            
             if group_by:
                 return Response(
-                    group_results(issues, group_by), status=status.HTTP_200_OK
+                    group_results(issues, group_by, sub_group_by), status=status.HTTP_200_OK
                 )
 
             return Response(issues, status=status.HTTP_200_OK)
