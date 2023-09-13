@@ -86,6 +86,7 @@ from .issue import (
     IssueReactionPublicViewSet,
     CommentReactionPublicViewSet,
     IssueVotePublicViewSet,
+    IssueRelationViewSet,
     IssueRetrievePublicEndpoint,
     ProjectIssuesPublicEndpoint,
     IssueDraftViewSet,
@@ -168,6 +169,4 @@ from .analytic import (
 
 from .notification import NotificationViewSet, UnreadNotificationEndpoint, MarkAllReadNotificationViewSet
 
-from .exporter import (
-    ExportIssuesEndpoint,
-)
+from .exporter import ExportIssuesEndpoint

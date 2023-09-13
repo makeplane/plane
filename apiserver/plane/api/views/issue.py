@@ -24,6 +24,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 from django.db import IntegrityError
 from django.conf import settings
+from django.db import IntegrityError
 
 # Third Party imports
 from rest_framework.response import Response
@@ -51,6 +52,7 @@ from plane.api.serializers import (
     IssueReactionSerializer,
     CommentReactionSerializer,
     IssueVoteSerializer,
+    IssueRelationSerializer,
     IssuePublicSerializer,
 )
 from plane.api.permissions import (
@@ -76,6 +78,7 @@ from plane.db.models import (
     CommentReaction,
     ProjectDeployBoard,
     IssueVote,
+    IssueRelation,
     ProjectPublicMember,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
@@ -2040,6 +2043,98 @@ class IssueVotePublicViewSet(BaseViewSet):
             )
 
 
+class IssueRelationViewSet(BaseViewSet):
+    serializer_class = IssueRelationSerializer
+    model = IssueRelation
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    def perform_destroy(self, instance):
+        current_instance = (
+            self.get_queryset().filter(pk=self.kwargs.get("pk", None)).first()
+        )
+        if current_instance is not None:
+            issue_activity.delay(
+                type="issue_relation.activity.deleted",
+                requested_data=json.dumps({"related_list": None}),
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("issue_id", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    IssueRelationSerializer(current_instance).data,
+                    cls=DjangoJSONEncoder,
+                ),
+            )
+        return super().perform_destroy(instance)
+
+    def create(self, request, slug, project_id, issue_id):
+        try:
+            related_list = request.data.get("related_list", [])
+            project = Project.objects.get(pk=project_id)
+
+            issueRelation = IssueRelation.objects.bulk_create(
+                [
+                    IssueRelation(
+                        issue_id=related_issue["issue"],
+                        related_issue_id=related_issue["related_issue"],
+                        relation_type=related_issue["relation_type"],
+                        project_id=project_id,
+                        workspace_id=project.workspace_id,
+                        created_by=request.user,
+                        updated_by=request.user,
+                    )
+                    for related_issue in related_list
+                ],
+                batch_size=10,
+                ignore_conflicts=True,
+            )
+
+            issue_activity.delay(
+                type="issue_relation.activity.created",
+                requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+                actor_id=str(request.user.id),
+                issue_id=str(issue_id),
+                project_id=str(project_id),
+                current_instance=None,
+            )
+
+            return Response(
+                IssueRelationSerializer(issueRelation, many=True).data,
+                status=status.HTTP_201_CREATED,
+            )
+        except IntegrityError as e:
+            if "already exists" in str(e):
+                return Response(
+                    {"name": "The issue is already taken"},
+                    status=status.HTTP_410_GONE,
+                )
+            else:
+                capture_exception(e)
+                return Response(
+                    {"error": "Something went wrong please try again later"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def get_queryset(self):
+        return self.filter_queryset(
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(issue_id=self.kwargs.get("issue_id"))
+            .filter(project__project_projectmember__member=self.request.user)
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("issue")
+            .distinct()
+        )
 class IssueRetrievePublicEndpoint(BaseAPIView):
     permission_classes = [
         AllowAny,

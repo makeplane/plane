@@ -180,6 +180,37 @@ class IssueBlocker(ProjectBaseModel):
         return f"{self.block.name} {self.blocked_by.name}"
 
 
+class IssueRelation(ProjectBaseModel):
+    RELATION_CHOICES = (
+        ("duplicate", "Duplicate"),
+        ("relates_to", "Relates To"),
+        ("blocked_by", "Blocked By"),
+    )
+        
+    issue = models.ForeignKey(
+        Issue, related_name="issue_relation", on_delete=models.CASCADE
+    )
+    related_issue = models.ForeignKey(
+        Issue, related_name="issue_related", on_delete=models.CASCADE
+    )
+    relation_type = models.CharField(
+        max_length=20,
+        choices=RELATION_CHOICES,
+        verbose_name="Issue Relation Type",
+        default="blocked_by",
+    )
+
+    class Meta:
+        unique_together = ["issue", "related_issue"]
+        verbose_name = "Issue Relation"
+        verbose_name_plural = "Issue Relations"
+        db_table = "issue_relations"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.issue.name} {self.related_issue.name}"    
+
+
 class IssueAssignee(ProjectBaseModel):
     issue = models.ForeignKey(
         Issue, on_delete=models.CASCADE, related_name="issue_assignee"

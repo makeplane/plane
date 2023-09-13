@@ -90,6 +90,7 @@ from plane.api.views import (
     IssueSubscriberViewSet,
     IssueCommentPublicViewSet,
     IssueReactionViewSet,
+    IssueRelationViewSet,
     CommentReactionViewSet,
     IssueDraftViewSet,
     ## End Issues
@@ -1011,6 +1012,26 @@ urlpatterns = [
         name="project-issue-archive",
     ),
     ## End Issue Archives
+    ## Issue Relation
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-relation/",
+        IssueRelationViewSet.as_view(
+            {
+                "post": "create",
+            }
+        ),
+        name="issue-relation",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-relation/<uuid:pk>/",
+        IssueRelationViewSet.as_view(
+            {
+                "delete": "destroy",
+            }
+        ),
+        name="issue-relation",
+    ),
+    ## End Issue Relation
     ## Issue Drafts
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-drafts/",
