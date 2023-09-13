@@ -7,16 +7,14 @@ import { UseFormWatch } from "react-hook-form";
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
 // icons
-import { LocateFixed } from "lucide-react";
+import { X } from "lucide-react";
+import { BlockerIcon, RelatedIcon } from "components/icons";
 // components
 import { ExistingIssuesListModal } from "components/core";
 // services
 import issuesService from "services/issues.service";
-// icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import { BlockerIcon } from "components/icons";
 // types
-import { BlockeIssueDetail, IIssue, ISearchIssueResponse, UserAuth } from "types";
+import { BlockeIssueDetail, IIssue, ISearchIssueResponse } from "types";
 
 type Props = {
   issueId?: string;
@@ -108,7 +106,7 @@ export const SidebarRelatesSelect: React.FC<Props> = (props) => {
       />
       <div className="flex flex-wrap items-start py-2">
         <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-          <LocateFixed className="h-4 w-4 flex-shrink-0" />
+          <RelatedIcon className="h-4 w-4 flex-shrink-0" />
           <p>Relates to</p>
         </div>
         <div className="space-y-1 sm:basis-1/2">
@@ -151,7 +149,7 @@ export const SidebarRelatesSelect: React.FC<Props> = (props) => {
                         );
                       }}
                     >
-                      <XMarkIcon className="h-2 w-2" />
+                      <X className="h-2 w-2" />
                     </button>
                   </div>
                 ))
