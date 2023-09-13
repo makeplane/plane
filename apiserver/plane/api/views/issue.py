@@ -52,6 +52,7 @@ from plane.api.serializers import (
     CommentReactionSerializer,
     IssueVoteSerializer,
     IssuePublicSerializer,
+    PropertyTransactionSerializer,
 )
 from plane.api.permissions import (
     WorkspaceEntityPermission,
@@ -509,12 +510,13 @@ class IssueActivityEndpoint(BaseAPIView):
                     )
                 )
             )
-            issue_property_transactions = PropertyTransaction.objects.filter(entity_uuid=issue_id, entity="issue")
+            issue_property_transactions = PropertyTransaction.objects.filter(entity_uuid=issue_id, entity="issue").select_related("actor")
             issue_activities = IssueActivitySerializer(issue_activities, many=True).data
             issue_comments = IssueCommentSerializer(issue_comments, many=True).data
+            issue_prop_transactions = PropertyTransactionSerializer(issue_property_transactions, many=True).data
 
             result_list = sorted(
-                chain(issue_activities, issue_comments),
+                chain(issue_activities, issue_comments, issue_prop_transactions),
                 key=lambda instance: instance["created_at"],
             )
 

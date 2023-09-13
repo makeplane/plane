@@ -103,4 +103,5 @@ from .issue_property import (
     PropertyReadSerializer,
     IssuePropertyValueReadSerializer,
     PropertyLiteSerializer,
+    PropertyTransactionSerializer,
 )

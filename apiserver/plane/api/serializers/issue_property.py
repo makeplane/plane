@@ -181,7 +181,7 @@ class PropertyReadSerializer(BaseSerializer):
             return None
 
 
-class PropertyTransactionSerialzier(BaseSerializer):
+class PropertyTransactionSerializer(BaseSerializer):
     actor_detail = UserLiteSerializer(read_only=True, source="actor")
 
     class Meta:

@@ -117,13 +117,18 @@ class PropertyViewSet(BaseViewSet):
     def retrieve(self, request, slug, pk):
         try:
             project_id = request.GET.get("project", False)
-            issue_properties = self.get_queryset().get(workspace__slug=slug, pk=pk)
+            issue_properties = self.get_queryset().filter(workspace__slug=slug, pk=pk)
 
             if project_id:
                 issue_properties = issue_properties.filter(project_id=project_id)
 
-            serializer = PropertySerializer(issue_properties)
+            serializer = PropertySerializer(issue_properties.first())
             return Response(serializer.data, status=status.HTTP_200_OK)
+        except Property.DoesNotExist:
+            return Response(
+                {"error": "Property does not exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except Exception as e:
             capture_exception(e)
             return Response(
