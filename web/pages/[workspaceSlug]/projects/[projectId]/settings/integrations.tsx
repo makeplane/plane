@@ -10,7 +10,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 import IntegrationService from "services/integration";
 import projectService from "services/project.service";
 // components
-import { SettingsHeader, SingleIntegration } from "components/project";
+import { SettingsSidebar, SingleIntegration } from "components/project";
 // ui
 import { EmptyState, IntegrationAndImportExportBanner, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -58,13 +58,15 @@ const ProjectIntegrations: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      <div className="h-full flex flex-col p-8 overflow-hidden">
-        <SettingsHeader />
+      <div className="flex flex-row gap-2 h-full overflow-hidden">
+        <div className="w-80 py-8">
+          <SettingsSidebar />
+        </div>
         {workspaceIntegrations ? (
           workspaceIntegrations.length > 0 ? (
-            <section className="space-y-8 overflow-y-auto">
+            <section className="pr-9 py-8 overflow-y-auto w-full">
               <IntegrationAndImportExportBanner bannerName="Integrations" />
-              <div className="space-y-5">
+              <div>
                 {workspaceIntegrations.map((integration) => (
                   <SingleIntegration
                     key={integration.integration_detail.id}

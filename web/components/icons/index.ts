@@ -84,3 +84,4 @@ export * from "./clock-icon";
 export * from "./bell-icon";
 export * from "./single-comment-icon";
 export * from "./related-icon";
+export * from "./module-icon";

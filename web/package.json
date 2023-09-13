@@ -57,7 +57,7 @@
     "js-cookie": "^3.0.1",
     "lodash.debounce": "^4.0.8",
     "lowlight": "^2.9.0",
-    "lucide-react": "^0.263.1",
+    "lucide-react": "^0.269.0",
     "mobx": "^6.10.0",
     "mobx-react-lite": "^4.0.3",
     "next": "12.3.2",

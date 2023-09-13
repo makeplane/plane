@@ -19,7 +19,7 @@ import {
   SingleLabel,
   SingleLabelGroup,
 } from "components/labels";
-import { SettingsHeader } from "components/project";
+import { SettingsSidebar } from "components/project";
 // ui
 import { EmptyState, Loader, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -113,20 +113,23 @@ const LabelsSettings: NextPage = () => {
           </Breadcrumbs>
         }
       >
-        <div className="p-8">
-          <SettingsHeader />
-          <section className="grid grid-cols-12 gap-10">
-            <div className="col-span-12 sm:col-span-5">
-              <h3 className="text-2xl font-semibold">Labels</h3>
-              <p className="text-custom-text-200">Manage the labels of this project.</p>
-              <PrimaryButton onClick={newLabel} size="sm" className="mt-4">
-                <span className="flex items-center gap-2">
-                  <PlusIcon className="h-4 w-4" />
-                  New label
-                </span>
+        <div className="flex flex-row gap-2">
+          <div className="w-80 py-8">
+            <SettingsSidebar />
+          </div>
+          <section className="pr-9 py-8 gap-10 w-full">
+            <div className="flex items-center justify-between pt-2 pb-3.5 border-b border-custom-border-200">
+              <h3 className="text-xl font-medium">Labels</h3>
+
+              <PrimaryButton
+                onClick={newLabel}
+                size="sm"
+                className="flex items-center justify-center"
+              >
+                Add label
               </PrimaryButton>
             </div>
-            <div className="col-span-12 space-y-5 sm:col-span-7">
+            <div className="space-y-3 py-6">
               {labelForm && (
                 <CreateUpdateLabelInline
                   labelForm={labelForm}

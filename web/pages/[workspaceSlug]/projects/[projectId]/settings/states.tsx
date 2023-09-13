@@ -18,7 +18,7 @@ import {
   SingleState,
   StateGroup,
 } from "components/states";
-import { SettingsHeader } from "components/project";
+import { SettingsSidebar } from "components/project";
 // ui
 import { Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -73,31 +73,33 @@ const StatesSettings: NextPage = () => {
           </Breadcrumbs>
         }
       >
-        <div className="p-8">
-          <SettingsHeader />
-          <div className="grid grid-cols-12 gap-10">
-            <div className="col-span-12 sm:col-span-5">
-              <h3 className="text-2xl font-semibold text-custom-text-100">States</h3>
-              <p className="text-custom-text-200">Manage the states of this project.</p>
+        <div className="flex flex-row gap-2">
+          <div className="w-80 py-8">
+            <SettingsSidebar />
+          </div>
+          <div className="pr-9 py-8 gap-10 w-full">
+            <div className="flex items-center py-3.5 border-b border-custom-border-200">
+              <h3 className="text-xl font-medium">States</h3>
             </div>
-            <div className="col-span-12 space-y-8 sm:col-span-7">
+            <div className="space-y-8 py-6">
               {states && projectDetails && orderedStateGroups ? (
                 Object.keys(orderedStateGroups).map((key) => {
                   if (orderedStateGroups[key].length !== 0)
                     return (
-                      <div key={key}>
-                        <div className="mb-2 flex w-full justify-between">
-                          <h4 className="text-custom-text-200 capitalize">{key}</h4>
+                      <div key={key} className="flex flex-col gap-2">
+                        <div className="flex w-full justify-between">
+                          <h4 className="text-base font-medium text-custom-text-200 capitalize">
+                            {key}
+                          </h4>
                           <button
                             type="button"
-                            className="flex items-center gap-2 text-custom-primary-100 hover:text-custom-primary-200 outline-none"
+                            className="flex items-center gap-2 text-custom-primary-100 px-2 hover:text-custom-primary-200 outline-none"
                             onClick={() => setActiveGroup(key as keyof StateGroup)}
                           >
                             <PlusIcon className="h-4 w-4" />
-                            Add
                           </button>
                         </div>
-                        <div className="divide-y divide-custom-border-200 rounded-[10px] border border-custom-border-200">
+                        <div className="flex flex-col gap-2 rounded">
                           {key === activeGroup && (
                             <CreateUpdateStateInline
                               groupLength={orderedStateGroups[key].length}
