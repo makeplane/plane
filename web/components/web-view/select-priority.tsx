@@ -39,7 +39,7 @@ export const PrioritySelect: React.FC<Props> = (props) => {
         <WebViewModal.Options
           options={
             PRIORITIES?.map((priority) => ({
-              label: priority ? capitalizeFirstLetter(priority) : "None",
+              label: capitalizeFirstLetter(priority),
               value: priority,
               checked: priority === value,
               onClick: () => {
