@@ -1679,7 +1679,7 @@ urlpatterns = [
         name="properties",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/properties/",
+        "workspaces/<str:slug>/entity-properties/",
         PropertyViewSet.as_view(
             {
                 "get": "list_objects",

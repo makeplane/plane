@@ -3,50 +3,72 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from plane.db.models import User, Issue, Cycle, Module, Page, IssueView, Property, IssuePropertyValue
+from plane.api.serializers import UserLiteSerializer
+from plane.db.models import (
+    User,
+    Issue,
+    Cycle,
+    Module,
+    Page,
+    IssueView,
+    Property,
+    IssuePropertyValue,
+    PropertyTransaction,
+)
 
 
 class UserSerializer(BaseSerializer):
-
     class Meta:
         model = User
-        fields = ["id", "display_name", "avatar",]
+        fields = [
+            "id",
+            "display_name",
+            "avatar",
+        ]
         read_only_fields = fields
 
-class CycleSerializer(BaseSerializer):
 
+class CycleSerializer(BaseSerializer):
     class Meta:
         model = Cycle
-        fields = ["id", "name",]
+        fields = [
+            "id",
+            "name",
+        ]
         read_only_fields = fields
 
 
 class ModuleSerializer(BaseSerializer):
-
     class Meta:
         model = Module
-        fields = ["id", "name",]
+        fields = [
+            "id",
+            "name",
+        ]
         read_only_fields = fields
 
 
 class PageSerializer(BaseSerializer):
-
     class Meta:
         model = Page
-        fields = ["id", "name",]
+        fields = [
+            "id",
+            "name",
+        ]
         read_only_fields = fields
 
 
 class IssueViewSerializer(BaseSerializer):
-
     class Meta:
         model = IssueView
-        fields = ["id", "name",]
+        fields = [
+            "id",
+            "name",
+        ]
         read_only_fields = fields
 
 
 class PropertyLiteSerializer(BaseSerializer):
-
     class Meta:
         model = Property
         fields = "__all__"
@@ -54,6 +76,7 @@ class PropertyLiteSerializer(BaseSerializer):
             "workspace",
             "project",
         ]
+
 
 class PropertySerializer(BaseSerializer):
     children = serializers.SerializerMethodField()
@@ -91,7 +114,10 @@ class IssuePropertyValueSerializer(BaseSerializer):
 class IssuePropertyValueReadSerializer(BaseSerializer):
     class Meta:
         model = IssuePropertyValue
-        fields = ["value", "type",]
+        fields = [
+            "value",
+            "type",
+        ]
         read_only_fields = fields
 
 
@@ -130,7 +156,7 @@ class PropertyReadSerializer(BaseSerializer):
 
         SERIALIZER_MAPPER = {
             "User": UserSerializer,
-            "Cycle": CycleSerializer, 
+            "Cycle": CycleSerializer,
             "Module": ModuleSerializer,
             "Page": PageSerializer,
             "View": IssueViewSerializer,
@@ -141,7 +167,10 @@ class PropertyReadSerializer(BaseSerializer):
             model = MODEL_MAPPER.get(obj.unit, None)
             if model is not None:
                 serializer = SERIALIZER_MAPPER.get(obj.unit, None)
-                return serializer(model.objects.filter(pk__in=[(p.value) for p in prop_values]), many=True).data
+                return serializer(
+                    model.objects.filter(pk__in=[(p.value) for p in prop_values]),
+                    many=True,
+                ).data
             else:
                 return None
         else:
@@ -150,3 +179,11 @@ class PropertyReadSerializer(BaseSerializer):
                 serializer = IssuePropertyValueReadSerializer(prop_values, many=True)
                 return serializer.data
             return None
+
+
+class PropertyTransactionSerialzier(BaseSerializer):
+    actor_detail = UserLiteSerializer(read_only=True, source="actor")
+
+    class Meta:
+        model = PropertyTransaction
+        fields = "__all__"

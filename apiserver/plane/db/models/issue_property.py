@@ -1,5 +1,6 @@
 # Django imports
 from django.db import models
+from django.conf import settings
 
 # Module imports
 from plane.db.mixins import AuditModel
@@ -69,9 +70,9 @@ class Property(BaseModel):
     def save(self, *args, **kwargs):
         self.name = convert_string(self.display_name)
         if self._state.adding:
-            largest_order = Property.objects.filter(
-                workspace=self.workspace
-            ).aggregate(largest=models.Min("sort_order"))["largest"]
+            largest_order = Property.objects.filter(workspace=self.workspace).aggregate(
+                largest=models.Min("sort_order")
+            )["largest"]
             if largest_order is not None:
                 self.sort_order = largest_order + 10000
 
@@ -113,6 +114,12 @@ class PropertyTransaction(AuditModel):
     project = models.ForeignKey(
         "db.Project", on_delete=models.CASCADE, related_name="property_transactions"
     )
+    actor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="property_transactions",
+        null=True,
+    )
     property = models.ForeignKey(
         "db.Property",
         on_delete=models.CASCADE,
@@ -137,4 +144,3 @@ class PropertyTransaction(AuditModel):
 
     def __str__(self):
         return f"<{str(self.issue_property.type)} {str(self.from_value)}>"
-

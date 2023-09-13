@@ -77,6 +77,7 @@ from plane.db.models import (
     ProjectDeployBoard,
     IssueVote,
     ProjectPublicMember,
+    PropertyTransaction,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -508,6 +509,7 @@ class IssueActivityEndpoint(BaseAPIView):
                     )
                 )
             )
+            issue_property_transactions = PropertyTransaction.objects.filter(entity_uuid=issue_id, entity="issue")
             issue_activities = IssueActivitySerializer(issue_activities, many=True).data
             issue_comments = IssueCommentSerializer(issue_comments, many=True).data
 

@@ -94,14 +94,17 @@ class PropertyViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def list_objects(self, request, slug, project_id):
+    def list_objects(self, request, slug):
         try:
-            custom_objects = Property.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
+            project_id = request.GET.get("project", False)
+            custom_objects = self.get_queryset().filter(
                 type="entity",
                 parent__isnull=True,
             )
+
+            if project_id:
+                custom_objects = custom_objects.filter(project_id=project_id)
+
             serializer = PropertyLiteSerializer(custom_objects, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
@@ -191,6 +194,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
                                             datetime.datetime.timestamp(timezone.now())
                                             * 1000
                                         ),
+                                        actor=request.user,
                                     )
                                 )
                                 issue_prop_value.value = prop_value
@@ -253,6 +257,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
                                         datetime.datetime.timestamp(timezone.now())
                                         * 1000
                                     ),
+                                    actor=request.user,
                                 )
                             )
                             issue_prop_values[0].value = prop_values
@@ -307,12 +312,13 @@ class IssuePropertyValueViewSet(BaseViewSet):
                         id=uuid.uuid4(),
                         workspace_id=workspace_id,
                         project_id=project_id,
-                        property_id=new_value.issue_property_id,
+                        property_id=new_value.property_id,
                         property_value=new_value,
                         to_value=new_value.value,
                         entity="issue",
                         entity_uuid=issue_id,
                         epoch=(datetime.datetime.timestamp(timezone.now()) * 1000),
+                        actor=request.user,
                     )
                 )
 
