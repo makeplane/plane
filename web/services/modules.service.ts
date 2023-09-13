@@ -1,9 +1,9 @@
 // services
 import APIService from "services/api.service";
 import trackEventServices from "./track-event.service";
-
 // types
-import type { IModule, IIssue, ICurrentUserResponse } from "types";
+import type { IIssueViewOptions, IModule, IIssue, ICurrentUserResponse } from "types";
+import { API_BASE_URL } from "helpers/common.helper";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -12,7 +12,7 @@ const trackEvent =
 
 class ProjectIssuesServices extends APIService {
   constructor() {
-    super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
+    super(API_BASE_URL);
   }
 
   async getModules(workspaceSlug: string, projectId: string): Promise<IModule[]> {
