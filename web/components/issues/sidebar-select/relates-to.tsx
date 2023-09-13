@@ -1,21 +1,20 @@
 import React, { useState } from "react";
 
 import { useRouter } from "next/router";
-
 // react-hook-form
 import { UseFormWatch } from "react-hook-form";
 // hooks
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
+// icons
+import { X } from "lucide-react";
+import { BlockerIcon, RelatedIcon } from "components/icons";
 // components
 import { ExistingIssuesListModal } from "components/core";
 // services
 import issuesService from "services/issues.service";
-// icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import { BlockerIcon } from "components/icons";
 // types
-import { BlockeIssueDetail, IIssue, ISearchIssueResponse, UserAuth } from "types";
+import { BlockeIssueDetail, IIssue, ISearchIssueResponse } from "types";
 
 type Props = {
   issueId?: string;
@@ -24,13 +23,10 @@ type Props = {
   disabled?: boolean;
 };
 
-export const SidebarBlockerSelect: React.FC<Props> = ({
-  issueId,
-  submitChanges,
-  watch,
-  disabled = false,
-}) => {
-  const [isBlockerModalOpen, setIsBlockerModalOpen] = useState(false);
+export const SidebarRelatesSelect: React.FC<Props> = (props) => {
+  const { issueId, submitChanges, watch, disabled = false } = props;
+
+  const [isRelatesToModalOpen, setIsRelatesToModalOpen] = useState(false);
 
   const { user } = useUser();
   const { setToastAlert } = useToast();
@@ -39,11 +35,8 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
   const { workspaceSlug, projectId } = router.query;
 
   const handleClose = () => {
-    setIsBlockerModalOpen(false);
+    setIsRelatesToModalOpen(false);
   };
-
-  const blockerIssue =
-    watch("issue_relations")?.filter((i) => i.relation_type === "blocked_by") || [];
 
   const onSubmit = async (data: ISearchIssueResponse[]) => {
     if (data.length === 0) {
@@ -75,71 +68,74 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
       .createIssueRelation(workspaceSlug as string, projectId as string, issueId as string, user, {
         related_list: [
           ...selectedIssues.map((issue) => ({
-            issue: issue.blocker_issue_detail.id,
-            relation_type: "blocked_by" as const,
-            related_issue: issueId as string,
+            issue: issueId as string,
             related_issue_detail: issue.blocker_issue_detail,
+            related_issue: issue.blocker_issue_detail.id,
+            relation_type: "relates_to" as const,
           })),
         ],
       })
       .then((response) => {
         submitChanges({
-          issue_relations: [
-            ...blockerIssue,
-            ...(response ?? []).map((i: any) => ({
-              id: i.id,
-              relation_type: i.relation_type,
-              issue_detail: i.related_issue_detail,
-              issue: i.related_issue,
-            })),
-          ],
+          related_issues: [...watch("related_issues"), ...(response ?? [])],
         });
       });
 
     handleClose();
   };
 
+  const relatedToIssueRelation = [
+    ...(watch("related_issues")?.filter((i) => i.relation_type === "relates_to") ?? []),
+    ...(watch("issue_relations") ?? [])
+      ?.filter((i) => i.relation_type === "relates_to")
+      .map((i) => ({
+        ...i,
+        related_issue_detail: i.issue_detail,
+        related_issue: i.issue_detail?.id,
+      })),
+  ];
+
   return (
     <>
       <ExistingIssuesListModal
-        isOpen={isBlockerModalOpen}
-        handleClose={() => setIsBlockerModalOpen(false)}
+        isOpen={isRelatesToModalOpen}
+        handleClose={() => setIsRelatesToModalOpen(false)}
         searchParams={{ issue_relation: true, issue_id: issueId }}
         handleOnSubmit={onSubmit}
         workspaceLevelToggle
       />
       <div className="flex flex-wrap items-start py-2">
         <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-          <BlockerIcon height={16} width={16} />
-          <p>Blocking</p>
+          <RelatedIcon className="h-4 w-4 flex-shrink-0" />
+          <p>Relates to</p>
         </div>
         <div className="space-y-1 sm:basis-1/2">
           <div className="flex flex-wrap gap-1">
-            {blockerIssue && blockerIssue.length > 0
-              ? blockerIssue.map((relation) => (
+            {relatedToIssueRelation && relatedToIssueRelation.length > 0
+              ? relatedToIssueRelation.map((relation) => (
                   <div
-                    key={relation.issue_detail?.id}
+                    key={relation.related_issue_detail?.id}
                     className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-1.5 py-0.5 text-xs text-yellow-500 duration-300 hover:border-yellow-500/20 hover:bg-yellow-500/20"
                   >
                     <a
-                      href={`/${workspaceSlug}/projects/${relation.issue_detail?.project_detail.id}/issues/${relation.issue_detail?.id}`}
+                      href={`/${workspaceSlug}/projects/${relation.related_issue_detail?.project_detail.id}/issues/${relation.related_issue_detail?.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-1"
                     >
                       <BlockerIcon height={10} width={10} />
-                      {`${relation.issue_detail?.project_detail.identifier}-${relation.issue_detail?.sequence_id}`}
+                      {`${relation.related_issue_detail?.project_detail.identifier}-${relation.related_issue_detail?.sequence_id}`}
                     </a>
                     <button
                       type="button"
                       className="opacity-0 duration-300 group-hover:opacity-100"
                       onClick={() => {
-                        const updatedBlockers = blockerIssue.filter(
-                          (i) => i.issue_detail?.id !== relation.issue_detail?.id
+                        const updatedBlockers = relatedToIssueRelation.filter(
+                          (i) => i.related_issue_detail?.id !== relation.related_issue_detail?.id
                         );
 
                         submitChanges({
-                          issue_relations: updatedBlockers,
+                          related_issues: updatedBlockers,
                         });
 
                         if (!user) return;
@@ -147,13 +143,13 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
                         issuesService.deleteIssueRelation(
                           workspaceSlug as string,
                           projectId as string,
-                          relation.issue_detail?.id as string,
+                          issueId as string,
                           relation.id,
                           user
                         );
                       }}
                     >
-                      <XMarkIcon className="h-2 w-2" />
+                      <X className="h-2 w-2" />
                     </button>
                   </div>
                 ))
@@ -164,7 +160,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
             className={`bg-custom-background-80 text-xs text-custom-text-200 rounded px-2.5 py-0.5 ${
               disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
             }`}
-            onClick={() => setIsBlockerModalOpen(true)}
+            onClick={() => setIsRelatesToModalOpen(true)}
             disabled={disabled}
           >
             Select issues

@@ -1,6 +1,6 @@
 import APIService from "services/api.service";
 import trackEventServices from "services/track-event.service";
-
+import { API_BASE_URL } from "helpers/common.helper";
 // types
 import { IJiraMetadata, IJiraResponse, IJiraImporterForm, ICurrentUserResponse } from "types";
 
@@ -11,7 +11,7 @@ const trackEvent =
 
 class JiraImportedService extends APIService {
   constructor() {
-    super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
+    super(API_BASE_URL);
   }
 
   async getJiraProjectInfo(workspaceSlug: string, params: IJiraMetadata): Promise<IJiraResponse> {

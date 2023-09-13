@@ -26,6 +26,7 @@ type Props = {
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
   handleTrashBox: (isDragging: boolean) => void;
   openIssuesListModal?: (() => void) | null;
+  handleMyIssueOpen?: (issue: IIssue) => void;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
@@ -42,6 +43,7 @@ export const SingleBoard: React.FC<Props> = ({
   handleIssueAction,
   handleTrashBox,
   openIssuesListModal,
+  handleMyIssueOpen,
   removeIssue,
   user,
   userAuth,
@@ -50,7 +52,7 @@ export const SingleBoard: React.FC<Props> = ({
   // collapse/expand
   const [isCollapsed, setIsCollapsed] = useState(true);
 
-  const { displayFilters, groupedIssues, properties } = viewProps;
+  const { displayFilters, groupedIssues } = viewProps;
 
   const router = useRouter();
   const { cycleId, moduleId } = router.query;
@@ -135,6 +137,7 @@ export const SingleBoard: React.FC<Props> = ({
                         makeIssueCopy={() => handleIssueAction(issue, "copy")}
                         handleDeleteIssue={() => handleIssueAction(issue, "delete")}
                         handleTrashBox={handleTrashBox}
+                        handleMyIssueOpen={handleMyIssueOpen}
                         removeIssue={() => {
                           if (removeIssue && issue.bridge_id)
                             removeIssue(issue.bridge_id, issue.id);

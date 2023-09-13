@@ -66,7 +66,7 @@ export const BlockedSelect: React.FC<Props> = (props) => {
       <ExistingIssuesListModal
         isOpen={isBlockedModalOpen}
         handleClose={() => setIsBlockedModalOpen(false)}
-        searchParams={{ blocker_blocked_by: true, issue_id: issueId!.toString() }}
+        searchParams={{ issue_relation: true, issue_id: issueId!.toString() }}
         handleOnSubmit={onSubmit}
         workspaceLevelToggle
       />
