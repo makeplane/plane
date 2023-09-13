@@ -78,7 +78,9 @@ const StatesSettings: NextPage = () => {
             <SettingsSidebar />
           </div>
           <div className="pr-9 py-8 gap-10 w-full">
-            <h3 className="text-xl font-medium pb-4 border-b border-custom-border-200">States</h3>
+            <div className="flex items-center py-3.5 border-b border-custom-border-200">
+              <h3 className="text-xl font-medium">States</h3>
+            </div>
             <div className="space-y-8 py-6">
               {states && projectDetails && orderedStateGroups ? (
                 Object.keys(orderedStateGroups).map((key) => {

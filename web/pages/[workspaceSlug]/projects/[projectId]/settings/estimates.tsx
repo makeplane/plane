@@ -130,7 +130,7 @@ const EstimatesSettings: NextPage = () => {
             <SettingsSidebar />
           </div>
           <div className="pr-9 py-8 flex flex-col w-full">
-            <section className="flex items-center justify-between pb-4 border-b border-custom-border-200">
+            <section className="flex items-center justify-between pt-2 pb-3.5 border-b border-custom-border-200">
               <h3 className="text-xl font-medium">Estimates</h3>
               <div className="col-span-12 space-y-5 sm:col-span-7">
                 <div className="flex items-center gap-2">

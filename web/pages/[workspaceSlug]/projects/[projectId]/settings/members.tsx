@@ -278,7 +278,9 @@ const MembersSettings: NextPage = () => {
           <SettingsSidebar />
         </div>
         <section className="pr-9 py-8 w-full">
-          <h4 className="text-xl font-medium py-4 border-b border-custom-border-200">Defaults</h4>
+          <div className="flex items-center py-3.5 border-b border-custom-border-200">
+            <h3 className="text-xl font-medium">Defaults</h3>
+          </div>
           <div className="flex flex-col gap-2 pb-4 w-full">
             <div className="flex items-center py-8 gap-4 w-full">
               <div className="flex flex-col gap-2 w-1/2">
@@ -331,7 +333,7 @@ const MembersSettings: NextPage = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between gap-4 mt-4 pb-4 border-b border-custom-border-200">
+          <div className="flex items-center justify-between gap-4 py-3.5 border-b border-custom-border-200">
             <h4 className="text-xl font-medium border-b border-custom-border-100">Members</h4>
             <PrimaryButton onClick={() => setInviteModal(true)}>Add Member</PrimaryButton>
           </div>
@@ -397,10 +399,16 @@ const MembersSettings: NextPage = () => {
                         <CustomSelect
                           customButton={
                             <button className="flex item-center gap-1">
-                              <span className="flex items-center text-sm font-medium">
+                              <span
+                                className={`flex items-center text-sm font-medium ${
+                                  member.memberId !== user?.id ? "" : "text-custom-sidebar-text-400"
+                                }`}
+                              >
                                 {ROLE[member.role as keyof typeof ROLE]}
                               </span>
-                              <Icon iconName="expand_more" className="text-lg font-medium" />
+                              {member.memberId !== user?.id && (
+                                <Icon iconName="expand_more" className="text-lg font-medium" />
+                              )}
                             </button>
                           }
                           value={member.role}
@@ -466,7 +474,11 @@ const MembersSettings: NextPage = () => {
                           >
                             <span className="flex items-center justify-start gap-2">
                               <XMarkIcon className="h-4 w-4" />
-                              <span>Remove member</span>
+
+                              <span>
+                                {" "}
+                                {member.memberId !== user?.id ? "Remove member" : "Leave project"}
+                              </span>
                             </span>
                           </CustomMenu.MenuItem>
                         </CustomMenu>

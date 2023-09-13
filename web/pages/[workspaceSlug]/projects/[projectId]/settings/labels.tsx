@@ -118,7 +118,7 @@ const LabelsSettings: NextPage = () => {
             <SettingsSidebar />
           </div>
           <section className="pr-9 py-8 gap-10 w-full">
-            <div className="flex items-center justify-between pb-4 border-b border-custom-border-200">
+            <div className="flex items-center justify-between pt-2 pb-3.5 border-b border-custom-border-200">
               <h3 className="text-xl font-medium">Labels</h3>
 
               <PrimaryButton

@@ -15,11 +15,11 @@ import useUserAuth from "hooks/use-user-auth";
 // components
 import { SettingsSidebar } from "components/project";
 // ui
-import { Icon, ToggleSwitch } from "components/ui";
+import { ToggleSwitch } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { ContrastIcon, PeopleGroupIcon, ViewListIcon, InboxIcon } from "components/icons";
-import { DocumentTextIcon } from "@heroicons/react/24/outline";
+import { ModuleIcon } from "components/icons";
+import { Contrast, FileText, Inbox, Layers } from "lucide-react";
 // types
 import { IProject } from "types";
 import type { NextPage } from "next";
@@ -33,38 +33,35 @@ const featuresList = [
     title: "Cycles",
     description:
       "Cycles are enabled for all the projects in this workspace. Access them from the sidebar.",
-    icon: <ContrastIcon color="#3f76ff" width={20} height={20} className="flex-shrink-0" />,
+    icon: <Contrast className="h-4 w-4 text-custom-primary-100 flex-shrink-0" />,
     property: "cycle_view",
   },
   {
     title: "Modules",
     description:
       "Modules are enabled for all the projects in this workspace. Access it from the sidebar.",
-    // icon: <PeopleGroupIcon color="#ff6b00" width={20} height={20} className="flex-shrink-0" />,
-    icon: <Icon iconName="dataset" className="text-xl flex-shrink-0" />,
+    icon: <ModuleIcon width={16} height={16} className="flex-shrink-0" />,
     property: "module_view",
   },
   {
     title: "Views",
     description:
       "Views are enabled for all the projects in this workspace. Access it from the sidebar.",
-    icon: <ViewListIcon color="#05c3ff" width={20} height={20} className="flex-shrink-0" />,
+    icon: <Layers className="h-4 w-4 text-custom-primary-100 flex-shrink-0" />,
     property: "issue_views_view",
   },
   {
     title: "Pages",
     description:
       "Pages are enabled for all the projects in this workspace. Access it from the sidebar.",
-    // icon: <DocumentTextIcon color="#fcbe1d" width={20} height={20} className="flex-shrink-0" />,
-    icon: <Icon iconName="article" className="text-xl flex-shrink-0" />,
+    icon: <FileText className="h-4 w-4 text-custom-primary-100 flex-shrink-0" />,
     property: "page_view",
   },
   {
     title: "Inbox",
     description:
       "Inbox are enabled for all the projects in this workspace. Access it from the issues views page.",
-    // icon: <InboxIcon color="#fcbe1d" width={20} height={20} className="flex-shrink-0" />,
-    icon: <Icon iconName="move_to_inbox" className="text-xl flex-shrink-0" />,
+    icon: <Inbox className="h-4 w-4 text-custom-primary-100 flex-shrink-0" />,
     property: "inbox_view",
   },
 ];
@@ -156,8 +153,10 @@ const FeaturesSettings: NextPage = () => {
         <div className="w-80 py-8">
           <SettingsSidebar />
         </div>
-        <section className="pr-9 py-8 space-y-4 w-full">
-          <h3 className="text-xl font-medium pb-4 border-b border-custom-border-200">Features</h3>
+        <section className="pr-9 py-8 w-full">
+          <div className="flex items-center py-3.5 border-b border-custom-border-200">
+            <h3 className="text-xl font-medium">Features</h3>
+          </div>
           <div>
             {featuresList.map((feature) => (
               <div
@@ -165,7 +164,7 @@ const FeaturesSettings: NextPage = () => {
                 className="flex items-center justify-between gap-x-8 gap-y-2 border-b border-custom-border-200 bg-custom-background-100 p-4"
               >
                 <div className="flex items-start gap-3">
-                  <div className="flex items-center justify-center p-2.5 rounded bg-custom-background-90">
+                  <div className="flex items-center justify-center p-3 rounded bg-custom-background-90">
                     {feature.icon}
                   </div>
                   <div className="">
@@ -196,7 +195,7 @@ const FeaturesSettings: NextPage = () => {
                       [feature.property]: !projectDetails?.[feature.property as keyof IProject],
                     });
                   }}
-                  size="md"
+                  size="sm"
                 />
               </div>
             ))}

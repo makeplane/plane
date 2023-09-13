@@ -53,7 +53,7 @@ export const MemberSelect: React.FC<Props> = ({ value, onChange }) => {
           )}
         </div>
       }
-      buttonClassName="!py-2.5 !px-3"
+      buttonClassName="!px-3 !py-2"
       options={
         options &&
         options && [
