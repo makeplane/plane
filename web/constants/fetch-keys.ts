@@ -229,8 +229,6 @@ export const INBOX_ISSUE_DETAILS = (inboxId: string, issueId: string) =>
 
 // Issues
 export const ISSUE_DETAILS = (issueId: string) => `ISSUE_DETAILS_${issueId.toUpperCase()}`;
-export const M_ISSUE_DETAILS = (workspaceSlug: string, projectId: string, issueId: string) =>
-  `M_ISSUE_DETAILS_${workspaceSlug.toUpperCase()}_${projectId.toUpperCase()}_${issueId}`;
 export const SUB_ISSUES = (issueId: string) => `SUB_ISSUES_${issueId.toUpperCase()}`;
 export const ISSUE_ATTACHMENTS = (issueId: string) => `ISSUE_ATTACHMENTS_${issueId.toUpperCase()}`;
 export const ARCHIVED_ISSUE_DETAILS = (issueId: string) =>

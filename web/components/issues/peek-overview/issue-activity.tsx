@@ -5,6 +5,7 @@ import issuesService from "services/issues.service";
 // hooks
 import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
+import useProjectDetails from "hooks/use-project-details";
 // components
 import { AddComment, IssueActivitySection } from "components/issues";
 // types
@@ -22,6 +23,7 @@ export const PeekOverviewIssueActivity: React.FC<Props> = ({ workspaceSlug, issu
   const { setToastAlert } = useToast();
 
   const { user } = useUser();
+  const { projectDetails } = useProjectDetails();
 
   const { data: issueActivity, mutate: mutateIssueActivity } = useSWR(
     workspaceSlug && issue ? PROJECT_ISSUES_ACTIVITY(issue.id) : null,
@@ -30,18 +32,11 @@ export const PeekOverviewIssueActivity: React.FC<Props> = ({ workspaceSlug, issu
       : null
   );
 
-  const handleCommentUpdate = async (comment: IIssueComment) => {
+  const handleCommentUpdate = async (commentId: string, data: Partial<IIssueComment>) => {
     if (!workspaceSlug || !issue) return;
 
     await issuesService
-      .patchIssueComment(
-        workspaceSlug as string,
-        issue.project,
-        issue.id,
-        comment.id,
-        comment,
-        user
-      )
+      .patchIssueComment(workspaceSlug as string, issue.project, issue.id, commentId, data, user)
       .then(() => mutateIssueActivity());
   };
 
@@ -80,9 +75,13 @@ export const PeekOverviewIssueActivity: React.FC<Props> = ({ workspaceSlug, issu
           activity={issueActivity}
           handleCommentUpdate={handleCommentUpdate}
           handleCommentDelete={handleCommentDelete}
+          showAccessSpecifier={projectDetails && projectDetails.is_deployed}
         />
         <div className="mt-4">
-          <AddComment onSubmit={handleAddComment} />
+          <AddComment
+            onSubmit={handleAddComment}
+            showAccessSpecifier={projectDetails && projectDetails.is_deployed}
+          />
         </div>
       </div>
     </div>

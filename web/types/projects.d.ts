@@ -8,6 +8,7 @@ import type {
   TIssueOrderByOptions,
   TIssueViewOptions,
   TStateGroups,
+  IProjectViewProps,
 } from ".";
 
 export interface IProject {
@@ -66,14 +67,6 @@ export interface IProjectLite {
   identifier: string;
 }
 
-type ProjectViewTheme = {
-  issueView: TIssueViewOptions;
-  groupByProperty: TIssueGroupByOptions;
-  orderBy: TIssueOrderByOptions;
-  calendarDateRange: string;
-  filters: IIssueFilterOptions;
-};
-
 type ProjectPreferences = {
   pages: {
     block_display: boolean;
@@ -90,8 +83,8 @@ export interface IProjectMember {
 
   preferences: ProjectPreferences;
 
-  view_props: ProjectViewTheme;
-  default_props: ProjectViewTheme;
+  view_props: IProjectViewProps;
+  default_props: IProjectViewProps;
 
   created_at: Date;
   updated_at: Date;
@@ -137,7 +130,7 @@ export interface GithubRepositoriesResponse {
 export type TProjectIssuesSearchParams = {
   search: string;
   parent?: boolean;
-  blocker_blocked_by?: boolean;
+  issue_relation?: boolean;
   cycle?: boolean;
   module?: boolean;
   sub_issue?: boolean;

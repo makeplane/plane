@@ -27,7 +27,7 @@ import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
 
-const defaultValues = {
+const defaultValues: Partial<IIssue> = {
   assignees_list: [],
   description: "",
   description_html: "",
@@ -86,8 +86,8 @@ const IssueDetailsPage: NextPage = () => {
         ...formData,
       };
 
-      delete payload.blocker_issues;
-      delete payload.blocked_issues;
+      delete payload.related_issues;
+      delete payload.issue_relations;
 
       await issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)

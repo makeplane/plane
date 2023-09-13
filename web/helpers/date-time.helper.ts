@@ -403,3 +403,5 @@ export const findTotalDaysInRange = (
 
   return diffInDays;
 };
+
+export const getUserTimeZoneFromWindow = () => Intl.DateTimeFormat().resolvedOptions().timeZone;

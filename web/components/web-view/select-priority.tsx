@@ -2,21 +2,23 @@
 import React, { useState } from "react";
 
 // icons
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { ChevronDown } from "lucide-react";
 
 // constants
 import { PRIORITIES } from "constants/project";
 
 // components
-import { getPriorityIcon } from "components/icons";
+import { PriorityIcon } from "components/icons";
 import { WebViewModal } from "./web-view-modal";
 
 // helpers
 import { capitalizeFirstLetter } from "helpers/string.helper";
+// types
+import { TIssuePriorities } from "types";
 
 type Props = {
   value: any;
-  onChange: (value: any) => void;
+  onChange: (value: TIssuePriorities) => void;
   disabled?: boolean;
 };
 
@@ -35,11 +37,16 @@ export const PrioritySelect: React.FC<Props> = (props) => {
         }}
       >
         <WebViewModal.Options
-          selectedOption={value}
           options={
             PRIORITIES?.map((priority) => ({
-              label: priority ? capitalizeFirstLetter(priority) : "None",
+              label: capitalizeFirstLetter(priority),
               value: priority,
+              checked: priority === value,
+              onClick: () => {
+                setIsOpen(false);
+                if (disabled) return;
+                onChange(priority);
+              },
               icon: (
                 <span
                   className={`text-left text-xs capitalize rounded ${
@@ -54,14 +61,9 @@ export const PrioritySelect: React.FC<Props> = (props) => {
                       : "border-custom-border-200 text-custom-text-200"
                   }`}
                 >
-                  {getPriorityIcon(priority, "text-sm")}
+                  <PriorityIcon priority={priority} className="text-sm" />
                 </span>
               ),
-              onClick: () => {
-                setIsOpen(false);
-                if (disabled) return;
-                onChange(priority);
-              },
             })) || []
           }
         />
@@ -76,7 +78,7 @@ export const PrioritySelect: React.FC<Props> = (props) => {
         }
       >
         {value ? capitalizeFirstLetter(value) : "None"}
-        <ChevronDownIcon className="w-5 h-5" />
+        <ChevronDown className="w-5 h-5" />
       </button>
     </>
   );

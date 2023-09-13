@@ -14,14 +14,14 @@ import { useForm } from "react-hook-form";
 import issuesService from "services/issues.service";
 
 // fetch key
-import { M_ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
+import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 // hooks
 import useUser from "hooks/use-user";
 import useProjectMembers from "hooks/use-project-members";
 
 // layouts
-import DefaultLayout from "layouts/default-layout";
+import WebViewLayout from "layouts/web-view-layout";
 
 // ui
 import { Spinner } from "components/ui";
@@ -33,6 +33,7 @@ import {
   IssueAttachments,
   IssuePropertiesDetail,
   IssueLinks,
+  IssueActivity,
 } from "components/web-view";
 
 // types
@@ -66,9 +67,7 @@ const MobileWebViewIssueDetail = () => {
     mutate: mutateIssueDetails,
     error,
   } = useSWR(
-    workspaceSlug && projectId && issueId
-      ? M_ISSUE_DETAILS(workspaceSlug.toString(), projectId.toString(), issueId.toString())
-      : null,
+    workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId.toString()) : null,
     workspaceSlug && projectId && issueId
       ? () =>
           issuesService.retrieve(workspaceSlug.toString(), projectId.toString(), issueId.toString())
@@ -83,6 +82,10 @@ const MobileWebViewIssueDetail = () => {
       description: issueDetails.description,
       description_html: issueDetails.description_html,
       state: issueDetails.state,
+      assignees_list:
+        issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
+      labels_list: issueDetails.labels_list ?? issueDetails.labels,
+      labels: issueDetails.labels_list ?? issueDetails.labels,
     });
   }, [issueDetails, reset]);
 
@@ -91,7 +94,7 @@ const MobileWebViewIssueDetail = () => {
       if (!workspaceSlug || !projectId || !issueId) return;
 
       mutate<IIssue>(
-        M_ISSUE_DETAILS(workspaceSlug.toString(), projectId.toString(), issueId.toString()),
+        ISSUE_DETAILS(issueId.toString()),
         (prevData) => {
           if (!prevData) return prevData;
 
@@ -107,8 +110,8 @@ const MobileWebViewIssueDetail = () => {
         ...formData,
       };
 
-      delete payload.blocker_issues;
-      delete payload.blocked_issues;
+      delete payload.issue_relations;
+      delete payload.related_issues;
 
       await issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)
@@ -125,25 +128,25 @@ const MobileWebViewIssueDetail = () => {
 
   if (!error && !issueDetails)
     return (
-      <DefaultLayout>
+      <WebViewLayout>
         <div className="px-4 py-2 h-full">
           <div className="h-full flex justify-center items-center">
             <Spinner />
             Loading...
           </div>
         </div>
-      </DefaultLayout>
+      </WebViewLayout>
     );
 
   if (error)
     return (
-      <DefaultLayout>
+      <WebViewLayout>
         <div className="px-4 py-2">{error?.response?.data || "Something went wrong"}</div>
-      </DefaultLayout>
+      </WebViewLayout>
     );
 
   return (
-    <DefaultLayout>
+    <WebViewLayout>
       <div className="px-6 py-2 h-full overflow-auto space-y-3">
         <IssueWebViewForm
           isAllowed={isAllowed}
@@ -161,9 +164,11 @@ const MobileWebViewIssueDetail = () => {
 
         <IssueAttachments allowed={isAllowed} />
 
-        <IssueLinks allowed={isAllowed} links={issueDetails?.issue_link} />
+        <IssueLinks allowed={isAllowed} issueDetails={issueDetails!} />
+
+        <IssueActivity allowed={isAllowed} issueDetails={issueDetails!} />
       </div>
-    </DefaultLayout>
+    </WebViewLayout>
   );
 };
 

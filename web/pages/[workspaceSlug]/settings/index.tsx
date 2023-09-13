@@ -90,9 +90,8 @@ const WorkspaceSettings: NextPage = () => {
     await workspaceService
       .updateWorkspace(activeWorkspace.slug, payload, user)
       .then((res) => {
-        mutate<IWorkspace[]>(
-          USER_WORKSPACES,
-          (prevData) => prevData?.map((workspace) => (workspace.id === res.id ? res : workspace))
+        mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) =>
+          prevData?.map((workspace) => (workspace.id === res.id ? res : workspace))
         );
         mutate<IWorkspace>(WORKSPACE_DETAILS(workspaceSlug as string), (prevData) => {
           if (!prevData) return prevData;
@@ -125,9 +124,8 @@ const WorkspaceSettings: NextPage = () => {
             title: "Success!",
             message: "Workspace picture removed successfully.",
           });
-          mutate<IWorkspace[]>(
-            USER_WORKSPACES,
-            (prevData) => prevData?.map((workspace) => (workspace.id === res.id ? res : workspace))
+          mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) =>
+            prevData?.map((workspace) => (workspace.id === res.id ? res : workspace))
           );
           mutate<IWorkspace>(WORKSPACE_DETAILS(workspaceSlug as string), (prevData) => {
             if (!prevData) return prevData;
@@ -183,7 +181,7 @@ const WorkspaceSettings: NextPage = () => {
       <div className="p-8">
         <SettingsHeader />
         {activeWorkspace ? (
-          <div className="space-y-8 sm:space-y-12 opacity-60">
+          <div className={`space-y-8 sm:space-y-12 ${isAdmin ? "" : "opacity-60"}`}>
             <div className="grid grid-cols-12 gap-4 sm:gap-16">
               <div className="col-span-12 sm:col-span-6">
                 <h4 className="text-lg font-semibold">Logo</h4>

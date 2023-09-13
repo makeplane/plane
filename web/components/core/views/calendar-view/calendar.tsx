@@ -12,6 +12,7 @@ import issuesService from "services/issues.service";
 import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 // components
 import { SingleCalendarDate, CalendarHeader } from "components/core";
+import { IssuePeekOverview } from "components/issues";
 // ui
 import { Spinner } from "components/ui";
 // helpers
@@ -60,7 +61,8 @@ export const CalendarView: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
-  const { calendarIssues, params, setCalendarDateRange } = useCalendarIssuesView();
+  const { calendarIssues, mutateIssues, params, displayFilters, setDisplayFilters } =
+    useCalendarIssuesView();
 
   const totalDate = eachDayOfInterval({
     start: calendarDates.startDate,
@@ -152,90 +154,103 @@ export const CalendarView: React.FC<Props> = ({
       endDate,
     });
 
-    setCalendarDateRange(
-      `${renderDateFormat(startDate)};after,${renderDateFormat(endDate)};before`
-    );
+    setDisplayFilters({
+      calendar_date_range: `${renderDateFormat(startDate)};after,${renderDateFormat(
+        endDate
+      )};before`,
+    });
   };
 
   useEffect(() => {
-    setCalendarDateRange(
-      `${renderDateFormat(startOfWeek(currentDate))};after,${renderDateFormat(
-        lastDayOfWeek(currentDate)
-      )};before`
-    );
-  }, [currentDate]);
+    if (!displayFilters || displayFilters.calendar_date_range === "")
+      setDisplayFilters({
+        calendar_date_range: `${renderDateFormat(
+          startOfWeek(currentDate)
+        )};after,${renderDateFormat(lastDayOfWeek(currentDate))};before`,
+      });
+  }, [currentDate, displayFilters, setDisplayFilters]);
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disableUserActions;
 
-  return calendarIssues ? (
-    <div className="h-full overflow-y-auto">
-      <DragDropContext onDragEnd={onDragEnd}>
-        <div className="h-full rounded-lg p-8 text-custom-text-200">
-          <CalendarHeader
-            isMonthlyView={isMonthlyView}
-            setIsMonthlyView={setIsMonthlyView}
-            showWeekEnds={showWeekEnds}
-            setShowWeekEnds={setShowWeekEnds}
-            currentDate={currentDate}
-            setCurrentDate={setCurrentDate}
-            changeDateRange={changeDateRange}
-          />
+  return (
+    <>
+      <IssuePeekOverview
+        handleMutation={() => mutateIssues()}
+        projectId={projectId?.toString() ?? ""}
+        workspaceSlug={workspaceSlug?.toString() ?? ""}
+        readOnly={disableUserActions}
+      />
+      {calendarIssues ? (
+        <div className="h-full overflow-y-auto">
+          <DragDropContext onDragEnd={onDragEnd}>
+            <div className="h-full rounded-lg p-8 text-custom-text-200">
+              <CalendarHeader
+                isMonthlyView={isMonthlyView}
+                setIsMonthlyView={setIsMonthlyView}
+                showWeekEnds={showWeekEnds}
+                setShowWeekEnds={setShowWeekEnds}
+                currentDate={currentDate}
+                setCurrentDate={setCurrentDate}
+                changeDateRange={changeDateRange}
+              />
 
-          <div
-            className={`grid auto-rows-[minmax(36px,1fr)] rounded-lg ${
-              showWeekEnds ? "grid-cols-7" : "grid-cols-5"
-            }`}
-          >
-            {weeks.map((date, index) => (
               <div
-                key={index}
-                className={`flex  items-center justify-start gap-2 border-custom-border-200 bg-custom-background-90 p-1.5 text-base font-medium text-custom-text-200 ${
-                  !isMonthlyView
-                    ? showWeekEnds
-                      ? (index + 1) % 7 === 0
-                        ? ""
-                        : "border-r"
-                      : (index + 1) % 5 === 0
-                      ? ""
-                      : "border-r"
-                    : ""
+                className={`grid auto-rows-[minmax(36px,1fr)] rounded-lg ${
+                  showWeekEnds ? "grid-cols-7" : "grid-cols-5"
                 }`}
               >
-                <span>
-                  {isMonthlyView
-                    ? formatDate(date, "eee").substring(0, 3)
-                    : formatDate(date, "eee")}
-                </span>
-                {!isMonthlyView && <span>{formatDate(date, "d")}</span>}
+                {weeks.map((date, index) => (
+                  <div
+                    key={index}
+                    className={`flex  items-center justify-start gap-2 border-custom-border-200 bg-custom-background-90 p-1.5 text-base font-medium text-custom-text-200 ${
+                      !isMonthlyView
+                        ? showWeekEnds
+                          ? (index + 1) % 7 === 0
+                            ? ""
+                            : "border-r"
+                          : (index + 1) % 5 === 0
+                          ? ""
+                          : "border-r"
+                        : ""
+                    }`}
+                  >
+                    <span>
+                      {isMonthlyView
+                        ? formatDate(date, "eee").substring(0, 3)
+                        : formatDate(date, "eee")}
+                    </span>
+                    {!isMonthlyView && <span>{formatDate(date, "d")}</span>}
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          <div
-            className={`grid h-full ${isMonthlyView ? "auto-rows-min" : ""} ${
-              showWeekEnds ? "grid-cols-7" : "grid-cols-5"
-            } `}
-          >
-            {currentViewDaysData.map((date, index) => (
-              <SingleCalendarDate
-                key={`${date}-${index}`}
-                index={index}
-                date={date}
-                handleIssueAction={handleIssueAction}
-                addIssueToDate={addIssueToDate}
-                isMonthlyView={isMonthlyView}
-                showWeekEnds={showWeekEnds}
-                user={user}
-                isNotAllowed={isNotAllowed}
-              />
-            ))}
-          </div>
+              <div
+                className={`grid h-full ${isMonthlyView ? "auto-rows-min" : ""} ${
+                  showWeekEnds ? "grid-cols-7" : "grid-cols-5"
+                } `}
+              >
+                {currentViewDaysData.map((date, index) => (
+                  <SingleCalendarDate
+                    key={`${date}-${index}`}
+                    index={index}
+                    date={date}
+                    handleIssueAction={handleIssueAction}
+                    addIssueToDate={addIssueToDate}
+                    isMonthlyView={isMonthlyView}
+                    showWeekEnds={showWeekEnds}
+                    user={user}
+                    isNotAllowed={isNotAllowed}
+                  />
+                ))}
+              </div>
+            </div>
+          </DragDropContext>
         </div>
-      </DragDropContext>
-    </div>
-  ) : (
-    <div className="flex h-full w-full items-center justify-center">
-      <Spinner />
-    </div>
+      ) : (
+        <div className="flex h-full w-full items-center justify-center">
+          <Spinner />
+        </div>
+      )}
+    </>
   );
 };

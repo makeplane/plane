@@ -12,7 +12,7 @@ import type {
   IProjectMemberInvitation,
   ISearchIssueResponse,
   ProjectPreferences,
-  ProjectViewTheme,
+  IProjectViewProps,
   TProjectIssuesSearchParams,
 } from "types";
 
@@ -295,8 +295,8 @@ export class ProjectServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     data: {
-      view_props?: ProjectViewTheme;
-      default_props?: ProjectViewTheme;
+      view_props?: IProjectViewProps;
+      default_props?: IProjectViewProps;
       preferences?: ProjectPreferences;
       sort_order?: number;
     }

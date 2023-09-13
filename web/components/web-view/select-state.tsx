@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // icons
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { ChevronDown } from "lucide-react";
 
 // services
 import stateService from "services/state.service";
@@ -17,7 +17,7 @@ import stateService from "services/state.service";
 import { STATES_LIST } from "constants/fetch-keys";
 
 // components
-import { getStateGroupIcon } from "components/icons";
+import { StateGroupIcon } from "components/icons";
 import { WebViewModal } from "./web-view-modal";
 
 // helpers
@@ -57,12 +57,12 @@ export const StateSelect: React.FC<Props> = (props) => {
         }}
       >
         <WebViewModal.Options
-          selectedOption={selectedState?.id || null}
           options={
             states?.map((state) => ({
               label: state.name,
               value: state.id,
-              icon: getStateGroupIcon(state.group, "16", "16", state.color),
+              checked: state.id === selectedState?.id,
+              icon: <StateGroupIcon stateGroup={state.group} color={state.color} />,
               onClick: () => {
                 setIsOpen(false);
                 if (disabled) return;
@@ -82,7 +82,7 @@ export const StateSelect: React.FC<Props> = (props) => {
         }
       >
         {selectedState?.name || "Select a state"}
-        <ChevronDownIcon className="w-5 h-5" />
+        <ChevronDown className="w-5 h-5" />
       </button>
     </>
   );

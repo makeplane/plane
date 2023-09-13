@@ -20,16 +20,25 @@ export const IssueEmojiReactions: React.FC = observer(() => {
   const reactions = issueId ? issueDetailsStore.details[issueId]?.reactions || [] : [];
   const groupedReactions = groupReactions(reactions, "reaction");
 
-  const handleReactionSelectClick = (reactionHex: string) => {
+  const userReactions = reactions?.filter((r) => r.actor_detail.id === user?.id);
+
+  const handleAddReaction = (reactionHex: string) => {
     if (!workspace_slug || !project_slug || !issueId) return;
-    const userReaction = reactions?.find((r) => r.actor_detail.id === user?.id && r.reaction === reactionHex);
-    if (userReaction) return;
+
     issueDetailsStore.addIssueReaction(workspace_slug.toString(), project_slug.toString(), issueId, reactionHex);
   };
 
-  const handleReactionClick = (reactionHex: string) => {
+  const handleRemoveReaction = (reactionHex: string) => {
     if (!workspace_slug || !project_slug || !issueId) return;
+
     issueDetailsStore.removeIssueReaction(workspace_slug.toString(), project_slug.toString(), issueId, reactionHex);
+  };
+
+  const handleReactionClick = (reactionHex: string) => {
+    const userReaction = userReactions?.find((r) => r.actor_detail.id === user?.id && r.reaction === reactionHex);
+
+    if (userReaction) handleRemoveReaction(reactionHex);
+    else handleAddReaction(reactionHex);
   };
 
   useEffect(() => {
@@ -42,9 +51,10 @@ export const IssueEmojiReactions: React.FC = observer(() => {
       <ReactionSelector
         onSelect={(value) => {
           userStore.requiredLogin(() => {
-            handleReactionSelectClick(value);
+            handleReactionClick(value);
           });
         }}
+        selected={userReactions?.map((r) => r.reaction)}
         size="md"
       />
       <div className="flex items-center gap-2 flex-wrap">

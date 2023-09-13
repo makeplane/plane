@@ -47,7 +47,7 @@ export const WebViewModal = (props: Props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-none rounded-tr-[4px] rounded-tl-[4px] bg-custom-background-100 p-6 text-left shadow-xl transition-all sm:mt-8 w-full">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-none rounded-tr-[20px] rounded-tl-[20px] bg-custom-background-100 p-6 text-left shadow-xl transition-all sm:mt-8 w-full">
                 <div className="flex justify-between items-center w-full">
                   <Dialog.Title
                     as="h3"
@@ -63,7 +63,7 @@ export const WebViewModal = (props: Props) => {
                     <XMarkIcon className="w-6 h-6 text-custom-text-200" />
                   </button>
                 </div>
-                <div className="mt-6">{children}</div>
+                <div className="mt-6 max-h-60 overflow-auto">{children}</div>
               </Dialog.Panel>
             </Transition.Child>
           </div>
@@ -74,24 +74,24 @@ export const WebViewModal = (props: Props) => {
 };
 
 type OptionsProps = {
-  selectedOption: string | null;
   options: Array<{
     label: string;
     value: string | null;
+    checked: boolean;
     icon?: any;
     onClick: () => void;
   }>;
 };
 
-const Options: React.FC<OptionsProps> = ({ options, selectedOption }) => (
-  <div className="space-y-6">
+const Options: React.FC<OptionsProps> = ({ options }) => (
+  <div className="divide-y">
     {options.map((option) => (
-      <div key={option.value} className="flex items-center justify-between gap-2 py-2">
+      <div key={option.value} className="flex items-center justify-between gap-2 py-[14px]">
         <div className="flex items-center gap-x-2">
           <input
             type="checkbox"
-            checked={option.value === selectedOption}
-            onClick={option.onClick}
+            checked={option.checked}
+            onChange={option.onClick}
             className="rounded-full border border-custom-border-200 bg-custom-background-100 w-4 h-4"
           />
 

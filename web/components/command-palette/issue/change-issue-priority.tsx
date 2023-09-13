@@ -1,5 +1,7 @@
-import { useRouter } from "next/router";
 import React, { Dispatch, SetStateAction, useCallback } from "react";
+
+import { useRouter } from "next/router";
+
 import { mutate } from "swr";
 
 // cmdk
@@ -7,12 +9,12 @@ import { Command } from "cmdk";
 // services
 import issuesService from "services/issues.service";
 // types
-import { ICurrentUserResponse, IIssue } from "types";
+import { ICurrentUserResponse, IIssue, TIssuePriorities } from "types";
 // constants
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 import { PRIORITIES } from "constants/project";
 // icons
-import { CheckIcon, getPriorityIcon } from "components/icons";
+import { CheckIcon, PriorityIcon } from "components/icons";
 
 type Props = {
   setIsPaletteOpen: Dispatch<SetStateAction<boolean>>;
@@ -54,7 +56,7 @@ export const ChangeIssuePriority: React.FC<Props> = ({ setIsPaletteOpen, issue, 
     [workspaceSlug, issueId, projectId, user]
   );
 
-  const handleIssueState = (priority: string | null) => {
+  const handleIssueState = (priority: TIssuePriorities) => {
     submitChanges({ priority });
     setIsPaletteOpen(false);
   };
@@ -68,7 +70,7 @@ export const ChangeIssuePriority: React.FC<Props> = ({ setIsPaletteOpen, issue, 
           className="focus:outline-none"
         >
           <div className="flex items-center space-x-3">
-            {getPriorityIcon(priority)}
+            <PriorityIcon priority={priority} />
             <span className="capitalize">{priority ?? "None"}</span>
           </div>
           <div>{priority === issue.priority && <CheckIcon className="h-3 w-3" />}</div>

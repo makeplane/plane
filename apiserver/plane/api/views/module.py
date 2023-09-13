@@ -308,6 +308,7 @@ class ModuleIssueViewSet(BaseViewSet):
         try:
             order_by = request.GET.get("order_by", "created_at")
             group_by = request.GET.get("group_by", False)
+            sub_group_by = request.GET.get("sub_group_by", False)
             filters = issue_filters(request.query_params, "GET")
             issues = (
                 Issue.issue_objects.filter(issue_module__module_id=module_id)
@@ -346,9 +347,15 @@ class ModuleIssueViewSet(BaseViewSet):
 
             issues_data = IssueStateSerializer(issues, many=True).data
 
+            if sub_group_by and sub_group_by == group_by:
+                return Response(
+                    {"error": "Group by and sub group by cannot be same"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             if group_by:
                 return Response(
-                    group_results(issues_data, group_by),
+                    group_results(issues_data, group_by, sub_group_by),
                     status=status.HTTP_200_OK,
                 )
 

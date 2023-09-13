@@ -15,6 +15,7 @@ import {
   MinusSquare,
   CheckSquare,
   ImageIcon,
+  Table,
 } from "lucide-react";
 import { startImageUpload } from "../plugins/upload-image";
 import { cn } from "../utils";
@@ -46,6 +47,9 @@ const Command = Extension.create({
     return [
       Suggestion({
         editor: this.editor,
+        allow({ editor }) {
+          return !editor.isActive("table");
+        },
         ...this.options.suggestion,
       }),
     ];
@@ -53,7 +57,10 @@ const Command = Extension.create({
 });
 
 const getSuggestionItems =
-  (workspaceSlug: string, setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void) =>
+  (
+    workspaceSlug: string,
+    setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
+  ) =>
   ({ query }: { query: string }) =>
     [
       {
@@ -120,6 +127,20 @@ const getSuggestionItems =
         },
       },
       {
+        title: "Table",
+        description: "Create a Table",
+        searchTerms: ["table", "cell", "db", "data", "tabular"],
+        icon: <Table size={18} />,
+        command: ({ editor, range }: CommandProps) => {
+          editor
+            .chain()
+            .focus()
+            .deleteRange(range)
+            .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+            .run();
+        },
+      },
+      {
         title: "Numbered List",
         description: "Create a list with numbering.",
         searchTerms: ["ordered"],
@@ -134,14 +155,21 @@ const getSuggestionItems =
         searchTerms: ["blockquote"],
         icon: <TextQuote size={18} />,
         command: ({ editor, range }: CommandProps) =>
-          editor.chain().focus().deleteRange(range).toggleNode("paragraph", "paragraph").toggleBlockquote().run(),
+          editor
+            .chain()
+            .focus()
+            .deleteRange(range)
+            .toggleNode("paragraph", "paragraph")
+            .toggleBlockquote()
+            .run(),
       },
       {
         title: "Code",
         description: "Capture a code snippet.",
         searchTerms: ["codeblock"],
         icon: <Code size={18} />,
-        command: ({ editor, range }: CommandProps) => editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
+        command: ({ editor, range }: CommandProps) =>
+          editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
       },
       {
         title: "Image",
@@ -190,7 +218,15 @@ export const updateScrollView = (container: HTMLElement, item: HTMLElement) => {
   }
 };
 
-const CommandList = ({ items, command }: { items: CommandItemProps[]; command: any; editor: any; range: any }) => {
+const CommandList = ({
+  items,
+  command,
+}: {
+  items: CommandItemProps[];
+  command: any;
+  editor: any;
+  range: any;
+}) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const selectItem = useCallback(
