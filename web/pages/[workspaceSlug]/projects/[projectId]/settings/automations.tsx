@@ -80,12 +80,11 @@ const AutomationsSettings: NextPage = () => {
           <SettingsSidebar />
         </div>
         <section className="pr-9 py-8 w-full">
-          <h3 className="text-xl font-medium pb-4 border-b border-custom-border-200">
-            Automations
-          </h3>
-
-          <AutoCloseAutomation projectDetails={projectDetails} handleChange={handleChange} />
+          <div className="flex items-center py-3.5 border-b border-custom-border-200">
+            <h3 className="text-xl font-medium">Automations</h3>
+          </div>
           <AutoArchiveAutomation projectDetails={projectDetails} handleChange={handleChange} />
+          <AutoCloseAutomation projectDetails={projectDetails} handleChange={handleChange} />
         </section>
       </div>
     </ProjectAuthorizationWrapper>
