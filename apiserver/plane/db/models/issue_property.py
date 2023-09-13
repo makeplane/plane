@@ -51,7 +51,7 @@ class Property(BaseModel):
         related_name="children",
         null=True,
     )
-    default_value = models.TextField(blank=True, null=True)
+    default_value = models.TextField(blank=True, default="")
     is_shared = models.BooleanField(default=True)
     extra_settings = models.JSONField(default=dict, blank=True)
     unit = models.CharField(max_length=100, blank=True, null=True)
