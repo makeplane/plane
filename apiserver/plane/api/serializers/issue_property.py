@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from plane.db.models import User, Issue, Cycle, Module, Page, IssueView, IssueProperty, IssuePropertyValue
+from plane.db.models import User, Issue, Cycle, Module, Page, IssueView, Property, IssuePropertyValue
 
 
 class UserSerializer(BaseSerializer):
@@ -45,26 +45,37 @@ class IssueViewSerializer(BaseSerializer):
         read_only_fields = fields
 
 
-class IssuePropertySerializer(BaseSerializer):
+class PropertyLiteSerializer(BaseSerializer):
+
+    class Meta:
+        model = Property
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+        ]
+
+class PropertySerializer(BaseSerializer):
     children = serializers.SerializerMethodField()
 
     def get_children(self, obj):
         children = obj.children.all().prefetch_related("children")
         if children:
-            serializer = IssuePropertySerializer(children, many=True)
+            serializer = PropertySerializer(children, many=True)
             return serializer.data
         return None
 
     class Meta:
-        model = IssueProperty
+        model = Property
         fields = "__all__"
         read_only_fields = [
             "workspace",
+            "name",
         ]
 
 
 class IssuePropertyValueSerializer(BaseSerializer):
-    property_values = IssuePropertySerializer(read_only=True, many=True)
+    property_values = PropertySerializer(read_only=True, many=True)
 
     class Meta:
         model = IssuePropertyValue
@@ -84,12 +95,12 @@ class IssuePropertyValueReadSerializer(BaseSerializer):
         read_only_fields = fields
 
 
-class IssuePropertyReadSerializer(BaseSerializer):
+class PropertyReadSerializer(BaseSerializer):
     children = serializers.SerializerMethodField()
     prop_value = serializers.SerializerMethodField()
 
     class Meta:
-        model = IssueProperty
+        model = Property
         fields = [
             "name",
             "type",
@@ -103,7 +114,7 @@ class IssuePropertyReadSerializer(BaseSerializer):
     def get_children(self, obj):
         children = obj.children.all().prefetch_related("children")
         if children:
-            serializer = IssuePropertyReadSerializer(children, many=True)
+            serializer = PropertyReadSerializer(children, many=True)
             return serializer.data
         return None
 

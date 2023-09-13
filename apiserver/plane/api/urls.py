@@ -180,7 +180,7 @@ from plane.api.views import (
     IssueRetrievePublicEndpoint,
     ## End Public Boards
     # Issue Properties
-    IssuePropertyViewSet,
+    PropertyViewSet,
     IssuePropertyValueViewSet,
     ## End Issue Properties
     ## Exporter
@@ -1658,25 +1658,34 @@ urlpatterns = [
     ## End Public Boards
     # Issue Property
     path(
-        "workspaces/<str:slug>/issue-properties/",
-        IssuePropertyViewSet.as_view(
+        "workspaces/<str:slug>/properties/",
+        PropertyViewSet.as_view(
             {
                 "get": "list",
                 "post": "create",
             }
         ),
-        name="issue-properties",
+        name="properties",
     ),
     path(
-        "workspaces/<str:slug>/issue-properties/<uuid:pk>/",
-        IssuePropertyViewSet.as_view(
+        "workspaces/<str:slug>/properties/<uuid:pk>/",
+        PropertyViewSet.as_view(
             {
                 "get": "retrieve",
                 "patch": "partial_update",
                 "delete": "destroy",
             }
         ),
-        name="issue-properties",
+        name="properties",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/properties/",
+        PropertyViewSet.as_view(
+            {
+                "get": "list_objects",
+            }
+        ),
+        name="properties",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-property-values/",

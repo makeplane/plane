@@ -10,7 +10,7 @@ def convert_string(s):
     return s.lower().replace(" ", "_")
 
 
-class IssueProperty(BaseModel):
+class Property(BaseModel):
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="issue_properties"
     )
@@ -24,7 +24,7 @@ class IssueProperty(BaseModel):
     display_name = models.CharField(max_length=255)
     icon = models.CharField(max_length=255, blank=True, null=True)
     color = models.CharField(max_length=20, blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, default="")
     type = models.CharField(
         choices=(
             ("entity", "entity"),
@@ -45,7 +45,7 @@ class IssueProperty(BaseModel):
     is_required = models.BooleanField(default=False)
     sort_order = models.FloatField(default=65535)
     parent = models.ForeignKey(
-        "db.IssueProperty",
+        "db.Property",
         on_delete=models.CASCADE,
         related_name="children",
         null=True,
@@ -58,9 +58,9 @@ class IssueProperty(BaseModel):
     is_default = models.BooleanField(default=False)
 
     class Meta:
-        verbose_name = "IssueProperty"
-        verbose_name_plural = "IssueProperties"
-        db_table = "issue_properties"
+        verbose_name = "Property"
+        verbose_name_plural = "Properties"
+        db_table = "properties"
         ordering = ("sort_order",)
 
     def __str__(self):
@@ -69,7 +69,7 @@ class IssueProperty(BaseModel):
     def save(self, *args, **kwargs):
         self.name = convert_string(self.display_name)
         if self._state.adding:
-            largest_order = IssueProperty.objects.filter(
+            largest_order = Property.objects.filter(
                 workspace=self.workspace
             ).aggregate(largest=models.Min("sort_order"))["largest"]
             if largest_order is not None:
@@ -78,7 +78,7 @@ class IssueProperty(BaseModel):
         if self.project is not None and self.workspace is not None:
             self.is_shared = False
 
-        super(IssueProperty, self).save(*args, **kwargs)
+        super(Property, self).save(*args, **kwargs)
 
 
 class IssuePropertyValue(ProjectBaseModel):
@@ -86,8 +86,8 @@ class IssuePropertyValue(ProjectBaseModel):
         ("text", "text"),
         ("uuid", "uuid"),
     )
-    issue_property = models.ForeignKey(
-        IssueProperty, on_delete=models.CASCADE, related_name="property_values"
+    property = models.ForeignKey(
+        Property, on_delete=models.CASCADE, related_name="property_values"
     )
     description = models.TextField(blank=True, null=True)
     value = models.TextField(null=True, blank=True, db_index=True)
@@ -97,9 +97,9 @@ class IssuePropertyValue(ProjectBaseModel):
     )
 
     class Meta:
-        verbose_name = "IssuePropertyValue"
-        verbose_name_plural = "IssuePropertyValues"
-        db_table = "issue_property_values"
+        verbose_name = "PropertyValue"
+        verbose_name_plural = "PropertyValues"
+        db_table = "property_values"
 
     def __str__(self):
         return f"<{str(self.issue_property.type)} {str(self.value)}>"
@@ -114,7 +114,7 @@ class PropertyTransaction(AuditModel):
         "db.Project", on_delete=models.CASCADE, related_name="property_transactions"
     )
     property = models.ForeignKey(
-        "db.IssueProperty",
+        "db.Property",
         on_delete=models.CASCADE,
         related_name="transactions",
     )

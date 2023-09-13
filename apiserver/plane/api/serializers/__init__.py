@@ -98,8 +98,9 @@ from .notification import NotificationSerializer
 from .exporter import ExporterHistorySerializer
 
 from .issue_property import (
-    IssuePropertySerializer,
+    PropertySerializer,
     IssuePropertyValueSerializer,
-    IssuePropertyReadSerializer,
+    PropertyReadSerializer,
     IssuePropertyValueReadSerializer,
+    PropertyLiteSerializer,
 )

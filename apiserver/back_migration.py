@@ -11,8 +11,6 @@ from plane.db.models import (
     ProjectMember,
     Label,
     Integration,
-    IssueProperty,
-    IssuePropertyValue,
 )
 
 

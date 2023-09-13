@@ -16,13 +16,14 @@ from sentry_sdk import capture_exception
 # Module imports
 from .base import BaseViewSet
 from plane.api.serializers import (
-    IssuePropertySerializer,
+    PropertySerializer,
     IssuePropertyValueSerializer,
-    IssuePropertyReadSerializer,
+    PropertyReadSerializer,
+    PropertyLiteSerializer,
 )
 from plane.db.models import (
     Workspace,
-    IssueProperty,
+    Property,
     IssuePropertyValue,
     Project,
     Issue,
@@ -39,9 +40,9 @@ def is_valid_uuid(uuid_string):
         return False
 
 
-class IssuePropertyViewSet(BaseViewSet):
-    serializer_class = IssuePropertySerializer
-    model = IssueProperty
+class PropertyViewSet(BaseViewSet):
+    serializer_class = PropertySerializer
+    model = Property
     permission_classes = [
         WorkSpaceAdminPermission,
     ]
@@ -64,7 +65,7 @@ class IssuePropertyViewSet(BaseViewSet):
             if project_id:
                 issue_properties = issue_properties.filter(project_id=project_id)
 
-            serializer = IssuePropertySerializer(issue_properties, many=True)
+            serializer = PropertySerializer(issue_properties, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
@@ -76,7 +77,7 @@ class IssuePropertyViewSet(BaseViewSet):
     def create(self, request, slug):
         try:
             workspace = Workspace.objects.get(slug=slug)
-            serializer = IssuePropertySerializer(data=request.data)
+            serializer = PropertySerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save(workspace_id=workspace.id)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -86,6 +87,40 @@ class IssuePropertyViewSet(BaseViewSet):
                 {"error": "Workspace does not exist"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def list_objects(self, request, slug, project_id):
+        try:
+            custom_objects = Property.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                type="entity",
+                parent__isnull=True,
+            )
+            serializer = PropertyLiteSerializer(custom_objects, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def retrieve(self, request, slug, pk):
+        try:
+            project_id = request.GET.get("project", False)
+            issue_properties = self.get_queryset().get(workspace__slug=slug, pk=pk)
+
+            if project_id:
+                issue_properties = issue_properties.filter(project_id=project_id)
+
+            serializer = PropertySerializer(issue_properties)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(
@@ -113,7 +148,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
             workspace_id = project.workspace_id
 
             # Get all the issue_properties
-            issue_properties = IssueProperty.objects.filter(
+            issue_properties = Property.objects.filter(
                 pk__in=[prop for prop in request_data if is_valid_uuid(prop)],
                 workspace__slug=slug,
             )
@@ -132,8 +167,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
                     issue_prop_values = [
                         issue_prop_value
                         for issue_prop_value in issue_property_values
-                        if str(issue_property.id)
-                        == str(issue_prop_value.issue_property_id)
+                        if str(issue_property.id) == str(issue_prop_value.property_id)
                     ]
 
                     # Already existing
@@ -141,7 +175,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
                         for prop_value, issue_prop_value in zip(
                             prop_values, issue_prop_values
                         ):
-                            if (issue_prop_value.value != prop_value):
+                            if issue_prop_value.value != prop_value:
                                 bulk_issue_prop_transaction.append(
                                     PropertyTransaction(
                                         id=uuid.uuid4(),
@@ -175,7 +209,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
                                     IssuePropertyValue(
                                         value=prop_value,
                                         type="uuid",
-                                        issue_property=issue_property,
+                                        property=issue_property,
                                         project_id=project_id,
                                         workspace_id=workspace_id,
                                         issue_id=issue_id,
@@ -187,7 +221,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
                                     IssuePropertyValue(
                                         value=prop_value,
                                         type="text",
-                                        issue_property=issue_property,
+                                        property=issue_property,
                                         project_id=project_id,
                                         workspace_id=workspace_id,
                                         issue_id=issue_id,
@@ -197,8 +231,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
                     issue_prop_values = [
                         issue_prop_value
                         for issue_prop_value in issue_property_values
-                        if str(issue_property.id)
-                        == str(issue_prop_value.issue_property_id)
+                        if str(issue_property.id) == str(issue_prop_value.property_id)
                     ]
 
                     # Already existing
@@ -217,7 +250,8 @@ class IssuePropertyValueViewSet(BaseViewSet):
                                     entity="issue",
                                     entity_uuid=issue_id,
                                     epoch=(
-                                        datetime.datetime.timestamp(timezone.now()) * 1000
+                                        datetime.datetime.timestamp(timezone.now())
+                                        * 1000
                                     ),
                                 )
                             )
@@ -237,7 +271,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
                                 IssuePropertyValue(
                                     value=prop_values,
                                     type="uuid",
-                                    issue_property=issue_property,
+                                    property=issue_property,
                                     project_id=project_id,
                                     workspace_id=workspace_id,
                                     issue_id=issue_id,
@@ -248,7 +282,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
                                 IssuePropertyValue(
                                     value=prop_values,
                                     type="text",
-                                    issue_property=issue_property,
+                                    property=issue_property,
                                     project_id=project_id,
                                     workspace_id=workspace_id,
                                     issue_id=issue_id,
@@ -296,7 +330,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
                 pk=issue_id, workspace__slug=slug, project_id=project_id
             )
             issue_properties = (
-                IssueProperty.objects.filter(
+                Property.objects.filter(
                     workspace__slug=slug,
                     property_values__project_id=project_id,
                 )
@@ -313,7 +347,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
                 )
                 .distinct()
             )
-            serializer_data = IssuePropertyReadSerializer(issue_properties, many=True)
+            serializer_data = PropertyReadSerializer(issue_properties, many=True)
             issue.issue_properties = json.loads(
                 json.dumps(serializer_data.data, cls=DjangoJSONEncoder)
             )
@@ -321,7 +355,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
 
             issue_property_values = IssuePropertyValue.objects.filter(
                 workspace__slug=slug, project_id=project_id, issue_id=issue_id
-            ).select_related("issue_property")
+            ).select_related("property")
 
             serilaizer = IssuePropertyValueSerializer(issue_property_values, many=True)
             return Response(serilaizer.data, status=status.HTTP_201_CREATED)
@@ -371,8 +405,8 @@ class IssuePropertyValueViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id, issue_id):
         try:
-            issue_properties = (
-                IssueProperty.objects.filter(
+            properties = (
+                Property.objects.filter(
                     workspace__slug=slug,
                     property_values__project_id=project_id,
                 )
@@ -389,7 +423,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
                 )
                 .distinct()
             )
-            serializer = IssuePropertyReadSerializer(issue_properties, many=True)
+            serializer = PropertyReadSerializer(properties, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
