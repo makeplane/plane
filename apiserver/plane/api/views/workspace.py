@@ -1072,7 +1072,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 .order_by("state_group")
             )
 
-            priority_order = ["urgent", "high", "medium", "low", None]
+            priority_order = ["urgent", "high", "medium", "low", "none"]
 
             priority_distribution = (
                 Issue.issue_objects.filter(

@@ -393,130 +393,6 @@ def track_assignees(
                 )
 
 
-# Track changes in blocking issues
-def track_blocks(
-    requested_data,
-    current_instance,
-    issue_id,
-    project,
-    actor,
-    issue_activities,
-):
-    if len(requested_data.get("blocks_list")) > len(
-        current_instance.get("blocked_issues")
-    ):
-        for block in requested_data.get("blocks_list"):
-            if (
-                len(
-                    [
-                        blocked
-                        for blocked in current_instance.get("blocked_issues")
-                        if blocked.get("block") == block
-                    ]
-                )
-                == 0
-            ):
-                issue = Issue.objects.get(pk=block)
-                issue_activities.append(
-                    IssueActivity(
-                        issue_id=issue_id,
-                        actor=actor,
-                        verb="updated",
-                        old_value="",
-                        new_value=f"{issue.project.identifier}-{issue.sequence_id}",
-                        field="blocks",
-                        project=project,
-                        workspace=project.workspace,
-                        comment=f"added blocking issue {project.identifier}-{issue.sequence_id}",
-                        new_identifier=issue.id,
-                    )
-                )
-
-    # Blocked Issue Removal
-    if len(requested_data.get("blocks_list")) < len(
-        current_instance.get("blocked_issues")
-    ):
-        for blocked in current_instance.get("blocked_issues"):
-            if blocked.get("block") not in requested_data.get("blocks_list"):
-                issue = Issue.objects.get(pk=blocked.get("block"))
-                issue_activities.append(
-                    IssueActivity(
-                        issue_id=issue_id,
-                        actor=actor,
-                        verb="updated",
-                        old_value=f"{issue.project.identifier}-{issue.sequence_id}",
-                        new_value="",
-                        field="blocks",
-                        project=project,
-                        workspace=project.workspace,
-                        comment=f"removed blocking issue {project.identifier}-{issue.sequence_id}",
-                        old_identifier=issue.id,
-                    )
-                )
-
-
-# Track changes in blocked_by issues
-def track_blockings(
-    requested_data,
-    current_instance,
-    issue_id,
-    project,
-    actor,
-    issue_activities,
-):
-    if len(requested_data.get("blockers_list")) > len(
-        current_instance.get("blocker_issues")
-    ):
-        for block in requested_data.get("blockers_list"):
-            if (
-                len(
-                    [
-                        blocked
-                        for blocked in current_instance.get("blocker_issues")
-                        if blocked.get("blocked_by") == block
-                    ]
-                )
-                == 0
-            ):
-                issue = Issue.objects.get(pk=block)
-                issue_activities.append(
-                    IssueActivity(
-                        issue_id=issue_id,
-                        actor=actor,
-                        verb="updated",
-                        old_value="",
-                        new_value=f"{issue.project.identifier}-{issue.sequence_id}",
-                        field="blocking",
-                        project=project,
-                        workspace=project.workspace,
-                        comment=f"added blocked by issue {project.identifier}-{issue.sequence_id}",
-                        new_identifier=issue.id,
-                    )
-                )
-
-    # Blocked Issue Removal
-    if len(requested_data.get("blockers_list")) < len(
-        current_instance.get("blocker_issues")
-    ):
-        for blocked in current_instance.get("blocker_issues"):
-            if blocked.get("blocked_by") not in requested_data.get("blockers_list"):
-                issue = Issue.objects.get(pk=blocked.get("blocked_by"))
-                issue_activities.append(
-                    IssueActivity(
-                        issue_id=issue_id,
-                        actor=actor,
-                        verb="updated",
-                        old_value=f"{issue.project.identifier}-{issue.sequence_id}",
-                        new_value="",
-                        field="blocking",
-                        project=project,
-                        workspace=project.workspace,
-                        comment=f"removed blocked by issue {project.identifier}-{issue.sequence_id}",
-                        old_identifier=issue.id,
-                    )
-                )
-
-
 def create_issue_activity(
     requested_data, current_instance, issue_id, project, actor, issue_activities
 ):
@@ -637,8 +513,6 @@ def update_issue_activity(
         "start_date": track_start_date,
         "labels_list": track_labels,
         "assignees_list": track_assignees,
-        "blocks_list": track_blocks,
-        "blockers_list": track_blockings,
         "estimate_point": track_estimate_points,
         "archived_at": track_archive_at,
         "closed_to": track_closed_to,
@@ -1170,6 +1044,57 @@ def delete_issue_vote_activity(
         )
 
 
+def create_issue_relation_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+    if current_instance is None and requested_data.get("related_list") is not None:
+        for issue_relation in requested_data.get("related_list"):
+            issue = Issue.objects.get(pk=issue_relation.get("related_issue"))
+            issue_activities.append(
+                IssueActivity(
+                    issue_id=issue_relation.get("issue"),
+                    actor=actor,
+                    verb="created",
+                    old_value="",
+                    new_value=f"{project.identifier}-{issue.sequence_id}",
+                    field=f'{issue_relation.get("relation_type")}',
+                    project=project,
+                    workspace=project.workspace,
+                    comment=f'added {issue_relation.get("relation_type")} relation',
+                    old_identifier=issue_relation.get("issue"),
+                )
+            )
+
+
+def delete_issue_relation_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+    if current_instance is not None and requested_data.get("related_list") is None:
+        issue = Issue.objects.get(pk=current_instance.get("issue"))
+        issue_activities.append(
+            IssueActivity(
+                issue_id=current_instance.get("issue"),
+                actor=actor,
+                verb="deleted",
+                old_value=f"{project.identifier}-{issue.sequence_id}",
+                new_value="",
+                field=f'{current_instance.get("relation_type")}',
+                project=project,
+                workspace=project.workspace,
+                comment=f'deleted the {current_instance.get("relation_type")} relation',
+                old_identifier=current_instance.get("issue"),
+            )
+        )
+
+
 # Receive message from room group
 @shared_task
 def issue_activity(
@@ -1233,6 +1158,8 @@ def issue_activity(
             "link.activity.deleted": delete_link_activity,
             "attachment.activity.created": create_attachment_activity,
             "attachment.activity.deleted": delete_attachment_activity,
+            "issue_relation.activity.created": create_issue_relation_activity,
+            "issue_relation.activity.deleted": delete_issue_relation_activity,
             "issue_reaction.activity.created": create_issue_reaction_activity,
             "issue_reaction.activity.deleted": delete_issue_reaction_activity,
             "comment_reaction.activity.created": create_comment_reaction_activity,
