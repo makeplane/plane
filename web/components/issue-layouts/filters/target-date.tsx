@@ -14,14 +14,14 @@ export const FilterTargetDate = observer(() => {
   const store: RootStore = useMobxStore();
   const { issueFilters: issueFilterStore, issueView: issueStore } = store;
 
-  const [previewEnabled, setPreviewEnabled] = React.useState(false);
+  const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
   return (
     <div>
       <FilterHeader
         title={"Target Date"}
         isPreviewEnabled={previewEnabled}
-        handleIsPreviewEnabled={setPreviewEnabled}
+        handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
         <div className="space-y-[2px] pt-1">

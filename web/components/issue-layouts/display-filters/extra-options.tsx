@@ -1,8 +1,5 @@
 import React from "react";
-// lucide icons
-import { Check, ChevronDown, ChevronUp } from "lucide-react";
 // components
-import { MemberIcons } from "./assignees";
 import { FilterHeader } from "../helpers/filter-header";
 import { FilterOption } from "../helpers/filter-option";
 // mobx react lite
@@ -11,7 +8,7 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 
-export const FilterCreatedBy = observer(() => {
+export const FilterExtraOptions = observer(() => {
   const store: RootStore = useMobxStore();
   const { issueFilters: issueFilterStore, issueView: issueStore } = store;
 
@@ -20,30 +17,23 @@ export const FilterCreatedBy = observer(() => {
   return (
     <div>
       <FilterHeader
-        title={"Created By"}
+        title={"Extra Options"}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
         <div className="space-y-[2px] pt-1">
-          {issueFilterStore?.projectMembers &&
-            issueFilterStore?.projectMembers.length > 0 &&
-            issueFilterStore?.projectMembers.map((_member) => (
+          {issueFilterStore?.issueRenderFilters?.extra_properties &&
+            issueFilterStore?.issueRenderFilters?.extra_properties.length > 0 &&
+            issueFilterStore?.issueRenderFilters?.extra_properties.map((_extraProperties) => (
               <FilterOption
-                key={`create-by-${_member?.member?.id}`}
+                key={_extraProperties?.key}
                 isChecked={
-                  issueFilterStore?.userFilters?.filters?.created_by != null &&
-                  issueFilterStore?.userFilters?.filters?.created_by.includes(_member?.member?.id)
+                  issueFilterStore?.userFilters?.display_filters?.[_extraProperties?.key]
                     ? true
                     : false
                 }
-                icon={
-                  <MemberIcons
-                    display_name={_member?.member.display_name}
-                    avatar={_member?.member.avatar}
-                  />
-                }
-                title={`${_member?.member?.display_name} (${_member?.member?.first_name} ${_member?.member?.last_name})`}
+                title={_extraProperties.title}
               />
             ))}
         </div>

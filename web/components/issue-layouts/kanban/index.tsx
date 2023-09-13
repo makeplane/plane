@@ -28,28 +28,6 @@ export const IssueKanBanViewRoot = observer(() => {
     console.log("result", result);
   };
 
-  console.log("------");
-  console.log("workspace id -->", issueFilterStore?.workspaceId);
-  console.log("project id -->", issueFilterStore?.projectId);
-  console.log("module id -->", issueFilterStore?.moduleId);
-  console.log("cycle id -->", issueFilterStore?.cycleId);
-  console.log("view id -->", issueFilterStore?.viewId);
-
-  console.log("<-- workspace level -->");
-  console.log("workspace projects -->", issueFilterStore?.workspaceProjects);
-  console.log("workspace labels -->", issueFilterStore?.workspaceLabels);
-
-  console.log("<-- project level -->");
-  console.log("project states -->", issueFilterStore?.projectStates);
-  console.log("project labels -->", issueFilterStore?.projectLabels);
-  console.log("project members -->", issueFilterStore?.projectMembers);
-
-  console.log("project display properties -->", issueFilterStore?.projectDisplayProperties);
-
-  console.log("issue layout -->", issueFilterStore?.issueLayout);
-  console.log("issues -->", issueViewStore?.getIssues);
-  console.log("------");
-
   return (
     <div className="relative w-full h-full">
       {issueViewStore.loader || issueViewStore?.getIssues === null ? (

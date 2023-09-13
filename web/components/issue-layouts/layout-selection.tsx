@@ -94,7 +94,7 @@ export const LayoutSelection = observer(() => {
       {layoutSelectionFilters.map((_layout) => (
         <div
           key={_layout?.key}
-          className={`w-[32px] h-[26px] rounded flex justify-center items-center cursor-pointer transition-all hover:bg-custom-background-100 overflow-hidden group ${
+          className={`w-[28px] h-[22px] rounded flex justify-center items-center cursor-pointer transition-all hover:bg-custom-background-100 overflow-hidden group ${
             issueFilterStore?.issueLayout == _layout?.key
               ? `bg-custom-background-100 shadow shadow-gray-200`
               : ``
@@ -102,7 +102,7 @@ export const LayoutSelection = observer(() => {
           onClick={() => handleLayoutSelection(_layout?.key)}
         >
           <_layout.icon
-            size={15}
+            size={14}
             strokeWidth={2}
             className={`${
               issueFilterStore?.issueLayout == _layout?.key

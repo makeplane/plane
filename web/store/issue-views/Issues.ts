@@ -131,9 +131,9 @@ class IssueViewStore implements IIssueViewStore {
 
       const currentLayout: TIssueLayouts = currentProjectId
         ? this.rootStore.issueFilters.issueFilters?.[currentWorkspaceId]
-            ?.project_issue_properties?.[currentProjectId]?.renderLayout
+            ?.project_issue_properties?.[currentProjectId]?.issues?.display_filters?.layout
         : this.rootStore.issueFilters.issueFilters?.[currentWorkspaceId]?.my_issue_properties
-            ?.renderLayout;
+            ?.display_filters?.layout;
 
       if (currentView === "my_issues")
         return this.issues?.[currentWorkspaceId]?.my_issues?.[currentLayout];

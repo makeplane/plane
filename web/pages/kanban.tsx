@@ -4,7 +4,11 @@ import useSWR from "swr";
 // components
 import { IssueKanBanViewRoot } from "components/issue-layouts/kanban";
 import { LayoutSelection } from "components/issue-layouts/layout-selection";
+// issue dropdowns
+import { IssueDropdown } from "components/issue-layouts/helpers/dropdown";
+// filter components
 import { FilterSelection } from "components/issue-layouts/filters";
+import { DisplayFiltersSelection } from "components/issue-layouts/display-filters";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
@@ -29,8 +33,8 @@ const KanBanViewRoot = () => {
       // await issueViewStore.getMyIssuesAsync(workspaceSlug, "my_issues", "spreadsheet");
       // await issueViewStore.getMyIssuesAsync(workspaceSlug, "my_issues", "gantt");
       // project issues under and workspace and project
-      await issueViewStore.getProjectIssuesAsync(workspaceSlug, projectSlug, "issues", "list");
-      // await issueViewStore.getProjectIssuesAsync(workspaceSlug, projectSlug, "issues", "kanban");
+      // await issueViewStore.getProjectIssuesAsync(workspaceSlug, projectSlug, "issues", "list");
+      await issueViewStore.getProjectIssuesAsync(workspaceSlug, projectSlug, "issues", "kanban");
       // await issueViewStore.getProjectIssuesAsync(workspaceSlug, projectSlug, "issues", "calendar");
       // await issueViewStore.getProjectIssuesAsync(
       //   workspaceSlug,
@@ -165,16 +169,18 @@ const KanBanViewRoot = () => {
               <div>Filter Header</div>
             </div>
             <div className="relative flex items-center gap-2">
-              <div>{/* <FilterSelection /> */}</div>
-              <div>
-                <LayoutSelection />
-              </div>
+              <IssueDropdown title={"Filters"}>
+                <FilterSelection />
+              </IssueDropdown>
+              <IssueDropdown title={"View"}>
+                <DisplayFiltersSelection />
+              </IssueDropdown>
+              <LayoutSelection />
             </div>
           </div>
         </div>
         <div className="w-full h-full relative overflow-hidden">
-          <FilterSelection />
-          {/* <IssueKanBanViewRoot /> */}
+          <IssueKanBanViewRoot />
         </div>
       </div>
     </div>

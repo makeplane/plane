@@ -20,14 +20,14 @@ export const FilterLabels = observer(() => {
   const store: RootStore = useMobxStore();
   const { issueFilters: issueFilterStore, issueView: issueStore } = store;
 
-  const [previewEnabled, setPreviewEnabled] = React.useState(false);
+  const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
   return (
     <div>
       <FilterHeader
         title={"labels"}
         isPreviewEnabled={previewEnabled}
-        handleIsPreviewEnabled={setPreviewEnabled}
+        handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
         <div className="space-y-[2px] pt-1">
@@ -35,8 +35,13 @@ export const FilterLabels = observer(() => {
             issueFilterStore?.projectLabels.length > 0 &&
             issueFilterStore?.projectLabels.map((_label) => (
               <FilterOption
-                key={_label?.key}
-                isChecked={false}
+                key={_label?.id}
+                isChecked={
+                  issueFilterStore?.userFilters?.filters?.labels != null &&
+                  issueFilterStore?.userFilters?.filters?.labels.includes(_label?.id)
+                    ? true
+                    : false
+                }
                 icon={<LabelIcons color={_label.color} />}
                 title={_label.name}
               />

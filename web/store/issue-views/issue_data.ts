@@ -12,7 +12,7 @@ export const filtersPriority: { key: string; title: string }[] = [
   { key: "high", title: "High" },
   { key: "medium", title: "Medium" },
   { key: "low", title: "Low" },
-  { key: "null", title: "None" },
+  { key: "none", title: "None" },
 ];
 
 export const filterStateGroup: { key: TStateGroup; title: string }[] = [
@@ -43,7 +43,7 @@ export const displayPropertyGroupBy: { key: string; title: string }[] = [
   { key: "state", title: "States" },
   { key: "state_detail.group", title: "State Groups" },
   { key: "priority", title: "Priority" },
-  { key: "Project", title: "project" }, // required this on my issues
+  { key: "Project", title: "Project" }, // required this on my issues
   { key: "labels", title: "Labels" },
   { key: "assignees", title: "Assignees" },
   { key: "created_by", title: "Created By" },
@@ -67,7 +67,7 @@ export const displayProperties: { key: string; title: string }[] = [
   { key: "assignee", title: "Assignee" },
   { key: "start_date", title: "Start Date" },
   { key: "due_date", title: "Due Date" },
-  { key: "key", title: "Id" },
+  { key: "key", title: "ID" },
   { key: "labels", title: "Labels" },
   { key: "priority", title: "Priority" },
   { key: "state", title: "State" },
@@ -75,4 +75,11 @@ export const displayProperties: { key: string; title: string }[] = [
   { key: "attachment_count", title: "Attachment Count" },
   { key: "link", title: "Link" },
   { key: "estimate", title: "Estimate" },
+];
+
+export const extraProperties: { key: string; title: string }[] = [
+  { key: "sub_issues", title: "Show sub-issues" }, // in spreadsheet its always false
+  { key: "show_empty_groups", title: "Show empty states" }, // filter on front-end
+  { key: "calendar_date_range", title: "Calendar Date Range" }, // calendar date range yyyy-mm-dd;before range yyyy-mm-dd;after
+  { key: "start_target_date", title: "Start target Date" }, // gantt always be true
 ];

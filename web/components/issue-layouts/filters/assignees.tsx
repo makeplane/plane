@@ -17,7 +17,7 @@ export const MemberIcons = ({
   display_name: string;
   avatar: string | null;
 }) => (
-  <div className="flex-shrink-0 rounded-sm overflow-hidden w-[20px] h-[20px] flex justify-center items-center bg-custom-background-80">
+  <div className="flex-shrink-0 rounded-sm overflow-hidden w-[20px] h-[20px] flex justify-center items-center">
     {avatar ? (
       <img src={avatar} alt={display_name || ""} className="" />
     ) : (
@@ -32,14 +32,14 @@ export const FilterAssignees = observer(() => {
   const store: RootStore = useMobxStore();
   const { issueFilters: issueFilterStore, issueView: issueStore } = store;
 
-  const [previewEnabled, setPreviewEnabled] = React.useState(false);
+  const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
   return (
     <div>
       <FilterHeader
         title={"Assignees"}
         isPreviewEnabled={previewEnabled}
-        handleIsPreviewEnabled={setPreviewEnabled}
+        handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
         <div className="space-y-[2px] pt-1">
@@ -48,7 +48,12 @@ export const FilterAssignees = observer(() => {
             issueFilterStore?.projectMembers.map((_member) => (
               <FilterOption
                 key={`assignees-${_member?.member?.id}`}
-                isChecked={false}
+                isChecked={
+                  issueFilterStore?.userFilters?.filters?.assignees != null &&
+                  issueFilterStore?.userFilters?.filters?.assignees.includes(_member?.member?.id)
+                    ? true
+                    : false
+                }
                 icon={
                   <MemberIcons
                     display_name={_member?.member.display_name}

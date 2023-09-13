@@ -1,6 +1,6 @@
 import React from "react";
 // lucide icons
-import { AlertCircle, SignalHigh, SignalMedium, SignalLow, Ban, Check } from "lucide-react";
+import { AlertCircle, SignalHigh, SignalMedium, SignalLow, Ban } from "lucide-react";
 // components
 import { FilterHeader } from "../helpers/filter-header";
 import { FilterOption } from "../helpers/filter-option";
@@ -54,14 +54,14 @@ export const FilterPriority = observer(() => {
   const store: RootStore = useMobxStore();
   const { issueFilters: issueFilterStore, issueView: issueStore } = store;
 
-  const [previewEnabled, setPreviewEnabled] = React.useState(false);
+  const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
   return (
     <div>
       <FilterHeader
         title={"Priority"}
         isPreviewEnabled={previewEnabled}
-        handleIsPreviewEnabled={setPreviewEnabled}
+        handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
         <div className="space-y-[2px] pt-1">
@@ -70,11 +70,21 @@ export const FilterPriority = observer(() => {
             issueFilterStore?.issueRenderFilters?.priority.map((_priority) => (
               <FilterOption
                 key={_priority?.key}
-                isChecked={false}
+                isChecked={
+                  issueFilterStore?.userFilters?.filters?.priority != null &&
+                  issueFilterStore?.userFilters?.filters?.priority.includes(_priority?.key)
+                    ? true
+                    : false
+                }
                 icon={<PriorityIcons priority={_priority.key} />}
                 title={_priority.title}
               />
             ))}
+          <div className="pl-[32px] flex items-center gap-2 py-[6px] text-xs text-custom-primary-100">
+            <div>View more</div>
+            <div>View less</div>
+            <div>View all</div>
+          </div>
         </div>
       )}
     </div>

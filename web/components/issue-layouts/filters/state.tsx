@@ -17,14 +17,14 @@ export const FilterState = observer(() => {
   const store: RootStore = useMobxStore();
   const { issueFilters: issueFilterStore, issueView: issueStore } = store;
 
-  const [previewEnabled, setPreviewEnabled] = React.useState(false);
+  const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
   return (
     <div>
       <FilterHeader
         title={"State"}
         isPreviewEnabled={previewEnabled}
-        handleIsPreviewEnabled={setPreviewEnabled}
+        handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
         <div className="space-y-[2px] pt-1">
@@ -36,7 +36,12 @@ export const FilterState = observer(() => {
               issueFilterStore?.projectStates[_stateGroup].map((_state: any) => (
                 <FilterOption
                   key={_state?.id}
-                  isChecked={false}
+                  isChecked={
+                    issueFilterStore?.userFilters?.filters?.state != null &&
+                    issueFilterStore?.userFilters?.filters?.state.includes(_state?.id)
+                      ? true
+                      : false
+                  }
                   icon={<StateGroupIcons stateGroup={_stateGroup} color={_state?.color} />}
                   title={_state?.name}
                 />

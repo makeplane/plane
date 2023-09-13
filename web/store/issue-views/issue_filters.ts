@@ -16,6 +16,7 @@ import {
   displayPropertyOrderBy,
   displayPropertyIssueType,
   displayProperties,
+  extraProperties,
 } from "./issue_data";
 
 export type TIssueViews = "my_issues" | "issues" | "modules" | "views" | "cycles";
@@ -70,6 +71,7 @@ export interface IIssueRenderFilters {
   order_by: { key: string; title: string }[];
   issue_type: { key: string; title: string }[];
   display_properties: { key: string; title: string }[];
+  extra_properties: { key: string; title: string }[];
   workspace_properties: {
     [key: string]: {
       projects: any[];
@@ -91,7 +93,6 @@ export interface IIssueFilters {
       filters: IIssueFilter;
       display_filters: IIssueDisplayFilters;
       display_properties: IIssueDisplayProperties;
-      renderLayout: TIssueLayouts;
     };
     project_issue_properties: {
       [key: string]: {
@@ -99,11 +100,22 @@ export interface IIssueFilters {
           filters: IIssueFilter;
           display_filters: IIssueDisplayFilters;
         };
-        cycles: { filters: IIssueFilter; display_filters: IIssueDisplayFilters };
-        modules: { filters: IIssueFilter; display_filters: IIssueDisplayFilters };
-        views: { filters: IIssueFilter; display_filters: IIssueDisplayFilters };
+        cycles: {
+          [key: string]: {
+            filters: IIssueFilter;
+          };
+        };
+        modules: {
+          [key: string]: {
+            filters: IIssueFilter;
+          };
+        };
+        views: {
+          [key: string]: {
+            filters: IIssueFilter;
+          };
+        };
         display_properties: IIssueDisplayProperties;
-        renderLayout: TIssueLayouts;
       };
     };
   };
@@ -123,6 +135,16 @@ export interface IIssueFilterStore {
 
   issueRenderFilters: IIssueRenderFilters;
   issueFilters: IIssueFilters;
+
+  filterRenderProperties:
+    | {
+        [key: string]: {
+          isPreviewEnabled: boolean;
+          totalElements: number;
+          elementsVisible: number;
+        };
+      }[]
+    | null;
 
   // actions
   getWorkspaceMyIssuesFilters: (workspaceId: string) => Promise<any>;
@@ -173,9 +195,20 @@ class IssueFilterStore implements IIssueFilterStore {
     order_by: displayPropertyOrderBy,
     issue_type: displayPropertyIssueType,
     display_properties: displayProperties,
+    extra_properties: extraProperties,
     workspace_properties: {},
   };
   issueFilters: IIssueFilters = {};
+
+  filterRenderProperties:
+    | {
+        [key: string]: {
+          isPreviewEnabled: boolean;
+          totalElements: number;
+          elementsVisible: number;
+        };
+      }[]
+    | null = null;
 
   // root store
   rootStore;
@@ -210,6 +243,8 @@ class IssueFilterStore implements IIssueFilterStore {
       projectLabels: computed,
       projectMembers: computed,
       projectDisplayProperties: computed,
+
+      userFilters: computed,
 
       // action
       setWorkspaceId: action,
@@ -253,12 +288,11 @@ class IssueFilterStore implements IIssueFilterStore {
   // computed
   get issueLayout() {
     if (!this.workspaceId) return null;
-
     if (!this.projectId)
-      return this.issueFilters?.[this.workspaceId]?.my_issue_properties?.renderLayout;
+      return this.issueFilters?.[this.workspaceId]?.my_issue_properties?.display_filters?.layout;
     if (this.projectId)
       return this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]
-        ?.renderLayout;
+        ?.issues?.display_filters?.layout;
   }
 
   get workspaceProjects() {
@@ -291,8 +325,67 @@ class IssueFilterStore implements IIssueFilterStore {
   get projectDisplayProperties() {
     if (!this.workspaceId || !this.projectId) return null;
     return this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]
-      ?.display_properties;
+      ?.display_properties as any;
   }
+
+  get userFilters() {
+    if (!this.workspaceId) return null;
+    if (this.issueView === "my_issues")
+      return this.issueFilters?.[this.workspaceId]?.my_issue_properties;
+
+    if (!this.projectId) return null;
+    let _issueFilters: {
+      filters: IIssueFilter | null;
+      display_filters: IIssueDisplayFilters;
+      display_properties: IIssueDisplayProperties;
+    } = {
+      filters: null,
+      display_filters:
+        this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.issues
+          ?.display_filters,
+      display_properties:
+        this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]
+          ?.display_properties,
+    };
+    if (this.issueView === "issues") {
+      _issueFilters = {
+        ..._issueFilters,
+        filters:
+          this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.issues
+            ?.filters,
+      };
+      return _issueFilters;
+    }
+    if (this.issueView === "modules" && this.moduleId) {
+      _issueFilters = {
+        ..._issueFilters,
+        filters:
+          this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]
+            ?.modules?.[this.moduleId]?.filters,
+      };
+      return _issueFilters;
+    }
+    if (this.issueView === "cycles" && this.cycleId) {
+      _issueFilters = {
+        ..._issueFilters,
+        filters:
+          this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]
+            ?.cycles?.[this.cycleId]?.filters,
+      };
+      return _issueFilters;
+    }
+    if (this.issueView === "views" && this.viewId) {
+      _issueFilters = {
+        ..._issueFilters,
+        filters:
+          this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]
+            ?.views?.[this.viewId]?.filters,
+      };
+      return _issueFilters;
+    }
+    return null;
+  }
+  handleUserFilter = () => {};
 
   computedFilter = (filters: any, filteredParams: any) => {
     const computedFilters: any = {};
@@ -322,53 +415,51 @@ class IssueFilterStore implements IIssueFilterStore {
     this.setViewId(_viewId);
     this.setIssueView(_issueView);
 
-    if (_workspaceId) {
-      if (!_projectId)
-        this.issueFilters = {
-          ...this.issueFilters,
-          [_workspaceId]: {
-            ...this.issueFilters[_workspaceId],
-            my_issue_properties: {
-              ...this.issueFilters[_workspaceId]?.my_issue_properties,
-              renderLayout: _issueLayout,
-            },
-          },
-        };
-      else
-        this.issueFilters = {
-          ...this.issueFilters,
-          [_workspaceId]: {
-            ...this.issueFilters[_workspaceId],
-            project_issue_properties: {
-              ...this.issueFilters[_workspaceId]?.project_issue_properties,
-              [_projectId]: {
-                ...this.issueFilters[_workspaceId]?.project_issue_properties?.[_projectId],
-                renderLayout: _issueLayout,
-              },
-            },
-          },
-        };
-    }
+    const _layout = this.userFilters?.display_filters?.layout;
 
     let filteredRouteParams: any = {
-      priority: [] || undefined,
-      state: [] || undefined,
-      assignees: [] || undefined, // ['user_id', 'user_id']
-      created_by: [] || undefined, // ['user_id', 'user_id']
-      labels: [] || undefined, // ['label_id', 'label_id']
-      start_date: [] || undefined, // ['yyyy-mm-dd:after/before', 'yyyy-mm-dd:after/before']
-      target_date: [] || undefined, // [yyyy-mm-dd:after, yyyy-mm-dd:before]
-      type: "" || undefined, // 'active' (started, un_started) || 'backlog' || 'null' (all_the_issues)
-      group_by: "state", // TIssueGroupByOptions
-      order_by: "-created_at", // TIssueOrderByOptions
-      sub_issue: true, // true for all other views except spreadsheet
+      priority: this.userFilters?.filters?.priority || undefined,
+      state_group: this.userFilters?.filters?.state_group || undefined,
+      state: this.userFilters?.filters?.state || undefined,
+      assignees: this.userFilters?.filters?.assignees || undefined,
+      created_by: this.userFilters?.filters?.created_by || undefined,
+      labels: this.userFilters?.filters?.labels || undefined,
+      start_date: this.userFilters?.filters?.start_date || undefined,
+      target_date: this.userFilters?.filters?.target_date || undefined,
+      type: this.userFilters?.display_filters?.type || undefined,
+      group_by: this.userFilters?.display_filters?.group_by || "state",
+      order_by: this.userFilters?.display_filters?.order_by || "-created_at",
+      sub_issue: this.userFilters?.display_filters?.sub_issue || true,
+      show_empty_groups: this.userFilters?.display_filters?.show_empty_groups || true,
+      calendar_date_range: this.userFilters?.display_filters?.calendar_date_range || undefined,
+      start_target_date: this.userFilters?.display_filters?.start_target_date || true,
     };
 
-    let filteredParams: any = {};
+    console.log("filteredRouteParams", filteredRouteParams);
 
-    if (_issueLayout === "list")
+    // start date and target date we have to construct the format here
+
+    let filteredParams: any = {};
+    if (_layout === "list")
       filteredParams = [
         "priority",
+        "state_group",
+        "state",
+        "assignees",
+        "created_by",
+        "labels",
+        "start_date",
+        "target_date",
+        "group_by",
+        "order_by",
+        "type",
+        "sub_issue",
+        "show_empty_groups",
+      ];
+    if (_layout === "kanban")
+      filteredParams = [
+        "priority",
+        "state_group",
         "state",
         "assignees",
         "created_by",
@@ -380,7 +471,33 @@ class IssueFilterStore implements IIssueFilterStore {
         "order_by",
         "sub_issue",
       ];
-    if (_issueLayout === "kanban")
+    if (_layout === "calendar")
+      filteredParams = [
+        "priority",
+        "state_group",
+        "state",
+        "assignees",
+        "created_by",
+        "labels",
+        "start_date",
+        "target_date",
+        "type",
+        "calendar_date_range",
+      ];
+    if (_layout === "spreadsheet")
+      filteredParams = [
+        "priority",
+        "state_group",
+        "state",
+        "assignees",
+        "created_by",
+        "labels",
+        "start_date",
+        "target_date",
+        "type",
+        "sub_issues",
+      ];
+    if (_layout === "gantt")
       filteredParams = [
         "priority",
         "state",
@@ -389,48 +506,16 @@ class IssueFilterStore implements IIssueFilterStore {
         "labels",
         "start_date",
         "target_date",
-        "type",
-        "group_by",
         "order_by",
-        "sub_issue",
-      ];
-    if (_issueLayout === "calendar")
-      filteredParams = [
-        "priority",
-        "state",
-        "assignees",
-        "created_by",
-        "labels",
-        "start_date",
-        "target_date",
         "type",
-      ];
-    if (_issueLayout === "spreadsheet")
-      filteredParams = [
-        "priority",
-        "state",
-        "assignees",
-        "created_by",
-        "labels",
-        "start_date",
-        "target_date",
-        "type",
-      ];
-    if (_issueLayout === "gantt")
-      filteredParams = [
-        "priority",
-        "state",
-        "assignees",
-        "created_by",
-        "labels",
-        "start_date",
-        "target_date",
-        "type",
-        "order_by",
         "sub_issue_id",
+        "start_target_date",
       ];
 
     filteredRouteParams = this.computedFilter(filteredRouteParams, filteredParams);
+
+    // remove few attributes from the object when we are in workspace issues
+    console.log("filteredRouteParams", filteredRouteParams);
 
     return filteredRouteParams;
   };
@@ -470,7 +555,6 @@ class IssueFilterStore implements IIssueFilterStore {
       return error;
     }
   };
-
   getWorkspaceMyIssuesLabels = async (workspaceId: string) => {
     try {
       this.loader = true;
@@ -523,40 +607,48 @@ class IssueFilterStore implements IIssueFilterStore {
             my_issue_properties: {
               ...this?.issueFilters?.[workspaceId]?.my_issue_properties,
               filters: {
-                priority: undefined,
-                state: undefined,
-                state_group: undefined,
-                assignees: undefined,
-                created_by: undefined,
-                labels: undefined,
-                start_date: undefined,
-                target_date: undefined,
-                subscriber: undefined,
+                priority: issuesFiltersResponse?.view_props?.filters?.priority ?? null,
+                state: issuesFiltersResponse?.view_props?.filters?.state ?? null,
+                state_group: issuesFiltersResponse?.view_props?.filters?.state_group ?? null,
+                assignees: issuesFiltersResponse?.view_props?.filters?.assignees ?? null,
+                created_by: issuesFiltersResponse?.view_props?.filters?.created_by ?? null,
+                labels: issuesFiltersResponse?.view_props?.filters?.labels ?? null,
+                start_date: issuesFiltersResponse?.view_props?.filters?.start_date ?? null,
+                target_date: issuesFiltersResponse?.view_props?.filters?.target_date ?? null,
+                subscriber: issuesFiltersResponse?.view_props?.filters?.subscriber ?? null,
               },
               display_filters: {
-                group_by: undefined,
-                order_by: undefined,
-                type: undefined,
-                sub_issue: undefined,
-                show_empty_groups: undefined,
-                layout: undefined,
-                calendar_date_range: undefined,
-                start_target_date: undefined,
+                group_by: issuesFiltersResponse?.view_props?.display_filters?.group_by ?? null,
+                order_by: issuesFiltersResponse?.view_props?.display_filters?.order_by ?? null,
+                type: issuesFiltersResponse?.view_props?.display_filters?.type ?? null,
+                sub_issue: issuesFiltersResponse?.view_props?.display_filters?.sub_issue ?? false,
+                show_empty_groups:
+                  issuesFiltersResponse?.view_props?.display_filters?.show_empty_groups ?? false,
+                layout: issuesFiltersResponse?.view_props?.display_filters?.layout ?? "list",
+                calendar_date_range:
+                  issuesFiltersResponse?.view_props?.display_filters?.calendar_date_range ?? false,
+                start_target_date:
+                  issuesFiltersResponse?.view_props?.display_filters?.start_target_date ?? true,
               },
               display_properties: {
-                assignee: false,
-                attachment_count: false,
-                created_on: false,
-                due_date: false,
-                estimate: false,
-                key: false,
-                labels: false,
-                link: false,
-                priority: false,
-                start_date: false,
-                state: false,
-                sub_issue_count: false,
-                updated_on: false,
+                assignee: issuesFiltersResponse?.view_props?.display_properties?.assignee ?? false,
+                attachment_count:
+                  issuesFiltersResponse?.view_props?.display_properties?.attachment_count ?? false,
+                created_on:
+                  issuesFiltersResponse?.view_props?.display_properties?.created_on ?? false,
+                due_date: issuesFiltersResponse?.view_props?.display_properties?.due_date ?? false,
+                estimate: issuesFiltersResponse?.view_props?.display_properties?.estimate ?? false,
+                key: issuesFiltersResponse?.view_props?.display_properties?.key ?? false,
+                labels: issuesFiltersResponse?.view_props?.display_properties?.labels ?? false,
+                link: issuesFiltersResponse?.view_props?.display_properties?.link ?? false,
+                priority: issuesFiltersResponse?.view_props?.display_properties?.priority ?? false,
+                start_date:
+                  issuesFiltersResponse?.view_props?.display_properties?.start_date ?? false,
+                state: issuesFiltersResponse?.view_props?.display_properties?.state ?? false,
+                sub_issue_count:
+                  issuesFiltersResponse?.view_props?.display_properties?.sub_issue_count ?? false,
+                updated_on:
+                  issuesFiltersResponse?.view_props?.display_properties?.updated_on ?? false,
               },
             },
           },
@@ -652,7 +744,6 @@ class IssueFilterStore implements IIssueFilterStore {
       return error;
     }
   };
-
   getProjectLevelLabels = async (workspaceId: string, projectId: string) => {
     try {
       this.loader = true;
@@ -692,7 +783,6 @@ class IssueFilterStore implements IIssueFilterStore {
       return error;
     }
   };
-
   getProjectLevelMembers = async (workspaceId: string, projectId: string) => {
     try {
       this.loader = true;
@@ -755,7 +845,7 @@ class IssueFilterStore implements IIssueFilterStore {
               ...this?.issueFilters[workspaceId]?.project_issue_properties,
               [projectId]: {
                 ...this?.issueFilters[workspaceId]?.project_issue_properties?.[projectId],
-                display_properties: issuesDisplayPropertiesResponse,
+                display_properties: issuesDisplayPropertiesResponse?.properties,
               },
             },
           },
@@ -822,25 +912,35 @@ class IssueFilterStore implements IIssueFilterStore {
       this.loader = true;
       this.error = null;
 
-      const workspaceId = "1";
+      const issuesDisplayFiltersResponse = await this.projectService.projectMemberMe(
+        workspaceId,
+        projectId
+      );
 
-      const issuesFiltersResponse = await this.workspaceService.workspaceMemberMe(workspaceId);
+      if (issuesDisplayFiltersResponse) {
+        const _filters = { ...issuesDisplayFiltersResponse?.view_props?.filters };
+        const _displayFilters = { ...issuesDisplayFiltersResponse?.view_props?.display_filters };
 
-      if (issuesFiltersResponse) {
-        // const _issuesFiltersResponse = this.issueFilters;
-        //   const _issuesFiltersResponse: any = {
-        //     ...this.issues,
-        //     [workspaceId]: {
-        //       ...this?.issues[workspaceId],
-        //       my_issues: {
-        //         ...this?.issues[workspaceId]?.my_issues,
-        //         [_layout as string]: issuesResponse,
-        //       },
-        //     },
-        //   };
+        const _issuesDisplayFiltersResponse: any = {
+          ...this.issueFilters,
+          [workspaceId]: {
+            ...this?.issueFilters[workspaceId],
+            project_issue_properties: {
+              ...this?.issueFilters[workspaceId]?.project_issue_properties,
+              [projectId]: {
+                ...this?.issueFilters[workspaceId]?.project_issue_properties?.[projectId],
+                issues: {
+                  ...this?.issueFilters[workspaceId]?.project_issue_properties?.[projectId]?.issues,
+                  filters: _filters,
+                  display_filters: _displayFilters,
+                },
+              },
+            },
+          },
+        };
 
         runInAction(() => {
-          // this.issueFilters = _issuesFiltersResponse;
+          this.issueFilters = _issuesDisplayFiltersResponse;
           this.loader = false;
           this.error = null;
         });
@@ -901,28 +1001,12 @@ class IssueFilterStore implements IIssueFilterStore {
       await this.getProjectLevelLabels(workspaceId, projectId);
       await this.getProjectLevelMembers(workspaceId, projectId);
       await this.getProjectDisplayProperties(workspaceId, projectId);
+      await this.getProjectDisplayFilters(workspaceId, projectId);
 
-      const issuesFiltersResponse = await this.workspaceService.workspaceMemberMe(workspaceId);
-
-      if (issuesFiltersResponse) {
-        // const _issuesFiltersResponse = this.issueFilters;
-        //   const _issuesFiltersResponse: any = {
-        //     ...this.issues,
-        //     [workspaceId]: {
-        //       ...this?.issues[workspaceId],
-        //       my_issues: {
-        //         ...this?.issues[workspaceId]?.my_issues,
-        //         [_layout as string]: issuesResponse,
-        //       },
-        //     },
-        //   };
-
-        runInAction(() => {
-          // this.issueFilters = _issuesFiltersResponse;
-          this.loader = false;
-          this.error = null;
-        });
-      }
+      runInAction(() => {
+        this.loader = false;
+        this.error = null;
+      });
 
       // return issuesResponse;
     } catch (error) {
@@ -936,11 +1020,6 @@ class IssueFilterStore implements IIssueFilterStore {
     try {
       this.loader = true;
       this.error = null;
-
-      await this.getProjectLevelStates(workspaceId, projectId);
-      await this.getProjectLevelLabels(workspaceId, projectId);
-      await this.getProjectLevelMembers(workspaceId, projectId);
-      // await this.getProjectDisplayProperties(workspaceId, projectId);
 
       const issuesFiltersResponse = await this.workspaceService.workspaceMemberMe(workspaceId);
 
