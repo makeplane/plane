@@ -86,9 +86,11 @@ const StatesSettings: NextPage = () => {
                 Object.keys(orderedStateGroups).map((key) => {
                   if (orderedStateGroups[key].length !== 0)
                     return (
-                      <div key={key}>
-                        <div className="mb-2 flex w-full justify-between">
-                          <h4 className="text-custom-text-200 capitalize">{key}</h4>
+                      <div key={key} className="flex flex-col gap-2">
+                        <div className="flex w-full justify-between">
+                          <h4 className="text-base font-medium text-custom-text-200 capitalize">
+                            {key}
+                          </h4>
                           <button
                             type="button"
                             className="flex items-center gap-2 text-custom-primary-100 px-2 hover:text-custom-primary-200 outline-none"
@@ -97,7 +99,7 @@ const StatesSettings: NextPage = () => {
                             <PlusIcon className="h-4 w-4" />
                           </button>
                         </div>
-                        <div className="divide-y divide-custom-border-200 rounded-[10px] border border-custom-border-200">
+                        <div className="flex flex-col gap-2 rounded">
                           {key === activeGroup && (
                             <CreateUpdateStateInline
                               groupLength={orderedStateGroups[key].length}

@@ -47,21 +47,21 @@ const featuresList = [
     title: "Views",
     description:
       "Views are enabled for all the projects in this workspace. Access it from the sidebar.",
-    icon: <Layers className="h-4 w-4 text-custom-primary-100 flex-shrink-0" />,
+    icon: <Layers className="h-4 w-4 text-cyan-500 flex-shrink-0" />,
     property: "issue_views_view",
   },
   {
     title: "Pages",
     description:
       "Pages are enabled for all the projects in this workspace. Access it from the sidebar.",
-    icon: <FileText className="h-4 w-4 text-custom-primary-100 flex-shrink-0" />,
+    icon: <FileText className="h-4 w-4 text-red-400 flex-shrink-0" />,
     property: "page_view",
   },
   {
     title: "Inbox",
     description:
       "Inbox are enabled for all the projects in this workspace. Access it from the issues views page.",
-    icon: <Inbox className="h-4 w-4 text-custom-primary-100 flex-shrink-0" />,
+    icon: <Inbox className="h-4 w-4 text-cyan-500 flex-shrink-0" />,
     property: "inbox_view",
   },
 ];
