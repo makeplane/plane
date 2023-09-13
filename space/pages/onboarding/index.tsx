@@ -2,10 +2,6 @@ import React, { useEffect } from "react";
 // mobx
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
-// services
-import authenticationService from "services/authentication.service";
-// hooks
-import useToast from "hooks/use-toast";
 // components
 import { OnBoardingForm } from "components/accounts/onboarding-form";
 
@@ -15,8 +11,6 @@ const OnBoardingPage = () => {
   const { user: userStore } = useMobxStore();
 
   const user = userStore?.currentUser;
-
-  const { setToastAlert } = useToast();
 
   useEffect(() => {
     const user = userStore?.currentUser;
