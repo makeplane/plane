@@ -142,7 +142,7 @@ class PropertyReadSerializer(BaseSerializer):
         if children:
             serializer = PropertyReadSerializer(children, many=True)
             return serializer.data
-        return None
+        return []
 
     def get_prop_value(self, obj):
         MODEL_MAPPER = {

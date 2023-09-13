@@ -24,7 +24,7 @@ class Property(BaseModel):
     name = models.CharField(max_length=255)
     display_name = models.CharField(max_length=255)
     icon = models.CharField(max_length=255, blank=True, null=True)
-    color = models.CharField(max_length=20, blank=True, null=True)
+    color = models.CharField(max_length=20, blank=True, default="")
     description = models.TextField(blank=True, default="")
     type = models.CharField(
         choices=(
@@ -53,7 +53,7 @@ class Property(BaseModel):
     )
     default_value = models.TextField(blank=True, null=True)
     is_shared = models.BooleanField(default=True)
-    extra_settings = models.JSONField(default=None, null=True, blank=True)
+    extra_settings = models.JSONField(default=dict, blank=True)
     unit = models.CharField(max_length=100, blank=True, null=True)
     is_multi = models.BooleanField(default=False)
     is_default = models.BooleanField(default=False)
