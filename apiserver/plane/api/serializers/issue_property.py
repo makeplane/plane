@@ -86,7 +86,7 @@ class PropertySerializer(BaseSerializer):
         if children:
             serializer = PropertySerializer(children, many=True)
             return serializer.data
-        return None
+        return []
 
     class Meta:
         model = Property
