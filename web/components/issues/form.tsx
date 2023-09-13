@@ -52,7 +52,7 @@ const defaultValues: Partial<IIssue> = {
   estimate_point: null,
   state: "",
   parent: null,
-  priority: null,
+  priority: "none",
   assignees: [],
   assignees_list: [],
   labels: [],

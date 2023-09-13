@@ -22,14 +22,12 @@ import {
 
 const useCalendarIssuesView = () => {
   const {
-    issueView,
-    calendarDateRange,
-    setCalendarDateRange,
+    display_filters: displayFilters,
+    setDisplayFilters,
     filters,
     setFilters,
     resetFilterToDefault,
     setNewFilterDefaultView,
-    setIssueView,
   } = useContext(issueViewContext);
 
   const router = useRouter();
@@ -39,11 +37,11 @@ const useCalendarIssuesView = () => {
     assignees: filters?.assignees ? filters?.assignees.join(",") : undefined,
     state: filters?.state ? filters?.state.join(",") : undefined,
     priority: filters?.priority ? filters?.priority.join(",") : undefined,
-    type: filters?.type ? filters?.type : undefined,
+    type: displayFilters?.type ? displayFilters?.type : undefined,
     labels: filters?.labels ? filters?.labels.join(",") : undefined,
     created_by: filters?.created_by ? filters?.created_by.join(",") : undefined,
     start_date: filters?.start_date ? filters?.start_date.join(",") : undefined,
-    target_date: calendarDateRange,
+    target_date: displayFilters?.calendar_date_range,
   };
 
   const { data: projectCalendarIssues } = useSWR(
@@ -103,16 +101,14 @@ const useCalendarIssuesView = () => {
     : (projectCalendarIssues as IIssue[]);
 
   return {
-    issueView,
+    displayFilters,
+    setDisplayFilters,
     calendarIssues: calendarIssues ?? [],
-    calendarDateRange,
-    setCalendarDateRange,
     filters,
     setFilters,
     params,
     resetFilterToDefault,
     setNewFilterDefaultView,
-    setIssueView,
   } as const;
 };
 

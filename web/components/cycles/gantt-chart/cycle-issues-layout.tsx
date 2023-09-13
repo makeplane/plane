@@ -16,7 +16,7 @@ export const CycleIssuesGanttChartView = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
 
-  const { orderBy } = useIssuesView();
+  const { displayFilters } = useIssuesView();
 
   const { user } = useUser();
   const { projectDetails } = useProjectDetails();
@@ -44,7 +44,7 @@ export const CycleIssuesGanttChartView = () => {
         enableBlockLeftResize={isAllowed}
         enableBlockRightResize={isAllowed}
         enableBlockMove={isAllowed}
-        enableReorder={orderBy === "sort_order" && isAllowed}
+        enableReorder={displayFilters.order_by === "sort_order" && isAllowed}
         bottomSpacing
       />
     </div>

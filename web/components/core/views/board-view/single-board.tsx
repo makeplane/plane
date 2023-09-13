@@ -50,7 +50,7 @@ export const SingleBoard: React.FC<Props> = ({
   // collapse/expand
   const [isCollapsed, setIsCollapsed] = useState(true);
 
-  const { groupedIssues, groupByProperty: selectedGroup, orderBy, properties } = viewProps;
+  const { displayFilters, groupedIssues, properties } = viewProps;
 
   const router = useRouter();
   const { cycleId, moduleId } = router.query;
@@ -80,14 +80,14 @@ export const SingleBoard: React.FC<Props> = ({
           {(provided, snapshot) => (
             <div
               className={`relative h-full ${
-                orderBy !== "sort_order" && snapshot.isDraggingOver
+                displayFilters?.order_by !== "sort_order" && snapshot.isDraggingOver
                   ? "bg-custom-background-100/20"
                   : ""
               } ${!isCollapsed ? "hidden" : "flex flex-col"}`}
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
-              {orderBy !== "sort_order" && (
+              {displayFilters?.order_by !== "sort_order" && (
                 <>
                   <div
                     className={`absolute ${
@@ -101,7 +101,11 @@ export const SingleBoard: React.FC<Props> = ({
                   >
                     This board is ordered by{" "}
                     {replaceUnderscoreIfSnakeCase(
-                      orderBy ? (orderBy[0] === "-" ? orderBy.slice(1) : orderBy) : "created_at"
+                      displayFilters?.order_by
+                        ? displayFilters?.order_by[0] === "-"
+                          ? displayFilters?.order_by.slice(1)
+                          : displayFilters?.order_by
+                        : "created_at"
                     )}
                   </div>
                 </>
@@ -145,13 +149,13 @@ export const SingleBoard: React.FC<Props> = ({
                 ))}
                 <span
                   style={{
-                    display: orderBy === "sort_order" ? "inline" : "none",
+                    display: displayFilters?.order_by === "sort_order" ? "inline" : "none",
                   }}
                 >
                   {provided.placeholder}
                 </span>
               </div>
-              {selectedGroup !== "created_by" && (
+              {displayFilters?.group_by !== "created_by" && (
                 <div>
                   {type === "issue"
                     ? !disableAddIssueOption && (

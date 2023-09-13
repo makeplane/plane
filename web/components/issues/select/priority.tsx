@@ -40,7 +40,7 @@ export const IssuePrioritySelect: React.FC<Props> = ({ value, onChange }) => (
             <span>
               <PriorityIcon priority={priority} />
             </span>
-            <span className="capitalize">{priority ?? "None"}</span>
+            <span className="capitalize">{priority}</span>
           </div>
         </div>
       </CustomSelect.Option>
