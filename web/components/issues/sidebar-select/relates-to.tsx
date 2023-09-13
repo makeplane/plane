@@ -79,7 +79,7 @@ export const SidebarRelatesSelect: React.FC<Props> = (props) => {
       })
       .then((response) => {
         submitChanges({
-          related_issues: [...watch("related_issues"), ...response.related_list],
+          related_issues: [...watch("related_issues"), ...(response ?? [])],
         });
       });
 
@@ -102,7 +102,7 @@ export const SidebarRelatesSelect: React.FC<Props> = (props) => {
       <ExistingIssuesListModal
         isOpen={isRelatesToModalOpen}
         handleClose={() => setIsRelatesToModalOpen(false)}
-        searchParams={{ blocker_blocked_by: true, issue_id: issueId }}
+        searchParams={{ issue_relation: true, issue_id: issueId }}
         handleOnSubmit={onSubmit}
         workspaceLevelToggle
       />

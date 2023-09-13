@@ -97,7 +97,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
       <ExistingIssuesListModal
         isOpen={isBlockedModalOpen}
         handleClose={() => setIsBlockedModalOpen(false)}
-        searchParams={{ blocker_blocked_by: true, issue_id: issueId }}
+        searchParams={{ issue_relation: true, issue_id: issueId }}
         handleOnSubmit={onSubmit}
         workspaceLevelToggle
       />

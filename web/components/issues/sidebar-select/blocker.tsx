@@ -84,23 +84,27 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
       })
       .then((response) => {
         submitChanges({
-          issue_relations: [...blockerIssue, ...response],
+          issue_relations: [
+            ...blockerIssue,
+            ...(response ?? []).map((i: any) => ({
+              id: i.id,
+              relation_type: i.relation_type,
+              issue_detail: i.related_issue_detail,
+              issue: i.related_issue,
+            })),
+          ],
         });
       });
 
     handleClose();
   };
 
-  console.log(watch(), "watch");
-
-  console.log(blockerIssue);
-
   return (
     <>
       <ExistingIssuesListModal
         isOpen={isBlockerModalOpen}
         handleClose={() => setIsBlockerModalOpen(false)}
-        searchParams={{ blocker_blocked_by: true, issue_id: issueId }}
+        searchParams={{ issue_relation: true, issue_id: issueId }}
         handleOnSubmit={onSubmit}
         workspaceLevelToggle
       />
@@ -143,7 +147,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
                         issuesService.deleteIssueRelation(
                           workspaceSlug as string,
                           projectId as string,
-                          issueId as string,
+                          relation.issue_detail?.id as string,
                           relation.id,
                           user
                         );
