@@ -141,25 +141,26 @@ class IssuePropertyValueViewSet(BaseViewSet):
                         for prop_value, issue_prop_value in zip(
                             prop_values, issue_prop_values
                         ):
-                            bulk_issue_prop_transaction.append(
-                                PropertyTransaction(
-                                    id=uuid.uuid4(),
-                                    workspace_id=workspace_id,
-                                    project_id=project_id,
-                                    property_id=issue_property.id,
-                                    property_value_id=issue_prop_value.id,
-                                    from_value=issue_prop_value.value,
-                                    to_value=prop_value,
-                                    entity="issue",
-                                    entity_uuid=issue_id,
-                                    epoch=(
-                                        datetime.datetime.timestamp(timezone.now())
-                                        * 1000
-                                    ),
+                            if (issue_prop_value.value != prop_value):
+                                bulk_issue_prop_transaction.append(
+                                    PropertyTransaction(
+                                        id=uuid.uuid4(),
+                                        workspace_id=workspace_id,
+                                        project_id=project_id,
+                                        property_id=issue_property.id,
+                                        property_value_id=issue_prop_value.id,
+                                        from_value=issue_prop_value.value,
+                                        to_value=prop_value,
+                                        entity="issue",
+                                        entity_uuid=issue_id,
+                                        epoch=(
+                                            datetime.datetime.timestamp(timezone.now())
+                                            * 1000
+                                        ),
+                                    )
                                 )
-                            )
-                            issue_prop_value.value = prop_value
-                            bulk_issue_props_update.append(issue_prop_value)
+                                issue_prop_value.value = prop_value
+                                bulk_issue_props_update.append(issue_prop_value)
                     # Create new one
                     else:
                         # Only for relation, multi select and select we will storing uuids
@@ -202,26 +203,28 @@ class IssuePropertyValueViewSet(BaseViewSet):
 
                     # Already existing
                     if issue_prop_values:
-                        bulk_issue_prop_transaction.append(
-                            PropertyTransaction(
-                                id=uuid.uuid4(),
-                                workspace_id=workspace_id,
-                                project_id=project_id,
-                                property=issue_property,
-                                property_value=issue_prop_values[0],
-                                from_value=issue_prop_values[0].value,
-                                to_value=prop_value,
-                                entity="issue",
-                                entity_uuid=issue_id,
-                                epoch=(
-                                    datetime.datetime.timestamp(timezone.now()) * 1000
-                                ),
+                        # Only update if the values are different
+                        if str(issue_prop_values[0].value) != str(prop_values):
+                            bulk_issue_prop_transaction.append(
+                                PropertyTransaction(
+                                    id=uuid.uuid4(),
+                                    workspace_id=workspace_id,
+                                    project_id=project_id,
+                                    property=issue_property,
+                                    property_value=issue_prop_values[0],
+                                    from_value=issue_prop_values[0].value,
+                                    to_value=prop_values,
+                                    entity="issue",
+                                    entity_uuid=issue_id,
+                                    epoch=(
+                                        datetime.datetime.timestamp(timezone.now()) * 1000
+                                    ),
+                                )
                             )
-                        )
-                        issue_prop_values[0].value = prop_values
-                        bulk_issue_props_update.append(
-                            issue_prop_values[0],
-                        )
+                            issue_prop_values[0].value = prop_values
+                            bulk_issue_props_update.append(
+                                issue_prop_values[0],
+                            )
                     # Non existent
                     else:
                         # Only for relation, multi select and select we will storing uuids
