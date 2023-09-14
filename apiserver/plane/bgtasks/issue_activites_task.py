@@ -1130,7 +1130,7 @@ def update_draft_issue_activity(
                     issue_id=issue_id,
                     project=project,
                     workspace=project.workspace,
-                    comment=f"updated the drafted issue",
+                    comment=f"updated the draft issue",
                     field="draft",
                     verb="updated",
                     actor=actor,
@@ -1146,7 +1146,7 @@ def delete_draft_issue_activity(
         IssueActivity(
             project=project,
             workspace=project.workspace,
-            comment=f"deleted the drafted issue",
+            comment=f"deleted the draft issue",
             field="draft",
             verb="deleted",
             actor=actor,
