@@ -94,7 +94,6 @@ class PropertySerializer(BaseSerializer):
         read_only_fields = [
             "workspace",
             "name",
-            "display_name",
         ]
 
 
