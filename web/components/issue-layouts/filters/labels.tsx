@@ -21,12 +21,13 @@ export const FilterLabels = observer(() => {
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
   const handleFilter = (key: string, value: string) => {
-    const _value =
+    let _value =
       issueFilterStore?.userFilters?.filters?.[key] != null
         ? issueFilterStore?.userFilters?.filters?.[key].includes(value)
           ? issueFilterStore?.userFilters?.filters?.[key].filter((p: string) => p != value)
           : [...issueFilterStore?.userFilters?.filters?.[key], value]
         : [value];
+    _value = _value && _value.length > 0 ? _value : null;
     issueFilterStore.handleUserFilter("filters", key, _value);
   };
 
