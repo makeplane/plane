@@ -205,7 +205,7 @@ export const MyIssuesView: React.FC<Props> = ({
   );
 
   const handleIssueAction = useCallback(
-    (issue: IIssue, action: "copy" | "edit" | "delete") => {
+    (issue: IIssue, action: "copy" | "edit" | "delete" | "updateDraft") => {
       if (action === "copy") makeIssueCopy(issue);
       else if (action === "edit") handleEditIssue(issue);
       else if (action === "delete") handleDeleteIssue(issue);

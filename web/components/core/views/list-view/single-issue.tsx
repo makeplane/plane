@@ -61,26 +61,30 @@ type Props = {
   makeIssueCopy: () => void;
   removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
+  handleDraftIssueSelect?: (issue: IIssue) => void;
   disableUserActions: boolean;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
   viewProps: IIssueViewProps;
 };
 
-export const SingleListIssue: React.FC<Props> = ({
-  type,
-  issue,
-  editIssue,
-  index,
-  makeIssueCopy,
-  removeIssue,
-  groupTitle,
-  handleDeleteIssue,
-  disableUserActions,
-  user,
-  userAuth,
-  viewProps,
-}) => {
+export const SingleListIssue: React.FC<Props> = (props) => {
+  const {
+    type,
+    issue,
+    editIssue,
+    index,
+    makeIssueCopy,
+    removeIssue,
+    groupTitle,
+    handleDeleteIssue,
+    handleDraftIssueSelect,
+    disableUserActions,
+    user,
+    userAuth,
+    viewProps,
+  } = props;
+
   // context menu
   const [contextMenu, setContextMenu] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState<React.MouseEvent | null>(null);
@@ -88,6 +92,7 @@ export const SingleListIssue: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, userId } = router.query;
   const isArchivedIssues = router.pathname.includes("archived-issues");
+  const isDraftIssues = router.pathname?.split("/")?.[4] === "draft-issues";
 
   const { setToastAlert } = useToast();
 
@@ -176,6 +181,8 @@ export const SingleListIssue: React.FC<Props> = ({
 
   const issuePath = isArchivedIssues
     ? `/${workspaceSlug}/projects/${issue.project}/archived-issues/${issue.id}`
+    : isDraftIssues
+    ? `#`
     : `/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`;
 
   const isNotAllowed =
@@ -221,7 +228,15 @@ export const SingleListIssue: React.FC<Props> = ({
       >
         <div className="flex-grow cursor-pointer min-w-[200px] whitespace-nowrap overflow-hidden overflow-ellipsis">
           <Link href={issuePath}>
-            <a className="group relative flex items-center gap-2">
+            <a
+              onClick={(e) => {
+                if (!isDraftIssues) return;
+
+                e.preventDefault();
+                if (handleDraftIssueSelect) handleDraftIssueSelect(issue);
+              }}
+              className="group relative flex items-center gap-2"
+            >
               {properties.key && (
                 <Tooltip
                   tooltipHeading="Issue ID"

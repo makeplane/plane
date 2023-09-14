@@ -39,7 +39,7 @@ type Props = {
   currentState?: IState | null;
   groupTitle: string;
   addIssueToGroup: () => void;
-  handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
+  handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit" | "updateDraft") => void;
   openIssuesListModal?: (() => void) | null;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
   disableUserActions: boolean;
@@ -251,6 +251,7 @@ export const SingleList: React.FC<Props> = ({
                       editIssue={() => handleIssueAction(issue, "edit")}
                       makeIssueCopy={() => handleIssueAction(issue, "copy")}
                       handleDeleteIssue={() => handleIssueAction(issue, "delete")}
+                      handleDraftIssueSelect={() => handleIssueAction(issue, "updateDraft")}
                       removeIssue={() => {
                         if (removeIssue !== null && issue.bridge_id)
                           removeIssue(issue.bridge_id, issue.id);
