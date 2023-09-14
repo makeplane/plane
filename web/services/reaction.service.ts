@@ -11,9 +11,6 @@ import type {
   IssueCommentReactionForm,
 } from "types";
 
-const trackEvent =
-  process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
-
 class ReactionService extends APIService {
   constructor() {
     super(API_BASE_URL);
@@ -31,8 +28,7 @@ class ReactionService extends APIService {
       data
     )
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackReactionEvent(response?.data, "ISSUE_REACTION_CREATE", user);
+        trackEventServices.trackReactionEvent(response?.data, "ISSUE_REACTION_CREATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -65,8 +61,7 @@ class ReactionService extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/reactions/${reaction}/`
     )
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackReactionEvent(response?.data, "ISSUE_REACTION_DELETE", user);
+        trackEventServices.trackReactionEvent(response?.data, "ISSUE_REACTION_DELETE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -86,12 +81,11 @@ class ReactionService extends APIService {
       data
     )
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackReactionEvent(
-            response?.data,
-            "ISSUE_COMMENT_REACTION_CREATE",
-            user
-          );
+        trackEventServices.trackReactionEvent(
+          response?.data,
+          "ISSUE_COMMENT_REACTION_CREATE",
+          user
+        );
         return response?.data;
       })
       .catch((error) => {
@@ -124,12 +118,11 @@ class ReactionService extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/comments/${commentId}/reactions/${reaction}/`
     )
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackReactionEvent(
-            response?.data,
-            "ISSUE_COMMENT_REACTION_DELETE",
-            user
-          );
+        trackEventServices.trackReactionEvent(
+          response?.data,
+          "ISSUE_COMMENT_REACTION_DELETE",
+          user
+        );
         return response?.data;
       })
       .catch((error) => {
