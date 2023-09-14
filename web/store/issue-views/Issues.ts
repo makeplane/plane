@@ -18,7 +18,7 @@ export interface IIssuesLayout {
   kanban: IIssues;
   calendar: IIssues;
   spreadsheet: IIssues;
-  gantt: IIssues;
+  gantt_chart: IIssues;
 }
 
 export interface IIssueState {

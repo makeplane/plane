@@ -23,7 +23,7 @@ import {
 } from "./issue_data";
 
 export type TIssueViews = "my_issues" | "issues" | "modules" | "views" | "cycles";
-export type TIssueLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt";
+export type TIssueLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
 
 export interface IIssueFilter {
   priority: string[] | undefined;
@@ -758,7 +758,7 @@ class IssueFilterStore implements IIssueFilterStore {
         "type",
         "sub_issues",
       ];
-    if (_layout === "gantt")
+    if (_layout === "gantt_chart")
       filteredParams = [
         "priority",
         "state",

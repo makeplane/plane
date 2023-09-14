@@ -36,7 +36,7 @@ export const LayoutSelection = observer(() => {
       icon: Columns,
     },
     {
-      key: "gantt",
+      key: "gantt_chart",
       title: "Gantt",
       icon: GanttChart,
     },

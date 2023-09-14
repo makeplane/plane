@@ -108,21 +108,21 @@ export const issueFilterVisibilityData: any = {
     },
   },
   others: {
-    layout: ["list", "kanban", "calendar", "spreadsheet", "gantt"],
+    layout: ["list", "kanban", "calendar", "spreadsheet", "gantt_chart"],
     filters: ["priority", "state", "assignees", "created_by", "labels", "start_date", "due_date"],
     display_properties: {
       list: true,
       kanban: true,
       calendar: true,
       spreadsheet: true,
-      gantt: false,
+      gantt_chart: false,
     },
     display_filters: {
       list: ["group_by", "order_by", "issue_type", "sub_issue", "show_empty_groups"],
       kanban: ["group_by", "order_by", "issue_type", "sub_issue", "show_empty_groups"],
       calendar: ["issue_type"],
       spreadsheet: ["issue_type"],
-      gantt: ["order_by", "issue_type", "sub_issue"],
+      gantt_chart: ["order_by", "issue_type", "sub_issue"],
     },
     extra_options: {
       list: {
@@ -141,7 +141,7 @@ export const issueFilterVisibilityData: any = {
         access: false,
         values: [],
       },
-      gantt: {
+      gantt_chart: {
         access: true,
         values: ["sub_issue"],
       },
