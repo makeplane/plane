@@ -1309,7 +1309,7 @@ class IssueFilterStore implements IIssueFilterStore {
         };
 
         runInAction(() => {
-          this.issueFilters = _issuesFiltersModuleResponse;
+          this.issueFilters = _issuesFiltersModuleResponse as any;
           this.loader = false;
           this.error = null;
         });
@@ -1407,7 +1407,7 @@ class IssueFilterStore implements IIssueFilterStore {
         };
 
         runInAction(() => {
-          this.issueFilters = _issuesFiltersCycleResponse;
+          this.issueFilters = _issuesFiltersCycleResponse as any;
           this.loader = false;
           this.error = null;
         });
@@ -1501,7 +1501,7 @@ class IssueFilterStore implements IIssueFilterStore {
         };
 
         runInAction(() => {
-          this.issueFilters = _issuesFiltersViewResponse;
+          this.issueFilters = _issuesFiltersViewResponse as any;
           this.loader = false;
           this.error = null;
         });
