@@ -32,18 +32,23 @@ export const FilterLabels = observer(() => {
     issueFilterStore.handleUserFilter("filters", key, _value);
   };
 
+  const handleLabels =
+    issueFilterStore.issueView && issueFilterStore.issueView === "my_issues"
+      ? issueFilterStore?.workspaceLabels
+      : issueFilterStore?.projectLabels;
+
   return (
     <div>
       <FilterHeader
-        title={`Labels (${issueFilterStore?.projectLabels?.length || 0})`}
+        title={`Labels (${(handleLabels && handleLabels?.length) || 0})`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
         <div className="space-y-[2px] pt-1">
-          {issueFilterStore?.projectLabels &&
-            issueFilterStore?.projectLabels.length > 0 &&
-            issueFilterStore?.projectLabels.map((_label) => (
+          {handleLabels &&
+            handleLabels.length > 0 &&
+            handleLabels.map((_label) => (
               <FilterOption
                 key={_label?.id}
                 isChecked={
