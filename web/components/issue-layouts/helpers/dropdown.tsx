@@ -37,7 +37,7 @@ export const IssueDropdown = ({ children, title = "Dropdown" }: IIssueDropdown) 
             leaveFrom="opacity-100 translate-y-0"
             leaveTo="opacity-0 translate-y-1"
           >
-            <Popover.Panel className="absolute right-0 z-10 mt-1 w-[300px] h-[700px]">
+            <Popover.Panel className="absolute right-0 z-10 mt-1 w-[300px] h-[600px]">
               <div className="w-full h-full overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 shadow-xl">
                 {children}
               </div>

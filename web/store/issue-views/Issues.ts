@@ -48,22 +48,29 @@ export interface IIssueViewStore {
   // computed
   getIssues: IIssues | null | undefined;
   // actions
-  getMyIssuesAsync: (workspaceId: string) => null | Promise<any>;
-  getProjectIssuesAsync: (workspaceId: string, projectId: string) => null | Promise<any>;
+  getMyIssuesAsync: (workspaceId: string, fetchFilterToggle: boolean) => null | Promise<any>;
+  getProjectIssuesAsync: (
+    workspaceId: string,
+    projectId: string,
+    fetchFilterToggle: boolean
+  ) => null | Promise<any>;
   getIssuesForModulesAsync: (
     workspaceId: string,
     projectId: string,
-    moduleId: string
+    moduleId: string,
+    fetchFilterToggle: boolean
   ) => null | Promise<any>;
   getIssuesForCyclesAsync: (
     workspaceId: string,
     projectId: string,
-    cycleId: string
+    cycleId: string,
+    fetchFilterToggle: boolean
   ) => null | Promise<any>;
   getIssuesForViewsAsync: (
     workspaceId: string,
     projectId: string,
-    viewId: string
+    viewId: string,
+    fetchFilterToggle: boolean
   ) => null | Promise<any>;
 }
 
@@ -144,12 +151,13 @@ class IssueViewStore implements IIssueViewStore {
   }
 
   // fetching my issues
-  getMyIssuesAsync = async (workspaceId: string) => {
+  getMyIssuesAsync = async (workspaceId: string, fetchFilterToggle: boolean = true) => {
     try {
       this.loader = true;
       this.error = null;
 
-      await this.rootStore.issueFilters.getWorkspaceMyIssuesFilters(workspaceId);
+      if (fetchFilterToggle)
+        await this.rootStore.issueFilters.getWorkspaceMyIssuesFilters(workspaceId);
       const filteredParams = this.rootStore.issueFilters.getComputedFilters(
         workspaceId,
         null,
@@ -190,12 +198,17 @@ class IssueViewStore implements IIssueViewStore {
   };
 
   // fetching project issues
-  getProjectIssuesAsync = async (workspaceId: string, projectId: string) => {
+  getProjectIssuesAsync = async (
+    workspaceId: string,
+    projectId: string,
+    fetchFilterToggle: boolean = true
+  ) => {
     try {
       this.loader = true;
       this.error = null;
 
-      await this.rootStore.issueFilters.getProjectIssueFilters(workspaceId, projectId);
+      if (fetchFilterToggle)
+        await this.rootStore.issueFilters.getProjectIssueFilters(workspaceId, projectId);
       const filteredParams = this.rootStore.issueFilters.getComputedFilters(
         workspaceId,
         projectId,
@@ -246,16 +259,22 @@ class IssueViewStore implements IIssueViewStore {
   };
 
   // fetching project issues for modules
-  getIssuesForModulesAsync = async (workspaceId: string, projectId: string, moduleId: string) => {
+  getIssuesForModulesAsync = async (
+    workspaceId: string,
+    projectId: string,
+    moduleId: string,
+    fetchFilterToggle: boolean = true
+  ) => {
     try {
       this.loader = true;
       this.error = null;
 
-      await this.rootStore.issueFilters.getProjectIssueModuleFilters(
-        workspaceId,
-        projectId,
-        moduleId
-      );
+      if (fetchFilterToggle)
+        await this.rootStore.issueFilters.getProjectIssueModuleFilters(
+          workspaceId,
+          projectId,
+          moduleId
+        );
       const filteredParams = this.rootStore.issueFilters.getComputedFilters(
         workspaceId,
         projectId,
@@ -310,16 +329,22 @@ class IssueViewStore implements IIssueViewStore {
   };
 
   // fetching project issues for cycles
-  getIssuesForCyclesAsync = async (workspaceId: string, projectId: string, cycleId: string) => {
+  getIssuesForCyclesAsync = async (
+    workspaceId: string,
+    projectId: string,
+    cycleId: string,
+    fetchFilterToggle: boolean = true
+  ) => {
     try {
       this.loader = true;
       this.error = null;
 
-      await this.rootStore.issueFilters.getProjectIssueCyclesFilters(
-        workspaceId,
-        projectId,
-        cycleId
-      );
+      if (fetchFilterToggle)
+        await this.rootStore.issueFilters.getProjectIssueCyclesFilters(
+          workspaceId,
+          projectId,
+          cycleId
+        );
       const filteredParams = this.rootStore.issueFilters.getComputedFilters(
         workspaceId,
         projectId,
@@ -374,12 +399,22 @@ class IssueViewStore implements IIssueViewStore {
   };
 
   // fetching project issues for views
-  getIssuesForViewsAsync = async (workspaceId: string, projectId: string, viewId: string) => {
+  getIssuesForViewsAsync = async (
+    workspaceId: string,
+    projectId: string,
+    viewId: string,
+    fetchFilterToggle: boolean = true
+  ) => {
     try {
       this.loader = true;
       this.error = null;
 
-      await this.rootStore.issueFilters.getProjectIssueViewsFilters(workspaceId, projectId, viewId);
+      if (fetchFilterToggle)
+        await this.rootStore.issueFilters.getProjectIssueViewsFilters(
+          workspaceId,
+          projectId,
+          viewId
+        );
       const filteredParams = this.rootStore.issueFilters.getComputedFilters(
         workspaceId,
         projectId,

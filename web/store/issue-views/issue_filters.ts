@@ -1,4 +1,4 @@
-import { observable, action, computed, makeObservable, runInAction } from "mobx";
+import { observable, action, computed, makeObservable, runInAction, autorun } from "mobx";
 // types
 import { RootStore } from "../root";
 // services
@@ -24,6 +24,22 @@ import {
 
 export type TIssueViews = "my_issues" | "issues" | "modules" | "views" | "cycles";
 export type TIssueLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
+export type TIssueParams =
+  | "priority"
+  | "state_group"
+  | "state"
+  | "assignees"
+  | "created_by"
+  | "labels"
+  | "start_date"
+  | "target_date"
+  | "group_by"
+  | "order_by"
+  | "type"
+  | "sub_issue"
+  | "show_empty_groups"
+  | "calendar_date_range"
+  | "start_target_date";
 
 export interface IIssueFilter {
   priority: string[] | undefined;
@@ -649,6 +665,32 @@ class IssueFilterStore implements IIssueFilterStore {
         );
       }
     }
+
+    if (this.issueView === "my_issues")
+      this.rootStore?.issueView?.getProjectIssuesAsync(this.workspaceId, this.projectId, false);
+    if (this.issueView === "issues")
+      this.rootStore?.issueView?.getProjectIssuesAsync(this.workspaceId, this.projectId, false);
+    if (this.issueView === "modules" && this.moduleId)
+      this.rootStore?.issueView?.getIssuesForModulesAsync(
+        this.workspaceId,
+        this.projectId,
+        this.moduleId,
+        false
+      );
+    if (this.issueView === "cycles" && this.cycleId)
+      this.rootStore?.issueView?.getIssuesForCyclesAsync(
+        this.workspaceId,
+        this.projectId,
+        this.cycleId,
+        false
+      );
+    if (this.issueView === "views" && this.viewId)
+      this.rootStore?.issueView?.getIssuesForViewsAsync(
+        this.workspaceId,
+        this.projectId,
+        this.viewId,
+        false
+      );
   };
 
   computedFilter = (filters: any, filteredParams: any) => {
@@ -699,8 +741,11 @@ class IssueFilterStore implements IIssueFilterStore {
     };
 
     // start date and target date we have to construct the format here
+    // in calendar view calendar_date_range send as target_date
+    // in spreadsheet sub issue is false for sure
+    // in gantt start_target_date is true for sure
 
-    let filteredParams: any = {};
+    let filteredParams: TIssueParams[] = [];
     if (_layout === "list")
       filteredParams = [
         "priority",
@@ -727,10 +772,11 @@ class IssueFilterStore implements IIssueFilterStore {
         "labels",
         "start_date",
         "target_date",
-        "type",
         "group_by",
         "order_by",
+        "type",
         "sub_issue",
+        "show_empty_groups",
       ];
     if (_layout === "calendar")
       filteredParams = [
@@ -756,7 +802,7 @@ class IssueFilterStore implements IIssueFilterStore {
         "start_date",
         "target_date",
         "type",
-        "sub_issues",
+        "sub_issue",
       ];
     if (_layout === "gantt_chart")
       filteredParams = [
@@ -769,13 +815,11 @@ class IssueFilterStore implements IIssueFilterStore {
         "target_date",
         "order_by",
         "type",
-        "sub_issue_id",
+        "sub_issue",
         "start_target_date",
       ];
 
     filteredRouteParams = this.computedFilter(filteredRouteParams, filteredParams);
-
-    // remove few attributes from the object when we are in workspace issues
 
     return filteredRouteParams;
   };

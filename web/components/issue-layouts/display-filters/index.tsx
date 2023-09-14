@@ -37,35 +37,33 @@ export const DisplayFiltersSelection = observer(() => {
       ?.extra_options?.[issueFilterStore?.issueLayout].access;
 
   return (
-    <div className="w-full h-full overflow-hidden select-none relative flex flex-col">
-      <div className="flex-shrink-0 p-2 text-sm border-b border-custom-border-200">
-        Search container
-      </div>
-      <div className="w-full h-full overflow-hidden overflow-y-auto relative pb-2">
+    <div className="w-full h-full overflow-hidden select-none relative flex flex-col divide-y divide-custom-border-200">
+      <div className="flex-shrink-0 p-2 text-sm">Search container</div>
+      <div className="w-full h-full overflow-hidden overflow-y-auto relative pb-2 divide-y divide-custom-border-200">
         {/* display properties */}
         {handleDisplayPropertiesSectionVisibility && (
-          <div className="pb-2 px-2 border-b border-custom-border-200">
+          <div className="pb-2 px-2">
             <FilterDisplayProperties />
           </div>
         )}
 
         {/* group by */}
         {handleDisplayFilterSectionVisibility("group_by") && (
-          <div className="py-1 px-2 border-b border-custom-border-200">
+          <div className="py-1 px-2">
             <FilterGroupBy />
           </div>
         )}
 
         {/* order by */}
         {handleDisplayFilterSectionVisibility("order_by") && (
-          <div className="py-1 px-2 border-b border-custom-border-200">
+          <div className="py-1 px-2">
             <FilterOrderBy />
           </div>
         )}
 
         {/* issue type */}
         {handleDisplayFilterSectionVisibility("issue_type") && (
-          <div className="py-1 px-2 border-b border-custom-border-200">
+          <div className="py-1 px-2">
             <FilterIssueType />
           </div>
         )}

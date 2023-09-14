@@ -52,22 +52,21 @@ export const LayoutSelection = observer(() => {
     issueFilterStore.handleUserFilter("display_filters", "layout", _layoutKey);
   };
 
-  console.log("----");
-  console.log("my_user_id", issueFilterStore.myUserId);
-  console.log("workspace_id", issueFilterStore.workspaceId);
-  console.log("project_id", issueFilterStore.projectId);
-  console.log("module_id", issueFilterStore.moduleId);
-  console.log("cycle_id", issueFilterStore.cycleId);
-  console.log("view_id", issueFilterStore.viewId);
+  // console.log("----");
+  // console.log("my_user_id", issueFilterStore.myUserId);
+  // console.log("workspace_id", issueFilterStore.workspaceId);
+  // console.log("project_id", issueFilterStore.projectId);
+  // console.log("module_id", issueFilterStore.moduleId);
+  // console.log("cycle_id", issueFilterStore.cycleId);
+  // console.log("view_id", issueFilterStore.viewId);
 
-  console.log("issue_view", issueFilterStore.issueView);
-  console.log("issue_layout", issueFilterStore.issueLayout);
+  // console.log("issue_view", issueFilterStore.issueView);
+  // console.log("issue_layout", issueFilterStore.issueLayout);
 
-  console.log("user_filters", issueFilterStore.userFilters);
-  console.log("issues", issueStore.issues);
-  console.log("issues", issueStore.getIssues);
-
-  console.log("----");
+  // console.log("user_filters", issueFilterStore.userFilters);
+  // console.log("issues", issueStore.issues);
+  // console.log("issues", issueStore.getIssues);
+  // console.log("----");
 
   return (
     <div className="relative flex items-center p-1 rounded gap-1 bg-custom-background-80">

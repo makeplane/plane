@@ -1,3 +1,5 @@
+import { renderDateFormat } from "helpers/date-time.helper";
+
 export type TStateGroup = "backlog" | "unstarted" | "started" | "completed" | "cancelled";
 export const issueStateGroupKeys: TStateGroup[] = [
   "backlog",
@@ -87,7 +89,10 @@ export const extraProperties: { key: string; title: string }[] = [
 export const issueFilterVisibilityData: any = {
   my_issues: {
     layout: ["list", "kanban"],
-    filters: ["priority", "state_group", "labels", "start_date", "due_date"],
+    filters: {
+      list: ["priority", "state_group", "labels", "start_date", "due_date"],
+      kanban: ["priority", "state_group", "labels", "start_date", "due_date"],
+    },
     display_properties: {
       list: true,
       kanban: true,
@@ -109,7 +114,29 @@ export const issueFilterVisibilityData: any = {
   },
   others: {
     layout: ["list", "kanban", "calendar", "spreadsheet", "gantt_chart"],
-    filters: ["priority", "state", "assignees", "created_by", "labels", "start_date", "due_date"],
+    filters: {
+      list: ["priority", "state", "assignees", "created_by", "labels", "start_date", "due_date"],
+      kanban: ["priority", "state", "assignees", "created_by", "labels", "start_date", "due_date"],
+      calendar: ["priority", "state", "assignees", "created_by", "labels"],
+      spreadsheet: [
+        "priority",
+        "state",
+        "assignees",
+        "created_by",
+        "labels",
+        "start_date",
+        "due_date",
+      ],
+      gantt_chart: [
+        "priority",
+        "state",
+        "assignees",
+        "created_by",
+        "labels",
+        "start_date",
+        "due_date",
+      ],
+    },
     display_properties: {
       list: true,
       kanban: true,
@@ -147,4 +174,32 @@ export const issueFilterVisibilityData: any = {
       },
     },
   },
+};
+
+export const handleIssueParamsDateFormat = (
+  key: string,
+  start_date: any | null,
+  target_date: any | null
+) => {
+  if (key === "last_week")
+    return `${renderDateFormat(
+      new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000)
+    )};after,${renderDateFormat(new Date())};before`;
+
+  if (key === "2_weeks_from_now")
+    return `${renderDateFormat(new Date())};after,
+      ${renderDateFormat(new Date(new Date().getTime() + 14 * 24 * 60 * 60 * 1000))};before`;
+
+  if (key === "1_month_from_now")
+    return `${renderDateFormat(new Date())};after,${renderDateFormat(
+      new Date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate())
+    )};before`;
+
+  if (key === "2_months_from_now")
+    return `${renderDateFormat(new Date())};after,${renderDateFormat(
+      new Date(new Date().getFullYear(), new Date().getMonth() + 2, new Date().getDate())
+    )};before`;
+
+  if (key === "custom" && start_date && target_date)
+    return `${renderDateFormat(start_date)};after,${renderDateFormat(target_date)};before`;
 };

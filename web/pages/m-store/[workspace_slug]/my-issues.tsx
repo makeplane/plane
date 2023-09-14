@@ -1,6 +1,8 @@
 import React from "react";
 // next imports
 import { useRouter } from "next/router";
+// swr
+// import useSWR from "swr";
 // components
 import { IssuesRoot } from "components/issue-layouts/root";
 // mobx store
@@ -13,6 +15,10 @@ const KanBanViewRoot = () => {
 
   const store: RootStore = useMobxStore();
   const { issueView: issueViewStore } = store;
+
+  // useSWR(`REVALIDATE_MY_ISSUES`, async () => {
+  //   if (workspace_slug) await issueViewStore.getMyIssuesAsync(workspace_slug);
+  // });
 
   React.useEffect(() => {
     console.log("request init--->");
