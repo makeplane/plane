@@ -162,7 +162,6 @@ class PropertyReadSerializer(BaseSerializer):
         }
 
         if obj.type == "relation":
-            print(obj.unit)
             prop_values = obj.property_values.all()
             model = MODEL_MAPPER.get(obj.unit, None)
             if model is not None:
