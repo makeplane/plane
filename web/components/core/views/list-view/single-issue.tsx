@@ -61,6 +61,7 @@ type Props = {
   makeIssueCopy: () => void;
   removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
+  handleMyIssueOpen?: (issue: IIssue) => void;
   disableUserActions: boolean;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
@@ -76,6 +77,7 @@ export const SingleListIssue: React.FC<Props> = ({
   removeIssue,
   groupTitle,
   handleDeleteIssue,
+  handleMyIssueOpen,
   disableUserActions,
   user,
   userAuth,
@@ -178,6 +180,16 @@ export const SingleListIssue: React.FC<Props> = ({
     ? `/${workspaceSlug}/projects/${issue.project}/archived-issues/${issue.id}`
     : `/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`;
 
+  const openPeekOverview = (issue: IIssue) => {
+    const { query } = router;
+
+    if (handleMyIssueOpen) handleMyIssueOpen(issue);
+    router.push({
+      pathname: router.pathname,
+      query: { ...query, peekIssue: issue.id },
+    });
+  };
+
   const isNotAllowed =
     userAuth.isGuest || userAuth.isViewer || disableUserActions || isArchivedIssues;
 
@@ -220,23 +232,27 @@ export const SingleListIssue: React.FC<Props> = ({
         }}
       >
         <div className="flex-grow cursor-pointer min-w-[200px] whitespace-nowrap overflow-hidden overflow-ellipsis">
-          <Link href={issuePath}>
-            <a className="group relative flex items-center gap-2">
-              {properties.key && (
-                <Tooltip
-                  tooltipHeading="Issue ID"
-                  tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
-                >
-                  <span className="flex-shrink-0 text-xs text-custom-text-200">
-                    {issue.project_detail?.identifier}-{issue.sequence_id}
-                  </span>
-                </Tooltip>
-              )}
-              <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
-                <span className="truncate text-[0.825rem] text-custom-text-100">{issue.name}</span>
+          <div className="group relative flex items-center gap-2">
+            {properties.key && (
+              <Tooltip
+                tooltipHeading="Issue ID"
+                tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
+              >
+                <span className="flex-shrink-0 text-xs text-custom-text-200">
+                  {issue.project_detail?.identifier}-{issue.sequence_id}
+                </span>
               </Tooltip>
-            </a>
-          </Link>
+            )}
+            <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
+              <button
+                type="button"
+                className="truncate text-[0.825rem] text-custom-text-100"
+                onClick={() => openPeekOverview(issue)}
+              >
+                {issue.name}
+              </button>
+            </Tooltip>
+          </div>
         </div>
 
         <div

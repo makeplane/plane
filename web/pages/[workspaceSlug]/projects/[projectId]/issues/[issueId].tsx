@@ -86,8 +86,8 @@ const IssueDetailsPage: NextPage = () => {
         ...formData,
       };
 
-      delete payload.blocker_issues;
-      delete payload.blocked_issues;
+      delete payload.related_issues;
+      delete payload.issue_relations;
 
       await issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)

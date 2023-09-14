@@ -95,8 +95,8 @@ const Editor: NextPage = () => {
       ...formData,
     };
 
-    delete payload.blocker_issues;
-    delete payload.blocked_issues;
+    delete payload.issue_relations;
+    delete payload.related_issues;
     await issuesService
       .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)
       .catch((e) => {

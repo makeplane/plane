@@ -17,7 +17,11 @@ type Props = {
 };
 
 const { NEXT_PUBLIC_DEPLOY_URL } = process.env;
-const plane_deploy_url = NEXT_PUBLIC_DEPLOY_URL ? NEXT_PUBLIC_DEPLOY_URL : "http://localhost:3001";
+let plane_deploy_url = NEXT_PUBLIC_DEPLOY_URL
+
+if (typeof window !== 'undefined' && !plane_deploy_url) {
+  plane_deploy_url= window.location.protocol + "//" + window.location.host + "/spaces";
+}
 
 const Header: React.FC<Props> = ({ breadcrumbs, left, right, setToggleSidebar, noHeader }) => {
   const { projectDetails } = useProjectDetails();

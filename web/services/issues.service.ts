@@ -10,15 +10,14 @@ import type {
   IIssueLabels,
   ISubIssueResponse,
 } from "types";
-
-const { NEXT_PUBLIC_API_BASE_URL } = process.env;
+import { API_BASE_URL } from "helpers/common.helper";
 
 const trackEvent =
   process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
 
 export class ProjectIssuesServices extends APIService {
   constructor() {
-    super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
+    super(API_BASE_URL);
   }
 
   async createIssues(
@@ -146,6 +145,52 @@ export class ProjectIssuesServices extends APIService {
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
+      });
+  }
+
+  async createIssueRelation(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    user: ICurrentUserResponse,
+    data: {
+      related_list: Array<{
+        relation_type: "duplicate" | "relates_to" | "blocked_by";
+        related_issue: string;
+      }>;
+    }
+  ) {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-relation/`,
+      data
+    )
+      .then((response) => {
+        if (trackEvent)
+          trackEventServices.trackIssueRelationEvent(response.data, "ISSUE_RELATION_CREATE", user);
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async deleteIssueRelation(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    relationId: string,
+    user: ICurrentUserResponse
+  ) {
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-relation/${relationId}/`
+    )
+      .then((response) => {
+        if (trackEvent)
+          trackEventServices.trackIssueRelationEvent(response.data, "ISSUE_RELATION_DELETE", user);
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response;
       });
   }
 

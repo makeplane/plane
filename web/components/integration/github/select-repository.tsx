@@ -66,6 +66,8 @@ export const SelectRepository: React.FC<Props> = ({
       content: <p>{truncateText(repo.full_name, characterLimit)}</p>,
     })) ?? [];
 
+  if (userRepositories.length < 1) return null;
+
   return (
     <CustomSearchSelect
       value={value}

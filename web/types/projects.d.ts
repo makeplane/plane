@@ -130,7 +130,7 @@ export interface GithubRepositoriesResponse {
 export type TProjectIssuesSearchParams = {
   search: string;
   parent?: boolean;
-  blocker_blocked_by?: boolean;
+  issue_relation?: boolean;
   cycle?: boolean;
   module?: boolean;
   sub_issue?: boolean;
