@@ -145,23 +145,24 @@ class PropertyReadSerializer(BaseSerializer):
 
     def get_prop_value(self, obj):
         MODEL_MAPPER = {
-            "User": User,
-            "Issue": Issue,
-            "Cycle": Cycle,
-            "Module": Module,
-            "Page": Page,
-            "View": IssueView,
+            "user": User,
+            "issue": Issue,
+            "cycle": Cycle,
+            "module": Module,
+            "page": Page,
+            "view": IssueView,
         }
 
         SERIALIZER_MAPPER = {
-            "User": UserSerializer,
-            "Cycle": CycleSerializer,
-            "Module": ModuleSerializer,
-            "Page": PageSerializer,
-            "View": IssueViewSerializer,
+            "user": UserSerializer,
+            "cycle": CycleSerializer,
+            "module": ModuleSerializer,
+            "page": PageSerializer,
+            "view": IssueViewSerializer,
         }
 
         if obj.type == "relation":
+            print(obj.unit)
             prop_values = obj.property_values.all()
             model = MODEL_MAPPER.get(obj.unit, None)
             if model is not None:
