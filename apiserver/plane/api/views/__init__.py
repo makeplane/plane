@@ -173,5 +173,5 @@ from .exporter import (
 
 from .issue_property import (
     PropertyViewSet,
-    IssuePropertyValueViewSet,
+    PropertyValueViewSet,
 )

@@ -2,6 +2,7 @@
 import uuid
 import json
 import datetime
+import hashlib
 
 # Django imports
 from django.utils import timezone
@@ -24,7 +25,7 @@ from plane.api.serializers import (
 from plane.db.models import (
     Workspace,
     Property,
-    IssuePropertyValue,
+    PropertyValue,
     Project,
     Issue,
     PropertyTransaction,
@@ -137,9 +138,9 @@ class PropertyViewSet(BaseViewSet):
             )
 
 
-class IssuePropertyValueViewSet(BaseViewSet):
+class PropertyValueViewSet(BaseViewSet):
     serializer_class = IssuePropertyValueSerializer
-    model = IssuePropertyValue
+    model = PropertyValue
 
     def perform_create(self, serializer):
         serializer.save(
@@ -151,187 +152,299 @@ class IssuePropertyValueViewSet(BaseViewSet):
     def create(self, request, slug, project_id, issue_id):
         try:
             request_data = request.data.get("issue_properties", [])
-
+            a_epoch = request.data.get(
+                "a_epoch", (datetime.datetime.timestamp(timezone.now()) * 1000)
+            )
             project = Project.objects.get(pk=project_id)
             workspace_id = project.workspace_id
 
             # Get all the issue_properties
-            issue_properties = Property.objects.filter(
+            properties = Property.objects.filter(
                 pk__in=[prop for prop in request_data if is_valid_uuid(prop)],
                 workspace__slug=slug,
             )
 
-            issue_property_values = IssuePropertyValue.objects.filter(issue_id=issue_id)
-
-            # This will be used to save the issue properties in bulk
-            bulk_issue_props_create = []
-            bulk_issue_props_update = []
-            bulk_issue_prop_transaction = []
-            for issue_property in issue_properties:
-                prop_values = request_data.get(str(issue_property.id))
-
-                if issue_property.is_multi and isinstance(prop_values, list):
-                    # Check if the value already exists then update
-                    issue_prop_values = [
-                        issue_prop_value
-                        for issue_prop_value in issue_property_values
-                        if str(issue_property.id) == str(issue_prop_value.property_id)
+            # Get the already existing for this entity
+            property_values = PropertyValue.objects.filter(
+                entity_uuid=issue_id, entity="issue"
+            )
+            bulk_transactions = []
+            bulk_prop_values_create = []
+            bulk_prop_values_update = []
+            for prop in properties:
+                # Get the requested values for the property
+                requested_prop_values = request_data.get(str(prop.id))
+                # For multi values -> multiple property values will be created
+                if prop.is_multi and isinstance(requested_prop_values, list):
+                    prop_values = [
+                        property_value
+                        for property_value in property_values
+                        if str(property.id) == str(property_value.property_id)
                     ]
-
                     # Already existing
-                    if issue_prop_values:
-                        for prop_value, issue_prop_value in zip(
-                            prop_values, issue_prop_values
+                    # append a record on the transaction log if the values are changed
+                    if prop_values:
+                        for requested_prop_value, prop_value in zip(
+                            requested_prop_values, prop_values
                         ):
-                            if issue_prop_value.value != prop_value:
-                                bulk_issue_prop_transaction.append(
+                            # Only do a lazy create -> only create if values are new
+                            if (
+                                hashlib.sha256(
+                                    requested_prop_value.encode("utf-8")
+                                ).hexdigest()
+                                != prop_value.value_hash
+                            ):
+                                transaction_id = uuid.uuid4()
+                                to_hash = hashlib.sha256(
+                                    requested_prop_value.encode("utf-8")
+                                ).hexdigest()
+                                bulk_transactions.append(
                                     PropertyTransaction(
-                                        id=uuid.uuid4(),
+                                        id=transaction_id,
                                         workspace_id=workspace_id,
                                         project_id=project_id,
-                                        property_id=issue_property.id,
-                                        property_value_id=issue_prop_value.id,
-                                        from_value=issue_prop_value.value,
-                                        to_value=prop_value,
+                                        property=property,
+                                        property_value_id=prop_value.id,
+                                        from_value=prop_value.value,
+                                        to_value=requested_prop_value,
+                                        from_hash=prop_value.value_hash,
+                                        to_hash=to_hash,
                                         entity="issue",
                                         entity_uuid=issue_id,
-                                        epoch=(
+                                        s_epoch=(
                                             datetime.datetime.timestamp(timezone.now())
                                             * 1000
                                         ),
+                                        a_epoch=a_epoch,
                                         actor=request.user,
                                     )
                                 )
-                                issue_prop_value.value = prop_value
-                                bulk_issue_props_update.append(issue_prop_value)
-                    # Create new one
+                                prop_value.value = requested_prop_value
+                                prop_value.transaction_id = transaction_id
+                                prop_value.value_hash = to_hash
+                                bulk_prop_values_update.append(prop_value)
                     else:
                         # Only for relation, multi select and select we will storing uuids
                         # for rest all we will storing the string values
                         if (
-                            issue_property.type == "relation"
-                            or issue_property.type == "multi_select"
-                            or issue_property.type == "select"
+                            property.type == "relation"
+                            or property.type == "multi_select"
+                            or property.type == "select"
                         ):
-                            for prop_value in prop_values:
-                                bulk_issue_props_create.append(
-                                    IssuePropertyValue(
-                                        value=prop_value,
-                                        type="uuid",
-                                        property=issue_property,
+                            for requested_prop_value in requested_prop_values:
+                                transaction_id = uuid.uuid4()
+                                to_hash = hashlib.sha256(
+                                    requested_prop_value.encode("utf-8")
+                                ).hexdigest()
+                                bulk_transactions.append(
+                                    PropertyTransaction(
+                                        id=transaction_id,
+                                        workspace_id=workspace_id,
+                                        project_id=project_id,
+                                        property=property,
+                                        property_value_id=prop_value.id,
+                                        to_value=requested_prop_value,
+                                        to_hash=to_hash,
+                                        entity="issue",
+                                        entity_uuid=issue_id,
+                                        s_epoch=(
+                                            datetime.datetime.timestamp(timezone.now())
+                                            * 1000
+                                        ),
+                                        a_epoch=a_epoch,
+                                        actor=request.user,
+                                    )
+                                )
+                                bulk_prop_values_create.append(
+                                    PropertyValue(
+                                        transaction_id=transaction_id,
+                                        value=requested_prop_value,
+                                        value_hash=to_hash,
+                                        type=1,
+                                        property=property,
                                         project_id=project_id,
                                         workspace_id=workspace_id,
                                         issue_id=issue_id,
                                     )
                                 )
                         else:
-                            for prop_value in prop_values:
-                                bulk_issue_props_create.append(
-                                    IssuePropertyValue(
-                                        value=prop_value,
-                                        type="text",
-                                        property=issue_property,
+                            for requested_prop_value in requested_prop_values:
+                                transaction_id = uuid.uuid4()
+                                to_hash = hashlib.sha256(
+                                    requested_prop_value.encode("utf-8")
+                                ).hexdigest()
+                                bulk_transactions.append(
+                                    PropertyTransaction(
+                                        id=transaction_id,
+                                        workspace_id=workspace_id,
+                                        project_id=project_id,
+                                        property=property,
+                                        property_value_id=prop_value.id,
+                                        to_value=requested_prop_value,
+                                        to_hash=to_hash,
+                                        entity="issue",
+                                        entity_uuid=issue_id,
+                                        s_epoch=(
+                                            datetime.datetime.timestamp(timezone.now())
+                                            * 1000
+                                        ),
+                                        a_epoch=a_epoch,
+                                        actor=request.user,
+                                    )
+                                )
+                                bulk_prop_values_create.append(
+                                    PropertyValue(
+                                        transaction_id=transaction_id,
+                                        value=requested_prop_value,
+                                        value_hash=to_hash,
+                                        type=0,
+                                        property=property,
                                         project_id=project_id,
                                         workspace_id=workspace_id,
                                         issue_id=issue_id,
                                     )
                                 )
                 else:
-                    issue_prop_values = [
-                        issue_prop_value
-                        for issue_prop_value in issue_property_values
-                        if str(issue_property.id) == str(issue_prop_value.property_id)
+                    prop_values = [
+                        property_value
+                        for property_value in property_values
+                        if str(property.id) == str(property_value.property_id)
                     ]
 
                     # Already existing
-                    if issue_prop_values:
-                        # Only update if the values are different
-                        if str(issue_prop_values[0].value) != str(prop_values):
-                            bulk_issue_prop_transaction.append(
-                                PropertyTransaction(
-                                    id=uuid.uuid4(),
-                                    workspace_id=workspace_id,
-                                    project_id=project_id,
-                                    property=issue_property,
-                                    property_value=issue_prop_values[0],
-                                    from_value=issue_prop_values[0].value,
-                                    to_value=prop_values,
-                                    entity="issue",
-                                    entity_uuid=issue_id,
-                                    epoch=(
-                                        datetime.datetime.timestamp(timezone.now())
-                                        * 1000
-                                    ),
-                                    actor=request.user,
+                    if prop_values:
+                            # Only do a lazy create -> only create if values are new
+                            if (
+                                hashlib.sha256(
+                                    requested_prop_value.encode("utf-8")
+                                ).hexdigest()
+                                != prop_value.value_hash
+                            ):
+                                transaction_id = uuid.uuid4()
+                                to_hash = hashlib.sha256(
+                                    requested_prop_value.encode("utf-8")
+                                ).hexdigest()
+                                bulk_transactions.append(
+                                    PropertyTransaction(
+                                        id=transaction_id,
+                                        workspace_id=workspace_id,
+                                        project_id=project_id,
+                                        property=property,
+                                        property_value_id=prop_value.id,
+                                        from_value=prop_value.value,
+                                        to_value=requested_prop_value,
+                                        from_hash=prop_value.value_hash,
+                                        to_hash=to_hash,
+                                        entity="issue",
+                                        entity_uuid=issue_id,
+                                        s_epoch=(
+                                            datetime.datetime.timestamp(timezone.now())
+                                            * 1000
+                                        ),
+                                        a_epoch=a_epoch,
+                                        actor=request.user,
+                                    )
                                 )
-                            )
-                            issue_prop_values[0].value = prop_values
-                            bulk_issue_props_update.append(
-                                issue_prop_values[0],
-                            )
-                    # Non existent
+                                prop_value.value = requested_prop_value
+                                prop_value.transaction_id = transaction_id
+                                prop_value.value_hash = to_hash
+                                bulk_prop_values_update.append(prop_value)
+                        # Non existent
                     else:
                         # Only for relation, multi select and select we will storing uuids
                         if (
-                            issue_property.type == "relation"
-                            or issue_property.type == "multi_select"
-                            or issue_property.type == "select"
+                            property.type == "relation"
+                            or property.type == "multi_select"
+                            or property.type == "select"
                         ):
-                            bulk_issue_props_create.append(
-                                IssuePropertyValue(
-                                    value=prop_values,
+                            transaction_id = uuid.uuid4()
+                            to_hash = hashlib.sha256(
+                                requested_prop_value.encode("utf-8")
+                            ).hexdigest()
+                            bulk_transactions.append(
+                                PropertyTransaction(
+                                    id=transaction_id,
+                                    workspace_id=workspace_id,
+                                    project_id=project_id,
+                                    property=property,
+                                    property_value_id=prop_value.id,
+                                    to_value=requested_prop_value,
+                                    to_hash=to_hash,
+                                    entity="issue",
+                                    entity_uuid=issue_id,
+                                    s_epoch=(
+                                        datetime.datetime.timestamp(timezone.now())
+                                        * 1000
+                                    ),
+                                    a_epoch=a_epoch,
+                                    actor=request.user,
+                                )
+                            )
+                            bulk_prop_values_create.append(
+                                PropertyValue(
+                                    transaction_id=transaction_id,
+                                    value=requested_prop_value,
+                                    value_hash=to_hash,
                                     type="uuid",
-                                    property=issue_property,
+                                    property=property,
                                     project_id=project_id,
                                     workspace_id=workspace_id,
                                     issue_id=issue_id,
                                 )
                             )
                         else:
-                            bulk_issue_props_create.append(
-                                IssuePropertyValue(
-                                    value=prop_values,
+                            transaction_id = uuid.uuid4()
+                            to_hash = hashlib.sha256(
+                                requested_prop_value.encode("utf-8")
+                            ).hexdigest()
+                            bulk_transactions.append(
+                                PropertyTransaction(
+                                    id=transaction_id,
+                                    workspace_id=workspace_id,
+                                    project_id=project_id,
+                                    property=property,
+                                    property_value_id=prop_value.id,
+                                    to_value=requested_prop_value,
+                                    to_hash=to_hash,
+                                    entity="issue",
+                                    entity_uuid=issue_id,
+                                    s_epoch=(
+                                        datetime.datetime.timestamp(timezone.now())
+                                        * 1000
+                                    ),
+                                    a_epoch=a_epoch,
+                                    actor=request.user,
+                                )
+                            )
+                            bulk_prop_values_create.append(
+                                PropertyValue(
+                                    transaction_id=transaction_id,
+                                    value=requested_prop_value,
+                                    value_hash=to_hash,
                                     type="text",
-                                    property=issue_property,
+                                    property=property,
                                     project_id=project_id,
                                     workspace_id=workspace_id,
                                     issue_id=issue_id,
                                 )
                             )
 
-            new_values = IssuePropertyValue.objects.bulk_create(
-                bulk_issue_props_create,
-                batch_size=100,
-                ignore_conflicts=True,
-            )
-            _ = IssuePropertyValue.objects.bulk_update(
-                bulk_issue_props_update,
-                ["value"],
-                batch_size=100,
-            )
-
-            # Update the bulk with new values also
-            for new_value in new_values:
-                bulk_issue_prop_transaction.append(
-                    PropertyTransaction(
-                        id=uuid.uuid4(),
-                        workspace_id=workspace_id,
-                        project_id=project_id,
-                        property_id=new_value.property_id,
-                        property_value=new_value,
-                        to_value=new_value.value,
-                        entity="issue",
-                        entity_uuid=issue_id,
-                        epoch=(datetime.datetime.timestamp(timezone.now()) * 1000),
-                        actor=request.user,
-                    )
-                )
-
             # Write the transaction table
             _ = PropertyTransaction.objects.bulk_create(
-                bulk_issue_prop_transaction,
+                bulk_transactions,
                 batch_size=100,
                 ignore_conflicts=True,
+            )
+
+            _ = PropertyValue.objects.bulk_create(
+                bulk_prop_values_create,
+                batch_size=100,
+                ignore_conflicts=True,
+            )
+            _ = PropertyValue.objects.bulk_update(
+                bulk_prop_values_update,
+                ["value"],
+                batch_size=100,
             )
 
             # Update the JSON column for faster reads
@@ -349,7 +462,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
                 .prefetch_related(
                     Prefetch(
                         "property_values",
-                        queryset=IssuePropertyValue.objects.filter(
+                        queryset=PropertyValue.objects.filter(
                             issue_id=issue_id,
                             workspace__slug=slug,
                             project_id=project_id,
@@ -364,28 +477,28 @@ class IssuePropertyValueViewSet(BaseViewSet):
             )
             issue.save(update_fields=["issue_properties"])
 
-            issue_property_values = IssuePropertyValue.objects.filter(
+            issue_property_values = PropertyValue.objects.filter(
                 workspace__slug=slug, project_id=project_id, issue_id=issue_id
             ).select_related("property")
 
             serilaizer = IssuePropertyValueSerializer(issue_property_values, many=True)
-            return Response(serilaizer.data, status=status.HTTP_201_CREATED)
+            return Response(status=status.HTTP_201_CREATED)
         except Project.DoesNotExist:
             return Response(
                 {"error": "Project Does not exists"}, status=status.HTTP_400_BAD_REQUEST
             )
-        # except Exception as e:
-        #     capture_exception(e)
-        #     return Response(
-        #         {"error": "Something went wrong please try again later"},
-        #         status=status.HTTP_400_BAD_REQUEST,
-        #     )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def partial_update(self, request, slug, project_id, issue_id):
         try:
             request_data = request.data.get("issue_property_values", [])
 
-            issue_property_values = IssuePropertyValue.objects.filter(
+            issue_property_values = PropertyValue.objects.filter(
                 issue_id=issue_id,
                 workspace__slug=slug,
                 project_id=project_id,
@@ -402,7 +515,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
                     issue_property_value[0].value = request_data.get(issue_prop_value)
                 bulk_issue_prop_values.append(issue_property_value)
 
-            updated_issue_props = IssuePropertyValue.objects.bulk_update(
+            updated_issue_props = PropertyValue.objects.bulk_update(
                 bulk_issue_prop_values, ["value"], batch_size=100, ignore_conflicts=True
             )
             serializer = IssuePropertyValueSerializer(updated_issue_props, many=True)
@@ -425,7 +538,7 @@ class IssuePropertyValueViewSet(BaseViewSet):
                 .prefetch_related(
                     Prefetch(
                         "property_values",
-                        queryset=IssuePropertyValue.objects.filter(
+                        queryset=PropertyValue.objects.filter(
                             issue_id=issue_id,
                             workspace__slug=slug,
                             project_id=project_id,

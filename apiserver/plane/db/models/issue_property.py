@@ -30,6 +30,7 @@ class Property(BaseModel):
         choices=(
             ("entity", "entity"),
             ("text", "text"),
+            ("description", "description"),
             ("number", "number"),
             ("checkbox", "checkbox"),
             ("select", "select"),
@@ -82,19 +83,26 @@ class Property(BaseModel):
         super(Property, self).save(*args, **kwargs)
 
 
-class IssuePropertyValue(ProjectBaseModel):
+class PropertyValue(ProjectBaseModel):
     TYPE_CHOICES = (
-        ("text", "text"),
-        ("uuid", "uuid"),
+        (0, "text"),
+        (1, "uuid"),
     )
     property = models.ForeignKey(
         Property, on_delete=models.CASCADE, related_name="property_values"
     )
-    description = models.TextField(blank=True, null=True)
     value = models.TextField(null=True, blank=True, db_index=True)
-    type = models.CharField(max_length=10, choices=TYPE_CHOICES)
+    value_hash = models.CharField(max_length=255)
+    type = models.PositiveSmallIntegerField(choices=TYPE_CHOICES)
     issue = models.ForeignKey(
         "db.Issue", on_delete=models.CASCADE, related_name="property_values"
+    )
+    entity = models.CharField()
+    entity_uuid = models.UUIDField()
+    transaction = models.ForeignKey(
+        "db.PropertyTransaction",
+        on_delete=models.CASCADE,
+        related_name="values",
     )
 
     class Meta:
@@ -125,16 +133,14 @@ class PropertyTransaction(AuditModel):
         on_delete=models.CASCADE,
         related_name="transactions",
     )
-    property_value = models.ForeignKey(
-        "db.IssuePropertyValue",
-        on_delete=models.CASCADE,
-        related_name="transactions",
-    )
     from_value = models.TextField(blank=True)
     to_value = models.TextField(blank=True)
+    from_value_hash = models.CharField(max_length=255)
+    to_value_hash = models.CharField(max_length=255)
     entity = models.CharField(max_length=255)
     entity_uuid = models.UUIDField()
-    epoch = models.FloatField()
+    s_epoch = models.FloatField()
+    a_epoch = models.FloatField()
 
     class Meta:
         verbose_name = "PropertyTransaction"
