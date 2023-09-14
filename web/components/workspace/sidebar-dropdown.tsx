@@ -1,8 +1,6 @@
 import { Fragment } from "react";
-
 import { useRouter } from "next/router";
 import Link from "next/link";
-
 // headless ui
 import { Menu, Transition } from "@headlessui/react";
 // next-themes
@@ -62,8 +60,6 @@ export const WorkspaceSidebarDropdown = () => {
   const { workspaceSlug } = router.query;
 
   const { user, mutateUser } = useUser();
-
-  const { collapsed: sidebarCollapse } = useThemeHook();
 
   const { setTheme } = useTheme();
 
@@ -155,7 +151,7 @@ export const WorkspaceSidebarDropdown = () => {
                   {workspaces.length > 0 ? (
                     workspaces.map((workspace) => (
                       <Menu.Item key={workspace.id}>
-                        {({ active }) => (
+                        {() => (
                           <button
                             type="button"
                             onClick={() => handleWorkspaceNavigation(workspace)}

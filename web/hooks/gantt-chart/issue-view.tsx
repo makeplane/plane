@@ -8,12 +8,12 @@ import useIssuesView from "hooks/use-issues-view";
 import { PROJECT_ISSUES_LIST_WITH_PARAMS } from "constants/fetch-keys";
 
 const useGanttChartIssues = (workspaceSlug: string | undefined, projectId: string | undefined) => {
-  const { orderBy, filters, showSubIssues } = useIssuesView();
+  const { displayFilters, filters } = useIssuesView();
 
   const params: any = {
-    order_by: orderBy,
-    type: filters?.type ? filters?.type : undefined,
-    sub_issue: showSubIssues,
+    order_by: displayFilters.order_by,
+    type: displayFilters?.type ? displayFilters?.type : undefined,
+    sub_issue: displayFilters.sub_issue,
     assignees: filters?.assignees ? filters?.assignees.join(",") : undefined,
     state: filters?.state ? filters?.state.join(",") : undefined,
     priority: filters?.priority ? filters?.priority.join(",") : undefined,

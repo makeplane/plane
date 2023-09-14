@@ -9,15 +9,11 @@ import {
   IWorkspaceIntegration,
   IExportServiceResponse,
 } from "types";
-
-const { NEXT_PUBLIC_API_BASE_URL } = process.env;
-
-const trackEvent =
-  process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
+import { API_BASE_URL } from "helpers/common.helper";
 
 class IntegrationService extends APIService {
   constructor() {
-    super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
+    super(API_BASE_URL);
   }
 
   async getAppIntegrationsList(): Promise<IAppIntegration[]> {
@@ -79,8 +75,7 @@ class IntegrationService extends APIService {
     return this.delete(`/api/workspaces/${workspaceSlug}/importers/${service}/${importerId}/`)
       .then((response) => {
         const eventName = service === "github" ? "GITHUB_IMPORTER_DELETE" : "JIRA_IMPORTER_DELETE";
-
-        if (trackEvent) trackEventServices.trackImporterEvent(response?.data, eventName, user);
+        trackEventServices.trackImporterEvent(response?.data, eventName, user);
         return response?.data;
       })
       .catch((error) => {

@@ -26,6 +26,7 @@ type Props = {
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
   handleTrashBox: (isDragging: boolean) => void;
   openIssuesListModal?: (() => void) | null;
+  handleMyIssueOpen?: (issue: IIssue) => void;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
@@ -42,6 +43,7 @@ export const SingleBoard: React.FC<Props> = ({
   handleIssueAction,
   handleTrashBox,
   openIssuesListModal,
+  handleMyIssueOpen,
   removeIssue,
   user,
   userAuth,
@@ -50,7 +52,7 @@ export const SingleBoard: React.FC<Props> = ({
   // collapse/expand
   const [isCollapsed, setIsCollapsed] = useState(true);
 
-  const { groupedIssues, groupByProperty: selectedGroup, orderBy, properties } = viewProps;
+  const { displayFilters, groupedIssues } = viewProps;
 
   const router = useRouter();
   const { cycleId, moduleId } = router.query;
@@ -80,14 +82,14 @@ export const SingleBoard: React.FC<Props> = ({
           {(provided, snapshot) => (
             <div
               className={`relative h-full ${
-                orderBy !== "sort_order" && snapshot.isDraggingOver
+                displayFilters?.order_by !== "sort_order" && snapshot.isDraggingOver
                   ? "bg-custom-background-100/20"
                   : ""
               } ${!isCollapsed ? "hidden" : "flex flex-col"}`}
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
-              {orderBy !== "sort_order" && (
+              {displayFilters?.order_by !== "sort_order" && (
                 <>
                   <div
                     className={`absolute ${
@@ -101,7 +103,11 @@ export const SingleBoard: React.FC<Props> = ({
                   >
                     This board is ordered by{" "}
                     {replaceUnderscoreIfSnakeCase(
-                      orderBy ? (orderBy[0] === "-" ? orderBy.slice(1) : orderBy) : "created_at"
+                      displayFilters?.order_by
+                        ? displayFilters?.order_by[0] === "-"
+                          ? displayFilters?.order_by.slice(1)
+                          : displayFilters?.order_by
+                        : "created_at"
                     )}
                   </div>
                 </>
@@ -131,6 +137,7 @@ export const SingleBoard: React.FC<Props> = ({
                         makeIssueCopy={() => handleIssueAction(issue, "copy")}
                         handleDeleteIssue={() => handleIssueAction(issue, "delete")}
                         handleTrashBox={handleTrashBox}
+                        handleMyIssueOpen={handleMyIssueOpen}
                         removeIssue={() => {
                           if (removeIssue && issue.bridge_id)
                             removeIssue(issue.bridge_id, issue.id);
@@ -145,13 +152,13 @@ export const SingleBoard: React.FC<Props> = ({
                 ))}
                 <span
                   style={{
-                    display: orderBy === "sort_order" ? "inline" : "none",
+                    display: displayFilters?.order_by === "sort_order" ? "inline" : "none",
                   }}
                 >
                   {provided.placeholder}
                 </span>
               </div>
-              {selectedGroup !== "created_by" && (
+              {displayFilters?.group_by !== "created_by" && (
                 <div>
                   {type === "issue"
                     ? !disableAddIssueOption && (

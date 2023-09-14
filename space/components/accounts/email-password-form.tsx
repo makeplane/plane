@@ -1,9 +1,6 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
 import Link from "next/link";
-
-// react hook form
 import { useForm } from "react-hook-form";
 // components
 import { EmailResetPasswordForm } from "./email-reset-password-form";

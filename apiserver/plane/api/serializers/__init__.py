@@ -56,6 +56,8 @@ from .issue import (
     IssueReactionSerializer,
     CommentReactionSerializer,
     IssueVoteSerializer,
+    IssueRelationSerializer,
+    RelatedIssueSerializer,
     IssuePublicSerializer,
 )
 

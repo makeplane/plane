@@ -86,8 +86,10 @@ from .issue import (
     IssueReactionPublicViewSet,
     CommentReactionPublicViewSet,
     IssueVotePublicViewSet,
+    IssueRelationViewSet,
     IssueRetrievePublicEndpoint,
     ProjectIssuesPublicEndpoint,
+    IssueDraftViewSet,
 )
 
 from .auth_extended import (
@@ -175,3 +177,4 @@ from .issue_property import (
     PropertyViewSet,
     PropertyValueViewSet,
 )
+

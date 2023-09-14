@@ -25,13 +25,26 @@ ROLE_CHOICES = (
 
 def get_default_props():
     return {
-        "filters": {"type": None},
-        "orderBy": "-created_at",
-        "collapsed": True,
-        "issueView": "list",
-        "filterIssue": None,
-        "groupByProperty": None,
-        "showEmptyGroups": True,
+        "filters": {
+            "priority": None,
+            "state": None,
+            "state_group": None,
+            "assignees": None,
+            "created_by": None,
+            "labels": None,
+            "start_date": None,
+            "target_date": None,
+            "subscriber": None,
+        },
+        "display_filters": {
+            "group_by": None,
+            "order_by": '-created_at',
+            "type": None,
+            "sub_issue": True,
+            "show_empty_groups": True,
+            "layout": "list",
+            "calendar_date_range": "",
+        },
     }
 
 

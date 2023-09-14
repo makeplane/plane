@@ -9,13 +9,10 @@ import stateService from "services/state.service";
 // ui
 import { Tooltip } from "components/ui";
 // icons
-import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  PencilSquareIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/24/outline";
 import { StateGroupIcon } from "components/icons";
+import { Pencil, X } from "lucide-react";
+
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { groupBy, orderArrayBy } from "helpers/array.helper";
@@ -160,15 +157,15 @@ export const SingleState: React.FC<Props> = ({
   };
 
   return (
-    <div className="group flex items-center justify-between gap-2 border-custom-border-200 bg-custom-background-100 p-5 first:rounded-t-[10px] last:rounded-b-[10px]">
+    <div className="group flex items-center justify-between gap-2 rounded border border-custom-border-200 bg-custom-background-100 px-4 py-3">
       <div className="flex items-center gap-3">
-        <StateGroupIcon stateGroup={state.group} color={state.color} height="20px" width="20px" />
+        <StateGroupIcon stateGroup={state.group} color={state.color} height="16px" width="16px" />
         <div>
-          <h6 className="text-sm">{addSpaceIfCamelCase(state.name)}</h6>
+          <h6 className="text-sm font-medium">{addSpaceIfCamelCase(state.name)}</h6>
           <p className="text-xs text-custom-text-200">{state.description}</p>
         </div>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="group flex items-center gap-2.5">
         {index !== 0 && (
           <button
             type="button"
@@ -192,37 +189,43 @@ export const SingleState: React.FC<Props> = ({
         ) : (
           <button
             type="button"
-            className="hidden text-xs text-custom-text-200 group-hover:inline-block"
+            className="hidden text-xs text-custom-sidebar-text-400 group-hover:inline-block"
             onClick={handleMakeDefault}
             disabled={isSubmitting}
           >
-            Set as default
+            Mark as default
           </button>
         )}
+        <div className=" items-center gap-2.5 hidden group-hover:flex">
+          <button
+            type="button"
+            className="grid place-items-center group-hover:opacity-100 opacity-0"
+            onClick={handleEditState}
+          >
+            <Pencil className="h-3.5 w-3.5 text-custom-text-200" />
+          </button>
 
-        <button type="button" className="grid place-items-center" onClick={handleEditState}>
-          <PencilSquareIcon className="h-4 w-4 text-custom-text-200" />
-        </button>
-        <button
-          type="button"
-          className={`${
-            state.default || groupLength === 1 ? "cursor-not-allowed" : ""
-          } grid place-items-center`}
-          onClick={handleDeleteState}
-          disabled={state.default || groupLength === 1}
-        >
-          {state.default ? (
-            <Tooltip tooltipContent="Cannot delete the default state.">
-              <TrashIcon className="h-4 w-4 text-red-500" />
-            </Tooltip>
-          ) : groupLength === 1 ? (
-            <Tooltip tooltipContent="Cannot have an empty group.">
-              <TrashIcon className="h-4 w-4 text-red-500" />
-            </Tooltip>
-          ) : (
-            <TrashIcon className="h-4 w-4 text-red-500" />
-          )}
-        </button>
+          <button
+            type="button"
+            className={`group-hover:opacity-100 opacity-0 ${
+              state.default || groupLength === 1 ? "cursor-not-allowed" : ""
+            } grid place-items-center`}
+            onClick={handleDeleteState}
+            disabled={state.default || groupLength === 1}
+          >
+            {state.default ? (
+              <Tooltip tooltipContent="Cannot delete the default state.">
+                <X className="h-3.5 w-3.5 text-red-500" />
+              </Tooltip>
+            ) : groupLength === 1 ? (
+              <Tooltip tooltipContent="Cannot have an empty group.">
+                <X className="h-3.5 w-3.5 text-red-500" />
+              </Tooltip>
+            ) : (
+              <X className="h-3.5 w-3.5 text-red-500" />
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );
