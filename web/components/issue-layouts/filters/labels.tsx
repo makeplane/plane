@@ -22,10 +22,20 @@ export const FilterLabels = observer(() => {
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
+  const handleFilter = (key: string, value: string) => {
+    const _value =
+      issueFilterStore?.userFilters?.filters?.[key] != null
+        ? issueFilterStore?.userFilters?.filters?.[key].includes(value)
+          ? issueFilterStore?.userFilters?.filters?.[key].filter((p: string) => p != value)
+          : [...issueFilterStore?.userFilters?.filters?.[key], value]
+        : [value];
+    issueFilterStore.handleUserFilter("filters", key, _value);
+  };
+
   return (
     <div>
       <FilterHeader
-        title={"labels"}
+        title={`Labels (${issueFilterStore?.projectLabels?.length || 0})`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -42,6 +52,7 @@ export const FilterLabels = observer(() => {
                     ? true
                     : false
                 }
+                onClick={() => handleFilter("labels", _label?.id)}
                 icon={<LabelIcons color={_label.color} />}
                 title={_label.name}
               />

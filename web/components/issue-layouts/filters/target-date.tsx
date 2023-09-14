@@ -16,10 +16,15 @@ export const FilterTargetDate = observer(() => {
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
+  const handleFilter = (key: string, value: string) => {
+    const _value = [value];
+    issueFilterStore.handleUserFilter("filters", key, _value);
+  };
+
   return (
     <div>
       <FilterHeader
-        title={"Target Date"}
+        title={`Target Date (${issueFilterStore?.issueRenderFilters?.due_date.length})`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -30,7 +35,13 @@ export const FilterTargetDate = observer(() => {
             issueFilterStore?.issueRenderFilters?.due_date.map((_targetDate) => (
               <FilterOption
                 key={_targetDate?.key}
-                isChecked={false}
+                isChecked={
+                  issueFilterStore?.userFilters?.filters?.target_date != null &&
+                  issueFilterStore?.userFilters?.filters?.target_date.includes(_targetDate?.key)
+                    ? true
+                    : false
+                }
+                onClick={() => handleFilter("target_date", _targetDate?.key)}
                 title={_targetDate.title}
                 multiple={false}
               />

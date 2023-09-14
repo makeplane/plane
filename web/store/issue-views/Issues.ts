@@ -48,37 +48,22 @@ export interface IIssueViewStore {
   // computed
   getIssues: IIssues | null | undefined;
   // actions
-  getMyIssuesAsync: (
-    workspaceId: string,
-    _view: TIssueViews,
-    _layout: TIssueLayouts
-  ) => null | Promise<any>;
-  getProjectIssuesAsync: (
-    workspaceId: string,
-    projectId: string,
-    _view: TIssueViews,
-    _layout: TIssueLayouts
-  ) => null | Promise<any>;
+  getMyIssuesAsync: (workspaceId: string) => null | Promise<any>;
+  getProjectIssuesAsync: (workspaceId: string, projectId: string) => null | Promise<any>;
   getIssuesForModulesAsync: (
     workspaceId: string,
     projectId: string,
-    moduleId: string,
-    _view: TIssueViews,
-    _layout: TIssueLayouts
+    moduleId: string
   ) => null | Promise<any>;
   getIssuesForCyclesAsync: (
     workspaceId: string,
     projectId: string,
-    cycleId: string,
-    _view: TIssueViews,
-    _layout: TIssueLayouts
+    cycleId: string
   ) => null | Promise<any>;
   getIssuesForViewsAsync: (
     workspaceId: string,
     projectId: string,
-    viewId: string,
-    _view: TIssueViews,
-    _layout: TIssueLayouts
+    viewId: string
   ) => null | Promise<any>;
 }
 
@@ -159,7 +144,7 @@ class IssueViewStore implements IIssueViewStore {
   }
 
   // fetching my issues
-  getMyIssuesAsync = async (workspaceId: string, _view: TIssueViews, _layout: TIssueLayouts) => {
+  getMyIssuesAsync = async (workspaceId: string) => {
     try {
       this.loader = true;
       this.error = null;
@@ -171,8 +156,7 @@ class IssueViewStore implements IIssueViewStore {
         null,
         null,
         null,
-        _view,
-        _layout
+        "my_issues"
       );
       const issuesResponse = await this.userService.userIssues(workspaceId, filteredParams);
 
@@ -183,7 +167,8 @@ class IssueViewStore implements IIssueViewStore {
             ...this?.issues[workspaceId],
             my_issues: {
               ...this?.issues[workspaceId]?.my_issues,
-              [_layout as string]: issuesResponse,
+              [this.rootStore?.issueFilters?.userFilters?.display_filters?.layout as string]:
+                issuesResponse,
             },
           },
         };
@@ -205,12 +190,7 @@ class IssueViewStore implements IIssueViewStore {
   };
 
   // fetching project issues
-  getProjectIssuesAsync = async (
-    workspaceId: string,
-    projectId: string,
-    _view: TIssueViews,
-    _layout: TIssueLayouts
-  ) => {
+  getProjectIssuesAsync = async (workspaceId: string, projectId: string) => {
     try {
       this.loader = true;
       this.error = null;
@@ -222,8 +202,7 @@ class IssueViewStore implements IIssueViewStore {
         null,
         null,
         null,
-        _view,
-        _layout
+        "issues"
       );
       const issuesResponse = await this.issueService.getIssuesWithParams(
         workspaceId,
@@ -242,7 +221,8 @@ class IssueViewStore implements IIssueViewStore {
                 ...this?.issues?.[workspaceId]?.project_issues?.[projectId],
                 issues: {
                   ...this?.issues[workspaceId]?.project_issues?.[projectId]?.issues,
-                  [_layout as string]: issuesResponse,
+                  [this.rootStore?.issueFilters?.userFilters?.display_filters?.layout as string]:
+                    issuesResponse,
                 },
               },
             },
@@ -266,13 +246,7 @@ class IssueViewStore implements IIssueViewStore {
   };
 
   // fetching project issues for modules
-  getIssuesForModulesAsync = async (
-    workspaceId: string,
-    projectId: string,
-    moduleId: string,
-    _view: TIssueViews,
-    _layout: TIssueLayouts
-  ) => {
+  getIssuesForModulesAsync = async (workspaceId: string, projectId: string, moduleId: string) => {
     try {
       this.loader = true;
       this.error = null;
@@ -288,8 +262,7 @@ class IssueViewStore implements IIssueViewStore {
         moduleId,
         null,
         null,
-        _view,
-        _layout
+        "modules"
       );
       const issuesResponse = await this.modulesService.getModuleIssuesWithParams(
         workspaceId,
@@ -311,7 +284,8 @@ class IssueViewStore implements IIssueViewStore {
                   ...this?.issues[workspaceId]?.project_issues?.[projectId]?.modules,
                   [moduleId]: {
                     ...this?.issues[workspaceId]?.project_issues?.[projectId]?.modules?.[moduleId],
-                    [_layout as string]: issuesResponse,
+                    [this.rootStore?.issueFilters?.userFilters?.display_filters?.layout as string]:
+                      issuesResponse,
                   },
                 },
               },
@@ -336,13 +310,7 @@ class IssueViewStore implements IIssueViewStore {
   };
 
   // fetching project issues for cycles
-  getIssuesForCyclesAsync = async (
-    workspaceId: string,
-    projectId: string,
-    cycleId: string,
-    _view: TIssueViews,
-    _layout: TIssueLayouts
-  ) => {
+  getIssuesForCyclesAsync = async (workspaceId: string, projectId: string, cycleId: string) => {
     try {
       this.loader = true;
       this.error = null;
@@ -358,8 +326,7 @@ class IssueViewStore implements IIssueViewStore {
         null,
         cycleId,
         null,
-        _view,
-        _layout
+        "cycles"
       );
       const issuesResponse = await this.cyclesService.getCycleIssuesWithParams(
         workspaceId,
@@ -381,7 +348,8 @@ class IssueViewStore implements IIssueViewStore {
                   ...this?.issues[workspaceId]?.project_issues?.[projectId]?.cycles,
                   [cycleId]: {
                     ...this?.issues[workspaceId]?.project_issues?.[projectId]?.cycles?.[cycleId],
-                    [_layout as string]: issuesResponse,
+                    [this.rootStore?.issueFilters?.userFilters?.display_filters?.layout as string]:
+                      issuesResponse,
                   },
                 },
               },
@@ -406,13 +374,7 @@ class IssueViewStore implements IIssueViewStore {
   };
 
   // fetching project issues for views
-  getIssuesForViewsAsync = async (
-    workspaceId: string,
-    projectId: string,
-    viewId: string,
-    _view: TIssueViews,
-    _layout: TIssueLayouts
-  ) => {
+  getIssuesForViewsAsync = async (workspaceId: string, projectId: string, viewId: string) => {
     try {
       this.loader = true;
       this.error = null;
@@ -424,8 +386,7 @@ class IssueViewStore implements IIssueViewStore {
         null,
         null,
         viewId,
-        _view,
-        _layout
+        "views"
       );
       const issuesResponse = await this.issueService.getIssuesWithParams(
         workspaceId,
@@ -446,7 +407,8 @@ class IssueViewStore implements IIssueViewStore {
                   ...this?.issues[workspaceId]?.project_issues?.[projectId]?.views,
                   [viewId]: {
                     ...this?.issues[workspaceId]?.project_issues?.[projectId]?.views?.[viewId],
-                    [_layout as string]: issuesResponse,
+                    [this.rootStore?.issueFilters?.userFilters?.display_filters?.layout as string]:
+                      issuesResponse,
                   },
                 },
               },

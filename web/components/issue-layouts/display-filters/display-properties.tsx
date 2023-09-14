@@ -13,6 +13,10 @@ export const FilterDisplayProperties = observer(() => {
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
+  const handleDisplayProperties = (key: string, value: boolean) => {
+    issueFilterStore.handleUserFilter("display_properties", key, !value);
+  };
+
   return (
     <div>
       <FilterHeader
@@ -32,6 +36,12 @@ export const FilterDisplayProperties = observer(() => {
                     ? `bg-custom-primary-200 border-custom-primary-200 text-white`
                     : `hover:bg-custom-border-100 border-custom-border-100`
                 }`}
+                onClick={() =>
+                  handleDisplayProperties(
+                    _displayProperties?.key,
+                    issueFilterStore?.userFilters?.display_properties?.[_displayProperties?.key]
+                  )
+                }
               >
                 {_displayProperties?.title}
               </div>

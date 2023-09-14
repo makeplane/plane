@@ -19,10 +19,26 @@ export const FilterState = observer(() => {
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
+  const handleFilter = (key: string, value: string) => {
+    const _value =
+      issueFilterStore?.userFilters?.filters?.[key] != null
+        ? issueFilterStore?.userFilters?.filters?.[key].includes(value)
+          ? issueFilterStore?.userFilters?.filters?.[key].filter((p: string) => p != value)
+          : [...issueFilterStore?.userFilters?.filters?.[key], value]
+        : [value];
+    issueFilterStore.handleUserFilter("filters", key, _value);
+  };
+
+  const countAllState = issueStateGroupKeys
+    .map((_stateGroup) => issueFilterStore?.projectStates?.[_stateGroup].length || 0)
+    .reduce((sum: number, currentValue: number) => sum + currentValue, 0);
+
+  console.log("countAllState", countAllState);
+
   return (
     <div>
       <FilterHeader
-        title={"State"}
+        title={`State (${countAllState})`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -42,6 +58,7 @@ export const FilterState = observer(() => {
                       ? true
                       : false
                   }
+                  onClick={() => handleFilter("state", _state?.id)}
                   icon={<StateGroupIcons stateGroup={_stateGroup} color={_state?.color} />}
                   title={_state?.name}
                 />

@@ -6,6 +6,9 @@ import { WorkspaceService } from "services/workspace.service";
 import { ProjectIssuesServices } from "services/issues.service";
 import { ProjectStateServices } from "services/state.service";
 import { ProjectServices } from "services/project.service";
+import { ProjectIssuesServices as ProjectModuleServices } from "services/modules.service";
+import { ProjectCycleServices } from "services/cycles.service";
+import { ViewServices as ProjectViewServices } from "services/views.service";
 // default data
 import {
   filtersPriority,
@@ -21,6 +24,7 @@ import {
 
 export type TIssueViews = "my_issues" | "issues" | "modules" | "views" | "cycles";
 export type TIssueLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt";
+
 export interface IIssueFilter {
   priority: string[] | undefined;
   state: string[] | undefined;
@@ -92,6 +96,7 @@ export interface IIssueFilters {
     my_issue_properties: {
       filters: IIssueFilter;
       display_filters: IIssueDisplayFilters;
+      display_properties_id: null;
       display_properties: IIssueDisplayProperties;
     };
     project_issue_properties: {
@@ -115,6 +120,7 @@ export interface IIssueFilters {
             filters: IIssueFilter;
           };
         };
+        display_properties_id: string;
         display_properties: IIssueDisplayProperties;
       };
     };
@@ -126,6 +132,7 @@ export interface IIssueFilterStore {
   error: any | null;
 
   // current workspace and project id
+  myUserId: string | null;
   workspaceId: string | null;
   projectId: string | null;
   moduleId: string | null;
@@ -136,48 +143,65 @@ export interface IIssueFilterStore {
   issueRenderFilters: IIssueRenderFilters;
   issueFilters: IIssueFilters;
 
-  filterRenderProperties:
-    | {
-        [key: string]: {
-          isPreviewEnabled: boolean;
-          totalElements: number;
-          elementsVisible: number;
-        };
-      }[]
-    | null;
-
   // actions
   getWorkspaceMyIssuesFilters: (workspaceId: string) => Promise<any>;
-  updateWorkspaceMyIssuesFilters: () => any | Promise<any>;
+  updateWorkspaceMyIssuesFilters: (workspaceId: string, data: any) => Promise<any>;
 
-  getProjectLevelMembers: (workspaceId: string, projectId: string) => any | Promise<any>;
-  getProjectLevelStates: (workspaceId: string, projectId: string) => any | Promise<any>;
-  getProjectLevelLabels: (workspaceId: string, projectId: string) => any | Promise<any>;
-  getProjectDisplayFilters: (workspaceId: string, projectId: string) => any | Promise<any>;
-  getProjectDisplayProperties: (workspaceId: string, projectId: string) => any | Promise<any>;
+  getProjectLevelMembers: (workspaceId: string, projectId: string) => Promise<any>;
+  getProjectLevelStates: (workspaceId: string, projectId: string) => Promise<any>;
+  getProjectLevelLabels: (workspaceId: string, projectId: string) => Promise<any>;
+  getProjectDisplayProperties: (workspaceId: string, projectId: string) => Promise<any>;
+  updateProjectDisplayProperties: (
+    workspaceId: string,
+    projectId: string,
+    display_properties_id: string,
+    data: any
+  ) => Promise<any>;
+  getProjectDisplayFilters: (workspaceId: string, projectId: string) => Promise<any>;
+  updateProjectDisplayFilters: (workspaceId: string, projectId: string, data: any) => Promise<any>;
 
-  getProjectIssueFilters: (workspaceId: string, projectId: string) => any | Promise<any>;
+  getProjectIssueFilters: (workspaceId: string, projectId: string) => Promise<any>;
+
   getProjectIssueModuleFilters: (
     workspaceId: string,
     projectId: string,
     moduleId: string
-  ) => any | Promise<any>;
+  ) => Promise<any>;
+  updateProjectIssueModuleFilters: (
+    workspaceId: string,
+    projectId: string,
+    moduleId: string,
+    data: any
+  ) => Promise<any>;
   getProjectIssueCyclesFilters: (
     workspaceId: string,
     projectId: string,
     cycleId: string
-  ) => any | Promise<any>;
+  ) => Promise<any>;
+  updateProjectIssueCyclesFilters: (
+    workspaceId: string,
+    projectId: string,
+    cycleId: string,
+    data: any
+  ) => Promise<any>;
   getProjectIssueViewsFilters: (
     workspaceId: string,
     projectId: string,
     viewId: string
-  ) => any | Promise<any>;
+  ) => Promise<any>;
+  updateProjectIssueViewsFilters: (
+    workspaceId: string,
+    projectId: string,
+    viewId: string,
+    data: any
+  ) => Promise<any>;
 }
 
 class IssueFilterStore implements IIssueFilterStore {
   loader: boolean = false;
   error: any | null = null;
 
+  myUserId: string | null = null;
   workspaceId: string | null = null;
   projectId: string | null = null;
   moduleId: string | null = null;
@@ -200,16 +224,6 @@ class IssueFilterStore implements IIssueFilterStore {
   };
   issueFilters: IIssueFilters = {};
 
-  filterRenderProperties:
-    | {
-        [key: string]: {
-          isPreviewEnabled: boolean;
-          totalElements: number;
-          elementsVisible: number;
-        };
-      }[]
-    | null = null;
-
   // root store
   rootStore;
   // service
@@ -217,6 +231,9 @@ class IssueFilterStore implements IIssueFilterStore {
   issueService;
   stateService;
   projectService;
+  moduleService;
+  cycleService;
+  viewService;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
@@ -224,6 +241,7 @@ class IssueFilterStore implements IIssueFilterStore {
       loader: observable,
       error: observable,
 
+      myUserId: observable,
       workspaceId: observable,
       projectId: observable,
       moduleId: observable,
@@ -246,15 +264,10 @@ class IssueFilterStore implements IIssueFilterStore {
 
       userFilters: computed,
 
-      // action
-      setWorkspaceId: action,
-      setProjectId: action,
-      setModuleId: action,
-      setCycleId: action,
-      setViewId: action,
-      setIssueView: action,
-
+      // actions
       getComputedFilters: action,
+
+      handleUserFilter: action,
 
       getWorkspaceMyIssuesFilters: action,
       updateWorkspaceMyIssuesFilters: action,
@@ -262,13 +275,23 @@ class IssueFilterStore implements IIssueFilterStore {
       getProjectLevelMembers: action,
       getProjectLevelStates: action,
       getProjectLevelLabels: action,
+
       getProjectDisplayFilters: action,
+      updateProjectDisplayFilters: action,
+
       getProjectDisplayProperties: action,
+      updateProjectDisplayProperties: action,
 
       getProjectIssueFilters: action,
+
       getProjectIssueModuleFilters: action,
+      updateProjectIssueModuleFilters: action,
+
       getProjectIssueCyclesFilters: action,
+      updateProjectIssueCyclesFilters: action,
+
       getProjectIssueViewsFilters: action,
+      updateProjectIssueViewsFilters: action,
     });
 
     this.rootStore = _rootStore;
@@ -276,14 +299,10 @@ class IssueFilterStore implements IIssueFilterStore {
     this.issueService = new ProjectIssuesServices();
     this.stateService = new ProjectStateServices();
     this.projectService = new ProjectServices();
+    this.moduleService = new ProjectModuleServices();
+    this.cycleService = new ProjectCycleServices();
+    this.viewService = new ProjectViewServices();
   }
-
-  setWorkspaceId = (_workspaceId: string | null) => (this.workspaceId = _workspaceId);
-  setProjectId = (_projectId: string | null) => (this.projectId = _projectId);
-  setModuleId = (_moduleId: string | null) => (this.moduleId = _moduleId);
-  setCycleId = (_cycleId: string | null) => (this.cycleId = _cycleId);
-  setViewId = (_viewId: string | null) => (this.viewId = _viewId);
-  setIssueView = (_view: TIssueViews | null) => (this.issueView = _view);
 
   // computed
   get issueLayout() {
@@ -331,22 +350,30 @@ class IssueFilterStore implements IIssueFilterStore {
   get userFilters() {
     if (!this.workspaceId) return null;
     if (this.issueView === "my_issues")
-      return this.issueFilters?.[this.workspaceId]?.my_issue_properties;
+      return {
+        ...this.issueFilters?.[this.workspaceId]?.my_issue_properties,
+        display_properties_id: null,
+      };
 
     if (!this.projectId) return null;
     let _issueFilters: {
       filters: IIssueFilter | null;
       display_filters: IIssueDisplayFilters;
+      display_properties_id: string;
       display_properties: IIssueDisplayProperties;
     } = {
       filters: null,
       display_filters:
         this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.issues
           ?.display_filters,
+      display_properties_id:
+        this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]
+          ?.display_properties_id,
       display_properties:
         this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]
           ?.display_properties,
     };
+
     if (this.issueView === "issues") {
       _issueFilters = {
         ..._issueFilters,
@@ -356,6 +383,7 @@ class IssueFilterStore implements IIssueFilterStore {
       };
       return _issueFilters;
     }
+
     if (this.issueView === "modules" && this.moduleId) {
       _issueFilters = {
         ..._issueFilters,
@@ -365,6 +393,7 @@ class IssueFilterStore implements IIssueFilterStore {
       };
       return _issueFilters;
     }
+
     if (this.issueView === "cycles" && this.cycleId) {
       _issueFilters = {
         ..._issueFilters,
@@ -374,6 +403,7 @@ class IssueFilterStore implements IIssueFilterStore {
       };
       return _issueFilters;
     }
+
     if (this.issueView === "views" && this.viewId) {
       _issueFilters = {
         ..._issueFilters,
@@ -383,9 +413,243 @@ class IssueFilterStore implements IIssueFilterStore {
       };
       return _issueFilters;
     }
+
     return null;
   }
-  handleUserFilter = () => {};
+  handleUserFilter = (
+    filter_type: "filters" | "display_filters" | "display_properties",
+    filter_key: string,
+    value: any
+  ) => {
+    if (!this.workspaceId) return null;
+
+    if (this.issueView === "my_issues") {
+      this.issueFilters = {
+        ...this.issueFilters,
+        [this.workspaceId]: {
+          ...this.issueFilters?.[this.workspaceId],
+          my_issue_properties: {
+            ...this.issueFilters?.[this.workspaceId]?.my_issue_properties,
+            [filter_type]: {
+              ...this.issueFilters?.[this.workspaceId]?.my_issue_properties?.[filter_type],
+              [filter_key]: value,
+            },
+          },
+        },
+      };
+      this.updateWorkspaceMyIssuesFilters(this.workspaceId, this.userFilters);
+    }
+
+    if (!this.projectId) return null;
+    if (filter_type === "display_properties") {
+      this.issueFilters = {
+        ...this.issueFilters,
+        [this.workspaceId]: {
+          ...this.issueFilters?.[this.workspaceId],
+          project_issue_properties: {
+            ...this.issueFilters?.[this.workspaceId]?.project_issue_properties,
+            [this.projectId]: {
+              ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId],
+              display_properties: {
+                ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]
+                  ?.display_properties,
+                [filter_key]: value,
+              },
+            },
+          },
+        },
+      };
+
+      if (this.userFilters?.display_properties_id) {
+        this.updateProjectDisplayProperties(
+          this.workspaceId,
+          this.projectId,
+          this.userFilters?.display_properties_id,
+          this.userFilters?.display_properties
+        );
+      }
+    }
+
+    if (filter_type === "display_filters") {
+      this.issueFilters = {
+        ...this.issueFilters,
+        [this.workspaceId]: {
+          ...this.issueFilters?.[this.workspaceId],
+          project_issue_properties: {
+            ...this.issueFilters?.[this.workspaceId]?.project_issue_properties,
+            [this.projectId]: {
+              ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId],
+              issues: {
+                ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]
+                  ?.issues,
+                [filter_type]: {
+                  ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
+                    this.projectId
+                  ]?.issues?.[filter_type],
+                  [filter_key]: value,
+                },
+              },
+            },
+          },
+        },
+      };
+      this.updateProjectDisplayFilters(this.workspaceId, this.projectId, {
+        filters: this.userFilters?.filters,
+        display_filters: this.userFilters?.display_filters,
+      });
+    }
+
+    if (filter_type === "filters") {
+      if (this.issueView === "issues") {
+        this.issueFilters = {
+          ...this.issueFilters,
+          [this.workspaceId]: {
+            ...this.issueFilters?.[this.workspaceId],
+            project_issue_properties: {
+              ...this.issueFilters?.[this.workspaceId]?.project_issue_properties,
+              [this.projectId]: {
+                ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
+                  this.projectId
+                ],
+                issues: {
+                  ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
+                    this.projectId
+                  ]?.issues,
+                  [filter_type]: {
+                    ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
+                      this.projectId
+                    ]?.issues?.[filter_type],
+                    [filter_key]: value,
+                  },
+                },
+              },
+            },
+          },
+        };
+        this.updateProjectDisplayFilters(this.workspaceId, this.projectId, {
+          filters: this.userFilters?.filters,
+          display_filters: this.userFilters?.display_filters,
+        });
+      }
+
+      if (this.issueView === "modules" && this.moduleId) {
+        this.issueFilters = {
+          ...this.issueFilters,
+          [this.workspaceId]: {
+            ...this.issueFilters?.[this.workspaceId],
+            project_issue_properties: {
+              ...this.issueFilters?.[this.workspaceId]?.project_issue_properties,
+              [this.projectId]: {
+                ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
+                  this.projectId
+                ],
+                modules: {
+                  ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
+                    this.projectId
+                  ]?.modules,
+                  [this.moduleId]: {
+                    ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
+                      this.projectId
+                    ]?.modules?.[this.moduleId],
+                    [filter_type]: {
+                      ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
+                        this.projectId
+                      ]?.modules?.[this.moduleId]?.[filter_type],
+                      [filter_key]: value,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        };
+        this.updateProjectIssueModuleFilters(
+          this.workspaceId,
+          this.projectId,
+          this.moduleId,
+          this.userFilters?.filters
+        );
+      }
+
+      if (this.issueView === "cycles" && this.cycleId) {
+        this.issueFilters = {
+          ...this.issueFilters,
+          [this.workspaceId]: {
+            ...this.issueFilters?.[this.workspaceId],
+            project_issue_properties: {
+              ...this.issueFilters?.[this.workspaceId]?.project_issue_properties,
+              [this.projectId]: {
+                ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
+                  this.projectId
+                ],
+                cycles: {
+                  ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
+                    this.projectId
+                  ]?.cycles,
+                  [this.cycleId]: {
+                    ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
+                      this.projectId
+                    ]?.cycles?.[this.cycleId],
+                    [filter_type]: {
+                      ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
+                        this.projectId
+                      ]?.cycles?.[this.cycleId]?.[filter_type],
+                      [filter_key]: value,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        };
+        this.updateProjectIssueCyclesFilters(
+          this.workspaceId,
+          this.projectId,
+          this.cycleId,
+          this.userFilters?.filters
+        );
+      }
+
+      if (this.issueView === "views" && this.viewId) {
+        this.issueFilters = {
+          ...this.issueFilters,
+          [this.workspaceId]: {
+            ...this.issueFilters?.[this.workspaceId],
+            project_issue_properties: {
+              ...this.issueFilters?.[this.workspaceId]?.project_issue_properties,
+              [this.projectId]: {
+                ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
+                  this.projectId
+                ],
+                views: {
+                  ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
+                    this.projectId
+                  ]?.views,
+                  [this.viewId]: {
+                    ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
+                      this.projectId
+                    ]?.views?.[this.viewId],
+                    [filter_type]: {
+                      ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
+                        this.projectId
+                      ]?.views?.[this.viewId]?.[filter_type],
+                      [filter_key]: value,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        };
+        this.updateProjectIssueViewsFilters(
+          this.workspaceId,
+          this.projectId,
+          this.viewId,
+          this.userFilters?.filters
+        );
+      }
+    }
+  };
 
   computedFilter = (filters: any, filteredParams: any) => {
     const computedFilters: any = {};
@@ -405,15 +669,14 @@ class IssueFilterStore implements IIssueFilterStore {
     _moduleId: string | null,
     _cycleId: string | null,
     _viewId: string | null,
-    _issueView: TIssueViews,
-    _issueLayout: TIssueLayouts
+    _issueView: TIssueViews
   ) => {
-    this.setWorkspaceId(_workspaceId);
-    this.setProjectId(_projectId);
-    this.setModuleId(_moduleId);
-    this.setCycleId(_cycleId);
-    this.setViewId(_viewId);
-    this.setIssueView(_issueView);
+    this.workspaceId = _workspaceId;
+    this.projectId = _projectId;
+    this.moduleId = _moduleId;
+    this.cycleId = _cycleId;
+    this.viewId = _viewId;
+    this.issueView = _issueView;
 
     const _layout = this.userFilters?.display_filters?.layout;
 
@@ -426,16 +689,14 @@ class IssueFilterStore implements IIssueFilterStore {
       labels: this.userFilters?.filters?.labels || undefined,
       start_date: this.userFilters?.filters?.start_date || undefined,
       target_date: this.userFilters?.filters?.target_date || undefined,
-      type: this.userFilters?.display_filters?.type || undefined,
       group_by: this.userFilters?.display_filters?.group_by || "state",
       order_by: this.userFilters?.display_filters?.order_by || "-created_at",
+      type: this.userFilters?.display_filters?.type || undefined,
       sub_issue: this.userFilters?.display_filters?.sub_issue || true,
       show_empty_groups: this.userFilters?.display_filters?.show_empty_groups || true,
       calendar_date_range: this.userFilters?.display_filters?.calendar_date_range || undefined,
       start_target_date: this.userFilters?.display_filters?.start_target_date || true,
     };
-
-    console.log("filteredRouteParams", filteredRouteParams);
 
     // start date and target date we have to construct the format here
 
@@ -515,7 +776,6 @@ class IssueFilterStore implements IIssueFilterStore {
     filteredRouteParams = this.computedFilter(filteredRouteParams, filteredParams);
 
     // remove few attributes from the object when we are in workspace issues
-    console.log("filteredRouteParams", filteredRouteParams);
 
     return filteredRouteParams;
   };
@@ -667,36 +927,25 @@ class IssueFilterStore implements IIssueFilterStore {
       return error;
     }
   };
-  updateWorkspaceMyIssuesFilters = async () => {
+  updateWorkspaceMyIssuesFilters = async (workspaceId: string, data: any) => {
     try {
       this.loader = true;
       this.error = null;
 
-      const workspaceId = "1";
-
-      const issuesFiltersResponse = await this.workspaceService.workspaceMemberMe(workspaceId);
+      const payload = {
+        view_props: data,
+      };
+      const issuesFiltersResponse = await this.workspaceService.updateWorkspaceView(
+        workspaceId,
+        payload
+      );
 
       if (issuesFiltersResponse) {
-        // const _issuesFiltersResponse = this.issueFilters;
-        //   const _issuesFiltersResponse: any = {
-        //     ...this.issues,
-        //     [workspaceId]: {
-        //       ...this?.issues[workspaceId],
-        //       my_issues: {
-        //         ...this?.issues[workspaceId]?.my_issues,
-        //         [_layout as string]: issuesResponse,
-        //       },
-        //     },
-        //   };
-
         runInAction(() => {
-          // this.issueFilters = _issuesFiltersResponse;
           this.loader = false;
           this.error = null;
         });
       }
-
-      // return issuesResponse;
     } catch (error) {
       console.warn("error in fetching workspace level issue filters", error);
       this.loader = false;
@@ -837,6 +1086,7 @@ class IssueFilterStore implements IIssueFilterStore {
       );
 
       if (issuesDisplayPropertiesResponse) {
+        const _myUserId: string = issuesDisplayPropertiesResponse?.user;
         const _issuesDisplayPropertiesResponse: any = {
           ...this.issueFilters,
           [workspaceId]: {
@@ -845,13 +1095,17 @@ class IssueFilterStore implements IIssueFilterStore {
               ...this?.issueFilters[workspaceId]?.project_issue_properties,
               [projectId]: {
                 ...this?.issueFilters[workspaceId]?.project_issue_properties?.[projectId],
-                display_properties: issuesDisplayPropertiesResponse?.properties,
+                display_properties_id: issuesDisplayPropertiesResponse?.id,
+                display_properties: {
+                  ...issuesDisplayPropertiesResponse?.properties,
+                },
               },
             },
           },
         };
 
         runInAction(() => {
+          this.myUserId = _myUserId;
           this.issueFilters = _issuesDisplayPropertiesResponse;
           this.loader = false;
           this.error = null;
@@ -866,33 +1120,29 @@ class IssueFilterStore implements IIssueFilterStore {
       return error;
     }
   };
-  updateProjectDisplayProperties = async (workspaceId: string, projectId: string, data: any) => {
+  updateProjectDisplayProperties = async (
+    workspaceId: string,
+    projectId: string,
+    display_properties_id: string,
+    data: any
+  ) => {
     try {
       this.loader = true;
       this.error = null;
 
-      const issuesDisplayPropertiesResponse = await this.issueService.getIssueProperties(
+      const payload = {
+        properties: data,
+        user: this.myUserId,
+      };
+      const issuesDisplayPropertiesResponse = await this.issueService.patchIssueProperties(
         workspaceId,
-        projectId
+        projectId,
+        display_properties_id,
+        payload
       );
 
       if (issuesDisplayPropertiesResponse) {
-        const _issuesDisplayPropertiesResponse: any = {
-          ...this.issueFilters,
-          [workspaceId]: {
-            ...this?.issueFilters[workspaceId],
-            project_issue_properties: {
-              ...this?.issueFilters[workspaceId]?.project_issue_properties,
-              [projectId]: {
-                ...this?.issueFilters[workspaceId]?.project_issue_properties?.[projectId],
-                display_properties: issuesDisplayPropertiesResponse,
-              },
-            },
-          },
-        };
-
         runInAction(() => {
-          this.issueFilters = _issuesDisplayPropertiesResponse;
           this.loader = false;
           this.error = null;
         });
@@ -946,7 +1196,7 @@ class IssueFilterStore implements IIssueFilterStore {
         });
       }
 
-      // return issuesResponse;
+      return issuesDisplayFiltersResponse;
     } catch (error) {
       console.warn("error in fetching workspace level issue filters", error);
       this.loader = false;
@@ -954,37 +1204,30 @@ class IssueFilterStore implements IIssueFilterStore {
       return error;
     }
   };
-  updateProjectDisplayFilters = async (workspaceId: string, projectId: string) => {
+  updateProjectDisplayFilters = async (workspaceId: string, projectId: string, data: any) => {
     try {
       this.loader = true;
       this.error = null;
 
-      const workspaceId = "1";
-
-      const issuesFiltersResponse = await this.workspaceService.workspaceMemberMe(workspaceId);
+      const payload: any = {
+        view_props: data,
+      };
+      const issuesFiltersResponse = await this.projectService.setProjectView(
+        workspaceId,
+        projectId,
+        payload
+      );
 
       if (issuesFiltersResponse) {
-        // const _issuesFiltersResponse = this.issueFilters;
-        //   const _issuesFiltersResponse: any = {
-        //     ...this.issues,
-        //     [workspaceId]: {
-        //       ...this?.issues[workspaceId],
-        //       my_issues: {
-        //         ...this?.issues[workspaceId]?.my_issues,
-        //         [_layout as string]: issuesResponse,
-        //       },
-        //     },
-        //   };
-
         runInAction(() => {
-          // this.issueFilters = _issuesFiltersResponse;
           this.loader = false;
           this.error = null;
         });
       }
 
-      // return issuesResponse;
+      return issuesFiltersResponse;
     } catch (error) {
+      this.getProjectDisplayFilters(workspaceId, projectId);
       console.warn("error in fetching workspace level issue filters", error);
       this.loader = false;
       this.error = null;
@@ -1007,43 +1250,6 @@ class IssueFilterStore implements IIssueFilterStore {
         this.loader = false;
         this.error = null;
       });
-
-      // return issuesResponse;
-    } catch (error) {
-      console.warn("error in fetching workspace level issue filters", error);
-      this.loader = false;
-      this.error = null;
-      return error;
-    }
-  };
-  updateProjectIssueFilters = async (workspaceId: string, projectId: string) => {
-    try {
-      this.loader = true;
-      this.error = null;
-
-      const issuesFiltersResponse = await this.workspaceService.workspaceMemberMe(workspaceId);
-
-      if (issuesFiltersResponse) {
-        // const _issuesFiltersResponse = this.issueFilters;
-        //   const _issuesFiltersResponse: any = {
-        //     ...this.issues,
-        //     [workspaceId]: {
-        //       ...this?.issues[workspaceId],
-        //       my_issues: {
-        //         ...this?.issues[workspaceId]?.my_issues,
-        //         [_layout as string]: issuesResponse,
-        //       },
-        //     },
-        //   };
-
-        runInAction(() => {
-          // this.issueFilters = _issuesFiltersResponse;
-          this.loader = false;
-          this.error = null;
-        });
-      }
-
-      // return issuesResponse;
     } catch (error) {
       console.warn("error in fetching workspace level issue filters", error);
       this.loader = false;
@@ -1061,31 +1267,53 @@ class IssueFilterStore implements IIssueFilterStore {
       this.loader = true;
       this.error = null;
 
-      const workspaceId = "1";
+      await this.getProjectIssueFilters(workspaceId, projectId);
 
-      const issuesFiltersResponse = await this.workspaceService.workspaceMemberMe(workspaceId);
+      const issuesFiltersModuleResponse = await this.moduleService.getModuleDetails(
+        workspaceId,
+        projectId,
+        moduleId
+      );
 
-      if (issuesFiltersResponse) {
-        // const _issuesFiltersResponse = this.issueFilters;
-        //   const _issuesFiltersResponse: any = {
-        //     ...this.issues,
-        //     [workspaceId]: {
-        //       ...this?.issues[workspaceId],
-        //       my_issues: {
-        //         ...this?.issues[workspaceId]?.my_issues,
-        //         [_layout as string]: issuesResponse,
-        //       },
-        //     },
-        //   };
+      if (issuesFiltersModuleResponse) {
+        const _filters = { ...issuesFiltersModuleResponse?.view_props?.filters };
+        const _issuesFiltersModuleResponse = {
+          ...this.issueFilters,
+          [workspaceId]: {
+            ...this?.issueFilters[workspaceId],
+            project_issue_properties: {
+              ...this?.issueFilters[workspaceId]?.project_issue_properties,
+              [projectId]: {
+                ...this?.issueFilters[workspaceId]?.project_issue_properties?.[projectId],
+                modules: {
+                  ...this?.issueFilters[workspaceId]?.project_issue_properties?.[projectId]
+                    ?.modules,
+                  [moduleId]: {
+                    ...this?.issueFilters[workspaceId]?.project_issue_properties?.[projectId]
+                      ?.modules?.[moduleId],
+                    filters: {
+                      priority: _filters?.priority ?? undefined,
+                      state: _filters?.state ?? undefined,
+                      state_group: _filters?.state_group ?? undefined,
+                      assignees: _filters?.assignees ?? undefined,
+                      created_by: _filters?.created_by ?? undefined,
+                      labels: _filters?.labels ?? undefined,
+                      start_date: _filters?.start_date ?? undefined,
+                      target_date: _filters?.target_date ?? undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        };
 
         runInAction(() => {
-          // this.issueFilters = _issuesFiltersResponse;
+          this.issueFilters = _issuesFiltersModuleResponse;
           this.loader = false;
           this.error = null;
         });
       }
-
-      // return issuesResponse;
     } catch (error) {
       console.warn("error in fetching workspace level issue filters", error);
       this.loader = false;
@@ -1096,38 +1324,32 @@ class IssueFilterStore implements IIssueFilterStore {
   updateProjectIssueModuleFilters = async (
     workspaceId: string,
     projectId: string,
-    moduleId: string
+    moduleId: string,
+    data: any
   ) => {
     try {
       this.loader = true;
       this.error = null;
 
-      const workspaceId = "1";
+      const payload = {
+        view_props: { filters: data },
+      };
+      const issuesFiltersModuleResponse = await this.moduleService.patchModule(
+        workspaceId,
+        projectId,
+        moduleId,
+        payload,
+        undefined // TODO: replace this with user
+      );
 
-      const issuesFiltersResponse = await this.workspaceService.workspaceMemberMe(workspaceId);
-
-      if (issuesFiltersResponse) {
-        // const _issuesFiltersResponse = this.issueFilters;
-        //   const _issuesFiltersResponse: any = {
-        //     ...this.issues,
-        //     [workspaceId]: {
-        //       ...this?.issues[workspaceId],
-        //       my_issues: {
-        //         ...this?.issues[workspaceId]?.my_issues,
-        //         [_layout as string]: issuesResponse,
-        //       },
-        //     },
-        //   };
-
+      if (issuesFiltersModuleResponse) {
         runInAction(() => {
-          // this.issueFilters = _issuesFiltersResponse;
           this.loader = false;
           this.error = null;
         });
       }
-
-      // return issuesResponse;
     } catch (error) {
+      this.getProjectIssueModuleFilters(workspaceId, projectId, moduleId);
       console.warn("error in fetching workspace level issue filters", error);
       this.loader = false;
       this.error = null;
@@ -1144,31 +1366,52 @@ class IssueFilterStore implements IIssueFilterStore {
       this.loader = true;
       this.error = null;
 
-      const workspaceId = "1";
+      await this.getProjectIssueFilters(workspaceId, projectId);
 
-      const issuesFiltersResponse = await this.workspaceService.workspaceMemberMe(workspaceId);
+      const issuesFiltersCycleResponse = await this.cycleService.getCycleDetails(
+        workspaceId,
+        projectId,
+        cycleId
+      );
 
-      if (issuesFiltersResponse) {
-        // const _issuesFiltersResponse = this.issueFilters;
-        //   const _issuesFiltersResponse: any = {
-        //     ...this.issues,
-        //     [workspaceId]: {
-        //       ...this?.issues[workspaceId],
-        //       my_issues: {
-        //         ...this?.issues[workspaceId]?.my_issues,
-        //         [_layout as string]: issuesResponse,
-        //       },
-        //     },
-        //   };
+      if (issuesFiltersCycleResponse) {
+        const _filters = { ...issuesFiltersCycleResponse?.view_props?.filters };
+        const _issuesFiltersCycleResponse = {
+          ...this.issueFilters,
+          [workspaceId]: {
+            ...this?.issueFilters[workspaceId],
+            project_issue_properties: {
+              ...this?.issueFilters[workspaceId]?.project_issue_properties,
+              [projectId]: {
+                ...this?.issueFilters[workspaceId]?.project_issue_properties?.[projectId],
+                cycles: {
+                  ...this?.issueFilters[workspaceId]?.project_issue_properties?.[projectId]?.cycles,
+                  [cycleId]: {
+                    ...this?.issueFilters[workspaceId]?.project_issue_properties?.[projectId]
+                      ?.modules?.[cycleId],
+                    filters: {
+                      priority: _filters?.priority ?? undefined,
+                      state: _filters?.state ?? undefined,
+                      state_group: _filters?.state_group ?? undefined,
+                      assignees: _filters?.assignees ?? undefined,
+                      created_by: _filters?.created_by ?? undefined,
+                      labels: _filters?.labels ?? undefined,
+                      start_date: _filters?.start_date ?? undefined,
+                      target_date: _filters?.target_date ?? undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        };
 
         runInAction(() => {
-          // this.issueFilters = _issuesFiltersResponse;
+          this.issueFilters = _issuesFiltersCycleResponse;
           this.loader = false;
           this.error = null;
         });
       }
-
-      // return issuesResponse;
     } catch (error) {
       console.warn("error in fetching workspace level issue filters", error);
       this.loader = false;
@@ -1179,38 +1422,32 @@ class IssueFilterStore implements IIssueFilterStore {
   updateProjectIssueCyclesFilters = async (
     workspaceId: string,
     projectId: string,
-    cycleId: string
+    cycleId: string,
+    data: any
   ) => {
     try {
       this.loader = true;
       this.error = null;
 
-      const workspaceId = "1";
+      const payload = {
+        view_props: { filters: data },
+      };
+      const issuesFiltersCycleResponse = await this.cycleService.patchCycle(
+        workspaceId,
+        projectId,
+        cycleId,
+        payload,
+        undefined // TODO: replace this with user
+      );
 
-      const issuesFiltersResponse = await this.workspaceService.workspaceMemberMe(workspaceId);
-
-      if (issuesFiltersResponse) {
-        // const _issuesFiltersResponse = this.issueFilters;
-        //   const _issuesFiltersResponse: any = {
-        //     ...this.issues,
-        //     [workspaceId]: {
-        //       ...this?.issues[workspaceId],
-        //       my_issues: {
-        //         ...this?.issues[workspaceId]?.my_issues,
-        //         [_layout as string]: issuesResponse,
-        //       },
-        //     },
-        //   };
-
+      if (issuesFiltersCycleResponse) {
         runInAction(() => {
-          // this.issueFilters = _issuesFiltersResponse;
           this.loader = false;
           this.error = null;
         });
       }
-
-      // return issuesResponse;
     } catch (error) {
+      this.getProjectIssueCyclesFilters(workspaceId, projectId, cycleId);
       console.warn("error in fetching workspace level issue filters", error);
       this.loader = false;
       this.error = null;
@@ -1223,31 +1460,52 @@ class IssueFilterStore implements IIssueFilterStore {
       this.loader = true;
       this.error = null;
 
-      const workspaceId = "1";
+      await this.getProjectIssueFilters(workspaceId, projectId);
 
-      const issuesFiltersResponse = await this.workspaceService.workspaceMemberMe(workspaceId);
+      const issuesFiltersViewResponse = await this.viewService.getViewDetails(
+        workspaceId,
+        projectId,
+        viewId
+      );
 
-      if (issuesFiltersResponse) {
-        // const _issuesFiltersResponse = this.issueFilters;
-        //   const _issuesFiltersResponse: any = {
-        //     ...this.issues,
-        //     [workspaceId]: {
-        //       ...this?.issues[workspaceId],
-        //       my_issues: {
-        //         ...this?.issues[workspaceId]?.my_issues,
-        //         [_layout as string]: issuesResponse,
-        //       },
-        //     },
-        //   };
+      if (issuesFiltersViewResponse) {
+        const _filters = { ...issuesFiltersViewResponse?.query_data } as any;
+        const _issuesFiltersViewResponse = {
+          ...this.issueFilters,
+          [workspaceId]: {
+            ...this?.issueFilters[workspaceId],
+            project_issue_properties: {
+              ...this?.issueFilters[workspaceId]?.project_issue_properties,
+              [projectId]: {
+                ...this?.issueFilters[workspaceId]?.project_issue_properties?.[projectId],
+                views: {
+                  ...this?.issueFilters[workspaceId]?.project_issue_properties?.[projectId]?.cycles,
+                  [viewId]: {
+                    ...this?.issueFilters[workspaceId]?.project_issue_properties?.[projectId]
+                      ?.modules?.[viewId],
+                    filters: {
+                      priority: _filters?.priority ?? undefined,
+                      state: _filters?.state ?? undefined,
+                      state_group: _filters?.state_group ?? undefined,
+                      assignees: _filters?.assignees ?? undefined,
+                      created_by: _filters?.created_by ?? undefined,
+                      labels: _filters?.labels ?? undefined,
+                      start_date: _filters?.start_date ?? undefined,
+                      target_date: _filters?.target_date ?? undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        };
 
         runInAction(() => {
-          // this.issueFilters = _issuesFiltersResponse;
+          this.issueFilters = _issuesFiltersViewResponse;
           this.loader = false;
           this.error = null;
         });
       }
-
-      // return issuesResponse;
     } catch (error) {
       console.warn("error in fetching workspace level issue filters", error);
       this.loader = false;
@@ -1258,45 +1516,40 @@ class IssueFilterStore implements IIssueFilterStore {
   updateProjectIssueViewsFilters = async (
     workspaceId: string,
     projectId: string,
-    viewId: string
+    viewId: string,
+    data: any
   ) => {
     try {
       this.loader = true;
       this.error = null;
 
-      const workspaceId = "1";
+      const payload = {
+        query_data: data,
+      };
+      const issuesFiltersViewResponse = await this.viewService.patchView(
+        workspaceId,
+        projectId,
+        viewId,
+        payload,
+        undefined // TODO: replace this with user
+      );
 
-      const issuesFiltersResponse = await this.workspaceService.workspaceMemberMe(workspaceId);
-
-      if (issuesFiltersResponse) {
-        // const _issuesFiltersResponse = this.issueFilters;
-        //   const _issuesFiltersResponse: any = {
-        //     ...this.issues,
-        //     [workspaceId]: {
-        //       ...this?.issues[workspaceId],
-        //       my_issues: {
-        //         ...this?.issues[workspaceId]?.my_issues,
-        //         [_layout as string]: issuesResponse,
-        //       },
-        //     },
-        //   };
-
+      if (issuesFiltersViewResponse) {
         runInAction(() => {
-          // this.issueFilters = _issuesFiltersResponse;
           this.loader = false;
           this.error = null;
         });
       }
 
-      // return issuesResponse;
+      return issuesFiltersViewResponse;
     } catch (error) {
+      this.getProjectIssueViewsFilters(projectId, workspaceId, viewId);
       console.warn("error in fetching workspace level issue filters", error);
       this.loader = false;
       this.error = null;
       return error;
     }
   };
-  // project level filters ends
 }
 
 export default IssueFilterStore;

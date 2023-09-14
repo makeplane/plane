@@ -34,10 +34,20 @@ export const FilterAssignees = observer(() => {
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
+  const handleFilter = (key: string, value: string) => {
+    const _value =
+      issueFilterStore?.userFilters?.filters?.[key] != null
+        ? issueFilterStore?.userFilters?.filters?.[key].includes(value)
+          ? issueFilterStore?.userFilters?.filters?.[key].filter((p: string) => p != value)
+          : [...issueFilterStore?.userFilters?.filters?.[key], value]
+        : [value];
+    issueFilterStore.handleUserFilter("filters", key, _value);
+  };
+
   return (
     <div>
       <FilterHeader
-        title={"Assignees"}
+        title={`Assignees (${issueFilterStore?.projectMembers?.length || 0})`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -54,6 +64,7 @@ export const FilterAssignees = observer(() => {
                     ? true
                     : false
                 }
+                onClick={() => handleFilter("assignees", _member?.member?.id)}
                 icon={
                   <MemberIcons
                     display_name={_member?.member.display_name}

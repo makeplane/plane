@@ -7,10 +7,20 @@ interface IFilterOption {
   icon?: React.ReactNode;
   title: string;
   multiple?: boolean;
+  onClick?: () => void;
 }
 
-export const FilterOption = ({ isChecked, icon, title, multiple = true }: IFilterOption) => (
-  <div className="flex items-center gap-3 cursor-pointer rounded p-[6px] py-[5px] transition-all hover:bg-custom-border-100">
+export const FilterOption = ({
+  isChecked,
+  icon,
+  title,
+  multiple = true,
+  onClick,
+}: IFilterOption) => (
+  <div
+    className="flex items-center gap-3 cursor-pointer rounded p-[6px] py-[5px] transition-all hover:bg-custom-border-100"
+    onClick={onClick}
+  >
     <div
       className={`flex-shrink-0 w-[14px] h-[14px] flex justify-center items-center border border-custom-border-300 bg-custom-background-90 ${
         isChecked ? `bg-custom-primary-300 text-white` : ``

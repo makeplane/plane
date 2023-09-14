@@ -14,6 +14,10 @@ export const FilterOrderBy = observer(() => {
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
+  const handleOrderBy = (key: string, value: string) => {
+    issueFilterStore.handleUserFilter("display_filters", key, value);
+  };
+
   return (
     <div>
       <FilterHeader
@@ -33,6 +37,7 @@ export const FilterOrderBy = observer(() => {
                     ? true
                     : false
                 }
+                onClick={() => handleOrderBy("order_by", _orderBy?.key)}
                 title={_orderBy.title}
                 multiple={false}
               />

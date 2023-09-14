@@ -14,6 +14,10 @@ export const FilterIssueType = observer(() => {
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
+  const handleIssueType = (key: string, value: string) => {
+    issueFilterStore.handleUserFilter("display_filters", key, value);
+  };
+
   return (
     <div>
       <FilterHeader
@@ -33,6 +37,7 @@ export const FilterIssueType = observer(() => {
                     ? true
                     : false
                 }
+                onClick={() => handleIssueType("type", _issueType?.key)}
                 title={_issueType.title}
                 multiple={false}
               />

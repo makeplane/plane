@@ -14,6 +14,10 @@ export const FilterGroupBy = observer(() => {
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
+  const handleGroupBy = (key: string, value: string) => {
+    issueFilterStore.handleUserFilter("display_filters", key, value);
+  };
+
   return (
     <div>
       <FilterHeader
@@ -33,6 +37,7 @@ export const FilterGroupBy = observer(() => {
                     ? true
                     : false
                 }
+                onClick={() => handleGroupBy("group_by", _groupBy?.key)}
                 title={_groupBy.title}
                 multiple={false}
               />

@@ -40,54 +40,21 @@ export const LayoutSelection = observer(() => {
     },
   ];
 
-  const handleLayoutSelection = (layout: TIssueLayouts) => {
-    if (!issueFilterStore.workspaceId) return;
-    if (issueFilterStore.issueView === "my_issues") {
-      issueStore.getMyIssuesAsync(issueFilterStore.workspaceId, issueFilterStore.issueView, layout);
-      return;
-    }
-
-    if (!issueFilterStore.projectId) return;
-    if (issueFilterStore.issueView === "issues") {
-      issueStore.getProjectIssuesAsync(
-        issueFilterStore.workspaceId,
-        issueFilterStore.projectId,
-        issueFilterStore.issueView,
-        layout
-      );
-      return;
-    }
-    if (issueFilterStore.issueView === "modules" && issueFilterStore.moduleId) {
-      issueStore.getIssuesForModulesAsync(
-        issueFilterStore.workspaceId,
-        issueFilterStore.projectId,
-        issueFilterStore.moduleId,
-        issueFilterStore.issueView,
-        layout
-      );
-      return;
-    }
-    if (issueFilterStore.issueView === "cycles" && issueFilterStore.cycleId) {
-      issueStore.getIssuesForCyclesAsync(
-        issueFilterStore.workspaceId,
-        issueFilterStore.projectId,
-        issueFilterStore.cycleId,
-        issueFilterStore.issueView,
-        layout
-      );
-      return;
-    }
-    if (issueFilterStore.issueView === "views" && issueFilterStore.viewId) {
-      issueStore.getIssuesForViewsAsync(
-        issueFilterStore.workspaceId,
-        issueFilterStore.projectId,
-        issueFilterStore.viewId,
-        issueFilterStore.issueView,
-        layout
-      );
-      return;
-    }
+  const handleLayoutSelection = (_layoutKey: string) => {
+    issueFilterStore.handleUserFilter("display_filters", "layout", _layoutKey);
   };
+
+  console.log("----");
+  console.log("workspace_id", issueFilterStore.workspaceId);
+  console.log("project_id", issueFilterStore.projectId);
+  console.log("module_id", issueFilterStore.moduleId);
+  console.log("cycle_id", issueFilterStore.cycleId);
+  console.log("view_id", issueFilterStore.viewId);
+
+  console.log("issue_view", issueFilterStore.issueView);
+  console.log("issue_layout", issueFilterStore.issueLayout);
+
+  console.log("----");
 
   return (
     <div className="relative flex items-center p-1 rounded gap-1 bg-custom-background-80">

@@ -14,6 +14,10 @@ export const FilterExtraOptions = observer(() => {
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
+  const handleExtraOptions = (key: string, value: boolean) => {
+    issueFilterStore.handleUserFilter("display_filters", key, !value);
+  };
+
   return (
     <div>
       <FilterHeader
@@ -32,6 +36,12 @@ export const FilterExtraOptions = observer(() => {
                   issueFilterStore?.userFilters?.display_filters?.[_extraProperties?.key]
                     ? true
                     : false
+                }
+                onClick={() =>
+                  handleExtraOptions(
+                    _extraProperties?.key,
+                    issueFilterStore?.userFilters?.display_filters?.[_extraProperties?.key]
+                  )
                 }
                 title={_extraProperties.title}
               />

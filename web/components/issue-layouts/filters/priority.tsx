@@ -56,10 +56,20 @@ export const FilterPriority = observer(() => {
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
+  const handleFilter = (key: string, value: string) => {
+    const _value =
+      issueFilterStore?.userFilters?.filters?.[key] != null
+        ? issueFilterStore?.userFilters?.filters?.[key].includes(value)
+          ? issueFilterStore?.userFilters?.filters?.[key].filter((p: string) => p != value)
+          : [...issueFilterStore?.userFilters?.filters?.[key], value]
+        : [value];
+    issueFilterStore.handleUserFilter("filters", key, _value);
+  };
+
   return (
     <div>
       <FilterHeader
-        title={"Priority"}
+        title={`Priority (${issueFilterStore?.issueRenderFilters?.priority.length || 0})`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -76,14 +86,15 @@ export const FilterPriority = observer(() => {
                     ? true
                     : false
                 }
+                onClick={() => handleFilter("priority", _priority?.key)}
                 icon={<PriorityIcons priority={_priority.key} />}
                 title={_priority.title}
               />
             ))}
           <div className="pl-[32px] flex items-center gap-2 py-[6px] text-xs text-custom-primary-100">
-            <div>View more</div>
             <div>View less</div>
-            <div>View all</div>
+            <div>View more</div>
+            {/* TODO: <div>View all</div> */}
           </div>
         </div>
       )}
