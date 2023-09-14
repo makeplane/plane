@@ -111,7 +111,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
             {blockedByIssue && blockedByIssue.length > 0
               ? blockedByIssue.map((relation) => (
                   <div
-                    key={relation.related_issue_detail?.id}
+                    key={relation?.id}
                     className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-1.5 py-0.5 text-xs text-red-500 duration-300 hover:border-red-500/20 hover:bg-red-500/20"
                   >
                     <a
