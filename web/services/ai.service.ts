@@ -5,9 +5,6 @@ import { ICurrentUserResponse, IGptResponse } from "types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 
-const trackEvent =
-  process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
-
 class AiServices extends APIService {
   constructor() {
     super(API_BASE_URL);
@@ -21,7 +18,7 @@ class AiServices extends APIService {
   ): Promise<IGptResponse> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/ai-assistant/`, data)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackAskGptEvent(response?.data, "ASK_GPT", user);
+        trackEventServices.trackAskGptEvent(response?.data, "ASK_GPT", user);
         return response?.data;
       })
       .catch((error) => {

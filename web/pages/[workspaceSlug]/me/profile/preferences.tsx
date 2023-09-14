@@ -15,17 +15,14 @@ import { ICustomTheme } from "types";
 import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// next themes
-import { useTheme } from "next-themes";
 
 const ProfilePreferences = observer(() => {
   const { user: myProfile } = useUserAuth();
 
   const store: any = useMobxStore();
-  const { theme } = useTheme();
 
-  console.log("store", store?.theme?.theme);
-  console.log("theme", theme);
+  // console.log("store", store?.theme?.theme);
+  // console.log("theme", theme);
 
   const [customThemeSelectorOptions, setCustomThemeSelectorOptions] = useState(false);
 
