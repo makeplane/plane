@@ -1038,6 +1038,7 @@ urlpatterns = [
         IssueDraftViewSet.as_view(
             {
                 "get": "list",
+                "post": "create",
             }
         ),
         name="project-issue-draft",
@@ -1047,6 +1048,7 @@ urlpatterns = [
         IssueDraftViewSet.as_view(
             {
                 "get": "retrieve",
+                "patch": "partial_update",
                 "delete": "destroy",
             }
         ),

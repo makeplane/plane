@@ -11,9 +11,6 @@ import {
 } from "types";
 import { API_BASE_URL } from "helpers/common.helper";
 
-const trackEvent =
-  process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
-
 class IntegrationService extends APIService {
   constructor() {
     super(API_BASE_URL);
@@ -78,8 +75,7 @@ class IntegrationService extends APIService {
     return this.delete(`/api/workspaces/${workspaceSlug}/importers/${service}/${importerId}/`)
       .then((response) => {
         const eventName = service === "github" ? "GITHUB_IMPORTER_DELETE" : "JIRA_IMPORTER_DELETE";
-
-        if (trackEvent) trackEventServices.trackImporterEvent(response?.data, eventName, user);
+        trackEventServices.trackImporterEvent(response?.data, eventName, user);
         return response?.data;
       })
       .catch((error) => {

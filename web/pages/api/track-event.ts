@@ -1,12 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-
 // jitsu
 import { createClient } from "@jitsu/nextjs";
-import { convertCookieStringToObject } from "lib/cookie";
 
-const jitsu = createClient({
-  key: process.env.TRACKER_ACCESS_KEY || "",
-  tracking_host: "https://t.jitsu.com",
+const jitsuClient = createClient({
+  key: process.env.JITSU_TRACKER_ACCESS_KEY || "",
+  tracking_host: process.env.JITSU_TRACKER_HOST || "",
 });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -18,18 +16,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (!user) return res.status(401).json({ message: "Unauthorized" });
 
-  // TODO: cache user info
-
-  jitsu
+  jitsuClient
     .id({
-      id: user.id,
-      email: user.email,
-      first_name: user.first_name,
-      last_name: user.last_name,
+      id: user?.id,
+      email: user?.email,
+      first_name: user?.first_name,
+      last_name: user?.last_name,
       display_name: user?.display_name,
     })
     .then(() => {
-      jitsu.track(eventName, {
+      jitsuClient.track(eventName, {
         ...extra,
       });
     });
