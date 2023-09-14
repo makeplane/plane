@@ -34,7 +34,6 @@ import {
 } from "constants/fetch-keys";
 // constants
 import { INBOX_ISSUE_SOURCE } from "constants/inbox";
-import { usePostHog } from "posthog-js/react";
 import { ISSUE_CREATE } from "constants/posthog-events";
 
 export interface IssuesModalProps {
@@ -69,7 +68,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   fieldsToShow = ["all"],
   onSubmit,
 }) => {
-  const posthog = usePostHog();
   // states
   const [createMore, setCreateMore] = useState(false);
   const [activeProject, setActiveProject] = useState<string | null>(null);
@@ -241,7 +239,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       await issuesService
         .createIssues(workspaceSlug as string, activeProject ?? "", payload, user)
         .then(async (res) => {
-          posthog?.capture(ISSUE_CREATE);
           mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
           if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res.id, payload.cycle);
           if (payload.module && payload.module !== "")

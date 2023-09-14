@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { usePostHog } from "posthog-js/react";
 import useSWR from "swr";
 // services
 import userService from "services/user.service";
@@ -11,7 +10,6 @@ import type { ICurrentUserResponse } from "types";
 
 export default function useUser({ redirectTo = "", redirectIfFound = false, options = {} } = {}) {
   const router = useRouter();
-  const posthog = usePostHog();
   // API to fetch user information
   const { data, isLoading, error, mutate } = useSWR<ICurrentUserResponse>(
     CURRENT_USER,

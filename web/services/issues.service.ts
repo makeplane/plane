@@ -11,6 +11,10 @@ import type {
   ISubIssueResponse,
 } from "types";
 import { API_BASE_URL } from "helpers/common.helper";
+import PosthogService from "./posthog.service";
+import { ISSUE_CREATE } from "constants/posthog-events";
+
+const posthogService = new PosthogService();
 
 class ProjectIssuesServices extends APIService {
   constructor() {
@@ -26,6 +30,7 @@ class ProjectIssuesServices extends APIService {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`, data)
       .then((response) => {
         trackEventServices.trackIssueEvent(response.data, "ISSUE_CREATE", user);
+        posthogService.capture(ISSUE_CREATE, response.data, user);
         return response?.data;
       })
       .catch((error) => {
