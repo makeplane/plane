@@ -18,7 +18,7 @@ from sentry_sdk import capture_exception
 from .base import BaseViewSet
 from plane.api.serializers import (
     PropertySerializer,
-    IssuePropertyValueSerializer,
+    PropertyValueSerializer,
     PropertyReadSerializer,
     PropertyLiteSerializer,
 )
@@ -30,7 +30,7 @@ from plane.db.models import (
     Issue,
     PropertyTransaction,
 )
-from plane.api.permissions import WorkSpaceAdminPermission
+from plane.api.permissions import WorkSpaceAdminPermission, ProjectEntityPermission
 
 
 def is_valid_uuid(uuid_string):
@@ -122,7 +122,11 @@ class PropertyViewSet(BaseViewSet):
 
             if project_id:
                 issue_properties = issue_properties.filter(project_id=project_id)
-
+            if issue_properties.first() is None:
+                return Response(
+                    {"error": "Property does not exists"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             serializer = PropertySerializer(issue_properties.first())
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Property.DoesNotExist:
@@ -139,8 +143,12 @@ class PropertyViewSet(BaseViewSet):
 
 
 class PropertyValueViewSet(BaseViewSet):
-    serializer_class = IssuePropertyValueSerializer
+    serializer_class = PropertyValueSerializer
     model = PropertyValue
+
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
 
     def perform_create(self, serializer):
         serializer.save(
@@ -149,7 +157,7 @@ class PropertyValueViewSet(BaseViewSet):
             issue_property_id=self.kwargs.get("issue_property_id"),
         )
 
-    def create(self, request, slug, project_id, issue_id):
+    def create(self, request, slug, project_id, entity, entity_uuid):
         try:
             request_data = request.data.get("issue_properties", [])
             a_epoch = request.data.get(
@@ -166,16 +174,16 @@ class PropertyValueViewSet(BaseViewSet):
 
             # Get the already existing for this entity
             property_values = PropertyValue.objects.filter(
-                entity_uuid=issue_id, entity="issue"
+                entity_uuid=entity_uuid, entity=entity,
             )
             bulk_transactions = []
             bulk_prop_values_create = []
             bulk_prop_values_update = []
-            for prop in properties:
+            for property in properties:
                 # Get the requested values for the property
-                requested_prop_values = request_data.get(str(prop.id))
+                requested_prop_values = request_data.get(str(property.id))
                 # For multi values -> multiple property values will be created
-                if prop.is_multi and isinstance(requested_prop_values, list):
+                if property.is_multi and isinstance(requested_prop_values, list):
                     prop_values = [
                         property_value
                         for property_value in property_values
@@ -195,7 +203,7 @@ class PropertyValueViewSet(BaseViewSet):
                                 != prop_value.value_hash
                             ):
                                 transaction_id = uuid.uuid4()
-                                to_hash = hashlib.sha256(
+                                to_value_hash = hashlib.sha256(
                                     requested_prop_value.encode("utf-8")
                                 ).hexdigest()
                                 bulk_transactions.append(
@@ -204,13 +212,12 @@ class PropertyValueViewSet(BaseViewSet):
                                         workspace_id=workspace_id,
                                         project_id=project_id,
                                         property=property,
-                                        property_value_id=prop_value.id,
                                         from_value=prop_value.value,
                                         to_value=requested_prop_value,
-                                        from_hash=prop_value.value_hash,
-                                        to_hash=to_hash,
-                                        entity="issue",
-                                        entity_uuid=issue_id,
+                                        from_value_hash=prop_value.value_hash,
+                                        to_value_hash=to_value_hash,
+                                        entity=entity,
+                                        entity_uuid=entity_uuid,
                                         s_epoch=(
                                             datetime.datetime.timestamp(timezone.now())
                                             * 1000
@@ -221,7 +228,7 @@ class PropertyValueViewSet(BaseViewSet):
                                 )
                                 prop_value.value = requested_prop_value
                                 prop_value.transaction_id = transaction_id
-                                prop_value.value_hash = to_hash
+                                prop_value.value_hash = to_value_hash
                                 bulk_prop_values_update.append(prop_value)
                     else:
                         # Only for relation, multi select and select we will storing uuids
@@ -233,7 +240,7 @@ class PropertyValueViewSet(BaseViewSet):
                         ):
                             for requested_prop_value in requested_prop_values:
                                 transaction_id = uuid.uuid4()
-                                to_hash = hashlib.sha256(
+                                to_value_hash = hashlib.sha256(
                                     requested_prop_value.encode("utf-8")
                                 ).hexdigest()
                                 bulk_transactions.append(
@@ -242,11 +249,10 @@ class PropertyValueViewSet(BaseViewSet):
                                         workspace_id=workspace_id,
                                         project_id=project_id,
                                         property=property,
-                                        property_value_id=prop_value.id,
                                         to_value=requested_prop_value,
-                                        to_hash=to_hash,
-                                        entity="issue",
-                                        entity_uuid=issue_id,
+                                        to_value_hash=to_value_hash,
+                                        entity=entity,
+                                        entity_uuid=entity_uuid,
                                         s_epoch=(
                                             datetime.datetime.timestamp(timezone.now())
                                             * 1000
@@ -259,18 +265,19 @@ class PropertyValueViewSet(BaseViewSet):
                                     PropertyValue(
                                         transaction_id=transaction_id,
                                         value=requested_prop_value,
-                                        value_hash=to_hash,
+                                        value_hash=to_value_hash,
                                         type=1,
                                         property=property,
                                         project_id=project_id,
                                         workspace_id=workspace_id,
-                                        issue_id=issue_id,
+                                        entity_uuid=entity_uuid,
+                                        entity=entity,
                                     )
                                 )
                         else:
                             for requested_prop_value in requested_prop_values:
                                 transaction_id = uuid.uuid4()
-                                to_hash = hashlib.sha256(
+                                to_value_hash = hashlib.sha256(
                                     requested_prop_value.encode("utf-8")
                                 ).hexdigest()
                                 bulk_transactions.append(
@@ -279,11 +286,10 @@ class PropertyValueViewSet(BaseViewSet):
                                         workspace_id=workspace_id,
                                         project_id=project_id,
                                         property=property,
-                                        property_value_id=prop_value.id,
                                         to_value=requested_prop_value,
-                                        to_hash=to_hash,
-                                        entity="issue",
-                                        entity_uuid=issue_id,
+                                        to_value_hash=to_value_hash,
+                                        entity=entity,
+                                        entity_uuid=entity_uuid,
                                         s_epoch=(
                                             datetime.datetime.timestamp(timezone.now())
                                             * 1000
@@ -296,12 +302,13 @@ class PropertyValueViewSet(BaseViewSet):
                                     PropertyValue(
                                         transaction_id=transaction_id,
                                         value=requested_prop_value,
-                                        value_hash=to_hash,
+                                        value_hash=to_value_hash,
                                         type=0,
                                         property=property,
                                         project_id=project_id,
                                         workspace_id=workspace_id,
-                                        issue_id=issue_id,
+                                        entity_uuid=entity_uuid,
+                                        entity=entity,
                                     )
                                 )
                 else:
@@ -313,43 +320,43 @@ class PropertyValueViewSet(BaseViewSet):
 
                     # Already existing
                     if prop_values:
-                            # Only do a lazy create -> only create if values are new
-                            if (
-                                hashlib.sha256(
-                                    requested_prop_value.encode("utf-8")
-                                ).hexdigest()
-                                != prop_value.value_hash
-                            ):
-                                transaction_id = uuid.uuid4()
-                                to_hash = hashlib.sha256(
-                                    requested_prop_value.encode("utf-8")
-                                ).hexdigest()
-                                bulk_transactions.append(
-                                    PropertyTransaction(
-                                        id=transaction_id,
-                                        workspace_id=workspace_id,
-                                        project_id=project_id,
-                                        property=property,
-                                        property_value_id=prop_value.id,
-                                        from_value=prop_value.value,
-                                        to_value=requested_prop_value,
-                                        from_hash=prop_value.value_hash,
-                                        to_hash=to_hash,
-                                        entity="issue",
-                                        entity_uuid=issue_id,
-                                        s_epoch=(
-                                            datetime.datetime.timestamp(timezone.now())
-                                            * 1000
-                                        ),
-                                        a_epoch=a_epoch,
-                                        actor=request.user,
-                                    )
+                        # Only do a lazy create -> only create if values are new
+                        prop_value = prop_values[0]
+                        if (
+                            hashlib.sha256(
+                                requested_prop_values.encode("utf-8")
+                            ).hexdigest()
+                            != prop_value.value_hash
+                        ):
+                            transaction_id = uuid.uuid4()
+                            to_value_hash = hashlib.sha256(
+                                requested_prop_values.encode("utf-8")
+                            ).hexdigest()
+                            bulk_transactions.append(
+                                PropertyTransaction(
+                                    id=transaction_id,
+                                    workspace_id=workspace_id,
+                                    project_id=project_id,
+                                    property=property,
+                                    from_value=prop_value.value,
+                                    to_value=requested_prop_values,
+                                    from_value_hash=prop_value.value_hash,
+                                    to_value_hash=to_value_hash,
+                                    entity=entity,
+                                    entity_uuid=entity_uuid,
+                                    s_epoch=(
+                                        datetime.datetime.timestamp(timezone.now())
+                                        * 1000
+                                    ),
+                                    a_epoch=a_epoch,
+                                    actor=request.user,
                                 )
-                                prop_value.value = requested_prop_value
-                                prop_value.transaction_id = transaction_id
-                                prop_value.value_hash = to_hash
-                                bulk_prop_values_update.append(prop_value)
-                        # Non existent
+                            )
+                            prop_value.value = requested_prop_values
+                            prop_value.transaction_id = transaction_id
+                            prop_value.value_hash = to_value_hash
+                            bulk_prop_values_update.append(prop_value)
+                    # Non existent
                     else:
                         # Only for relation, multi select and select we will storing uuids
                         if (
@@ -358,8 +365,8 @@ class PropertyValueViewSet(BaseViewSet):
                             or property.type == "select"
                         ):
                             transaction_id = uuid.uuid4()
-                            to_hash = hashlib.sha256(
-                                requested_prop_value.encode("utf-8")
+                            to_value_hash = hashlib.sha256(
+                                requested_prop_values.encode("utf-8")
                             ).hexdigest()
                             bulk_transactions.append(
                                 PropertyTransaction(
@@ -367,11 +374,10 @@ class PropertyValueViewSet(BaseViewSet):
                                     workspace_id=workspace_id,
                                     project_id=project_id,
                                     property=property,
-                                    property_value_id=prop_value.id,
-                                    to_value=requested_prop_value,
-                                    to_hash=to_hash,
-                                    entity="issue",
-                                    entity_uuid=issue_id,
+                                    to_value=requested_prop_values,
+                                    to_value_hash=to_value_hash,
+                                    entity=entity,
+                                    entity_uuid=entity_uuid,
                                     s_epoch=(
                                         datetime.datetime.timestamp(timezone.now())
                                         * 1000
@@ -383,19 +389,20 @@ class PropertyValueViewSet(BaseViewSet):
                             bulk_prop_values_create.append(
                                 PropertyValue(
                                     transaction_id=transaction_id,
-                                    value=requested_prop_value,
-                                    value_hash=to_hash,
-                                    type="uuid",
+                                    value=requested_prop_values,
+                                    value_hash=to_value_hash,
+                                    type=1,
                                     property=property,
                                     project_id=project_id,
                                     workspace_id=workspace_id,
-                                    issue_id=issue_id,
+                                    entity_uuid=entity_uuid,
+                                    entity=entity,
                                 )
                             )
                         else:
                             transaction_id = uuid.uuid4()
-                            to_hash = hashlib.sha256(
-                                requested_prop_value.encode("utf-8")
+                            to_value_hash = hashlib.sha256(
+                                requested_prop_values.encode("utf-8")
                             ).hexdigest()
                             bulk_transactions.append(
                                 PropertyTransaction(
@@ -403,11 +410,10 @@ class PropertyValueViewSet(BaseViewSet):
                                     workspace_id=workspace_id,
                                     project_id=project_id,
                                     property=property,
-                                    property_value_id=prop_value.id,
-                                    to_value=requested_prop_value,
-                                    to_hash=to_hash,
-                                    entity="issue",
-                                    entity_uuid=issue_id,
+                                    to_value=requested_prop_values,
+                                    to_value_hash=to_value_hash,
+                                    entity=entity,
+                                    entity_uuid=entity_uuid,
                                     s_epoch=(
                                         datetime.datetime.timestamp(timezone.now())
                                         * 1000
@@ -419,13 +425,14 @@ class PropertyValueViewSet(BaseViewSet):
                             bulk_prop_values_create.append(
                                 PropertyValue(
                                     transaction_id=transaction_id,
-                                    value=requested_prop_value,
-                                    value_hash=to_hash,
-                                    type="text",
+                                    value=requested_prop_values,
+                                    value_hash=to_value_hash,
+                                    type=0,
                                     property=property,
                                     project_id=project_id,
                                     workspace_id=workspace_id,
-                                    issue_id=issue_id,
+                                    entity_uuid=entity_uuid,
+                                    entity=entity,
                                 )
                             )
 
@@ -451,7 +458,7 @@ class PropertyValueViewSet(BaseViewSet):
             # This makes the writes a bit slow
             # TODO: Find a better approach for faster reads
             issue = Issue.objects.get(
-                pk=issue_id, workspace__slug=slug, project_id=project_id
+                pk=entity_uuid, workspace__slug=slug, project_id=project_id
             )
             issue_properties = (
                 Property.objects.filter(
@@ -463,7 +470,7 @@ class PropertyValueViewSet(BaseViewSet):
                     Prefetch(
                         "property_values",
                         queryset=PropertyValue.objects.filter(
-                            issue_id=issue_id,
+                            entity_uuid=entity_uuid,
                             workspace__slug=slug,
                             project_id=project_id,
                         ),
@@ -475,14 +482,15 @@ class PropertyValueViewSet(BaseViewSet):
             issue.issue_properties = json.loads(
                 json.dumps(serializer_data.data, cls=DjangoJSONEncoder)
             )
-            issue.save(update_fields=["issue_properties"])
+            issue.save(update_fields=["properties"])
 
-            issue_property_values = PropertyValue.objects.filter(
-                workspace__slug=slug, project_id=project_id, issue_id=issue_id
-            ).select_related("property")
-
-            serilaizer = IssuePropertyValueSerializer(issue_property_values, many=True)
-            return Response(status=status.HTTP_201_CREATED)
+            properties = Property.objects.get(
+                workspace__slug=slug,
+                project_id=project_id,
+                pk=issue.entity_id,
+            )
+            serializer = PropertyReadSerializer(properties)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Project.DoesNotExist:
             return Response(
                 {"error": "Project Does not exists"}, status=status.HTTP_400_BAD_REQUEST
@@ -494,61 +502,25 @@ class PropertyValueViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def partial_update(self, request, slug, project_id, issue_id):
+    def list(self, request, slug, project_id, entity, entity_uuid):
         try:
-            request_data = request.data.get("issue_property_values", [])
-
-            issue_property_values = PropertyValue.objects.filter(
-                issue_id=issue_id,
-                workspace__slug=slug,
-                project_id=project_id,
-            )
-            bulk_issue_prop_values = []
-            for issue_prop_value in request_data:
-                issue_property_value = [
-                    issue_value
-                    for issue_value in issue_property_values
-                    if str(issue_prop_value) == str(issue_value.pk)
-                ]
-
-                if issue_property_value:
-                    issue_property_value[0].value = request_data.get(issue_prop_value)
-                bulk_issue_prop_values.append(issue_property_value)
-
-            updated_issue_props = PropertyValue.objects.bulk_update(
-                bulk_issue_prop_values, ["value"], batch_size=100, ignore_conflicts=True
-            )
-            serializer = IssuePropertyValueSerializer(updated_issue_props, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            capture_exception(e)
+            if entity == "issues":
+                issue = Issue.issue_objects.get(
+                    pk=entity_uuid, workspace__slug=slug, project_id=project_id
+                )
+                properties = Property.objects.get(
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    pk=issue.entity_id,
+                )
+                serializer = PropertyReadSerializer(properties)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({"error": "Entity not supported yet"}, status=status.HTTP_400_BAD_REQUEST)
+        except (Issue.DoesNotExist, Property.DoesNotExist):
             return Response(
-                {"error": "Something went wrong please try again later"},
+                {"error": "Property does not exist"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
-    def list(self, request, slug, project_id, issue_id):
-        try:
-            properties = (
-                Property.objects.filter(
-                    workspace__slug=slug,
-                    property_values__project_id=project_id,
-                )
-                .prefetch_related("children")
-                .prefetch_related(
-                    Prefetch(
-                        "property_values",
-                        queryset=PropertyValue.objects.filter(
-                            issue_id=issue_id,
-                            workspace__slug=slug,
-                            project_id=project_id,
-                        ),
-                    )
-                )
-                .distinct()
-            )
-            serializer = PropertyReadSerializer(properties, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(

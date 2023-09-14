@@ -30,7 +30,7 @@ class Property(BaseModel):
         choices=(
             ("entity", "entity"),
             ("text", "text"),
-            ("description", "description"),
+            ("paragraph", "paragraph"),
             ("number", "number"),
             ("checkbox", "checkbox"),
             ("select", "select"),
@@ -71,9 +71,17 @@ class Property(BaseModel):
     def save(self, *args, **kwargs):
         self.name = convert_string(self.display_name)
         if self._state.adding:
-            largest_order = Property.objects.filter(workspace=self.workspace).aggregate(
-                largest=models.Min("sort_order")
-            )["largest"]
+            if self.parent is None:
+                largest_order = Property.objects.filter(
+                    workspace=self.workspace
+                ).aggregate(largest=models.Max("sort_order"))["largest"]
+            else:
+                largest_order = Property.objects.filter(
+                    workspace=self.workspace, parent=self.parent
+                ).aggregate(largest=models.Max("sort_order"))["largest"]
+            
+            
+            # Save the sort_order as well
             if largest_order is not None:
                 self.sort_order = largest_order + 10000
 
@@ -94,9 +102,6 @@ class PropertyValue(ProjectBaseModel):
     value = models.TextField(null=True, blank=True, db_index=True)
     value_hash = models.CharField(max_length=255)
     type = models.PositiveSmallIntegerField(choices=TYPE_CHOICES)
-    issue = models.ForeignKey(
-        "db.Issue", on_delete=models.CASCADE, related_name="property_values"
-    )
     entity = models.CharField()
     entity_uuid = models.UUIDField()
     transaction = models.ForeignKey(
@@ -111,7 +116,7 @@ class PropertyValue(ProjectBaseModel):
         db_table = "property_values"
 
     def __str__(self):
-        return f"<{str(self.issue_property.type)} {str(self.value)}>"
+        return f"<{str(self.property.type)} {str(self.value)}>"
 
 
 class PropertyTransaction(AuditModel):

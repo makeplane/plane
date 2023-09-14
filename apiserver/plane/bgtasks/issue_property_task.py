@@ -9,8 +9,8 @@ from celery import shared_task
 from sentry_sdk import capture_exception
 
 # Module imports
-from plane.db.models import IssueProperty, IssuePropertyValue, Issue
-from plane.api.serializers import IssuePropertyReadSerializer
+from plane.db.models import Property, PropertyValue, Issue
+from plane.api.serializers import PropertyReadSerializer
 
 
 @shared_task
@@ -20,7 +20,7 @@ def issue_property_json_task(slug, project_id, issue_id):
             pk=issue_id, workspace__slug=slug, project_id=project_id
         )
         issue_properties = (
-            IssueProperty.objects.filter(
+            Property.objects.filter(
                 workspace__slug=slug,
                 property_values__project_id=project_id,
             )
@@ -28,7 +28,7 @@ def issue_property_json_task(slug, project_id, issue_id):
             .prefetch_related(
                 Prefetch(
                     "property_values",
-                    queryset=IssuePropertyValue.objects.filter(
+                    queryset=PropertyValue.objects.filter(
                         issue_id=issue_id,
                         workspace__slug=slug,
                         project_id=project_id,
@@ -37,7 +37,7 @@ def issue_property_json_task(slug, project_id, issue_id):
             )
             .distinct()
         )
-        serializer = IssuePropertyReadSerializer(issue_properties, many=True)
+        serializer = PropertyReadSerializer(issue_properties, many=True)
         issue.issue_properties = json.loads(json.dumps(serializer.data, cls=DjangoJSONEncoder))
         issue.save(update_fields=["issue_properties"])
         return

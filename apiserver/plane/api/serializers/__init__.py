@@ -99,9 +99,9 @@ from .exporter import ExporterHistorySerializer
 
 from .issue_property import (
     PropertySerializer,
-    IssuePropertyValueSerializer,
+    PropertyValueSerializer,
     PropertyReadSerializer,
-    IssuePropertyValueReadSerializer,
+    PropertyValueReadSerializer,
     PropertyLiteSerializer,
     PropertyTransactionSerializer,
 )

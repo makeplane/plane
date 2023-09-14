@@ -12,7 +12,7 @@ from plane.db.models import (
     Page,
     IssueView,
     Property,
-    IssuePropertyValue,
+    PropertyValue,
     PropertyTransaction,
 )
 
@@ -94,26 +94,26 @@ class PropertySerializer(BaseSerializer):
         read_only_fields = [
             "workspace",
             "name",
+            "display_name",
         ]
 
 
-class IssuePropertyValueSerializer(BaseSerializer):
+class PropertyValueSerializer(BaseSerializer):
     property_values = PropertySerializer(read_only=True, many=True)
 
     class Meta:
-        model = IssuePropertyValue
+        model = PropertyValue
         fields = "__all__"
         read_only_fields = [
             "project",
             "workspace",
-            "issue",
             "issue_property",
         ]
 
 
-class IssuePropertyValueReadSerializer(BaseSerializer):
+class PropertyValueReadSerializer(BaseSerializer):
     class Meta:
-        model = IssuePropertyValue
+        model = PropertyValue
         fields = [
             "value",
             "type",
@@ -176,7 +176,7 @@ class PropertyReadSerializer(BaseSerializer):
         else:
             prop_values = obj.property_values.all()
             if prop_values:
-                serializer = IssuePropertyValueReadSerializer(prop_values, many=True)
+                serializer = PropertyValueReadSerializer(prop_values, many=True)
                 return serializer.data
             return None
 
