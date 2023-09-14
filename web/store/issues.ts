@@ -1,5 +1,7 @@
 // mobx
+import { ISSUE_CREATE } from "constants/posthog-events";
 import { action, observable, runInAction, makeAutoObservable } from "mobx";
+import { usePostHog } from "posthog-js/react";
 // services
 import issueService from "services/issues.service";
 // types
