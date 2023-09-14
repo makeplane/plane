@@ -174,7 +174,8 @@ class PropertyValueViewSet(BaseViewSet):
 
             # Get the already existing for this entity
             property_values = PropertyValue.objects.filter(
-                entity_uuid=entity_uuid, entity=entity,
+                entity_uuid=entity_uuid,
+                entity=entity,
             )
             bulk_transactions = []
             bulk_prop_values_create = []
@@ -322,16 +323,12 @@ class PropertyValueViewSet(BaseViewSet):
                     if prop_values:
                         # Only do a lazy create -> only create if values are new
                         prop_value = prop_values[0]
-                        if (
-                            hashlib.sha256(
-                                requested_prop_values.encode("utf-8")
-                            ).hexdigest()
-                            != prop_value.value_hash
-                        ):
-                            transaction_id = uuid.uuid4()
-                            to_value_hash = hashlib.sha256(
-                                requested_prop_values.encode("utf-8")
-                            ).hexdigest()
+                        transaction_id = uuid.uuid4()
+                        to_value_hash = hashlib.sha256(
+                            requested_prop_values.encode("utf-8")
+                        ).hexdigest()
+
+                        if to_value_hash != prop_value.value_hash:
                             bulk_transactions.append(
                                 PropertyTransaction(
                                     id=transaction_id,
@@ -450,7 +447,7 @@ class PropertyValueViewSet(BaseViewSet):
             )
             _ = PropertyValue.objects.bulk_update(
                 bulk_prop_values_update,
-                ["value"],
+                ["value", "value_hash", "transaction_id"],
                 batch_size=100,
             )
 
@@ -515,7 +512,10 @@ class PropertyValueViewSet(BaseViewSet):
                 )
                 serializer = PropertyReadSerializer(properties)
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response({"error": "Entity not supported yet"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Entity not supported yet"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except (Issue.DoesNotExist, Property.DoesNotExist):
             return Response(
                 {"error": "Property does not exist"},

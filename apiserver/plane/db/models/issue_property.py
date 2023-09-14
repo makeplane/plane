@@ -35,7 +35,6 @@ class Property(BaseModel):
             ("checkbox", "checkbox"),
             ("select", "select"),
             ("multi_select", "multi_select"),
-            ("date", "date"),
             ("relation", "relation"),
             ("files", "files"),
             ("email", "email"),
