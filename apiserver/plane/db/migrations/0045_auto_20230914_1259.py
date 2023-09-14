@@ -7,7 +7,7 @@ from django.conf import settings
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("db", "0042_alter_analyticview_created_by_and_more"),
+        ("db", "0044_auto_20230913_0709"),
     ]
 
     operations = [

@@ -42,8 +42,6 @@ from .issue import (
     IssueActivitySerializer,
     IssueCommentSerializer,
     IssueDisplayPropertySerializer,
-    BlockerIssueSerializer,
-    BlockedIssueSerializer,
     IssueAssigneeSerializer,
     LabelSerializer,
     IssueSerializer,
