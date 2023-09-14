@@ -1,5 +1,12 @@
+import { useRouter } from "next/router";
+
+//hook
+import useMyIssues from "hooks/my-issues/use-my-issues";
+import useIssuesView from "hooks/use-issues-view";
+import useProfileIssues from "hooks/use-profile-issues";
 // components
 import { SingleBoard } from "components/core/views/board-view/single-board";
+import { IssuePeekOverview } from "components/issues";
 // icons
 import { StateGroupIcon } from "components/icons";
 // helpers
@@ -16,6 +23,8 @@ type Props = {
   handleTrashBox: (isDragging: boolean) => void;
   openIssuesListModal?: (() => void) | null;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
+  myIssueProjectId?: string | null;
+  handleMyIssueOpen?: (issue: IIssue) => void;
   states: IState[] | undefined;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
@@ -30,16 +39,40 @@ export const AllBoards: React.FC<Props> = ({
   handleIssueAction,
   handleTrashBox,
   openIssuesListModal,
+  myIssueProjectId,
+  handleMyIssueOpen,
   removeIssue,
   states,
   user,
   userAuth,
   viewProps,
 }) => {
+  const router = useRouter();
+  const { workspaceSlug, projectId, userId } = router.query;
+
+  const isProfileIssue =
+    router.pathname.includes("assigned") ||
+    router.pathname.includes("created") ||
+    router.pathname.includes("subscribed");
+
+  const isMyIssue = router.pathname.includes("my-issues");
+
+  const { mutateIssues } = useIssuesView();
+  const { mutateMyIssues } = useMyIssues(workspaceSlug?.toString());
+  const { mutateProfileIssues } = useProfileIssues(workspaceSlug?.toString(), userId?.toString());
+
   const { displayFilters, groupedIssues } = viewProps;
 
   return (
     <>
+      <IssuePeekOverview
+        handleMutation={() =>
+          isMyIssue ? mutateMyIssues() : isProfileIssue ? mutateProfileIssues() : mutateIssues()
+        }
+        projectId={myIssueProjectId ? myIssueProjectId : projectId?.toString() ?? ""}
+        workspaceSlug={workspaceSlug?.toString() ?? ""}
+        readOnly={disableUserActions}
+      />
       {groupedIssues ? (
         <div className="horizontal-scroll-enable flex h-full gap-x-4 p-8">
           {Object.keys(groupedIssues).map((singleGroup, index) => {
@@ -63,6 +96,7 @@ export const AllBoards: React.FC<Props> = ({
                 handleIssueAction={handleIssueAction}
                 handleTrashBox={handleTrashBox}
                 openIssuesListModal={openIssuesListModal ?? null}
+                handleMyIssueOpen={handleMyIssueOpen}
                 removeIssue={removeIssue}
                 user={user}
                 userAuth={userAuth}

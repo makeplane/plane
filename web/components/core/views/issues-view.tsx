@@ -22,6 +22,7 @@ import { FiltersList, AllViews } from "components/core";
 import {
   CreateUpdateIssueModal,
   DeleteIssueModal,
+  IssuePeekOverview,
   CreateUpdateDraftIssueModal,
 } from "components/issues";
 import { CreateUpdateViewModal } from "components/views";
@@ -493,6 +494,7 @@ export const IssuesView: React.FC<Props> = ({
         data={issueToDelete}
         user={user}
       />
+
       {areFiltersApplied && (
         <>
           <div className="flex items-center justify-between gap-2 px-5 pt-3 pb-0">

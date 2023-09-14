@@ -30,8 +30,7 @@ const integrationDetails: { [key: string]: any } = {
   },
   slack: {
     logo: SlackLogo,
-    description:
-      "Connect your slack channel to this project to get regular updates. Control which notification you want to receive.",
+    description: "Get regular updates and control which notification you want to receive.",
   },
 };
 
@@ -93,19 +92,19 @@ export const SingleIntegration: React.FC<Props> = ({ integration }) => {
   return (
     <>
       {integration && (
-        <div className="flex items-center justify-between gap-2 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-5">
+        <div className="flex items-center justify-between gap-2 border-b border-custom-border-200 bg-custom-background-100 px-4 py-6">
           <div className="flex items-start gap-4">
-            <div className="h-12 w-12 flex-shrink-0">
+            <div className="h-10 w-10 flex-shrink-0">
               <Image
                 src={integrationDetails[integration.integration_detail.provider].logo}
                 alt={`${integration.integration_detail.title} Logo`}
               />
             </div>
             <div>
-              <h3 className="flex items-center gap-4 text-xl font-semibold">
+              <h3 className="flex items-center gap-4 text-sm font-medium">
                 {integration.integration_detail.title}
               </h3>
-              <p className="text-sm text-custom-text-200">
+              <p className="text-sm text-custom-text-200 tracking-tight">
                 {integrationDetails[integration.integration_detail.provider].description}
               </p>
             </div>

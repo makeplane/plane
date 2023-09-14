@@ -30,6 +30,8 @@ import {
   SidebarStateSelect,
   SidebarEstimateSelect,
   SidebarLabelSelect,
+  SidebarDuplicateSelect,
+  SidebarRelatesSelect,
 } from "components/issues";
 // ui
 import { CustomDatePicker, Icon } from "components/ui";
@@ -76,6 +78,8 @@ type Props = {
     | "delete"
     | "all"
     | "subscribe"
+    | "duplicate"
+    | "relates_to"
   )[];
   uneditable?: boolean;
 };
@@ -464,7 +468,19 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("blocker")) && (
                   <SidebarBlockerSelect
                     issueId={issueId as string}
-                    submitChanges={submitChanges}
+                    submitChanges={(data: any) => {
+                      mutate<IIssue>(
+                        ISSUE_DETAILS(issueId as string),
+                        (prevData) => {
+                          if (!prevData) return prevData;
+                          return {
+                            ...prevData,
+                            ...data,
+                          };
+                        },
+                        false
+                      );
+                    }}
                     watch={watchIssue}
                     disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
                   />
@@ -472,7 +488,59 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("blocked")) && (
                   <SidebarBlockedSelect
                     issueId={issueId as string}
-                    submitChanges={submitChanges}
+                    submitChanges={(data: any) => {
+                      mutate<IIssue>(
+                        ISSUE_DETAILS(issueId as string),
+                        (prevData) => {
+                          if (!prevData) return prevData;
+                          return {
+                            ...prevData,
+                            ...data,
+                          };
+                        },
+                        false
+                      );
+                    }}
+                    watch={watchIssue}
+                    disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                  />
+                )}
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("duplicate")) && (
+                  <SidebarDuplicateSelect
+                    issueId={issueId as string}
+                    submitChanges={(data: any) => {
+                      mutate<IIssue>(
+                        ISSUE_DETAILS(issueId as string),
+                        (prevData) => {
+                          if (!prevData) return prevData;
+                          return {
+                            ...prevData,
+                            ...data,
+                          };
+                        },
+                        false
+                      );
+                    }}
+                    watch={watchIssue}
+                    disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                  />
+                )}
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("relates_to")) && (
+                  <SidebarRelatesSelect
+                    issueId={issueId as string}
+                    submitChanges={(data: any) => {
+                      mutate<IIssue>(
+                        ISSUE_DETAILS(issueId as string),
+                        (prevData) => {
+                          if (!prevData) return prevData;
+                          return {
+                            ...prevData,
+                            ...data,
+                          };
+                        },
+                        false
+                      );
+                    }}
                     watch={watchIssue}
                     disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
                   />

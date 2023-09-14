@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -13,7 +13,7 @@ import useToast from "hooks/use-toast";
 // components
 import { EmailPasswordForm, GithubLoginButton, GoogleLoginButton, EmailCodeForm } from "components/accounts";
 // images
-const imagePrefix = process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX ? "/spaces/" : "";
+const imagePrefix = Boolean(parseInt(process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX || "0")) ? "/spaces" : "";
 
 export const SignInView = observer(() => {
   const { user: userStore } = useMobxStore();

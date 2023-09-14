@@ -57,7 +57,7 @@ export const MyIssuesView: React.FC<Props> = ({
   const { user } = useUserAuth();
 
   const { groupedIssues, mutateMyIssues, isEmpty, params } = useMyIssues(workspaceSlug?.toString());
-  const { filters, setFilters, displayFilters, setDisplayFilters, properties } = useMyIssuesFilters(
+  const { filters, setFilters, displayFilters, properties } = useMyIssuesFilters(
     workspaceSlug?.toString()
   );
 

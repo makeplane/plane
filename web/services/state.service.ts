@@ -1,18 +1,14 @@
 // services
 import APIService from "services/api.service";
 import trackEventServices from "services/track-event.service";
-
-const { NEXT_PUBLIC_API_BASE_URL } = process.env;
-
-const trackEvent =
-  process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
-
+// helpers
+import { API_BASE_URL } from "helpers/common.helper";
 // types
 import type { ICurrentUserResponse, IState, IStateResponse } from "types";
 
 class ProjectStateServices extends APIService {
   constructor() {
-    super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
+    super(API_BASE_URL);
   }
 
   async createState(
@@ -23,7 +19,7 @@ class ProjectStateServices extends APIService {
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/`, data)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackStateEvent(response?.data, "STATE_CREATE", user);
+        trackEventServices.trackStateEvent(response?.data, "STATE_CREATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -68,7 +64,7 @@ class ProjectStateServices extends APIService {
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackStateEvent(response?.data, "STATE_UPDATE", user);
+        trackEventServices.trackStateEvent(response?.data, "STATE_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -88,7 +84,7 @@ class ProjectStateServices extends APIService {
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackStateEvent(response?.data, "STATE_UPDATE", user);
+        trackEventServices.trackStateEvent(response?.data, "STATE_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -104,7 +100,7 @@ class ProjectStateServices extends APIService {
   ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/${stateId}/`)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackStateEvent(response?.data, "STATE_DELETE", user);
+        trackEventServices.trackStateEvent(response?.data, "STATE_DELETE", user);
         return response?.data;
       })
       .catch((error) => {

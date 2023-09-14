@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -77,6 +77,8 @@ export const AllViews: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
+  const [myIssueProjectId, setMyIssueProjectId] = useState<string | null>(null);
+
   const { user } = useUser();
   const { memberRole } = useProjectMyMembership();
 
@@ -89,6 +91,10 @@ export const AllViews: React.FC<Props> = ({
       : null
   );
   const states = getStatesList(stateGroups);
+
+  const handleMyIssueOpen = (issue: IIssue) => {
+    setMyIssueProjectId(issue.project);
+  };
 
   const handleTrashBox = useCallback(
     (isDragging: boolean) => {
@@ -128,6 +134,8 @@ export const AllViews: React.FC<Props> = ({
                 handleIssueAction={handleIssueAction}
                 openIssuesListModal={cycleId || moduleId ? openIssuesListModal : null}
                 removeIssue={removeIssue}
+                myIssueProjectId={myIssueProjectId}
+                handleMyIssueOpen={handleMyIssueOpen}
                 disableUserActions={disableUserActions}
                 disableAddIssueOption={disableAddIssueOption}
                 user={user}
@@ -143,6 +151,8 @@ export const AllViews: React.FC<Props> = ({
                 handleIssueAction={handleIssueAction}
                 handleTrashBox={handleTrashBox}
                 openIssuesListModal={cycleId || moduleId ? openIssuesListModal : null}
+                myIssueProjectId={myIssueProjectId}
+                handleMyIssueOpen={handleMyIssueOpen}
                 removeIssue={removeIssue}
                 states={states}
                 user={user}
@@ -166,7 +176,9 @@ export const AllViews: React.FC<Props> = ({
                 userAuth={memberRole}
               />
             ) : (
-              displayFilters?.layout === "gantt_chart" && <GanttChartView />
+              displayFilters?.layout === "gantt_chart" && (
+                <GanttChartView disableUserActions={disableUserActions} />
+              )
             )}
           </>
         ) : router.pathname.includes("archived-issues") ? (

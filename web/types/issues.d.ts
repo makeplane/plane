@@ -71,6 +71,15 @@ export interface linkDetails {
   url: string;
 }
 
+export type IssueRelationType = "duplicate" | "relates_to" | "blocked_by";
+
+export interface IssueRelation {
+  id: string;
+  issue: string;
+  related_issue: string;
+  relation_type: IssueRelationType;
+}
+
 export interface IIssue {
   archived_at: string;
   assignees: string[];
@@ -78,10 +87,20 @@ export interface IIssue {
   assignees_list: string[];
   attachment_count: number;
   attachments: any[];
-  blocked_issues: { blocked_issue_detail?: BlockeIssueDetail }[];
-  blocker_issues: { blocker_issue_detail?: BlockeIssueDetail }[];
-  blockers_list: string[];
-  blocks_list: string[];
+  issue_relations: {
+    id: string;
+    issue: string;
+    issue_detail: BlockeIssueDetail;
+    relation_type: IssueRelationType;
+    related_issue: string;
+  }[];
+  related_issues: {
+    id: string;
+    issue: string;
+    related_issue_detail: BlockeIssueDetail;
+    relation_type: IssueRelationType;
+    related_issue: string;
+  }[];
   bridge_id?: string | null;
   completed_at: Date;
   created_at: string;

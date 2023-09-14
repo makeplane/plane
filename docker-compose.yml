@@ -1,37 +1,5 @@
 version: "3.8"
 
-x-api-and-worker-env: &api-and-worker-env
-  DEBUG: ${DEBUG}
-  SENTRY_DSN: ${SENTRY_DSN}
-  DJANGO_SETTINGS_MODULE: plane.settings.production
-  DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:5432/${PGDATABASE}
-  REDIS_URL: redis://plane-redis:6379/
-  EMAIL_HOST: ${EMAIL_HOST}
-  EMAIL_HOST_USER: ${EMAIL_HOST_USER}
-  EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
-  EMAIL_PORT: ${EMAIL_PORT}
-  EMAIL_FROM: ${EMAIL_FROM}
-  EMAIL_USE_TLS: ${EMAIL_USE_TLS}
-  EMAIL_USE_SSL: ${EMAIL_USE_SSL}
-  AWS_REGION: ${AWS_REGION}
-  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-  AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
-  AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL}
-  FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT}
-  WEB_URL: ${WEB_URL}
-  GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
-  DISABLE_COLLECTSTATIC: 1
-  DOCKERIZED: 1
-  OPENAI_API_BASE: ${OPENAI_API_BASE}
-  OPENAI_API_KEY: ${OPENAI_API_KEY}
-  GPT_ENGINE: ${GPT_ENGINE}
-  SECRET_KEY: ${SECRET_KEY}
-  DEFAULT_EMAIL: ${DEFAULT_EMAIL}
-  DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
-  USE_MINIO: ${USE_MINIO}
-  ENABLE_SIGNUP: ${ENABLE_SIGNUP}
-
 services:
   plane-web:
     container_name: planefrontend
@@ -40,23 +8,8 @@ services:
       dockerfile: ./web/Dockerfile.web
       args:
         DOCKER_BUILDKIT: 1
-        NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
-        NEXT_PUBLIC_DEPLOY_URL: http://localhost/spaces
     restart: always
     command: /usr/local/bin/start.sh web/server.js web
-    env_file:
-      - .env
-    environment:
-      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
-      NEXT_PUBLIC_DEPLOY_URL: ${NEXT_PUBLIC_DEPLOY_URL}
-      NEXT_PUBLIC_GOOGLE_CLIENTID: "0"
-      NEXT_PUBLIC_GITHUB_APP_NAME: "0"
-      NEXT_PUBLIC_GITHUB_ID: "0"
-      NEXT_PUBLIC_SENTRY_DSN: "0"
-      NEXT_PUBLIC_ENABLE_OAUTH: "0"
-      NEXT_PUBLIC_ENABLE_SENTRY: "0"
-      NEXT_PUBLIC_ENABLE_SESSION_RECORDER: "0"
-      NEXT_PUBLIC_TRACK_EVENTS: "0"
     depends_on:
       - plane-api
       - plane-worker
@@ -68,14 +21,8 @@ services:
       dockerfile: ./space/Dockerfile.space
       args:
         DOCKER_BUILDKIT: 1
-        NEXT_PUBLIC_DEPLOY_WITH_NGINX: 1
-        NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
     restart: always
     command: /usr/local/bin/start.sh space/server.js space
-    env_file:
-      - .env
-    environment:
-      - NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
     depends_on:
       - plane-api
       - plane-worker
@@ -91,9 +38,7 @@ services:
     restart: always
     command: ./bin/takeoff
     env_file:
-      - .env
-    environment:
-      <<: *api-and-worker-env
+      - ./apiserver/.env
     depends_on:
       - plane-db
       - plane-redis
@@ -108,9 +53,7 @@ services:
     restart: always
     command: ./bin/worker
     env_file:
-      - .env
-    environment:
-      <<: *api-and-worker-env
+      - ./apiserver/.env
     depends_on:
       - plane-api
       - plane-db
@@ -126,9 +69,7 @@ services:
     restart: always
     command: ./bin/beat
     env_file:
-      - .env
-    environment:
-      <<: *api-and-worker-env
+      - ./apiserver/.env
     depends_on:
       - plane-api
       - plane-db
@@ -163,8 +104,6 @@ services:
     command: server /export --console-address ":9090"
     volumes:
       - uploads:/export
-    env_file:
-      - .env
     environment:
       MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
       MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
@@ -187,8 +126,6 @@ services:
     restart: always
     ports:
       - ${NGINX_PORT}:80
-    env_file:
-      - .env
     environment:
       FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
       BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}

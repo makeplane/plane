@@ -49,6 +49,7 @@ class IssueFlatSerializer(BaseSerializer):
             "target_date",
             "sequence_id",
             "sort_order",
+            "is_draft",
         ]
 
 
