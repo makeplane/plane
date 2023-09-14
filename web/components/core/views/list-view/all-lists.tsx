@@ -14,7 +14,7 @@ import { ICurrentUserResponse, IIssue, IIssueViewProps, IState, UserAuth } from 
 type Props = {
   states: IState[] | undefined;
   addIssueToGroup: (groupTitle: string) => void;
-  handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
+  handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit" | "updateDraft") => void;
   openIssuesListModal?: (() => void) | null;
   myIssueProjectId?: string | null;
   handleMyIssueOpen?: (issue: IIssue) => void;

@@ -20,6 +20,7 @@ import {
   CYCLE_ISSUES_WITH_PARAMS,
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ARCHIVED_ISSUES_LIST_WITH_PARAMS,
+  PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   STATES_LIST,
   VIEW_ISSUES,
@@ -38,6 +39,7 @@ const useIssuesView = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId, archivedIssueId } = router.query;
   const isArchivedIssues = router.pathname.includes("archived-issues");
+  const isDraftIssues = router.pathname.includes("draft-issues");
 
   const params: any = {
     order_by: displayFilters?.order_by,
@@ -69,6 +71,15 @@ const useIssuesView = () => {
       : null,
     workspaceSlug && projectId && params && isArchivedIssues && !archivedIssueId
       ? () => issuesService.getArchivedIssues(workspaceSlug as string, projectId as string, params)
+      : null
+  );
+
+  const { data: draftIssues, mutate: mutateDraftIssues } = useSWR(
+    workspaceSlug && projectId && params && isDraftIssues && !archivedIssueId
+      ? PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS(projectId as string, params)
+      : null,
+    workspaceSlug && projectId && params && isDraftIssues && !archivedIssueId
+      ? () => issuesService.getDraftIssues(workspaceSlug as string, projectId as string, params)
       : null
   );
 
@@ -151,6 +162,8 @@ const useIssuesView = () => {
       ? viewIssues
       : isArchivedIssues
       ? projectArchivedIssues
+      : isDraftIssues
+      ? draftIssues
       : projectIssues;
 
     if (Array.isArray(issuesToGroup)) return { allIssues: issuesToGroup };
@@ -169,6 +182,8 @@ const useIssuesView = () => {
     moduleId,
     viewId,
     isArchivedIssues,
+    isDraftIssues,
+    draftIssues,
     emptyStatesObject,
   ]);
 
@@ -191,6 +206,8 @@ const useIssuesView = () => {
       ? mutateViewIssues
       : isArchivedIssues
       ? mutateProjectArchivedIssues
+      : isDraftIssues
+      ? mutateDraftIssues
       : mutateProjectIssues,
     filters,
     setFilters,
