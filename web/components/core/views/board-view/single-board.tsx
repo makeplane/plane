@@ -24,6 +24,7 @@ type Props = {
   dragDisabled: boolean;
   groupTitle: string;
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
+  handleDraftIssueAction: (issue: IIssue, action: "edit" | "delete") => void;
   handleTrashBox: (isDragging: boolean) => void;
   openIssuesListModal?: (() => void) | null;
   handleMyIssueOpen?: (issue: IIssue) => void;
@@ -41,6 +42,7 @@ export const SingleBoard: React.FC<Props> = ({
   disableAddIssueOption = false,
   dragDisabled,
   handleIssueAction,
+  handleDraftIssueAction,
   handleTrashBox,
   openIssuesListModal,
   handleMyIssueOpen,
@@ -136,6 +138,8 @@ export const SingleBoard: React.FC<Props> = ({
                         editIssue={() => handleIssueAction(issue, "edit")}
                         makeIssueCopy={() => handleIssueAction(issue, "copy")}
                         handleDeleteIssue={() => handleIssueAction(issue, "delete")}
+                        handleDraftIssueEdit={() => handleDraftIssueAction(issue, "edit")}
+                        handleDraftIssueDelete={() => handleDraftIssueAction(issue, "delete")}
                         handleTrashBox={handleTrashBox}
                         handleMyIssueOpen={handleMyIssueOpen}
                         removeIssue={() => {

@@ -22,6 +22,7 @@ import { FiltersList, AllViews } from "components/core";
 import {
   CreateUpdateIssueModal,
   DeleteIssueModal,
+  DeleteDraftIssueModal,
   IssuePeekOverview,
   CreateUpdateDraftIssueModal,
 } from "components/issues";
@@ -77,9 +78,11 @@ export const IssuesView: React.FC<Props> = ({
 
   // selected draft issue
   const [selectedDraftIssue, setSelectedDraftIssue] = useState<IIssue | null>(null);
+  const [selectedDraftForDelete, setSelectDraftForDelete] = useState<IIssue | null>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+  const isDraftIssues = router.asPath.includes("draft-issues");
 
   const { user } = useUserAuth();
 
@@ -114,7 +117,8 @@ export const IssuesView: React.FC<Props> = ({
     [setDeleteIssueModal, setIssueToDelete]
   );
 
-  const handleDraftIssueClick = (issue: any) => setSelectedDraftIssue(issue);
+  const handleDraftIssueClick = useCallback((issue: any) => setSelectedDraftIssue(issue), []);
+  const handleDraftIssueDelete = useCallback((issue: any) => setSelectDraftForDelete(issue), []);
 
   const handleOnDragEnd = useCallback(
     async (result: DropResult) => {
@@ -345,13 +349,20 @@ export const IssuesView: React.FC<Props> = ({
   );
 
   const handleIssueAction = useCallback(
-    (issue: IIssue, action: "copy" | "edit" | "delete" | "updateDraft") => {
+    (issue: IIssue, action: "copy" | "edit" | "delete") => {
       if (action === "copy") makeIssueCopy(issue);
       else if (action === "edit") handleEditIssue(issue);
       else if (action === "delete") handleDeleteIssue(issue);
-      else if (action === "updateDraft") handleDraftIssueClick(issue);
     },
     [makeIssueCopy, handleEditIssue, handleDeleteIssue]
+  );
+
+  const handleDraftIssueAction = useCallback(
+    (issue: IIssue, action: "edit" | "delete") => {
+      if (action === "edit") handleDraftIssueClick(issue);
+      else if (action === "delete") handleDraftIssueDelete(issue);
+    },
+    [handleDraftIssueClick, handleDraftIssueDelete]
   );
 
   const removeIssueFromCycle = useCallback(
@@ -494,6 +505,11 @@ export const IssuesView: React.FC<Props> = ({
         data={issueToDelete}
         user={user}
       />
+      <DeleteDraftIssueModal
+        data={selectedDraftForDelete}
+        isOpen={selectedDraftForDelete !== null}
+        handleClose={() => setSelectDraftForDelete(null)}
+      />
 
       {areFiltersApplied && (
         <>
@@ -550,23 +566,28 @@ export const IssuesView: React.FC<Props> = ({
           displayFilters.group_by === "assignees"
         }
         emptyState={{
-          title: cycleId
+          title: isDraftIssues
+            ? "Draft issues will appear here"
+            : cycleId
             ? "Cycle issues will appear here"
             : moduleId
             ? "Module issues will appear here"
             : "Project issues will appear here",
-          description:
-            "Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done.",
-          primaryButton: {
-            icon: <PlusIcon className="h-4 w-4" />,
-            text: "New Issue",
-            onClick: () => {
-              const e = new KeyboardEvent("keydown", {
-                key: "c",
-              });
-              document.dispatchEvent(e);
-            },
-          },
+          description: isDraftIssues
+            ? "Draft issues are issues that are not yet created."
+            : "Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done.",
+          primaryButton: !isDraftIssues
+            ? {
+                icon: <PlusIcon className="h-4 w-4" />,
+                text: "New Issue",
+                onClick: () => {
+                  const e = new KeyboardEvent("keydown", {
+                    key: "c",
+                  });
+                  document.dispatchEvent(e);
+                },
+              }
+            : undefined,
           secondaryButton:
             cycleId || moduleId ? (
               <SecondaryButton
@@ -580,6 +601,7 @@ export const IssuesView: React.FC<Props> = ({
         }}
         handleOnDragEnd={handleOnDragEnd}
         handleIssueAction={handleIssueAction}
+        handleDraftIssueAction={handleDraftIssueAction}
         openIssuesListModal={openIssuesListModal ?? null}
         removeIssue={cycleId ? removeIssueFromCycle : moduleId ? removeIssueFromModule : null}
         trashBox={trashBox}
