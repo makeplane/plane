@@ -17,7 +17,7 @@ import issuesService from "services/issues.service";
 // ui
 import { Input, PrimaryButton, SecondaryButton } from "components/ui";
 // icons
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { Component } from "lucide-react";
 // types
 import { IIssueLabels } from "types";
 // fetch-keys
@@ -132,7 +132,7 @@ export const CreateUpdateLabelInline = forwardRef<HTMLDivElement, Props>(
 
     return (
       <div
-        className={`flex scroll-m-8 items-center gap-2 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-5 ${
+        className={`flex scroll-m-8 items-center gap-2 rounded border border-custom-border-200 bg-custom-background-100 px-3.5 py-2 ${
           labelForm ? "" : "hidden"
         }`}
         ref={ref}
@@ -146,17 +146,11 @@ export const CreateUpdateLabelInline = forwardRef<HTMLDivElement, Props>(
                     open ? "text-custom-text-100" : "text-custom-text-200"
                   }`}
                 >
-                  <span
-                    className="h-5 w-5 rounded"
+                  <Component
+                    className="h-4 w-4 text-custom-text-100 flex-shrink-0"
                     style={{
-                      backgroundColor: watch("color"),
+                      color: watch("color"),
                     }}
-                  />
-                  <ChevronDownIcon
-                    className={`ml-2 h-5 w-5 group-hover:text-custom-text-200 ${
-                      open ? "text-gray-600" : "text-gray-400"
-                    }`}
-                    aria-hidden="true"
                   />
                 </Popover.Button>
 

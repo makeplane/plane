@@ -1,5 +1,6 @@
 import APIService from "services/api.service";
 import trackEventServices from "services/track-event.service";
+import { API_BASE_URL } from "helpers/common.helper";
 
 import { ICurrentUserResponse, IGithubRepoInfo, IGithubServiceImportFormData } from "types";
 
@@ -11,7 +12,7 @@ const trackEvent =
 const integrationServiceType: string = "github";
 class GithubIntegrationService extends APIService {
   constructor() {
-    super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
+    super(API_BASE_URL);
   }
 
   async listAllRepositories(workspaceSlug: string, integrationSlug: string): Promise<any> {

@@ -1,9 +1,10 @@
 // services
 import APIService from "services/api.service";
+import { API_BASE_URL } from "helpers/common.helper";
 
 class ProjectService extends APIService {
   constructor() {
-    super(process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
+    super(API_BASE_URL);
   }
 
   async getProjectSettings(workspace_slug: string, project_slug: string): Promise<any> {
