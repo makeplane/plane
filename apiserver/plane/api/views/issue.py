@@ -508,7 +508,7 @@ class IssueActivityEndpoint(BaseAPIView):
             issue_activities = (
                 IssueActivity.objects.filter(issue_id=issue_id)
                 .filter(
-                    ~Q(field__in=["comment", "vote", "reaction"]),
+                    ~Q(field__in=["comment", "vote", "reaction", "draft"]),
                     project__project_projectmember__member=self.request.user,
                 )
                 .select_related("actor", "workspace", "issue", "project")
@@ -2358,6 +2358,47 @@ class IssueDraftViewSet(BaseViewSet):
     serializer_class = IssueFlatSerializer
     model = Issue
 
+
+    def perform_update(self, serializer):
+        requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
+        current_instance = (
+            self.get_queryset().filter(pk=self.kwargs.get("pk", None)).first()
+        )
+        if current_instance is not None:
+            issue_activity.delay(
+                type="issue_draft.activity.updated",
+                requested_data=requested_data,
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("pk", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
+                ),
+            )
+
+        return super().perform_update(serializer)
+    
+
+    def perform_destroy(self, instance):
+        current_instance = (
+            self.get_queryset().filter(pk=self.kwargs.get("pk", None)).first()
+        )
+        if current_instance is not None:
+            issue_activity.delay(
+                type="issue_draft.activity.deleted",
+                requested_data=json.dumps(
+                    {"issue_id": str(self.kwargs.get("pk", None))}
+                ),
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("pk", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
+                ),
+            )
+        return super().perform_destroy(instance)
+
+
     def get_queryset(self):
         return (
             Issue.objects.annotate(
@@ -2382,6 +2423,7 @@ class IssueDraftViewSet(BaseViewSet):
                 )
             )
         )
+
 
     @method_decorator(gzip_page)
     def list(self, request, slug, project_id):
@@ -2489,6 +2531,40 @@ class IssueDraftViewSet(BaseViewSet):
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+    def create(self, request, slug, project_id):
+        try:
+            project = Project.objects.get(pk=project_id)
+
+            serializer = IssueCreateSerializer(
+                data=request.data,
+                context={
+                    "project_id": project_id,
+                    "workspace_id": project.workspace_id,
+                    "default_assignee_id": project.default_assignee_id,
+                },
+            )
+
+            if serializer.is_valid():
+                serializer.save(is_draft=True)
+
+                # Track the issue
+                issue_activity.delay(
+                    type="issue_draft.activity.created",
+                    requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
+                    actor_id=str(request.user.id),
+                    issue_id=str(serializer.data.get("id", None)),
+                    project_id=str(project_id),
+                    current_instance=None,
+                )
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except Project.DoesNotExist:
+            return Response(
+                {"error": "Project was not found"}, status=status.HTTP_404_NOT_FOUND
             )
 
 
