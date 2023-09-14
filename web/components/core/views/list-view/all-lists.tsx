@@ -15,7 +15,7 @@ type Props = {
   states: IState[] | undefined;
   addIssueToGroup: (groupTitle: string) => void;
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
-  handleDraftIssueAction: (issue: IIssue, action: "edit" | "delete") => void;
+  handleDraftIssueAction?: (issue: IIssue, action: "edit" | "delete") => void;
   openIssuesListModal?: (() => void) | null;
   myIssueProjectId?: string | null;
   handleMyIssueOpen?: (issue: IIssue) => void;

@@ -20,7 +20,7 @@ type Props = {
   disableAddIssueOption?: boolean;
   dragDisabled: boolean;
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
-  handleDraftIssueAction: (issue: IIssue, action: "edit" | "delete") => void;
+  handleDraftIssueAction?: (issue: IIssue, action: "edit" | "delete") => void;
   handleTrashBox: (isDragging: boolean) => void;
   openIssuesListModal?: (() => void) | null;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;

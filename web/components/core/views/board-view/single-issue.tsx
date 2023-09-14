@@ -60,8 +60,8 @@ type Props = {
   handleMyIssueOpen?: (issue: IIssue) => void;
   removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
-  handleDraftIssueEdit: () => void;
-  handleDraftIssueDelete: () => void;
+  handleDraftIssueEdit?: () => void;
+  handleDraftIssueDelete?: () => void;
   handleTrashBox: (isDragging: boolean) => void;
   disableUserActions: boolean;
   user: ICurrentUserResponse | undefined;
@@ -220,7 +220,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
             <ContextMenu.Item
               Icon={PencilIcon}
               onClick={() => {
-                if (isDraftIssue) handleDraftIssueEdit();
+                if (isDraftIssue && handleDraftIssueEdit) handleDraftIssueEdit();
                 else editIssue();
               }}
             >
@@ -234,7 +234,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
             <ContextMenu.Item
               Icon={TrashIcon}
               onClick={() => {
-                if (isDraftIssue) handleDraftIssueDelete();
+                if (isDraftIssue && handleDraftIssueDelete) handleDraftIssueDelete();
                 else handleDeleteIssue(issue);
               }}
             >
@@ -294,7 +294,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 >
                   <CustomMenu.MenuItem
                     onClick={() => {
-                      if (isDraftIssue) handleDraftIssueEdit();
+                      if (isDraftIssue && handleDraftIssueEdit) handleDraftIssueEdit();
                       else editIssue();
                     }}
                   >
@@ -313,7 +313,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                   )}
                   <CustomMenu.MenuItem
                     onClick={() => {
-                      if (isDraftIssue) handleDraftIssueDelete();
+                      if (isDraftIssue && handleDraftIssueDelete) handleDraftIssueDelete();
                       else handleDeleteIssue(issue);
                     }}
                   >
@@ -345,7 +345,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
               type="button"
               className="text-sm text-left break-words line-clamp-2"
               onClick={() => {
-                if (isDraftIssue) handleDraftIssueEdit();
+                if (isDraftIssue && handleDraftIssueEdit) handleDraftIssueEdit();
                 else openPeekOverview();
               }}
             >

@@ -50,7 +50,7 @@ type Props = {
     secondaryButton?: React.ReactNode;
   };
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
-  handleDraftIssueAction: (issue: IIssue, action: "edit" | "delete") => void;
+  handleDraftIssueAction?: (issue: IIssue, action: "edit" | "delete") => void;
   handleOnDragEnd: (result: DropResult) => Promise<void>;
   openIssuesListModal: (() => void) | null;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;

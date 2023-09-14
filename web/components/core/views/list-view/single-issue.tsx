@@ -62,7 +62,7 @@ type Props = {
   removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
   handleDraftIssueSelect?: (issue: IIssue) => void;
-  handleDraftIssueDelete: (issue: IIssue) => void;
+  handleDraftIssueDelete?: (issue: IIssue) => void;
   handleMyIssueOpen?: (issue: IIssue) => void;
   disableUserActions: boolean;
   user: ICurrentUserResponse | undefined;
@@ -227,7 +227,7 @@ export const SingleListIssue: React.FC<Props> = ({
             <ContextMenu.Item
               Icon={TrashIcon}
               onClick={() => {
-                if (isDraftIssues) handleDraftIssueDelete(issue);
+                if (isDraftIssues && handleDraftIssueDelete) handleDraftIssueDelete(issue);
                 else handleDeleteIssue(issue);
               }}
             >
@@ -396,7 +396,7 @@ export const SingleListIssue: React.FC<Props> = ({
               )}
               <CustomMenu.MenuItem
                 onClick={() => {
-                  if (isDraftIssues) handleDraftIssueDelete(issue);
+                  if (isDraftIssues && handleDraftIssueDelete) handleDraftIssueDelete(issue);
                   else handleDeleteIssue(issue);
                 }}
               >
