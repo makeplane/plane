@@ -1,11 +1,7 @@
 import React, { useState } from "react";
 
-import { useRouter } from "next/router";
-
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// hooks
-import useToast from "hooks/use-toast";
 // ui
 import { SecondaryButton, PrimaryButton } from "components/ui";
 
@@ -20,11 +16,6 @@ export const ConfirmIssueDiscard: React.FC<Props> = (props) => {
   const { isOpen, handleClose, onDiscard, onConfirm } = props;
 
   const [isLoading, setIsLoading] = useState(false);
-
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
-  const { setToastAlert } = useToast();
 
   const onClose = () => {
     handleClose();
@@ -52,8 +43,8 @@ export const ConfirmIssueDiscard: React.FC<Props> = (props) => {
           <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+        <div className="fixed inset-0 z-10 overflow-y-auto">
+          <div className="my-10 flex items-center justify-center p-4 text-center sm:p-0 md:my-32">
             <Transition.Child
               as={React.Fragment}
               enter="ease-out duration-300"
