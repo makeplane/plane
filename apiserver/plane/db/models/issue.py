@@ -309,6 +309,7 @@ class IssueActivity(ProjectBaseModel):
     )
     old_identifier = models.UUIDField(null=True)
     new_identifier = models.UUIDField(null=True)
+    epoch = models.FloatField(null=True)
 
     class Meta:
         verbose_name = "Issue Activity"
