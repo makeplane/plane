@@ -5,7 +5,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { OnBoardingForm } from "components/accounts/onboarding-form";
 
-const imagePrefix = process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX ? "/spaces" : "";
+const imagePrefix = Boolean(parseInt(process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX || "0")) ? "/spaces" : "";
 
 const OnBoardingPage = () => {
   const { user: userStore } = useMobxStore();

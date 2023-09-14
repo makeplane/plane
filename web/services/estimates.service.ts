@@ -3,15 +3,14 @@ import APIService from "services/api.service";
 // types
 import type { ICurrentUserResponse, IEstimate, IEstimateFormData } from "types";
 import trackEventServices from "services/track-event.service";
-
-const { NEXT_PUBLIC_API_BASE_URL } = process.env;
+import { API_BASE_URL } from "helpers/common.helper";
 
 const trackEvent =
   process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
 
 class ProjectEstimateServices extends APIService {
   constructor() {
-    super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
+    super(API_BASE_URL);
   }
 
   async createEstimate(
