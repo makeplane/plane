@@ -105,44 +105,65 @@ class CycleViewSet(BaseViewSet):
             .annotate(
                 completed_issues=Count(
                     "issue_cycle__issue__state__group",
-                    filter=Q(issue_cycle__issue__state__group="completed"),
+                    filter=Q(
+                        issue_cycle__issue__state__group="completed",
+                        issue_cycle__issue__archived_at__isnull=True,
+                    ),
                 )
             )
             .annotate(
                 cancelled_issues=Count(
                     "issue_cycle__issue__state__group",
-                    filter=Q(issue_cycle__issue__state__group="cancelled"),
+                    filter=Q(
+                        issue_cycle__issue__state__group="cancelled",
+                        issue_cycle__issue__archived_at__isnull=True,
+                    ),
                 )
             )
             .annotate(
                 started_issues=Count(
                     "issue_cycle__issue__state__group",
-                    filter=Q(issue_cycle__issue__state__group="started"),
+                    filter=Q(
+                        issue_cycle__issue__state__group="started",
+                        issue_cycle__issue__archived_at__isnull=True,
+                    ),
                 )
             )
             .annotate(
                 unstarted_issues=Count(
                     "issue_cycle__issue__state__group",
-                    filter=Q(issue_cycle__issue__state__group="unstarted"),
+                    filter=Q(
+                        issue_cycle__issue__state__group="unstarted",
+                        issue_cycle__issue__archived_at__isnull=True,
+                    ),
                 )
             )
             .annotate(
                 backlog_issues=Count(
                     "issue_cycle__issue__state__group",
-                    filter=Q(issue_cycle__issue__state__group="backlog"),
+                    filter=Q(
+                        issue_cycle__issue__state__group="backlog",
+                        issue_cycle__issue__archived_at__isnull=True,
+                    ),
                 )
             )
             .annotate(total_estimates=Sum("issue_cycle__issue__estimate_point"))
             .annotate(
                 completed_estimates=Sum(
                     "issue_cycle__issue__estimate_point",
-                    filter=Q(issue_cycle__issue__state__group="completed"),
+                    filter=Q(
+                        issue_cycle__issue__state__group="completed",
+                        issue_cycle__issue__archived_at__isnull=True,
+                    ),
                 )
             )
             .annotate(
                 started_estimates=Sum(
                     "issue_cycle__issue__estimate_point",
-                    filter=Q(issue_cycle__issue__state__group="started"),
+                    filter=Q(
+                        issue_cycle__issue__state__group="started",
+                        issue_cycle__issue__archived_at__isnull=True,
+                    ),
                 )
             )
             .prefetch_related(
@@ -199,13 +220,19 @@ class CycleViewSet(BaseViewSet):
                         .annotate(
                             completed_issues=Count(
                                 "assignee_id",
-                                filter=Q(completed_at__isnull=False),
+                                filter=Q(
+                                    completed_at__isnull=False,
+                                    archived_at__isnull=True,
+                                ),
                             )
                         )
                         .annotate(
                             pending_issues=Count(
                                 "assignee_id",
-                                filter=Q(completed_at__isnull=True),
+                                filter=Q(
+                                    completed_at__isnull=True,
+                                    archived_at__isnull=True,
+                                ),
                             )
                         )
                         .order_by("display_name")
@@ -225,13 +252,19 @@ class CycleViewSet(BaseViewSet):
                         .annotate(
                             completed_issues=Count(
                                 "label_id",
-                                filter=Q(completed_at__isnull=False),
+                                filter=Q(
+                                    completed_at__isnull=False,
+                                    archived_at__isnull=True,
+                                ),
                             )
                         )
                         .annotate(
                             pending_issues=Count(
                                 "label_id",
-                                filter=Q(completed_at__isnull=True),
+                                filter=Q(
+                                    completed_at__isnull=True,
+                                    archived_at__isnull=True,
+                                ),
                             )
                         )
                         .order_by("label_name")
@@ -388,13 +421,19 @@ class CycleViewSet(BaseViewSet):
                 .annotate(
                     completed_issues=Count(
                         "assignee_id",
-                        filter=Q(completed_at__isnull=False),
+                        filter=Q(
+                            completed_at__isnull=False,
+                            archived_at__isnull=True,
+                        ),
                     )
                 )
                 .annotate(
                     pending_issues=Count(
                         "assignee_id",
-                        filter=Q(completed_at__isnull=True),
+                        filter=Q(
+                            completed_at__isnull=True,
+                            archived_at__isnull=True,
+                        ),
                     )
                 )
                 .order_by("first_name", "last_name")
@@ -415,13 +454,19 @@ class CycleViewSet(BaseViewSet):
                 .annotate(
                     completed_issues=Count(
                         "label_id",
-                        filter=Q(completed_at__isnull=False),
+                        filter=Q(
+                            completed_at__isnull=False,
+                            archived_at__isnull=True,
+                        ),
                     )
                 )
                 .annotate(
                     pending_issues=Count(
                         "label_id",
-                        filter=Q(completed_at__isnull=True),
+                        filter=Q(
+                            completed_at__isnull=True,
+                            archived_at__isnull=True,
+                        ),
                     )
                 )
                 .order_by("label_name")
