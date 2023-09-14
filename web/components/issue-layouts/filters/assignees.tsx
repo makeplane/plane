@@ -1,6 +1,4 @@
 import React from "react";
-// lucide icons
-import { Check, ChevronDown, ChevronUp } from "lucide-react";
 // components
 import { FilterHeader } from "../helpers/filter-header";
 import { FilterOption } from "../helpers/filter-option";
@@ -30,7 +28,7 @@ export const MemberIcons = ({
 
 export const FilterAssignees = observer(() => {
   const store: RootStore = useMobxStore();
-  const { issueFilters: issueFilterStore, issueView: issueStore } = store;
+  const { issueFilters: issueFilterStore } = store;
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 

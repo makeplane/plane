@@ -2,7 +2,7 @@
 import { Plus } from "lucide-react";
 
 export const IssueHeader = () => (
-  <div className="relative flex flex-colw-full h-full gap-1">
+  <div className="relative flex items-center w-full h-full gap-1">
     {/* default layout */}
     <div className=" border border-red-500 flex-shrink-0 w-[24px] h-[24px] flex justify-center items-center">
       I

@@ -1,6 +1,4 @@
 import React from "react";
-// lucide icons
-import { Check, ChevronDown, ChevronUp } from "lucide-react";
 // components
 import { MemberIcons } from "./assignees";
 import { FilterHeader } from "../helpers/filter-header";
@@ -13,7 +11,7 @@ import { RootStore } from "store/root";
 
 export const FilterCreatedBy = observer(() => {
   const store: RootStore = useMobxStore();
-  const { issueFilters: issueFilterStore, issueView: issueStore } = store;
+  const { issueFilters: issueFilterStore } = store;
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 

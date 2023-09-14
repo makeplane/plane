@@ -12,7 +12,7 @@ import { RootStore } from "store/root";
 
 export const IssueKanBanViewRoot = observer(() => {
   const store: RootStore = useMobxStore();
-  const { issueFilters: issueFilterStore, issueView: issueViewStore } = store;
+  const { issueView: issueViewStore } = store;
 
   const onDragEnd = (result: any) => {
     if (!result) return;

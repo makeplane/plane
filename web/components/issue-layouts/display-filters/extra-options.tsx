@@ -12,7 +12,7 @@ import { issueFilterVisibilityData } from "store/issue-views/issue_data";
 
 export const FilterExtraOptions = observer(() => {
   const store: RootStore = useMobxStore();
-  const { issueFilters: issueFilterStore, issueView: issueStore } = store;
+  const { issueFilters: issueFilterStore } = store;
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 

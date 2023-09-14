@@ -1,6 +1,4 @@
 import React from "react";
-// lucide icons
-import { Check, ChevronDown, ChevronUp } from "lucide-react";
 // components
 import { StateGroupIcons } from "./state-group";
 import { FilterHeader } from "../helpers/filter-header";
@@ -15,7 +13,7 @@ import { issueStateGroupKeys } from "store/issue-views/issue_data";
 
 export const FilterState = observer(() => {
   const store: RootStore = useMobxStore();
-  const { issueFilters: issueFilterStore, issueView: issueStore } = store;
+  const { issueFilters: issueFilterStore } = store;
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 

@@ -1,6 +1,4 @@
 import React from "react";
-// lucide icons
-import { Check, ChevronDown, ChevronUp } from "lucide-react";
 import {
   StateGroupBacklogIcon,
   StateGroupCancelledIcon,
@@ -85,7 +83,7 @@ export const StateGroupIcons = ({
 
 export const FilterStateGroup = observer(() => {
   const store: RootStore = useMobxStore();
-  const { issueFilters: issueFilterStore, issueView: issueStore } = store;
+  const { issueFilters: issueFilterStore } = store;
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
