@@ -19,6 +19,7 @@ from .project import (
     ProjectIdentifier,
     ProjectFavorite,
     ProjectDeployBoard,
+    ProjectPublicMember,
 )
 
 from .issue import (
@@ -31,6 +32,7 @@ from .issue import (
     IssueAssignee,
     Label,
     IssueBlocker,
+    IssueRelation,
     IssueLink,
     IssueSequence,
     IssueAttachment,

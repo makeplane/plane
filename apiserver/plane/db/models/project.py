@@ -25,13 +25,26 @@ ROLE_CHOICES = (
 
 def get_default_props():
     return {
-        "filters": {"type": None},
-        "orderBy": "-created_at",
-        "collapsed": True,
-        "issueView": "list",
-        "filterIssue": None,
-        "groupByProperty": None,
-        "showEmptyGroups": True,
+        "filters": {
+            "priority": None,
+            "state": None,
+            "state_group": None,
+            "assignees": None,
+            "created_by": None,
+            "labels": None,
+            "start_date": None,
+            "target_date": None,
+            "subscriber": None,
+        },
+        "display_filters": {
+            "group_by": None,
+            "order_by": '-created_at',
+            "type": None,
+            "sub_issue": True,
+            "show_empty_groups": True,
+            "layout": "list",
+            "calendar_date_range": "",
+        },
     }
 
 
@@ -254,3 +267,18 @@ class ProjectDeployBoard(ProjectBaseModel):
     def __str__(self):
         """Return project and anchor"""
         return f"{self.anchor} <{self.project.name}>"
+
+
+class ProjectPublicMember(ProjectBaseModel):
+    member = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="public_project_members",
+    )
+
+    class Meta:
+        unique_together = ["project", "member"]
+        verbose_name = "Project Public Member"
+        verbose_name_plural = "Project Public Members"
+        db_table = "project_public_members"
+        ordering = ("-created_at",)

@@ -38,7 +38,7 @@ services:
                 container_name: planefrontend
                 image: makeplane/plane-frontend:latest
                 restart: always
-                command: /usr/local/bin/start.sh apps/app/server.js app
+                command: /usr/local/bin/start.sh web/server.js web
                 env_file:
                         - .env
                 environment:
@@ -56,6 +56,20 @@ services:
                         - plane-api
                         - plane-worker
 
+        plane-deploy:
+                container_name: planedeploy
+                image: makeplane/plane-deploy:latest
+                restart: always
+                command: /usr/local/bin/start.sh space/server.js space
+                env_file:
+                        - .env
+                environment:
+                        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+                depends_on:
+                        - plane-api
+                        - plane-worker
+                        - plane-web
+
         plane-api:
                 container_name: planebackend
                 image: makeplane/plane-backend:latest
@@ -71,7 +85,7 @@ services:
 
         plane-worker:
                 container_name: planebgworker
-                image: makeplane/plane-worker:latest
+                image: makeplane/plane-backend:latest
                 restart: always
                 command: ./bin/worker
                 env_file:
@@ -85,7 +99,7 @@ services:
 
         plane-beat-worker:
                 container_name: planebeatworker
-                image: makeplane/plane-worker:latest
+                image: makeplane/plane-backend:latest
                 restart: always
                 command: ./bin/beat
                 env_file:

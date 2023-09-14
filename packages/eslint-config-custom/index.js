@@ -4,7 +4,7 @@ module.exports = {
   plugins: ["react", "@typescript-eslint"],
   settings: {
     next: {
-      rootDir: ["app/", "docs/", "packages/*/"],
+      rootDir: ["web/", "space/", "packages/*/"],
     },
   },
   rules: {
@@ -16,5 +16,7 @@ module.exports = {
     "no-duplicate-imports": "error",
     "arrow-body-style": ["error", "as-needed"],
     "react/self-closing-comp": ["error", { component: true, html: true }],
+    "@next/next/no-img-element": "off",
+    "@typescript-eslint/no-unused-vars": ["warn"],
   },
 };

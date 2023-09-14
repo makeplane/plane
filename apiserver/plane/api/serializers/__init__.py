@@ -20,6 +20,7 @@ from .project import (
     ProjectMemberLiteSerializer,
     ProjectDeployBoardSerializer,
     ProjectMemberAdminSerializer,
+    ProjectPublicMemberSerializer
 )
 from .state import StateSerializer, StateLiteSerializer
 from .view import WorkspaceViewSerializer, IssueViewSerializer, IssueViewFavoriteSerializer
@@ -30,8 +31,6 @@ from .issue import (
     IssueActivitySerializer,
     IssueCommentSerializer,
     IssuePropertySerializer,
-    BlockerIssueSerializer,
-    BlockedIssueSerializer,
     IssueAssigneeSerializer,
     LabelSerializer,
     IssueSerializer,
@@ -44,6 +43,9 @@ from .issue import (
     IssueReactionSerializer,
     CommentReactionSerializer,
     IssueVoteSerializer,
+    IssueRelationSerializer,
+    RelatedIssueSerializer,
+    IssuePublicSerializer,
 )
 
 from .module import (

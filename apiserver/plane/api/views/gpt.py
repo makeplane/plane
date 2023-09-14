@@ -41,9 +41,9 @@ class GPTIntegrationEndpoint(BaseAPIView):
             final_text = task + "\n" + prompt
 
             openai.api_key = settings.OPENAI_API_KEY
-            response = openai.Completion.create(
+            response = openai.ChatCompletion.create(
                 model=settings.GPT_ENGINE,
-                prompt=final_text,
+                messages=[{"role": "user", "content": final_text}],
                 temperature=0.7,
                 max_tokens=1024,
             )
@@ -51,7 +51,7 @@ class GPTIntegrationEndpoint(BaseAPIView):
             workspace = Workspace.objects.get(slug=slug)
             project = Project.objects.get(pk=project_id)
 
-            text = response.choices[0].text.strip()
+            text = response.choices[0].message.content.strip()
             text_html = text.replace("\n", "<br/>")
             return Response(
                 {
