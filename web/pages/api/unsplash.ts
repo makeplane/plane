@@ -1,7 +1,7 @@
 import axios from "axios";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-const unsplashKey = process.env.UNSPLASH_ACCESS;
+const unsplashKey = process.env.UNSPLASH_ACCESS_KEY;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { query, page, per_page = 20 } = req.query;
