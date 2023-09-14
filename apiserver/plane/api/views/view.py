@@ -80,9 +80,20 @@ class WorkspaceViewIssuesEndpoint(BaseAPIView):
                     )
                 )
             )
-
-            serializer = IssueLiteSerializer(issues, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            if request.GET.get("per_page", False) and request.GET.get("cursor", False):
+                return self.paginate(
+                    request=request,
+                    queryset=issues,
+                    on_results=lambda issues: IssueLiteSerializer(
+                        issues, many=True
+                    ).data,
+                )
+            else:
+                return Response(
+                    {"error": "per_page and cursor are required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            
         except WorkspaceView.DoesNotExist:
             return Response(
                 {"error": "Workspace View does not exist"}, status=status.HTTP_404_NOT_FOUND
