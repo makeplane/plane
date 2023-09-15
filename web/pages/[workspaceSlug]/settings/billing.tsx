@@ -8,7 +8,8 @@ import useSWR from "swr";
 import workspaceService from "services/workspace.service";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
-import { SettingsHeader } from "components/workspace";
+// component
+import { SettingsSidebar } from "components/project";
 // ui
 import { SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -42,14 +43,17 @@ const BillingSettings: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      <div className="p-8">
-        <SettingsHeader />
-        <section className="space-y-8">
+      <div className="flex flex-row gap-2 h-full overflow-hidden">
+        <div className="w-80 py-8">
+          <SettingsSidebar />
+        </div>
+        <section className="pr-9 py-8 w-full">
           <div>
-            <h3 className="text-2xl font-semibold leading-6">Billing & Plans</h3>
-            <p className="mt-4 text-sm text-custom-text-200">Free launch preview</p>
+            <div className="flex  items-center py-3.5 border-b border-custom-border-200">
+              <h3 className="text-xl font-medium">Billing & Plan</h3>
+            </div>
           </div>
-          <div className="space-y-8 md:w-2/3">
+          <div className="px-4 py-6">
             <div>
               <h4 className="text-md mb-1 leading-6">Current plan</h4>
               <p className="mb-3 text-sm text-custom-text-200">
