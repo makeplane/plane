@@ -94,6 +94,7 @@ class IssueViewStore implements IIssueViewStore {
       getIssuesForModulesAsync: action,
       getIssuesForCyclesAsync: action,
       getIssuesForViewsAsync: action,
+      updateIssues: action,
       // computed
       getIssues: computed,
     });
@@ -141,6 +142,97 @@ class IssueViewStore implements IIssueViewStore {
 
     return null;
   }
+
+  updateIssues = (group_id: string | null, issue_id: string | null, data: any) => {
+    const currentWorkspaceId: string | null = this.rootStore.issueFilters.workspaceId;
+    const currentProjectId: string | null = this.rootStore.issueFilters.projectId;
+    const currentModuleId: string | null = this.rootStore.issueFilters.moduleId;
+    const currentCycleId: string | null = this.rootStore.issueFilters.cycleId;
+    const currentViewId: string | null = this.rootStore.issueFilters.viewId;
+    const currentView: TIssueViews | null = this.rootStore.issueFilters.issueView;
+    const currentLayout: TIssueLayouts | null | undefined = this.rootStore.issueFilters.issueLayout;
+
+    if (!currentView || !currentWorkspaceId || !currentLayout || !issue_id) return null;
+
+    if (currentView === "my_issues") {
+      if (group_id) {
+        this.issues = {
+          ...this.issues,
+          [currentWorkspaceId]: {
+            ...this?.issues?.[currentWorkspaceId],
+            my_issues: {
+              ...this?.issues?.[currentWorkspaceId]?.my_issues,
+              [currentLayout]: {
+                ...this?.issues?.[currentWorkspaceId]?.my_issues?.[currentLayout],
+                [group_id]: this?.issues?.[currentWorkspaceId]?.my_issues?.[currentLayout]?.[group_id].map(
+                  (item: any) => (item.id === issue_id ? { ...item, ...data } : { ...item })
+                ),
+              },
+            },
+          },
+        };
+      } else {
+        this.issues = {
+          ...this.issues,
+          [currentWorkspaceId]: {
+            ...this?.issues?.[currentWorkspaceId],
+            my_issues: {
+              ...this?.issues?.[currentWorkspaceId]?.my_issues,
+              [currentLayout]: this?.issues?.[currentWorkspaceId]?.my_issues?.[currentLayout].map((item: any) =>
+                item.id === issue_id ? { ...item, ...data } : { ...item }
+              ),
+            },
+          },
+        };
+      }
+    }
+
+    if (!currentProjectId) return null;
+    if (currentView) {
+      if (group_id) {
+        this.issues = {
+          ...this.issues,
+          [currentWorkspaceId]: {
+            ...this?.issues?.[currentWorkspaceId],
+            project_issues: {
+              ...this?.issues?.[currentWorkspaceId]?.project_issues,
+              [currentProjectId]: {
+                ...this?.issues?.[currentWorkspaceId]?.project_issues?.[currentProjectId],
+                [currentView]: {
+                  ...this?.issues?.[currentWorkspaceId]?.project_issues?.[currentProjectId]?.issues,
+                  [currentLayout]: {
+                    ...this?.issues?.[currentWorkspaceId]?.project_issues?.[currentProjectId]?.issues?.[currentLayout],
+                    [group_id]: this?.issues?.[currentWorkspaceId]?.project_issues?.[currentProjectId]?.issues?.[
+                      currentLayout
+                    ]?.[group_id].map((item: any) => (item.id === issue_id ? { ...item, ...data } : { ...item })),
+                  },
+                },
+              },
+            },
+          },
+        };
+      } else {
+        this.issues = {
+          ...this.issues,
+          [currentWorkspaceId]: {
+            ...this?.issues?.[currentWorkspaceId],
+            project_issues: {
+              ...this?.issues?.[currentWorkspaceId]?.project_issues,
+              [currentProjectId]: {
+                ...this?.issues?.[currentWorkspaceId]?.project_issues?.[currentProjectId],
+                [currentView]: {
+                  ...this?.issues?.[currentWorkspaceId]?.project_issues?.[currentProjectId]?.issues,
+                  [currentLayout]: this?.issues?.[currentWorkspaceId]?.project_issues?.[currentProjectId]?.issues?.[
+                    currentLayout
+                  ].map((item: any) => (item.id === issue_id ? { ...item, ...data } : { ...item })),
+                },
+              },
+            },
+          },
+        };
+      }
+    }
+  };
 
   // fetching my issues
   getMyIssuesAsync = async (workspaceId: string, fetchFilterToggle: boolean = true) => {

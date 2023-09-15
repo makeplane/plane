@@ -3,22 +3,23 @@ import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { IIssue } from "types";
+import { observer } from "mobx-react-lite";
 
 export interface IIssuePrioritySelect {
   issue: IIssue;
   groupId: string;
 }
 
-export const IssuePrioritySelect: FC<IIssuePrioritySelect> = (props) => {
+export const IssuePrioritySelect: FC<IIssuePrioritySelect> = observer((props) => {
   const { issue, groupId } = props;
 
-  const { issueFilters: issueFilterStore } = useMobxStore();
+  const { issueView: issueViewStore, issueFilters: issueFilterStore } = useMobxStore();
   const priorityList = issueFilterStore.issueRenderFilters.priority;
 
   const selected = priorityList.find((p) => p.key === issue.priority);
 
   const changePriority = (selectedPriority: any) => {
-    console.log("selectedPriority", selectedPriority);
+    issueViewStore.updateIssues(groupId, issue.id, { priority: selectedPriority.key });
   };
 
   return (
@@ -58,4 +59,4 @@ export const IssuePrioritySelect: FC<IIssuePrioritySelect> = (props) => {
       </div>
     </Listbox>
   );
-};
+});

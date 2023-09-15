@@ -1,15 +1,8 @@
 import { renderDateFormat } from "helpers/date-time.helper";
 
 export type TStateGroup = "backlog" | "unstarted" | "started" | "completed" | "cancelled";
-export const issueStateGroupKeys: TStateGroup[] = [
-  "backlog",
-  "unstarted",
-  "started",
-  "completed",
-  "cancelled",
-];
 
-export const filtersPriority: { key: string; title: string }[] = [
+export const priorities: { key: string; title: string }[] = [
   { key: "urgent", title: "Urgent" },
   { key: "high", title: "High" },
   { key: "medium", title: "Medium" },
@@ -17,7 +10,7 @@ export const filtersPriority: { key: string; title: string }[] = [
   { key: "none", title: "None" },
 ];
 
-export const filterStateGroup: { key: TStateGroup; title: string }[] = [
+export const stateGroups: { key: TStateGroup; title: string }[] = [
   { key: "backlog", title: "Backlog" },
   { key: "unstarted", title: "Unstarted" },
   { key: "started", title: "Started" },
@@ -25,7 +18,7 @@ export const filterStateGroup: { key: TStateGroup; title: string }[] = [
   { key: "cancelled", title: "Cancelled" },
 ];
 
-export const filtersStartDate: { key: string; title: string }[] = [
+export const startDateOptions: { key: string; title: string }[] = [
   { key: "last_week", title: "Last Week" },
   { key: "2_weeks_from_now", title: "2 weeks from now" },
   { key: "1_month_from_now", title: "1 month from now" },
@@ -33,7 +26,7 @@ export const filtersStartDate: { key: string; title: string }[] = [
   { key: "custom", title: "Custom" },
 ];
 
-export const filtersDueDate: { key: string; title: string }[] = [
+export const dueDateOptions: { key: string; title: string }[] = [
   { key: "last_week", title: "Last Week" },
   { key: "2_weeks_from_now", title: "2 weeks from now" },
   { key: "1_month_from_now", title: "1 month from now" },
@@ -41,7 +34,7 @@ export const filtersDueDate: { key: string; title: string }[] = [
   { key: "custom", title: "Custom" },
 ];
 
-export const displayPropertyGroupBy: { key: string; title: string }[] = [
+export const groupByOptions: { key: string; title: string }[] = [
   { key: "state", title: "States" },
   { key: "state_detail.group", title: "State Groups" },
   { key: "priority", title: "Priority" },
@@ -51,7 +44,7 @@ export const displayPropertyGroupBy: { key: string; title: string }[] = [
   { key: "created_by", title: "Created By" },
 ];
 
-export const displayPropertyOrderBy: { key: string; title: string }[] = [
+export const orderByOptions: { key: string; title: string }[] = [
   { key: "sort_order", title: "Manual" },
   { key: "created_at", title: "Last Created" },
   { key: "updated_at", title: "Last Updated" },
@@ -59,7 +52,7 @@ export const displayPropertyOrderBy: { key: string; title: string }[] = [
   { key: "priority", title: "Priority" },
 ];
 
-export const displayPropertyIssueType: { key: string; title: string }[] = [
+export const issueTypes: { key: string; title: string }[] = [
   { key: "all", title: "All" },
   { key: "active", title: "Active Issues" },
   { key: "backlog", title: "Backlog Issues" },
@@ -112,30 +105,14 @@ export const issueFilterVisibilityData: any = {
       },
     },
   },
-  others: {
+  issues: {
     layout: ["list", "kanban", "calendar", "spreadsheet", "gantt_chart"],
     filters: {
       list: ["priority", "state", "assignees", "created_by", "labels", "start_date", "due_date"],
       kanban: ["priority", "state", "assignees", "created_by", "labels", "start_date", "due_date"],
       calendar: ["priority", "state", "assignees", "created_by", "labels"],
-      spreadsheet: [
-        "priority",
-        "state",
-        "assignees",
-        "created_by",
-        "labels",
-        "start_date",
-        "due_date",
-      ],
-      gantt_chart: [
-        "priority",
-        "state",
-        "assignees",
-        "created_by",
-        "labels",
-        "start_date",
-        "due_date",
-      ],
+      spreadsheet: ["priority", "state", "assignees", "created_by", "labels", "start_date", "due_date"],
+      gantt_chart: ["priority", "state", "assignees", "created_by", "labels", "start_date", "due_date"],
     },
     display_properties: {
       list: true,
@@ -176,15 +153,11 @@ export const issueFilterVisibilityData: any = {
   },
 };
 
-export const handleIssueParamsDateFormat = (
-  key: string,
-  start_date: any | null,
-  target_date: any | null
-) => {
+export const handleIssueParamsDateFormat = (key: string, start_date: any | null, target_date: any | null) => {
   if (key === "last_week")
-    return `${renderDateFormat(
-      new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000)
-    )};after,${renderDateFormat(new Date())};before`;
+    return `${renderDateFormat(new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000))};after,${renderDateFormat(
+      new Date()
+    )};before`;
 
   if (key === "2_weeks_from_now")
     return `${renderDateFormat(new Date())};after,

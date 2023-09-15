@@ -196,7 +196,6 @@ class IssueFilterStore implements IIssueFilterStore {
   loader: boolean = false;
   error: any | null = null;
 
-  myUserId: string | null = null;
   workspaceId: string | null = null;
   projectId: string | null = null;
   moduleId: string | null = null;
@@ -305,25 +304,30 @@ class IssueFilterStore implements IIssueFilterStore {
   // computed
   get issueLayout() {
     if (!this.workspaceId) return null;
-    if (!this.projectId) return this.issueFilters?.[this.workspaceId]?.my_issue_properties?.display_filters?.layout;
+    if (!this.projectId)
+      return this.issueFilters?.[this.workspaceId]?.my_issue_properties?.display_filters?.layout || null;
     if (this.projectId)
-      return this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.issues?.display_filters
-        ?.layout;
+      return (
+        this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.issues?.display_filters
+          ?.layout || null
+      );
   }
 
   get workspaceProjects() {
     if (!this.workspaceId) return null;
-    return this.issueRenderFilters?.workspace_properties?.[this.workspaceId]?.projects;
+    return this.issueRenderFilters?.workspace_properties?.[this.workspaceId]?.projects || null;
   }
   get workspaceLabels() {
     if (!this.workspaceId) return null;
-    return this.issueRenderFilters?.workspace_properties?.[this.workspaceId]?.labels;
+    return this.issueRenderFilters?.workspace_properties?.[this.workspaceId]?.labels || null;
   }
 
   get projectStates() {
     if (!this.workspaceId || !this.projectId) return null;
-    return this.issueRenderFilters?.workspace_properties?.[this.workspaceId]?.project_properties?.[this.projectId]
-      ?.states;
+    return (
+      this.issueRenderFilters?.workspace_properties?.[this.workspaceId]?.project_properties?.[this.projectId]?.states ||
+      null
+    );
   }
 
   getProjectStateById = (stateId: string) => {
