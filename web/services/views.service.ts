@@ -1,17 +1,10 @@
-// services
 import APIService from "services/api.service";
 import trackEventServices from "services/track-event.service";
-import { ICurrentUserResponse } from "types";
-
 // types
 import { IView } from "types/views";
-
+import { ICurrentUserResponse } from "types";
+// helpers
 import { API_BASE_URL } from "helpers/common.helper";
-
-const { NEXT_PUBLIC_API_BASE_URL } = process.env;
-
-const trackEvent =
-  process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
 
 class ViewServices extends APIService {
   constructor() {
@@ -26,7 +19,7 @@ class ViewServices extends APIService {
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/`, data)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackViewEvent(response?.data, "VIEW_CREATE", user);
+        trackEventServices.trackViewEvent(response?.data, "VIEW_CREATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -43,7 +36,7 @@ class ViewServices extends APIService {
   ): Promise<any> {
     return this.put(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`, data)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackViewEvent(response?.data, "VIEW_UPDATE", user);
+        trackEventServices.trackViewEvent(response?.data, "VIEW_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -63,7 +56,7 @@ class ViewServices extends APIService {
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackViewEvent(response?.data, "VIEW_UPDATE", user);
+        trackEventServices.trackViewEvent(response?.data, "VIEW_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -79,7 +72,7 @@ class ViewServices extends APIService {
   ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackViewEvent(response?.data, "VIEW_DELETE", user);
+        trackEventServices.trackViewEvent(response?.data, "VIEW_DELETE", user);
         return response?.data;
       })
       .catch((error) => {

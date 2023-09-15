@@ -16,9 +16,6 @@ import type {
   TProjectIssuesSearchParams,
 } from "types";
 
-const trackEvent =
-  process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
-
 export class ProjectServices extends APIService {
   constructor() {
     super(API_BASE_URL);
@@ -31,7 +28,7 @@ export class ProjectServices extends APIService {
   ): Promise<IProject> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/`, data)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackProjectEvent(response.data, "CREATE_PROJECT", user);
+        trackEventServices.trackProjectEvent(response.data, "CREATE_PROJECT", user);
         return response?.data;
       })
       .catch((error) => {
@@ -82,7 +79,7 @@ export class ProjectServices extends APIService {
   ): Promise<IProject> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`, data)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackProjectEvent(response.data, "UPDATE_PROJECT", user);
+        trackEventServices.trackProjectEvent(response.data, "UPDATE_PROJECT", user);
         return response?.data;
       })
       .catch((error) => {
@@ -97,7 +94,7 @@ export class ProjectServices extends APIService {
   ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackProjectEvent({ projectId }, "DELETE_PROJECT", user);
+        trackEventServices.trackProjectEvent({ projectId }, "DELETE_PROJECT", user);
         return response?.data;
       })
       .catch((error) => {
@@ -113,18 +110,17 @@ export class ProjectServices extends APIService {
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/add/`, data)
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackProjectEvent(
-            {
-              workspaceId: response?.data?.workspace?.id,
-              workspaceSlug,
-              projectId,
-              projectName: response?.data?.project?.name,
-              memberEmail: response?.data?.member?.email,
-            },
-            "PROJECT_MEMBER_INVITE",
-            user
-          );
+        trackEventServices.trackProjectEvent(
+          {
+            workspaceId: response?.data?.workspace?.id,
+            workspaceSlug,
+            projectId,
+            projectName: response?.data?.project?.name,
+            memberEmail: response?.data?.member?.email,
+          },
+          "PROJECT_MEMBER_INVITE",
+          user
+        );
         return response?.data;
       })
       .catch((error) => {
@@ -147,16 +143,15 @@ export class ProjectServices extends APIService {
   ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/leave/`)
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackProjectEvent(
-            "PROJECT_MEMBER_LEAVE",
-            {
-              workspaceSlug,
-              projectId,
-              ...response?.data,
-            },
-            user
-          );
+        trackEventServices.trackProjectEvent(
+          "PROJECT_MEMBER_LEAVE",
+          {
+            workspaceSlug,
+            projectId,
+            ...response?.data,
+          },
+          user
+        );
         return response?.data;
       })
       .catch((error) => {

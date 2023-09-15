@@ -3,8 +3,6 @@ import { useEffect } from "react";
 import { useTheme } from "next-themes";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// theme helpers
-import { applyTheme, unsetCustomCssVariables } from "helpers/theme.helper";
 
 const MobxStoreInit = () => {
   const store: any = useMobxStore();

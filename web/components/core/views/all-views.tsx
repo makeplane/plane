@@ -49,7 +49,7 @@ type Props = {
     };
     secondaryButton?: React.ReactNode;
   };
-  handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
+  handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit" | "updateDraft") => void;
   handleOnDragEnd: (result: DropResult) => Promise<void>;
   openIssuesListModal: (() => void) | null;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;

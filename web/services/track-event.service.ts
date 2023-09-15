@@ -131,6 +131,8 @@ class TrackEventServices extends APIService {
     eventName: WorkspaceEventType,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
+    if (!trackEvent) return;
+
     let payload: any;
     if (
       eventName !== "DELETE_WORKSPACE" &&
@@ -163,6 +165,8 @@ class TrackEventServices extends APIService {
     eventName: ProjectEventType,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
+    if (!trackEvent) return;
+
     let payload: any;
     if (
       eventName !== "DELETE_PROJECT" &&
@@ -195,6 +199,8 @@ class TrackEventServices extends APIService {
     data: any,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
+    if (!trackEvent) return;
+
     return this.request({
       url: "/api/track-event",
       method: "POST",
@@ -212,6 +218,8 @@ class TrackEventServices extends APIService {
     data: any,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
+    if (!trackEvent) return;
+
     return this.request({
       url: "/api/track-event",
       method: "POST",
@@ -230,6 +238,8 @@ class TrackEventServices extends APIService {
     eventName: IssueEventType,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
+    if (!trackEvent) return;
+
     let payload: any;
     if (eventName !== "ISSUE_DELETE")
       payload = {
@@ -303,6 +313,8 @@ class TrackEventServices extends APIService {
     eventName: IssueCommentEventType,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
+    if (!trackEvent) return;
+
     let payload: any;
     if (eventName !== "ISSUE_COMMENT_DELETE")
       payload = {
@@ -333,6 +345,8 @@ class TrackEventServices extends APIService {
     eventName: "ISSUE_RELATION_CREATE" | "ISSUE_RELATION_DELETE",
     user: ICurrentUserResponse
   ): Promise<any> {
+    if (!trackEvent) return;
+
     return this.request({
       url: "/api/track-event",
       method: "POST",
@@ -353,6 +367,8 @@ class TrackEventServices extends APIService {
       | "ISSUE_MOVED_TO_MODULE_IN_BULK",
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
+    if (!trackEvent) return;
+
     return this.request({
       url: "/api/track-event",
       method: "POST",
@@ -367,6 +383,8 @@ class TrackEventServices extends APIService {
   }
 
   async trackIssueBulkDeleteEvent(data: any, user: ICurrentUserResponse | undefined): Promise<any> {
+    if (!trackEvent) return;
+
     return this.request({
       url: "/api/track-event",
       method: "POST",
@@ -385,6 +403,8 @@ class TrackEventServices extends APIService {
     eventName: IssueLabelEventType,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
+    if (!trackEvent) return;
+
     return this.request({
       url: "/api/track-event",
       method: "POST",
@@ -403,6 +423,8 @@ class TrackEventServices extends APIService {
     eventName: StateEventType,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
+    if (!trackEvent) return;
+
     let payload: any;
     if (eventName !== "STATE_DELETE")
       payload = {
@@ -434,6 +456,8 @@ class TrackEventServices extends APIService {
     eventName: CycleEventType,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
+    if (!trackEvent) return;
+
     let payload: any;
     if (eventName !== "CYCLE_DELETE")
       payload = {
@@ -465,6 +489,8 @@ class TrackEventServices extends APIService {
     eventName: ModuleEventType,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
+    if (!trackEvent) return;
+
     let payload: any;
     if (eventName !== "MODULE_DELETE")
       payload = {
@@ -496,6 +522,8 @@ class TrackEventServices extends APIService {
     eventName: PagesEventType,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
+    if (!trackEvent) return;
+
     let payload: any;
     if (eventName !== "PAGE_DELETE")
       payload = {
@@ -527,6 +555,8 @@ class TrackEventServices extends APIService {
     eventName: PageBlocksEventType,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
+    if (!trackEvent) return;
+
     let payload: any;
     if (eventName !== "PAGE_BLOCK_DELETE" && eventName !== "PAGE_BLOCK_CONVERTED_TO_ISSUE")
       payload = {
@@ -569,6 +599,8 @@ class TrackEventServices extends APIService {
     eventName: GptEventType,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
+    if (!trackEvent) return;
+
     const payload = {
       workspaceId: data?.workspace_detail?.id,
       workspaceName: data?.workspace_detail?.name,
@@ -641,6 +673,8 @@ class TrackEventServices extends APIService {
     eventName: ViewEventType,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
+    if (!trackEvent) return;
+
     let payload: any;
     if (eventName === "VIEW_DELETE") payload = data;
     else
@@ -670,6 +704,8 @@ class TrackEventServices extends APIService {
     eventName: MiscellaneousEventType,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
+    if (!trackEvent) return;
+
     return this.request({
       url: "/api/track-event",
       method: "POST",
@@ -688,6 +724,8 @@ class TrackEventServices extends APIService {
     eventName: IntegrationEventType,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
+    if (!trackEvent) return;
+
     return this.request({
       url: "/api/track-event",
       method: "POST",
@@ -706,6 +744,8 @@ class TrackEventServices extends APIService {
     eventName: GitHubSyncEventType,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
+    if (!trackEvent) return;
+
     return this.request({
       url: "/api/track-event",
       method: "POST",
@@ -724,6 +764,8 @@ class TrackEventServices extends APIService {
     eventName: IssueEstimateEventType,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
+    if (!trackEvent) return;
+
     let payload: any;
     if (eventName === "ESTIMATE_DELETE") payload = data;
     else
@@ -755,6 +797,8 @@ class TrackEventServices extends APIService {
     eventName: ImporterEventType,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
+    if (!trackEvent) return;
+
     let payload: any;
     if (eventName === "GITHUB_IMPORTER_DELETE" || eventName === "JIRA_IMPORTER_DELETE")
       payload = data;
@@ -786,6 +830,8 @@ class TrackEventServices extends APIService {
     eventName: AnalyticsEventType,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
+    if (!trackEvent) return;
+
     const payload = { ...data };
 
     return this.request({
@@ -799,12 +845,13 @@ class TrackEventServices extends APIService {
     });
   }
 
-  // track exporter function\
   async trackExporterEvent(
     data: any,
     eventName: ExporterEventType,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
+    if (!trackEvent) return;
+
     const payload = { ...data };
 
     return this.request({
@@ -826,6 +873,8 @@ class TrackEventServices extends APIService {
     eventName: InboxEventType,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
+    if (!trackEvent) return;
+
     let payload: any;
     if (eventName !== "INBOX_DELETE")
       payload = {
@@ -857,6 +906,8 @@ class TrackEventServices extends APIService {
     eventName: ReactionEventType,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
+    if (!trackEvent) return;
+
     let payload: any;
     if (eventName === "ISSUE_REACTION_DELETE" || eventName === "ISSUE_COMMENT_REACTION_DELETE")
       payload = data;
@@ -878,12 +929,13 @@ class TrackEventServices extends APIService {
     });
   }
 
-  // project publish settings track events starts
   async trackProjectPublishSettingsEvent(
     data: any,
     eventName: string,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
+    if (!trackEvent) return;
+
     const payload: any = data;
 
     return this.request({
@@ -896,8 +948,6 @@ class TrackEventServices extends APIService {
       },
     });
   }
-
-  // project publish settings track events ends
 }
 
 const trackEventServices = new TrackEventServices();
