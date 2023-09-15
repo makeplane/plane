@@ -167,6 +167,7 @@ const GeneralSettings: NextPage = () => {
   };
 
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === projectDetails?.network);
+  const selectedNetwork = NETWORK_CHOICES.find((n) => n.key === watch("network"));
 
   const isAdmin = memberDetails?.role === 20;
 
@@ -349,7 +350,7 @@ const GeneralSettings: NextPage = () => {
                         <CustomSelect
                           value={value}
                           onChange={onChange}
-                          label={currentNetwork?.label ?? "Select network"}
+                          label={selectedNetwork?.label ?? "Select network"}
                           className="!border-custom-border-200 !shadow-none"
                           input
                           disabled={!isAdmin}

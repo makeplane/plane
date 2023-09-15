@@ -49,7 +49,7 @@ export const MemberSelect: React.FC<Props> = ({ value, onChange }) => {
           {selectedOption ? (
             selectedOption?.display_name
           ) : (
-            <span className="text-sm py-0.5 text-custom-text-200">Select</span>
+            <span className="text-sm py-0.5 text-custom-sidebar-text-400">Select</span>
           )}
         </div>
       }

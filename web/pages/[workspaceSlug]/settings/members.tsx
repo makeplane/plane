@@ -192,7 +192,7 @@ const MembersSettings: NextPage = () => {
         </div>
         <section className="pr-9 py-8 w-full">
           <div className="flex items-center justify-between gap-4 pt-2 pb-3.5 border-b border-custom-border-200">
-            <h4 className="text-xl font-medium border-b border-custom-border-100">Members</h4>
+            <h4 className="text-xl font-medium">Members</h4>
             <PrimaryButton onClick={() => setInviteModal(true)}>Add Member</PrimaryButton>
           </div>
           {!workspaceMembers || !workspaceInvitations ? (
@@ -250,7 +250,9 @@ const MembersSettings: NextPage = () => {
                             </h4>
                           )}
                           {isOwner && (
-                            <p className="mt-0.5 text-xs text-custom-text-200">{member.email}</p>
+                            <p className="mt-0.5 text-xs text-custom-sidebar-text-300">
+                              {member.email}
+                            </p>
                           )}
                         </div>
                       </div>
