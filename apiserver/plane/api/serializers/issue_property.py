@@ -123,6 +123,7 @@ class PropertyValueReadSerializer(BaseSerializer):
 class PropertyReadSerializer(BaseSerializer):
     children = serializers.SerializerMethodField()
     prop_value = serializers.SerializerMethodField()
+    prop_extra = serializers.SerializerMethodField()
 
     class Meta:
         model = Property
@@ -133,6 +134,7 @@ class PropertyReadSerializer(BaseSerializer):
             "prop_value",
             "id",
             "unit",
+            "prop_extra",
         ]
         read_only = fields
 
@@ -144,6 +146,13 @@ class PropertyReadSerializer(BaseSerializer):
         return []
 
     def get_prop_value(self, obj):
+        prop_values = obj.property_values.all()
+        if prop_values:
+            serializer = PropertyValueReadSerializer(prop_values, many=True)
+            return serializer.data
+        return None
+
+    def get_prop_extra(self, obj):
         MODEL_MAPPER = {
             "user": User,
             "issue": Issue,
@@ -160,7 +169,6 @@ class PropertyReadSerializer(BaseSerializer):
             "page": PageSerializer,
             "view": IssueViewSerializer,
         }
-
         if obj.type == "relation":
             prop_values = obj.property_values.all()
             model = MODEL_MAPPER.get(obj.unit, None)
@@ -170,15 +178,8 @@ class PropertyReadSerializer(BaseSerializer):
                     model.objects.filter(pk__in=[(p.value) for p in prop_values]),
                     many=True,
                 ).data
-            else:
-                return None
-        else:
-            prop_values = obj.property_values.all()
-            if prop_values:
-                serializer = PropertyValueReadSerializer(prop_values, many=True)
-                return serializer.data
             return None
-
+        return None
 
 class PropertyTransactionSerializer(BaseSerializer):
     actor_detail = UserLiteSerializer(read_only=True, source="actor")
