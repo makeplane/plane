@@ -45,9 +45,6 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
   const blockerIssue =
     watch("issue_relations")?.filter((i) => i.relation_type === "blocked_by") || [];
 
-  console.log("blockerIssue: ", watch());
-  // console.log("leng: ", blockerIssue.length);
-
   const onSubmit = async (data: ISearchIssueResponse[]) => {
     if (data.length === 0) {
       setToastAlert({
@@ -84,17 +81,16 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
             related_issue_detail: issue.blocker_issue_detail,
           })),
         ],
+        relation: "blocking",
       })
       .then((response) => {
-        console.log("response: ", response);
-
         submitChanges({
           issue_relations: [
             ...blockerIssue,
             ...(response ?? []).map((i: any) => ({
               id: i.id,
               relation_type: i.relation_type,
-              issue_detail: i.related_issue_detail,
+              issue_detail: i.issue_detail,
               issue: i.related_issue,
             })),
           ],
@@ -140,8 +136,6 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
                       className="opacity-0 duration-300 group-hover:opacity-100"
                       onClick={() => {
                         const updatedBlockers = blockerIssue.filter((i) => i.id !== relation.id);
-
-                        console.log("updatedRelations: ", updatedBlockers);
 
                         submitChanges({
                           issue_relations: updatedBlockers,
