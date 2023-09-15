@@ -40,18 +40,15 @@ const ImportExport: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      <div className="flex flex-row gap-2 h-full overflow-hidden">
-        <div className="w-80 py-8">
+      <div className="flex flex-row gap-2 h-full">
+        <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
           <SettingsSidebar />
         </div>
-        <section className="pr-9 py-8 w-full">
+        <section className="pr-9 py-8 w-full overflow-y-auto">
           <div className="flex items-center py-3.5 border-b border-custom-border-200">
             <h3 className="text-xl font-medium">Imports</h3>
           </div>
           <IntegrationGuide />
-          <div className="flex items-center py-3.5 border-b border-custom-border-200">
-            <h3 className="text-xl font-medium">Previous Imports</h3>
-          </div>
         </section>
       </div>
     </WorkspaceAuthorizationLayout>

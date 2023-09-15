@@ -190,21 +190,21 @@ const GeneralSettings: NextPage = () => {
         onClose={() => setSelectedProject(null)}
         user={user}
       />
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-row gap-2">
-          <div className="w-80 py-8">
-            <SettingsSidebar />
-          </div>
-          <div className={`pr-9 py-8 w-full ${isAdmin ? "" : "opacity-60"}`}>
+      <div className="flex flex-row gap-2 h-full">
+        <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
+          <SettingsSidebar />
+        </div>
+        <div className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="relative h-44 w-full mt-6">
               <img
                 src={watch("cover_image")!}
                 alt={watch("cover_image")!}
                 className="h-44 w-full rounded-md object-cover"
               />
-              <div className="flex items-end justify-between absolute bottom-4 w-full px-4">
-                <div className="flex gap-3">
-                  <div className="flex items-center justify-center bg-custom-background-90 h-[52px] w-[52px] rounded-lg">
+              <div className="flex items-end justify-between gap-3 absolute bottom-4 w-full px-4">
+                <div className="flex gap-3 flex-grow truncate">
+                  <div className="flex items-center justify-center flex-shrink-0 bg-custom-background-90 h-[52px] w-[52px] rounded-lg">
                     {projectDetails ? (
                       <div className="h-7 w-7 grid place-items-center">
                         <Controller
@@ -226,8 +226,8 @@ const GeneralSettings: NextPage = () => {
                       </Loader>
                     )}
                   </div>
-                  <div className="flex flex-col gap-1 text-white">
-                    <span className="text-lg font-semibold">{watch("name")}</span>
+                  <div className="flex flex-col gap-1 text-white truncate">
+                    <span className="text-lg font-semibold truncate">{watch("name")}</span>
                     <span className="flex items-center gap-2 text-sm">
                       <span>
                         {watch("identifier")} . {currentNetwork?.label}
@@ -236,7 +236,7 @@ const GeneralSettings: NextPage = () => {
                   </div>
                 </div>
 
-                <div className="flex justify-center">
+                <div className="flex justify-center flex-shrink-0">
                   {projectDetails ? (
                     <div>
                       <Controller
@@ -442,9 +442,9 @@ const GeneralSettings: NextPage = () => {
                 )}
               </Disclosure>
             )}
-          </div>
+          </form>
         </div>
-      </form>
+      </div>
     </ProjectAuthorizationWrapper>
   );
 };
