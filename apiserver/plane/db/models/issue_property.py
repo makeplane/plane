@@ -69,6 +69,11 @@ class Property(BaseModel):
 
     def save(self, *args, **kwargs):
         self.name = convert_string(self.display_name)
+        
+        # type is multi_select
+        if self.type == "multi_select":
+            self.is_multi = True
+
         if self._state.adding:
             if self.parent is None:
                 largest_order = Property.objects.filter(

@@ -7,15 +7,11 @@ def is_valid_uuid(uuid_string):
         uuid_obj = uuid.UUID(uuid_string)
         return str(uuid_obj) == uuid_string
     except ValueError:
+        print(uuid_string, "False")
         return False
 
 # Validations
 def is_text(property, value) -> bool:
-    if property.is_multi:
-        if isinstance(value, list):
-            return all(isinstance(val, str) for val in value)
-        else:
-            return False
     return isinstance(value, str)
 
 def is_paragraph(property, value) -> bool:
@@ -42,13 +38,10 @@ def is_checkbox(property, value) -> bool:
     return value in ["true", "false"]
 
 def is_select(property, value) -> bool:
-    if property.is_multi:
-        return all([isinstance(val, str) for val in value]) and all([is_valid_uuid(val) for val in value])
-    else:
-        return isinstance(value, str) and is_valid_uuid(value)
+    return isinstance(value, str) and is_valid_uuid(value)
 
 def is_multi_select(property, value) -> bool:
-    return all([isinstance(val, str) for val in value]) and all([is_valid_uuid(val) for val in value])
+    return isinstance(value, str) and is_valid_uuid(value)
 
 def is_relation(property, value) -> bool:
     return isinstance(value, str) and is_valid_uuid(value)
