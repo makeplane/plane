@@ -179,41 +179,17 @@ export interface IIssueFilterStore {
 
   getProjectIssueFilters: (workspaceId: string, projectId: string) => Promise<any>;
 
-  getProjectIssueModuleFilters: (
-    workspaceId: string,
-    projectId: string,
-    moduleId: string
-  ) => Promise<any>;
+  getProjectIssueModuleFilters: (workspaceId: string, projectId: string, moduleId: string) => Promise<any>;
   updateProjectIssueModuleFilters: (
     workspaceId: string,
     projectId: string,
     moduleId: string,
     data: any
   ) => Promise<any>;
-  getProjectIssueCyclesFilters: (
-    workspaceId: string,
-    projectId: string,
-    cycleId: string
-  ) => Promise<any>;
-  updateProjectIssueCyclesFilters: (
-    workspaceId: string,
-    projectId: string,
-    cycleId: string,
-    data: any
-  ) => Promise<any>;
-  getProjectIssueViewsFilters: (
-    workspaceId: string,
-    projectId: string,
-    viewId: string
-  ) => Promise<any>;
-  updateProjectIssueViewsFilters: (
-    workspaceId: string,
-    projectId: string,
-    viewId: string,
-    data: any
-  ) => Promise<any>;
-
-  getProjectStateById: (state_id: string) => any;
+  getProjectIssueCyclesFilters: (workspaceId: string, projectId: string, cycleId: string) => Promise<any>;
+  updateProjectIssueCyclesFilters: (workspaceId: string, projectId: string, cycleId: string, data: any) => Promise<any>;
+  getProjectIssueViewsFilters: (workspaceId: string, projectId: string, viewId: string) => Promise<any>;
+  updateProjectIssueViewsFilters: (workspaceId: string, projectId: string, viewId: string, data: any) => Promise<any>;
 }
 
 class IssueFilterStore implements IIssueFilterStore {
@@ -329,11 +305,10 @@ class IssueFilterStore implements IIssueFilterStore {
   // computed
   get issueLayout() {
     if (!this.workspaceId) return null;
-    if (!this.projectId)
-      return this.issueFilters?.[this.workspaceId]?.my_issue_properties?.display_filters?.layout;
+    if (!this.projectId) return this.issueFilters?.[this.workspaceId]?.my_issue_properties?.display_filters?.layout;
     if (this.projectId)
-      return this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]
-        ?.issues?.display_filters?.layout;
+      return this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.issues?.display_filters
+        ?.layout;
   }
 
   get workspaceProjects() {
@@ -347,17 +322,14 @@ class IssueFilterStore implements IIssueFilterStore {
 
   get projectStates() {
     if (!this.workspaceId || !this.projectId) return null;
-    return this.issueRenderFilters?.workspace_properties?.[this.workspaceId]?.project_properties?.[
-      this.projectId
-    ]?.states;
+    return this.issueRenderFilters?.workspace_properties?.[this.workspaceId]?.project_properties?.[this.projectId]
+      ?.states;
   }
 
   getProjectStateById = (stateId: string) => {
     if (!this.workspaceId || !this.projectId) return null;
     const states =
-      this.issueRenderFilters?.workspace_properties?.[this.workspaceId]?.project_properties?.[
-        this.projectId
-      ]?.states;
+      this.issueRenderFilters?.workspace_properties?.[this.workspaceId]?.project_properties?.[this.projectId]?.states;
 
     let stateInfo: any = null;
     Object.keys(states).forEach((stateGroupName) => {
@@ -370,20 +342,17 @@ class IssueFilterStore implements IIssueFilterStore {
 
   get projectLabels() {
     if (!this.workspaceId || !this.projectId) return null;
-    return this.issueRenderFilters?.workspace_properties?.[this.workspaceId]?.project_properties?.[
-      this.projectId
-    ]?.labels;
+    return this.issueRenderFilters?.workspace_properties?.[this.workspaceId]?.project_properties?.[this.projectId]
+      ?.labels;
   }
   get projectMembers() {
     if (!this.workspaceId || !this.projectId) return null;
-    return this.issueRenderFilters?.workspace_properties?.[this.workspaceId]?.project_properties?.[
-      this.projectId
-    ]?.members;
+    return this.issueRenderFilters?.workspace_properties?.[this.workspaceId]?.project_properties?.[this.projectId]
+      ?.members;
   }
   get projectDisplayProperties() {
     if (!this.workspaceId || !this.projectId) return null;
-    return this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]
-      ?.display_properties as any;
+    return this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.display_properties as any;
   }
 
   get userFilters() {
@@ -403,22 +372,17 @@ class IssueFilterStore implements IIssueFilterStore {
     } = {
       filters: null,
       display_filters:
-        this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.issues
-          ?.display_filters,
+        this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.issues?.display_filters,
       display_properties_id:
-        this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]
-          ?.display_properties_id,
+        this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.display_properties_id,
       display_properties:
-        this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]
-          ?.display_properties,
+        this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.display_properties,
     };
 
     if (this.issueView === "issues") {
       _issueFilters = {
         ..._issueFilters,
-        filters:
-          this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.issues
-            ?.filters,
+        filters: this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.issues?.filters,
       };
       return _issueFilters;
     }
@@ -427,8 +391,8 @@ class IssueFilterStore implements IIssueFilterStore {
       _issueFilters = {
         ..._issueFilters,
         filters:
-          this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]
-            ?.modules?.[this.moduleId]?.filters,
+          this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.modules?.[this.moduleId]
+            ?.filters,
       };
       return _issueFilters;
     }
@@ -437,8 +401,8 @@ class IssueFilterStore implements IIssueFilterStore {
       _issueFilters = {
         ..._issueFilters,
         filters:
-          this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]
-            ?.cycles?.[this.cycleId]?.filters,
+          this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.cycles?.[this.cycleId]
+            ?.filters,
       };
       return _issueFilters;
     }
@@ -447,8 +411,8 @@ class IssueFilterStore implements IIssueFilterStore {
       _issueFilters = {
         ..._issueFilters,
         filters:
-          this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]
-            ?.views?.[this.viewId]?.filters,
+          this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.views?.[this.viewId]
+            ?.filters,
       };
       return _issueFilters;
     }
@@ -519,12 +483,11 @@ class IssueFilterStore implements IIssueFilterStore {
             [this.projectId]: {
               ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId],
               issues: {
-                ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]
-                  ?.issues,
+                ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.issues,
                 [filter_type]: {
-                  ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
-                    this.projectId
-                  ]?.issues?.[filter_type],
+                  ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.issues?.[
+                    filter_type
+                  ],
                   [filter_key]: value,
                 },
               },
@@ -547,17 +510,13 @@ class IssueFilterStore implements IIssueFilterStore {
             project_issue_properties: {
               ...this.issueFilters?.[this.workspaceId]?.project_issue_properties,
               [this.projectId]: {
-                ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
-                  this.projectId
-                ],
+                ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId],
                 issues: {
-                  ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
-                    this.projectId
-                  ]?.issues,
+                  ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.issues,
                   [filter_type]: {
-                    ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
-                      this.projectId
-                    ]?.issues?.[filter_type],
+                    ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.issues?.[
+                      filter_type
+                    ],
                     [filter_key]: value,
                   },
                 },
@@ -579,21 +538,17 @@ class IssueFilterStore implements IIssueFilterStore {
             project_issue_properties: {
               ...this.issueFilters?.[this.workspaceId]?.project_issue_properties,
               [this.projectId]: {
-                ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
-                  this.projectId
-                ],
+                ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId],
                 modules: {
-                  ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
-                    this.projectId
-                  ]?.modules,
+                  ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.modules,
                   [this.moduleId]: {
-                    ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
-                      this.projectId
-                    ]?.modules?.[this.moduleId],
+                    ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.modules?.[
+                      this.moduleId
+                    ],
                     [filter_type]: {
-                      ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
-                        this.projectId
-                      ]?.modules?.[this.moduleId]?.[filter_type],
+                      ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.modules?.[
+                        this.moduleId
+                      ]?.[filter_type],
                       [filter_key]: value,
                     },
                   },
@@ -618,21 +573,17 @@ class IssueFilterStore implements IIssueFilterStore {
             project_issue_properties: {
               ...this.issueFilters?.[this.workspaceId]?.project_issue_properties,
               [this.projectId]: {
-                ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
-                  this.projectId
-                ],
+                ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId],
                 cycles: {
-                  ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
-                    this.projectId
-                  ]?.cycles,
+                  ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.cycles,
                   [this.cycleId]: {
-                    ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
-                      this.projectId
-                    ]?.cycles?.[this.cycleId],
+                    ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.cycles?.[
+                      this.cycleId
+                    ],
                     [filter_type]: {
-                      ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
-                        this.projectId
-                      ]?.cycles?.[this.cycleId]?.[filter_type],
+                      ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.cycles?.[
+                        this.cycleId
+                      ]?.[filter_type],
                       [filter_key]: value,
                     },
                   },
@@ -641,12 +592,7 @@ class IssueFilterStore implements IIssueFilterStore {
             },
           },
         };
-        this.updateProjectIssueCyclesFilters(
-          this.workspaceId,
-          this.projectId,
-          this.cycleId,
-          this.userFilters?.filters
-        );
+        this.updateProjectIssueCyclesFilters(this.workspaceId, this.projectId, this.cycleId, this.userFilters?.filters);
       }
 
       if (this.issueView === "views" && this.viewId) {
@@ -657,21 +603,17 @@ class IssueFilterStore implements IIssueFilterStore {
             project_issue_properties: {
               ...this.issueFilters?.[this.workspaceId]?.project_issue_properties,
               [this.projectId]: {
-                ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
-                  this.projectId
-                ],
+                ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId],
                 views: {
-                  ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
-                    this.projectId
-                  ]?.views,
+                  ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.views,
                   [this.viewId]: {
-                    ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
-                      this.projectId
-                    ]?.views?.[this.viewId],
+                    ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.views?.[
+                      this.viewId
+                    ],
                     [filter_type]: {
-                      ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[
-                        this.projectId
-                      ]?.views?.[this.viewId]?.[filter_type],
+                      ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.views?.[
+                        this.viewId
+                      ]?.[filter_type],
                       [filter_key]: value,
                     },
                   },
@@ -680,12 +622,7 @@ class IssueFilterStore implements IIssueFilterStore {
             },
           },
         };
-        this.updateProjectIssueViewsFilters(
-          this.workspaceId,
-          this.projectId,
-          this.viewId,
-          this.userFilters?.filters
-        );
+        this.updateProjectIssueViewsFilters(this.workspaceId, this.projectId, this.viewId, this.userFilters?.filters);
       }
     }
 
@@ -694,26 +631,11 @@ class IssueFilterStore implements IIssueFilterStore {
     if (this.issueView === "issues")
       this.rootStore?.issueView?.getProjectIssuesAsync(this.workspaceId, this.projectId, false);
     if (this.issueView === "modules" && this.moduleId)
-      this.rootStore?.issueView?.getIssuesForModulesAsync(
-        this.workspaceId,
-        this.projectId,
-        this.moduleId,
-        false
-      );
+      this.rootStore?.issueView?.getIssuesForModulesAsync(this.workspaceId, this.projectId, this.moduleId, false);
     if (this.issueView === "cycles" && this.cycleId)
-      this.rootStore?.issueView?.getIssuesForCyclesAsync(
-        this.workspaceId,
-        this.projectId,
-        this.cycleId,
-        false
-      );
+      this.rootStore?.issueView?.getIssuesForCyclesAsync(this.workspaceId, this.projectId, this.cycleId, false);
     if (this.issueView === "views" && this.viewId)
-      this.rootStore?.issueView?.getIssuesForViewsAsync(
-        this.workspaceId,
-        this.projectId,
-        this.viewId,
-        false
-      );
+      this.rootStore?.issueView?.getIssuesForViewsAsync(this.workspaceId, this.projectId, this.viewId, false);
   };
 
   computedFilter = (filters: any, filteredParams: any) => {
@@ -721,9 +643,7 @@ class IssueFilterStore implements IIssueFilterStore {
     Object.keys(filters).map((key) => {
       if (filters[key] != undefined && filteredParams.includes(key))
         computedFilters[key] =
-          typeof filters[key] === "string" || typeof filters[key] === "boolean"
-            ? filters[key]
-            : filters[key].join(",");
+          typeof filters[key] === "string" || typeof filters[key] === "boolean" ? filters[key] : filters[key].join(",");
     });
 
     return computedFilters;
@@ -949,33 +869,25 @@ class IssueFilterStore implements IIssueFilterStore {
                 order_by: issuesFiltersResponse?.view_props?.display_filters?.order_by ?? null,
                 type: issuesFiltersResponse?.view_props?.display_filters?.type ?? null,
                 sub_issue: issuesFiltersResponse?.view_props?.display_filters?.sub_issue ?? false,
-                show_empty_groups:
-                  issuesFiltersResponse?.view_props?.display_filters?.show_empty_groups ?? false,
+                show_empty_groups: issuesFiltersResponse?.view_props?.display_filters?.show_empty_groups ?? false,
                 layout: issuesFiltersResponse?.view_props?.display_filters?.layout ?? "list",
-                calendar_date_range:
-                  issuesFiltersResponse?.view_props?.display_filters?.calendar_date_range ?? false,
-                start_target_date:
-                  issuesFiltersResponse?.view_props?.display_filters?.start_target_date ?? true,
+                calendar_date_range: issuesFiltersResponse?.view_props?.display_filters?.calendar_date_range ?? false,
+                start_target_date: issuesFiltersResponse?.view_props?.display_filters?.start_target_date ?? true,
               },
               display_properties: {
                 assignee: issuesFiltersResponse?.view_props?.display_properties?.assignee ?? false,
-                attachment_count:
-                  issuesFiltersResponse?.view_props?.display_properties?.attachment_count ?? false,
-                created_on:
-                  issuesFiltersResponse?.view_props?.display_properties?.created_on ?? false,
+                attachment_count: issuesFiltersResponse?.view_props?.display_properties?.attachment_count ?? false,
+                created_on: issuesFiltersResponse?.view_props?.display_properties?.created_on ?? false,
                 due_date: issuesFiltersResponse?.view_props?.display_properties?.due_date ?? false,
                 estimate: issuesFiltersResponse?.view_props?.display_properties?.estimate ?? false,
                 key: issuesFiltersResponse?.view_props?.display_properties?.key ?? false,
                 labels: issuesFiltersResponse?.view_props?.display_properties?.labels ?? false,
                 link: issuesFiltersResponse?.view_props?.display_properties?.link ?? false,
                 priority: issuesFiltersResponse?.view_props?.display_properties?.priority ?? false,
-                start_date:
-                  issuesFiltersResponse?.view_props?.display_properties?.start_date ?? false,
+                start_date: issuesFiltersResponse?.view_props?.display_properties?.start_date ?? false,
                 state: issuesFiltersResponse?.view_props?.display_properties?.state ?? false,
-                sub_issue_count:
-                  issuesFiltersResponse?.view_props?.display_properties?.sub_issue_count ?? false,
-                updated_on:
-                  issuesFiltersResponse?.view_props?.display_properties?.updated_on ?? false,
+                sub_issue_count: issuesFiltersResponse?.view_props?.display_properties?.sub_issue_count ?? false,
+                updated_on: issuesFiltersResponse?.view_props?.display_properties?.updated_on ?? false,
               },
             },
           },
@@ -1002,10 +914,7 @@ class IssueFilterStore implements IIssueFilterStore {
       const payload = {
         view_props: data,
       };
-      const issuesFiltersResponse = await this.workspaceService.updateWorkspaceView(
-        workspaceId,
-        payload
-      );
+      const issuesFiltersResponse = await this.workspaceService.updateWorkspaceView(workspaceId, payload);
 
       if (issuesFiltersResponse) {
         runInAction(() => {
@@ -1037,8 +946,7 @@ class IssueFilterStore implements IIssueFilterStore {
               project_properties: {
                 ...this.issueRenderFilters?.workspace_properties?.[workspaceId]?.project_properties,
                 [projectId]: {
-                  ...this.issueRenderFilters?.workspace_properties?.[workspaceId]
-                    ?.project_properties?.[projectId],
+                  ...this.issueRenderFilters?.workspace_properties?.[workspaceId]?.project_properties?.[projectId],
                   states: issuesStateResponse,
                 },
               },
@@ -1076,8 +984,7 @@ class IssueFilterStore implements IIssueFilterStore {
               project_properties: {
                 ...this.issueRenderFilters?.workspace_properties?.[workspaceId]?.project_properties,
                 [projectId]: {
-                  ...this.issueRenderFilters?.workspace_properties?.[workspaceId]
-                    ?.project_properties?.[projectId],
+                  ...this.issueRenderFilters?.workspace_properties?.[workspaceId]?.project_properties?.[projectId],
                   labels: issuesLabelsResponse,
                 },
               },
@@ -1104,10 +1011,7 @@ class IssueFilterStore implements IIssueFilterStore {
       this.loader = true;
       this.error = null;
 
-      const issuesMembersResponse = await this.projectService.projectMembers(
-        workspaceId,
-        projectId
-      );
+      const issuesMembersResponse = await this.projectService.projectMembers(workspaceId, projectId);
       if (issuesMembersResponse) {
         const _issuesMembersResponse = {
           ...this.issueRenderFilters,
@@ -1118,8 +1022,7 @@ class IssueFilterStore implements IIssueFilterStore {
               project_properties: {
                 ...this.issueRenderFilters?.workspace_properties?.[workspaceId]?.project_properties,
                 [projectId]: {
-                  ...this.issueRenderFilters?.workspace_properties?.[workspaceId]
-                    ?.project_properties?.[projectId],
+                  ...this.issueRenderFilters?.workspace_properties?.[workspaceId]?.project_properties?.[projectId],
                   members: issuesMembersResponse,
                 },
               },
@@ -1147,10 +1050,7 @@ class IssueFilterStore implements IIssueFilterStore {
       this.loader = true;
       this.error = null;
 
-      const issuesDisplayPropertiesResponse = await this.issueService.getIssueProperties(
-        workspaceId,
-        projectId
-      );
+      const issuesDisplayPropertiesResponse = await this.issueService.getIssueProperties(workspaceId, projectId);
 
       if (issuesDisplayPropertiesResponse) {
         const _myUserId: string = issuesDisplayPropertiesResponse?.user;
@@ -1229,10 +1129,7 @@ class IssueFilterStore implements IIssueFilterStore {
       this.loader = true;
       this.error = null;
 
-      const issuesDisplayFiltersResponse = await this.projectService.projectMemberMe(
-        workspaceId,
-        projectId
-      );
+      const issuesDisplayFiltersResponse = await this.projectService.projectMemberMe(workspaceId, projectId);
 
       if (issuesDisplayFiltersResponse) {
         const _filters = { ...issuesDisplayFiltersResponse?.view_props?.filters };
@@ -1279,11 +1176,7 @@ class IssueFilterStore implements IIssueFilterStore {
       const payload: any = {
         view_props: data,
       };
-      const issuesFiltersResponse = await this.projectService.setProjectView(
-        workspaceId,
-        projectId,
-        payload
-      );
+      const issuesFiltersResponse = await this.projectService.setProjectView(workspaceId, projectId, payload);
 
       if (issuesFiltersResponse) {
         runInAction(() => {
@@ -1325,22 +1218,14 @@ class IssueFilterStore implements IIssueFilterStore {
     }
   };
 
-  getProjectIssueModuleFilters = async (
-    workspaceId: string,
-    projectId: string,
-    moduleId: string
-  ) => {
+  getProjectIssueModuleFilters = async (workspaceId: string, projectId: string, moduleId: string) => {
     try {
       this.loader = true;
       this.error = null;
 
       await this.getProjectIssueFilters(workspaceId, projectId);
 
-      const issuesFiltersModuleResponse = await this.moduleService.getModuleDetails(
-        workspaceId,
-        projectId,
-        moduleId
-      );
+      const issuesFiltersModuleResponse = await this.moduleService.getModuleDetails(workspaceId, projectId, moduleId);
 
       if (issuesFiltersModuleResponse) {
         const _filters = { ...issuesFiltersModuleResponse?.view_props?.filters };
@@ -1353,11 +1238,9 @@ class IssueFilterStore implements IIssueFilterStore {
               [projectId]: {
                 ...this?.issueFilters[workspaceId]?.project_issue_properties?.[projectId],
                 modules: {
-                  ...this?.issueFilters[workspaceId]?.project_issue_properties?.[projectId]
-                    ?.modules,
+                  ...this?.issueFilters[workspaceId]?.project_issue_properties?.[projectId]?.modules,
                   [moduleId]: {
-                    ...this?.issueFilters[workspaceId]?.project_issue_properties?.[projectId]
-                      ?.modules?.[moduleId],
+                    ...this?.issueFilters[workspaceId]?.project_issue_properties?.[projectId]?.modules?.[moduleId],
                     filters: {
                       priority: _filters?.priority ?? undefined,
                       state: _filters?.state ?? undefined,
@@ -1388,12 +1271,7 @@ class IssueFilterStore implements IIssueFilterStore {
       return error;
     }
   };
-  updateProjectIssueModuleFilters = async (
-    workspaceId: string,
-    projectId: string,
-    moduleId: string,
-    data: any
-  ) => {
+  updateProjectIssueModuleFilters = async (workspaceId: string, projectId: string, moduleId: string, data: any) => {
     try {
       this.loader = true;
       this.error = null;
@@ -1424,22 +1302,14 @@ class IssueFilterStore implements IIssueFilterStore {
     }
   };
 
-  getProjectIssueCyclesFilters = async (
-    workspaceId: string,
-    projectId: string,
-    cycleId: string
-  ) => {
+  getProjectIssueCyclesFilters = async (workspaceId: string, projectId: string, cycleId: string) => {
     try {
       this.loader = true;
       this.error = null;
 
       await this.getProjectIssueFilters(workspaceId, projectId);
 
-      const issuesFiltersCycleResponse = await this.cycleService.getCycleDetails(
-        workspaceId,
-        projectId,
-        cycleId
-      );
+      const issuesFiltersCycleResponse = await this.cycleService.getCycleDetails(workspaceId, projectId, cycleId);
 
       if (issuesFiltersCycleResponse) {
         const _filters = { ...issuesFiltersCycleResponse?.view_props?.filters };
@@ -1454,8 +1324,7 @@ class IssueFilterStore implements IIssueFilterStore {
                 cycles: {
                   ...this?.issueFilters[workspaceId]?.project_issue_properties?.[projectId]?.cycles,
                   [cycleId]: {
-                    ...this?.issueFilters[workspaceId]?.project_issue_properties?.[projectId]
-                      ?.modules?.[cycleId],
+                    ...this?.issueFilters[workspaceId]?.project_issue_properties?.[projectId]?.modules?.[cycleId],
                     filters: {
                       priority: _filters?.priority ?? undefined,
                       state: _filters?.state ?? undefined,
@@ -1486,12 +1355,7 @@ class IssueFilterStore implements IIssueFilterStore {
       return error;
     }
   };
-  updateProjectIssueCyclesFilters = async (
-    workspaceId: string,
-    projectId: string,
-    cycleId: string,
-    data: any
-  ) => {
+  updateProjectIssueCyclesFilters = async (workspaceId: string, projectId: string, cycleId: string, data: any) => {
     try {
       this.loader = true;
       this.error = null;
@@ -1529,11 +1393,7 @@ class IssueFilterStore implements IIssueFilterStore {
 
       await this.getProjectIssueFilters(workspaceId, projectId);
 
-      const issuesFiltersViewResponse = await this.viewService.getViewDetails(
-        workspaceId,
-        projectId,
-        viewId
-      );
+      const issuesFiltersViewResponse = await this.viewService.getViewDetails(workspaceId, projectId, viewId);
 
       if (issuesFiltersViewResponse) {
         const _filters = { ...issuesFiltersViewResponse?.query_data } as any;
@@ -1548,8 +1408,7 @@ class IssueFilterStore implements IIssueFilterStore {
                 views: {
                   ...this?.issueFilters[workspaceId]?.project_issue_properties?.[projectId]?.cycles,
                   [viewId]: {
-                    ...this?.issueFilters[workspaceId]?.project_issue_properties?.[projectId]
-                      ?.modules?.[viewId],
+                    ...this?.issueFilters[workspaceId]?.project_issue_properties?.[projectId]?.modules?.[viewId],
                     filters: {
                       priority: _filters?.priority ?? undefined,
                       state: _filters?.state ?? undefined,
@@ -1580,12 +1439,7 @@ class IssueFilterStore implements IIssueFilterStore {
       return error;
     }
   };
-  updateProjectIssueViewsFilters = async (
-    workspaceId: string,
-    projectId: string,
-    viewId: string,
-    data: any
-  ) => {
+  updateProjectIssueViewsFilters = async (workspaceId: string, projectId: string, viewId: string, data: any) => {
     try {
       this.loader = true;
       this.error = null;

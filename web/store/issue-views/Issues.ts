@@ -49,11 +49,7 @@ export interface IIssueViewStore {
   getIssues: IIssues | null | undefined;
   // actions
   getMyIssuesAsync: (workspaceId: string, fetchFilterToggle: boolean) => null | Promise<any>;
-  getProjectIssuesAsync: (
-    workspaceId: string,
-    projectId: string,
-    fetchFilterToggle: boolean
-  ) => null | Promise<any>;
+  getProjectIssuesAsync: (workspaceId: string, projectId: string, fetchFilterToggle: boolean) => null | Promise<any>;
   getIssuesForModulesAsync: (
     workspaceId: string,
     projectId: string,
@@ -122,29 +118,25 @@ class IssueViewStore implements IIssueViewStore {
       if (!currentView || !currentWorkspaceId) return null;
 
       const currentLayout: TIssueLayouts = currentProjectId
-        ? this.rootStore.issueFilters.issueFilters?.[currentWorkspaceId]
-            ?.project_issue_properties?.[currentProjectId]?.issues?.display_filters?.layout
-        : this.rootStore.issueFilters.issueFilters?.[currentWorkspaceId]?.my_issue_properties
-            ?.display_filters?.layout;
+        ? this.rootStore.issueFilters.issueFilters?.[currentWorkspaceId]?.project_issue_properties?.[currentProjectId]
+            ?.issues?.display_filters?.layout
+        : this.rootStore.issueFilters.issueFilters?.[currentWorkspaceId]?.my_issue_properties?.display_filters?.layout;
 
-      if (currentView === "my_issues")
-        return this.issues?.[currentWorkspaceId]?.my_issues?.[currentLayout];
+      if (currentView === "my_issues") return this.issues?.[currentWorkspaceId]?.my_issues?.[currentLayout];
       else if (currentView === "issues" && currentProjectId)
-        return this.issues?.[currentWorkspaceId]?.project_issues?.[currentProjectId]?.issues?.[
+        return this.issues?.[currentWorkspaceId]?.project_issues?.[currentProjectId]?.issues?.[currentLayout];
+      else if (currentView === "modules" && currentProjectId && currentModuleId)
+        return this.issues?.[currentWorkspaceId]?.project_issues?.[currentProjectId]?.modules?.[currentModuleId]?.[
           currentLayout
         ];
-      else if (currentView === "modules" && currentProjectId && currentModuleId)
-        return this.issues?.[currentWorkspaceId]?.project_issues?.[currentProjectId]?.modules?.[
-          currentModuleId
-        ]?.[currentLayout];
       else if (currentView === "cycles" && currentProjectId && currentCycleId)
-        return this.issues?.[currentWorkspaceId]?.project_issues?.[currentProjectId]?.cycles?.[
-          currentCycleId
-        ]?.[currentLayout];
+        return this.issues?.[currentWorkspaceId]?.project_issues?.[currentProjectId]?.cycles?.[currentCycleId]?.[
+          currentLayout
+        ];
       else if (currentView === "views" && currentProjectId && currentViewId)
-        return this.issues?.[currentWorkspaceId]?.project_issues?.[currentProjectId]?.views?.[
-          currentViewId
-        ]?.[currentLayout];
+        return this.issues?.[currentWorkspaceId]?.project_issues?.[currentProjectId]?.views?.[currentViewId]?.[
+          currentLayout
+        ];
     }
 
     return null;
@@ -156,8 +148,7 @@ class IssueViewStore implements IIssueViewStore {
       this.loader = true;
       this.error = null;
 
-      if (fetchFilterToggle)
-        await this.rootStore.issueFilters.getWorkspaceMyIssuesFilters(workspaceId);
+      if (fetchFilterToggle) await this.rootStore.issueFilters.getWorkspaceMyIssuesFilters(workspaceId);
       const filteredParams = this.rootStore.issueFilters.getComputedFilters(
         workspaceId,
         null,
@@ -175,8 +166,7 @@ class IssueViewStore implements IIssueViewStore {
             ...this?.issues[workspaceId],
             my_issues: {
               ...this?.issues[workspaceId]?.my_issues,
-              [this.rootStore?.issueFilters?.userFilters?.display_filters?.layout as string]:
-                issuesResponse,
+              [this.rootStore?.issueFilters?.userFilters?.display_filters?.layout as string]: issuesResponse,
             },
           },
         };
@@ -198,17 +188,12 @@ class IssueViewStore implements IIssueViewStore {
   };
 
   // fetching project issues
-  getProjectIssuesAsync = async (
-    workspaceId: string,
-    projectId: string,
-    fetchFilterToggle: boolean = true
-  ) => {
+  getProjectIssuesAsync = async (workspaceId: string, projectId: string, fetchFilterToggle: boolean = true) => {
     try {
       this.loader = true;
       this.error = null;
 
-      if (fetchFilterToggle)
-        await this.rootStore.issueFilters.getProjectIssueFilters(workspaceId, projectId);
+      if (fetchFilterToggle) await this.rootStore.issueFilters.getProjectIssueFilters(workspaceId, projectId);
       const filteredParams = this.rootStore.issueFilters.getComputedFilters(
         workspaceId,
         projectId,
@@ -217,11 +202,7 @@ class IssueViewStore implements IIssueViewStore {
         null,
         "issues"
       );
-      const issuesResponse = await this.issueService.getIssuesWithParams(
-        workspaceId,
-        projectId,
-        filteredParams
-      );
+      const issuesResponse = await this.issueService.getIssuesWithParams(workspaceId, projectId, filteredParams);
 
       if (issuesResponse) {
         const _issueResponse: any = {
@@ -234,8 +215,7 @@ class IssueViewStore implements IIssueViewStore {
                 ...this?.issues?.[workspaceId]?.project_issues?.[projectId],
                 issues: {
                   ...this?.issues[workspaceId]?.project_issues?.[projectId]?.issues,
-                  [this.rootStore?.issueFilters?.userFilters?.display_filters?.layout as string]:
-                    issuesResponse,
+                  [this.rootStore?.issueFilters?.userFilters?.display_filters?.layout as string]: issuesResponse,
                 },
               },
             },
@@ -270,11 +250,7 @@ class IssueViewStore implements IIssueViewStore {
       this.error = null;
 
       if (fetchFilterToggle)
-        await this.rootStore.issueFilters.getProjectIssueModuleFilters(
-          workspaceId,
-          projectId,
-          moduleId
-        );
+        await this.rootStore.issueFilters.getProjectIssueModuleFilters(workspaceId, projectId, moduleId);
       const filteredParams = this.rootStore.issueFilters.getComputedFilters(
         workspaceId,
         projectId,
@@ -303,8 +279,7 @@ class IssueViewStore implements IIssueViewStore {
                   ...this?.issues[workspaceId]?.project_issues?.[projectId]?.modules,
                   [moduleId]: {
                     ...this?.issues[workspaceId]?.project_issues?.[projectId]?.modules?.[moduleId],
-                    [this.rootStore?.issueFilters?.userFilters?.display_filters?.layout as string]:
-                      issuesResponse,
+                    [this.rootStore?.issueFilters?.userFilters?.display_filters?.layout as string]: issuesResponse,
                   },
                 },
               },
@@ -340,11 +315,7 @@ class IssueViewStore implements IIssueViewStore {
       this.error = null;
 
       if (fetchFilterToggle)
-        await this.rootStore.issueFilters.getProjectIssueCyclesFilters(
-          workspaceId,
-          projectId,
-          cycleId
-        );
+        await this.rootStore.issueFilters.getProjectIssueCyclesFilters(workspaceId, projectId, cycleId);
       const filteredParams = this.rootStore.issueFilters.getComputedFilters(
         workspaceId,
         projectId,
@@ -373,8 +344,7 @@ class IssueViewStore implements IIssueViewStore {
                   ...this?.issues[workspaceId]?.project_issues?.[projectId]?.cycles,
                   [cycleId]: {
                     ...this?.issues[workspaceId]?.project_issues?.[projectId]?.cycles?.[cycleId],
-                    [this.rootStore?.issueFilters?.userFilters?.display_filters?.layout as string]:
-                      issuesResponse,
+                    [this.rootStore?.issueFilters?.userFilters?.display_filters?.layout as string]: issuesResponse,
                   },
                 },
               },
@@ -410,11 +380,7 @@ class IssueViewStore implements IIssueViewStore {
       this.error = null;
 
       if (fetchFilterToggle)
-        await this.rootStore.issueFilters.getProjectIssueViewsFilters(
-          workspaceId,
-          projectId,
-          viewId
-        );
+        await this.rootStore.issueFilters.getProjectIssueViewsFilters(workspaceId, projectId, viewId);
       const filteredParams = this.rootStore.issueFilters.getComputedFilters(
         workspaceId,
         projectId,
@@ -423,11 +389,7 @@ class IssueViewStore implements IIssueViewStore {
         viewId,
         "views"
       );
-      const issuesResponse = await this.issueService.getIssuesWithParams(
-        workspaceId,
-        projectId,
-        filteredParams
-      );
+      const issuesResponse = await this.issueService.getIssuesWithParams(workspaceId, projectId, filteredParams);
 
       if (issuesResponse) {
         const _issueResponse: any = {
@@ -442,8 +404,7 @@ class IssueViewStore implements IIssueViewStore {
                   ...this?.issues[workspaceId]?.project_issues?.[projectId]?.views,
                   [viewId]: {
                     ...this?.issues[workspaceId]?.project_issues?.[projectId]?.views?.[viewId],
-                    [this.rootStore?.issueFilters?.userFilters?.display_filters?.layout as string]:
-                      issuesResponse,
+                    [this.rootStore?.issueFilters?.userFilters?.display_filters?.layout as string]: issuesResponse,
                   },
                 },
               },
