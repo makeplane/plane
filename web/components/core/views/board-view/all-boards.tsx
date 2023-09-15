@@ -19,7 +19,8 @@ type Props = {
   disableUserActions: boolean;
   disableAddIssueOption?: boolean;
   dragDisabled: boolean;
-  handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit" | "updateDraft") => void;
+  handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
+  handleDraftIssueAction?: (issue: IIssue, action: "edit" | "delete") => void;
   handleTrashBox: (isDragging: boolean) => void;
   openIssuesListModal?: (() => void) | null;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
@@ -37,6 +38,7 @@ export const AllBoards: React.FC<Props> = ({
   disableAddIssueOption = false,
   dragDisabled,
   handleIssueAction,
+  handleDraftIssueAction,
   handleTrashBox,
   openIssuesListModal,
   myIssueProjectId,
@@ -94,6 +96,7 @@ export const AllBoards: React.FC<Props> = ({
                 dragDisabled={dragDisabled}
                 groupTitle={singleGroup}
                 handleIssueAction={handleIssueAction}
+                handleDraftIssueAction={handleDraftIssueAction}
                 handleTrashBox={handleTrashBox}
                 openIssuesListModal={openIssuesListModal ?? null}
                 handleMyIssueOpen={handleMyIssueOpen}

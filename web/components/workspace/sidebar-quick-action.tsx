@@ -38,6 +38,9 @@ export const WorkspaceSidebarQuickAction = () => {
           "priority",
           "dueDate",
           "priority",
+          "state",
+          "startDate",
+          "project",
         ]}
       />
 
@@ -47,7 +50,7 @@ export const WorkspaceSidebarQuickAction = () => {
         }`}
       >
         <div
-          className={`flex items-center justify-between w-full rounded cursor-pointer px-4 gap-1 ${
+          className={`flex items-center justify-between w-full rounded cursor-pointer px-2 gap-1 ${
             store?.theme?.sidebarCollapsed
               ? "px-2 hover:bg-custom-sidebar-background-80"
               : "px-3 shadow border-[0.5px] border-custom-border-300"
@@ -80,7 +83,7 @@ export const WorkspaceSidebarQuickAction = () => {
                     <div>
                       <Menu.Button
                         type="button"
-                        className={`flex items-center justify-center rounded flex-shrink-0 p-2 ${
+                        className={`flex items-center justify-center rounded flex-shrink-0 p-1.5 ${
                           open ? "rotate-180 pl-0" : "rotate-0 pr-0"
                         }`}
                       >
@@ -108,7 +111,7 @@ export const WorkspaceSidebarQuickAction = () => {
                             >
                               <PenSquare
                                 size={16}
-                                className="!text-lg !leading-4 text-custom-sidebar-text-300 mx-2"
+                                className="!text-lg !leading-4 text-custom-sidebar-text-300 mr-2"
                               />
                               Last Drafted Issue
                             </button>
