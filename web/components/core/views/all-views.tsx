@@ -49,7 +49,8 @@ type Props = {
     };
     secondaryButton?: React.ReactNode;
   };
-  handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit" | "updateDraft") => void;
+  handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
+  handleDraftIssueAction?: (issue: IIssue, action: "edit" | "delete") => void;
   handleOnDragEnd: (result: DropResult) => Promise<void>;
   openIssuesListModal: (() => void) | null;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
@@ -66,6 +67,7 @@ export const AllViews: React.FC<Props> = ({
   dragDisabled = false,
   emptyState,
   handleIssueAction,
+  handleDraftIssueAction,
   handleOnDragEnd,
   openIssuesListModal,
   removeIssue,
@@ -132,6 +134,7 @@ export const AllViews: React.FC<Props> = ({
                 states={states}
                 addIssueToGroup={addIssueToGroup}
                 handleIssueAction={handleIssueAction}
+                handleDraftIssueAction={handleDraftIssueAction}
                 openIssuesListModal={cycleId || moduleId ? openIssuesListModal : null}
                 removeIssue={removeIssue}
                 myIssueProjectId={myIssueProjectId}
@@ -149,6 +152,7 @@ export const AllViews: React.FC<Props> = ({
                 disableAddIssueOption={disableAddIssueOption}
                 dragDisabled={dragDisabled}
                 handleIssueAction={handleIssueAction}
+                handleDraftIssueAction={handleDraftIssueAction}
                 handleTrashBox={handleTrashBox}
                 openIssuesListModal={cycleId || moduleId ? openIssuesListModal : null}
                 myIssueProjectId={myIssueProjectId}

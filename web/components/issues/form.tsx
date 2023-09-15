@@ -133,9 +133,15 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
 
   const issueName = watch("name");
 
-  const payload = {
+  const payload: Partial<IIssue> = {
     name: getValues("name"),
     description: getValues("description"),
+    state: getValues("state"),
+    priority: getValues("priority"),
+    assignees: getValues("assignees"),
+    target_date: getValues("target_date"),
+    labels: getValues("labels"),
+    project: getValues("project"),
   };
 
   useEffect(() => {

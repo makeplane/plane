@@ -39,7 +39,8 @@ type Props = {
   currentState?: IState | null;
   groupTitle: string;
   addIssueToGroup: () => void;
-  handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit" | "updateDraft") => void;
+  handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
+  handleDraftIssueAction?: (issue: IIssue, action: "edit" | "delete") => void;
   openIssuesListModal?: (() => void) | null;
   handleMyIssueOpen?: (issue: IIssue) => void;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
@@ -56,6 +57,7 @@ export const SingleList: React.FC<Props> = ({
   addIssueToGroup,
   handleIssueAction,
   openIssuesListModal,
+  handleDraftIssueAction,
   handleMyIssueOpen,
   removeIssue,
   disableUserActions,
@@ -253,7 +255,16 @@ export const SingleList: React.FC<Props> = ({
                       editIssue={() => handleIssueAction(issue, "edit")}
                       makeIssueCopy={() => handleIssueAction(issue, "copy")}
                       handleDeleteIssue={() => handleIssueAction(issue, "delete")}
-                      handleDraftIssueSelect={() => handleIssueAction(issue, "updateDraft")}
+                      handleDraftIssueSelect={
+                        handleDraftIssueAction
+                          ? () => handleDraftIssueAction(issue, "edit")
+                          : undefined
+                      }
+                      handleDraftIssueDelete={
+                        handleDraftIssueAction
+                          ? () => handleDraftIssueAction(issue, "delete")
+                          : undefined
+                      }
                       handleMyIssueOpen={handleMyIssueOpen}
                       removeIssue={() => {
                         if (removeIssue !== null && issue.bridge_id)

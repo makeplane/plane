@@ -16,8 +16,6 @@ import { Popover, Transition } from "@headlessui/react";
 import issuesService from "services/issues.service";
 // ui
 import { Input, PrimaryButton, SecondaryButton } from "components/ui";
-// icons
-import { Component } from "lucide-react";
 // types
 import { IIssueLabels } from "types";
 // fetch-keys
@@ -146,10 +144,10 @@ export const CreateUpdateLabelInline = forwardRef<HTMLDivElement, Props>(
                     open ? "text-custom-text-100" : "text-custom-text-200"
                   }`}
                 >
-                  <Component
-                    className="h-4 w-4 text-custom-text-100 flex-shrink-0"
+                  <span
+                    className="h-4 w-4 rounded-full"
                     style={{
-                      color: watch("color"),
+                      backgroundColor: watch("color"),
                     }}
                   />
                 </Popover.Button>

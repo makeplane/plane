@@ -14,7 +14,8 @@ import { ICurrentUserResponse, IIssue, IIssueViewProps, IState, UserAuth } from 
 type Props = {
   states: IState[] | undefined;
   addIssueToGroup: (groupTitle: string) => void;
-  handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit" | "updateDraft") => void;
+  handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
+  handleDraftIssueAction?: (issue: IIssue, action: "edit" | "delete") => void;
   openIssuesListModal?: (() => void) | null;
   myIssueProjectId?: string | null;
   handleMyIssueOpen?: (issue: IIssue) => void;
@@ -36,6 +37,7 @@ export const AllLists: React.FC<Props> = ({
   myIssueProjectId,
   removeIssue,
   states,
+  handleDraftIssueAction,
   user,
   userAuth,
   viewProps,
@@ -82,6 +84,7 @@ export const AllLists: React.FC<Props> = ({
                 groupTitle={singleGroup}
                 currentState={currentState}
                 addIssueToGroup={() => addIssueToGroup(singleGroup)}
+                handleDraftIssueAction={handleDraftIssueAction}
                 handleIssueAction={handleIssueAction}
                 handleMyIssueOpen={handleMyIssueOpen}
                 openIssuesListModal={openIssuesListModal}

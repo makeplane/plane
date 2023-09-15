@@ -55,7 +55,7 @@ const ProjectDraftIssues: NextPage = () => {
             <button
               type="button"
               onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/issues/`)}
-              className="flex items-center gap-1.5 rounded-full border border-custom-border-200 px-3 py-1.5 text-xs"
+              className="flex items-center gap-1.5 rounded border border-custom-border-200 px-3 py-1.5 text-xs"
             >
               <PenSquare className="h-3 w-3 text-custom-text-300" />
               <span>Draft Issues</span>

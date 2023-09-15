@@ -19,7 +19,8 @@ import { ToggleSwitch } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { ModuleIcon } from "components/icons";
-import { Contrast, FileText, Inbox, Layers } from "lucide-react";
+import { FileText, Inbox, Layers } from "lucide-react";
+import { ContrastOutlined } from "@mui/icons-material";
 // types
 import { IProject } from "types";
 import type { NextPage } from "next";
@@ -33,7 +34,10 @@ const featuresList = [
     title: "Cycles",
     description:
       "Cycles are enabled for all the projects in this workspace. Access them from the sidebar.",
-    icon: <Contrast className="h-4 w-4 text-custom-primary-100 flex-shrink-0" />,
+    icon: (
+      <ContrastOutlined className="!text-base !leading-4 text-purple-500 flex-shrink-0 rotate-180" />
+    ),
+
     property: "cycle_view",
   },
   {
@@ -61,7 +65,7 @@ const featuresList = [
     title: "Inbox",
     description:
       "Inbox are enabled for all the projects in this workspace. Access it from the issues views page.",
-    icon: <Inbox className="h-4 w-4 text-cyan-500 flex-shrink-0" />,
+    icon: <Inbox className="h-4 w-4 text-fuchsia-500 flex-shrink-0" />,
     property: "inbox_view",
   },
 ];
