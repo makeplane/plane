@@ -16,9 +16,6 @@ import {
   IWorkspaceViewProps,
 } from "types";
 
-const trackEvent =
-  process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
-
 class WorkspaceService extends APIService {
   constructor() {
     super(API_BASE_URL);
@@ -46,8 +43,7 @@ class WorkspaceService extends APIService {
   ): Promise<IWorkspace> {
     return this.post("/api/workspaces/", data)
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackWorkspaceEvent(response.data, "CREATE_WORKSPACE", user);
+        trackEventServices.trackWorkspaceEvent(response.data, "CREATE_WORKSPACE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -62,8 +58,7 @@ class WorkspaceService extends APIService {
   ): Promise<IWorkspace> {
     return this.patch(`/api/workspaces/${workspaceSlug}/`, data)
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackWorkspaceEvent(response.data, "UPDATE_WORKSPACE", user);
+        trackEventServices.trackWorkspaceEvent(response.data, "UPDATE_WORKSPACE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -77,8 +72,7 @@ class WorkspaceService extends APIService {
   ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/`)
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackWorkspaceEvent({ workspaceSlug }, "DELETE_WORKSPACE", user);
+        trackEventServices.trackWorkspaceEvent({ workspaceSlug }, "DELETE_WORKSPACE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -93,8 +87,7 @@ class WorkspaceService extends APIService {
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/invite/`, data)
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackWorkspaceEvent(response.data, "WORKSPACE_USER_INVITE", user);
+        trackEventServices.trackWorkspaceEvent(response.data, "WORKSPACE_USER_INVITE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -116,12 +109,7 @@ class WorkspaceService extends APIService {
       }
     )
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackWorkspaceEvent(
-            response.data,
-            "WORKSPACE_USER_INVITE_ACCEPT",
-            user
-          );
+        trackEventServices.trackWorkspaceEvent(response.data, "WORKSPACE_USER_INVITE_ACCEPT", user);
         return response?.data;
       })
       .catch((error) => {

@@ -5,11 +5,6 @@ import trackEventServices from "./track-event.service";
 import type { IModule, IIssue, ICurrentUserResponse } from "types";
 import { API_BASE_URL } from "helpers/common.helper";
 
-const { NEXT_PUBLIC_API_BASE_URL } = process.env;
-
-const trackEvent =
-  process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
-
 class ProjectIssuesServices extends APIService {
   constructor() {
     super(API_BASE_URL);
@@ -31,7 +26,7 @@ class ProjectIssuesServices extends APIService {
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/`, data)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackModuleEvent(response?.data, "MODULE_CREATE", user);
+        trackEventServices.trackModuleEvent(response?.data, "MODULE_CREATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -51,7 +46,7 @@ class ProjectIssuesServices extends APIService {
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackModuleEvent(response?.data, "MODULE_UPDATE", user);
+        trackEventServices.trackModuleEvent(response?.data, "MODULE_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -83,7 +78,7 @@ class ProjectIssuesServices extends APIService {
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackModuleEvent(response?.data, "MODULE_UPDATE", user);
+        trackEventServices.trackModuleEvent(response?.data, "MODULE_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -101,7 +96,7 @@ class ProjectIssuesServices extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackModuleEvent(response?.data, "MODULE_DELETE", user);
+        trackEventServices.trackModuleEvent(response?.data, "MODULE_DELETE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -156,20 +151,19 @@ class ProjectIssuesServices extends APIService {
       data
     )
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackIssueMovedToCycleOrModuleEvent(
-            {
-              workspaceSlug,
-              workspaceName: response?.data?.[0]?.issue_detail?.workspace_detail?.name,
-              projectId,
-              projectIdentifier: response?.data?.[0]?.issue_detail?.project_detail?.identifier,
-              projectName: response?.data?.[0]?.issue_detail?.project_detail?.name,
-              issueId: response?.data?.[0]?.issue_detail?.id,
-              moduleId,
-            },
-            response?.data?.length > 1 ? "ISSUE_MOVED_TO_MODULE_IN_BULK" : "ISSUE_MOVED_TO_MODULE",
-            user
-          );
+        trackEventServices.trackIssueMovedToCycleOrModuleEvent(
+          {
+            workspaceSlug,
+            workspaceName: response?.data?.[0]?.issue_detail?.workspace_detail?.name,
+            projectId,
+            projectIdentifier: response?.data?.[0]?.issue_detail?.project_detail?.identifier,
+            projectName: response?.data?.[0]?.issue_detail?.project_detail?.name,
+            issueId: response?.data?.[0]?.issue_detail?.id,
+            moduleId,
+          },
+          response?.data?.length > 1 ? "ISSUE_MOVED_TO_MODULE_IN_BULK" : "ISSUE_MOVED_TO_MODULE",
+          user
+        );
         return response?.data;
       })
       .catch((error) => {

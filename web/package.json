@@ -97,8 +97,8 @@
     "eslint-config-custom": "*",
     "eslint-config-next": "12.2.2",
     "prettier": "^2.8.7",
-    "tsconfig": "*",
     "tailwind-config-custom": "*",
+    "tsconfig": "*",
     "typescript": "4.7.4"
   },
   "resolutions": {

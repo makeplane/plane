@@ -1048,6 +1048,25 @@ def create_issue_relation_activity(
     )
     if current_instance is None and requested_data.get("related_list") is not None:
         for issue_relation in requested_data.get("related_list"):
+            if issue_relation.get("relation_type") == "blocked_by":
+                relation_type = "blocking"
+            else:
+                relation_type = issue_relation.get("relation_type")
+            issue = Issue.objects.get(pk=issue_relation.get("issue"))
+            issue_activities.append(
+                IssueActivity(
+                    issue_id=issue_relation.get("related_issue"),
+                    actor=actor,
+                    verb="created",
+                    old_value="",
+                    new_value=f"{project.identifier}-{issue.sequence_id}",
+                    field=relation_type,
+                    project=project,
+                    workspace=project.workspace,
+                    comment=f'added {relation_type} relation',
+                    old_identifier=issue_relation.get("issue"),
+                )
+            )
             issue = Issue.objects.get(pk=issue_relation.get("related_issue"))
             issue_activities.append(
                 IssueActivity(
@@ -1060,7 +1079,7 @@ def create_issue_relation_activity(
                     project=project,
                     workspace=project.workspace,
                     comment=f'added {issue_relation.get("relation_type")} relation',
-                    old_identifier=issue_relation.get("issue"),
+                    old_identifier=issue_relation.get("related_issue"),
                 )
             )
 
@@ -1073,21 +1092,40 @@ def delete_issue_relation_activity(
         json.loads(current_instance) if current_instance is not None else None
     )
     if current_instance is not None and requested_data.get("related_list") is None:
-        issue = Issue.objects.get(pk=current_instance.get("issue"))
-        issue_activities.append(
-            IssueActivity(
-                issue_id=current_instance.get("issue"),
-                actor=actor,
-                verb="deleted",
-                old_value=f"{project.identifier}-{issue.sequence_id}",
-                new_value="",
-                field=f'{current_instance.get("relation_type")}',
-                project=project,
-                workspace=project.workspace,
-                comment=f'deleted the {current_instance.get("relation_type")} relation',
-                old_identifier=current_instance.get("issue"),
+            if current_instance.get("relation_type") == "blocked_by":
+                relation_type = "blocking"
+            else:
+                relation_type = current_instance.get("relation_type")
+            issue = Issue.objects.get(pk=current_instance.get("issue"))
+            issue_activities.append(
+                IssueActivity(
+                    issue_id=current_instance.get("related_issue"),
+                    actor=actor,
+                    verb="deleted",
+                    old_value="",
+                    new_value=f"{project.identifier}-{issue.sequence_id}",
+                    field=relation_type,
+                    project=project,
+                    workspace=project.workspace,
+                    comment=f'deleted {relation_type} relation',
+                    old_identifier=current_instance.get("issue"),
+                )
             )
-        )
+            issue = Issue.objects.get(pk=current_instance.get("related_issue"))
+            issue_activities.append(
+                IssueActivity(
+                    issue_id=current_instance.get("issue"),
+                    actor=actor,
+                    verb="deleted",
+                    old_value="",
+                    new_value=f"{project.identifier}-{issue.sequence_id}",
+                    field=f'{current_instance.get("relation_type")}',
+                    project=project,
+                    workspace=project.workspace,
+                    comment=f'deleted {current_instance.get("relation_type")} relation',
+                    old_identifier=current_instance.get("related_issue"),
+                )
+            )
 
 
 def create_draft_issue_activity(

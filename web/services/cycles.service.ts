@@ -5,9 +5,6 @@ import trackEventServices from "services/track-event.service";
 import type { CycleDateCheckData, ICurrentUserResponse, ICycle, IIssue } from "types";
 import { API_BASE_URL } from "helpers/common.helper";
 
-const trackEvent =
-  process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
-
 class ProjectCycleServices extends APIService {
   constructor() {
     super(API_BASE_URL);
@@ -21,7 +18,7 @@ class ProjectCycleServices extends APIService {
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/`, data)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackCycleEvent(response?.data, "CYCLE_CREATE", user);
+        trackEventServices.trackCycleEvent(response?.data, "CYCLE_CREATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -99,7 +96,7 @@ class ProjectCycleServices extends APIService {
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackCycleEvent(response?.data, "CYCLE_UPDATE", user);
+        trackEventServices.trackCycleEvent(response?.data, "CYCLE_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -119,7 +116,7 @@ class ProjectCycleServices extends APIService {
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackCycleEvent(response?.data, "CYCLE_UPDATE", user);
+        trackEventServices.trackCycleEvent(response?.data, "CYCLE_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -135,7 +132,7 @@ class ProjectCycleServices extends APIService {
   ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackCycleEvent(response?.data, "CYCLE_DELETE", user);
+        trackEventServices.trackCycleEvent(response?.data, "CYCLE_DELETE", user);
         return response?.data;
       })
       .catch((error) => {

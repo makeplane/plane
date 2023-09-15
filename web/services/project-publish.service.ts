@@ -6,9 +6,6 @@ import trackEventServices from "services/track-event.service";
 import { ICurrentUserResponse } from "types";
 import { IProjectPublishSettings } from "store/project-publish";
 
-const trackEvent =
-  process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
-
 class ProjectServices extends APIService {
   constructor() {
     super(API_BASE_URL);
@@ -23,13 +20,11 @@ class ProjectServices extends APIService {
       `/api/workspaces/${workspace_slug}/projects/${project_slug}/project-deploy-boards/`
     )
       .then((response) => {
-        if (trackEvent) {
-          // trackEventServices.trackProjectPublishSettingsEvent(
-          //   response.data,
-          //   "GET_PROJECT_PUBLISH_SETTINGS",
-          //   user
-          // );
-        }
+        // trackEventServices.trackProjectPublishSettingsEvent(
+        //   response.data,
+        //   "GET_PROJECT_PUBLISH_SETTINGS",
+        //   user
+        // );
         return response?.data;
       })
       .catch((error) => {
@@ -48,13 +43,12 @@ class ProjectServices extends APIService {
       data
     )
       .then((response) => {
-        if (trackEvent) {
-          //   trackEventServices.trackProjectPublishSettingsEvent(
-          //     response.data,
-          //     "CREATE_PROJECT_PUBLISH_SETTINGS",
-          //     user
-          //   );
-        }
+        //   trackEventServices.trackProjectPublishSettingsEvent(
+        //     response.data,
+        //     "CREATE_PROJECT_PUBLISH_SETTINGS",
+        //     user
+        //   );
+
         return response?.data;
       })
       .catch((error) => {
@@ -74,13 +68,11 @@ class ProjectServices extends APIService {
       data
     )
       .then((response) => {
-        if (trackEvent) {
-          //   trackEventServices.trackProjectPublishSettingsEvent(
-          //     response.data,
-          //     "UPDATE_PROJECT_PUBLISH_SETTINGS",
-          //     user
-          //   );
-        }
+        //   trackEventServices.trackProjectPublishSettingsEvent(
+        //     response.data,
+        //     "UPDATE_PROJECT_PUBLISH_SETTINGS",
+        //     user
+        //   );
         return response?.data;
       })
       .catch((error) => {
@@ -98,13 +90,11 @@ class ProjectServices extends APIService {
       `/api/workspaces/${workspace_slug}/projects/${project_slug}/project-deploy-boards/${project_publish_id}/`
     )
       .then((response) => {
-        if (trackEvent) {
-          //   trackEventServices.trackProjectPublishSettingsEvent(
-          //     response.data,
-          //     "DELETE_PROJECT_PUBLISH_SETTINGS",
-          //     user
-          //   );
-        }
+        //   trackEventServices.trackProjectPublishSettingsEvent(
+        //     response.data,
+        //     "DELETE_PROJECT_PUBLISH_SETTINGS",
+        //     user
+        //   );
         return response?.data;
       })
       .catch((error) => {

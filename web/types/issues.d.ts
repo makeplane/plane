@@ -118,6 +118,7 @@ export interface IIssue {
   issue_module: IIssueModule | null;
   labels: string[];
   label_details: any[];
+  is_draft: boolean;
   labels_list: string[];
   links_list: IIssueLink[];
   link_count: number;
