@@ -560,7 +560,7 @@ class PropertyValueViewSet(BaseViewSet):
                 .distinct()
             )
             serializer_data = PropertyReadSerializer(issue_properties, many=True)
-            issue.issue_properties = json.loads(
+            issue.properties = json.loads(
                 json.dumps(serializer_data.data, cls=DjangoJSONEncoder)
             )
             issue.save(update_fields=["properties"])
