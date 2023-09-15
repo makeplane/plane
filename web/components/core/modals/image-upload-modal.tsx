@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from "react";
 
-import NextImage from "next/image";
 import { useRouter } from "next/router";
 
 // react-dropzone
@@ -12,7 +11,7 @@ import fileServices from "services/file.service";
 // hooks
 import useWorkspaceDetails from "hooks/use-workspace-details";
 // ui
-import { PrimaryButton, SecondaryButton } from "components/ui";
+import { DangerButton, PrimaryButton, SecondaryButton } from "components/ui";
 // icons
 import { UserCircleIcon } from "components/icons";
 
@@ -21,6 +20,8 @@ type Props = {
   onClose: () => void;
   isOpen: boolean;
   onSuccess: (url: string) => void;
+  isRemoving: boolean;
+  handleDelete: () => void;
   userImage?: boolean;
 };
 
@@ -29,6 +30,8 @@ export const ImageUploadModal: React.FC<Props> = ({
   onSuccess,
   isOpen,
   onClose,
+  isRemoving,
+  handleDelete,
   userImage,
 }) => {
   const [image, setImage] = useState<File | null>(null);
@@ -148,12 +151,10 @@ export const ImageUploadModal: React.FC<Props> = ({
                             >
                               Edit
                             </button>
-                            <NextImage
-                              layout="fill"
-                              objectFit="cover"
+                            <img
                               src={image ? URL.createObjectURL(image) : value ? value : ""}
                               alt="image"
-                              className="rounded-lg"
+                              className="absolute top-0 left-0 h-full w-full object-cover rounded-md"
                             />
                           </>
                         ) : (
@@ -182,15 +183,22 @@ export const ImageUploadModal: React.FC<Props> = ({
                 <p className="my-4 text-custom-text-200 text-sm">
                   File formats supported- .jpeg, .jpg, .png, .webp, .svg
                 </p>
-                <div className="flex items-center justify-end gap-2">
-                  <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                  <PrimaryButton
-                    onClick={handleSubmit}
-                    disabled={!image}
-                    loading={isImageUploading}
-                  >
-                    {isImageUploading ? "Uploading..." : "Upload & Save"}
-                  </PrimaryButton>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <DangerButton onClick={handleDelete} outline disabled={!value}>
+                      {isRemoving ? "Removing..." : "Remove"}
+                    </DangerButton>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                    <PrimaryButton
+                      onClick={handleSubmit}
+                      disabled={!image}
+                      loading={isImageUploading}
+                    >
+                      {isImageUploading ? "Uploading..." : "Upload & Save"}
+                    </PrimaryButton>
+                  </div>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

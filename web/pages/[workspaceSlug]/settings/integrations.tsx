@@ -9,9 +9,9 @@ import workspaceService from "services/workspace.service";
 import IntegrationService from "services/integration";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
-import { SettingsHeader } from "components/workspace";
 // components
 import { SingleIntegrationCard } from "components/integration";
+import { SettingsSidebar } from "components/project";
 // ui
 import { IntegrationAndImportExportBanner, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -48,19 +48,21 @@ const WorkspaceIntegrations: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      <div className="p-8">
-        <SettingsHeader />
-        <section className="space-y-5">
+      <div className="flex flex-row gap-2">
+        <div className="w-80 py-8">
+          <SettingsSidebar />
+        </div>
+        <section className="pr-9 py-8 w-full">
           <IntegrationAndImportExportBanner bannerName="Integrations" />
-          <div className="space-y-5">
+          <div>
             {appIntegrations ? (
               appIntegrations.map((integration) => (
                 <SingleIntegrationCard key={integration.id} integration={integration} />
               ))
             ) : (
-              <Loader className="space-y-5">
-                <Loader.Item height="60px" />
-                <Loader.Item height="60px" />
+              <Loader className="space-y-1">
+                <Loader.Item height="89px" />
+                <Loader.Item height="89px" />
               </Loader>
             )}
           </div>

@@ -25,7 +25,6 @@ import {
   TextArea,
   Loader,
   CustomSelect,
-  SecondaryButton,
   DangerButton,
   Icon,
   PrimaryButton,
@@ -67,7 +66,7 @@ const GeneralSettings: NextPage = () => {
       : null
   );
 
-  const { data: memberDetails, error } = useSWR(
+  const { data: memberDetails } = useSWR(
     workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
     workspaceSlug && projectId
       ? () => projectService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
@@ -168,6 +167,7 @@ const GeneralSettings: NextPage = () => {
   };
 
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === projectDetails?.network);
+  const selectedNetwork = NETWORK_CHOICES.find((n) => n.key === watch("network"));
 
   const isAdmin = memberDetails?.role === 20;
 
@@ -350,7 +350,7 @@ const GeneralSettings: NextPage = () => {
                         <CustomSelect
                           value={value}
                           onChange={onChange}
-                          label={currentNetwork?.label ?? "Select network"}
+                          label={selectedNetwork?.label ?? "Select network"}
                           className="!border-custom-border-200 !shadow-none"
                           input
                           disabled={!isAdmin}
@@ -388,59 +388,60 @@ const GeneralSettings: NextPage = () => {
                 )}
               </div>
             </div>
+            {isAdmin && (
+              <Disclosure as="div" className="border-t border-custom-border-400">
+                {({ open }) => (
+                  <div className="w-full">
+                    <Disclosure.Button
+                      as="button"
+                      type="button"
+                      className="flex items-center justify-between w-full py-4"
+                    >
+                      <span className="text-xl tracking-tight">Delete Project</span>
+                      <Icon iconName={open ? "expand_less" : "expand_more"} className="!text-2xl" />
+                    </Disclosure.Button>
 
-            <Disclosure as="div" className="border-t border-custom-border-400">
-              {({ open }) => (
-                <div className="w-full">
-                  <Disclosure.Button
-                    as="button"
-                    type="button"
-                    className="flex items-center justify-between w-full py-4"
-                  >
-                    <span className="text-xl tracking-tight">Danger Zone</span>
-                    <Icon iconName={open ? "expand_more" : "expand_less"} className="!text-2xl" />
-                  </Disclosure.Button>
-
-                  <Transition
-                    show={open}
-                    enter="transition duration-100 ease-out"
-                    enterFrom="transform opacity-0"
-                    enterTo="transform opacity-100"
-                    leave="transition duration-75 ease-out"
-                    leaveFrom="transform opacity-100"
-                    leaveTo="transform opacity-0"
-                  >
-                    <Disclosure.Panel>
-                      <div className="flex flex-col gap-8">
-                        <span className="text-sm tracking-tight">
-                          The danger zone of the project delete page is a critical area that
-                          requires careful consideration and attention. When deleting a project, all
-                          of the data and resources within that project will be permanently removed
-                          and cannot be recovered.
-                        </span>
-                        <div>
-                          {projectDetails ? (
-                            <div>
-                              <DangerButton
-                                onClick={() => setSelectedProject(projectDetails.id ?? null)}
-                                className="!text-sm"
-                                outline
-                              >
-                                Delete my project
-                              </DangerButton>
-                            </div>
-                          ) : (
-                            <Loader className="mt-2 w-full">
-                              <Loader.Item height="38px" width="144px" />
-                            </Loader>
-                          )}
+                    <Transition
+                      show={open}
+                      enter="transition duration-100 ease-out"
+                      enterFrom="transform opacity-0"
+                      enterTo="transform opacity-100"
+                      leave="transition duration-75 ease-out"
+                      leaveFrom="transform opacity-100"
+                      leaveTo="transform opacity-0"
+                    >
+                      <Disclosure.Panel>
+                        <div className="flex flex-col gap-8">
+                          <span className="text-sm tracking-tight">
+                            The danger zone of the project delete page is a critical area that
+                            requires careful consideration and attention. When deleting a project,
+                            all of the data and resources within that project will be permanently
+                            removed and cannot be recovered.
+                          </span>
+                          <div>
+                            {projectDetails ? (
+                              <div>
+                                <DangerButton
+                                  onClick={() => setSelectedProject(projectDetails.id ?? null)}
+                                  className="!text-sm"
+                                  outline
+                                >
+                                  Delete my project
+                                </DangerButton>
+                              </div>
+                            ) : (
+                              <Loader className="mt-2 w-full">
+                                <Loader.Item height="38px" width="144px" />
+                              </Loader>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    </Disclosure.Panel>
-                  </Transition>
-                </div>
-              )}
-            </Disclosure>
+                      </Disclosure.Panel>
+                    </Transition>
+                  </div>
+                )}
+              </Disclosure>
+            )}
           </div>
         </div>
       </form>

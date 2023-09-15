@@ -184,19 +184,20 @@ export const SingleState: React.FC<Props> = ({
             <ArrowDownIcon className="h-4 w-4" />
           </button>
         )}
-        {state.default ? (
-          <span className="text-xs text-custom-text-200">Default</span>
-        ) : (
-          <button
-            type="button"
-            className="hidden text-xs text-custom-sidebar-text-400 group-hover:inline-block"
-            onClick={handleMakeDefault}
-            disabled={isSubmitting}
-          >
-            Mark as default
-          </button>
-        )}
+
         <div className=" items-center gap-2.5 hidden group-hover:flex">
+          {state.default ? (
+            <span className="text-xs text-custom-text-200">Default</span>
+          ) : (
+            <button
+              type="button"
+              className="hidden text-xs text-custom-sidebar-text-400 group-hover:inline-block"
+              onClick={handleMakeDefault}
+              disabled={isSubmitting}
+            >
+              Mark as default
+            </button>
+          )}
           <button
             type="button"
             className="grid place-items-center group-hover:opacity-100 opacity-0"
@@ -215,14 +216,26 @@ export const SingleState: React.FC<Props> = ({
           >
             {state.default ? (
               <Tooltip tooltipContent="Cannot delete the default state.">
-                <X className="h-3.5 w-3.5 text-red-500" />
+                <X
+                  className={`h-4 w-4 ${
+                    groupLength < 1 ? "text-custom-sidebar-text-400" : "text-red-500"
+                  }`}
+                />
               </Tooltip>
             ) : groupLength === 1 ? (
               <Tooltip tooltipContent="Cannot have an empty group.">
-                <X className="h-3.5 w-3.5 text-red-500" />
+                <X
+                  className={`h-4 w-4 ${
+                    groupLength < 1 ? "text-custom-sidebar-text-400" : "text-red-500"
+                  }`}
+                />
               </Tooltip>
             ) : (
-              <X className="h-3.5 w-3.5 text-red-500" />
+              <X
+                className={`h-4 w-4 ${
+                  groupLength < 1 ? "text-custom-sidebar-text-400" : "text-red-500"
+                }`}
+              />
             )}
           </button>
         </div>
