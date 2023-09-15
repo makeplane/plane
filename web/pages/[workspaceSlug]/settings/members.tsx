@@ -186,11 +186,11 @@ const MembersSettings: NextPage = () => {
         user={user}
         onSuccess={handleInviteModalSuccess}
       />
-      <div className="flex flex-row gap-2">
-        <div className="w-80 py-8">
+      <div className="flex flex-row gap-2 h-full">
+        <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
           <SettingsSidebar />
         </div>
-        <section className="pr-9 py-8 w-full">
+        <section className="pr-9 py-8 w-full overflow-y-auto">
           <div className="flex items-center justify-between gap-4 pt-2 pb-3.5 border-b border-custom-border-200">
             <h4 className="text-xl font-medium">Members</h4>
             <PrimaryButton onClick={() => setInviteModal(true)}>Add Member</PrimaryButton>

@@ -147,7 +147,9 @@ const IntegrationGuide = () => {
                     </div>
                   </div>
                 ) : (
-                  <p className="py-2 text-sm text-custom-text-200">No previous export available.</p>
+                  <p className="text-sm text-custom-text-200 px-4 py-6">
+                    No previous export available.
+                  </p>
                 )
               ) : (
                 <Loader className="mt-6 grid grid-cols-1 gap-3">

@@ -113,11 +113,11 @@ const LabelsSettings: NextPage = () => {
           </Breadcrumbs>
         }
       >
-        <div className="flex flex-row gap-2 h-full w-full">
-          <div className="w-80 py-8">
+        <div className="flex flex-row gap-2 h-full">
+          <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
             <SettingsSidebar />
           </div>
-          <section className="pr-9 py-8 gap-10 h-full w-full">
+          <section className="pr-9 py-8 gap-10 w-full overflow-y-auto">
             <div className="flex items-center justify-between pt-2 pb-3.5 border-b border-custom-border-200">
               <h3 className="text-xl font-medium">Labels</h3>
 

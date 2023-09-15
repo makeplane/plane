@@ -129,7 +129,7 @@ const IntegrationGuide = () => {
                   </button>
                 </h3>
               </div>
-              <div className="flex flex-col px-4 py-6">
+              <div className="flex flex-col">
                 {importerServices ? (
                   importerServices.length > 0 ? (
                     <div className="space-y-2">
@@ -145,7 +145,7 @@ const IntegrationGuide = () => {
                       </div>
                     </div>
                   ) : (
-                    <p className="py-2 text-sm text-custom-text-200">
+                    <p className="text-sm text-custom-text-200 px-4 py-6">
                       No previous imports available.
                     </p>
                   )
