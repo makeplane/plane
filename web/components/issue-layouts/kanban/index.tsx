@@ -11,8 +11,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 
 export const IssueKanBanViewRoot = observer(() => {
-  const store: RootStore = useMobxStore();
-  const { issueView: issueViewStore } = store;
+  const { issueView: issueViewStore, issueKanBanView: issueKanBanViewStore }: RootStore = useMobxStore();
 
   const onDragEnd = (result: any) => {
     if (!result) return;
@@ -25,7 +24,7 @@ export const IssueKanBanViewRoot = observer(() => {
     )
       return;
 
-    console.log("result", result);
+    issueKanBanViewStore?.handleDragDrop(result.source, result.destination);
   };
 
   return (
@@ -38,10 +37,7 @@ export const IssueKanBanViewRoot = observer(() => {
             <DragDropContext onDragEnd={onDragEnd}>
               <div className="relative w-full h-full overflow-hidden !overflow-x-scroll flex">
                 {Object.keys(issueViewStore?.getIssues).map((_issueStateKey: any) => (
-                  <div
-                    key={`${_issueStateKey}`}
-                    className="flex-shrink-0 w-[380px] h-full relative flex flex-col"
-                  >
+                  <div key={`${_issueStateKey}`} className="flex-shrink-0 w-[380px] h-full relative flex flex-col">
                     <div className="flex-shrink-0 w-full p-2">
                       <IssueHeader />
                     </div>

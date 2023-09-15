@@ -23,9 +23,9 @@ export const FilterSelection = observer(() => {
   const handleFilterSectionVisibility = (section_key: string) =>
     issueFilterStore?.issueView &&
     issueFilterStore?.issueLayout &&
-    issueFilterVisibilityData[
-      issueFilterStore?.issueView === "my_issues" ? "my_issues" : "others"
-    ]?.filters?.[issueFilterStore?.issueLayout]?.includes(section_key);
+    issueFilterVisibilityData[issueFilterStore?.issueView === "my_issues" ? "my_issues" : "others"]?.filters?.[
+      issueFilterStore?.issueLayout
+    ]?.includes(section_key);
 
   return (
     <div className="w-full h-full overflow-hidden select-none relative flex flex-col divide-y divide-custom-border-200">
