@@ -6,10 +6,9 @@ import useSWR from "swr";
 import workspaceService from "services/workspace.service";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
-import { SettingsHeader } from "components/workspace";
 // components
 import ExportGuide from "components/exporter/guide";
-import { IntegrationAndImportExportBanner } from "components/ui";
+import { SettingsSidebar } from "components/project";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
@@ -41,10 +40,16 @@ const ImportExport: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      <div className="p-8 space-y-4">
-        <SettingsHeader />
-        <IntegrationAndImportExportBanner bannerName="Export" />
-        <ExportGuide />
+      <div className="flex flex-row gap-2">
+        <div className="w-80 py-8">
+          <SettingsSidebar />
+        </div>
+        <div className="pr-9 py-8 overflow-y-auto w-full">
+          <div className="flex items-center py-3.5 border-b border-custom-border-200">
+            <h3 className="text-xl font-medium">Exports</h3>
+          </div>
+          <ExportGuide />
+        </div>
       </div>
     </WorkspaceAuthorizationLayout>
   );
