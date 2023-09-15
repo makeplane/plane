@@ -1049,9 +1049,9 @@ def create_issue_relation_activity(
     if current_instance is None and requested_data.get("related_list") is not None:
         for issue_relation in requested_data.get("related_list"):
             if issue_relation.get("relation_type") == "blocked_by":
-                custom_field = "blocking"
+                relation_type = "blocking"
             else:
-                custom_field = issue_relation.get("relation_type")
+                relation_type = issue_relation.get("relation_type")
             issue = Issue.objects.get(pk=issue_relation.get("issue"))
             issue_activities.append(
                 IssueActivity(
@@ -1060,10 +1060,10 @@ def create_issue_relation_activity(
                     verb="created",
                     old_value="",
                     new_value=f"{project.identifier}-{issue.sequence_id}",
-                    field=custom_field,
+                    field=relation_type,
                     project=project,
                     workspace=project.workspace,
-                    comment=f'added {custom_field} relation',
+                    comment=f'added {relation_type} relation',
                     old_identifier=issue_relation.get("issue"),
                 )
             )
@@ -1093,9 +1093,9 @@ def delete_issue_relation_activity(
     )
     if current_instance is not None and requested_data.get("related_list") is None:
             if current_instance.get("relation_type") == "blocked_by":
-                custom_field = "blocking"
+                relation_type = "blocking"
             else:
-                custom_field = current_instance.get("relation_type")
+                relation_type = current_instance.get("relation_type")
             issue = Issue.objects.get(pk=current_instance.get("issue"))
             issue_activities.append(
                 IssueActivity(
@@ -1104,10 +1104,10 @@ def delete_issue_relation_activity(
                     verb="deleted",
                     old_value="",
                     new_value=f"{project.identifier}-{issue.sequence_id}",
-                    field=custom_field,
+                    field=relation_type,
                     project=project,
                     workspace=project.workspace,
-                    comment=f'deleted {custom_field} relation',
+                    comment=f'deleted {relation_type} relation',
                     old_identifier=current_instance.get("issue"),
                 )
             )
