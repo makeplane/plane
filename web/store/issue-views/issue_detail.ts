@@ -134,12 +134,23 @@ class IssueViewDetailStore implements IIssueViewDetailStore {
       this.loader = true;
       this.error = null;
 
+      const filteredParams = this.rootStore.issueFilters.getComputedFilters(
+        workspaceId,
+        projectId,
+        null,
+        null,
+        null,
+        this.rootStore.issueFilters.issueView || "issues"
+      );
       const issueResponse = await this.issueService.patchIssue(workspaceId, projectId, issueId, data, undefined);
+      const issueList = await this.issueService.getIssuesWithParams(workspaceId, projectId, filteredParams);
+      console.log("issueList", issueList);
 
       if (issueResponse) {
         runInAction(() => {
           this.loader = false;
           this.error = null;
+          this.rootStore.issueView.issues[workspaceId].project_issues[projectId].issues.list = issueList;
         });
       }
     } catch (error) {

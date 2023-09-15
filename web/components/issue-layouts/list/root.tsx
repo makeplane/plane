@@ -31,7 +31,7 @@ export const IssueListViewRoot = observer(() => {
                     />
                   </Disclosure.Button>
                   <Disclosure.Panel className="px-4 pt-4 pb-2">
-                    <IssueListView issues={issueViewStore?.getIssues?.[groupId]}></IssueListView>
+                    <IssueListView issues={issueViewStore?.getIssues?.[groupId]} groupId={groupId}></IssueListView>
                   </Disclosure.Panel>
                 </>
               )}

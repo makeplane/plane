@@ -1,5 +1,5 @@
 import React, { FC, useState } from "react";
-import { Tooltip, CustomMenu, ContextMenu } from "components/ui";
+import { observer } from "mobx-react-lite";
 // lib
 import { useMobxStore } from "lib/mobx/store-provider";
 import { IIssue } from "types";
@@ -15,6 +15,7 @@ import {
   PaperClipIcon,
 } from "@heroicons/react/24/outline";
 // components
+import { Tooltip, CustomMenu, ContextMenu } from "components/ui";
 import { LayerDiagonalIcon } from "components/icons";
 import {
   ViewAssigneeSelect,
@@ -25,24 +26,35 @@ import {
   ViewStartDateSelect,
   ViewStateSelect,
 } from "components/issues";
+import { IssuePrioritySelect } from "../properties";
 
 export interface IIssueListItem {
   issue: IIssue;
+  groupId: string;
 }
 
-export const IssueListItem: FC<IIssueListItem> = (props) => {
-  const { issue } = props;
+export const IssueListItem: FC<IIssueListItem> = observer((props) => {
+  const { issue, groupId } = props;
   // store
-  const { user: userStore, issueFilters: issueFilterStore } = useMobxStore();
+  const { user: userStore, issueFilters: issueFilterStore, issueDetail: issueDetailStore } = useMobxStore();
   const displayProperties = issueFilterStore.userFilters?.display_properties;
+  const workspaceId = issueFilterStore.workspaceId;
+  const projectId = issueFilterStore.projectId;
+  const issueId = issue.id;
+  const user = userStore.currentUser;
   console.log("userStore", userStore);
   // context menu
   const [contextMenu, setContextMenu] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState<React.MouseEvent | null>(null);
-  const { user: userAuth } = useUserAuth();
 
+  const isNotAllowed = false;
   // const isNotAllowed =
   //   userAuth?.isGuest || userAuth?.isViewer || disableUserActions || isArchivedIssues;
+
+  const partialUpdateIssue = (data: any) => {
+    // console.log("data", data);
+    if (workspaceId && projectId && issueId) issueDetailStore.updateIssueAsync(workspaceId, projectId, issueId, data);
+  };
 
   return (
     <div>
@@ -112,20 +124,21 @@ export const IssueListItem: FC<IIssueListItem> = (props) => {
 
           <div className={`flex flex-shrink-0 items-center gap-2 text-xs `}>
             {displayProperties?.priority && (
-              <ViewPrioritySelect
-                issue={issue}
-                partialUpdateIssue={partialUpdateIssue}
-                position="right"
-                user={user}
-                isNotAllowed={isNotAllowed}
-              />
+              // <ViewPrioritySelect
+              //   issue={issue}
+              //   partialUpdateIssue={partialUpdateIssue}
+              //   position="right"
+              //   user={user as any}
+              //   isNotAllowed={isNotAllowed}
+              // />
+              <IssuePrioritySelect issue={issue} groupId={groupId} />
             )}
             {displayProperties?.state && (
               <ViewStateSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 position="right"
-                user={user}
+                user={user as any}
                 isNotAllowed={isNotAllowed}
               />
             )}
@@ -133,7 +146,7 @@ export const IssueListItem: FC<IIssueListItem> = (props) => {
               <ViewStartDateSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
-                user={user}
+                user={user as any}
                 isNotAllowed={isNotAllowed}
               />
             )}
@@ -141,19 +154,17 @@ export const IssueListItem: FC<IIssueListItem> = (props) => {
               <ViewDueDateSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
-                user={user}
+                user={user as any}
                 isNotAllowed={isNotAllowed}
               />
             )}
-            {displayProperties?.labels && (
-              <ViewIssueLabel labelDetails={issue.label_details} maxRender={3} />
-            )}
+            {displayProperties?.labels && <ViewIssueLabel labelDetails={issue.label_details} maxRender={3} />}
             {displayProperties?.assignee && (
               <ViewAssigneeSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 position="right"
-                user={user}
+                user={user as any}
                 isNotAllowed={isNotAllowed}
               />
             )}
@@ -162,7 +173,7 @@ export const IssueListItem: FC<IIssueListItem> = (props) => {
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 position="right"
-                user={user}
+                user={user as any}
                 isNotAllowed={isNotAllowed}
               />
             )}
@@ -231,4 +242,4 @@ export const IssueListItem: FC<IIssueListItem> = (props) => {
       </>
     </div>
   );
-};
+});
