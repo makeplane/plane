@@ -198,6 +198,8 @@ export const SingleListIssue: React.FC<Props> = ({
   const isNotAllowed =
     userAuth.isGuest || userAuth.isViewer || disableUserActions || isArchivedIssues;
 
+  console.log("properties", properties);
+
   return (
     <>
       <ContextMenu

@@ -21,6 +21,7 @@ import {
   displayProperties,
   extraProperties,
 } from "./issue_data";
+import { IIssueState } from "./Issues";
 
 export type TIssueViews = "my_issues" | "issues" | "modules" | "views" | "cycles";
 export type TIssueLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
@@ -259,6 +260,9 @@ class IssueFilterStore implements IIssueFilterStore {
       userFilters: computed,
 
       // actions
+
+      getProjectStateById: action,
+
       getComputedFilters: action,
 
       handleUserFilter: action,
@@ -321,6 +325,21 @@ class IssueFilterStore implements IIssueFilterStore {
     return this.issueRenderFilters?.workspace_properties?.[this.workspaceId]?.project_properties?.[this.projectId]
       ?.states;
   }
+
+  getProjectStateById = (stateId: string) => {
+    if (!this.workspaceId || !this.projectId) return null;
+    const states =
+      this.issueRenderFilters?.workspace_properties?.[this.workspaceId]?.project_properties?.[this.projectId]?.states;
+
+    let stateInfo: any = null;
+    Object.keys(states).forEach((stateGroupName) => {
+      if (states[stateGroupName].find((state: any) => state.id === stateId)) {
+        stateInfo = states[stateGroupName].find((state: any) => state.id === stateId);
+      }
+    });
+    return stateInfo;
+  };
+
   get projectLabels() {
     if (!this.workspaceId || !this.projectId) return null;
     return this.issueRenderFilters?.workspace_properties?.[this.workspaceId]?.project_properties?.[this.projectId]

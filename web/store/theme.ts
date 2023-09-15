@@ -40,7 +40,7 @@ class ThemeStore {
 
   setTheme = async (_theme: { theme: ICurrentUserSettings }) => {
     try {
-      const currentTheme: string = _theme.theme.theme.toString();
+      const currentTheme: string = _theme?.theme?.theme?.toString();
 
       // updating the local storage theme value
       localStorage.setItem("theme", currentTheme);
