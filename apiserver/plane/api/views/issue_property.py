@@ -177,7 +177,11 @@ class PropertyValueViewSet(BaseViewSet):
             property_values = PropertyValue.objects.filter(
                 entity_uuid=entity_uuid,
                 entity=entity,
+                workspace__slug=slug,
+                project_id=project_id,
             )
+
+            # Value creations
             bulk_transactions = []
             bulk_prop_values_create = []
             bulk_prop_values_update = []
@@ -541,36 +545,21 @@ class PropertyValueViewSet(BaseViewSet):
             issue = Issue.objects.get(
                 pk=entity_uuid, workspace__slug=slug, project_id=project_id
             )
-            issue_properties = (
-                Property.objects.filter(
+            # Fetch the object with the values
+            property = (
+                Property.objects.get(
                     workspace__slug=slug,
                     property_values__project_id=project_id,
+                    pk=issue.entity_id,
                 )
-                .prefetch_related("children")
-                .prefetch_related(
-                    Prefetch(
-                        "property_values",
-                        queryset=PropertyValue.objects.filter(
-                            entity_uuid=entity_uuid,
-                            workspace__slug=slug,
-                            project_id=project_id,
-                        ),
-                    )
-                )
-                .distinct()
             )
-            serializer_data = PropertyReadSerializer(issue_properties, many=True)
+
+            # Set the tree here
+            serializer = PropertyReadSerializer(property)
             issue.properties = json.loads(
-                json.dumps(serializer_data.data, cls=DjangoJSONEncoder)
+                json.dumps(serializer.data, cls=DjangoJSONEncoder)
             )
             issue.save(update_fields=["properties"])
-
-            properties = Property.objects.get(
-                workspace__slug=slug,
-                project_id=project_id,
-                pk=issue.entity_id,
-            )
-            serializer = PropertyReadSerializer(properties)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Project.DoesNotExist:
             return Response(

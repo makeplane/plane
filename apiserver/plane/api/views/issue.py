@@ -82,6 +82,8 @@ from plane.db.models import (
     IssueRelation,
     ProjectPublicMember,
     PropertyTransaction,
+    PropertyValue,
+    PropertyTransaction,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -280,7 +282,8 @@ class IssueViewSet(BaseViewSet):
 
             if group_by:
                 return Response(
-                    group_results(issues, group_by, sub_group_by), status=status.HTTP_200_OK
+                    group_results(issues, group_by, sub_group_by),
+                    status=status.HTTP_200_OK,
                 )
 
             return Response(issues, status=status.HTTP_200_OK)
@@ -331,6 +334,35 @@ class IssueViewSet(BaseViewSet):
                 workspace__slug=slug, project_id=project_id, pk=pk
             )
             return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
+        except Issue.DoesNotExist:
+            return Response(
+                {"error": "Issue Does not exist"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+    def destroy(self, request, slug, project_id, pk=None):
+        try:
+            issue = Issue.issue_objects.get(
+                workspace__slug=slug, project_id=project_id, pk=pk
+            )
+            issue.delete()
+
+            # Delete all property values also
+            PropertyValue.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                entity_uuid=pk,
+                entity="issue",
+            ).delete()
+
+            # Delete transactions
+            PropertyTransaction.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                entity_uuid=pk,
+                entity="issue",
+            ).delete()
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except Issue.DoesNotExist:
             return Response(
                 {"error": "Issue Does not exist"}, status=status.HTTP_404_NOT_FOUND
@@ -461,10 +493,11 @@ class UserWorkSpaceIssues(BaseAPIView):
                     {"error": "Group by and sub group by cannot be same"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            
+
             if group_by:
                 return Response(
-                    group_results(issues, group_by, sub_group_by), status=status.HTTP_200_OK
+                    group_results(issues, group_by, sub_group_by),
+                    status=status.HTTP_200_OK,
                 )
 
             return Response(issues, status=status.HTTP_200_OK)
@@ -527,10 +560,14 @@ class IssueActivityEndpoint(BaseAPIView):
                     )
                 )
             )
-            issue_property_transactions = PropertyTransaction.objects.filter(entity_uuid=issue_id, entity="issue").select_related("actor")
+            issue_property_transactions = PropertyTransaction.objects.filter(
+                entity_uuid=issue_id, entity="issue"
+            ).select_related("actor")
             issue_activities = IssueActivitySerializer(issue_activities, many=True).data
             issue_comments = IssueCommentSerializer(issue_comments, many=True).data
-            issue_prop_transactions = PropertyTransactionSerializer(issue_property_transactions, many=True).data
+            issue_prop_transactions = PropertyTransactionSerializer(
+                issue_property_transactions, many=True
+            ).data
 
             result_list = sorted(
                 chain(issue_activities, issue_comments, issue_prop_transactions),
@@ -2153,6 +2190,8 @@ class IssueRelationViewSet(BaseViewSet):
             .select_related("issue")
             .distinct()
         )
+
+
 class IssueRetrievePublicEndpoint(BaseAPIView):
     permission_classes = [
         AllowAny,
@@ -2362,7 +2401,6 @@ class IssueDraftViewSet(BaseViewSet):
     serializer_class = IssueFlatSerializer
     model = Issue
 
-
     def perform_update(self, serializer):
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         current_instance = (
@@ -2381,7 +2419,6 @@ class IssueDraftViewSet(BaseViewSet):
             )
 
         return super().perform_update(serializer)
-    
 
     def perform_destroy(self, instance):
         current_instance = (
@@ -2401,7 +2438,6 @@ class IssueDraftViewSet(BaseViewSet):
                 ),
             )
         return super().perform_destroy(instance)
-
 
     def get_queryset(self):
         return (
@@ -2427,7 +2463,6 @@ class IssueDraftViewSet(BaseViewSet):
                 )
             )
         )
-
 
     @method_decorator(gzip_page)
     def list(self, request, slug, project_id):
@@ -2537,7 +2572,6 @@ class IssueDraftViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-
     def create(self, request, slug, project_id):
         try:
             project = Project.objects.get(pk=project_id)
@@ -2571,7 +2605,6 @@ class IssueDraftViewSet(BaseViewSet):
                 {"error": "Project was not found"}, status=status.HTTP_404_NOT_FOUND
             )
 
-
     def retrieve(self, request, slug, project_id, pk=None):
         try:
             issue = Issue.objects.get(
@@ -2582,4 +2615,3 @@ class IssueDraftViewSet(BaseViewSet):
             return Response(
                 {"error": "Issue Does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
-    
