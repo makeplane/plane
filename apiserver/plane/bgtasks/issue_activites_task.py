@@ -396,16 +396,16 @@ def track_assignees(
 def create_issue_activity(
     requested_data, current_instance, issue_id, project, actor, issue_activities
 ):
-    issue_activities.append(
-        IssueActivity(
-            issue_id=issue_id,
-            project=project,
-            workspace=project.workspace,
-            comment=f"created the issue",
-            verb="created",
-            actor=actor,
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                project=project,
+                workspace=project.workspace,
+                comment=f"created the issue",
+                verb="created",
+                actor=actor,
+            )
         )
-    )
 
 
 def track_estimate_points(
@@ -517,11 +517,6 @@ def update_issue_activity(
         "archived_at": track_archive_at,
         "closed_to": track_closed_to,
     }
-
-    requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
 
     for key in requested_data:
         func = ISSUE_ACTIVITY_MAPPER.get(key, None)
@@ -1053,6 +1048,25 @@ def create_issue_relation_activity(
     )
     if current_instance is None and requested_data.get("related_list") is not None:
         for issue_relation in requested_data.get("related_list"):
+            if issue_relation.get("relation_type") == "blocked_by":
+                relation_type = "blocking"
+            else:
+                relation_type = issue_relation.get("relation_type")
+            issue = Issue.objects.get(pk=issue_relation.get("issue"))
+            issue_activities.append(
+                IssueActivity(
+                    issue_id=issue_relation.get("related_issue"),
+                    actor=actor,
+                    verb="created",
+                    old_value="",
+                    new_value=f"{project.identifier}-{issue.sequence_id}",
+                    field=relation_type,
+                    project=project,
+                    workspace=project.workspace,
+                    comment=f'added {relation_type} relation',
+                    old_identifier=issue_relation.get("issue"),
+                )
+            )
             issue = Issue.objects.get(pk=issue_relation.get("related_issue"))
             issue_activities.append(
                 IssueActivity(
@@ -1065,7 +1079,7 @@ def create_issue_relation_activity(
                     project=project,
                     workspace=project.workspace,
                     comment=f'added {issue_relation.get("relation_type")} relation',
-                    old_identifier=issue_relation.get("issue"),
+                    old_identifier=issue_relation.get("related_issue"),
                 )
             )
 
@@ -1078,22 +1092,104 @@ def delete_issue_relation_activity(
         json.loads(current_instance) if current_instance is not None else None
     )
     if current_instance is not None and requested_data.get("related_list") is None:
-        issue = Issue.objects.get(pk=current_instance.get("issue"))
+            if current_instance.get("relation_type") == "blocked_by":
+                relation_type = "blocking"
+            else:
+                relation_type = current_instance.get("relation_type")
+            issue = Issue.objects.get(pk=current_instance.get("issue"))
+            issue_activities.append(
+                IssueActivity(
+                    issue_id=current_instance.get("related_issue"),
+                    actor=actor,
+                    verb="deleted",
+                    old_value="",
+                    new_value=f"{project.identifier}-{issue.sequence_id}",
+                    field=relation_type,
+                    project=project,
+                    workspace=project.workspace,
+                    comment=f'deleted {relation_type} relation',
+                    old_identifier=current_instance.get("issue"),
+                )
+            )
+            issue = Issue.objects.get(pk=current_instance.get("related_issue"))
+            issue_activities.append(
+                IssueActivity(
+                    issue_id=current_instance.get("issue"),
+                    actor=actor,
+                    verb="deleted",
+                    old_value="",
+                    new_value=f"{project.identifier}-{issue.sequence_id}",
+                    field=f'{current_instance.get("relation_type")}',
+                    project=project,
+                    workspace=project.workspace,
+                    comment=f'deleted {current_instance.get("relation_type")} relation',
+                    old_identifier=current_instance.get("related_issue"),
+                )
+            )
+
+
+def create_draft_issue_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
         issue_activities.append(
             IssueActivity(
-                issue_id=current_instance.get("issue"),
-                actor=actor,
-                verb="deleted",
-                old_value=f"{project.identifier}-{issue.sequence_id}",
-                new_value="",
-                field=f'{current_instance.get("relation_type")}',
+                issue_id=issue_id,
                 project=project,
                 workspace=project.workspace,
-                comment=f'deleted the {current_instance.get("relation_type")} relation',
-                old_identifier=current_instance.get("issue"),
+                comment=f"drafted the issue",
+                field="draft",
+                verb="created",
+                actor=actor,
             )
         )
 
+
+def update_draft_issue_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+        requested_data = json.loads(requested_data) if requested_data is not None else None
+        current_instance = (
+            json.loads(current_instance) if current_instance is not None else None
+        )
+        if requested_data.get("is_draft") is not None and requested_data.get("is_draft") == False:
+            issue_activities.append(
+                IssueActivity(
+                    issue_id=issue_id,
+                    project=project,
+                    workspace=project.workspace,
+                    comment=f"created the issue",
+                    verb="updated",
+                    actor=actor,
+                )
+            )
+        else:
+            issue_activities.append(
+                IssueActivity(
+                    issue_id=issue_id,
+                    project=project,
+                    workspace=project.workspace,
+                    comment=f"updated the draft issue",
+                    field="draft",
+                    verb="updated",
+                    actor=actor,
+                )
+            )
+
+
+
+def delete_draft_issue_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    issue_activities.append(
+        IssueActivity(
+            project=project,
+            workspace=project.workspace,
+            comment=f"deleted the draft issue",
+            field="draft",
+            verb="deleted",
+            actor=actor,
+        )
+    )
 
 # Receive message from room group
 @shared_task
@@ -1166,6 +1262,9 @@ def issue_activity(
             "comment_reaction.activity.deleted": delete_comment_reaction_activity,
             "issue_vote.activity.created": create_issue_vote_activity,
             "issue_vote.activity.deleted": delete_issue_vote_activity,
+            "issue_draft.activity.created": create_draft_issue_activity,
+            "issue_draft.activity.updated": update_draft_issue_activity,
+            "issue_draft.activity.deleted": delete_draft_issue_activity,
         }
 
         func = ACTIVITY_MAPPER.get(type)

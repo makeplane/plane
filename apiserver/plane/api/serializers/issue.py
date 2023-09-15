@@ -49,6 +49,7 @@ class IssueFlatSerializer(BaseSerializer):
             "target_date",
             "sequence_id",
             "sort_order",
+            "is_draft",
         ]
 
 
@@ -292,12 +293,12 @@ class IssueLabelSerializer(BaseSerializer):
 
 
 class IssueRelationSerializer(BaseSerializer):
-    related_issue_detail = IssueProjectLiteSerializer(read_only=True, source="related_issue")
+    issue_detail = IssueProjectLiteSerializer(read_only=True, source="related_issue")
 
     class Meta:
         model = IssueRelation
         fields = [
-            "related_issue_detail",
+            "issue_detail",
             "relation_type",
             "related_issue",
             "issue",

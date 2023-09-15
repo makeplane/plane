@@ -13,12 +13,12 @@ import { CustomMenu } from "components/ui";
 // icons
 import {
   ChevronDownIcon,
-  RectangleGroupIcon,
   XMarkIcon,
   PlusIcon,
   PencilIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
+import { Component, X } from "lucide-react";
 // types
 import { ICurrentUserResponse, IIssueLabels } from "types";
 // fetch-keys
@@ -76,20 +76,18 @@ export const SingleLabelGroup: React.FC<Props> = ({
   return (
     <Disclosure
       as="div"
-      className="rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-5 text-custom-text-100"
+      className="rounded border border-custom-border-200 bg-custom-background-100 px-3.5 py-3 text-custom-text-100"
       defaultOpen
     >
       {({ open }) => (
         <>
           <div className="flex cursor-pointer items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <span>
-                <RectangleGroupIcon className="h-4 w-4" />
-              </span>
+              <Component className="h-4 w-4 text-custom-text-100 flex-shrink-0" />
               <h6>{label.name}</h6>
             </div>
             <div className="flex items-center gap-2">
-              <CustomMenu ellipsis>
+              <CustomMenu ellipsis buttonClassName="!text-custom-sidebar-text-400">
                 <CustomMenu.MenuItem onClick={() => addLabelToGroup(label)}>
                   <span className="flex items-center justify-start gap-2">
                     <PlusIcon className="h-4 w-4" />
@@ -112,7 +110,9 @@ export const SingleLabelGroup: React.FC<Props> = ({
               <Disclosure.Button>
                 <span>
                   <ChevronDownIcon
-                    className={`h-4 w-4 text-custom-text-100 ${!open ? "rotate-90 transform" : ""}`}
+                    className={`h-4 w-4 text-custom-sidebar-text-400 ${
+                      !open ? "rotate-90 transform" : ""
+                    }`}
                   />
                 </span>
               </Disclosure.Button>
@@ -128,15 +128,15 @@ export const SingleLabelGroup: React.FC<Props> = ({
             leaveTo="transform opacity-0"
           >
             <Disclosure.Panel>
-              <div className="mt-3 ml-6 space-y-3">
+              <div className="mt-2.5 ml-6">
                 {labelChildren.map((child) => (
                   <div
                     key={child.id}
-                    className="group flex items-center justify-between rounded-md border border-custom-border-200 p-2 text-sm"
+                    className="group flex items-center justify-between border-b border-custom-border-200 px-4 py-2.5 text-sm last:border-0"
                   >
                     <h5 className="flex items-center gap-3">
                       <span
-                        className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
+                        className="h-3.5 w-3.5 flex-shrink-0 rounded-full"
                         style={{
                           backgroundColor:
                             child.color && child.color !== "" ? child.color : "#000000",
@@ -144,27 +144,38 @@ export const SingleLabelGroup: React.FC<Props> = ({
                       />
                       {child.name}
                     </h5>
-                    <div className="pointer-events-none opacity-0 group-hover:pointer-events-auto group-hover:opacity-100">
-                      <CustomMenu ellipsis>
-                        <CustomMenu.MenuItem onClick={() => removeFromGroup(child)}>
-                          <span className="flex items-center justify-start gap-2">
-                            <XMarkIcon className="h-4 w-4" />
-                            <span>Remove from group</span>
-                          </span>
-                        </CustomMenu.MenuItem>
-                        <CustomMenu.MenuItem onClick={() => editLabel(child)}>
-                          <span className="flex items-center justify-start gap-2">
-                            <PencilIcon className="h-4 w-4" />
-                            <span>Edit label</span>
-                          </span>
-                        </CustomMenu.MenuItem>
-                        <CustomMenu.MenuItem onClick={handleLabelDelete}>
-                          <span className="flex items-center justify-start gap-2">
-                            <TrashIcon className="h-4 w-4" />
-                            <span>Delete label</span>
-                          </span>
-                        </CustomMenu.MenuItem>
-                      </CustomMenu>
+                    <div className="flex items-center gap-3.5 pointer-events-none opacity-0 group-hover:pointer-events-auto group-hover:opacity-100">
+                      <div className="h-4 w-4">
+                        <CustomMenu
+                          customButton={
+                            <div className="h-4 w-4">
+                              <Component className="h-4 w-4 leading-4 text-custom-sidebar-text-400 flex-shrink-0" />
+                            </div>
+                          }
+                        >
+                          <CustomMenu.MenuItem onClick={() => removeFromGroup(child)}>
+                            <span className="flex items-center justify-start gap-2">
+                              <XMarkIcon className="h-4 w-4" />
+                              <span>Remove from group</span>
+                            </span>
+                          </CustomMenu.MenuItem>
+                          <CustomMenu.MenuItem onClick={() => editLabel(child)}>
+                            <span className="flex items-center justify-start gap-2">
+                              <PencilIcon className="h-4 w-4" />
+                              <span>Edit label</span>
+                            </span>
+                          </CustomMenu.MenuItem>
+                        </CustomMenu>
+                      </div>
+
+                      <div className="flex items-center">
+                        <button
+                          className="flex items-center justify-start gap-2"
+                          onClick={handleLabelDelete}
+                        >
+                          <X className="h-[18px] w-[18px] text-custom-sidebar-text-400 flex-shrink-0" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
