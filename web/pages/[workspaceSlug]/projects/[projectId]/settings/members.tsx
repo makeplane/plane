@@ -390,7 +390,7 @@ const MembersSettings: NextPage = () => {
                           )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 text-xs">
+                      <div className="flex items-center gap-3 text-xs">
                         {!member.member && (
                           <div className="mr-2 flex items-center justify-center rounded-full bg-yellow-500/20 px-2 py-1 text-center text-xs text-yellow-500">
                             Pending
