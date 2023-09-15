@@ -8,6 +8,8 @@ import useSWR from "swr";
 import projectService from "services/project.service";
 // ui
 import { Avatar, CustomSearchSelect } from "components/ui";
+// icon
+import { Ban } from "lucide-react";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -49,7 +51,10 @@ export const MemberSelect: React.FC<Props> = ({ value, onChange }) => {
           {selectedOption ? (
             selectedOption?.display_name
           ) : (
-            <span className="text-sm py-0.5 text-custom-sidebar-text-400">Select</span>
+            <div className="flex items-center gap-2">
+              <Ban className="h-3.5 w-3.5 text-custom-sidebar-text-400 rotate-90" />
+              <span className="text-sm py-0.5 text-custom-sidebar-text-400">None</span>
+            </div>
           )}
         </div>
       }
@@ -61,7 +66,12 @@ export const MemberSelect: React.FC<Props> = ({ value, onChange }) => {
           {
             value: "none",
             query: "none",
-            content: <div className="flex items-center gap-2">None</div>,
+            content: (
+              <div className="flex items-center gap-2">
+                <Ban className="h-3.5 w-3.5 text-custom-sidebar-text-400 rotate-90" />
+                <span className="text-sm py-0.5 text-custom-sidebar-text-400">None</span>
+              </div>
+            ),
           },
         ]
       }

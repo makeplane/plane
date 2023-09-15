@@ -44,7 +44,7 @@ const WorkspaceIntegrations: NextPage = () => {
             link={`/${workspaceSlug}`}
             linkTruncate
           />
-          <BreadcrumbItem title="Integrations" unshrinkTitle />
+          <BreadcrumbItem title="Integrations Settings" unshrinkTitle />
         </Breadcrumbs>
       }
     >
@@ -60,7 +60,7 @@ const WorkspaceIntegrations: NextPage = () => {
                 <SingleIntegrationCard key={integration.id} integration={integration} />
               ))
             ) : (
-              <Loader className="space-y-1">
+              <Loader className="space-y-2.5 mt-4">
                 <Loader.Item height="89px" />
                 <Loader.Item height="89px" />
               </Loader>
