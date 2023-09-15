@@ -190,12 +190,12 @@ const GeneralSettings: NextPage = () => {
         onClose={() => setSelectedProject(null)}
         user={user}
       />
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-row gap-2">
-          <div className="w-80 py-8">
-            <SettingsSidebar />
-          </div>
-          <div className={`pr-9 py-8 w-full ${isAdmin ? "" : "opacity-60"}`}>
+      <div className="flex flex-row gap-2 h-full">
+        <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
+          <SettingsSidebar />
+        </div>
+        <div className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="relative h-44 w-full mt-6">
               <img
                 src={watch("cover_image")!}
@@ -442,9 +442,9 @@ const GeneralSettings: NextPage = () => {
                 )}
               </Disclosure>
             )}
-          </div>
+          </form>
         </div>
-      </form>
+      </div>
     </ProjectAuthorizationWrapper>
   );
 };

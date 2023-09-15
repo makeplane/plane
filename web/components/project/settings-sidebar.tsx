@@ -2,11 +2,7 @@ import React from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
-type Props = {
-  profilePage?: boolean;
-};
-
-export const SettingsSidebar: React.FC<Props> = ({ profilePage = false }) => {
+export const SettingsSidebar = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 

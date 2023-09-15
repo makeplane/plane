@@ -48,11 +48,11 @@ const WorkspaceIntegrations: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      <div className="flex flex-row gap-2">
-        <div className="w-80 py-8">
+      <div className="flex flex-row gap-2 h-full">
+        <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
           <SettingsSidebar />
         </div>
-        <section className="pr-9 py-8 w-full">
+        <section className="pr-9 py-8 w-full overflow-y-auto">
           <IntegrationAndImportExportBanner bannerName="Integrations" />
           <div>
             {appIntegrations ? (
