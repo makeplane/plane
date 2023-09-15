@@ -16,3 +16,6 @@ export * from "./sub-issues-list";
 export * from "./label";
 export * from "./issue-reaction";
 export * from "./peek-overview";
+export * from "./confirm-issue-discard";
+export * from "./draft-issue-form";
+export * from "./draft-issue-modal";

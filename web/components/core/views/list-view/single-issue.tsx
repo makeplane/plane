@@ -61,6 +61,7 @@ type Props = {
   makeIssueCopy: () => void;
   removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
+  handleDraftIssueSelect?: (issue: IIssue) => void;
   handleMyIssueOpen?: (issue: IIssue) => void;
   disableUserActions: boolean;
   user: ICurrentUserResponse | undefined;
@@ -82,6 +83,7 @@ export const SingleListIssue: React.FC<Props> = ({
   user,
   userAuth,
   viewProps,
+  handleDraftIssueSelect,
 }) => {
   // context menu
   const [contextMenu, setContextMenu] = useState(false);
@@ -90,6 +92,7 @@ export const SingleListIssue: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, userId } = router.query;
   const isArchivedIssues = router.pathname.includes("archived-issues");
+  const isDraftIssues = router.pathname?.split("/")?.[4] === "draft-issues";
 
   const { setToastAlert } = useToast();
 
@@ -178,6 +181,8 @@ export const SingleListIssue: React.FC<Props> = ({
 
   const issuePath = isArchivedIssues
     ? `/${workspaceSlug}/projects/${issue.project}/archived-issues/${issue.id}`
+    : isDraftIssues
+    ? `#`
     : `/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`;
 
   const openPeekOverview = (issue: IIssue) => {
@@ -247,7 +252,11 @@ export const SingleListIssue: React.FC<Props> = ({
               <button
                 type="button"
                 className="truncate text-[0.825rem] text-custom-text-100"
-                onClick={() => openPeekOverview(issue)}
+                onClick={() => {
+                  if (!isDraftIssues) openPeekOverview(issue);
+
+                  if (handleDraftIssueSelect) handleDraftIssueSelect(issue);
+                }}
               >
                 {issue.name}
               </button>

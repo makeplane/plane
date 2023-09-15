@@ -14,9 +14,6 @@ import type {
 
 import { API_BASE_URL } from "helpers/common.helper";
 
-const trackEvent =
-  process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
-
 export class UserService extends APIService {
   constructor() {
     super(API_BASE_URL);
@@ -68,13 +65,12 @@ export class UserService extends APIService {
       is_onboarded: true,
     })
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackUserOnboardingCompleteEvent(
-            {
-              user_role: userRole ?? "None",
-            },
-            user
-          );
+        trackEventServices.trackUserOnboardingCompleteEvent(
+          {
+            user_role: userRole ?? "None",
+          },
+          user
+        );
         return response?.data;
       })
       .catch((error) => {
@@ -87,13 +83,7 @@ export class UserService extends APIService {
       is_tour_completed: true,
     })
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackUserTourCompleteEvent(
-            {
-              user_role: user.role ?? "None",
-            },
-            user
-          );
+        trackEventServices.trackUserTourCompleteEvent({ user_role: user.role ?? "None" }, user);
         return response?.data;
       })
       .catch((error) => {

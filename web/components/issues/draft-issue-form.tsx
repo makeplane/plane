@@ -8,7 +8,6 @@ import { Controller, useForm } from "react-hook-form";
 import aiService from "services/ai.service";
 // hooks
 import useToast from "hooks/use-toast";
-import useLocalStorage from "hooks/use-local-storage";
 // components
 import { GptAssistantModal } from "components/core";
 import { ParentIssuesListModal } from "components/issues";
@@ -55,19 +54,17 @@ const defaultValues: Partial<IIssue> = {
   target_date: null,
 };
 
-export interface IssueFormProps {
-  handleFormSubmit: (values: Partial<IIssue>) => Promise<void>;
-  initialData?: Partial<IIssue>;
+interface IssueFormProps {
+  handleFormSubmit: (formData: Partial<IIssue>) => Promise<void>;
+  data?: Partial<IIssue> | null;
+  prePopulatedData?: Partial<IIssue> | null;
   projectId: string;
   setActiveProject: React.Dispatch<React.SetStateAction<string | null>>;
   createMore: boolean;
   setCreateMore: React.Dispatch<React.SetStateAction<boolean>>;
   handleClose: () => void;
-  handleDiscardClose: () => void;
   status: boolean;
   user: ICurrentUserResponse | undefined;
-  setIsConfirmDiscardOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  handleFormDirty: (payload: Partial<IIssue> | null) => void;
   fieldsToShow: (
     | "project"
     | "name"
@@ -84,19 +81,19 @@ export interface IssueFormProps {
   )[];
 }
 
-export const IssueForm: FC<IssueFormProps> = (props) => {
+export const DraftIssueForm: FC<IssueFormProps> = (props) => {
   const {
     handleFormSubmit,
-    initialData,
+    data,
+    prePopulatedData,
     projectId,
     setActiveProject,
     createMore,
     setCreateMore,
-    handleDiscardClose,
+    handleClose,
     status,
     user,
     fieldsToShow,
-    handleFormDirty,
   } = props;
 
   const [stateModal, setStateModal] = useState(false);
@@ -107,8 +104,6 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
 
-  const { setValue: setValueInLocalStorage } = useLocalStorage<any>("draftedIssue", null);
-
   const editorRef = useRef<any>(null);
 
   const router = useRouter();
@@ -118,7 +113,7 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
 
   const {
     register,
-    formState: { errors, isSubmitting, isDirty },
+    formState: { errors, isSubmitting },
     handleSubmit,
     reset,
     watch,
@@ -127,25 +122,24 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
     setValue,
     setFocus,
   } = useForm<IIssue>({
-    defaultValues: initialData ?? defaultValues,
+    defaultValues: prePopulatedData ?? defaultValues,
     reValidateMode: "onChange",
   });
 
   const issueName = watch("name");
 
-  const payload = {
-    name: getValues("name"),
-    description: getValues("description"),
+  const onClose = () => {
+    handleClose();
   };
 
-  useEffect(() => {
-    if (isDirty) handleFormDirty(payload);
-    else handleFormDirty(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(payload), isDirty]);
-
-  const handleCreateUpdateIssue = async (formData: Partial<IIssue>) => {
-    await handleFormSubmit(formData);
+  const handleCreateUpdateIssue = async (
+    formData: Partial<IIssue>,
+    action: "saveDraft" | "createToNewIssue" = "saveDraft"
+  ) => {
+    await handleFormSubmit({
+      ...formData,
+      is_draft: action === "saveDraft",
+    });
 
     setGptAssistantModal(false);
 
@@ -224,9 +218,10 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
 
     reset({
       ...defaultValues,
-      ...initialData,
+      ...(prePopulatedData ?? {}),
+      ...(data ?? {}),
     });
-  }, [setFocus, initialData, reset]);
+  }, [setFocus, prePopulatedData, reset, data]);
 
   // update projectId in form when projectId changes
   useEffect(() => {
@@ -267,7 +262,9 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
           />
         </>
       )}
-      <form onSubmit={handleSubmit(handleCreateUpdateIssue)}>
+      <form
+        onSubmit={handleSubmit((formData) => handleCreateUpdateIssue(formData, "createToNewIssue"))}
+      >
         <div className="space-y-5">
           <div className="flex items-center gap-x-2">
             {(fieldsToShow.includes("all") || fieldsToShow.includes("project")) && (
@@ -563,24 +560,18 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
             <ToggleSwitch value={createMore} onChange={() => {}} size="md" />
           </div>
           <div className="flex items-center gap-2">
+            <SecondaryButton onClick={onClose}>Discard</SecondaryButton>
             <SecondaryButton
-              onClick={() => {
-                const data = JSON.stringify(getValues());
-                setValueInLocalStorage(data);
-                handleDiscardClose();
-              }}
+              loading={isSubmitting}
+              onClick={handleSubmit((formData) => handleCreateUpdateIssue(formData, "saveDraft"))}
             >
-              Discard
+              {isSubmitting ? "Saving..." : "Save Draft"}
             </SecondaryButton>
-            <PrimaryButton type="submit" loading={isSubmitting}>
-              {status
-                ? isSubmitting
-                  ? "Updating Issue..."
-                  : "Update Issue"
-                : isSubmitting
-                ? "Adding Issue..."
-                : "Add Issue"}
-            </PrimaryButton>
+            {data && (
+              <PrimaryButton type="submit" loading={isSubmitting}>
+                {isSubmitting ? "Saving..." : "Add Issue"}
+              </PrimaryButton>
+            )}
           </div>
         </div>
       </form>

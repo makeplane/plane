@@ -12,9 +12,6 @@ import type {
 } from "types";
 import { API_BASE_URL } from "helpers/common.helper";
 
-const trackEvent =
-  process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
-
 export class ProjectIssuesServices extends APIService {
   constructor() {
     super(API_BASE_URL);
@@ -28,7 +25,7 @@ export class ProjectIssuesServices extends APIService {
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`, data)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackIssueEvent(response.data, "ISSUE_CREATE", user);
+        trackEventServices.trackIssueEvent(response.data, "ISSUE_CREATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -112,20 +109,19 @@ export class ProjectIssuesServices extends APIService {
       data
     )
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackIssueMovedToCycleOrModuleEvent(
-            {
-              workspaceSlug,
-              workspaceName: response?.data?.[0]?.issue_detail?.workspace_detail?.name,
-              projectId,
-              projectIdentifier: response?.data?.[0]?.issue_detail?.project_detail?.identifier,
-              projectName: response?.data?.[0]?.issue_detail?.project_detail?.name,
-              issueId: response?.data?.[0]?.issue_detail?.id,
-              cycleId,
-            },
-            response.data.length > 1 ? "ISSUE_MOVED_TO_CYCLE_IN_BULK" : "ISSUE_MOVED_TO_CYCLE",
-            user
-          );
+        trackEventServices.trackIssueMovedToCycleOrModuleEvent(
+          {
+            workspaceSlug,
+            workspaceName: response?.data?.[0]?.issue_detail?.workspace_detail?.name,
+            projectId,
+            projectIdentifier: response?.data?.[0]?.issue_detail?.project_detail?.identifier,
+            projectName: response?.data?.[0]?.issue_detail?.project_detail?.name,
+            issueId: response?.data?.[0]?.issue_detail?.id,
+            cycleId,
+          },
+          response.data.length > 1 ? "ISSUE_MOVED_TO_CYCLE_IN_BULK" : "ISSUE_MOVED_TO_CYCLE",
+          user
+        );
         return response?.data;
       })
       .catch((error) => {
@@ -165,8 +161,7 @@ export class ProjectIssuesServices extends APIService {
       data
     )
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackIssueRelationEvent(response.data, "ISSUE_RELATION_CREATE", user);
+        trackEventServices.trackIssueRelationEvent(response.data, "ISSUE_RELATION_CREATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -185,8 +180,7 @@ export class ProjectIssuesServices extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-relation/${relationId}/`
     )
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackIssueRelationEvent(response.data, "ISSUE_RELATION_DELETE", user);
+        trackEventServices.trackIssueRelationEvent(response.data, "ISSUE_RELATION_DELETE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -234,8 +228,7 @@ export class ProjectIssuesServices extends APIService {
       data
     )
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackIssueCommentEvent(response.data, "ISSUE_COMMENT_CREATE", user);
+        trackEventServices.trackIssueCommentEvent(response.data, "ISSUE_COMMENT_CREATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -256,8 +249,7 @@ export class ProjectIssuesServices extends APIService {
       data
     )
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackIssueCommentEvent(response.data, "ISSUE_COMMENT_UPDATE", user);
+        trackEventServices.trackIssueCommentEvent(response.data, "ISSUE_COMMENT_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -276,15 +268,14 @@ export class ProjectIssuesServices extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/comments/${commentId}/`
     )
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackIssueCommentEvent(
-            {
-              issueId,
-              commentId,
-            },
-            "ISSUE_COMMENT_DELETE",
-            user
-          );
+        trackEventServices.trackIssueCommentEvent(
+          {
+            issueId,
+            commentId,
+          },
+          "ISSUE_COMMENT_DELETE",
+          user
+        );
         return response?.data;
       })
       .catch((error) => {
@@ -316,21 +307,20 @@ export class ProjectIssuesServices extends APIService {
   ): Promise<IIssueLabels> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/`, data)
       .then((response: { data: IIssueLabels; [key: string]: any }) => {
-        if (trackEvent)
-          trackEventServices.trackIssueLabelEvent(
-            {
-              workSpaceId: response?.data?.workspace_detail?.id,
-              workSpaceName: response?.data?.workspace_detail?.name,
-              workspaceSlug,
-              projectId,
-              projectIdentifier: response?.data?.project_detail?.identifier,
-              projectName: response?.data?.project_detail?.name,
-              labelId: response?.data?.id,
-              color: response?.data?.color,
-            },
-            "ISSUE_LABEL_CREATE",
-            user
-          );
+        trackEventServices.trackIssueLabelEvent(
+          {
+            workSpaceId: response?.data?.workspace_detail?.id,
+            workSpaceName: response?.data?.workspace_detail?.name,
+            workspaceSlug,
+            projectId,
+            projectIdentifier: response?.data?.project_detail?.identifier,
+            projectName: response?.data?.project_detail?.name,
+            labelId: response?.data?.id,
+            color: response?.data?.color,
+          },
+          "ISSUE_LABEL_CREATE",
+          user
+        );
         return response?.data;
       })
       .catch((error) => {
@@ -350,21 +340,20 @@ export class ProjectIssuesServices extends APIService {
       data
     )
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackIssueLabelEvent(
-            {
-              workSpaceId: response?.data?.workspace_detail?.id,
-              workSpaceName: response?.data?.workspace_detail?.name,
-              workspaceSlug,
-              projectId,
-              projectIdentifier: response?.data?.project_detail?.identifier,
-              projectName: response?.data?.project_detail?.name,
-              labelId: response?.data?.id,
-              color: response?.data?.color,
-            },
-            "ISSUE_LABEL_UPDATE",
-            user
-          );
+        trackEventServices.trackIssueLabelEvent(
+          {
+            workSpaceId: response?.data?.workspace_detail?.id,
+            workSpaceName: response?.data?.workspace_detail?.name,
+            workspaceSlug,
+            projectId,
+            projectIdentifier: response?.data?.project_detail?.identifier,
+            projectName: response?.data?.project_detail?.name,
+            labelId: response?.data?.id,
+            color: response?.data?.color,
+          },
+          "ISSUE_LABEL_UPDATE",
+          user
+        );
         return response?.data;
       })
       .catch((error) => {
@@ -382,15 +371,14 @@ export class ProjectIssuesServices extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/${labelId}/`
     )
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackIssueLabelEvent(
-            {
-              workspaceSlug,
-              projectId,
-            },
-            "ISSUE_LABEL_DELETE",
-            user
-          );
+        trackEventServices.trackIssueLabelEvent(
+          {
+            workspaceSlug,
+            projectId,
+          },
+          "ISSUE_LABEL_DELETE",
+          user
+        );
         return response?.data;
       })
       .catch((error) => {
@@ -410,7 +398,7 @@ export class ProjectIssuesServices extends APIService {
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackIssueEvent(response.data, "ISSUE_UPDATE", user);
+        trackEventServices.trackIssueEvent(response.data, "ISSUE_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -426,7 +414,7 @@ export class ProjectIssuesServices extends APIService {
   ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issuesId}/`)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackIssueEvent({ issuesId }, "ISSUE_DELETE", user);
+        trackEventServices.trackIssueEvent({ issuesId }, "ISSUE_DELETE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -445,7 +433,7 @@ export class ProjectIssuesServices extends APIService {
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackIssueBulkDeleteEvent(data, user);
+        trackEventServices.trackIssueBulkDeleteEvent(data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -629,6 +617,68 @@ export class ProjectIssuesServices extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async getDraftIssues(workspaceSlug: string, projectId: string, params?: any): Promise<any> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/`, {
+      params,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async createDraftIssue(
+    workspaceSlug: string,
+    projectId: string,
+    data: any,
+    user: ICurrentUserResponse
+  ): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async updateDraftIssue(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: any,
+    user: ICurrentUserResponse
+  ): Promise<any> {
+    return this.patch(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/${issueId}/`,
+      data
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async deleteDraftIssue(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/${issueId}/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async getDraftIssueById(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/${issueId}/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
 }
 
-export default new ProjectIssuesServices();
+const projectIssuesServices = new ProjectIssuesServices();
+
+export default projectIssuesServices;

@@ -396,16 +396,16 @@ def track_assignees(
 def create_issue_activity(
     requested_data, current_instance, issue_id, project, actor, issue_activities
 ):
-    issue_activities.append(
-        IssueActivity(
-            issue_id=issue_id,
-            project=project,
-            workspace=project.workspace,
-            comment=f"created the issue",
-            verb="created",
-            actor=actor,
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                project=project,
+                workspace=project.workspace,
+                comment=f"created the issue",
+                verb="created",
+                actor=actor,
+            )
         )
-    )
 
 
 def track_estimate_points(
@@ -517,11 +517,6 @@ def update_issue_activity(
         "archived_at": track_archive_at,
         "closed_to": track_closed_to,
     }
-
-    requested_data = json.loads(requested_data) if requested_data is not None else None
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
 
     for key in requested_data:
         func = ISSUE_ACTIVITY_MAPPER.get(key, None)
@@ -1095,6 +1090,69 @@ def delete_issue_relation_activity(
         )
 
 
+def create_draft_issue_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                project=project,
+                workspace=project.workspace,
+                comment=f"drafted the issue",
+                field="draft",
+                verb="created",
+                actor=actor,
+            )
+        )
+
+
+def update_draft_issue_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+        requested_data = json.loads(requested_data) if requested_data is not None else None
+        current_instance = (
+            json.loads(current_instance) if current_instance is not None else None
+        )
+        if requested_data.get("is_draft") is not None and requested_data.get("is_draft") == False:
+            issue_activities.append(
+                IssueActivity(
+                    issue_id=issue_id,
+                    project=project,
+                    workspace=project.workspace,
+                    comment=f"created the issue",
+                    verb="updated",
+                    actor=actor,
+                )
+            )
+        else:
+            issue_activities.append(
+                IssueActivity(
+                    issue_id=issue_id,
+                    project=project,
+                    workspace=project.workspace,
+                    comment=f"updated the draft issue",
+                    field="draft",
+                    verb="updated",
+                    actor=actor,
+                )
+            )
+
+
+
+def delete_draft_issue_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    issue_activities.append(
+        IssueActivity(
+            project=project,
+            workspace=project.workspace,
+            comment=f"deleted the draft issue",
+            field="draft",
+            verb="deleted",
+            actor=actor,
+        )
+    )
+
 # Receive message from room group
 @shared_task
 def issue_activity(
@@ -1166,6 +1224,9 @@ def issue_activity(
             "comment_reaction.activity.deleted": delete_comment_reaction_activity,
             "issue_vote.activity.created": create_issue_vote_activity,
             "issue_vote.activity.deleted": delete_issue_vote_activity,
+            "issue_draft.activity.created": create_draft_issue_activity,
+            "issue_draft.activity.updated": update_draft_issue_activity,
+            "issue_draft.activity.deleted": delete_draft_issue_activity,
         }
 
         func = ACTIVITY_MAPPER.get(type)

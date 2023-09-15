@@ -19,7 +19,12 @@ import useIssuesProperties from "hooks/use-issue-properties";
 import useProjectMembers from "hooks/use-project-members";
 // components
 import { FiltersList, AllViews } from "components/core";
-import { CreateUpdateIssueModal, DeleteIssueModal, IssuePeekOverview } from "components/issues";
+import {
+  CreateUpdateIssueModal,
+  DeleteIssueModal,
+  IssuePeekOverview,
+  CreateUpdateDraftIssueModal,
+} from "components/issues";
 import { CreateUpdateViewModal } from "components/views";
 // ui
 import { PrimaryButton, SecondaryButton } from "components/ui";
@@ -70,6 +75,9 @@ export const IssuesView: React.FC<Props> = ({
   // trash box
   const [trashBox, setTrashBox] = useState(false);
 
+  // selected draft issue
+  const [selectedDraftIssue, setSelectedDraftIssue] = useState<IIssue | null>(null);
+
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
@@ -105,6 +113,8 @@ export const IssuesView: React.FC<Props> = ({
     },
     [setDeleteIssueModal, setIssueToDelete]
   );
+
+  const handleDraftIssueClick = (issue: any) => setSelectedDraftIssue(issue);
 
   const handleOnDragEnd = useCallback(
     async (result: DropResult) => {
@@ -335,10 +345,11 @@ export const IssuesView: React.FC<Props> = ({
   );
 
   const handleIssueAction = useCallback(
-    (issue: IIssue, action: "copy" | "edit" | "delete") => {
+    (issue: IIssue, action: "copy" | "edit" | "delete" | "updateDraft") => {
       if (action === "copy") makeIssueCopy(issue);
       else if (action === "edit") handleEditIssue(issue);
       else if (action === "delete") handleDeleteIssue(issue);
+      else if (action === "updateDraft") handleDraftIssueClick(issue);
     },
     [makeIssueCopy, handleEditIssue, handleDeleteIssue]
   );
@@ -450,6 +461,27 @@ export const IssuesView: React.FC<Props> = ({
         prePopulateData={{
           ...preloadedData,
         }}
+      />
+      <CreateUpdateDraftIssueModal
+        isOpen={selectedDraftIssue !== null}
+        handleClose={() => setSelectedDraftIssue(null)}
+        data={
+          selectedDraftIssue
+            ? {
+                ...selectedDraftIssue,
+                is_draft: true,
+              }
+            : null
+        }
+        fieldsToShow={[
+          "name",
+          "description",
+          "label",
+          "assignee",
+          "priority",
+          "dueDate",
+          "priority",
+        ]}
       />
       <CreateUpdateIssueModal
         isOpen={editIssueModal && issueToEdit?.actionType !== "delete"}
