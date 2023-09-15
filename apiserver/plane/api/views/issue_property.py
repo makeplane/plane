@@ -31,7 +31,7 @@ from plane.db.models import (
     PropertyTransaction,
 )
 from plane.api.permissions import WorkSpaceAdminPermission, ProjectEntityPermission
-
+from plane.utils.validators import validators
 
 def is_valid_uuid(uuid_string):
     try:
@@ -197,16 +197,20 @@ class PropertyValueViewSet(BaseViewSet):
                             requested_prop_values, prop_values
                         ):
                             # Only do a lazy create -> only create if values are new
+                            to_value_hash = hashlib.sha256(
+                                requested_prop_value.encode("utf-8")
+                            ).hexdigest()
                             if (
-                                hashlib.sha256(
-                                    requested_prop_value.encode("utf-8")
-                                ).hexdigest()
+                                to_value_hash
                                 != prop_value.value_hash
                             ):
+                                # Validation
+                                res, message = validators(property, requested_prop_value)
+
+                                if not res:
+                                    return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
                                 transaction_id = uuid.uuid4()
-                                to_value_hash = hashlib.sha256(
-                                    requested_prop_value.encode("utf-8")
-                                ).hexdigest()
                                 bulk_transactions.append(
                                     PropertyTransaction(
                                         id=transaction_id,
@@ -240,6 +244,11 @@ class PropertyValueViewSet(BaseViewSet):
                             or property.type == "select"
                         ):
                             for requested_prop_value in requested_prop_values:
+                                # Validation
+                                res, message = validators(property, requested_prop_value)
+                                if not res:
+                                    return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
                                 transaction_id = uuid.uuid4()
                                 to_value_hash = hashlib.sha256(
                                     requested_prop_value.encode("utf-8")
@@ -329,6 +338,11 @@ class PropertyValueViewSet(BaseViewSet):
                         ).hexdigest()
 
                         if to_value_hash != prop_value.value_hash:
+                            # Validators
+                            res, message = validators(property, requested_prop_values)
+                            if not res:
+                                return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
                             bulk_transactions.append(
                                 PropertyTransaction(
                                     id=transaction_id,
@@ -361,6 +375,11 @@ class PropertyValueViewSet(BaseViewSet):
                             or property.type == "multi_select"
                             or property.type == "select"
                         ):
+                            # Validators
+                            res, message = validators(property, requested_prop_values)
+                            if not res:
+                                return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
                             transaction_id = uuid.uuid4()
                             to_value_hash = hashlib.sha256(
                                 requested_prop_values.encode("utf-8")
@@ -397,6 +416,11 @@ class PropertyValueViewSet(BaseViewSet):
                                 )
                             )
                         else:
+                            # Validators
+                            res, message = validators(property, requested_prop_values)
+                            if not res:
+                                return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
                             transaction_id = uuid.uuid4()
                             to_value_hash = hashlib.sha256(
                                 requested_prop_values.encode("utf-8")

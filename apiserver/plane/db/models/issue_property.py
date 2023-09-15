@@ -36,7 +36,7 @@ class Property(BaseModel):
             ("select", "select"),
             ("multi_select", "multi_select"),
             ("relation", "relation"),
-            ("files", "files"),
+            ("file", "file"),
             ("email", "email"),
             ("url", "url"),
             ("datetime", "datetime"),
