@@ -33,6 +33,7 @@ from plane.db.models import (
 from plane.api.permissions import WorkSpaceAdminPermission, ProjectEntityPermission
 from plane.utils.validators import validators
 
+
 def is_valid_uuid(uuid_string):
     try:
         uuid_obj = uuid.UUID(uuid_string)
@@ -183,6 +184,7 @@ class PropertyValueViewSet(BaseViewSet):
             for property in properties:
                 # Get the requested values for the property
                 requested_prop_values = request_data.get(str(property.id))
+
                 # For multi values -> multiple property values will be created
                 if property.is_multi and isinstance(requested_prop_values, list):
                     prop_values = [
@@ -200,15 +202,16 @@ class PropertyValueViewSet(BaseViewSet):
                             to_value_hash = hashlib.sha256(
                                 requested_prop_value.encode("utf-8")
                             ).hexdigest()
-                            if (
-                                to_value_hash
-                                != prop_value.value_hash
-                            ):
+                            if to_value_hash != prop_value.value_hash:
                                 # Validation
-                                res, message = validators(property, requested_prop_value)
+                                res, message = validators(
+                                    property, requested_prop_value
+                                )
 
                                 if not res:
-                                    return Response(message, status=status.HTTP_400_BAD_REQUEST)
+                                    return Response(
+                                        message, status=status.HTTP_400_BAD_REQUEST
+                                    )
 
                                 transaction_id = uuid.uuid4()
                                 bulk_transactions.append(
@@ -245,9 +248,13 @@ class PropertyValueViewSet(BaseViewSet):
                         ):
                             for requested_prop_value in requested_prop_values:
                                 # Validation
-                                res, message = validators(property, requested_prop_value)
+                                res, message = validators(
+                                    property, requested_prop_value
+                                )
                                 if not res:
-                                    return Response(message, status=status.HTTP_400_BAD_REQUEST)
+                                    return Response(
+                                        message, status=status.HTTP_400_BAD_REQUEST
+                                    )
 
                                 transaction_id = uuid.uuid4()
                                 to_value_hash = hashlib.sha256(
@@ -331,131 +338,138 @@ class PropertyValueViewSet(BaseViewSet):
                     # Already existing
                     if prop_values:
                         # Only do a lazy create -> only create if values are new
-                        prop_value = prop_values[0]
-                        transaction_id = uuid.uuid4()
-                        to_value_hash = hashlib.sha256(
-                            requested_prop_values.encode("utf-8")
-                        ).hexdigest()
+                        for requested_prop_value in requested_prop_values:
+                            prop_value = prop_values[0]
+                            transaction_id = uuid.uuid4()
+                            to_value_hash = hashlib.sha256(
+                                requested_prop_value.encode("utf-8")
+                            ).hexdigest()
 
-                        if to_value_hash != prop_value.value_hash:
-                            # Validators
-                            res, message = validators(property, requested_prop_values)
-                            if not res:
-                                return Response(message, status=status.HTTP_400_BAD_REQUEST)
-
-                            bulk_transactions.append(
-                                PropertyTransaction(
-                                    id=transaction_id,
-                                    workspace_id=workspace_id,
-                                    project_id=project_id,
-                                    property=property,
-                                    from_value=prop_value.value,
-                                    to_value=requested_prop_values,
-                                    from_value_hash=prop_value.value_hash,
-                                    to_value_hash=to_value_hash,
-                                    entity=entity,
-                                    entity_uuid=entity_uuid,
-                                    s_epoch=(
-                                        datetime.datetime.timestamp(timezone.now())
-                                        * 1000
-                                    ),
-                                    a_epoch=a_epoch,
-                                    actor=request.user,
+                            if to_value_hash != prop_value.value_hash:
+                                # Validators
+                                res, message = validators(
+                                    property, requested_prop_value
                                 )
-                            )
-                            prop_value.value = requested_prop_values
-                            prop_value.transaction_id = transaction_id
-                            prop_value.value_hash = to_value_hash
-                            bulk_prop_values_update.append(prop_value)
+                                if not res:
+                                    return Response(
+                                        message, status=status.HTTP_400_BAD_REQUEST
+                                    )
+
+                                bulk_transactions.append(
+                                    PropertyTransaction(
+                                        id=transaction_id,
+                                        workspace_id=workspace_id,
+                                        project_id=project_id,
+                                        property=property,
+                                        from_value=prop_value.value,
+                                        to_value=requested_prop_value,
+                                        from_value_hash=prop_value.value_hash,
+                                        to_value_hash=to_value_hash,
+                                        entity=entity,
+                                        entity_uuid=entity_uuid,
+                                        s_epoch=(
+                                            datetime.datetime.timestamp(timezone.now())
+                                            * 1000
+                                        ),
+                                        a_epoch=a_epoch,
+                                        actor=request.user,
+                                    )
+                                )
+                                prop_value.value = requested_prop_value
+                                prop_value.transaction_id = transaction_id
+                                prop_value.value_hash = to_value_hash
+                                bulk_prop_values_update.append(prop_value)
                     # Non existent
                     else:
                         # Only for relation, multi select and select we will storing uuids
-                        if (
-                            property.type == "relation"
-                            or property.type == "multi_select"
-                            or property.type == "select"
-                        ):
+                        if property.type == "relation" or property.type == "select":
                             # Validators
-                            res, message = validators(property, requested_prop_values)
-                            if not res:
-                                return Response(message, status=status.HTTP_400_BAD_REQUEST)
+                            for requested_prop_value in requested_prop_values:
+                                res, message = validators(property, requested_prop_value)
+                                if not res:
+                                    return Response(
+                                        message, status=status.HTTP_400_BAD_REQUEST
+                                    )
 
-                            transaction_id = uuid.uuid4()
-                            to_value_hash = hashlib.sha256(
-                                requested_prop_values.encode("utf-8")
-                            ).hexdigest()
-                            bulk_transactions.append(
-                                PropertyTransaction(
-                                    id=transaction_id,
-                                    workspace_id=workspace_id,
-                                    project_id=project_id,
-                                    property=property,
-                                    to_value=requested_prop_values,
-                                    to_value_hash=to_value_hash,
-                                    entity=entity,
-                                    entity_uuid=entity_uuid,
-                                    s_epoch=(
-                                        datetime.datetime.timestamp(timezone.now())
-                                        * 1000
-                                    ),
-                                    a_epoch=a_epoch,
-                                    actor=request.user,
+                                transaction_id = uuid.uuid4()
+                                to_value_hash = hashlib.sha256(
+                                    requested_prop_value.encode("utf-8")
+                                ).hexdigest()
+                                bulk_transactions.append(
+                                    PropertyTransaction(
+                                        id=transaction_id,
+                                        workspace_id=workspace_id,
+                                        project_id=project_id,
+                                        property=property,
+                                        to_value=requested_prop_value,
+                                        to_value_hash=to_value_hash,
+                                        entity=entity,
+                                        entity_uuid=entity_uuid,
+                                        s_epoch=(
+                                            datetime.datetime.timestamp(timezone.now())
+                                            * 1000
+                                        ),
+                                        a_epoch=a_epoch,
+                                        actor=request.user,
+                                    )
                                 )
-                            )
-                            bulk_prop_values_create.append(
-                                PropertyValue(
-                                    transaction_id=transaction_id,
-                                    value=requested_prop_values,
-                                    value_hash=to_value_hash,
-                                    type=1,
-                                    property=property,
-                                    project_id=project_id,
-                                    workspace_id=workspace_id,
-                                    entity_uuid=entity_uuid,
-                                    entity=entity,
+                                bulk_prop_values_create.append(
+                                    PropertyValue(
+                                        transaction_id=transaction_id,
+                                        value=requested_prop_value,
+                                        value_hash=to_value_hash,
+                                        type=1,
+                                        property=property,
+                                        project_id=project_id,
+                                        workspace_id=workspace_id,
+                                        entity_uuid=entity_uuid,
+                                        entity=entity,
+                                    )
                                 )
-                            )
                         else:
                             # Validators
-                            res, message = validators(property, requested_prop_values)
-                            if not res:
-                                return Response(message, status=status.HTTP_400_BAD_REQUEST)
+                            for requested_prop_value in requested_prop_values:                                    
+                                res, message = validators(property, requested_prop_value)
+                                if not res:
+                                    return Response(
+                                        message, status=status.HTTP_400_BAD_REQUEST
+                                    )
 
-                            transaction_id = uuid.uuid4()
-                            to_value_hash = hashlib.sha256(
-                                requested_prop_values.encode("utf-8")
-                            ).hexdigest()
-                            bulk_transactions.append(
-                                PropertyTransaction(
-                                    id=transaction_id,
-                                    workspace_id=workspace_id,
-                                    project_id=project_id,
-                                    property=property,
-                                    to_value=requested_prop_values,
-                                    to_value_hash=to_value_hash,
-                                    entity=entity,
-                                    entity_uuid=entity_uuid,
-                                    s_epoch=(
-                                        datetime.datetime.timestamp(timezone.now())
-                                        * 1000
-                                    ),
-                                    a_epoch=a_epoch,
-                                    actor=request.user,
+                                transaction_id = uuid.uuid4()
+                                to_value_hash = hashlib.sha256(
+                                    requested_prop_value.encode("utf-8")
+                                ).hexdigest()
+                                bulk_transactions.append(
+                                    PropertyTransaction(
+                                        id=transaction_id,
+                                        workspace_id=workspace_id,
+                                        project_id=project_id,
+                                        property=property,
+                                        to_value=requested_prop_value,
+                                        to_value_hash=to_value_hash,
+                                        entity=entity,
+                                        entity_uuid=entity_uuid,
+                                        s_epoch=(
+                                            datetime.datetime.timestamp(timezone.now())
+                                            * 1000
+                                        ),
+                                        a_epoch=a_epoch,
+                                        actor=request.user,
+                                    )
                                 )
-                            )
-                            bulk_prop_values_create.append(
-                                PropertyValue(
-                                    transaction_id=transaction_id,
-                                    value=requested_prop_values,
-                                    value_hash=to_value_hash,
-                                    type=0,
-                                    property=property,
-                                    project_id=project_id,
-                                    workspace_id=workspace_id,
-                                    entity_uuid=entity_uuid,
-                                    entity=entity,
+                                bulk_prop_values_create.append(
+                                    PropertyValue(
+                                        transaction_id=transaction_id,
+                                        value=requested_prop_value,
+                                        value_hash=to_value_hash,
+                                        type=0,
+                                        property=property,
+                                        project_id=project_id,
+                                        workspace_id=workspace_id,
+                                        entity_uuid=entity_uuid,
+                                        entity=entity,
+                                    )
                                 )
-                            )
 
             # Write the transaction table
             _ = PropertyTransaction.objects.bulk_create(
@@ -516,12 +530,12 @@ class PropertyValueViewSet(BaseViewSet):
             return Response(
                 {"error": "Project Does not exists"}, status=status.HTTP_400_BAD_REQUEST
             )
-        # except Exception as e:
-        #     capture_exception(e)
-        #     return Response(
-        #         {"error": "Something went wrong please try again later"},
-        #         status=status.HTTP_400_BAD_REQUEST,
-        #     )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def list(self, request, slug, project_id, entity, entity_uuid):
         try:
