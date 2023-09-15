@@ -275,8 +275,7 @@ export const SingleListIssue: React.FC<Props> = ({
                 className="truncate text-[0.825rem] text-custom-text-100"
                 onClick={() => {
                   if (!isDraftIssues) openPeekOverview(issue);
-
-                  if (handleDraftIssueSelect) handleDraftIssueSelect(issue);
+                  if (isDraftIssues && handleDraftIssueSelect) handleDraftIssueSelect(issue);
                 }}
               >
                 {issue.name}
