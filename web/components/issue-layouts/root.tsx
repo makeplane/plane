@@ -7,7 +7,7 @@ import { DisplayFiltersSelection } from "./display-filters";
 
 import { FilterPreview } from "./filters-preview";
 
-import { IssueListViewRoot } from "./list";
+import { IssueListViewRoot } from "./list/root";
 import { IssueKanBanViewRoot } from "./kanban";
 import { IssueCalendarViewRoot } from "./calendar";
 import { IssueSpreadsheetViewRoot } from "./spreadsheet";
@@ -19,8 +19,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 
 export const IssuesRoot = observer(() => {
-  const store: RootStore = useMobxStore();
-  const { issueFilters: issueFilterStore } = store;
+  const { issueFilters: issueFilterStore }: RootStore = useMobxStore();
 
   return (
     <div className="w-full h-full relative flex flex-col overflow-hidden">

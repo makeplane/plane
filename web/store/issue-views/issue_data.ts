@@ -45,7 +45,7 @@ export const displayPropertyGroupBy: { key: string; title: string }[] = [
   { key: "state", title: "States" },
   { key: "state_detail.group", title: "State Groups" },
   { key: "priority", title: "Priority" },
-  { key: "Project", title: "Project" }, // required this on my issues
+  { key: "project", title: "Project" }, // required this on my issues
   { key: "labels", title: "Labels" },
   { key: "assignees", title: "Assignees" },
   { key: "created_by", title: "Created By" },
