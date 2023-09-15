@@ -538,7 +538,6 @@ class PropertyValueViewSet(BaseViewSet):
             PropertyValue.objects.filter(
                 pk__in=[prop_value.id for prop_value in bulk_prop_value_delete]
             ).delete()
-
             # Update the JSON column for faster reads
             # This makes the writes a bit slow
             # TODO: Find a better approach for faster reads
@@ -549,13 +548,17 @@ class PropertyValueViewSet(BaseViewSet):
             property = (
                 Property.objects.get(
                     workspace__slug=slug,
-                    property_values__project_id=project_id,
                     pk=issue.entity_id,
                 )
             )
 
+            context = {
+                "entity_uuid": str(entity_uuid),
+                "entity": str(entity),
+            }
+
             # Set the tree here
-            serializer = PropertyReadSerializer(property)
+            serializer = PropertyReadSerializer(property, context=context)
             issue.properties = json.loads(
                 json.dumps(serializer.data, cls=DjangoJSONEncoder)
             )
@@ -583,7 +586,14 @@ class PropertyValueViewSet(BaseViewSet):
                     project_id=project_id,
                     pk=issue.entity_id,
                 )
-                serializer = PropertyReadSerializer(properties)
+
+                context = {
+                    "entity_uuid": str(entity_uuid),
+                    "entity": str(entity),
+                }
+
+            # Set the tree here
+                serializer = PropertyReadSerializer(property, context=context)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(
                 {"error": "Entity not supported yet"},

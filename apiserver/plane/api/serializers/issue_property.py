@@ -1,3 +1,6 @@
+# Django imports
+from django.db.models import Prefetch
+
 # Third party imports
 from rest_framework import serializers
 
@@ -139,14 +142,14 @@ class PropertyReadSerializer(BaseSerializer):
         read_only = fields
 
     def get_children(self, obj):
-        children = obj.children.all().prefetch_related("children")
+        children = obj.children.all()
         if children:
             serializer = PropertyReadSerializer(children, many=True)
             return serializer.data
         return []
 
     def get_prop_value(self, obj):
-        prop_values = obj.property_values.all()
+        prop_values = obj.property_values.filter(entity_uuid=self.context.get("entity_uuid"))
         if prop_values:
             serializer = PropertyValueReadSerializer(prop_values, many=True)
             return serializer.data
