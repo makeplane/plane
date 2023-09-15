@@ -658,7 +658,12 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async deleteDraftIssue(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
+  async deleteDraftIssue(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    user: ICurrentUserResponse
+  ): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/${issueId}/`
     )
