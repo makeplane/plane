@@ -349,7 +349,7 @@ class ProjectViewSet(BaseViewSet):
                     {"name": "The project name is already taken"},
                     status=status.HTTP_410_GONE,
                 )
-        except Project.DoesNotExist or Workspace.DoesNotExist as e:
+        except (Project.DoesNotExist, Workspace.DoesNotExist):
             return Response(
                 {"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
