@@ -66,7 +66,7 @@ def track_parent(
     issue_activities,
 ):
     if current_instance.get("parent") != requested_data.get("parent"):
-        if requested_data.get("parent") == None:
+        if requested_data.get("parent") is None:
             old_parent = Issue.objects.get(pk=current_instance.get("parent"))
             issue_activities.append(
                 IssueActivity(
@@ -115,7 +115,7 @@ def track_priority(
     issue_activities,
 ):
     if current_instance.get("priority") != requested_data.get("priority"):
-        if requested_data.get("priority") == None:
+        if requested_data.get("priority") is None:
             issue_activities.append(
                 IssueActivity(
                     issue_id=issue_id,
@@ -217,7 +217,7 @@ def track_target_date(
     issue_activities,
 ):
     if current_instance.get("target_date") != requested_data.get("target_date"):
-        if requested_data.get("target_date") == None:
+        if requested_data.get("target_date") is None:
             issue_activities.append(
                 IssueActivity(
                     issue_id=issue_id,
@@ -257,7 +257,7 @@ def track_start_date(
     issue_activities,
 ):
     if current_instance.get("start_date") != requested_data.get("start_date"):
-        if requested_data.get("start_date") == None:
+        if requested_data.get("start_date") is None:
             issue_activities.append(
                 IssueActivity(
                     issue_id=issue_id,
@@ -412,7 +412,7 @@ def track_estimate_points(
     requested_data, current_instance, issue_id, project, actor, issue_activities
 ):
     if current_instance.get("estimate_point") != requested_data.get("estimate_point"):
-        if requested_data.get("estimate_point") == None:
+        if requested_data.get("estimate_point") is None:
             issue_activities.append(
                 IssueActivity(
                     issue_id=issue_id,

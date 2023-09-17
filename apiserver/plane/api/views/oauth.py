@@ -147,7 +147,7 @@ class OauthEndpoint(BaseAPIView):
                 data = get_user_data(access_token)
 
             email = data.get("email", None)
-            if email == None:
+            if email is None:
                 return Response(
                     {
                         "error": "Something went wrong. Please try again later or contact the support team."
