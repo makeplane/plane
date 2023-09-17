@@ -97,7 +97,7 @@ from .notification import NotificationSerializer
 
 from .exporter import ExporterHistorySerializer
 
-from .issue_property import (
+from .property import (
     PropertySerializer,
     PropertyValueSerializer,
     PropertyReadSerializer,

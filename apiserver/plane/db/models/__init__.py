@@ -80,4 +80,4 @@ from .notification import Notification
 
 from .exporter import ExporterHistory
 
-from .issue_property import Property, PropertyValue, PropertyTransaction
+from .property import Property, PropertyValue, PropertyTransaction

@@ -173,7 +173,7 @@ from .exporter import (
     ExportIssuesEndpoint,
 )
 
-from .issue_property import (
+from .property import (
     PropertyViewSet,
     PropertyValueViewSet,
 )
