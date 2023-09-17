@@ -13,7 +13,6 @@ from plane.db.models import Issue
 
 
 def build_graph_plot(queryset, x_axis, y_axis, segment=None):
-
     temp_axis = x_axis
 
     if x_axis in ["created_at", "start_date", "target_date", "completed_at"]:
@@ -77,14 +76,15 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
         order = ["low", "medium", "high", "urgent", "None"]
         sorted_data = {key: grouped_data[key] for key in order if key in grouped_data}
     else:
-        sorted_data = dict(sorted(grouped_data.items(), key=lambda x: (x[0] == "None", x[0])))
+        sorted_data = dict(
+            sorted(grouped_data.items(), key=lambda x: (x[0] == "None", x[0]))
+        )
     return sorted_data
 
 
 def burndown_plot(queryset, slug, project_id, cycle_id=None, module_id=None):
     # Total Issues in Cycle or Module
     total_issues = queryset.total_issues
-
 
     if cycle_id:
         # Get all dates between the two dates
@@ -107,7 +107,7 @@ def burndown_plot(queryset, slug, project_id, cycle_id=None, module_id=None):
             .values("date", "total_completed")
             .order_by("date")
         )
-    
+
     if module_id:
         # Get all dates between the two dates
         date_range = [
@@ -130,16 +130,13 @@ def burndown_plot(queryset, slug, project_id, cycle_id=None, module_id=None):
             .order_by("date")
         )
 
-
     for date in date_range:
         cumulative_pending_issues = total_issues
         total_completed = 0
         total_completed = sum(
-            [
-                item["total_completed"]
-                for item in completed_issues_distribution
-                if item["date"] is not None and item["date"] <= date
-            ]
+            item["total_completed"]
+            for item in completed_issues_distribution
+            if item["date"] is not None and item["date"] <= date
         )
         cumulative_pending_issues -= total_completed
         chart_data[str(date)] = cumulative_pending_issues
