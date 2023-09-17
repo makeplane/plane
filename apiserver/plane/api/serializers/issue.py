@@ -225,25 +225,6 @@ class IssueActivitySerializer(BaseSerializer):
         fields = "__all__"
 
 
-class IssueCommentSerializer(BaseSerializer):
-    actor_detail = UserLiteSerializer(read_only=True, source="actor")
-    issue_detail = IssueFlatSerializer(read_only=True, source="issue")
-    project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
-
-    class Meta:
-        model = IssueComment
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "issue",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-        ]
-
 
 class IssuePropertySerializer(BaseSerializer):
     class Meta:
