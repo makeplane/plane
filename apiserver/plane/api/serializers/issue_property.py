@@ -144,7 +144,7 @@ class PropertyReadSerializer(BaseSerializer):
     def get_children(self, obj):
         children = obj.children.all()
         if children:
-            serializer = PropertyReadSerializer(children, many=True)
+            serializer = PropertyReadSerializer(children, many=True, context=self.context)
             return serializer.data
         return []
 
@@ -173,9 +173,9 @@ class PropertyReadSerializer(BaseSerializer):
             "view": IssueViewSerializer,
         }
         if obj.type == "relation":
-            prop_values = obj.property_values.all()
+            prop_values = obj.property_values.filter(entity_uuid=self.context.get("entity_uuid"))
             model = MODEL_MAPPER.get(obj.unit, None)
-            if model is not None:
+            if model is not None and prop_values:
                 serializer = SERIALIZER_MAPPER.get(obj.unit, None)
                 return serializer(
                     model.objects.filter(pk__in=[(p.value) for p in prop_values]),
@@ -183,6 +183,7 @@ class PropertyReadSerializer(BaseSerializer):
                 ).data
             return None
         return None
+
 
 class PropertyTransactionSerializer(BaseSerializer):
     actor_detail = UserLiteSerializer(read_only=True, source="actor")
