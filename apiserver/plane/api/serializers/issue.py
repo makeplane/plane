@@ -280,7 +280,6 @@ class LabelLiteSerializer(BaseSerializer):
 
 
 class IssueLabelSerializer(BaseSerializer):
-    # label_details = LabelSerializer(read_only=True, source="label")
 
     class Meta:
         model = IssueLabel
