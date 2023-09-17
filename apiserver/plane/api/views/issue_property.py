@@ -581,7 +581,7 @@ class PropertyValueViewSet(BaseViewSet):
                 issue = Issue.issue_objects.get(
                     pk=entity_uuid, workspace__slug=slug, project_id=project_id
                 )
-                properties = Property.objects.get(
+                property = Property.objects.get(
                     workspace__slug=slug,
                     project_id=project_id,
                     pk=issue.entity_id,
