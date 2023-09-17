@@ -108,11 +108,10 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
                 )
                 if "error" in response:
                     return Response(response, status=status.HTTP_400_BAD_REQUEST)
-                else:
-                    return Response(
-                        response,
-                        status=status.HTTP_200_OK,
-                    )
+                return Response(
+                    response,
+                    status=status.HTTP_200_OK,
+                )
             return Response(
                 {"error": "Service not supported yet"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -585,11 +584,10 @@ class BulkImportModulesEndpoint(BaseAPIView):
                     {"modules": serializer.data}, status=status.HTTP_201_CREATED
                 )
 
-            else:
-                return Response(
-                    {"message": "Modules created but issues could not be imported"},
-                    status=status.HTTP_200_OK,
-                )
+            return Response(
+                {"message": "Modules created but issues could not be imported"},
+                status=status.HTTP_200_OK,
+            )
         except Project.DoesNotExist:
             return Response(
                 {"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND

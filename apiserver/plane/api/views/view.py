@@ -126,12 +126,11 @@ class IssueViewFavoriteViewSet(BaseViewSet):
                     {"error": "The view is already added to favorites"},
                     status=status.HTTP_410_GONE,
                 )
-            else:
-                capture_exception(e)
-                return Response(
-                    {"error": "Something went wrong please try again later"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except Exception as e:
             capture_exception(e)
             return Response(

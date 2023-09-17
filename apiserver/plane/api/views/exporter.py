@@ -56,11 +56,10 @@ class ExportIssuesEndpoint(BaseAPIView):
                     },
                     status=status.HTTP_200_OK,
                 )
-            else:
-                return Response(
-                    {"error": f"Provider '{provider}' not found."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+            return Response(
+                {"error": f"Provider '{provider}' not found."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except Workspace.DoesNotExist:
             return Response(
                 {"error": "Workspace does not exists"},
@@ -87,11 +86,10 @@ class ExportIssuesEndpoint(BaseAPIView):
                         exporter_history, many=True
                     ).data,
                 )
-            else:
-                return Response(
-                    {"error": "per_page and cursor are required"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+            return Response(
+                {"error": "per_page and cursor are required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except Exception as e:
             capture_exception(e)
             return Response(

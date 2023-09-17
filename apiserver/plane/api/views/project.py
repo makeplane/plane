@@ -290,12 +290,11 @@ class ProjectViewSet(BaseViewSet):
                     {"name": "The project name is already taken"},
                     status=status.HTTP_410_GONE,
                 )
-            else:
-                capture_exception(e)
-                return Response(
-                    {"error": "Something went wrong please try again later"},
-                    status=status.HTTP_410_GONE,
-                )
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_410_GONE,
+            )
         except Workspace.DoesNotExist as e:
             return Response(
                 {"error": "Workspace does not exist"}, status=status.HTTP_404_NOT_FOUND
@@ -993,12 +992,11 @@ class ProjectFavoritesViewSet(BaseViewSet):
                     {"error": "The project is already added to favorites"},
                     status=status.HTTP_410_GONE,
                 )
-            else:
-                capture_exception(e)
-                return Response(
-                    {"error": "Something went wrong please try again later"},
-                    status=status.HTTP_410_GONE,
-                )
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_410_GONE,
+            )
         except Exception as e:
             capture_exception(e)
             return Response(

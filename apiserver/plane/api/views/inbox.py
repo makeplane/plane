@@ -326,8 +326,7 @@ class InboxIssueViewSet(BaseViewSet):
 
                     return Response(serializer.data, status=status.HTTP_200_OK)
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            else:
-                return Response(InboxIssueSerializer(inbox_issue).data, status=status.HTTP_200_OK)
+            return Response(InboxIssueSerializer(inbox_issue).data, status=status.HTTP_200_OK)
         except InboxIssue.DoesNotExist:
             return Response(
                 {"error": "Inbox Issue does not exist"},
@@ -402,8 +401,7 @@ class InboxIssuePublicViewSet(BaseViewSet):
                 )
                 .select_related("issue", "workspace", "project")
             )
-        else:
-            return InboxIssue.objects.none()
+        return InboxIssue.objects.none()
 
     def list(self, request, slug, project_id, inbox_id):
         try:

@@ -438,11 +438,10 @@ class MagicSignInEndpoint(BaseAPIView):
 
                     return Response(data, status=status.HTTP_200_OK)
 
-                else:
-                    return Response(
-                        {"error": "Your login code was incorrect. Please try again."},
-                        status=status.HTTP_400_BAD_REQUEST,
-                    )
+                return Response(
+                    {"error": "Your login code was incorrect. Please try again."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             else:
                 return Response(

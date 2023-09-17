@@ -24,8 +24,7 @@ class FileAssetEndpoint(BaseAPIView):
             if files.exists():
                 serializer = FileAssetSerializer(files, context={"request": request}, many=True)
                 return Response({"data": serializer.data, "status": True}, status=status.HTTP_200_OK)
-            else:
-                return Response({"error": "Asset key does not exist", "status": False}, status=status.HTTP_200_OK)
+            return Response({"error": "Asset key does not exist", "status": False}, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(

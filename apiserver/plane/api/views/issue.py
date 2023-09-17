@@ -1594,8 +1594,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                     )
                     .distinct()
                 ).order_by("created_at")
-            else:
-                return IssueComment.objects.none()
+            return IssueComment.objects.none()
         except ProjectDeployBoard.DoesNotExist:
             return IssueComment.objects.none()
 
@@ -1744,8 +1743,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
                     .order_by("-created_at")
                     .distinct()
                 )
-            else:
-                return IssueReaction.objects.none()
+            return IssueReaction.objects.none()
         except ProjectDeployBoard.DoesNotExist:
             return IssueReaction.objects.none()
 
@@ -1862,8 +1860,7 @@ class CommentReactionPublicViewSet(BaseViewSet):
                     .order_by("-created_at")
                     .distinct()
                 )
-            else:
-                return CommentReaction.objects.none()
+            return CommentReaction.objects.none()
         except ProjectDeployBoard.DoesNotExist:
             return CommentReaction.objects.none()
 
@@ -1984,8 +1981,7 @@ class IssueVotePublicViewSet(BaseViewSet):
                     .filter(workspace__slug=self.kwargs.get("slug"))
                     .filter(project_id=self.kwargs.get("project_id"))
                 )
-            else:
-                return IssueVote.objects.none()
+            return IssueVote.objects.none()
         except ProjectDeployBoard.DoesNotExist:
             return IssueVote.objects.none()
 
