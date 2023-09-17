@@ -21,12 +21,7 @@ class Cursor:
         )
 
     def __repr__(self):
-        return "<{}: value={} offset={} is_prev={}>".format(
-            type(self).__name__,
-            self.value,
-            self.offset,
-            int(self.is_prev),
-        )
+        return f"{type(self).__name__,}: value={self.value} offset={self.offset}, is_prev={int(self.is_prev)}"
 
     def __bool__(self):
         return bool(self.has_results)

@@ -956,7 +956,7 @@ class BulkCreateIssueLabelsEndpoint(BaseAPIView):
                     Label(
                         name=label.get("name", "Migrated"),
                         description=label.get("description", "Migrated Issue"),
-                        color="#" + "%06x" % random.randint(0, 0xFFFFFF),
+                        color=f"#{random.randint(0, 0xFFFFFF):06x}",
                         project_id=project_id,
                         workspace_id=project.workspace_id,
                         created_by=request.user,
