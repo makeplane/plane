@@ -1359,7 +1359,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
             ).distinct()
 
             # Priority Ordering
-            if order_by_param == "priority" or order_by_param == "-priority":
+            if order_by_param in ["priority", "-priority"]:
                 priority_order = (
                     priority_order
                     if order_by_param == "priority"

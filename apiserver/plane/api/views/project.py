@@ -80,7 +80,7 @@ class ProjectViewSet(BaseViewSet):
     ]
 
     def get_serializer_class(self, *args, **kwargs):
-        if self.action == "update" or self.action == "partial_update":
+        if self.action in ["update", "partial_update"]:
             return ProjectSerializer
         return ProjectDetailSerializer
 
