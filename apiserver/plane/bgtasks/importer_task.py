@@ -57,7 +57,7 @@ def service_importer(service, importer_id):
                 ignore_conflicts=True,
             )
 
-            [
+            _ = [
                 send_welcome_slack.delay(
                     str(user.id),
                     True,

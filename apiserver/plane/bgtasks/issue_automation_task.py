@@ -68,7 +68,7 @@ def archive_old_issues():
                     updated_issues = Issue.objects.bulk_update(
                         issues_to_update, ["archived_at"], batch_size=100
                     )
-                    [
+                    _ = [
                         issue_activity.delay(
                             type="issue.activity.updated",
                             requested_data=json.dumps({"archived_at": str(issue.archived_at)}),
@@ -139,7 +139,7 @@ def close_old_issues():
                 # Bulk Update the issues and log the activity
                 if issues_to_update:
                     updated_issues = Issue.objects.bulk_update(issues_to_update, ["state"], batch_size=100)
-                    [
+                    _ = [
                         issue_activity.delay(
                             type="issue.activity.updated",
                             requested_data=json.dumps({"closed_to": str(issue.state_id)}),

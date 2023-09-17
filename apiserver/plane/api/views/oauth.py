@@ -15,6 +15,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from sentry_sdk import capture_exception
+
 # sso authentication
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_auth_request
@@ -112,7 +113,7 @@ def get_user_data(access_token: str) -> dict:
         url="https://api.github.com/user/emails", headers=headers
     ).json()
 
-    [
+    _ = [
         user_data.update({"email": item.get("email")})
         for item in response
         if item.get("primary") is True
