@@ -73,7 +73,7 @@ class BulkEstimatePointEndpoint(BaseViewSet):
 
             estimate_points = request.data.get("estimate_points", [])
 
-            if not len(estimate_points) or len(estimate_points) > 8:
+            if not estimate_points or len(estimate_points) > 8:
                 return Response(
                     {"error": "Estimate points are required"},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -161,7 +161,7 @@ class BulkEstimatePointEndpoint(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            if not len(request.data.get("estimate_points", [])):
+            if not request.data.get("estimate_points", []):
                 return Response(
                     {"error": "Estimate points are required"},
                     status=status.HTTP_400_BAD_REQUEST,

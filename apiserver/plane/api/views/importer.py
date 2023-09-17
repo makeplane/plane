@@ -354,7 +354,7 @@ class BulkImportIssuesEndpoint(BaseAPIView):
             # Get the issues_data
             issues_data = request.data.get("issues_data", [])
 
-            if not len(issues_data):
+            if not issues_data:
                 return Response(
                     {"error": "Issue data is required"},
                     status=status.HTTP_400_BAD_REQUEST,

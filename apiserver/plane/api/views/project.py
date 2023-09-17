@@ -636,7 +636,7 @@ class AddMemberToProjectEndpoint(BaseAPIView):
             # get the project
             project = Project.objects.get(pk=project_id, workspace__slug=slug)
 
-            if not len(members):
+            if not members:
                 return Response(
                     {"error": "Atleast one member is required"},
                     status=status.HTTP_400_BAD_REQUEST,

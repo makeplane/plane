@@ -731,7 +731,7 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
         try:
             issue_ids = request.data.get("issue_ids", [])
 
-            if not len(issue_ids):
+            if not issue_ids:
                 return Response(
                     {"error": "Issue IDs are required"},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -839,7 +839,7 @@ class SubIssuesEndpoint(BaseAPIView):
             parent_issue = Issue.issue_objects.get(pk=issue_id)
             sub_issue_ids = request.data.get("sub_issue_ids", [])
 
-            if not len(sub_issue_ids):
+            if not sub_issue_ids:
                 return Response(
                     {"error": "Sub Issue IDs are required"},
                     status=status.HTTP_400_BAD_REQUEST,

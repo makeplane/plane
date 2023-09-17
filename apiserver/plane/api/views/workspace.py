@@ -266,7 +266,7 @@ class InviteWorkspaceEndpoint(BaseAPIView):
         try:
             emails = request.data.get("emails", False)
             # Check if email is provided
-            if not emails or not len(emails):
+            if not emails:
                 return Response(
                     {"error": "Emails are required"}, status=status.HTTP_400_BAD_REQUEST
                 )
@@ -275,7 +275,7 @@ class InviteWorkspaceEndpoint(BaseAPIView):
             requesting_user = WorkspaceMember.objects.get(
                 workspace__slug=slug, member=request.user
             )
-            if len(
+            if (
                 [
                     email
                     for email in emails

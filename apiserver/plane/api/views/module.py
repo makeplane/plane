@@ -373,7 +373,7 @@ class ModuleIssueViewSet(BaseViewSet):
     def create(self, request, slug, project_id, module_id):
         try:
             issues = request.data.get("issues", [])
-            if not len(issues):
+            if not issues:
                 return Response(
                     {"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST
                 )
