@@ -27,7 +27,6 @@ from plane.api.views import (
     ## End User
     # Workspaces
     WorkSpaceViewSet,
-    UserWorkspaceInvitationsEndpoint,
     UserWorkSpacesEndpoint,
     InviteWorkspaceEndpoint,
     JoinWorkspaceEndpoint,

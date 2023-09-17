@@ -9,7 +9,6 @@ from django.db.models import (
     Q,
     Exists,
     OuterRef,
-    Func,
     F,
     Func,
     Subquery,

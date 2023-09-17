@@ -40,7 +40,6 @@ from plane.api.serializers import (
     IssueActivitySerializer,
     IssueCommentSerializer,
     IssuePropertySerializer,
-    LabelSerializer,
     IssueSerializer,
     LabelSerializer,
     IssueFlatSerializer,

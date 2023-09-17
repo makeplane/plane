@@ -6,7 +6,6 @@ from uuid import uuid4
 
 # Django imports
 from django.db import IntegrityError
-from django.db.models import Prefetch
 from django.conf import settings
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -54,7 +53,6 @@ from . import BaseViewSet
 from plane.db.models import (
     User,
     Workspace,
-    WorkspaceMember,
     WorkspaceMemberInvite,
     Team,
     ProjectMember,
