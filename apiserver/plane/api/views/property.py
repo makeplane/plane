@@ -652,8 +652,11 @@ class PropertyValueViewSet(BaseViewSet):
                         from_value_hash=property_value.value_hash,
                         a_epoch=a_epoch,
                         s_epoch=(datetime.datetime.timestamp(timezone.now()) * 1000),
+                        property_id=property_id,
                     )
                 )
+
+            PropertyTransaction.objects.bulk_create(bulk_transactions, batch_size=100)
 
             property_values.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -662,7 +665,7 @@ class PropertyValueViewSet(BaseViewSet):
                 {"error": "Project does not exists"}, status=status.HTTP_400_BAD_REQUEST
             )
         except Exception as e:
-            capture_exception(e)
+            print(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
