@@ -8,7 +8,7 @@ from rest_framework import serializers
 from .base import BaseSerializer
 from .user import UserLiteSerializer
 from .state import StateSerializer, StateLiteSerializer
-from .project import ProjectSerializer, ProjectLiteSerializer
+from .project import ProjectLiteSerializer
 from .workspace import WorkspaceLiteSerializer
 from plane.db.models import (
     User,

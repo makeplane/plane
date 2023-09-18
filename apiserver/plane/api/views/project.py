@@ -31,7 +31,6 @@ from plane.api.serializers import (
     ProjectDetailSerializer,
     ProjectMemberInviteSerializer,
     ProjectFavoriteSerializer,
-    IssueLiteSerializer,
     ProjectDeployBoardSerializer,
     ProjectMemberAdminSerializer,
 )

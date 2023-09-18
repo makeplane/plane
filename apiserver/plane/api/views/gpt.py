@@ -1,6 +1,3 @@
-# Python imports
-import requests
-
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status

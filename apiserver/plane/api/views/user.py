@@ -17,7 +17,6 @@ from plane.db.models import (
     WorkspaceMemberInvite,
     Issue,
     IssueActivity,
-    WorkspaceMember,
 )
 from plane.utils.paginator import BasePaginator
 

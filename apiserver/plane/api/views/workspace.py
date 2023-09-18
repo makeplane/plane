@@ -10,7 +10,6 @@ from django.conf import settings
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import (
     Prefetch,
     OuterRef,

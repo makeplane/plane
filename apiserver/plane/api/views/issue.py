@@ -56,7 +56,6 @@ from plane.api.serializers import (
     IssuePublicSerializer,
 )
 from plane.api.permissions import (
-    WorkspaceEntityPermission,
     ProjectEntityPermission,
     WorkSpaceAdminPermission,
     ProjectMemberPermission,
@@ -84,7 +83,6 @@ from plane.db.models import (
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
-from plane.bgtasks.export_task import issue_export_task
 
 
 class IssueViewSet(BaseViewSet):

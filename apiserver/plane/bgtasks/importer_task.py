@@ -2,8 +2,6 @@
 import json
 import requests
 import uuid
-import jwt
-from datetime import datetime
 
 # Django imports
 from django.conf import settings
@@ -26,7 +24,6 @@ from plane.db.models import (
     Label,
     User,
 )
-from .workspace_invitation_task import workspace_invitation
 from plane.bgtasks.user_welcome_task import send_welcome_slack
 
 

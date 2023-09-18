@@ -1,6 +1,3 @@
-# Django imports
-from django.db.models.functions import TruncDate
-
 # Third party imports
 from rest_framework import serializers
 
