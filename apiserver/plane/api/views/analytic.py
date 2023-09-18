@@ -48,7 +48,7 @@ class AnalyticsEndpoint(BaseAPIView):
                 queryset=queryset, x_axis=x_axis, y_axis=y_axis, segment=segment
             )
 
-            colors = dict()
+            colors = {}
             if x_axis in ["state__name", "state__group"] or segment in [
                 "state__name",
                 "state__group",

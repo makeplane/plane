@@ -61,7 +61,7 @@ class StateViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id):
         try:
-            state_dict = dict()
+            state_dict = {}
             states = StateSerializer(self.get_queryset(), many=True).data
 
             for key, value in groupby(
