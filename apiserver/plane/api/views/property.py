@@ -46,6 +46,7 @@ class PropertyViewSet(BaseViewSet):
     """
     Create a Property of all types from here
     """
+
     serializer_class = PropertySerializer
     model = Property
     permission_classes = [
@@ -170,7 +171,7 @@ class PropertyValueViewSet(BaseViewSet):
                 "a_epoch", (datetime.datetime.timestamp(timezone.now()) * 1000)
             )
 
-            # Get the project and workspace for bulk creates 
+            # Get the project and workspace for bulk creates
             project = Project.objects.get(pk=project_id)
             workspace_id = project.workspace_id
 
@@ -201,7 +202,6 @@ class PropertyValueViewSet(BaseViewSet):
 
                 # For multi values -> multiple property values will be created
                 if property.is_multi and isinstance(requested_prop_values, list):
-                    
                     # Get the value for existing property
                     prop_values = [
                         property_value
@@ -221,7 +221,7 @@ class PropertyValueViewSet(BaseViewSet):
                                 [prop_value.value for prop_value in prop_values]
                             )
                         ]
-                        # Delete records that are not required 
+                        # Delete records that are not required
                         delete_records = [
                             prop_value
                             for prop_value in prop_values
@@ -560,11 +560,9 @@ class PropertyValueViewSet(BaseViewSet):
                 pk=entity_uuid, workspace__slug=slug, project_id=project_id
             )
             # Fetch the object with the values
-            property = (
-                Property.objects.get(
-                    workspace__slug=slug,
-                    pk=issue.entity_id,
-                )
+            property = Property.objects.get(
+                workspace__slug=slug,
+                pk=issue.entity_id,
             )
 
             context = {
@@ -607,7 +605,7 @@ class PropertyValueViewSet(BaseViewSet):
                     "entity": str(entity),
                 }
 
-            # Set the tree here
+                # Set the tree here
                 serializer = PropertyReadSerializer(property, context=context)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(
@@ -618,6 +616,50 @@ class PropertyValueViewSet(BaseViewSet):
             return Response(
                 {"error": "Property does not exist"},
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def destroy(self, request, slug, project_id, entity, entity_uuid, property_id):
+        try:
+            a_epoch = request.GET.get(
+                "a_epoch", (datetime.datetime.timestamp(timezone.now()) * 1000)
+            )
+            project = Project.objects.get(workspace__slug=slug, pk=project_id)
+            workspace_id = project.workspace_id
+            property_values = PropertyValue.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                entity=entity,
+                entity_uuid=entity_uuid,
+                property_id=property_id,
+            )
+
+            bulk_transactions = []
+            for property_value in property_values:
+                bulk_transactions.append(
+                    PropertyTransaction(
+                        id=uuid.uuid4(),
+                        workspace_id=workspace_id,
+                        project_id=project_id,
+                        entity=entity,
+                        entity_uuid=entity_uuid,
+                        from_value=property_value.value,
+                        from_value_hash=property_value.value_hash,
+                        a_epoch=a_epoch,
+                        s_epoch=(datetime.datetime.timestamp(timezone.now()) * 1000),
+                    )
+                )
+
+            property_values.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Project.DoesNotExist:
+            return Response(
+                {"error": "Project does not exists"}, status=status.HTTP_400_BAD_REQUEST
             )
         except Exception as e:
             capture_exception(e)

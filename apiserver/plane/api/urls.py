@@ -1743,11 +1743,9 @@ urlpatterns = [
         name="property-values",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/<str:entity>/<uuid:entity_uuid>/property-values/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/<str:entity>/<uuid:entity_uuid>/property-values/<uuid:property_id>/",
         PropertyValueViewSet.as_view(
             {
-                "get": "retrieve",
-                "patch": "partial_update",
                 "delete": "destroy",
             }
         ),
