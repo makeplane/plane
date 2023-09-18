@@ -43,6 +43,9 @@ def is_valid_uuid(uuid_string):
 
 
 class PropertyViewSet(BaseViewSet):
+    """
+    Create a Property of all types from here
+    """
     serializer_class = PropertySerializer
     model = Property
     permission_classes = [
@@ -160,10 +163,14 @@ class PropertyValueViewSet(BaseViewSet):
 
     def create(self, request, slug, project_id, entity, entity_uuid):
         try:
+            # Get the property values
             request_data = request.data.get("issue_properties", [])
+            # The application epoch sent by the frontend
             a_epoch = request.data.get(
                 "a_epoch", (datetime.datetime.timestamp(timezone.now()) * 1000)
             )
+
+            # Get the project and workspace for bulk creates 
             project = Project.objects.get(pk=project_id)
             workspace_id = project.workspace_id
 
@@ -186,12 +193,16 @@ class PropertyValueViewSet(BaseViewSet):
             bulk_prop_values_create = []
             bulk_prop_values_update = []
             bulk_prop_value_delete = []
+
+            # Loop through all the properties in the given
             for property in properties:
                 # Get the requested values for the property
                 requested_prop_values = request_data.get(str(property.id))
 
                 # For multi values -> multiple property values will be created
                 if property.is_multi and isinstance(requested_prop_values, list):
+                    
+                    # Get the value for existing property
                     prop_values = [
                         property_value
                         for property_value in property_values
@@ -201,6 +212,7 @@ class PropertyValueViewSet(BaseViewSet):
                     # Already existing
                     # append a record on the transaction log if the values are changed
                     if prop_values:
+                        # New records that need to be created
                         new_records = [
                             value
                             for value in requested_prop_values
@@ -209,11 +221,14 @@ class PropertyValueViewSet(BaseViewSet):
                                 [prop_value.value for prop_value in prop_values]
                             )
                         ]
+                        # Delete records that are not required 
                         delete_records = [
                             prop_value
                             for prop_value in prop_values
                             if prop_value.value not in sorted(requested_prop_values)
                         ]
+
+                        # Delete records
                         bulk_prop_value_delete.extend(delete_records)
                         # New records that needs to be created
                         for new_record in new_records:
