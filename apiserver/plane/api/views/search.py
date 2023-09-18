@@ -202,7 +202,7 @@ class GlobalSearchEndpoint(BaseAPIView):
             results = {}
 
             for model in MODELS_MAPPER:
-                func = MODELS_MAPPER.get(model, None)
+                func = MODELS_MAPPER.get(model)
                 results[model] = func(query, slug, project_id, workspace_search)
             return Response({"results": results}, status=status.HTTP_200_OK)
 
