@@ -230,7 +230,11 @@ CELERY_BROKER_URL = broker_url
 
 GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)
 
+# Enable or Disable signups
+ENABLE_SIGNUP = os.environ.get("ENABLE_SIGNUP", "1") == "1"
+
 # Scout Settings
 SCOUT_MONITOR = os.environ.get("SCOUT_MONITOR", False)
 SCOUT_KEY = os.environ.get("SCOUT_KEY", "")
 SCOUT_NAME = "Plane"
+

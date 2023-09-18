@@ -9,6 +9,7 @@ from .common import *  # noqa
 
 # Database
 DEBUG = int(os.environ.get("DEBUG", 0)) == 1
+DOCKERIZED = 1
 
 DATABASES = {
     "default": {
@@ -114,6 +115,9 @@ CELERY_RESULT_BACKEND = REDIS_URL
 
 # Enable or Disable signups
 ENABLE_SIGNUP = os.environ.get("ENABLE_SIGNUP", "1") == "1"
+
+# Analytics
+ANALYTICS_BASE_API = False
 
 # OPEN AI Settings
 OPENAI_API_BASE = os.environ.get("OPENAI_API_BASE", "https://api.openai.com/v1")
