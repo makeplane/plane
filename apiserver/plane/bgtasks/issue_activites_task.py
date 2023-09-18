@@ -78,7 +78,7 @@ def track_parent(
                     field="parent",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"updated the parent issue to None",
+                    comment="updated the parent issue to None",
                     old_identifier=old_parent.id,
                     new_identifier=None,
                 )
@@ -126,7 +126,7 @@ def track_priority(
                     field="priority",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"updated the priority to None",
+                    comment="updated the priority to None",
                 )
             )
         else:
@@ -228,7 +228,7 @@ def track_target_date(
                     field="target_date",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"updated the target date to None",
+                    comment="updated the target date to None",
                 )
             )
         else:
@@ -268,7 +268,7 @@ def track_start_date(
                     field="start_date",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"updated the start date to None",
+                    comment="updated the start date to None",
                 )
             )
         else:
@@ -401,7 +401,7 @@ def create_issue_activity(
                 issue_id=issue_id,
                 project=project,
                 workspace=project.workspace,
-                comment=f"created the issue",
+                comment="created the issue",
                 verb="created",
                 actor=actor,
             )
@@ -423,7 +423,7 @@ def track_estimate_points(
                     field="estimate_point",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"updated the estimate point to None",
+                    comment="updated the estimate point to None",
                 )
             )
         else:
@@ -451,7 +451,7 @@ def track_archive_at(
                 issue_id=issue_id,
                 project=project,
                 workspace=project.workspace,
-                comment=f"has restored the issue",
+                comment="has restored the issue",
                 verb="updated",
                 actor=actor,
                 field="archived_at",
@@ -465,7 +465,7 @@ def track_archive_at(
                 issue_id=issue_id,
                 project=project,
                 workspace=project.workspace,
-                comment=f"Plane has archived the issue",
+                comment="Plane has archived the issue",
                 verb="updated",
                 actor=actor,
                 field="archived_at",
@@ -538,7 +538,7 @@ def delete_issue_activity(
         IssueActivity(
             project=project,
             workspace=project.workspace,
-            comment=f"deleted the issue",
+            comment="deleted the issue",
             verb="deleted",
             actor=actor,
             field="issue",
@@ -559,7 +559,7 @@ def create_comment_activity(
             issue_id=issue_id,
             project=project,
             workspace=project.workspace,
-            comment=f"created a comment",
+            comment="created a comment",
             verb="created",
             actor=actor,
             field="comment",
@@ -584,7 +584,7 @@ def update_comment_activity(
                 issue_id=issue_id,
                 project=project,
                 workspace=project.workspace,
-                comment=f"updated a comment",
+                comment="updated a comment",
                 verb="updated",
                 actor=actor,
                 field="comment",
@@ -605,7 +605,7 @@ def delete_comment_activity(
             issue_id=issue_id,
             project=project,
             workspace=project.workspace,
-            comment=f"deleted the comment",
+            comment="deleted the comment",
             verb="deleted",
             actor=actor,
             field="comment",
@@ -797,7 +797,7 @@ def create_link_activity(
             issue_id=issue_id,
             project=project,
             workspace=project.workspace,
-            comment=f"created a link",
+            comment="created a link",
             verb="created",
             actor=actor,
             field="link",
@@ -821,7 +821,7 @@ def update_link_activity(
                 issue_id=issue_id,
                 project=project,
                 workspace=project.workspace,
-                comment=f"updated a link",
+                comment="updated a link",
                 verb="updated",
                 actor=actor,
                 field="link",
@@ -846,7 +846,7 @@ def delete_link_activity(
             issue_id=issue_id,
             project=project,
             workspace=project.workspace,
-            comment=f"deleted the link",
+            comment="deleted the link",
             verb="deleted",
             actor=actor,
             field="link",
@@ -869,7 +869,7 @@ def create_attachment_activity(
             issue_id=issue_id,
             project=project,
             workspace=project.workspace,
-            comment=f"created an attachment",
+            comment="created an attachment",
             verb="created",
             actor=actor,
             field="attachment",
@@ -887,7 +887,7 @@ def delete_attachment_activity(
             issue_id=issue_id,
             project=project,
             workspace=project.workspace,
-            comment=f"deleted the attachment",
+            comment="deleted the attachment",
             verb="deleted",
             actor=actor,
             field="attachment",
@@ -1157,7 +1157,7 @@ def update_draft_issue_activity(
                     issue_id=issue_id,
                     project=project,
                     workspace=project.workspace,
-                    comment=f"created the issue",
+                    comment="created the issue",
                     verb="updated",
                     actor=actor,
                 )

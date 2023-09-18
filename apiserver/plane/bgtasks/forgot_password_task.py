@@ -19,7 +19,7 @@ def forgot_password(first_name, email, uidb64, token, current_site):
 
         from_email_string = settings.EMAIL_FROM
 
-        subject = f"Reset Your Password - Plane"
+        subject = "Reset Your Password - Plane"
 
         context = {
             "first_name": first_name,

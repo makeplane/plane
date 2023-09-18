@@ -181,7 +181,7 @@ class OauthEndpoint(BaseAPIView):
             user.last_active = timezone.now()
             user.last_login_time = timezone.now()
             user.last_login_ip = request.META.get("REMOTE_ADDR")
-            user.last_login_medium = f"oauth"
+            user.last_login_medium = "oauth"
             user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
             user.is_email_verified = email_verified
             user.save()
