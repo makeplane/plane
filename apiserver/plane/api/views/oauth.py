@@ -157,7 +157,6 @@ class OauthEndpoint(BaseAPIView):
             if "@" in email:
                 user = User.objects.get(email=email)
                 email = data["email"]
-                channel = "email"
                 mobile_number = uuid.uuid4().hex
                 email_verified = True
             else:
@@ -235,7 +234,6 @@ class OauthEndpoint(BaseAPIView):
             if "@" in email:
                 email = data["email"]
                 mobile_number = uuid.uuid4().hex
-                channel = "email"
                 email_verified = True
             else:
                 return Response(

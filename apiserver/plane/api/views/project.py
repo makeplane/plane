@@ -432,7 +432,7 @@ class InviteProjectEndpoint(BaseAPIView):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        except (Workspace.DoesNotExist, Project.DoesNotExist) as e:
+        except (Workspace.DoesNotExist, Project.DoesNotExist) as _e:
             return Response(
                 {"error": "Workspace or Project does not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -984,7 +984,6 @@ class ProjectFavoritesViewSet(BaseViewSet):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError as e:
-            print(str(e))
             if "already exists" in str(e):
                 return Response(
                     {"error": "The project is already added to favorites"},

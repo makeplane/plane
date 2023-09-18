@@ -59,7 +59,7 @@ class GPTIntegrationEndpoint(BaseAPIView):
                 },
                 status=status.HTTP_200_OK,
             )
-        except (Workspace.DoesNotExist, Project.DoesNotExist) as e:
+        except (Workspace.DoesNotExist, Project.DoesNotExist) as _e:
             return Response(
                 {"error": "Workspace or Project Does not exist"},
                 status=status.HTTP_400_BAD_REQUEST,

@@ -742,7 +742,7 @@ class CycleFavoriteViewSet(BaseViewSet):
                 serializer.save(user=request.user, project_id=project_id)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except IntegrityError as e:
+        except IntegrityError as _e:
             if "already exists" in str(e):
                 return Response(
                     {"error": "The cycle is already added to favorites"},

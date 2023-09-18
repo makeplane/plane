@@ -213,7 +213,7 @@ class BulkEstimatePointEndpoint(BaseViewSet):
                 EstimatePoint.objects.bulk_update(
                     updated_estimate_points, ["value"], batch_size=10,
                 )
-            except IntegrityError as e:
+            except IntegrityError as _e:
                 return Response(
                     {"error": "Values need to be unique for each key"},
                     status=status.HTTP_400_BAD_REQUEST,

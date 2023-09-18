@@ -63,7 +63,7 @@ class SignUpEndpoint(BaseAPIView):
 
             try:
                 validate_email(email)
-            except ValidationError as e:
+            except ValidationError as _e:
                 return Response(
                     {"error": "Please provide a valid email address."},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -148,7 +148,7 @@ class SignInEndpoint(BaseAPIView):
 
             try:
                 validate_email(email)
-            except ValidationError as e:
+            except ValidationError as _e:
                 return Response(
                     {"error": "Please provide a valid email address."},
                     status=status.HTTP_400_BAD_REQUEST,

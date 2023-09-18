@@ -139,7 +139,7 @@ def service_importer(service, importer_id):
             )
 
             # Create repo sync
-            repo_sync = GithubRepositorySync.objects.create(
+            _ = GithubRepositorySync.objects.create(
                 repository=repo,
                 workspace_integration=workspace_integration,
                 actor=workspace_integration.actor,
@@ -161,7 +161,7 @@ def service_importer(service, importer_id):
                 ImporterSerializer(importer).data,
                 cls=DjangoJSONEncoder,
             )
-            res = requests.post(
+            _ = requests.post(
                 f"{settings.PROXY_BASE_URL}/hooks/workspaces/{str(importer.workspace_id)}/projects/{str(importer.project_id)}/importers/{str(service)}/",
                 json=import_data_json,
                 headers=headers,

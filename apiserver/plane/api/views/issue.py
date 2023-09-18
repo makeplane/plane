@@ -2181,7 +2181,7 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
 
     def get(self, request, slug, project_id):
         try:
-            project_deploy_board = ProjectDeployBoard.objects.get(
+            _ = ProjectDeployBoard.objects.get(
                 workspace__slug=slug, project_id=project_id
             )
 
