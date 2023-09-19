@@ -130,7 +130,7 @@ class IssueViewSet(BaseViewSet):
                 current_instance=json.dumps(
                     IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
                 ),
-                epoch  = int(timezone.now().time())
+                epoch  = int(timezone.now().timestamp())
             )
 
         return super().perform_update(serializer)
@@ -2412,7 +2412,7 @@ class IssueDraftViewSet(BaseViewSet):
                 current_instance=json.dumps(
                     IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
                 ),
-                epoch  = int(timezone.now().time())
+                epoch  = int(timezone.now().timestamp())
             )
 
         return super().perform_update(serializer)
