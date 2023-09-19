@@ -125,11 +125,11 @@ const EstimatesSettings: NextPage = () => {
           </Breadcrumbs>
         }
       >
-        <div className="flex flex-row gap-2 h-full overflow-hidden">
-          <div className="w-80 py-8">
+        <div className="flex flex-row gap-2 h-full">
+          <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
             <SettingsSidebar />
           </div>
-          <div className="pr-9 py-8 flex flex-col w-full">
+          <div className="pr-9 py-8 flex flex-col w-full overflow-y-auto">
             <section className="flex items-center justify-between pt-2 pb-3.5 border-b border-custom-border-200">
               <h3 className="text-xl font-medium">Estimates</h3>
               <div className="col-span-12 space-y-5 sm:col-span-7">

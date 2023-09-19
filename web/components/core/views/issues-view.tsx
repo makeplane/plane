@@ -19,7 +19,12 @@ import useIssuesProperties from "hooks/use-issue-properties";
 import useProjectMembers from "hooks/use-project-members";
 // components
 import { FiltersList, AllViews } from "components/core";
-import { CreateUpdateIssueModal, DeleteIssueModal, IssuePeekOverview } from "components/issues";
+import {
+  CreateUpdateIssueModal,
+  DeleteIssueModal,
+  DeleteDraftIssueModal,
+  CreateUpdateDraftIssueModal,
+} from "components/issues";
 import { CreateUpdateViewModal } from "components/views";
 // ui
 import { PrimaryButton, SecondaryButton } from "components/ui";
@@ -70,8 +75,13 @@ export const IssuesView: React.FC<Props> = ({
   // trash box
   const [trashBox, setTrashBox] = useState(false);
 
+  // selected draft issue
+  const [selectedDraftIssue, setSelectedDraftIssue] = useState<IIssue | null>(null);
+  const [selectedDraftForDelete, setSelectDraftForDelete] = useState<IIssue | null>(null);
+
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+  const isDraftIssues = router.asPath.includes("draft-issues");
 
   const { user } = useUserAuth();
 
@@ -105,6 +115,9 @@ export const IssuesView: React.FC<Props> = ({
     },
     [setDeleteIssueModal, setIssueToDelete]
   );
+
+  const handleDraftIssueClick = useCallback((issue: any) => setSelectedDraftIssue(issue), []);
+  const handleDraftIssueDelete = useCallback((issue: any) => setSelectDraftForDelete(issue), []);
 
   const handleOnDragEnd = useCallback(
     async (result: DropResult) => {
@@ -343,6 +356,14 @@ export const IssuesView: React.FC<Props> = ({
     [makeIssueCopy, handleEditIssue, handleDeleteIssue]
   );
 
+  const handleDraftIssueAction = useCallback(
+    (issue: IIssue, action: "edit" | "delete") => {
+      if (action === "edit") handleDraftIssueClick(issue);
+      else if (action === "delete") handleDraftIssueDelete(issue);
+    },
+    [handleDraftIssueClick, handleDraftIssueDelete]
+  );
+
   const removeIssueFromCycle = useCallback(
     (bridgeId: string, issueId: string) => {
       if (!workspaceSlug || !projectId || !cycleId) return;
@@ -451,6 +472,19 @@ export const IssuesView: React.FC<Props> = ({
           ...preloadedData,
         }}
       />
+      <CreateUpdateDraftIssueModal
+        isOpen={selectedDraftIssue !== null}
+        handleClose={() => setSelectedDraftIssue(null)}
+        data={
+          selectedDraftIssue
+            ? {
+                ...selectedDraftIssue,
+                is_draft: true,
+              }
+            : null
+        }
+        fieldsToShow={["all"]}
+      />
       <CreateUpdateIssueModal
         isOpen={editIssueModal && issueToEdit?.actionType !== "delete"}
         handleClose={() => setEditIssueModal(false)}
@@ -461,6 +495,11 @@ export const IssuesView: React.FC<Props> = ({
         isOpen={deleteIssueModal}
         data={issueToDelete}
         user={user}
+      />
+      <DeleteDraftIssueModal
+        data={selectedDraftForDelete}
+        isOpen={selectedDraftForDelete !== null}
+        handleClose={() => setSelectDraftForDelete(null)}
       />
 
       {areFiltersApplied && (
@@ -518,23 +557,28 @@ export const IssuesView: React.FC<Props> = ({
           displayFilters.group_by === "assignees"
         }
         emptyState={{
-          title: cycleId
+          title: isDraftIssues
+            ? "Draft issues will appear here"
+            : cycleId
             ? "Cycle issues will appear here"
             : moduleId
             ? "Module issues will appear here"
             : "Project issues will appear here",
-          description:
-            "Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done.",
-          primaryButton: {
-            icon: <PlusIcon className="h-4 w-4" />,
-            text: "New Issue",
-            onClick: () => {
-              const e = new KeyboardEvent("keydown", {
-                key: "c",
-              });
-              document.dispatchEvent(e);
-            },
-          },
+          description: isDraftIssues
+            ? "Draft issues are issues that are not yet created."
+            : "Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done.",
+          primaryButton: !isDraftIssues
+            ? {
+                icon: <PlusIcon className="h-4 w-4" />,
+                text: "New Issue",
+                onClick: () => {
+                  const e = new KeyboardEvent("keydown", {
+                    key: "c",
+                  });
+                  document.dispatchEvent(e);
+                },
+              }
+            : undefined,
           secondaryButton:
             cycleId || moduleId ? (
               <SecondaryButton
@@ -548,6 +592,7 @@ export const IssuesView: React.FC<Props> = ({
         }}
         handleOnDragEnd={handleOnDragEnd}
         handleIssueAction={handleIssueAction}
+        handleDraftIssueAction={handleDraftIssueAction}
         openIssuesListModal={openIssuesListModal ?? null}
         removeIssue={cycleId ? removeIssueFromCycle : moduleId ? removeIssueFromModule : null}
         trashBox={trashBox}

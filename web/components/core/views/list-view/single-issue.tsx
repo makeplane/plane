@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from "react";
 
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { mutate } from "swr";
@@ -18,6 +17,7 @@ import {
   ViewPrioritySelect,
   ViewStartDateSelect,
   ViewStateSelect,
+  CreateUpdateDraftIssueModal,
 } from "components/issues";
 // ui
 import { Tooltip, CustomMenu, ContextMenu } from "components/ui";
@@ -61,6 +61,8 @@ type Props = {
   makeIssueCopy: () => void;
   removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
+  handleDraftIssueSelect?: (issue: IIssue) => void;
+  handleDraftIssueDelete?: (issue: IIssue) => void;
   handleMyIssueOpen?: (issue: IIssue) => void;
   disableUserActions: boolean;
   user: ICurrentUserResponse | undefined;
@@ -76,12 +78,14 @@ export const SingleListIssue: React.FC<Props> = ({
   makeIssueCopy,
   removeIssue,
   groupTitle,
+  handleDraftIssueDelete,
   handleDeleteIssue,
   handleMyIssueOpen,
   disableUserActions,
   user,
   userAuth,
   viewProps,
+  handleDraftIssueSelect,
 }) => {
   // context menu
   const [contextMenu, setContextMenu] = useState(false);
@@ -90,6 +94,7 @@ export const SingleListIssue: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, userId } = router.query;
   const isArchivedIssues = router.pathname.includes("archived-issues");
+  const isDraftIssues = router.pathname?.split("/")?.[4] === "draft-issues";
 
   const { setToastAlert } = useToast();
 
@@ -178,6 +183,8 @@ export const SingleListIssue: React.FC<Props> = ({
 
   const issuePath = isArchivedIssues
     ? `/${workspaceSlug}/projects/${issue.project}/archived-issues/${issue.id}`
+    : isDraftIssues
+    ? `#`
     : `/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`;
 
   const openPeekOverview = (issue: IIssue) => {
@@ -203,26 +210,45 @@ export const SingleListIssue: React.FC<Props> = ({
       >
         {!isNotAllowed && (
           <>
-            <ContextMenu.Item Icon={PencilIcon} onClick={editIssue}>
+            <ContextMenu.Item
+              Icon={PencilIcon}
+              onClick={() => {
+                if (isDraftIssues && handleDraftIssueSelect) handleDraftIssueSelect(issue);
+                else editIssue();
+              }}
+            >
               Edit issue
             </ContextMenu.Item>
-            <ContextMenu.Item Icon={ClipboardDocumentCheckIcon} onClick={makeIssueCopy}>
-              Make a copy...
-            </ContextMenu.Item>
-            <ContextMenu.Item Icon={TrashIcon} onClick={() => handleDeleteIssue(issue)}>
+            {!isDraftIssues && (
+              <ContextMenu.Item Icon={ClipboardDocumentCheckIcon} onClick={makeIssueCopy}>
+                Make a copy...
+              </ContextMenu.Item>
+            )}
+            <ContextMenu.Item
+              Icon={TrashIcon}
+              onClick={() => {
+                if (isDraftIssues && handleDraftIssueDelete) handleDraftIssueDelete(issue);
+                else handleDeleteIssue(issue);
+              }}
+            >
               Delete issue
             </ContextMenu.Item>
           </>
         )}
-        <ContextMenu.Item Icon={LinkIcon} onClick={handleCopyText}>
-          Copy issue link
-        </ContextMenu.Item>
-        <a href={issuePath} target="_blank" rel="noreferrer noopener">
-          <ContextMenu.Item Icon={ArrowTopRightOnSquareIcon}>
-            Open issue in new tab
-          </ContextMenu.Item>
-        </a>
+        {!isDraftIssues && (
+          <>
+            <ContextMenu.Item Icon={LinkIcon} onClick={handleCopyText}>
+              Copy issue link
+            </ContextMenu.Item>
+            <a href={issuePath} target="_blank" rel="noreferrer noopener">
+              <ContextMenu.Item Icon={ArrowTopRightOnSquareIcon}>
+                Open issue in new tab
+              </ContextMenu.Item>
+            </a>
+          </>
+        )}
       </ContextMenu>
+
       <div
         className="flex items-center justify-between px-4 py-2.5 gap-10 border-b border-custom-border-200 bg-custom-background-100 last:border-b-0"
         onContextMenu={(e) => {
@@ -247,7 +273,10 @@ export const SingleListIssue: React.FC<Props> = ({
               <button
                 type="button"
                 className="truncate text-[0.825rem] text-custom-text-100"
-                onClick={() => openPeekOverview(issue)}
+                onClick={() => {
+                  if (!isDraftIssues) openPeekOverview(issue);
+                  if (isDraftIssues && handleDraftIssueSelect) handleDraftIssueSelect(issue);
+                }}
               >
                 {issue.name}
               </button>
@@ -345,7 +374,12 @@ export const SingleListIssue: React.FC<Props> = ({
           )}
           {type && !isNotAllowed && (
             <CustomMenu width="auto" ellipsis>
-              <CustomMenu.MenuItem onClick={editIssue}>
+              <CustomMenu.MenuItem
+                onClick={() => {
+                  if (isDraftIssues && handleDraftIssueSelect) handleDraftIssueSelect(issue);
+                  else editIssue();
+                }}
+              >
                 <div className="flex items-center justify-start gap-2">
                   <PencilIcon className="h-4 w-4" />
                   <span>Edit issue</span>
@@ -359,18 +393,25 @@ export const SingleListIssue: React.FC<Props> = ({
                   </div>
                 </CustomMenu.MenuItem>
               )}
-              <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
+              <CustomMenu.MenuItem
+                onClick={() => {
+                  if (isDraftIssues && handleDraftIssueDelete) handleDraftIssueDelete(issue);
+                  else handleDeleteIssue(issue);
+                }}
+              >
                 <div className="flex items-center justify-start gap-2">
                   <TrashIcon className="h-4 w-4" />
                   <span>Delete issue</span>
                 </div>
               </CustomMenu.MenuItem>
-              <CustomMenu.MenuItem onClick={handleCopyText}>
-                <div className="flex items-center justify-start gap-2">
-                  <LinkIcon className="h-4 w-4" />
-                  <span>Copy issue link</span>
-                </div>
-              </CustomMenu.MenuItem>
+              {!isDraftIssues && (
+                <CustomMenu.MenuItem onClick={handleCopyText}>
+                  <div className="flex items-center justify-start gap-2">
+                    <LinkIcon className="h-4 w-4" />
+                    <span>Copy issue link</span>
+                  </div>
+                </CustomMenu.MenuItem>
+              )}
             </CustomMenu>
           )}
         </div>

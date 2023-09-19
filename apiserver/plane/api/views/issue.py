@@ -54,6 +54,7 @@ from plane.api.serializers import (
     CommentReactionSerializer,
     IssueVoteSerializer,
     IssueRelationSerializer,
+    RelatedIssueSerializer,
     IssuePublicSerializer,
 )
 from plane.api.permissions import (
@@ -2112,9 +2113,10 @@ class IssueRelationViewSet(BaseViewSet):
     def create(self, request, slug, project_id, issue_id):
         try:
             related_list = request.data.get("related_list", [])
+            relation = request.data.get("relation", None)
             project = Project.objects.get(pk=project_id)
 
-            issueRelation = IssueRelation.objects.bulk_create(
+            issue_relation = IssueRelation.objects.bulk_create(
                 [
                     IssueRelation(
                         issue_id=related_issue["issue"],
@@ -2140,11 +2142,17 @@ class IssueRelationViewSet(BaseViewSet):
                 current_instance=None,
                 epoch = int(timezone.now().timestamp())
             )
-
-            return Response(
-                IssueRelationSerializer(issueRelation, many=True).data,
-                status=status.HTTP_201_CREATED,
-            )
+            
+            if relation == "blocking":
+                return Response(
+                    RelatedIssueSerializer(issue_relation, many=True).data,
+                    status=status.HTTP_201_CREATED,
+                )
+            else:
+                return Response(
+                    IssueRelationSerializer(issue_relation, many=True).data,
+                    status=status.HTTP_201_CREATED,
+                )
         except IntegrityError as e:
             if "already exists" in str(e):
                 return Response(
