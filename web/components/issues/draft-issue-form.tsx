@@ -55,7 +55,10 @@ const defaultValues: Partial<IIssue> = {
 };
 
 interface IssueFormProps {
-  handleFormSubmit: (formData: Partial<IIssue>) => Promise<void>;
+  handleFormSubmit: (
+    formData: Partial<IIssue>,
+    action?: "createDraft" | "createToNewIssue" | "updateDraft"
+  ) => Promise<void>;
   data?: Partial<IIssue> | null;
   prePopulatedData?: Partial<IIssue> | null;
   projectId: string;
@@ -134,12 +137,16 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
 
   const handleCreateUpdateIssue = async (
     formData: Partial<IIssue>,
-    action: "saveDraft" | "createToNewIssue" = "saveDraft"
+    action: "createDraft" | "createToNewIssue" | "updateDraft" = "createDraft"
   ) => {
-    await handleFormSubmit({
-      ...formData,
-      is_draft: action === "saveDraft",
-    });
+    await handleFormSubmit(
+      {
+        ...(data ?? {}),
+        ...formData,
+        is_draft: action === "createDraft",
+      },
+      action
+    );
 
     setGptAssistantModal(false);
 
@@ -563,15 +570,13 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
             <SecondaryButton onClick={onClose}>Discard</SecondaryButton>
             <SecondaryButton
               loading={isSubmitting}
-              onClick={handleSubmit((formData) => handleCreateUpdateIssue(formData, "saveDraft"))}
+              onClick={handleSubmit((formData) => handleCreateUpdateIssue(formData, "createDraft"))}
             >
               {isSubmitting ? "Saving..." : "Save Draft"}
             </SecondaryButton>
-            {data && (
-              <PrimaryButton type="submit" loading={isSubmitting}>
-                {isSubmitting ? "Saving..." : "Add Issue"}
-              </PrimaryButton>
-            )}
+            <PrimaryButton type="submit" loading={isSubmitting}>
+              {isSubmitting ? "Saving..." : "Add Issue"}
+            </PrimaryButton>
           </div>
         </div>
       </form>
