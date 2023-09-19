@@ -18,11 +18,10 @@ import { CustomMenu, Tooltip } from "components/ui";
 import {
   ViewDueDateSelect,
   ViewEstimateSelect,
-  ViewLabelSelect,
   ViewPrioritySelect,
   ViewStartDateSelect,
 } from "components/issues";
-import { MembersSelect, StateSelect } from "components/project";
+import { LabelSelect, MembersSelect, StateSelect } from "components/project";
 // icons
 import { LinkIcon, PaperClipIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { LayerDiagonalIcon } from "components/icons";
@@ -213,6 +212,15 @@ export const SingleCalendarIssue: React.FC<Props> = ({
     );
   };
 
+  const handleLabelChange = (data: any) => {
+    const newData = issue.labels ?? [];
+
+    if (newData.includes(data)) newData.splice(newData.indexOf(data), 1);
+    else newData.push(data);
+
+    partialUpdateIssue({ labels_list: newData }, issue);
+  };
+
   const displayProperties = properties
     ? Object.values(properties).some((value) => value === true)
     : false;
@@ -318,12 +326,13 @@ export const SingleCalendarIssue: React.FC<Props> = ({
               />
             )}
             {properties.labels && issue.labels.length > 0 && (
-              <ViewLabelSelect
-                issue={issue}
-                partialUpdateIssue={partialUpdateIssue}
-                position="left"
+              <LabelSelect
+                value={issue.label_details}
+                onChange={handleLabelChange}
+                hideDropdownArrow
+                maxRender={1}
                 user={user}
-                isNotAllowed={isNotAllowed}
+                disabled={isNotAllowed}
               />
             )}
             {properties.assignee && (

@@ -21,11 +21,10 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import {
   ViewDueDateSelect,
   ViewEstimateSelect,
-  ViewIssueLabel,
   ViewPrioritySelect,
   ViewStartDateSelect,
 } from "components/issues";
-import { StateSelect, MembersSelect } from "components/project";
+import { StateSelect, MembersSelect, LabelSelect } from "components/project";
 // ui
 import { ContextMenu, CustomMenu, Tooltip } from "components/ui";
 // icons
@@ -255,6 +254,15 @@ export const SingleBoardIssue: React.FC<Props> = ({
     );
   };
 
+  const handleLabelChange = (data: any) => {
+    const newData = issue.labels ?? [];
+
+    if (newData.includes(data)) newData.splice(newData.indexOf(data), 1);
+    else newData.push(data);
+
+    partialUpdateIssue({ labels_list: newData }, issue);
+  };
+
   useEffect(() => {
     if (snapshot.isDragging) handleTrashBox(snapshot.isDragging);
   }, [snapshot, handleTrashBox]);
@@ -462,7 +470,13 @@ export const SingleBoardIssue: React.FC<Props> = ({
               />
             )}
             {properties.labels && issue.labels.length > 0 && (
-              <ViewIssueLabel labelDetails={issue.label_details} maxRender={2} />
+              <LabelSelect
+                value={issue.label_details}
+                onChange={handleLabelChange}
+                hideDropdownArrow
+                user={user}
+                disabled={isNotAllowed}
+              />
             )}
             {properties.assignee && (
               <MembersSelect

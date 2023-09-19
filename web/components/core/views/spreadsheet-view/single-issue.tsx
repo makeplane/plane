@@ -8,11 +8,10 @@ import { mutate } from "swr";
 import {
   ViewDueDateSelect,
   ViewEstimateSelect,
-  ViewIssueLabel,
   ViewPrioritySelect,
   ViewStartDateSelect,
 } from "components/issues";
-import { MembersSelect, StateSelect } from "components/project";
+import { LabelSelect, MembersSelect, StateSelect } from "components/project";
 import { Popover2 } from "@blueprintjs/popover2";
 // icons
 import { Icon } from "components/ui";
@@ -247,6 +246,15 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
     );
   };
 
+  const handleLabelChange = (data: any) => {
+    const newData = issue.labels ?? [];
+
+    if (newData.includes(data)) newData.splice(newData.indexOf(data), 1);
+    else newData.push(data);
+
+    partialUpdateIssue({ labels_list: newData }, issue);
+  };
+
   const paddingLeft = `${nestingLevel * 68}px`;
 
   const tooltipPosition = index === 0 ? "bottom" : "top";
@@ -386,7 +394,14 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         )}
         {properties.labels && (
           <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
-            <ViewIssueLabel labelDetails={issue.label_details} maxRender={1} />
+            <LabelSelect
+              value={issue.label_details}
+              onChange={handleLabelChange}
+              hideDropdownArrow
+              maxRender={1}
+              user={user}
+              disabled={isNotAllowed}
+            />
           </div>
         )}
 

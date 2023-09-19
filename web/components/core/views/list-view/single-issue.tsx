@@ -13,11 +13,10 @@ import useToast from "hooks/use-toast";
 import {
   ViewDueDateSelect,
   ViewEstimateSelect,
-  ViewIssueLabel,
   ViewPrioritySelect,
   ViewStartDateSelect,
 } from "components/issues";
-import { MembersSelect, StateSelect } from "components/project";
+import { LabelSelect, MembersSelect, StateSelect } from "components/project";
 // ui
 import { Tooltip, CustomMenu, ContextMenu } from "components/ui";
 // icons
@@ -241,6 +240,15 @@ export const SingleListIssue: React.FC<Props> = ({
     );
   };
 
+  const handleLabelChange = (data: any) => {
+    const newData = issue.labels ?? [];
+
+    if (newData.includes(data)) newData.splice(newData.indexOf(data), 1);
+    else newData.push(data);
+
+    partialUpdateIssue({ labels_list: newData }, issue);
+  };
+
   const issuePath = isArchivedIssues
     ? `/${workspaceSlug}/projects/${issue.project}/archived-issues/${issue.id}`
     : isDraftIssues
@@ -382,7 +390,16 @@ export const SingleListIssue: React.FC<Props> = ({
               isNotAllowed={isNotAllowed}
             />
           )}
-          {properties.labels && <ViewIssueLabel labelDetails={issue.label_details} maxRender={3} />}
+          {properties.labels && (
+            <LabelSelect
+              value={issue.label_details}
+              onChange={handleLabelChange}
+              hideDropdownArrow
+              maxRender={3}
+              user={user}
+              disabled={isNotAllowed}
+            />
+          )}
           {properties.assignee && (
             <MembersSelect
               value={issue.assignees}

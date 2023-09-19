@@ -9,3 +9,4 @@ export * from "./confirm-project-leave-modal";
 export * from "./member-select";
 export * from "./state-select";
 export * from "./members-select";
+export * from "./label-select";
