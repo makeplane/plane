@@ -518,6 +518,11 @@ def update_issue_activity(
         "closed_to": track_closed_to,
     }
 
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+
     for key in requested_data:
         func = ISSUE_ACTIVITY_MAPPER.get(key, None)
         if func is not None:
