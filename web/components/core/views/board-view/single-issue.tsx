@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { mutate } from "swr";
@@ -58,8 +57,11 @@ type Props = {
   index: number;
   editIssue: () => void;
   makeIssueCopy: () => void;
+  handleMyIssueOpen?: (issue: IIssue) => void;
   removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
+  handleDraftIssueEdit?: () => void;
+  handleDraftIssueDelete?: () => void;
   handleTrashBox: (isDragging: boolean) => void;
   disableUserActions: boolean;
   user: ICurrentUserResponse | undefined;
@@ -75,9 +77,12 @@ export const SingleBoardIssue: React.FC<Props> = ({
   index,
   editIssue,
   makeIssueCopy,
+  handleMyIssueOpen,
   removeIssue,
   groupTitle,
   handleDeleteIssue,
+  handleDraftIssueEdit,
+  handleDraftIssueDelete,
   handleTrashBox,
   disableUserActions,
   user,
@@ -93,10 +98,12 @@ export const SingleBoardIssue: React.FC<Props> = ({
 
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
 
-  const { groupByProperty: selectedGroup, orderBy, properties, mutateIssues } = viewProps;
+  const { displayFilters, properties, mutateIssues } = viewProps;
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+
+  const isDraftIssue = router.pathname.includes("draft-issues");
 
   const { setToastAlert } = useToast();
 
@@ -131,9 +138,9 @@ export const SingleBoardIssue: React.FC<Props> = ({
             handleIssuesMutation(
               formData,
               groupTitle ?? "",
-              selectedGroup,
+              displayFilters?.group_by ?? null,
               index,
-              orderBy,
+              displayFilters?.order_by ?? "-created_at",
               prevData
             ),
           false
@@ -149,24 +156,14 @@ export const SingleBoardIssue: React.FC<Props> = ({
           if (moduleId) mutate(MODULE_DETAILS(moduleId as string));
         });
     },
-    [
-      workspaceSlug,
-      cycleId,
-      moduleId,
-      groupTitle,
-      index,
-      selectedGroup,
-      mutateIssues,
-      orderBy,
-      user,
-    ]
+    [displayFilters, workspaceSlug, cycleId, moduleId, groupTitle, index, mutateIssues, user]
   );
 
   const getStyle = (
     style: DraggingStyle | NotDraggingStyle | undefined,
     snapshot: DraggableStateSnapshot
   ) => {
-    if (orderBy === "sort_order") return style;
+    if (displayFilters?.order_by === "sort_order") return style;
     if (!snapshot.isDragging) return {};
     if (!snapshot.isDropAnimating) return style;
 
@@ -197,6 +194,17 @@ export const SingleBoardIssue: React.FC<Props> = ({
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 
+  const openPeekOverview = () => {
+    const { query } = router;
+
+    if (handleMyIssueOpen) handleMyIssueOpen(issue);
+
+    router.push({
+      pathname: router.pathname,
+      query: { ...query, peekIssue: issue.id },
+    });
+  };
+
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disableUserActions;
 
   return (
@@ -209,29 +217,47 @@ export const SingleBoardIssue: React.FC<Props> = ({
       >
         {!isNotAllowed && (
           <>
-            <ContextMenu.Item Icon={PencilIcon} onClick={editIssue}>
+            <ContextMenu.Item
+              Icon={PencilIcon}
+              onClick={() => {
+                if (isDraftIssue && handleDraftIssueEdit) handleDraftIssueEdit();
+                else editIssue();
+              }}
+            >
               Edit issue
             </ContextMenu.Item>
-            <ContextMenu.Item Icon={ClipboardDocumentCheckIcon} onClick={makeIssueCopy}>
-              Make a copy...
-            </ContextMenu.Item>
-            <ContextMenu.Item Icon={TrashIcon} onClick={() => handleDeleteIssue(issue)}>
+            {!isDraftIssue && (
+              <ContextMenu.Item Icon={ClipboardDocumentCheckIcon} onClick={makeIssueCopy}>
+                Make a copy...
+              </ContextMenu.Item>
+            )}
+            <ContextMenu.Item
+              Icon={TrashIcon}
+              onClick={() => {
+                if (isDraftIssue && handleDraftIssueDelete) handleDraftIssueDelete();
+                else handleDeleteIssue(issue);
+              }}
+            >
               Delete issue
             </ContextMenu.Item>
           </>
         )}
-        <ContextMenu.Item Icon={LinkIcon} onClick={handleCopyText}>
-          Copy issue link
-        </ContextMenu.Item>
-        <a
-          href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}
-          target="_blank"
-          rel="noreferrer noopener"
-        >
-          <ContextMenu.Item Icon={ArrowTopRightOnSquareIcon}>
-            Open issue in new tab
+        {!isDraftIssue && (
+          <ContextMenu.Item Icon={LinkIcon} onClick={handleCopyText}>
+            Copy issue link
           </ContextMenu.Item>
-        </a>
+        )}
+        {!isDraftIssue && (
+          <a
+            href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            <ContextMenu.Item Icon={ArrowTopRightOnSquareIcon}>
+              Open issue in new tab
+            </ContextMenu.Item>
+          </a>
+        )}
       </ContextMenu>
       <div
         className={`mb-3 rounded bg-custom-background-100 shadow ${
@@ -266,13 +292,18 @@ export const SingleBoardIssue: React.FC<Props> = ({
                     </button>
                   }
                 >
-                  <CustomMenu.MenuItem onClick={editIssue}>
+                  <CustomMenu.MenuItem
+                    onClick={() => {
+                      if (isDraftIssue && handleDraftIssueEdit) handleDraftIssueEdit();
+                      else editIssue();
+                    }}
+                  >
                     <div className="flex items-center justify-start gap-2">
                       <PencilIcon className="h-4 w-4" />
                       <span>Edit issue</span>
                     </div>
                   </CustomMenu.MenuItem>
-                  {type !== "issue" && removeIssue && (
+                  {type !== "issue" && removeIssue && !isDraftIssue && (
                     <CustomMenu.MenuItem onClick={removeIssue}>
                       <div className="flex items-center justify-start gap-2">
                         <XMarkIcon className="h-4 w-4" />
@@ -280,32 +311,48 @@ export const SingleBoardIssue: React.FC<Props> = ({
                       </div>
                     </CustomMenu.MenuItem>
                   )}
-                  <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
+                  <CustomMenu.MenuItem
+                    onClick={() => {
+                      if (isDraftIssue && handleDraftIssueDelete) handleDraftIssueDelete();
+                      else handleDeleteIssue(issue);
+                    }}
+                  >
                     <div className="flex items-center justify-start gap-2">
                       <TrashIcon className="h-4 w-4" />
                       <span>Delete issue</span>
                     </div>
                   </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem onClick={handleCopyText}>
-                    <div className="flex items-center justify-start gap-2">
-                      <LinkIcon className="h-4 w-4" />
-                      <span>Copy issue Link</span>
-                    </div>
-                  </CustomMenu.MenuItem>
+                  {!isDraftIssue && (
+                    <CustomMenu.MenuItem onClick={handleCopyText}>
+                      <div className="flex items-center justify-start gap-2">
+                        <LinkIcon className="h-4 w-4" />
+                        <span>Copy issue Link</span>
+                      </div>
+                    </CustomMenu.MenuItem>
+                  )}
                 </CustomMenu>
               )}
             </div>
           )}
-          <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
-            <a className="flex flex-col gap-1.5">
-              {properties.key && (
-                <div className="text-xs font-medium text-custom-text-200">
-                  {issue.project_detail.identifier}-{issue.sequence_id}
-                </div>
-              )}
-              <h5 className="text-sm break-words line-clamp-2">{issue.name}</h5>
-            </a>
-          </Link>
+
+          <div className="flex flex-col gap-1.5">
+            {properties.key && (
+              <div className="text-xs font-medium text-custom-text-200">
+                {issue.project_detail.identifier}-{issue.sequence_id}
+              </div>
+            )}
+            <button
+              type="button"
+              className="text-sm text-left break-words line-clamp-2"
+              onClick={() => {
+                if (isDraftIssue && handleDraftIssueEdit) handleDraftIssueEdit();
+                else openPeekOverview();
+              }}
+            >
+              {issue.name}
+            </button>
+          </div>
+
           <div
             className={`flex items-center gap-2 text-xs ${
               isDropdownActive ? "" : "overflow-x-scroll"

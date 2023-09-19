@@ -6,10 +6,9 @@ import useSWR from "swr";
 import workspaceService from "services/workspace.service";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
-import { SettingsHeader } from "components/workspace";
 // components
 import IntegrationGuide from "components/integration/guide";
-import { IntegrationAndImportExportBanner } from "components/ui";
+import { SettingsSidebar } from "components/project";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
@@ -41,15 +40,16 @@ const ImportExport: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      <div className="p-8 space-y-4">
-        <SettingsHeader />
-        <IntegrationAndImportExportBanner
-          bannerName="Import/ Export"
-          description="Integrations and importers are only available on the cloud version. We plan to open-source
-        our SDKs in the near future so that the community can request or contribute integrations as
-        needed."
-        />
-        <IntegrationGuide />
+      <div className="flex flex-row gap-2 h-full">
+        <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
+          <SettingsSidebar />
+        </div>
+        <section className="pr-9 py-8 w-full overflow-y-auto">
+          <div className="flex items-center py-3.5 border-b border-custom-border-200">
+            <h3 className="text-xl font-medium">Imports</h3>
+          </div>
+          <IntegrationGuide />
+        </section>
       </div>
     </WorkspaceAuthorizationLayout>
   );

@@ -2,7 +2,6 @@
 import React from "react";
 
 // next
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 // swr
@@ -16,12 +15,10 @@ import issuesService from "services/issues.service";
 
 // hooks
 import useUser from "hooks/use-user";
-import useToast from "hooks/use-toast";
 
 // components
-import { Label, AddComment } from "components/web-view";
 import { CommentCard } from "components/issues/comment";
-import { ActivityIcon, ActivityMessage } from "components/core";
+import { Label, AddComment, ActivityMessage, ActivityIcon } from "components/web-view";
 
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
@@ -183,15 +180,15 @@ export const IssueActivity: React.FC<Props> = (props) => {
                               {activityItem.actor_detail.first_name} Bot
                             </span>
                           ) : (
-                            <Link
-                              href={`/${workspaceSlug}/profile/${activityItem.actor_detail.id}`}
+                            <button
+                              type="button"
+                              className="text-gray font-medium"
+                              onClick={() => console.log("user", activityItem.actor)}
                             >
-                              <a className="text-gray font-medium">
-                                {activityItem.actor_detail.is_bot
-                                  ? activityItem.actor_detail.first_name
-                                  : activityItem.actor_detail.display_name}
-                              </a>
-                            </Link>
+                              {activityItem.actor_detail.is_bot
+                                ? activityItem.actor_detail.first_name
+                                : activityItem.actor_detail.display_name}
+                            </button>
                           )}{" "}
                           {message}{" "}
                           <span className="whitespace-nowrap">

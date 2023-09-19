@@ -63,7 +63,11 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
   const [isUnpublishing, setIsUnpublishing] = useState(false);
   const [isUpdateRequired, setIsUpdateRequired] = useState(false);
 
-  const plane_deploy_url = process.env.NEXT_PUBLIC_DEPLOY_URL ?? "http://localhost:4000";
+  let plane_deploy_url = process.env.NEXT_PUBLIC_DEPLOY_URL;
+
+  if (typeof window !== 'undefined' && !plane_deploy_url) {
+    plane_deploy_url= window.location.protocol + "//" + window.location.host + "/spaces";
+  }
 
   const router = useRouter();
   const { workspaceSlug } = router.query;

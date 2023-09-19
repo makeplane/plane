@@ -19,7 +19,13 @@ import useIssuesProperties from "hooks/use-issue-properties";
 import useProjectMembers from "hooks/use-project-members";
 // components
 import { FiltersList, AllViews } from "components/core";
-import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
+import {
+  CreateUpdateIssueModal,
+  DeleteIssueModal,
+  DeleteDraftIssueModal,
+  IssuePeekOverview,
+  CreateUpdateDraftIssueModal,
+} from "components/issues";
 import { CreateUpdateViewModal } from "components/views";
 // ui
 import { PrimaryButton, SecondaryButton } from "components/ui";
@@ -29,7 +35,7 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import { getStatesList } from "helpers/state.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
-import { IIssue, IIssueFilterOptions, IState } from "types";
+import { IIssue, IIssueFilterOptions, IState, TIssuePriorities } from "types";
 // fetch-keys
 import {
   CYCLE_DETAILS,
@@ -70,25 +76,20 @@ export const IssuesView: React.FC<Props> = ({
   // trash box
   const [trashBox, setTrashBox] = useState(false);
 
+  // selected draft issue
+  const [selectedDraftIssue, setSelectedDraftIssue] = useState<IIssue | null>(null);
+  const [selectedDraftForDelete, setSelectDraftForDelete] = useState<IIssue | null>(null);
+
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+  const isDraftIssues = router.asPath.includes("draft-issues");
 
   const { user } = useUserAuth();
 
   const { setToastAlert } = useToast();
 
-  const {
-    groupedByIssues,
-    mutateIssues,
-    issueView,
-    groupByProperty: selectedGroup,
-    orderBy,
-    filters,
-    isEmpty,
-    setFilters,
-    params,
-    showEmptyGroups,
-  } = useIssuesView();
+  const { groupedByIssues, mutateIssues, displayFilters, filters, isEmpty, setFilters, params } =
+    useIssuesView();
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
   const { data: stateGroups } = useSWR(
@@ -116,6 +117,9 @@ export const IssuesView: React.FC<Props> = ({
     [setDeleteIssueModal, setIssueToDelete]
   );
 
+  const handleDraftIssueClick = useCallback((issue: any) => setSelectedDraftIssue(issue), []);
+  const handleDraftIssueDelete = useCallback((issue: any) => setSelectDraftForDelete(issue), []);
+
   const handleOnDragEnd = useCallback(
     async (result: DropResult) => {
       setTrashBox(false);
@@ -129,7 +133,7 @@ export const IssuesView: React.FC<Props> = ({
       if (destination.droppableId === "trashBox") {
         handleDeleteIssue(draggedItem);
       } else {
-        if (orderBy === "sort_order") {
+        if (displayFilters.order_by === "sort_order") {
           let newSortOrder = draggedItem.sort_order;
 
           const destinationGroupArray = groupedByIssues[destination.droppableId];
@@ -177,15 +181,19 @@ export const IssuesView: React.FC<Props> = ({
 
         const destinationGroup = destination.droppableId; // destination group id
 
-        if (orderBy === "sort_order" || source.droppableId !== destination.droppableId) {
+        if (
+          displayFilters.order_by === "sort_order" ||
+          source.droppableId !== destination.droppableId
+        ) {
           // different group/column;
 
           // source.droppableId !== destination.droppableId -> even if order by is not sort_order,
           // if the issue is moved to a different group, then we will change the group of the
           // dragged item(or issue)
 
-          if (selectedGroup === "priority") draggedItem.priority = destinationGroup;
-          else if (selectedGroup === "state") {
+          if (displayFilters.group_by === "priority")
+            draggedItem.priority = destinationGroup as TIssuePriorities;
+          else if (displayFilters.group_by === "state") {
             draggedItem.state = destinationGroup;
             draggedItem.state_detail = states?.find((s) => s.id === destinationGroup) as IState;
           }
@@ -212,8 +220,14 @@ export const IssuesView: React.FC<Props> = ({
 
             return {
               ...prevData,
-              [sourceGroup]: orderArrayBy(sourceGroupArray, orderBy),
-              [destinationGroup]: orderArrayBy(destinationGroupArray, orderBy),
+              [sourceGroup]: orderArrayBy(
+                sourceGroupArray,
+                displayFilters.order_by ?? "-created_at"
+              ),
+              [destinationGroup]: orderArrayBy(
+                destinationGroupArray,
+                displayFilters.order_by ?? "-created_at"
+              ),
             };
           },
           false
@@ -266,13 +280,13 @@ export const IssuesView: React.FC<Props> = ({
       }
     },
     [
+      displayFilters.group_by,
+      displayFilters.order_by,
       workspaceSlug,
       cycleId,
       moduleId,
       groupedByIssues,
       projectId,
-      selectedGroup,
-      orderBy,
       handleDeleteIssue,
       params,
       states,
@@ -286,19 +300,19 @@ export const IssuesView: React.FC<Props> = ({
 
       let preloadedValue: string | string[] = groupTitle;
 
-      if (selectedGroup === "labels") {
+      if (displayFilters.group_by === "labels") {
         if (groupTitle === "None") preloadedValue = [];
         else preloadedValue = [groupTitle];
       }
 
-      if (selectedGroup)
+      if (displayFilters.group_by)
         setPreloadedData({
-          [selectedGroup]: preloadedValue,
+          [displayFilters.group_by]: preloadedValue,
           actionType: "createIssue",
         });
       else setPreloadedData({ actionType: "createIssue" });
     },
-    [setCreateIssueModal, setPreloadedData, selectedGroup]
+    [displayFilters.group_by, setCreateIssueModal, setPreloadedData]
   );
 
   const addIssueToDate = useCallback(
@@ -343,6 +357,14 @@ export const IssuesView: React.FC<Props> = ({
     [makeIssueCopy, handleEditIssue, handleDeleteIssue]
   );
 
+  const handleDraftIssueAction = useCallback(
+    (issue: IIssue, action: "edit" | "delete") => {
+      if (action === "edit") handleDraftIssueClick(issue);
+      else if (action === "delete") handleDraftIssueDelete(issue);
+    },
+    [handleDraftIssueClick, handleDraftIssueDelete]
+  );
+
   const removeIssueFromCycle = useCallback(
     (bridgeId: string, issueId: string) => {
       if (!workspaceSlug || !projectId || !cycleId) return;
@@ -351,7 +373,7 @@ export const IssuesView: React.FC<Props> = ({
         CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params),
         (prevData: any) => {
           if (!prevData) return prevData;
-          if (selectedGroup) {
+          if (displayFilters.group_by) {
             const filteredData: any = {};
             for (const key in prevData) {
               filteredData[key] = prevData[key].filter((item: any) => item.id !== issueId);
@@ -383,7 +405,7 @@ export const IssuesView: React.FC<Props> = ({
           console.log(e);
         });
     },
-    [workspaceSlug, projectId, cycleId, params, selectedGroup, setToastAlert]
+    [displayFilters.group_by, workspaceSlug, projectId, cycleId, params, setToastAlert]
   );
 
   const removeIssueFromModule = useCallback(
@@ -394,7 +416,7 @@ export const IssuesView: React.FC<Props> = ({
         MODULE_ISSUES_WITH_PARAMS(moduleId as string, params),
         (prevData: any) => {
           if (!prevData) return prevData;
-          if (selectedGroup) {
+          if (displayFilters.group_by) {
             const filteredData: any = {};
             for (const key in prevData) {
               filteredData[key] = prevData[key].filter((item: any) => item.id !== issueId);
@@ -426,7 +448,7 @@ export const IssuesView: React.FC<Props> = ({
           console.log(e);
         });
     },
-    [workspaceSlug, projectId, moduleId, params, selectedGroup, setToastAlert]
+    [displayFilters.group_by, workspaceSlug, projectId, moduleId, params, setToastAlert]
   );
 
   const nullFilters = Object.keys(filters).filter(
@@ -451,6 +473,27 @@ export const IssuesView: React.FC<Props> = ({
           ...preloadedData,
         }}
       />
+      <CreateUpdateDraftIssueModal
+        isOpen={selectedDraftIssue !== null}
+        handleClose={() => setSelectedDraftIssue(null)}
+        data={
+          selectedDraftIssue
+            ? {
+                ...selectedDraftIssue,
+                is_draft: true,
+              }
+            : null
+        }
+        fieldsToShow={[
+          "name",
+          "description",
+          "label",
+          "assignee",
+          "priority",
+          "dueDate",
+          "priority",
+        ]}
+      />
       <CreateUpdateIssueModal
         isOpen={editIssueModal && issueToEdit?.actionType !== "delete"}
         handleClose={() => setEditIssueModal(false)}
@@ -462,6 +505,12 @@ export const IssuesView: React.FC<Props> = ({
         data={issueToDelete}
         user={user}
       />
+      <DeleteDraftIssueModal
+        data={selectedDraftForDelete}
+        isOpen={selectedDraftForDelete !== null}
+        handleClose={() => setSelectDraftForDelete(null)}
+      />
+
       {areFiltersApplied && (
         <>
           <div className="flex items-center justify-between gap-2 px-5 pt-3 pb-0">
@@ -480,7 +529,6 @@ export const IssuesView: React.FC<Props> = ({
                   state: null,
                   start_date: null,
                   target_date: null,
-                  type: null,
                 })
               }
             />
@@ -512,29 +560,34 @@ export const IssuesView: React.FC<Props> = ({
         addIssueToGroup={addIssueToGroup}
         disableUserActions={disableUserActions}
         dragDisabled={
-          selectedGroup === "created_by" ||
-          selectedGroup === "labels" ||
-          selectedGroup === "state_detail.group" ||
-          selectedGroup === "assignees"
+          displayFilters.group_by === "created_by" ||
+          displayFilters.group_by === "labels" ||
+          displayFilters.group_by === "state_detail.group" ||
+          displayFilters.group_by === "assignees"
         }
         emptyState={{
-          title: cycleId
+          title: isDraftIssues
+            ? "Draft issues will appear here"
+            : cycleId
             ? "Cycle issues will appear here"
             : moduleId
             ? "Module issues will appear here"
             : "Project issues will appear here",
-          description:
-            "Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done.",
-          primaryButton: {
-            icon: <PlusIcon className="h-4 w-4" />,
-            text: "New Issue",
-            onClick: () => {
-              const e = new KeyboardEvent("keydown", {
-                key: "c",
-              });
-              document.dispatchEvent(e);
-            },
-          },
+          description: isDraftIssues
+            ? "Draft issues are issues that are not yet created."
+            : "Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done.",
+          primaryButton: !isDraftIssues
+            ? {
+                icon: <PlusIcon className="h-4 w-4" />,
+                text: "New Issue",
+                onClick: () => {
+                  const e = new KeyboardEvent("keydown", {
+                    key: "c",
+                  });
+                  document.dispatchEvent(e);
+                },
+              }
+            : undefined,
           secondaryButton:
             cycleId || moduleId ? (
               <SecondaryButton
@@ -548,20 +601,18 @@ export const IssuesView: React.FC<Props> = ({
         }}
         handleOnDragEnd={handleOnDragEnd}
         handleIssueAction={handleIssueAction}
+        handleDraftIssueAction={handleDraftIssueAction}
         openIssuesListModal={openIssuesListModal ?? null}
         removeIssue={cycleId ? removeIssueFromCycle : moduleId ? removeIssueFromModule : null}
         trashBox={trashBox}
         setTrashBox={setTrashBox}
         viewProps={{
-          groupByProperty: selectedGroup,
           groupedIssues: groupedByIssues,
+          displayFilters,
           isEmpty,
-          issueView,
           mutateIssues,
-          orderBy,
           params,
           properties,
-          showEmptyGroups,
         }}
       />
     </>

@@ -17,7 +17,6 @@
     "@heroicons/react": "^2.0.12",
     "@mui/icons-material": "^5.14.1",
     "@mui/material": "^5.14.1",
-    "@tailwindcss/typography": "^0.5.9",
     "@tiptap-pro/extension-unique-id": "^2.1.0",
     "@tiptap/extension-code-block-lowlight": "^2.0.4",
     "@tiptap/extension-color": "^2.0.4",
@@ -62,19 +61,17 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@tailwindcss/typography": "^0.5.9",
     "@types/js-cookie": "^3.0.3",
     "@types/node": "18.14.1",
     "@types/nprogress": "^0.2.0",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
     "@types/uuid": "^9.0.1",
-    "autoprefixer": "^10.4.13",
+    "@typescript-eslint/eslint-plugin": "^5.48.2",
     "eslint": "8.34.0",
     "eslint-config-custom": "*",
     "eslint-config-next": "13.2.1",
-    "postcss": "^8.4.21",
     "tsconfig": "*",
-    "tailwindcss": "^3.2.7"
+    "tailwind-config-custom": "*"
   }
 }

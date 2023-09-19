@@ -13,13 +13,14 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // components
-import { SettingsHeader } from "components/project";
+import { SettingsSidebar } from "components/project";
 // ui
-import { SecondaryButton, ToggleSwitch } from "components/ui";
+import { ToggleSwitch } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { ContrastIcon, PeopleGroupIcon, ViewListIcon, InboxIcon } from "components/icons";
-import { DocumentTextIcon } from "@heroicons/react/24/outline";
+import { ModuleIcon } from "components/icons";
+import { FileText, Inbox, Layers } from "lucide-react";
+import { ContrastOutlined } from "@mui/icons-material";
 // types
 import { IProject } from "types";
 import type { NextPage } from "next";
@@ -33,35 +34,38 @@ const featuresList = [
     title: "Cycles",
     description:
       "Cycles are enabled for all the projects in this workspace. Access them from the sidebar.",
-    icon: <ContrastIcon color="#3f76ff" width={28} height={28} className="flex-shrink-0" />,
+    icon: (
+      <ContrastOutlined className="!text-base !leading-4 text-purple-500 flex-shrink-0 rotate-180" />
+    ),
+
     property: "cycle_view",
   },
   {
     title: "Modules",
     description:
       "Modules are enabled for all the projects in this workspace. Access it from the sidebar.",
-    icon: <PeopleGroupIcon color="#ff6b00" width={28} height={28} className="flex-shrink-0" />,
+    icon: <ModuleIcon width={16} height={16} className="flex-shrink-0" />,
     property: "module_view",
   },
   {
     title: "Views",
     description:
       "Views are enabled for all the projects in this workspace. Access it from the sidebar.",
-    icon: <ViewListIcon color="#05c3ff" width={28} height={28} className="flex-shrink-0" />,
+    icon: <Layers className="h-4 w-4 text-cyan-500 flex-shrink-0" />,
     property: "issue_views_view",
   },
   {
     title: "Pages",
     description:
       "Pages are enabled for all the projects in this workspace. Access it from the sidebar.",
-    icon: <DocumentTextIcon color="#fcbe1d" width={28} height={28} className="flex-shrink-0" />,
+    icon: <FileText className="h-4 w-4 text-red-400 flex-shrink-0" />,
     property: "page_view",
   },
   {
     title: "Inbox",
     description:
       "Inbox are enabled for all the projects in this workspace. Access it from the issues views page.",
-    icon: <InboxIcon color="#fcbe1d" width={24} height={24} className="flex-shrink-0" />,
+    icon: <Inbox className="h-4 w-4 text-fuchsia-500 flex-shrink-0" />,
     property: "inbox_view",
   },
 ];
@@ -149,21 +153,29 @@ const FeaturesSettings: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      <div className="p-8">
-        <SettingsHeader />
-        <section className="space-y-5">
-          <h3 className="text-2xl font-semibold">Features</h3>
-          <div className="space-y-5">
+      <div className="flex flex-row gap-2 h-full">
+        <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
+          <SettingsSidebar />
+        </div>
+        <section className="pr-9 py-8 w-full overflow-y-auto">
+          <div className="flex items-center py-3.5 border-b border-custom-border-200">
+            <h3 className="text-xl font-medium">Features</h3>
+          </div>
+          <div>
             {featuresList.map((feature) => (
               <div
                 key={feature.property}
-                className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-5"
+                className="flex items-center justify-between gap-x-8 gap-y-2 border-b border-custom-border-200 bg-custom-background-100 p-4"
               >
                 <div className="flex items-start gap-3">
-                  {feature.icon}
+                  <div className="flex items-center justify-center p-3 rounded bg-custom-background-90">
+                    {feature.icon}
+                  </div>
                   <div className="">
-                    <h4 className="text-lg font-semibold">{feature.title}</h4>
-                    <p className="text-sm text-custom-text-200">{feature.description}</p>
+                    <h4 className="text-sm font-medium">{feature.title}</h4>
+                    <p className="text-sm text-custom-text-200 tracking-tight">
+                      {feature.description}
+                    </p>
                   </div>
                 </div>
                 <ToggleSwitch
@@ -187,28 +199,10 @@ const FeaturesSettings: NextPage = () => {
                       [feature.property]: !projectDetails?.[feature.property as keyof IProject],
                     });
                   }}
-                  size="lg"
+                  size="sm"
                 />
               </div>
             ))}
-          </div>
-          <div className="flex items-center gap-2 text-custom-text-200">
-            <a
-              href="https://plane.so/"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-custom-text-100"
-            >
-              <SecondaryButton outline>Plane is open-source, view Roadmap</SecondaryButton>
-            </a>
-            <a
-              href="https://github.com/makeplane/plane"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-custom-text-100"
-            >
-              <SecondaryButton outline>Star us on GitHub</SecondaryButton>
-            </a>
           </div>
         </section>
       </div>

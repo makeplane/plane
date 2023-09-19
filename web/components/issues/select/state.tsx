@@ -10,7 +10,7 @@ import stateService from "services/state.service";
 import { CustomSearchSelect } from "components/ui";
 // icons
 import { PlusIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
-import { getStateGroupIcon } from "components/icons";
+import { StateGroupIcon } from "components/icons";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // fetch keys
@@ -41,7 +41,7 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
     query: state.name,
     content: (
       <div className="flex items-center gap-2">
-        {getStateGroupIcon(state.group, "16", "16", state.color)}
+        <StateGroupIcon stateGroup={state.group} color={state.color} />
         {state.name}
       </div>
     ),
@@ -58,9 +58,12 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
       label={
         <div className="flex items-center gap-2">
           {selectedOption ? (
-            getStateGroupIcon(selectedOption.group, "16", "16", selectedOption.color)
+            <StateGroupIcon stateGroup={selectedOption.group} color={selectedOption.color} />
           ) : currentDefaultState ? (
-            getStateGroupIcon(currentDefaultState.group, "16", "16", currentDefaultState.color)
+            <StateGroupIcon
+              stateGroup={currentDefaultState.group}
+              color={currentDefaultState.color}
+            />
           ) : (
             <Squares2X2Icon className="h-3.5 w-3.5 text-custom-text-200" />
           )}

@@ -8,15 +8,17 @@ import { ChevronDown } from "lucide-react";
 import { PRIORITIES } from "constants/project";
 
 // components
-import { getPriorityIcon } from "components/icons";
+import { PriorityIcon } from "components/icons";
 import { WebViewModal } from "./web-view-modal";
 
 // helpers
 import { capitalizeFirstLetter } from "helpers/string.helper";
+// types
+import { TIssuePriorities } from "types";
 
 type Props = {
   value: any;
-  onChange: (value: any) => void;
+  onChange: (value: TIssuePriorities) => void;
   disabled?: boolean;
 };
 
@@ -37,7 +39,7 @@ export const PrioritySelect: React.FC<Props> = (props) => {
         <WebViewModal.Options
           options={
             PRIORITIES?.map((priority) => ({
-              label: priority ? capitalizeFirstLetter(priority) : "None",
+              label: capitalizeFirstLetter(priority),
               value: priority,
               checked: priority === value,
               onClick: () => {
@@ -59,7 +61,7 @@ export const PrioritySelect: React.FC<Props> = (props) => {
                       : "border-custom-border-200 text-custom-text-200"
                   }`}
                 >
-                  {getPriorityIcon(priority, "text-sm")}
+                  <PriorityIcon priority={priority} className="text-sm" />
                 </span>
               ),
             })) || []
