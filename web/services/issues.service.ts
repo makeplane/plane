@@ -154,6 +154,7 @@ class ProjectIssuesServices extends APIService {
         relation_type: "duplicate" | "relates_to" | "blocked_by";
         related_issue: string;
       }>;
+      relation?: "blocking" | null;
     }
   ) {
     return this.post(

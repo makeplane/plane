@@ -351,25 +351,23 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
               {blockedIssue &&
                 blockedIssue.map((issue) => (
                   <div
-                    key={issue.related_issue_detail?.id}
+                    key={issue.issue_detail?.id}
                     className="group inline-flex mr-1 cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-1.5 py-0.5 text-xs text-red-500 duration-300 hover:border-red-500/20 hover:bg-red-500/20"
                   >
                     <a
-                      href={`/${workspaceSlug}/projects/${issue.related_issue_detail?.project_detail.id}/issues/${issue.related_issue_detail?.id}`}
+                      href={`/${workspaceSlug}/projects/${issue.issue_detail?.project_detail.id}/issues/${issue.issue_detail?.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-1"
                     >
                       <BlockedIcon height={10} width={10} />
-                      {`${issue?.related_issue_detail?.project_detail?.identifier}-${issue?.related_issue_detail?.sequence_id}`}
+                      {`${issue?.issue_detail?.project_detail?.identifier}-${issue?.issue_detail?.sequence_id}`}
                     </a>
                     <button
                       type="button"
                       className="duration-300"
                       onClick={() => {
-                        const updatedBlocked = blockedIssue.filter(
-                          (i) => i.related_issue_detail?.id !== issue.related_issue_detail?.id
-                        );
+                        const updatedBlocked = blockedIssue.filter((i) => i?.id !== issue?.id);
 
                         if (!user) return;
 

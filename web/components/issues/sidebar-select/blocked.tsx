@@ -73,7 +73,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
           ...selectedIssues.map((issue) => ({
             issue: issueId as string,
             relation_type: "blocked_by" as const,
-            related_issue_detail: issue.blocked_issue_detail,
+            issue_detail: issue.blocked_issue_detail,
             related_issue: issue.blocked_issue_detail.id,
           })),
         ],
@@ -111,17 +111,17 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
             {blockedByIssue && blockedByIssue.length > 0
               ? blockedByIssue.map((relation) => (
                   <div
-                    key={relation.related_issue_detail?.id}
+                    key={relation?.id}
                     className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-1.5 py-0.5 text-xs text-red-500 duration-300 hover:border-red-500/20 hover:bg-red-500/20"
                   >
                     <a
-                      href={`/${workspaceSlug}/projects/${relation.related_issue_detail?.project_detail.id}/issues/${relation.related_issue_detail?.id}`}
+                      href={`/${workspaceSlug}/projects/${relation.issue_detail?.project_detail.id}/issues/${relation.issue_detail?.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-1"
                     >
                       <BlockedIcon height={10} width={10} />
-                      {`${relation.related_issue_detail?.project_detail.identifier}-${relation.related_issue_detail?.sequence_id}`}
+                      {`${relation.issue_detail?.project_detail.identifier}-${relation.issue_detail?.sequence_id}`}
                     </a>
                     <button
                       type="button"
