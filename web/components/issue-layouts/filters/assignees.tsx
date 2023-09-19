@@ -8,13 +8,7 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 
-export const MemberIcons = ({
-  display_name,
-  avatar,
-}: {
-  display_name: string;
-  avatar: string | null;
-}) => (
+export const MemberIcons = ({ display_name, avatar }: { display_name: string; avatar: string | null }) => (
   <div className="flex-shrink-0 rounded-sm overflow-hidden w-[20px] h-[20px] flex justify-center items-center">
     {avatar ? (
       <img src={avatar} alt={display_name || ""} className="" />
@@ -64,12 +58,7 @@ export const FilterAssignees = observer(() => {
                     : false
                 }
                 onClick={() => handleFilter("assignees", _member?.member?.id)}
-                icon={
-                  <MemberIcons
-                    display_name={_member?.member.display_name}
-                    avatar={_member?.member.avatar}
-                  />
-                }
+                icon={<MemberIcons display_name={_member?.member.display_name} avatar={_member?.member.avatar} />}
                 title={`${_member?.member?.display_name} (${_member?.member?.first_name} ${_member?.member?.last_name})`}
               />
             ))}

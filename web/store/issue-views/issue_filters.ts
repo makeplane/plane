@@ -1,4 +1,4 @@
-import { observable, action, computed, makeObservable, runInAction, autorun } from "mobx";
+import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // types
 import { RootStore } from "../root";
 // services
@@ -11,20 +11,22 @@ import { ProjectCycleServices } from "services/cycles.service";
 import { ViewServices as ProjectViewServices } from "services/views.service";
 // default data
 import {
-  filtersPriority,
-  filterStateGroup,
-  filtersStartDate,
-  filtersDueDate,
-  displayPropertyGroupBy,
-  displayPropertyOrderBy,
-  displayPropertyIssueType,
+  priorities,
+  stateGroups,
+  startDateOptions,
+  dueDateOptions,
+  groupByOptions,
+  orderByOptions,
+  issueTypes,
   displayProperties,
   extraProperties,
+  handleIssueQueryParamsByLayout,
 } from "./issue_data";
-import { IIssueState } from "./Issues";
 
 export type TIssueViews = "my_issues" | "issues" | "modules" | "views" | "cycles";
+
 export type TIssueLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
+
 export type TIssueParams =
   | "priority"
   | "state_group"
@@ -149,7 +151,6 @@ export interface IIssueFilterStore {
   error: any | null;
 
   // current workspace and project id
-  myUserId: string | null;
   workspaceId: string | null;
   projectId: string | null;
   moduleId: string | null;
@@ -205,13 +206,13 @@ class IssueFilterStore implements IIssueFilterStore {
   issueView: TIssueViews | null = null;
 
   issueRenderFilters: IIssueRenderFilters = {
-    priority: filtersPriority,
-    state_group: filterStateGroup,
-    start_date: filtersStartDate,
-    due_date: filtersDueDate,
-    group_by: displayPropertyGroupBy,
-    order_by: displayPropertyOrderBy,
-    issue_type: displayPropertyIssueType,
+    priority: priorities,
+    state_group: stateGroups,
+    start_date: startDateOptions,
+    due_date: dueDateOptions,
+    group_by: groupByOptions,
+    order_by: orderByOptions,
+    issue_type: issueTypes,
     display_properties: displayProperties,
     extra_properties: extraProperties,
     workspace_properties: {},
@@ -235,7 +236,6 @@ class IssueFilterStore implements IIssueFilterStore {
       loader: observable,
       error: observable,
 
-      myUserId: observable,
       workspaceId: observable,
       projectId: observable,
       moduleId: observable,
@@ -311,6 +311,8 @@ class IssueFilterStore implements IIssueFilterStore {
         this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.issues?.display_filters
           ?.layout || null
       );
+
+    return null;
   }
 
   get workspaceProjects() {
@@ -692,81 +694,8 @@ class IssueFilterStore implements IIssueFilterStore {
     // in spreadsheet sub issue is false for sure
     // in gantt start_target_date is true for sure
 
-    let filteredParams: TIssueParams[] = [];
-    if (_layout === "list")
-      filteredParams = [
-        "priority",
-        "state_group",
-        "state",
-        "assignees",
-        "created_by",
-        "labels",
-        "start_date",
-        "target_date",
-        "group_by",
-        "order_by",
-        "type",
-        "sub_issue",
-        "show_empty_groups",
-      ];
-    if (_layout === "kanban")
-      filteredParams = [
-        "priority",
-        "state_group",
-        "state",
-        "assignees",
-        "created_by",
-        "labels",
-        "start_date",
-        "target_date",
-        "group_by",
-        "order_by",
-        "type",
-        "sub_issue",
-        "show_empty_groups",
-      ];
-    if (_layout === "calendar")
-      filteredParams = [
-        "priority",
-        "state_group",
-        "state",
-        "assignees",
-        "created_by",
-        "labels",
-        "start_date",
-        "target_date",
-        "type",
-        "calendar_date_range",
-      ];
-    if (_layout === "spreadsheet")
-      filteredParams = [
-        "priority",
-        "state_group",
-        "state",
-        "assignees",
-        "created_by",
-        "labels",
-        "start_date",
-        "target_date",
-        "type",
-        "sub_issue",
-      ];
-    if (_layout === "gantt_chart")
-      filteredParams = [
-        "priority",
-        "state",
-        "assignees",
-        "created_by",
-        "labels",
-        "start_date",
-        "target_date",
-        "order_by",
-        "type",
-        "sub_issue",
-        "start_target_date",
-      ];
-
-    filteredRouteParams = this.computedFilter(filteredRouteParams, filteredParams);
+    const filteredParams: TIssueParams[] | null = handleIssueQueryParamsByLayout(_layout);
+    if (filteredParams) filteredRouteParams = this.computedFilter(filteredRouteParams, filteredParams);
 
     return filteredRouteParams;
   };
@@ -1054,10 +983,10 @@ class IssueFilterStore implements IIssueFilterStore {
       this.loader = true;
       this.error = null;
 
+      await this.rootStore.user.setCurrentUser();
       const issuesDisplayPropertiesResponse = await this.issueService.getIssueProperties(workspaceId, projectId);
 
       if (issuesDisplayPropertiesResponse) {
-        const _myUserId: string = issuesDisplayPropertiesResponse?.user;
         const _issuesDisplayPropertiesResponse: any = {
           ...this.issueFilters,
           [workspaceId]: {
@@ -1076,7 +1005,6 @@ class IssueFilterStore implements IIssueFilterStore {
         };
 
         runInAction(() => {
-          this.myUserId = _myUserId;
           this.issueFilters = _issuesDisplayPropertiesResponse;
           this.loader = false;
           this.error = null;
@@ -1103,7 +1031,7 @@ class IssueFilterStore implements IIssueFilterStore {
 
       const payload = {
         properties: data,
-        user: this.myUserId,
+        user: this.rootStore?.user?.currentUser?.id,
       };
       const issuesDisplayPropertiesResponse = await this.issueService.patchIssueProperties(
         workspaceId,

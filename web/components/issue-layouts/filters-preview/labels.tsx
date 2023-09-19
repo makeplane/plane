@@ -43,9 +43,7 @@ export const FilterLabels = observer(() => {
       {issueFilterStore?.userFilters?.filters?.labels != null && (
         <div className="border border-custom-border-200 bg-custom-background-80 rounded-full overflow-hidden flex items-center gap-2 px-2 py-1">
           <div className="flex-shrink-0">
-            <FilterPreviewHeader
-              title={`Labels (${issueFilterStore?.userFilters?.filters?.labels?.length || 0})`}
-            />
+            <FilterPreviewHeader title={`Labels (${issueFilterStore?.userFilters?.filters?.labels?.length || 0})`} />
           </div>
 
           <div className="relative flex items-center flex-wrap gap-2">

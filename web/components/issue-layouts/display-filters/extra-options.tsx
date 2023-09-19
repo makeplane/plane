@@ -23,9 +23,9 @@ export const FilterExtraOptions = observer(() => {
   const handleExtraOptionsSectionVisibility = (key: string) =>
     issueFilterStore?.issueView &&
     issueFilterStore?.issueLayout &&
-    issueFilterVisibilityData[
-      issueFilterStore?.issueView === "my_issues" ? "my_issues" : "others"
-    ]?.extra_options?.[issueFilterStore?.issueLayout].values?.includes(key);
+    issueFilterVisibilityData[issueFilterStore?.issueView === "my_issues" ? "my_issues" : "issues"]?.extra_options?.[
+      issueFilterStore?.issueLayout
+    ].values?.includes(key);
 
   return (
     <div>
@@ -43,11 +43,7 @@ export const FilterExtraOptions = observer(() => {
                 handleExtraOptionsSectionVisibility(_extraProperties?.key) && (
                   <FilterOption
                     key={_extraProperties?.key}
-                    isChecked={
-                      issueFilterStore?.userFilters?.display_filters?.[_extraProperties?.key]
-                        ? true
-                        : false
-                    }
+                    isChecked={issueFilterStore?.userFilters?.display_filters?.[_extraProperties?.key] ? true : false}
                     onClick={() =>
                       handleExtraOptions(
                         _extraProperties?.key,

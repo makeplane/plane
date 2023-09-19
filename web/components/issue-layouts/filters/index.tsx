@@ -23,7 +23,7 @@ export const FilterSelection = observer(() => {
   const handleFilterSectionVisibility = (section_key: string) =>
     issueFilterStore?.issueView &&
     issueFilterStore?.issueLayout &&
-    issueFilterVisibilityData[issueFilterStore?.issueView === "my_issues" ? "my_issues" : "others"]?.filters?.[
+    issueFilterVisibilityData[issueFilterStore?.issueView === "my_issues" ? "my_issues" : "issues"]?.filters?.[
       issueFilterStore?.issueLayout
     ]?.includes(section_key);
 

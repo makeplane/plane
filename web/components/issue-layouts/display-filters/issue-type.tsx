@@ -32,11 +32,7 @@ export const FilterIssueType = observer(() => {
             issueFilterStore?.issueRenderFilters?.issue_type.map((_issueType) => (
               <FilterOption
                 key={_issueType?.key}
-                isChecked={
-                  issueFilterStore?.userFilters?.display_filters?.type === _issueType?.key
-                    ? true
-                    : false
-                }
+                isChecked={issueFilterStore?.userFilters?.display_filters?.type === _issueType?.key ? true : false}
                 onClick={() => handleIssueType("type", _issueType?.key)}
                 title={_issueType.title}
                 multiple={false}

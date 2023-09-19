@@ -10,7 +10,7 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 // store default data
-import { issueStateGroupKeys } from "store/issue-views/issue_data";
+import { stateGroups } from "store/issue-views/issue_data";
 
 export const FilterState = observer(() => {
   const store: RootStore = useMobxStore();
@@ -33,23 +33,21 @@ export const FilterState = observer(() => {
       {issueFilterStore?.userFilters?.filters?.state != null && (
         <div className="border border-custom-border-200 bg-custom-background-80 rounded-full overflow-hidden flex items-center gap-2 px-2 py-1">
           <div className="flex-shrink-0">
-            <FilterPreviewHeader
-              title={`State (${issueFilterStore?.userFilters?.filters?.state?.length || 0})`}
-            />
+            <FilterPreviewHeader title={`State (${issueFilterStore?.userFilters?.filters?.state?.length || 0})`} />
           </div>
           <div className="relative flex items-center flex-wrap gap-2">
-            {issueStateGroupKeys.map(
+            {stateGroups.map(
               (_stateGroup) =>
                 issueFilterStore?.projectStates &&
-                issueFilterStore?.projectStates[_stateGroup] &&
-                issueFilterStore?.projectStates[_stateGroup].length > 0 &&
-                issueFilterStore?.projectStates[_stateGroup].map(
+                issueFilterStore?.projectStates[_stateGroup?.key] &&
+                issueFilterStore?.projectStates[_stateGroup?.key].length > 0 &&
+                issueFilterStore?.projectStates[_stateGroup?.key].map(
                   (_state: any) =>
                     issueFilterStore?.userFilters?.filters?.state != null &&
                     issueFilterStore?.userFilters?.filters?.state.includes(_state?.id) && (
                       <FilterPreviewContent
                         key={_state?.id}
-                        icon={<StateGroupIcons stateGroup={_stateGroup} color={_state?.color} />}
+                        icon={<StateGroupIcons stateGroup={_stateGroup?.key} color={_state?.color} />}
                         title={_state?.name}
                         style={stateStyles(_state?.group, _state?.color)}
                         onClick={() => handleFilter("state", _state?.id)}

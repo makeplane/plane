@@ -32,11 +32,7 @@ export const FilterGroupBy = observer(() => {
             issueFilterStore?.issueRenderFilters?.group_by.map((_groupBy) => (
               <FilterOption
                 key={_groupBy?.key}
-                isChecked={
-                  issueFilterStore?.userFilters?.display_filters?.group_by === _groupBy?.key
-                    ? true
-                    : false
-                }
+                isChecked={issueFilterStore?.userFilters?.display_filters?.group_by === _groupBy?.key ? true : false}
                 onClick={() => handleGroupBy("group_by", _groupBy?.key)}
                 title={_groupBy.title}
                 multiple={false}

@@ -14,11 +14,11 @@ export interface IIssues {
 }
 
 export interface IIssuesLayout {
-  list: IIssues;
-  kanban: IIssues;
-  calendar: IIssues;
-  spreadsheet: IIssues;
-  gantt_chart: IIssues;
+  list: IIssues[];
+  kanban: IIssues[];
+  calendar: IIssues[];
+  spreadsheet: IIssues[];
+  gantt_chart: IIssues[];
 }
 
 export interface IIssueState {
@@ -143,14 +143,14 @@ class IssueViewStore implements IIssueViewStore {
     return null;
   }
 
-  updateIssues = (group_id: string | null, issue_id: string | null, data: any) => {
+  updateIssues = (group_id: any = null, issue_id: string | null, data: any) => {
     const currentWorkspaceId: string | null = this.rootStore.issueFilters.workspaceId;
     const currentProjectId: string | null = this.rootStore.issueFilters.projectId;
-    const currentModuleId: string | null = this.rootStore.issueFilters.moduleId;
-    const currentCycleId: string | null = this.rootStore.issueFilters.cycleId;
-    const currentViewId: string | null = this.rootStore.issueFilters.viewId;
+    // const currentModuleId: string | null = this.rootStore.issueFilters.moduleId;
+    // const currentCycleId: string | null = this.rootStore.issueFilters.cycleId;
+    // const currentViewId: string | null = this.rootStore.issueFilters.viewId;
     const currentView: TIssueViews | null = this.rootStore.issueFilters.issueView;
-    const currentLayout: TIssueLayouts | null | undefined = this.rootStore.issueFilters.issueLayout;
+    const currentLayout: TIssueLayouts | null = this.rootStore.issueFilters.issueLayout;
 
     if (!currentView || !currentWorkspaceId || !currentLayout || !issue_id) return null;
 
@@ -170,7 +170,7 @@ class IssueViewStore implements IIssueViewStore {
               },
             },
           },
-        };
+        } as any;
       } else {
         this.issues = {
           ...this.issues,
@@ -183,7 +183,7 @@ class IssueViewStore implements IIssueViewStore {
               ),
             },
           },
-        };
+        } as any;
       }
     }
 
@@ -210,7 +210,7 @@ class IssueViewStore implements IIssueViewStore {
               },
             },
           },
-        };
+        } as any;
       } else {
         this.issues = {
           ...this.issues,
@@ -229,7 +229,7 @@ class IssueViewStore implements IIssueViewStore {
               },
             },
           },
-        };
+        } as any;
       }
     }
   };

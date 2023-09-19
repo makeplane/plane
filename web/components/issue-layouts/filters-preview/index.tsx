@@ -23,9 +23,9 @@ export const FilterPreview = observer(() => {
   const handleFilterSectionVisibility = (section_key: string) =>
     issueFilterStore?.issueView &&
     issueFilterStore?.issueLayout &&
-    issueFilterVisibilityData[
-      issueFilterStore?.issueView === "my_issues" ? "my_issues" : "others"
-    ]?.filters?.[issueFilterStore?.issueLayout]?.includes(section_key);
+    issueFilterVisibilityData[issueFilterStore?.issueView === "my_issues" ? "my_issues" : "issues"]?.filters?.[
+      issueFilterStore?.issueLayout
+    ]?.includes(section_key);
 
   const validateFiltersAvailability =
     issueFilterStore?.userFilters?.filters != null &&

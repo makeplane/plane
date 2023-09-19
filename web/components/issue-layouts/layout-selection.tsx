@@ -44,9 +44,9 @@ export const LayoutSelection = observer(() => {
 
   const handleLayoutSectionVisibility = (layout_key: string) =>
     issueFilterStore?.issueView &&
-    issueFilterVisibilityData[
-      issueFilterStore?.issueView === "my_issues" ? "my_issues" : "others"
-    ].layout.includes(layout_key);
+    issueFilterVisibilityData[issueFilterStore?.issueView === "my_issues" ? "my_issues" : "issues"].layout.includes(
+      layout_key
+    );
 
   const handleLayoutSelection = (_layoutKey: string) => {
     issueFilterStore.handleUserFilter("display_filters", "layout", _layoutKey);
@@ -76,9 +76,7 @@ export const LayoutSelection = observer(() => {
             <div
               key={_layout?.key}
               className={`w-[28px] h-[22px] rounded flex justify-center items-center cursor-pointer transition-all hover:bg-custom-background-100 overflow-hidden group ${
-                issueFilterStore?.issueLayout == _layout?.key
-                  ? `bg-custom-background-100 shadow shadow-gray-200`
-                  : ``
+                issueFilterStore?.issueLayout == _layout?.key ? `bg-custom-background-100 shadow shadow-gray-200` : ``
               }}`}
               onClick={() => handleLayoutSelection(_layout?.key)}
             >

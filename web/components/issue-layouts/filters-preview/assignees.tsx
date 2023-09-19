@@ -9,13 +9,7 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 
-export const MemberIcons = ({
-  display_name,
-  avatar,
-}: {
-  display_name: string;
-  avatar: string | null;
-}) => (
+export const MemberIcons = ({ display_name, avatar }: { display_name: string; avatar: string | null }) => (
   <div className="flex-shrink-0 rounded-sm overflow-hidden w-[16px] h-[16px] flex justify-center items-center">
     {avatar ? (
       <img src={avatar} alt={display_name || ""} className="" />
@@ -49,9 +43,7 @@ export const FilterAssignees = observer(() => {
         <div className="border border-custom-border-200 bg-custom-background-80 rounded-full overflow-hidden flex items-center gap-2 px-2 py-1">
           <div className="flex-shrink-0">
             <FilterPreviewHeader
-              title={`Assignees (${
-                issueFilterStore?.userFilters?.filters?.assignees?.length || 0
-              })`}
+              title={`Assignees (${issueFilterStore?.userFilters?.filters?.assignees?.length || 0})`}
             />
           </div>
           <div className="relative flex items-center flex-wrap gap-2">
@@ -60,17 +52,10 @@ export const FilterAssignees = observer(() => {
               issueFilterStore?.projectMembers.map(
                 (_member) =>
                   issueFilterStore?.userFilters?.filters?.assignees != null &&
-                  issueFilterStore?.userFilters?.filters?.assignees.includes(
-                    _member?.member?.id
-                  ) && (
+                  issueFilterStore?.userFilters?.filters?.assignees.includes(_member?.member?.id) && (
                     <FilterPreviewContent
                       key={`assignees-${_member?.member?.id}`}
-                      icon={
-                        <MemberIcons
-                          display_name={_member?.member.display_name}
-                          avatar={_member?.member.avatar}
-                        />
-                      }
+                      icon={<MemberIcons display_name={_member?.member.display_name} avatar={_member?.member.avatar} />}
                       title={`${_member?.member?.display_name}`}
                       onClick={() => handleFilter("assignees", _member?.member?.id)}
                       className="border border-custom-border-100 bg-custom-background-100"

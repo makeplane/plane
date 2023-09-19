@@ -20,7 +20,7 @@ export const IssueListViewRoot = observer(() => {
         <div>Loading...</div>
       ) : (
         <>
-          {Object.keys(issueViewStore?.getIssues).map((groupId) => (
+          {Object.keys(issueViewStore?.getIssues).map((groupId: any) => (
             <Disclosure key={groupId}>
               {({ open }) => (
                 <>
@@ -31,7 +31,10 @@ export const IssueListViewRoot = observer(() => {
                     />
                   </Disclosure.Button>
                   <Disclosure.Panel className="px-4 pt-4 pb-2">
-                    <IssueListView issues={issueViewStore?.getIssues?.[groupId]} groupId={groupId} />
+                    <IssueListView
+                      issues={(groupId && issueViewStore?.getIssues?.[groupId]) ?? null}
+                      groupId={groupId}
+                    />
                   </Disclosure.Panel>
                 </>
               )}

@@ -21,11 +21,7 @@ export const IssueDropdown = ({ children, title = "Dropdown" }: IIssueDropdown) 
           >
             <div className="font-medium">{title}</div>
             <div className="w-[14px] h-[14px] flex justify-center items-center">
-              {open ? (
-                <ChevronUp width={14} strokeWidth={2} />
-              ) : (
-                <ChevronDown width={14} strokeWidth={2} />
-              )}
+              {open ? <ChevronUp width={14} strokeWidth={2} /> : <ChevronDown width={14} strokeWidth={2} />}
             </div>
           </Popover.Button>
           <Transition

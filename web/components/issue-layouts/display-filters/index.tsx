@@ -20,21 +20,22 @@ export const DisplayFiltersSelection = observer(() => {
   const handleDisplayPropertiesSectionVisibility =
     issueFilterStore?.issueView &&
     issueFilterStore?.issueLayout &&
-    issueFilterVisibilityData[issueFilterStore?.issueView === "my_issues" ? "my_issues" : "others"]
+    issueFilterVisibilityData[issueFilterStore?.issueView === "my_issues" ? "my_issues" : "issues"]
       ?.display_properties?.[issueFilterStore?.issueLayout];
 
   const handleDisplayFilterSectionVisibility = (section_key: string) =>
     issueFilterStore?.issueView &&
     issueFilterStore?.issueLayout &&
-    issueFilterVisibilityData[
-      issueFilterStore?.issueView === "my_issues" ? "my_issues" : "others"
-    ]?.display_filters?.[issueFilterStore?.issueLayout].includes(section_key);
+    issueFilterVisibilityData[issueFilterStore?.issueView === "my_issues" ? "my_issues" : "issues"]?.display_filters?.[
+      issueFilterStore?.issueLayout
+    ].includes(section_key);
 
   const handleExtraOptionsSectionVisibility =
     issueFilterStore?.issueView &&
     issueFilterStore?.issueLayout &&
-    issueFilterVisibilityData[issueFilterStore?.issueView === "my_issues" ? "my_issues" : "others"]
-      ?.extra_options?.[issueFilterStore?.issueLayout].access;
+    issueFilterVisibilityData[issueFilterStore?.issueView === "my_issues" ? "my_issues" : "issues"]?.extra_options?.[
+      issueFilterStore?.issueLayout
+    ].access;
 
   return (
     <div className="w-full h-full overflow-hidden select-none relative flex flex-col divide-y divide-custom-border-200">

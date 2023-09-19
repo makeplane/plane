@@ -10,13 +10,7 @@ interface IFilterOption {
   onClick?: () => void;
 }
 
-export const FilterOption = ({
-  isChecked,
-  icon,
-  title,
-  multiple = true,
-  onClick,
-}: IFilterOption) => (
+export const FilterOption = ({ isChecked, icon, title, multiple = true, onClick }: IFilterOption) => (
   <div
     className="flex items-center gap-3 cursor-pointer rounded p-[6px] py-[5px] transition-all hover:bg-custom-border-100"
     onClick={onClick}

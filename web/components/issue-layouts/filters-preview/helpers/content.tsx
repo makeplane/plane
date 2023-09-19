@@ -8,13 +8,7 @@ interface IFilterPreviewContent {
   style?: any;
 }
 
-export const FilterPreviewContent = ({
-  icon,
-  title,
-  onClick,
-  className,
-  style,
-}: IFilterPreviewContent) => (
+export const FilterPreviewContent = ({ icon, title, onClick, className, style }: IFilterPreviewContent) => (
   <div
     className={`flex-shrink-0 flex items-center gap-1.5 rounded-full px-[8px] transition-all ${className}`}
     style={style ? style : {}}

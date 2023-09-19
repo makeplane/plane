@@ -32,11 +32,7 @@ export const FilterOrderBy = observer(() => {
             issueFilterStore?.issueRenderFilters?.order_by.map((_orderBy) => (
               <FilterOption
                 key={_orderBy?.key}
-                isChecked={
-                  issueFilterStore?.userFilters?.display_filters?.order_by === _orderBy?.key
-                    ? true
-                    : false
-                }
+                isChecked={issueFilterStore?.userFilters?.display_filters?.order_by === _orderBy?.key ? true : false}
                 onClick={() => handleOrderBy("order_by", _orderBy?.key)}
                 title={_orderBy.title}
                 multiple={false}

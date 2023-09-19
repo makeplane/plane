@@ -31,51 +31,31 @@ export const StateGroupIcons = ({
   if (stateGroup === "cancelled")
     return (
       <div className="flex-shrink-0 rounded-sm overflow-hidden w-[20px] h-[20px] flex justify-center items-center">
-        <StateGroupCancelledIcon
-          width={width}
-          height={height}
-          color={color ? color : STATE_GROUP_COLORS[stateGroup]}
-        />
+        <StateGroupCancelledIcon width={width} height={height} color={color ? color : STATE_GROUP_COLORS[stateGroup]} />
       </div>
     );
   if (stateGroup === "completed")
     return (
       <div className="flex-shrink-0 rounded-sm overflow-hidden w-[20px] h-[20px] flex justify-center items-center">
-        <StateGroupCompletedIcon
-          width={width}
-          height={height}
-          color={color ? color : STATE_GROUP_COLORS[stateGroup]}
-        />
+        <StateGroupCompletedIcon width={width} height={height} color={color ? color : STATE_GROUP_COLORS[stateGroup]} />
       </div>
     );
   if (stateGroup === "started")
     return (
       <div className="flex-shrink-0 rounded-sm overflow-hidden w-[20px] h-[20px] flex justify-center items-center">
-        <StateGroupStartedIcon
-          width={width}
-          height={height}
-          color={color ? color : STATE_GROUP_COLORS[stateGroup]}
-        />
+        <StateGroupStartedIcon width={width} height={height} color={color ? color : STATE_GROUP_COLORS[stateGroup]} />
       </div>
     );
   if (stateGroup === "unstarted")
     return (
       <div className="flex-shrink-0 rounded-sm overflow-hidden w-[20px] h-[20px] flex justify-center items-center">
-        <StateGroupUnstartedIcon
-          width={width}
-          height={height}
-          color={color ? color : STATE_GROUP_COLORS[stateGroup]}
-        />
+        <StateGroupUnstartedIcon width={width} height={height} color={color ? color : STATE_GROUP_COLORS[stateGroup]} />
       </div>
     );
   if (stateGroup === "backlog")
     return (
       <div className="flex-shrink-0 rounded-sm overflow-hidden w-[20px] h-[20px] flex justify-center items-center">
-        <StateGroupBacklogIcon
-          width={width}
-          height={height}
-          color={color ? color : STATE_GROUP_COLORS[stateGroup]}
-        />
+        <StateGroupBacklogIcon width={width} height={height} color={color ? color : STATE_GROUP_COLORS[stateGroup]} />
       </div>
     );
   return <></>;

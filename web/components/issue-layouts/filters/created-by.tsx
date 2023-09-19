@@ -47,12 +47,7 @@ export const FilterCreatedBy = observer(() => {
                     : false
                 }
                 onClick={() => handleFilter("created_by", _member?.member?.id)}
-                icon={
-                  <MemberIcons
-                    display_name={_member?.member.display_name}
-                    avatar={_member?.member.avatar}
-                  />
-                }
+                icon={<MemberIcons display_name={_member?.member.display_name} avatar={_member?.member.avatar} />}
                 title={`${_member?.member?.display_name} (${_member?.member?.first_name} ${_member?.member?.last_name})`}
               />
             ))}

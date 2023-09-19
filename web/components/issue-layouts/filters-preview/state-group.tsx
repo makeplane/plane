@@ -18,53 +18,27 @@ import { RootStore } from "store/root";
 // constants
 import { STATE_GROUP_COLORS } from "constants/state";
 
-export const StateGroupIcons = ({
-  stateGroup,
-  color = null,
-}: {
-  stateGroup: string;
-  color?: string | null;
-}) => {
+export const StateGroupIcons = ({ stateGroup, color = null }: { stateGroup: string; color?: string | null }) => {
   if (stateGroup === "cancelled")
     return (
-      <StateGroupCancelledIcon
-        width={"12px"}
-        height={"12px"}
-        color={color ? color : STATE_GROUP_COLORS[stateGroup]}
-      />
+      <StateGroupCancelledIcon width={"12px"} height={"12px"} color={color ? color : STATE_GROUP_COLORS[stateGroup]} />
     );
   if (stateGroup === "completed")
     return (
-      <StateGroupCompletedIcon
-        width={"12px"}
-        height={"12px"}
-        color={color ? color : STATE_GROUP_COLORS[stateGroup]}
-      />
+      <StateGroupCompletedIcon width={"12px"} height={"12px"} color={color ? color : STATE_GROUP_COLORS[stateGroup]} />
     );
   if (stateGroup === "started")
     return (
-      <StateGroupStartedIcon
-        width={"12px"}
-        height={"12px"}
-        color={color ? color : STATE_GROUP_COLORS[stateGroup]}
-      />
+      <StateGroupStartedIcon width={"12px"} height={"12px"} color={color ? color : STATE_GROUP_COLORS[stateGroup]} />
     );
   if (stateGroup === "unstarted")
     return (
-      <StateGroupUnstartedIcon
-        width={"12px"}
-        height={"12px"}
-        color={color ? color : STATE_GROUP_COLORS[stateGroup]}
-      />
+      <StateGroupUnstartedIcon width={"12px"} height={"12px"} color={color ? color : STATE_GROUP_COLORS[stateGroup]} />
     );
   if (stateGroup === "backlog")
     return (
       <div className="flex-shrink-0 rounded-sm overflow-hidden w-[20px] h-[20px] flex justify-center items-center">
-        <StateGroupBacklogIcon
-          width={"12px"}
-          height={"12px"}
-          color={color ? color : STATE_GROUP_COLORS[stateGroup]}
-        />
+        <StateGroupBacklogIcon width={"12px"} height={"12px"} color={color ? color : STATE_GROUP_COLORS[stateGroup]} />
       </div>
     );
   return <></>;
@@ -125,9 +99,7 @@ export const FilterStateGroup = observer(() => {
         <div className="border border-custom-border-200 bg-custom-background-80 rounded-full overflow-hidden flex items-center gap-2 px-2 py-1">
           <div className="flex-shrink-0">
             <FilterPreviewHeader
-              title={`State Group (${
-                issueFilterStore?.userFilters?.filters?.state_group?.length || 0
-              })`}
+              title={`State Group (${issueFilterStore?.userFilters?.filters?.state_group?.length || 0})`}
             />
           </div>
           <div className="relative flex items-center flex-wrap gap-2">
@@ -136,9 +108,7 @@ export const FilterStateGroup = observer(() => {
               issueFilterStore?.issueRenderFilters?.state_group.map(
                 (_stateGroup) =>
                   issueFilterStore?.userFilters?.filters?.state_group != null &&
-                  issueFilterStore?.userFilters?.filters?.state_group.includes(
-                    _stateGroup?.key
-                  ) && (
+                  issueFilterStore?.userFilters?.filters?.state_group.includes(_stateGroup?.key) && (
                     <FilterPreviewContent
                       key={_stateGroup?.key}
                       icon={<StateGroupIcons stateGroup={_stateGroup.key} />}

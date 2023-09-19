@@ -9,7 +9,7 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 // store default data
-import { issueStateGroupKeys } from "store/issue-views/issue_data";
+import { stateGroups } from "store/issue-views/issue_data";
 
 export const FilterState = observer(() => {
   const store: RootStore = useMobxStore();
@@ -28,8 +28,8 @@ export const FilterState = observer(() => {
     issueFilterStore.handleUserFilter("filters", key, _value);
   };
 
-  const countAllState = issueStateGroupKeys
-    .map((_stateGroup) => issueFilterStore?.projectStates?.[_stateGroup].length || 0)
+  const countAllState = stateGroups
+    .map((_stateGroup) => issueFilterStore?.projectStates?.[_stateGroup?.key].length || 0)
     .reduce((sum: number, currentValue: number) => sum + currentValue, 0);
 
   console.log("countAllState", countAllState);
@@ -43,12 +43,12 @@ export const FilterState = observer(() => {
       />
       {previewEnabled && (
         <div className="space-y-[2px] pt-1">
-          {issueStateGroupKeys.map(
+          {stateGroups.map(
             (_stateGroup) =>
               issueFilterStore?.projectStates &&
-              issueFilterStore?.projectStates[_stateGroup] &&
-              issueFilterStore?.projectStates[_stateGroup].length > 0 &&
-              issueFilterStore?.projectStates[_stateGroup].map((_state: any) => (
+              issueFilterStore?.projectStates[_stateGroup?.key] &&
+              issueFilterStore?.projectStates[_stateGroup?.key].length > 0 &&
+              issueFilterStore?.projectStates[_stateGroup?.key].map((_state: any) => (
                 <FilterOption
                   key={_state?.id}
                   isChecked={
@@ -58,7 +58,7 @@ export const FilterState = observer(() => {
                       : false
                   }
                   onClick={() => handleFilter("state", _state?.id)}
-                  icon={<StateGroupIcons stateGroup={_stateGroup} color={_state?.color} />}
+                  icon={<StateGroupIcons stateGroup={_stateGroup?.key} color={_state?.color} />}
                   title={_state?.name}
                 />
               ))

@@ -143,7 +143,7 @@ class IssueViewDetailStore implements IIssueViewDetailStore {
         this.rootStore.issueFilters.issueView || "issues"
       );
       const issueResponse = await this.issueService.patchIssue(workspaceId, projectId, issueId, data, undefined);
-      const issueList = await this.issueService.getIssuesWithParams(workspaceId, projectId, filteredParams);
+      const issueList = (await this.issueService.getIssuesWithParams(workspaceId, projectId, filteredParams)) as any;
       console.log("issueList", issueList);
 
       if (issueResponse) {

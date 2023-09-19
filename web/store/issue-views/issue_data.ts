@@ -1,4 +1,6 @@
 import { renderDateFormat } from "helpers/date-time.helper";
+// types
+import { TIssueLayouts, TIssueParams } from "./issue_filters";
 
 export type TStateGroup = "backlog" | "unstarted" | "started" | "completed" | "cancelled";
 
@@ -151,6 +153,83 @@ export const issueFilterVisibilityData: any = {
       },
     },
   },
+};
+
+export const handleIssueQueryParamsByLayout = (_layout: TIssueLayouts | undefined): TIssueParams[] | null => {
+  if (_layout === "list")
+    return [
+      "priority",
+      "state_group",
+      "state",
+      "assignees",
+      "created_by",
+      "labels",
+      "start_date",
+      "target_date",
+      "group_by",
+      "order_by",
+      "type",
+      "sub_issue",
+      "show_empty_groups",
+    ];
+  if (_layout === "kanban")
+    return [
+      "priority",
+      "state_group",
+      "state",
+      "assignees",
+      "created_by",
+      "labels",
+      "start_date",
+      "target_date",
+      "group_by",
+      "order_by",
+      "type",
+      "sub_issue",
+      "show_empty_groups",
+    ];
+  if (_layout === "calendar")
+    return [
+      "priority",
+      "state_group",
+      "state",
+      "assignees",
+      "created_by",
+      "labels",
+      "start_date",
+      "target_date",
+      "type",
+      "calendar_date_range",
+    ];
+  if (_layout === "spreadsheet")
+    return [
+      "priority",
+      "state_group",
+      "state",
+      "assignees",
+      "created_by",
+      "labels",
+      "start_date",
+      "target_date",
+      "type",
+      "sub_issue",
+    ];
+  if (_layout === "gantt_chart")
+    return [
+      "priority",
+      "state",
+      "assignees",
+      "created_by",
+      "labels",
+      "start_date",
+      "target_date",
+      "order_by",
+      "type",
+      "sub_issue",
+      "start_target_date",
+    ];
+
+  return null;
 };
 
 export const handleIssueParamsDateFormat = (key: string, start_date: any | null, target_date: any | null) => {

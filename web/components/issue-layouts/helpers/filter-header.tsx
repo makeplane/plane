@@ -8,11 +8,7 @@ interface IFilterHeader {
   handleIsPreviewEnabled: () => void;
 }
 
-export const FilterHeader = ({
-  title,
-  isPreviewEnabled,
-  handleIsPreviewEnabled,
-}: IFilterHeader) => (
+export const FilterHeader = ({ title, isPreviewEnabled, handleIsPreviewEnabled }: IFilterHeader) => (
   <div className="flex items-center justify-between gap-2 p-[6px] pb-1 bg-custom-background-100 sticky top-0">
     <div className="text-gray-500 text-xs text-custom-text-300 font-medium">{title}</div>
     <div
