@@ -103,7 +103,7 @@ from plane.api.views import (
     ## End Estimates
     # Views
     WorkspaceViewViewSet,
-    WorkspaceViewIssuesEndpoint,
+    WorkspaceViewIssuesViewSet,
     IssueViewViewSet,
     ViewIssuesEndpoint,
     IssueViewFavoriteViewSet,
@@ -675,7 +675,11 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/views/<uuid:view_id>/issues/",
-        WorkspaceViewIssuesEndpoint.as_view(),
+        WorkspaceViewIssuesViewSet.as_view(
+            {
+                "get": "list",
+            }
+        ),
         name="workspace-view-issues",
     ),
     path(
