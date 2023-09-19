@@ -50,12 +50,12 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
   };
 
   const handleDeletion = async () => {
-    if (!workspaceSlug || !data) return;
+    if (!workspaceSlug || !data || !user) return;
 
     setIsDeleteLoading(true);
 
     await issueServices
-      .deleteDraftIssue(workspaceSlug as string, data.project, data.id)
+      .deleteDraftIssue(workspaceSlug as string, data.project, data.id, user)
       .then(() => {
         setIsDeleteLoading(false);
         handleClose();

@@ -18,7 +18,7 @@ import { BlockeIssueDetail, IIssue, ISearchIssueResponse } from "types";
 
 type Props = {
   issueId?: string;
-  submitChanges: (formData: Partial<IIssue>) => void;
+  submitChanges: (formData?: Partial<IIssue>) => void;
   watch: UseFormWatch<IIssue>;
   disabled?: boolean;
 };
@@ -69,7 +69,7 @@ export const SidebarDuplicateSelect: React.FC<Props> = (props) => {
         related_list: [
           ...selectedIssues.map((issue) => ({
             issue: issueId as string,
-            related_issue_detail: issue.blocker_issue_detail,
+            issue_detail: issue.blocker_issue_detail,
             related_issue: issue.blocker_issue_detail.id,
             relation_type: "duplicate" as const,
           })),
@@ -90,7 +90,7 @@ export const SidebarDuplicateSelect: React.FC<Props> = (props) => {
       ?.filter((i) => i.relation_type === "duplicate")
       .map((i) => ({
         ...i,
-        related_issue_detail: i.issue_detail,
+        issue_detail: i.issue_detail,
         related_issue: i.issue_detail?.id,
       })),
   ];
@@ -114,39 +114,35 @@ export const SidebarDuplicateSelect: React.FC<Props> = (props) => {
             {duplicateIssuesRelation && duplicateIssuesRelation.length > 0
               ? duplicateIssuesRelation.map((relation) => (
                   <div
-                    key={relation.related_issue_detail?.id}
+                    key={relation.issue_detail?.id}
                     className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-1.5 py-0.5 text-xs text-yellow-500 duration-300 hover:border-yellow-500/20 hover:bg-yellow-500/20"
                   >
                     <a
-                      href={`/${workspaceSlug}/projects/${relation.related_issue_detail?.project_detail.id}/issues/${relation.related_issue_detail?.id}`}
+                      href={`/${workspaceSlug}/projects/${relation.issue_detail?.project_detail.id}/issues/${relation.issue_detail?.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-1"
                     >
                       <BlockerIcon height={10} width={10} />
-                      {`${relation.related_issue_detail?.project_detail.identifier}-${relation.related_issue_detail?.sequence_id}`}
+                      {`${relation.issue_detail?.project_detail.identifier}-${relation.issue_detail?.sequence_id}`}
                     </a>
                     <button
                       type="button"
                       className="opacity-0 duration-300 group-hover:opacity-100"
                       onClick={() => {
-                        const updatedBlockers = duplicateIssuesRelation.filter(
-                          (i) => i.related_issue_detail?.id !== relation.related_issue_detail?.id
-                        );
-
-                        submitChanges({
-                          related_issues: updatedBlockers,
-                        });
-
                         if (!user) return;
 
-                        issuesService.deleteIssueRelation(
-                          workspaceSlug as string,
-                          projectId as string,
-                          issueId as string,
-                          relation.id,
-                          user
-                        );
+                        issuesService
+                          .deleteIssueRelation(
+                            workspaceSlug as string,
+                            projectId as string,
+                            issueId as string,
+                            relation.id,
+                            user
+                          )
+                          .then(() => {
+                            submitChanges();
+                          });
                       }}
                     >
                       <X className="h-2 w-2" />
