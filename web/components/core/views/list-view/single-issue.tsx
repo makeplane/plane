@@ -11,14 +11,13 @@ import trackEventServices from "services/track-event.service";
 import useToast from "hooks/use-toast";
 // components
 import {
-  ViewAssigneeSelect,
   ViewDueDateSelect,
   ViewEstimateSelect,
   ViewIssueLabel,
   ViewPrioritySelect,
   ViewStartDateSelect,
 } from "components/issues";
-import { StateSelect } from "components/project";
+import { MembersSelect, StateSelect } from "components/project";
 // ui
 import { Tooltip, CustomMenu, ContextMenu } from "components/ui";
 // icons
@@ -220,6 +219,28 @@ export const SingleListIssue: React.FC<Props> = ({
     }
   };
 
+  const handleAssigneeChange = (data: any) => {
+    const newData = issue.assignees ?? [];
+
+    if (newData.includes(data)) newData.splice(newData.indexOf(data), 1);
+    else newData.push(data);
+
+    partialUpdateIssue({ assignees_list: data }, issue);
+
+    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+      {
+        workspaceSlug,
+        workspaceId: issue.workspace,
+        projectId: issue.project_detail.id,
+        projectIdentifier: issue.project_detail.identifier,
+        projectName: issue.project_detail.name,
+        issueId: issue.id,
+      },
+      "ISSUE_PROPERTY_UPDATE_ASSIGNEE",
+      user
+    );
+  };
+
   const issuePath = isArchivedIssues
     ? `/${workspaceSlug}/projects/${issue.project}/archived-issues/${issue.id}`
     : isDraftIssues
@@ -363,12 +384,12 @@ export const SingleListIssue: React.FC<Props> = ({
           )}
           {properties.labels && <ViewIssueLabel labelDetails={issue.label_details} maxRender={3} />}
           {properties.assignee && (
-            <ViewAssigneeSelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              position="right"
-              user={user}
-              isNotAllowed={isNotAllowed}
+            <MembersSelect
+              value={issue.assignees}
+              onChange={handleAssigneeChange}
+              membersDetails={issue.assignee_details}
+              hideDropdownArrow
+              disabled={isNotAllowed}
             />
           )}
           {properties.estimate && issue.estimate_point !== null && (

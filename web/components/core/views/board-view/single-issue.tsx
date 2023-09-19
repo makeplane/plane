@@ -19,14 +19,13 @@ import useToast from "hooks/use-toast";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import {
-  ViewAssigneeSelect,
   ViewDueDateSelect,
   ViewEstimateSelect,
   ViewIssueLabel,
   ViewPrioritySelect,
   ViewStartDateSelect,
 } from "components/issues";
-import { StateSelect } from "components/project";
+import { StateSelect, MembersSelect } from "components/project";
 // ui
 import { ContextMenu, CustomMenu, Tooltip } from "components/ui";
 // icons
@@ -232,6 +231,28 @@ export const SingleBoardIssue: React.FC<Props> = ({
         user
       );
     }
+  };
+
+  const handleAssigneeChange = (data: any) => {
+    const newData = issue.assignees ?? [];
+
+    if (newData.includes(data)) newData.splice(newData.indexOf(data), 1);
+    else newData.push(data);
+
+    partialUpdateIssue({ assignees_list: data }, issue);
+
+    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+      {
+        workspaceSlug,
+        workspaceId: issue.workspace,
+        projectId: issue.project_detail.id,
+        projectIdentifier: issue.project_detail.identifier,
+        projectName: issue.project_detail.name,
+        issueId: issue.id,
+      },
+      "ISSUE_PROPERTY_UPDATE_ASSIGNEE",
+      user
+    );
   };
 
   useEffect(() => {
@@ -444,13 +465,12 @@ export const SingleBoardIssue: React.FC<Props> = ({
               <ViewIssueLabel labelDetails={issue.label_details} maxRender={2} />
             )}
             {properties.assignee && (
-              <ViewAssigneeSelect
-                issue={issue}
-                partialUpdateIssue={partialUpdateIssue}
-                isNotAllowed={isNotAllowed}
-                customButton
-                user={user}
-                selfPositioned
+              <MembersSelect
+                value={issue.assignees}
+                onChange={handleAssigneeChange}
+                membersDetails={issue.assignee_details}
+                hideDropdownArrow
+                disabled={isNotAllowed}
               />
             )}
             {properties.estimate && issue.estimate_point !== null && (

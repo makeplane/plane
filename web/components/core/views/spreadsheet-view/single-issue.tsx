@@ -6,14 +6,13 @@ import { mutate } from "swr";
 
 // components
 import {
-  ViewAssigneeSelect,
   ViewDueDateSelect,
   ViewEstimateSelect,
   ViewIssueLabel,
   ViewPrioritySelect,
   ViewStartDateSelect,
 } from "components/issues";
-import { StateSelect } from "components/project";
+import { MembersSelect, StateSelect } from "components/project";
 import { Popover2 } from "@blueprintjs/popover2";
 // icons
 import { Icon } from "components/ui";
@@ -226,6 +225,28 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
     }
   };
 
+  const handleAssigneeChange = (data: any) => {
+    const newData = issue.assignees ?? [];
+
+    if (newData.includes(data)) newData.splice(newData.indexOf(data), 1);
+    else newData.push(data);
+
+    partialUpdateIssue({ assignees_list: data }, issue);
+
+    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+      {
+        workspaceSlug,
+        workspaceId: issue.workspace,
+        projectId: issue.project_detail.id,
+        projectIdentifier: issue.project_detail.identifier,
+        projectName: issue.project_detail.name,
+        issueId: issue.id,
+      },
+      "ISSUE_PROPERTY_UPDATE_ASSIGNEE",
+      user
+    );
+  };
+
   const paddingLeft = `${nestingLevel * 68}px`;
 
   const tooltipPosition = index === 0 ? "bottom" : "top";
@@ -353,14 +374,13 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         )}
         {properties.assignee && (
           <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
-            <ViewAssigneeSelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              position="left"
-              tooltipPosition={tooltipPosition}
-              customButton
-              user={user}
-              isNotAllowed={isNotAllowed}
+            <MembersSelect
+              value={issue.assignees}
+              onChange={handleAssigneeChange}
+              membersDetails={issue.assignee_details}
+              buttonClassName="!p-0 !rounded-none !shadow-none !border-0"
+              hideDropdownArrow
+              disabled={isNotAllowed}
             />
           </div>
         )}
