@@ -1,22 +1,20 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 
 import { useRouter } from "next/router";
 
 // hooks
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
+import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 import useProjectMembers from "hooks/use-project-members";
 import useWorkspaceMembers from "hooks/use-workspace-members";
 // headless ui
-import { Combobox, Transition } from "@headlessui/react";
+import { Combobox } from "@headlessui/react";
+// components
+import { AssigneesList, Avatar, Icon, Tooltip } from "components/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { CheckIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // types
-import { AssigneesList, Avatar, Icon, Tooltip } from "components/ui";
 import { IUser } from "types";
-
-// helper
-import { handleDropdownPosition } from "helpers/dyanamic-dropdown-position";
 
 type Props = {
   value: string | string[];
@@ -105,23 +103,7 @@ export const MembersSelect: React.FC<Props> = ({
     </Tooltip>
   );
 
-  useOutsideClickDetector(dropdownOptions, () => {
-    if (isOpen) setIsOpen(false);
-  });
-
-  const handleResize = useCallback(() => {
-    if (isOpen) {
-      handleDropdownPosition(dropdownBtn, dropdownOptions);
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [handleResize, isOpen]);
+  useDynamicDropdownPosition(isOpen, () => setIsOpen(false), dropdownBtn, dropdownOptions);
 
   return (
     <Combobox
@@ -134,10 +116,9 @@ export const MembersSelect: React.FC<Props> = ({
     >
       {({ open }: { open: boolean }) => {
         if (open) {
-          setIsOpen(true);
-          handleDropdownPosition(dropdownBtn, dropdownOptions);
+          if (!isOpen) setIsOpen(true);
           setFetchStates(true);
-        }
+        } else if (isOpen) setIsOpen(false);
 
         return (
           <>
@@ -155,64 +136,53 @@ export const MembersSelect: React.FC<Props> = ({
                 <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
               )}
             </Combobox.Button>
-            <Transition
-              show={open}
-              as={React.Fragment}
-              enter="transition ease-out duration-200"
-              enterFrom="opacity-0 translate-y-1"
-              enterTo="opacity-100 translate-y-0"
-              leave="transition ease-in duration-150"
-              leaveFrom="opacity-100 translate-y-0"
-              leaveTo="opacity-0 translate-y-1"
-            >
-              <div className="fixed z-20 top-0 left-0 h-full w-full cursor-auto">
-                <Combobox.Options
-                  ref={dropdownOptions}
-                  className={`absolute z-10 border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-lg focus:outline-none w-48 whitespace-nowrap ${optionsClassName}`}
-                >
-                  <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
-                    <MagnifyingGlassIcon className="h-3.5 w-3.5 text-custom-text-300" />
-                    <Combobox.Input
-                      className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                      placeholder="Search"
-                      displayValue={(assigned: any) => assigned?.name}
-                    />
-                  </div>
-                  <div className={`mt-2 space-y-1 max-h-48 overflow-y-scroll`}>
-                    {filteredOptions ? (
-                      filteredOptions.length > 0 ? (
-                        filteredOptions.map((option) => (
-                          <Combobox.Option
-                            key={option.value}
-                            value={option.value}
-                            className={({ active, selected }) =>
-                              `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                                active && !selected ? "bg-custom-background-80" : ""
-                              } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
-                            }
-                          >
-                            {({ selected }) => (
-                              <>
-                                {option.content}
-                                {selected && <CheckIcon className={`h-3.5 w-3.5`} />}
-                              </>
-                            )}
-                          </Combobox.Option>
-                        ))
-                      ) : (
-                        <span className="flex items-center gap-2 p-1">
-                          <p className="text-left text-custom-text-200 ">No matching results</p>
-                        </span>
-                      )
+            <div className={`${open ? "fixed z-20 top-0 left-0 h-full w-full cursor-auto" : ""}`}>
+              <Combobox.Options
+                ref={dropdownOptions}
+                className={`absolute z-10 border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-lg focus:outline-none w-48 whitespace-nowrap mt-1 ${optionsClassName}`}
+              >
+                <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
+                  <MagnifyingGlassIcon className="h-3.5 w-3.5 text-custom-text-300" />
+                  <Combobox.Input
+                    className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search"
+                    displayValue={(assigned: any) => assigned?.name}
+                  />
+                </div>
+                <div className={`mt-2 space-y-1 max-h-48 overflow-y-scroll`}>
+                  {filteredOptions ? (
+                    filteredOptions.length > 0 ? (
+                      filteredOptions.map((option) => (
+                        <Combobox.Option
+                          key={option.value}
+                          value={option.value}
+                          className={({ active, selected }) =>
+                            `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
+                              active && !selected ? "bg-custom-background-80" : ""
+                            } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                          }
+                        >
+                          {({ selected }) => (
+                            <>
+                              {option.content}
+                              {selected && <CheckIcon className={`h-3.5 w-3.5`} />}
+                            </>
+                          )}
+                        </Combobox.Option>
+                      ))
                     ) : (
-                      <p className="text-center text-custom-text-200">Loading...</p>
-                    )}
-                  </div>
-                </Combobox.Options>
-              </div>
-            </Transition>
+                      <span className="flex items-center gap-2 p-1">
+                        <p className="text-left text-custom-text-200 ">No matching results</p>
+                      </span>
+                    )
+                  ) : (
+                    <p className="text-center text-custom-text-200">Loading...</p>
+                  )}
+                </div>
+              </Combobox.Options>
+            </div>
           </>
         );
       }}
