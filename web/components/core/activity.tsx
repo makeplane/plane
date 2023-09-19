@@ -2,8 +2,9 @@ import { useRouter } from "next/router";
 
 // icons
 import { Icon, Tooltip } from "components/ui";
+import { CopyPlus } from "lucide-react";
 import { Squares2X2Icon } from "@heroicons/react/24/outline";
-import { BlockedIcon, BlockerIcon } from "components/icons";
+import { BlockedIcon, BlockerIcon, RelatedIcon } from "components/icons";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { capitalizeFirstLetter } from "helpers/string.helper";
@@ -157,7 +158,7 @@ const activityDetails: {
     },
     icon: <BlockerIcon height="12" width="12" color="#6b7280" />,
   },
-  blocks: {
+  blocked_by: {
     message: (activity) => {
       if (activity.old_value === "")
         return (
@@ -175,6 +176,44 @@ const activityDetails: {
         );
     },
     icon: <BlockedIcon height="12" width="12" color="#6b7280" />,
+  },
+  duplicate: {
+    message: (activity) => {
+      if (activity.old_value === "")
+        return (
+          <>
+            marked this issue as duplicate of{" "}
+            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+          </>
+        );
+      else
+        return (
+          <>
+            removed this issue as a duplicate of{" "}
+            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+          </>
+        );
+    },
+    icon: <CopyPlus size={12} color="#6b7280" />,
+  },
+  relates_to: {
+    message: (activity) => {
+      if (activity.old_value === "")
+        return (
+          <>
+            marked that this issue relates to{" "}
+            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+          </>
+        );
+      else
+        return (
+          <>
+            removed the relation from{" "}
+            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+          </>
+        );
+    },
+    icon: <RelatedIcon height="12" width="12" color="#6b7280" />,
   },
   cycles: {
     message: (activity, showIssue, workspaceSlug) => {

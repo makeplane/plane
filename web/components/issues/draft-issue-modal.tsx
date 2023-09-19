@@ -14,6 +14,7 @@ import useIssuesView from "hooks/use-issues-view";
 import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useToast from "hooks/use-toast";
 import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
+import useLocalStorage from "hooks/use-local-storage";
 import useProjects from "hooks/use-projects";
 import useMyIssues from "hooks/my-issues/use-my-issues";
 // components
@@ -79,6 +80,8 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = ({
   const { user } = useUser();
   const { projects } = useProjects();
 
+  const { clearValue: clearDraftIssueLocalStorage } = useLocalStorage("draftedIssue", {});
+
   const { groupedIssues, mutateMyIssues } = useMyIssues(workspaceSlug?.toString());
 
   const { setToastAlert } = useToast();
@@ -111,11 +114,14 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = ({
       return;
     }
 
+    if (prePopulateData && prePopulateData.project)
+      return setActiveProject(prePopulateData.project);
+
     // if data is not present, set active project to the project
     // in the url. This has the least priority.
     if (projects && projects.length > 0 && !activeProject)
       setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
-  }, [activeProject, data, projectId, projects, isOpen]);
+  }, [activeProject, data, projectId, projects, isOpen, prePopulateData]);
 
   const calendarFetchKey = cycleId
     ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), calendarParams)
@@ -227,6 +233,8 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = ({
 
     if (!data) await createIssue(payload);
     else await updateIssue(payload);
+
+    clearDraftIssueLocalStorage();
 
     if (onSubmit) await onSubmit(payload);
   };

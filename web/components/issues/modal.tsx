@@ -19,6 +19,7 @@ import useInboxView from "hooks/use-inbox-view";
 import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 import useProjects from "hooks/use-projects";
 import useMyIssues from "hooks/my-issues/use-my-issues";
+import useLocalStorage from "hooks/use-local-storage";
 // components
 import { IssueForm, ConfirmIssueDiscard } from "components/issues";
 // types
@@ -92,10 +93,11 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
   const { groupedIssues, mutateMyIssues } = useMyIssues(workspaceSlug?.toString());
 
+  const { setValue: setValueInLocalStorage, clearValue: clearLocalStorageValue } =
+    useLocalStorage<any>("draftedIssue", {});
+
   const { setToastAlert } = useToast();
 
-  if (cycleId) prePopulateData = { ...prePopulateData, cycle: cycleId as string };
-  if (moduleId) prePopulateData = { ...prePopulateData, module: moduleId as string };
   if (router.asPath.includes("my-issues") || router.asPath.includes("assigned"))
     prePopulateData = {
       ...prePopulateData,
@@ -103,17 +105,19 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     };
 
   const onClose = () => {
+    if (!showConfirmDiscard) handleClose();
+    if (formDirtyState === null) return setActiveProject(null);
+    const data = JSON.stringify(formDirtyState);
+    setValueInLocalStorage(data);
+  };
+
+  const onDiscardClose = () => {
     if (formDirtyState !== null) {
       setShowConfirmDiscard(true);
     } else {
       handleClose();
       setActiveProject(null);
     }
-  };
-
-  const onDiscardClose = () => {
-    handleClose();
-    setActiveProject(null);
   };
 
   const handleFormDirty = (data: any) => {
@@ -397,6 +401,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           setActiveProject(null);
           setFormDirtyState(null);
           setShowConfirmDiscard(false);
+          clearLocalStorageValue();
         }}
       />
 
@@ -431,9 +436,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
                     initialData={data ?? prePopulateData}
                     createMore={createMore}
                     setCreateMore={setCreateMore}
-                    handleClose={onClose}
                     handleDiscardClose={onDiscardClose}
-                    setIsConfirmDiscardOpen={setShowConfirmDiscard}
                     projectId={activeProject ?? ""}
                     setActiveProject={setActiveProject}
                     status={data ? true : false}
