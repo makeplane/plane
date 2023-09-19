@@ -2174,13 +2174,6 @@
     lodash.merge "^4.6.2"
     postcss-selector-parser "6.0.10"
 
-"@tiptap-pro/extension-unique-id@^2.1.0":
-  version "2.2.3"
-  resolved "https://registry.tiptap.dev/@tiptap-pro%2fextension-unique-id/-/extension-unique-id-2.2.3.tgz#151a570ef8363bf460bf5b08dc0581fb182ebabc"
-  integrity sha512-Y1jM+6hebNltFZ+0fbC+NcOCU647KjRtqJ7jEZVFoP12ZMocZNqTTabsSIys0UXOkSaJy3/H6Z/ybygAHY/dBg==
-  dependencies:
-    uuid "^8.3.2"
-
 "@tiptap/core@^2.1.8":
   version "2.1.8"
   resolved "https://registry.yarnpkg.com/@tiptap/core/-/core-2.1.8.tgz#4555dc7d86580dee790d4aded1ce7fb79319da70"
@@ -8187,11 +8180,6 @@ util-deprecate@^1.0.1, util-deprecate@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==
-
-uuid@^8.3.2:
-  version "8.3.2"
-  resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
-  integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
 
 uuid@^9.0.0:
   version "9.0.1"
