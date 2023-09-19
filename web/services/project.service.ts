@@ -15,6 +15,16 @@ import type {
   IProjectViewProps,
   TProjectIssuesSearchParams,
 } from "types";
+import PosthogService from "./posthog.service";
+import {
+  CREATE_PROJECT,
+  UPDATE_PROJECT,
+  DELETE_PROJECT,
+  PROJECT_MEMBER_INVITE,
+  PROJECT_MEMBER_LEAVE,
+} from "constants/posthog-events";
+
+const posthogService = new PosthogService();
 
 export class ProjectServices extends APIService {
   constructor() {
@@ -29,6 +39,7 @@ export class ProjectServices extends APIService {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/`, data)
       .then((response) => {
         trackEventServices.trackProjectEvent(response.data, "CREATE_PROJECT", user);
+        posthogService.capture(CREATE_PROJECT, response.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -80,6 +91,7 @@ export class ProjectServices extends APIService {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`, data)
       .then((response) => {
         trackEventServices.trackProjectEvent(response.data, "UPDATE_PROJECT", user);
+        posthogService.capture(UPDATE_PROJECT, response.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -95,6 +107,7 @@ export class ProjectServices extends APIService {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`)
       .then((response) => {
         trackEventServices.trackProjectEvent({ projectId }, "DELETE_PROJECT", user);
+        posthogService.capture(DELETE_PROJECT, response.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -119,6 +132,17 @@ export class ProjectServices extends APIService {
             memberEmail: response?.data?.member?.email,
           },
           "PROJECT_MEMBER_INVITE",
+          user
+        );
+        posthogService.capture(
+          PROJECT_MEMBER_INVITE,
+          {
+            workspaceId: response?.data?.workspace?.id,
+            workspaceSlug,
+            projectId,
+            projectName: response?.data?.project?.name,
+            memberEmail: response?.data?.member?.email,
+          },
           user
         );
         return response?.data;
@@ -152,6 +176,16 @@ export class ProjectServices extends APIService {
           },
           user
         );
+        posthogService.capture(
+          PROJECT_MEMBER_LEAVE,
+          {
+            workspaceSlug,
+            projectId,
+            ...response?.data,
+          },
+          user
+        );
+
         return response?.data;
       })
       .catch((error) => {

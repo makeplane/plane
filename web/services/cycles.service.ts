@@ -4,6 +4,10 @@ import trackEventServices from "services/track-event.service";
 // types
 import type { CycleDateCheckData, ICurrentUserResponse, ICycle, IIssue } from "types";
 import { API_BASE_URL } from "helpers/common.helper";
+import PosthogService from "./posthog.service";
+import { CYCLE_CREATE, CYCLE_UPDATE, CYCLE_DELETE } from "constants/posthog-events";
+
+const posthogService = new PosthogService();
 
 class ProjectCycleServices extends APIService {
   constructor() {
@@ -19,6 +23,8 @@ class ProjectCycleServices extends APIService {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/`, data)
       .then((response) => {
         trackEventServices.trackCycleEvent(response?.data, "CYCLE_CREATE", user);
+        posthogService.capture(CYCLE_CREATE, response.data, user);
+
         return response?.data;
       })
       .catch((error) => {
@@ -97,6 +103,7 @@ class ProjectCycleServices extends APIService {
     )
       .then((response) => {
         trackEventServices.trackCycleEvent(response?.data, "CYCLE_UPDATE", user);
+        posthogService.capture(CYCLE_UPDATE, response?.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -117,6 +124,7 @@ class ProjectCycleServices extends APIService {
     )
       .then((response) => {
         trackEventServices.trackCycleEvent(response?.data, "CYCLE_UPDATE", user);
+        posthogService.capture(CYCLE_UPDATE, response?.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -133,6 +141,7 @@ class ProjectCycleServices extends APIService {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`)
       .then((response) => {
         trackEventServices.trackCycleEvent(response?.data, "CYCLE_DELETE", user);
+        posthogService.capture(CYCLE_DELETE, { workspaceSlug, projectId, cycleId }, user);
         return response?.data;
       })
       .catch((error) => {

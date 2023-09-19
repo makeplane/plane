@@ -5,6 +5,10 @@ import { IView } from "types/views";
 import { ICurrentUserResponse } from "types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
+import PosthogService from "./posthog.service";
+import { VIEW_CREATE, VIEW_UPDATE, VIEW_DELETE } from "constants/posthog-events";
+
+const posthogService = new PosthogService();
 
 class ViewServices extends APIService {
   constructor() {
@@ -20,6 +24,7 @@ class ViewServices extends APIService {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/`, data)
       .then((response) => {
         trackEventServices.trackViewEvent(response?.data, "VIEW_CREATE", user);
+        posthogService.capture(VIEW_CREATE, response?.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -37,6 +42,8 @@ class ViewServices extends APIService {
     return this.put(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`, data)
       .then((response) => {
         trackEventServices.trackViewEvent(response?.data, "VIEW_UPDATE", user);
+        posthogService.capture(VIEW_UPDATE, response?.data, user);
+
         return response?.data;
       })
       .catch((error) => {
@@ -57,6 +64,8 @@ class ViewServices extends APIService {
     )
       .then((response) => {
         trackEventServices.trackViewEvent(response?.data, "VIEW_UPDATE", user);
+        posthogService.capture(VIEW_UPDATE, response?.data, user);
+
         return response?.data;
       })
       .catch((error) => {
@@ -73,6 +82,8 @@ class ViewServices extends APIService {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`)
       .then((response) => {
         trackEventServices.trackViewEvent(response?.data, "VIEW_DELETE", user);
+        posthogService.capture(VIEW_DELETE, { workspaceSlug, projectId, viewId }, user);
+
         return response?.data;
       })
       .catch((error) => {

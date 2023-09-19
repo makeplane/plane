@@ -90,14 +90,14 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Icon iconName="group" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="group" className="!text-2xl" aria-hidden="true" />,
   },
   archived_at: {
     message: (activity) => {
       if (activity.new_value === "restore") return "restored the issue.";
       else return "archived the issue.";
     },
-    icon: <Icon iconName="archive" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="archive" className="!text-2xl" aria-hidden="true" />,
   },
   attachment: {
     message: (activity, showIssue) => {
@@ -136,7 +136,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Icon iconName="attach_file" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="attach_file" className="!text-2xl" aria-hidden="true" />,
   },
   blocking: {
     message: (activity) => {
@@ -224,7 +224,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Icon iconName="contrast" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="contrast" className="!text-2xl" aria-hidden="true" />,
   },
   description: {
     message: (activity, showIssue) => (
@@ -239,7 +239,7 @@ const activityDetails: {
         .
       </>
     ),
-    icon: <Icon iconName="chat" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="chat" className="!text-2xl" aria-hidden="true" />,
   },
   estimate_point: {
     message: (activity, showIssue) => {
@@ -271,14 +271,14 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Icon iconName="change_history" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="change_history" className="!text-2xl" aria-hidden="true" />,
   },
   issue: {
     message: (activity) => {
       if (activity.verb === "created") return "created the issue.";
       else return "deleted an issue.";
     },
-    icon: <Icon iconName="stack" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="stack" className="!text-2xl" aria-hidden="true" />,
   },
   labels: {
     message: (activity, showIssue) => {
@@ -327,7 +327,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Icon iconName="sell" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="sell" className="!text-2xl" aria-hidden="true" />,
   },
   link: {
     message: (activity, showIssue) => {
@@ -398,7 +398,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Icon iconName="link" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="link" className="!text-2xl" aria-hidden="true" />,
   },
   modules: {
     message: (activity, showIssue, workspaceSlug) => {
@@ -448,7 +448,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Icon iconName="dataset" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="dataset" className="!text-2xl" aria-hidden="true" />,
   },
   name: {
     message: (activity, showIssue) => (
@@ -463,7 +463,7 @@ const activityDetails: {
         .
       </>
     ),
-    icon: <Icon iconName="chat" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="chat" className="!text-2xl" aria-hidden="true" />,
   },
   parent: {
     message: (activity, showIssue) => {
@@ -496,7 +496,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Icon iconName="supervised_user_circle" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="supervised_user_circle" className="!text-2xl" aria-hidden="true" />,
   },
   priority: {
     message: (activity, showIssue) => (
@@ -514,7 +514,7 @@ const activityDetails: {
         .
       </>
     ),
-    icon: <Icon iconName="signal_cellular_alt" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="signal_cellular_alt" className="!text-2xl" aria-hidden="true" />,
   },
   start_date: {
     message: (activity, showIssue) => {
@@ -548,7 +548,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Icon iconName="calendar_today" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="calendar_today" className="!text-2xl" aria-hidden="true" />,
   },
   state: {
     message: (activity, showIssue) => (
@@ -564,7 +564,7 @@ const activityDetails: {
         .
       </>
     ),
-    icon: <Squares2X2Icon className="h-3 w-3" aria-hidden="true" />,
+    icon: <Squares2X2Icon className="h-6 w-6 text-custom-sidebar-200" aria-hidden="true" />,
   },
   target_date: {
     message: (activity, showIssue) => {
@@ -598,7 +598,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Icon iconName="calendar_today" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="calendar_today" className="!text-2xl" aria-hidden="true" />,
   },
 };
 

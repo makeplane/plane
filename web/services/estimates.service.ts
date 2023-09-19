@@ -4,7 +4,10 @@ import APIService from "services/api.service";
 import type { ICurrentUserResponse, IEstimate, IEstimateFormData } from "types";
 import trackEventServices from "services/track-event.service";
 import { API_BASE_URL } from "helpers/common.helper";
+import PosthogService from "./posthog.service";
+import { ESTIMATE_CREATE, ESTIMATE_UPDATE, ESTIMATE_DELETE } from "constants/posthog-events";
 
+const posthogService = new PosthogService();
 class ProjectEstimateServices extends APIService {
   constructor() {
     super(API_BASE_URL);
@@ -19,6 +22,7 @@ class ProjectEstimateServices extends APIService {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/`, data)
       .then((response) => {
         trackEventServices.trackIssueEstimateEvent(response?.data, "ESTIMATE_CREATE", user);
+        posthogService.capture(ESTIMATE_CREATE, response?.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -39,6 +43,7 @@ class ProjectEstimateServices extends APIService {
     )
       .then((response) => {
         trackEventServices.trackIssueEstimateEvent(response?.data, "ESTIMATE_UPDATE", user);
+        posthogService.capture(ESTIMATE_UPDATE, response?.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -79,6 +84,7 @@ class ProjectEstimateServices extends APIService {
     )
       .then((response) => {
         trackEventServices.trackIssueEstimateEvent(response?.data, "ESTIMATE_DELETE", user);
+        posthogService.capture(ESTIMATE_DELETE, { workspaceSlug, projectId, estimateId }, user);
         return response?.data;
       })
       .catch((error) => {

@@ -15,6 +15,7 @@ import { DangerButton, Loader, PrimaryButton } from "components/ui";
 // icons
 import GithubLogo from "public/services/github.png";
 import SlackLogo from "public/services/slack.png";
+import { CheckCircle2 } from "lucide-react";
 // types
 import { IAppIntegration, IWorkspaceIntegration } from "types";
 // fetch-keys
@@ -27,13 +28,12 @@ type Props = {
 const integrationDetails: { [key: string]: any } = {
   github: {
     logo: GithubLogo,
-    installed:
-      "Activate GitHub integrations on individual projects to sync with specific repositories.",
+    installed: "Activate GitHub on individual projects to sync with specific repositories.",
     notInstalled: "Connect with GitHub with your Plane workspace to sync project issues.",
   },
   slack: {
     logo: SlackLogo,
-    installed: "Activate Slack integrations on individual projects to sync with specific channels.",
+    installed: "Activate Slack on individual projects to sync with specific channels.",
     notInstalled: "Connect with Slack with your Plane workspace to sync project issues.",
   },
 };
@@ -99,31 +99,22 @@ export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
   );
 
   return (
-    <div className="flex items-center justify-between gap-2 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-5">
+    <div className="flex items-center justify-between gap-2 border-b border-custom-border-200 bg-custom-background-100 px-4 py-6">
       <div className="flex items-start gap-4">
-        <div className="h-12 w-12 flex-shrink-0">
+        <div className="h-10 w-10 flex-shrink-0">
           <Image
             src={integrationDetails[integration.provider].logo}
             alt={`${integration.title} Logo`}
           />
         </div>
         <div>
-          <h3 className="flex items-center gap-4 text-xl font-semibold">
+          <h3 className="flex items-center gap-2 text-sm font-medium">
             {integration.title}
-            {workspaceIntegrations ? (
-              isInstalled ? (
-                <span className="flex items-center gap-1 text-sm font-normal text-green-500">
-                  <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-green-500" /> Installed
-                </span>
-              ) : (
-                <span className="flex items-center gap-1 text-sm font-normal text-custom-text-200">
-                  <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-custom-background-80" />{" "}
-                  Not Installed
-                </span>
-              )
-            ) : null}
+            {workspaceIntegrations
+              ? isInstalled && <CheckCircle2 className="h-3.5 w-3.5 text-white fill-green-500" />
+              : null}
           </h3>
-          <p className="text-sm text-custom-text-200">
+          <p className="text-sm text-custom-text-200 tracking-tight">
             {workspaceIntegrations
               ? isInstalled
                 ? integrationDetails[integration.provider].installed
@@ -135,12 +126,12 @@ export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
 
       {workspaceIntegrations ? (
         isInstalled ? (
-          <DangerButton onClick={handleRemoveIntegration} loading={deletingIntegration}>
-            {deletingIntegration ? "Removing..." : "Remove installation"}
+          <DangerButton onClick={handleRemoveIntegration} loading={deletingIntegration} outline>
+            {deletingIntegration ? "Uninstalling..." : "Uninstall"}
           </DangerButton>
         ) : (
           <PrimaryButton onClick={startAuth} loading={isInstalling}>
-            {isInstalling ? "Installing..." : "Add installation"}
+            {isInstalling ? "Installing..." : "Install"}
           </PrimaryButton>
         )
       ) : (

@@ -10,6 +10,15 @@ import type {
   IssueReactionForm,
   IssueCommentReactionForm,
 } from "types";
+import PosthogService from "./posthog.service";
+import {
+  ISSUE_REACTION_CREATE,
+  ISSUE_COMMENT_REACTION_CREATE,
+  ISSUE_REACTION_DELETE,
+  ISSUE_COMMENT_REACTION_DELETE,
+} from "constants/posthog-events";
+
+const posthogService = new PosthogService();
 
 class ReactionService extends APIService {
   constructor() {
@@ -29,6 +38,8 @@ class ReactionService extends APIService {
     )
       .then((response) => {
         trackEventServices.trackReactionEvent(response?.data, "ISSUE_REACTION_CREATE", user);
+        posthogService.capture(ISSUE_REACTION_CREATE, response?.data, user);
+
         return response?.data;
       })
       .catch((error) => {
@@ -62,6 +73,8 @@ class ReactionService extends APIService {
     )
       .then((response) => {
         trackEventServices.trackReactionEvent(response?.data, "ISSUE_REACTION_DELETE", user);
+        posthogService.capture(ISSUE_REACTION_DELETE, { workspaceSlug, projectId, issueId, reaction }, user);
+
         return response?.data;
       })
       .catch((error) => {
@@ -86,6 +99,7 @@ class ReactionService extends APIService {
           "ISSUE_COMMENT_REACTION_CREATE",
           user
         );
+        posthogService.capture(ISSUE_COMMENT_REACTION_CREATE, response?.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -123,6 +137,12 @@ class ReactionService extends APIService {
           "ISSUE_COMMENT_REACTION_DELETE",
           user
         );
+        posthogService.capture(
+          ISSUE_COMMENT_REACTION_DELETE,
+          { workspaceSlug, projectId, commentId, reaction },
+          user
+        );
+
         return response?.data;
       })
       .catch((error) => {

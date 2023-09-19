@@ -3,6 +3,10 @@ import trackEventServices from "services/track-event.service";
 import { API_BASE_URL } from "helpers/common.helper";
 // types
 import { IJiraMetadata, IJiraResponse, IJiraImporterForm, ICurrentUserResponse } from "types";
+import PosthogService from "../posthog.service";
+import { JIRA_IMPORTER_CREATE } from "constants/posthog-events";
+
+const posthogService = new PosthogService();
 
 class JiraImportedService extends APIService {
   constructor() {
@@ -27,6 +31,7 @@ class JiraImportedService extends APIService {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/importers/jira/`, data)
       .then((response) => {
         trackEventServices.trackImporterEvent(response?.data, "JIRA_IMPORTER_CREATE", user);
+        posthogService.capture(JIRA_IMPORTER_CREATE, response?.data, user);
         return response?.data;
       })
       .catch((error) => {

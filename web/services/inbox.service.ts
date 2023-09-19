@@ -10,6 +10,14 @@ import type {
   ICurrentUserResponse,
   IInboxQueryParams,
 } from "types";
+import PosthogService from "./posthog.service";
+import {
+  INBOX_ISSUE_CREATE,
+  INBOX_ISSUE_UPDATE,
+  INBOX_ISSUE_DELETE,
+} from "constants/posthog-events";
+
+const posthogService = new PosthogService();
 
 class InboxServices extends APIService {
   constructor() {
@@ -91,6 +99,11 @@ class InboxServices extends APIService {
     )
       .then((response) => {
         trackEventServices.trackInboxEvent(response?.data, "INBOX_ISSUE_DELETE", user);
+        posthogService.capture(
+          INBOX_ISSUE_DELETE,
+          { workspaceSlug, projectId, inboxId, inboxIssueId },
+          user
+        );
         return response?.data;
       })
       .catch((error) => {
@@ -141,6 +154,7 @@ class InboxServices extends APIService {
     )
       .then((response) => {
         trackEventServices.trackInboxEvent(response?.data, "INBOX_ISSUE_UPDATE", user);
+        posthogService.capture(INBOX_ISSUE_UPDATE, response?.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -161,6 +175,7 @@ class InboxServices extends APIService {
     )
       .then((response) => {
         trackEventServices.trackInboxEvent(response?.data, "INBOX_ISSUE_CREATE", user);
+        posthogService.capture(INBOX_ISSUE_CREATE, response?.data, user);
         return response?.data;
       })
       .catch((error) => {

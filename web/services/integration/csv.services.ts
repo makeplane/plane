@@ -2,7 +2,10 @@ import APIService from "services/api.service";
 import trackEventServices from "services/track-event.service";
 import { ICurrentUserResponse } from "types";
 import { API_BASE_URL } from "helpers/common.helper";
+import PosthogService from "../posthog.service";
+import { CSV_EXPORTER_CREATE } from "constants/posthog-events";
 
+const posthogService = new PosthogService();
 class CSVIntegrationService extends APIService {
   constructor() {
     super(API_BASE_URL);
@@ -25,6 +28,7 @@ class CSVIntegrationService extends APIService {
           "CSV_EXPORTER_CREATE",
           user
         );
+        posthogService.capture(CSV_EXPORTER_CREATE, { workspaceSlug, data }, user);
         return response?.data;
       })
       .catch((error) => {

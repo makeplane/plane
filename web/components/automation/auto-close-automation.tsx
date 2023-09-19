@@ -103,8 +103,8 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
 
         {projectDetails?.close_in !== 0 && (
           <div className="ml-12">
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between rounded px-5 py-4 bg-custom-background-90 border border-custom-border-200 gap-2 w-full">
+            <div className="flex flex-col rounded bg-custom-background-90 border border-custom-border-200 p-2">
+              <div className="flex items-center justify-between px-5 py-4 gap-2 w-full">
                 <div className="w-1/2 text-sm font-medium">
                   Auto-close issues that are inactive for
                 </div>
@@ -138,7 +138,7 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
                 </div>
               </div>
 
-              <div className="flex items-center justify-between rounded px-5 py-4 bg-custom-background-90 border border-custom-border-200 gap-2 w-full">
+              <div className="flex items-center justify-between px-5 py-4 gap-2 w-full">
                 <div className="w-1/2 text-sm font-medium">Auto-close Status</div>
                 <div className="w-1/2 ">
                   <CustomSearchSelect

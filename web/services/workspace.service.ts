@@ -15,6 +15,18 @@ import {
   IWorkspaceBulkInviteFormData,
   IWorkspaceViewProps,
 } from "types";
+import PosthogService from "./posthog.service";
+import {
+  CREATE_WORKSPACE,
+  UPDATE_WORKSPACE,
+  DELETE_WORKSPACE,
+  WORKSPACE_USER_INVITE,
+  WORKSPACE_USER_INVITE_ACCEPT,
+  WORKSPACE_USER_BULK_INVITE_ACCEPT,
+  WORKSPACE_MEMBER_LEAVE,
+} from "constants/posthog-events";
+
+const posthogService = new PosthogService();
 
 class WorkspaceService extends APIService {
   constructor() {
@@ -44,6 +56,7 @@ class WorkspaceService extends APIService {
     return this.post("/api/workspaces/", data)
       .then((response) => {
         trackEventServices.trackWorkspaceEvent(response.data, "CREATE_WORKSPACE", user);
+        posthogService.capture(CREATE_WORKSPACE, response.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -59,6 +72,7 @@ class WorkspaceService extends APIService {
     return this.patch(`/api/workspaces/${workspaceSlug}/`, data)
       .then((response) => {
         trackEventServices.trackWorkspaceEvent(response.data, "UPDATE_WORKSPACE", user);
+        posthogService.capture(UPDATE_WORKSPACE, response.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -73,6 +87,7 @@ class WorkspaceService extends APIService {
     return this.delete(`/api/workspaces/${workspaceSlug}/`)
       .then((response) => {
         trackEventServices.trackWorkspaceEvent({ workspaceSlug }, "DELETE_WORKSPACE", user);
+        posthogService.capture(DELETE_WORKSPACE, { workspaceSlug }, user);
         return response?.data;
       })
       .catch((error) => {
@@ -88,6 +103,7 @@ class WorkspaceService extends APIService {
     return this.post(`/api/workspaces/${workspaceSlug}/invite/`, data)
       .then((response) => {
         trackEventServices.trackWorkspaceEvent(response.data, "WORKSPACE_USER_INVITE", user);
+        posthogService.capture(WORKSPACE_USER_INVITE, response.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -110,6 +126,7 @@ class WorkspaceService extends APIService {
     )
       .then((response) => {
         trackEventServices.trackWorkspaceEvent(response.data, "WORKSPACE_USER_INVITE_ACCEPT", user);
+        posthogService.capture(WORKSPACE_USER_INVITE_ACCEPT, response.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -190,7 +207,10 @@ class WorkspaceService extends APIService {
 
   async deleteWorkspaceMember(workspaceSlug: string, memberId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/members/${memberId}/`)
-      .then((response) => response?.data)
+      .then((response) => {
+        posthogService.capture(WORKSPACE_MEMBER_LEAVE, { workspaceSlug, memberId });
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });

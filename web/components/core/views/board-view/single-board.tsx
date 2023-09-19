@@ -24,6 +24,7 @@ type Props = {
   dragDisabled: boolean;
   groupTitle: string;
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
+  handleDraftIssueAction?: (issue: IIssue, action: "edit" | "delete") => void;
   handleTrashBox: (isDragging: boolean) => void;
   openIssuesListModal?: (() => void) | null;
   handleMyIssueOpen?: (issue: IIssue) => void;
@@ -41,6 +42,7 @@ export const SingleBoard: React.FC<Props> = ({
   disableAddIssueOption = false,
   dragDisabled,
   handleIssueAction,
+  handleDraftIssueAction,
   handleTrashBox,
   openIssuesListModal,
   handleMyIssueOpen,
@@ -136,6 +138,16 @@ export const SingleBoard: React.FC<Props> = ({
                         editIssue={() => handleIssueAction(issue, "edit")}
                         makeIssueCopy={() => handleIssueAction(issue, "copy")}
                         handleDeleteIssue={() => handleIssueAction(issue, "delete")}
+                        handleDraftIssueEdit={
+                          handleDraftIssueAction
+                            ? () => handleDraftIssueAction(issue, "edit")
+                            : undefined
+                        }
+                        handleDraftIssueDelete={() =>
+                          handleDraftIssueAction
+                            ? handleDraftIssueAction(issue, "delete")
+                            : undefined
+                        }
                         handleTrashBox={handleTrashBox}
                         handleMyIssueOpen={handleMyIssueOpen}
                         removeIssue={() => {
@@ -155,7 +167,7 @@ export const SingleBoard: React.FC<Props> = ({
                     display: displayFilters?.order_by === "sort_order" ? "inline" : "none",
                   }}
                 >
-                  {provided.placeholder}
+                  <>{provided.placeholder}</>
                 </span>
               </div>
               {displayFilters?.group_by !== "created_by" && (

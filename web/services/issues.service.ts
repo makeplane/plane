@@ -12,7 +12,17 @@ import type {
 } from "types";
 import { API_BASE_URL } from "helpers/common.helper";
 import PosthogService from "./posthog.service";
-import { ISSUE_CREATE } from "constants/posthog-events";
+import {
+  ISSUE_CREATE,
+  ISSUE_UPDATE,
+  ISSUE_DELETE,
+  ISSUE_COMMENT_CREATE,
+  ISSUE_COMMENT_UPDATE,
+  ISSUE_COMMENT_DELETE,
+  ISSUE_LABEL_CREATE,
+  ISSUE_LABEL_UPDATE,
+  ISSUE_LABEL_DELETE,
+} from "constants/posthog-events";
 
 const posthogService = new PosthogService();
 
@@ -234,6 +244,7 @@ class ProjectIssuesServices extends APIService {
     )
       .then((response) => {
         trackEventServices.trackIssueCommentEvent(response.data, "ISSUE_COMMENT_CREATE", user);
+        posthogService.capture(ISSUE_COMMENT_CREATE, response.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -255,6 +266,7 @@ class ProjectIssuesServices extends APIService {
     )
       .then((response) => {
         trackEventServices.trackIssueCommentEvent(response.data, "ISSUE_COMMENT_UPDATE", user);
+        posthogService.capture(ISSUE_COMMENT_UPDATE, response.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -281,6 +293,15 @@ class ProjectIssuesServices extends APIService {
           "ISSUE_COMMENT_DELETE",
           user
         );
+        posthogService.capture(
+          ISSUE_COMMENT_DELETE,
+          {
+            issueId,
+            commentId,
+          },
+          user
+        );
+
         return response?.data;
       })
       .catch((error) => {
@@ -326,6 +347,21 @@ class ProjectIssuesServices extends APIService {
           "ISSUE_LABEL_CREATE",
           user
         );
+        posthogService.capture(
+          ISSUE_LABEL_CREATE,
+          {
+            workSpaceId: response?.data?.workspace_detail?.id,
+            workSpaceName: response?.data?.workspace_detail?.name,
+            workspaceSlug,
+            projectId,
+            projectIdentifier: response?.data?.project_detail?.identifier,
+            projectName: response?.data?.project_detail?.name,
+            labelId: response?.data?.id,
+            color: response?.data?.color,
+          },
+          user
+        );
+
         return response?.data;
       })
       .catch((error) => {
@@ -359,6 +395,21 @@ class ProjectIssuesServices extends APIService {
           "ISSUE_LABEL_UPDATE",
           user
         );
+        posthogService.capture(
+          ISSUE_LABEL_UPDATE,
+          {
+            workSpaceId: response?.data?.workspace_detail?.id,
+            workSpaceName: response?.data?.workspace_detail?.name,
+            workspaceSlug,
+            projectId,
+            projectIdentifier: response?.data?.project_detail?.identifier,
+            projectName: response?.data?.project_detail?.name,
+            labelId: response?.data?.id,
+            color: response?.data?.color,
+          },
+          user
+        );
+
         return response?.data;
       })
       .catch((error) => {
@@ -384,6 +435,14 @@ class ProjectIssuesServices extends APIService {
           "ISSUE_LABEL_DELETE",
           user
         );
+        posthogService.capture(
+          ISSUE_LABEL_DELETE,
+          {
+            workspaceSlug,
+            projectId,
+          },
+          user
+        );
         return response?.data;
       })
       .catch((error) => {
@@ -404,6 +463,7 @@ class ProjectIssuesServices extends APIService {
     )
       .then((response) => {
         trackEventServices.trackIssueEvent(response.data, "ISSUE_UPDATE", user);
+        posthogService.capture(ISSUE_UPDATE, response.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -420,6 +480,7 @@ class ProjectIssuesServices extends APIService {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issuesId}/`)
       .then((response) => {
         trackEventServices.trackIssueEvent({ issuesId }, "ISSUE_DELETE", user);
+        posthogService.capture(ISSUE_DELETE, response.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -622,6 +683,68 @@ class ProjectIssuesServices extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async getDraftIssues(workspaceSlug: string, projectId: string, params?: any): Promise<any> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/`, {
+      params,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async createDraftIssue(
+    workspaceSlug: string,
+    projectId: string,
+    data: any,
+    user: ICurrentUserResponse
+  ): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async updateDraftIssue(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: any,
+    user: ICurrentUserResponse
+  ): Promise<any> {
+    return this.patch(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/${issueId}/`,
+      data
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async deleteDraftIssue(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/${issueId}/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async getDraftIssueById(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/${issueId}/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
 }
 
-export default new ProjectIssuesServices();
+const projectIssuesServices = new ProjectIssuesServices();
+
+export default projectIssuesServices;

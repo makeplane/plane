@@ -52,10 +52,22 @@ const issueViewOptions: { type: TIssueViewOptions; Icon: any }[] = [
   },
 ];
 
+const issueViewForDraftIssues: { type: TIssueViewOptions; Icon: any }[] = [
+  {
+    type: "list",
+    Icon: FormatListBulletedOutlined,
+  },
+  {
+    type: "kanban",
+    Icon: GridViewOutlined,
+  },
+];
+
 export const IssuesFilterView: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, viewId } = router.query;
   const isArchivedIssues = router.pathname.includes("archived-issues");
+  const isDraftIssues = router.pathname.includes("draft-issues");
 
   const {
     displayFilters,
@@ -75,9 +87,39 @@ export const IssuesFilterView: React.FC = () => {
 
   return (
     <div className="flex items-center gap-2">
-      {!isArchivedIssues && (
+      {!isArchivedIssues && !isDraftIssues && (
         <div className="flex items-center gap-x-1">
           {issueViewOptions.map((option) => (
+            <Tooltip
+              key={option.type}
+              tooltipContent={
+                <span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} View</span>
+              }
+              position="bottom"
+            >
+              <button
+                type="button"
+                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80 duration-300 ${
+                  displayFilters.layout === option.type
+                    ? "bg-custom-sidebar-background-80"
+                    : "text-custom-sidebar-text-200"
+                }`}
+                onClick={() => setDisplayFilters({ layout: option.type })}
+              >
+                <option.Icon
+                  sx={{
+                    fontSize: 16,
+                  }}
+                  className={option.type === "gantt_chart" ? "rotate-90" : ""}
+                />
+              </button>
+            </Tooltip>
+          ))}
+        </div>
+      )}
+      {isDraftIssues && (
+        <div className="flex items-center gap-x-1">
+          {issueViewForDraftIssues.map((option) => (
             <Tooltip
               key={option.type}
               tooltipContent={

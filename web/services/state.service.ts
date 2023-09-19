@@ -5,6 +5,10 @@ import trackEventServices from "services/track-event.service";
 import { API_BASE_URL } from "helpers/common.helper";
 // types
 import type { ICurrentUserResponse, IState, IStateResponse } from "types";
+import PosthogService from "./posthog.service";
+import { STATE_CREATE, STATE_UPDATE, STATE_DELETE } from "constants/posthog-events";
+
+const posthogService = new PosthogService();
 
 class ProjectStateServices extends APIService {
   constructor() {
@@ -20,6 +24,7 @@ class ProjectStateServices extends APIService {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/`, data)
       .then((response) => {
         trackEventServices.trackStateEvent(response?.data, "STATE_CREATE", user);
+        posthogService.capture(STATE_CREATE, response.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -65,6 +70,7 @@ class ProjectStateServices extends APIService {
     )
       .then((response) => {
         trackEventServices.trackStateEvent(response?.data, "STATE_UPDATE", user);
+        posthogService.capture(STATE_UPDATE, response?.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -85,6 +91,7 @@ class ProjectStateServices extends APIService {
     )
       .then((response) => {
         trackEventServices.trackStateEvent(response?.data, "STATE_UPDATE", user);
+        posthogService.capture(STATE_UPDATE, response?.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -101,6 +108,7 @@ class ProjectStateServices extends APIService {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/${stateId}/`)
       .then((response) => {
         trackEventServices.trackStateEvent(response?.data, "STATE_DELETE", user);
+        posthogService.capture(STATE_DELETE, { workspaceSlug, projectId, stateId }, user);
         return response?.data;
       })
       .catch((error) => {

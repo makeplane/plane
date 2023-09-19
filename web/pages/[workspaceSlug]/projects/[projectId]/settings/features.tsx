@@ -19,7 +19,8 @@ import { ToggleSwitch } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { ModuleIcon } from "components/icons";
-import { Contrast, FileText, Inbox, Layers } from "lucide-react";
+import { FileText, Inbox, Layers } from "lucide-react";
+import { ContrastOutlined } from "@mui/icons-material";
 // types
 import { IProject } from "types";
 import type { NextPage } from "next";
@@ -27,13 +28,32 @@ import type { NextPage } from "next";
 import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
+//Posthog
+import PosthogService from "services/posthog.service";
+import {
+  TOGGLE_CYCLE_ON,
+  TOGGLE_CYCLE_OFF,
+  TOGGLE_MODULE_ON,
+  TOGGLE_MODULE_OFF,
+  TOGGLE_VIEW_ON,
+  TOGGLE_VIEW_OFF,
+  TOGGLE_PAGES_ON,
+  TOGGLE_PAGES_OFF,
+  TOGGLE_INBOX_ON,
+  TOGGLE_INBOX_OFF,
+} from "constants/posthog-events";
+
+const posthogService = new PosthogService();
 
 const featuresList = [
   {
     title: "Cycles",
     description:
       "Cycles are enabled for all the projects in this workspace. Access them from the sidebar.",
-    icon: <Contrast className="h-4 w-4 text-custom-primary-100 flex-shrink-0" />,
+    icon: (
+      <ContrastOutlined className="!text-base !leading-4 text-purple-500 flex-shrink-0 rotate-180" />
+    ),
+
     property: "cycle_view",
   },
   {
@@ -61,7 +81,7 @@ const featuresList = [
     title: "Inbox",
     description:
       "Inbox are enabled for all the projects in this workspace. Access it from the issues views page.",
-    icon: <Inbox className="h-4 w-4 text-cyan-500 flex-shrink-0" />,
+    icon: <Inbox className="h-4 w-4 text-fuchsia-500 flex-shrink-0" />,
     property: "inbox_view",
   },
 ];
@@ -78,6 +98,23 @@ const getEventType = (feature: string, toggle: boolean): MiscellaneousEventType 
       return toggle ? "TOGGLE_PAGES_ON" : "TOGGLE_PAGES_OFF";
     case "Inbox":
       return toggle ? "TOGGLE_INBOX_ON" : "TOGGLE_INBOX_OFF";
+    default:
+      throw new Error("Invalid feature");
+  }
+};
+
+const getPosthogEventType = (feature: string, toggle: boolean): MiscellaneousEventType => {
+  switch (feature) {
+    case "Cycles":
+      return toggle ? TOGGLE_CYCLE_ON : TOGGLE_CYCLE_OFF;
+    case "Modules":
+      return toggle ? TOGGLE_MODULE_ON : TOGGLE_MODULE_OFF;
+    case "Views":
+      return toggle ? TOGGLE_VIEW_ON : TOGGLE_VIEW_OFF;
+    case "Pages":
+      return toggle ? TOGGLE_PAGES_ON : TOGGLE_PAGES_OFF;
+    case "Inbox":
+      return toggle ? TOGGLE_INBOX_ON : TOGGLE_INBOX_OFF;
     default:
       throw new Error("Invalid feature");
   }
@@ -189,6 +226,20 @@ const FeaturesSettings: NextPage = () => {
                         feature.title,
                         !projectDetails?.[feature.property as keyof IProject]
                       ),
+                      user
+                    );
+                    posthogService.capture(
+                      getPosthogEventType(
+                        feature.title,
+                        !projectDetails?.[feature.property as keyof IProject]
+                      ),
+                      {
+                        workspaceId: (projectDetails?.workspace as any)?.id,
+                        workspaceSlug,
+                        projectId,
+                        projectIdentifier: projectDetails?.identifier,
+                        projectName: projectDetails?.name,
+                      },
                       user
                     );
                     handleSubmit({

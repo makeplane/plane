@@ -4,6 +4,18 @@ import APIService from "services/api.service";
 import trackEventServices from "services/track-event.service";
 // types
 import { IPage, IPageBlock, RecentPagesResponse, IIssue, ICurrentUserResponse } from "types";
+import PosthogService from "./posthog.service";
+import {
+  PAGE_CREATE,
+  PAGE_UPDATE,
+  PAGE_DELETE,
+  PAGE_BLOCK_CREATE,
+  PAGE_BLOCK_UPDATE,
+  PAGE_BLOCK_DELETE,
+  PAGE_BLOCK_CONVERTED_TO_ISSUE,
+} from "constants/posthog-events";
+
+const posthogService = new PosthogService();
 
 class PageServices extends APIService {
   constructor() {
@@ -19,6 +31,7 @@ class PageServices extends APIService {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/`, data)
       .then((response) => {
         trackEventServices.trackPageEvent(response?.data, "PAGE_CREATE", user);
+        posthogService.capture(PAGE_CREATE, response?.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -39,6 +52,7 @@ class PageServices extends APIService {
     )
       .then((response) => {
         trackEventServices.trackPageEvent(response?.data, "PAGE_UPDATE", user);
+        posthogService.capture(PAGE_UPDATE, response?.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -55,6 +69,7 @@ class PageServices extends APIService {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`)
       .then((response) => {
         trackEventServices.trackPageEvent(response?.data, "PAGE_DELETE", user);
+        posthogService.capture(PAGE_DELETE, { workspaceSlug, projectId, pageId }, user);
         return response?.data;
       })
       .catch((error) => {
@@ -138,6 +153,7 @@ class PageServices extends APIService {
     )
       .then((response) => {
         trackEventServices.trackPageBlockEvent(response?.data, "PAGE_BLOCK_CREATE", user);
+        posthogService.capture(PAGE_BLOCK_CREATE, response?.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -174,6 +190,7 @@ class PageServices extends APIService {
     )
       .then((response) => {
         trackEventServices.trackPageBlockEvent(response?.data, "PAGE_BLOCK_UPDATE", user);
+        posthogService.capture(PAGE_BLOCK_UPDATE, response?.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -193,6 +210,11 @@ class PageServices extends APIService {
     )
       .then((response) => {
         trackEventServices.trackPageBlockEvent(response?.data, "PAGE_BLOCK_DELETE", user);
+        posthogService.capture(
+          PAGE_BLOCK_DELETE,
+          { workspaceSlug, projectId, pageId, pageBlockId },
+          user
+        );
         return response?.data;
       })
       .catch((error) => {
@@ -230,6 +252,7 @@ class PageServices extends APIService {
           "PAGE_BLOCK_CONVERTED_TO_ISSUE",
           user
         );
+        posthogService.capture(PAGE_BLOCK_CONVERTED_TO_ISSUE, response?.data, user);
         return response?.data;
       })
       .catch((error) => {

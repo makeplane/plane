@@ -3,6 +3,10 @@ import trackEventServices from "services/track-event.service";
 import { API_BASE_URL } from "helpers/common.helper";
 
 import { ICurrentUserResponse, IGithubRepoInfo, IGithubServiceImportFormData } from "types";
+import PosthogService from "../posthog.service";
+import { GITHUB_IMPORTER_CREATE } from "constants/posthog-events";
+
+const posthogService = new PosthogService();
 
 const integrationServiceType: string = "github";
 class GithubIntegrationService extends APIService {
@@ -44,6 +48,8 @@ class GithubIntegrationService extends APIService {
     )
       .then((response) => {
         trackEventServices.trackImporterEvent(response?.data, "GITHUB_IMPORTER_CREATE", user);
+        posthogService.capture(GITHUB_IMPORTER_CREATE, response?.data, user);
+
         return response?.data;
       })
       .catch((error) => {

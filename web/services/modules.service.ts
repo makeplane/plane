@@ -4,6 +4,10 @@ import trackEventServices from "./track-event.service";
 // types
 import type { IModule, IIssue, ICurrentUserResponse } from "types";
 import { API_BASE_URL } from "helpers/common.helper";
+import PosthogService from "./posthog.service";
+import { MODULE_CREATE, MODULE_UPDATE, MODULE_DELETE } from "constants/posthog-events";
+
+const posthogService = new PosthogService();
 
 class ProjectIssuesServices extends APIService {
   constructor() {
@@ -27,6 +31,7 @@ class ProjectIssuesServices extends APIService {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/`, data)
       .then((response) => {
         trackEventServices.trackModuleEvent(response?.data, "MODULE_CREATE", user);
+        posthogService.capture(MODULE_CREATE, response?.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -47,6 +52,7 @@ class ProjectIssuesServices extends APIService {
     )
       .then((response) => {
         trackEventServices.trackModuleEvent(response?.data, "MODULE_UPDATE", user);
+        posthogService.capture(MODULE_UPDATE, response?.data, user);
         return response?.data;
       })
       .catch((error) => {
@@ -79,6 +85,8 @@ class ProjectIssuesServices extends APIService {
     )
       .then((response) => {
         trackEventServices.trackModuleEvent(response?.data, "MODULE_UPDATE", user);
+        posthogService.capture(MODULE_UPDATE, response?.data, user);
+
         return response?.data;
       })
       .catch((error) => {
@@ -97,6 +105,7 @@ class ProjectIssuesServices extends APIService {
     )
       .then((response) => {
         trackEventServices.trackModuleEvent(response?.data, "MODULE_DELETE", user);
+        posthogService.capture(MODULE_DELETE, { workspaceSlug, projectId, moduleId }, user);
         return response?.data;
       })
       .catch((error) => {
