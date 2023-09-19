@@ -677,6 +677,15 @@ urlpatterns = [
         name="global-view",
     ),
     path(
+        "workspaces/<str:slug>/issues/",
+        GlobalViewIssuesViewSet.as_view(
+            {
+                "get": "list",
+            }
+        ),
+        name="global-view-issues",
+    ),
+    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-views/",
         IssueViewFavoriteViewSet.as_view(
             {
@@ -793,15 +802,6 @@ urlpatterns = [
             }
         ),
         name="project-issue",
-    ),
-    path(
-        "workspaces/<str:slug>/issues/",
-        GlobalViewIssuesViewSet.as_view(
-            {
-                "get": "list",
-            }
-        ),
-        name="global-view-issues",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-labels/",
