@@ -66,7 +66,7 @@ const ProfilePreferences = observer(() => {
 
           <div className="pr-9 py-8 w-full overflow-y-auto">
             <div className="flex items-center py-3.5 border-b border-custom-border-200">
-              <h3 className="text-xl font-medium">Acitivity</h3>
+              <h3 className="text-xl font-medium">Preferences</h3>
             </div>
             <div className="grid grid-cols-12 gap-4 sm:gap-16 py-6">
               <div className="col-span-12 sm:col-span-6">
