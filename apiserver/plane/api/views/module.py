@@ -78,13 +78,22 @@ class ModuleViewSet(BaseViewSet):
                     queryset=ModuleLink.objects.select_related("module", "created_by"),
                 )
             )
-            .annotate(total_issues=Count("issue_module"))
+            .annotate(
+                total_issues=Count(
+                    "issue_module",
+                    filter=Q(
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                ),
+            )
             .annotate(
                 completed_issues=Count(
                     "issue_module__issue__state__group",
                     filter=Q(
                         issue_module__issue__state__group="completed",
                         issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
                     ),
                 )
             )
@@ -94,6 +103,7 @@ class ModuleViewSet(BaseViewSet):
                     filter=Q(
                         issue_module__issue__state__group="cancelled",
                         issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
                     ),
                 )
             )
@@ -103,6 +113,7 @@ class ModuleViewSet(BaseViewSet):
                     filter=Q(
                         issue_module__issue__state__group="started",
                         issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
                     ),
                 )
             )
@@ -112,6 +123,7 @@ class ModuleViewSet(BaseViewSet):
                     filter=Q(
                         issue_module__issue__state__group="unstarted",
                         issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
                     ),
                 )
             )
@@ -121,6 +133,7 @@ class ModuleViewSet(BaseViewSet):
                     filter=Q(
                         issue_module__issue__state__group="backlog",
                         issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
                     ),
                 )
             )
@@ -196,13 +209,22 @@ class ModuleViewSet(BaseViewSet):
                 .values(
                     "first_name", "last_name", "assignee_id", "avatar", "display_name"
                 )
-                .annotate(total_issues=Count("assignee_id"))
+                .annotate(
+                    total_issues=Count(
+                        "assignee_id",
+                        filter=Q(
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+                )
                 .annotate(
                     completed_issues=Count(
                         "assignee_id",
                         filter=Q(
                             completed_at__isnull=False,
                             archived_at__isnull=True,
+                            is_draft=False,
                         ),
                     )
                 )
@@ -212,6 +234,7 @@ class ModuleViewSet(BaseViewSet):
                         filter=Q(
                             completed_at__isnull=True,
                             archived_at__isnull=True,
+                            is_draft=False,
                         ),
                     )
                 )
@@ -228,13 +251,22 @@ class ModuleViewSet(BaseViewSet):
                 .annotate(color=F("labels__color"))
                 .annotate(label_id=F("labels__id"))
                 .values("label_name", "color", "label_id")
-                .annotate(total_issues=Count("label_id"))
+                .annotate(
+                    total_issues=Count(
+                        "label_id",
+                        filter=Q(
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    ),
+                )
                 .annotate(
                     completed_issues=Count(
                         "label_id",
                         filter=Q(
                             completed_at__isnull=False,
                             archived_at__isnull=True,
+                            is_draft=False,
                         ),
                     )
                 )
@@ -244,6 +276,7 @@ class ModuleViewSet(BaseViewSet):
                         filter=Q(
                             completed_at__isnull=True,
                             archived_at__isnull=True,
+                            is_draft=False,
                         ),
                     )
                 )
