@@ -167,11 +167,11 @@ const Profile: NextPage = () => {
       />
       {myProfile ? (
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-row gap-2">
-            <div className="w-80 py-8">
+          <div className="flex flex-row gap-2 h-full">
+            <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
               <SettingsSidebar />
             </div>
-            <div className={`flex flex-col gap-8 pr-9 py-9 w-full`}>
+            <div className={`flex flex-col gap-8 pr-9 py-9 w-full overflow-y-auto`}>
               <div className="relative h-44 w-full mt-6">
                 <img
                   src={

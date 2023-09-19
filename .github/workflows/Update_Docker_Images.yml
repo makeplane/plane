@@ -22,10 +22,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Setup .npmrc for repository
-        run: |
-            echo -e "@tiptap-pro:registry=https://registry.tiptap.dev/\n//registry.tiptap.dev/:_authToken=${{ secrets.TIPTAP_TOKEN }}" > .npmrc
-
       - name: Extract metadata (tags, labels) for Docker (Docker Hub) from Github Release
         id: metaFrontend
         uses: docker/metadata-action@v4.3.0

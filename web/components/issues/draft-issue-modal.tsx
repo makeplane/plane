@@ -117,6 +117,9 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = ({
     if (prePopulateData && prePopulateData.project && !activeProject)
       return setActiveProject(prePopulateData.project);
 
+    if (prePopulateData && prePopulateData.project)
+      return setActiveProject(prePopulateData.project);
+
     // if data is not present, set active project to the project
     // in the url. This has the least priority.
     if (projects && projects.length > 0 && !activeProject)
@@ -318,6 +321,8 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = ({
     if (action === "createDraft") await createDraftIssue(payload);
     else if (action === "updateDraft") await updateDraftIssue(payload);
     else if (action === "createToNewIssue") await createIssue(payload);
+
+    clearDraftIssueLocalStorage();
 
     clearDraftIssueLocalStorage();
 
