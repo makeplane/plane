@@ -11,7 +11,8 @@ import trackEventServices from "services/track-event.service";
 import useToast from "hooks/use-toast";
 // components
 import { ViewDueDateSelect, ViewEstimateSelect, ViewStartDateSelect } from "components/issues";
-import { LabelSelect, MembersSelect, PrioritySelect, StateSelect } from "components/project";
+import { LabelSelect, MembersSelect, PrioritySelect } from "components/project";
+import { StateSelect } from "components/states";
 // ui
 import { Tooltip, CustomMenu, ContextMenu } from "components/ui";
 // icons

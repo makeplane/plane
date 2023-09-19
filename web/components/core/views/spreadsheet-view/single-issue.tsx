@@ -6,7 +6,8 @@ import { mutate } from "swr";
 
 // components
 import { ViewDueDateSelect, ViewEstimateSelect, ViewStartDateSelect } from "components/issues";
-import { LabelSelect, MembersSelect, PrioritySelect, StateSelect } from "components/project";
+import { LabelSelect, MembersSelect, PrioritySelect } from "components/project";
+import { StateSelect } from "components/states";
 import { Popover2 } from "@blueprintjs/popover2";
 // icons
 import { Icon } from "components/ui";

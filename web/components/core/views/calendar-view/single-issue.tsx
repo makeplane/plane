@@ -16,7 +16,8 @@ import useToast from "hooks/use-toast";
 // components
 import { CustomMenu, Tooltip } from "components/ui";
 import { ViewDueDateSelect, ViewEstimateSelect, ViewStartDateSelect } from "components/issues";
-import { LabelSelect, MembersSelect, PrioritySelect, StateSelect } from "components/project";
+import { LabelSelect, MembersSelect, PrioritySelect } from "components/project";
+import { StateSelect } from "components/states";
 // icons
 import { LinkIcon, PaperClipIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { LayerDiagonalIcon } from "components/icons";

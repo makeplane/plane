@@ -19,7 +19,8 @@ import useToast from "hooks/use-toast";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { ViewDueDateSelect, ViewEstimateSelect, ViewStartDateSelect } from "components/issues";
-import { StateSelect, MembersSelect, LabelSelect, PrioritySelect } from "components/project";
+import { MembersSelect, LabelSelect, PrioritySelect } from "components/project";
+import { StateSelect } from "components/states";
 // ui
 import { ContextMenu, CustomMenu, Tooltip } from "components/ui";
 // icons
