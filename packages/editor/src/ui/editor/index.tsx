@@ -1,12 +1,20 @@
+"use client"
 import * as React from 'react';
 import { useImperativeHandle, useRef, forwardRef } from "react";
 import { useEditor, EditorContent, Editor } from "@tiptap/react";
 import { useDebouncedCallback } from "use-debounce";
 import { TableMenu } from '@/ui/editor/menus/table-menu';
 import { TiptapExtensions } from '@/ui/editor/extensions';
+import { EditorBubbleMenu } from '@/ui/editor/menus/bubble-menu';
+import { ImageResizer } from '@/ui/editor/extensions/image/image-resize';
+import { TiptapEditorProps } from '@/ui/editor/props';
+import { UploadImage } from '@/types/upload-file';
+import { DeleteImage } from '@/types/delete-file';
 
 export interface ITipTapRichTextEditor {
   value: string;
+  uploadFile: UploadImage;
+  deleteFile: DeleteImage;
   noBorder?: boolean;
   borderOnFocus?: boolean;
   customClassName?: string;
@@ -30,6 +38,8 @@ const Tiptap = (props: ITipTapRichTextEditor) => {
     setShouldShowAlert,
     editorContentCustomClassNames,
     value,
+    uploadFile,
+    deleteFile,
     noBorder,
     workspaceSlug,
     borderOnFocus,
@@ -38,9 +48,10 @@ const Tiptap = (props: ITipTapRichTextEditor) => {
 
   const editor = useEditor({
     editable: editable ?? true,
-    editorProps: TiptapEditorProps(workspaceSlug, setIsSubmitting),
-    extensions: TiptapExtensions(workspaceSlug, setIsSubmitting),
-    content: value,
+    editorProps: TiptapEditorProps(workspaceSlug, uploadFile, setIsSubmitting),
+    // @ts-ignore
+    extensions: TiptapExtensions(workspaceSlug, uploadFile, deleteFile, setIsSubmitting),
+    content: (typeof value === "string" && value.trim() !== "") ? value : "<p></p>",
     onUpdate: async ({ editor }) => {
       // for instant feedback loop
       setIsSubmitting?.("submitting");

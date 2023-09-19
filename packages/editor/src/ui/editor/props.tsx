@@ -1,9 +1,11 @@
 import { EditorProps } from "@tiptap/pm/view";
 import { findTableAncestor } from "@/ui/editor/menus/table-menu";
 import { startImageUpload } from "@/ui/editor/plugins/upload-image";
+import { UploadImage } from "@/types/upload-file";
 
 export function TiptapEditorProps(
   workspaceSlug: string,
+  uploadFile: UploadImage,
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
 ): EditorProps {
   return {
@@ -35,7 +37,7 @@ export function TiptapEditorProps(
         event.preventDefault();
         const file = event.clipboardData.files[0];
         const pos = view.state.selection.from;
-        startImageUpload(file, view, pos, workspaceSlug, setIsSubmitting);
+        startImageUpload(file, view, pos, workspaceSlug, uploadFile, setIsSubmitting);
         return true;
       }
       return false;
@@ -59,7 +61,7 @@ export function TiptapEditorProps(
         });
         // here we deduct 1 from the pos or else the image will create an extra node
         if (coordinates) {
-          startImageUpload(file, view, coordinates.pos - 1, workspaceSlug, setIsSubmitting);
+          startImageUpload(file, view, coordinates.pos - 1, workspaceSlug, uploadFile, setIsSubmitting);
         }
         return true;
       }

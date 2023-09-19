@@ -17,8 +17,9 @@ import {
   ImageIcon,
   Table,
 } from "lucide-react";
-import { startImageUpload } from "../plugins/upload-image";
-import { cn } from "../utils";
+import { startImageUpload } from "@/ui/editor/plugins/upload-image";
+import { cn } from "@/lib/utils";
+import { UploadImage } from "@/types/upload-file";
 
 interface CommandItemProps {
   title: string;
@@ -59,6 +60,7 @@ const Command = Extension.create({
 const getSuggestionItems =
   (
     workspaceSlug: string,
+    uploadFile: UploadImage,
     setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
   ) =>
     ({ query }: { query: string }) =>
@@ -114,6 +116,7 @@ const getSuggestionItems =
           searchTerms: ["unordered", "point"],
           icon: <List size={18} />,
           command: ({ editor, range }: CommandProps) => {
+            // @ts-ignore
             editor.chain().focus().deleteRange(range).toggleBulletList().run();
           },
         },
@@ -146,6 +149,7 @@ const getSuggestionItems =
           searchTerms: ["ordered"],
           icon: <ListOrdered size={18} />,
           command: ({ editor, range }: CommandProps) => {
+            // @ts-ignore
             editor.chain().focus().deleteRange(range).toggleOrderedList().run();
           },
         },
@@ -155,13 +159,8 @@ const getSuggestionItems =
           searchTerms: ["blockquote"],
           icon: <TextQuote size={18} />,
           command: ({ editor, range }: CommandProps) =>
-            editor
-              .chain()
-              .focus()
-              .deleteRange(range)
-              .toggleNode("paragraph", "paragraph")
-              .toggleBlockquote()
-              .run(),
+            // @ts-ignore
+            editor.chain().focus().deleteRange(range).toggleNode("paragraph", "paragraph").toggleBlockquote().run(),
         },
         {
           title: "Code",
@@ -186,7 +185,7 @@ const getSuggestionItems =
               if (input.files?.length) {
                 const file = input.files[0];
                 const pos = editor.view.state.selection.from;
-                startImageUpload(file, editor.view, pos, workspaceSlug, setIsSubmitting);
+                startImageUpload(file, editor.view, pos, workspaceSlug, uploadFile, setIsSubmitting);
               }
             };
             input.click();
@@ -353,11 +352,12 @@ const renderItems = () => {
 
 export const SlashCommand = (
   workspaceSlug: string,
+  uploadFile: UploadImage,
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
 ) =>
   Command.configure({
     suggestion: {
-      items: getSuggestionItems(workspaceSlug, setIsSubmitting),
+      items: getSuggestionItems(workspaceSlug, uploadFile, setIsSubmitting),
       render: renderItems,
     },
   });

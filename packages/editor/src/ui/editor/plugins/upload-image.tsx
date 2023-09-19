@@ -1,6 +1,6 @@
+import { UploadFileFunction, UploadImage } from "@/types/upload-file";
 import { EditorState, Plugin, PluginKey } from "@tiptap/pm/state";
 import { Decoration, DecorationSet, EditorView } from "@tiptap/pm/view";
-import fileService from "services/file.service";
 
 const uploadKey = new PluginKey("upload-image");
 
@@ -58,6 +58,7 @@ export async function startImageUpload(
   view: EditorView,
   pos: number,
   workspaceSlug: string,
+  uploadFile: UploadImage,
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
 ) {
   if (!file.type.includes("image/")) {
@@ -86,7 +87,7 @@ export async function startImageUpload(
     return;
   }
   setIsSubmitting?.("submitting");
-  const src = await UploadImageHandler(file, workspaceSlug);
+  const src = await UploadImageHandler(file, workspaceSlug, uploadFile);
   const { schema } = view.state;
   pos = findPlaceholder(view.state, id);
 
@@ -100,7 +101,9 @@ export async function startImageUpload(
   view.dispatch(transaction);
 }
 
-const UploadImageHandler = (file: File, workspaceSlug: string): Promise<string> => {
+const UploadImageHandler = (file: File, workspaceSlug: string,
+  uploadFile: UploadFileFunction
+): Promise<string> => {
   if (!workspaceSlug) {
     return Promise.reject("Workspace slug is missing");
   }
@@ -110,18 +113,26 @@ const UploadImageHandler = (file: File, workspaceSlug: string): Promise<string> 
     formData.append("attributes", JSON.stringify({}));
 
     return new Promise(async (resolve, reject) => {
-      const imageUrl = await fileService
-        .uploadFile(workspaceSlug, formData)
-        .then((response) => response.asset);
+      try {
+        const imageUrl = await uploadFile(workspaceSlug, formData)
+          .then((response: { asset: string }) => response.asset);
 
-      const image = new Image();
-      image.src = imageUrl;
-      image.onload = () => {
-        resolve(imageUrl);
-      };
+        const image = new Image();
+        image.src = imageUrl;
+        image.onload = () => {
+          resolve(imageUrl);
+        };
+      } catch (error) {
+        if (error instanceof Error) {
+          console.log(error.message);
+        }
+        reject(error);
+      }
     });
   } catch (error) {
-    console.log(error);
+    if (error instanceof Error) {
+      console.log(error.message);
+    }
     return Promise.reject(error);
   }
 };

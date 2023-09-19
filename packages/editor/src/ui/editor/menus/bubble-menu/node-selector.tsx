@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { Editor } from "@tiptap/core";
 import {
   Check,
@@ -14,7 +15,6 @@ import {
 import { Dispatch, FC, SetStateAction } from "react";
 
 import { BubbleMenuItem } from ".";
-import { cn } from "../utils";
 
 interface NodeSelectorProps {
   editor: Editor;

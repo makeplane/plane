@@ -4,7 +4,7 @@ import { BoldIcon, ItalicIcon, UnderlineIcon, StrikethroughIcon, CodeIcon } from
 
 import { NodeSelector } from "./node-selector";
 import { LinkSelector } from "./link-selector";
-import { cn } from "../utils";
+import { cn } from "@/lib/utils";
 
 export interface BubbleMenuItem {
   name: string;

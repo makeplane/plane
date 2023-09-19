@@ -1,10 +1,11 @@
 import Image from "@tiptap/extension-image";
-import TrackImageDeletionPlugin from "../plugins/delete-image";
-import UploadImagesPlugin from "../plugins/upload-image";
+import TrackImageDeletionPlugin from "@/ui/editor/plugins/delete-image";
+import UploadImagesPlugin from "@/ui/editor/plugins/upload-image";
+import { DeleteFileFunction } from "@/types/delete-file";
 
-const UpdatedImage = Image.extend({
+const UpdatedImage = (deleteImage: DeleteFileFunction) => Image.extend({
   addProseMirrorPlugins() {
-    return [UploadImagesPlugin(), TrackImageDeletionPlugin()];
+    return [UploadImagesPlugin(), TrackImageDeletionPlugin(deleteImage)];
   },
   addAttributes() {
     return {

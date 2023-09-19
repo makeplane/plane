@@ -1,8 +1,9 @@
+import { cn } from "@/lib/utils";
 import { Editor } from "@tiptap/core";
 import { Check, Trash } from "lucide-react";
 import { Dispatch, FC, SetStateAction, useCallback, useEffect, useRef } from "react";
-import { cn } from "../utils";
-import isValidHttpUrl from "./utils/link-validator";
+import isValidHttpUrl from "@/ui/editor/menus/bubble-menu/utils";
+
 interface LinkSelectorProps {
   editor: Editor;
   isOpen: boolean;

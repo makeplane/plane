@@ -10,23 +10,34 @@ import TaskList from "@tiptap/extension-task-list";
 import { Markdown } from "tiptap-markdown";
 import Highlight from "@tiptap/extension-highlight";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-import { lowlight } from "lowlight/lib/core";
 import { InputRule } from "@tiptap/core";
 import Gapcursor from "@tiptap/extension-gapcursor";
+import OrderedList from "@tiptap/extension-ordered-list";
+import ListItem from "@tiptap/extension-list-item";
+import BulletList from "@tiptap/extension-bullet-list";
+import { Table } from "@/ui/editor/extensions/table/table";
+import { TableHeader } from "@/ui/editor/extensions/table/table-header";
+import { TableRow } from "@tiptap/extension-table-row";
+import { CustomTableCell } from "@/ui/editor/extensions/table/table-cell";
+
+import UpdatedImage from "@/ui/editor/extensions/image/updated-image";
+import SlashCommand from "@/ui/editor/extensions/slash-command";
+
+import { DeleteFileFunction } from "@/types/delete-file";
+import { UploadFileFunction } from "@/types/upload-file";
+
+import isValidHttpUrl from "@/ui/editor/menus/bubble-menu/utils"
 
 import ts from "highlight.js/lib/languages/typescript";
-
+import { lowlight } from "lowlight/lib/core";
 import "highlight.js/styles/github-dark.css";
-import UniqueID from "@tiptap-pro/extension-unique-id";
-import { CustomTableCell } from "./table/table-cell";
-import { Table } from "./table/table";
-import { TableHeader } from "./table/table-header";
-import { TableRow } from "@tiptap/extension-table-row";
 
 lowlight.registerLanguage("ts", ts);
 
 export const TiptapExtensions = (
   workspaceSlug: string,
+  uploadFile: UploadFileFunction,
+  deleteFile: DeleteFileFunction,
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
 ) => [
     StarterKit.configure({
@@ -100,7 +111,7 @@ export const TiptapExtensions = (
           "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
       },
     }),
-    UpdatedImage.configure({
+    UpdatedImage(deleteFile).configure({
       HTMLAttributes: {
         class: "rounded-lg border border-custom-border-300",
       },
@@ -118,10 +129,7 @@ export const TiptapExtensions = (
       },
       includeChildren: true,
     }),
-    UniqueID.configure({
-      types: ["image"],
-    }),
-    SlashCommand(workspaceSlug, setIsSubmitting),
+    SlashCommand(workspaceSlug, uploadFile, setIsSubmitting),
     TiptapUnderline,
     TextStyle,
     Color,

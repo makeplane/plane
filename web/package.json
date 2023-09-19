@@ -80,7 +80,8 @@
     "tiptap-markdown": "^0.8.2",
     "tlds": "^1.238.0",
     "use-debounce": "^9.0.4",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "plane-editor": "*"
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.2",

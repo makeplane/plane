@@ -43,7 +43,7 @@ const Tiptap = (props: ITipTapRichTextEditor) => {
     editable: editable ?? true,
     editorProps: TiptapEditorProps(workspaceSlug, setIsSubmitting),
     extensions: TiptapExtensions(workspaceSlug, setIsSubmitting),
-    content: value,
+    content: (typeof value === "string" && value.trim() !== "") ? value : "<p></p>",
     onUpdate: async ({ editor }) => {
       // for instant feedback loop
       setIsSubmitting?.("submitting");

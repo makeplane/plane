@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { Rows, Columns, ToggleRight } from "lucide-react";
-import { cn } from "../utils";
-import { Tooltip } from "components/ui";
 import InsertLeftTableIcon from "./InsertLeftTableIcon";
 import InsertRightTableIcon from "./InsertRightTableIcon";
 import InsertTopTableIcon from "./InsertTopTableIcon";
 import InsertBottomTableIcon from "./InsertBottomTableIcon";
+import { cn } from "@/lib/utils";
+import { Tooltip } from "./tooltip";
 
 interface TableMenuItem {
   command: () => void;
