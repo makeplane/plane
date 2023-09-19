@@ -169,6 +169,7 @@ class ProjectIssuesServices extends APIService {
         relation_type: "duplicate" | "relates_to" | "blocked_by";
         related_issue: string;
       }>;
+      relation?: "blocking" | null;
     }
   ) {
     return this.post(
@@ -724,7 +725,12 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async deleteDraftIssue(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
+  async deleteDraftIssue(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    user: ICurrentUserResponse
+  ): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/${issueId}/`
     )
