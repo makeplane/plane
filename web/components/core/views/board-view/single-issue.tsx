@@ -60,6 +60,8 @@ type Props = {
   handleMyIssueOpen?: (issue: IIssue) => void;
   removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
+  handleDraftIssueEdit?: () => void;
+  handleDraftIssueDelete?: () => void;
   handleTrashBox: (isDragging: boolean) => void;
   disableUserActions: boolean;
   user: ICurrentUserResponse | undefined;
@@ -79,6 +81,8 @@ export const SingleBoardIssue: React.FC<Props> = ({
   removeIssue,
   groupTitle,
   handleDeleteIssue,
+  handleDraftIssueEdit,
+  handleDraftIssueDelete,
   handleTrashBox,
   disableUserActions,
   user,
@@ -98,6 +102,8 @@ export const SingleBoardIssue: React.FC<Props> = ({
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+
+  const isDraftIssue = router.pathname.includes("draft-issues");
 
   const { setToastAlert } = useToast();
 
@@ -211,29 +217,47 @@ export const SingleBoardIssue: React.FC<Props> = ({
       >
         {!isNotAllowed && (
           <>
-            <ContextMenu.Item Icon={PencilIcon} onClick={editIssue}>
+            <ContextMenu.Item
+              Icon={PencilIcon}
+              onClick={() => {
+                if (isDraftIssue && handleDraftIssueEdit) handleDraftIssueEdit();
+                else editIssue();
+              }}
+            >
               Edit issue
             </ContextMenu.Item>
-            <ContextMenu.Item Icon={ClipboardDocumentCheckIcon} onClick={makeIssueCopy}>
-              Make a copy...
-            </ContextMenu.Item>
-            <ContextMenu.Item Icon={TrashIcon} onClick={() => handleDeleteIssue(issue)}>
+            {!isDraftIssue && (
+              <ContextMenu.Item Icon={ClipboardDocumentCheckIcon} onClick={makeIssueCopy}>
+                Make a copy...
+              </ContextMenu.Item>
+            )}
+            <ContextMenu.Item
+              Icon={TrashIcon}
+              onClick={() => {
+                if (isDraftIssue && handleDraftIssueDelete) handleDraftIssueDelete();
+                else handleDeleteIssue(issue);
+              }}
+            >
               Delete issue
             </ContextMenu.Item>
           </>
         )}
-        <ContextMenu.Item Icon={LinkIcon} onClick={handleCopyText}>
-          Copy issue link
-        </ContextMenu.Item>
-        <a
-          href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}
-          target="_blank"
-          rel="noreferrer noopener"
-        >
-          <ContextMenu.Item Icon={ArrowTopRightOnSquareIcon}>
-            Open issue in new tab
+        {!isDraftIssue && (
+          <ContextMenu.Item Icon={LinkIcon} onClick={handleCopyText}>
+            Copy issue link
           </ContextMenu.Item>
-        </a>
+        )}
+        {!isDraftIssue && (
+          <a
+            href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            <ContextMenu.Item Icon={ArrowTopRightOnSquareIcon}>
+              Open issue in new tab
+            </ContextMenu.Item>
+          </a>
+        )}
       </ContextMenu>
       <div
         className={`mb-3 rounded bg-custom-background-100 shadow ${
@@ -268,13 +292,18 @@ export const SingleBoardIssue: React.FC<Props> = ({
                     </button>
                   }
                 >
-                  <CustomMenu.MenuItem onClick={editIssue}>
+                  <CustomMenu.MenuItem
+                    onClick={() => {
+                      if (isDraftIssue && handleDraftIssueEdit) handleDraftIssueEdit();
+                      else editIssue();
+                    }}
+                  >
                     <div className="flex items-center justify-start gap-2">
                       <PencilIcon className="h-4 w-4" />
                       <span>Edit issue</span>
                     </div>
                   </CustomMenu.MenuItem>
-                  {type !== "issue" && removeIssue && (
+                  {type !== "issue" && removeIssue && !isDraftIssue && (
                     <CustomMenu.MenuItem onClick={removeIssue}>
                       <div className="flex items-center justify-start gap-2">
                         <XMarkIcon className="h-4 w-4" />
@@ -282,18 +311,25 @@ export const SingleBoardIssue: React.FC<Props> = ({
                       </div>
                     </CustomMenu.MenuItem>
                   )}
-                  <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
+                  <CustomMenu.MenuItem
+                    onClick={() => {
+                      if (isDraftIssue && handleDraftIssueDelete) handleDraftIssueDelete();
+                      else handleDeleteIssue(issue);
+                    }}
+                  >
                     <div className="flex items-center justify-start gap-2">
                       <TrashIcon className="h-4 w-4" />
                       <span>Delete issue</span>
                     </div>
                   </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem onClick={handleCopyText}>
-                    <div className="flex items-center justify-start gap-2">
-                      <LinkIcon className="h-4 w-4" />
-                      <span>Copy issue Link</span>
-                    </div>
-                  </CustomMenu.MenuItem>
+                  {!isDraftIssue && (
+                    <CustomMenu.MenuItem onClick={handleCopyText}>
+                      <div className="flex items-center justify-start gap-2">
+                        <LinkIcon className="h-4 w-4" />
+                        <span>Copy issue Link</span>
+                      </div>
+                    </CustomMenu.MenuItem>
+                  )}
                 </CustomMenu>
               )}
             </div>
@@ -308,7 +344,10 @@ export const SingleBoardIssue: React.FC<Props> = ({
             <button
               type="button"
               className="text-sm text-left break-words line-clamp-2"
-              onClick={openPeekOverview}
+              onClick={() => {
+                if (isDraftIssue && handleDraftIssueEdit) handleDraftIssueEdit();
+                else openPeekOverview();
+              }}
             >
               {issue.name}
             </button>

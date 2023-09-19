@@ -43,7 +43,7 @@ export const SingleLabel: React.FC<Props> = ({
           >
             <CustomMenu.MenuItem onClick={() => addLabelToGroup(label)}>
               <span className="flex items-center justify-start gap-2">
-                <RectangleGroupIcon className="h-4 w-4" />
+                <Component className="h-4 w-4 leading-4 text-custom-sidebar-text-400 flex-shrink-0" />
                 <span>Convert to group</span>
               </span>
             </CustomMenu.MenuItem>

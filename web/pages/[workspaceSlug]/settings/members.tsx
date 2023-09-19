@@ -13,15 +13,15 @@ import useUser from "hooks/use-user";
 import useWorkspaceMembers from "hooks/use-workspace-members";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
-import { SettingsHeader } from "components/workspace";
 // components
 import ConfirmWorkspaceMemberRemove from "components/workspace/confirm-workspace-member-remove";
 import SendWorkspaceInvitationModal from "components/workspace/send-workspace-invitation-modal";
+import { SettingsSidebar } from "components/project";
 // ui
-import { CustomMenu, CustomSelect, Loader } from "components/ui";
+import { CustomMenu, CustomSelect, Icon, Loader, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon } from "components/icons";
 // types
 import type { NextPage } from "next";
 // fetch-keys
@@ -143,9 +143,8 @@ const MembersSettings: NextPage = () => {
                 });
               })
               .finally(() => {
-                mutateMembers(
-                  (prevData: any) =>
-                    prevData?.filter((item: any) => item.id !== selectedRemoveMember)
+                mutateMembers((prevData: any) =>
+                  prevData?.filter((item: any) => item.id !== selectedRemoveMember)
                 );
               });
           }
@@ -187,19 +186,14 @@ const MembersSettings: NextPage = () => {
         user={user}
         onSuccess={handleInviteModalSuccess}
       />
-      <div className="p-8">
-        <SettingsHeader />
-        <section className="space-y-5">
-          <div className="flex items-end justify-between gap-4">
-            <h3 className="text-2xl font-semibold">Members</h3>
-            <button
-              type="button"
-              className="flex items-center gap-2 text-custom-primary outline-none"
-              onClick={() => setInviteModal(true)}
-            >
-              <PlusIcon className="h-4 w-4" />
-              Add Member
-            </button>
+      <div className="flex flex-row gap-2 h-full">
+        <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
+          <SettingsSidebar />
+        </div>
+        <section className="pr-9 py-8 w-full overflow-y-auto">
+          <div className="flex items-center justify-between gap-4 pt-2 pb-3.5 border-b border-custom-border-200">
+            <h4 className="text-xl font-medium">Members</h4>
+            <PrimaryButton onClick={() => setInviteModal(true)}>Add Member</PrimaryButton>
           </div>
           {!workspaceMembers || !workspaceInvitations ? (
             <Loader className="space-y-5">
@@ -209,23 +203,30 @@ const MembersSettings: NextPage = () => {
               <Loader.Item height="40px" />
             </Loader>
           ) : (
-            <div className="divide-y divide-custom-border-200 rounded-[10px] border border-custom-border-200 bg-custom-background-100 px-6">
+            <div className="divide-y divide-custom-border-200">
               {members.length > 0
                 ? members.map((member) => (
-                    <div key={member.id} className="flex items-center justify-between py-6">
+                    <div
+                      key={member.id}
+                      className="group flex items-center justify-between px-3.5 py-[18px]"
+                    >
                       <div className="flex items-center gap-x-8 gap-y-2">
                         {member.avatar && member.avatar !== "" ? (
-                          <div className="relative flex h-10 w-10 items-center justify-center rounded-lg p-4 capitalize text-white">
-                            <img
-                              src={member.avatar}
-                              className="absolute top-0 left-0 h-full w-full object-cover rounded-lg"
-                              alt={member.display_name || member.email}
-                            />
-                          </div>
+                          <Link href={`/${workspaceSlug}/profile/${member.memberId}`}>
+                            <a className="relative flex h-10 w-10 items-center justify-center rounded-lg p-4 capitalize text-white">
+                              <img
+                                src={member.avatar}
+                                className="absolute top-0 left-0 h-full w-full object-cover rounded-lg"
+                                alt={member.display_name || member.email}
+                              />
+                            </a>
+                          </Link>
                         ) : member.display_name || member.email ? (
-                          <div className="relative flex h-10 w-10 items-center justify-center rounded-lg p-4 capitalize bg-gray-700 text-white">
-                            {(member.display_name || member.email)?.charAt(0)}
-                          </div>
+                          <Link href={`/${workspaceSlug}/profile/${member.memberId}`}>
+                            <a className="relative flex h-10 w-10 items-center justify-center rounded-lg p-4 capitalize bg-gray-700 text-white">
+                              {(member.display_name || member.email)?.charAt(0)}
+                            </a>
+                          </Link>
                         ) : (
                           <div className="relative flex h-10 w-10 items-center justify-center rounded-lg p-4 capitalize bg-gray-700 text-white">
                             ?
@@ -244,14 +245,18 @@ const MembersSettings: NextPage = () => {
                               </a>
                             </Link>
                           ) : (
-                            <h4 className="text-sm">{member.display_name || member.email}</h4>
+                            <h4 className="text-sm cursor-default">
+                              {member.display_name || member.email}
+                            </h4>
                           )}
                           {isOwner && (
-                            <p className="text-xs text-custom-text-200">{member.email}</p>
+                            <p className="mt-0.5 text-xs text-custom-sidebar-text-300">
+                              {member.email}
+                            </p>
                           )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 text-xs">
+                      <div className="flex items-center gap-3 text-xs">
                         {!member?.status && (
                           <div className="mr-2 flex items-center justify-center rounded-full bg-yellow-500/20 px-2 py-1 text-center text-xs text-yellow-500">
                             <p>Pending</p>
@@ -263,9 +268,22 @@ const MembersSettings: NextPage = () => {
                           </div>
                         )}
                         <CustomSelect
-                          label={ROLE[member.role as keyof typeof ROLE]}
+                          customButton={
+                            <button className="flex item-center gap-1">
+                              <span
+                                className={`flex items-center text-sm font-medium ${
+                                  member.memberId !== user?.id ? "" : "text-custom-sidebar-text-400"
+                                }`}
+                              >
+                                {ROLE[member.role as keyof typeof ROLE]}
+                              </span>
+                              {member.memberId !== user?.id && (
+                                <Icon iconName="expand_more" className="text-lg font-medium" />
+                              )}
+                            </button>
+                          }
                           value={member.role}
-                          onChange={(value: any) => {
+                          onChange={(value: 5 | 10 | 15 | 20 | undefined) => {
                             if (!workspaceSlug) return;
 
                             mutateMembers(
@@ -323,7 +341,14 @@ const MembersSettings: NextPage = () => {
                               }
                             }}
                           >
-                            {user?.id === member.memberId ? "Leave" : "Remove member"}
+                            <span className="flex items-center justify-start gap-2">
+                              <XMarkIcon className="h-4 w-4" />
+
+                              <span>
+                                {" "}
+                                {user?.id === member.memberId ? "Leave" : "Remove member"}
+                              </span>
+                            </span>
                           </CustomMenu.MenuItem>
                         </CustomMenu>
                       </div>
