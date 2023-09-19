@@ -9,7 +9,10 @@ from .common import *  # noqa
 
 # Database
 DEBUG = int(os.environ.get("DEBUG", 0)) == 1
+
+# Docker configurations
 DOCKERIZED = 1
+USE_MINIO = 1
 
 DATABASES = {
     "default": {
