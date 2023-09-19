@@ -88,7 +88,7 @@ class ProjectIssuesServices extends APIService {
   }
 
   async getIssueProperties(workspaceSlug: string, projectId: string): Promise<any> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-properties/`)
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-display-properties/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -191,7 +191,7 @@ class ProjectIssuesServices extends APIService {
 
   async createIssueProperties(workspaceSlug: string, projectId: string, data: any): Promise<any> {
     return this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-properties/`,
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-display-properties/`,
       data
     )
       .then((response) => response?.data)
@@ -207,7 +207,7 @@ class ProjectIssuesServices extends APIService {
     data: any
   ): Promise<any> {
     return this.patch(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-properties/` +
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-display-properties/` +
         `${issuePropertyId}/`,
       data
     )
