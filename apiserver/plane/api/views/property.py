@@ -230,6 +230,16 @@ class PropertyValueViewSet(BaseViewSet):
 
                         # Delete records
                         bulk_prop_value_delete.extend(delete_records)
+
+                        # Check if new records are present or not
+                        if property.is_required and not new_records:
+                            return Response(
+                                {
+                                    "error": f"{property.display_name} is not a valid input"
+                                },
+                                status=status.HTTP_400_BAD_REQUEST,
+                            )
+
                         # New records that needs to be created
                         for new_record in new_records:
                             # Validation

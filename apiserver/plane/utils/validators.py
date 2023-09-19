@@ -12,9 +12,13 @@ def is_valid_uuid(uuid_string):
 
 # Validations
 def is_text(property, value) -> bool:
+    if property.is_required:
+        return isinstance(value, str) and bool(value)
     return isinstance(value, str)
 
 def is_paragraph(property, value) -> bool:
+    if property.is_required:
+        return isinstance(value, str) and bool(value)
     return isinstance(value, str)
 
 def is_number(property, value) -> bool:
@@ -49,15 +53,21 @@ def is_relation(property, value) -> bool:
 def is_file(property, value) -> bool:
     pattern = re.compile(
         r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
+    if property.is_required:
+        return bool(pattern.match(value)) and bool(value)
     return bool(pattern.match(value))
 
 def is_email(property, value) -> bool:
     pattern = re.compile(r"[^@]+@[^@]+\.[^@]+")
+    if property.is_required:
+        return bool(pattern.match(value)) and bool(value)
     return bool(pattern.match(value))
 
 def is_url(property, value) -> bool:
     pattern = re.compile(
         r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
+    if property.is_required:
+        return bool(pattern.match(value)) and bool(value)
     return bool(pattern.match(value))
 
 def is_datetime(property, value) -> bool:
