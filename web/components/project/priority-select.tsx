@@ -1,31 +1,25 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 
-import { useRouter } from "next/router";
-
-import useSWR from "swr";
-
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-// services
-import stateService from "services/state.service";
 // headless ui
 import { Combobox, Transition } from "@headlessui/react";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { CheckIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { StateGroupIcon } from "components/icons";
-// types
+import { PriorityIcon } from "components/icons";
+// components
 import { Tooltip } from "components/ui";
+// types
+import { TIssuePriorities } from "types";
 // constants
-import { IState } from "types";
-import { STATES_LIST } from "constants/fetch-keys";
+import { PRIORITIES } from "constants/project";
 // helper
-import { getStatesList } from "helpers/state.helper";
 import { handleDropdownPosition } from "helpers/dyanamic-dropdown-position";
 
 type Props = {
-  value: IState;
-  onChange: (data: any, states: IState[] | undefined) => void;
+  value: TIssuePriorities;
+  onChange: (data: any) => void;
   className?: string;
   buttonClassName?: string;
   optionsClassName?: string;
@@ -33,7 +27,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const StateSelect: React.FC<Props> = ({
+export const PrioritySelect: React.FC<Props> = ({
   value,
   onChange,
   className = "",
@@ -48,27 +42,13 @@ export const StateSelect: React.FC<Props> = ({
   const dropdownBtn = useRef<any>(null);
   const dropdownOptions = useRef<any>(null);
 
-  const [fetchStates, setFetchStates] = useState<boolean>(false);
-
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
-  const { data: stateGroups } = useSWR(
-    workspaceSlug && projectId && fetchStates ? STATES_LIST(projectId as string) : null,
-    workspaceSlug && projectId && fetchStates
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
-      : null
-  );
-
-  const states = getStatesList(stateGroups);
-
-  const options = states?.map((state) => ({
-    value: state.id,
-    query: state.name,
+  const options = PRIORITIES?.map((priority) => ({
+    value: priority,
+    query: priority,
     content: (
       <div className="flex items-center gap-2">
-        <StateGroupIcon stateGroup={state.group} color={state.color} />
-        {state.name}
+        <PriorityIcon priority={priority} className="text-sm" />
+        {priority ?? "None"}
       </div>
     ),
   }));
@@ -78,13 +58,33 @@ export const StateSelect: React.FC<Props> = ({
       ? options
       : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
+  const selectedOption = value ?? "None";
+
   const label = (
-    <Tooltip tooltipHeading="State" tooltipContent={value?.name ?? ""} position="top">
-      <div className="flex items-center cursor-pointer w-full gap-2 text-custom-text-200">
-        <span className="h-3.5 w-3.5">
-          {value && <StateGroupIcon stateGroup={value.group} color={value.color} />}
+    <Tooltip tooltipHeading="Priority" tooltipContent={selectedOption} position="top">
+      <div
+        className={`grid place-items-center rounded "h-6 w-6 border shadow-sm ${
+          value === "urgent"
+            ? "border-red-500/20 bg-red-500"
+            : "border-custom-border-300 bg-custom-background-100"
+        } items-center`}
+      >
+        <span className="flex gap-1 items-center text-custom-text-200 text-xs">
+          <PriorityIcon
+            priority={value}
+            className={`text-sm ${
+              value === "urgent"
+                ? "text-white"
+                : value === "high"
+                ? "text-orange-500"
+                : value === "medium"
+                ? "text-yellow-500"
+                : value === "low"
+                ? "text-green-500"
+                : "text-custom-text-200"
+            }`}
+          />
         </span>
-        <span className="truncate">{value?.name ?? "State"}</span>
       </div>
     </Tooltip>
   );
@@ -111,17 +111,14 @@ export const StateSelect: React.FC<Props> = ({
     <Combobox
       as="div"
       className={`flex-shrink-0 text-left ${className}`}
-      value={value.id}
-      onChange={(data: string) => {
-        onChange(data, states);
-      }}
+      value={value}
+      onChange={onChange}
       disabled={disabled}
     >
       {({ open }: { open: boolean }) => {
         if (open) {
           setIsOpen(true);
           handleDropdownPosition(dropdownBtn, dropdownOptions);
-          setFetchStates(true);
         }
 
         return (
@@ -129,7 +126,7 @@ export const StateSelect: React.FC<Props> = ({
             <Combobox.Button
               ref={dropdownBtn}
               type="button"
-              className={`flex items-center justify-between gap-1 w-full text-xs px-2.5 py-1 rounded-md shadow-sm border border-custom-border-300 duration-300 focus:outline-none ${
+              className={`flex items-center justify-between gap-1 w-full text-xs ${
                 disabled
                   ? "cursor-not-allowed text-custom-text-200"
                   : "cursor-pointer hover:bg-custom-background-80"

@@ -10,13 +10,8 @@ import trackEventServices from "services/track-event.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
-import {
-  ViewDueDateSelect,
-  ViewEstimateSelect,
-  ViewPrioritySelect,
-  ViewStartDateSelect,
-} from "components/issues";
-import { LabelSelect, MembersSelect, StateSelect } from "components/project";
+import { ViewDueDateSelect, ViewEstimateSelect, ViewStartDateSelect } from "components/issues";
+import { LabelSelect, MembersSelect, PrioritySelect, StateSelect } from "components/project";
 // ui
 import { Tooltip, CustomMenu, ContextMenu } from "components/ui";
 // icons
@@ -41,6 +36,7 @@ import {
   IState,
   ISubIssueResponse,
   IUserProfileProjectSegregation,
+  TIssuePriorities,
   UserAuth,
 } from "types";
 // fetch-keys
@@ -249,6 +245,22 @@ export const SingleListIssue: React.FC<Props> = ({
     partialUpdateIssue({ labels_list: newData }, issue);
   };
 
+  const handlePriorityChange = (data: TIssuePriorities) => {
+    partialUpdateIssue({ priority: data }, issue);
+    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+      {
+        workspaceSlug,
+        workspaceId: issue.workspace,
+        projectId: issue.project_detail.id,
+        projectIdentifier: issue.project_detail.identifier,
+        projectName: issue.project_detail.name,
+        issueId: issue.id,
+      },
+      "ISSUE_PROPERTY_UPDATE_PRIORITY",
+      user
+    );
+  };
+
   const issuePath = isArchivedIssues
     ? `/${workspaceSlug}/projects/${issue.project}/archived-issues/${issue.id}`
     : isDraftIssues
@@ -358,12 +370,11 @@ export const SingleListIssue: React.FC<Props> = ({
           }`}
         >
           {properties.priority && (
-            <ViewPrioritySelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              position="right"
-              user={user}
-              isNotAllowed={isNotAllowed}
+            <PrioritySelect
+              value={issue.priority}
+              onChange={handlePriorityChange}
+              hideDropdownArrow
+              disabled={isNotAllowed}
             />
           )}
           {properties.state && (

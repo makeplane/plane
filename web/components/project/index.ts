@@ -10,3 +10,4 @@ export * from "./member-select";
 export * from "./state-select";
 export * from "./members-select";
 export * from "./label-select";
+export * from "./priority-select";

@@ -18,13 +18,8 @@ import trackEventServices from "services/track-event.service";
 import useToast from "hooks/use-toast";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
-import {
-  ViewDueDateSelect,
-  ViewEstimateSelect,
-  ViewPrioritySelect,
-  ViewStartDateSelect,
-} from "components/issues";
-import { StateSelect, MembersSelect, LabelSelect } from "components/project";
+import { ViewDueDateSelect, ViewEstimateSelect, ViewStartDateSelect } from "components/issues";
+import { StateSelect, MembersSelect, LabelSelect, PrioritySelect } from "components/project";
 // ui
 import { ContextMenu, CustomMenu, Tooltip } from "components/ui";
 // icons
@@ -49,6 +44,7 @@ import {
   IIssueViewProps,
   IState,
   ISubIssueResponse,
+  TIssuePriorities,
   UserAuth,
 } from "types";
 // fetch-keys
@@ -263,6 +259,22 @@ export const SingleBoardIssue: React.FC<Props> = ({
     partialUpdateIssue({ labels_list: newData }, issue);
   };
 
+  const handlePriorityChange = (data: TIssuePriorities) => {
+    partialUpdateIssue({ priority: data }, issue);
+    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+      {
+        workspaceSlug,
+        workspaceId: issue.workspace,
+        projectId: issue.project_detail.id,
+        projectIdentifier: issue.project_detail.identifier,
+        projectName: issue.project_detail.name,
+        issueId: issue.id,
+      },
+      "ISSUE_PROPERTY_UPDATE_PRIORITY",
+      user
+    );
+  };
+
   useEffect(() => {
     if (snapshot.isDragging) handleTrashBox(snapshot.isDragging);
   }, [snapshot, handleTrashBox]);
@@ -433,12 +445,11 @@ export const SingleBoardIssue: React.FC<Props> = ({
             }`}
           >
             {properties.priority && (
-              <ViewPrioritySelect
-                issue={issue}
-                partialUpdateIssue={partialUpdateIssue}
-                isNotAllowed={isNotAllowed}
-                user={user}
-                selfPositioned
+              <PrioritySelect
+                value={issue.priority}
+                onChange={handlePriorityChange}
+                hideDropdownArrow
+                disabled={isNotAllowed}
               />
             )}
             {properties.state && (

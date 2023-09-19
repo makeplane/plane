@@ -15,20 +15,15 @@ import useIssuesProperties from "hooks/use-issue-properties";
 import useToast from "hooks/use-toast";
 // components
 import { CustomMenu, Tooltip } from "components/ui";
-import {
-  ViewDueDateSelect,
-  ViewEstimateSelect,
-  ViewPrioritySelect,
-  ViewStartDateSelect,
-} from "components/issues";
-import { LabelSelect, MembersSelect, StateSelect } from "components/project";
+import { ViewDueDateSelect, ViewEstimateSelect, ViewStartDateSelect } from "components/issues";
+import { LabelSelect, MembersSelect, PrioritySelect, StateSelect } from "components/project";
 // icons
 import { LinkIcon, PaperClipIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { LayerDiagonalIcon } from "components/icons";
 // helper
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // type
-import { ICurrentUserResponse, IIssue, IState, ISubIssueResponse } from "types";
+import { ICurrentUserResponse, IIssue, IState, ISubIssueResponse, TIssuePriorities } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES_WITH_PARAMS,
@@ -221,6 +216,22 @@ export const SingleCalendarIssue: React.FC<Props> = ({
     partialUpdateIssue({ labels_list: newData }, issue);
   };
 
+  const handlePriorityChange = (data: TIssuePriorities) => {
+    partialUpdateIssue({ priority: data }, issue);
+    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+      {
+        workspaceSlug,
+        workspaceId: issue.workspace,
+        projectId: issue.project_detail.id,
+        projectIdentifier: issue.project_detail.identifier,
+        projectName: issue.project_detail.name,
+        issueId: issue.id,
+      },
+      "ISSUE_PROPERTY_UPDATE_PRIORITY",
+      user
+    );
+  };
+
   const displayProperties = properties
     ? Object.values(properties).some((value) => value === true)
     : false;
@@ -293,12 +304,11 @@ export const SingleCalendarIssue: React.FC<Props> = ({
         {displayProperties && (
           <div className="relative mt-1.5 w-full flex flex-wrap items-center gap-2 text-xs">
             {properties.priority && (
-              <ViewPrioritySelect
-                issue={issue}
-                partialUpdateIssue={partialUpdateIssue}
-                position="left"
-                user={user}
-                isNotAllowed={isNotAllowed}
+              <PrioritySelect
+                value={issue.priority}
+                onChange={handlePriorityChange}
+                hideDropdownArrow
+                disabled={isNotAllowed}
               />
             )}
             {properties.state && (

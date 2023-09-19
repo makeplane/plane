@@ -176,6 +176,7 @@ export const LabelSelect: React.FC<Props> = ({
         value={value}
         onChange={onChange}
         disabled={disabled}
+        multiple
       >
         {({ open }: { open: boolean }) => {
           if (open) {
@@ -243,11 +244,7 @@ export const LabelSelect: React.FC<Props> = ({
                               {({ selected }) => (
                                 <>
                                   {option.content}
-                                  <CheckIcon
-                                    className={`h-3.5 w-3.5 ${
-                                      selected ? "opacity-100" : "opacity-0"
-                                    }`}
-                                  />
+                                  {selected && <CheckIcon className={`h-3.5 w-3.5`} />}
                                 </>
                               )}
                             </Combobox.Option>
