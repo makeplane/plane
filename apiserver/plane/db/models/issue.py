@@ -87,7 +87,7 @@ class Issue(ProjectBaseModel):
     properties = models.JSONField(null=True, default=None)
     entity = models.ForeignKey(
         "db.Property",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
         related_name="issues",
