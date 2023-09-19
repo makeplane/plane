@@ -25,8 +25,9 @@ import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 import { handleDropdownPosition } from "helpers/dyanamic-dropdown-position";
 
 type Props = {
-  value: any[];
+  value: string[];
   onChange: (data: any) => void;
+  labelsDetails: any[];
   className?: string;
   buttonClassName?: string;
   optionsClassName?: string;
@@ -39,6 +40,7 @@ type Props = {
 export const LabelSelect: React.FC<Props> = ({
   value,
   onChange,
+  labelsDetails,
   className = "",
   buttonClassName = "",
   optionsClassName = "",
@@ -89,10 +91,10 @@ export const LabelSelect: React.FC<Props> = ({
 
   const label = (
     <div className={`flex  items-center gap-2 text-custom-text-200`}>
-      {value.length > 0 ? (
-        value.length <= maxRender ? (
+      {labelsDetails.length > 0 ? (
+        labelsDetails.length <= maxRender ? (
           <>
-            {value.map((label) => (
+            {labelsDetails.map((label) => (
               <div
                 key={label.id}
                 className="flex cursor-default items-center flex-shrink-0 rounded-md border border-custom-border-300 px-2.5 py-1 text-xs shadow-sm"
@@ -114,7 +116,7 @@ export const LabelSelect: React.FC<Props> = ({
             <Tooltip
               position="top"
               tooltipHeading="Labels"
-              tooltipContent={value.map((l) => l.name).join(", ")}
+              tooltipContent={labelsDetails.map((l) => l.name).join(", ")}
             >
               <div className="flex items-center gap-1.5 text-custom-text-200">
                 <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />

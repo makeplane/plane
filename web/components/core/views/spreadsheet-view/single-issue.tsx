@@ -259,12 +259,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
   };
 
   const handleLabelChange = (data: any) => {
-    const newData = issue.labels ?? [];
-
-    if (newData.includes(data)) newData.splice(newData.indexOf(data), 1);
-    else newData.push(data);
-
-    partialUpdateIssue({ labels_list: newData }, issue);
+    partialUpdateIssue({ labels_list: data }, issue);
   };
 
   const paddingLeft = `${nestingLevel * 68}px`;
@@ -405,8 +400,9 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         {properties.labels && (
           <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
             <LabelSelect
-              value={issue.label_details}
+              value={issue.labels}
               onChange={handleLabelChange}
+              labelsDetails={issue.label_details}
               hideDropdownArrow
               maxRender={1}
               user={user}

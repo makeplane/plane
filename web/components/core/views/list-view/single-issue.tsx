@@ -237,12 +237,7 @@ export const SingleListIssue: React.FC<Props> = ({
   };
 
   const handleLabelChange = (data: any) => {
-    const newData = issue.labels ?? [];
-
-    if (newData.includes(data)) newData.splice(newData.indexOf(data), 1);
-    else newData.push(data);
-
-    partialUpdateIssue({ labels_list: newData }, issue);
+    partialUpdateIssue({ labels_list: data }, issue);
   };
 
   const handlePriorityChange = (data: TIssuePriorities) => {
@@ -403,8 +398,9 @@ export const SingleListIssue: React.FC<Props> = ({
           )}
           {properties.labels && (
             <LabelSelect
-              value={issue.label_details}
+              value={issue.labels}
               onChange={handleLabelChange}
+              labelsDetails={issue.label_details}
               hideDropdownArrow
               maxRender={3}
               user={user}
