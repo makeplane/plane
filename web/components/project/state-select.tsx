@@ -1,14 +1,13 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
-// services
-import stateService from "services/state.service";
-import trackEventServices from "services/track-event.service";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
+// services
+import stateService from "services/state.service";
 // headless ui
 import { Combobox, Transition } from "@headlessui/react";
 // icons
@@ -18,50 +17,49 @@ import { StateGroupIcon } from "components/icons";
 // types
 import { Tooltip } from "components/ui";
 // constants
+import { IState } from "types";
 import { STATES_LIST } from "constants/fetch-keys";
-import { ICurrentUserResponse, IIssue } from "types";
 // helper
 import { getStatesList } from "helpers/state.helper";
+import { handleDropdownPosition } from "helpers/dyanamic-dropdown-position";
 
 type Props = {
-  issue: IIssue;
-  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
+  value: IState;
+  onChange: (data: any, states: IState[] | undefined) => void;
   className?: string;
   buttonClassName?: string;
   optionsClassName?: string;
-  noBorder?: boolean;
-  noChevron?: boolean;
+  hideDropdownArrow?: boolean;
   disabled?: boolean;
-  user: ICurrentUserResponse | undefined;
 };
 
 export const StateSelect: React.FC<Props> = ({
-  issue,
-  partialUpdateIssue,
+  value,
+  onChange,
   className = "",
   buttonClassName = "",
   optionsClassName = "",
-  noChevron = false,
-  noBorder = false,
+  hideDropdownArrow = false,
   disabled = false,
-  user,
 }) => {
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const [fetchStates, setFetchStates] = useState(false);
-
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
 
   const dropdownBtn = useRef<any>(null);
   const dropdownOptions = useRef<any>(null);
 
+  const [fetchStates, setFetchStates] = useState<boolean>(false);
+
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
   const { data: stateGroups } = useSWR(
-    workspaceSlug && issue && fetchStates ? STATES_LIST(issue.project) : null,
-    workspaceSlug && issue && fetchStates
-      ? () => stateService.getStates(workspaceSlug as string, issue.project)
+    workspaceSlug && projectId && fetchStates ? STATES_LIST(projectId as string) : null,
+    workspaceSlug && projectId && fetchStates
+      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
+
   const states = getStatesList(stateGroups);
 
   const options = states?.map((state) => ({
@@ -80,45 +78,30 @@ export const StateSelect: React.FC<Props> = ({
       ? options
       : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
-  const handleOnOpen = () => {
-    const dropdownOptionsRef = dropdownOptions.current;
-    const dropdownBtnRef = dropdownBtn.current;
-
-    if (!dropdownOptionsRef || !dropdownBtnRef) return;
-
-    const dropdownWidth = dropdownOptionsRef.clientWidth;
-    const dropdownHeight = dropdownOptionsRef.clientHeight;
-
-    const dropdownBtnX = dropdownBtnRef.getBoundingClientRect().x;
-    const dropdownBtnY = dropdownBtnRef.getBoundingClientRect().y;
-    const dropdownBtnHeight = dropdownBtnRef.clientHeight;
-
-    let top = dropdownBtnY + dropdownBtnHeight;
-    if (dropdownBtnY + dropdownHeight > window.innerHeight)
-      top = dropdownBtnY - dropdownHeight - 10;
-    else top = top + 10;
-
-    let left = dropdownBtnX;
-    if (dropdownBtnX + dropdownWidth > window.innerWidth) left = dropdownBtnX - dropdownWidth;
-
-    dropdownOptionsRef.style.top = `${Math.round(top)}px`;
-    dropdownOptionsRef.style.left = `${Math.round(left)}px`;
-  };
-
-  const selectedOption = issue.state_detail;
-
   const label = (
-    <Tooltip tooltipHeading="State" tooltipContent={selectedOption?.name ?? ""} position="top">
+    <Tooltip tooltipHeading="State" tooltipContent={value?.name ?? ""} position="top">
       <div className="flex items-center cursor-pointer w-full gap-2 text-custom-text-200">
         <span className="h-3.5 w-3.5">
-          {selectedOption && (
-            <StateGroupIcon stateGroup={selectedOption.group} color={selectedOption.color} />
-          )}
+          {value && <StateGroupIcon stateGroup={value.group} color={value.color} />}
         </span>
-        <span className="truncate">{selectedOption?.name ?? "State"}</span>
+        <span className="truncate">{value?.name ?? "State"}</span>
       </div>
     </Tooltip>
   );
+
+  const handleResize = useCallback(() => {
+    if (isOpen) {
+      handleDropdownPosition(dropdownBtn, dropdownOptions);
+    }
+  }, [isOpen, dropdownBtn, dropdownOptions]);
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [isOpen, handleResize]);
 
   useOutsideClickDetector(dropdownOptions, () => {
     if (isOpen) setIsOpen(false);
@@ -128,50 +111,16 @@ export const StateSelect: React.FC<Props> = ({
     <Combobox
       as="div"
       className={`flex-shrink-0 text-left ${className}`}
-      value={issue.state}
+      value={value.id}
       onChange={(data: string) => {
-        const oldState = states?.find((s) => s.id === issue.state);
-        const newState = states?.find((s) => s.id === data);
-
-        partialUpdateIssue(
-          {
-            state: data,
-            state_detail: newState,
-          },
-          issue
-        );
-        trackEventServices.trackIssuePartialPropertyUpdateEvent(
-          {
-            workspaceSlug,
-            workspaceId: issue.workspace,
-            projectId: issue.project_detail.id,
-            projectIdentifier: issue.project_detail.identifier,
-            projectName: issue.project_detail.name,
-            issueId: issue.id,
-          },
-          "ISSUE_PROPERTY_UPDATE_STATE",
-          user
-        );
-
-        if (oldState?.group !== "completed" && newState?.group !== "completed") {
-          trackEventServices.trackIssueMarkedAsDoneEvent(
-            {
-              workspaceSlug: issue.workspace_detail.slug,
-              workspaceId: issue.workspace_detail.id,
-              projectId: issue.project_detail.id,
-              projectIdentifier: issue.project_detail.identifier,
-              projectName: issue.project_detail.name,
-              issueId: issue.id,
-            },
-            user
-          );
-        }
+        onChange(data, states);
       }}
       disabled={disabled}
     >
       {({ open }: { open: boolean }) => {
         if (open) {
-          handleOnOpen();
+          setIsOpen(true);
+          handleDropdownPosition(dropdownBtn, dropdownOptions);
           setFetchStates(true);
         }
 
@@ -180,18 +129,14 @@ export const StateSelect: React.FC<Props> = ({
             <Combobox.Button
               ref={dropdownBtn}
               type="button"
-              className={`flex items-center justify-between gap-1 w-full ${
-                noBorder
-                  ? ""
-                  : "px-2.5 py-1 rounded-md shadow-sm border border-custom-border-300 duration-300 focus:outline-none"
-              } text-xs ${
+              className={`flex items-center justify-between gap-1 w-full text-xs px-2.5 py-1 rounded-md shadow-sm border border-custom-border-300 duration-300 focus:outline-none ${
                 disabled
                   ? "cursor-not-allowed text-custom-text-200"
                   : "cursor-pointer hover:bg-custom-background-80"
               } ${buttonClassName}`}
             >
               {label}
-              {!noChevron && !disabled && (
+              {!hideDropdownArrow && !disabled && (
                 <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
               )}
             </Combobox.Button>
@@ -233,14 +178,16 @@ export const StateSelect: React.FC<Props> = ({
                               } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                             }
                           >
-                            {({ active, selected }) => (
+                            {({ selected }) => (
                               <>
                                 {option.content}
-                                <CheckIcon
-                                  className={`h-3.5 w-3.5 ${
-                                    selected ? "opacity-100" : "opacity-0"
-                                  }`}
-                                />
+                                {selected && (
+                                  <CheckIcon
+                                    className={`h-3.5 w-3.5 ${
+                                      selected ? "opacity-100" : "opacity-0"
+                                    }`}
+                                  />
+                                )}
                               </>
                             )}
                           </Combobox.Option>

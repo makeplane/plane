@@ -6,6 +6,7 @@ import { mutate } from "swr";
 
 // services
 import issuesService from "services/issues.service";
+import trackEventServices from "services/track-event.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -16,10 +17,8 @@ import {
   ViewIssueLabel,
   ViewPrioritySelect,
   ViewStartDateSelect,
-  ViewStateSelect,
-  CreateUpdateDraftIssueModal,
 } from "components/issues";
-import { StateSelect } from "components/states";
+import { StateSelect } from "components/project";
 // ui
 import { Tooltip, CustomMenu, ContextMenu } from "components/ui";
 // icons
@@ -41,6 +40,7 @@ import {
   ICurrentUserResponse,
   IIssue,
   IIssueViewProps,
+  IState,
   ISubIssueResponse,
   IUserProfileProjectSegregation,
   UserAuth,
@@ -182,6 +182,44 @@ export const SingleListIssue: React.FC<Props> = ({
     });
   };
 
+  const handleStateChange = (data: string, states: IState[] | undefined) => {
+    const oldState = states?.find((s) => s.id === issue.state);
+    const newState = states?.find((s) => s.id === data);
+
+    partialUpdateIssue(
+      {
+        state: data,
+        state_detail: newState,
+      },
+      issue
+    );
+    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+      {
+        workspaceSlug,
+        workspaceId: issue.workspace,
+        projectId: issue.project_detail.id,
+        projectIdentifier: issue.project_detail.identifier,
+        projectName: issue.project_detail.name,
+        issueId: issue.id,
+      },
+      "ISSUE_PROPERTY_UPDATE_STATE",
+      user
+    );
+    if (oldState?.group !== "completed" && newState?.group !== "completed") {
+      trackEventServices.trackIssueMarkedAsDoneEvent(
+        {
+          workspaceSlug: issue.workspace_detail.slug,
+          workspaceId: issue.workspace_detail.id,
+          projectId: issue.project_detail.id,
+          projectIdentifier: issue.project_detail.identifier,
+          projectName: issue.project_detail.name,
+          issueId: issue.id,
+        },
+        user
+      );
+    }
+  };
+
   const issuePath = isArchivedIssues
     ? `/${workspaceSlug}/projects/${issue.project}/archived-issues/${issue.id}`
     : isDraftIssues
@@ -301,11 +339,10 @@ export const SingleListIssue: React.FC<Props> = ({
           )}
           {properties.state && (
             <StateSelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              noChevron
+              value={issue.state_detail}
+              onChange={handleStateChange}
+              hideDropdownArrow
               disabled={isNotAllowed}
-              user={user}
             />
           )}
           {properties.start_date && issue.start_date && (

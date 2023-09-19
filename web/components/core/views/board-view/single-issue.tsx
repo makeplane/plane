@@ -13,6 +13,7 @@ import {
 } from "react-beautiful-dnd";
 // services
 import issuesService from "services/issues.service";
+import trackEventServices from "services/track-event.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
@@ -25,7 +26,7 @@ import {
   ViewPrioritySelect,
   ViewStartDateSelect,
 } from "components/issues";
-import { StateSelect } from "components/states";
+import { StateSelect } from "components/project";
 // ui
 import { ContextMenu, CustomMenu, Tooltip } from "components/ui";
 // icons
@@ -44,7 +45,14 @@ import { LayerDiagonalIcon } from "components/icons";
 import { handleIssuesMutation } from "constants/issue";
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import { ICurrentUserResponse, IIssue, IIssueViewProps, ISubIssueResponse, UserAuth } from "types";
+import {
+  ICurrentUserResponse,
+  IIssue,
+  IIssueViewProps,
+  IState,
+  ISubIssueResponse,
+  UserAuth,
+} from "types";
 // fetch-keys
 import { CYCLE_DETAILS, MODULE_DETAILS, SUB_ISSUES } from "constants/fetch-keys";
 
@@ -186,6 +194,44 @@ export const SingleBoardIssue: React.FC<Props> = ({
       });
       setIsMenuActive(false);
     });
+  };
+
+  const handleStateChange = (data: string, states: IState[] | undefined) => {
+    const oldState = states?.find((s) => s.id === issue.state);
+    const newState = states?.find((s) => s.id === data);
+
+    partialUpdateIssue(
+      {
+        state: data,
+        state_detail: newState,
+      },
+      issue
+    );
+    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+      {
+        workspaceSlug,
+        workspaceId: issue.workspace,
+        projectId: issue.project_detail.id,
+        projectIdentifier: issue.project_detail.identifier,
+        projectName: issue.project_detail.name,
+        issueId: issue.id,
+      },
+      "ISSUE_PROPERTY_UPDATE_STATE",
+      user
+    );
+    if (oldState?.group !== "completed" && newState?.group !== "completed") {
+      trackEventServices.trackIssueMarkedAsDoneEvent(
+        {
+          workspaceSlug: issue.workspace_detail.slug,
+          workspaceId: issue.workspace_detail.id,
+          projectId: issue.project_detail.id,
+          projectIdentifier: issue.project_detail.identifier,
+          projectName: issue.project_detail.name,
+          issueId: issue.id,
+        },
+        user
+      );
+    }
   };
 
   useEffect(() => {
@@ -343,13 +389,12 @@ export const SingleBoardIssue: React.FC<Props> = ({
             )}
             <button
               type="button"
-              className="text-sm text-left break-words line-clamp-2"
               onClick={() => {
                 if (isDraftIssue && handleDraftIssueEdit) handleDraftIssueEdit();
                 else openPeekOverview();
               }}
             >
-              {issue.name}
+              <span className="text-sm text-left break-words line-clamp-2">{issue.name}</span>
             </button>
           </div>
 
@@ -369,11 +414,10 @@ export const SingleBoardIssue: React.FC<Props> = ({
             )}
             {properties.state && (
               <StateSelect
-                issue={issue}
-                partialUpdateIssue={partialUpdateIssue}
-                noChevron
+                value={issue.state_detail}
+                onChange={handleStateChange}
+                hideDropdownArrow
                 disabled={isNotAllowed}
-                user={user}
               />
             )}
             {properties.start_date && issue.start_date && (

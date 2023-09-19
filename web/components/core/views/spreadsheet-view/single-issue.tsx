@@ -13,7 +13,7 @@ import {
   ViewPrioritySelect,
   ViewStartDateSelect,
 } from "components/issues";
-import { StateSelect } from "components/states";
+import { StateSelect } from "components/project";
 import { Popover2 } from "@blueprintjs/popover2";
 // icons
 import { Icon } from "components/ui";
@@ -28,6 +28,7 @@ import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 import useToast from "hooks/use-toast";
 // services
 import issuesService from "services/issues.service";
+import trackEventServices from "services/track-event.service";
 // constant
 import {
   CYCLE_DETAILS,
@@ -39,7 +40,14 @@ import {
   VIEW_ISSUES,
 } from "constants/fetch-keys";
 // types
-import { ICurrentUserResponse, IIssue, ISubIssueResponse, Properties, UserAuth } from "types";
+import {
+  ICurrentUserResponse,
+  IIssue,
+  IState,
+  ISubIssueResponse,
+  Properties,
+  UserAuth,
+} from "types";
 // helper
 import { copyTextToClipboard } from "helpers/string.helper";
 import { renderLongDetailDateFormat } from "helpers/date-time.helper";
@@ -180,6 +188,44 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
     });
   };
 
+  const handleStateChange = (data: string, states: IState[] | undefined) => {
+    const oldState = states?.find((s) => s.id === issue.state);
+    const newState = states?.find((s) => s.id === data);
+
+    partialUpdateIssue(
+      {
+        state: data,
+        state_detail: newState,
+      },
+      issue
+    );
+    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+      {
+        workspaceSlug,
+        workspaceId: issue.workspace,
+        projectId: issue.project_detail.id,
+        projectIdentifier: issue.project_detail.identifier,
+        projectName: issue.project_detail.name,
+        issueId: issue.id,
+      },
+      "ISSUE_PROPERTY_UPDATE_STATE",
+      user
+    );
+    if (oldState?.group !== "completed" && newState?.group !== "completed") {
+      trackEventServices.trackIssueMarkedAsDoneEvent(
+        {
+          workspaceSlug: issue.workspace_detail.slug,
+          workspaceId: issue.workspace_detail.id,
+          projectId: issue.project_detail.id,
+          projectIdentifier: issue.project_detail.identifier,
+          projectName: issue.project_detail.name,
+          issueId: issue.id,
+        },
+        user
+      );
+    }
+  };
+
   const paddingLeft = `${nestingLevel * 68}px`;
 
   const tooltipPosition = index === 0 ? "bottom" : "top";
@@ -284,12 +330,11 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         {properties.state && (
           <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
             <StateSelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              noChevron
-              noBorder
+              value={issue.state_detail}
+              onChange={handleStateChange}
+              buttonClassName="!p-0 !rounded-none !shadow-none !border-0"
+              hideDropdownArrow
               disabled={isNotAllowed}
-              user={user}
             />
           </div>
         )}

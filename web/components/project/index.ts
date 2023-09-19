@@ -7,3 +7,4 @@ export * from "./single-project-card";
 export * from "./single-sidebar-project";
 export * from "./confirm-project-leave-modal";
 export * from "./member-select";
+export * from "./state-select";
