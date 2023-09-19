@@ -23,7 +23,7 @@ from .project import (
     ProjectPublicMemberSerializer
 )
 from .state import StateSerializer, StateLiteSerializer
-from .view import IssueViewSerializer, IssueViewFavoriteSerializer
+from .view import GlobalViewSerializer, IssueViewSerializer, IssueViewFavoriteSerializer
 from .cycle import CycleSerializer, CycleIssueSerializer, CycleFavoriteSerializer, CycleWriteSerializer
 from .asset import FileAssetSerializer
 from .issue import (

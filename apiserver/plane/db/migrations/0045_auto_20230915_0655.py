@@ -2,6 +2,7 @@
 
 from django.db import migrations
 
+
 def update_issue_activity(apps, schema_editor):
     IssueActivityModel = apps.get_model("db", "IssueActivity")
     updated_issue_activity = []
