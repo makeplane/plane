@@ -183,12 +183,12 @@ const WorkspaceSettings: NextPage = () => {
         data={activeWorkspace ?? null}
         user={user}
       />
-      <div className="flex flex-row gap-2 h-full w-full">
-        <div className="w-80 py-8">
+      <div className="flex flex-row gap-2 h-full">
+        <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
           <SettingsSidebar />
         </div>
         {activeWorkspace ? (
-          <div className={`pr-9 py-8 w-full  ${isAdmin ? "" : "opacity-60"}`}>
+          <div className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
             <div className="flex gap-5 items-center pb-7 border-b border-custom-border-200">
               <div className="flex flex-col gap-1">
                 <button
