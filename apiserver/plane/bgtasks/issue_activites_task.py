@@ -1191,6 +1191,29 @@ def delete_draft_issue_activity(
         )
     )
 
+
+def transfer_issue_activity(requested_data, current_instance, issue_id, project, actor, issue_activities):
+
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+
+    # Old project
+    old_project = Project.objects.get(pk=requested_data.get("old_project_id"))
+
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            verb="updated",
+            project=project,
+            workspace=project.workspace,
+            comment=f"moved the issue",
+            old_identifier=requested_data.get("old_project_id"),
+            new_identifier=project.id,
+            old_value=old_project.name,
+            new_value=project.name,
+            actor=actor,
+        )
+    )
+
 # Receive message from room group
 @shared_task
 def issue_activity(
@@ -1265,6 +1288,7 @@ def issue_activity(
             "issue_draft.activity.created": create_draft_issue_activity,
             "issue_draft.activity.updated": update_draft_issue_activity,
             "issue_draft.activity.deleted": delete_draft_issue_activity,
+            "issue.transfer.activity": transfer_issue_activity,
         }
 
         func = ACTIVITY_MAPPER.get(type)

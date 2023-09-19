@@ -279,7 +279,8 @@ class IssueViewSet(BaseViewSet):
 
             if group_by:
                 return Response(
-                    group_results(issues, group_by, sub_group_by), status=status.HTTP_200_OK
+                    group_results(issues, group_by, sub_group_by),
+                    status=status.HTTP_200_OK,
                 )
 
             return Response(issues, status=status.HTTP_200_OK)
@@ -460,10 +461,11 @@ class UserWorkSpaceIssues(BaseAPIView):
                     {"error": "Group by and sub group by cannot be same"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            
+
             if group_by:
                 return Response(
-                    group_results(issues, group_by, sub_group_by), status=status.HTTP_200_OK
+                    group_results(issues, group_by, sub_group_by),
+                    status=status.HTTP_200_OK,
                 )
 
             return Response(issues, status=status.HTTP_200_OK)
@@ -2114,7 +2116,7 @@ class IssueRelationViewSet(BaseViewSet):
                 project_id=str(project_id),
                 current_instance=None,
             )
-            
+
             if relation == "blocking":
                 return Response(
                     RelatedIssueSerializer(issue_relation, many=True).data,
@@ -2157,6 +2159,8 @@ class IssueRelationViewSet(BaseViewSet):
             .select_related("issue")
             .distinct()
         )
+
+
 class IssueRetrievePublicEndpoint(BaseAPIView):
     permission_classes = [
         AllowAny,
@@ -2366,7 +2370,6 @@ class IssueDraftViewSet(BaseViewSet):
     serializer_class = IssueFlatSerializer
     model = Issue
 
-
     def perform_update(self, serializer):
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         current_instance = (
@@ -2385,7 +2388,6 @@ class IssueDraftViewSet(BaseViewSet):
             )
 
         return super().perform_update(serializer)
-    
 
     def perform_destroy(self, instance):
         current_instance = (
@@ -2405,7 +2407,6 @@ class IssueDraftViewSet(BaseViewSet):
                 ),
             )
         return super().perform_destroy(instance)
-
 
     def get_queryset(self):
         return (
@@ -2431,7 +2432,6 @@ class IssueDraftViewSet(BaseViewSet):
                 )
             )
         )
-
 
     @method_decorator(gzip_page)
     def list(self, request, slug, project_id):
@@ -2541,7 +2541,6 @@ class IssueDraftViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-
     def create(self, request, slug, project_id):
         try:
             project = Project.objects.get(pk=project_id)
@@ -2575,7 +2574,6 @@ class IssueDraftViewSet(BaseViewSet):
                 {"error": "Project was not found"}, status=status.HTTP_404_NOT_FOUND
             )
 
-
     def retrieve(self, request, slug, project_id, pk=None):
         try:
             issue = Issue.objects.get(
@@ -2586,4 +2584,68 @@ class IssueDraftViewSet(BaseViewSet):
             return Response(
                 {"error": "Issue Does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
-    
+
+
+class TransferProjectIssueEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    def post(self, request, slug, project_id):
+        try:
+            issue_ids = request.data.get("issue_ids", [])
+            transfer_project_id = request.data.get("transfer_project_id", False)
+
+            if not issue_ids or not transfer_project_id:
+                return Response(
+                    {"error": "Issue ids and transafer project id is required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # The project that all issues need to be transfered
+            transfer_project = Project.objects.get(
+                workspace__slug=slug, pk=transfer_project_id
+            )
+
+            # Fetch all the issues
+            issues = Issue.objects.filter(
+                workspace__slug=slug, project_id=project_id, pk__in=issue_ids
+            )
+
+            bulk_issues = []
+            for issue in issues:
+                issue.project_id = transfer_project_id
+                bulk_issues.append(issue)
+
+            moved_issues_count = Issue.objects.bulk_update(
+                bulk_issues, ["project_id"], batch_size=100
+            )
+
+            if moved_issues_count:
+                [
+                    issue_activity.delay(
+                        type="issue.transfer.activity",
+                        issue_id=str(issue.id),
+                        requested_data=json.dumps({"old_project_id": str(project_id)}),
+                        current_instance=None,
+                        project_id=transfer_project_id,
+                        actor_id=request.user.id,
+                    )
+                    for issue in bulk_issues
+                ]
+
+            return Response(
+                {"message": f"{moved_issues_count} issue(s) moved to {transfer_project.name}"},
+                status=status.HTTP_200_OK,
+            )
+        except Project.DoesNotExist:
+            return Response(
+                {"error": "Transfer project does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )

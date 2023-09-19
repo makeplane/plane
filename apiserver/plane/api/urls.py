@@ -93,6 +93,7 @@ from plane.api.views import (
     IssueRelationViewSet,
     CommentReactionViewSet,
     IssueDraftViewSet,
+    TransferProjectIssueEndpoint,
     ## End Issues
     # States
     StateViewSet,
@@ -855,6 +856,11 @@ urlpatterns = [
         "workspaces/<str:slug>/export-issues/",
         ExportIssuesEndpoint.as_view(),
         name="export-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/transfer-issues/",
+        TransferProjectIssueEndpoint.as_view(),
+        name="transfer-issues",
     ),
     ## End Issues
     ## Issue Activity
