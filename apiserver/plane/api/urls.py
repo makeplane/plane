@@ -102,8 +102,8 @@ from plane.api.views import (
     BulkEstimatePointEndpoint,
     ## End Estimates
     # Views
-    WorkspaceViewViewSet,
-    WorkspaceViewIssuesViewSet,
+    GlobalViewViewSet,
+    GlobalViewIssuesViewSet,
     IssueViewViewSet,
     ViewIssuesEndpoint,
     IssueViewFavoriteViewSet,
@@ -186,7 +186,6 @@ from plane.api.views import (
     ## Exporter
     ExportIssuesEndpoint,
     ## End Exporter
-
 )
 
 
@@ -243,7 +242,11 @@ urlpatterns = [
         UpdateUserTourCompletedEndpoint.as_view(),
         name="user-tour",
     ),
-    path("users/workspaces/<str:slug>/activities/", UserActivityEndpoint.as_view(), name="user-activities"),
+    path(
+        "users/workspaces/<str:slug>/activities/",
+        UserActivityEndpoint.as_view(),
+        name="user-activities",
+    ),
     # user workspaces
     path(
         "users/me/workspaces/",
@@ -653,17 +656,17 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/views/",
-        WorkspaceViewViewSet.as_view(
+        GlobalViewViewSet.as_view(
             {
                 "get": "list",
                 "post": "create",
             }
         ),
-        name="workspace-view",
+        name="global-view",
     ),
     path(
         "workspaces/<str:slug>/views/<uuid:pk>/",
-        WorkspaceViewViewSet.as_view(
+        GlobalViewViewSet.as_view(
             {
                 "get": "retrieve",
                 "put": "update",
@@ -671,16 +674,7 @@ urlpatterns = [
                 "delete": "destroy",
             }
         ),
-        name="workspace-view",
-    ),
-    path(
-        "workspaces/<str:slug>/views/<uuid:view_id>/issues/",
-        WorkspaceViewIssuesViewSet.as_view(
-            {
-                "get": "list",
-            }
-        ),
-        name="workspace-view-issues",
+        name="global-view",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-views/",
@@ -802,8 +796,12 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/issues/",
-        WorkSpaceIssuesEndpoint.as_view(),
-        name="workspace-issue",
+        GlobalViewIssuesViewSet.as_view(
+            {
+                "get": "list",
+            }
+        ),
+        name="global-view-issues",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-labels/",

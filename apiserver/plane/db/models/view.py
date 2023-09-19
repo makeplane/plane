@@ -6,9 +6,9 @@ from django.conf import settings
 from . import ProjectBaseModel, BaseModel
 
 
-class WorkspaceView(BaseModel):
+class GlobalView(BaseModel):
     workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_views"
+        "db.Workspace", on_delete=models.CASCADE, related_name="global_views"
     )
     name = models.CharField(max_length=255, verbose_name="View Name")
     description = models.TextField(verbose_name="View Description", blank=True)
@@ -19,9 +19,9 @@ class WorkspaceView(BaseModel):
     query_data = models.JSONField(default=dict)
 
     class Meta:
-        verbose_name = "Workspace View"
-        verbose_name_plural = "Workspace Views"
-        db_table = "workspace_views"
+        verbose_name = "Global View"
+        verbose_name_plural = "Global Views"
+        db_table = "global_views"
         ordering = ("-created_at",)
 
     def __str__(self):

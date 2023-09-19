@@ -24,7 +24,7 @@ from sentry_sdk import capture_exception
 # Module imports
 from . import BaseViewSet, BaseAPIView
 from plane.api.serializers import (
-    WorkspaceViewSerializer,
+    GlobalViewSerializer,
     IssueViewSerializer,
     IssueLiteSerializer,
     IssueViewFavoriteSerializer,
@@ -32,7 +32,7 @@ from plane.api.serializers import (
 from plane.api.permissions import WorkspaceEntityPermission, ProjectEntityPermission
 from plane.db.models import (
     Workspace,
-    WorkspaceView,
+    GlobalView,
     IssueView,
     Issue,
     IssueViewFavorite,
@@ -44,9 +44,9 @@ from plane.utils.issue_filters import issue_filters
 from plane.utils.grouper import group_results
 
 
-class WorkspaceViewViewSet(BaseViewSet):
-    serializer_class = WorkspaceViewSerializer
-    model = WorkspaceView
+class GlobalViewViewSet(BaseViewSet):
+    serializer_class = GlobalViewSerializer
+    model = GlobalView
     permission_classes = [
         WorkspaceEntityPermission,
     ]
@@ -66,7 +66,7 @@ class WorkspaceViewViewSet(BaseViewSet):
         )
 
 
-class WorkspaceViewIssuesViewSet(BaseViewSet):
+class GlobalViewIssuesViewSet(BaseViewSet):
     permission_classes = [
         WorkspaceEntityPermission,
     ]
@@ -80,6 +80,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 .values("count")
             )
             .filter(workspace__slug=self.kwargs.get("slug"))
+            .select_related("project")
             .select_related("workspace")
             .select_related("state")
             .select_related("parent")
@@ -95,7 +96,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
 
         
     @method_decorator(gzip_page)
-    def list(self, request, slug, view_id):
+    def list(self, request, slug):
         try:
             filters = issue_filters(request.query_params, "GET")
 
