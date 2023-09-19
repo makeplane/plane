@@ -39,6 +39,7 @@ def track_name(
     project,
     actor,
     issue_activities,
+    epoch
 ):
     if current_instance.get("name") != requested_data.get("name"):
         issue_activities.append(
@@ -52,6 +53,7 @@ def track_name(
                 project=project,
                 workspace=project.workspace,
                 comment=f"updated the name to {requested_data.get('name')}",
+                epoch=epoch,
             )
         )
 
@@ -64,6 +66,7 @@ def track_parent(
     project,
     actor,
     issue_activities,
+    epoch
 ):
     if current_instance.get("parent") != requested_data.get("parent"):
         if requested_data.get("parent") == None:
@@ -81,6 +84,7 @@ def track_parent(
                     comment=f"updated the parent issue to None",
                     old_identifier=old_parent.id,
                     new_identifier=None,
+                    epoch=epoch,
                 )
             )
         else:
@@ -101,6 +105,7 @@ def track_parent(
                     comment=f"updated the parent issue to {new_parent.name}",
                     old_identifier=old_parent.id if old_parent is not None else None,
                     new_identifier=new_parent.id,
+                    epoch=epoch,
                 )
             )
 
@@ -113,6 +118,7 @@ def track_priority(
     project,
     actor,
     issue_activities,
+    epoch
 ):
     if current_instance.get("priority") != requested_data.get("priority"):
         if requested_data.get("priority") == None:
@@ -127,6 +133,7 @@ def track_priority(
                     project=project,
                     workspace=project.workspace,
                     comment=f"updated the priority to None",
+                    epoch=epoch,
                 )
             )
         else:
@@ -141,6 +148,7 @@ def track_priority(
                     project=project,
                     workspace=project.workspace,
                     comment=f"updated the priority to {requested_data.get('priority')}",
+                    epoch=epoch,
                 )
             )
 
@@ -153,6 +161,7 @@ def track_state(
     project,
     actor,
     issue_activities,
+    epoch
 ):
     if current_instance.get("state") != requested_data.get("state"):
         new_state = State.objects.get(pk=requested_data.get("state", None))
@@ -171,6 +180,7 @@ def track_state(
                 comment=f"updated the state to {new_state.name}",
                 old_identifier=old_state.id,
                 new_identifier=new_state.id,
+                epoch=epoch,
             )
         )
 
@@ -183,6 +193,7 @@ def track_description(
     project,
     actor,
     issue_activities,
+    epoch
 ):
     if current_instance.get("description_html") != requested_data.get(
         "description_html"
@@ -203,6 +214,7 @@ def track_description(
                         project=project,
                         workspace=project.workspace,
                         comment=f"updated the description to {requested_data.get('description_html')}",
+                        epoch=epoch,
                     )
                 )
 
@@ -215,6 +227,7 @@ def track_target_date(
     project,
     actor,
     issue_activities,
+    epoch
 ):
     if current_instance.get("target_date") != requested_data.get("target_date"):
         if requested_data.get("target_date") == None:
@@ -229,6 +242,7 @@ def track_target_date(
                     project=project,
                     workspace=project.workspace,
                     comment=f"updated the target date to None",
+                    epoch=epoch,
                 )
             )
         else:
@@ -243,6 +257,7 @@ def track_target_date(
                     project=project,
                     workspace=project.workspace,
                     comment=f"updated the target date to {requested_data.get('target_date')}",
+                    epoch=epoch,
                 )
             )
 
@@ -255,6 +270,7 @@ def track_start_date(
     project,
     actor,
     issue_activities,
+    epoch
 ):
     if current_instance.get("start_date") != requested_data.get("start_date"):
         if requested_data.get("start_date") == None:
@@ -269,6 +285,7 @@ def track_start_date(
                     project=project,
                     workspace=project.workspace,
                     comment=f"updated the start date to None",
+                    epoch=epoch,
                 )
             )
         else:
@@ -283,6 +300,7 @@ def track_start_date(
                     project=project,
                     workspace=project.workspace,
                     comment=f"updated the start date to {requested_data.get('start_date')}",
+                    epoch=epoch,
                 )
             )
 
@@ -295,6 +313,7 @@ def track_labels(
     project,
     actor,
     issue_activities,
+    epoch
 ):
     # Label Addition
     if len(requested_data.get("labels_list")) > len(current_instance.get("labels")):
@@ -314,6 +333,7 @@ def track_labels(
                         comment=f"added label {label.name}",
                         new_identifier=label.id,
                         old_identifier=None,
+                        epoch=epoch,
                     )
                 )
 
@@ -335,6 +355,7 @@ def track_labels(
                         comment=f"removed label {label.name}",
                         old_identifier=label.id,
                         new_identifier=None,
+                        epoch=epoch,
                     )
                 )
 
@@ -347,6 +368,7 @@ def track_assignees(
     project,
     actor,
     issue_activities,
+    epoch
 ):
     # Assignee Addition
     if len(requested_data.get("assignees_list")) > len(
@@ -367,6 +389,7 @@ def track_assignees(
                         workspace=project.workspace,
                         comment=f"added assignee {assignee.display_name}",
                         new_identifier=assignee.id,
+                        epoch=epoch,
                     )
                 )
 
@@ -389,12 +412,13 @@ def track_assignees(
                         workspace=project.workspace,
                         comment=f"removed assignee {assignee.display_name}",
                         old_identifier=assignee.id,
+                        epoch=epoch,
                     )
                 )
 
 
 def create_issue_activity(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
         issue_activities.append(
             IssueActivity(
@@ -404,12 +428,13 @@ def create_issue_activity(
                 comment=f"created the issue",
                 verb="created",
                 actor=actor,
+                epoch=epoch,
             )
         )
 
 
 def track_estimate_points(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
     if current_instance.get("estimate_point") != requested_data.get("estimate_point"):
         if requested_data.get("estimate_point") == None:
@@ -424,6 +449,7 @@ def track_estimate_points(
                     project=project,
                     workspace=project.workspace,
                     comment=f"updated the estimate point to None",
+                    epoch=epoch,
                 )
             )
         else:
@@ -438,12 +464,13 @@ def track_estimate_points(
                     project=project,
                     workspace=project.workspace,
                     comment=f"updated the estimate point to {requested_data.get('estimate_point')}",
+                    epoch=epoch,
                 )
             )
 
 
 def track_archive_at(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
     if requested_data.get("archived_at") is None:
         issue_activities.append(
@@ -457,6 +484,7 @@ def track_archive_at(
                 field="archived_at",
                 old_value="archive",
                 new_value="restore",
+                epoch=epoch,
             )
         )
     else:
@@ -471,12 +499,13 @@ def track_archive_at(
                 field="archived_at",
                 old_value=None,
                 new_value="archive",
+                epoch=epoch,
             )
         )
 
 
 def track_closed_to(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
     if requested_data.get("closed_to") is not None:
         updated_state = State.objects.get(
@@ -496,12 +525,13 @@ def track_closed_to(
                 comment=f"Plane updated the state to {updated_state.name}",
                 old_identifier=None,
                 new_identifier=updated_state.id,
+                epoch=epoch,
             )
         )
 
 
 def update_issue_activity(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
     ISSUE_ACTIVITY_MAPPER = {
         "name": track_name,
@@ -533,11 +563,12 @@ def update_issue_activity(
                 project,
                 actor,
                 issue_activities,
+                epoch
             )
 
 
 def delete_issue_activity(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
     issue_activities.append(
         IssueActivity(
@@ -547,12 +578,13 @@ def delete_issue_activity(
             verb="deleted",
             actor=actor,
             field="issue",
+            epoch=epoch,
         )
     )
 
 
 def create_comment_activity(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
@@ -571,12 +603,13 @@ def create_comment_activity(
             new_value=requested_data.get("comment_html", ""),
             new_identifier=requested_data.get("id", None),
             issue_comment_id=requested_data.get("id", None),
+            epoch=epoch,
         )
     )
 
 
 def update_comment_activity(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
@@ -598,12 +631,13 @@ def update_comment_activity(
                 new_value=requested_data.get("comment_html", ""),
                 new_identifier=current_instance.get("id", None),
                 issue_comment_id=current_instance.get("id", None),
+                epoch=epoch,
             )
         )
 
 
 def delete_comment_activity(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
     issue_activities.append(
         IssueActivity(
@@ -614,12 +648,13 @@ def delete_comment_activity(
             verb="deleted",
             actor=actor,
             field="comment",
+            epoch=epoch,
         )
     )
 
 
 def create_cycle_issue_activity(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
@@ -651,6 +686,7 @@ def create_cycle_issue_activity(
                 comment=f"updated cycle from {old_cycle.name} to {new_cycle.name}",
                 old_identifier=old_cycle.id,
                 new_identifier=new_cycle.id,
+                epoch=epoch,
             )
         )
 
@@ -671,12 +707,13 @@ def create_cycle_issue_activity(
                 workspace=project.workspace,
                 comment=f"added cycle {cycle.name}",
                 new_identifier=cycle.id,
+                epoch=epoch,
             )
         )
 
 
 def delete_cycle_issue_activity(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
@@ -700,12 +737,13 @@ def delete_cycle_issue_activity(
                 workspace=project.workspace,
                 comment=f"removed this issue from {cycle.name if cycle is not None else None}",
                 old_identifier=cycle.id if cycle is not None else None,
+                epoch=epoch,
             )
         )
 
 
 def create_module_issue_activity(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
@@ -737,6 +775,7 @@ def create_module_issue_activity(
                 comment=f"updated module from {old_module.name} to {new_module.name}",
                 old_identifier=old_module.id,
                 new_identifier=new_module.id,
+                epoch=epoch,
             )
         )
 
@@ -756,12 +795,13 @@ def create_module_issue_activity(
                 workspace=project.workspace,
                 comment=f"added module {module.name}",
                 new_identifier=module.id,
+                epoch=epoch,
             )
         )
 
 
 def delete_module_issue_activity(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
@@ -785,12 +825,13 @@ def delete_module_issue_activity(
                 workspace=project.workspace,
                 comment=f"removed this issue from {module.name if module is not None else None}",
                 old_identifier=module.id if module is not None else None,
+                epoch=epoch,
             )
         )
 
 
 def create_link_activity(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
@@ -808,12 +849,13 @@ def create_link_activity(
             field="link",
             new_value=requested_data.get("url", ""),
             new_identifier=requested_data.get("id", None),
+            epoch=epoch,
         )
     )
 
 
 def update_link_activity(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
@@ -834,12 +876,13 @@ def update_link_activity(
                 old_identifier=current_instance.get("id"),
                 new_value=requested_data.get("url", ""),
                 new_identifier=current_instance.get("id", None),
+                epoch=epoch,
             )
         )
 
 
 def delete_link_activity(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
 
     current_instance = (
@@ -856,13 +899,14 @@ def delete_link_activity(
             actor=actor,
             field="link",
             old_value=current_instance.get("url", ""),
-            new_value=""
+            new_value="",
+            epoch=epoch,
         )
     )
 
 
 def create_attachment_activity(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
@@ -880,12 +924,13 @@ def create_attachment_activity(
             field="attachment",
             new_value=current_instance.get("asset", ""),
             new_identifier=current_instance.get("id", None),
+            epoch=epoch,
         )
     )
 
 
 def delete_attachment_activity(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
     issue_activities.append(
         IssueActivity(
@@ -896,11 +941,12 @@ def delete_attachment_activity(
             verb="deleted",
             actor=actor,
             field="attachment",
+            epoch=epoch,
         )
     )
 
 def create_issue_reaction_activity(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
     if requested_data and requested_data.get("reaction") is not None:
@@ -919,12 +965,13 @@ def create_issue_reaction_activity(
                     comment="added the reaction",
                     old_identifier=None,
                     new_identifier=issue_reaction,
+                    epoch=epoch,
                 )
             )
 
 
 def delete_issue_reaction_activity(
-        requested_data, current_instance, issue_id, project, actor, issue_activities
+        requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
@@ -943,12 +990,13 @@ def delete_issue_reaction_activity(
                 comment="removed the reaction",
                 old_identifier=current_instance.get("identifier"),
                 new_identifier=None,
+                epoch=epoch,
             )
         )
 
 
 def create_comment_reaction_activity(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
     if requested_data and requested_data.get("reaction") is not None:
@@ -968,12 +1016,13 @@ def create_comment_reaction_activity(
                     comment="added the reaction",
                     old_identifier=None,
                     new_identifier=comment_reaction_id,
+                    epoch=epoch,
                 )
             )
 
 
 def delete_comment_reaction_activity(
-        requested_data, current_instance, issue_id, project, actor, issue_activities
+        requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
@@ -994,12 +1043,13 @@ def delete_comment_reaction_activity(
                     comment="removed the reaction",
                     old_identifier=current_instance.get("identifier"),
                     new_identifier=None,
+                    epoch=epoch,
                 )
             )
 
 
 def create_issue_vote_activity(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
     if requested_data and requested_data.get("vote") is not None:
@@ -1016,12 +1066,13 @@ def create_issue_vote_activity(
                 comment="added the vote",
                 old_identifier=None,
                 new_identifier=None,
+                epoch=epoch,
             )
         )
 
 
 def delete_issue_vote_activity(
-        requested_data, current_instance, issue_id, project, actor, issue_activities
+        requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
@@ -1040,12 +1091,13 @@ def delete_issue_vote_activity(
                 comment="removed the vote",
                 old_identifier=current_instance.get("identifier"),
                 new_identifier=None,
+                epoch=epoch,
             )
         )
 
 
 def create_issue_relation_activity(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
@@ -1085,12 +1137,13 @@ def create_issue_relation_activity(
                     workspace=project.workspace,
                     comment=f'added {issue_relation.get("relation_type")} relation',
                     old_identifier=issue_relation.get("related_issue"),
+                    epoch=epoch,
                 )
             )
 
 
 def delete_issue_relation_activity(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
@@ -1114,6 +1167,7 @@ def delete_issue_relation_activity(
                     workspace=project.workspace,
                     comment=f'deleted {relation_type} relation',
                     old_identifier=current_instance.get("issue"),
+                    epoch=epoch,
                 )
             )
             issue = Issue.objects.get(pk=current_instance.get("related_issue"))
@@ -1129,12 +1183,13 @@ def delete_issue_relation_activity(
                     workspace=project.workspace,
                     comment=f'deleted {current_instance.get("relation_type")} relation',
                     old_identifier=current_instance.get("related_issue"),
+                    epoch=epoch,
                 )
             )
 
 
 def create_draft_issue_activity(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
         issue_activities.append(
             IssueActivity(
@@ -1145,12 +1200,13 @@ def create_draft_issue_activity(
                 field="draft",
                 verb="created",
                 actor=actor,
+                epoch=epoch,
             )
         )
 
 
 def update_draft_issue_activity(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
         requested_data = json.loads(requested_data) if requested_data is not None else None
         current_instance = (
@@ -1165,6 +1221,7 @@ def update_draft_issue_activity(
                     comment=f"created the issue",
                     verb="updated",
                     actor=actor,
+                    epoch=epoch,
                 )
             )
         else:
@@ -1177,13 +1234,14 @@ def update_draft_issue_activity(
                     field="draft",
                     verb="updated",
                     actor=actor,
+                    epoch=epoch,
                 )
             )
 
 
 
 def delete_draft_issue_activity(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
+    requested_data, current_instance, issue_id, project, actor, issue_activities, epoch
 ):
     issue_activities.append(
         IssueActivity(
@@ -1193,6 +1251,7 @@ def delete_draft_issue_activity(
             field="draft",
             verb="deleted",
             actor=actor,
+            epoch=epoch,
         )
     )
 
@@ -1205,6 +1264,7 @@ def issue_activity(
     issue_id,
     actor_id,
     project_id,
+    epoch,
     subscriber=True,
 ):
     try:
@@ -1281,6 +1341,7 @@ def issue_activity(
                 project,
                 actor,
                 issue_activities,
+                epoch,
             )
 
         # Save all the values to database

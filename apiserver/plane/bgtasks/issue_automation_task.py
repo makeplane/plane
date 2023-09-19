@@ -77,6 +77,7 @@ def archive_old_issues():
                             project_id=project_id,
                             current_instance=None,
                             subscriber=False,
+                            epoch = int(timezone.now().timestamp())
                         )
                         for issue in updated_issues
                     ]
@@ -148,6 +149,7 @@ def close_old_issues():
                             project_id=project_id,
                             current_instance=None,
                             subscriber=False,
+                            epoch = int(timezone.now().timestamp())
                         )
                         for issue in updated_issues
                     ]
