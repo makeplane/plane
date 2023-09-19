@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { startImageUpload } from "@/ui/editor/plugins/upload-image";
 import { cn } from "@/lib/utils";
-import { UploadImage } from "@/types/upload-file";
+import { UploadImage } from "@/types/upload-image";
 
 interface CommandItemProps {
   title: string;

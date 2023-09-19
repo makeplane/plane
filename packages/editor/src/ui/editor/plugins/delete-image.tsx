@@ -1,6 +1,6 @@
 import { EditorState, Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
 import { Node as ProseMirrorNode } from "@tiptap/pm/model";
-import { DeleteFileFunction } from "@/types/delete-file";
+import { DeleteImage } from "@/types/delete-image";
 
 const deleteKey = new PluginKey("delete-image");
 const IMAGE_NODE_TYPE = "image";
@@ -12,7 +12,7 @@ interface ImageNode extends ProseMirrorNode {
   };
 }
 
-const TrackImageDeletionPlugin = (deleteImage: DeleteFileFunction): Plugin =>
+const TrackImageDeletionPlugin = (deleteImage: DeleteImage): Plugin =>
   new Plugin({
     key: deleteKey,
     appendTransaction: (transactions: readonly Transaction[], oldState: EditorState, newState: EditorState) => {
@@ -55,7 +55,7 @@ const TrackImageDeletionPlugin = (deleteImage: DeleteFileFunction): Plugin =>
 
 export default TrackImageDeletionPlugin;
 
-async function onNodeDeleted(src: string, deleteImage: DeleteFileFunction): Promise<void> {
+async function onNodeDeleted(src: string, deleteImage: DeleteImage): Promise<void> {
   try {
     const assetUrlWithWorkspaceId = new URL(src).pathname.substring(1);
     const resStatus = await deleteImage(assetUrlWithWorkspaceId);

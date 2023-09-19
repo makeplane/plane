@@ -80,7 +80,7 @@
     "tlds": "^1.238.0",
     "use-debounce": "^9.0.4",
     "uuid": "^9.0.0",
-    "plane-editor": "*"
+    "@plane/editor": "*"
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.2",
@@ -101,8 +101,5 @@
     "tsconfig": "*",
     "tailwind-config": "*",
     "typescript": "4.7.4"
-  },
-  "resolutions": {
-    "prosemirror-model": "1.18.1"
   }
 }

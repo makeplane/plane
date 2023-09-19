@@ -1,7 +1,7 @@
 import { EditorProps } from "@tiptap/pm/view";
 import { findTableAncestor } from "@/ui/editor/menus/table-menu";
 import { startImageUpload } from "@/ui/editor/plugins/upload-image";
-import { UploadImage } from "@/types/upload-file";
+import { UploadImage } from "@/types/upload-image";
 
 export function TiptapEditorProps(
   workspaceSlug: string,

@@ -1,4 +1,4 @@
-import { UploadFileFunction, UploadImage } from "@/types/upload-file";
+import { UploadImage } from "@/types/upload-image";
 import { EditorState, Plugin, PluginKey } from "@tiptap/pm/state";
 import { Decoration, DecorationSet, EditorView } from "@tiptap/pm/view";
 
@@ -102,7 +102,7 @@ export async function startImageUpload(
 }
 
 const UploadImageHandler = (file: File, workspaceSlug: string,
-  uploadFile: UploadFileFunction
+  uploadFile: UploadImage
 ): Promise<string> => {
   if (!workspaceSlug) {
     return Promise.reject("Workspace slug is missing");

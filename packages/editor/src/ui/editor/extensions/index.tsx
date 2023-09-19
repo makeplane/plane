@@ -12,9 +12,6 @@ import Highlight from "@tiptap/extension-highlight";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { InputRule } from "@tiptap/core";
 import Gapcursor from "@tiptap/extension-gapcursor";
-import OrderedList from "@tiptap/extension-ordered-list";
-import ListItem from "@tiptap/extension-list-item";
-import BulletList from "@tiptap/extension-bullet-list";
 import { Table } from "@/ui/editor/extensions/table/table";
 import { TableHeader } from "@/ui/editor/extensions/table/table-header";
 import { TableRow } from "@tiptap/extension-table-row";
@@ -23,8 +20,8 @@ import { CustomTableCell } from "@/ui/editor/extensions/table/table-cell";
 import UpdatedImage from "@/ui/editor/extensions/image/updated-image";
 import SlashCommand from "@/ui/editor/extensions/slash-command";
 
-import { DeleteFileFunction } from "@/types/delete-file";
-import { UploadFileFunction } from "@/types/upload-file";
+import { DeleteImage } from "@/types/delete-image";
+import { UploadImage } from "@/types/upload-image";
 
 import isValidHttpUrl from "@/ui/editor/menus/bubble-menu/utils"
 
@@ -36,8 +33,8 @@ lowlight.registerLanguage("ts", ts);
 
 export const TiptapExtensions = (
   workspaceSlug: string,
-  uploadFile: UploadFileFunction,
-  deleteFile: DeleteFileFunction,
+  uploadFile: UploadImage,
+  deleteFile: DeleteImage,
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
 ) => [
     StarterKit.configure({
