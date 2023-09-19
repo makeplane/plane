@@ -273,11 +273,11 @@ const MembersSettings: NextPage = () => {
         user={user}
         onSuccess={() => mutateMembers()}
       />
-      <div className="flex flex-row gap-2">
-        <div className="w-80 py-8">
+      <div className="flex flex-row gap-2 h-full">
+        <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
           <SettingsSidebar />
         </div>
-        <section className="pr-9 py-8 w-full">
+        <section className="pr-9 py-8 w-full overflow-y-auto">
           <div className="flex items-center py-3.5 border-b border-custom-border-200">
             <h3 className="text-xl font-medium">Defaults</h3>
           </div>
@@ -334,7 +334,7 @@ const MembersSettings: NextPage = () => {
           </div>
 
           <div className="flex items-center justify-between gap-4 py-3.5 border-b border-custom-border-200">
-            <h4 className="text-xl font-medium border-b border-custom-border-100">Members</h4>
+            <h4 className="text-xl font-medium">Members</h4>
             <PrimaryButton onClick={() => setInviteModal(true)}>Add Member</PrimaryButton>
           </div>
           {!projectMembers || !projectInvitations ? (
@@ -386,11 +386,13 @@ const MembersSettings: NextPage = () => {
                             <h4 className="text-sm">{member.display_name || member.email}</h4>
                           )}
                           {isOwner && (
-                            <p className="mt-0.5 text-xs text-custom-text-200">{member.email}</p>
+                            <p className="mt-0.5 text-xs text-custom-sidebar-text-300">
+                              {member.email}
+                            </p>
                           )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 text-xs">
+                      <div className="flex items-center gap-3 text-xs">
                         {!member.member && (
                           <div className="mr-2 flex items-center justify-center rounded-full bg-yellow-500/20 px-2 py-1 text-center text-xs text-yellow-500">
                             Pending

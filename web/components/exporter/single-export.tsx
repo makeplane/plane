@@ -23,7 +23,7 @@ export const SingleExport: React.FC<Props> = ({ service, refreshing }) => {
   };
 
   return (
-    <div className="flex items-center justify-between gap-2 py-3">
+    <div className="flex items-center justify-between gap-2 px-4 py-3">
       <div>
         <h4 className="flex items-center gap-2 text-sm">
           <span>

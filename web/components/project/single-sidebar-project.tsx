@@ -25,6 +25,7 @@ import {
   PhotoFilterOutlined,
   SettingsOutlined,
 } from "@mui/icons-material";
+import { PenSquare } from "lucide-react";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
 // types
@@ -288,6 +289,16 @@ export const SingleSidebarProject: React.FC<Props> = observer((props) => {
                     </div>
                   </CustomMenu.MenuItem>
                 )}
+                <CustomMenu.MenuItem
+                  onClick={() =>
+                    router.push(`/${workspaceSlug}/projects/${project?.id}/draft-issues`)
+                  }
+                >
+                  <div className="flex items-center justify-start gap-2">
+                    <PenSquare className="!text-base !leading-4 w-[14px] h-[14px] text-custom-text-300" />
+                    <span>Draft Issues</span>
+                  </div>
+                </CustomMenu.MenuItem>
                 <CustomMenu.MenuItem
                   onClick={() => router.push(`/${workspaceSlug}/projects/${project?.id}/settings`)}
                 >
