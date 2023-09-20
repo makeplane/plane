@@ -14,15 +14,26 @@ const KanBanViewRoot = () => {
     project_slug: string;
   };
 
-  const store: RootStore = useMobxStore();
-  const { issueView: issueViewStore } = store;
+  const { issue: issueViewStore, workspace: workspaceStore, project: projectStore }: RootStore = useMobxStore();
 
   React.useEffect(() => {
     console.log("request init--->");
-    const init = async () => await issueViewStore.getProjectIssuesAsync(workspace_slug, project_slug);
+    const init = async () => {
+      workspaceStore.setWorkspaceId(workspace_slug);
+      await workspaceStore.getWorkspaces();
+      await workspaceStore.getWorkspaceLabels(workspace_slug);
+
+      projectStore.setProject(project_slug);
+      await projectStore.getWorkspaceProjects(workspace_slug);
+      await projectStore.getProjectStates(workspace_slug, project_slug);
+      await projectStore.getProjectLabels(workspace_slug, project_slug);
+      await projectStore.getProjectMembers(workspace_slug, project_slug);
+
+      await issueViewStore.getProjectIssuesAsync(workspace_slug, project_slug);
+    };
     if (workspace_slug && project_slug) init();
     console.log("request completed--->");
-  }, [workspace_slug, project_slug, issueViewStore]);
+  }, [workspace_slug, project_slug, issueViewStore, workspaceStore, projectStore]);
 
   return (
     <div className="w-screen min-h-[600px] h-screen">

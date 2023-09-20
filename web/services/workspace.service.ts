@@ -37,10 +37,7 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async createWorkspace(
-    data: Partial<IWorkspace>,
-    user: ICurrentUserResponse | undefined
-  ): Promise<IWorkspace> {
+  async createWorkspace(data: Partial<IWorkspace>, user: ICurrentUserResponse | undefined): Promise<IWorkspace> {
     return this.post("/api/workspaces/", data)
       .then((response) => {
         trackEventServices.trackWorkspaceEvent(response.data, "CREATE_WORKSPACE", user);
@@ -66,10 +63,7 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async deleteWorkspace(
-    workspaceSlug: string,
-    user: ICurrentUserResponse | undefined
-  ): Promise<any> {
+  async deleteWorkspace(workspaceSlug: string, user: ICurrentUserResponse | undefined): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/`)
       .then((response) => {
         trackEventServices.trackWorkspaceEvent({ workspaceSlug }, "DELETE_WORKSPACE", user);
@@ -101,13 +95,9 @@ export class WorkspaceService extends APIService {
     data: any,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
-    return this.post(
-      `/api/users/me/invitations/workspaces/${workspaceSlug}/${invitationId}/join/`,
-      data,
-      {
-        headers: {},
-      }
-    )
+    return this.post(`/api/users/me/invitations/workspaces/${workspaceSlug}/${invitationId}/join/`, data, {
+      headers: {},
+    })
       .then((response) => {
         trackEventServices.trackWorkspaceEvent(response.data, "WORKSPACE_USER_INVITE_ACCEPT", user);
         return response?.data;
@@ -165,10 +155,7 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async updateWorkspaceView(
-    workspaceSlug: string,
-    data: { view_props: IWorkspaceViewProps }
-  ): Promise<any> {
+  async updateWorkspaceView(workspaceSlug: string, data: { view_props: IWorkspaceViewProps }): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/workspace-views/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -204,9 +191,7 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async workspaceInvitationsWithEmail(
-    workspaceSlug: string
-  ): Promise<IWorkspaceMemberInvitation[]> {
+  async workspaceInvitationsWithEmail(workspaceSlug: string): Promise<IWorkspaceMemberInvitation[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/invitations/`)
       .then((response) => response?.data)
       .catch((error) => {

@@ -10,7 +10,7 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 // store default data
-import { stateGroups } from "store/issue-views/issue_data";
+import { stateGroups } from "store/helpers/issue-data";
 
 export const FilterState = observer(() => {
   const store: RootStore = useMobxStore();

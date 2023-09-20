@@ -19,7 +19,42 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 
 export const IssuesRoot = observer(() => {
-  const { issueFilters: issueFilterStore }: RootStore = useMobxStore();
+  const {
+    workspace: workspaceStore,
+    project: projectStore,
+    issue: issueStore,
+    issueFilter: issueFilterStore,
+  }: RootStore = useMobxStore();
+
+  // console.log("---");
+  // console.log("--- workspace store");
+  // console.log("workspaces", workspaceStore?.workspaces);
+  // console.log("workspace id", workspaceStore?.workspaceId);
+  // console.log("current workspace", workspaceStore?.currentWorkspace);
+  // console.log("workspace by id", workspaceStore?.workspaceById("plane"));
+  // console.log("workspace labels", workspaceStore?.workspaceLabels);
+  // console.log("workspace label by id", workspaceStore?.workspaceLabelById("1fe1031b-8986-4e6a-86cc-0d2fe3ac272f"));
+
+  // console.log("--- project store");
+  // console.log("workspace projects", projectStore?.workspaceProjects);
+  // console.log("project id", projectStore?.projectId);
+  // console.log("project state by groups", projectStore?.projectStatesByGroups);
+  // console.log("project states", projectStore?.projectStates);
+  // console.log("project labels", projectStore?.projectLabels);
+  // console.log("project members", projectStore?.projectMembers);
+  // projectStore?.projectStates &&
+  //   console.log("project state by id", projectStore?.projectStateById(projectStore?.projectStates?.[0]?.id));
+  // projectStore?.projectLabels &&
+  //   console.log("project label by id", projectStore?.projectLabelById(projectStore?.projectLabels?.[0]?.id));
+  // projectStore?.projectMembers &&
+  //   console.log("project member by id", projectStore?.projectMemberById(projectStore?.projectMembers?.[0]?.id));
+
+  // console.log("--- issue filter store");
+  // console.log("issues filters", issueFilterStore?.issueFilters);
+
+  // console.log("--- issue store");
+  // console.log("issues", issueStore?.issues);
+  // console.log("---");
 
   return (
     <div className="w-full h-full relative flex flex-col overflow-hidden">

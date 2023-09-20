@@ -31,10 +31,7 @@ class IssuesStore {
   loadIssues = async (workspaceSlug: string, projectId: string) => {
     this.isIssuesLoading = true;
     try {
-      const issuesResponse: IIssue[] = (await issueService.getIssuesWithParams(
-        workspaceSlug,
-        projectId
-      )) as IIssue[];
+      const issuesResponse: IIssue[] = (await issueService.getIssuesWithParams(workspaceSlug, projectId)) as IIssue[];
 
       const issues: { [kye: string]: IIssue } = {};
       issuesResponse.forEach((issue) => {
@@ -51,11 +48,7 @@ class IssuesStore {
     }
   };
 
-  getIssueById = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string
-  ): Promise<IIssue> => {
+  getIssueById = async (workspaceSlug: string, projectId: string, issueId: string): Promise<IIssue> => {
     if (this.issues[issueId]) return this.issues[issueId];
 
     try {
@@ -83,12 +76,7 @@ class IssuesStore {
     user: ICurrentUserResponse
   ): Promise<IIssue> => {
     try {
-      const issueResponse = await issueService.createIssues(
-        workspaceSlug,
-        projectId,
-        issueForm,
-        user
-      );
+      const issueResponse = await issueService.createIssues(workspaceSlug, projectId, issueForm, user);
 
       const issues = {
         ...this.issues,
@@ -125,13 +113,7 @@ class IssuesStore {
       });
 
       // make a patch request to update the issue
-      const issueResponse: IIssue = await issueService.patchIssue(
-        workspaceSlug,
-        projectId,
-        issueId,
-        issueForm,
-        user
-      );
+      const issueResponse: IIssue = await issueService.patchIssue(workspaceSlug, projectId, issueId, issueForm, user);
 
       const updatedIssues = { ...this.issues };
       updatedIssues[issueId] = { ...issueResponse };
@@ -149,12 +131,7 @@ class IssuesStore {
     }
   };
 
-  deleteIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    user: ICurrentUserResponse
-  ) => {
+  deleteIssue = async (workspaceSlug: string, projectId: string, issueId: string, user: ICurrentUserResponse) => {
     const issues = { ...this.issues };
     delete issues[issueId];
 

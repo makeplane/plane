@@ -115,9 +115,7 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
                 noHeader={noHeader}
               />
               <div className="h-full w-full overflow-hidden">
-                <div className="relative h-full w-full overflow-x-hidden overflow-y-scroll">
-                  {children}
-                </div>
+                <div className="relative h-full w-full overflow-x-hidden overflow-y-scroll">{children}</div>
               </div>
             </main>
           )}

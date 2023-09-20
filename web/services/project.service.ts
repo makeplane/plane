@@ -87,11 +87,7 @@ export class ProjectServices extends APIService {
       });
   }
 
-  async deleteProject(
-    workspaceSlug: string,
-    projectId: string,
-    user: ICurrentUserResponse | undefined
-  ): Promise<any> {
+  async deleteProject(workspaceSlug: string, projectId: string, user: ICurrentUserResponse | undefined): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`)
       .then((response) => {
         trackEventServices.trackProjectEvent({ projectId }, "DELETE_PROJECT", user);
@@ -136,11 +132,7 @@ export class ProjectServices extends APIService {
       });
   }
 
-  async leaveProject(
-    workspaceSlug: string,
-    projectId: string,
-    user: ICurrentUserResponse
-  ): Promise<any> {
+  async leaveProject(workspaceSlug: string, projectId: string, user: ICurrentUserResponse): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/leave/`)
       .then((response) => {
         trackEventServices.trackProjectEvent(
@@ -175,10 +167,7 @@ export class ProjectServices extends APIService {
       });
   }
 
-  async projectMembersWithEmail(
-    workspaceSlug: string,
-    projectId: string
-  ): Promise<IProjectMember[]> {
+  async projectMembersWithEmail(workspaceSlug: string, projectId: string): Promise<IProjectMember[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -194,11 +183,7 @@ export class ProjectServices extends APIService {
       });
   }
 
-  async getProjectMember(
-    workspaceSlug: string,
-    projectId: string,
-    memberId: string
-  ): Promise<IProjectMember> {
+  async getProjectMember(workspaceSlug: string, projectId: string, memberId: string): Promise<IProjectMember> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/${memberId}/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -212,34 +197,22 @@ export class ProjectServices extends APIService {
     memberId: string,
     data: Partial<IProjectMember>
   ): Promise<IProjectMember> {
-    return this.patch(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/members/${memberId}/`,
-      data
-    )
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/${memberId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async deleteProjectMember(
-    workspaceSlug: string,
-    projectId: string,
-    memberId: string
-  ): Promise<any> {
-    return this.delete(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/members/${memberId}/`
-    )
+  async deleteProjectMember(workspaceSlug: string, projectId: string, memberId: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/${memberId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async projectInvitations(
-    workspaceSlug: string,
-    projectId: string
-  ): Promise<IProjectMemberInvitation[]> {
+  async projectInvitations(workspaceSlug: string, projectId: string): Promise<IProjectMemberInvitation[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/invitations/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -247,10 +220,7 @@ export class ProjectServices extends APIService {
       });
   }
 
-  async projectInvitationsWithEmail(
-    workspaceSlug: string,
-    projectId: string
-  ): Promise<IProjectMemberInvitation[]> {
+  async projectInvitationsWithEmail(workspaceSlug: string, projectId: string): Promise<IProjectMemberInvitation[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/invitations/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -258,28 +228,16 @@ export class ProjectServices extends APIService {
       });
   }
 
-  async updateProjectInvitation(
-    workspaceSlug: string,
-    projectId: string,
-    invitationId: string
-  ): Promise<any> {
-    return this.put(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/invitations/${invitationId}/`
-    )
+  async updateProjectInvitation(workspaceSlug: string, projectId: string, invitationId: string): Promise<any> {
+    return this.put(`/api/workspaces/${workspaceSlug}/projects/${projectId}/invitations/${invitationId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async deleteProjectInvitation(
-    workspaceSlug: string,
-    projectId: string,
-    invitationId: string
-  ): Promise<any> {
-    return this.delete(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/invitations/${invitationId}/`
-    )
+  async deleteProjectInvitation(workspaceSlug: string, projectId: string, invitationId: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/invitations/${invitationId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -332,11 +290,7 @@ export class ProjectServices extends APIService {
       });
   }
 
-  async getProjectGithubRepository(
-    workspaceSlug: string,
-    projectId: string,
-    integrationId: string
-  ): Promise<any> {
+  async getProjectGithubRepository(workspaceSlug: string, projectId: string, integrationId: string): Promise<any> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/workspace-integrations/${integrationId}/github-repository-sync/`
     )

@@ -14,7 +14,7 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 // default data
-import { issueFilterVisibilityData } from "store/issue-views/issue_data";
+import { issueFilterVisibilityData } from "store/helpers/issue-data";
 
 export const FilterSelection = observer(() => {
   const store: RootStore = useMobxStore();
