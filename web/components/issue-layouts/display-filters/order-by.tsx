@@ -7,15 +7,16 @@ import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
+import { ISSUE_ORDER_BY_OPTIONS } from "constants/issue";
 
 export const FilterOrderBy = observer(() => {
   const store: RootStore = useMobxStore();
-  const { issueFilters: issueFilterStore } = store;
+  const { issueFilter: issueFilterStore } = store;
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
   const handleOrderBy = (key: string, value: string) => {
-    issueFilterStore.handleUserFilter("display_filters", key, value);
+    // issueFilterStore.handleUserFilter("display_filters", key, value);
   };
 
   return (
@@ -27,17 +28,15 @@ export const FilterOrderBy = observer(() => {
       />
       {previewEnabled && (
         <div className="space-y-[2px] pt-1">
-          {issueFilterStore?.issueRenderFilters?.order_by &&
-            issueFilterStore?.issueRenderFilters?.order_by.length > 0 &&
-            issueFilterStore?.issueRenderFilters?.order_by.map((_orderBy) => (
-              <FilterOption
-                key={_orderBy?.key}
-                isChecked={issueFilterStore?.userFilters?.display_filters?.order_by === _orderBy?.key ? true : false}
-                onClick={() => handleOrderBy("order_by", _orderBy?.key)}
-                title={_orderBy.title}
-                multiple={false}
-              />
-            ))}
+          {ISSUE_ORDER_BY_OPTIONS.map((_orderBy) => (
+            <FilterOption
+              key={_orderBy?.key}
+              isChecked={issueFilterStore?.userDisplayFilters?.order_by === _orderBy?.key ? true : false}
+              onClick={() => handleOrderBy("order_by", _orderBy?.key)}
+              title={_orderBy.title}
+              multiple={false}
+            />
+          ))}
         </div>
       )}
     </div>

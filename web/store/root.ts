@@ -4,8 +4,8 @@ import { enableStaticRendering } from "mobx-react-lite";
 import UserStore from "./user";
 import ThemeStore from "./theme";
 import ProjectPublishStore, { IProjectPublishStore } from "./project_publish";
-import IssueStore, { IIssueStore } from "./issue_store.legacy";
-import DraftIssuesStore from "./draft_issue";
+import IssueStore, { IIssueStore } from "./issue";
+import DraftIssuesStore from "./issue_draft";
 import WorkspaceStore, { IWorkspaceStore } from "./workspace";
 import ProjectStore, { IProjectStore } from "./project";
 import ModuleStore, { IModuleStore } from "./modules";
@@ -13,7 +13,7 @@ import CycleStore, { ICycleStore } from "./cycles";
 import ViewStore, { IViewStore } from "./views";
 import IssueFilterStore, { IIssueFilterStore } from "./issue_filters";
 import IssueViewDetailStore from "./issue_detail";
-import IssueKanBanViewStore from "./kanban-view";
+import IssueKanBanViewStore from "./kanban_view";
 
 enableStaticRendering(typeof window === "undefined");
 

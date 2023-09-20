@@ -1,121 +1,182 @@
-export const GROUP_BY_OPTIONS: Array<{
-  name: string;
-  key: TIssueGroupByOptions;
-}> = [
-  { name: "States", key: "state" },
-  { name: "State Groups", key: "state_detail.group" },
-  { name: "Priority", key: "priority" },
-  { name: "Project", key: "project" },
-  { name: "Labels", key: "labels" },
-  { name: "Assignees", key: "assignees" },
-  { name: "Created by", key: "created_by" },
-  { name: "None", key: null },
+export const ISSUE_PRIORITIES = [
+  { key: "urgent", title: "Urgent" },
+  { key: "high", title: "High" },
+  { key: "medium", title: "Medium" },
+  { key: "low", title: "Low" },
+  { key: "none", title: "None" },
 ];
 
-export const ORDER_BY_OPTIONS: Array<{
-  name: string;
-  key: TIssueOrderByOptions;
-}> = [
-  { name: "Manual", key: "sort_order" },
-  { name: "Last created", key: "-created_at" },
-  { name: "Last updated", key: "-updated_at" },
-  { name: "Start date", key: "start_date" },
-  { name: "Priority", key: "priority" },
+export const ISSUE_STATE_GROUPS = [
+  { key: "backlog", title: "Backlog" },
+  { key: "unstarted", title: "Unstarted" },
+  { key: "started", title: "Started" },
+  { key: "completed", title: "Completed" },
+  { key: "cancelled", title: "Cancelled" },
 ];
 
-export const FILTER_ISSUE_OPTIONS: Array<{
-  name: string;
-  key: "active" | "backlog" | null;
-}> = [
-  {
-    name: "All",
-    key: null,
-  },
-  {
-    name: "Active Issues",
-    key: "active",
-  },
-  {
-    name: "Backlog Issues",
-    key: "backlog",
-  },
+export const ISSUE_START_DATE_OPTIONS = [
+  { key: "last_week", title: "Last Week" },
+  { key: "2_weeks_from_now", title: "2 weeks from now" },
+  { key: "1_month_from_now", title: "1 month from now" },
+  { key: "2_months_from_now", title: "2 months from now" },
+  { key: "custom", title: "Custom" },
 ];
 
-import { orderArrayBy } from "helpers/array.helper";
-import { IIssue, TIssueGroupByOptions, TIssueOrderByOptions } from "types";
+export const ISSUE_DUE_DATE_OPTIONS = [
+  { key: "last_week", title: "Last Week" },
+  { key: "2_weeks_from_now", title: "2 weeks from now" },
+  { key: "1_month_from_now", title: "1 month from now" },
+  { key: "2_months_from_now", title: "2 months from now" },
+  { key: "custom", title: "Custom" },
+];
 
-type THandleIssuesMutation = (
-  formData: Partial<IIssue>,
-  oldGroupTitle: string,
-  selectedGroupBy: TIssueGroupByOptions,
-  issueIndex: number,
-  orderBy: TIssueOrderByOptions,
-  prevData?:
-    | {
-        [key: string]: IIssue[];
-      }
-    | IIssue[]
-) =>
-  | {
-      [key: string]: IIssue[];
-    }
-  | IIssue[]
-  | undefined;
+export const ISSUE_GROUP_BY_OPTIONS = [
+  { key: "state", title: "States" },
+  { key: "state_detail.group", title: "State Groups" },
+  { key: "priority", title: "Priority" },
+  { key: "project", title: "Project" }, // required this on my issues
+  { key: "labels", title: "Labels" },
+  { key: "assignees", title: "Assignees" },
+  { key: "created_by", title: "Created By" },
+];
 
-export const handleIssuesMutation: THandleIssuesMutation = (
-  formData,
-  oldGroupTitle,
-  selectedGroupBy,
-  issueIndex,
-  orderBy,
-  prevData
-) => {
-  if (!prevData) return prevData;
+export const ISSUE_ORDER_BY_OPTIONS = [
+  { key: "sort_order", title: "Manual" },
+  { key: "created_at", title: "Last Created" },
+  { key: "updated_at", title: "Last Updated" },
+  { key: "start_date", title: "Start Date" },
+  { key: "priority", title: "Priority" },
+];
 
-  if (Array.isArray(prevData)) {
-    const updatedIssue = {
-      ...prevData[issueIndex],
-      ...formData,
-      assignees: formData?.assignees_list ?? prevData[issueIndex]?.assignees,
-      labels: formData?.labels_list ?? prevData[issueIndex]?.labels,
-    };
+export const ISSUE_FILTER_OPTIONS = [
+  { key: "all", title: "All" },
+  { key: "active", title: "Active Issues" },
+  { key: "backlog", title: "Backlog Issues" },
+  // { key: "draft", title: "Draft Issues" },
+];
 
-    prevData.splice(issueIndex, 1, updatedIssue);
+export const ISSUE_DISPLAY_PROPERTIES = [
+  { key: "assignee", title: "Assignee" },
+  { key: "start_date", title: "Start Date" },
+  { key: "due_date", title: "Due Date" },
+  { key: "key", title: "ID" },
+  { key: "labels", title: "Labels" },
+  { key: "priority", title: "Priority" },
+  { key: "state", title: "State" },
+  { key: "sub_issue_count", title: "Sub Issue Count" },
+  { key: "attachment_count", title: "Attachment Count" },
+  { key: "link", title: "Link" },
+  { key: "estimate", title: "Estimate" },
+];
 
-    return [...prevData];
-  } else {
-    const oldGroup = prevData[oldGroupTitle ?? ""] ?? [];
+export const ISSUE_EXTRA_PROPERTIES = [
+  { key: "sub_issue", title: "Show sub-issues" }, // in spreadsheet its always false
+  { key: "show_empty_groups", title: "Show empty states" }, // filter on front-end
+  { key: "calendar_date_range", title: "Calendar Date Range" }, // calendar date range yyyy-mm-dd;before range yyyy-mm-dd;after
+  { key: "start_target_date", title: "Start target Date" }, // gantt always be true
+];
 
-    let newGroup: IIssue[] = [];
+export const ISSUE_LAYOUTS = [
+  { key: "list", title: "List View" },
+  { key: "kanban", title: "Kanban View" },
+  { key: "calendar", title: "Calendar View" },
+  { key: "spreadsheet", title: "Spreadsheet View" },
+  { key: "gantt_chart", title: "Gantt Chart View" },
+];
 
-    if (selectedGroupBy === "priority") newGroup = prevData[formData.priority ?? ""] ?? [];
-    else if (selectedGroupBy === "state") newGroup = prevData[formData.state ?? ""] ?? [];
+export const ISSUE_LIST_FILTERS = [
+  { key: "priority", title: "Priority" },
+  { key: "state", title: "State" },
+  { key: "assignees", title: "Assignees" },
+  { key: "created_by", title: "Created By" },
+  { key: "labels", title: "Labels" },
+  { key: "start_date", title: "Start Date" },
+  { key: "due_date", title: "Due Date" },
+];
 
-    const updatedIssue = {
-      ...oldGroup[issueIndex],
-      ...formData,
-      assignees: formData?.assignees_list ?? oldGroup[issueIndex]?.assignees,
-      labels: formData?.labels_list ?? oldGroup[issueIndex]?.labels,
-    };
+export const ISSUE_KANBAN_FILTERS = [
+  { key: "priority", title: "Priority" },
+  { key: "state", title: "State" },
+  { key: "assignees", title: "Assignees" },
+  { key: "created_by", title: "Created By" },
+  { key: "labels", title: "Labels" },
+  { key: "start_date", title: "Start Date" },
+  { key: "due_date", title: "Due Date" },
+];
 
-    if (selectedGroupBy !== Object.keys(formData)[0])
-      return {
-        ...prevData,
-        [oldGroupTitle ?? ""]: orderArrayBy(
-          oldGroup.map((i) => (i.id === updatedIssue.id ? updatedIssue : i)),
-          orderBy
-        ),
-      };
+export const ISSUE_CALENDER_FILTERS = [
+  { key: "priority", title: "Priority" },
+  { key: "state", title: "State" },
+  { key: "assignees", title: "Assignees" },
+  { key: "created_by", title: "Created By" },
+  { key: "labels", title: "Labels" },
+];
 
-    const groupThatIsUpdated = selectedGroupBy === "priority" ? formData.priority : formData.state;
+export const ISSUE_SPREADSHEET_FILTERS = [
+  { key: "priority", title: "Priority" },
+  { key: "state", title: "State" },
+  { key: "assignees", title: "Assignees" },
+  { key: "created_by", title: "Created By" },
+  { key: "labels", title: "Labels" },
+  { key: "start_date", title: "Start Date" },
+  { key: "due_date", title: "Due Date" },
+];
 
-    return {
-      ...prevData,
-      [oldGroupTitle ?? ""]: orderArrayBy(
-        oldGroup.filter((i) => i.id !== updatedIssue.id),
-        orderBy
-      ),
-      [groupThatIsUpdated ?? ""]: orderArrayBy([...newGroup, updatedIssue], orderBy),
-    };
-  }
+export const ISSUE_GANTT_FILTERS = [
+  { key: "priority", title: "Priority" },
+  { key: "state", title: "State" },
+  { key: "assignees", title: "Assignees" },
+  { key: "created_by", title: "Created By" },
+  { key: "labels", title: "Labels" },
+  { key: "start_date", title: "Start Date" },
+  { key: "due_date", title: "Due Date" },
+];
+
+export const ISSUE_LIST_DISPLAY_FILTERS = [
+  { key: "group_by", title: "Group By" },
+  { key: "order_by", title: "Order By" },
+  { key: "issue_type", title: "Issue Type" },
+  { key: "sub_issue", title: "Sub Issue" },
+  { key: "show_empty_groups", title: "Show Empty Groups" },
+];
+
+export const ISSUE_KANBAN_DISPLAY_FILTERS = [
+  { key: "group_by", title: "Group By" },
+  { key: "order_by", title: "Order By" },
+  { key: "issue_type", title: "Issue Type" },
+  { key: "sub_issue", title: "Sub Issue" },
+  { key: "show_empty_groups", title: "Show Empty Groups" },
+];
+
+export const ISSUE_CALENDER_DISPLAY_FILTERS = [{ key: "issue_type", title: "Issue Type" }];
+
+export const ISSUE_SPREADSHEET_DISPLAY_FILTERS = [{ key: "issue_type", title: "Issue Type" }];
+
+export const ISSUE_GANTT_DISPLAY_FILTERS = [
+  { key: "order_by", title: "Order By" },
+  { key: "issue_type", title: "Issue Type" },
+  { key: "sub_issue", title: "Sub Issue" },
+];
+
+export const ISSUE_EXTRA_DISPLAY_PROPERTIES = {
+  list: {
+    access: true,
+    values: ["show_empty_groups", "sub_issue"],
+  },
+  kanban: {
+    access: true,
+    values: ["show_empty_groups", "sub_issue"],
+  },
+  calendar: {
+    access: false,
+    values: [],
+  },
+  spreadsheet: {
+    access: false,
+    values: [],
+  },
+  gantt_chart: {
+    access: true,
+    values: ["sub_issue"],
+  },
 };

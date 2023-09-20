@@ -7,25 +7,27 @@ import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
+import { ISSUE_EXTRA_PROPERTIES } from "constants/issue";
 // default data
-import { issueFilterVisibilityData } from "store/helpers/issue-data";
+// import { issueFilterVisibilityData } from "helpers/issue.helper";
 
 export const FilterExtraOptions = observer(() => {
   const store: RootStore = useMobxStore();
-  const { issueFilters: issueFilterStore } = store;
+  const { issueFilter: issueFilterStore } = store;
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
   const handleExtraOptions = (key: string, value: boolean) => {
-    issueFilterStore.handleUserFilter("display_filters", key, !value);
+    // issueFilterStore.handleUserFilter("display_filters", key, !value);
   };
 
-  const handleExtraOptionsSectionVisibility = (key: string) =>
-    issueFilterStore?.issueView &&
-    issueFilterStore?.issueLayout &&
-    issueFilterVisibilityData[issueFilterStore?.issueView === "my_issues" ? "my_issues" : "issues"]?.extra_options?.[
-      issueFilterStore?.issueLayout
-    ].values?.includes(key);
+  const handleExtraOptionsSectionVisibility = (key: string) => {
+    // issueFilterStore?.issueView &&
+    // issueFilterStore?.issueLayout &&
+    // issueFilterVisibilityData[issueFilterStore?.issueView === "my_issues" ? "my_issues" : "issues"]?.extra_options?.[
+    //   issueFilterStore?.issueLayout
+    // ].values?.includes(key);
+  };
 
   return (
     <div>
@@ -36,24 +38,16 @@ export const FilterExtraOptions = observer(() => {
       />
       {previewEnabled && (
         <div className="space-y-[2px] pt-1">
-          {issueFilterStore?.issueRenderFilters?.extra_properties &&
-            issueFilterStore?.issueRenderFilters?.extra_properties.length > 0 &&
-            issueFilterStore?.issueRenderFilters?.extra_properties.map(
-              (_extraProperties) =>
-                handleExtraOptionsSectionVisibility(_extraProperties?.key) && (
-                  <FilterOption
-                    key={_extraProperties?.key}
-                    isChecked={issueFilterStore?.userFilters?.display_filters?.[_extraProperties?.key] ? true : false}
-                    onClick={() =>
-                      handleExtraOptions(
-                        _extraProperties?.key,
-                        issueFilterStore?.userFilters?.display_filters?.[_extraProperties?.key]
-                      )
-                    }
-                    title={_extraProperties.title}
-                  />
-                )
-            )}
+          {ISSUE_EXTRA_PROPERTIES.map((_extraProperties) => (
+            <FilterOption
+              key={_extraProperties?.key}
+              isChecked={issueFilterStore?.userDisplayFilters?.[_extraProperties?.key] ? true : false}
+              onClick={() =>
+                handleExtraOptions(_extraProperties?.key, issueFilterStore?.userDisplayFilters?.[_extraProperties?.key])
+              }
+              title={_extraProperties.title}
+            />
+          ))}
         </div>
       )}
     </div>

@@ -36,7 +36,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { LayerDiagonalIcon } from "components/icons";
 // helpers
-import { handleIssuesMutation } from "constants/issue";
+import { handleIssuesMutation } from "helpers/issue.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { ICurrentUserResponse, IIssue, IIssueViewProps, ISubIssueResponse, UserAuth } from "types";

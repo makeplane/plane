@@ -1,5 +1,6 @@
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 import { IIssue } from "types";
+import { RootStore } from "./root";
 
 export interface IIssueStore {
   loader: boolean;
@@ -16,13 +17,16 @@ class IssueStore implements IIssueStore {
     };
   } = {};
 
-  constructor() {
+  rootStore;
+
+  constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observable
       loader: observable.ref,
       error: observable.ref,
       issues: observable.ref,
     });
+    this.rootStore = _rootStore;
   }
 
   fetchIssuesWithParams() {}

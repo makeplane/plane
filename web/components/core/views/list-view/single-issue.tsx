@@ -34,7 +34,7 @@ import {
 import { LayerDiagonalIcon } from "components/icons";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
-import { handleIssuesMutation } from "constants/issue";
+import { handleIssuesMutation } from "helpers/issue.helper";
 // types
 import {
   ICurrentUserResponse,

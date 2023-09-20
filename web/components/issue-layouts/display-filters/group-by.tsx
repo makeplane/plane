@@ -7,15 +7,16 @@ import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
+import { ISSUE_GROUP_BY_OPTIONS } from "constants/issue";
 
 export const FilterGroupBy = observer(() => {
   const store: RootStore = useMobxStore();
-  const { issueFilters: issueFilterStore } = store;
+  const { issueFilter: issueFilterStore } = store;
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
   const handleGroupBy = (key: string, value: string) => {
-    issueFilterStore.handleUserFilter("display_filters", key, value);
+    // issueFilterStore.handleUserFilter("display_filters", key, value);
   };
 
   return (
@@ -27,17 +28,15 @@ export const FilterGroupBy = observer(() => {
       />
       {previewEnabled && (
         <div className="space-y-[2px] pt-1">
-          {issueFilterStore?.issueRenderFilters?.group_by &&
-            issueFilterStore?.issueRenderFilters?.group_by.length > 0 &&
-            issueFilterStore?.issueRenderFilters?.group_by.map((_groupBy) => (
-              <FilterOption
-                key={_groupBy?.key}
-                isChecked={issueFilterStore?.userFilters?.display_filters?.group_by === _groupBy?.key ? true : false}
-                onClick={() => handleGroupBy("group_by", _groupBy?.key)}
-                title={_groupBy.title}
-                multiple={false}
-              />
-            ))}
+          {ISSUE_GROUP_BY_OPTIONS.map((_groupBy) => (
+            <FilterOption
+              key={_groupBy?.key}
+              isChecked={issueFilterStore?.userDisplayFilters?.group_by === _groupBy?.key ? true : false}
+              onClick={() => handleGroupBy("group_by", _groupBy?.key)}
+              title={_groupBy.title}
+              multiple={false}
+            />
+          ))}
         </div>
       )}
     </div>

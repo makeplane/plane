@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import CSVIntegrationService from "services/csv.services";
+import { CSVIntegrationService } from "services/csv.services";
 // hooks
 import useToast from "hooks/use-toast";
 // ui

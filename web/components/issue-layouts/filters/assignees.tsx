@@ -22,19 +22,19 @@ export const MemberIcons = ({ display_name, avatar }: { display_name: string; av
 
 export const FilterAssignees = observer(() => {
   const store: RootStore = useMobxStore();
-  const { issueFilters: issueFilterStore } = store;
+  const { issueFilter: issueFilterStore } = store;
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
   const handleFilter = (key: string, value: string) => {
-    let _value =
-      issueFilterStore?.userFilters?.filters?.[key] != null
-        ? issueFilterStore?.userFilters?.filters?.[key].includes(value)
-          ? issueFilterStore?.userFilters?.filters?.[key].filter((p: string) => p != value)
-          : [...issueFilterStore?.userFilters?.filters?.[key], value]
-        : [value];
-    _value = _value && _value.length > 0 ? _value : null;
-    issueFilterStore.handleUserFilter("filters", key, _value);
+    // let _value =
+    //   issueFilterStore?.userFilters?.filters?.[key] != null
+    //     ? issueFilterStore?.userFilters?.filters?.[key].includes(value)
+    //       ? issueFilterStore?.userFilters?.filters?.[key].filter((p: string) => p != value)
+    //       : [...issueFilterStore?.userFilters?.filters?.[key], value]
+    //     : [value];
+    // _value = _value && _value.length > 0 ? _value : null;
+    // issueFilterStore.handleUserFilter("filters", key, _value);
   };
 
   return (

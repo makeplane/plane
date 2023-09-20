@@ -27,7 +27,7 @@ import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 // types
 import { Properties, TIssueViewOptions } from "types";
 // constants
-import { GROUP_BY_OPTIONS, ORDER_BY_OPTIONS, FILTER_ISSUE_OPTIONS } from "constants/issue";
+import { ISSUE_GROUP_BY_OPTIONS, ISSUE_ORDER_BY_OPTIONS, ISSUE_FILTER_OPTIONS } from "constants/issue";
 
 const issueViewOptions: { type: TIssueViewOptions; Icon: any }[] = [
   {
@@ -69,19 +69,10 @@ export const IssuesFilterView: React.FC = () => {
   const isArchivedIssues = router.pathname.includes("archived-issues");
   const isDraftIssues = router.pathname.includes("draft-issues");
 
-  const {
-    displayFilters,
-    setDisplayFilters,
-    filters,
-    setFilters,
-    resetFilterToDefault,
-    setNewFilterDefaultView,
-  } = useIssuesView();
+  const { displayFilters, setDisplayFilters, filters, setFilters, resetFilterToDefault, setNewFilterDefaultView } =
+    useIssuesView();
 
-  const [properties, setProperties] = useIssuesProperties(
-    workspaceSlug as string,
-    projectId as string
-  );
+  const [properties, setProperties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
   const { isEstimateActive } = useEstimateOption();
 
@@ -92,9 +83,7 @@ export const IssuesFilterView: React.FC = () => {
           {issueViewOptions.map((option) => (
             <Tooltip
               key={option.type}
-              tooltipContent={
-                <span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} View</span>
-              }
+              tooltipContent={<span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} View</span>}
               position="bottom"
             >
               <button
@@ -122,9 +111,7 @@ export const IssuesFilterView: React.FC = () => {
           {issueViewForDraftIssues.map((option) => (
             <Tooltip
               key={option.type}
-              tooltipContent={
-                <span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} View</span>
-              }
+              tooltipContent={<span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} View</span>}
               position="bottom"
             >
               <button
@@ -164,9 +151,7 @@ export const IssuesFilterView: React.FC = () => {
             if (valueExists)
               setFilters(
                 {
-                  [option.key]: ((filters[key] ?? []) as any[])?.filter(
-                    (val) => val !== option.value
-                  ),
+                  [option.key]: ((filters[key] ?? []) as any[])?.filter((val) => val !== option.value),
                 },
                 !Boolean(viewId)
               );
@@ -187,9 +172,7 @@ export const IssuesFilterView: React.FC = () => {
           <>
             <Popover.Button
               className={`group flex items-center gap-2 rounded-md border border-custom-border-200 px-3 py-1.5 text-xs hover:bg-custom-sidebar-background-90 hover:text-custom-sidebar-text-100 focus:outline-none duration-300 ${
-                open
-                  ? "bg-custom-sidebar-background-90 text-custom-sidebar-text-100"
-                  : "text-custom-sidebar-text-200"
+                open ? "bg-custom-sidebar-background-90 text-custom-sidebar-text-100" : "text-custom-sidebar-text-200"
               }`}
             >
               Display
@@ -216,24 +199,24 @@ export const IssuesFilterView: React.FC = () => {
                           <div className="w-28">
                             <CustomMenu
                               label={
-                                GROUP_BY_OPTIONS.find(
-                                  (option) => option.key === displayFilters.group_by
-                                )?.name ?? "Select"
+                                ISSUE_GROUP_BY_OPTIONS.find((option) => option.key === displayFilters.group_by)
+                                  ?.title ?? "Select"
                               }
                               className="!w-full"
                               buttonClassName="w-full"
                             >
-                              {GROUP_BY_OPTIONS.map((option) => {
-                                if (displayFilters.layout === "kanban" && option.key === null)
-                                  return null;
+                              {ISSUE_GROUP_BY_OPTIONS.map((option) => {
+                                if (displayFilters.layout === "kanban" && option.key === null) return null;
                                 if (option.key === "project") return null;
 
                                 return (
                                   <CustomMenu.MenuItem
                                     key={option.key}
-                                    onClick={() => setDisplayFilters({ group_by: option.key })}
+                                    onClick={() => {
+                                      // setDisplayFilters({ group_by: option.key })
+                                    }}
                                   >
-                                    {option.name}
+                                    {option.title}
                                   </CustomMenu.MenuItem>
                                 );
                               })}
@@ -241,79 +224,71 @@ export const IssuesFilterView: React.FC = () => {
                           </div>
                         </div>
                       )}
-                    {displayFilters.layout !== "calendar" &&
-                      displayFilters.layout !== "spreadsheet" && (
-                        <div className="flex items-center justify-between">
-                          <h4 className="text-custom-text-200">Order by</h4>
-                          <div className="w-28">
-                            <CustomMenu
-                              label={
-                                ORDER_BY_OPTIONS.find(
-                                  (option) => option.key === displayFilters.order_by
-                                )?.name ?? "Select"
-                              }
-                              className="!w-full"
-                              buttonClassName="w-full"
-                            >
-                              {ORDER_BY_OPTIONS.map((option) =>
-                                displayFilters.group_by === "priority" &&
-                                option.key === "priority" ? null : (
-                                  <CustomMenu.MenuItem
-                                    key={option.key}
-                                    onClick={() => {
-                                      setDisplayFilters({ order_by: option.key });
-                                    }}
-                                  >
-                                    {option.name}
-                                  </CustomMenu.MenuItem>
-                                )
-                              )}
-                            </CustomMenu>
-                          </div>
+                    {displayFilters.layout !== "calendar" && displayFilters.layout !== "spreadsheet" && (
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-custom-text-200">Order by</h4>
+                        <div className="w-28">
+                          <CustomMenu
+                            label={
+                              ISSUE_ORDER_BY_OPTIONS.find((option) => option.key === displayFilters.order_by)?.title ??
+                              "Select"
+                            }
+                            className="!w-full"
+                            buttonClassName="w-full"
+                          >
+                            {ISSUE_ORDER_BY_OPTIONS.map((option) =>
+                              displayFilters.group_by === "priority" && option.key === "priority" ? null : (
+                                <CustomMenu.MenuItem
+                                  key={option.key}
+                                  onClick={() => {
+                                    // setDisplayFilters({ order_by: option.key });
+                                  }}
+                                >
+                                  {option.title}
+                                </CustomMenu.MenuItem>
+                              )
+                            )}
+                          </CustomMenu>
                         </div>
-                      )}
+                      </div>
+                    )}
                     <div className="flex items-center justify-between">
                       <h4 className="text-custom-text-200">Issue type</h4>
                       <div className="w-28">
                         <CustomMenu
                           label={
-                            FILTER_ISSUE_OPTIONS.find(
-                              (option) => option.key === displayFilters.type
-                            )?.name ?? "Select"
+                            ISSUE_FILTER_OPTIONS.find((option) => option.key === displayFilters.type)?.title ?? "Select"
                           }
                           className="!w-full"
                           buttonClassName="w-full"
                         >
-                          {FILTER_ISSUE_OPTIONS.map((option) => (
+                          {ISSUE_FILTER_OPTIONS.map((option) => (
                             <CustomMenu.MenuItem
                               key={option.key}
-                              onClick={() =>
-                                setDisplayFilters({
-                                  type: option.key,
-                                })
-                              }
+                              onClick={() => {
+                                // setDisplayFilters({
+                                //   type: option.key,
+                                // })
+                              }}
                             >
-                              {option.name}
+                              {option.title}
                             </CustomMenu.MenuItem>
                           ))}
                         </CustomMenu>
                       </div>
                     </div>
 
-                    {displayFilters.layout !== "calendar" &&
-                      displayFilters.layout !== "spreadsheet" && (
-                        <div className="flex items-center justify-between">
-                          <h4 className="text-custom-text-200">Show sub-issues</h4>
-                          <div className="w-28">
-                            <ToggleSwitch
-                              value={displayFilters.sub_issue ?? true}
-                              onChange={() =>
-                                setDisplayFilters({ sub_issue: !displayFilters.sub_issue })
-                              }
-                            />
-                          </div>
+                    {displayFilters.layout !== "calendar" && displayFilters.layout !== "spreadsheet" && (
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-custom-text-200">Show sub-issues</h4>
+                        <div className="w-28">
+                          <ToggleSwitch
+                            value={displayFilters.sub_issue ?? true}
+                            onChange={() => setDisplayFilters({ sub_issue: !displayFilters.sub_issue })}
+                          />
                         </div>
-                      )}
+                      </div>
+                    )}
                     {displayFilters.layout !== "calendar" &&
                       displayFilters.layout !== "spreadsheet" &&
                       displayFilters.layout !== "gantt_chart" && (
@@ -358,16 +333,11 @@ export const IssuesFilterView: React.FC = () => {
 
                           if (
                             displayFilters.layout === "spreadsheet" &&
-                            (key === "attachment_count" ||
-                              key === "link" ||
-                              key === "sub_issue_count")
+                            (key === "attachment_count" || key === "link" || key === "sub_issue_count")
                           )
                             return null;
 
-                          if (
-                            displayFilters.layout !== "spreadsheet" &&
-                            (key === "created_on" || key === "updated_on")
-                          )
+                          if (displayFilters.layout !== "spreadsheet" && (key === "created_on" || key === "updated_on"))
                             return null;
 
                           return (

@@ -34,5 +34,5 @@ export class JiraImporterService extends APIService {
       });
   }
 }
-
-export default JiraImporterService;
+const jiraService = new JiraImporterService();
+export default jiraService;
