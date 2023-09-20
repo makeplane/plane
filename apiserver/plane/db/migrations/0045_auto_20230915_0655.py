@@ -21,17 +21,4 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(update_issue_activity),
-        migrations.RenameModel("IssueProperty", "IssueDisplayProperty"),
-        migrations.AlterModelOptions(
-            name="issuedisplayproperty",
-            options={
-                "ordering": ("-created_at",),
-                "verbose_name": "Issue Display Property",
-                "verbose_name_plural": "Issue Display Properties",
-            },
-        ),
-        migrations.AlterModelTable(
-            name="issuedisplayproperty",
-            table="issue_display_properties",
-        ),
     ]

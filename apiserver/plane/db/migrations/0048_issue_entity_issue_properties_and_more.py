@@ -12,6 +12,19 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RenameModel("IssueProperty", "IssueDisplayProperty"),
+        migrations.AlterModelOptions(
+            name="issuedisplayproperty",
+            options={
+                "ordering": ("-created_at",),
+                "verbose_name": "Issue Display Property",
+                "verbose_name_plural": "Issue Display Properties",
+            },
+        ),
+        migrations.AlterModelTable(
+            name="issuedisplayproperty",
+            table="issue_display_properties",
+        ),
         migrations.AddField(
             model_name='issue',
             name='entity',
