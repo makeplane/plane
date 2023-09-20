@@ -212,13 +212,12 @@ class IssueFilterStore implements IIssueFilterStore {
 
       // computed
       issueLayout: computed,
-      projectDisplayProperties: computed,
       userFilters: computed,
 
       // actions
       getComputedFilters: action,
 
-      handleUserFilter: action,
+      handleIssueFilter: action,
 
       // getWorkspaceMyIssuesFilters: action,
       // updateWorkspaceMyIssuesFilters: action,
@@ -265,286 +264,39 @@ class IssueFilterStore implements IIssueFilterStore {
     return null;
   }
 
-  get projectDisplayProperties() {
-    // if (!this.workspaceId || !this.projectId) return null;
-    // return this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.display_properties as any;
-
-    return null;
-  }
-
   get userFilters() {
-    if (!this.projectId) return null;
-    if (this.issueView === "my_issues")
-      return {
-        ...this.issueFilters?.[this.workspaceId]?.my_issue_properties,
-        display_properties_id: null,
-      };
+    const projectId = this.rootStore?.project?.projectId;
+    const moduleId = this.rootStore?.module?.moduleId;
+    const cycleId = this.rootStore?.cycle?.cycleId;
+    const viewId = this.rootStore?.view?.viewId;
+    const _issueView = this.issueView;
 
-    if (!this.projectId) return null;
-    let _issueFilters: {
+    if (!projectId || !_issueView) return null;
+    const currentIssueViewId: string | null =
+      _issueView === "issues" && projectId
+        ? projectId
+        : _issueView === "modules" && moduleId
+        ? moduleId
+        : _issueView === "cycles" && cycleId
+        ? cycleId
+        : _issueView === "cycles" && viewId
+        ? viewId
+        : null;
+
+    if (!currentIssueViewId) return null;
+    const _issueFilters: {
       filters: IIssueFilter | null;
       display_filters: IIssueDisplayFilters;
       display_properties_id: string;
       display_properties: IIssueDisplayProperties;
     } = {
-      filters: null,
-      display_filters:
-        this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.issues?.display_filters,
-      display_properties_id:
-        this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.display_properties_id,
-      display_properties:
-        this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.display_properties,
+      filters: this.issueFilters?.[projectId]?.[_issueView]?.[currentIssueViewId]?.filters,
+      display_filters: this.issueFilters?.[projectId]?.display_filters,
+      display_properties_id: this.issueFilters?.[projectId]?.display_properties_id,
+      display_properties: this.issueFilters?.[projectId]?.display_properties,
     };
-
-    if (this.issueView === "issues") {
-      _issueFilters = {
-        ..._issueFilters,
-        filters: this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.issues?.filters,
-      };
-      return _issueFilters;
-    }
-
-    if (this.issueView === "modules" && this.moduleId) {
-      _issueFilters = {
-        ..._issueFilters,
-        filters:
-          this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.modules?.[this.moduleId]
-            ?.filters,
-      };
-      return _issueFilters;
-    }
-
-    if (this.issueView === "cycles" && this.cycleId) {
-      _issueFilters = {
-        ..._issueFilters,
-        filters:
-          this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.cycles?.[this.cycleId]
-            ?.filters,
-      };
-      return _issueFilters;
-    }
-
-    if (this.issueView === "views" && this.viewId) {
-      _issueFilters = {
-        ..._issueFilters,
-        filters:
-          this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.views?.[this.viewId]
-            ?.filters,
-      };
-      return _issueFilters;
-    }
-
-    return null;
+    return _issueFilters;
   }
-  handleUserFilter = (
-    filter_type: "filters" | "display_filters" | "display_properties",
-    filter_key: string,
-    value: any
-  ) => {
-    // if (!this.workspaceId) return null;
-    // if (this.issueView === "my_issues") {
-    //   this.issueFilters = {
-    //     ...this.issueFilters,
-    //     [this.workspaceId]: {
-    //       ...this.issueFilters?.[this.workspaceId],
-    //       my_issue_properties: {
-    //         ...this.issueFilters?.[this.workspaceId]?.my_issue_properties,
-    //         [filter_type]: {
-    //           ...this.issueFilters?.[this.workspaceId]?.my_issue_properties?.[filter_type],
-    //           [filter_key]: value,
-    //         },
-    //       },
-    //     },
-    //   };
-    //   this.updateWorkspaceMyIssuesFilters(this.workspaceId, this.userFilters);
-    // }
-    // if (!this.projectId) return null;
-    // if (filter_type === "display_properties") {
-    //   this.issueFilters = {
-    //     ...this.issueFilters,
-    //     [this.workspaceId]: {
-    //       ...this.issueFilters?.[this.workspaceId],
-    //       project_issue_properties: {
-    //         ...this.issueFilters?.[this.workspaceId]?.project_issue_properties,
-    //         [this.projectId]: {
-    //           ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId],
-    //           display_properties: {
-    //             ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]
-    //               ?.display_properties,
-    //             [filter_key]: value,
-    //           },
-    //         },
-    //       },
-    //     },
-    //   };
-    //   if (this.userFilters?.display_properties_id) {
-    //     this.updateProjectDisplayProperties(
-    //       this.workspaceId,
-    //       this.projectId,
-    //       this.userFilters?.display_properties_id,
-    //       this.userFilters?.display_properties
-    //     );
-    //   }
-    // }
-    // if (filter_type === "display_filters") {
-    //   this.issueFilters = {
-    //     ...this.issueFilters,
-    //     [this.workspaceId]: {
-    //       ...this.issueFilters?.[this.workspaceId],
-    //       project_issue_properties: {
-    //         ...this.issueFilters?.[this.workspaceId]?.project_issue_properties,
-    //         [this.projectId]: {
-    //           ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId],
-    //           issues: {
-    //             ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.issues,
-    //             [filter_type]: {
-    //               ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.issues?.[
-    //                 filter_type
-    //               ],
-    //               [filter_key]: value,
-    //             },
-    //           },
-    //         },
-    //       },
-    //     },
-    //   };
-    //   this.updateProjectDisplayFilters(this.workspaceId, this.projectId, {
-    //     filters: this.userFilters?.filters,
-    //     display_filters: this.userFilters?.display_filters,
-    //   });
-    // }
-    // if (filter_type === "filters") {
-    //   if (this.issueView === "issues") {
-    //     this.issueFilters = {
-    //       ...this.issueFilters,
-    //       [this.workspaceId]: {
-    //         ...this.issueFilters?.[this.workspaceId],
-    //         project_issue_properties: {
-    //           ...this.issueFilters?.[this.workspaceId]?.project_issue_properties,
-    //           [this.projectId]: {
-    //             ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId],
-    //             issues: {
-    //               ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.issues,
-    //               [filter_type]: {
-    //                 ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.issues?.[
-    //                   filter_type
-    //                 ],
-    //                 [filter_key]: value,
-    //               },
-    //             },
-    //           },
-    //         },
-    //       },
-    //     };
-    //     this.updateProjectDisplayFilters(this.workspaceId, this.projectId, {
-    //       filters: this.userFilters?.filters,
-    //       display_filters: this.userFilters?.display_filters,
-    //     });
-    //   }
-    //   if (this.issueView === "modules" && this.moduleId) {
-    //     this.issueFilters = {
-    //       ...this.issueFilters,
-    //       [this.workspaceId]: {
-    //         ...this.issueFilters?.[this.workspaceId],
-    //         project_issue_properties: {
-    //           ...this.issueFilters?.[this.workspaceId]?.project_issue_properties,
-    //           [this.projectId]: {
-    //             ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId],
-    //             modules: {
-    //               ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.modules,
-    //               [this.moduleId]: {
-    //                 ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.modules?.[
-    //                   this.moduleId
-    //                 ],
-    //                 [filter_type]: {
-    //                   ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.modules?.[
-    //                     this.moduleId
-    //                   ]?.[filter_type],
-    //                   [filter_key]: value,
-    //                 },
-    //               },
-    //             },
-    //           },
-    //         },
-    //       },
-    //     };
-    //     this.updateProjectIssueModuleFilters(
-    //       this.workspaceId,
-    //       this.projectId,
-    //       this.moduleId,
-    //       this.userFilters?.filters
-    //     );
-    //   }
-    //   if (this.issueView === "cycles" && this.cycleId) {
-    //     this.issueFilters = {
-    //       ...this.issueFilters,
-    //       [this.workspaceId]: {
-    //         ...this.issueFilters?.[this.workspaceId],
-    //         project_issue_properties: {
-    //           ...this.issueFilters?.[this.workspaceId]?.project_issue_properties,
-    //           [this.projectId]: {
-    //             ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId],
-    //             cycles: {
-    //               ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.cycles,
-    //               [this.cycleId]: {
-    //                 ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.cycles?.[
-    //                   this.cycleId
-    //                 ],
-    //                 [filter_type]: {
-    //                   ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.cycles?.[
-    //                     this.cycleId
-    //                   ]?.[filter_type],
-    //                   [filter_key]: value,
-    //                 },
-    //               },
-    //             },
-    //           },
-    //         },
-    //       },
-    //     };
-    //     this.updateProjectIssueCyclesFilters(this.workspaceId, this.projectId, this.cycleId, this.userFilters?.filters);
-    //   }
-    //   if (this.issueView === "views" && this.viewId) {
-    //     this.issueFilters = {
-    //       ...this.issueFilters,
-    //       [this.workspaceId]: {
-    //         ...this.issueFilters?.[this.workspaceId],
-    //         project_issue_properties: {
-    //           ...this.issueFilters?.[this.workspaceId]?.project_issue_properties,
-    //           [this.projectId]: {
-    //             ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId],
-    //             views: {
-    //               ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.views,
-    //               [this.viewId]: {
-    //                 ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.views?.[
-    //                   this.viewId
-    //                 ],
-    //                 [filter_type]: {
-    //                   ...this.issueFilters?.[this.workspaceId]?.project_issue_properties?.[this.projectId]?.views?.[
-    //                     this.viewId
-    //                   ]?.[filter_type],
-    //                   [filter_key]: value,
-    //                 },
-    //               },
-    //             },
-    //           },
-    //         },
-    //       },
-    //     };
-    //     this.updateProjectIssueViewsFilters(this.workspaceId, this.projectId, this.viewId, this.userFilters?.filters);
-    //   }
-    // }
-    // if (this.issueView === "my_issues")
-    //   this.rootStore?.issueView?.getProjectIssuesAsync(this.workspaceId, this.projectId, false);
-    // if (this.issueView === "issues")
-    //   this.rootStore?.issueView?.getProjectIssuesAsync(this.workspaceId, this.projectId, false);
-    // if (this.issueView === "modules" && this.moduleId)
-    //   this.rootStore?.issueView?.getIssuesForModulesAsync(this.workspaceId, this.projectId, this.moduleId, false);
-    // if (this.issueView === "cycles" && this.cycleId)
-    //   this.rootStore?.issueView?.getIssuesForCyclesAsync(this.workspaceId, this.projectId, this.cycleId, false);
-    // if (this.issueView === "views" && this.viewId)
-    //   this.rootStore?.issueView?.getIssuesForViewsAsync(this.workspaceId, this.projectId, this.viewId, false);
-  };
 
   computedFilter = (filters: any, filteredParams: any) => {
     const computedFilters: any = {};
@@ -566,25 +318,24 @@ class IssueFilterStore implements IIssueFilterStore {
   ) => {
     this.issueView = _issueView;
 
-    // const _layout = this.userFilters?.display_filters?.layout;
-    const _layout = "";
+    const _layout = this.userFilters?.display_filters?.layout;
 
     let filteredRouteParams: any = {
-      // priority: this.userFilters?.filters?.priority || undefined,
-      // state_group: this.userFilters?.filters?.state_group || undefined,
-      // state: this.userFilters?.filters?.state || undefined,
-      // assignees: this.userFilters?.filters?.assignees || undefined,
-      // created_by: this.userFilters?.filters?.created_by || undefined,
-      // labels: this.userFilters?.filters?.labels || undefined,
-      // start_date: this.userFilters?.filters?.start_date || undefined,
-      // target_date: this.userFilters?.filters?.target_date || undefined,
-      // group_by: this.userFilters?.display_filters?.group_by || "state",
-      // order_by: this.userFilters?.display_filters?.order_by || "-created_at",
-      // type: this.userFilters?.display_filters?.type || undefined,
-      // sub_issue: this.userFilters?.display_filters?.sub_issue || true,
-      // show_empty_groups: this.userFilters?.display_filters?.show_empty_groups || true,
-      // calendar_date_range: this.userFilters?.display_filters?.calendar_date_range || undefined,
-      // start_target_date: this.userFilters?.display_filters?.start_target_date || true,
+      priority: this.userFilters?.filters?.priority || undefined,
+      state_group: this.userFilters?.filters?.state_group || undefined,
+      state: this.userFilters?.filters?.state || undefined,
+      assignees: this.userFilters?.filters?.assignees || undefined,
+      created_by: this.userFilters?.filters?.created_by || undefined,
+      labels: this.userFilters?.filters?.labels || undefined,
+      start_date: this.userFilters?.filters?.start_date || undefined,
+      target_date: this.userFilters?.filters?.target_date || undefined,
+      group_by: this.userFilters?.display_filters?.group_by || "state",
+      order_by: this.userFilters?.display_filters?.order_by || "-created_at",
+      type: this.userFilters?.display_filters?.type || undefined,
+      sub_issue: this.userFilters?.display_filters?.sub_issue || true,
+      show_empty_groups: this.userFilters?.display_filters?.show_empty_groups || true,
+      calendar_date_range: this.userFilters?.display_filters?.calendar_date_range || undefined,
+      start_target_date: this.userFilters?.display_filters?.start_target_date || true,
     };
 
     // start date and target date we have to construct the format here
@@ -602,16 +353,16 @@ class IssueFilterStore implements IIssueFilterStore {
     filter_type: "filters" | "display_filters" | "display_properties" | "display_properties_id",
     value: any
   ) => {
-    const projectId = this.rootStore?.project?.projectId || null;
-    const moduleId = this.rootStore?.module?.moduleId || null;
-    const cycleId = this.rootStore?.cycle?.cycleId || null;
-    const viewId = this.rootStore?.view?.viewId || null;
-    const currentView = this.issueView || null;
+    const projectId = this.rootStore?.project?.projectId;
+    const moduleId = this.rootStore?.module?.moduleId;
+    const cycleId = this.rootStore?.cycle?.cycleId;
+    const viewId = this.rootStore?.view?.viewId;
+    const _issueView = this.issueView;
 
     console.log("filter_type", filter_type);
     console.log("value", value);
 
-    if (!currentView || !projectId || !moduleId || !cycleId || !viewId) return null;
+    if (!_issueView || !projectId || !moduleId || !cycleId || !viewId) return null;
 
     // let _issueFilters: IIssueFilters = {
     //   ...this.issueFilters,
@@ -621,6 +372,17 @@ class IssueFilterStore implements IIssueFilterStore {
     // };
 
     // console.log("_issueFilters", _issueFilters);
+
+    // if (this.issueView === "my_issues")
+    //   this.rootStore?.issueView?.getProjectIssuesAsync(this.workspaceId, this.projectId, false);
+    // if (this.issueView === "issues")
+    //   this.rootStore?.issueView?.getProjectIssuesAsync(this.workspaceId, this.projectId, false);
+    // if (this.issueView === "modules" && this.moduleId)
+    //   this.rootStore?.issueView?.getIssuesForModulesAsync(this.workspaceId, this.projectId, this.moduleId, false);
+    // if (this.issueView === "cycles" && this.cycleId)
+    //   this.rootStore?.issueView?.getIssuesForCyclesAsync(this.workspaceId, this.projectId, this.cycleId, false);
+    // if (this.issueView === "views" && this.viewId)
+    //   this.rootStore?.issueView?.getIssuesForViewsAsync(this.workspaceId, this.projectId, this.viewId, false);
   };
 
   // services
