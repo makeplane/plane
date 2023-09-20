@@ -9,7 +9,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { TextArea } from "components/ui";
 // types
 import { IIssue } from "types";
-import { TiptapEditor } from "@plane/editor"
+import { TiptapEditor } from "@plane/editor";
 import fileService from "services/file.service";
 
 export interface IssueDescriptionFormValues {

@@ -2,19 +2,22 @@
   "name": "@plane/editor",
   "version": "0.0.1",
   "description": "Rich Text Editor that powers Plane",
-  "main": "dist/index.js",
+  "main": "dist/index",
+  "types": "dist/index",
   "source": "src/index.ts",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.mts",
   "files": [
     "dist"
   ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs",
-      "module": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/module.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/main.js"
+      }
     }
   },
   "scripts": {
@@ -81,12 +84,5 @@
     "markdown",
     "nextjs",
     "react"
-  ],
-  "typesVersions": {
-    "*": {
-      "*": [
-        "src/*"
-      ]
-    }
-  }
+  ]
 }
