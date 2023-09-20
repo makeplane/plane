@@ -123,7 +123,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       setPreloadedData((prevData) => ({
         ...(prevData ?? {}),
         ...prePopulateDataProps,
-        assignees: [...(prePopulateDataProps?.assignees ?? []), user?.id ?? ""],
+        assignees: prePopulateDataProps?.assignees ?? [user?.id ?? ""],
       }));
     }
   }, [prePopulateDataProps, cycleId, moduleId, router.asPath, user?.id]);

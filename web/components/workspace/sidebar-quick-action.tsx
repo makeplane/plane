@@ -26,7 +26,6 @@ export const WorkspaceSidebarQuickAction = () => {
         onSubmit={() => {
           localStorage.removeItem("draftedIssue");
           clearValue();
-          setIsDraftIssueModalOpen(false);
         }}
         fieldsToShow={["all"]}
       />
@@ -66,11 +65,11 @@ export const WorkspaceSidebarQuickAction = () => {
 
               <button
                 type="button"
-                className="flex items-center justify-center rounded flex-shrink-0 p-1.5 group-hover:rotate-180 rotate-0"
+                className="flex items-center justify-center rounded flex-shrink-0 py-1.5 ml-1.5"
               >
                 <ChevronDown
                   size={16}
-                  className="!text-custom-sidebar-text-300 transform transition-transform duration-300"
+                  className="!text-custom-sidebar-text-300 transform transition-transform duration-300 group-hover:rotate-180 rotate-0"
                 />
               </button>
 
