@@ -19,6 +19,6 @@ export const StateGroupUnstartedIcon: React.FC<Props> = ({
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <circle cx="8" cy="8" r="7.4" stroke={color} stroke-width="1.2" />
+    <circle cx="8" cy="8" r="7.4" stroke={color} strokeWidth="1.2" />
   </svg>
 );

@@ -5,15 +5,9 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 
 // components
-import {
-  ViewAssigneeSelect,
-  ViewDueDateSelect,
-  ViewEstimateSelect,
-  ViewIssueLabel,
-  ViewPrioritySelect,
-  ViewStartDateSelect,
-  ViewStateSelect,
-} from "components/issues";
+import { ViewDueDateSelect, ViewEstimateSelect, ViewStartDateSelect } from "components/issues";
+import { LabelSelect, MembersSelect, PrioritySelect } from "components/project";
+import { StateSelect } from "components/states";
 import { Popover2 } from "@blueprintjs/popover2";
 // icons
 import { Icon } from "components/ui";
@@ -28,6 +22,7 @@ import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 import useToast from "hooks/use-toast";
 // services
 import issuesService from "services/issues.service";
+import trackEventServices from "services/track-event.service";
 // constant
 import {
   CYCLE_DETAILS,
@@ -39,7 +34,15 @@ import {
   VIEW_ISSUES,
 } from "constants/fetch-keys";
 // types
-import { ICurrentUserResponse, IIssue, ISubIssueResponse, Properties, UserAuth } from "types";
+import {
+  ICurrentUserResponse,
+  IIssue,
+  IState,
+  ISubIssueResponse,
+  Properties,
+  TIssuePriorities,
+  UserAuth,
+} from "types";
 // helper
 import { copyTextToClipboard } from "helpers/string.helper";
 import { renderLongDetailDateFormat } from "helpers/date-time.helper";
@@ -180,6 +183,86 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
     });
   };
 
+  const handleStateChange = (data: string, states: IState[] | undefined) => {
+    const oldState = states?.find((s) => s.id === issue.state);
+    const newState = states?.find((s) => s.id === data);
+
+    partialUpdateIssue(
+      {
+        state: data,
+        state_detail: newState,
+      },
+      issue
+    );
+    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+      {
+        workspaceSlug,
+        workspaceId: issue.workspace,
+        projectId: issue.project_detail.id,
+        projectIdentifier: issue.project_detail.identifier,
+        projectName: issue.project_detail.name,
+        issueId: issue.id,
+      },
+      "ISSUE_PROPERTY_UPDATE_STATE",
+      user
+    );
+    if (oldState?.group !== "completed" && newState?.group !== "completed") {
+      trackEventServices.trackIssueMarkedAsDoneEvent(
+        {
+          workspaceSlug: issue.workspace_detail.slug,
+          workspaceId: issue.workspace_detail.id,
+          projectId: issue.project_detail.id,
+          projectIdentifier: issue.project_detail.identifier,
+          projectName: issue.project_detail.name,
+          issueId: issue.id,
+        },
+        user
+      );
+    }
+  };
+
+  const handlePriorityChange = (data: TIssuePriorities) => {
+    partialUpdateIssue({ priority: data }, issue);
+    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+      {
+        workspaceSlug,
+        workspaceId: issue.workspace,
+        projectId: issue.project_detail.id,
+        projectIdentifier: issue.project_detail.identifier,
+        projectName: issue.project_detail.name,
+        issueId: issue.id,
+      },
+      "ISSUE_PROPERTY_UPDATE_PRIORITY",
+      user
+    );
+  };
+
+  const handleAssigneeChange = (data: any) => {
+    const newData = issue.assignees ?? [];
+
+    if (newData.includes(data)) newData.splice(newData.indexOf(data), 1);
+    else newData.push(data);
+
+    partialUpdateIssue({ assignees_list: data }, issue);
+
+    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+      {
+        workspaceSlug,
+        workspaceId: issue.workspace,
+        projectId: issue.project_detail.id,
+        projectIdentifier: issue.project_detail.identifier,
+        projectName: issue.project_detail.name,
+        issueId: issue.id,
+      },
+      "ISSUE_PROPERTY_UPDATE_ASSIGNEE",
+      user
+    );
+  };
+
+  const handleLabelChange = (data: any) => {
+    partialUpdateIssue({ labels_list: data }, issue);
+  };
+
   const paddingLeft = `${nestingLevel * 68}px`;
 
   const tooltipPosition = index === 0 ? "bottom" : "top";
@@ -283,47 +366,49 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         </div>
         {properties.state && (
           <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
-            <ViewStateSelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              position="left"
-              className="max-w-full"
-              tooltipPosition={tooltipPosition}
-              customButton
-              user={user}
-              isNotAllowed={isNotAllowed}
+            <StateSelect
+              value={issue.state_detail}
+              onChange={handleStateChange}
+              buttonClassName="!p-0 !rounded-none !shadow-none !border-0"
+              hideDropdownArrow
+              disabled={isNotAllowed}
             />
           </div>
         )}
         {properties.priority && (
           <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
-            <ViewPrioritySelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              position="left"
-              tooltipPosition={tooltipPosition}
-              noBorder
-              user={user}
-              isNotAllowed={isNotAllowed}
+            <PrioritySelect
+              value={issue.priority}
+              onChange={handlePriorityChange}
+              buttonClassName="!p-0 !rounded-none !shadow-none !border-0"
+              hideDropdownArrow
+              disabled={isNotAllowed}
             />
           </div>
         )}
         {properties.assignee && (
           <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
-            <ViewAssigneeSelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              position="left"
-              tooltipPosition={tooltipPosition}
-              customButton
-              user={user}
-              isNotAllowed={isNotAllowed}
+            <MembersSelect
+              value={issue.assignees}
+              onChange={handleAssigneeChange}
+              membersDetails={issue.assignee_details}
+              buttonClassName="!p-0 !rounded-none !shadow-none !border-0"
+              hideDropdownArrow
+              disabled={isNotAllowed}
             />
           </div>
         )}
         {properties.labels && (
           <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
-            <ViewIssueLabel labelDetails={issue.label_details} maxRender={1} />
+            <LabelSelect
+              value={issue.labels}
+              onChange={handleLabelChange}
+              labelsDetails={issue.label_details}
+              hideDropdownArrow
+              maxRender={1}
+              user={user}
+              disabled={isNotAllowed}
+            />
           </div>
         )}
 
