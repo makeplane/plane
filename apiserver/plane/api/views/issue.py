@@ -330,7 +330,12 @@ class IssueViewSet(BaseViewSet):
 
     def retrieve(self, request, slug, project_id, pk=None):
         try:
-            issue = Issue.issue_objects.get(
+            issue = Issue.issue_objects.annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            ).get(
                 workspace__slug=slug, project_id=project_id, pk=pk
             )
             return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
