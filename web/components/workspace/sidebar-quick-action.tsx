@@ -17,7 +17,10 @@ export const WorkspaceSidebarQuickAction = () => {
 
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
 
-  const { storedValue, clearValue } = useLocalStorage<any>("draftedIssue", null);
+  const { storedValue, clearValue } = useLocalStorage<any>(
+    "draftedIssue",
+    JSON.stringify(undefined)
+  );
 
   return (
     <>
@@ -30,18 +33,7 @@ export const WorkspaceSidebarQuickAction = () => {
           clearValue();
           setIsDraftIssueModalOpen(false);
         }}
-        fieldsToShow={[
-          "name",
-          "description",
-          "label",
-          "assignee",
-          "priority",
-          "dueDate",
-          "priority",
-          "state",
-          "startDate",
-          "project",
-        ]}
+        fieldsToShow={["all"]}
       />
 
       <div
@@ -50,7 +42,7 @@ export const WorkspaceSidebarQuickAction = () => {
         }`}
       >
         <div
-          className={`flex items-center justify-between w-full rounded cursor-pointer px-2 gap-1 ${
+          className={`flex items-center justify-between w-full rounded cursor-pointer px-2 gap-1 group ${
             store?.theme?.sidebarCollapsed
               ? "px-2 hover:bg-custom-sidebar-background-80"
               : "px-3 shadow border-[0.5px] border-custom-border-300"
