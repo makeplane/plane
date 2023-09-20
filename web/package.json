@@ -26,6 +26,7 @@
     "@nivo/pie": "0.80.0",
     "@nivo/scatterplot": "0.80.0",
     "@sentry/nextjs": "^7.36.0",
+    "plane-editor": "*",
     "@tiptap/extension-code-block-lowlight": "^2.0.4",
     "@tiptap/extension-color": "^2.0.4",
     "@tiptap/extension-gapcursor": "^2.1.7",
@@ -79,8 +80,7 @@
     "tiptap-markdown": "^0.8.2",
     "tlds": "^1.238.0",
     "use-debounce": "^9.0.4",
-    "uuid": "^9.0.0",
-    "@plane/editor": "*"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.2",
