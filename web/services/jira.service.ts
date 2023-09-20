@@ -1,10 +1,10 @@
 import APIService from "services/api.service";
-import trackEventServices from "services/track-event.service";
+import trackEventServices from "services/track_event.service";
 import { API_BASE_URL } from "helpers/common.helper";
 // types
 import { IJiraMetadata, IJiraResponse, IJiraImporterForm, ICurrentUserResponse } from "types";
 
-class JiraImportedService extends APIService {
+export class JiraImporterService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -35,6 +35,4 @@ class JiraImportedService extends APIService {
   }
 }
 
-const jiraImporterService = new JiraImportedService();
-
-export default jiraImporterService;
+export default JiraImporterService;

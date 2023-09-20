@@ -1,5 +1,5 @@
 import APIService from "services/api.service";
-import trackEventServices from "services/track-event.service";
+import trackEventServices from "services/track_event.service";
 import { API_BASE_URL } from "helpers/common.helper";
 // types
 import type {
@@ -11,7 +11,7 @@ import type {
   IInboxQueryParams,
 } from "types";
 
-class InboxServices extends APIService {
+export class InboxServices extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -32,16 +32,8 @@ class InboxServices extends APIService {
       });
   }
 
-  async patchInbox(
-    workspaceSlug: string,
-    projectId: string,
-    inboxId: string,
-    data: Partial<IInbox>
-  ): Promise<any> {
-    return this.patch(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/`,
-      data
-    )
+  async patchInbox(workspaceSlug: string, projectId: string, inboxId: string, data: Partial<IInbox>): Promise<any> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -54,10 +46,9 @@ class InboxServices extends APIService {
     inboxId: string,
     params?: IInboxQueryParams
   ): Promise<IInboxIssue[]> {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/`,
-      { params }
-    )
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/`, {
+      params,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -155,10 +146,7 @@ class InboxServices extends APIService {
     data: any,
     user: ICurrentUserResponse | undefined
   ): Promise<IInboxIssueDetail> {
-    return this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/`,
-      data
-    )
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/`, data)
       .then((response) => {
         trackEventServices.trackInboxEvent(response?.data, "INBOX_ISSUE_CREATE", user);
         return response?.data;

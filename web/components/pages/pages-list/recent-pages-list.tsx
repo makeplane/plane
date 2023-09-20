@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import pagesService from "services/pages.service";
+import pagesService from "services/page.service";
 // components
 import { PagesView } from "components/pages";
 // ui
@@ -28,9 +28,7 @@ export const RecentPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
 
   const { data: pages } = useSWR(
     workspaceSlug && projectId ? RECENT_PAGES_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => pagesService.getRecentPages(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => pagesService.getRecentPages(workspaceSlug as string, projectId as string) : null
   );
 
   const isEmpty = pages && Object.keys(pages).every((key) => pages[key].length === 0);
@@ -44,9 +42,7 @@ export const RecentPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
 
             return (
               <div key={key} className="h-full overflow-hidden">
-                <h2 className="text-xl font-semibold capitalize mb-2">
-                  {replaceUnderscoreIfSnakeCase(key)}
-                </h2>
+                <h2 className="text-xl font-semibold capitalize mb-2">{replaceUnderscoreIfSnakeCase(key)}</h2>
                 <PagesView pages={pages[key as keyof RecentPagesResponse]} viewType={viewType} />
               </div>
             );

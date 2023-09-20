@@ -1,7 +1,7 @@
 import { API_BASE_URL } from "helpers/common.helper";
 // services
 import APIService from "services/api.service";
-import trackEventServices from "services/track-event.service";
+import trackEventServices from "services/track_event.service";
 // types
 import type {
   ICurrentUserResponse,
@@ -11,7 +11,7 @@ import type {
   IssueCommentReactionForm,
 } from "types";
 
-class ReactionService extends APIService {
+export class IssueReactionService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -23,10 +23,7 @@ class ReactionService extends APIService {
     data: IssueReactionForm,
     user?: ICurrentUserResponse
   ): Promise<any> {
-    return this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/reactions/`,
-      data
-    )
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/reactions/`, data)
       .then((response) => {
         trackEventServices.trackReactionEvent(response?.data, "ISSUE_REACTION_CREATE", user);
         return response?.data;
@@ -36,14 +33,8 @@ class ReactionService extends APIService {
       });
   }
 
-  async listIssueReactions(
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string
-  ): Promise<IssueReaction[]> {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/reactions/`
-    )
+  async listIssueReactions(workspaceSlug: string, projectId: string, issueId: string): Promise<IssueReaction[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/reactions/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -76,16 +67,9 @@ class ReactionService extends APIService {
     data: IssueCommentReactionForm,
     user?: ICurrentUserResponse
   ): Promise<any> {
-    return this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/comments/${commentId}/reactions/`,
-      data
-    )
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/comments/${commentId}/reactions/`, data)
       .then((response) => {
-        trackEventServices.trackReactionEvent(
-          response?.data,
-          "ISSUE_COMMENT_REACTION_CREATE",
-          user
-        );
+        trackEventServices.trackReactionEvent(response?.data, "ISSUE_COMMENT_REACTION_CREATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -98,9 +82,7 @@ class ReactionService extends APIService {
     projectId: string,
     commentId: string
   ): Promise<IssueCommentReaction[]> {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/comments/${commentId}/reactions/`
-    )
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/comments/${commentId}/reactions/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -118,11 +100,7 @@ class ReactionService extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/comments/${commentId}/reactions/${reaction}/`
     )
       .then((response) => {
-        trackEventServices.trackReactionEvent(
-          response?.data,
-          "ISSUE_COMMENT_REACTION_DELETE",
-          user
-        );
+        trackEventServices.trackReactionEvent(response?.data, "ISSUE_COMMENT_REACTION_DELETE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -131,6 +109,6 @@ class ReactionService extends APIService {
   }
 }
 
-const reactionService = new ReactionService();
+const issueReactionService = new IssueReactionService();
 
-export default reactionService;
+export default issueReactionService;

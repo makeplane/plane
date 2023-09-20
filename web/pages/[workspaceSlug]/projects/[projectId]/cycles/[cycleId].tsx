@@ -14,7 +14,7 @@ import { IssueViewContextProvider } from "contexts/issue-view.context";
 import { ExistingIssuesListModal, IssuesFilterView, IssuesView } from "components/core";
 import { CycleDetailsSidebar, TransferIssues, TransferIssuesModal } from "components/cycles";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 import cycleServices from "services/cycles.service";
 // hooks
 import useToast from "hooks/use-toast";
@@ -57,12 +57,7 @@ const SingleCycle: React.FC = () => {
   const { data: cycleDetails, error } = useSWR(
     workspaceSlug && projectId && cycleId ? CYCLE_DETAILS(cycleId.toString()) : null,
     workspaceSlug && projectId && cycleId
-      ? () =>
-          cycleServices.getCycleDetails(
-            workspaceSlug.toString(),
-            projectId.toString(),
-            cycleId.toString()
-          )
+      ? () => cycleServices.getCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString())
       : null
   );
 
@@ -83,13 +78,7 @@ const SingleCycle: React.FC = () => {
     };
 
     await issuesService
-      .addIssueToCycle(
-        workspaceSlug as string,
-        projectId as string,
-        cycleId as string,
-        payload,
-        user
-      )
+      .addIssueToCycle(workspaceSlug as string, projectId as string, cycleId as string, payload, user)
       .catch(() => {
         setToastAlert({
           type: "error",
@@ -173,22 +162,14 @@ const SingleCycle: React.FC = () => {
           />
         ) : (
           <>
-            <TransferIssuesModal
-              handleClose={() => setTransferIssuesModal(false)}
-              isOpen={transferIssuesModal}
-            />
-            <AnalyticsProjectModal
-              isOpen={analyticsModal}
-              onClose={() => setAnalyticsModal(false)}
-            />
+            <TransferIssuesModal handleClose={() => setTransferIssuesModal(false)} isOpen={transferIssuesModal} />
+            <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
             <div
               className={`h-full flex flex-col ${cycleSidebar ? "mr-[24rem]" : ""} ${
                 analyticsModal ? "mr-[50%]" : ""
               } duration-300`}
             >
-              {cycleStatus === "completed" && (
-                <TransferIssues handleClick={() => setTransferIssuesModal(true)} />
-              )}
+              {cycleStatus === "completed" && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
               <IssuesView
                 openIssuesListModal={openIssuesListModal}
                 disableUserActions={cycleStatus === "completed" ?? false}

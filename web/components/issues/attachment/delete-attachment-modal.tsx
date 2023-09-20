@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -47,12 +47,7 @@ export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data
     );
 
     await issuesService
-      .deleteIssueAttachment(
-        workspaceSlug as string,
-        projectId as string,
-        issueId as string,
-        assetId as string
-      )
+      .deleteIssueAttachment(workspaceSlug as string, projectId as string, issueId as string, assetId as string)
       .then(() => mutate(PROJECT_ISSUES_ACTIVITY(issueId as string)))
       .catch(() => {
         setToastAlert({
@@ -94,24 +89,17 @@ export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data
                   <div className="bg-custom-background-80 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <div className="sm:flex sm:items-start">
                       <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                        <ExclamationTriangleIcon
-                          className="h-6 w-6 text-red-600"
-                          aria-hidden="true"
-                        />
+                        <ExclamationTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
                       </div>
                       <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                        <Dialog.Title
-                          as="h3"
-                          className="text-lg font-medium leading-6 text-custom-text-100"
-                        >
+                        <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                           Delete Attachment
                         </Dialog.Title>
                         <div className="mt-2">
                           <p className="text-sm text-custom-text-200">
                             Are you sure you want to delete attachment-{" "}
-                            <span className="font-bold">{getFileName(data.attributes.name)}</span>?
-                            This attachment will be permanently removed. This action cannot be
-                            undone.
+                            <span className="font-bold">{getFileName(data.attributes.name)}</span>? This attachment will
+                            be permanently removed. This action cannot be undone.
                           </p>
                         </div>
                       </div>

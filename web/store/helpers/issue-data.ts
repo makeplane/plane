@@ -1,6 +1,6 @@
 import { renderDateFormat } from "helpers/date-time.helper";
 // types
-import { TIssueLayouts, TIssueParams } from "../issue-filters";
+import { TIssueLayouts, TIssueParams } from "../issue_filters.legacy";
 
 export type TStateGroup = "backlog" | "unstarted" | "started" | "completed" | "cancelled";
 

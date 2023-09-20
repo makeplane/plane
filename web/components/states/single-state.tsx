@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 
 // services
-import stateService from "services/state.service";
+import stateService from "services/project_state.service";
 // ui
 import { Tooltip } from "components/ui";
 // icons
@@ -58,11 +58,7 @@ export const SingleState: React.FC<Props> = ({
     }));
     newStatesList = orderArrayBy(newStatesList, "sequence", "ascending");
 
-    mutate(
-      STATES_LIST(projectId as string),
-      orderStateGroups(groupBy(newStatesList, "group")),
-      false
-    );
+    mutate(STATES_LIST(projectId as string), orderStateGroups(groupBy(newStatesList, "group")), false);
 
     if (currentDefaultState)
       stateService
@@ -131,11 +127,7 @@ export const SingleState: React.FC<Props> = ({
     }));
     newStatesList = orderArrayBy(newStatesList, "sequence", "ascending");
 
-    mutate(
-      STATES_LIST(projectId as string),
-      orderStateGroups(groupBy(newStatesList, "group")),
-      false
-    );
+    mutate(STATES_LIST(projectId as string), orderStateGroups(groupBy(newStatesList, "group")), false);
 
     stateService
       .patchState(
@@ -216,26 +208,14 @@ export const SingleState: React.FC<Props> = ({
           >
             {state.default ? (
               <Tooltip tooltipContent="Cannot delete the default state.">
-                <X
-                  className={`h-4 w-4 ${
-                    groupLength < 1 ? "text-custom-sidebar-text-400" : "text-red-500"
-                  }`}
-                />
+                <X className={`h-4 w-4 ${groupLength < 1 ? "text-custom-sidebar-text-400" : "text-red-500"}`} />
               </Tooltip>
             ) : groupLength === 1 ? (
               <Tooltip tooltipContent="Cannot have an empty group.">
-                <X
-                  className={`h-4 w-4 ${
-                    groupLength < 1 ? "text-custom-sidebar-text-400" : "text-red-500"
-                  }`}
-                />
+                <X className={`h-4 w-4 ${groupLength < 1 ? "text-custom-sidebar-text-400" : "text-red-500"}`} />
               </Tooltip>
             ) : (
-              <X
-                className={`h-4 w-4 ${
-                  groupLength < 1 ? "text-custom-sidebar-text-400" : "text-red-500"
-                }`}
-              />
+              <X className={`h-4 w-4 ${groupLength < 1 ? "text-custom-sidebar-text-400" : "text-red-500"}`} />
             )}
           </button>
         </div>

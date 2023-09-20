@@ -15,8 +15,8 @@ import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 // services
 import projectService from "services/project.service";
-import pagesService from "services/pages.service";
-import issuesService from "services/issues.service";
+import pagesService from "services/page.service";
+import issuesService from "services/issue.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
@@ -28,14 +28,7 @@ import { CreateLabelModal } from "components/labels";
 import { CreateBlock } from "components/pages/create-block";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-import {
-  CustomSearchSelect,
-  EmptyState,
-  Loader,
-  TextArea,
-  ToggleSwitch,
-  Tooltip,
-} from "components/ui";
+import { CustomSearchSelect, EmptyState, Loader, TextArea, ToggleSwitch, Tooltip } from "components/ui";
 // images
 import emptyPage from "public/empty-state/page.svg";
 // icons
@@ -86,40 +79,26 @@ const SinglePage: NextPage = () => {
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => projectService.getProject(workspaceSlug as string, projectId as string) : null
   );
 
   const { data: pageDetails, error } = useSWR(
     workspaceSlug && projectId && pageId ? PAGE_DETAILS(pageId as string) : null,
     workspaceSlug && projectId
-      ? () =>
-          pagesService.getPageDetails(
-            workspaceSlug as string,
-            projectId as string,
-            pageId as string
-          )
+      ? () => pagesService.getPageDetails(workspaceSlug as string, projectId as string, pageId as string)
       : null
   );
 
   const { data: pageBlocks } = useSWR(
     workspaceSlug && projectId && pageId ? PAGE_BLOCKS_LIST(pageId as string) : null,
     workspaceSlug && projectId
-      ? () =>
-          pagesService.listPageBlocks(
-            workspaceSlug as string,
-            projectId as string,
-            pageId as string
-          )
+      ? () => pagesService.listPageBlocks(workspaceSlug as string, projectId as string, pageId as string)
       : null
   );
 
   const { data: labels } = useSWR<IIssueLabels[]>(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string) : null
   );
 
   const { data: memberDetails } = useSWR(
@@ -209,11 +188,7 @@ const SinglePage: NextPage = () => {
       });
     });
 
-    pagesService.removePageFromFavorites(
-      workspaceSlug as string,
-      projectId as string,
-      pageId as string
-    );
+    pagesService.removePageFromFavorites(workspaceSlug as string, projectId as string, pageId as string);
   };
 
   const handleOnDragEnd = (result: DropResult) => {
@@ -228,15 +203,9 @@ const SinglePage: NextPage = () => {
       newSortOrder = pageBlocks[pageBlocks.length - 1].sort_order + 10000;
     else {
       if (destination.index > source.index)
-        newSortOrder =
-          (pageBlocks[destination.index].sort_order +
-            pageBlocks[destination.index + 1].sort_order) /
-          2;
+        newSortOrder = (pageBlocks[destination.index].sort_order + pageBlocks[destination.index + 1].sort_order) / 2;
       else if (destination.index < source.index)
-        newSortOrder =
-          (pageBlocks[destination.index - 1].sort_order +
-            pageBlocks[destination.index].sort_order) /
-          2;
+        newSortOrder = (pageBlocks[destination.index - 1].sort_order + pageBlocks[destination.index].sort_order) / 2;
     }
 
     const newBlocksList = pageBlocks.map((p) => ({
@@ -262,18 +231,15 @@ const SinglePage: NextPage = () => {
   };
 
   const handleCopyText = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
-    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/pages/${pageId}`).then(
-      () => {
-        setToastAlert({
-          type: "success",
-          title: "Link Copied!",
-          message: "Page link copied to clipboard.",
-        });
-      }
-    );
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/pages/${pageId}`).then(() => {
+      setToastAlert({
+        type: "success",
+        title: "Link Copied!",
+        message: "Page link copied to clipboard.",
+      });
+    });
   };
 
   const handleShowBlockToggle = async () => {
@@ -288,9 +254,7 @@ const SinglePage: NextPage = () => {
     };
 
     mutate<IProjectMember>(
-      (workspaceSlug as string) && (projectId as string)
-        ? USER_PROJECT_VIEW(projectId as string)
-        : null,
+      (workspaceSlug as string) && (projectId as string) ? USER_PROJECT_VIEW(projectId as string) : null,
       (prevData) => {
         if (!prevData) return prevData;
 
@@ -302,15 +266,13 @@ const SinglePage: NextPage = () => {
       false
     );
 
-    await projectService
-      .setProjectView(workspaceSlug as string, projectId as string, payload)
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Something went wrong. Please try again.",
-        });
+    await projectService.setProjectView(workspaceSlug as string, projectId as string, payload).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Something went wrong. Please try again.",
       });
+    });
   };
 
   const options = labels?.map((label) => ({
@@ -406,16 +368,13 @@ const SinglePage: NextPage = () => {
                               partialUpdatePage({ labels_list: updatedLabels });
                             }}
                             style={{
-                              backgroundColor: `${
-                                label?.color && label.color !== "" ? label.color : "#000000"
-                              }20`,
+                              backgroundColor: `${label?.color && label.color !== "" ? label.color : "#000000"}20`,
                             }}
                           >
                             <span
                               className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
                               style={{
-                                backgroundColor:
-                                  label?.color && label.color !== "" ? label.color : "#000000",
+                                backgroundColor: label?.color && label.color !== "" ? label.color : "#000000",
                               }}
                             />
                             {label.name}
@@ -492,9 +451,7 @@ const SinglePage: NextPage = () => {
                           <Popover.Panel className="absolute right-0 z-30 mt-1 w-screen max-w-xs transform rounded-lg border border-custom-border-200 bg-custom-background-90 p-3 shadow-lg">
                             <div className="relative divide-y-2 divide-custom-border-200">
                               <div className="flex items-center justify-between">
-                                <span className="text-sm text-custom-text-200">
-                                  Show full block content
-                                </span>
+                                <span className="text-sm text-custom-text-200">Show full block content</span>
                                 <ToggleSwitch
                                   value={showBlock}
                                   onChange={(value) => {
@@ -594,11 +551,7 @@ const SinglePage: NextPage = () => {
                           <LockClosedIcon className="h-4 w-4" />
                         </button>
                       ) : (
-                        <button
-                          onClick={() => partialUpdatePage({ access: 1 })}
-                          type="button"
-                          className="z-10"
-                        >
+                        <button onClick={() => partialUpdatePage({ access: 1 })} type="button" className="z-10">
                           <LockOpenIcon className="h-4 w-4" />
                         </button>
                       )}
@@ -649,11 +602,7 @@ const SinglePage: NextPage = () => {
                   </DragDropContext>
                   {createBlockForm && (
                     <div className="mt-4" ref={scrollToRef}>
-                      <CreateUpdateBlockInline
-                        handleClose={() => setCreateBlockForm(false)}
-                        focus="name"
-                        user={user}
-                      />
+                      <CreateUpdateBlockInline handleClose={() => setCreateBlockForm(false)} focus="name" user={user} />
                     </div>
                   )}
                   {labelModal && typeof projectId === "string" && (

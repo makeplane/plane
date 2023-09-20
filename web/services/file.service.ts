@@ -26,13 +26,18 @@ interface UnSplashImageUrls {
   small_s3: string;
 }
 
-class FileServices extends APIService {
+export class FileServices extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
   async uploadFile(workspaceSlug: string, file: FormData): Promise<any> {
-    return this.mediaUpload(`/api/workspaces/${workspaceSlug}/file-assets/`, file)
+    return this.post(`/api/workspaces/${workspaceSlug}/file-assets/`, file, {
+      headers: {
+        ...this.getHeaders(),
+        "Content-Type": "multipart/form-data",
+      },
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -57,8 +62,14 @@ class FileServices extends APIService {
         throw error?.response?.data;
       });
   }
+
   async uploadUserFile(file: FormData): Promise<any> {
-    return this.mediaUpload(`/api/users/file-assets/`, file)
+    return this.post(`/api/users/file-assets/`, file, {
+      headers: {
+        ...this.getHeaders(),
+        "Content-Type": "multipart/form-data",
+      },
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import pagesService from "services/pages.service";
+import pagesService from "services/page.service";
 // components
 import { PagesView } from "components/pages";
 // types
@@ -18,8 +18,7 @@ export const FavoritePagesList: React.FC<TPagesListProps> = ({ viewType }) => {
   const { data: pages } = useSWR(
     workspaceSlug && projectId ? FAVORITE_PAGES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () =>
-          pagesService.getPagesWithParams(workspaceSlug as string, projectId as string, "favorite")
+      ? () => pagesService.getPagesWithParams(workspaceSlug as string, projectId as string, "favorite")
       : null
   );
 

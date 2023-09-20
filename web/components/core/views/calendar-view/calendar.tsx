@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // react-beautiful-dnd
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // hooks
 import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 // components
@@ -17,13 +17,7 @@ import { IssuePeekOverview } from "components/issues";
 import { Spinner } from "components/ui";
 // helpers
 import { renderDateFormat } from "helpers/date-time.helper";
-import {
-  startOfWeek,
-  lastDayOfWeek,
-  eachDayOfInterval,
-  weekDayInterval,
-  formatDate,
-} from "helpers/calendar.helper";
+import { startOfWeek, lastDayOfWeek, eachDayOfInterval, weekDayInterval, formatDate } from "helpers/calendar.helper";
 // types
 import { ICalendarRange, ICurrentUserResponse, IIssue, UserAuth } from "types";
 // fetch-keys
@@ -61,8 +55,7 @@ export const CalendarView: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
-  const { calendarIssues, mutateIssues, params, displayFilters, setDisplayFilters } =
-    useCalendarIssuesView();
+  const { calendarIssues, mutateIssues, params, displayFilters, setDisplayFilters } = useCalendarIssuesView();
 
   const totalDate = eachDayOfInterval({
     start: calendarDates.startDate,
@@ -80,8 +73,7 @@ export const CalendarView: React.FC<Props> = ({
     const filterIssue =
       calendarIssues.length > 0
         ? calendarIssues.filter(
-            (issue) =>
-              issue.target_date && renderDateFormat(issue.target_date) === renderDateFormat(date)
+            (issue) => issue.target_date && renderDateFormat(issue.target_date) === renderDateFormat(date)
           )
         : [];
     return {
@@ -155,18 +147,16 @@ export const CalendarView: React.FC<Props> = ({
     });
 
     setDisplayFilters({
-      calendar_date_range: `${renderDateFormat(startDate)};after,${renderDateFormat(
-        endDate
-      )};before`,
+      calendar_date_range: `${renderDateFormat(startDate)};after,${renderDateFormat(endDate)};before`,
     });
   };
 
   useEffect(() => {
     if (!displayFilters || displayFilters.calendar_date_range === "")
       setDisplayFilters({
-        calendar_date_range: `${renderDateFormat(
-          startOfWeek(currentDate)
-        )};after,${renderDateFormat(lastDayOfWeek(currentDate))};before`,
+        calendar_date_range: `${renderDateFormat(startOfWeek(currentDate))};after,${renderDateFormat(
+          lastDayOfWeek(currentDate)
+        )};before`,
       });
   }, [currentDate, displayFilters, setDisplayFilters]);
 
@@ -214,11 +204,7 @@ export const CalendarView: React.FC<Props> = ({
                         : ""
                     }`}
                   >
-                    <span>
-                      {isMonthlyView
-                        ? formatDate(date, "eee").substring(0, 3)
-                        : formatDate(date, "eee")}
-                    </span>
+                    <span>{isMonthlyView ? formatDate(date, "eee").substring(0, 3) : formatDate(date, "eee")}</span>
                     {!isMonthlyView && <span>{formatDate(date, "d")}</span>}
                   </div>
                 ))}

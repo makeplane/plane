@@ -1,11 +1,11 @@
 import APIService from "services/api.service";
-import trackEventServices from "services/track-event.service";
+import trackEventServices from "services/track_event.service";
 // types
 import { ICurrentUserResponse, IGptResponse } from "types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 
-class AiServices extends APIService {
+export class AIService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -27,4 +27,4 @@ class AiServices extends APIService {
   }
 }
 
-export default new AiServices();
+export default new AIService();

@@ -7,17 +7,11 @@ import useSWR from "swr";
 // headless ui
 import { Combobox, Transition } from "@headlessui/react";
 // services
-import issuesServices from "services/issues.service";
+import issuesServices from "services/issue.service";
 // ui
 import { IssueLabelsList } from "components/ui";
 // icons
-import {
-  CheckIcon,
-  MagnifyingGlassIcon,
-  PlusIcon,
-  RectangleGroupIcon,
-  TagIcon,
-} from "@heroicons/react/24/outline";
+import { CheckIcon, MagnifyingGlassIcon, PlusIcon, RectangleGroupIcon, TagIcon } from "@heroicons/react/24/outline";
 // types
 import type { IIssueLabels } from "types";
 // fetch-keys
@@ -39,24 +33,14 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
 
   const { data: issueLabels } = useSWR<IIssueLabels[]>(
     projectId ? PROJECT_ISSUE_LABELS(projectId) : null,
-    workspaceSlug && projectId
-      ? () => issuesServices.getIssueLabels(workspaceSlug as string, projectId)
-      : null
+    workspaceSlug && projectId ? () => issuesServices.getIssueLabels(workspaceSlug as string, projectId) : null
   );
 
   const filteredOptions =
-    query === ""
-      ? issueLabels
-      : issueLabels?.filter((l) => l.name.toLowerCase().includes(query.toLowerCase()));
+    query === "" ? issueLabels : issueLabels?.filter((l) => l.name.toLowerCase().includes(query.toLowerCase()));
 
   return (
-    <Combobox
-      as="div"
-      value={value}
-      onChange={(val) => onChange(val)}
-      className="relative flex-shrink-0"
-      multiple
-    >
+    <Combobox as="div" value={value} onChange={(val) => onChange(val)} className="relative flex-shrink-0" multiple>
       {({ open }: any) => (
         <>
           <Combobox.Button className="flex items-center gap-2 cursor-pointer text-xs text-custom-text-200">
@@ -129,11 +113,7 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                                     <span>{label.name}</span>
                                   </div>
                                   <div className="flex items-center justify-center rounded p-1">
-                                    <CheckIcon
-                                      className={`h-3 w-3 ${
-                                        selected ? "opacity-100" : "opacity-0"
-                                      }`}
-                                    />
+                                    <CheckIcon className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
                                   </div>
                                 </div>
                               )}
@@ -168,11 +148,7 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                                         <span>{child.name}</span>
                                       </div>
                                       <div className="flex items-center justify-center rounded p-1">
-                                        <CheckIcon
-                                          className={`h-3 w-3 ${
-                                            selected ? "opacity-100" : "opacity-0"
-                                          }`}
-                                        />
+                                        <CheckIcon className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
                                       </div>
                                     </div>
                                   )}

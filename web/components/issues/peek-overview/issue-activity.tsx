@@ -1,7 +1,7 @@
 import useSWR, { mutate } from "swr";
 
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // hooks
 import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
@@ -78,10 +78,7 @@ export const PeekOverviewIssueActivity: React.FC<Props> = ({ workspaceSlug, issu
           showAccessSpecifier={projectDetails && projectDetails.is_deployed}
         />
         <div className="mt-4">
-          <AddComment
-            onSubmit={handleAddComment}
-            showAccessSpecifier={projectDetails && projectDetails.is_deployed}
-          />
+          <AddComment onSubmit={handleAddComment} showAccessSpecifier={projectDetails && projectDetails.is_deployed} />
         </div>
       </div>
     </div>

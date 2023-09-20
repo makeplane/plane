@@ -7,8 +7,8 @@ import useSWR, { mutate } from "swr";
 // cmdk
 import { Command } from "cmdk";
 // services
-import issuesService from "services/issues.service";
-import stateService from "services/state.service";
+import issuesService from "services/issue.service";
+import stateService from "services/project_state.service";
 // ui
 import { Spinner } from "components/ui";
 // icons
@@ -32,9 +32,7 @@ export const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen, issue, use
 
   const { data: stateGroups, mutate: mutateIssueDetails } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => stateService.getStates(workspaceSlug as string, projectId as string) : null
   );
   const states = getStatesList(stateGroups);
 
@@ -78,18 +76,9 @@ export const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen, issue, use
       {states ? (
         states.length > 0 ? (
           states.map((state) => (
-            <Command.Item
-              key={state.id}
-              onSelect={() => handleIssueState(state.id)}
-              className="focus:outline-none"
-            >
+            <Command.Item key={state.id} onSelect={() => handleIssueState(state.id)} className="focus:outline-none">
               <div className="flex items-center space-x-3">
-                <StateGroupIcon
-                  stateGroup={state.group}
-                  color={state.color}
-                  height="16px"
-                  width="16px"
-                />
+                <StateGroupIcon stateGroup={state.group} color={state.color} height="16px" width="16px" />
                 <p>{state.name}</p>
               </div>
               <div>{state.id === issue.state && <CheckIcon className="h-3 w-3" />}</div>

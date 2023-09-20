@@ -17,17 +17,12 @@ import {
 import { Popover2 } from "@blueprintjs/popover2";
 // icons
 import { Icon } from "components/ui";
-import {
-  EllipsisHorizontalIcon,
-  LinkIcon,
-  PencilIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { EllipsisHorizontalIcon, LinkIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 // hooks
 import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 import useToast from "hooks/use-toast";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // constant
 import {
   CYCLE_DETAILS,
@@ -133,13 +128,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         );
 
       issuesService
-        .patchIssue(
-          workspaceSlug as string,
-          projectId as string,
-          issue.id as string,
-          formData,
-          user
-        )
+        .patchIssue(workspaceSlug as string, projectId as string, issue.id as string, formData, user)
         .then(() => {
           if (issue.parent) {
             mutate(SUB_ISSUES(issue.parent as string));
@@ -167,11 +156,8 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
   };
 
   const handleCopyText = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`
-    ).then(() => {
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",

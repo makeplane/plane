@@ -8,18 +8,12 @@ import useSWR from "swr";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 // services
-import stateService from "services/state.service";
+import stateService from "services/project_state.service";
 // hooks
 import useUser from "hooks/use-user";
 import { useProjectMyMembership } from "contexts/project-member.context";
 // components
-import {
-  AllLists,
-  AllBoards,
-  CalendarView,
-  SpreadsheetView,
-  GanttChartView,
-} from "components/core";
+import { AllLists, AllBoards, CalendarView, SpreadsheetView, GanttChartView } from "components/core";
 // ui
 import { EmptyState, Spinner } from "components/ui";
 // icons
@@ -88,9 +82,7 @@ export const AllViews: React.FC<Props> = ({
 
   const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
-    workspaceSlug
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug ? () => stateService.getStates(workspaceSlug as string, projectId as string) : null
   );
   const states = getStatesList(stateGroups);
 
@@ -180,9 +172,7 @@ export const AllViews: React.FC<Props> = ({
                 userAuth={memberRole}
               />
             ) : (
-              displayFilters?.layout === "gantt_chart" && (
-                <GanttChartView disableUserActions={disableUserActions} />
-              )
+              displayFilters?.layout === "gantt_chart" && <GanttChartView disableUserActions={disableUserActions} />
             )}
           </>
         ) : router.pathname.includes("archived-issues") ? (

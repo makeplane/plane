@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // cmdk
 import { Command } from "cmdk";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // types
 import { ICurrentUserResponse, IIssue, TIssuePriorities } from "types";
 // constants
@@ -64,11 +64,7 @@ export const ChangeIssuePriority: React.FC<Props> = ({ setIsPaletteOpen, issue, 
   return (
     <>
       {PRIORITIES.map((priority) => (
-        <Command.Item
-          key={priority}
-          onSelect={() => handleIssueState(priority)}
-          className="focus:outline-none"
-        >
+        <Command.Item key={priority} onSelect={() => handleIssueState(priority)} className="focus:outline-none">
           <div className="flex items-center space-x-3">
             <PriorityIcon priority={priority} />
             <span className="capitalize">{priority ?? "None"}</span>

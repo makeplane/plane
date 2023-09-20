@@ -1,7 +1,7 @@
 import { KeyedMutator } from "swr";
 
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // types
 import { ICurrentUserResponse, IIssue } from "types";
 import { IBlockUpdateData } from "../types";
@@ -34,8 +34,7 @@ export const updateGanttIssue = (
 
   const newPayload: any = { ...payload };
 
-  if (newPayload.sort_order && payload.sort_order)
-    newPayload.sort_order = payload.sort_order.newSortOrder;
+  if (newPayload.sort_order && payload.sort_order) newPayload.sort_order = payload.sort_order.newSortOrder;
 
   issuesService.patchIssue(workspaceSlug, issue.project, issue.id, newPayload, user);
 };

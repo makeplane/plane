@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 import cyclesService from "services/cycles.service";
 // ui
 import { Spinner, CustomSelect, Tooltip } from "components/ui";
@@ -22,23 +22,14 @@ type Props = {
   disabled?: boolean;
 };
 
-export const SidebarCycleSelect: React.FC<Props> = ({
-  issueDetail,
-  handleCycleChange,
-  disabled = false,
-}) => {
+export const SidebarCycleSelect: React.FC<Props> = ({ issueDetail, handleCycleChange, disabled = false }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
   const { data: incompleteCycles } = useSWR(
     workspaceSlug && projectId ? INCOMPLETE_CYCLES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () =>
-          cyclesService.getCyclesWithParams(
-            workspaceSlug as string,
-            projectId as string,
-            "incomplete"
-          )
+      ? () => cyclesService.getCyclesWithParams(workspaceSlug as string, projectId as string, "incomplete")
       : null
   );
 
@@ -63,21 +54,14 @@ export const SidebarCycleSelect: React.FC<Props> = ({
     <CustomSelect
       customButton={
         <div>
-          <Tooltip
-            position="left"
-            tooltipContent={`${issueCycle ? issueCycle.cycle_detail.name : "No cycle"}`}
-          >
+          <Tooltip position="left" tooltipContent={`${issueCycle ? issueCycle.cycle_detail.name : "No cycle"}`}>
             <button
               type="button"
               className={`bg-custom-background-80 text-xs rounded px-2.5 py-0.5 w-full flex ${
                 disabled ? "cursor-not-allowed" : ""
               }`}
             >
-              <span
-                className={`truncate ${
-                  issueCycle ? "text-custom-text-100" : "text-custom-text-200"
-                }`}
-              >
+              <span className={`truncate ${issueCycle ? "text-custom-text-100" : "text-custom-text-200"}`}>
                 {issueCycle ? issueCycle.cycle_detail.name : "No cycle"}
               </span>
             </button>

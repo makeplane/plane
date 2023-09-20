@@ -4,7 +4,7 @@ import useSWR from "swr";
 import { COMMENT_REACTION_LIST } from "constants/fetch-keys";
 
 // services
-import reactionService from "services/reaction.service";
+import reactionService from "services/issue_reaction.service";
 
 // helpers
 import { groupReactions } from "helpers/emoji.helper";
@@ -69,8 +69,7 @@ const useCommentReaction = (
     if (!workspaceSlug || !projectId || !commendId) return;
 
     mutateCommentReactions(
-      (prevData: any) =>
-        prevData?.filter((r: any) => r.actor !== user?.user?.id || r.reaction !== reaction) || [],
+      (prevData: any) => prevData?.filter((r: any) => r.actor !== user?.user?.id || r.reaction !== reaction) || [],
       false
     );
 

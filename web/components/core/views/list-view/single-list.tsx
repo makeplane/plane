@@ -5,7 +5,7 @@ import useSWR from "swr";
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 import projectService from "services/project.service";
 // hooks
 import useProjects from "hooks/use-projects";
@@ -77,9 +77,7 @@ export const SingleList: React.FC<Props> = ({
 
   const { data: issueLabels } = useSWR<IIssueLabels[]>(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string) : null
   );
 
   const { data: members } = useSWR(
@@ -120,12 +118,7 @@ export const SingleList: React.FC<Props> = ({
     switch (displayFilters?.group_by) {
       case "state":
         icon = currentState && (
-          <StateGroupIcon
-            stateGroup={currentState.group}
-            color={currentState.color}
-            height="16px"
-            width="16px"
-          />
+          <StateGroupIcon stateGroup={currentState.group} color={currentState.color} height="16px" width="16px" />
         );
         break;
       case "state_detail.group":
@@ -152,14 +145,8 @@ export const SingleList: React.FC<Props> = ({
             : null);
         break;
       case "labels":
-        const labelColor =
-          issueLabels?.find((label) => label.id === groupTitle)?.color ?? "#000000";
-        icon = (
-          <span
-            className="h-3 w-3 flex-shrink-0 rounded-full"
-            style={{ backgroundColor: labelColor }}
-          />
-        );
+        const labelColor = issueLabels?.find((label) => label.id === groupTitle)?.color ?? "#000000";
+        icon = <span className="h-3 w-3 flex-shrink-0 rounded-full" style={{ backgroundColor: labelColor }} />;
         break;
       case "assignees":
       case "created_by":
@@ -181,9 +168,7 @@ export const SingleList: React.FC<Props> = ({
           <div className="flex items-center justify-between px-4 py-2.5 bg-custom-background-90">
             <Disclosure.Button>
               <div className="flex items-center gap-x-3">
-                {displayFilters?.group_by !== null && (
-                  <div className="flex items-center">{getGroupIcon()}</div>
-                )}
+                {displayFilters?.group_by !== null && <div className="flex items-center">{getGroupIcon()}</div>}
                 {displayFilters?.group_by !== null ? (
                   <h2
                     className={`text-sm font-semibold leading-6 text-custom-text-100 ${
@@ -226,9 +211,7 @@ export const SingleList: React.FC<Props> = ({
               >
                 <CustomMenu.MenuItem onClick={addIssueToGroup}>Create new</CustomMenu.MenuItem>
                 {openIssuesListModal && (
-                  <CustomMenu.MenuItem onClick={openIssuesListModal}>
-                    Add an existing issue
-                  </CustomMenu.MenuItem>
+                  <CustomMenu.MenuItem onClick={openIssuesListModal}>Add an existing issue</CustomMenu.MenuItem>
                 )}
               </CustomMenu>
             )}
@@ -256,19 +239,14 @@ export const SingleList: React.FC<Props> = ({
                       makeIssueCopy={() => handleIssueAction(issue, "copy")}
                       handleDeleteIssue={() => handleIssueAction(issue, "delete")}
                       handleDraftIssueSelect={
-                        handleDraftIssueAction
-                          ? () => handleDraftIssueAction(issue, "edit")
-                          : undefined
+                        handleDraftIssueAction ? () => handleDraftIssueAction(issue, "edit") : undefined
                       }
                       handleDraftIssueDelete={
-                        handleDraftIssueAction
-                          ? () => handleDraftIssueAction(issue, "delete")
-                          : undefined
+                        handleDraftIssueAction ? () => handleDraftIssueAction(issue, "delete") : undefined
                       }
                       handleMyIssueOpen={handleMyIssueOpen}
                       removeIssue={() => {
-                        if (removeIssue !== null && issue.bridge_id)
-                          removeIssue(issue.bridge_id, issue.id);
+                        if (removeIssue !== null && issue.bridge_id) removeIssue(issue.bridge_id, issue.id);
                       }}
                       disableUserActions={disableUserActions}
                       user={user}
@@ -277,9 +255,7 @@ export const SingleList: React.FC<Props> = ({
                     />
                   ))
                 ) : (
-                  <p className="bg-custom-background-100 px-4 py-2.5 text-sm text-custom-text-200">
-                    No issues.
-                  </p>
+                  <p className="bg-custom-background-100 px-4 py-2.5 text-sm text-custom-text-200">No issues.</p>
                 )
               ) : (
                 <div className="flex h-full w-full items-center justify-center">Loading...</div>

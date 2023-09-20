@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 
 // fetch key
 import { ISSUE_DETAILS } from "constants/fetch-keys";
@@ -37,8 +37,7 @@ export const ParentSelect: React.FC<Props> = (props) => {
   const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId.toString()) : null,
     workspaceSlug && projectId && issueId
-      ? () =>
-          issuesService.retrieve(workspaceSlug.toString(), projectId.toString(), issueId.toString())
+      ? () => issuesService.retrieve(workspaceSlug.toString(), projectId.toString(), issueId.toString())
       : null
   );
 

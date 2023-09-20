@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import estimatesService from "services/estimates.service";
+import estimatesService from "services/project_estimates.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -119,13 +119,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
     );
 
     await estimatesService
-      .patchEstimate(
-        workspaceSlug as string,
-        projectId as string,
-        data?.id as string,
-        payload,
-        user
-      )
+      .patchEstimate(workspaceSlug as string, projectId as string, data?.id as string, payload, user)
       .then(() => {
         mutate(ESTIMATES_LIST(projectId.toString()));
         mutate(ESTIMATE_DETAILS(data.id));
@@ -257,9 +251,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                 <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="space-y-3">
-                      <div className="text-lg font-medium leading-6">
-                        {data ? "Update" : "Create"} Estimate
-                      </div>
+                      <div className="text-lg font-medium leading-6">{data ? "Update" : "Create"} Estimate</div>
                       <div>
                         <Input
                           id="name"

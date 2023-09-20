@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // react-dropzone
 import { useDropzone } from "react-dropzone";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // hooks
 import useToast from "hooks/use-toast";
 // types
@@ -44,12 +44,7 @@ export const IssueAttachmentUpload: React.FC<Props> = ({ disabled = false }) => 
     setIsLoading(true);
 
     issuesService
-      .uploadIssueAttachment(
-        workspaceSlug as string,
-        projectId as string,
-        issueId as string,
-        formData
-      )
+      .uploadIssueAttachment(workspaceSlug as string, projectId as string, issueId as string, formData)
       .then((res) => {
         mutate<IIssueAttachment[]>(
           ISSUE_ATTACHMENTS(issueId as string),
@@ -83,9 +78,7 @@ export const IssueAttachmentUpload: React.FC<Props> = ({ disabled = false }) => 
   });
 
   const fileError =
-    fileRejections.length > 0
-      ? `Invalid file type or size (max ${maxFileSize / 1024 / 1024} MB)`
-      : null;
+    fileRejections.length > 0 ? `Invalid file type or size (max ${maxFileSize / 1024 / 1024} MB)` : null;
 
   return (
     <div

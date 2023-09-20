@@ -10,7 +10,7 @@ import {
 } from "types";
 import { API_BASE_URL } from "helpers/common.helper";
 
-class AnalyticsServices extends APIService {
+export class AnalyticsService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -61,4 +61,4 @@ class AnalyticsServices extends APIService {
   }
 }
 
-export default new AnalyticsServices();
+export default new AnalyticsService();

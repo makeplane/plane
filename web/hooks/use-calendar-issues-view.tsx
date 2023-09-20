@@ -7,7 +7,7 @@ import useSWR from "swr";
 // contexts
 import { issueViewContext } from "contexts/issue-view.context";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 import cyclesService from "services/cycles.service";
 import modulesService from "services/modules.service";
 // types
@@ -45,19 +45,14 @@ const useCalendarIssuesView = () => {
   };
 
   const { data: projectCalendarIssues, mutate: mutateProjectCalendarIssues } = useSWR(
+    workspaceSlug && projectId ? PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params) : null,
     workspaceSlug && projectId
-      ? PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params)
-      : null,
-    workspaceSlug && projectId
-      ? () =>
-          issuesService.getIssuesWithParams(workspaceSlug.toString(), projectId.toString(), params)
+      ? () => issuesService.getIssuesWithParams(workspaceSlug.toString(), projectId.toString(), params)
       : null
   );
 
   const { data: cycleCalendarIssues, mutate: mutateCycleCalendarIssues } = useSWR(
-    workspaceSlug && projectId && cycleId
-      ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), params)
-      : null,
+    workspaceSlug && projectId && cycleId ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), params) : null,
     workspaceSlug && projectId && cycleId
       ? () =>
           cyclesService.getCycleIssuesWithParams(
@@ -70,9 +65,7 @@ const useCalendarIssuesView = () => {
   );
 
   const { data: moduleCalendarIssues, mutate: mutateModuleCalendarIssues } = useSWR(
-    workspaceSlug && projectId && moduleId
-      ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), params)
-      : null,
+    workspaceSlug && projectId && moduleId ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), params) : null,
     workspaceSlug && projectId && moduleId
       ? () =>
           modulesService.getModuleIssuesWithParams(
@@ -87,8 +80,7 @@ const useCalendarIssuesView = () => {
   const { data: viewCalendarIssues, mutate: mutateViewCalendarIssues } = useSWR(
     workspaceSlug && projectId && viewId && params ? VIEW_ISSUES(viewId.toString(), params) : null,
     workspaceSlug && projectId && viewId && params
-      ? () =>
-          issuesService.getIssuesWithParams(workspaceSlug.toString(), projectId.toString(), params)
+      ? () => issuesService.getIssuesWithParams(workspaceSlug.toString(), projectId.toString(), params)
       : null
   );
 

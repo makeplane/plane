@@ -2,7 +2,7 @@ import { observable, action, makeObservable, runInAction } from "mobx";
 // types
 import { RootStore } from "./root";
 // services
-import { ProjectIssuesServices } from "services/issues.service";
+import { IssueServices } from "services/issue.service";
 
 export type IPeekMode = "side" | "modal" | "full";
 
@@ -80,7 +80,7 @@ class IssueViewDetailStore implements IIssueViewDetailStore {
     });
 
     this.rootStore = _rootStore;
-    this.issueService = new ProjectIssuesServices();
+    this.issueService = new IssueServices();
   }
 
   setPeekId = (issueId: string | null) => (this.peekId = issueId);

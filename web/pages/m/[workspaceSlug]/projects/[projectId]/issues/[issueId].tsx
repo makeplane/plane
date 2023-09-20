@@ -11,7 +11,7 @@ import useSWR, { mutate } from "swr";
 import { useForm } from "react-hook-form";
 
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 
 // fetch key
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
@@ -43,11 +43,7 @@ const MobileWebViewIssueDetail = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
-  const memberRole = useProjectMembers(
-    workspaceSlug as string,
-    projectId as string,
-    !!workspaceSlug && !!projectId
-  );
+  const memberRole = useProjectMembers(workspaceSlug as string, projectId as string, !!workspaceSlug && !!projectId);
 
   const isAllowed = Boolean(memberRole.isMember || memberRole.isOwner);
 
@@ -69,8 +65,7 @@ const MobileWebViewIssueDetail = () => {
   } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId.toString()) : null,
     workspaceSlug && projectId && issueId
-      ? () =>
-          issuesService.retrieve(workspaceSlug.toString(), projectId.toString(), issueId.toString())
+      ? () => issuesService.retrieve(workspaceSlug.toString(), projectId.toString(), issueId.toString())
       : null
   );
 
@@ -82,8 +77,7 @@ const MobileWebViewIssueDetail = () => {
       description: issueDetails.description,
       description_html: issueDetails.description_html,
       state: issueDetails.state,
-      assignees_list:
-        issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
+      assignees_list: issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
       labels_list: issueDetails.labels_list ?? issueDetails.labels,
       labels: issueDetails.labels_list ?? issueDetails.labels,
     });

@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import stateService from "services/state.service";
+import stateService from "services/project_state.service";
 // ui
 import { CustomSearchSelect } from "components/ui";
 // icons
@@ -30,9 +30,7 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
 
   const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId) : null,
-    workspaceSlug && projectId
-      ? () => stateService.getStates(workspaceSlug as string, projectId)
-      : null
+    workspaceSlug && projectId ? () => stateService.getStates(workspaceSlug as string, projectId) : null
   );
   const states = getStatesList(stateGroups);
 
@@ -60,10 +58,7 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
           {selectedOption ? (
             <StateGroupIcon stateGroup={selectedOption.group} color={selectedOption.color} />
           ) : currentDefaultState ? (
-            <StateGroupIcon
-              stateGroup={currentDefaultState.group}
-              color={currentDefaultState.color}
-            />
+            <StateGroupIcon stateGroup={currentDefaultState.group} color={currentDefaultState.color} />
           ) : (
             <Squares2X2Icon className="h-3.5 w-3.5 text-custom-text-200" />
           )}

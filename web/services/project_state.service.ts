@@ -1,6 +1,6 @@
 // services
 import APIService from "services/api.service";
-import trackEventServices from "services/track-event.service";
+import trackEventServices from "services/track_event.service";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 // types
@@ -59,10 +59,7 @@ export class ProjectStateServices extends APIService {
     data: IState,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
-    return this.put(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/states/${stateId}/`,
-      data
-    )
+    return this.put(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/${stateId}/`, data)
       .then((response) => {
         trackEventServices.trackStateEvent(response?.data, "STATE_UPDATE", user);
         return response?.data;
@@ -79,10 +76,7 @@ export class ProjectStateServices extends APIService {
     data: Partial<IState>,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
-    return this.patch(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/states/${stateId}/`,
-      data
-    )
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/${stateId}/`, data)
       .then((response) => {
         trackEventServices.trackStateEvent(response?.data, "STATE_UPDATE", user);
         return response?.data;

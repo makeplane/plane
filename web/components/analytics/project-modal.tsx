@@ -13,15 +13,11 @@ import analyticsService from "services/analytics.service";
 import projectService from "services/project.service";
 import cyclesService from "services/cycles.service";
 import modulesService from "services/modules.service";
-import trackEventServices from "services/track-event.service";
+import trackEventServices from "services/track_event.service";
 // components
 import { CustomAnalytics, ScopeAndDemand } from "components/analytics";
 // icons
-import {
-  ArrowsPointingInIcon,
-  ArrowsPointingOutIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowsPointingInIcon, ArrowsPointingOutIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
 import { IAnalyticsParams, IWorkspace } from "types";
 // fetch-keys
@@ -67,9 +63,7 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
   );
 
   const { data: projectDetails } = useSWR(
-    workspaceSlug && projectId && !(cycleId || moduleId)
-      ? PROJECT_DETAILS(projectId.toString())
-      : null,
+    workspaceSlug && projectId && !(cycleId || moduleId) ? PROJECT_DETAILS(projectId.toString()) : null,
     workspaceSlug && projectId && !(cycleId || moduleId)
       ? () => projectService.getProject(workspaceSlug.toString(), projectId.toString())
       : null
@@ -78,24 +72,14 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const { data: cycleDetails } = useSWR(
     workspaceSlug && projectId && cycleId ? CYCLE_DETAILS(cycleId.toString()) : null,
     workspaceSlug && projectId && cycleId
-      ? () =>
-          cyclesService.getCycleDetails(
-            workspaceSlug.toString(),
-            projectId.toString(),
-            cycleId.toString()
-          )
+      ? () => cyclesService.getCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString())
       : null
   );
 
   const { data: moduleDetails } = useSWR(
     workspaceSlug && projectId && moduleId ? MODULE_DETAILS(moduleId.toString()) : null,
     workspaceSlug && projectId && moduleId
-      ? () =>
-          modulesService.getModuleDetails(
-            workspaceSlug.toString(),
-            projectId.toString(),
-            moduleId.toString()
-          )
+      ? () => modulesService.getModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString())
       : null
   );
 
@@ -134,8 +118,7 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
       eventPayload.moduleName = moduleDetails.name;
     }
 
-    const eventType =
-      tab === "Scope and Demand" ? "SCOPE_AND_DEMAND_ANALYTICS" : "CUSTOM_ANALYTICS";
+    const eventType = tab === "Scope and Demand" ? "SCOPE_AND_DEMAND_ANALYTICS" : "CUSTOM_ANALYTICS";
 
     trackEventServices.trackAnalyticsEvent(
       eventPayload,
@@ -150,9 +133,9 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
   return (
     <div
-      className={`absolute top-0 z-30 h-full bg-custom-background-90 ${
-        fullScreen ? "p-2 w-full" : "w-1/2"
-      } ${isOpen ? "right-0" : "-right-full"} duration-300 transition-all`}
+      className={`absolute top-0 z-30 h-full bg-custom-background-90 ${fullScreen ? "p-2 w-full" : "w-1/2"} ${
+        isOpen ? "right-0" : "-right-full"
+      } duration-300 transition-all`}
     >
       <div
         className={`flex h-full flex-col overflow-hidden border-custom-border-200 bg-custom-background-100 text-left ${
@@ -161,8 +144,7 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
       >
         <div className="flex items-center justify-between gap-4 bg-custom-background-100 px-5 py-4 text-sm">
           <h3 className="break-words">
-            Analytics for{" "}
-            {cycleId ? cycleDetails?.name : moduleId ? moduleDetails?.name : projectDetails?.name}
+            Analytics for {cycleId ? cycleDetails?.name : moduleId ? moduleDetails?.name : projectDetails?.name}
           </h3>
           <div className="flex items-center gap-2">
             <button

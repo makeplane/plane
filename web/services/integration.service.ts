@@ -1,5 +1,5 @@
 import APIService from "services/api.service";
-import trackEventServices from "services/track-event.service";
+import trackEventServices from "services/track_event.service";
 
 // types
 import {
@@ -11,7 +11,7 @@ import {
 } from "types";
 import { API_BASE_URL } from "helpers/common.helper";
 
-class IntegrationService extends APIService {
+export class IntegrationService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -33,9 +33,7 @@ class IntegrationService extends APIService {
   }
 
   async deleteWorkspaceIntegration(workspaceSlug: string, integrationId: string): Promise<any> {
-    return this.delete(
-      `/api/workspaces/${workspaceSlug}/workspace-integrations/${integrationId}/provider/`
-    )
+    return this.delete(`/api/workspaces/${workspaceSlug}/workspace-integrations/${integrationId}/provider/`)
       .then((res) => res?.data)
       .catch((error) => {
         throw error?.response?.data;

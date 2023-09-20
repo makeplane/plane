@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import issueServices from "services/issues.service";
+import issueServices from "services/issue.service";
 // hooks
 import useIssuesView from "hooks/use-issues-view";
 import useCalendarIssuesView from "hooks/use-calendar-issues-view";
@@ -37,13 +37,7 @@ type Props = {
   onSubmit?: () => Promise<void>;
 };
 
-export const DeleteIssueModal: React.FC<Props> = ({
-  isOpen,
-  handleClose,
-  data,
-  user,
-  onSubmit,
-}) => {
+export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, user, onSubmit }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
@@ -82,11 +76,7 @@ export const DeleteIssueModal: React.FC<Props> = ({
             ? VIEW_ISSUES(viewId.toString(), calendarParams)
             : PROJECT_ISSUES_LIST_WITH_PARAMS(data.project, calendarParams);
 
-          mutate<IIssue[]>(
-            calendarFetchKey,
-            (prevData) => (prevData ?? []).filter((p) => p.id !== data.id),
-            false
-          );
+          mutate<IIssue[]>(calendarFetchKey, (prevData) => (prevData ?? []).filter((p) => p.id !== data.id), false);
         } else if (displayFilters.layout === "spreadsheet") {
           const spreadsheetFetchKey = cycleId
             ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), spreadsheetParams)
@@ -163,8 +153,7 @@ export const DeleteIssueModal: React.FC<Props> = ({
       });
   };
 
-  const handleIssueDelete = () =>
-    isArchivedIssues ? handleArchivedIssueDeletion() : handleDeletion();
+  const handleIssueDelete = () => (isArchivedIssues ? handleArchivedIssueDeletion() : handleDeletion());
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -196,10 +185,7 @@ export const DeleteIssueModal: React.FC<Props> = ({
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-500/20 p-4">
-                      <ExclamationTriangleIcon
-                        className="h-6 w-6 text-red-600"
-                        aria-hidden="true"
-                      />
+                      <ExclamationTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">
                       <h3 className="text-xl font-medium 2xl:text-2xl">Delete Issue</h3>
@@ -211,8 +197,8 @@ export const DeleteIssueModal: React.FC<Props> = ({
                       <span className="break-words font-medium text-custom-text-100">
                         {data?.project_detail.identifier}-{data?.sequence_id}
                       </span>
-                      {""}? All of the data related to the issue will be permanently removed. This
-                      action cannot be undone.
+                      {""}? All of the data related to the issue will be permanently removed. This action cannot be
+                      undone.
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">

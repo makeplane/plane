@@ -4,8 +4,8 @@ import { mutate } from "swr";
 import { SparklesIcon } from "@heroicons/react/24/outline";
 import { Controller, useForm } from "react-hook-form";
 // services
-import pagesService from "services/pages.service";
-import issuesService from "services/issues.service";
+import pagesService from "services/page.service";
+import issuesService from "services/issue.service";
 import aiService from "services/ai.service";
 // hooks
 import useToast from "hooks/use-toast";
@@ -195,8 +195,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
           setToastAlert({
             type: "error",
             title: "Error!",
-            message:
-              "You have reached the maximum number of requests of 50 requests per month per user.",
+            message: "You have reached the maximum number of requests of 50 requests per month per user.",
           });
         else
           setToastAlert({
@@ -294,9 +293,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
                     />
                   );
                 else if (!value || !watch("description_html"))
-                  return (
-                    <div className="h-32 w-full flex items-center justify-center text-custom-text-200 text-sm" />
-                  );
+                  return <div className="h-32 w-full flex items-center justify-center text-custom-text-200 text-sm" />;
 
                 return (
                   <TipTapEditor
@@ -351,13 +348,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
         <div className="flex items-center justify-end gap-2 p-4">
           <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
           <PrimaryButton type="submit" disabled={watch("name") === ""} loading={isSubmitting}>
-            {data
-              ? isSubmitting
-                ? "Updating..."
-                : "Update block"
-              : isSubmitting
-              ? "Adding..."
-              : "Add block"}
+            {data ? (isSubmitting ? "Updating..." : "Update block") : isSubmitting ? "Adding..." : "Add block"}
           </PrimaryButton>
         </div>
       </form>
@@ -371,9 +362,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
         onResponse={(response) => {
           if (data && handleAiAssistance) {
             handleAiAssistance(response);
-            editorRef.current?.setEditorValue(
-              `${watch("description_html")}<p>${response}</p>` ?? ""
-            );
+            editorRef.current?.setEditorValue(`${watch("description_html")}<p>${response}</p>` ?? "");
           } else {
             setValue("description", {});
             setValue("description_html", `${watch("description_html")}<p>${response}</p>`);

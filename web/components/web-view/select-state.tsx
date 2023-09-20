@@ -11,7 +11,7 @@ import useSWR from "swr";
 import { ChevronDown } from "lucide-react";
 
 // services
-import stateService from "services/state.service";
+import stateService from "services/project_state.service";
 
 // fetch key
 import { STATES_LIST } from "constants/fetch-keys";
@@ -39,9 +39,7 @@ export const StateSelect: React.FC<Props> = (props) => {
 
   const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => stateService.getStates(workspaceSlug as string, projectId as string) : null
   );
   const states = getStatesList(stateGroups);
 

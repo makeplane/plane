@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // component
 import { CreateLabelModal } from "components/labels";
 // ui
@@ -45,9 +45,7 @@ export const ViewLabelSelect: React.FC<Props> = ({
 
   const { data: issueLabels } = useSWR<IIssueLabels[]>(
     projectId ? PROJECT_ISSUE_LABELS(projectId.toString()) : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string) : null
   );
 
   const options = issueLabels?.map((label) => ({

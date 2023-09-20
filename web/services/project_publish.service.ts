@@ -1,10 +1,10 @@
 import { API_BASE_URL } from "helpers/common.helper";
 // services
 import APIService from "services/api.service";
-import trackEventServices from "services/track-event.service";
+import trackEventServices from "services/track_event.service";
 // types
 import { ICurrentUserResponse } from "types";
-import { IProjectPublishSettings } from "store/project-publish";
+import { IProjectPublishSettings } from "store/project_publish";
 
 class ProjectServices extends APIService {
   constructor() {
@@ -16,9 +16,7 @@ class ProjectServices extends APIService {
     project_slug: string,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
-    return this.get(
-      `/api/workspaces/${workspace_slug}/projects/${project_slug}/project-deploy-boards/`
-    )
+    return this.get(`/api/workspaces/${workspace_slug}/projects/${project_slug}/project-deploy-boards/`)
       .then((response) => {
         // trackEventServices.trackProjectPublishSettingsEvent(
         //   response.data,
@@ -38,10 +36,7 @@ class ProjectServices extends APIService {
     data: IProjectPublishSettings,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
-    return this.post(
-      `/api/workspaces/${workspace_slug}/projects/${project_slug}/project-deploy-boards/`,
-      data
-    )
+    return this.post(`/api/workspaces/${workspace_slug}/projects/${project_slug}/project-deploy-boards/`, data)
       .then((response) => {
         //   trackEventServices.trackProjectPublishSettingsEvent(
         //     response.data,

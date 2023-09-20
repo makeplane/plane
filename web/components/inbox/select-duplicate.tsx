@@ -11,7 +11,7 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 // hooks
 import useToast from "hooks/use-toast";
 // services
-import issuesServices from "services/issues.service";
+import issuesServices from "services/issue.service";
 // ui
 import { PrimaryButton, SecondaryButton } from "components/ui";
 // icons
@@ -39,9 +39,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
   const { workspaceSlug, projectId, issueId } = router.query;
 
   const { data: issues } = useSWR(
-    workspaceSlug && projectId
-      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
-      : null,
+    workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string) : null,
     workspaceSlug && projectId
       ? () =>
           issuesServices
@@ -71,8 +69,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
     handleClose();
   };
 
-  const filteredIssues =
-    (query === "" ? issues : issues?.filter((issue) => issue.name.includes(query))) ?? [];
+  const filteredIssues = (query === "" ? issues : issues?.filter((issue) => issue.name.includes(query))) ?? [];
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setQuery("")} appear>
@@ -128,9 +125,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                       {filteredIssues.length > 0 ? (
                         <li className="p-2">
                           {query === "" && (
-                            <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-custom-text-100">
-                              Select issue
-                            </h2>
+                            <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-custom-text-100">Select issue</h2>
                           )}
                           <ul className="text-sm text-custom-text-100">
                             {filteredIssues.map((issue) => (
@@ -140,9 +135,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                                 value={issue.id}
                                 className={({ active, selected }) =>
                                   `flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-custom-text-200 ${
-                                    active || selected
-                                      ? "bg-custom-background-80 text-custom-text-100"
-                                      : ""
+                                    active || selected ? "bg-custom-background-80 text-custom-text-100" : ""
                                   } `
                                 }
                               >
@@ -154,11 +147,8 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                                     }}
                                   />
                                   <span className="flex-shrink-0 text-xs text-custom-text-200">
-                                    {
-                                      issues?.find((i) => i.id === issue.id)?.project_detail
-                                        ?.identifier
-                                    }
-                                    -{issue.sequence_id}
+                                    {issues?.find((i) => i.id === issue.id)?.project_detail?.identifier}-
+                                    {issue.sequence_id}
                                   </span>
                                   <span className="text-custom-text-200">{issue.name}</span>
                                 </div>
@@ -171,10 +161,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                           <LayerDiagonalIcon height="56" width="56" />
                           <h3 className="text-sm text-custom-text-200">
                             No issues found. Create a new issue with{" "}
-                            <pre className="inline rounded bg-custom-background-80 px-2 py-1">
-                              C
-                            </pre>
-                            .
+                            <pre className="inline rounded bg-custom-background-80 px-2 py-1">C</pre>.
                           </h3>
                         </div>
                       )}

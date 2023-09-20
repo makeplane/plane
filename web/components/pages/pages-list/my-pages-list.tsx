@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import pagesService from "services/pages.service";
+import pagesService from "services/page.service";
 // components
 import { PagesView } from "components/pages";
 // types
@@ -18,12 +18,7 @@ export const MyPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
   const { data: pages } = useSWR(
     workspaceSlug && projectId ? MY_PAGES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () =>
-          pagesService.getPagesWithParams(
-            workspaceSlug as string,
-            projectId as string,
-            "created_by_me"
-          )
+      ? () => pagesService.getPagesWithParams(workspaceSlug as string, projectId as string, "created_by_me")
       : null
   );
 

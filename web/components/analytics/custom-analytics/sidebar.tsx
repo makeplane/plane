@@ -7,19 +7,14 @@ import analyticsService from "services/analytics.service";
 import projectService from "services/project.service";
 import cyclesService from "services/cycles.service";
 import modulesService from "services/modules.service";
-import trackEventServices from "services/track-event.service";
+import trackEventServices from "services/track_event.service";
 // hooks
 import useProjects from "hooks/use-projects";
 import useToast from "hooks/use-toast";
 // ui
 import { PrimaryButton, SecondaryButton } from "components/ui";
 // icons
-import {
-  ArrowDownTrayIcon,
-  ArrowPathIcon,
-  CalendarDaysIcon,
-  UserGroupIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowDownTrayIcon, ArrowPathIcon, CalendarDaysIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 import { ContrastIcon, LayerDiagonalIcon } from "components/icons";
 // helpers
 import { renderShortDate } from "helpers/date-time.helper";
@@ -46,13 +41,7 @@ type Props = {
   user: ICurrentUserResponse | undefined;
 };
 
-export const AnalyticsSidebar: React.FC<Props> = ({
-  analytics,
-  params,
-  fullScreen,
-  isProjectLevel = false,
-  user,
-}) => {
+export const AnalyticsSidebar: React.FC<Props> = ({ analytics, params, fullScreen, isProjectLevel = false, user }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
@@ -61,9 +50,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
   const { setToastAlert } = useToast();
 
   const { data: projectDetails } = useSWR(
-    workspaceSlug && projectId && !(cycleId || moduleId)
-      ? PROJECT_DETAILS(projectId.toString())
-      : null,
+    workspaceSlug && projectId && !(cycleId || moduleId) ? PROJECT_DETAILS(projectId.toString()) : null,
     workspaceSlug && projectId && !(cycleId || moduleId)
       ? () => projectService.getProject(workspaceSlug.toString(), projectId.toString())
       : null
@@ -72,24 +59,14 @@ export const AnalyticsSidebar: React.FC<Props> = ({
   const { data: cycleDetails } = useSWR(
     workspaceSlug && projectId && cycleId ? CYCLE_DETAILS(cycleId.toString()) : null,
     workspaceSlug && projectId && cycleId
-      ? () =>
-          cyclesService.getCycleDetails(
-            workspaceSlug.toString(),
-            projectId.toString(),
-            cycleId.toString()
-          )
+      ? () => cyclesService.getCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString())
       : null
   );
 
   const { data: moduleDetails } = useSWR(
     workspaceSlug && projectId && moduleId ? MODULE_DETAILS(moduleId.toString()) : null,
     workspaceSlug && projectId && moduleId
-      ? () =>
-          modulesService.getModuleDetails(
-            workspaceSlug.toString(),
-            projectId.toString(),
-            moduleId.toString()
-          )
+      ? () => modulesService.getModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString())
       : null
   );
 
@@ -178,8 +155,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
       );
   };
 
-  const selectedProjects =
-    params.project && params.project.length > 0 ? params.project : projects?.map((p) => p.id);
+  const selectedProjects = params.project && params.project.length > 0 ? params.project : projects?.map((p) => p.id);
 
   return (
     <div
@@ -236,9 +212,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                             )}
                             <h5 className="flex items-center gap-1">
                               <p className="break-words">{truncateText(project.name, 20)}</p>
-                              <span className="text-custom-text-200 text-xs ml-1">
-                                ({project.identifier})
-                              </span>
+                              <span className="text-custom-text-200 text-xs ml-1">({project.identifier})</span>
                             </h5>
                           </div>
                           <div className="mt-4 space-y-3 pl-2 w-full">
@@ -344,10 +318,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                   <div className="space-y-4 mt-4">
                     <div className="flex items-center gap-2 text-xs">
                       <h6 className="text-custom-text-200">Network</h6>
-                      <span>
-                        {NETWORK_CHOICES.find((n) => n.key === projectDetails?.network)?.label ??
-                          ""}
-                      </span>
+                      <span>{NETWORK_CHOICES.find((n) => n.key === projectDetails?.network)?.label ?? ""}</span>
                     </div>
                   </div>
                 </div>

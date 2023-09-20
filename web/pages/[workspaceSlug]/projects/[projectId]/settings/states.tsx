@@ -5,19 +5,14 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import stateService from "services/state.service";
+import stateService from "services/project_state.service";
 // hooks
 import useProjectDetails from "hooks/use-project-details";
 import useUserAuth from "hooks/use-user-auth";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
-import {
-  CreateUpdateStateInline,
-  DeleteStateModal,
-  SingleState,
-  StateGroup,
-} from "components/states";
+import { CreateUpdateStateInline, DeleteStateModal, SingleState, StateGroup } from "components/states";
 import { SettingsSidebar } from "components/project";
 // ui
 import { Loader } from "components/ui";
@@ -46,9 +41,7 @@ const StatesSettings: NextPage = () => {
 
   const { data: states } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => stateService.getStates(workspaceSlug as string, projectId as string) : null
   );
   const orderedStateGroups = orderStateGroups(states);
   const statesList = getStatesList(orderedStateGroups);
@@ -88,9 +81,7 @@ const StatesSettings: NextPage = () => {
                     return (
                       <div key={key} className="flex flex-col gap-2">
                         <div className="flex w-full justify-between">
-                          <h4 className="text-base font-medium text-custom-text-200 capitalize">
-                            {key}
-                          </h4>
+                          <h4 className="text-base font-medium text-custom-text-200 capitalize">{key}</h4>
                           <button
                             type="button"
                             className="flex items-center gap-2 text-custom-primary-100 px-2 hover:text-custom-primary-200 outline-none"
@@ -124,19 +115,14 @@ const StatesSettings: NextPage = () => {
                                 user={user}
                               />
                             ) : (
-                              <div
-                                className="border-b border-custom-border-200 last:border-b-0"
-                                key={state.id}
-                              >
+                              <div className="border-b border-custom-border-200 last:border-b-0" key={state.id}>
                                 <CreateUpdateStateInline
                                   onClose={() => {
                                     setActiveGroup(null);
                                     setSelectedState(null);
                                   }}
                                   groupLength={orderedStateGroups[key].length}
-                                  data={
-                                    statesList?.find((state) => state.id === selectedState) ?? null
-                                  }
+                                  data={statesList?.find((state) => state.id === selectedState) ?? null}
                                   selectedGroup={key as keyof StateGroup}
                                   user={user}
                                 />

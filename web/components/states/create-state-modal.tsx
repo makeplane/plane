@@ -11,7 +11,7 @@ import { TwitterPicker } from "react-color";
 // headless ui
 import { Dialog, Popover, Transition } from "@headlessui/react";
 // services
-import stateService from "services/state.service";
+import stateService from "services/project_state.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -131,10 +131,7 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-80 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div>
-                    <Dialog.Title
-                      as="h3"
-                      className="text-lg font-medium leading-6 text-custom-text-100"
-                    >
+                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                       Create State
                     </Dialog.Title>
                     <div className="mt-2 space-y-3">
@@ -215,10 +212,7 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                                     name="color"
                                     control={control}
                                     render={({ field: { value, onChange } }) => (
-                                      <TwitterPicker
-                                        color={value}
-                                        onChange={(value) => onChange(value.hex)}
-                                      />
+                                      <TwitterPicker color={value} onChange={(value) => onChange(value.hex)} />
                                     )}
                                   />
                                 </Popover.Panel>

@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // hooks
 import useUser from "hooks/use-user";
 import useIssuesView from "hooks/use-issues-view";
@@ -114,8 +114,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = ({
       return;
     }
 
-    if (prePopulateData && prePopulateData.project)
-      return setActiveProject(prePopulateData.project);
+    if (prePopulateData && prePopulateData.project) return setActiveProject(prePopulateData.project);
 
     // if data is not present, set active project to the project
     // in the url. This has the least priority.

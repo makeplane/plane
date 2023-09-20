@@ -7,7 +7,7 @@ import { UseFormWatch } from "react-hook-form";
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // components
 import { ExistingIssuesListModal } from "components/core";
 // icons
@@ -23,12 +23,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const SidebarBlockedSelect: React.FC<Props> = ({
-  issueId,
-  submitChanges,
-  watch,
-  disabled = false,
-}) => {
+export const SidebarBlockedSelect: React.FC<Props> = ({ issueId, submitChanges, watch, disabled = false }) => {
   const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
 
   const { user } = useUser();
@@ -80,10 +75,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
       })
       .then((response) => {
         submitChanges({
-          related_issues: [
-            ...watch("related_issues")?.filter((i) => i.relation_type !== "blocked_by"),
-            ...response,
-          ],
+          related_issues: [...watch("related_issues")?.filter((i) => i.relation_type !== "blocked_by"), ...response],
         });
       });
 
@@ -127,9 +119,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
                       type="button"
                       className="opacity-0 duration-300 group-hover:opacity-100"
                       onClick={() => {
-                        const updatedRelations = watch("related_issues")?.filter(
-                          (i) => i.id !== relation.id
-                        );
+                        const updatedRelations = watch("related_issues")?.filter((i) => i.id !== relation.id);
 
                         submitChanges({
                           related_issues: updatedRelations,

@@ -1,6 +1,6 @@
 // services
 import APIService from "services/api.service";
-import trackEventServices from "services/track-event.service";
+import trackEventServices from "services/track_event.service";
 // type
 import type {
   ICurrentUserResponse,
@@ -12,7 +12,7 @@ import type {
 } from "types";
 import { API_BASE_URL } from "helpers/common.helper";
 
-export class ProjectIssuesServices extends APIService {
+export class IssueServices extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -475,9 +475,15 @@ export class ProjectIssuesServices extends APIService {
   }
 
   async uploadIssueAttachment(workspaceSlug: string, projectId: string, issueId: string, file: FormData): Promise<any> {
-    return this.mediaUpload(
+    return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-attachments/`,
-      file
+      file,
+      {
+        headers: {
+          ...this.getHeaders(),
+          "Content-Type": "multipart/form-data",
+        },
+      }
     )
       .then((response) => response?.data)
       .catch((error) => {
@@ -585,9 +591,7 @@ export class ProjectIssuesServices extends APIService {
     issueId: string,
     user: ICurrentUserResponse
   ): Promise<any> {
-    return this.delete(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/${issueId}/`
-    )
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/${issueId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -603,6 +607,6 @@ export class ProjectIssuesServices extends APIService {
   }
 }
 
-const projectIssuesServices = new ProjectIssuesServices();
+const issuesServices = new IssueServices();
 
-export default projectIssuesServices;
+export default issuesServices;

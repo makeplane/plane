@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
@@ -37,11 +37,7 @@ type Props = {
   uneditable?: boolean;
 };
 
-export const IssueMainContent: React.FC<Props> = ({
-  issueDetails,
-  submitChanges,
-  uneditable = false,
-}) => {
+export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges, uneditable = false }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId, archivedIssueId } = router.query;
 
@@ -55,12 +51,7 @@ export const IssueMainContent: React.FC<Props> = ({
   const { data: siblingIssues } = useSWR(
     workspaceSlug && projectId && issueDetails?.parent ? SUB_ISSUES(issueDetails.parent) : null,
     workspaceSlug && projectId && issueDetails?.parent
-      ? () =>
-          issuesService.subIssues(
-            workspaceSlug as string,
-            projectId as string,
-            issueDetails.parent ?? ""
-          )
+      ? () => issuesService.subIssues(workspaceSlug as string, projectId as string, issueDetails.parent ?? "")
       : null
   );
   const siblingIssuesList = siblingIssues?.sub_issues.filter((i) => i.id !== issueDetails.id);
@@ -68,12 +59,7 @@ export const IssueMainContent: React.FC<Props> = ({
   const { data: issueActivity, mutate: mutateIssueActivity } = useSWR(
     workspaceSlug && projectId && issueId ? PROJECT_ISSUES_ACTIVITY(issueId.toString()) : null,
     workspaceSlug && projectId && issueId
-      ? () =>
-          issuesService.getIssueActivities(
-            workspaceSlug.toString(),
-            projectId.toString(),
-            issueId.toString()
-          )
+      ? () => issuesService.getIssueActivities(workspaceSlug.toString(), projectId.toString(), issueId.toString())
       : null
   );
 
@@ -81,14 +67,7 @@ export const IssueMainContent: React.FC<Props> = ({
     if (!workspaceSlug || !projectId || !issueId) return;
 
     await issuesService
-      .patchIssueComment(
-        workspaceSlug as string,
-        projectId as string,
-        issueId as string,
-        commentId,
-        data,
-        user
-      )
+      .patchIssueComment(workspaceSlug as string, projectId as string, issueId as string, commentId, data, user)
       .then(() => mutateIssueActivity());
   };
 
@@ -98,13 +77,7 @@ export const IssueMainContent: React.FC<Props> = ({
     mutateIssueActivity((prevData: any) => prevData?.filter((p: any) => p.id !== commentId), false);
 
     await issuesService
-      .deleteIssueComment(
-        workspaceSlug as string,
-        projectId as string,
-        issueId as string,
-        commentId,
-        user
-      )
+      .deleteIssueComment(workspaceSlug as string, projectId as string, issueId as string, commentId, user)
       .then(() => mutateIssueActivity());
   };
 
@@ -112,13 +85,7 @@ export const IssueMainContent: React.FC<Props> = ({
     if (!workspaceSlug || !issueDetails) return;
 
     await issuesService
-      .createIssueComment(
-        workspaceSlug.toString(),
-        issueDetails.project,
-        issueDetails.id,
-        formData,
-        user
-      )
+      .createIssueComment(workspaceSlug.toString(), issueDetails.project, issueDetails.id, formData, user)
       .then(() => {
         mutate(PROJECT_ISSUES_ACTIVITY(issueDetails.id));
       })
@@ -148,8 +115,7 @@ export const IssueMainContent: React.FC<Props> = ({
                     }}
                   />
                   <span className="flex-shrink-0 text-custom-text-200">
-                    {issueDetails.parent_detail?.project_detail.identifier}-
-                    {issueDetails.parent_detail?.sequence_id}
+                    {issueDetails.parent_detail?.project_detail.identifier}-{issueDetails.parent_detail?.sequence_id}
                   </span>
                 </div>
                 <span className="truncate text-custom-text-100">
@@ -169,9 +135,7 @@ export const IssueMainContent: React.FC<Props> = ({
                       <CustomMenu.MenuItem
                         key={issue.id}
                         renderAs="a"
-                        href={`/${workspaceSlug}/projects/${projectId as string}/issues/${
-                          issue.id
-                        }`}
+                        href={`/${workspaceSlug}/projects/${projectId as string}/issues/${issue.id}`}
                         className="flex items-center gap-2 py-2"
                       >
                         <LayerDiagonalIcon className="h-4 w-4" />

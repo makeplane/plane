@@ -1,6 +1,6 @@
 import { action, computed, makeObservable } from "mobx";
 // types
-import { RootStore } from "../root";
+import { RootStore } from "./root";
 
 export interface IIssueKanBanViewStore {
   handleDragDrop: (source: any, destination: any) => void;

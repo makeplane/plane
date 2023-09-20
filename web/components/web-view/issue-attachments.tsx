@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 
 // react dropzone
 import { useDropzone } from "react-dropzone";
@@ -61,12 +61,7 @@ export const IssueAttachments: React.FC<Props> = (props) => {
       setIsLoading(true);
 
       issuesService
-        .uploadIssueAttachment(
-          workspaceSlug as string,
-          projectId as string,
-          issueId as string,
-          formData
-        )
+        .uploadIssueAttachment(workspaceSlug as string, projectId as string, issueId as string, formData)
         .then((res) => {
           mutate<IIssueAttachment[]>(
             ISSUE_ATTACHMENTS(issueId as string),
@@ -109,12 +104,7 @@ export const IssueAttachments: React.FC<Props> = (props) => {
   const { data: attachments } = useSWR<IIssueAttachment[]>(
     workspaceSlug && projectId && issueId ? ISSUE_ATTACHMENTS(issueId as string) : null,
     workspaceSlug && projectId && issueId
-      ? () =>
-          issuesService.getIssueAttachment(
-            workspaceSlug.toString(),
-            projectId.toString(),
-            issueId.toString()
-          )
+      ? () => issuesService.getIssueAttachment(workspaceSlug.toString(), projectId.toString(), issueId.toString())
       : null
   );
 

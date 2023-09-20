@@ -3,7 +3,7 @@ import axios from "axios";
 import APIService from "services/api.service";
 import { API_BASE_URL } from "helpers/common.helper";
 
-class AppInstallationsService extends APIService {
+export class AppInstallationService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -74,4 +74,4 @@ class AppInstallationsService extends APIService {
   }
 }
 
-export default new AppInstallationsService();
+export default new AppInstallationService();

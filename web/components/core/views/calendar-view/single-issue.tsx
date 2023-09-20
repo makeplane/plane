@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // react-beautiful-dnd
 import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // hooks
 import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useIssuesProperties from "hooks/use-issue-properties";
@@ -122,13 +122,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
       }
 
       issuesService
-        .patchIssue(
-          workspaceSlug as string,
-          projectId as string,
-          issue.id as string,
-          formData,
-          user
-        )
+        .patchIssue(workspaceSlug as string, projectId as string, issue.id as string, formData, user)
         .then(() => {
           mutate(fetchKey);
         })
@@ -140,11 +134,8 @@ export const SingleCalendarIssue: React.FC<Props> = ({
   );
 
   const handleCopyText = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`
-    ).then(() => {
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",
@@ -153,9 +144,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
     });
   };
 
-  const displayProperties = properties
-    ? Object.values(properties).some((value) => value === true)
-    : false;
+  const displayProperties = properties ? Object.values(properties).some((value) => value === true) : false;
 
   const openPeekOverview = () => {
     const { query } = router;

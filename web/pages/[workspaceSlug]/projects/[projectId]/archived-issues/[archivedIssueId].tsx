@@ -7,7 +7,7 @@ import useSWR, { mutate } from "swr";
 // react-hook-form
 import { useForm } from "react-hook-form";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
@@ -53,11 +53,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
     workspaceSlug && projectId && archivedIssueId ? ISSUE_DETAILS(archivedIssueId as string) : null,
     workspaceSlug && projectId && archivedIssueId
       ? () =>
-          issuesService.retrieveArchivedIssue(
-            workspaceSlug as string,
-            projectId as string,
-            archivedIssueId as string
-          )
+          issuesService.retrieveArchivedIssue(workspaceSlug as string, projectId as string, archivedIssueId as string)
       : null
   );
 
@@ -87,13 +83,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
       };
 
       await issuesService
-        .patchIssue(
-          workspaceSlug as string,
-          projectId as string,
-          archivedIssueId as string,
-          payload,
-          user
-        )
+        .patchIssue(workspaceSlug as string, projectId as string, archivedIssueId as string, payload, user)
         .then(() => {
           mutateIssueDetails();
           mutate(PROJECT_ISSUES_ACTIVITY(archivedIssueId as string));
@@ -111,8 +101,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
     mutate(PROJECT_ISSUES_ACTIVITY(archivedIssueId as string));
     reset({
       ...issueDetails,
-      assignees_list:
-        issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
+      assignees_list: issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
       labels_list: issueDetails.labels_list ?? issueDetails.labels,
       labels: issueDetails.labels_list ?? issueDetails.labels,
     });
@@ -181,11 +170,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
               </div>
             )}
             <div className="space-y-5 divide-y-2 divide-custom-border-200 opacity-60 pointer-events-none">
-              <IssueMainContent
-                issueDetails={issueDetails}
-                submitChanges={submitChanges}
-                uneditable
-              />
+              <IssueMainContent issueDetails={issueDetails} submitChanges={submitChanges} uneditable />
             </div>
           </div>
           <div className="w-1/3 h-full space-y-5 border-l border-custom-border-300 p-5 overflow-hidden">

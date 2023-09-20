@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 // services
-import appinstallationsService from "services/app-installations.service";
+import appinstallationsService from "services/app_installation.service";
 // ui
 import { Loader } from "components/ui";
 // hooks
@@ -20,8 +20,7 @@ type Props = {
 };
 
 export const SelectChannel: React.FC<Props> = ({ integration }) => {
-  const [slackChannelAvailabilityToggle, setSlackChannelAvailabilityToggle] =
-    useState<boolean>(false);
+  const [slackChannelAvailabilityToggle, setSlackChannelAvailabilityToggle] = useState<boolean>(false);
   const [slackChannel, setSlackChannel] = useState<ISlackIntegration | null>(null);
 
   const router = useRouter();
@@ -65,12 +64,7 @@ export const SelectChannel: React.FC<Props> = ({ integration }) => {
       setSlackChannel(null);
     });
     appinstallationsService
-      .removeSlackChannel(
-        workspaceSlug as string,
-        projectId as string,
-        integration.id as string,
-        slackChannel?.id
-      )
+      .removeSlackChannel(workspaceSlug as string, projectId as string, integration.id as string, slackChannel?.id)
       .catch((err) => console.log(err));
   };
 

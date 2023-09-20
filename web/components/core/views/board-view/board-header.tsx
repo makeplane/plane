@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 import projectService from "services/project.service";
 // hooks
 import useProjects from "hooks/use-projects";
@@ -106,12 +106,7 @@ export const BoardHeader: React.FC<Props> = ({
     switch (displayFilters?.group_by) {
       case "state":
         icon = currentState && (
-          <StateGroupIcon
-            stateGroup={currentState.group}
-            color={currentState.color}
-            height="16px"
-            width="16px"
-          />
+          <StateGroupIcon stateGroup={currentState.group} color={currentState.color} height="16px" width="16px" />
         );
         break;
       case "state_detail.group":
@@ -138,14 +133,8 @@ export const BoardHeader: React.FC<Props> = ({
             : null);
         break;
       case "labels":
-        const labelColor =
-          issueLabels?.find((label) => label.id === groupTitle)?.color ?? "#000000";
-        icon = (
-          <span
-            className="h-3.5 w-3.5 flex-shrink-0 rounded-full"
-            style={{ backgroundColor: labelColor }}
-          />
-        );
+        const labelColor = issueLabels?.find((label) => label.id === groupTitle)?.color ?? "#000000";
+        icon = <span className="h-3.5 w-3.5 flex-shrink-0 rounded-full" style={{ backgroundColor: labelColor }} />;
         break;
       case "assignees":
       case "created_by":
@@ -196,10 +185,7 @@ export const BoardHeader: React.FC<Props> = ({
           }}
         >
           {isCollapsed ? (
-            <Icon
-              iconName="close_fullscreen"
-              className="text-base font-medium text-custom-text-900"
-            />
+            <Icon iconName="close_fullscreen" className="text-base font-medium text-custom-text-900" />
           ) : (
             <Icon iconName="open_in_full" className="text-base font-medium text-custom-text-900" />
           )}

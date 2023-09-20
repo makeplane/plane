@@ -13,7 +13,7 @@ import useProjects from "hooks/use-projects";
 import { Tab } from "@headlessui/react";
 // services
 import analyticsService from "services/analytics.service";
-import trackEventServices from "services/track-event.service";
+import trackEventServices from "services/track_event.service";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
@@ -66,9 +66,7 @@ const Analytics = () => {
     };
 
     const eventType =
-      tab === "Scope and Demand"
-        ? "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS"
-        : "WORKSPACE_CUSTOM_ANALYTICS";
+      tab === "Scope and Demand" ? "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS" : "WORKSPACE_CUSTOM_ANALYTICS";
 
     trackEventServices.trackAnalyticsEvent(eventPayload, eventType, user);
   };

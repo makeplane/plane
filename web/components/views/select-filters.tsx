@@ -5,9 +5,9 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import stateService from "services/state.service";
+import stateService from "services/project_state.service";
 import projectService from "services/project.service";
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // components
 import { DateFilterModal } from "components/core";
 // ui
@@ -32,12 +32,7 @@ type Props = {
   height?: "sm" | "md" | "rg" | "lg";
 };
 
-export const SelectFilters: React.FC<Props> = ({
-  filters,
-  onSelect,
-  direction = "right",
-  height = "md",
-}) => {
+export const SelectFilters: React.FC<Props> = ({ filters, onSelect, direction = "right", height = "md" }) => {
   const [isDateFilterModalOpen, setIsDateFilterModalOpen] = useState(false);
   const [dateFilterType, setDateFilterType] = useState<{
     title: string;
@@ -52,9 +47,7 @@ export const SelectFilters: React.FC<Props> = ({
 
   const { data: states } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => stateService.getStates(workspaceSlug as string, projectId as string) : null
   );
   const statesList = getStatesList(states);
 

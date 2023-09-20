@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 
 // icons
 // import { LinkIcon, PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";

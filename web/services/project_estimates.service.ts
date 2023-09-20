@@ -1,11 +1,12 @@
 // services
 import APIService from "services/api.service";
+import trackEventServices from "services/track_event.service";
 // types
 import type { ICurrentUserResponse, IEstimate, IEstimateFormData } from "types";
-import trackEventServices from "services/track-event.service";
+// helpers
 import { API_BASE_URL } from "helpers/common.helper";
 
-class ProjectEstimateServices extends APIService {
+export class ProjectEstimateServices extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -33,10 +34,7 @@ class ProjectEstimateServices extends APIService {
     data: IEstimateFormData,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
-    return this.patch(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/`,
-      data
-    )
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/`, data)
       .then((response) => {
         trackEventServices.trackIssueEstimateEvent(response?.data, "ESTIMATE_UPDATE", user);
         return response?.data;
@@ -46,14 +44,8 @@ class ProjectEstimateServices extends APIService {
       });
   }
 
-  async getEstimateDetails(
-    workspaceSlug: string,
-    projectId: string,
-    estimateId: string
-  ): Promise<IEstimate> {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/`
-    )
+  async getEstimateDetails(workspaceSlug: string, projectId: string, estimateId: string): Promise<IEstimate> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -74,9 +66,7 @@ class ProjectEstimateServices extends APIService {
     estimateId: string,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
-    return this.delete(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/`
-    )
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/`)
       .then((response) => {
         trackEventServices.trackIssueEstimateEvent(response?.data, "ESTIMATE_DELETE", user);
         return response?.data;

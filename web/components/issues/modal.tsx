@@ -8,7 +8,7 @@ import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import modulesService from "services/modules.service";
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 import inboxServices from "services/inbox.service";
 // hooks
 import useUser from "hooks/use-user";
@@ -93,8 +93,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
   const { groupedIssues, mutateMyIssues } = useMyIssues(workspaceSlug?.toString());
 
-  const { setValue: setValueInLocalStorage, clearValue: clearLocalStorageValue } =
-    useLocalStorage<any>("draftedIssue", {});
+  const { setValue: setValueInLocalStorage, clearValue: clearLocalStorageValue } = useLocalStorage<any>(
+    "draftedIssue",
+    {}
+  );
 
   const { setToastAlert } = useToast();
 
@@ -201,13 +203,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     };
 
     await inboxServices
-      .createInboxIssue(
-        workspaceSlug.toString(),
-        activeProject.toString(),
-        inboxId.toString(),
-        payload,
-        user
-      )
+      .createInboxIssue(workspaceSlug.toString(), activeProject.toString(), inboxId.toString(), payload, user)
       .then((res) => {
         setToastAlert({
           type: "success",
@@ -264,8 +260,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         .then(async (res) => {
           mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
           if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res.id, payload.cycle);
-          if (payload.module && payload.module !== "")
-            await addIssueToModule(res.id, payload.module);
+          if (payload.module && payload.module !== "") await addIssueToModule(res.id, payload.module);
 
           if (displayFilters.layout === "calendar") mutate(calendarFetchKey);
           if (displayFilters.layout === "gantt_chart")

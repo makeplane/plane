@@ -9,7 +9,7 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 // icons
 import { RectangleStackIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // types
 import { ICurrentUserResponse, IIssueLabels } from "types";
 // constants
@@ -30,9 +30,7 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent, 
 
   const { data: issueLabels, mutate } = useSWR<IIssueLabels[]>(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string) : null
   );
 
   const filteredLabels: IIssueLabels[] =
@@ -114,9 +112,7 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent, 
                   {filteredLabels.length > 0 && (
                     <li className="p-2">
                       {query === "" && (
-                        <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-custom-text-100">
-                          Labels
-                        </h2>
+                        <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-custom-text-100">Labels</h2>
                       )}
                       <ul className="text-sm text-gray-700">
                         {filteredLabels.map((label) => {

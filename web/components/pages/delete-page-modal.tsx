@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import pagesService from "services/pages.service";
+import pagesService from "services/page.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -17,12 +17,7 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
 import type { ICurrentUserResponse, IPage } from "types";
 // fetch-keys
-import {
-  ALL_PAGES_LIST,
-  FAVORITE_PAGES_LIST,
-  MY_PAGES_LIST,
-  RECENT_PAGES_LIST,
-} from "constants/fetch-keys";
+import { ALL_PAGES_LIST, FAVORITE_PAGES_LIST, MY_PAGES_LIST, RECENT_PAGES_LIST } from "constants/fetch-keys";
 
 type TConfirmPageDeletionProps = {
   isOpen: boolean;
@@ -31,12 +26,7 @@ type TConfirmPageDeletionProps = {
   user: ICurrentUserResponse | undefined;
 };
 
-export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({
-  isOpen,
-  setIsOpen,
-  data,
-  user,
-}) => {
+export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({ isOpen, setIsOpen, data, user }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
@@ -121,26 +111,17 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({
                 <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
                     <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-500/20 sm:mx-0 sm:h-10 sm:w-10">
-                      <ExclamationTriangleIcon
-                        className="h-6 w-6 text-red-600"
-                        aria-hidden="true"
-                      />
+                      <ExclamationTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </div>
                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                      <Dialog.Title
-                        as="h3"
-                        className="text-lg font-medium leading-6 text-custom-text-100"
-                      >
+                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                         Delete Page
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
                           Are you sure you want to delete Page-{" "}
-                          <span className="break-words font-medium text-custom-text-100">
-                            {data?.name}
-                          </span>
-                          ? All of the data related to the page will be permanently removed. This
-                          action cannot be undone.
+                          <span className="break-words font-medium text-custom-text-100">{data?.name}</span>? All of the
+                          data related to the page will be permanently removed. This action cannot be undone.
                         </p>
                       </div>
                     </div>

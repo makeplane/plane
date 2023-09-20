@@ -2,7 +2,7 @@ import { observable, action, computed, makeObservable, runInAction } from "mobx"
 // types
 import { RootStore } from "./root";
 // services
-import ProjectServices from "services/project-publish.service";
+import ProjectServices from "services/project_publish.service";
 
 export type TProjectPublishViews = "list" | "gantt" | "kanban" | "calendar" | "spreadsheet";
 
@@ -31,11 +31,7 @@ export interface IProjectPublishStore {
 
   handleProjectModal: (project_id: string | null) => void;
 
-  getProjectSettingsAsync: (
-    workspace_slug: string,
-    project_slug: string,
-    user: any
-  ) => Promise<void>;
+  getProjectSettingsAsync: (workspace_slug: string, project_slug: string, user: any) => Promise<void>;
   publishProject: (
     workspace_slug: string,
     project_slug: string,
@@ -110,11 +106,7 @@ class ProjectPublishStore implements IProjectPublishStore {
       this.fetchSettingsLoader = true;
       this.error = null;
 
-      const response = await this.projectPublishService.getProjectSettingsAsync(
-        workspace_slug,
-        project_slug,
-        user
-      );
+      const response = await this.projectPublishService.getProjectSettingsAsync(workspace_slug, project_slug, user);
 
       if (response && response.length > 0) {
         const _projectPublishSettings: IProjectPublishSettings = {
@@ -151,12 +143,7 @@ class ProjectPublishStore implements IProjectPublishStore {
     }
   };
 
-  publishProject = async (
-    workspace_slug: string,
-    project_slug: string,
-    data: IProjectPublishSettings,
-    user: any
-  ) => {
+  publishProject = async (workspace_slug: string, project_slug: string, data: IProjectPublishSettings, user: any) => {
     try {
       this.generalLoader = true;
       this.error = null;
@@ -239,12 +226,7 @@ class ProjectPublishStore implements IProjectPublishStore {
     }
   };
 
-  unPublishProject = async (
-    workspace_slug: string,
-    project_slug: string,
-    project_publish_id: string,
-    user: any
-  ) => {
+  unPublishProject = async (workspace_slug: string, project_slug: string, project_publish_id: string, user: any) => {
     try {
       this.generalLoader = true;
       this.error = null;

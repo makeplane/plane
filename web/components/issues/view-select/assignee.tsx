@@ -6,7 +6,7 @@ import useSWR from "swr";
 
 // services
 import projectService from "services/project.service";
-import trackEventServices from "services/track-event.service";
+import trackEventServices from "services/track_event.service";
 // ui
 import { AssigneesList, Avatar, CustomSearchSelect, Icon, Tooltip } from "components/ui";
 // icons

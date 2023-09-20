@@ -1,11 +1,15 @@
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // types
 import { RootStore } from "./root";
-import { IProject, IIssueLabels, IProjectMember, IStateResponse, IState } from "types";
+import { IProject, IIssueLabels, IProjectMember, IStateResponse, IState, ICycle, IModule, IView, IPage } from "types";
 // services
 import { ProjectServices } from "services/project.service";
-import { ProjectIssuesServices } from "services/issues.service";
-import { ProjectStateServices } from "services/state.service";
+import { IssueServices } from "services/issue.service";
+import { ProjectStateServices } from "services/project_state.service";
+import CycleService from "services/cycles.service";
+import { ModuleService } from "services/modules.service";
+import { ViewService } from "services/views.service";
+import { PageService } from "services/page.service";
 
 export interface IProjectStore {
   loader: boolean;
@@ -15,17 +19,30 @@ export interface IProjectStore {
   projectLeaveDetails: IProject | any;
 
   projectId: string | null;
+
   projects: {
-    [key: string]: { [key: string]: IProject }; // workspace_id: project_id: projects
+    [projectId: string]: IProject; // projectId: project Info
   } | null;
   states: {
-    [key: string]: IStateResponse; // project_id: states
+    [projectId: string]: IStateResponse; // project_id: states
   } | null;
   labels: {
-    [key: string]: IIssueLabels[]; // project_id: labels
+    [projectId: string]: IIssueLabels[] | null; // project_id: labels
   } | null;
   members: {
-    [key: string]: IProjectMember[]; // project_id: members
+    [projectId: string]: IProjectMember[] | null; // project_id: members
+  } | null;
+  cycles: {
+    [projectId: string]: ICycle[] | null; // project_id: cycles
+  } | null;
+  modules: {
+    [projectId: string]: IModule[] | null; // project_id: modules
+  } | null;
+  views: {
+    [projectId: string]: IView[] | null; // project_id: views
+  } | null;
+  pages: {
+    [projectId: string]: IPage[] | null; // project_id: pages
   } | null;
 
   // computed
@@ -33,19 +50,17 @@ export interface IProjectStore {
   projectStates: IState[] | null;
   projectLabels: IIssueLabels[] | null;
   projectMembers: IProjectMember[] | null;
-  workspaceProjects: { [key: string]: IProject } | null;
 
   // actions
-  projectStateById: (stateId: string) => IState | null;
-  projectLabelById: (labelId: string) => IIssueLabels | null;
-  projectMemberById: (memberId: string) => IProjectMember | null;
+  setProjectId: (projectId: string) => void;
 
-  setProject: (projectSlug: string) => void;
+  getProjectStateById: (stateId: string) => IState | null;
+  getProjectLabelById: (labelId: string) => IIssueLabels | null;
+  getProjectMemberById: (memberId: string) => IProjectMember | null;
 
-  getWorkspaceProjects: (workspaceSlug: string, is_favorite?: "all" | boolean) => Promise<void>;
-  getProjectStates: (workspaceSlug: string, projectSlug: string) => Promise<void>;
-  getProjectLabels: (workspaceSlug: string, projectSlug: string) => Promise<void>;
-  getProjectMembers: (workspaceSlug: string, projectSlug: string) => Promise<void>;
+  fetchProjectStates: (workspaceSlug: string, projectSlug: string) => Promise<void>;
+  fetchProjectLabels: (workspaceSlug: string, projectSlug: string) => Promise<void>;
+  fetchProjectMembers: (workspaceSlug: string, projectSlug: string) => Promise<void>;
 
   handleProjectLeaveModal: (project: IProject | null) => void;
 
@@ -60,18 +75,31 @@ class ProjectStore implements IProjectStore {
   projectLeaveDetails: IProject | null = null;
 
   projectId: string | null = null;
+
   projects: {
-    [key: string]: { [key: string]: IProject }; // workspace_id: project_id: projects
-  } | null = null;
+    [key: string]: IProject; // project_id: project
+  } | null = {};
+  cycles: {
+    [key: string]: ICycle[]; // project_id: cycles
+  } = {};
+  modules: {
+    [key: string]: IModule[]; // project_id: modules
+  } = {};
+  views: {
+    [key: string]: IView[]; // project_id: views
+  } = {};
+  pages: {
+    [key: string]: IPage[]; // project_id: pages
+  } = {};
   states: {
     [key: string]: IStateResponse; // project_id: states
-  } | null = null;
+  } | null = {};
   labels: {
     [key: string]: IIssueLabels[]; // project_id: labels
-  } | null = null;
+  } | null = {};
   members: {
     [key: string]: IProjectMember[]; // project_id: members
-  } | null = null;
+  } | null = {};
 
   // root store
   rootStore;
@@ -79,6 +107,9 @@ class ProjectStore implements IProjectStore {
   projectService;
   issueService;
   stateService;
+  moduleService;
+  viewService;
+  pageService;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
@@ -96,23 +127,21 @@ class ProjectStore implements IProjectStore {
       projectLeaveDetails: observable.ref,
 
       // computed
-      workspaceProjects: computed,
       projectStatesByGroups: computed,
       projectStates: computed,
       projectLabels: computed,
       projectMembers: computed,
 
       // action
-      setProject: action,
+      setProjectId: action,
 
-      projectStateById: action,
-      projectLabelById: action,
-      projectMemberById: action,
+      getProjectStateById: action,
+      getProjectLabelById: action,
+      getProjectMemberById: action,
 
-      getWorkspaceProjects: action,
-      getProjectStates: action,
-      getProjectLabels: action,
-      getProjectMembers: action,
+      fetchProjectStates: action,
+      fetchProjectLabels: action,
+      fetchProjectMembers: action,
 
       handleProjectLeaveModal: action,
       leaveProject: action,
@@ -120,19 +149,18 @@ class ProjectStore implements IProjectStore {
 
     this.rootStore = _rootStore;
     this.projectService = new ProjectServices();
-    this.issueService = new ProjectIssuesServices();
+    this.issueService = new IssueServices();
     this.stateService = new ProjectStateServices();
+    this.moduleService = new ModuleService();
+    this.viewService = new ViewService();
+    this.pageService = new PageService();
   }
 
-  // computed
-  get workspaceProjects() {
-    if (!this.rootStore.workspace.workspaceId) return null;
-    return this.projects?.[this.rootStore.workspace.workspaceId] || null;
-  }
   get projectStatesByGroups() {
     if (!this.projectId) return null;
     return this.states?.[this.projectId] || null;
   }
+
   get projectStates() {
     if (!this.projectId) return null;
     const stateByGroups: IStateResponse | null = this.projectStatesByGroups;
@@ -143,33 +171,61 @@ class ProjectStore implements IProjectStore {
         _states.push(state);
       });
     });
-    return _states && _states.length > 0 ? _states : null;
+    return _states.length > 0 ? _states : null;
   }
+
   get projectLabels() {
     if (!this.projectId) return null;
     return this.labels?.[this.projectId] || null;
   }
+
   get projectMembers() {
     if (!this.projectId) return null;
     return this.members?.[this.projectId] || null;
   }
 
+  get projectCycles() {
+    if (!this.projectId) return null;
+    return this.cycles[this.projectId] || null;
+  }
+
+  get projectModules() {
+    if (!this.projectId) return null;
+    return this.modules[this.projectId] || null;
+  }
+
+  get projectViews() {
+    if (!this.projectId) return null;
+    return this.views[this.projectId] || null;
+  }
+
+  get projectPages() {
+    if (!this.projectId) return null;
+    return this.pages[this.projectId] || null;
+  }
+
   // actions
-  projectStateById = (stateId: string) => {
+  setProjectId = (projectSlug: string) => {
+    this.projectId = projectSlug ?? null;
+  };
+
+  getProjectStateById = (stateId: string) => {
     if (!this.projectId) return null;
     const states = this.projectStates;
     if (!states) return null;
     const stateInfo: IState | null = states.find((state) => state.id === stateId) || null;
     return stateInfo;
   };
-  projectLabelById = (labelId: string) => {
+
+  getProjectLabelById = (labelId: string) => {
     if (!this.projectId) return null;
     const labels = this.projectLabels;
     if (!labels) return null;
     const labelInfo: IIssueLabels | null = labels.find((label) => label.id === labelId) || null;
     return labelInfo;
   };
-  projectMemberById = (memberId: string) => {
+
+  getProjectMemberById = (memberId: string) => {
     if (!this.projectId) return null;
     const members = this.projectMembers;
     if (!members) return null;
@@ -177,38 +233,7 @@ class ProjectStore implements IProjectStore {
     return memberInfo;
   };
 
-  setProject = (projectSlug: string) => {
-    this.projectId = projectSlug ?? null;
-  };
-
-  getWorkspaceProjects = async (workspaceSlug: string, is_favorite: "all" | boolean = "all") => {
-    try {
-      this.loader = true;
-      this.error = null;
-
-      const params: { is_favorite: "all" | boolean } = { is_favorite: is_favorite };
-      const projectsResponse = await this.projectService.getProjects(workspaceSlug, params);
-
-      let _projects: { [key: string]: IProject } = {};
-      projectsResponse.map((project) => {
-        _projects = { ..._projects, [project.id]: project };
-      });
-
-      runInAction(() => {
-        this.projects = {
-          ...this.projects,
-          [workspaceSlug]: _projects,
-        };
-        this.loader = false;
-        this.error = null;
-      });
-    } catch (error) {
-      console.error(error);
-      this.loader = false;
-      this.error = error;
-    }
-  };
-  getProjectStates = async (workspaceSlug: string, projectSlug: string) => {
+  fetchProjectStates = async (workspaceSlug: string, projectSlug: string) => {
     try {
       this.loader = true;
       this.error = null;
@@ -230,7 +255,8 @@ class ProjectStore implements IProjectStore {
       this.error = error;
     }
   };
-  getProjectLabels = async (workspaceSlug: string, projectSlug: string) => {
+
+  fetchProjectLabels = async (workspaceSlug: string, projectSlug: string) => {
     try {
       this.loader = true;
       this.error = null;
@@ -252,7 +278,8 @@ class ProjectStore implements IProjectStore {
       this.error = error;
     }
   };
-  getProjectMembers = async (workspaceSlug: string, projectSlug: string) => {
+
+  fetchProjectMembers = async (workspaceSlug: string, projectSlug: string) => {
     try {
       this.loader = true;
       this.error = null;
@@ -270,6 +297,94 @@ class ProjectStore implements IProjectStore {
       });
     } catch (error) {
       console.error(error);
+      this.loader = false;
+      this.error = error;
+    }
+  };
+
+  fetchProjectCycles = async (workspaceSlug: string, projectSlug: string) => {
+    try {
+      this.loader = true;
+      this.error = null;
+
+      const cyclesResponse = await CycleService.getCyclesWithParams(workspaceSlug, projectSlug, "all");
+
+      runInAction(() => {
+        this.cycles = {
+          ...this.cycles,
+          [projectSlug]: cyclesResponse,
+        };
+        this.loader = false;
+        this.error = null;
+      });
+    } catch (error) {
+      console.error("Failed to fetch project cycles in project store", error);
+      this.loader = false;
+      this.error = error;
+    }
+  };
+
+  fetchProjectModules = async (workspaceSlug: string, projectSlug: string) => {
+    try {
+      this.loader = true;
+      this.error = null;
+
+      const modulesResponse = await this.moduleService.getModules(workspaceSlug, projectSlug);
+
+      runInAction(() => {
+        this.modules = {
+          ...this.modules,
+          [projectSlug]: modulesResponse,
+        };
+        this.loader = false;
+        this.error = null;
+      });
+    } catch (error) {
+      console.error("Failed to fetch modules list in project store", error);
+      this.loader = false;
+      this.error = error;
+    }
+  };
+
+  fetchProjectViews = async (workspaceSlug: string, projectSlug: string) => {
+    try {
+      this.loader = true;
+      this.error = null;
+
+      const viewsResponse = await this.viewService.getViews(workspaceSlug, projectSlug);
+
+      runInAction(() => {
+        this.views = {
+          ...this.views,
+          [projectSlug]: viewsResponse,
+        };
+        this.loader = false;
+        this.error = null;
+      });
+    } catch (error) {
+      console.error("Failed to fetch project views in project store", error);
+      this.loader = false;
+      this.error = error;
+    }
+  };
+
+  fetchProjectPages = async (workspaceSlug: string, projectSlug: string) => {
+    try {
+      this.loader = true;
+      this.error = null;
+
+      const pagesResponse = await this.pageService.getPagesWithParams(workspaceSlug, projectSlug, "all");
+
+      runInAction(() => {
+        this.pages = {
+          ...this.pages,
+          [projectSlug]: pagesResponse,
+        };
+        this.loader = false;
+        this.error = null;
+      });
+    } catch (error) {
+      console.error("Failed to fetch project pages in project store", error);
       this.loader = false;
       this.error = error;
     }

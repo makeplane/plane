@@ -10,8 +10,8 @@ import { useForm } from "react-hook-form";
 // react-beautiful-dnd
 import { Draggable } from "react-beautiful-dnd";
 // services
-import pagesService from "services/pages.service";
-import issuesService from "services/issues.service";
+import pagesService from "services/page.service";
+import issuesService from "services/issue.service";
 import aiService from "services/ai.service";
 // hooks
 import useToast from "hooks/use-toast";
@@ -48,13 +48,7 @@ type Props = {
   user: ICurrentUserResponse | undefined;
 };
 
-export const SinglePageBlock: React.FC<Props> = ({
-  block,
-  projectDetails,
-  showBlockDetails,
-  index,
-  user,
-}) => {
+export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBlockDetails, index, user }) => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [createBlockForm, setCreateBlockForm] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
@@ -131,13 +125,7 @@ export const SinglePageBlock: React.FC<Props> = ({
     if (!workspaceSlug || !projectId || !pageId) return;
 
     await pagesService
-      .convertPageBlockToIssue(
-        workspaceSlug as string,
-        projectId as string,
-        pageId as string,
-        block.id,
-        user
-      )
+      .convertPageBlockToIssue(workspaceSlug as string, projectId as string, pageId as string, block.id, user)
       .then((res: IIssue) => {
         mutate<IPageBlock[]>(
           PAGE_BLOCKS_LIST(pageId as string),
@@ -175,13 +163,7 @@ export const SinglePageBlock: React.FC<Props> = ({
     );
 
     await pagesService
-      .deletePageBlock(
-        workspaceSlug as string,
-        projectId as string,
-        pageId as string,
-        block.id,
-        user
-      )
+      .deletePageBlock(workspaceSlug as string, projectId as string, pageId as string, block.id, user)
       .catch(() => {
         setToastAlert({
           type: "error",
@@ -221,8 +203,7 @@ export const SinglePageBlock: React.FC<Props> = ({
           setToastAlert({
             type: "error",
             title: "Error!",
-            message:
-              "You have reached the maximum number of requests of 50 requests per month per user.",
+            message: "You have reached the maximum number of requests of 50 requests per month per user.",
           });
         else
           setToastAlert({
@@ -283,12 +264,9 @@ export const SinglePageBlock: React.FC<Props> = ({
   };
 
   const handleCopyText = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${projectId}/issues/${block.issue}`
-    ).then(() => {
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${block.issue}`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",
@@ -343,11 +321,7 @@ export const SinglePageBlock: React.FC<Props> = ({
               >
                 {block.issue && block.sync && (
                   <div className="flex flex-shrink-0 cursor-default items-center gap-1 rounded py-1 px-1.5 text-xs">
-                    {isSyncing ? (
-                      <ArrowPathIcon className="h-3 w-3 animate-spin" />
-                    ) : (
-                      <CheckIcon className="h-3 w-3" />
-                    )}
+                    {isSyncing ? <ArrowPathIcon className="h-3 w-3 animate-spin" /> : <CheckIcon className="h-3 w-3" />}
                     {isSyncing ? "Syncing..." : "Synced"}
                   </div>
                 )}
@@ -431,9 +405,7 @@ export const SinglePageBlock: React.FC<Props> = ({
                   <div className="flex items-center">
                     {block.issue && (
                       <div className="mr-1.5 flex">
-                        <Link
-                          href={`/${workspaceSlug}/projects/${projectId}/issues/${block.issue}`}
-                        >
+                        <Link href={`/${workspaceSlug}/projects/${projectId}/issues/${block.issue}`}>
                           <a className="flex h-6 flex-shrink-0 items-center gap-1 rounded bg-custom-background-80 px-1.5 py-1 text-xs">
                             <LayerDiagonalIcon height="16" width="16" />
                             {projectDetails?.identifier}-{block.issue_detail?.sequence_id}

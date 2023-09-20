@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 
 // services
-import appInstallationsService from "services/app-installations.service";
+import appInstallationsService from "services/app_installation.service";
 // ui
 import { Spinner } from "components/ui";
 

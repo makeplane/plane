@@ -7,7 +7,7 @@ import useSWR from "swr";
 // react-hook-form
 import { useForm } from "react-hook-form";
 // services
-import stateService from "services/state.service";
+import stateService from "services/project_state.service";
 // hooks
 import useProjectMembers from "hooks/use-project-members";
 // components
@@ -20,7 +20,7 @@ import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 import { getStatesList } from "helpers/state.helper";
 // types
 import { IQuery, IView } from "types";
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, STATES_LIST } from "constants/fetch-keys";
 
@@ -37,13 +37,7 @@ const defaultValues: Partial<IView> = {
   description: "",
 };
 
-export const ViewForm: React.FC<Props> = ({
-  handleFormSubmit,
-  handleClose,
-  status,
-  data,
-  preLoadedData,
-}) => {
+export const ViewForm: React.FC<Props> = ({ handleFormSubmit, handleClose, status, data, preLoadedData }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -60,9 +54,7 @@ export const ViewForm: React.FC<Props> = ({
   const filters = watch("query");
 
   const { data: stateGroups } = useSWR(
-    workspaceSlug && projectId && (filters?.state ?? []).length > 0
-      ? STATES_LIST(projectId as string)
-      : null,
+    workspaceSlug && projectId && (filters?.state ?? []).length > 0 ? STATES_LIST(projectId as string) : null,
     workspaceSlug && (filters?.state ?? []).length > 0
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
@@ -117,9 +109,7 @@ export const ViewForm: React.FC<Props> = ({
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateView)}>
       <div className="space-y-5">
-        <h3 className="text-lg font-medium leading-6 text-custom-text-100">
-          {status ? "Update" : "Create"} View
-        </h3>
+        <h3 className="text-lg font-medium leading-6 text-custom-text-100">{status ? "Update" : "Create"} View</h3>
         <div className="space-y-3">
           <div>
             <Input
@@ -157,10 +147,7 @@ export const ViewForm: React.FC<Props> = ({
                 const key = option.key as keyof typeof filters;
 
                 if (key === "start_date" || key === "target_date") {
-                  const valueExists = checkIfArraysHaveSameElements(
-                    filters?.[key] ?? [],
-                    option.value
-                  );
+                  const valueExists = checkIfArraysHaveSameElements(filters?.[key] ?? [], option.value);
 
                   setValue("query", {
                     ...filters,

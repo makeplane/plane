@@ -8,7 +8,7 @@ import useSWR, { mutate } from "swr";
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // contexts
 import { useProjectMyMembership } from "contexts/project-member.context";
 // components
@@ -126,10 +126,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user, disabled = false }
                 <div className="flex items-center justify-start gap-3 text-custom-text-200">
                   <Disclosure.Button className="flex items-center gap-1 rounded px-2 py-1 text-xs text-custom-text-100 hover:bg-custom-background-80">
                     <ChevronRightIcon className={`h-3 w-3 ${open ? "rotate-90" : ""}`} />
-                    Sub-issues{" "}
-                    <span className="ml-1 text-custom-text-200">
-                      {subIssuesResponse.sub_issues.length}
-                    </span>
+                    Sub-issues <span className="ml-1 text-custom-text-200">{subIssuesResponse.sub_issues.length}</span>
                   </Disclosure.Button>
                   <div className="flex w-60 items-center gap-2">
                     <div className="bar relative h-1.5 w-full rounded bg-custom-background-80">
@@ -186,10 +183,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user, disabled = false }
               >
                 <Disclosure.Panel className="mt-3 flex flex-col gap-y-1">
                   {subIssuesResponse.sub_issues.map((issue) => (
-                    <Link
-                      key={issue.id}
-                      href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}
-                    >
+                    <Link key={issue.id} href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
                       <a className="group flex items-center justify-between gap-2 rounded p-2 hover:bg-custom-background-90">
                         <div className="flex items-center gap-2 rounded text-xs">
                           <span
@@ -240,9 +234,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, user, disabled = false }
             noChevron
           >
             <CustomMenu.MenuItem onClick={handleCreateIssueModal}>Create new</CustomMenu.MenuItem>
-            <CustomMenu.MenuItem onClick={() => setSubIssuesListModal(true)}>
-              Add an existing issue
-            </CustomMenu.MenuItem>
+            <CustomMenu.MenuItem onClick={() => setSubIssuesListModal(true)}>Add an existing issue</CustomMenu.MenuItem>
           </CustomMenu>
         )
       )}

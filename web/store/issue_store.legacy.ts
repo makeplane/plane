@@ -3,11 +3,11 @@ import { observable, action, computed, makeObservable, runInAction } from "mobx"
 import { RootStore } from "./root";
 // services
 import { UserService } from "services/user.service";
-import { ProjectIssuesServices } from "services/issues.service";
-import { ProjectIssuesServices as ProjectModuleServices } from "services/modules.service";
-import { ProjectCycleServices } from "services/cycles.service";
+import { IssueServices } from "services/issue.service";
+import { ModuleService } from "services/modules.service";
+import { CycleService } from "services/cycles.service";
 // types
-import { TIssueLayouts, TIssueViews } from "./issue-filters";
+import { TIssueLayouts, TIssueViews } from "./issue_filters.legacy";
 
 export interface IIssues {
   [key: string]: any;
@@ -97,10 +97,10 @@ class IssueStore implements IIssueStore {
     });
 
     this.rootStore = _rootStore;
-    this.issueService = new ProjectIssuesServices();
+    this.issueService = new IssueServices();
     this.userService = new UserService();
-    this.modulesService = new ProjectModuleServices();
-    this.cyclesService = new ProjectCycleServices();
+    this.modulesService = new ModuleService();
+    this.cyclesService = new CycleService();
   }
 
   // computed

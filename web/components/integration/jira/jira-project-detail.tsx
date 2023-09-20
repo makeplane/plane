@@ -10,7 +10,7 @@ import useSWR from "swr";
 import { useFormContext, Controller } from "react-hook-form";
 
 // services
-import jiraImporterService from "services/integration/jira.service";
+import jiraImporterService from "services/jira.service";
 
 // fetch keys
 import { JIRA_IMPORTER_DETAIL } from "constants/fetch-keys";
@@ -157,9 +157,7 @@ export const JiraProjectDetail: React.FC<Props> = (props) => {
           <Controller
             control={control}
             name="config.epics_to_modules"
-            render={({ field: { value, onChange } }) => (
-              <ToggleSwitch onChange={onChange} value={value} />
-            )}
+            render={({ field: { value, onChange } }) => <ToggleSwitch onChange={onChange} value={value} />}
           />
         </div>
       </div>

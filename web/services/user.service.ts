@@ -1,6 +1,6 @@
 // services
 import APIService from "services/api.service";
-import trackEventServices from "services/track-event.service";
+import trackEventServices from "services/track_event.service";
 
 import type {
   ICurrentUserResponse,
@@ -99,10 +99,7 @@ export class UserService extends APIService {
       });
   }
 
-  async userWorkspaceDashboard(
-    workspaceSlug: string,
-    month: number
-  ): Promise<IUserWorkspaceDashboard> {
+  async userWorkspaceDashboard(workspaceSlug: string, month: number): Promise<IUserWorkspaceDashboard> {
     return this.get(`/api/users/me/workspaces/${workspaceSlug}/dashboard/`, {
       params: {
         month: month,
@@ -156,10 +153,7 @@ export class UserService extends APIService {
       });
   }
 
-  async getUserProfileActivity(
-    workspaceSlug: string,
-    userId: string
-  ): Promise<IUserActivityResponse> {
+  async getUserProfileActivity(workspaceSlug: string, userId: string): Promise<IUserActivityResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/user-activity/${userId}/?per_page=15`)
       .then((response) => response?.data)
       .catch((error) => {

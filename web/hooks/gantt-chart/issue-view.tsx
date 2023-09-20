@@ -1,7 +1,7 @@
 import useSWR from "swr";
 
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // hooks
 import useIssuesView from "hooks/use-issues-view";
 // fetch-keys
@@ -28,8 +28,7 @@ const useGanttChartIssues = (workspaceSlug: string | undefined, projectId: strin
   const { data: ganttIssues, mutate: mutateGanttIssues } = useSWR(
     workspaceSlug && projectId ? PROJECT_ISSUES_LIST_WITH_PARAMS(projectId, params) : null,
     workspaceSlug && projectId
-      ? () =>
-          issuesService.getIssuesWithParams(workspaceSlug.toString(), projectId.toString(), params)
+      ? () => issuesService.getIssuesWithParams(workspaceSlug.toString(), projectId.toString(), params)
       : null
   );
 

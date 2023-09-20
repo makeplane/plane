@@ -1,44 +1,44 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const unAuthorizedStatus = [401];
-const nonValidatedRoutes = [
-  "/",
-  "/magic-sign-in",
-  "/reset-password",
-  "/workspace-member-invitation",
-  "/sign-up",
-  "/m/",
-];
+// const unAuthorizedStatus = [401];
+// const nonValidatedRoutes = [
+//   "/",
+//   "/magic-sign-in",
+//   "/reset-password",
+//   "/workspace-member-invitation",
+//   "/sign-up",
+//   "/m/",
+// ];
 
-const validateRouteCheck = (route: string): boolean => {
-  let validationToggle = false;
+// const validateRouteCheck = (route: string): boolean => {
+//   let validationToggle = false;
 
-  let routeCheck = false;
-  nonValidatedRoutes.forEach((_route: string) => {
-    if (route.includes(_route)) {
-      routeCheck = true;
-    }
-  });
+//   let routeCheck = false;
+//   nonValidatedRoutes.forEach((_route: string) => {
+//     if (route.includes(_route)) {
+//       routeCheck = true;
+//     }
+//   });
 
-  if (routeCheck) validationToggle = true;
-  return validationToggle;
-};
+//   if (routeCheck) validationToggle = true;
+//   return validationToggle;
+// };
 
-axios.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    const { status }: any = error.response;
-    if (!validateRouteCheck(window.location.pathname)) {
-      if (unAuthorizedStatus.includes(status)) {
-        Cookies.remove("refreshToken", { path: "/" });
-        Cookies.remove("accessToken", { path: "/" });
-        window.location.href = `/?next_url=${window.location.pathname}`;
-      }
-    }
-    return Promise.reject(error);
-  }
-);
+// axios.interceptors.response.use(
+//   (response) => response,
+//   (error) => {
+//     const { status }: any = error.response;
+//     if (!validateRouteCheck(window.location.pathname)) {
+//       if (unAuthorizedStatus.includes(status)) {
+//         Cookies.remove("refreshToken", { path: "/" });
+//         Cookies.remove("accessToken", { path: "/" });
+//         window.location.href = `/?next_url=${window.location.pathname}`;
+//       }
+//     }
+//     return Promise.reject(error);
+//   }
+// );
 
 abstract class APIService {
   protected baseURL: string;
@@ -132,18 +132,6 @@ abstract class APIService {
       url: this.baseURL + url,
       data: data,
       headers: this.getAccessToken() ? this.getHeaders() : {},
-      ...config,
-    });
-  }
-
-  mediaUpload(url: string, data = {}, config = {}): Promise<any> {
-    return axios({
-      method: "post",
-      url: this.baseURL + url,
-      data,
-      headers: this.getAccessToken()
-        ? { ...this.getHeaders(), "Content-Type": "multipart/form-data" }
-        : {},
       ...config,
     });
   }

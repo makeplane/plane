@@ -1,11 +1,11 @@
 // services
 import APIService from "services/api.service";
-import trackEventServices from "./track-event.service";
+import trackEventServices from "./track_event.service";
 // types
 import type { IModule, IIssue, ICurrentUserResponse } from "types";
 import { API_BASE_URL } from "helpers/common.helper";
 
-export class ProjectIssuesServices extends APIService {
+export class ModuleService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -41,10 +41,7 @@ export class ProjectIssuesServices extends APIService {
     data: any,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
-    return this.put(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`,
-      data
-    )
+    return this.put(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`, data)
       .then((response) => {
         trackEventServices.trackModuleEvent(response?.data, "MODULE_UPDATE", user);
         return response?.data;
@@ -54,11 +51,7 @@ export class ProjectIssuesServices extends APIService {
       });
   }
 
-  async getModuleDetails(
-    workspaceSlug: string,
-    projectId: string,
-    moduleId: string
-  ): Promise<IModule> {
+  async getModuleDetails(workspaceSlug: string, projectId: string, moduleId: string): Promise<IModule> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -73,10 +66,7 @@ export class ProjectIssuesServices extends APIService {
     data: Partial<IModule>,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
-    return this.patch(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`,
-      data
-    )
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`, data)
       .then((response) => {
         trackEventServices.trackModuleEvent(response?.data, "MODULE_UPDATE", user);
         return response?.data;
@@ -92,9 +82,7 @@ export class ProjectIssuesServices extends APIService {
     moduleId: string,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
-    return this.delete(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`
-    )
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`)
       .then((response) => {
         trackEventServices.trackModuleEvent(response?.data, "MODULE_DELETE", user);
         return response?.data;
@@ -104,14 +92,8 @@ export class ProjectIssuesServices extends APIService {
       });
   }
 
-  async getModuleIssues(
-    workspaceSlug: string,
-    projectId: string,
-    moduleId: string
-  ): Promise<IIssue[]> {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`
-    )
+  async getModuleIssues(workspaceSlug: string, projectId: string, moduleId: string): Promise<IIssue[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -129,10 +111,9 @@ export class ProjectIssuesServices extends APIService {
         [key: string]: IIssue[];
       }
   > {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`,
-      { params: queries }
-    )
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`, {
+      params: queries,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -146,10 +127,7 @@ export class ProjectIssuesServices extends APIService {
     data: { issues: string[] },
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
-    return this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`,
-      data
-    )
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`, data)
       .then((response) => {
         trackEventServices.trackIssueMovedToCycleOrModuleEvent(
           {
@@ -196,10 +174,7 @@ export class ProjectIssuesServices extends APIService {
       url: string;
     }
   ): Promise<any> {
-    return this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-links/`,
-      data
-    )
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-links/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -227,12 +202,7 @@ export class ProjectIssuesServices extends APIService {
       });
   }
 
-  async deleteModuleLink(
-    workspaceSlug: string,
-    projectId: string,
-    moduleId: string,
-    linkId: string
-  ): Promise<any> {
+  async deleteModuleLink(workspaceSlug: string, projectId: string, moduleId: string, linkId: string): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-links/${linkId}/`
     )
@@ -249,24 +219,15 @@ export class ProjectIssuesServices extends APIService {
       module: string;
     }
   ): Promise<any> {
-    return this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-modules/`,
-      data
-    )
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-modules/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async removeModuleFromFavorites(
-    workspaceSlug: string,
-    projectId: string,
-    moduleId: string
-  ): Promise<any> {
-    return this.delete(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-modules/${moduleId}/`
-    )
+  async removeModuleFromFavorites(workspaceSlug: string, projectId: string, moduleId: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-modules/${moduleId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -274,4 +235,4 @@ export class ProjectIssuesServices extends APIService {
   }
 }
 
-export default new ProjectIssuesServices();
+export default new ModuleService();

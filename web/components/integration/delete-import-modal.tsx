@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import IntegrationService from "services/integration";
+import IntegrationService from "services/integration.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -92,10 +92,7 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, 
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-500/20 p-4">
-                      <ExclamationTriangleIcon
-                        className="h-6 w-6 text-red-500"
-                        aria-hidden="true"
-                      />
+                      <ExclamationTriangleIcon className="h-6 w-6 text-red-500" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">
                       <h3 className="text-xl font-medium 2xl:text-2xl">Delete Project</h3>
@@ -104,17 +101,13 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, 
                   <span>
                     <p className="text-sm leading-7 text-custom-text-200">
                       Are you sure you want to delete import from{" "}
-                      <span className="break-words font-semibold capitalize text-custom-text-100">
-                        {data?.service}
-                      </span>
-                      ? All of the data related to the import will be permanently removed. This
-                      action cannot be undone.
+                      <span className="break-words font-semibold capitalize text-custom-text-100">{data?.service}</span>
+                      ? All of the data related to the import will be permanently removed. This action cannot be undone.
                     </p>
                   </span>
                   <div>
                     <p className="text-sm text-custom-text-200">
-                      To confirm, type{" "}
-                      <span className="font-medium text-custom-text-100">delete import</span> below:
+                      To confirm, type <span className="font-medium text-custom-text-100">delete import</span> below:
                     </p>
                     <Input
                       type="text"
@@ -129,11 +122,7 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, 
                   </div>
                   <div className="flex justify-end gap-2">
                     <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <DangerButton
-                      onClick={handleDeletion}
-                      disabled={!confirmDeleteImport}
-                      loading={deleteLoading}
-                    >
+                    <DangerButton onClick={handleDeletion} disabled={!confirmDeleteImport} loading={deleteLoading}>
                       {deleteLoading ? "Deleting..." : "Delete Project"}
                     </DangerButton>
                   </div>

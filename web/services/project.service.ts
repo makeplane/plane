@@ -1,7 +1,7 @@
 import { API_BASE_URL } from "helpers/common.helper";
 // services
 import APIService from "services/api.service";
-import trackEventServices from "services/track-event.service";
+import trackEventServices from "services/track_event.service";
 // types
 import type {
   GithubRepositoriesResponse,

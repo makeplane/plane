@@ -5,7 +5,7 @@ import useSWR, { mutate } from "swr";
 // components
 import { AddComment, IssueActivitySection } from "components/issues";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // hooks
 import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
@@ -25,16 +25,9 @@ export const InboxIssueActivity: React.FC<Props> = ({ issueDetails }) => {
   const { user } = useUser();
 
   const { data: issueActivity, mutate: mutateIssueActivity } = useSWR(
+    workspaceSlug && projectId && inboxIssueId ? PROJECT_ISSUES_ACTIVITY(inboxIssueId.toString()) : null,
     workspaceSlug && projectId && inboxIssueId
-      ? PROJECT_ISSUES_ACTIVITY(inboxIssueId.toString())
-      : null,
-    workspaceSlug && projectId && inboxIssueId
-      ? () =>
-          issuesService.getIssueActivities(
-            workspaceSlug.toString(),
-            projectId.toString(),
-            inboxIssueId.toString()
-          )
+      ? () => issuesService.getIssueActivities(workspaceSlug.toString(), projectId.toString(), inboxIssueId.toString())
       : null
   );
 
@@ -42,14 +35,7 @@ export const InboxIssueActivity: React.FC<Props> = ({ issueDetails }) => {
     if (!workspaceSlug || !projectId || !inboxIssueId) return;
 
     await issuesService
-      .patchIssueComment(
-        workspaceSlug as string,
-        projectId as string,
-        inboxIssueId as string,
-        commentId,
-        data,
-        user
-      )
+      .patchIssueComment(workspaceSlug as string, projectId as string, inboxIssueId as string, commentId, data, user)
       .then(() => mutateIssueActivity());
   };
 
@@ -59,13 +45,7 @@ export const InboxIssueActivity: React.FC<Props> = ({ issueDetails }) => {
     mutateIssueActivity((prevData: any) => prevData?.filter((p: any) => p.id !== commentId), false);
 
     await issuesService
-      .deleteIssueComment(
-        workspaceSlug as string,
-        projectId as string,
-        inboxIssueId as string,
-        commentId,
-        user
-      )
+      .deleteIssueComment(workspaceSlug as string, projectId as string, inboxIssueId as string, commentId, user)
       .then(() => mutateIssueActivity());
   };
 
@@ -73,13 +53,7 @@ export const InboxIssueActivity: React.FC<Props> = ({ issueDetails }) => {
     if (!workspaceSlug || !issueDetails) return;
 
     await issuesService
-      .createIssueComment(
-        workspaceSlug.toString(),
-        issueDetails.project,
-        issueDetails.id,
-        formData,
-        user
-      )
+      .createIssueComment(workspaceSlug.toString(), issueDetails.project, issueDetails.id, formData, user)
       .then(() => {
         mutate(PROJECT_ISSUES_ACTIVITY(issueDetails.id));
       })

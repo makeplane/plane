@@ -1,11 +1,11 @@
 // mobx
 import { action, observable, runInAction, makeAutoObservable } from "mobx";
 // services
-import issueService from "services/issues.service";
+import issueService from "services/issue.service";
 // types
 import type { ICurrentUserResponse, IIssue } from "types";
 
-class DraftIssuesStore {
+class IssuesStore {
   issues: { [key: string]: IIssue } = {};
   isIssuesLoading: boolean = false;
   rootStore: any | null = null;
@@ -13,28 +13,30 @@ class DraftIssuesStore {
   constructor(_rootStore: any | null = null) {
     makeAutoObservable(this, {
       issues: observable.ref,
-      isIssuesLoading: observable.ref,
-      rootStore: observable.ref,
-      loadDraftIssues: action,
+      loadIssues: action,
       getIssueById: action,
-      createDraftIssue: action,
-      updateDraftIssue: action,
-      deleteDraftIssue: action,
+      isIssuesLoading: observable,
+      createIssue: action,
+      updateIssue: action,
+      deleteIssue: action,
     });
 
     this.rootStore = _rootStore;
   }
 
   /**
-   * @description Fetch all draft issues of a project and hydrate issues field
+   * @description Fetch all issues of a project and hydrate issues field
    */
 
-  loadDraftIssues = async (workspaceSlug: string, projectId: string, params?: any) => {
+  loadIssues = async (workspaceSlug: string, projectId: string) => {
     this.isIssuesLoading = true;
     try {
-      const issuesResponse = await issueService.getDraftIssues(workspaceSlug, projectId, params);
+      const issuesResponse: IIssue[] = (await issueService.getIssuesWithParams(workspaceSlug, projectId)) as IIssue[];
 
-      const issues = Array.isArray(issuesResponse) ? { allIssues: issuesResponse } : issuesResponse;
+      const issues: { [kye: string]: IIssue } = {};
+      issuesResponse.forEach((issue) => {
+        issues[issue.id] = issue;
+      });
 
       runInAction(() => {
         this.issues = issues;
@@ -46,27 +48,11 @@ class DraftIssuesStore {
     }
   };
 
-  /**
-   * @description Fetch a single draft issue by id and hydrate issues field
-   * @param workspaceSlug
-   * @param projectId
-   * @param issueId
-   * @returns {IIssue}
-   */
-
-  getIssueById = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string
-  ): Promise<IIssue> => {
+  getIssueById = async (workspaceSlug: string, projectId: string, issueId: string): Promise<IIssue> => {
     if (this.issues[issueId]) return this.issues[issueId];
 
     try {
-      const issueResponse: IIssue = await issueService.getDraftIssueById(
-        workspaceSlug,
-        projectId,
-        issueId
-      );
+      const issueResponse: IIssue = await issueService.retrieve(workspaceSlug, projectId, issueId);
 
       const issues = {
         ...this.issues,
@@ -83,28 +69,14 @@ class DraftIssuesStore {
     }
   };
 
-  /**
-   * @description Create a new draft issue and hydrate issues field
-   * @param workspaceSlug
-   * @param projectId
-   * @param issueForm
-   * @param user
-   * @returns {IIssue}
-   */
-
-  createDraftIssue = async (
+  createIssue = async (
     workspaceSlug: string,
     projectId: string,
     issueForm: IIssue,
     user: ICurrentUserResponse
   ): Promise<IIssue> => {
     try {
-      const issueResponse = await issueService.createDraftIssue(
-        workspaceSlug,
-        projectId,
-        issueForm,
-        user
-      );
+      const issueResponse = await issueService.createIssues(workspaceSlug, projectId, issueForm, user);
 
       const issues = {
         ...this.issues,
@@ -121,7 +93,7 @@ class DraftIssuesStore {
     }
   };
 
-  updateDraftIssue = async (
+  updateIssue = async (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
@@ -141,13 +113,7 @@ class DraftIssuesStore {
       });
 
       // make a patch request to update the issue
-      const issueResponse: IIssue = await issueService.updateDraftIssue(
-        workspaceSlug,
-        projectId,
-        issueId,
-        issueForm,
-        user
-      );
+      const issueResponse: IIssue = await issueService.patchIssue(workspaceSlug, projectId, issueId, issueForm, user);
 
       const updatedIssues = { ...this.issues };
       updatedIssues[issueId] = { ...issueResponse };
@@ -165,12 +131,7 @@ class DraftIssuesStore {
     }
   };
 
-  deleteDraftIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    user: ICurrentUserResponse
-  ) => {
+  deleteIssue = async (workspaceSlug: string, projectId: string, issueId: string, user: ICurrentUserResponse) => {
     const issues = { ...this.issues };
     delete issues[issueId];
 
@@ -179,11 +140,11 @@ class DraftIssuesStore {
         this.issues = issues;
       });
 
-      issueService.deleteDraftIssue(workspaceSlug, projectId, issueId, user);
+      issueService.deleteIssue(workspaceSlug, projectId, issueId, user);
     } catch (error) {
       console.error("Deleting issue error", error);
     }
   };
 }
 
-export default DraftIssuesStore;
+export default IssuesStore;

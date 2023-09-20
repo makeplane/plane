@@ -7,7 +7,7 @@ import useSWR from "swr";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // services
-import IntegrationService from "services/integration";
+import IntegrationService from "services/integration.service";
 import projectService from "services/project.service";
 // components
 import { SettingsSidebar, SingleIntegration } from "components/project";
@@ -32,17 +32,12 @@ const ProjectIntegrations: NextPage = () => {
 
   const { data: projectDetails } = useSWR<IProject>(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => projectService.getProject(workspaceSlug as string, projectId as string) : null
   );
 
   const { data: workspaceIntegrations } = useSWR(
     workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug as string) : null,
-    () =>
-      workspaceSlug
-        ? IntegrationService.getWorkspaceIntegrationsList(workspaceSlug as string)
-        : null
+    () => (workspaceSlug ? IntegrationService.getWorkspaceIntegrationsList(workspaceSlug as string) : null)
   );
 
   return (
@@ -70,10 +65,7 @@ const ProjectIntegrations: NextPage = () => {
             workspaceIntegrations.length > 0 ? (
               <div>
                 {workspaceIntegrations.map((integration) => (
-                  <SingleIntegration
-                    key={integration.integration_detail.id}
-                    integration={integration}
-                  />
+                  <SingleIntegration key={integration.integration_detail.id} integration={integration} />
                 ))}
               </div>
             ) : (

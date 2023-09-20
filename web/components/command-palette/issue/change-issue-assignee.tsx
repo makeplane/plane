@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // cmdk
 import { Command } from "cmdk";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // hooks
 import useProjectMembers from "hooks/use-project-members";
 // constants

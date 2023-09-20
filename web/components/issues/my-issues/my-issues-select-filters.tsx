@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // components
 import { DateFilterModal } from "components/core";
 // ui
@@ -29,12 +29,7 @@ type Props = {
   height?: "sm" | "md" | "rg" | "lg";
 };
 
-export const MyIssuesSelectFilters: React.FC<Props> = ({
-  filters,
-  onSelect,
-  direction = "right",
-  height = "md",
-}) => {
+export const MyIssuesSelectFilters: React.FC<Props> = ({ filters, onSelect, direction = "right", height = "md" }) => {
   const [isDateFilterModalOpen, setIsDateFilterModalOpen] = useState(false);
   const [dateFilterType, setDateFilterType] = useState<{
     title: string;
@@ -50,9 +45,7 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
 
   const { data: labels } = useSWR(
     workspaceSlug && fetchLabels ? WORKSPACE_LABELS(workspaceSlug.toString()) : null,
-    workspaceSlug && fetchLabels
-      ? () => issuesService.getWorkspaceLabels(workspaceSlug.toString())
-      : null
+    workspaceSlug && fetchLabels ? () => issuesService.getWorkspaceLabels(workspaceSlug.toString()) : null
   );
 
   return (

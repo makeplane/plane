@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -45,12 +45,7 @@ import {
   UserAuth,
 } from "types";
 // fetch-keys
-import {
-  CYCLE_DETAILS,
-  MODULE_DETAILS,
-  SUB_ISSUES,
-  USER_PROFILE_PROJECT_SEGREGATION,
-} from "constants/fetch-keys";
+import { CYCLE_DETAILS, MODULE_DETAILS, SUB_ISSUES, USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
 
 type Props = {
   type?: string;
@@ -140,39 +135,24 @@ export const SingleListIssue: React.FC<Props> = ({
         );
       }
 
-      issuesService
-        .patchIssue(workspaceSlug as string, issue.project, issue.id, formData, user)
-        .then(() => {
-          mutateIssues();
+      issuesService.patchIssue(workspaceSlug as string, issue.project, issue.id, formData, user).then(() => {
+        mutateIssues();
 
-          if (userId)
-            mutate<IUserProfileProjectSegregation>(
-              USER_PROFILE_PROJECT_SEGREGATION(workspaceSlug.toString(), userId.toString())
-            );
+        if (userId)
+          mutate<IUserProfileProjectSegregation>(
+            USER_PROFILE_PROJECT_SEGREGATION(workspaceSlug.toString(), userId.toString())
+          );
 
-          if (cycleId) mutate(CYCLE_DETAILS(cycleId as string));
-          if (moduleId) mutate(MODULE_DETAILS(moduleId as string));
-        });
+        if (cycleId) mutate(CYCLE_DETAILS(cycleId as string));
+        if (moduleId) mutate(MODULE_DETAILS(moduleId as string));
+      });
     },
-    [
-      displayFilters,
-      workspaceSlug,
-      cycleId,
-      moduleId,
-      userId,
-      groupTitle,
-      index,
-      mutateIssues,
-      user,
-    ]
+    [displayFilters, workspaceSlug, cycleId, moduleId, userId, groupTitle, index, mutateIssues, user]
   );
 
   const handleCopyText = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`
-    ).then(() => {
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",
@@ -197,8 +177,7 @@ export const SingleListIssue: React.FC<Props> = ({
     });
   };
 
-  const isNotAllowed =
-    userAuth.isGuest || userAuth.isViewer || disableUserActions || isArchivedIssues;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disableUserActions || isArchivedIssues;
 
   console.log("properties", properties);
 
@@ -243,9 +222,7 @@ export const SingleListIssue: React.FC<Props> = ({
               Copy issue link
             </ContextMenu.Item>
             <a href={issuePath} target="_blank" rel="noreferrer noopener">
-              <ContextMenu.Item Icon={ArrowTopRightOnSquareIcon}>
-                Open issue in new tab
-              </ContextMenu.Item>
+              <ContextMenu.Item Icon={ArrowTopRightOnSquareIcon}>Open issue in new tab</ContextMenu.Item>
             </a>
           </>
         )}
@@ -286,11 +263,7 @@ export const SingleListIssue: React.FC<Props> = ({
           </div>
         </div>
 
-        <div
-          className={`flex flex-shrink-0 items-center gap-2 text-xs ${
-            isArchivedIssues ? "opacity-60" : ""
-          }`}
-        >
+        <div className={`flex flex-shrink-0 items-center gap-2 text-xs ${isArchivedIssues ? "opacity-60" : ""}`}>
           {properties.priority && (
             <ViewPrioritySelect
               issue={issue}

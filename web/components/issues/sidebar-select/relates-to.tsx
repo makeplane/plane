@@ -12,7 +12,7 @@ import { BlockerIcon, RelatedIcon } from "components/icons";
 // components
 import { ExistingIssuesListModal } from "components/core";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // types
 import { BlockeIssueDetail, IIssue, ISearchIssueResponse } from "types";
 

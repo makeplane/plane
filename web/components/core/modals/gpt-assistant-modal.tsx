@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 // services
 import aiService from "services/ai.service";
-import trackEventServices from "services/track-event.service";
+import trackEventServices from "services/track_event.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
@@ -110,9 +110,7 @@ export const GptAssistantModal: React.FC<Props> = ({
           setToastAlert({
             type: "error",
             title: "Error!",
-            message:
-              error ||
-              "You have reached the maximum number of requests of 50 requests per month per user.",
+            message: error || "You have reached the maximum number of requests of 50 requests per month per user.",
           });
         else
           setToastAlert({
@@ -166,8 +164,7 @@ export const GptAssistantModal: React.FC<Props> = ({
       )}
       {invalidResponse && (
         <div className="text-sm text-red-500">
-          No response could be generated. This may be due to insufficient content or task
-          information. Please try again.
+          No response could be generated. This may be due to insufficient content or task information. Please try again.
         </div>
       )}
       <Input
@@ -175,9 +172,7 @@ export const GptAssistantModal: React.FC<Props> = ({
         name="task"
         register={register}
         placeholder={`${
-          content && content !== ""
-            ? "Tell AI what action to perform on this content..."
-            : "Ask AI anything..."
+          content && content !== "" ? "Tell AI what action to perform on this content..." : "Ask AI anything..."
         }`}
         autoComplete="off"
       />
@@ -187,18 +182,8 @@ export const GptAssistantModal: React.FC<Props> = ({
             onClick={() => {
               onResponse(response);
               onClose();
-              if (block)
-                trackEventServices.trackUseGPTResponseEvent(
-                  block,
-                  "USE_GPT_RESPONSE_IN_PAGE_BLOCK",
-                  user
-                );
-              else if (issue)
-                trackEventServices.trackUseGPTResponseEvent(
-                  issue,
-                  "USE_GPT_RESPONSE_IN_ISSUE",
-                  user
-                );
+              if (block) trackEventServices.trackUseGPTResponseEvent(block, "USE_GPT_RESPONSE_IN_PAGE_BLOCK", user);
+              else if (issue) trackEventServices.trackUseGPTResponseEvent(issue, "USE_GPT_RESPONSE_IN_ISSUE", user);
             }}
           >
             Use this response
@@ -206,16 +191,8 @@ export const GptAssistantModal: React.FC<Props> = ({
         )}
         <div className="flex items-center gap-2">
           <SecondaryButton onClick={onClose}>Close</SecondaryButton>
-          <PrimaryButton
-            type="button"
-            onClick={handleSubmit(handleResponse)}
-            loading={isSubmitting}
-          >
-            {isSubmitting
-              ? "Generating response..."
-              : response === ""
-              ? "Generate response"
-              : "Generate again"}
+          <PrimaryButton type="button" onClick={handleSubmit(handleResponse)} loading={isSubmitting}>
+            {isSubmitting ? "Generating response..." : response === "" ? "Generate response" : "Generate again"}
           </PrimaryButton>
         </div>
       </div>

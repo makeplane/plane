@@ -12,7 +12,7 @@ import { DeleteAttachmentModal } from "./delete-attachment-modal";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { ExclamationIcon, getFileIcon } from "components/icons";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 import projectService from "services/project.service";
 // fetch-key
 import { ISSUE_ATTACHMENTS, PROJECT_MEMBERS } from "constants/fetch-keys";
@@ -33,12 +33,7 @@ export const IssueAttachments = () => {
   const { data: attachments } = useSWR<IIssueAttachment[]>(
     workspaceSlug && projectId && issueId ? ISSUE_ATTACHMENTS(issueId as string) : null,
     workspaceSlug && projectId && issueId
-      ? () =>
-          issuesService.getIssueAttachment(
-            workspaceSlug as string,
-            projectId as string,
-            issueId as string
-          )
+      ? () => issuesService.getIssueAttachment(workspaceSlug as string, projectId as string, issueId as string)
       : null
   );
 
@@ -70,14 +65,11 @@ export const IssueAttachments = () => {
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
                       <Tooltip tooltipContent={getFileName(file.attributes.name)}>
-                        <span className="text-sm">
-                          {truncateText(`${getFileName(file.attributes.name)}`, 10)}
-                        </span>
+                        <span className="text-sm">{truncateText(`${getFileName(file.attributes.name)}`, 10)}</span>
                       </Tooltip>
                       <Tooltip
                         tooltipContent={`${
-                          people?.find((person) => person.member.id === file.updated_by)?.member
-                            .display_name ?? ""
+                          people?.find((person) => person.member.id === file.updated_by)?.member.display_name ?? ""
                         } uploaded on ${renderLongDateFormat(file.updated_at)}`}
                       >
                         <span>

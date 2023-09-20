@@ -2,7 +2,7 @@ import { TipTapEditor } from "components/tiptap";
 import type { NextPage } from "next";
 import { useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 import { ICurrentUserResponse, IIssue } from "types";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 import { Spinner } from "components/ui";
@@ -137,9 +137,7 @@ const Editor: NextPage = () => {
           <TipTapEditor
             borderOnFocus={false}
             value={
-              !value ||
-              value === "" ||
-              (typeof value === "object" && Object.keys(value).length === 0)
+              !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
                 ? watch("description_html")
                 : value
             }

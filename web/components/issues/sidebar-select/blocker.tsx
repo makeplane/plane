@@ -10,7 +10,7 @@ import useUser from "hooks/use-user";
 // components
 import { ExistingIssuesListModal } from "components/core";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { BlockerIcon } from "components/icons";
@@ -24,12 +24,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const SidebarBlockerSelect: React.FC<Props> = ({
-  issueId,
-  submitChanges,
-  watch,
-  disabled = false,
-}) => {
+export const SidebarBlockerSelect: React.FC<Props> = ({ issueId, submitChanges, watch, disabled = false }) => {
   const [isBlockerModalOpen, setIsBlockerModalOpen] = useState(false);
 
   const { user } = useUser();
@@ -42,8 +37,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
     setIsBlockerModalOpen(false);
   };
 
-  const blockerIssue =
-    watch("issue_relations")?.filter((i) => i.relation_type === "blocked_by") || [];
+  const blockerIssue = watch("issue_relations")?.filter((i) => i.relation_type === "blocked_by") || [];
 
   const onSubmit = async (data: ISearchIssueResponse[]) => {
     if (data.length === 0) {

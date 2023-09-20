@@ -5,8 +5,8 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import stateService from "services/state.service";
-import trackEventServices from "services/track-event.service";
+import stateService from "services/project_state.service";
+import trackEventServices from "services/track_event.service";
 // ui
 import { CustomSearchSelect, Tooltip } from "components/ui";
 // icons
@@ -48,9 +48,7 @@ export const ViewStateSelect: React.FC<Props> = ({
 
   const { data: stateGroups } = useSWR(
     workspaceSlug && issue && fetchStates ? STATES_LIST(issue.project) : null,
-    workspaceSlug && issue && fetchStates
-      ? () => stateService.getStates(workspaceSlug as string, issue.project)
-      : null
+    workspaceSlug && issue && fetchStates ? () => stateService.getStates(workspaceSlug as string, issue.project) : null
   );
   const states = getStatesList(stateGroups);
 
@@ -68,16 +66,10 @@ export const ViewStateSelect: React.FC<Props> = ({
   const selectedOption = issue.state_detail;
 
   const stateLabel = (
-    <Tooltip
-      tooltipHeading="State"
-      tooltipContent={selectedOption?.name ?? ""}
-      position={tooltipPosition}
-    >
+    <Tooltip tooltipHeading="State" tooltipContent={selectedOption?.name ?? ""} position={tooltipPosition}>
       <div className="flex items-center cursor-pointer w-full gap-2 text-custom-text-200">
         <span className="h-3.5 w-3.5">
-          {selectedOption && (
-            <StateGroupIcon stateGroup={selectedOption.group} color={selectedOption.color} />
-          )}
+          {selectedOption && <StateGroupIcon stateGroup={selectedOption.group} color={selectedOption.color} />}
         </span>
         <span className="truncate">{selectedOption?.name ?? "State"}</span>
       </div>

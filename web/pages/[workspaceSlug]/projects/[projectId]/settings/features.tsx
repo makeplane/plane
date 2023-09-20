@@ -6,7 +6,7 @@ import useSWR, { mutate } from "swr";
 
 // services
 import projectService from "services/project.service";
-import trackEventServices, { MiscellaneousEventType } from "services/track-event.service";
+import trackEventServices, { MiscellaneousEventType } from "services/track_event.service";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // hooks
@@ -32,39 +32,32 @@ import { truncateText } from "helpers/string.helper";
 const featuresList = [
   {
     title: "Cycles",
-    description:
-      "Cycles are enabled for all the projects in this workspace. Access them from the sidebar.",
-    icon: (
-      <ContrastOutlined className="!text-base !leading-4 text-purple-500 flex-shrink-0 rotate-180" />
-    ),
+    description: "Cycles are enabled for all the projects in this workspace. Access them from the sidebar.",
+    icon: <ContrastOutlined className="!text-base !leading-4 text-purple-500 flex-shrink-0 rotate-180" />,
 
     property: "cycle_view",
   },
   {
     title: "Modules",
-    description:
-      "Modules are enabled for all the projects in this workspace. Access it from the sidebar.",
+    description: "Modules are enabled for all the projects in this workspace. Access it from the sidebar.",
     icon: <ModuleIcon width={16} height={16} className="flex-shrink-0" />,
     property: "module_view",
   },
   {
     title: "Views",
-    description:
-      "Views are enabled for all the projects in this workspace. Access it from the sidebar.",
+    description: "Views are enabled for all the projects in this workspace. Access it from the sidebar.",
     icon: <Layers className="h-4 w-4 text-cyan-500 flex-shrink-0" />,
     property: "issue_views_view",
   },
   {
     title: "Pages",
-    description:
-      "Pages are enabled for all the projects in this workspace. Access it from the sidebar.",
+    description: "Pages are enabled for all the projects in this workspace. Access it from the sidebar.",
     icon: <FileText className="h-4 w-4 text-red-400 flex-shrink-0" />,
     property: "page_view",
   },
   {
     title: "Inbox",
-    description:
-      "Inbox are enabled for all the projects in this workspace. Access it from the issues views page.",
+    description: "Inbox are enabled for all the projects in this workspace. Access it from the issues views page.",
     icon: <Inbox className="h-4 w-4 text-fuchsia-500 flex-shrink-0" />,
     property: "inbox_view",
   },
@@ -97,9 +90,7 @@ const FeaturesSettings: NextPage = () => {
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => projectService.getProject(workspaceSlug as string, projectId as string) : null
   );
 
   const handleSubmit = async (formData: Partial<IProject>) => {
@@ -129,15 +120,13 @@ const FeaturesSettings: NextPage = () => {
       message: "Project feature updated successfully.",
     });
 
-    await projectService
-      .updateProject(workspaceSlug as string, projectId as string, formData, user)
-      .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Project feature could not be updated. Please try again.",
-        })
-      );
+    await projectService.updateProject(workspaceSlug as string, projectId as string, formData, user).catch(() =>
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Project feature could not be updated. Please try again.",
+      })
+    );
   };
 
   return (
@@ -173,9 +162,7 @@ const FeaturesSettings: NextPage = () => {
                   </div>
                   <div className="">
                     <h4 className="text-sm font-medium">{feature.title}</h4>
-                    <p className="text-sm text-custom-text-200 tracking-tight">
-                      {feature.description}
-                    </p>
+                    <p className="text-sm text-custom-text-200 tracking-tight">{feature.description}</p>
                   </div>
                 </div>
                 <ToggleSwitch
@@ -189,10 +176,7 @@ const FeaturesSettings: NextPage = () => {
                         projectIdentifier: projectDetails?.identifier,
                         projectName: projectDetails?.name,
                       },
-                      getEventType(
-                        feature.title,
-                        !projectDetails?.[feature.property as keyof IProject]
-                      ),
+                      getEventType(feature.title, !projectDetails?.[feature.property as keyof IProject]),
                       user
                     );
                     handleSubmit({

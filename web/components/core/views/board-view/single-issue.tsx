@@ -5,14 +5,9 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 
 // react-beautiful-dnd
-import {
-  DraggableProvided,
-  DraggableStateSnapshot,
-  DraggingStyle,
-  NotDraggingStyle,
-} from "react-beautiful-dnd";
+import { DraggableProvided, DraggableStateSnapshot, DraggingStyle, NotDraggingStyle } from "react-beautiful-dnd";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
@@ -147,22 +142,17 @@ export const SingleBoardIssue: React.FC<Props> = ({
         );
       }
 
-      issuesService
-        .patchIssue(workspaceSlug as string, issue.project, issue.id, formData, user)
-        .then(() => {
-          mutateIssues();
+      issuesService.patchIssue(workspaceSlug as string, issue.project, issue.id, formData, user).then(() => {
+        mutateIssues();
 
-          if (cycleId) mutate(CYCLE_DETAILS(cycleId as string));
-          if (moduleId) mutate(MODULE_DETAILS(moduleId as string));
-        });
+        if (cycleId) mutate(CYCLE_DETAILS(cycleId as string));
+        if (moduleId) mutate(MODULE_DETAILS(moduleId as string));
+      });
     },
     [displayFilters, workspaceSlug, cycleId, moduleId, groupTitle, index, mutateIssues, user]
   );
 
-  const getStyle = (
-    style: DraggingStyle | NotDraggingStyle | undefined,
-    snapshot: DraggableStateSnapshot
-  ) => {
+  const getStyle = (style: DraggingStyle | NotDraggingStyle | undefined, snapshot: DraggableStateSnapshot) => {
     if (displayFilters?.order_by === "sort_order") return style;
     if (!snapshot.isDragging) return {};
     if (!snapshot.isDropAnimating) return style;
@@ -174,11 +164,8 @@ export const SingleBoardIssue: React.FC<Props> = ({
   };
 
   const handleCopyText = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`
-    ).then(() => {
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",
@@ -253,9 +240,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
             target="_blank"
             rel="noreferrer noopener"
           >
-            <ContextMenu.Item Icon={ArrowTopRightOnSquareIcon}>
-              Open issue in new tab
-            </ContextMenu.Item>
+            <ContextMenu.Item Icon={ArrowTopRightOnSquareIcon}>Open issue in new tab</ContextMenu.Item>
           </a>
         )}
       </ContextMenu>
@@ -277,9 +262,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
           {!isNotAllowed && (
             <div
               ref={actionSectionRef}
-              className={`z-1 absolute top-1.5 right-1.5 hidden group-hover/card:!flex ${
-                isMenuActive ? "!flex" : ""
-              }`}
+              className={`z-1 absolute top-1.5 right-1.5 hidden group-hover/card:!flex ${isMenuActive ? "!flex" : ""}`}
             >
               {type && !isNotAllowed && (
                 <CustomMenu
@@ -353,11 +336,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
             </button>
           </div>
 
-          <div
-            className={`flex items-center gap-2 text-xs ${
-              isDropdownActive ? "" : "overflow-x-scroll"
-            }`}
-          >
+          <div className={`flex items-center gap-2 text-xs ${isDropdownActive ? "" : "overflow-x-scroll"}`}>
             {properties.priority && (
               <ViewPrioritySelect
                 issue={issue}

@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import stateService from "services/state.service";
+import stateService from "services/project_state.service";
 // ui
 import { Spinner, CustomSelect } from "components/ui";
 // icons
@@ -28,9 +28,7 @@ export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, disabled 
 
   const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => stateService.getStates(workspaceSlug as string, projectId as string) : null
   );
   const states = getStatesList(stateGroups);
 

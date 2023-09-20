@@ -11,7 +11,7 @@ import { TwitterPicker } from "react-color";
 // headless ui
 import { Listbox, Popover, Transition } from "@headlessui/react";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // hooks
 import useUser from "hooks/use-user";
 // ui
@@ -66,25 +66,21 @@ export const SidebarLabelSelect: React.FC<Props> = ({
 
   const { data: issueLabels, mutate: issueLabelMutate } = useSWR<IIssueLabels[]>(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string) : null
   );
 
   const handleNewLabel = async (formData: Partial<IIssueLabels>) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;
 
-    await issuesService
-      .createIssueLabel(workspaceSlug as string, projectId as string, formData, user)
-      .then((res) => {
-        reset(defaultValues);
+    await issuesService.createIssueLabel(workspaceSlug as string, projectId as string, formData, user).then((res) => {
+      reset(defaultValues);
 
-        issueLabelMutate((prevData: any) => [...(prevData ?? []), res], false);
+      issueLabelMutate((prevData: any) => [...(prevData ?? []), res], false);
 
-        submitChanges({ labels_list: [...(issueDetails?.labels ?? []), res.id] });
+      submitChanges({ labels_list: [...(issueDetails?.labels ?? []), res.id] });
 
-        setCreateLabelForm(false);
-      });
+      setCreateLabelForm(false);
+    });
   };
 
   useEffect(() => {
@@ -165,9 +161,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
                             {issueLabels ? (
                               issueLabels.length > 0 ? (
                                 issueLabels.map((label: IIssueLabels) => {
-                                  const children = issueLabels?.filter(
-                                    (l) => l.parent === label.id
-                                  );
+                                  const children = issueLabels?.filter((l) => l.parent === label.id);
 
                                   if (children.length === 0) {
                                     if (!label.parent)
@@ -175,9 +169,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
                                         <Listbox.Option
                                           key={label.id}
                                           className={({ active, selected }) =>
-                                            `${
-                                              active || selected ? "bg-custom-background-90" : ""
-                                            } ${
+                                            `${active || selected ? "bg-custom-background-90" : ""} ${
                                               selected ? "" : "text-custom-text-200"
                                             } flex cursor-pointer select-none items-center gap-2 truncate p-2`
                                           }
@@ -186,10 +178,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
                                           <span
                                             className="h-2 w-2 flex-shrink-0 rounded-full"
                                             style={{
-                                              backgroundColor:
-                                                label.color && label.color !== ""
-                                                  ? label.color
-                                                  : "#000",
+                                              backgroundColor: label.color && label.color !== "" ? label.color : "#000",
                                             }}
                                           />
                                           {label.name}
@@ -207,11 +196,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
                                             <Listbox.Option
                                               key={child.id}
                                               className={({ active, selected }) =>
-                                                `${
-                                                  active || selected
-                                                    ? "bg-custom-background-100"
-                                                    : ""
-                                                } ${
+                                                `${active || selected ? "bg-custom-background-100" : ""} ${
                                                   selected ? "" : "text-custom-text-200"
                                                 } flex cursor-pointer select-none items-center gap-2 truncate p-2`
                                               }
@@ -248,9 +233,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
               <button
                 type="button"
                 className={`flex ${
-                  isNotAllowed || uneditable
-                    ? "cursor-not-allowed"
-                    : "cursor-pointer hover:bg-custom-background-90"
+                  isNotAllowed || uneditable ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-90"
                 } items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs text-custom-text-200`}
                 onClick={() => setCreateLabelForm((prevData) => !prevData)}
                 disabled={uneditable}
@@ -326,11 +309,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
           >
             <XMarkIcon className="h-4 w-4 text-white" />
           </button>
-          <button
-            type="submit"
-            className="grid place-items-center rounded bg-green-500 p-2.5"
-            disabled={isSubmitting}
-          >
+          <button type="submit" className="grid place-items-center rounded bg-green-500 p-2.5" disabled={isSubmitting}>
             <PlusIcon className="h-4 w-4 text-white" />
           </button>
         </form>

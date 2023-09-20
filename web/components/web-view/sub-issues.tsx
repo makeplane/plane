@@ -11,7 +11,7 @@ import useSWR, { mutate } from "swr";
 import { X } from "lucide-react";
 
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 
 // fetch key
 import { SUB_ISSUES } from "constants/fetch-keys";
@@ -41,8 +41,7 @@ export const SubIssueList: React.FC<Props> = (props) => {
   const { data: subIssuesResponse } = useSWR(
     workspaceSlug && issueDetails ? SUB_ISSUES(issueDetails.id) : null,
     workspaceSlug && issueDetails
-      ? () =>
-          issuesService.subIssues(workspaceSlug as string, issueDetails.project, issueDetails.id)
+      ? () => issuesService.subIssues(workspaceSlug as string, issueDetails.project, issueDetails.id)
       : null
   );
 

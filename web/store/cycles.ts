@@ -3,7 +3,7 @@ import { action, computed, observable, makeObservable, runInAction } from "mobx"
 import { RootStore } from "./root";
 // services
 import { ProjectServices } from "services/project.service";
-import { ProjectIssuesServices as IssueServices } from "services/issues.service";
+import { IssueServices } from "services/issue.service";
 
 export interface ICycleStore {
   loader: boolean;

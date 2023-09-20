@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // services
-import IntegrationService from "services/integration";
+import IntegrationService from "services/integration.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useIntegrationPopup from "hooks/use-integration-popup";
@@ -50,25 +50,17 @@ export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
 
   const { data: workspaceIntegrations } = useSWR(
     workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug as string) : null,
-    () =>
-      workspaceSlug
-        ? IntegrationService.getWorkspaceIntegrationsList(workspaceSlug as string)
-        : null
+    () => (workspaceSlug ? IntegrationService.getWorkspaceIntegrationsList(workspaceSlug as string) : null)
   );
 
   const handleRemoveIntegration = async () => {
     if (!workspaceSlug || !integration || !workspaceIntegrations) return;
 
-    const workspaceIntegrationId = workspaceIntegrations?.find(
-      (i) => i.integration === integration.id
-    )?.id;
+    const workspaceIntegrationId = workspaceIntegrations?.find((i) => i.integration === integration.id)?.id;
 
     setDeletingIntegration(true);
 
-    await IntegrationService.deleteWorkspaceIntegration(
-      workspaceSlug as string,
-      workspaceIntegrationId ?? ""
-    )
+    await IntegrationService.deleteWorkspaceIntegration(workspaceSlug as string, workspaceIntegrationId ?? "")
       .then(() => {
         mutate<IWorkspaceIntegration[]>(
           WORKSPACE_INTEGRATIONS(workspaceSlug as string),
@@ -94,18 +86,13 @@ export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
       });
   };
 
-  const isInstalled = workspaceIntegrations?.find(
-    (i: any) => i.integration_detail.id === integration.id
-  );
+  const isInstalled = workspaceIntegrations?.find((i: any) => i.integration_detail.id === integration.id);
 
   return (
     <div className="flex items-center justify-between gap-2 border-b border-custom-border-200 bg-custom-background-100 px-4 py-6">
       <div className="flex items-start gap-4">
         <div className="h-10 w-10 flex-shrink-0">
-          <Image
-            src={integrationDetails[integration.provider].logo}
-            alt={`${integration.title} Logo`}
-          />
+          <Image src={integrationDetails[integration.provider].logo} alt={`${integration.title} Logo`} />
         </div>
         <div>
           <h3 className="flex items-center gap-2 text-sm font-medium">

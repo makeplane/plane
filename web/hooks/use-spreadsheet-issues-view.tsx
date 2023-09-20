@@ -7,7 +7,7 @@ import useSWR from "swr";
 // contexts
 import { issueViewContext } from "contexts/issue-view.context";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 import cyclesService from "services/cycles.service";
 import modulesService from "services/modules.service";
 // types
@@ -47,19 +47,14 @@ const useSpreadsheetIssuesView = () => {
   };
 
   const { data: projectSpreadsheetIssues, mutate: mutateProjectSpreadsheetIssues } = useSWR(
+    workspaceSlug && projectId ? PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params) : null,
     workspaceSlug && projectId
-      ? PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params)
-      : null,
-    workspaceSlug && projectId
-      ? () =>
-          issuesService.getIssuesWithParams(workspaceSlug.toString(), projectId.toString(), params)
+      ? () => issuesService.getIssuesWithParams(workspaceSlug.toString(), projectId.toString(), params)
       : null
   );
 
   const { data: cycleSpreadsheetIssues, mutate: mutateCycleSpreadsheetIssues } = useSWR(
-    workspaceSlug && projectId && cycleId
-      ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), params)
-      : null,
+    workspaceSlug && projectId && cycleId ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), params) : null,
     workspaceSlug && projectId && cycleId
       ? () =>
           cyclesService.getCycleIssuesWithParams(
@@ -72,9 +67,7 @@ const useSpreadsheetIssuesView = () => {
   );
 
   const { data: moduleSpreadsheetIssues, mutate: mutateModuleSpreadsheetIssues } = useSWR(
-    workspaceSlug && projectId && moduleId
-      ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), params)
-      : null,
+    workspaceSlug && projectId && moduleId ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), params) : null,
     workspaceSlug && projectId && moduleId
       ? () =>
           modulesService.getModuleIssuesWithParams(
@@ -89,8 +82,7 @@ const useSpreadsheetIssuesView = () => {
   const { data: viewSpreadsheetIssues, mutate: mutateViewSpreadsheetIssues } = useSWR(
     workspaceSlug && projectId && viewId && params ? VIEW_ISSUES(viewId.toString(), params) : null,
     workspaceSlug && projectId && viewId && params
-      ? () =>
-          issuesService.getIssuesWithParams(workspaceSlug.toString(), projectId.toString(), params)
+      ? () => issuesService.getIssuesWithParams(workspaceSlug.toString(), projectId.toString(), params)
       : null
   );
 

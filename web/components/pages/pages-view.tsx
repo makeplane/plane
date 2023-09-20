@@ -4,18 +4,13 @@ import useSWR, { mutate } from "swr";
 import { useRouter } from "next/router";
 
 // services
-import pagesService from "services/pages.service";
+import pagesService from "services/page.service";
 import projectService from "services/project.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // components
-import {
-  CreateUpdatePageModal,
-  DeletePageModal,
-  SinglePageDetailedItem,
-  SinglePageListItem,
-} from "components/pages";
+import { CreateUpdatePageModal, DeletePageModal, SinglePageDetailedItem, SinglePageListItem } from "components/pages";
 // ui
 import { EmptyState, Loader } from "components/ui";
 // icons
@@ -91,11 +86,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
         }),
       false
     );
-    mutate<IPage[]>(
-      FAVORITE_PAGES_LIST(projectId.toString()),
-      (prevData) => [page, ...(prevData ?? [])],
-      false
-    );
+    mutate<IPage[]>(FAVORITE_PAGES_LIST(projectId.toString()), (prevData) => [page, ...(prevData ?? [])], false);
 
     pagesService
       .addPageToFavorites(workspaceSlug.toString(), projectId.toString(), {
@@ -185,11 +176,9 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
       false
     );
 
-    pagesService
-      .patchPage(workspaceSlug.toString(), projectId.toString(), page.id, formData, user)
-      .then(() => {
-        mutate(RECENT_PAGES_LIST(projectId.toString()));
-      });
+    pagesService.patchPage(workspaceSlug.toString(), projectId.toString(), page.id, formData, user).then(() => {
+      mutate(RECENT_PAGES_LIST(projectId.toString()));
+    });
   };
 
   return (

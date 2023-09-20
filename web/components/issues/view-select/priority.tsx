@@ -3,7 +3,7 @@ import React from "react";
 import { useRouter } from "next/router";
 
 // services
-import trackEventServices from "services/track-event.service";
+import trackEventServices from "services/track_event.service";
 // ui
 import { CustomSelect, Tooltip } from "components/ui";
 // icons
@@ -61,9 +61,9 @@ export const ViewPrioritySelect: React.FC<Props> = ({
       customButton={
         <button
           type="button"
-          className={`grid place-items-center rounded ${
-            isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
-          } ${noBorder ? "" : "h-6 w-6 border shadow-sm"} ${
+          className={`grid place-items-center rounded ${isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"} ${
+            noBorder ? "" : "h-6 w-6 border shadow-sm"
+          } ${
             noBorder
               ? ""
               : issue.priority === "urgent"
@@ -71,11 +71,7 @@ export const ViewPrioritySelect: React.FC<Props> = ({
               : "border-custom-border-300 bg-custom-background-100"
           } items-center`}
         >
-          <Tooltip
-            tooltipHeading="Priority"
-            tooltipContent={issue.priority ?? "None"}
-            position={tooltipPosition}
-          >
+          <Tooltip tooltipHeading="Priority" tooltipContent={issue.priority ?? "None"} position={tooltipPosition}>
             <span className="flex gap-1 items-center text-custom-text-200 text-xs">
               <PriorityIcon
                 priority={issue.priority}

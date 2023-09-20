@@ -1,11 +1,11 @@
 import { API_BASE_URL } from "helpers/common.helper";
 // services
 import APIService from "services/api.service";
-import trackEventServices from "services/track-event.service";
+import trackEventServices from "services/track_event.service";
 // types
 import { IPage, IPageBlock, RecentPagesResponse, IIssue, ICurrentUserResponse } from "types";
 
-class PageServices extends APIService {
+export class PageService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -33,10 +33,7 @@ class PageServices extends APIService {
     data: Partial<IPage>,
     user: ICurrentUserResponse | undefined
   ): Promise<IPage> {
-    return this.patch(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`,
-      data
-    )
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`, data)
       .then((response) => {
         trackEventServices.trackPageEvent(response?.data, "PAGE_UPDATE", user);
         return response?.data;
@@ -69,10 +66,7 @@ class PageServices extends APIService {
       page: string;
     }
   ): Promise<any> {
-    return this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-pages/`,
-      data
-    )
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-pages/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -80,9 +74,7 @@ class PageServices extends APIService {
   }
 
   async removePageFromFavorites(workspaceSlug: string, projectId: string, pageId: string) {
-    return this.delete(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-pages/${pageId}`
-    )
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-pages/${pageId}`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -132,10 +124,7 @@ class PageServices extends APIService {
     data: Partial<IPageBlock>,
     user: ICurrentUserResponse | undefined
   ): Promise<IPageBlock> {
-    return this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/page-blocks/`,
-      data
-    )
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/page-blocks/`, data)
       .then((response) => {
         trackEventServices.trackPageBlockEvent(response?.data, "PAGE_BLOCK_CREATE", user);
         return response?.data;
@@ -200,14 +189,8 @@ class PageServices extends APIService {
       });
   }
 
-  async listPageBlocks(
-    workspaceSlug: string,
-    projectId: string,
-    pageId: string
-  ): Promise<IPageBlock[]> {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/page-blocks/`
-    )
+  async listPageBlocks(workspaceSlug: string, projectId: string, pageId: string): Promise<IPageBlock[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/page-blocks/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -225,11 +208,7 @@ class PageServices extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/page-blocks/${blockId}/issues/`
     )
       .then((response) => {
-        trackEventServices.trackPageBlockEvent(
-          response?.data,
-          "PAGE_BLOCK_CONVERTED_TO_ISSUE",
-          user
-        );
+        trackEventServices.trackPageBlockEvent(response?.data, "PAGE_BLOCK_CONVERTED_TO_ISSUE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -238,4 +217,4 @@ class PageServices extends APIService {
   }
 }
 
-export default new PageServices();
+export default new PageService();

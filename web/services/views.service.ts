@@ -1,12 +1,12 @@
 import APIService from "services/api.service";
-import trackEventServices from "services/track-event.service";
+import trackEventServices from "services/track_event.service";
 // types
 import { IView } from "types/views";
 import { ICurrentUserResponse } from "types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 
-export class ViewServices extends APIService {
+export class ViewService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -51,10 +51,7 @@ export class ViewServices extends APIService {
     data: Partial<IView>,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
-    return this.patch(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`,
-      data
-    )
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`, data)
       .then((response) => {
         trackEventServices.trackViewEvent(response?.data, "VIEW_UPDATE", user);
         return response?.data;
@@ -97,9 +94,7 @@ export class ViewServices extends APIService {
   }
 
   async getViewIssues(workspaceSlug: string, projectId: string, viewId: string): Promise<any> {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/issues/`
-    )
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/issues/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -113,24 +108,15 @@ export class ViewServices extends APIService {
       view: string;
     }
   ): Promise<any> {
-    return this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-views/`,
-      data
-    )
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-views/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async removeViewFromFavorites(
-    workspaceSlug: string,
-    projectId: string,
-    viewId: string
-  ): Promise<any> {
-    return this.delete(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-views/${viewId}/`
-    )
+  async removeViewFromFavorites(workspaceSlug: string, projectId: string, viewId: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-views/${viewId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -138,4 +124,4 @@ export class ViewServices extends APIService {
   }
 }
 
-export default new ViewServices();
+export default new ViewService();

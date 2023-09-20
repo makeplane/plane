@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // services
-import estimatesService from "services/estimates.service";
+import estimatesService from "services/project_estimates.service";
 import projectService from "services/project.service";
 // hooks
 import useProjectDetails from "hooks/use-project-details";
@@ -67,15 +67,13 @@ const EstimatesSettings: NextPage = () => {
       false
     );
 
-    estimatesService
-      .deleteEstimate(workspaceSlug as string, projectId as string, estimateId, user)
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Error: Estimate could not be deleted. Please try again",
-        });
+    estimatesService.deleteEstimate(workspaceSlug as string, projectId as string, estimateId, user).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Error: Estimate could not be deleted. Please try again",
       });
+    });
   };
 
   const disableEstimates = () => {
@@ -91,15 +89,13 @@ const EstimatesSettings: NextPage = () => {
       false
     );
 
-    projectService
-      .updateProject(workspaceSlug as string, projectId as string, { estimate: null }, user)
-      .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Estimate could not be disabled. Please try again",
-        })
-      );
+    projectService.updateProject(workspaceSlug as string, projectId as string, { estimate: null }, user).catch(() =>
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Estimate could not be disabled. Please try again",
+      })
+    );
   };
 
   return (

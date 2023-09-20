@@ -7,7 +7,7 @@ import useSWR, { mutate } from "swr";
 // react-beautiful-dnd
 import { DropResult } from "react-beautiful-dnd";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // hooks
 import useMyIssues from "hooks/my-issues/use-my-issues";
 import useMyIssuesFilters from "hooks/my-issues/use-my-issues-filter";
@@ -28,10 +28,7 @@ type Props = {
   disableUserActions?: false;
 };
 
-export const MyIssuesView: React.FC<Props> = ({
-  openIssuesListModal,
-  disableUserActions = false,
-}) => {
+export const MyIssuesView: React.FC<Props> = ({ openIssuesListModal, disableUserActions = false }) => {
   // create issue modal
   const [createIssueModal, setCreateIssueModal] = useState(false);
   const [preloadedData, setPreloadedData] = useState<
@@ -40,9 +37,7 @@ export const MyIssuesView: React.FC<Props> = ({
 
   // update issue modal
   const [editIssueModal, setEditIssueModal] = useState(false);
-  const [issueToEdit, setIssueToEdit] = useState<
-    (IIssue & { actionType: "edit" | "delete" }) | undefined
-  >(undefined);
+  const [issueToEdit, setIssueToEdit] = useState<(IIssue & { actionType: "edit" | "delete" }) | undefined>(undefined);
 
   // delete issue modal
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
@@ -57,14 +52,10 @@ export const MyIssuesView: React.FC<Props> = ({
   const { user } = useUserAuth();
 
   const { groupedIssues, mutateMyIssues, isEmpty, params } = useMyIssues(workspaceSlug?.toString());
-  const { filters, setFilters, displayFilters, properties } = useMyIssuesFilters(
-    workspaceSlug?.toString()
-  );
+  const { filters, setFilters, displayFilters, properties } = useMyIssuesFilters(workspaceSlug?.toString());
 
   const { data: labels } = useSWR(
-    workspaceSlug && (filters?.labels ?? []).length > 0
-      ? WORKSPACE_LABELS(workspaceSlug.toString())
-      : null,
+    workspaceSlug && (filters?.labels ?? []).length > 0 ? WORKSPACE_LABELS(workspaceSlug.toString()) : null,
     workspaceSlug && (filters?.labels ?? []).length > 0
       ? () => issuesService.getWorkspaceLabels(workspaceSlug.toString())
       : null
@@ -82,13 +73,7 @@ export const MyIssuesView: React.FC<Props> = ({
     async (result: DropResult) => {
       setTrashBox(false);
 
-      if (
-        !result.destination ||
-        !workspaceSlug ||
-        !groupedIssues ||
-        displayFilters?.group_by !== "priority"
-      )
-        return;
+      if (!result.destination || !workspaceSlug || !groupedIssues || displayFilters?.group_by !== "priority") return;
 
       const { source, destination } = result;
 
@@ -120,14 +105,8 @@ export const MyIssuesView: React.FC<Props> = ({
 
             return {
               ...prevData,
-              [sourceGroup]: orderArrayBy(
-                sourceGroupArray,
-                displayFilters.order_by ?? "-created_at"
-              ),
-              [destinationGroup]: orderArrayBy(
-                destinationGroupArray,
-                displayFilters.order_by ?? "-created_at"
-              ),
+              [sourceGroup]: orderArrayBy(sourceGroupArray, displayFilters.order_by ?? "-created_at"),
+              [destinationGroup]: orderArrayBy(destinationGroupArray, displayFilters.order_by ?? "-created_at"),
             };
           },
           false
@@ -219,15 +198,11 @@ export const MyIssuesView: React.FC<Props> = ({
     (key) => filtersToDisplay[key as keyof IIssueFilterOptions] === null
   );
   const areFiltersApplied =
-    Object.keys(filtersToDisplay).length > 0 &&
-    nullFilters.length !== Object.keys(filtersToDisplay).length;
+    Object.keys(filtersToDisplay).length > 0 && nullFilters.length !== Object.keys(filtersToDisplay).length;
 
   const isSubscribedIssuesRoute = router.pathname.includes("subscribed");
   const isMySubscribedIssues =
-    (filters.subscriber &&
-      filters.subscriber.length > 0 &&
-      router.pathname.includes("my-issues")) ??
-    false;
+    (filters.subscriber && filters.subscriber.length > 0 && router.pathname.includes("my-issues")) ?? false;
 
   const disableAddIssueOption = isSubscribedIssuesRoute || isMySubscribedIssues;
 

@@ -3,20 +3,17 @@ import { enableStaticRendering } from "mobx-react-lite";
 // store imports
 import UserStore from "./user";
 import ThemeStore from "./theme";
-import ProjectPublishStore, { IProjectPublishStore } from "./project-publish";
-import IssuesStore from "./issues";
-import DraftIssuesStore from "./draft-issue";
-
-import WorkspaceStore, { IWorkspaceStore } from "./workspaces";
-import ProjectStore, { IProjectStore } from "./projects";
-import IssueStore, { IIssueStore } from "./issue-store";
+import ProjectPublishStore, { IProjectPublishStore } from "./project_publish";
+import IssueStore, { IIssueStore } from "./issue_store.legacy";
+import DraftIssuesStore from "./draft_issue";
+import WorkspaceStore, { IWorkspaceStore } from "./workspace";
+import ProjectStore, { IProjectStore } from "./project";
 import ModuleStore, { IModuleStore } from "./modules";
 import CycleStore, { ICycleStore } from "./cycles";
 import ViewStore, { IViewStore } from "./views";
-import IssueFilterStore, { IIssueFilterStore } from "./issue-filters";
-
+import IssueFilterStore, { IIssueFilterStore } from "./issue_filters";
 import IssueViewDetailStore from "./issue_detail";
-import IssueKanBanViewStore from "./issue-views/kanban-view";
+import IssueKanBanViewStore from "./kanban-view";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -24,9 +21,7 @@ export class RootStore {
   user;
   theme;
   projectPublish: IProjectPublishStore;
-  issues: IssuesStore;
   draftIssuesStore: DraftIssuesStore;
-
   workspace: IWorkspaceStore;
   project: IProjectStore;
   issue: IIssueStore;
@@ -40,17 +35,14 @@ export class RootStore {
   constructor() {
     this.user = new UserStore(this);
     this.theme = new ThemeStore(this);
-    this.projectPublish = new ProjectPublishStore(this);
-    this.issues = new IssuesStore(this);
-
     this.workspace = new WorkspaceStore(this);
     this.project = new ProjectStore(this);
-    this.issue = new IssueStore(this);
+    this.projectPublish = new ProjectPublishStore(this);
     this.module = new ModuleStore(this);
     this.cycle = new CycleStore(this);
     this.view = new ViewStore(this);
+    this.issue = new IssueStore(this);
     this.issueFilter = new IssueFilterStore(this);
-
     this.issueDetail = new IssueViewDetailStore(this);
     this.issueKanBanView = new IssueKanBanViewStore(this);
     this.draftIssuesStore = new DraftIssuesStore(this);

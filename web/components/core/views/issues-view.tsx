@@ -7,10 +7,10 @@ import useSWR, { mutate } from "swr";
 // react-beautiful-dnd
 import { DropResult } from "react-beautiful-dnd";
 // services
-import issuesService from "services/issues.service";
-import stateService from "services/state.service";
+import issuesService from "services/issue.service";
+import stateService from "services/project_state.service";
 import modulesService from "services/modules.service";
-import trackEventServices from "services/track-event.service";
+import trackEventServices from "services/track_event.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
@@ -51,10 +51,7 @@ type Props = {
   disableUserActions?: boolean;
 };
 
-export const IssuesView: React.FC<Props> = ({
-  openIssuesListModal,
-  disableUserActions = false,
-}) => {
+export const IssuesView: React.FC<Props> = ({ openIssuesListModal, disableUserActions = false }) => {
   // create issue modal
   const [createIssueModal, setCreateIssueModal] = useState(false);
   const [createViewModal, setCreateViewModal] = useState<any>(null);
@@ -64,9 +61,7 @@ export const IssuesView: React.FC<Props> = ({
 
   // update issue modal
   const [editIssueModal, setEditIssueModal] = useState(false);
-  const [issueToEdit, setIssueToEdit] = useState<
-    (IIssue & { actionType: "edit" | "delete" }) | undefined
-  >(undefined);
+  const [issueToEdit, setIssueToEdit] = useState<(IIssue & { actionType: "edit" | "delete" }) | undefined>(undefined);
 
   // delete issue modal
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
@@ -87,15 +82,12 @@ export const IssuesView: React.FC<Props> = ({
 
   const { setToastAlert } = useToast();
 
-  const { groupedByIssues, mutateIssues, displayFilters, filters, isEmpty, setFilters, params } =
-    useIssuesView();
+  const { groupedByIssues, mutateIssues, displayFilters, filters, isEmpty, setFilters, params } = useIssuesView();
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
   const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
-    workspaceSlug
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug ? () => stateService.getStates(workspaceSlug as string, projectId as string) : null
   );
   const states = getStatesList(stateGroups);
 
@@ -141,12 +133,10 @@ export const IssuesView: React.FC<Props> = ({
             // check if dropping in the same group
             if (source.droppableId === destination.droppableId) {
               // check if dropping at beginning
-              if (destination.index === 0)
-                newSortOrder = destinationGroupArray[0].sort_order - 10000;
+              if (destination.index === 0) newSortOrder = destinationGroupArray[0].sort_order - 10000;
               // check if dropping at last
               else if (destination.index === destinationGroupArray.length - 1)
-                newSortOrder =
-                  destinationGroupArray[destinationGroupArray.length - 1].sort_order + 10000;
+                newSortOrder = destinationGroupArray[destinationGroupArray.length - 1].sort_order + 10000;
               else {
                 if (destination.index > source.index)
                   newSortOrder =
@@ -161,12 +151,10 @@ export const IssuesView: React.FC<Props> = ({
               }
             } else {
               // check if dropping at beginning
-              if (destination.index === 0)
-                newSortOrder = destinationGroupArray[0].sort_order - 10000;
+              if (destination.index === 0) newSortOrder = destinationGroupArray[0].sort_order - 10000;
               // check if dropping at last
               else if (destination.index === destinationGroupArray.length)
-                newSortOrder =
-                  destinationGroupArray[destinationGroupArray.length - 1].sort_order + 10000;
+                newSortOrder = destinationGroupArray[destinationGroupArray.length - 1].sort_order + 10000;
               else
                 newSortOrder =
                   (destinationGroupArray[destination.index - 1].sort_order +
@@ -180,18 +168,14 @@ export const IssuesView: React.FC<Props> = ({
 
         const destinationGroup = destination.droppableId; // destination group id
 
-        if (
-          displayFilters.order_by === "sort_order" ||
-          source.droppableId !== destination.droppableId
-        ) {
+        if (displayFilters.order_by === "sort_order" || source.droppableId !== destination.droppableId) {
           // different group/column;
 
           // source.droppableId !== destination.droppableId -> even if order by is not sort_order,
           // if the issue is moved to a different group, then we will change the group of the
           // dragged item(or issue)
 
-          if (displayFilters.group_by === "priority")
-            draggedItem.priority = destinationGroup as TIssuePriorities;
+          if (displayFilters.group_by === "priority") draggedItem.priority = destinationGroup as TIssuePriorities;
           else if (displayFilters.group_by === "state") {
             draggedItem.state = destinationGroup;
             draggedItem.state_detail = states?.find((s) => s.id === destinationGroup) as IState;
@@ -219,14 +203,8 @@ export const IssuesView: React.FC<Props> = ({
 
             return {
               ...prevData,
-              [sourceGroup]: orderArrayBy(
-                sourceGroupArray,
-                displayFilters.order_by ?? "-created_at"
-              ),
-              [destinationGroup]: orderArrayBy(
-                destinationGroupArray,
-                displayFilters.order_by ?? "-created_at"
-              ),
+              [sourceGroup]: orderArrayBy(sourceGroupArray, displayFilters.order_by ?? "-created_at"),
+              [destinationGroup]: orderArrayBy(destinationGroupArray, displayFilters.order_by ?? "-created_at"),
             };
           },
           false
@@ -246,14 +224,9 @@ export const IssuesView: React.FC<Props> = ({
             user
           )
           .then((response) => {
-            const sourceStateBeforeDrag = states?.find(
-              (state) => state.name === source.droppableId
-            );
+            const sourceStateBeforeDrag = states?.find((state) => state.name === source.droppableId);
 
-            if (
-              sourceStateBeforeDrag?.group !== "completed" &&
-              response?.state_detail?.group === "completed"
-            )
+            if (sourceStateBeforeDrag?.group !== "completed" && response?.state_detail?.group === "completed")
               trackEventServices.trackIssueMarkedAsDoneEvent(
                 {
                   workspaceSlug,
@@ -387,12 +360,7 @@ export const IssuesView: React.FC<Props> = ({
       );
 
       issuesService
-        .removeIssueFromCycle(
-          workspaceSlug as string,
-          projectId as string,
-          cycleId as string,
-          bridgeId
-        )
+        .removeIssueFromCycle(workspaceSlug as string, projectId as string, cycleId as string, bridgeId)
         .then(() => {
           setToastAlert({
             title: "Success",
@@ -430,12 +398,7 @@ export const IssuesView: React.FC<Props> = ({
       );
 
       modulesService
-        .removeIssueFromModule(
-          workspaceSlug as string,
-          projectId as string,
-          moduleId as string,
-          bridgeId
-        )
+        .removeIssueFromModule(workspaceSlug as string, projectId as string, moduleId as string, bridgeId)
         .then(() => {
           setToastAlert({
             title: "Success",
@@ -450,12 +413,9 @@ export const IssuesView: React.FC<Props> = ({
     [displayFilters.group_by, workspaceSlug, projectId, moduleId, params, setToastAlert]
   );
 
-  const nullFilters = Object.keys(filters).filter(
-    (key) => filters[key as keyof IIssueFilterOptions] === null
-  );
+  const nullFilters = Object.keys(filters).filter((key) => filters[key as keyof IIssueFilterOptions] === null);
 
-  const areFiltersApplied =
-    Object.keys(filters).length > 0 && nullFilters.length !== Object.keys(filters).length;
+  const areFiltersApplied = Object.keys(filters).length > 0 && nullFilters.length !== Object.keys(filters).length;
 
   return (
     <>
@@ -581,10 +541,7 @@ export const IssuesView: React.FC<Props> = ({
             : undefined,
           secondaryButton:
             cycleId || moduleId ? (
-              <SecondaryButton
-                className="flex items-center gap-1.5"
-                onClick={openIssuesListModal ?? (() => {})}
-              >
+              <SecondaryButton className="flex items-center gap-1.5" onClick={openIssuesListModal ?? (() => {})}>
                 <PlusIcon className="h-4 w-4" />
                 Add an existing issue
               </SecondaryButton>

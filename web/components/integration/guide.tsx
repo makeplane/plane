@@ -9,14 +9,9 @@ import useSWR, { mutate } from "swr";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // services
-import IntegrationService from "services/integration";
+import IntegrationService from "services/integration.service";
 // components
-import {
-  DeleteImportModal,
-  GithubImporterRoot,
-  JiraImporterRoot,
-  SingleImport,
-} from "components/integration";
+import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "components/integration";
 // ui
 import { Loader, PrimaryButton } from "components/ui";
 // icons
@@ -85,18 +80,11 @@ const IntegrationGuide = () => {
               >
                 <div className="flex items-start gap-4">
                   <div className="relative h-10 w-10 flex-shrink-0">
-                    <Image
-                      src={service.logo}
-                      layout="fill"
-                      objectFit="cover"
-                      alt={`${service.title} Logo`}
-                    />
+                    <Image src={service.logo} layout="fill" objectFit="cover" alt={`${service.title} Logo`} />
                   </div>
                   <div>
                     <h3 className="flex items-center gap-4 text-sm font-medium">{service.title}</h3>
-                    <p className="text-sm text-custom-text-200 tracking-tight">
-                      {service.description}
-                    </p>
+                    <p className="text-sm text-custom-text-200 tracking-tight">{service.description}</p>
                   </div>
                 </div>
                 <div className="flex-shrink-0">
@@ -119,9 +107,7 @@ const IntegrationGuide = () => {
                     className="flex flex-shrink-0 items-center gap-1 rounded bg-custom-background-80 py-1 px-1.5 text-xs outline-none"
                     onClick={() => {
                       setRefreshing(true);
-                      mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string)).then(() =>
-                        setRefreshing(false)
-                      );
+                      mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string)).then(() => setRefreshing(false));
                     }}
                   >
                     <ArrowPathIcon className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />{" "}
@@ -145,9 +131,7 @@ const IntegrationGuide = () => {
                       </div>
                     </div>
                   ) : (
-                    <p className="text-sm text-custom-text-200 px-4 py-6">
-                      No previous imports available.
-                    </p>
+                    <p className="text-sm text-custom-text-200 px-4 py-6">No previous imports available.</p>
                   )
                 ) : (
                   <Loader className="mt-6 grid grid-cols-1 gap-3">

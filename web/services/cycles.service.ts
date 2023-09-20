@@ -1,11 +1,11 @@
 // services
 import APIService from "services/api.service";
-import trackEventServices from "services/track-event.service";
+import trackEventServices from "services/track_event.service";
 // types
 import type { CycleDateCheckData, ICurrentUserResponse, ICycle, IIssue } from "types";
 import { API_BASE_URL } from "helpers/common.helper";
 
-export class ProjectCycleServices extends APIService {
+export class CycleService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -42,11 +42,7 @@ export class ProjectCycleServices extends APIService {
       });
   }
 
-  async getCycleDetails(
-    workspaceSlug: string,
-    projectId: string,
-    cycleId: string
-  ): Promise<ICycle> {
+  async getCycleDetails(workspaceSlug: string, projectId: string, cycleId: string): Promise<ICycle> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`)
       .then((res) => res?.data)
       .catch((err) => {
@@ -54,14 +50,8 @@ export class ProjectCycleServices extends APIService {
       });
   }
 
-  async getCycleIssues(
-    workspaceSlug: string,
-    projectId: string,
-    cycleId: string
-  ): Promise<IIssue[]> {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`
-    )
+  async getCycleIssues(workspaceSlug: string, projectId: string, cycleId: string): Promise<IIssue[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -74,10 +64,9 @@ export class ProjectCycleServices extends APIService {
     cycleId: string,
     queries?: any
   ): Promise<IIssue[] | { [key: string]: IIssue[] }> {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`,
-      { params: queries }
-    )
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`, {
+      params: queries,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -91,10 +80,7 @@ export class ProjectCycleServices extends APIService {
     data: any,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
-    return this.put(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`,
-      data
-    )
+    return this.put(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`, data)
       .then((response) => {
         trackEventServices.trackCycleEvent(response?.data, "CYCLE_UPDATE", user);
         return response?.data;
@@ -111,10 +97,7 @@ export class ProjectCycleServices extends APIService {
     data: Partial<ICycle>,
     user: ICurrentUserResponse | undefined
   ): Promise<any> {
-    return this.patch(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`,
-      data
-    )
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`, data)
       .then((response) => {
         trackEventServices.trackCycleEvent(response?.data, "CYCLE_UPDATE", user);
         return response?.data;
@@ -140,15 +123,8 @@ export class ProjectCycleServices extends APIService {
       });
   }
 
-  async cycleDateCheck(
-    workspaceSlug: string,
-    projectId: string,
-    data: CycleDateCheckData
-  ): Promise<any> {
-    return this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/date-check/`,
-      data
-    )
+  async cycleDateCheck(workspaceSlug: string, projectId: string, data: CycleDateCheckData): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/date-check/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -162,10 +138,7 @@ export class ProjectCycleServices extends APIService {
       cycle: string;
     }
   ): Promise<any> {
-    return this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-cycles/`,
-      data
-    )
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-cycles/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -180,24 +153,15 @@ export class ProjectCycleServices extends APIService {
       new_cycle_id: string;
     }
   ): Promise<any> {
-    return this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/transfer-issues/`,
-      data
-    )
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/transfer-issues/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async removeCycleFromFavorites(
-    workspaceSlug: string,
-    projectId: string,
-    cycleId: string
-  ): Promise<any> {
-    return this.delete(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-cycles/${cycleId}/`
-    )
+  async removeCycleFromFavorites(workspaceSlug: string, projectId: string, cycleId: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-cycles/${cycleId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -205,4 +169,4 @@ export class ProjectCycleServices extends APIService {
   }
 }
 
-export default new ProjectCycleServices();
+export default new CycleService();

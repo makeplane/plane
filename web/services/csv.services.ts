@@ -1,9 +1,9 @@
 import APIService from "services/api.service";
-import trackEventServices from "services/track-event.service";
+import trackEventServices from "services/track_event.service";
 import { ICurrentUserResponse } from "types";
 import { API_BASE_URL } from "helpers/common.helper";
 
-class CSVIntegrationService extends APIService {
+export class CSVIntegrationService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }

@@ -8,7 +8,7 @@ import useSWR from "swr";
 import useUserAuth from "hooks/use-user-auth";
 // services
 import projectService from "services/project.service";
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
@@ -59,16 +59,12 @@ const LabelsSettings: NextPage = () => {
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => projectService.getProject(workspaceSlug as string, projectId as string) : null
   );
 
   const { data: issueLabels } = useSWR(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string) : null
   );
 
   const newLabel = () => {
@@ -121,11 +117,7 @@ const LabelsSettings: NextPage = () => {
             <div className="flex items-center justify-between pt-2 pb-3.5 border-b border-custom-border-200">
               <h3 className="text-xl font-medium">Labels</h3>
 
-              <PrimaryButton
-                onClick={newLabel}
-                size="sm"
-                className="flex items-center justify-center"
-              >
+              <PrimaryButton onClick={newLabel} size="sm" className="flex items-center justify-center">
                 Add label
               </PrimaryButton>
             </div>

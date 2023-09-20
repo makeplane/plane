@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import useSWR from "swr";
 
 // services
-import issueServices from "services/issues.service";
+import issueServices from "services/issue.service";
 // hooks
 import useUser from "hooks/use-user";
 // types
@@ -31,12 +31,8 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
   const { user } = useUser();
 
   const { data: issueProperties, mutate: mutateIssueProperties } = useSWR<IssuePriorities>(
-    workspaceSlug && projectId
-      ? `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-properties/`
-      : null,
-    workspaceSlug && projectId
-      ? () => issueServices.getIssueProperties(workspaceSlug, projectId)
-      : null
+    workspaceSlug && projectId ? `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-properties/` : null,
+    workspaceSlug && projectId ? () => issueServices.getIssueProperties(workspaceSlug, projectId) : null
   );
 
   useEffect(() => {
@@ -68,7 +64,7 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
             ({
               ...prev,
               properties: { ...prev?.properties, [key]: !prev?.properties?.[key] },
-            }) as IssuePriorities,
+            } as IssuePriorities),
           false
         );
         if (Object.keys(issueProperties).length > 0) {

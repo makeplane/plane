@@ -7,7 +7,7 @@ import { observer } from "mobx-react-lite";
 import { RootStore } from "store/root";
 import { useMobxStore } from "lib/mobx/store-provider";
 // types and default data
-import { TIssueLayouts } from "store/issue-filters";
+import { TIssueLayouts } from "store/issue_filters.legacy";
 import { issueFilterVisibilityData } from "store/helpers/issue-data";
 
 export const LayoutSelection = observer(() => {

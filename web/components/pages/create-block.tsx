@@ -9,7 +9,7 @@ import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
 // react-hook-form
 import { useForm } from "react-hook-form";
 // services
-import pagesService from "services/pages.service";
+import pagesService from "services/page.service";
 
 // hooks
 import useToast from "hooks/use-toast";
@@ -81,8 +81,7 @@ export const CreateBlock: React.FC<Props> = ({ user }) => {
   };
 
   const handleKeyDown = (e: any) => {
-    const keyCombination =
-      ((e.ctrlKey || e.metaKey) && e.key === "Enter") || (e.shiftKey && e.key === "Enter");
+    const keyCombination = ((e.ctrlKey || e.metaKey) && e.key === "Enter") || (e.shiftKey && e.key === "Enter");
 
     if (e.key === "Enter" && !keyCombination) {
       if (watch("name") && watch("name") !== "") {

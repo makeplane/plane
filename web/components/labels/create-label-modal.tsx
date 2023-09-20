@@ -11,7 +11,7 @@ import { TwitterPicker } from "react-color";
 // headless ui
 import { Dialog, Popover, Transition } from "@headlessui/react";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // ui
 import { Input, PrimaryButton, SecondaryButton } from "components/ui";
 // icons
@@ -36,13 +36,7 @@ const defaultValues: Partial<IState> = {
   color: "rgb(var(--color-text-200))",
 };
 
-export const CreateLabelModal: React.FC<Props> = ({
-  isOpen,
-  projectId,
-  handleClose,
-  user,
-  onSuccess,
-}) => {
+export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClose, user, onSuccess }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -73,11 +67,7 @@ export const CreateLabelModal: React.FC<Props> = ({
     await issuesService
       .createIssueLabel(workspaceSlug as string, projectId as string, formData, user)
       .then((res) => {
-        mutate<IIssueLabels[]>(
-          PROJECT_ISSUE_LABELS(projectId),
-          (prevData) => [res, ...(prevData ?? [])],
-          false
-        );
+        mutate<IIssueLabels[]>(PROJECT_ISSUE_LABELS(projectId), (prevData) => [res, ...(prevData ?? [])], false);
         onClose();
         if (onSuccess) onSuccess(res);
       })
@@ -115,10 +105,7 @@ export const CreateLabelModal: React.FC<Props> = ({
               <Dialog.Panel className="relative transform rounded-lg bg-custom-background-90 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div>
-                    <Dialog.Title
-                      as="h3"
-                      className="text-lg font-medium leading-6 text-custom-text-100"
-                    >
+                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                       Create Label
                     </Dialog.Title>
                     <div className="mt-8 flex items-center gap-2">

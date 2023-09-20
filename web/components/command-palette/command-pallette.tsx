@@ -17,7 +17,7 @@ import { CreateUpdatePageModal } from "components/pages";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 import inboxService from "services/inbox.service";
 // fetch keys
 import { INBOX_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
@@ -50,8 +50,7 @@ export const CommandPalette: React.FC = observer(() => {
   const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
     workspaceSlug && projectId && issueId
-      ? () =>
-          issuesService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
+      ? () => issuesService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
       : null
   );
 
@@ -141,11 +140,7 @@ export const CommandPalette: React.FC = observer(() => {
     <>
       <ShortcutsModal isOpen={isShortcutsModalOpen} setIsOpen={setIsShortcutsModalOpen} />
       {workspaceSlug && (
-        <CreateProjectModal
-          isOpen={isProjectModalOpen}
-          setIsOpen={setIsProjectModalOpen}
-          user={user}
-        />
+        <CreateProjectModal isOpen={isProjectModalOpen} setIsOpen={setIsProjectModalOpen} user={user} />
       )}
       {projectId && (
         <>
@@ -184,11 +179,7 @@ export const CommandPalette: React.FC = observer(() => {
         handleClose={() => setIsIssueModalOpen(false)}
         fieldsToShow={inboxId ? ["name", "description", "priority"] : ["all"]}
         prePopulateData={
-          cycleId
-            ? { cycle: cycleId.toString() }
-            : moduleId
-            ? { module: moduleId.toString() }
-            : undefined
+          cycleId ? { cycle: cycleId.toString() } : moduleId ? { module: moduleId.toString() } : undefined
         }
       />
       <BulkDeleteIssuesModal
@@ -196,11 +187,7 @@ export const CommandPalette: React.FC = observer(() => {
         setIsOpen={setIsBulkDeleteIssuesModalOpen}
         user={user}
       />
-      <CommandK
-        deleteIssue={deleteIssue}
-        isPaletteOpen={isPaletteOpen}
-        setIsPaletteOpen={setIsPaletteOpen}
-      />
+      <CommandK deleteIssue={deleteIssue} isPaletteOpen={isPaletteOpen} setIsPaletteOpen={setIsPaletteOpen} />
     </>
   );
 });

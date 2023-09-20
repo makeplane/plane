@@ -11,7 +11,7 @@ import { mutate } from "swr";
 import { useForm } from "react-hook-form";
 
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 
 // fetch keys
 import { ISSUE_DETAILS } from "constants/fetch-keys";
@@ -75,12 +75,7 @@ export const CreateUpdateLinkForm: React.FC<Props> = (props) => {
 
     if (!data)
       await issuesService
-        .createIssueLink(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          issueId.toString(),
-          payload
-        )
+        .createIssueLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), payload)
         .then(() => {
           onSuccess();
           mutate(ISSUE_DETAILS(issueId.toString()));
@@ -110,20 +105,10 @@ export const CreateUpdateLinkForm: React.FC<Props> = (props) => {
           : l
       );
 
-      mutate(
-        ISSUE_DETAILS(issueId.toString()),
-        (prevData) => ({ ...prevData, issue_link: updatedLinks }),
-        false
-      );
+      mutate(ISSUE_DETAILS(issueId.toString()), (prevData) => ({ ...prevData, issue_link: updatedLinks }), false);
 
       await issuesService
-        .updateIssueLink(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          issueId.toString(),
-          data!.id,
-          payload
-        )
+        .updateIssueLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), data!.id, payload)
         .then(() => {
           onSuccess();
           mutate(ISSUE_DETAILS(issueId.toString()));
@@ -172,13 +157,7 @@ export const CreateUpdateLinkForm: React.FC<Props> = (props) => {
           loading={isSubmitting}
           className="w-full !py-2 text-custom-text-300 !text-base flex items-center justify-center"
         >
-          {data
-            ? isSubmitting
-              ? "Updating Link..."
-              : "Update Link"
-            : isSubmitting
-            ? "Adding Link..."
-            : "Add Link"}
+          {data ? (isSubmitting ? "Updating Link..." : "Update Link") : isSubmitting ? "Adding Link..." : "Add Link"}
         </PrimaryButton>
       </div>
     </form>

@@ -11,7 +11,7 @@ import { mutate } from "swr";
 import { Control, Controller, useWatch } from "react-hook-form";
 
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 
 // hooks
 import useUser from "hooks/use-user";
@@ -105,10 +105,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
               control={control}
               name="state"
               render={({ field: { value } }) => (
-                <StateSelect
-                  value={value}
-                  onChange={(val: string) => submitChanges({ state: val })}
-                />
+                <StateSelect value={value} onChange={(val: string) => submitChanges({ state: val })} />
               )}
             />
           </div>
@@ -117,13 +114,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
       <div className="mb-[6px]">
         <div className="border border-custom-border-200 rounded-[4px] p-2 flex justify-between items-center">
           <div className="flex items-center gap-1">
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 18 18"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M13.5862 14.5239C13.3459 14.5239 13.1416 14.4398 12.9733 14.2715C12.805 14.1032 12.7209 13.8989 12.7209 13.6585V3.76429C12.7209 3.52391 12.805 3.31958 12.9733 3.15132C13.1416 2.98306 13.3459 2.89893 13.5862 2.89893C13.8266 2.89893 14.031 2.98306 14.1992 3.15132C14.3675 3.31958 14.4516 3.52391 14.4516 3.76429V13.6585C14.4516 13.8989 14.3675 14.1032 14.1992 14.2715C14.031 14.4398 13.8266 14.5239 13.5862 14.5239ZM5.1629 14.5239C5.04676 14.5239 4.93557 14.5018 4.82932 14.4576C4.72308 14.4133 4.63006 14.3513 4.55025 14.2715C4.47045 14.1917 4.40843 14.0986 4.36419 13.9922C4.31996 13.8858 4.29785 13.7746 4.29785 13.6585V11.2643C4.29785 11.0239 4.38198 10.8196 4.55025 10.6513C4.71851 10.4831 4.92283 10.3989 5.16322 10.3989C5.40359 10.3989 5.60791 10.4831 5.77618 10.6513C5.94445 10.8196 6.02859 11.0239 6.02859 11.2643V13.6585C6.02859 13.7746 6.00647 13.8858 5.96223 13.9922C5.91801 14.0986 5.85599 14.1917 5.77618 14.2715C5.69638 14.3513 5.60325 14.4133 5.49678 14.4576C5.39033 14.5018 5.27904 14.5239 5.1629 14.5239ZM9.37473 14.5239C9.13436 14.5239 8.93003 14.4398 8.76176 14.2715C8.59349 14.1032 8.50936 13.8989 8.50936 13.6585V7.5143C8.50936 7.27391 8.59349 7.06958 8.76176 6.90132C8.93003 6.73306 9.13436 6.64893 9.37473 6.64893C9.61511 6.64893 9.81943 6.73306 9.98771 6.90132C10.156 7.06958 10.2401 7.27391 10.2401 7.5143V13.6585C10.2401 13.8989 10.156 14.1032 9.98771 14.2715C9.81943 14.4398 9.61511 14.5239 9.37473 14.5239Z"
                 fill="#A3A3A3"
@@ -137,10 +128,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
               control={control}
               name="priority"
               render={({ field: { value } }) => (
-                <PrioritySelect
-                  value={value}
-                  onChange={(val) => submitChanges({ priority: val })}
-                />
+                <PrioritySelect value={value} onChange={(val) => submitChanges({ priority: val })} />
               )}
             />
           </div>
@@ -157,10 +145,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
               control={control}
               name="assignees_list"
               render={({ field: { value } }) => (
-                <AssigneeSelect
-                  value={value}
-                  onChange={(val: string) => submitChanges({ assignees_list: [val] })}
-                />
+                <AssigneeSelect value={value} onChange={(val: string) => submitChanges({ assignees_list: [val] })} />
               )}
             />
           </div>
@@ -180,10 +165,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                     control={control}
                     name="estimate_point"
                     render={({ field: { value } }) => (
-                      <EstimateSelect
-                        value={value}
-                        onChange={(val) => submitChanges({ estimate_point: val })}
-                      />
+                      <EstimateSelect value={value} onChange={(val) => submitChanges({ estimate_point: val })} />
                     )}
                   />
                 </div>
@@ -201,10 +183,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                   control={control}
                   name="parent"
                   render={({ field: { value } }) => (
-                    <ParentSelect
-                      value={value}
-                      onChange={(val) => submitChanges({ parent: val })}
-                    />
+                    <ParentSelect value={value} onChange={(val) => submitChanges({ parent: val })} />
                   )}
                 />
               </div>
@@ -224,22 +203,16 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                       if (!user || !workspaceSlug || !projectId || !issueId) return;
 
                       issuesService
-                        .createIssueRelation(
-                          workspaceSlug as string,
-                          projectId as string,
-                          issueId as string,
-                          user,
-                          {
-                            related_list: [
-                              ...val.map((issue: any) => ({
-                                issue: issue.blocker_issue_detail.id,
-                                relation_type: "blocked_by" as const,
-                                related_issue: issueId as string,
-                                related_issue_detail: issue.blocker_issue_detail,
-                              })),
-                            ],
-                          }
-                        )
+                        .createIssueRelation(workspaceSlug as string, projectId as string, issueId as string, user, {
+                          related_list: [
+                            ...val.map((issue: any) => ({
+                              issue: issue.blocker_issue_detail.id,
+                              relation_type: "blocked_by" as const,
+                              related_issue: issueId as string,
+                              related_issue_detail: issue.blocker_issue_detail,
+                            })),
+                          ],
+                        })
                         .then((response) => {
                           handleMutation({
                             issue_relations: [
@@ -315,22 +288,16 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                       if (!user || !workspaceSlug || !projectId || !issueId) return;
 
                       issuesService
-                        .createIssueRelation(
-                          workspaceSlug as string,
-                          projectId as string,
-                          issueId as string,
-                          user,
-                          {
-                            related_list: [
-                              ...val.map((issue: any) => ({
-                                issue: issue.blocked_issue_detail.id,
-                                relation_type: "blocked_by" as const,
-                                related_issue: issueId as string,
-                                related_issue_detail: issue.blocked_issue_detail,
-                              })),
-                            ],
-                          }
-                        )
+                        .createIssueRelation(workspaceSlug as string, projectId as string, issueId as string, user, {
+                          related_list: [
+                            ...val.map((issue: any) => ({
+                              issue: issue.blocked_issue_detail.id,
+                              relation_type: "blocked_by" as const,
+                              related_issue: issueId as string,
+                              related_issue_detail: issue.blocked_issue_detail,
+                            })),
+                          ],
+                        })
                         .then((response) => {
                           handleMutation({
                             related_issues: [
@@ -429,13 +396,8 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
           onClick={() => setIsViewAllOpen((prev) => !prev)}
           className="w-full flex justify-center items-center gap-1 !py-2"
         >
-          <span className="text-base text-custom-primary-100">
-            {isViewAllOpen ? "View less" : "View all"}
-          </span>
-          <ChevronDown
-            size={16}
-            className={`ml-1 text-custom-primary-100 ${isViewAllOpen ? "-rotate-180" : ""}`}
-          />
+          <span className="text-base text-custom-primary-100">{isViewAllOpen ? "View less" : "View all"}</span>
+          <ChevronDown size={16} className={`ml-1 text-custom-primary-100 ${isViewAllOpen ? "-rotate-180" : ""}`} />
         </SecondaryButton>
       </div>
     </div>

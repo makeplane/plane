@@ -11,7 +11,7 @@ import { TwitterPicker } from "react-color";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // services
-import stateService from "services/state.service";
+import stateService from "services/project_state.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -39,13 +39,7 @@ const defaultValues: Partial<IState> = {
   group: "backlog",
 };
 
-export const CreateUpdateStateInline: React.FC<Props> = ({
-  data,
-  onClose,
-  selectedGroup,
-  user,
-  groupLength,
-}) => {
+export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, selectedGroup, user, groupLength }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -153,8 +147,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
             setToastAlert({
               type: "error",
               title: "Error!",
-              message:
-                "Another state exists with the same name. Please try again with another name.",
+              message: "Another state exists with the same name. Please try again with another name.",
             });
           else
             setToastAlert({
@@ -230,9 +223,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
           name="group"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <Tooltip
-              tooltipContent={groupLength === 1 ? "Cannot have an empty group." : "Choose State"}
-            >
+            <Tooltip tooltipContent={groupLength === 1 ? "Cannot have an empty group." : "Choose State"}>
               <div>
                 <CustomSelect
                   disabled={groupLength === 1}

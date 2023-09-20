@@ -9,7 +9,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
-import issuesServices from "services/issues.service";
+import issuesServices from "services/issue.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
@@ -49,12 +49,8 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
   const { data: issues } = useSWR(
-    workspaceSlug && projectId
-      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
-      : null,
-    workspaceSlug && projectId
-      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string) : null,
+    workspaceSlug && projectId ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string) : null
   );
 
   const { setToastAlert } = useToast();
@@ -155,9 +151,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
       : issues?.filter(
           (issue) =>
             issue.name.toLowerCase().includes(query.toLowerCase()) ||
-            `${issue.project_detail.identifier}-${issue.sequence_id}`
-              .toLowerCase()
-              .includes(query.toLowerCase())
+            `${issue.project_detail.identifier}-${issue.sequence_id}`.toLowerCase().includes(query.toLowerCase())
         ) ?? [];
 
   return (

@@ -3,12 +3,12 @@ import { observable, action, computed, makeObservable, runInAction } from "mobx"
 import { RootStore } from "./root";
 // services
 import { WorkspaceService } from "services/workspace.service";
-import { ProjectIssuesServices } from "services/issues.service";
-import { ProjectStateServices } from "services/state.service";
+import { ProjectIssuesServices } from "services/issue.service";
+import { ProjectStateServices } from "services/project_state.service";
 import { ProjectServices } from "services/project.service";
 import { ProjectIssuesServices as ProjectModuleServices } from "services/modules.service";
 import { ProjectCycleServices } from "services/cycles.service";
-import { ViewServices as ProjectViewServices } from "services/views.service";
+import { ViewService } from "services/views.service";
 // default data
 import {
   priorities,
@@ -248,7 +248,7 @@ class IssueFilterStore implements IIssueFilterStore {
     this.projectService = new ProjectServices();
     this.moduleService = new ProjectModuleServices();
     this.cycleService = new ProjectCycleServices();
-    this.viewService = new ProjectViewServices();
+    this.viewService = new ViewService();
   }
 
   // computed

@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import CSVIntegrationService from "services/integration/csv.services";
+import CSVIntegrationService from "services/csv.services";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -23,13 +22,9 @@ type Props = {
   mutateServices: () => void;
 };
 
-export const Exporter: React.FC<Props> = ({
-  isOpen,
-  handleClose,
-  user,
-  provider,
-  mutateServices,
-}) => {
+const cvsService = new CSVIntegrationService();
+
+export const Exporter: React.FC<Props> = ({ isOpen, handleClose, user, provider, mutateServices }) => {
   const [exportLoading, setExportLoading] = useState(false);
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -60,7 +55,8 @@ export const Exporter: React.FC<Props> = ({
         project: value,
         multiple: multiple,
       };
-      await CSVIntegrationService.exportCSVService(workspaceSlug as string, payload, user)
+      await cvsService
+        .exportCSVService(workspaceSlug as string, payload, user)
         .then(() => {
           mutateServices();
           router.push(`/${workspaceSlug}/settings/exports`);
@@ -69,13 +65,7 @@ export const Exporter: React.FC<Props> = ({
             type: "success",
             title: "Export Successful",
             message: `You will be able to download the exported ${
-              provider === "csv"
-                ? "CSV"
-                : provider === "xlsx"
-                ? "Excel"
-                : provider === "json"
-                ? "JSON"
-                : ""
+              provider === "csv" ? "CSV" : provider === "xlsx" ? "Excel" : provider === "json" ? "JSON" : ""
             } from the previous export.`,
           });
         })
@@ -122,13 +112,7 @@ export const Exporter: React.FC<Props> = ({
                     <span className="flex items-center justify-start">
                       <h3 className="text-xl font-medium 2xl:text-2xl">
                         Export to{" "}
-                        {provider === "csv"
-                          ? "CSV"
-                          : provider === "xlsx"
-                          ? "Excel"
-                          : provider === "json"
-                          ? "JSON"
-                          : ""}
+                        {provider === "csv" ? "CSV" : provider === "xlsx" ? "Excel" : provider === "json" ? "JSON" : ""}
                       </h3>
                     </span>
                   </div>
@@ -155,22 +139,12 @@ export const Exporter: React.FC<Props> = ({
                     onClick={() => setMultiple(!multiple)}
                     className="flex items-center gap-2 max-w-min cursor-pointer"
                   >
-                    <input
-                      type="checkbox"
-                      checked={multiple}
-                      onChange={() => setMultiple(!multiple)}
-                    />
-                    <div className="text-sm whitespace-nowrap">
-                      Export the data into separate files
-                    </div>
+                    <input type="checkbox" checked={multiple} onChange={() => setMultiple(!multiple)} />
+                    <div className="text-sm whitespace-nowrap">Export the data into separate files</div>
                   </div>
                   <div className="flex justify-end gap-2">
                     <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <PrimaryButton
-                      onClick={ExportCSVToMail}
-                      disabled={exportLoading}
-                      loading={exportLoading}
-                    >
+                    <PrimaryButton onClick={ExportCSVToMail} disabled={exportLoading} loading={exportLoading}>
                       {exportLoading ? "Exporting..." : "Export"}
                     </PrimaryButton>
                   </div>

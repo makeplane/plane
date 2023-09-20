@@ -3,7 +3,7 @@ import APIService from "services/api.service";
 import { ICurrentUserResponse } from "types";
 import { API_BASE_URL } from "helpers/common.helper";
 
-class AuthService extends APIService {
+export class AuthService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
