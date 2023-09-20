@@ -3,6 +3,14 @@ import React, { useCallback, useEffect } from "react";
 // hook
 import useOutsideClickDetector from "./use-outside-click-detector";
 
+/**
+ * Custom hook for dynamic dropdown position calculation.
+ * @param isOpen - Indicates whether the dropdown is open.
+ * @param handleClose - Callback to handle closing the dropdown.
+ * @param buttonRef - Ref object for the button triggering the dropdown.
+ * @param dropdownRef - Ref object for the dropdown element.
+ */
+
 const useDynamicDropdownPosition = (
   isOpen: boolean,
   handleClose: () => void,
