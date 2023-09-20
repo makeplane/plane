@@ -71,6 +71,8 @@ from plane.db.models import (
     IssueProperty,
     Label,
     IssueLink,
+    IssueLabel,
+    IssueAssignee,
     IssueAttachment,
     State,
     IssueSubscriber,
@@ -81,6 +83,8 @@ from plane.db.models import (
     IssueVote,
     IssueRelation,
     ProjectPublicMember,
+    CycleIssue,
+    ModuleIssue,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -2607,20 +2611,31 @@ class TransferProjectIssueEndpoint(BaseAPIView):
                 workspace__slug=slug, pk=transfer_project_id
             )
 
+            # Get the default state of the new project
+            default_state = State.objects.filter(
+                workspace__slug=slug, project_id=transfer_project_id, default=True,
+            ).first()
+
             # Fetch all the issues
             issues = Issue.objects.filter(
                 workspace__slug=slug, project_id=project_id, pk__in=issue_ids
             )
 
+            # Append all the issues
             bulk_issues = []
             for issue in issues:
-                issue.project_id = transfer_project_id
-                bulk_issues.append(issue)
+                if str(issue.project_id) != str(transfer_project_id):
+                    issue.project_id = transfer_project_id
+                    if default_state is not None:
+                        issue.state = default_state
+                    bulk_issues.append(issue)
 
+            # Bulk update
             moved_issues_count = Issue.objects.bulk_update(
-                bulk_issues, ["project_id"], batch_size=100
+                bulk_issues, ["project_id", "state"], batch_size=100
             )
 
+            # Activity logs
             if moved_issues_count:
                 [
                     issue_activity.delay(
@@ -2634,6 +2649,36 @@ class TransferProjectIssueEndpoint(BaseAPIView):
                     for issue in bulk_issues
                 ]
 
+            # Issue IDs
+            issue_ids = [issue.id for issue in bulk_issues]
+
+            # Transfer attachments
+            issue_attachments = IssueAttachment.objects.filter(issue_id__in=issue_ids, workspace__slug=slug, project_id=project_id)
+            bulk_attachment = []
+            for issue_attachment in issue_attachments:
+                issue_attachment.project_id = transfer_project_id
+                bulk_attachment.append(issue_attachment)
+
+            IssueAttachment.objects.bulk_update(bulk_attachment, ["project_id"], batch_size=100)
+
+            # Transfer Links
+            issue_links = IssueLink.objects.filter(issue_id__in=issue_ids, workspace__slug=slug, project_id=project_id)
+            bulk_links = []
+            for issue_link in issue_links:
+                issue_link.project_id = transfer_project_id
+                bulk_links.append(issue_link)
+            IssueLink.objects.bulk_update(issue_links, ["project_id"], batch_size=100)
+
+            # Delete all the other attached properties
+            # Delete all the issue labels in the old project
+            IssueLabel.objects.filter(issue_id__in=issue_ids, workspace__slug=slug, project_id=project_id).delete()
+            # Delete assignees
+            IssueAssignee.objects.filter(issue_id__in=issue_ids, workspace__slug=slug, project_id=project_id).delete()
+            # Delete attached cycles
+            CycleIssue.objects.filter(issue_id__in=issue_ids, workspace__slug=slug, project_id=project_id).delete()
+            # Delete attached modules
+            ModuleIssue.objects.filter(issue_id__in=issue_ids, workspace__slug=slug, project_id=project_id).delete()
+
             return Response(
                 {"message": f"{moved_issues_count} issue(s) moved to {transfer_project.name}"},
                 status=status.HTTP_200_OK,
@@ -2643,9 +2688,9 @@ class TransferProjectIssueEndpoint(BaseAPIView):
                 {"error": "Transfer project does not exist"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        # except Exception as e:
+        #     capture_exception(e)
+        #     return Response(
+        #         {"error": "Something went wrong please try again later"},
+        #         status=status.HTTP_400_BAD_REQUEST,
+        #     )
