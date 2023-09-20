@@ -59,7 +59,7 @@ const TiptapEditor = ({
   const editor = useEditor({
     editable: editable ?? true,
     editorProps: TiptapEditorProps(workspaceSlug, uploadFile, setIsSubmitting),
-    // @ts-expect-error
+    // @ts-expect-err
     extensions: TiptapExtensions(workspaceSlug, uploadFile, deleteFile, setIsSubmitting),
     content: (typeof value === "string" && value.trim() !== "") ? value : "<p></p>",
     onUpdate: async ({ editor }) => {

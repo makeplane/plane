@@ -3,11 +3,9 @@
   "display": "React Library",
   "extends": "./base.json",
   "compilerOptions": {
-    "lib": [
-      "DOM"
-    ],
+    "jsx": "react-jsx",
+    "lib": ["ES2015", "DOM"],
     "module": "ESNext",
-    "target": "ES6",
-    "jsx": "react-jsx"
+    "target": "es6"
   }
 }
