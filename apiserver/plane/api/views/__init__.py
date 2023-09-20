@@ -172,9 +172,3 @@ from .notification import NotificationViewSet, UnreadNotificationEndpoint, MarkA
 from .exporter import (
     ExportIssuesEndpoint,
 )
-
-from .property import (
-    PropertyViewSet,
-    PropertyValueViewSet,
-)
-

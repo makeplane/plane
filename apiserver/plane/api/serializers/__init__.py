@@ -97,11 +97,3 @@ from .notification import NotificationSerializer
 
 from .exporter import ExporterHistorySerializer
 
-from .property import (
-    PropertySerializer,
-    PropertyValueSerializer,
-    PropertyReadSerializer,
-    PropertyValueReadSerializer,
-    PropertyLiteSerializer,
-    PropertyTransactionSerializer,
-)

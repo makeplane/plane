@@ -38,6 +38,16 @@ INSTALLED_APPS = [
     "django_celery_beat",
 ]
 
+# Append Enterprise Edition as an app if available
+try:
+    from plane.ee.apps import EnterpriseEditionConfig
+    print("Enterprise enabled")
+except ImportError:
+    print("Enterprise not enabled")
+    pass
+else:
+    INSTALLED_APPS.append("plane.ee")
+
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",

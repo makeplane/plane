@@ -46,7 +46,7 @@ class Property(BaseModel):
     is_required = models.BooleanField(default=False)
     sort_order = models.FloatField(default=65535)
     parent = models.ForeignKey(
-        "db.Property",
+        "ee.Property",
         on_delete=models.CASCADE,
         related_name="children",
         null=True,
@@ -109,7 +109,7 @@ class PropertyValue(ProjectBaseModel):
     entity = models.CharField()
     entity_uuid = models.UUIDField()
     transaction = models.ForeignKey(
-        "db.PropertyTransaction",
+        "ee.PropertyTransaction",
         on_delete=models.CASCADE,
         related_name="values",
     )
@@ -138,7 +138,7 @@ class PropertyTransaction(AuditModel):
         null=True,
     )
     property = models.ForeignKey(
-        "db.Property",
+        Property,
         on_delete=models.CASCADE,
         related_name="transactions",
     )

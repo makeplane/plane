@@ -1,12 +1,14 @@
-# Django imports
-from django.db.models import Prefetch
-
 # Third party imports
 from rest_framework import serializers
 
 # Module imports
-from .base import BaseSerializer
+from plane.api.serializers.base import BaseSerializer
 from plane.api.serializers import UserLiteSerializer
+from plane.ee.models import (
+    Property,
+    PropertyValue,
+    PropertyTransaction,
+)
 from plane.db.models import (
     User,
     Issue,
@@ -14,9 +16,6 @@ from plane.db.models import (
     Module,
     Page,
     IssueView,
-    Property,
-    PropertyValue,
-    PropertyTransaction,
 )
 
 
@@ -144,12 +143,16 @@ class PropertyReadSerializer(BaseSerializer):
     def get_children(self, obj):
         children = obj.children.all()
         if children:
-            serializer = PropertyReadSerializer(children, many=True, context=self.context)
+            serializer = PropertyReadSerializer(
+                children, many=True, context=self.context
+            )
             return serializer.data
         return []
 
     def get_prop_value(self, obj):
-        prop_values = obj.property_values.filter(entity_uuid=self.context.get("entity_uuid"))
+        prop_values = obj.property_values.filter(
+            entity_uuid=self.context.get("entity_uuid")
+        )
         if prop_values:
             serializer = PropertyValueReadSerializer(prop_values, many=True)
             return serializer.data
@@ -173,7 +176,9 @@ class PropertyReadSerializer(BaseSerializer):
             "view": IssueViewSerializer,
         }
         if obj.type == "relation":
-            prop_values = obj.property_values.filter(entity_uuid=self.context.get("entity_uuid"))
+            prop_values = obj.property_values.filter(
+                entity_uuid=self.context.get("entity_uuid")
+            )
             model = MODEL_MAPPER.get(obj.unit, None)
             if model is not None and prop_values:
                 serializer = SERIALIZER_MAPPER.get(obj.unit, None)

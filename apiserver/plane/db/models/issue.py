@@ -86,7 +86,7 @@ class Issue(ProjectBaseModel):
     archived_at = models.DateField(null=True)
     properties = models.JSONField(null=True, default=None)
     entity = models.ForeignKey(
-        "db.Property",
+        "ee.Property",
         on_delete=models.SET_NULL,
         blank=True,
         null=True,

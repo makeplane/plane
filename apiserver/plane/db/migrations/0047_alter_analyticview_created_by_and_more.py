@@ -8,7 +8,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('db', '0046_auto_20230914_1300'),
+        ('db', '0046_auto_20230919_1421'),
     ]
 
     operations = [
@@ -816,11 +816,6 @@ class Migration(migrations.Migration):
             model_name='projectmemberinvite',
             name='workspace',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workspace_%(class)s', to='db.workspace'),
-        ),
-        migrations.AlterField(
-            model_name='property',
-            name='type',
-            field=models.CharField(choices=[('entity', 'entity'), ('text', 'text'), ('paragraph', 'paragraph'), ('number', 'number'), ('checkbox', 'checkbox'), ('select', 'select'), ('multi_select', 'multi_select'), ('relation', 'relation'), ('files', 'files'), ('email', 'email'), ('url', 'url'), ('datetime', 'datetime'), ('option', 'option')]),
         ),
         migrations.AlterField(
             model_name='slackprojectsync',

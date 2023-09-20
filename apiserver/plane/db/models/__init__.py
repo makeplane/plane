@@ -79,5 +79,3 @@ from .analytic import AnalyticView
 from .notification import Notification
 
 from .exporter import ExporterHistory
-
-from .property import Property, PropertyValue, PropertyTransaction

@@ -183,14 +183,17 @@ from plane.api.views import (
     WorkspaceProjectDeployBoardEndpoint,
     IssueRetrievePublicEndpoint,
     ## End Public Boards
-    # Issue Properties
-    PropertyViewSet,
-    PropertyValueViewSet,
-    ## End Issue Properties
     ## Exporter
     ExportIssuesEndpoint,
     ## End Exporter
 )
+
+ee_urlpatterns = []
+
+try:
+    from plane.ee.api.urls import urlpatterns as ee_urlpatterns
+except ImportError:
+    pass
 
 
 urlpatterns = [
@@ -1732,55 +1735,7 @@ urlpatterns = [
         name="workspace-project-boards",
     ),
     ## End Public Boards
-    # Issue Property
-    path(
-        "workspaces/<str:slug>/properties/",
-        PropertyViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
-        name="properties",
-    ),
-    path(
-        "workspaces/<str:slug>/properties/<uuid:pk>/",
-        PropertyViewSet.as_view(
-            {
-                "get": "retrieve",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
-        ),
-        name="properties",
-    ),
-    path(
-        "workspaces/<str:slug>/entity-properties/",
-        PropertyViewSet.as_view(
-            {
-                "get": "list_objects",
-            }
-        ),
-        name="properties",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/<str:entity>/<uuid:entity_uuid>/property-values/",
-        PropertyValueViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
-        name="property-values",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/<str:entity>/<uuid:entity_uuid>/property-values/<uuid:property_id>/",
-        PropertyValueViewSet.as_view(
-            {
-                "delete": "destroy",
-            }
-        ),
-        name="property-values",
-    ),
-    ## End Issue Property
+    ## EE urls
+    *ee_urlpatterns
+    ## End EE urls
 ]

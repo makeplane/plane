@@ -6,7 +6,6 @@ import hashlib
 
 # Django imports
 from django.utils import timezone
-from django.db.models import Prefetch
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third party imports
@@ -15,8 +14,8 @@ from rest_framework import status
 from sentry_sdk import capture_exception
 
 # Module imports
-from .base import BaseViewSet
-from plane.api.serializers import (
+from plane.api.views.base import BaseViewSet
+from plane.ee.api.serializers import (
     PropertySerializer,
     PropertyValueSerializer,
     PropertyReadSerializer,
@@ -24,22 +23,16 @@ from plane.api.serializers import (
 )
 from plane.db.models import (
     Workspace,
-    Property,
-    PropertyValue,
     Project,
     Issue,
+)
+from plane.ee.models import (
+    Property,
+    PropertyValue,
     PropertyTransaction,
 )
 from plane.api.permissions import WorkSpaceAdminPermission, ProjectEntityPermission
-from plane.utils.validators import validators
-
-
-def is_valid_uuid(uuid_string):
-    try:
-        uuid_obj = uuid.UUID(uuid_string)
-        return str(uuid_obj) == uuid_string
-    except ValueError:
-        return False
+from plane.ee.utils.validators import validators, is_valid_uuid
 
 
 class PropertyViewSet(BaseViewSet):
@@ -232,7 +225,7 @@ class PropertyValueViewSet(BaseViewSet):
                         bulk_prop_value_delete.extend(delete_records)
 
                         # Check if new records are present or not
-                        if property.is_required and not new_records:
+                        if property.is_required and not new_records and len(delete_records) == len(prop_values):
                             return Response(
                                 {
                                     "error": f"{property.display_name} is not a valid input"
@@ -591,12 +584,12 @@ class PropertyValueViewSet(BaseViewSet):
             return Response(
                 {"error": "Project Does not exists"}, status=status.HTTP_400_BAD_REQUEST
             )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        # except Exception as e:
+        #     capture_exception(e)
+        #     return Response(
+        #         {"error": "Something went wrong please try again later"},
+        #         status=status.HTTP_400_BAD_REQUEST,
+        #     )
 
     def list(self, request, slug, project_id, entity, entity_uuid):
         try:
