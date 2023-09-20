@@ -5,6 +5,7 @@ import UserStore from "./user";
 import ThemeStore from "./theme";
 import ProjectPublishStore, { IProjectPublishStore } from "./project-publish";
 import IssuesStore from "./issues";
+import DraftIssuesStore from "./draft-issue";
 
 import WorkspaceStore, { IWorkspaceStore } from "./workspaces";
 import ProjectStore, { IProjectStore } from "./projects";
@@ -24,6 +25,7 @@ export class RootStore {
   theme;
   projectPublish: IProjectPublishStore;
   issues: IssuesStore;
+  draftIssuesStore: DraftIssuesStore;
 
   workspace: IWorkspaceStore;
   project: IProjectStore;
@@ -51,5 +53,6 @@ export class RootStore {
 
     this.issueDetail = new IssueViewDetailStore(this);
     this.issueKanBanView = new IssueKanBanViewStore(this);
+    this.draftIssuesStore = new DraftIssuesStore(this);
   }
 }

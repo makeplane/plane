@@ -23,7 +23,6 @@ import {
   CreateUpdateIssueModal,
   DeleteIssueModal,
   DeleteDraftIssueModal,
-  IssuePeekOverview,
   CreateUpdateDraftIssueModal,
 } from "components/issues";
 import { CreateUpdateViewModal } from "components/views";
@@ -484,15 +483,7 @@ export const IssuesView: React.FC<Props> = ({
               }
             : null
         }
-        fieldsToShow={[
-          "name",
-          "description",
-          "label",
-          "assignee",
-          "priority",
-          "dueDate",
-          "priority",
-        ]}
+        fieldsToShow={["all"]}
       />
       <CreateUpdateIssueModal
         isOpen={editIssueModal && issueToEdit?.actionType !== "delete"}
