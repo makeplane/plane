@@ -158,4 +158,4 @@ class PropertyTransaction(AuditModel):
         ordering = ("-created_at",)
 
     def __str__(self):
-        return f"<{str(self.issue_property.type)} {str(self.from_value)}>"
+        return f"<{str(self.property.type)} {str(self.from_value)}>"

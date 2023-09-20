@@ -348,7 +348,7 @@ class IssueViewSet(BaseViewSet):
             issue.delete()
 
             try:
-                from plane.ee.db.models import PropertyValue, PropertyTransaction
+                from plane.ee.models import PropertyValue, PropertyTransaction
             except ImportError:
                 pass
             else:
@@ -566,30 +566,14 @@ class IssueActivityEndpoint(BaseAPIView):
                     )
                 )
             )
-            issue_property_transactions = PropertyTransaction.objects.filter(
-                entity_uuid=issue_id, entity="issue"
-            ).select_related("actor")
+
             issue_activities = IssueActivitySerializer(issue_activities, many=True).data
             issue_comments = IssueCommentSerializer(issue_comments, many=True).data
 
-            # Import Transaction if available
-            issue_property_transactions = []
-            try:
-                from plane.ee.db.models import PropertyTransaction
-                from plane.ee.api.serializers import PropertyTransactionSerializer
-            except ImportError:
-                issue_property_transactions = PropertyTransaction.objects.filter(
-                    entity_uuid=issue_id, entity="issue"
-                ).select_related("actor")
-                issue_property_transactions = PropertyTransactionSerializer(
-                    issue_property_transactions, many=True
-                ).data
-
             result_list = sorted(
-                chain(issue_activities, issue_comments, issue_property_transactions),
+                chain(issue_activities, issue_comments),
                 key=lambda instance: instance["created_at"],
             )
-
             return Response(result_list, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)

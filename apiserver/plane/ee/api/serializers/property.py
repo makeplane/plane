@@ -108,7 +108,7 @@ class PropertyValueSerializer(BaseSerializer):
         read_only_fields = [
             "project",
             "workspace",
-            "issue_property",
+            "property",
         ]
 
 
