@@ -41,9 +41,7 @@ INSTALLED_APPS = [
 # Append Enterprise Edition as an app if available
 try:
     from plane.ee.apps import EnterpriseEditionConfig
-    print("Enterprise enabled")
 except ImportError:
-    print("Enterprise not enabled")
     pass
 else:
     INSTALLED_APPS.append("plane.ee")
