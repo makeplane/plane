@@ -94,7 +94,7 @@ export const SubIssues: React.FC<ISubIssues> = ({
               {issue.project_detail.identifier}-{issue?.sequence_id}
             </div>
             <Tooltip tooltipHeading="Title" tooltipContent={`${issue?.name}`}>
-              <div className="line-clamp-1 text-xs text-custom-text-100">{issue?.name}</div>
+              <div className="line-clamp-1 text-xs text-custom-text-100 pr-2">{issue?.name}</div>
             </Tooltip>
           </a>
         </Link>
