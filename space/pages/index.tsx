@@ -1,8 +1,5 @@
 import React from "react";
 
-// components
-import { HomeView } from "components/views";
+const space = () => <></>;
 
-const HomePage = () => <HomeView />;
-
-export default HomePage;
+export default space;
