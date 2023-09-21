@@ -12,7 +12,7 @@ import type {
 } from "types";
 import { API_BASE_URL } from "helpers/common.helper";
 
-export class IssueServices extends APIService {
+export class IssueService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -607,6 +607,6 @@ export class IssueServices extends APIService {
   }
 }
 
-const issuesServices = new IssueServices();
+const issueService = new IssueService();
 
-export default issuesServices;
+export default issueService;

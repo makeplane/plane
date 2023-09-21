@@ -14,18 +14,19 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 // default data
-import { issueFilterVisibilityData } from "store/helpers/issue-data";
+// import { issueFilterVisibilityData } from "store/helpers/issue-data";
 
 export const FilterPreview = observer(() => {
   const store: RootStore = useMobxStore();
-  const { issueFilters: issueFilterStore } = store;
+  const { issueFilter: issueFilterStore } = store;
 
-  const handleFilterSectionVisibility = (section_key: string) =>
-    issueFilterStore?.issueView &&
-    issueFilterStore?.issueLayout &&
-    issueFilterVisibilityData[issueFilterStore?.issueView === "my_issues" ? "my_issues" : "issues"]?.filters?.[
-      issueFilterStore?.issueLayout
-    ]?.includes(section_key);
+  const handleFilterSectionVisibility = (section_key: string) => {
+    // issueFilterStore?.issueView &&
+    // issueFilterStore?.issueLayout &&
+    // issueFilterVisibilityData[issueFilterStore?.issueView === "my_issues" ? "my_issues" : "issues"]?.filters?.[
+    //   issueFilterStore?.issueLayout
+    // ]?.includes(section_key);
+  };
 
   const validateFiltersAvailability =
     issueFilterStore?.userFilters?.filters != null &&

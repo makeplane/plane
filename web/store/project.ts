@@ -3,10 +3,10 @@ import { observable, action, computed, makeObservable, runInAction } from "mobx"
 import { RootStore } from "./root";
 import { IProject, IIssueLabels, IProjectMember, IStateResponse, IState, ICycle, IModule, IView, IPage } from "types";
 // services
-import { ProjectServices } from "services/project.service";
-import { IssueServices } from "services/issue.service";
+import { ProjectService } from "services/project.service";
+import { IssueService } from "services/issue.service";
 import { ProjectStateServices } from "services/project_state.service";
-import CycleService from "services/cycles.service";
+import { CycleService } from "services/cycles.service";
 import { ModuleService } from "services/modules.service";
 import { ViewService } from "services/views.service";
 import { PageService } from "services/page.service";
@@ -110,6 +110,7 @@ class ProjectStore implements IProjectStore {
   moduleService;
   viewService;
   pageService;
+  cycleService;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
@@ -148,12 +149,13 @@ class ProjectStore implements IProjectStore {
     });
 
     this.rootStore = _rootStore;
-    this.projectService = new ProjectServices();
-    this.issueService = new IssueServices();
+    this.projectService = new ProjectService();
+    this.issueService = new IssueService();
     this.stateService = new ProjectStateServices();
     this.moduleService = new ModuleService();
     this.viewService = new ViewService();
     this.pageService = new PageService();
+    this.cycleService = new CycleService();
   }
 
   get projectStatesByGroups() {
@@ -307,7 +309,7 @@ class ProjectStore implements IProjectStore {
       this.loader = true;
       this.error = null;
 
-      const cyclesResponse = await CycleService.getCyclesWithParams(workspaceSlug, projectSlug, "all");
+      const cyclesResponse = await this.cycleService.getCyclesWithParams(workspaceSlug, projectSlug, "all");
 
       runInAction(() => {
         this.cycles = {

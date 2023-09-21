@@ -16,7 +16,7 @@ import type {
   TProjectIssuesSearchParams,
 } from "types";
 
-export class ProjectServices extends APIService {
+export class ProjectService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -336,4 +336,4 @@ export class ProjectServices extends APIService {
   }
 }
 
-export default new ProjectServices();
+export default new ProjectService();

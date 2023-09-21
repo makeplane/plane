@@ -2,8 +2,8 @@ import { action, computed, observable, makeObservable, runInAction } from "mobx"
 // types
 import { RootStore } from "./root";
 // services
-import { ProjectServices } from "services/project.service";
-import { IssueServices } from "services/issue.service";
+import { ProjectService } from "services/project.service";
+import { IssueService } from "services/issue.service";
 
 export interface IViewStore {
   loader: boolean;
@@ -40,8 +40,8 @@ class ViewStore implements IViewStore {
     });
 
     this.rootStore = _rootStore;
-    this.projectService = new ProjectServices();
-    this.issueService = new IssueServices();
+    this.projectService = new ProjectService();
+    this.issueService = new IssueService();
   }
 
   // computed

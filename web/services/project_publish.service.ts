@@ -6,7 +6,7 @@ import trackEventServices from "services/track_event.service";
 import { ICurrentUserResponse } from "types";
 import { IProjectPublishSettings } from "store/project_publish";
 
-class ProjectServices extends APIService {
+export class ProjectPublishServices extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -98,4 +98,4 @@ class ProjectServices extends APIService {
   }
 }
 
-export default ProjectServices;
+export default new ProjectPublishServices();

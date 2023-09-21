@@ -4,8 +4,8 @@ import { RootStore } from "./root";
 import { IIssueLabels, IProject, IWorkspace } from "types";
 // services
 import { WorkspaceService } from "services/workspace.service";
-import { ProjectServices } from "services/project.service";
-import { IssueServices } from "services/issue.service";
+import { ProjectService } from "services/project.service";
+import { IssueService } from "services/issue.service";
 
 export interface IWorkspaceStore {
   loader: boolean;
@@ -64,8 +64,8 @@ class WorkspaceStore implements IWorkspaceStore {
 
     this.rootStore = _rootStore;
     this.workspaceService = new WorkspaceService();
-    this.projectService = new ProjectServices();
-    this.issueService = new IssueServices();
+    this.projectService = new ProjectService();
+    this.issueService = new IssueService();
   }
 
   /**

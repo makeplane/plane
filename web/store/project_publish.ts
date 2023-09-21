@@ -2,7 +2,7 @@ import { observable, action, computed, makeObservable, runInAction } from "mobx"
 // types
 import { RootStore } from "./root";
 // services
-import ProjectServices from "services/project_publish.service";
+import { ProjectPublishServices } from "services/project_publish.service";
 
 export type TProjectPublishViews = "list" | "gantt" | "kanban" | "calendar" | "spreadsheet";
 
@@ -87,7 +87,7 @@ class ProjectPublishStore implements IProjectPublishStore {
     });
 
     this.rootStore = _rootStore;
-    this.projectPublishService = new ProjectServices();
+    this.projectPublishService = new ProjectPublishServices();
   }
 
   handleProjectModal = (project_id: string | null = null) => {
