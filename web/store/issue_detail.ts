@@ -3,57 +3,43 @@ import { observable, action, makeObservable, runInAction } from "mobx";
 import { RootStore } from "./root";
 // services
 import { IssueService } from "services/issue.service";
+import { IIssue } from "types";
 
 export type IPeekMode = "side" | "modal" | "full";
 
-export interface IIssueViewDetailStore {
+export interface IIssueDetailStore {
   loader: boolean;
   error: any | null;
 
   peekId: string | null;
   peekMode: IPeekMode | null;
 
-  issue_detail: {
-    workspace: {
-      [key: string]: {
-        issues: {
-          [key: string]: any;
-        };
-      };
-    };
+  issues: {
+    [key: string]: IIssue;
   };
 
   setPeekId: (issueId: string | null) => void;
   setPeekMode: (issueId: IPeekMode | null) => void;
-
   // fetch issue details
-  fetchIssueDetailsAsync: (workspaceId: string, projectId: string, issueId: string) => void;
+  fetchIssueDetails: (workspaceId: string, projectId: string, issueId: string) => void;
   // creating issue
-  createIssueAsync: (workspaceId: string, projectId: string, issueId: string, data: any) => void;
+  createIssue: (workspaceId: string, projectId: string, issueId: string, data: any) => void;
   // updating issue
-  updateIssueAsync: (workspaceId: string, projectId: string, issueId: string, data: any) => void;
+  updateIssue: (workspaceId: string, projectId: string, issueId: string, data: any) => void;
   // deleting issue
-  deleteIssueAsync: (workspaceId: string, projectId: string, issueId: string) => void;
+  deleteIssue: (workspaceId: string, projectId: string, issueId: string) => void;
 }
 
-class IssueViewDetailStore implements IIssueViewDetailStore {
+class IssueDetailStore implements IIssueDetailStore {
   loader: boolean = false;
   error: any | null = null;
 
   peekId: string | null = null;
   peekMode: IPeekMode | null = null;
 
-  issue_detail: {
-    workspace: {
-      [key: string]: {
-        issues: {
-          [key: string]: any;
-        };
-      };
-    };
-  } = {
-    workspace: {},
-  };
+  issues: {
+    [key: string]: IIssue;
+  } = {};
 
   // root store
   rootStore;
@@ -63,20 +49,21 @@ class IssueViewDetailStore implements IIssueViewDetailStore {
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observable
-      loader: observable,
-      error: observable,
+      loader: observable.ref,
+      error: observable.ref,
 
-      peekId: observable,
-      peekMode: observable,
-      issue_detail: observable,
+      peekId: observable.ref,
+      peekMode: observable.ref,
+
+      issues: observable.ref,
 
       setPeekId: action,
       setPeekMode: action,
 
-      fetchIssueDetailsAsync: action,
-      createIssueAsync: action,
-      updateIssueAsync: action,
-      deleteIssueAsync: action,
+      fetchIssueDetails: action,
+      createIssue: action,
+      updateIssue: action,
+      deleteIssue: action,
     });
 
     this.rootStore = _rootStore;
@@ -84,20 +71,22 @@ class IssueViewDetailStore implements IIssueViewDetailStore {
   }
 
   setPeekId = (issueId: string | null) => (this.peekId = issueId);
+
   setPeekMode = (mode: IPeekMode | null) => (this.peekMode = mode);
 
-  fetchIssueDetailsAsync = async (workspaceId: string, projectId: string, issueId: string) => {
+  fetchIssueDetails = async (workspaceId: string, projectId: string, issueId: string) => {
     try {
       this.loader = true;
       this.error = null;
 
-      console.log("workspaceId", workspaceId);
-      console.log("projectId", projectId);
-      console.log("issueId", issueId);
+      const issueDetailsResponse = await this.issueService.retrieve(workspaceId, projectId, issueId);
 
       runInAction(() => {
         this.loader = false;
         this.error = null;
+        this.issues = {
+          [issueId]: issueDetailsResponse,
+        };
       });
     } catch (error) {
       console.log("error in fetching issue details", error);
@@ -107,7 +96,7 @@ class IssueViewDetailStore implements IIssueViewDetailStore {
     }
   };
 
-  createIssueAsync = async (workspaceId: string, projectId: string, issueId: string, data: any) => {
+  createIssue = async (workspaceId: string, projectId: string, issueId: string, data: any) => {
     try {
       this.loader = true;
       this.error = null;
@@ -129,12 +118,12 @@ class IssueViewDetailStore implements IIssueViewDetailStore {
     }
   };
 
-  updateIssueAsync = async (workspaceId: string, projectId: string, issueId: string, data: any) => {
+  updateIssue = async (workspaceId: string, projectId: string, issueId: string, data: any) => {
     try {
       this.loader = true;
       this.error = null;
 
-      const filteredParams = this.rootStore.issueFilters.getComputedFilters(
+      const filteredParams = this.rootStore.issueFilter.getComputedFilters(
         workspaceId,
         projectId,
         null,
@@ -161,7 +150,7 @@ class IssueViewDetailStore implements IIssueViewDetailStore {
     }
   };
 
-  deleteIssueAsync = async (workspaceId: string, projectId: string, issueId: string) => {
+  deleteIssue = async (workspaceId: string, projectId: string, issueId: string) => {
     try {
       this.loader = true;
       this.error = null;
@@ -183,4 +172,4 @@ class IssueViewDetailStore implements IIssueViewDetailStore {
   };
 }
 
-export default IssueViewDetailStore;
+export default IssueDetailStore;
