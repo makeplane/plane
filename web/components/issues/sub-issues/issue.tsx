@@ -15,7 +15,8 @@ import {
 import { SubIssuesRootList } from "./issues-list";
 import { IssueProperty } from "./properties";
 // ui
-import { CustomMenu } from "components/ui";
+import { Tooltip, CustomMenu } from "components/ui";
+
 // types
 import { ICurrentUserResponse, IIssue } from "types";
 
@@ -31,6 +32,11 @@ export interface ISubIssues {
   issuesVisibility: string[];
   handleIssuesVisibility: (issueId: string) => void;
   copyText: (text: string) => void;
+  handleIssueCrudOperation: (
+    key: "create" | "existing" | "edit" | "delete",
+    issueId: string,
+    issue?: IIssue | null
+  ) => void;
 }
 
 export const SubIssues: React.FC<ISubIssues> = ({
@@ -45,6 +51,7 @@ export const SubIssues: React.FC<ISubIssues> = ({
   issuesVisibility,
   handleIssuesVisibility,
   copyText,
+  handleIssueCrudOperation,
 }) => (
   <div>
     {issue && (
@@ -73,7 +80,7 @@ export const SubIssues: React.FC<ISubIssues> = ({
           )}
         </div>
 
-        <Link href={"/"}>
+        <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
           <a className="w-full flex items-center gap-2">
             <div
               className="flex-shrink-0 w-[6px] h-[6px] rounded-full"
@@ -84,7 +91,9 @@ export const SubIssues: React.FC<ISubIssues> = ({
             <div className="flex-shrink-0 text-xs text-custom-text-200">
               {issue.project_detail.identifier}-{issue?.sequence_id}
             </div>
-            <div className="line-clamp-1 text-xs text-custom-text-100">{issue?.name}</div>
+            <Tooltip tooltipHeading="Title" tooltipContent={`${issue?.name}`}>
+              <div className="line-clamp-1 text-xs text-custom-text-100">{issue?.name}</div>
+            </Tooltip>
           </a>
         </Link>
 
@@ -102,7 +111,9 @@ export const SubIssues: React.FC<ISubIssues> = ({
         <div className="flex-shrink-0 text-sm">
           <CustomMenu width="auto" ellipsis>
             {editable && (
-              <CustomMenu.MenuItem onClick={() => editIssue()}>
+              <CustomMenu.MenuItem
+                onClick={() => handleIssueCrudOperation("edit", parentIssue?.id, issue)}
+              >
                 <div className="flex items-center justify-start gap-2">
                   <Pencil width={14} strokeWidth={2} />
                   <span>Edit issue</span>
@@ -111,7 +122,9 @@ export const SubIssues: React.FC<ISubIssues> = ({
             )}
 
             {editable && (
-              <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
+              <CustomMenu.MenuItem
+                onClick={() => handleIssueCrudOperation("delete", parentIssue?.id, issue)}
+              >
                 <div className="flex items-center justify-start gap-2">
                   <Trash width={14} strokeWidth={2} />
                   <span>Delete issue</span>
@@ -151,6 +164,7 @@ export const SubIssues: React.FC<ISubIssues> = ({
         issuesVisibility={issuesVisibility}
         handleIssuesVisibility={handleIssuesVisibility}
         copyText={copyText}
+        handleIssueCrudOperation={handleIssueCrudOperation}
       />
     )}
   </div>

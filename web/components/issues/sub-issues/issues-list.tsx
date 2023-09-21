@@ -21,6 +21,11 @@ export interface ISubIssuesRootList {
   issuesVisibility: string[];
   handleIssuesVisibility: (issueId: string) => void;
   copyText: (text: string) => void;
+  handleIssueCrudOperation: (
+    key: "create" | "existing" | "edit" | "delete",
+    issueId: string,
+    issue?: IIssue | null
+  ) => void;
 }
 
 export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
@@ -34,6 +39,7 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
   issuesVisibility,
   handleIssuesVisibility,
   copyText,
+  handleIssueCrudOperation,
 }) => {
   const { data: issues, isLoading } = useSWR(
     workspaceSlug && projectId && parentIssue && parentIssue?.id
@@ -47,6 +53,7 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
   return (
     <div className="relative">
       {issues &&
+        issues.sub_issues &&
         issues.sub_issues.length > 0 &&
         issues.sub_issues.map((issue: IIssue) => (
           <SubIssues
@@ -62,6 +69,7 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
             issuesVisibility={issuesVisibility}
             handleIssuesVisibility={handleIssuesVisibility}
             copyText={copyText}
+            handleIssueCrudOperation={handleIssueCrudOperation}
           />
         ))}
 

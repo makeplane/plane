@@ -7,7 +7,7 @@ import useSWR, { mutate } from "swr";
 import { Plus, ChevronRight, ChevronDown } from "lucide-react";
 // components
 import { ExistingIssuesListModal } from "components/core";
-import { CreateUpdateIssueModal } from "components/issues";
+import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { SubIssuesRootList } from "./issues-list";
 import { ProgressBar } from "./progressbar";
 // ui
@@ -54,9 +54,11 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user, edi
     }
   };
 
-  const [issueCreateOption, setIssueCreateOption] = React.useState<{
+  const [issueCrudOperation, setIssueCrudOperation] = React.useState<{
     create: { toggle: boolean; issueId: string | null };
     existing: { toggle: boolean; issueId: string | null };
+    edit: { toggle: boolean; issueId: string | null; issue: IIssue | null };
+    delete: { toggle: boolean; issueId: string | null; issue: IIssue | null };
   }>({
     create: {
       toggle: false,
@@ -66,26 +68,41 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user, edi
       toggle: false,
       issueId: null,
     },
+    edit: {
+      toggle: false,
+      issueId: null, // parent issue id for mutation
+      issue: null,
+    },
+    delete: {
+      toggle: false,
+      issueId: null, // parent issue id for mutation
+      issue: null,
+    },
   });
-  const handleCreateOption = (key: "create" | "existing", issueId: string | null) => {
-    setIssueCreateOption({
-      ...issueCreateOption,
+  const handleIssueCrudOperation = (
+    key: "create" | "existing" | "edit" | "delete",
+    issueId: string | null,
+    issue: IIssue | null = null
+  ) => {
+    setIssueCrudOperation({
+      ...issueCrudOperation,
       [key]: {
-        toggle: !issueCreateOption[key].toggle,
+        toggle: !issueCrudOperation[key].toggle,
         issueId: issueId,
+        issue: issue,
       },
     });
   };
 
   const addAsSubIssueFromExistingIssues = async (data: ISearchIssueResponse[]) => {
-    if (!workspaceSlug || !parentIssue || issueCreateOption?.existing?.issueId === null) return;
-    const issueId = issueCreateOption?.existing?.issueId;
+    if (!workspaceSlug || !parentIssue || issueCrudOperation?.existing?.issueId === null) return;
+    const issueId = issueCrudOperation?.existing?.issueId;
     const payload = {
       sub_issue_ids: data.map((i) => i.id),
     };
 
     await issuesService.addSubIssues(workspaceSlug, projectId, issueId, payload).finally(() => {
-      if (issueId) mutate(SUB_ISSUES(issueId), true);
+      if (issueId) mutate(SUB_ISSUES(issueId));
     });
   };
 
@@ -94,7 +111,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user, edi
     issuesService
       .patchIssue(workspaceSlug, projectId, issue.id, { parent: null }, user)
       .finally(() => {
-        if (parentIssueId) mutate(SUB_ISSUES(parentIssueId), true);
+        if (parentIssueId) mutate(SUB_ISSUES(parentIssueId));
       });
   };
 
@@ -112,7 +129,9 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user, edi
 
   const isEditable = memberRole?.isGuest || memberRole?.isViewer ? false : true;
 
-  console.log("isEditable", isEditable);
+  const mutateSubIssues = (parentIssueId: string | null) => {
+    if (parentIssueId) mutate(SUB_ISSUES(parentIssueId));
+  };
 
   return (
     <div className="w-full h-full space-y-2">
@@ -125,7 +144,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user, edi
               onClick={() => handleIssuesVisibility(parentIssue?.id)}
             >
               <div className="flex-shrink-0 w-[16px] h-[16px] flex justify-center items-center">
-                {!issuesVisibility.includes(parentIssue?.id) ? (
+                {issuesVisibility.includes(parentIssue?.id) ? (
                   <ChevronDown width={16} strokeWidth={2} />
                 ) : (
                   <ChevronRight width={14} strokeWidth={2} />
@@ -149,13 +168,13 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user, edi
               <div className="ml-auto flex-shrink-0 flex items-center gap-2 select-none">
                 <div
                   className="hover:bg-custom-background-80 transition-all cursor-pointer p-1.5 px-2 rounded border border-custom-border-100 shadow"
-                  onClick={() => handleCreateOption("create", parentIssue?.id)}
+                  onClick={() => handleIssueCrudOperation("create", parentIssue?.id)}
                 >
                   Add sub-issue
                 </div>
                 <div
                   className="hover:bg-custom-background-80 transition-all cursor-pointer p-1.5 px-2 rounded border border-custom-border-100 shadow"
-                  onClick={() => handleCreateOption("existing", parentIssue?.id)}
+                  onClick={() => handleIssueCrudOperation("existing", parentIssue?.id)}
                 >
                   Add an existing issue
                 </div>
@@ -176,6 +195,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user, edi
                 issuesVisibility={issuesVisibility}
                 handleIssuesVisibility={handleIssuesVisibility}
                 copyText={copyText}
+                handleIssueCrudOperation={handleIssueCrudOperation}
               />
             </div>
           )}
@@ -197,11 +217,13 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user, edi
                 noBorder
                 noChevron
               >
-                <CustomMenu.MenuItem onClick={() => handleCreateOption("create", parentIssue?.id)}>
+                <CustomMenu.MenuItem
+                  onClick={() => handleIssueCrudOperation("create", parentIssue?.id)}
+                >
                   Create new
                 </CustomMenu.MenuItem>
                 <CustomMenu.MenuItem
-                  onClick={() => handleCreateOption("existing", parentIssue?.id)}
+                  onClick={() => handleIssueCrudOperation("existing", parentIssue?.id)}
                 >
                   Add an existing issue
                 </CustomMenu.MenuItem>
@@ -211,27 +233,51 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user, edi
         )
       )}
 
-      {isEditable && issueCreateOption?.create?.toggle && issueCreateOption?.create?.issueId && (
+      {isEditable && issueCrudOperation?.create?.toggle && (
         <CreateUpdateIssueModal
-          isOpen={issueCreateOption?.create?.toggle}
+          isOpen={issueCrudOperation?.create?.toggle}
           prePopulateData={{
-            parent: issueCreateOption?.create?.issueId,
+            parent: issueCrudOperation?.create?.issueId,
           }}
-          handleClose={() => handleCreateOption("create", null)}
+          handleClose={() => handleIssueCrudOperation("create", null)}
         />
       )}
 
       {isEditable &&
-        issueCreateOption?.existing?.toggle &&
-        issueCreateOption?.existing?.issueId && (
+        issueCrudOperation?.existing?.toggle &&
+        issueCrudOperation?.existing?.issueId && (
           <ExistingIssuesListModal
-            isOpen={issueCreateOption?.existing?.toggle}
-            handleClose={() => handleCreateOption("existing", null)}
-            searchParams={{ sub_issue: true, issue_id: issueCreateOption?.existing?.issueId }}
+            isOpen={issueCrudOperation?.existing?.toggle}
+            handleClose={() => handleIssueCrudOperation("existing", null)}
+            searchParams={{ sub_issue: true, issue_id: issueCrudOperation?.existing?.issueId }}
             handleOnSubmit={addAsSubIssueFromExistingIssues}
             workspaceLevelToggle
           />
         )}
+
+      {isEditable && issueCrudOperation?.edit?.toggle && issueCrudOperation?.edit?.issueId && (
+        <CreateUpdateIssueModal
+          isOpen={issueCrudOperation?.edit?.toggle}
+          handleClose={() => {
+            mutateSubIssues(issueCrudOperation?.edit?.issueId);
+            handleIssueCrudOperation("edit", null, null);
+          }}
+          data={issueCrudOperation?.edit?.issue}
+        />
+      )}
+
+      {isEditable && issueCrudOperation?.delete?.toggle && issueCrudOperation?.delete?.issueId && (
+        <DeleteIssueModal
+          isOpen={issueCrudOperation?.delete?.toggle}
+          handleClose={() => {
+            mutateSubIssues(issueCrudOperation?.delete?.issueId);
+            handleIssueCrudOperation("delete", null, null);
+          }}
+          data={issueCrudOperation?.delete?.issue}
+          user={user}
+          redirection={false}
+        />
+      )}
     </div>
   );
 };
