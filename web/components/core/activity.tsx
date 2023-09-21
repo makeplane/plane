@@ -1,5 +1,9 @@
 import { useRouter } from "next/router";
 
+import useSWR from "swr";
+
+// services
+import issuesService from "services/issue.service";
 // icons
 import { Icon, Tooltip } from "components/ui";
 import { CopyPlus } from "lucide-react";
@@ -10,26 +14,22 @@ import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
 import { IIssueActivity } from "types";
+// fetch-keys
+import { WORKSPACE_LABELS } from "constants/fetch-keys";
 
 const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
   return (
-    <Tooltip
-      tooltipContent={
-        activity.issue_detail ? activity.issue_detail.name : "This issue has been deleted"
-      }
-    >
+    <Tooltip tooltipContent={activity.issue_detail ? activity.issue_detail.name : "This issue has been deleted"}>
       <a
         href={`/${workspaceSlug}/projects/${activity.project}/issues/${activity.issue}`}
         target="_blank"
         rel="noopener noreferrer"
         className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
       >
-        {activity.issue_detail
-          ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}`
-          : "Issue"}
+        {activity.issue_detail ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}` : "Issue"}
         <Icon iconName="launch" className="!text-xs" />
       </a>
     </Tooltip>
@@ -52,13 +52,29 @@ const UserLink = ({ activity }: { activity: IIssueActivity }) => {
   );
 };
 
+const LabelPill = ({ labelId }: { labelId: string }) => {
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
+  const { data: labels } = useSWR(
+    workspaceSlug ? WORKSPACE_LABELS(workspaceSlug.toString()) : null,
+    workspaceSlug ? () => issuesService.getWorkspaceLabels(workspaceSlug.toString()) : null
+  );
+
+  return (
+    <span
+      className="h-1.5 w-1.5 rounded-full"
+      style={{
+        backgroundColor: labels?.find((l) => l.id === labelId)?.color ?? "#000000",
+      }}
+      aria-hidden="true"
+    />
+  );
+};
+
 const activityDetails: {
   [key: string]: {
-    message: (
-      activity: IIssueActivity,
-      showIssue: boolean,
-      workspaceSlug: string
-    ) => React.ReactNode;
+    message: (activity: IIssueActivity, showIssue: boolean, workspaceSlug: string) => React.ReactNode;
     icon: React.ReactNode;
   };
 } = {
@@ -151,8 +167,7 @@ const activityDetails: {
       else
         return (
           <>
-            removed the blocking issue{" "}
-            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+            removed the blocking issue <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
           </>
         );
     },
@@ -208,8 +223,7 @@ const activityDetails: {
       else
         return (
           <>
-            removed the relation from{" "}
-            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+            removed the relation from <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
           </>
         );
     },
@@ -298,8 +312,7 @@ const activityDetails: {
       else
         return (
           <>
-            set the estimate point to{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+            set the estimate point to <span className="font-medium text-custom-text-100">{activity.new_value}</span>
             {showIssue && (
               <>
                 {" "}
@@ -325,14 +338,8 @@ const activityDetails: {
         return (
           <>
             added a new label{" "}
-            <span className="inline-flex items-center gap-3 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
-              <span
-                className="h-1.5 w-1.5 rounded-full"
-                style={{
-                  backgroundColor: "#000000",
-                }}
-                aria-hidden="true"
-              />
+            <span className="inline-flex items-center gap-2 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
+              <LabelPill labelId={activity.new_identifier ?? ""} />
               <span className="font-medium text-custom-text-100">{activity.new_value}</span>
             </span>
             {showIssue && (
@@ -348,13 +355,7 @@ const activityDetails: {
           <>
             removed the label{" "}
             <span className="inline-flex items-center gap-3 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
-              <span
-                className="h-1.5 w-1.5 rounded-full"
-                style={{
-                  backgroundColor: "#000000",
-                }}
-                aria-hidden="true"
-              />
+              <LabelPill labelId={activity.old_identifier ?? ""} />
               <span className="font-medium text-custom-text-100">{activity.old_value}</span>
             </span>
             {showIssue && (
@@ -509,8 +510,7 @@ const activityDetails: {
       if (!activity.new_value)
         return (
           <>
-            removed the parent{" "}
-            <span className="font-medium text-custom-text-100">{activity.old_value}</span>
+            removed the parent <span className="font-medium text-custom-text-100">{activity.old_value}</span>
             {showIssue && (
               <>
                 {" "}
@@ -523,8 +523,7 @@ const activityDetails: {
       else
         return (
           <>
-            set the parent to{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+            set the parent to <span className="font-medium text-custom-text-100">{activity.new_value}</span>
             {showIssue && (
               <>
                 {" "}
@@ -592,8 +591,7 @@ const activityDetails: {
   state: {
     message: (activity, showIssue) => (
       <>
-        set the state to{" "}
-        <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+        set the state to <span className="font-medium text-custom-text-100">{activity.new_value}</span>
         {showIssue && (
           <>
             {" "}
@@ -645,13 +643,7 @@ export const ActivityIcon = ({ activity }: { activity: IIssueActivity }) => (
   <>{activityDetails[activity.field as keyof typeof activityDetails]?.icon}</>
 );
 
-export const ActivityMessage = ({
-  activity,
-  showIssue = false,
-}: {
-  activity: IIssueActivity;
-  showIssue?: boolean;
-}) => {
+export const ActivityMessage = ({ activity, showIssue = false }: { activity: IIssueActivity; showIssue?: boolean }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
