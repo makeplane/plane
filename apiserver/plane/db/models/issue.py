@@ -413,6 +413,7 @@ class IssueLabel(ProjectBaseModel):
     )
 
     class Meta:
+        unique_together = ["issue", "label"]
         verbose_name = "Issue Label"
         verbose_name_plural = "Issue Labels"
         db_table = "issue_labels"

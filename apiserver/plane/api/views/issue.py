@@ -82,6 +82,8 @@ from plane.db.models import (
     IssueVote,
     IssueRelation,
     ProjectPublicMember,
+    IssueLabel,
+    IssueAssignee,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -130,7 +132,7 @@ class IssueViewSet(BaseViewSet):
                 current_instance=json.dumps(
                     IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
                 ),
-                epoch  = int(timezone.now().timestamp())
+                epoch=int(timezone.now().timestamp()),
             )
 
         return super().perform_update(serializer)
@@ -151,7 +153,7 @@ class IssueViewSet(BaseViewSet):
                 current_instance=json.dumps(
                     IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
                 ),
-                epoch = int(timezone.now().timestamp())
+                epoch=int(timezone.now().timestamp()),
             )
         return super().perform_destroy(instance)
 
@@ -282,7 +284,8 @@ class IssueViewSet(BaseViewSet):
 
             if group_by:
                 return Response(
-                    group_results(issues, group_by, sub_group_by), status=status.HTTP_200_OK
+                    group_results(issues, group_by, sub_group_by),
+                    status=status.HTTP_200_OK,
                 )
 
             return Response(issues, status=status.HTTP_200_OK)
@@ -318,7 +321,7 @@ class IssueViewSet(BaseViewSet):
                     issue_id=str(serializer.data.get("id", None)),
                     project_id=str(project_id),
                     current_instance=None,
-                    epoch = int(timezone.now().timestamp())
+                    epoch=int(timezone.now().timestamp()),
                 )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -335,9 +338,7 @@ class IssueViewSet(BaseViewSet):
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
-            ).get(
-                workspace__slug=slug, project_id=project_id, pk=pk
-            )
+            ).get(workspace__slug=slug, project_id=project_id, pk=pk)
             return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
         except Issue.DoesNotExist:
             return Response(
@@ -469,10 +470,11 @@ class UserWorkSpaceIssues(BaseAPIView):
                     {"error": "Group by and sub group by cannot be same"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            
+
             if group_by:
                 return Response(
-                    group_results(issues, group_by, sub_group_by), status=status.HTTP_200_OK
+                    group_results(issues, group_by, sub_group_by),
+                    status=status.HTTP_200_OK,
                 )
 
             return Response(issues, status=status.HTTP_200_OK)
@@ -577,7 +579,7 @@ class IssueCommentViewSet(BaseViewSet):
             issue_id=str(self.kwargs.get("issue_id")),
             project_id=str(self.kwargs.get("project_id")),
             current_instance=None,
-            epoch = int(timezone.now().timestamp())
+            epoch=int(timezone.now().timestamp()),
         )
 
     def perform_update(self, serializer):
@@ -596,7 +598,7 @@ class IssueCommentViewSet(BaseViewSet):
                     IssueCommentSerializer(current_instance).data,
                     cls=DjangoJSONEncoder,
                 ),
-                epoch = int(timezone.now().timestamp())
+                epoch=int(timezone.now().timestamp()),
             )
 
         return super().perform_update(serializer)
@@ -618,7 +620,7 @@ class IssueCommentViewSet(BaseViewSet):
                     IssueCommentSerializer(current_instance).data,
                     cls=DjangoJSONEncoder,
                 ),
-                epoch = int(timezone.now().timestamp())
+                epoch=int(timezone.now().timestamp()),
             )
         return super().perform_destroy(instance)
 
@@ -902,7 +904,7 @@ class IssueLinkViewSet(BaseViewSet):
             issue_id=str(self.kwargs.get("issue_id")),
             project_id=str(self.kwargs.get("project_id")),
             current_instance=None,
-            epoch = int(timezone.now().timestamp())
+            epoch=int(timezone.now().timestamp()),
         )
 
     def perform_update(self, serializer):
@@ -921,7 +923,7 @@ class IssueLinkViewSet(BaseViewSet):
                     IssueLinkSerializer(current_instance).data,
                     cls=DjangoJSONEncoder,
                 ),
-                epoch = int(timezone.now().timestamp())
+                epoch=int(timezone.now().timestamp()),
             )
 
         return super().perform_update(serializer)
@@ -943,7 +945,7 @@ class IssueLinkViewSet(BaseViewSet):
                     IssueLinkSerializer(current_instance).data,
                     cls=DjangoJSONEncoder,
                 ),
-                epoch = int(timezone.now().timestamp())
+                epoch=int(timezone.now().timestamp()),
             )
         return super().perform_destroy(instance)
 
@@ -1022,7 +1024,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
                         serializer.data,
                         cls=DjangoJSONEncoder,
                     ),
-                    epoch = int(timezone.now().timestamp())
+                    epoch=int(timezone.now().timestamp()),
                 )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1045,7 +1047,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
                 issue_id=str(self.kwargs.get("issue_id", None)),
                 project_id=str(self.kwargs.get("project_id", None)),
                 current_instance=None,
-                epoch = int(timezone.now().timestamp())
+                epoch=int(timezone.now().timestamp()),
             )
 
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -1248,7 +1250,7 @@ class IssueArchiveViewSet(BaseViewSet):
                 issue_id=str(issue.id),
                 project_id=str(project_id),
                 current_instance=None,
-                epoch = int(timezone.now().timestamp())
+                epoch=int(timezone.now().timestamp()),
             )
 
             return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
@@ -1453,7 +1455,7 @@ class IssueReactionViewSet(BaseViewSet):
             issue_id=str(self.kwargs.get("issue_id", None)),
             project_id=str(self.kwargs.get("project_id", None)),
             current_instance=None,
-            epoch = int(timezone.now().timestamp())
+            epoch=int(timezone.now().timestamp()),
         )
 
     def destroy(self, request, slug, project_id, issue_id, reaction_code):
@@ -1477,7 +1479,7 @@ class IssueReactionViewSet(BaseViewSet):
                         "identifier": str(issue_reaction.id),
                     }
                 ),
-                epoch = int(timezone.now().timestamp())
+                epoch=int(timezone.now().timestamp()),
             )
             issue_reaction.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -1526,7 +1528,7 @@ class CommentReactionViewSet(BaseViewSet):
             issue_id=None,
             project_id=str(self.kwargs.get("project_id", None)),
             current_instance=None,
-            epoch = int(timezone.now().timestamp())
+            epoch=int(timezone.now().timestamp()),
         )
 
     def destroy(self, request, slug, project_id, comment_id, reaction_code):
@@ -1551,7 +1553,7 @@ class CommentReactionViewSet(BaseViewSet):
                         "comment_id": str(comment_id),
                     }
                 ),
-                epoch = int(timezone.now().timestamp())
+                epoch=int(timezone.now().timestamp()),
             )
             comment_reaction.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -1648,7 +1650,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                     issue_id=str(issue_id),
                     project_id=str(project_id),
                     current_instance=None,
-                    epoch = int(timezone.now().timestamp())
+                    epoch=int(timezone.now().timestamp()),
                 )
                 if not ProjectMember.objects.filter(
                     project_id=project_id,
@@ -1698,7 +1700,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                         IssueCommentSerializer(comment).data,
                         cls=DjangoJSONEncoder,
                     ),
-                    epoch = int(timezone.now().timestamp())
+                    epoch=int(timezone.now().timestamp()),
                 )
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1732,7 +1734,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                     IssueCommentSerializer(comment).data,
                     cls=DjangoJSONEncoder,
                 ),
-                epoch = int(timezone.now().timestamp())
+                epoch=int(timezone.now().timestamp()),
             )
             comment.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -1807,7 +1809,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
                     issue_id=str(self.kwargs.get("issue_id", None)),
                     project_id=str(self.kwargs.get("project_id", None)),
                     current_instance=None,
-                    epoch = int(timezone.now().timestamp())
+                    epoch=int(timezone.now().timestamp()),
                 )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1852,7 +1854,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
                         "identifier": str(issue_reaction.id),
                     }
                 ),
-                epoch = int(timezone.now().timestamp())
+                epoch=int(timezone.now().timestamp()),
             )
             issue_reaction.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -1926,7 +1928,7 @@ class CommentReactionPublicViewSet(BaseViewSet):
                     issue_id=None,
                     project_id=str(self.kwargs.get("project_id", None)),
                     current_instance=None,
-                    epoch = int(timezone.now().timestamp())
+                    epoch=int(timezone.now().timestamp()),
                 )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1978,7 +1980,7 @@ class CommentReactionPublicViewSet(BaseViewSet):
                         "comment_id": str(comment_id),
                     }
                 ),
-                epoch = int(timezone.now().timestamp())
+                epoch=int(timezone.now().timestamp()),
             )
             comment_reaction.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -2042,7 +2044,7 @@ class IssueVotePublicViewSet(BaseViewSet):
                 issue_id=str(self.kwargs.get("issue_id", None)),
                 project_id=str(self.kwargs.get("project_id", None)),
                 current_instance=None,
-                epoch = int(timezone.now().timestamp())
+                epoch=int(timezone.now().timestamp()),
             )
             serializer = IssueVoteSerializer(issue_vote)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -2077,7 +2079,7 @@ class IssueVotePublicViewSet(BaseViewSet):
                         "identifier": str(issue_vote.id),
                     }
                 ),
-                epoch = int(timezone.now().timestamp())
+                epoch=int(timezone.now().timestamp()),
             )
             issue_vote.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -2111,7 +2113,7 @@ class IssueRelationViewSet(BaseViewSet):
                     IssueRelationSerializer(current_instance).data,
                     cls=DjangoJSONEncoder,
                 ),
-                epoch = int(timezone.now().timestamp())
+                epoch=int(timezone.now().timestamp()),
             )
         return super().perform_destroy(instance)
 
@@ -2145,9 +2147,9 @@ class IssueRelationViewSet(BaseViewSet):
                 issue_id=str(issue_id),
                 project_id=str(project_id),
                 current_instance=None,
-                epoch = int(timezone.now().timestamp())
+                epoch=int(timezone.now().timestamp()),
             )
-            
+
             if relation == "blocking":
                 return Response(
                     RelatedIssueSerializer(issue_relation, many=True).data,
@@ -2401,7 +2403,6 @@ class IssueDraftViewSet(BaseViewSet):
     serializer_class = IssueFlatSerializer
     model = Issue
 
-
     def perform_update(self, serializer):
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         current_instance = (
@@ -2417,11 +2418,10 @@ class IssueDraftViewSet(BaseViewSet):
                 current_instance=json.dumps(
                     IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
                 ),
-                epoch  = int(timezone.now().timestamp())
+                epoch=int(timezone.now().timestamp()),
             )
 
         return super().perform_update(serializer)
-    
 
     def perform_destroy(self, instance):
         current_instance = (
@@ -2441,7 +2441,6 @@ class IssueDraftViewSet(BaseViewSet):
                 ),
             )
         return super().perform_destroy(instance)
-
 
     def get_queryset(self):
         return (
@@ -2467,7 +2466,6 @@ class IssueDraftViewSet(BaseViewSet):
                 )
             )
         )
-
 
     @method_decorator(gzip_page)
     def list(self, request, slug, project_id):
@@ -2577,7 +2575,6 @@ class IssueDraftViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-
     def create(self, request, slug, project_id):
         try:
             project = Project.objects.get(pk=project_id)
@@ -2602,7 +2599,7 @@ class IssueDraftViewSet(BaseViewSet):
                     issue_id=str(serializer.data.get("id", None)),
                     project_id=str(project_id),
                     current_instance=None,
-                    epoch = int(timezone.now().timestamp())
+                    epoch=int(timezone.now().timestamp()),
                 )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -2611,7 +2608,6 @@ class IssueDraftViewSet(BaseViewSet):
             return Response(
                 {"error": "Project was not found"}, status=status.HTTP_404_NOT_FOUND
             )
-
 
     def retrieve(self, request, slug, project_id, pk=None):
         try:
@@ -2623,4 +2619,225 @@ class IssueDraftViewSet(BaseViewSet):
             return Response(
                 {"error": "Issue Does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
-    
+
+
+class BulkIssueOperationsEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    def post(self, request, slug, project_id):
+        try:
+            issue_ids = request.data.get("issue_ids", [])
+            # Get all the issues
+            issues = (
+                Issue.objects.filter(
+                    workspace__slug=slug, project_id=project_id, pk__in=issue_ids
+                )
+                .select_related("state")
+                .prefetch_related("labels", "assignees")
+            )
+            # Current epoch
+            epoch = int(timezone.now().timestamp())
+
+            # Project details
+            project = Project.objects.get(workspace__slug=slug, pk=project_id)
+            workspace_id = project.workspace_id
+
+            # Initialize arrays
+            bulk_update_issues = []
+            bulk_issue_activities = []
+            bulk_update_issue_labels = []
+            bulk_update_issue_assignees = []
+
+            properties = request.data.get("properties", {})
+
+            for issue in issues:
+                # Priority
+                if properties.get("priority", False):
+                    bulk_issue_activities.append(
+                        {
+                            "type": "issue.activity.updated",
+                            "requested_data": json.dumps(
+                                {"priority": properties.get("priority")}
+                            ),
+                            "current_instance": json.dumps(
+                                {"priority": (issue.priority)}
+                            ),
+                            "issue_id": str(issue.id),
+                            "actor_id": str(request.user.id),
+                            "project_id": str(project_id),
+                            "epoch": epoch,
+                        }
+                    )
+                    issue.priority = properties.get("priority")
+                # State
+                if properties.get("state", False):
+                    bulk_issue_activities.append(
+                        {
+                            "type": "issue.activity.updated",
+                            "requested_data": json.dumps(
+                                {"state": properties.get("state_id")}
+                            ),
+                            "current_instance": json.dumps({"state": (issue.state_id)}),
+                            "issue_id": str(issue.id),
+                            "actor_id": str(request.user.id),
+                            "project_id": str(project_id),
+                            "epoch": epoch,
+                        }
+                    )
+                    issue.state_id = properties.get("state")
+                # Start date
+                if properties.get("start_date", False):
+                    bulk_issue_activities.append(
+                        {
+                            "type": "issue.activity.updated",
+                            "requested_data": json.dumps(
+                                {"start_date": properties.get("start_date")}
+                            ),
+                            "current_instance": json.dumps(
+                                {"start_date": (issue.start_date)}
+                            ),
+                            "issue_id": str(issue.id),
+                            "actor_id": str(request.user.id),
+                            "project_id": str(project_id),
+                            "epoch": epoch,
+                        }
+                    )
+                    issue.start_date = properties.get("start_date")
+                # Target date
+                if properties.get("target_date", False):
+                    bulk_issue_activities.append(
+                        {
+                            "type": "issue.activity.updated",
+                            "requested_data": json.dumps(
+                                {"target_date": properties.get("requested_data")}
+                            ),
+                            "current_instance": json.dumps(
+                                {"target_date": (issue.target_date)}
+                            ),
+                            "issue_id": str(issue.id),
+                            "actor_id": str(request.user.id),
+                            "project_id": str(project_id),
+                            "epoch": epoch,
+                        }
+                    )
+                    issue.target_date = properties.get("target_date")
+                # Estimate point
+                if properties.get("estimate_point", False):
+                    bulk_issue_activities.append(
+                        {
+                            "type": "issue.activity.updated",
+                            "requested_data": json.dumps(
+                                {"estimate_point": properties.get("estimate_point")}
+                            ),
+                            "current_instance": json.dumps(
+                                {"estimate_point": (issue.estimate_point)}
+                            ),
+                            "issue_id": str(issue.id),
+                            "actor_id": str(request.user.id),
+                            "project_id": str(project_id),
+                            "epoch": epoch,
+                        }
+                    )
+                    issue.estimate_point = properties.get("estimate_point")
+
+                bulk_update_issues.append(issue)
+
+                # Labels
+                if properties.get("labels_list", []):
+                    for label_id in properties.get("labels_list", []):
+                        bulk_update_issue_labels.append(
+                            IssueLabel(
+                                issue=issue,
+                                label_id=label_id,
+                                created_by=request.user,
+                                project_id=project_id,
+                                workspace_id=workspace_id,
+                            )
+                        )
+                    bulk_issue_activities.append(
+                        {
+                            "type": "issue.activity.updated",
+                            "requested_data": json.dumps(
+                                {"labels_list": properties.get("labels_list", [])}
+                            ),
+                            "current_instance": json.dumps(
+                                {"labels": [str(label.id) for label in issue.labels.all()]}
+                            ),
+                            "issue_id": str(issue.id),
+                            "actor_id": str(request.user.id),
+                            "project_id": str(project_id),
+                            "epoch": epoch,
+                        }
+                    )
+
+                # Assignees
+                if properties.get("assignees_list", []):
+                    for assignee_id in properties.get(
+                        "assignees_list", issue.assignees
+                    ):
+                        bulk_update_issue_assignees.append(
+                            IssueAssignee(
+                                issue=issue,
+                                assignee_id=assignee_id,
+                                created_by=request.user,
+                                project_id=project_id,
+                                workspace_id=workspace_id,
+                            )
+                        )
+                    bulk_issue_activities.append(
+                        {
+                            "type": "issue.activity.updated",
+                            "requested_data": json.dumps(
+                                {"assignees_list": properties.get("assignees_list", [])}
+                            ),
+                            "current_instance": json.dumps(
+                                {
+                                    "assignees": [
+                                        str(assignee.id)
+                                        for assignee in issue.assignees.all()
+                                    ]
+                                }
+                            ),
+                            "issue_id": str(issue.id),
+                            "actor_id": str(request.user.id),
+                            "project_id": str(project_id),
+                            "epoch": epoch,
+                        }
+                    )
+
+            # Bulk update all the objects
+            Issue.objects.bulk_update(
+                bulk_update_issues,
+                ["priority", "estimate_point", "start_date", "target_date", "state"],
+                batch_size=100,
+            )
+
+            # Create new labels
+            IssueLabel.objects.bulk_create(
+                bulk_update_issue_labels,
+                ignore_conflicts=True,
+                batch_size=100,
+            )
+
+            # Create new assignees
+            IssueAssignee.objects.bulk_create(
+                bulk_update_issue_assignees,
+                ignore_conflicts=True,
+                batch_size=100,
+            )
+
+            [issue_activity.delay(**activity) for activity in bulk_issue_activities]
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Project.DoesNotExist:
+            return Response(
+                {"error": "Project does not exists"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )

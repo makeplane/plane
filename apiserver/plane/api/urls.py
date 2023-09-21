@@ -186,6 +186,9 @@ from plane.api.views import (
     ## Exporter
     ExportIssuesEndpoint,
     ## End Exporter
+    # Bulk Issue Operations
+    BulkIssueOperationsEndpoint,
+    ## End Bulk Issue Operations
 )
 
 
@@ -1728,4 +1731,9 @@ urlpatterns = [
         name="workspace-project-boards",
     ),
     ## End Public Boards
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-operation-issues/",
+        BulkIssueOperationsEndpoint.as_view(),
+        name="bulk-issue-operation",
+    ),
 ]
