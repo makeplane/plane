@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { useRouter } from "next/router";
 
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // hooks
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // headless ui
@@ -83,9 +83,7 @@ export const LabelSelect: React.FC<Props> = ({
   }));
 
   const filteredOptions =
-    query === ""
-      ? options
-      : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
+    query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const label = (
     <div className={`flex  items-center gap-2 text-custom-text-200`}>
@@ -182,9 +180,7 @@ export const LabelSelect: React.FC<Props> = ({
                 }  ${buttonClassName}`}
               >
                 {label}
-                {!hideDropdownArrow && !disabled && (
-                  <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
-                )}
+                {!hideDropdownArrow && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
               </Combobox.Button>
               <div className={`${open ? "fixed z-20 top-0 left-0 h-full w-full cursor-auto" : ""}`}>
                 <Combobox.Options
