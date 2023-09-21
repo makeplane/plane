@@ -36,7 +36,7 @@ export const IssuePeekOverview: React.FC<Props> = observer(({ handleMutation, pr
   const { peekIssue } = router.query;
 
   const { issueDetail: issueDetailStore } = useMobxStore();
-  const { deleteIssue, getIssueById, issues, updateIssue } = issueDetailStore;
+  const { deleteIssue, fetchIssueDetails, issues, updateIssue } = issueDetailStore;
 
   const issue = issues[peekIssue?.toString() ?? ""];
 
@@ -72,8 +72,8 @@ export const IssuePeekOverview: React.FC<Props> = observer(({ handleMutation, pr
   useEffect(() => {
     if (!peekIssue) return;
 
-    getIssueById(workspaceSlug, projectId, peekIssue.toString());
-  }, [getIssueById, peekIssue, projectId, workspaceSlug]);
+    fetchIssueDetails(workspaceSlug, projectId, peekIssue.toString());
+  }, [fetchIssueDetails, peekIssue, projectId, workspaceSlug]);
 
   useEffect(() => {
     if (peekIssue) {
