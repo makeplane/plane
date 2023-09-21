@@ -76,7 +76,7 @@ export const AllBoards: React.FC<Props> = ({
         readOnly={disableUserActions}
       />
       {groupedIssues ? (
-        <div className="horizontal-scroll-enable flex h-full gap-x-4 p-8">
+        <div className="horizontal-scroll-enable flex h-full gap-x-4 p-8 bg-custom-background-90">
           {Object.keys(groupedIssues).map((singleGroup, index) => {
             const currentState =
               displayFilters?.group_by === "state"
