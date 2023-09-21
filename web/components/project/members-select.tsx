@@ -74,15 +74,13 @@ export const MembersSelect: React.FC<Props> = ({
   }));
 
   const filteredOptions =
-    query === ""
-      ? options
-      : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
+    query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const label = (
     <Tooltip
       tooltipHeading="Assignee"
       tooltipContent={
-        membersDetails.length > 0
+        membersDetails && membersDetails.length > 0
           ? membersDetails.map((assignee) => assignee?.display_name).join(", ")
           : "No Assignee"
       }
@@ -126,15 +124,11 @@ export const MembersSelect: React.FC<Props> = ({
               ref={dropdownBtn}
               type="button"
               className={`flex items-center justify-between gap-1 w-full text-xs ${
-                disabled
-                  ? "cursor-not-allowed text-custom-text-200"
-                  : "cursor-pointer hover:bg-custom-background-80"
+                disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
               } ${buttonClassName}`}
             >
               {label}
-              {!hideDropdownArrow && !disabled && (
-                <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
-              )}
+              {!hideDropdownArrow && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
             </Combobox.Button>
             <div className={`${open ? "fixed z-20 top-0 left-0 h-full w-full cursor-auto" : ""}`}>
               <Combobox.Options

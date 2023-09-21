@@ -9,7 +9,6 @@ import { findStringWithMostCharacters } from "helpers/array.helper";
 import { generateBarColor } from "helpers/analytics.helper";
 // types
 import { IAnalyticsParams, IAnalyticsResponse } from "types";
-// constants
 
 type Props = {
   analytics: IAnalyticsResponse;

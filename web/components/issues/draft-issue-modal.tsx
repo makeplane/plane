@@ -138,8 +138,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
     // issue. This has more priority than the project in the url.
     if (data && data.project) return setActiveProject(data.project);
 
-    if (prePopulateData && prePopulateData.project && !activeProject)
-      return setActiveProject(prePopulateData.project);
+    if (prePopulateData && prePopulateData.project && !activeProject) return setActiveProject(prePopulateData.project);
 
     if (prePopulateData && prePopulateData.project) return setActiveProject(prePopulateData.project);
 
@@ -349,8 +348,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
     };
 
     if (action === "createDraft") await createDraftIssue(payload);
-    else if (action === "updateDraft" || action === "convertToNewIssue")
-      await updateDraftIssue(payload);
+    else if (action === "updateDraft" || action === "convertToNewIssue") await updateDraftIssue(payload);
     else if (action === "createNewIssue") await createIssue(payload);
 
     clearDraftIssueLocalStorage();

@@ -49,7 +49,6 @@ export const ProfileIssuesView = () => {
     groupedIssues,
     mutateProfileIssues,
     displayFilters,
-    setDisplayFilters,
     isEmpty,
     filters,
     setFilters,
