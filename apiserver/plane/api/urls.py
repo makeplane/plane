@@ -1,8 +1,6 @@
 from django.urls import path
 
-
-# Create your urls here.
-
+# Module imports
 from plane.api.views import (
     # Authentication
     SignUpEndpoint,
