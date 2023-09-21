@@ -1,6 +1,9 @@
 import React from "react";
 // swr
 import { mutate } from "swr";
+// services
+import issuesService from "services/issue.service";
+import trackEventServices from "services/track_event.service";
 // components
 import { ViewDueDateSelect, ViewStartDateSelect } from "components/issues";
 import { MembersSelect, PrioritySelect } from "components/project";
@@ -11,9 +14,6 @@ import useIssuesProperties from "hooks/use-issue-properties";
 import { ICurrentUserResponse, IIssue, IState } from "types";
 // fetch-keys
 import { SUB_ISSUES } from "constants/fetch-keys";
-// services
-import issuesService from "services/issues.service";
-import trackEventServices from "services/track-event.service";
 
 export interface IIssueProperty {
   workspaceSlug: string;
@@ -121,13 +121,7 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
       false
     );
 
-    const issueResponse = await issuesService.patchIssue(
-      workspaceSlug as string,
-      issue.project,
-      issue.id,
-      data,
-      user
-    );
+    const issueResponse = await issuesService.patchIssue(workspaceSlug as string, issue.project, issue.id, data, user);
 
     mutate(
       SUB_ISSUES(parentIssue.id),
@@ -157,12 +151,7 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
 
       {properties.state && (
         <div className="flex-shrink-0">
-          <StateSelect
-            value={issue.state_detail}
-            onChange={handleStateChange}
-            hideDropdownArrow
-            disabled={!editable}
-          />
+          <StateSelect value={issue.state_detail} onChange={handleStateChange} hideDropdownArrow disabled={!editable} />
         </div>
       )}
 

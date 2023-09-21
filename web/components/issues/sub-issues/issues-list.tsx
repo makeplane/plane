@@ -6,7 +6,7 @@ import { SubIssues } from "./issue";
 // types
 import { ICurrentUserResponse, IIssue } from "types";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // fetch keys
 import { SUB_ISSUES } from "constants/fetch-keys";
 
@@ -42,9 +42,7 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
   handleIssueCrudOperation,
 }) => {
   const { data: issues, isLoading } = useSWR(
-    workspaceSlug && projectId && parentIssue && parentIssue?.id
-      ? SUB_ISSUES(parentIssue?.id)
-      : null,
+    workspaceSlug && projectId && parentIssue && parentIssue?.id ? SUB_ISSUES(parentIssue?.id) : null,
     workspaceSlug && projectId && parentIssue && parentIssue?.id
       ? () => issuesService.subIssues(workspaceSlug, projectId, parentIssue.id)
       : null
@@ -74,9 +72,7 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
         ))}
 
       <div
-        className={`absolute top-0 bottom-0  ${
-          spacingLeft > 10 ? `border-l border-custom-border-100` : ``
-        }`}
+        className={`absolute top-0 bottom-0  ${spacingLeft > 10 ? `border-l border-custom-border-100` : ``}`}
         style={{ left: `${spacingLeft - 12}px` }}
       />
     </div>

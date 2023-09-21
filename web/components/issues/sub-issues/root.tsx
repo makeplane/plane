@@ -19,7 +19,7 @@ import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { ICurrentUserResponse, IIssue, ISearchIssueResponse } from "types";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // fetch keys
 import { SUB_ISSUES } from "constants/fetch-keys";
 
@@ -37,9 +37,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user, edi
   const { memberRole } = useProjectMyMembership();
 
   const { data: issues } = useSWR(
-    workspaceSlug && projectId && parentIssue && parentIssue?.id
-      ? SUB_ISSUES(parentIssue?.id)
-      : null,
+    workspaceSlug && projectId && parentIssue && parentIssue?.id ? SUB_ISSUES(parentIssue?.id) : null,
     workspaceSlug && projectId && parentIssue && parentIssue?.id
       ? () => issuesService.subIssues(workspaceSlug, projectId, parentIssue.id)
       : null
@@ -108,16 +106,13 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user, edi
 
   const removeIssueFromSubIssues = async (parentIssueId: string, issue: IIssue) => {
     if (!workspaceSlug || !parentIssue || !issue?.id) return;
-    issuesService
-      .patchIssue(workspaceSlug, projectId, issue.id, { parent: null }, user)
-      .finally(() => {
-        if (parentIssueId) mutate(SUB_ISSUES(parentIssueId));
-      });
+    issuesService.patchIssue(workspaceSlug, projectId, issue.id, { parent: null }, user).finally(() => {
+      if (parentIssueId) mutate(SUB_ISSUES(parentIssueId));
+    });
   };
 
   const copyText = (text: string) => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
     copyTextToClipboard(`${originURL}/${text}`).then(() => {
       // setToastAlert({
       //   type: "success",
@@ -157,10 +152,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user, edi
             <div className="w-full max-w-[250px] select-none">
               <ProgressBar
                 total={parentIssue?.sub_issues_count}
-                done={
-                  (issues?.state_distribution?.cancelled || 0) +
-                  (issues?.state_distribution?.completed || 0)
-                }
+                done={(issues?.state_distribution?.cancelled || 0) + (issues?.state_distribution?.completed || 0)}
               />
             </div>
 
@@ -217,14 +209,10 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user, edi
                 noBorder
                 noChevron
               >
-                <CustomMenu.MenuItem
-                  onClick={() => handleIssueCrudOperation("create", parentIssue?.id)}
-                >
+                <CustomMenu.MenuItem onClick={() => handleIssueCrudOperation("create", parentIssue?.id)}>
                   Create new
                 </CustomMenu.MenuItem>
-                <CustomMenu.MenuItem
-                  onClick={() => handleIssueCrudOperation("existing", parentIssue?.id)}
-                >
+                <CustomMenu.MenuItem onClick={() => handleIssueCrudOperation("existing", parentIssue?.id)}>
                   Add an existing issue
                 </CustomMenu.MenuItem>
               </CustomMenu>
@@ -243,17 +231,15 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user, edi
         />
       )}
 
-      {isEditable &&
-        issueCrudOperation?.existing?.toggle &&
-        issueCrudOperation?.existing?.issueId && (
-          <ExistingIssuesListModal
-            isOpen={issueCrudOperation?.existing?.toggle}
-            handleClose={() => handleIssueCrudOperation("existing", null)}
-            searchParams={{ sub_issue: true, issue_id: issueCrudOperation?.existing?.issueId }}
-            handleOnSubmit={addAsSubIssueFromExistingIssues}
-            workspaceLevelToggle
-          />
-        )}
+      {isEditable && issueCrudOperation?.existing?.toggle && issueCrudOperation?.existing?.issueId && (
+        <ExistingIssuesListModal
+          isOpen={issueCrudOperation?.existing?.toggle}
+          handleClose={() => handleIssueCrudOperation("existing", null)}
+          searchParams={{ sub_issue: true, issue_id: issueCrudOperation?.existing?.issueId }}
+          handleOnSubmit={addAsSubIssueFromExistingIssues}
+          workspaceLevelToggle
+        />
+      )}
 
       {isEditable && issueCrudOperation?.edit?.toggle && issueCrudOperation?.edit?.issueId && (
         <CreateUpdateIssueModal
