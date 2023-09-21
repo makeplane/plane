@@ -27,7 +27,7 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
   workspaceSlug,
   projectId,
   parentIssue,
-  spacingLeft = 0,
+  spacingLeft = 10,
   user,
   editable,
   removeIssueFromSubIssues,
@@ -44,10 +44,8 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
       : null
   );
 
-  console.log("isLoading", isLoading);
-
   return (
-    <>
+    <div className="relative">
       {issues &&
         issues.sub_issues.length > 0 &&
         issues.sub_issues.map((issue: IIssue) => (
@@ -66,6 +64,13 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
             copyText={copyText}
           />
         ))}
-    </>
+
+      <div
+        className={`absolute top-0 bottom-0  ${
+          spacingLeft > 10 ? `border-l border-custom-border-100` : ``
+        }`}
+        style={{ left: `${spacingLeft - 12}px` }}
+      />
+    </div>
   );
 };

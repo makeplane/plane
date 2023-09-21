@@ -49,10 +49,10 @@ export const SubIssues: React.FC<ISubIssues> = ({
   <div>
     {issue && (
       <div
-        className="relative flex items-center px-2 gap-2 hover:bg-custom-background-90 group transition-all border-b border-custom-border-100 py-1"
+        className="relative flex items-center gap-2 py-1 px-2 w-full h-full hover:bg-custom-background-90 group transition-all border-b border-custom-border-100"
         style={{ paddingLeft: `${spacingLeft}px` }}
       >
-        <div className="flex-shrink-0 w-[22px] h-[22px] border-l border-custom-border-100">
+        <div className="flex-shrink-0 w-[22px] h-[22px]">
           {issue?.sub_issues_count > 0 && (
             <>
               {true ? (
@@ -84,9 +84,7 @@ export const SubIssues: React.FC<ISubIssues> = ({
             <div className="flex-shrink-0 text-xs text-custom-text-200">
               {issue.project_detail.identifier}-{issue?.sequence_id}
             </div>
-            <div className="line-clamp-1 text-xs font-medium text-custom-text-100">
-              {issue?.name}
-            </div>
+            <div className="line-clamp-1 text-xs text-custom-text-100">{issue?.name}</div>
           </a>
         </Link>
 
@@ -103,23 +101,23 @@ export const SubIssues: React.FC<ISubIssues> = ({
 
         <div className="flex-shrink-0 text-sm">
           <CustomMenu width="auto" ellipsis>
-            {/* {editable && (
+            {editable && (
               <CustomMenu.MenuItem onClick={() => editIssue()}>
                 <div className="flex items-center justify-start gap-2">
                   <Pencil width={14} strokeWidth={2} />
                   <span>Edit issue</span>
                 </div>
               </CustomMenu.MenuItem>
-            )} */}
+            )}
 
-            {/* {editable && (
+            {editable && (
               <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
                 <div className="flex items-center justify-start gap-2">
                   <Trash width={14} strokeWidth={2} />
                   <span>Delete issue</span>
                 </div>
               </CustomMenu.MenuItem>
-            )} */}
+            )}
 
             <CustomMenu.MenuItem onClick={copyText}>
               <div className="flex items-center justify-start gap-2">

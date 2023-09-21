@@ -121,20 +121,18 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user, edi
           {/* header */}
           <div className="relative flex items-center gap-4 text-xs">
             <div
-              className="flex items-center gap-2 hover:bg-custom-background-80 transition-all cursor-pointer p-1.5 pl-[3px] rounded-sm select-none"
+              className="rounded border border-custom-border-100 shadow p-1.5 px-2 flex items-center gap-1 hover:bg-custom-background-80 transition-all cursor-pointer select-none"
               onClick={() => handleIssuesVisibility(parentIssue?.id)}
             >
               <div className="flex-shrink-0 w-[16px] h-[16px] flex justify-center items-center">
-                {issuesVisibility.includes(parentIssue?.id) ? (
+                {!issuesVisibility.includes(parentIssue?.id) ? (
                   <ChevronDown width={16} strokeWidth={2} />
                 ) : (
                   <ChevronRight width={14} strokeWidth={2} />
                 )}
               </div>
-              <div className="flex items-center gap-2">
-                <div>Sub-issues</div>
-                <div>({parentIssue?.sub_issues_count})</div>
-              </div>
+              <div>Sub-issues</div>
+              <div>({parentIssue?.sub_issues_count})</div>
             </div>
 
             <div className="w-full max-w-[250px] select-none">
@@ -166,8 +164,8 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user, edi
           </div>
 
           {/* issues */}
-          <div className="border border-custom-border-100">
-            {issuesVisibility.includes(parentIssue?.id) && (
+          {issuesVisibility.includes(parentIssue?.id) && (
+            <div className="border border-b-0 border-custom-border-100">
               <SubIssuesRootList
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
@@ -179,8 +177,8 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user, edi
                 handleIssuesVisibility={handleIssuesVisibility}
                 copyText={copyText}
               />
-            )}
-          </div>
+            </div>
+          )}
         </>
       ) : (
         isEditable && (
