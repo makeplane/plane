@@ -22,7 +22,7 @@ import { ICurrentUserResponse, IIssue, ISearchIssueResponse } from "types";
 // services
 import issuesService from "services/issues.service";
 // fetch keys
-import { ISSUE_DETAILS, SUB_ISSUES } from "constants/fetch-keys";
+import { SUB_ISSUES } from "constants/fetch-keys";
 
 export interface ISubIssuesRoot {
   parentIssue: IIssue;

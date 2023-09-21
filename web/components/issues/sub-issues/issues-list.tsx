@@ -51,6 +51,16 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
       : null
   );
 
+  React.useEffect(() => {
+    if (isLoading) {
+      handleIssuesLoader({ key: "sub_issues", issueId: parentIssue?.id });
+    } else {
+      if (issuesLoader.sub_issues.includes(parentIssue?.id)) {
+        handleIssuesLoader({ key: "sub_issues", issueId: parentIssue?.id });
+      }
+    }
+  }, [isLoading]);
+
   return (
     <div className="relative">
       {issues &&
