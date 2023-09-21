@@ -18,7 +18,6 @@ import {
   IssueAttachmentUpload,
   IssueAttachments,
   IssueDescriptionForm,
-  SubIssuesList,
   IssueReaction,
 } from "components/issues";
 import { SubIssuesRoot } from "./sub-issues";
@@ -208,7 +207,6 @@ export const IssueMainContent: React.FC<Props> = ({
 
         <div className="mt-2 space-y-2">
           <SubIssuesRoot parentIssue={issueDetails} user={user} editable={uneditable} />
-          {/* <SubIssuesList parentIssue={issueDetails} user={user} disabled={uneditable} /> */}
         </div>
       </div>
       <div className="flex flex-col gap-3 py-3">
