@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -82,7 +82,8 @@ export const IssuesView: React.FC<Props> = ({ openIssuesListModal, disableUserAc
 
   const { setToastAlert } = useToast();
 
-  const { groupedByIssues, mutateIssues, displayFilters, filters, isEmpty, setFilters, params } = useIssuesView();
+  const { groupedByIssues, mutateIssues, displayFilters, filters, isEmpty, setFilters, params, setDisplayFilters } =
+    useIssuesView();
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
   const { data: stateGroups } = useSWR(
@@ -99,6 +100,17 @@ export const IssuesView: React.FC<Props> = ({ openIssuesListModal, disableUserAc
   );
 
   const { members } = useProjectMembers(workspaceSlug?.toString(), projectId?.toString());
+
+  useEffect(() => {
+    if (!isDraftIssues) return;
+
+    if (
+      displayFilters.layout === "calendar" ||
+      displayFilters.layout === "gantt_chart" ||
+      displayFilters.layout === "spreadsheet"
+    )
+      setDisplayFilters({ layout: "list" });
+  }, [isDraftIssues, displayFilters, setDisplayFilters]);
 
   const handleDeleteIssue = useCallback(
     (issue: IIssue) => {

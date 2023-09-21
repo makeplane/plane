@@ -50,8 +50,6 @@ export const BoardHeader: React.FC<Props> = ({
 
   const { displayFilters, groupedIssues } = viewProps;
 
-  console.log("dF", displayFilters);
-
   const { data: issueLabels } = useSWR(
     workspaceSlug && projectId && displayFilters?.group_by === "labels"
       ? PROJECT_ISSUE_LABELS(projectId.toString())
