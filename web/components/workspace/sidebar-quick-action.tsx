@@ -3,8 +3,6 @@ import React, { useState } from "react";
 // ui
 import { Icon } from "components/ui";
 import { ChevronDown, PenSquare } from "lucide-react";
-// headless ui
-import { Menu, Transition } from "@headlessui/react";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
 // components
@@ -17,10 +15,7 @@ export const WorkspaceSidebarQuickAction = () => {
 
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
 
-  const { storedValue, clearValue } = useLocalStorage<any>(
-    "draftedIssue",
-    JSON.stringify(undefined)
-  );
+  const { storedValue, clearValue } = useLocalStorage<any>("draftedIssue", JSON.stringify({}));
 
   return (
     <>
@@ -31,18 +26,17 @@ export const WorkspaceSidebarQuickAction = () => {
         onSubmit={() => {
           localStorage.removeItem("draftedIssue");
           clearValue();
-          setIsDraftIssueModalOpen(false);
         }}
         fieldsToShow={["all"]}
       />
 
       <div
-        className={`relative flex items-center justify-between w-full cursor-pointer px-4 mt-4 ${
+        className={`flex items-center justify-between w-full cursor-pointer px-4 mt-4 ${
           store?.theme?.sidebarCollapsed ? "flex-col gap-1" : "gap-2"
         }`}
       >
         <div
-          className={`flex items-center justify-between w-full rounded cursor-pointer px-2 gap-1 group ${
+          className={`relative flex items-center justify-between w-full rounded cursor-pointer px-2 gap-1 group ${
             store?.theme?.sidebarCollapsed
               ? "px-2 hover:bg-custom-sidebar-background-80"
               : "px-3 shadow border-[0.5px] border-custom-border-300"
@@ -50,7 +44,7 @@ export const WorkspaceSidebarQuickAction = () => {
         >
           <button
             type="button"
-            className="flex items-center gap-2 flex-grow rounded flex-shrink-0 py-1.5"
+            className="relative flex items-center gap-2 flex-grow rounded flex-shrink-0 py-1.5"
             onClick={() => {
               const e = new KeyboardEvent("keydown", { key: "c" });
               document.dispatchEvent(e);
@@ -65,56 +59,35 @@ export const WorkspaceSidebarQuickAction = () => {
             )}
           </button>
 
-          {storedValue && <div className="h-8 w-0.5 bg-custom-sidebar-background-80" />}
+          {storedValue && Object.keys(JSON.parse(storedValue)).length > 0 && (
+            <>
+              <div className="h-8 w-0.5 bg-custom-sidebar-background-80" />
 
-          {storedValue && (
-            <div className="relative">
-              <Menu as={React.Fragment}>
-                {({ open }) => (
-                  <>
-                    <div>
-                      <Menu.Button
-                        type="button"
-                        className={`flex items-center justify-center rounded flex-shrink-0 p-1.5 ${
-                          open ? "rotate-180 pl-0" : "rotate-0 pr-0"
-                        }`}
-                      >
-                        <ChevronDown
-                          size={16}
-                          className="!text-custom-sidebar-text-300 transform transition-transform duration-300"
-                        />
-                      </Menu.Button>
-                    </div>
-                    <Transition
-                      as={React.Fragment}
-                      enter="transition ease-out duration-100"
-                      enterFrom="transform opacity-0 scale-95"
-                      enterTo="transform opacity-100 scale-100"
-                      leave="transition ease-in duration-75"
-                      leaveFrom="transform opacity-100 scale-100"
-                      leaveTo="transform opacity-0 scale-95"
-                    >
-                      <Menu.Items className="absolute -right-4 mt-1 w-52 bg-custom-background-300">
-                        <div className="px-1 py-1 ">
-                          <Menu.Item>
-                            <button
-                              onClick={() => setIsDraftIssueModalOpen(true)}
-                              className="w-full flex text-sm items-center rounded flex-shrink-0 py-[10px] px-3 bg-custom-background-100 shadow border-[0.5px] border-custom-border-300 text-custom-text-300"
-                            >
-                              <PenSquare
-                                size={16}
-                                className="!text-lg !leading-4 text-custom-sidebar-text-300 mr-2"
-                              />
-                              Last Drafted Issue
-                            </button>
-                          </Menu.Item>
-                        </div>
-                      </Menu.Items>
-                    </Transition>
-                  </>
-                )}
-              </Menu>
-            </div>
+              <button
+                type="button"
+                className="flex items-center justify-center rounded flex-shrink-0 py-1.5 ml-1.5"
+              >
+                <ChevronDown
+                  size={16}
+                  className="!text-custom-sidebar-text-300 transform transition-transform duration-300 group-hover:rotate-180 rotate-0"
+                />
+              </button>
+
+              <div className="absolute w-full h-10 pt-2 top-full left-0 opacity-0 group-hover:opacity-100 mt-0 pointer-events-none group-hover:pointer-events-auto">
+                <div className="w-full h-full">
+                  <button
+                    onClick={() => setIsDraftIssueModalOpen(true)}
+                    className="w-full flex text-sm items-center rounded flex-shrink-0 py-[10px] px-3 bg-custom-background-100 shadow border-[0.5px] border-custom-border-300 text-custom-text-300"
+                  >
+                    <PenSquare
+                      size={16}
+                      className="!text-lg !leading-4 text-custom-sidebar-text-300 mr-2"
+                    />
+                    Last Drafted Issue
+                  </button>
+                </div>
+              </div>
+            </>
           )}
         </div>
 

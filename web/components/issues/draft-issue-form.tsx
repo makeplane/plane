@@ -55,7 +55,10 @@ const defaultValues: Partial<IIssue> = {
 };
 
 interface IssueFormProps {
-  handleFormSubmit: (formData: Partial<IIssue>) => Promise<void>;
+  handleFormSubmit: (
+    formData: Partial<IIssue>,
+    action?: "createDraft" | "createNewIssue" | "updateDraft" | "convertToNewIssue"
+  ) => Promise<void>;
   data?: Partial<IIssue> | null;
   prePopulatedData?: Partial<IIssue> | null;
   projectId: string;
@@ -134,12 +137,16 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
 
   const handleCreateUpdateIssue = async (
     formData: Partial<IIssue>,
-    action: "saveDraft" | "createToNewIssue" = "saveDraft"
+    action: "createDraft" | "createNewIssue" | "updateDraft" | "convertToNewIssue" = "createDraft"
   ) => {
-    await handleFormSubmit({
-      ...formData,
-      is_draft: action === "saveDraft",
-    });
+    await handleFormSubmit(
+      {
+        ...(data ?? {}),
+        ...formData,
+        is_draft: action === "createDraft" || action === "updateDraft",
+      },
+      action
+    );
 
     setGptAssistantModal(false);
 
@@ -263,7 +270,9 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
         </>
       )}
       <form
-        onSubmit={handleSubmit((formData) => handleCreateUpdateIssue(formData, "createToNewIssue"))}
+        onSubmit={handleSubmit((formData) =>
+          handleCreateUpdateIssue(formData, "convertToNewIssue")
+        )}
       >
         <div className="space-y-5">
           <div className="flex items-center gap-x-2">
@@ -563,15 +572,20 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
             <SecondaryButton onClick={onClose}>Discard</SecondaryButton>
             <SecondaryButton
               loading={isSubmitting}
-              onClick={handleSubmit((formData) => handleCreateUpdateIssue(formData, "saveDraft"))}
+              onClick={handleSubmit((formData) =>
+                handleCreateUpdateIssue(formData, data?.id ? "updateDraft" : "createDraft")
+              )}
             >
               {isSubmitting ? "Saving..." : "Save Draft"}
             </SecondaryButton>
-            {data && (
-              <PrimaryButton type="submit" loading={isSubmitting}>
-                {isSubmitting ? "Saving..." : "Add Issue"}
-              </PrimaryButton>
-            )}
+            <PrimaryButton
+              loading={isSubmitting}
+              onClick={handleSubmit((formData) =>
+                handleCreateUpdateIssue(formData, data ? "convertToNewIssue" : "createNewIssue")
+              )}
+            >
+              {isSubmitting ? "Saving..." : "Add Issue"}
+            </PrimaryButton>
           </div>
         </div>
       </form>
