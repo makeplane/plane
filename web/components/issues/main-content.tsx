@@ -21,6 +21,7 @@ import {
   SubIssuesList,
   IssueReaction,
 } from "components/issues";
+import { SubIssuesRoot } from "./sub-issues";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
@@ -206,7 +207,8 @@ export const IssueMainContent: React.FC<Props> = ({
         <IssueReaction workspaceSlug={workspaceSlug} issueId={issueId} projectId={projectId} />
 
         <div className="mt-2 space-y-2">
-          <SubIssuesList parentIssue={issueDetails} user={user} disabled={uneditable} />
+          <SubIssuesRoot parentIssue={issueDetails} user={user} editable={uneditable} />
+          {/* <SubIssuesList parentIssue={issueDetails} user={user} disabled={uneditable} /> */}
         </div>
       </div>
       <div className="flex flex-col gap-3 py-3">

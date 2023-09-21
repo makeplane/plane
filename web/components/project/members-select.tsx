@@ -82,7 +82,7 @@ export const MembersSelect: React.FC<Props> = ({
     <Tooltip
       tooltipHeading="Assignee"
       tooltipContent={
-        membersDetails.length > 0
+        membersDetails && membersDetails.length > 0
           ? membersDetails.map((assignee) => assignee?.display_name).join(", ")
           : "No Assignee"
       }
