@@ -86,12 +86,14 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
   };
 
   const handleAssigneeChange = (data: any) => {
-    const newData = issue.assignees ?? [];
+    let newData = issue.assignees ?? [];
 
-    if (newData.includes(data)) newData.splice(newData.indexOf(data), 1);
-    else newData.push(data);
+    if (newData && newData.length > 0) {
+      if (newData.includes(data)) newData = newData.splice(newData.indexOf(data), 1);
+      else newData = [...newData, data];
+    } else newData = [...newData, data];
 
-    partialUpdateIssue({ assignees_list: data });
+    partialUpdateIssue({ assignees_list: data, assignees: data });
 
     trackEventServices.trackIssuePartialPropertyUpdateEvent(
       {
