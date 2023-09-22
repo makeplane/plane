@@ -9,7 +9,12 @@ export interface IIssueStore {
   issues: {
     [project_id: string]: {
       grouped: {
-        [issueId: string]: IIssue[];
+        [group_id: string]: IIssue[];
+      };
+      groupWithSubGroups: {
+        [group_id: string]: {
+          [sub_group_id: string]: IIssue[];
+        };
       };
       ungrouped: IIssue[];
     };
@@ -27,6 +32,11 @@ class IssueStore implements IIssueStore {
     [project_id: string]: {
       grouped: {
         [issueId: string]: IIssue[];
+      };
+      groupWithSubGroups: {
+        [group_id: string]: {
+          [sub_group_id: string]: IIssue[];
+        };
       };
       ungrouped: IIssue[];
     };
