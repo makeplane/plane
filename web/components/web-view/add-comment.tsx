@@ -10,7 +10,7 @@ import { useForm, Controller } from "react-hook-form";
 import useProjectDetails from "hooks/use-project-details";
 
 // components
-import { TipTapEditor } from "components/tiptap";
+import { TiptapEditorWithRef } from "@plane/editor";
 
 // icons
 import { Send } from "lucide-react";
@@ -20,6 +20,7 @@ import { Icon, SecondaryButton, Tooltip, PrimaryButton } from "components/ui";
 
 // types
 import type { IIssueComment } from "types";
+import fileService from "@/services/file.service";
 
 const defaultValues: Partial<IIssueComment> = {
   access: "INTERNAL",
@@ -85,15 +86,13 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit }) => {
                       <button
                         type="button"
                         onClick={() => onChange(access.key)}
-                        className={`grid place-items-center p-1 hover:bg-custom-background-80 ${
-                          value === access.key ? "bg-custom-background-80" : ""
-                        }`}
+                        className={`grid place-items-center p-1 hover:bg-custom-background-80 ${value === access.key ? "bg-custom-background-80" : ""
+                          }`}
                       >
                         <Icon
                           iconName={access.icon}
-                          className={`w-4 h-4 -mt-1 ${
-                            value === access.key ? "!text-custom-text-100" : "!text-custom-text-400"
-                          }`}
+                          className={`w-4 h-4 -mt-1 ${value === access.key ? "!text-custom-text-100" : "!text-custom-text-400"
+                            }`}
                         />
                       </button>
                     </Tooltip>
@@ -107,7 +106,9 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit }) => {
           name="comment_html"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <TipTapEditor
+            <TiptapEditorWithRef
+              uploadFile={fileService.uploadFile}
+              deleteFile={fileService.deleteImage}
               workspaceSlug={workspaceSlug as string}
               ref={editorRef}
               value={!value || value === "" ? "<p></p>" : value}

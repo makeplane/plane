@@ -9,7 +9,8 @@ import userService from "services/user.service";
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
 import { ActivityIcon, ActivityMessage } from "components/core";
-import { TipTapEditor } from "components/tiptap";
+import { TiptapEditor } from "@plane/editor";
+// import { TipTapEditor } from "components/tiptap";
 // icons
 import { ArrowTopRightOnSquareIcon, ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
 // ui
@@ -20,6 +21,7 @@ import { USER_ACTIVITY } from "constants/fetch-keys";
 // helper
 import { timeAgo } from "helpers/date-time.helper";
 import { SettingsSidebar } from "components/project";
+import fileService from "@/services/file.service";
 
 const ProfileActivity = () => {
   const router = useRouter();
@@ -96,7 +98,9 @@ const ProfileActivity = () => {
                               </p>
                             </div>
                             <div className="issue-comments-section p-0">
-                              <TipTapEditor
+                              <TiptapEditor
+                                uploadFile={fileService.uploadFile}
+                                deleteFile={fileService.deleteImage}
                                 workspaceSlug={workspaceSlug as string}
                                 value={
                                   activityItem?.new_value !== ""

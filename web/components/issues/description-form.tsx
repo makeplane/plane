@@ -137,13 +137,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
               <TiptapEditor
                 uploadFile={fileService.uploadFile}
                 deleteFile={fileService.deleteImage}
-                value={
-                  !value ||
-                    value === "" ||
-                    (typeof value === "object" && Object.keys(value).length === 0)
-                    ? "<p></p>"
-                    : value
-                }
+                value={value}
                 workspaceSlug={workspaceSlug}
                 debouncedUpdatesEnabled={true}
                 setShouldShowAlert={setShowAlert}
