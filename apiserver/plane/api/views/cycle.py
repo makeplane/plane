@@ -80,7 +80,7 @@ class CycleViewSet(BaseViewSet):
             issue_id=str(self.kwargs.get("pk", None)),
             project_id=str(self.kwargs.get("project_id", None)),
             current_instance=None,
-            epoch = int(timezone.now().timestamp())
+            epoch=int(timezone.now().timestamp())
         )
 
         return super().perform_destroy(instance)
@@ -576,7 +576,7 @@ class CycleIssueViewSet(BaseViewSet):
             issue_id=str(self.kwargs.get("pk", None)),
             project_id=str(self.kwargs.get("project_id", None)),
             current_instance=None,
-            epoch = int(timezone.now().timestamp())
+            epoch=int(timezone.now().timestamp())
         )
         return super().perform_destroy(instance)
 
@@ -752,7 +752,7 @@ class CycleIssueViewSet(BaseViewSet):
                         ),
                     }
                 ),
-                epoch = int(timezone.now().timestamp())
+                epoch=int(timezone.now().timestamp())
             )
 
             # Return all Cycle Issues
