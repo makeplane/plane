@@ -8,7 +8,7 @@ from django.conf import settings
 
 # Module import
 from . import BaseModel
-
+from plane.settings.storage import PublicS3Storage
 
 def get_upload_path(instance, filename):
     if instance.workspace_id is not None:
@@ -32,6 +32,7 @@ class FileAsset(BaseModel):
         validators=[
             file_size,
         ],
+        storage=PublicS3Storage,
     )
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, null=True, related_name="assets"

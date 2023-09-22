@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "taggit",
     "django_celery_beat",
+    "storages",
 ]
 
 MIDDLEWARE = [

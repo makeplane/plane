@@ -114,3 +114,31 @@ CELERY_BROKER_URL = os.environ.get("REDIS_URL")
 GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)
 
 ENABLE_SIGNUP = os.environ.get("ENABLE_SIGNUP", "1") == "1"
+
+# Storage Settings
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+STORAGES["default"] = {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"}
+# Common AWS settings
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+AWS_REGION_NAME = os.environ.get("AWS_REGION")
+AWS_S3_ADDRESSING_STYLE = os.environ.get("AWS_S3_ADDRESSING_STYLE")
+
+# Public S3 bucket settings
+AWS_PUBLIC_STORAGE_BUCKET_NAME = os.environ.get("AWS_PUBLIC_STORAGE_BUCKET_NAME")
+AWS_PUBLIC_DEFAULT_ACL = "public-read"
+AWS_S3_PUBLIC_OBJECT_PARAMETERS = {
+    "CacheControl": "max-age=86400",
+}
+PUBLIC_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+
+# Private S3 bucket settings
+AWS_PRIVATE_STORAGE_BUCKET_NAME = os.environ.get("AWS_PRIVATE_STORAGE_BUCKET_NAME")
+AWS_S3_PRIVATE_FILE_OVERWRITE = False
+AWS_PRIVATE_DEFAULT_ACL = "private"
+PRIVATE_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+# End Storage Settings

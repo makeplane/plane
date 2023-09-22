@@ -55,33 +55,33 @@ CORS_ALLOW_HEADERS = [
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True
 
+# Storage Settings
 STORAGES = {
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
-
-INSTALLED_APPS += ("storages",)
 STORAGES["default"] = {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"}
-# The AWS access key to use.
+# Common AWS settings
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "access-key")
-# The AWS secret access key to use.
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "secret-key")
-# The name of the bucket to store files in.
-AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME", "uploads")
-# The full URL to the S3 endpoint. Leave blank to use the default region URL.
 AWS_S3_ENDPOINT_URL = os.environ.get(
     "AWS_S3_ENDPOINT_URL", "http://plane-minio:9000"
 )
-# Default permissions
-AWS_DEFAULT_ACL = "public-read"
-AWS_QUERYSTRING_AUTH = False
-AWS_S3_FILE_OVERWRITE = False
+# Public S3 bucket settings
+AWS_PUBLIC_STORAGE_BUCKET_NAME = os.environ.get("AWS_PUBLIC_STORAGE_BUCKET_NAME")
+AWS_PUBLIC_DEFAULT_ACL = "public-read"
+AWS_S3_PUBLIC_OBJECT_PARAMETERS = {
+    "CacheControl": "max-age=86400",
+}
+PUBLIC_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
-# Custom Domain settings
-parsed_url = urlparse(os.environ.get("WEB_URL", "http://localhost"))
-AWS_S3_CUSTOM_DOMAIN = f"{parsed_url.netloc}/{AWS_STORAGE_BUCKET_NAME}"
-AWS_S3_URL_PROTOCOL = f"{parsed_url.scheme}:"
+# Private S3 bucket settings
+AWS_PRIVATE_STORAGE_BUCKET_NAME = os.environ.get("AWS_PRIVATE_STORAGE_BUCKET_NAME")
+AWS_S3_PRIVATE_FILE_OVERWRITE = False
+AWS_PRIVATE_DEFAULT_ACL = "private"
+PRIVATE_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+## End Storage settings
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

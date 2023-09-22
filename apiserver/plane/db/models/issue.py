@@ -14,7 +14,7 @@ from django.core.exceptions import ValidationError
 # Module imports
 from . import ProjectBaseModel
 from plane.utils.html_processor import strip_tags
-
+from plane.settings.storage import PrivateS3Storage
 
 # TODO: Handle identifiers for Bulk Inserts - nk
 class IssueManager(models.Manager):
@@ -267,6 +267,7 @@ class IssueAttachment(ProjectBaseModel):
         validators=[
             file_size,
         ],
+        storage=PrivateS3Storage,
     )
     issue = models.ForeignKey(
         "db.Issue", on_delete=models.CASCADE, related_name="issue_attachment"
