@@ -1,5 +1,9 @@
 import { useRouter } from "next/router";
 
+import useSWR from "swr";
+
+// services
+import issuesService from "services/issues.service";
 // icons
 import { Icon, Tooltip } from "components/ui";
 import { CopyPlus } from "lucide-react";
@@ -10,6 +14,8 @@ import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
 import { IIssueActivity } from "types";
+// fetch-keys
+import { WORKSPACE_LABELS } from "constants/fetch-keys";
 
 const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
   const router = useRouter();
@@ -49,6 +55,26 @@ const UserLink = ({ activity }: { activity: IIssueActivity }) => {
     >
       {activity.new_value && activity.new_value !== "" ? activity.new_value : activity.old_value}
     </a>
+  );
+};
+
+const LabelPill = ({ labelId }: { labelId: string }) => {
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
+  const { data: labels } = useSWR(
+    workspaceSlug ? WORKSPACE_LABELS(workspaceSlug.toString()) : null,
+    workspaceSlug ? () => issuesService.getWorkspaceLabels(workspaceSlug.toString()) : null
+  );
+
+  return (
+    <span
+      className="h-1.5 w-1.5 rounded-full"
+      style={{
+        backgroundColor: labels?.find((l) => l.id === labelId)?.color ?? "#000000",
+      }}
+      aria-hidden="true"
+    />
   );
 };
 
@@ -325,14 +351,8 @@ const activityDetails: {
         return (
           <>
             added a new label{" "}
-            <span className="inline-flex items-center gap-3 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
-              <span
-                className="h-1.5 w-1.5 rounded-full"
-                style={{
-                  backgroundColor: "#000000",
-                }}
-                aria-hidden="true"
-              />
+            <span className="inline-flex items-center gap-2 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
+              <LabelPill labelId={activity.new_identifier ?? ""} />
               <span className="font-medium text-custom-text-100">{activity.new_value}</span>
             </span>
             {showIssue && (
@@ -348,13 +368,7 @@ const activityDetails: {
           <>
             removed the label{" "}
             <span className="inline-flex items-center gap-3 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
-              <span
-                className="h-1.5 w-1.5 rounded-full"
-                style={{
-                  backgroundColor: "#000000",
-                }}
-                aria-hidden="true"
-              />
+              <LabelPill labelId={activity.old_identifier ?? ""} />
               <span className="font-medium text-custom-text-100">{activity.old_value}</span>
             </span>
             {showIssue && (

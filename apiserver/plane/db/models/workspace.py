@@ -17,7 +17,7 @@ ROLE_CHOICES = (
 def get_default_props():
     return {
         "filters": {
-            "priority": None,
+            "priority": "none",
             "state": None,
             "state_group": None,
             "assignees": None,

@@ -2,6 +2,7 @@
 import json
 
 # Django Imports
+from django.utils import timezone
 from django.db import IntegrityError
 from django.db.models import Prefetch, F, OuterRef, Func, Exists, Count, Q
 from django.core import serializers
@@ -158,6 +159,7 @@ class ModuleViewSet(BaseViewSet):
             issue_id=str(self.kwargs.get("pk", None)),
             project_id=str(self.kwargs.get("project_id", None)),
             current_instance=None,
+            epoch = int(timezone.now().timestamp())
         )
 
         return super().perform_destroy(instance)
@@ -340,6 +342,7 @@ class ModuleIssueViewSet(BaseViewSet):
             issue_id=str(self.kwargs.get("pk", None)),
             project_id=str(self.kwargs.get("project_id", None)),
             current_instance=None,
+            epoch = int(timezone.now().timestamp())
         )
         return super().perform_destroy(instance)
 
@@ -507,6 +510,7 @@ class ModuleIssueViewSet(BaseViewSet):
                         ),
                     }
                 ),
+                epoch = int(timezone.now().timestamp())
             )
 
             return Response(

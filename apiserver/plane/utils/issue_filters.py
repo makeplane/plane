@@ -40,9 +40,6 @@ def filter_priority(params, filter, method):
         priorities = params.get("priority").split(",")
         if len(priorities) and "" not in priorities:
             filter["priority__in"] = priorities
-    else:
-        if params.get("priority", None) and len(params.get("priority")):
-            filter["priority__in"] = params.get("priority")
     return filter
 
 
