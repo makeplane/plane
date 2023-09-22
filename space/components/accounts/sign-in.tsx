@@ -33,7 +33,7 @@ export const SignInView = observer(() => {
   const onSignInSuccess = (response: any) => {
     const isOnboarded = response?.user?.onboarding_step?.profile_complete || false;
 
-    const nextPath = router.asPath.includes("next_path") ? router.asPath.split("/?next_path=")[1] : "/home";
+    const nextPath = router.asPath.includes("next_path") ? router.asPath.split("/?next_path=")[1] : "/login";
 
     userStore.setCurrentUser(response?.user);
 
