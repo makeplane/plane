@@ -133,7 +133,8 @@ services:
       - ${NGINX_PORT}:80
     environment:
       FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
-      BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+      PUBLIC_BUCKET_NAME: ${AWS_PUBLIC_STORAGE_BUCKET_NAME:-uploads}
+      PRIVATE_BUCKET_NAME: ${AWS_PRIVATE_STORAGE_BUCKET_NAME:-uploads-private}
     depends_on:
       - plane-web
       - plane-api
