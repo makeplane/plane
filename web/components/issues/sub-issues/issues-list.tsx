@@ -5,6 +5,8 @@ import useSWR from "swr";
 import { SubIssues } from "./issue";
 // types
 import { ICurrentUserResponse, IIssue } from "types";
+
+import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
 // services
 import issuesService from "services/issues.service";
 // fetch keys
@@ -18,8 +20,8 @@ export interface ISubIssuesRootList {
   user: ICurrentUserResponse | undefined;
   editable: boolean;
   removeIssueFromSubIssues: (parentIssueId: string, issue: IIssue) => void;
-  issuesVisibility: string[];
-  handleIssuesVisibility: (issueId: string) => void;
+  issuesLoader: ISubIssuesRootLoaders;
+  handleIssuesLoader: ({ key, issueId }: ISubIssuesRootLoadersHandler) => void;
   copyText: (text: string) => void;
   handleIssueCrudOperation: (
     key: "create" | "existing" | "edit" | "delete",
@@ -36,8 +38,8 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
   user,
   editable,
   removeIssueFromSubIssues,
-  issuesVisibility,
-  handleIssuesVisibility,
+  issuesLoader,
+  handleIssuesLoader,
   copyText,
   handleIssueCrudOperation,
 }) => {
@@ -49,6 +51,16 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
       ? () => issuesService.subIssues(workspaceSlug, projectId, parentIssue.id)
       : null
   );
+
+  React.useEffect(() => {
+    if (isLoading) {
+      handleIssuesLoader({ key: "sub_issues", issueId: parentIssue?.id });
+    } else {
+      if (issuesLoader.sub_issues.includes(parentIssue?.id)) {
+        handleIssuesLoader({ key: "sub_issues", issueId: parentIssue?.id });
+      }
+    }
+  }, [isLoading]);
 
   return (
     <div className="relative">
@@ -66,8 +78,8 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
             user={user}
             editable={editable}
             removeIssueFromSubIssues={removeIssueFromSubIssues}
-            issuesVisibility={issuesVisibility}
-            handleIssuesVisibility={handleIssuesVisibility}
+            issuesLoader={issuesLoader}
+            handleIssuesLoader={handleIssuesLoader}
             copyText={copyText}
             handleIssueCrudOperation={handleIssueCrudOperation}
           />

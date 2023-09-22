@@ -43,7 +43,7 @@ export const IssueMainContent: React.FC<Props> = ({
   uneditable = false,
 }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId, issueId, archivedIssueId } = router.query;
+  const { workspaceSlug, projectId, issueId } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -206,7 +206,7 @@ export const IssueMainContent: React.FC<Props> = ({
         <IssueReaction workspaceSlug={workspaceSlug} issueId={issueId} projectId={projectId} />
 
         <div className="mt-2 space-y-2">
-          <SubIssuesRoot parentIssue={issueDetails} user={user} editable={uneditable} />
+          <SubIssuesRoot parentIssue={issueDetails} user={user} />
         </div>
       </div>
       <div className="flex flex-col gap-3 py-3">
