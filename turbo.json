@@ -40,7 +40,7 @@
         "dist/**"
       ]
     },
-    "web#dev": {
+    "web#develop": {
       "cache": false,
       "persistent": true,
       "dependsOn": [
@@ -57,6 +57,9 @@
       "outputs": []
     },
     "dev": {
+      "cache": false
+    },
+    "develop": {
       "cache": false
     },
     "start": {
