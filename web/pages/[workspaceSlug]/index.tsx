@@ -127,9 +127,21 @@ const WorkspacePage: NextPage = () => {
           />
         </div>
       )}
-      {projects ? (
-        projects.length > 0 ? (
-          <div className="p-8">
+      <div className="p-8 space-y-8">
+        <div>
+          <h3 className="text-2xl font-semibold">
+            Good {greeting}, {user?.first_name} {user?.last_name}
+          </h3>
+          <h6 className="text-custom-text-400 font-medium flex items-center gap-2">
+            <div>{greeting === "morning" ? "🌤️" : greeting === "afternoon" ? "🌥️" : "🌙️"}</div>
+            <div>
+              {DAYS[today.getDay()]}, {renderShortDate(today)} {render12HourFormatTime(today)}
+            </div>
+          </h6>
+        </div>
+
+        {projects ? (
+          projects.length > 0 ? (
             <div className="flex flex-col gap-8">
               <IssuesStats data={workspaceDashboardData} />
               <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
@@ -143,17 +155,8 @@ const WorkspacePage: NextPage = () => {
                 />
               </div>
             </div>
-          </div>
-        ) : (
-          <div className="p-8">
-            <h3 className="text-2xl font-semibold">
-              Good {greeting}, {user?.first_name} {user?.last_name}
-            </h3>
-            <h6 className="text-custom-text-400 font-medium">
-              {greeting === "morning" ? "🌤️" : greeting === "afternoon" ? "🌥️" : "🌙️"}
-              {DAYS[today.getDay()]}, {renderShortDate(today)} {render12HourFormatTime(today)}
-            </h6>
-            <div className="mt-7 bg-custom-primary-100/5 flex justify-between gap-5 md:gap-8">
+          ) : (
+            <div className="bg-custom-primary-100/5 flex justify-between gap-5 md:gap-8">
               <div className="p-5 md:p-8 pr-0">
                 <h5 className="text-xl font-semibold">Create a project</h5>
                 <p className="mt-2 mb-5">
@@ -174,9 +177,9 @@ const WorkspacePage: NextPage = () => {
                 <Image src={emptyDashboard} alt="Empty Dashboard" />
               </div>
             </div>
-          </div>
-        )
-      ) : null}
+          )
+        ) : null}
+      </div>
     </WorkspaceAuthorizationLayout>
   );
 };
