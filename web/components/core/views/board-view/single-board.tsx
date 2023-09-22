@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { Draggable } from "react-beautiful-dnd";
 // components
-import { BoardHeader, SingleBoardIssue } from "components/core";
+import { BoardHeader, SingleBoardIssue, BoardInlineCreateIssueForm } from "components/core";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
@@ -34,25 +34,29 @@ type Props = {
   viewProps: IIssueViewProps;
 };
 
-export const SingleBoard: React.FC<Props> = ({
-  addIssueToGroup,
-  currentState,
-  groupTitle,
-  disableUserActions,
-  disableAddIssueOption = false,
-  dragDisabled,
-  handleIssueAction,
-  handleDraftIssueAction,
-  handleTrashBox,
-  openIssuesListModal,
-  handleMyIssueOpen,
-  removeIssue,
-  user,
-  userAuth,
-  viewProps,
-}) => {
+export const SingleBoard: React.FC<Props> = (props) => {
+  const {
+    addIssueToGroup,
+    currentState,
+    groupTitle,
+    disableUserActions,
+    disableAddIssueOption = false,
+    dragDisabled,
+    handleIssueAction,
+    handleDraftIssueAction,
+    handleTrashBox,
+    openIssuesListModal,
+    handleMyIssueOpen,
+    removeIssue,
+    user,
+    userAuth,
+    viewProps,
+  } = props;
+
   // collapse/expand
   const [isCollapsed, setIsCollapsed] = useState(true);
+
+  const [isInlineCreateIssueFormOpen, setIsInlineCreateIssueFormOpen] = useState(false);
 
   const { displayFilters, groupedIssues } = viewProps;
 
@@ -66,6 +70,24 @@ export const SingleBoard: React.FC<Props> = ({
   const hasMinimumNumberOfCards = issuesLength ? issuesLength >= 4 : false;
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disableUserActions;
+
+  const onCreateClick = () => {
+    setIsInlineCreateIssueFormOpen(true);
+
+    const boardListElement = document.getElementById(`board-list-${groupTitle}`);
+
+    // timeout is needed because the animation
+    // takes time to complete & we can scroll only after that
+    const timeoutId = setTimeout(() => {
+      if (boardListElement)
+        boardListElement.scrollBy({
+          top: boardListElement.scrollHeight,
+          left: 0,
+          behavior: "smooth",
+        });
+      clearTimeout(timeoutId);
+    }, 10);
+  };
 
   return (
     <div className={`flex-shrink-0 ${!isCollapsed ? "" : "flex h-full flex-col w-96"}`}>
@@ -115,6 +137,7 @@ export const SingleBoard: React.FC<Props> = ({
                 </>
               )}
               <div
+                id={`board-list-${groupTitle}`}
                 className={`pt-3 ${
                   hasMinimumNumberOfCards ? "overflow-hidden overflow-y-scroll" : ""
                 } `}
@@ -169,6 +192,19 @@ export const SingleBoard: React.FC<Props> = ({
                 >
                   <>{provided.placeholder}</>
                 </span>
+
+                <BoardInlineCreateIssueForm
+                  isOpen={isInlineCreateIssueFormOpen}
+                  handleClose={() => setIsInlineCreateIssueFormOpen(false)}
+                  prePopulatedData={{
+                    ...(cycleId && { cycle: cycleId.toString() }),
+                    ...(moduleId && { module: moduleId.toString() }),
+                    [displayFilters?.group_by! === "labels"
+                      ? "labels_list"
+                      : displayFilters?.group_by!]:
+                      displayFilters?.group_by === "labels" ? [groupTitle] : groupTitle,
+                  }}
+                />
               </div>
               {displayFilters?.group_by !== "created_by" && (
                 <div>
@@ -177,7 +213,7 @@ export const SingleBoard: React.FC<Props> = ({
                         <button
                           type="button"
                           className="flex items-center gap-2 font-medium text-custom-primary outline-none p-1"
-                          onClick={addIssueToGroup}
+                          onClick={() => onCreateClick()}
                         >
                           <PlusIcon className="h-4 w-4" />
                           Add Issue
@@ -197,7 +233,7 @@ export const SingleBoard: React.FC<Props> = ({
                           position="left"
                           noBorder
                         >
-                          <CustomMenu.MenuItem onClick={addIssueToGroup}>
+                          <CustomMenu.MenuItem onClick={() => onCreateClick()}>
                             Create new
                           </CustomMenu.MenuItem>
                           {openIssuesListModal && (
