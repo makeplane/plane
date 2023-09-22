@@ -10,7 +10,6 @@ import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
 import { ActivityIcon, ActivityMessage } from "components/core";
 import { TiptapEditor } from "@plane/editor";
-// import { TipTapEditor } from "components/tiptap";
 // icons
 import { ArrowTopRightOnSquareIcon, ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
 // ui
@@ -21,6 +20,7 @@ import { USER_ACTIVITY } from "constants/fetch-keys";
 // helper
 import { timeAgo } from "helpers/date-time.helper";
 import { SettingsSidebar } from "components/project";
+// services
 import fileService from "@/services/file.service";
 
 const ProfileActivity = () => {

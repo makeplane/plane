@@ -25,9 +25,11 @@ interface UnSplashImageUrls {
   small_s3: string;
 }
 
-class FileServices extends APIService {
+class FileService extends APIService {
   constructor() {
     super(API_BASE_URL);
+    this.uploadFile = this.uploadFile.bind(this);
+    this.deleteImage = this.deleteImage.bind(this);
   }
 
   async uploadFile(workspaceSlug: string, file: FormData): Promise<any> {
@@ -94,6 +96,6 @@ class FileServices extends APIService {
   }
 }
 
-const fileServices = new FileServices();
+const fileService = new FileService();
 
-export default fileServices;
+export default fileService;

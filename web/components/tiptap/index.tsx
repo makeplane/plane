@@ -1,4 +1,4 @@
-import { useImperativeHandle, useRef, forwardRef, useEffect } from "react";
+import { useImperativeHandle, useRef, forwardRef } from "react";
 import { useEditor, EditorContent, Editor } from "@tiptap/react";
 import { useDebouncedCallback } from "use-debounce";
 // components

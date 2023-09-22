@@ -3,11 +3,13 @@ import { useRouter } from "next/router";
 // react-hook-form
 import { useForm, Controller } from "react-hook-form";
 // components
-import { TipTapEditor } from "components/tiptap";
+import { TiptapEditorWithRef } from "@plane/editor";
 // ui
 import { Icon, SecondaryButton, Tooltip } from "components/ui";
 // types
 import type { IIssueComment } from "types";
+// services
+import fileService from "@/services/file.service";
 
 const defaultValues: Partial<IIssueComment> = {
   access: "INTERNAL",
@@ -100,7 +102,9 @@ export const AddComment: React.FC<Props> = ({
               name="comment_html"
               control={control}
               render={({ field: { value, onChange } }) => (
-                <TipTapEditor
+                <TiptapEditorWithRef
+                  uploadFile={fileService.uploadFile}
+                  deleteFile={fileService.deleteImage}
                   workspaceSlug={workspaceSlug as string}
                   ref={editorRef}
                   value={!value || value === "" ? "<p></p>" : value}

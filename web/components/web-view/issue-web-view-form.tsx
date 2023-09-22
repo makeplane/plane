@@ -16,11 +16,13 @@ import useReloadConfirmations from "hooks/use-reload-confirmation";
 import { TextArea } from "components/ui";
 
 // components
-import { TipTapEditor } from "components/tiptap";
+import { TiptapEditor } from "@plane/editor";
 import { Label } from "components/web-view";
 
 // types
 import type { IIssue } from "types";
+// services
+import fileService from "@/services/file.service";
 
 type Props = {
   isAllowed: boolean;
@@ -121,7 +123,9 @@ export const IssueWebViewForm: React.FC<Props> = (props) => {
               if (!value) return <></>;
 
               return (
-                <TipTapEditor
+                <TiptapEditor
+                  uploadFile={fileService.uploadFile}
+                  deleteFile={fileService.deleteImage}
                   value={
                     !value ||
                     value === "" ||

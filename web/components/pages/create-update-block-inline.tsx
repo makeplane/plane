@@ -11,12 +11,14 @@ import aiService from "services/ai.service";
 import useToast from "hooks/use-toast";
 // components
 import { GptAssistantModal } from "components/core";
-import { TipTapEditor } from "components/tiptap";
+import { TiptapEditorWithRef } from "@plane/editor";
 import { PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // types
 import { ICurrentUserResponse, IPageBlock } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
+// services
+import fileService from "@/services/file.service";
 
 type Props = {
   handleClose: () => void;
@@ -279,7 +281,9 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
               render={({ field: { value, onChange } }) => {
                 if (!data)
                   return (
-                    <TipTapEditor
+                    <TiptapEditorWithRef
+                      uploadFile={fileService.uploadFile}
+                      deleteFile={fileService.deleteImage}
                       workspaceSlug={workspaceSlug as string}
                       ref={editorRef}
                       value={"<p></p>"}
@@ -299,7 +303,9 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
                   );
 
                 return (
-                  <TipTapEditor
+                  <TiptapEditorWithRef
+                    uploadFile={fileService.uploadFile}
+                    deleteFile={fileService.deleteImage}
                     workspaceSlug={workspaceSlug as string}
                     ref={editorRef}
                     value={

@@ -14,8 +14,10 @@ import { Controller, useForm } from "react-hook-form";
 import WebViewLayout from "layouts/web-view-layout";
 
 // components
-import { TipTapEditor } from "components/tiptap";
+import { TiptapEditor } from "@plane/editor";
 import { PrimaryButton, Spinner } from "components/ui";
+// services
+import fileService from "@/services/file.service";
 
 const Editor: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -52,7 +54,9 @@ const Editor: NextPage = () => {
             name="data_html"
             control={control}
             render={({ field: { value, onChange } }) => (
-              <TipTapEditor
+              <TiptapEditor
+                uploadFile={fileService.uploadFile}
+                deleteFile={fileService.deleteImage}
                 borderOnFocus={false}
                 value={
                   !value ||

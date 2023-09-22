@@ -24,11 +24,14 @@ import { CreateStateModal } from "components/states";
 import { CreateLabelModal } from "components/labels";
 // ui
 import { CustomMenu, Input, PrimaryButton, SecondaryButton, ToggleSwitch } from "components/ui";
-import { TipTapEditor } from "components/tiptap";
+// components
+import { TiptapEditorWithRef } from "@plane/editor";
 // icons
 import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
 import type { ICurrentUserResponse, IIssue, ISearchIssueResponse } from "types";
+// services
+import fileService from "@/services/file.service";
 
 const defaultValues: Partial<IIssue> = {
   project: "",
@@ -381,7 +384,9 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                       if (!value && !watch("description_html")) return <></>;
 
                       return (
-                        <TipTapEditor
+                        <TiptapEditorWithRef
+                          uploadFile={fileService.uploadFile}
+                          deleteFile={fileService.deleteImage}
                           workspaceSlug={workspaceSlug as string}
                           ref={editorRef}
                           debouncedUpdatesEnabled={false}

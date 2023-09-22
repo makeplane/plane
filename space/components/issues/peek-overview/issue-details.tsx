@@ -1,8 +1,10 @@
 import { IssueReactions } from "components/issues/peek-overview";
-import { TipTapEditor } from "components/tiptap";
+import { TiptapEditor } from "@plane/editor";
 import { useRouter } from "next/router";
 // types
 import { IIssue } from "types/issue";
+// services
+import fileService from "@/services/file.service";
 
 type Props = {
   issueDetails: IIssue;
@@ -19,7 +21,9 @@ export const PeekOverviewIssueDetails: React.FC<Props> = ({ issueDetails }) => {
       </h6>
       <h4 className="break-words text-2xl font-semibold">{issueDetails.name}</h4>
       {issueDetails.description_html !== "" && issueDetails.description_html !== "<p></p>" && (
-        <TipTapEditor
+        <TiptapEditor
+          uploadFile={fileService.uploadFile}
+          deleteFile={fileService.deleteImage}
           workspaceSlug={workspace_slug as string}
           value={
             !issueDetails.description_html ||

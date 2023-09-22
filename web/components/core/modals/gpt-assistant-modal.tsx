@@ -1,4 +1,4 @@
-import React, { useEffect, useState, forwardRef, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 // react-hook-form
 import { useForm } from "react-hook-form";
@@ -10,9 +10,12 @@ import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // ui
 import { Input, PrimaryButton, SecondaryButton } from "components/ui";
-import { TipTapEditor } from "components/tiptap";
+// components
+import { TiptapEditor, TiptapEditorWithRef } from "@plane/editor";
 // types
 import { IIssue, IPageBlock } from "types";
+// services
+import fileService from "@/services/file.service";
 
 type Props = {
   isOpen: boolean;
@@ -140,7 +143,9 @@ export const GptAssistantModal: React.FC<Props> = ({
       {((content && content !== "") || (htmlContent && htmlContent !== "<p></p>")) && (
         <div className="text-sm">
           Content:
-          <TipTapEditor
+          <TiptapEditorWithRef
+            uploadFile={fileService.uploadFile}
+            deleteFile={fileService.deleteImage}
             workspaceSlug={workspaceSlug as string}
             value={htmlContent ?? `<p>${content}</p>`}
             customClassName="-m-3"
@@ -154,7 +159,9 @@ export const GptAssistantModal: React.FC<Props> = ({
       {response !== "" && (
         <div className="page-block-section text-sm">
           Response:
-          <TipTapEditor
+          <TiptapEditor
+            uploadFile={fileService.uploadFile}
+            deleteFile={fileService.deleteImage}
             workspaceSlug={workspaceSlug as string}
             value={`<p>${response}</p>`}
             customClassName="-mx-3 -my-3"

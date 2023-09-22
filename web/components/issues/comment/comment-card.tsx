@@ -9,11 +9,13 @@ import useUser from "hooks/use-user";
 // ui
 import { CustomMenu, Icon } from "components/ui";
 import { CommentReaction } from "components/issues";
-import { TipTapEditor } from "components/tiptap";
+import { TiptapEditorWithRef } from "@plane/editor";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
 import type { IIssueComment } from "types";
+// services
+import fileService from "@/services/file.service";
 
 type Props = {
   comment: IIssueComment;
@@ -110,7 +112,9 @@ export const CommentCard: React.FC<Props> = ({
             onSubmit={handleSubmit(onEnter)}
           >
             <div>
-              <TipTapEditor
+              <TiptapEditorWithRef
+                uploadFile={fileService.uploadFile}
+                deleteFile={fileService.deleteImage}
                 workspaceSlug={workspaceSlug as string}
                 ref={editorRef}
                 value={watch("comment_html")}
@@ -148,7 +152,9 @@ export const CommentCard: React.FC<Props> = ({
                 />
               </div>
             )}
-            <TipTapEditor
+            <TiptapEditorWithRef
+              uploadFile={fileService.uploadFile}
+              deleteFile={fileService.deleteImage}
               workspaceSlug={workspaceSlug as string}
               ref={showEditorRef}
               value={comment.comment_html}

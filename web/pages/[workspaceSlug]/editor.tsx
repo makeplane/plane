@@ -1,4 +1,4 @@
-import { TipTapEditor } from "components/tiptap";
+import { TiptapEditor } from "@plane/editor";
 import type { NextPage } from "next";
 import { useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -11,6 +11,7 @@ import DefaultLayout from "layouts/default-layout";
 import Image from "next/image";
 import userService from "services/user.service";
 import { useRouter } from "next/router";
+import fileService from "@/services/file.service";
 
 const Editor: NextPage = () => {
   const [user, setUser] = useState<ICurrentUserResponse | undefined>();
@@ -134,7 +135,9 @@ const Editor: NextPage = () => {
         name="description_html"
         control={control}
         render={({ field: { value, onChange } }) => (
-          <TipTapEditor
+          <TiptapEditor
+            uploadFile={fileService.uploadFile}
+            deleteFile={fileService.deleteImage}
             borderOnFocus={false}
             value={
               !value ||

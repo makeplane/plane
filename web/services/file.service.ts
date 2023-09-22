@@ -26,7 +26,7 @@ interface UnSplashImageUrls {
   small_s3: string;
 }
 
-class FileServices extends APIService {
+class FileService extends APIService {
   constructor() {
     super(API_BASE_URL);
     this.uploadFile = this.uploadFile.bind(this);
@@ -97,4 +97,6 @@ class FileServices extends APIService {
   }
 }
 
-export default new FileServices();
+const fileService = new FileService();
+
+export default fileService;

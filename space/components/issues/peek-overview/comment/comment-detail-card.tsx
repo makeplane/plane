@@ -9,7 +9,8 @@ import { Menu, Transition } from "@headlessui/react";
 // lib
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { TipTapEditor } from "components/tiptap";
+import { TiptapEditorWithRef } from "@plane/editor";
+
 import { CommentReactions } from "components/issues/peek-overview";
 // icons
 import { ChatBubbleLeftEllipsisIcon, CheckIcon, XMarkIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
@@ -17,6 +18,8 @@ import { ChatBubbleLeftEllipsisIcon, CheckIcon, XMarkIcon, EllipsisVerticalIcon 
 import { timeAgo } from "helpers/date-time.helper";
 // types
 import { Comment } from "types/issue";
+// services
+import fileService from "@/services/file.service";
 
 type Props = {
   workspaceSlug: string;
@@ -100,7 +103,9 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                 control={control}
                 name="comment_html"
                 render={({ field: { onChange, value } }) => (
-                  <TipTapEditor
+                  <TiptapEditorWithRef
+                    uploadFile={fileService.uploadFile}
+                    deleteFile={fileService.deleteImage}
                     workspaceSlug={workspaceSlug as string}
                     ref={editorRef}
                     value={value}
@@ -131,7 +136,9 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             </div>
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
-            <TipTapEditor
+            <TiptapEditorWithRef
+              uploadFile={fileService.uploadFile}
+              deleteFile={fileService.deleteImage}
               workspaceSlug={workspaceSlug as string}
               ref={showEditorRef}
               value={comment.comment_html}
