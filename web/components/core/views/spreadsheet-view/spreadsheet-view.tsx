@@ -3,13 +3,14 @@ import React, { useState } from "react";
 // next
 import { useRouter } from "next/router";
 
+import { KeyedMutator } from "swr";
+
 // components
 import { SpreadsheetColumns, SpreadsheetIssues } from "components/core";
 import { CustomMenu, Spinner } from "components/ui";
 import { IssuePeekOverview } from "components/issues";
 // hooks
 import useIssuesProperties from "hooks/use-issue-properties";
-import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 // types
 import { ICurrentUserResponse, IIssue, Properties, UserAuth } from "types";
 // constants
@@ -18,6 +19,13 @@ import { SPREADSHEET_COLUMN } from "constants/spreadsheet";
 import { PlusIcon } from "@heroicons/react/24/outline";
 
 type Props = {
+  spreadsheetIssues: IIssue[];
+  mutateIssues: KeyedMutator<
+    | IIssue[]
+    | {
+        [key: string]: IIssue[];
+      }
+  >;
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
   openIssuesListModal?: (() => void) | null;
   disableUserActions: boolean;
@@ -26,6 +34,8 @@ type Props = {
 };
 
 export const SpreadsheetView: React.FC<Props> = ({
+  spreadsheetIssues,
+  mutateIssues,
   handleIssueAction,
   openIssuesListModal,
   disableUserActions,
@@ -38,8 +48,6 @@ export const SpreadsheetView: React.FC<Props> = ({
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
   const type = cycleId ? "cycle" : moduleId ? "module" : "issue";
-
-  const { spreadsheetIssues, mutateIssues } = useSpreadsheetIssuesView();
 
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 

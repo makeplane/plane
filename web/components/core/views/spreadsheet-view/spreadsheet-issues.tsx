@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 // components
 import { SingleSpreadsheetIssue } from "components/core";
@@ -49,7 +49,7 @@ export const SpreadsheetIssues: React.FC<Props> = ({
 
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
-  const { subIssues, isLoading } = useSubIssue(issue.id, isExpanded);
+  const { subIssues, isLoading } = useSubIssue(issue.project_detail.id, issue.id, isExpanded);
 
   return (
     <div>
