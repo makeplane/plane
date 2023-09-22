@@ -1,13 +1,4 @@
-import type {
-  IIssueFilterOptions,
-  IProjectMember,
-  IUser,
-  IUserMemberLite,
-  IWorkspaceViewProps,
-  TIssueGroupByOptions,
-  TIssueOrderByOptions,
-  TIssueViewOptions,
-} from "types";
+import type { IProjectMember, IUser, IUserMemberLite, IWorkspaceViewProps } from "types";
 
 export interface IWorkspace {
   readonly id: string;
@@ -121,6 +112,21 @@ export interface IWorkspaceSearchResults {
     issue_view: IWorkspaceDefaultSearchResult[];
     page: IWorkspaceDefaultSearchResult[];
   };
+}
+
+export interface WorkspaceViewIssueParams {
+  assignees: string | undefined;
+  created_by: string | undefined;
+  estimate_point: string | undefined;
+  labels: string | undefined;
+  priority: string | undefined;
+  state: string | undefined;
+  state_group: string | undefined;
+  start_date: string | undefined;
+  target_date: string | undefined;
+  type: "active" | "backlog" | undefined;
+  project: string | undefined;
+  sub_issue: boolean;
 }
 
 export interface IProductUpdateResponse {

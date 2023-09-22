@@ -15,6 +15,7 @@ import {
   IWorkspaceBulkInviteFormData,
   IWorkspaceViewProps,
   IView,
+  WorkspaceViewIssueParams,
 } from "types";
 
 class WorkspaceService extends APIService {
@@ -303,8 +304,10 @@ class WorkspaceService extends APIService {
       });
   }
 
-  async getViewIssues(workspaceSlug: string, params: any): Promise<any> {
-    return this.get(`/api/workspaces/${workspaceSlug}/issues/`, { params })
+  async getViewIssues(workspaceSlug: string, params: WorkspaceViewIssueParams): Promise<any> {
+    return this.get(`/api/workspaces/${workspaceSlug}/issues/`, {
+      params,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
