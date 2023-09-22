@@ -161,6 +161,7 @@ export const CommandPalette: React.FC = observer(() => {
           />
           <CreateUpdateViewModal
             handleClose={() => setIsCreateViewModalOpen(false)}
+            viewType="project"
             isOpen={isCreateViewModalOpen}
             user={user}
           />

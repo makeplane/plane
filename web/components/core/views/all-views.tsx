@@ -12,6 +12,7 @@ import stateService from "services/state.service";
 // hooks
 import useUser from "hooks/use-user";
 import { useProjectMyMembership } from "contexts/project-member.context";
+import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 // components
 import {
   AllLists,
@@ -85,6 +86,8 @@ export const AllViews: React.FC<Props> = ({
   const { memberRole } = useProjectMyMembership();
 
   const { groupedIssues, isEmpty, displayFilters } = viewProps;
+
+  const { spreadsheetIssues, mutateIssues } = useSpreadsheetIssuesView();
 
   const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
@@ -174,6 +177,8 @@ export const AllViews: React.FC<Props> = ({
             ) : displayFilters?.layout === "spreadsheet" ? (
               <SpreadsheetView
                 handleIssueAction={handleIssueAction}
+                spreadsheetIssues={spreadsheetIssues}
+                mutateIssues={mutateIssues}
                 openIssuesListModal={cycleId || moduleId ? openIssuesListModal : null}
                 disableUserActions={disableUserActions}
                 user={user}
