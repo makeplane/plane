@@ -24,5 +24,8 @@
     "tailwindcss": "^3.3.3",
     "turbo": "latest"
   },
+  "resolutions": {
+    "@types/react": "18.2.0"
+  },
   "packageManager": "yarn@1.22.19"
 }
