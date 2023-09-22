@@ -29,7 +29,7 @@ const InlineInput = () => {
 
   return (
     <>
-      <h4 className="text-sm font-medium leading-5 text-custom-text-200">
+      <h4 className="text-sm font-medium leading-5 text-custom-text-400">
         {projectDetails?.identifier ?? "..."}
       </h4>
       <input

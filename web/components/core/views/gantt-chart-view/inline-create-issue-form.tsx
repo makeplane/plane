@@ -31,7 +31,7 @@ const InlineInput = () => {
   return (
     <>
       <div className="w-[14px] h-[14px] rounded-full border border-custom-border-1000 flex-shrink-0" />
-      <h4 className="text-sm text-custom-text-200">{projectDetails?.identifier ?? "..."}</h4>
+      <h4 className="text-sm text-custom-text-400">{projectDetails?.identifier ?? "..."}</h4>
       <input
         type="text"
         autoComplete="off"
