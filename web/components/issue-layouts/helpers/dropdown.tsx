@@ -17,7 +17,7 @@ export const IssueDropdown = ({ children, title = "Dropdown" }: IIssueDropdown) 
       return (
         <>
           <Popover.Button
-            className={`outline-none border border-custom-border-200 text-xs rounded flex items-center gap-2 p-2 py-1.5 hover:bg-custom-background-100`}
+            className={`outline-none border border-custom-border-200 text-xs rounded flex items-center gap-2 px-2 py-1.5 hover:bg-custom-background-100`}
           >
             <div className="font-medium">{title}</div>
             <div className="w-[14px] h-[14px] flex justify-center items-center">
@@ -33,10 +33,8 @@ export const IssueDropdown = ({ children, title = "Dropdown" }: IIssueDropdown) 
             leaveFrom="opacity-100 translate-y-0"
             leaveTo="opacity-0 translate-y-1"
           >
-            <Popover.Panel className="absolute right-0 z-10 mt-1 w-[300px] h-[600px]">
-              <div className="w-full h-full overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 shadow-xl">
-                {children}
-              </div>
+            <Popover.Panel className="absolute right-0 z-10 mt-1 w-[18.75rem] h-auto max-h-[37.5rem] bg-custom-background-100 border border-custom-border-200 shadow-custom-shadow-rg rounded overflow-y-auto">
+              {children}
             </Popover.Panel>
           </Transition>
         </>

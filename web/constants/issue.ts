@@ -1,3 +1,14 @@
+import { Calendar, GanttChart, Kanban, List, Sheet } from "lucide-react";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  TIssueGroupByOptions,
+  TIssueLayouts,
+  TIssueOrderByOptions,
+  TIssueTypeFilters,
+  TStateGroups,
+} from "types";
+
 export const ISSUE_PRIORITIES = [
   { key: "urgent", title: "Urgent" },
   { key: "high", title: "High" },
@@ -6,7 +17,10 @@ export const ISSUE_PRIORITIES = [
   { key: "none", title: "None" },
 ];
 
-export const ISSUE_STATE_GROUPS = [
+export const ISSUE_STATE_GROUPS: {
+  key: TStateGroups;
+  title: string;
+}[] = [
   { key: "backlog", title: "Backlog" },
   { key: "unstarted", title: "Unstarted" },
   { key: "started", title: "Started" },
@@ -30,7 +44,10 @@ export const ISSUE_DUE_DATE_OPTIONS = [
   { key: "custom", title: "Custom" },
 ];
 
-export const ISSUE_GROUP_BY_OPTIONS = [
+export const ISSUE_GROUP_BY_OPTIONS: {
+  key: TIssueGroupByOptions;
+  title: string;
+}[] = [
   { key: "state", title: "States" },
   { key: "state_detail.group", title: "State Groups" },
   { key: "priority", title: "Priority" },
@@ -40,22 +57,31 @@ export const ISSUE_GROUP_BY_OPTIONS = [
   { key: "created_by", title: "Created By" },
 ];
 
-export const ISSUE_ORDER_BY_OPTIONS = [
+export const ISSUE_ORDER_BY_OPTIONS: {
+  key: TIssueOrderByOptions;
+  title: string;
+}[] = [
   { key: "sort_order", title: "Manual" },
-  { key: "created_at", title: "Last Created" },
-  { key: "updated_at", title: "Last Updated" },
+  { key: "-created_at", title: "Last Created" },
+  { key: "-updated_at", title: "Last Updated" },
   { key: "start_date", title: "Start Date" },
   { key: "priority", title: "Priority" },
 ];
 
-export const ISSUE_FILTER_OPTIONS = [
-  { key: "all", title: "All" },
+export const ISSUE_FILTER_OPTIONS: {
+  key: TIssueTypeFilters;
+  title: string;
+}[] = [
+  { key: null, title: "All" },
   { key: "active", title: "Active Issues" },
   { key: "backlog", title: "Backlog Issues" },
   // { key: "draft", title: "Draft Issues" },
 ];
 
-export const ISSUE_DISPLAY_PROPERTIES = [
+export const ISSUE_DISPLAY_PROPERTIES: {
+  key: keyof IIssueDisplayProperties;
+  title: string;
+}[] = [
   { key: "assignee", title: "Assignee" },
   { key: "start_date", title: "Start Date" },
   { key: "due_date", title: "Due Date" },
@@ -69,19 +95,26 @@ export const ISSUE_DISPLAY_PROPERTIES = [
   { key: "estimate", title: "Estimate" },
 ];
 
-export const ISSUE_EXTRA_PROPERTIES = [
+export const ISSUE_EXTRA_PROPERTIES: {
+  key: keyof IIssueDisplayFilterOptions;
+  title: string;
+}[] = [
   { key: "sub_issue", title: "Show sub-issues" }, // in spreadsheet its always false
   { key: "show_empty_groups", title: "Show empty states" }, // filter on front-end
   { key: "calendar_date_range", title: "Calendar Date Range" }, // calendar date range yyyy-mm-dd;before range yyyy-mm-dd;after
   { key: "start_target_date", title: "Start target Date" }, // gantt always be true
 ];
 
-export const ISSUE_LAYOUTS = [
-  { key: "list", title: "List View" },
-  { key: "kanban", title: "Kanban View" },
-  { key: "calendar", title: "Calendar View" },
-  { key: "spreadsheet", title: "Spreadsheet View" },
-  { key: "gantt_chart", title: "Gantt Chart View" },
+export const ISSUE_LAYOUTS: {
+  key: TIssueLayouts;
+  title: string;
+  icon: any;
+}[] = [
+  { key: "list", title: "List View", icon: List },
+  { key: "kanban", title: "Kanban View", icon: Kanban },
+  { key: "calendar", title: "Calendar View", icon: Calendar },
+  { key: "spreadsheet", title: "Spreadsheet View", icon: Sheet },
+  { key: "gantt_chart", title: "Gantt Chart View", icon: GanttChart },
 ];
 
 export const ISSUE_LIST_FILTERS = [

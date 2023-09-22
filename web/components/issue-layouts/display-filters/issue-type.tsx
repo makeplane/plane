@@ -1,38 +1,52 @@
 import React from "react";
+
+import { useRouter } from "next/router";
+
+// mobx
 import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { FilterHeader } from "../helpers/filter-header";
 import { FilterOption } from "../helpers/filter-option";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
+// types
+import { TIssueTypeFilters } from "types";
+// constants
 import { ISSUE_FILTER_OPTIONS } from "constants/issue";
 
 export const FilterIssueType = observer(() => {
-  const store: RootStore = useMobxStore();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
+  const store = useMobxStore();
   const { issueFilter: issueFilterStore } = store;
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
-  const handleIssueType = (key: string, value: string) => {
-    // issueFilterStore.handleUserFilter("display_filters", key, value);
+  const handleIssueType = (value: TIssueTypeFilters) => {
+    if (!workspaceSlug || !projectId) return;
+
+    issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
+      display_filters: {
+        type: value,
+      },
+    });
   };
 
   return (
     <div>
       <FilterHeader
-        title={"Issue Type"}
+        title="Issue Type"
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
-        <div className="space-y-[2px] pt-1">
-          {ISSUE_FILTER_OPTIONS.map((_issueType) => (
+        <div className="space-y-1 pt-1">
+          {ISSUE_FILTER_OPTIONS.map((issueType) => (
             <FilterOption
-              key={_issueType?.key}
-              isChecked={issueFilterStore?.userDisplayFilters?.type === _issueType?.key ? true : false}
-              onClick={() => handleIssueType("type", _issueType?.key)}
-              title={_issueType.title}
+              key={issueType?.key}
+              isChecked={issueFilterStore?.userDisplayFilters?.type === issueType?.key ? true : false}
+              onClick={() => handleIssueType(issueType?.key)}
+              title={issueType.title}
               multiple={false}
             />
           ))}

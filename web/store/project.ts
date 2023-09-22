@@ -258,15 +258,15 @@ class ProjectStore implements IProjectStore {
     }
   };
 
-  fetchProjectLabels = async (workspaceSlug: string, projectSlug: string) => {
+  fetchProjectLabels = async (workspaceSlug: string, projectId: string) => {
     try {
       this.loader = true;
       this.error = null;
 
-      const labelResponse = await this.issueService.getIssueLabels(workspaceSlug, projectSlug);
+      const labelResponse = await this.issueService.getIssueLabels(workspaceSlug, projectId);
       const _labels = {
         ...this.labels,
-        [projectSlug]: labelResponse,
+        [projectId]: labelResponse,
       };
 
       runInAction(() => {

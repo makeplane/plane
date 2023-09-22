@@ -18,12 +18,12 @@ import { FormatListBulletedOutlined, GridViewOutlined } from "@mui/icons-materia
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 // types
-import { Properties, TIssueViewOptions } from "types";
+import { Properties, TIssueLayouts } from "types";
 // constants
 import { GROUP_BY_OPTIONS, ORDER_BY_OPTIONS, FILTER_ISSUE_OPTIONS } from "constants/issue";
 import useProjects from "hooks/use-projects";
 
-const issueViewOptions: { type: TIssueViewOptions; Icon: any }[] = [
+const issueViewOptions: { type: TIssueLayouts; Icon: any }[] = [
   {
     type: "list",
     Icon: FormatListBulletedOutlined,
@@ -40,14 +40,10 @@ export const ProfileIssuesViewOptions: React.FC = () => {
 
   const { projects } = useProjects();
 
-  const {
-    displayFilters,
-    setDisplayFilters,
-    filters,
-    displayProperties,
-    setProperties,
-    setFilters,
-  } = useProfileIssues(workspaceSlug?.toString(), userId?.toString());
+  const { displayFilters, setDisplayFilters, filters, displayProperties, setProperties, setFilters } = useProfileIssues(
+    workspaceSlug?.toString(),
+    userId?.toString()
+  );
 
   const { isEstimateActive } = useEstimateOption();
 
@@ -80,9 +76,7 @@ export const ProfileIssuesViewOptions: React.FC = () => {
         {issueViewOptions.map((option) => (
           <Tooltip
             key={option.type}
-            tooltipContent={
-              <span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} View</span>
-            }
+            tooltipContent={<span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} View</span>}
             position="bottom"
           >
             <button
@@ -120,9 +114,7 @@ export const ProfileIssuesViewOptions: React.FC = () => {
 
             if (valueExists)
               setFilters({
-                [option.key]: ((filters[key] ?? []) as any[])?.filter(
-                  (val) => val !== option.value
-                ),
+                [option.key]: ((filters[key] ?? []) as any[])?.filter((val) => val !== option.value),
               });
             else
               setFilters({
@@ -138,9 +130,7 @@ export const ProfileIssuesViewOptions: React.FC = () => {
           <>
             <Popover.Button
               className={`group flex items-center gap-2 rounded-md border border-custom-border-200 bg-transparent px-3 py-1.5 text-xs hover:bg-custom-sidebar-background-90 hover:text-custom-sidebar-text-100 focus:outline-none duration-300 ${
-                open
-                  ? "bg-custom-sidebar-background-90 text-custom-sidebar-text-100"
-                  : "text-custom-sidebar-text-200"
+                open ? "bg-custom-sidebar-background-90 text-custom-sidebar-text-100" : "text-custom-sidebar-text-200"
               }`}
             >
               Display
@@ -159,89 +149,75 @@ export const ProfileIssuesViewOptions: React.FC = () => {
               <Popover.Panel className="absolute right-0 z-30 mt-1 w-screen max-w-xs transform rounded-lg border border-custom-border-200 bg-custom-background-90 p-3 shadow-lg">
                 <div className="relative divide-y-2 divide-custom-border-200">
                   <div className="space-y-4 pb-3 text-xs">
-                    {displayFilters?.layout !== "calendar" &&
-                      displayFilters?.layout !== "spreadsheet" && (
-                        <>
-                          <div className="flex items-center justify-between">
-                            <h4 className="text-custom-text-200">Group by</h4>
-                            <div className="w-28">
-                              <CustomMenu
-                                label={
-                                  displayFilters?.group_by === "project"
-                                    ? "Project"
-                                    : GROUP_BY_OPTIONS.find(
-                                        (option) => option.key === displayFilters?.group_by
-                                      )?.name ?? "Select"
-                                }
-                                className="!w-full"
-                                buttonClassName="w-full"
-                              >
-                                {GROUP_BY_OPTIONS.map((option) => {
-                                  if (displayFilters?.layout === "kanban" && option.key === null)
-                                    return null;
-                                  if (
-                                    option.key === "state" ||
-                                    option.key === "created_by" ||
-                                    option.key === "assignees"
-                                  )
-                                    return null;
+                    {displayFilters?.layout !== "calendar" && displayFilters?.layout !== "spreadsheet" && (
+                      <>
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-custom-text-200">Group by</h4>
+                          <div className="w-28">
+                            <CustomMenu
+                              label={
+                                displayFilters?.group_by === "project"
+                                  ? "Project"
+                                  : GROUP_BY_OPTIONS.find((option) => option.key === displayFilters?.group_by)?.name ??
+                                    "Select"
+                              }
+                              className="!w-full"
+                              buttonClassName="w-full"
+                            >
+                              {GROUP_BY_OPTIONS.map((option) => {
+                                if (displayFilters?.layout === "kanban" && option.key === null) return null;
+                                if (option.key === "state" || option.key === "created_by" || option.key === "assignees")
+                                  return null;
 
-                                  return (
-                                    <CustomMenu.MenuItem
-                                      key={option.key}
-                                      onClick={() => setDisplayFilters({ group_by: option.key })}
-                                    >
-                                      {option.name}
-                                    </CustomMenu.MenuItem>
-                                  );
-                                })}
-                              </CustomMenu>
-                            </div>
+                                return (
+                                  <CustomMenu.MenuItem
+                                    key={option.key}
+                                    onClick={() => setDisplayFilters({ group_by: option.key })}
+                                  >
+                                    {option.name}
+                                  </CustomMenu.MenuItem>
+                                );
+                              })}
+                            </CustomMenu>
                           </div>
-                          <div className="flex items-center justify-between">
-                            <h4 className="text-custom-text-200">Order by</h4>
-                            <div className="w-28">
-                              <CustomMenu
-                                label={
-                                  ORDER_BY_OPTIONS.find(
-                                    (option) => option.key === displayFilters?.order_by
-                                  )?.name ?? "Select"
-                                }
-                                className="!w-full"
-                                buttonClassName="w-full"
-                              >
-                                {ORDER_BY_OPTIONS.map((option) => {
-                                  if (
-                                    displayFilters?.group_by === "priority" &&
-                                    option.key === "priority"
-                                  )
-                                    return null;
-                                  if (option.key === "sort_order") return null;
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-custom-text-200">Order by</h4>
+                          <div className="w-28">
+                            <CustomMenu
+                              label={
+                                ORDER_BY_OPTIONS.find((option) => option.key === displayFilters?.order_by)?.name ??
+                                "Select"
+                              }
+                              className="!w-full"
+                              buttonClassName="w-full"
+                            >
+                              {ORDER_BY_OPTIONS.map((option) => {
+                                if (displayFilters?.group_by === "priority" && option.key === "priority") return null;
+                                if (option.key === "sort_order") return null;
 
-                                  return (
-                                    <CustomMenu.MenuItem
-                                      key={option.key}
-                                      onClick={() => {
-                                        setDisplayFilters({ order_by: option.key });
-                                      }}
-                                    >
-                                      {option.name}
-                                    </CustomMenu.MenuItem>
-                                  );
-                                })}
-                              </CustomMenu>
-                            </div>
+                                return (
+                                  <CustomMenu.MenuItem
+                                    key={option.key}
+                                    onClick={() => {
+                                      setDisplayFilters({ order_by: option.key });
+                                    }}
+                                  >
+                                    {option.name}
+                                  </CustomMenu.MenuItem>
+                                );
+                              })}
+                            </CustomMenu>
                           </div>
-                        </>
-                      )}
+                        </div>
+                      </>
+                    )}
                     <div className="flex items-center justify-between">
                       <h4 className="text-custom-text-200">Issue type</h4>
                       <div className="w-28">
                         <CustomMenu
                           label={
-                            FILTER_ISSUE_OPTIONS.find(
-                              (option) => option.key === displayFilters?.type
-                            )?.name ?? "Select"
+                            FILTER_ISSUE_OPTIONS.find((option) => option.key === displayFilters?.type)?.name ?? "Select"
                           }
                           className="!w-full"
                           buttonClassName="w-full"
@@ -262,24 +238,23 @@ export const ProfileIssuesViewOptions: React.FC = () => {
                       </div>
                     </div>
 
-                    {displayFilters?.layout !== "calendar" &&
-                      displayFilters?.layout !== "spreadsheet" && (
-                        <>
-                          <div className="flex items-center justify-between">
-                            <h4 className="text-custom-text-200">Show empty states</h4>
-                            <div className="w-28">
-                              <ToggleSwitch
-                                value={displayFilters?.show_empty_groups ?? true}
-                                onChange={() =>
-                                  setDisplayFilters({
-                                    show_empty_groups: !displayFilters?.show_empty_groups,
-                                  })
-                                }
-                              />
-                            </div>
+                    {displayFilters?.layout !== "calendar" && displayFilters?.layout !== "spreadsheet" && (
+                      <>
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-custom-text-200">Show empty states</h4>
+                          <div className="w-28">
+                            <ToggleSwitch
+                              value={displayFilters?.show_empty_groups ?? true}
+                              onChange={() =>
+                                setDisplayFilters({
+                                  show_empty_groups: !displayFilters?.show_empty_groups,
+                                })
+                              }
+                            />
                           </div>
-                        </>
-                      )}
+                        </div>
+                      </>
+                    )}
                   </div>
 
                   <div className="space-y-2 py-3">
@@ -290,16 +265,11 @@ export const ProfileIssuesViewOptions: React.FC = () => {
 
                         if (
                           displayFilters?.layout === "spreadsheet" &&
-                          (key === "attachment_count" ||
-                            key === "link" ||
-                            key === "sub_issue_count")
+                          (key === "attachment_count" || key === "link" || key === "sub_issue_count")
                         )
                           return null;
 
-                        if (
-                          displayFilters?.layout !== "spreadsheet" &&
-                          (key === "created_on" || key === "updated_on")
-                        )
+                        if (displayFilters?.layout !== "spreadsheet" && (key === "created_on" || key === "updated_on"))
                           return null;
 
                         return (

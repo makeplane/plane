@@ -1,56 +1,47 @@
-import React from "react";
+import React, { useState } from "react";
+
+import { useRouter } from "next/router";
+
+// mobx
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { MemberIcons } from "./assignees";
 import { FilterHeader } from "../helpers/filter-header";
 import { FilterOption } from "../helpers/filter-option";
-// mobx react lite
-import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
+// ui
+import { Avatar } from "components/ui";
 
-export const FilterCreatedBy = observer(() => {
-  const store: RootStore = useMobxStore();
-  const { issueFilters: issueFilterStore } = store;
+type Props = { onClick: (stateId: string) => void };
 
-  const [previewEnabled, setPreviewEnabled] = React.useState(true);
+export const FilterCreatedBy: React.FC<Props> = observer((props) => {
+  const { onClick } = props;
 
-  const handleFilter = (key: string, value: string) => {
-    let _value =
-      issueFilterStore?.userFilters?.filters?.[key] != null
-        ? issueFilterStore?.userFilters?.filters?.[key].includes(value)
-          ? issueFilterStore?.userFilters?.filters?.[key].filter((p: string) => p != value)
-          : [...issueFilterStore?.userFilters?.filters?.[key], value]
-        : [value];
-    _value = _value && _value.length > 0 ? _value : null;
-    issueFilterStore.handleUserFilter("filters", key, _value);
-  };
+  const [previewEnabled, setPreviewEnabled] = useState(true);
+
+  const router = useRouter();
+  const { projectId } = router.query;
+
+  const store = useMobxStore();
+  const { issueFilter: issueFilterStore, project: projectStore } = store;
 
   return (
     <div>
       <FilterHeader
-        title={`Created By (${issueFilterStore?.projectMembers?.length || 0})`}
+        title={`Created By (${issueFilterStore?.userFilters.created_by?.length ?? 0})`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
-        <div className="space-y-[2px] pt-1">
-          {issueFilterStore?.projectMembers &&
-            issueFilterStore?.projectMembers.length > 0 &&
-            issueFilterStore?.projectMembers.map((_member) => (
-              <FilterOption
-                key={`create-by-${_member?.member?.id}`}
-                isChecked={
-                  issueFilterStore?.userFilters?.filters?.created_by != null &&
-                  issueFilterStore?.userFilters?.filters?.created_by.includes(_member?.member?.id)
-                    ? true
-                    : false
-                }
-                onClick={() => handleFilter("created_by", _member?.member?.id)}
-                icon={<MemberIcons display_name={_member?.member.display_name} avatar={_member?.member.avatar} />}
-                title={`${_member?.member?.display_name} (${_member?.member?.first_name} ${_member?.member?.last_name})`}
-              />
-            ))}
+        <div className="space-y-1 pt-1">
+          {projectStore.members?.[projectId?.toString() ?? ""]?.map((member) => (
+            <FilterOption
+              key={`created-by-${member.member?.id}`}
+              isChecked={issueFilterStore?.userFilters?.created_by?.includes(member.member?.id) ? true : false}
+              onClick={() => onClick(member.member?.id)}
+              icon={<Avatar user={member.member} height="18px" width="18px" />}
+              title={member.member?.display_name}
+            />
+          ))}
         </div>
       )}
     </div>

@@ -1,68 +1,52 @@
 import React from "react";
+
+import { useRouter } from "next/router";
+
+// mobx
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { StateGroupIcons } from "./state-group";
 import { FilterHeader } from "../helpers/filter-header";
 import { FilterOption } from "../helpers/filter-option";
-// mobx react lite
-import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
-// store default data
-import { stateGroups } from "store/helpers/issue-data";
+// icons
+import { StateGroupIcon } from "components/icons";
+// helpers
+import { getStatesList } from "helpers/state.helper";
 
-export const FilterState = observer(() => {
-  const store: RootStore = useMobxStore();
-  const { issueFilters: issueFilterStore } = store;
+type Props = { onClick: (stateId: string) => void };
+
+export const FilterState: React.FC<Props> = observer((props) => {
+  const { onClick } = props;
+
+  const router = useRouter();
+  const { projectId } = router.query;
+
+  const store = useMobxStore();
+  const { issueFilter: issueFilterStore, project: projectStore } = store;
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
-  const handleFilter = (key: string, value: string) => {
-    let _value =
-      issueFilterStore?.userFilters?.filters?.[key] != null
-        ? issueFilterStore?.userFilters?.filters?.[key].includes(value)
-          ? issueFilterStore?.userFilters?.filters?.[key].filter((p: string) => p != value)
-          : [...issueFilterStore?.userFilters?.filters?.[key], value]
-        : [value];
-    _value = _value && _value.length > 0 ? _value : null;
-    issueFilterStore.handleUserFilter("filters", key, _value);
-  };
-
-  const countAllState = stateGroups
-    .map((_stateGroup) => issueFilterStore?.projectStates?.[_stateGroup?.key].length || 0)
-    .reduce((sum: number, currentValue: number) => sum + currentValue, 0);
-
-  console.log("countAllState", countAllState);
+  const statesByGroups = projectStore.states?.[projectId?.toString() ?? ""];
+  const statesList = getStatesList(statesByGroups);
 
   return (
     <div>
       <FilterHeader
-        title={`State (${countAllState})`}
+        title={`State (${issueFilterStore.userFilters?.state?.length ?? 0})`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
-        <div className="space-y-[2px] pt-1">
-          {stateGroups.map(
-            (_stateGroup) =>
-              issueFilterStore?.projectStates &&
-              issueFilterStore?.projectStates[_stateGroup?.key] &&
-              issueFilterStore?.projectStates[_stateGroup?.key].length > 0 &&
-              issueFilterStore?.projectStates[_stateGroup?.key].map((_state: any) => (
-                <FilterOption
-                  key={_state?.id}
-                  isChecked={
-                    issueFilterStore?.userFilters?.filters?.state != null &&
-                    issueFilterStore?.userFilters?.filters?.state.includes(_state?.id)
-                      ? true
-                      : false
-                  }
-                  onClick={() => handleFilter("state", _state?.id)}
-                  icon={<StateGroupIcons stateGroup={_stateGroup?.key} color={_state?.color} />}
-                  title={_state?.name}
-                />
-              ))
-          )}
+        <div className="space-y-1 pt-1">
+          {statesList?.map((state) => (
+            <FilterOption
+              key={state.id}
+              isChecked={issueFilterStore?.userFilters?.state?.includes(state?.id) ? true : false}
+              onClick={() => onClick(state?.id)}
+              icon={<StateGroupIcon stateGroup={state?.group} color={state?.color} />}
+              title={state?.name}
+            />
+          ))}
         </div>
       )}
     </div>
