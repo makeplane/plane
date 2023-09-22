@@ -180,16 +180,8 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
     await issuesService
       .createDraftIssue(workspaceSlug as string, activeProject ?? "", payload, user)
       .then(async () => {
-        mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
         mutate(PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
 
-        if (displayFilters.layout === "calendar") mutate(calendarFetchKey);
-        if (displayFilters.layout === "gantt_chart")
-          mutate(ganttFetchKey, {
-            start_target_date: true,
-            order_by: "sort_order",
-          });
-        if (displayFilters.layout === "spreadsheet") mutate(spreadsheetFetchKey);
         if (groupedIssues) mutateMyIssues();
 
         setToastAlert({
@@ -200,8 +192,6 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
 
         if (payload.assignees_list?.some((assignee) => assignee === user?.id))
           mutate(USER_ISSUE(workspaceSlug as string));
-
-        if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
       })
       .catch(() => {
         setToastAlert({
