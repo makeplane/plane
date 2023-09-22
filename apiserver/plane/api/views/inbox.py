@@ -173,12 +173,12 @@ class InboxIssueViewSet(BaseViewSet):
                 )
 
             # Check for valid priority
-            if not request.data.get("issue", {}).get("priority", None) in [
+            if not request.data.get("issue", {}).get("priority", "none") in [
                 "low",
                 "medium",
                 "high",
                 "urgent",
-                None,
+                "none",
             ]:
                 return Response(
                     {"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST
@@ -480,12 +480,12 @@ class InboxIssuePublicViewSet(BaseViewSet):
                 )
 
             # Check for valid priority
-            if not request.data.get("issue", {}).get("priority", None) in [
+            if not request.data.get("issue", {}).get("priority", "none") in [
                 "low",
                 "medium",
                 "high",
                 "urgent",
-                None,
+                "none",
             ]:
                 return Response(
                     {"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST

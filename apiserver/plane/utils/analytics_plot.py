@@ -74,10 +74,10 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
 
     sorted_data = grouped_data
     if temp_axis == "priority":
-        order = ["low", "medium", "high", "urgent", "None"]
+        order = ["low", "medium", "high", "urgent", "none"]
         sorted_data = {key: grouped_data[key] for key in order if key in grouped_data}
     else:
-        sorted_data = dict(sorted(grouped_data.items(), key=lambda x: (x[0] == "None", x[0])))
+        sorted_data = dict(sorted(grouped_data.items(), key=lambda x: (x[0] == "none", x[0])))
     return sorted_data
 
 

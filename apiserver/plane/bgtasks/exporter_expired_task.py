@@ -32,7 +32,7 @@ def delete_old_s3_link():
     else:
         s3 = boto3.client(
             "s3",
-            region_name="ap-south-1",
+            region_name=settings.AWS_REGION,
             aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
             aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
             config=Config(signature_version="s3v4"),
