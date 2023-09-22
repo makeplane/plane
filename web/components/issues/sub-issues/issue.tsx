@@ -16,9 +16,9 @@ import { SubIssuesRootList } from "./issues-list";
 import { IssueProperty } from "./properties";
 // ui
 import { Tooltip, CustomMenu } from "components/ui";
-
 // types
 import { ICurrentUserResponse, IIssue } from "types";
+import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
 
 export interface ISubIssues {
   workspaceSlug: string;
@@ -29,8 +29,8 @@ export interface ISubIssues {
   user: ICurrentUserResponse | undefined;
   editable: boolean;
   removeIssueFromSubIssues: (parentIssueId: string, issue: IIssue) => void;
-  issuesVisibility: string[];
-  handleIssuesVisibility: (issueId: string) => void;
+  issuesLoader: ISubIssuesRootLoaders;
+  handleIssuesLoader: ({ key, issueId }: ISubIssuesRootLoadersHandler) => void;
   copyText: (text: string) => void;
   handleIssueCrudOperation: (
     key: "create" | "existing" | "edit" | "delete",
@@ -48,8 +48,8 @@ export const SubIssues: React.FC<ISubIssues> = ({
   user,
   editable,
   removeIssueFromSubIssues,
-  issuesVisibility,
-  handleIssuesVisibility,
+  issuesLoader,
+  handleIssuesLoader,
   copyText,
   handleIssueCrudOperation,
 }) => (
@@ -62,19 +62,21 @@ export const SubIssues: React.FC<ISubIssues> = ({
         <div className="flex-shrink-0 w-[22px] h-[22px]">
           {issue?.sub_issues_count > 0 && (
             <>
-              {true ? (
+              {issuesLoader.sub_issues.includes(issue?.id) ? (
+                <div className="w-full h-full flex justify-center items-center rounded-sm bg-custom-background-80 transition-all cursor-not-allowed">
+                  <Loader width={14} strokeWidth={2} className="animate-spin" />
+                </div>
+              ) : (
                 <div
                   className="w-full h-full flex justify-center items-center rounded-sm hover:bg-custom-background-80 transition-all cursor-pointer"
-                  onClick={() => handleIssuesVisibility(issue?.id)}
+                  onClick={() => handleIssuesLoader({ key: "visibility", issueId: issue?.id })}
                 >
-                  {issuesVisibility && issuesVisibility.includes(issue?.id) ? (
+                  {issuesLoader && issuesLoader.visibility.includes(issue?.id) ? (
                     <ChevronDown width={14} strokeWidth={2} />
                   ) : (
                     <ChevronRight width={14} strokeWidth={2} />
                   )}
                 </div>
-              ) : (
-                <Loader width={14} strokeWidth={2} className="animate-spin" />
               )}
             </>
           )}
@@ -92,7 +94,7 @@ export const SubIssues: React.FC<ISubIssues> = ({
               {issue.project_detail.identifier}-{issue?.sequence_id}
             </div>
             <Tooltip tooltipHeading="Title" tooltipContent={`${issue?.name}`}>
-              <div className="line-clamp-1 text-xs text-custom-text-100">{issue?.name}</div>
+              <div className="line-clamp-1 text-xs text-custom-text-100 pr-2">{issue?.name}</div>
             </Tooltip>
           </a>
         </Link>
@@ -132,7 +134,11 @@ export const SubIssues: React.FC<ISubIssues> = ({
               </CustomMenu.MenuItem>
             )}
 
-            <CustomMenu.MenuItem onClick={copyText}>
+            <CustomMenu.MenuItem
+              onClick={() =>
+                copyText(`${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`)
+              }
+            >
               <div className="flex items-center justify-start gap-2">
                 <LinkIcon width={14} strokeWidth={2} />
                 <span>Copy issue link</span>
@@ -142,17 +148,28 @@ export const SubIssues: React.FC<ISubIssues> = ({
         </div>
 
         {editable && (
-          <div
-            className="flex-shrink-0 invisible group-hover:visible w-[22px] h-[22px] flex justify-center items-center rounded-sm hover:bg-custom-background-80 transition-all cursor-pointer overflow-hidden"
-            onClick={() => removeIssueFromSubIssues(parentIssue?.id, issue)}
-          >
-            <X width={14} strokeWidth={2} />
-          </div>
+          <>
+            {issuesLoader.delete.includes(issue?.id) ? (
+              <div className="flex-shrink-0 w-[22px] h-[22px] rounded-sm bg-red-200/10 text-red-500 transition-all cursor-not-allowed overflow-hidden flex justify-center items-center">
+                <Loader width={14} strokeWidth={2} className="animate-spin" />
+              </div>
+            ) : (
+              <div
+                className="flex-shrink-0 invisible group-hover:visible w-[22px] h-[22px] rounded-sm hover:bg-custom-background-80 transition-all cursor-pointer overflow-hidden flex justify-center items-center"
+                onClick={() => {
+                  handleIssuesLoader({ key: "delete", issueId: issue?.id });
+                  removeIssueFromSubIssues(parentIssue?.id, issue);
+                }}
+              >
+                <X width={14} strokeWidth={2} />
+              </div>
+            )}
+          </>
         )}
       </div>
     )}
 
-    {issuesVisibility.includes(issue?.id) && issue?.sub_issues_count > 0 && (
+    {issuesLoader.visibility.includes(issue?.id) && issue?.sub_issues_count > 0 && (
       <SubIssuesRootList
         workspaceSlug={workspaceSlug}
         projectId={projectId}
@@ -161,8 +178,8 @@ export const SubIssues: React.FC<ISubIssues> = ({
         user={user}
         editable={editable}
         removeIssueFromSubIssues={removeIssueFromSubIssues}
-        issuesVisibility={issuesVisibility}
-        handleIssuesVisibility={handleIssuesVisibility}
+        issuesLoader={issuesLoader}
+        handleIssuesLoader={handleIssuesLoader}
         copyText={copyText}
         handleIssueCrudOperation={handleIssueCrudOperation}
       />
