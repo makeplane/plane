@@ -1,113 +1,61 @@
 version: "3.8"
 
-x-api-and-worker-env:
-        &api-and-worker-env
-        DEBUG: ${DEBUG}
-        SENTRY_DSN: ${SENTRY_DSN}
-        DJANGO_SETTINGS_MODULE: plane.settings.selfhosted
-        DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:5432/${PGDATABASE}
-        REDIS_URL: redis://plane-redis:6379/
-        EMAIL_HOST: ${EMAIL_HOST}
-        EMAIL_HOST_USER: ${EMAIL_HOST_USER}
-        EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
-        EMAIL_PORT: ${EMAIL_PORT}
-        EMAIL_FROM: ${EMAIL_FROM}
-        EMAIL_USE_TLS: ${EMAIL_USE_TLS}
-        EMAIL_USE_SSL: ${EMAIL_USE_SSL}
-        AWS_REGION: ${AWS_REGION}
-        AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-        AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-        AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
-        AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL}
-        FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT}
-        WEB_URL: ${WEB_URL}
-        GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
-        DISABLE_COLLECTSTATIC: 1
-        DOCKERIZED: 1
-        OPENAI_API_BASE: ${OPENAI_API_BASE}
-        OPENAI_API_KEY: ${OPENAI_API_KEY}
-        GPT_ENGINE: ${GPT_ENGINE}
-        SECRET_KEY: ${SECRET_KEY}
-        DEFAULT_EMAIL: ${DEFAULT_EMAIL}
-        DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
-        USE_MINIO: ${USE_MINIO}
-        ENABLE_SIGNUP: ${ENABLE_SIGNUP}
-
 services:
-        plane-web:
-                container_name: planefrontend
+        web:
+                container_name: web
                 image: makeplane/plane-frontend:latest
                 restart: always
                 command: /usr/local/bin/start.sh web/server.js web
                 env_file:
-                        - .env
-                environment:
-                        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
-                        NEXT_PUBLIC_DEPLOY_URL: ${NEXT_PUBLIC_DEPLOY_URL}
-                        NEXT_PUBLIC_GOOGLE_CLIENTID: "0"
-                        NEXT_PUBLIC_GITHUB_APP_NAME: "0"
-                        NEXT_PUBLIC_GITHUB_ID: "0"
-                        NEXT_PUBLIC_SENTRY_DSN: "0"
-                        NEXT_PUBLIC_ENABLE_OAUTH: "0"
-                        NEXT_PUBLIC_ENABLE_SENTRY: "0"
-                        NEXT_PUBLIC_ENABLE_SESSION_RECORDER: "0"
-                        NEXT_PUBLIC_TRACK_EVENTS: "0"
+                        - ./web/.env
                 depends_on:
-                        - plane-api
-                        - plane-worker
+                        - api
+                        - worker
 
-        plane-deploy:
-                container_name: planedeploy
-                image: makeplane/plane-deploy:latest
+        space:
+                container_name: space
+                image: makeplane/plane-space:latest
                 restart: always
                 command: /usr/local/bin/start.sh space/server.js space
                 env_file:
-                        - .env
-                environment:
-                        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+                        - ./space/.env
                 depends_on:
-                        - plane-api
-                        - plane-worker
-                        - plane-web
+                        - api
+                        - worker
+                        - web
 
-        plane-api:
-                container_name: planebackend
+        api:
+                container_name: api
                 image: makeplane/plane-backend:latest
                 restart: always
                 command: ./bin/takeoff
                 env_file:
-                        - .env
-                environment:
-                        <<: *api-and-worker-env
+                        - ./apiserver/.env
                 depends_on:
                         - plane-db
                         - plane-redis
 
-        plane-worker:
-                container_name: planebgworker
+        worker:
+                container_name: bgworker
                 image: makeplane/plane-backend:latest
                 restart: always
                 command: ./bin/worker
                 env_file:
-                        - .env
-                environment:
-                        <<: *api-and-worker-env
+                        - ./apiserver/.env
                 depends_on:
-                        - plane-api
+                        - api
                         - plane-db
                         - plane-redis
 
-        plane-beat-worker:
-                container_name: planebeatworker
+        beat-worker:
+                container_name: beatworker
                 image: makeplane/plane-backend:latest
                 restart: always
                 command: ./bin/beat
                 env_file:
-                        - .env
-                environment:
-                        <<: *api-and-worker-env
+                        - ./apiserver/.env
                 depends_on:
-                        - plane-api
+                        - api
                         - plane-db
                         - plane-redis
 
@@ -157,8 +105,8 @@ services:
                         - plane-minio
 
         # Comment this if you already have a reverse proxy running
-        plane-proxy:
-                container_name: planeproxy
+        proxy:
+                container_name: proxy
                 image: makeplane/plane-proxy:latest
                 ports:
                         - ${NGINX_PORT}:80
@@ -168,8 +116,9 @@ services:
                         FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
                         BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
                 depends_on:
-                        - plane-web
-                        - plane-api
+                        - web
+                        - api
+                        - space
 
 volumes:
         pgdata:
