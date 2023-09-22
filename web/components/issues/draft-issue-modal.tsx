@@ -141,7 +141,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
     if (prePopulateData && prePopulateData.project && !activeProject)
       return setActiveProject(prePopulateData.project);
 
-    if (prePopulateData && prePopulateData.project)
+    if (prePopulateData && prePopulateData.project && !activeProject)
       return setActiveProject(prePopulateData.project);
 
     // if data is not present, set active project to the project
