@@ -1,0 +1,7 @@
+FROM minio/mc
+
+# Copy the setup script
+COPY minio.sh /usr/local/bin/
+
+# Set the execute permission for the setup script
+RUN chmod +x /usr/local/bin/minio.sh
