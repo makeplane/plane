@@ -69,7 +69,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   handleClose,
   isOpen,
   isUpdatingSingleIssue = false,
-  prePopulateData,
+  prePopulateData: prePopulateDataProps,
   fieldsToShow = ["all"],
   onSubmit,
 }) => {
@@ -78,6 +78,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const [formDirtyState, setFormDirtyState] = useState<any>(null);
   const [showConfirmDiscard, setShowConfirmDiscard] = useState(false);
   const [activeProject, setActiveProject] = useState<string | null>(null);
+  const [prePopulateData, setPreloadedData] = useState<Partial<IIssue>>({});
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId, inboxId } = router.query;
@@ -98,11 +99,40 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
   const { setToastAlert } = useToast();
 
-  if (router.asPath.includes("my-issues") || router.asPath.includes("assigned"))
-    prePopulateData = {
-      ...prePopulateData,
-      assignees: [...(prePopulateData?.assignees ?? []), user?.id ?? ""],
-    };
+  useEffect(() => {
+    setPreloadedData(prePopulateDataProps ?? {});
+
+    if (cycleId && !prePopulateDataProps?.cycle) {
+      setPreloadedData((prevData) => ({
+        ...(prevData ?? {}),
+        ...prePopulateDataProps,
+        cycle: cycleId.toString(),
+      }));
+    }
+    if (moduleId && !prePopulateDataProps?.module) {
+      setPreloadedData((prevData) => ({
+        ...(prevData ?? {}),
+        ...prePopulateDataProps,
+        module: moduleId.toString(),
+      }));
+    }
+    if (
+      (router.asPath.includes("my-issues") || router.asPath.includes("assigned")) &&
+      !prePopulateDataProps?.assignees
+    ) {
+      setPreloadedData((prevData) => ({
+        ...(prevData ?? {}),
+        ...prePopulateDataProps,
+        assignees: prePopulateDataProps?.assignees ?? [user?.id ?? ""],
+      }));
+    }
+  }, [prePopulateDataProps, cycleId, moduleId, router.asPath, user?.id]);
+
+  /**
+   *
+   * @description This function is used to close the modals. This function will show a confirm discard modal if the form is dirty.
+   * @returns void
+   */
 
   const onClose = () => {
     if (!showConfirmDiscard) handleClose();
@@ -110,6 +140,22 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     const data = JSON.stringify(formDirtyState);
     setValueInLocalStorage(data);
   };
+
+  /**
+   * @description This function is used to close the modals. This function is to be used when the form is submitted,
+   * meaning we don't need to show the confirm discard modal or store the form data in local storage.
+   */
+
+  const onFormSubmitClose = () => {
+    setFormDirtyState(null);
+    handleClose();
+  };
+
+  /**
+   * @description This function is used to close the modals. This function is to be used when we click outside the modal,
+   * meaning we don't need to show the confirm discard modal but will store the form data in local storage.
+   * Use this function when you want to store the form data in local storage.
+   */
 
   const onDiscardClose = () => {
     if (formDirtyState !== null) {
@@ -295,7 +341,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           });
         });
 
-    if (!createMore) onDiscardClose();
+    if (!createMore) onFormSubmitClose();
   };
 
   const createDraftIssue = async () => {
@@ -354,7 +400,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
         if (payload.module && payload.module !== "") addIssueToModule(res.id, payload.module);
 
-        if (!createMore) onDiscardClose();
+        if (!createMore) onFormSubmitClose();
 
         setToastAlert({
           type: "success",

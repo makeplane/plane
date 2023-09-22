@@ -139,6 +139,8 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
     target_date: getValues("target_date"),
     project: getValues("project"),
     parent: getValues("parent"),
+    cycle: getValues("cycle"),
+    module: getValues("module"),
   };
 
   useEffect(() => {

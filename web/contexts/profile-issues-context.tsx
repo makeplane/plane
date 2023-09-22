@@ -71,9 +71,8 @@ export const reducer: ReducerFunctionType = (state, action) => {
         ...state,
         display_filters: {
           ...state.display_filters,
-          ...payload,
+          ...payload?.display_filters,
         },
-        issueView: payload?.display_filters?.layout || "list",
       };
 
       return {
@@ -100,7 +99,7 @@ export const reducer: ReducerFunctionType = (state, action) => {
     case "SET_PROPERTIES": {
       const newState = {
         ...state,
-        properties: {
+        display_properties: {
           ...state.display_properties,
           ...payload?.display_properties,
         },
@@ -129,7 +128,6 @@ export const ProfileIssuesContextProvider: React.FC<{ children: React.ReactNode 
         type: "SET_DISPLAY_FILTERS",
         payload: {
           display_filters: {
-            ...state.display_filters,
             ...displayFilter,
           },
         },
@@ -179,7 +177,6 @@ export const ProfileIssuesContextProvider: React.FC<{ children: React.ReactNode 
         type: "SET_PROPERTIES",
         payload: {
           display_properties: {
-            ...state.display_properties,
             [key]: !state.display_properties[key],
           },
         },
