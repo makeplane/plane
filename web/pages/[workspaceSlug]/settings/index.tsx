@@ -337,10 +337,10 @@ const WorkspaceSettings: NextPage = () => {
                     <Disclosure.Panel>
                       <div className="flex flex-col gap-8">
                         <span className="text-sm tracking-tight">
-                          The danger zone of the project delete page is a critical area that
-                          requires careful consideration and attention. When deleting a project, all
-                          of the data and resources within that project will be permanently removed
-                          and cannot be recovered.
+                          The danger zone of the workspace delete page is a critical area that
+                          requires careful consideration and attention. When deleting a workspace,
+                          all of the data and resources within that workspace will be permanently
+                          removed and cannot be recovered.
                         </span>
                         <div>
                           <DangerButton
@@ -348,7 +348,7 @@ const WorkspaceSettings: NextPage = () => {
                             className="!text-sm"
                             outline
                           >
-                            Delete my project
+                            Delete my workspace
                           </DangerButton>
                         </div>
                       </div>
