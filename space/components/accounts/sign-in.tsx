@@ -41,7 +41,7 @@ export const SignInView = observer(() => {
       router.push(`/onboarding?next_path=${nextPath}`);
       return;
     }
-    router.push((nextPath ?? "/home").toString());
+    router.push((nextPath ?? "/login").toString());
   };
 
   const handleGoogleSignIn = async ({ clientId, credential }: any) => {
