@@ -108,14 +108,16 @@ services:
       MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
       MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
 
-  createbuckets:
-    image: minio/mc
-    entrypoint: >
-      /bin/sh -c " /usr/bin/mc config host add plane-minio http://plane-minio:9000 \$AWS_ACCESS_KEY_ID \$AWS_SECRET_ACCESS_KEY; /usr/bin/mc mb plane-minio/\$AWS_S3_BUCKET_NAME; /usr/bin/mc anonymous set download plane-minio/\$AWS_S3_BUCKET_NAME; exit 0; "
+  configure-minio:
+    build:
+      context: .
+      dockerfile: ./minio/Dockerfile.minio
+    entrypoint: /usr/local/bin/minio.sh ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} ${AWS_S3_BUCKET_NAME}
     env_file:
       - .env
     depends_on:
       - plane-minio
+    
 
   # Comment this if you already have a reverse proxy running
   proxy:
