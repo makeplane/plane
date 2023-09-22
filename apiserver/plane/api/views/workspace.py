@@ -1317,6 +1317,11 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
     def get(self, request, slug, user_id):
         try:
             filters = issue_filters(request.query_params, "GET")
+
+            # Custom ordering for priority and state
+            priority_order = ["urgent", "high", "medium", "low", "none"]
+            state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
+
             order_by_param = request.GET.get("order_by", "-created_at")
             issue_queryset = (
                 Issue.issue_objects.filter(
