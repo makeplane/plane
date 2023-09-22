@@ -24,7 +24,7 @@ http {
         }
 
         location /spaces/ {
-            rewrite ^/spaces/?$ /spaces/home break;
+            rewrite ^/spaces/?$ /spaces/login break;
             proxy_pass http://planedeploy:3000/spaces/;
         }
 
