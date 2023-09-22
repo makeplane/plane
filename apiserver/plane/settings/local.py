@@ -127,13 +127,10 @@ AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 AWS_REGION_NAME = os.environ.get("AWS_REGION")
 AWS_S3_ADDRESSING_STYLE = os.environ.get("AWS_S3_ADDRESSING_STYLE")
-
+AWS_S3_FILE_OVERWRITE = False
 # Public S3 bucket settings
 AWS_PUBLIC_STORAGE_BUCKET_NAME = os.environ.get("AWS_PUBLIC_STORAGE_BUCKET_NAME")
 AWS_PUBLIC_DEFAULT_ACL = "public-read"
-AWS_S3_PUBLIC_OBJECT_PARAMETERS = {
-    "CacheControl": "max-age=86400",
-}
 PUBLIC_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
 # Private S3 bucket settings

@@ -7,7 +7,6 @@ class PublicS3Storage(S3Boto3Storage):
     """Configuration for the Public bucket storage"""
     bucket_name = settings.AWS_PUBLIC_STORAGE_BUCKET_NAME
     default_acl = settings.AWS_PUBLIC_DEFAULT_ACL
-    object_parameters = settings.AWS_S3_PUBLIC_OBJECT_PARAMETERS
     querystring_auth = False
 
     # For self hosted docker and minio

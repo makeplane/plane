@@ -68,17 +68,14 @@ AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "secret-key")
 AWS_S3_ENDPOINT_URL = os.environ.get(
     "AWS_S3_ENDPOINT_URL", "http://plane-minio:9000"
 )
+AWS_S3_FILE_OVERWRITE = False
 # Public S3 bucket settings
 AWS_PUBLIC_STORAGE_BUCKET_NAME = os.environ.get("AWS_PUBLIC_STORAGE_BUCKET_NAME")
 AWS_PUBLIC_DEFAULT_ACL = "public-read"
-AWS_S3_PUBLIC_OBJECT_PARAMETERS = {
-    "CacheControl": "max-age=86400",
-}
 PUBLIC_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
 # Private S3 bucket settings
 AWS_PRIVATE_STORAGE_BUCKET_NAME = os.environ.get("AWS_PRIVATE_STORAGE_BUCKET_NAME")
-AWS_S3_PRIVATE_FILE_OVERWRITE = False
 AWS_PRIVATE_DEFAULT_ACL = "private"
 PRIVATE_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 ## End Storage settings
