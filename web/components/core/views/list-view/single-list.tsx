@@ -1,3 +1,6 @@
+import { useState } from "react";
+
+// next
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
@@ -10,7 +13,7 @@ import projectService from "services/project.service";
 // hooks
 import useProjects from "hooks/use-projects";
 // components
-import { SingleListIssue } from "components/core";
+import { SingleListIssue, ListInlineCreateIssueForm } from "components/core";
 // ui
 import { Avatar, CustomMenu } from "components/ui";
 // icons
@@ -51,23 +54,26 @@ type Props = {
   viewProps: IIssueViewProps;
 };
 
-export const SingleList: React.FC<Props> = ({
-  currentState,
-  groupTitle,
-  addIssueToGroup,
-  handleIssueAction,
-  openIssuesListModal,
-  handleDraftIssueAction,
-  handleMyIssueOpen,
-  removeIssue,
-  disableUserActions,
-  disableAddIssueOption = false,
-  user,
-  userAuth,
-  viewProps,
-}) => {
+export const SingleList: React.FC<Props> = (props) => {
+  const {
+    currentState,
+    groupTitle,
+    handleIssueAction,
+    openIssuesListModal,
+    handleDraftIssueAction,
+    handleMyIssueOpen,
+    removeIssue,
+    disableUserActions,
+    disableAddIssueOption = false,
+    user,
+    userAuth,
+    viewProps,
+  } = props;
+
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+
+  const [isCreateIssueFormOpen, setIsCreateIssueFormOpen] = useState(false);
 
   const isArchivedIssues = router.pathname.includes("archived-issues");
 
@@ -207,7 +213,7 @@ export const SingleList: React.FC<Props> = ({
                 <button
                   type="button"
                   className="p-1  text-custom-text-200 hover:bg-custom-background-80"
-                  onClick={addIssueToGroup}
+                  onClick={() => setIsCreateIssueFormOpen(true)}
                 >
                   <PlusIcon className="h-4 w-4" />
                 </button>
@@ -224,7 +230,9 @@ export const SingleList: React.FC<Props> = ({
                 position="right"
                 noBorder
               >
-                <CustomMenu.MenuItem onClick={addIssueToGroup}>Create new</CustomMenu.MenuItem>
+                <CustomMenu.MenuItem onClick={() => setIsCreateIssueFormOpen(true)}>
+                  Create new
+                </CustomMenu.MenuItem>
                 {openIssuesListModal && (
                   <CustomMenu.MenuItem onClick={openIssuesListModal}>
                     Add an existing issue
@@ -283,6 +291,29 @@ export const SingleList: React.FC<Props> = ({
                 )
               ) : (
                 <div className="flex h-full w-full items-center justify-center">Loading...</div>
+              )}
+
+              <ListInlineCreateIssueForm
+                isOpen={isCreateIssueFormOpen}
+                handleClose={() => setIsCreateIssueFormOpen(false)}
+                prePopulatedData={{
+                  ...(cycleId && { cycle: cycleId.toString() }),
+                  ...(moduleId && { module: moduleId.toString() }),
+                  [displayFilters?.group_by!]: groupTitle,
+                }}
+              />
+
+              {!isCreateIssueFormOpen && (
+                <div className="w-full bg-custom-background-100 px-6 py-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsCreateIssueFormOpen(true)}
+                    className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-1 rounded-md"
+                  >
+                    <PlusIcon className="h-4 w-4" />
+                    <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
+                  </button>
+                </div>
               )}
             </Disclosure.Panel>
           </Transition>
