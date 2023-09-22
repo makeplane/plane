@@ -2439,6 +2439,7 @@ class IssueDraftViewSet(BaseViewSet):
                 current_instance=json.dumps(
                     IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
                 ),
+                epoch  = int(timezone.now().timestamp())
             )
         return super().perform_destroy(instance)
 
