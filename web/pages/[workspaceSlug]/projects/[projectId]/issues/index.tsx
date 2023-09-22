@@ -35,16 +35,12 @@ const ProjectIssues: NextPage = () => {
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => projectService.getProject(workspaceSlug as string, projectId as string) : null
   );
 
   const { data: inboxList } = useSWR(
     workspaceSlug && projectId ? INBOX_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => inboxService.getInboxes(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => inboxService.getInboxes(workspaceSlug as string, projectId as string) : null
   );
 
   return (
@@ -53,9 +49,7 @@ const ProjectIssues: NextPage = () => {
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-            <BreadcrumbItem
-              title={`${truncateText(projectDetails?.name ?? "Project", 32)} Issues`}
-            />
+            <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Issues`} />
           </Breadcrumbs>
         }
         right={

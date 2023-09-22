@@ -96,27 +96,22 @@ class WorkspaceStore implements IWorkspaceStore {
    * fetch workspace info from the array of workspaces in the store.
    * @param workspaceSlug
    */
-  getWorkspaceBySlug = (workspaceSlug: string) => {
-    return this.workspaces.find((w) => w.slug == workspaceSlug) || null;
-  };
+  getWorkspaceBySlug = (workspaceSlug: string) => this.workspaces.find((w) => w.slug == workspaceSlug) || null;
 
   /**
    * get Workspace projects using workspace slug
    * @param workspaceSlug
    * @returns
    */
-  getWorkspaceProjects = (workspaceSlug: string) => {
-    return this.projects[workspaceSlug];
-  };
+  getWorkspaceProjects = (workspaceSlug: string) => this.projects[workspaceSlug];
 
   /**
    * get workspace label information from the workspace labels
    * @param labelId
    * @returns
    */
-  getWorkspaceLabelById = (workspaceSlug: string, labelId: string) => {
-    return this.labels?.[workspaceSlug].find((label) => label.id === labelId) || null;
-  };
+  getWorkspaceLabelById = (workspaceSlug: string, labelId: string) =>
+    this.labels?.[workspaceSlug].find((label) => label.id === labelId) || null;
 
   /**
    * fetch user workspaces from API
