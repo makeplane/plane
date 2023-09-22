@@ -24,6 +24,7 @@ import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 
 type Props = {
   value: string[];
+  projectId: string;
   onChange: (data: any) => void;
   labelsDetails: any[];
   className?: string;
@@ -37,6 +38,7 @@ type Props = {
 
 export const LabelSelect: React.FC<Props> = ({
   value,
+  projectId,
   onChange,
   labelsDetails,
   className = "",
@@ -54,15 +56,15 @@ export const LabelSelect: React.FC<Props> = ({
   const [labelModal, setLabelModal] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
   const dropdownBtn = useRef<any>(null);
   const dropdownOptions = useRef<any>(null);
 
   const { data: issueLabels } = useSWR<IIssueLabels[]>(
-    projectId && fetchStates ? PROJECT_ISSUE_LABELS(projectId.toString()) : null,
+    projectId && fetchStates ? PROJECT_ISSUE_LABELS(projectId) : null,
     workspaceSlug && projectId && fetchStates
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
+      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId)
       : null
   );
 
@@ -150,7 +152,7 @@ export const LabelSelect: React.FC<Props> = ({
         <CreateLabelModal
           isOpen={labelModal}
           handleClose={() => setLabelModal(false)}
-          projectId={projectId.toString()}
+          projectId={projectId}
           user={user}
         />
       )}

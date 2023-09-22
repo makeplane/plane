@@ -56,6 +56,7 @@ type Props = {
   provided: DraggableProvided;
   snapshot: DraggableStateSnapshot;
   issue: IIssue;
+  projectId: string;
   groupTitle?: string;
   index: number;
   editIssue: () => void;
@@ -77,6 +78,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
   provided,
   snapshot,
   issue,
+  projectId,
   index,
   editIssue,
   makeIssueCopy,
@@ -104,7 +106,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
   const { displayFilters, properties, mutateIssues } = viewProps;
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, cycleId, moduleId } = router.query;
 
   const isDraftIssue = router.pathname.includes("draft-issues");
 
@@ -452,6 +454,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
               <StateSelect
                 value={issue.state_detail}
                 onChange={handleStateChange}
+                projectId={projectId}
                 hideDropdownArrow
                 disabled={isNotAllowed}
               />
@@ -479,6 +482,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
             {properties.labels && issue.labels.length > 0 && (
               <LabelSelect
                 value={issue.labels}
+                projectId={projectId}
                 onChange={handleLabelChange}
                 labelsDetails={issue.label_details}
                 hideDropdownArrow
@@ -489,6 +493,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
             {properties.assignee && (
               <MembersSelect
                 value={issue.assignees}
+                projectId={projectId}
                 onChange={handleAssigneeChange}
                 membersDetails={issue.assignee_details}
                 hideDropdownArrow

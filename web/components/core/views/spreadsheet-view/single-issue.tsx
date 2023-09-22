@@ -49,6 +49,7 @@ import { renderLongDetailDateFormat } from "helpers/date-time.helper";
 
 type Props = {
   issue: IIssue;
+  projectId: string;
   index: number;
   expanded: boolean;
   handleToggleExpand: (issueId: string) => void;
@@ -64,6 +65,7 @@ type Props = {
 
 export const SingleSpreadsheetIssue: React.FC<Props> = ({
   issue,
+  projectId,
   index,
   expanded,
   handleToggleExpand,
@@ -80,7 +82,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
 
   const router = useRouter();
 
-  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+  const { workspaceSlug, cycleId, moduleId, viewId } = router.query;
 
   const { params } = useSpreadsheetIssuesView();
 
@@ -96,7 +98,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), params)
         : viewId
         ? VIEW_ISSUES(viewId.toString(), params)
-        : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params);
+        : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId, params);
 
       if (issue.parent)
         mutate<ISubIssueResponse>(
@@ -136,13 +138,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         );
 
       issuesService
-        .patchIssue(
-          workspaceSlug as string,
-          projectId as string,
-          issue.id as string,
-          formData,
-          user
-        )
+        .patchIssue(workspaceSlug as string, projectId, issue.id as string, formData, user)
         .then(() => {
           if (issue.parent) {
             mutate(SUB_ISSUES(issue.parent as string));
@@ -368,6 +364,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
           <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
             <StateSelect
               value={issue.state_detail}
+              projectId={projectId}
               onChange={handleStateChange}
               buttonClassName="!p-0 !rounded-none !shadow-none !border-0"
               hideDropdownArrow
@@ -390,6 +387,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
           <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
             <MembersSelect
               value={issue.assignees}
+              projectId={projectId}
               onChange={handleAssigneeChange}
               membersDetails={issue.assignee_details}
               buttonClassName="!p-0 !rounded-none !shadow-none !border-0"
@@ -402,6 +400,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
           <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
             <LabelSelect
               value={issue.labels}
+              projectId={projectId}
               onChange={handleLabelChange}
               labelsDetails={issue.label_details}
               hideDropdownArrow
