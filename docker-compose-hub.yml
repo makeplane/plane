@@ -13,8 +13,8 @@ services:
                         - worker
 
         space:
-                container_name: deploy
-                image: makeplane/plane-deploy:latest
+                container_name: space
+                image: makeplane/plane-space:latest
                 restart: always
                 command: /usr/local/bin/start.sh space/server.js space
                 env_file:
