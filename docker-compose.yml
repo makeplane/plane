@@ -1,8 +1,8 @@
 version: "3.8"
 
 services:
-  plane-web:
-    container_name: planefrontend
+  web:
+    container_name: web
     build:
       context: .
       dockerfile: ./web/Dockerfile.web
@@ -11,11 +11,11 @@ services:
     restart: always
     command: /usr/local/bin/start.sh web/server.js web
     depends_on:
-      - plane-api
-      - plane-worker
+      - api
+      - worker
 
-  plane-deploy:
-    container_name: planedeploy
+  space:
+    container_name: space
     build:
       context: .
       dockerfile: ./space/Dockerfile.space
@@ -24,12 +24,12 @@ services:
     restart: always
     command: /usr/local/bin/start.sh space/server.js space
     depends_on:
-      - plane-api
-      - plane-worker
-      - plane-web
+      - api
+      - worker
+      - web
 
-  plane-api:
-    container_name: planebackend
+  api:
+    container_name: api
     build:
       context: ./apiserver
       dockerfile: Dockerfile.api
@@ -43,8 +43,8 @@ services:
       - plane-db
       - plane-redis
 
-  plane-worker:
-    container_name: planebgworker
+  worker:
+    container_name: bgworker
     build:
       context: ./apiserver
       dockerfile: Dockerfile.api
@@ -55,12 +55,12 @@ services:
     env_file:
       - ./apiserver/.env
     depends_on:
-      - plane-api
+      - api
       - plane-db
       - plane-redis
 
-  plane-beat-worker:
-    container_name: planebeatworker
+  beat-worker:
+    container_name: beatworker
     build:
       context: ./apiserver
       dockerfile: Dockerfile.api
@@ -71,7 +71,7 @@ services:
     env_file:
       - ./apiserver/.env
     depends_on:
-      - plane-api
+      - api
       - plane-db
       - plane-redis
 
@@ -118,8 +118,8 @@ services:
       - plane-minio
 
   # Comment this if you already have a reverse proxy running
-  plane-proxy:
-    container_name: planeproxy
+  proxy:
+    container_name: proxy
     build:
       context: ./nginx
       dockerfile: Dockerfile
@@ -130,8 +130,9 @@ services:
       FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
       BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
     depends_on:
-      - plane-web
-      - plane-api
+      - web
+      - api
+      - space
 
 volumes:
   pgdata:

@@ -40,6 +40,7 @@ from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
 from plane.utils.analytics_plot import burndown_plot
 
+
 class ModuleViewSet(BaseViewSet):
     model = Module
     permission_classes = [
@@ -78,35 +79,63 @@ class ModuleViewSet(BaseViewSet):
                     queryset=ModuleLink.objects.select_related("module", "created_by"),
                 )
             )
-            .annotate(total_issues=Count("issue_module"))
+            .annotate(
+                total_issues=Count(
+                    "issue_module",
+                    filter=Q(
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                ),
+            )
             .annotate(
                 completed_issues=Count(
                     "issue_module__issue__state__group",
-                    filter=Q(issue_module__issue__state__group="completed"),
+                    filter=Q(
+                        issue_module__issue__state__group="completed",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
                 )
             )
             .annotate(
                 cancelled_issues=Count(
                     "issue_module__issue__state__group",
-                    filter=Q(issue_module__issue__state__group="cancelled"),
+                    filter=Q(
+                        issue_module__issue__state__group="cancelled",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
                 )
             )
             .annotate(
                 started_issues=Count(
                     "issue_module__issue__state__group",
-                    filter=Q(issue_module__issue__state__group="started"),
+                    filter=Q(
+                        issue_module__issue__state__group="started",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
                 )
             )
             .annotate(
                 unstarted_issues=Count(
                     "issue_module__issue__state__group",
-                    filter=Q(issue_module__issue__state__group="unstarted"),
+                    filter=Q(
+                        issue_module__issue__state__group="unstarted",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
                 )
             )
             .annotate(
                 backlog_issues=Count(
                     "issue_module__issue__state__group",
-                    filter=Q(issue_module__issue__state__group="backlog"),
+                    filter=Q(
+                        issue_module__issue__state__group="backlog",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
                 )
             )
             .order_by(order_by, "name")
@@ -179,18 +208,36 @@ class ModuleViewSet(BaseViewSet):
                 .annotate(assignee_id=F("assignees__id"))
                 .annotate(display_name=F("assignees__display_name"))
                 .annotate(avatar=F("assignees__avatar"))
-                .values("first_name", "last_name", "assignee_id", "avatar", "display_name")
-                .annotate(total_issues=Count("assignee_id"))
+                .values(
+                    "first_name", "last_name", "assignee_id", "avatar", "display_name"
+                )
+                .annotate(
+                    total_issues=Count(
+                        "assignee_id",
+                        filter=Q(
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+                )
                 .annotate(
                     completed_issues=Count(
                         "assignee_id",
-                        filter=Q(completed_at__isnull=False),
+                        filter=Q(
+                            completed_at__isnull=False,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
                     )
                 )
                 .annotate(
                     pending_issues=Count(
                         "assignee_id",
-                        filter=Q(completed_at__isnull=True),
+                        filter=Q(
+                            completed_at__isnull=True,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
                     )
                 )
                 .order_by("first_name", "last_name")
@@ -206,17 +253,33 @@ class ModuleViewSet(BaseViewSet):
                 .annotate(color=F("labels__color"))
                 .annotate(label_id=F("labels__id"))
                 .values("label_name", "color", "label_id")
-                .annotate(total_issues=Count("label_id"))
+                .annotate(
+                    total_issues=Count(
+                        "label_id",
+                        filter=Q(
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    ),
+                )
                 .annotate(
                     completed_issues=Count(
                         "label_id",
-                        filter=Q(completed_at__isnull=False),
+                        filter=Q(
+                            completed_at__isnull=False,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
                     )
                 )
                 .annotate(
                     pending_issues=Count(
                         "label_id",
-                        filter=Q(completed_at__isnull=True),
+                        filter=Q(
+                            completed_at__isnull=True,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
                     )
                 )
                 .order_by("label_name")
@@ -494,7 +557,6 @@ class ModuleLinkViewSet(BaseViewSet):
 
 
 class ModuleFavoriteViewSet(BaseViewSet):
-
     serializer_class = ModuleFavoriteSerializer
     model = ModuleFavorite
 

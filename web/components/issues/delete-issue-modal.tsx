@@ -35,6 +35,7 @@ type Props = {
   data: IIssue | null;
   user: ICurrentUserResponse | undefined;
   onSubmit?: () => Promise<void>;
+  redirection?: boolean;
 };
 
 export const DeleteIssueModal: React.FC<Props> = ({
@@ -43,6 +44,7 @@ export const DeleteIssueModal: React.FC<Props> = ({
   data,
   user,
   onSubmit,
+  redirection = true,
 }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
@@ -132,7 +134,7 @@ export const DeleteIssueModal: React.FC<Props> = ({
           message: "Issue deleted successfully",
         });
 
-        if (issueId) router.back();
+        if (issueId && redirection) router.back();
       })
       .catch((error) => {
         console.log(error);

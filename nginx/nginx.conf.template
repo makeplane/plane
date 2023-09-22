@@ -1,11 +1,12 @@
-events { }
+events {
+}
 
 http {
     sendfile on;
 
     server {
-        listen       80;
-        root   /www/data/;
+        listen 80;
+        root /www/data/;
         access_log /var/log/nginx/access.log;
 
         client_max_body_size ${FILE_SIZE_LIMIT};
@@ -16,16 +17,16 @@ http {
         add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 
         location / {
-            proxy_pass http://planefrontend:3000/;       
+            proxy_pass http://web:3000/;
         }
 
         location /api/ {
-            proxy_pass http://planebackend:8000/api/;
+            proxy_pass http://api:8000/api/;
         }
 
         location /spaces/ {
             rewrite ^/spaces/?$ /spaces/login break;
-            proxy_pass http://planedeploy:3000/spaces/;
+            proxy_pass http://space:3000/spaces/;
         }
 
         location /${BUCKET_NAME}/ {
