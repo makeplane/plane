@@ -17,11 +17,13 @@ export const IssueDropdown = ({ children, title = "Dropdown" }: IIssueDropdown) 
       return (
         <>
           <Popover.Button
-            className={`outline-none border border-custom-border-200 text-xs rounded flex items-center gap-2 px-2 py-1.5 hover:bg-custom-background-100`}
+            className={`outline-none border border-custom-border-200 text-xs rounded flex items-center gap-2 px-2 py-1.5 hover:bg-custom-background-80 ${
+              open ? "text-custom-text-100" : "text-custom-text-200"
+            }`}
           >
             <div className="font-medium">{title}</div>
-            <div className="w-[14px] h-[14px] flex justify-center items-center">
-              {open ? <ChevronUp width={14} strokeWidth={2} /> : <ChevronDown width={14} strokeWidth={2} />}
+            <div className={`w-3.5 h-3.5 flex items-center justify-center transition-all ${open ? "" : "rotate-180"}`}>
+              <ChevronUp width={14} strokeWidth={2} />
             </div>
           </Popover.Button>
           <Transition
