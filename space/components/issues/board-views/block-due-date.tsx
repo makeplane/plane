@@ -1,17 +1,9 @@
 "use client";
 
 // helpers
-import { renderFullDate } from "constants/helpers";
+import { renderFullDate } from "helpers/date-time.helper";
 
-export const findHowManyDaysLeft = (date: string | Date) => {
-  const today = new Date();
-  const eventDate = new Date(date);
-  const timeDiff = Math.abs(eventDate.getTime() - today.getTime());
-
-  return Math.ceil(timeDiff / (1000 * 3600 * 24));
-};
-
-const dueDateIcon = (
+export const dueDateIconDetails = (
   date: string,
   stateGroup: string
 ): {
@@ -26,17 +18,24 @@ const dueDateIcon = (
     className = "";
   } else {
     const today = new Date();
-    const dueDate = new Date(date);
+    today.setHours(0, 0, 0, 0);
+    const targetDate = new Date(date);
+    targetDate.setHours(0, 0, 0, 0);
 
-    if (dueDate < today) {
+    const timeDifference = targetDate.getTime() - today.getTime();
+
+    if (timeDifference < 0) {
       iconName = "event_busy";
       className = "text-red-500";
-    } else if (dueDate > today) {
-      iconName = "calendar_today";
-      className = "";
-    } else {
+    } else if (timeDifference === 0) {
       iconName = "today";
       className = "text-red-500";
+    } else if (timeDifference === 24 * 60 * 60 * 1000) {
+      iconName = "event";
+      className = "text-yellow-500";
+    } else {
+      iconName = "calendar_today";
+      className = "";
     }
   }
 
@@ -47,7 +46,7 @@ const dueDateIcon = (
 };
 
 export const IssueBlockDueDate = ({ due_date, group }: { due_date: string; group: string }) => {
-  const iconDetails = dueDateIcon(due_date, group);
+  const iconDetails = dueDateIconDetails(due_date, group);
 
   return (
     <div className="rounded flex px-2.5 py-1 items-center border-[0.5px] border-custom-border-300 gap-1 text-custom-text-100 text-xs">

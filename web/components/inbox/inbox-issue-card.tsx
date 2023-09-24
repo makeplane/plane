@@ -4,7 +4,7 @@ import Link from "next/link";
 // ui
 import { Tooltip } from "components/ui";
 // icons
-import { getPriorityIcon } from "components/icons";
+import { PriorityIcon } from "components/icons";
 import {
   CalendarDaysIcon,
   CheckCircleIcon,
@@ -65,10 +65,7 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
                     : "border-custom-border-200"
                 }`}
               >
-                {getPriorityIcon(
-                  issue.priority && issue.priority !== "" ? issue.priority ?? "" : "None",
-                  "text-sm"
-                )}
+                <PriorityIcon priority={issue.priority ?? null} className="text-sm" />
               </div>
             </Tooltip>
             <Tooltip

@@ -85,7 +85,8 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
   });
 
   const uninvitedPeople = people?.filter((person) => {
-    const isInvited = members?.find((member) => member.display_name === person.member.display_name);
+    const isInvited = members?.find((member) => member.memberId === person.member.id);
+
     return !isInvited;
   });
 
@@ -143,7 +144,7 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
     content: (
       <div className="flex items-center gap-2">
         <Avatar user={person.member} />
-        {person.member.display_name}
+        {person.member.display_name} ({person.member.first_name + " " + person.member.last_name})
       </div>
     ),
   }));
@@ -218,7 +219,9 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
                                           }
                                         </div>
                                       ) : (
-                                        <div>Select co-worker</div>
+                                        <div className="flex items-center gap-2 py-0.5">
+                                          Select co-worker
+                                        </div>
                                       )}
                                       <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
                                     </button>
@@ -248,10 +251,13 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
                                 render={({ field }) => (
                                   <CustomSelect
                                     {...field}
-                                    label={
-                                      <span className="capitalize">
-                                        {field.value ? ROLE[field.value] : "Select role"}
-                                      </span>
+                                    customButton={
+                                      <button className="flex w-full items-center justify-between gap-1 rounded-md border border-custom-border-200 shadow-sm duration-300 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 focus:outline-none px-3 py-2.5 text-sm text-left">
+                                        <span className="capitalize">
+                                          {field.value ? ROLE[field.value] : "Select role"}
+                                        </span>
+                                        <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+                                      </button>
                                     }
                                     input
                                     width="w-full"

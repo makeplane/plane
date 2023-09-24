@@ -20,6 +20,7 @@ import fileService from "services/file.service";
 import { Input, Spinner, PrimaryButton, SecondaryButton } from "components/ui";
 // hooks
 import useWorkspaceDetails from "hooks/use-workspace-details";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 
 const unsplashEnabled =
   process.env.NEXT_PUBLIC_UNSPLASH_ENABLED === "true" ||
@@ -66,6 +67,8 @@ export const ImagePickerPopover: React.FC<Props> = ({
   const { data: images } = useSWR(`UNSPLASH_IMAGES_${searchParams}`, () =>
     fileService.getUnsplashImages(1, searchParams)
   );
+
+  const imagePickerRef = useRef<HTMLDivElement>(null);
 
   const { workspaceDetails } = useWorkspaceDetails();
 
@@ -116,12 +119,14 @@ export const ImagePickerPopover: React.FC<Props> = ({
     onChange(images[0].urls.regular);
   }, [value, onChange, images]);
 
+  useOutsideClickDetector(imagePickerRef, () => setIsOpen(false));
+
   if (!unsplashEnabled) return null;
 
   return (
     <Popover className="relative z-[2]" ref={ref}>
       <Popover.Button
-        className="rounded-md border border-custom-border-300 bg-custom-background-100 px-2 py-1 text-xs text-custom-text-200 hover:text-custom-text-100"
+        className="rounded-sm border border-custom-border-300 bg-custom-background-100 px-2 py-1 text-xs text-custom-text-200 hover:text-custom-text-100"
         onClick={() => setIsOpen((prev) => !prev)}
         disabled={disabled}
       >
@@ -137,7 +142,10 @@ export const ImagePickerPopover: React.FC<Props> = ({
         leaveTo="transform opacity-0 scale-95"
       >
         <Popover.Panel className="absolute right-0 z-10 mt-2 rounded-md border border-custom-border-200 bg-custom-background-80 shadow-lg">
-          <div className="h-96 md:h-[28rem] w-80 md:w-[36rem] flex flex-col overflow-auto rounded border border-custom-border-300 bg-custom-background-100 p-3 shadow-2xl">
+          <div
+            ref={imagePickerRef}
+            className="h-96 md:h-[28rem] w-80 md:w-[36rem] flex flex-col overflow-auto rounded border border-custom-border-300 bg-custom-background-100 p-3 shadow-2xl"
+          >
             <Tab.Group>
               <div>
                 <Tab.List as="span" className="inline-block rounded bg-custom-background-80 p-1">

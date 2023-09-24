@@ -62,17 +62,13 @@ class UserStore implements IUserStore {
       return;
     }
 
+    const currentPath = window.location.pathname + window.location.search;
     this.fetchCurrentUser()
       .then(() => {
-        if (!this.currentUser) {
-          const currentPath = window.location.pathname;
-          window.location.href = `/?next_path=${currentPath}`;
-        } else callback();
+        if (!this.currentUser) window.location.href = `/?next_path=${currentPath}`;
+        else callback();
       })
-      .catch(() => {
-        const currentPath = window.location.pathname;
-        window.location.href = `/?next_path=${currentPath}`;
-      });
+      .catch(() => (window.location.href = `/?next_path=${currentPath}`));
   };
 
   fetchCurrentUser = async () => {

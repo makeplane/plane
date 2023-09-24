@@ -1,67 +1,36 @@
-// headless ui
-import { Disclosure } from "@headlessui/react";
-// import { getStateGroupIcon } from "components/icons";
 // hooks
 import useToast from "hooks/use-toast";
 // icons
 import { Icon } from "components/ui";
+// helpers
 import { copyTextToClipboard, addSpaceIfCamelCase } from "helpers/string.helper";
+import { renderFullDate } from "helpers/date-time.helper";
+import { dueDateIconDetails } from "../board-views/block-due-date";
 // types
 import { IIssue } from "types/issue";
+import { IPeekMode } from "store/issue_details";
 // constants
 import { issueGroupFilter, issuePriorityFilter } from "constants/data";
-import { useEffect } from "react";
-import { renderDateFormat } from "constants/helpers";
-import { IPeekMode } from "store/issue_details";
-import { useRouter } from "next/router";
-import { RootStore } from "store/root";
-import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   issueDetails: IIssue;
   mode?: IPeekMode;
 };
 
-const validDate = (date: any, state: string): string => {
-  if (date === null || ["backlog", "unstarted", "cancelled"].includes(state))
-    return `bg-gray-500/10 text-gray-500 border-gray-500/50`;
-  else {
-    const today = new Date();
-    const dueDate = new Date(date);
-
-    if (dueDate < today) return `bg-red-500/10 text-red-500 border-red-500/50`;
-    else return `bg-green-500/10 text-green-500 border-green-500/50`;
-  }
-};
-
 export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mode }) => {
   const { setToastAlert } = useToast();
-
-  const { issueDetails: issueDetailStore }: RootStore = useMobxStore();
-
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
-  const startDate = issueDetails.start_date;
-  const targetDate = issueDetails.target_date;
-
-  const minDate = startDate ? new Date(startDate) : null;
-  minDate?.setDate(minDate.getDate());
-
-  const maxDate = targetDate ? new Date(targetDate) : null;
-  maxDate?.setDate(maxDate.getDate());
 
   const state = issueDetails.state_detail;
   const stateGroup = issueGroupFilter(state.group);
 
   const priority = issueDetails.priority ? issuePriorityFilter(issueDetails.priority) : null;
 
-  const handleCopyLink = () => {
-    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+  const dueDateIcon = dueDateIconDetails(issueDetails.target_date, state.group);
 
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${issueDetails.project}/issues/${issueDetails.id}`
-    ).then(() => {
+  const handleCopyLink = () => {
+    const urlToCopy = window.location.href;
+
+    copyTextToClipboard(urlToCopy).then(() => {
       setToastAlert({
         type: "success",
         title: "Link copied!",
@@ -75,7 +44,6 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
       {mode === "full" && (
         <div className="flex justify-between gap-2 pb-3">
           <h6 className="flex items-center gap-2 font-medium">
-            {/* {getStateGroupIcon(issue.state_detail.group, "16", "16", issue.state_detail.color)} */}
             {issueDetails.project_detail.identifier}-{issueDetails.sequence_id}
           </h6>
           <div className="flex items-center gap-2">
@@ -138,11 +106,11 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
           </div>
           <div>
             {issueDetails.target_date ? (
-              <div
-                className={`h-[24px] rounded-md flex px-2.5 py-1 items-center border border-custom-border-100 gap-1 text-custom-text-100 text-xs font-medium 
-                ${validDate(issueDetails.target_date, state)}`}
-              >
-                {renderDateFormat(issueDetails.target_date)}
+              <div className="h-6 rounded flex items-center gap-1 px-2.5 py-1 border border-custom-border-100 text-custom-text-100 text-xs bg-custom-background-80">
+                <span className={`material-symbols-rounded text-sm -my-0.5 ${dueDateIcon.className}`}>
+                  {dueDateIcon.iconName}
+                </span>
+                {renderFullDate(issueDetails.target_date)}
               </div>
             ) : (
               <span className="text-custom-text-200">Empty</span>

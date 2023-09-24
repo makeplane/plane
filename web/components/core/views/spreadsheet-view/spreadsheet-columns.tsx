@@ -22,10 +22,10 @@ export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateCo
   const { storedValue: activeSortingProperty, setValue: setActiveSortingProperty } =
     useLocalStorage("spreadsheetViewActiveSortingProperty", "");
 
-  const { orderBy, setOrderBy } = useSpreadsheetIssuesView();
+  const { displayFilters, setDisplayFilters } = useSpreadsheetIssuesView();
 
   const handleOrderBy = (order: TIssueOrderByOptions, itemKey: string) => {
-    setOrderBy(order);
+    setDisplayFilters({ order_by: order });
     setSelectedMenuItem(`${order}_${itemKey}`);
     setActiveSortingProperty(order === "-created_at" ? "" : itemKey);
   };
@@ -239,7 +239,7 @@ export const SpreadsheetColumns: React.FC<Props> = ({ columnData, gridTemplateCo
                   </CustomMenu.MenuItem>
                   {selectedMenuItem &&
                     selectedMenuItem !== "" &&
-                    orderBy !== "-created_at" &&
+                    displayFilters?.order_by !== "-created_at" &&
                     selectedMenuItem.includes(col.propertyName) && (
                       <CustomMenu.MenuItem
                         className={`mt-0.5${

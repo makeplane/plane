@@ -1,3 +1,6 @@
+import { useState } from "react";
+
+// next
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
@@ -10,12 +13,12 @@ import projectService from "services/project.service";
 // hooks
 import useProjects from "hooks/use-projects";
 // components
-import { SingleListIssue } from "components/core";
+import { SingleListIssue, ListInlineCreateIssueForm } from "components/core";
 // ui
 import { Avatar, CustomMenu } from "components/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
-import { getPriorityIcon, getStateGroupIcon } from "components/icons";
+import { PriorityIcon, StateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
@@ -26,45 +29,57 @@ import {
   IIssueLabels,
   IIssueViewProps,
   IState,
+  TIssuePriorities,
+  TStateGroups,
   UserAuth,
 } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS } from "constants/fetch-keys";
+// constants
+import { STATE_GROUP_COLORS } from "constants/state";
 
 type Props = {
   currentState?: IState | null;
   groupTitle: string;
   addIssueToGroup: () => void;
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
+  handleDraftIssueAction?: (issue: IIssue, action: "edit" | "delete") => void;
   openIssuesListModal?: (() => void) | null;
+  handleMyIssueOpen?: (issue: IIssue) => void;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
   disableUserActions: boolean;
+  disableAddIssueOption?: boolean;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
   viewProps: IIssueViewProps;
 };
 
-export const SingleList: React.FC<Props> = ({
-  currentState,
-  groupTitle,
-  addIssueToGroup,
-  handleIssueAction,
-  openIssuesListModal,
-  removeIssue,
-  disableUserActions,
-  user,
-  userAuth,
-  viewProps,
-}) => {
+export const SingleList: React.FC<Props> = (props) => {
+  const {
+    currentState,
+    groupTitle,
+    handleIssueAction,
+    openIssuesListModal,
+    handleDraftIssueAction,
+    handleMyIssueOpen,
+    removeIssue,
+    disableUserActions,
+    disableAddIssueOption = false,
+    user,
+    userAuth,
+    viewProps,
+  } = props;
+
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
+  const [isCreateIssueFormOpen, setIsCreateIssueFormOpen] = useState(false);
+
   const isArchivedIssues = router.pathname.includes("archived-issues");
-  const isSubscribedIssues = router.pathname.includes("subscribed");
 
   const type = cycleId ? "cycle" : moduleId ? "module" : "issue";
 
-  const { groupByProperty: selectedGroup, groupedIssues } = viewProps;
+  const { displayFilters, groupedIssues } = viewProps;
 
   const { data: issueLabels } = useSWR<IIssueLabels[]>(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
@@ -85,7 +100,7 @@ export const SingleList: React.FC<Props> = ({
   const getGroupTitle = () => {
     let title = addSpaceIfCamelCase(groupTitle);
 
-    switch (selectedGroup) {
+    switch (displayFilters?.group_by) {
       case "state":
         title = addSpaceIfCamelCase(currentState?.name ?? "");
         break;
@@ -108,16 +123,29 @@ export const SingleList: React.FC<Props> = ({
   const getGroupIcon = () => {
     let icon;
 
-    switch (selectedGroup) {
+    switch (displayFilters?.group_by) {
       case "state":
-        icon =
-          currentState && getStateGroupIcon(currentState.group, "16", "16", currentState.color);
+        icon = currentState && (
+          <StateGroupIcon
+            stateGroup={currentState.group}
+            color={currentState.color}
+            height="16px"
+            width="16px"
+          />
+        );
         break;
       case "state_detail.group":
-        icon = getStateGroupIcon(groupTitle as any, "16", "16");
+        icon = (
+          <StateGroupIcon
+            stateGroup={groupTitle as TStateGroups}
+            color={STATE_GROUP_COLORS[groupTitle as TStateGroups]}
+            height="16px"
+            width="16px"
+          />
+        );
         break;
       case "priority":
-        icon = getPriorityIcon(groupTitle, "text-lg");
+        icon = <PriorityIcon priority={groupTitle as TIssuePriorities} className="text-lg" />;
         break;
       case "project":
         const project = projects?.find((p) => p.id === groupTitle);
@@ -159,13 +187,13 @@ export const SingleList: React.FC<Props> = ({
           <div className="flex items-center justify-between px-4 py-2.5 bg-custom-background-90">
             <Disclosure.Button>
               <div className="flex items-center gap-x-3">
-                {selectedGroup !== null && (
+                {displayFilters?.group_by !== null && (
                   <div className="flex items-center">{getGroupIcon()}</div>
                 )}
-                {selectedGroup !== null ? (
+                {displayFilters?.group_by !== null ? (
                   <h2
                     className={`text-sm font-semibold leading-6 text-custom-text-100 ${
-                      selectedGroup === "created_by" ? "" : "capitalize"
+                      displayFilters?.group_by === "created_by" ? "" : "capitalize"
                     }`}
                   >
                     {getGroupTitle()}
@@ -181,11 +209,11 @@ export const SingleList: React.FC<Props> = ({
             {isArchivedIssues ? (
               ""
             ) : type === "issue" ? (
-              !isSubscribedIssues && (
+              !disableAddIssueOption && (
                 <button
                   type="button"
                   className="p-1  text-custom-text-200 hover:bg-custom-background-80"
-                  onClick={addIssueToGroup}
+                  onClick={() => setIsCreateIssueFormOpen(true)}
                 >
                   <PlusIcon className="h-4 w-4" />
                 </button>
@@ -202,7 +230,9 @@ export const SingleList: React.FC<Props> = ({
                 position="right"
                 noBorder
               >
-                <CustomMenu.MenuItem onClick={addIssueToGroup}>Create new</CustomMenu.MenuItem>
+                <CustomMenu.MenuItem onClick={() => setIsCreateIssueFormOpen(true)}>
+                  Create new
+                </CustomMenu.MenuItem>
                 {openIssuesListModal && (
                   <CustomMenu.MenuItem onClick={openIssuesListModal}>
                     Add an existing issue
@@ -233,6 +263,17 @@ export const SingleList: React.FC<Props> = ({
                       editIssue={() => handleIssueAction(issue, "edit")}
                       makeIssueCopy={() => handleIssueAction(issue, "copy")}
                       handleDeleteIssue={() => handleIssueAction(issue, "delete")}
+                      handleDraftIssueSelect={
+                        handleDraftIssueAction
+                          ? () => handleDraftIssueAction(issue, "edit")
+                          : undefined
+                      }
+                      handleDraftIssueDelete={
+                        handleDraftIssueAction
+                          ? () => handleDraftIssueAction(issue, "delete")
+                          : undefined
+                      }
+                      handleMyIssueOpen={handleMyIssueOpen}
                       removeIssue={() => {
                         if (removeIssue !== null && issue.bridge_id)
                           removeIssue(issue.bridge_id, issue.id);
@@ -250,6 +291,29 @@ export const SingleList: React.FC<Props> = ({
                 )
               ) : (
                 <div className="flex h-full w-full items-center justify-center">Loading...</div>
+              )}
+
+              <ListInlineCreateIssueForm
+                isOpen={isCreateIssueFormOpen}
+                handleClose={() => setIsCreateIssueFormOpen(false)}
+                prePopulatedData={{
+                  ...(cycleId && { cycle: cycleId.toString() }),
+                  ...(moduleId && { module: moduleId.toString() }),
+                  [displayFilters?.group_by!]: groupTitle,
+                }}
+              />
+
+              {!isCreateIssueFormOpen && (
+                <div className="w-full bg-custom-background-100 px-6 py-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsCreateIssueFormOpen(true)}
+                    className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-1 rounded-md"
+                  >
+                    <PlusIcon className="h-4 w-4" />
+                    <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
+                  </button>
+                </div>
               )}
             </Disclosure.Panel>
           </Transition>

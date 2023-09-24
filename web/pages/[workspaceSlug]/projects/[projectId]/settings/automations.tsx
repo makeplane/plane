@@ -13,8 +13,8 @@ import useUserAuth from "hooks/use-user-auth";
 import useProjectDetails from "hooks/use-project-details";
 import useToast from "hooks/use-toast";
 // components
-import { SettingsHeader } from "components/project";
 import { AutoArchiveAutomation, AutoCloseAutomation } from "components/automation";
+import { SettingsSidebar } from "components/project";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
@@ -75,11 +75,16 @@ const AutomationsSettings: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      <div className="p-8">
-        <SettingsHeader />
-        <section className="space-y-5">
-          <AutoCloseAutomation projectDetails={projectDetails} handleChange={handleChange} />
+      <div className="flex flex-row gap-2 h-full">
+        <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
+          <SettingsSidebar />
+        </div>
+        <section className="pr-9 py-8 w-full overflow-y-auto">
+          <div className="flex items-center py-3.5 border-b border-custom-border-200">
+            <h3 className="text-xl font-medium">Automations</h3>
+          </div>
           <AutoArchiveAutomation projectDetails={projectDetails} handleChange={handleChange} />
+          <AutoCloseAutomation projectDetails={projectDetails} handleChange={handleChange} />
         </section>
       </div>
     </ProjectAuthorizationWrapper>

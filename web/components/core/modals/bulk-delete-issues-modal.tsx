@@ -58,7 +58,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
   );
 
   const { setToastAlert } = useToast();
-  const { issueView, params } = useIssuesView();
+  const { displayFilters, params } = useIssuesView();
   const { params: calendarParams } = useCalendarIssuesView();
   const { order_by, group_by, ...viewGanttParams } = params;
 
@@ -126,8 +126,8 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
           message: "Issues deleted successfully!",
         });
 
-        if (issueView === "calendar") mutate(calendarFetchKey);
-        else if (issueView === "gantt_chart") mutate(ganttFetchKey);
+        if (displayFilters.layout === "calendar") mutate(calendarFetchKey);
+        else if (displayFilters.layout === "gantt_chart") mutate(ganttFetchKey);
         else {
           if (cycleId) {
             mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), params));

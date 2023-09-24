@@ -13,12 +13,12 @@ import useProjectDetails from "hooks/use-project-details";
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
 import { CreateUpdateEstimateModal, SingleEstimate } from "components/estimates";
-import { SettingsHeader } from "components/project";
+import { SettingsSidebar } from "components/project";
 //hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // ui
-import { EmptyState, Loader, SecondaryButton } from "components/ui";
+import { EmptyState, Loader, PrimaryButton, SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -125,66 +125,68 @@ const EstimatesSettings: NextPage = () => {
           </Breadcrumbs>
         }
       >
-        <div className="h-full flex flex-col p-8 overflow-hidden">
-          <SettingsHeader />
-          <section className="flex items-center justify-between">
-            <h3 className="text-2xl font-semibold">Estimates</h3>
-            <div className="col-span-12 space-y-5 sm:col-span-7">
-              <div className="flex items-center gap-2">
-                <div
-                  className="flex cursor-pointer items-center gap-2 text-custom-primary-100 hover:text-custom-primary-200"
-                  onClick={() => {
-                    setEstimateToUpdate(undefined);
-                    setEstimateFormOpen(true);
-                  }}
-                >
-                  <PlusIcon className="h-4 w-4" />
-                  Create New Estimate
-                </div>
-                {projectDetails?.estimate && (
-                  <SecondaryButton onClick={disableEstimates}>Disable Estimates</SecondaryButton>
-                )}
-              </div>
-            </div>
-          </section>
-          {estimatesList ? (
-            estimatesList.length > 0 ? (
-              <section className="h-full mt-5 divide-y divide-custom-border-200 rounded-xl border border-custom-border-200 bg-custom-background-100 px-6 overflow-y-auto">
-                {estimatesList.map((estimate) => (
-                  <SingleEstimate
-                    key={estimate.id}
-                    estimate={estimate}
-                    editEstimate={(estimate) => editEstimate(estimate)}
-                    handleEstimateDelete={(estimateId) => removeEstimate(estimateId)}
-                    user={user}
-                  />
-                ))}
-              </section>
-            ) : (
-              <div className="h-full w-full overflow-y-auto">
-                <EmptyState
-                  title="No estimates yet"
-                  description="Estimates help you communicate the complexity of an issue."
-                  image={emptyEstimate}
-                  primaryButton={{
-                    icon: <PlusIcon className="h-4 w-4" />,
-                    text: "Add Estimate",
-                    onClick: () => {
+        <div className="flex flex-row gap-2 h-full">
+          <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
+            <SettingsSidebar />
+          </div>
+          <div className="pr-9 py-8 flex flex-col w-full overflow-y-auto">
+            <section className="flex items-center justify-between pt-2 pb-3.5 border-b border-custom-border-200">
+              <h3 className="text-xl font-medium">Estimates</h3>
+              <div className="col-span-12 space-y-5 sm:col-span-7">
+                <div className="flex items-center gap-2">
+                  <PrimaryButton
+                    onClick={() => {
                       setEstimateToUpdate(undefined);
                       setEstimateFormOpen(true);
-                    },
-                  }}
-                />
+                    }}
+                  >
+                    Add Estimate
+                  </PrimaryButton>
+                  {projectDetails?.estimate && (
+                    <SecondaryButton onClick={disableEstimates}>Disable Estimates</SecondaryButton>
+                  )}
+                </div>
               </div>
-            )
-          ) : (
-            <Loader className="mt-5 space-y-5">
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-            </Loader>
-          )}
+            </section>
+            {estimatesList ? (
+              estimatesList.length > 0 ? (
+                <section className="h-full bg-custom-background-100 overflow-y-auto">
+                  {estimatesList.map((estimate) => (
+                    <SingleEstimate
+                      key={estimate.id}
+                      estimate={estimate}
+                      editEstimate={(estimate) => editEstimate(estimate)}
+                      handleEstimateDelete={(estimateId) => removeEstimate(estimateId)}
+                      user={user}
+                    />
+                  ))}
+                </section>
+              ) : (
+                <div className="h-full w-full overflow-y-auto">
+                  <EmptyState
+                    title="No estimates yet"
+                    description="Estimates help you communicate the complexity of an issue."
+                    image={emptyEstimate}
+                    primaryButton={{
+                      icon: <PlusIcon className="h-4 w-4" />,
+                      text: "Add Estimate",
+                      onClick: () => {
+                        setEstimateToUpdate(undefined);
+                        setEstimateFormOpen(true);
+                      },
+                    }}
+                  />
+                </div>
+              )
+            ) : (
+              <Loader className="mt-5 space-y-5">
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+              </Loader>
+            )}
+          </div>
         </div>
       </ProjectAuthorizationWrapper>
     </>

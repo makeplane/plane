@@ -1,5 +1,7 @@
+import { TStateGroups } from "types";
+
 export const STATE_GROUP_COLORS: {
-  [key: string]: string;
+  [key in TStateGroups]: string;
 } = {
   backlog: "#d9d9d9",
   unstarted: "#3f76ff",

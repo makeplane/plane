@@ -18,7 +18,6 @@ import Gapcursor from "@tiptap/extension-gapcursor";
 import ts from "highlight.js/lib/languages/typescript";
 
 import "highlight.js/styles/github-dark.css";
-import UniqueID from "@tiptap-pro/extension-unique-id";
 import UpdatedImage from "./updated-image";
 import isValidHttpUrl from "../bubble-menu/utils/link-validator";
 import { CustomTableCell } from "./table/table-cell";
@@ -124,9 +123,6 @@ export const TiptapExtensions = (
       },
       includeChildren: true,
     }),
-    UniqueID.configure({
-      types: ["image"],
-    }),
     SlashCommand(workspaceSlug, setIsSubmitting),
     TiptapUnderline,
     TextStyle,
@@ -153,7 +149,4 @@ export const TiptapExtensions = (
     TableHeader,
     CustomTableCell,
     TableRow,
-    DragAndDrop,
-    CustomKeymap,
-    Mentions,
   ];

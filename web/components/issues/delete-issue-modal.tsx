@@ -35,6 +35,7 @@ type Props = {
   data: IIssue | null;
   user: ICurrentUserResponse | undefined;
   onSubmit?: () => Promise<void>;
+  redirection?: boolean;
 };
 
 export const DeleteIssueModal: React.FC<Props> = ({
@@ -43,6 +44,7 @@ export const DeleteIssueModal: React.FC<Props> = ({
   data,
   user,
   onSubmit,
+  redirection = true,
 }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
@@ -50,7 +52,7 @@ export const DeleteIssueModal: React.FC<Props> = ({
   const { workspaceSlug, projectId, cycleId, moduleId, viewId, issueId } = router.query;
   const isArchivedIssues = router.pathname.includes("archived-issues");
 
-  const { issueView, params } = useIssuesView();
+  const { displayFilters, params } = useIssuesView();
   const { params: calendarParams } = useCalendarIssuesView();
   const { params: spreadsheetParams } = useSpreadsheetIssuesView();
 
@@ -73,7 +75,7 @@ export const DeleteIssueModal: React.FC<Props> = ({
     await issueServices
       .deleteIssue(workspaceSlug as string, data.project, data.id, user)
       .then(() => {
-        if (issueView === "calendar") {
+        if (displayFilters.layout === "calendar") {
           const calendarFetchKey = cycleId
             ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), calendarParams)
             : moduleId
@@ -87,7 +89,7 @@ export const DeleteIssueModal: React.FC<Props> = ({
             (prevData) => (prevData ?? []).filter((p) => p.id !== data.id),
             false
           );
-        } else if (issueView === "spreadsheet") {
+        } else if (displayFilters.layout === "spreadsheet") {
           const spreadsheetFetchKey = cycleId
             ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), spreadsheetParams)
             : moduleId
@@ -132,7 +134,7 @@ export const DeleteIssueModal: React.FC<Props> = ({
           message: "Issue deleted successfully",
         });
 
-        if (issueId) router.back();
+        if (issueId && redirection) router.back();
       })
       .catch((error) => {
         console.log(error);

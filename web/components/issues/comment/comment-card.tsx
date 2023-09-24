@@ -7,7 +7,7 @@ import { ChatBubbleLeftEllipsisIcon, CheckIcon, XMarkIcon } from "@heroicons/rea
 // hooks
 import useUser from "hooks/use-user";
 // ui
-import { CustomMenu } from "components/ui";
+import { CustomMenu, Icon } from "components/ui";
 import { CommentReaction } from "components/issues";
 import { TipTapEditor } from "components/tiptap";
 // helpers
@@ -16,17 +16,19 @@ import { timeAgo } from "helpers/date-time.helper";
 import type { IIssueComment } from "types";
 
 type Props = {
-  workspaceSlug: string;
   comment: IIssueComment;
-  onSubmit: (comment: IIssueComment) => void;
   handleCommentDeletion: (comment: string) => void;
+  onSubmit: (commentId: string, data: Partial<IIssueComment>) => void;
+  showAccessSpecifier?: boolean;
+  workspaceSlug: string;
 };
 
 export const CommentCard: React.FC<Props> = ({
   comment,
-  workspaceSlug,
-  onSubmit,
   handleCommentDeletion,
+  onSubmit,
+  showAccessSpecifier = false,
+  workspaceSlug,
 }) => {
   const { user } = useUser();
 
@@ -45,11 +47,11 @@ export const CommentCard: React.FC<Props> = ({
     defaultValues: comment,
   });
 
-  const onEnter = (formData: IIssueComment) => {
+  const onEnter = (formData: Partial<IIssueComment>) => {
     if (isSubmitting) return;
     setIsEditing(false);
 
-    onSubmit(formData);
+    onSubmit(comment.id, formData);
 
     editorRef.current?.setEditorValue(formData.comment_html);
     showEditorRef.current?.setEditorValue(formData.comment_html);
@@ -99,7 +101,7 @@ export const CommentCard: React.FC<Props> = ({
               : comment.actor_detail.display_name}
           </div>
           <p className="mt-0.5 text-xs text-custom-text-200">
-            Commented {timeAgo(comment.created_at)}
+            commented {timeAgo(comment.created_at)}
           </p>
         </div>
         <div className="issue-comments-section p-0">
@@ -137,7 +139,15 @@ export const CommentCard: React.FC<Props> = ({
               </button>
             </div>
           </form>
-          <div className={`${isEditing ? "hidden" : ""}`}>
+          <div className={`relative ${isEditing ? "hidden" : ""}`}>
+            {showAccessSpecifier && (
+              <div className="absolute top-1 right-1.5 z-[1] text-custom-text-300">
+                <Icon
+                  iconName={comment.access === "INTERNAL" ? "lock" : "public"}
+                  className="!text-xs"
+                />
+              </div>
+            )}
             <TipTapEditor
               workspaceSlug={workspaceSlug as string}
               ref={showEditorRef}
@@ -151,13 +161,44 @@ export const CommentCard: React.FC<Props> = ({
       </div>
       {user?.id === comment.actor && (
         <CustomMenu ellipsis>
-          <CustomMenu.MenuItem onClick={() => setIsEditing(true)}>Edit</CustomMenu.MenuItem>
+          <CustomMenu.MenuItem
+            onClick={() => setIsEditing(true)}
+            className="flex items-center gap-1"
+          >
+            <Icon iconName="edit" />
+            Edit comment
+          </CustomMenu.MenuItem>
+          {showAccessSpecifier && (
+            <>
+              {comment.access === "INTERNAL" ? (
+                <CustomMenu.MenuItem
+                  renderAs="button"
+                  onClick={() => onSubmit(comment.id, { access: "EXTERNAL" })}
+                  className="flex items-center gap-1"
+                >
+                  <Icon iconName="public" />
+                  Switch to public comment
+                </CustomMenu.MenuItem>
+              ) : (
+                <CustomMenu.MenuItem
+                  renderAs="button"
+                  onClick={() => onSubmit(comment.id, { access: "INTERNAL" })}
+                  className="flex items-center gap-1"
+                >
+                  <Icon iconName="lock" />
+                  Switch to private comment
+                </CustomMenu.MenuItem>
+              )}
+            </>
+          )}
           <CustomMenu.MenuItem
             onClick={() => {
               handleCommentDeletion(comment.id);
             }}
+            className="flex items-center gap-1"
           >
-            Delete
+            <Icon iconName="delete" />
+            Delete comment
           </CustomMenu.MenuItem>
         </CustomMenu>
       )}

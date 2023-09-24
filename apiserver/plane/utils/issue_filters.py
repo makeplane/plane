@@ -1,6 +1,7 @@
 from django.utils.timezone import make_aware
 from django.utils.dateparse import parse_datetime
 
+
 def filter_state(params, filter, method):
     if method == "GET":
         states = params.get("state").split(",")
@@ -23,7 +24,6 @@ def filter_state_group(params, filter, method):
     return filter
 
 
-
 def filter_estimate_point(params, filter, method):
     if method == "GET":
         estimate_points = params.get("estimate_point").split(",")
@@ -39,25 +39,7 @@ def filter_priority(params, filter, method):
     if method == "GET":
         priorities = params.get("priority").split(",")
         if len(priorities) and "" not in priorities:
-            if len(priorities) == 1 and "null" in priorities:
-                filter["priority__isnull"] = True
-            elif len(priorities) > 1 and "null" in priorities:
-                filter["priority__isnull"] = True
-                filter["priority__in"] = [p for p in priorities if p != "null"]
-            else:
-                filter["priority__in"] = [p for p in priorities if p != "null"]
-
-    else:
-        if params.get("priority", None) and len(params.get("priority")):
-            priorities = params.get("priority")
-            if len(priorities) == 1 and "null" in priorities:
-                filter["priority__isnull"] = True
-            elif len(priorities) > 1 and "null" in priorities:
-                filter["priority__isnull"] = True
-                filter["priority__in"] = [p for p in priorities if p != "null"]
-            else:
-                filter["priority__in"] = [p for p in priorities if p != "null"]
-
+            filter["priority__in"] = priorities
     return filter
 
 
@@ -229,7 +211,6 @@ def filter_issue_state_type(params, filter, method):
     return filter
 
 
-
 def filter_project(params, filter, method):
     if method == "GET":
         projects = params.get("project").split(",")
@@ -329,7 +310,7 @@ def issue_filters(query_params, method):
         "module": filter_module,
         "inbox_status": filter_inbox_status,
         "sub_issue": filter_sub_issue_toggle,
-        "subscriber":  filter_subscribed_issues,
+        "subscriber": filter_subscribed_issues,
         "start_target_date": filter_start_target_date_issues,
     }
 

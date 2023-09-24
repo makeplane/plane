@@ -1,16 +1,11 @@
 import APIService from "services/api.service";
 import trackEventServices from "services/track-event.service";
-
 import { ICurrentUserResponse } from "types";
-
-const { NEXT_PUBLIC_API_BASE_URL } = process.env;
-
-const trackEvent =
-  process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
+import { API_BASE_URL } from "helpers/common.helper";
 
 class CSVIntegrationService extends APIService {
   constructor() {
-    super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
+    super(API_BASE_URL);
   }
 
   async exportCSVService(
@@ -23,14 +18,13 @@ class CSVIntegrationService extends APIService {
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/export-issues/`, data)
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackExporterEvent(
-            {
-              workspaceSlug,
-            },
-            "CSV_EXPORTER_CREATE",
-            user
-          );
+        trackEventServices.trackExporterEvent(
+          {
+            workspaceSlug,
+          },
+          "CSV_EXPORTER_CREATE",
+          user
+        );
         return response?.data;
       })
       .catch((error) => {

@@ -140,6 +140,15 @@ export const PROJECT_ARCHIVED_ISSUES_LIST_WITH_PARAMS = (projectId: string, para
 
   return `PROJECT_ARCHIVED_ISSUES_LIST_WITH_PARAMS_${projectId.toUpperCase()}_${paramsKey}`;
 };
+
+export const PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS = (projectId: string, params?: any) => {
+  if (!params) return `PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS${projectId.toUpperCase()}`;
+
+  const paramsKey = paramsToKey(params);
+
+  return `PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS${projectId.toUpperCase()}_${paramsKey}`;
+};
+
 export const PROJECT_ISSUES_DETAILS = (issueId: string) =>
   `PROJECT_ISSUES_DETAILS_${issueId.toUpperCase()}`;
 export const PROJECT_ISSUES_PROPERTIES = (projectId: string) =>
@@ -285,7 +294,9 @@ export const ANALYTICS = (workspaceSlug: string, params: IAnalyticsParams) =>
     params.segment
   }_${params.project?.toString()}`;
 export const DEFAULT_ANALYTICS = (workspaceSlug: string, params?: Partial<IAnalyticsParams>) =>
-  `DEFAULT_ANALYTICS_${workspaceSlug.toUpperCase()}_${params?.project?.toString()}_${params?.cycle}_${params?.module}`;
+  `DEFAULT_ANALYTICS_${workspaceSlug.toUpperCase()}_${params?.project?.toString()}_${
+    params?.cycle
+  }_${params?.module}`;
 
 // notifications
 export const USER_WORKSPACE_NOTIFICATIONS = (

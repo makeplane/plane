@@ -10,7 +10,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 import IntegrationService from "services/integration";
 import projectService from "services/project.service";
 // components
-import { SettingsHeader, SingleIntegration } from "components/project";
+import { SettingsSidebar, SingleIntegration } from "components/project";
 // ui
 import { EmptyState, IntegrationAndImportExportBanner, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -54,17 +54,21 @@ const ProjectIntegrations: NextPage = () => {
             link={`/${workspaceSlug}/projects/${projectId}/issues`}
             linkTruncate
           />
-          <BreadcrumbItem title="Integrations" unshrinkTitle />
+          <BreadcrumbItem title="Integrations Settings" unshrinkTitle />
         </Breadcrumbs>
       }
     >
-      <div className="h-full flex flex-col p-8 overflow-hidden">
-        <SettingsHeader />
-        {workspaceIntegrations ? (
-          workspaceIntegrations.length > 0 ? (
-            <section className="space-y-8 overflow-y-auto">
-              <IntegrationAndImportExportBanner bannerName="Integrations" />
-              <div className="space-y-5">
+      <div className="flex flex-row gap-2 h-full">
+        <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
+          <SettingsSidebar />
+        </div>
+        <div className="pr-9 py-8 gap-10 w-full overflow-y-auto">
+          <div className="flex items-center py-3.5 border-b border-custom-border-200">
+            <h3 className="text-xl font-medium">Integrations</h3>
+          </div>
+          {workspaceIntegrations ? (
+            workspaceIntegrations.length > 0 ? (
+              <div>
                 {workspaceIntegrations.map((integration) => (
                   <SingleIntegration
                     key={integration.integration_detail.id}
@@ -72,26 +76,26 @@ const ProjectIntegrations: NextPage = () => {
                   />
                 ))}
               </div>
-            </section>
+            ) : (
+              <EmptyState
+                title="You haven't configured integrations"
+                description="Configure GitHub and other integrations to sync your project issues."
+                image={emptyIntegration}
+                primaryButton={{
+                  text: "Configure now",
+                  onClick: () => router.push(`/${workspaceSlug}/settings/integrations`),
+                }}
+              />
+            )
           ) : (
-            <EmptyState
-              title="You haven't configured integrations"
-              description="Configure GitHub and other integrations to sync your project issues."
-              image={emptyIntegration}
-              primaryButton={{
-                text: "Configure now",
-                onClick: () => router.push(`/${workspaceSlug}/settings/integrations`),
-              }}
-            />
-          )
-        ) : (
-          <Loader className="space-y-5">
-            <Loader.Item height="40px" />
-            <Loader.Item height="40px" />
-            <Loader.Item height="40px" />
-            <Loader.Item height="40px" />
-          </Loader>
-        )}
+            <Loader className="space-y-5">
+              <Loader.Item height="40px" />
+              <Loader.Item height="40px" />
+              <Loader.Item height="40px" />
+              <Loader.Item height="40px" />
+            </Loader>
+          )}
+        </div>
       </div>
     </ProjectAuthorizationWrapper>
   );
