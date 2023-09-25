@@ -1,23 +1,21 @@
 import React, { useState } from "react";
 
+// mobx
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { FilterHeader, FilterOption } from "components/issue-layouts";
-// mobx react lite
-import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// ui
+import { Loader } from "components/ui";
 
 const LabelIcons = ({ color }: { color: string }) => (
   <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
 );
 
-type Props = {
-  workspaceSlug: string;
-  projectId: string;
-};
+type Props = { workspaceSlug: string; projectId: string; itemsToRender: number };
 
 export const FilterLabels: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId } = props;
+  const { workspaceSlug, projectId, itemsToRender } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
@@ -37,26 +35,46 @@ export const FilterLabels: React.FC<Props> = observer((props) => {
     });
   };
 
+  const appliedFiltersCount = issueFilterStore.userFilters?.labels?.length ?? 0;
+
+  const filteredOptions = projectStore.labels?.[projectId?.toString() ?? ""]?.filter((label) =>
+    label.name.toLowerCase().includes(issueFilterStore.filtersSearchQuery.toLowerCase())
+  );
+
   return (
-    <div>
+    <>
       <FilterHeader
-        title={`Labels (${issueFilterStore.userFilters?.labels?.length ?? 0})`}
+        title={`Label${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
-        <div className="space-y-[2px] pt-1">
-          {projectStore.labels?.[projectId?.toString() ?? ""]?.map((label) => (
-            <FilterOption
-              key={label?.id}
-              isChecked={issueFilterStore?.userFilters?.labels?.includes(label?.id) ? true : false}
-              onClick={() => handleUpdateLabels(label?.id)}
-              icon={<LabelIcons color={label.color} />}
-              title={label.name}
-            />
-          ))}
+        <div>
+          {filteredOptions ? (
+            filteredOptions.length > 0 ? (
+              filteredOptions
+                .slice(0, itemsToRender)
+                .map((label) => (
+                  <FilterOption
+                    key={label?.id}
+                    isChecked={issueFilterStore?.userFilters?.labels?.includes(label?.id) ? true : false}
+                    onClick={() => handleUpdateLabels(label?.id)}
+                    icon={<LabelIcons color={label.color} />}
+                    title={label.name}
+                  />
+                ))
+            ) : (
+              <p className="text-xs text-custom-text-400 italic">No matches found</p>
+            )
+          ) : (
+            <Loader className="space-y-2">
+              <Loader.Item height="20px" />
+              <Loader.Item height="20px" />
+              <Loader.Item height="20px" />
+            </Loader>
+          )}
         </div>
       )}
-    </div>
+    </>
   );
 });

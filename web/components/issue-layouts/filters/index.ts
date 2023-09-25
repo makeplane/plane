@@ -1,6 +1,6 @@
 export * from "./assignees";
 export * from "./created-by";
-export * from "./filter-selection";
+export * from "./filters-selection";
 export * from "./labels";
 export * from "./priority";
 export * from "./start-date";

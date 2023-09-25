@@ -50,10 +50,10 @@ const PriorityIcons = ({
   );
 };
 
-type Props = { workspaceSlug: string; projectId: string };
+type Props = { workspaceSlug: string; projectId: string; itemsToRender: number };
 
 export const FilterPriority: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId } = props;
+  const { workspaceSlug, projectId, itemsToRender } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
@@ -73,24 +73,36 @@ export const FilterPriority: React.FC<Props> = observer((props) => {
     });
   };
 
+  const appliedFiltersCount = issueFilterStore.userFilters?.priority?.length ?? 0;
+
+  const filteredOptions = ISSUE_PRIORITIES.filter((p) =>
+    p.key.includes(issueFilterStore.filtersSearchQuery.toLowerCase())
+  );
+
   return (
     <>
       <FilterHeader
-        title={`Priority (${issueFilterStore.userFilters?.priority?.length ?? 0})`}
+        title={`Priority${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
-        <div className="space-y-1 pt-1">
-          {ISSUE_PRIORITIES.map((priority) => (
-            <FilterOption
-              key={priority.key}
-              isChecked={issueFilterStore.userFilters?.priority?.includes(priority.key) ? true : false}
-              onClick={() => handleUpdatePriority(priority.key)}
-              icon={<PriorityIcons priority={priority.key} />}
-              title={priority.title}
-            />
-          ))}
+        <div>
+          {filteredOptions.length > 0 ? (
+            filteredOptions
+              .slice(0, itemsToRender)
+              .map((priority) => (
+                <FilterOption
+                  key={priority.key}
+                  isChecked={issueFilterStore.userFilters?.priority?.includes(priority.key) ? true : false}
+                  onClick={() => handleUpdatePriority(priority.key)}
+                  icon={<PriorityIcons priority={priority.key} />}
+                  title={priority.title}
+                />
+              ))
+          ) : (
+            <p className="text-xs text-custom-text-400 italic">No matches found</p>
+          )}
         </div>
       )}
     </>

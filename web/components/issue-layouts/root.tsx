@@ -2,7 +2,7 @@ import React from "react";
 // components
 import { LayoutSelection } from "./layout-selection";
 import { IssueDropdown } from "./helpers/dropdown";
-import { FilterSelection } from "./filters/filter-selection";
+import { FilterSelection } from "./filters/filters-selection";
 import { DisplayFiltersSelection } from "./display-filters";
 
 import { FilterPreview } from "./filters-preview";
@@ -64,13 +64,13 @@ export const IssuesRoot = observer(() => {
             <div>Filter Header</div>
           </div>
           <div className="relative flex items-center gap-2">
-            <IssueDropdown title={"Filters"}>
+            {/* <IssueDropdown title={"Filters"}>
               <FilterSelection />
             </IssueDropdown>
             <IssueDropdown title={"View"}>
               <DisplayFiltersSelection />
             </IssueDropdown>
-            <LayoutSelection />
+            <LayoutSelection /> */}
           </div>
         </div>
       </div>
@@ -78,11 +78,11 @@ export const IssuesRoot = observer(() => {
         <FilterPreview />
       </div>
       <div className="w-full h-full relative overflow-hidden">
-        {issueFilterStore?.issueLayout === "list" && <IssueListViewRoot />}
-        {issueFilterStore?.issueLayout === "kanban" && <IssueKanBanViewRoot />}
-        {issueFilterStore?.issueLayout === "calendar" && <IssueCalendarViewRoot />}
-        {issueFilterStore?.issueLayout === "spreadsheet" && <IssueSpreadsheetViewRoot />}
-        {issueFilterStore?.issueLayout === "gantt_chart" && <IssueGanttViewRoot />}
+        {issueFilterStore?.userDisplayFilters.layout === "list" && <IssueListViewRoot />}
+        {issueFilterStore?.userDisplayFilters.layout === "kanban" && <IssueKanBanViewRoot />}
+        {issueFilterStore?.userDisplayFilters.layout === "calendar" && <IssueCalendarViewRoot />}
+        {issueFilterStore?.userDisplayFilters.layout === "spreadsheet" && <IssueSpreadsheetViewRoot />}
+        {issueFilterStore?.userDisplayFilters.layout === "gantt_chart" && <IssueGanttViewRoot />}
       </div>
     </div>
   );

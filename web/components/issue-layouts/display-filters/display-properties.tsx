@@ -28,14 +28,14 @@ export const FilterDisplayProperties = observer(() => {
   };
 
   return (
-    <div>
+    <>
       <FilterHeader
         title="Display Properties"
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
-        <div className="flex items-center gap-2 flex-wrap mx-1 mt-1">
+        <div className="flex items-center gap-2 flex-wrap mt-1">
           {ISSUE_DISPLAY_PROPERTIES.map((displayProperty) => (
             <button
               key={displayProperty.key}
@@ -56,6 +56,6 @@ export const FilterDisplayProperties = observer(() => {
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 });

@@ -9,7 +9,7 @@ interface IFilterHeader {
 }
 
 export const FilterHeader = ({ title, isPreviewEnabled, handleIsPreviewEnabled }: IFilterHeader) => (
-  <div className="flex items-center justify-between gap-2 p-1.5 pb-1 bg-custom-background-100 sticky top-0">
+  <div className="flex items-center justify-between gap-2 pb-1 bg-custom-background-100 sticky top-0">
     <div className="text-custom-text-300 text-xs font-medium flex-grow truncate">{title}</div>
     <button
       type="button"

@@ -16,7 +16,7 @@ export const FilterOption: React.FC<Props> = (props) => {
   return (
     <button
       type="button"
-      className="flex items-center gap-2 rounded p-1.5 hover:bg-custom-background-80 w-full"
+      className="flex items-center gap-2 rounded hover:bg-custom-background-80 w-full p-1.5"
       onClick={onClick}
     >
       <div

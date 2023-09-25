@@ -40,6 +40,7 @@ export type TIssueParams =
   | "start_date"
   | "target_date"
   | "group_by"
+  | "sub_group_by"
   | "order_by"
   | "type"
   | "sub_issue"
@@ -62,6 +63,7 @@ export interface IIssueFilterOptions {
 export interface IIssueDisplayFilterOptions {
   calendar_date_range?: string;
   group_by?: TIssueGroupByOptions;
+  sub_group_by?: TIssueGroupByOptions;
   layout?: TIssueLayouts;
   order_by?: TIssueOrderByOptions;
   show_empty_groups?: boolean;
