@@ -43,6 +43,7 @@ export const SpreadsheetView: React.FC<Props> = ({
   userAuth,
 }) => {
   const [expandedIssues, setExpandedIssues] = useState<string[]>([]);
+  const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
@@ -71,7 +72,7 @@ export const SpreadsheetView: React.FC<Props> = ({
     <>
       <IssuePeekOverview
         handleMutation={() => mutateIssues()}
-        projectId={projectId?.toString() ?? ""}
+        projectId={currentProjectId ?? ""}
         workspaceSlug={workspaceSlug?.toString() ?? ""}
         readOnly={disableUserActions}
       />
@@ -89,6 +90,7 @@ export const SpreadsheetView: React.FC<Props> = ({
                 projectId={issue.project_detail.id}
                 expandedIssues={expandedIssues}
                 setExpandedIssues={setExpandedIssues}
+                setCurrentProjectId={setCurrentProjectId}
                 gridTemplateColumns={gridTemplateColumns}
                 properties={properties}
                 handleIssueAction={handleIssueAction}
@@ -148,7 +150,9 @@ export const SpreadsheetView: React.FC<Props> = ({
             </div>
           </div>
         ) : (
-          <Spinner />
+          <div className="flex flex-col justify-center items-center h-full w-full">
+            <Spinner />
+          </div>
         )}
       </div>
     </>

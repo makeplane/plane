@@ -58,6 +58,7 @@ type Props = {
   properties: Properties;
   handleEditIssue: (issue: IIssue) => void;
   handleDeleteIssue: (issue: IIssue) => void;
+  setCurrentProjectId: React.Dispatch<React.SetStateAction<string | null>>;
   gridTemplateColumns: string;
   disableUserActions: boolean;
   user: ICurrentUserResponse | undefined;
@@ -74,6 +75,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
   properties,
   handleEditIssue,
   handleDeleteIssue,
+  setCurrentProjectId,
   gridTemplateColumns,
   disableUserActions,
   user,
@@ -214,7 +216,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
 
   const openPeekOverview = () => {
     const { query } = router;
-
+    setCurrentProjectId(issue.project_detail.id);
     router.push({
       pathname: router.pathname,
       query: { ...query, peekIssue: issue.id },

@@ -15,6 +15,7 @@ type Props = {
   setExpandedIssues: React.Dispatch<React.SetStateAction<string[]>>;
   properties: Properties;
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
+  setCurrentProjectId: React.Dispatch<React.SetStateAction<string | null>>;
   gridTemplateColumns: string;
   disableUserActions: boolean;
   user: ICurrentUserResponse | undefined;
@@ -31,6 +32,7 @@ export const SpreadsheetIssues: React.FC<Props> = ({
   gridTemplateColumns,
   properties,
   handleIssueAction,
+  setCurrentProjectId,
   disableUserActions,
   user,
   userAuth,
@@ -65,6 +67,7 @@ export const SpreadsheetIssues: React.FC<Props> = ({
         properties={properties}
         handleEditIssue={() => handleIssueAction(issue, "edit")}
         handleDeleteIssue={() => handleIssueAction(issue, "delete")}
+        setCurrentProjectId={setCurrentProjectId}
         disableUserActions={disableUserActions}
         user={user}
         userAuth={userAuth}
@@ -86,6 +89,7 @@ export const SpreadsheetIssues: React.FC<Props> = ({
             gridTemplateColumns={gridTemplateColumns}
             properties={properties}
             handleIssueAction={handleIssueAction}
+            setCurrentProjectId={setCurrentProjectId}
             disableUserActions={disableUserActions}
             user={user}
             userAuth={userAuth}
