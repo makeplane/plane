@@ -1,4 +1,3 @@
-import os
 from django.conf import settings
 from storages.backends.s3boto3 import S3Boto3Storage
 from urllib.parse import urlparse
@@ -11,9 +10,8 @@ class PublicS3Storage(S3Boto3Storage):
 
     # For self hosted docker and minio
     if settings.DOCKERIZED and settings.USE_MINIO:
-        parsed_url = urlparse(settings.WEB_URL)
-        custom_domain = f"{parsed_url.netloc}/{bucket_name}"
-        url_protocol = f"{parsed_url.scheme}:"
+        custom_domain = f"{urlparse(settings.WEB_URL).netloc}/{bucket_name}"
+        url_protocol = f"{urlparse(settings.WEB_URL).scheme}:"
 
 
 class PrivateS3Storage(S3Boto3Storage):
@@ -25,9 +23,5 @@ class PrivateS3Storage(S3Boto3Storage):
 
     # For self hosted docker and minio
     if settings.DOCKERIZED and settings.USE_MINIO:
-        parsed_url = urlparse(settings.WEB_URL)
-        custom_domain = f"{parsed_url.netloc}/{bucket_name}"
-        url_protocol = f"{parsed_url.scheme}:"
-        default_acl = None
-        querystring_auth = True
-        addressing_style = None
+        custom_domain = f"{urlparse(settings.WEB_URL).netloc}/{bucket_name}"
+        url_protocol = f"{urlparse(settings.WEB_URL).scheme}:"

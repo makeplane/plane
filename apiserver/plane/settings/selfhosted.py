@@ -68,15 +68,16 @@ AWS_S3_ENDPOINT_URL = os.environ.get(
     "AWS_S3_ENDPOINT_URL", "http://plane-minio:9000"
 )
 AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
 # Public S3 bucket settings
 AWS_PUBLIC_STORAGE_BUCKET_NAME = os.environ.get("AWS_PUBLIC_STORAGE_BUCKET_NAME")
 AWS_PUBLIC_DEFAULT_ACL = "public-read"
-PUBLIC_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+PUBLIC_FILE_STORAGE = "plane.settings.storage.PublicS3Storage"
 
 # Private S3 bucket settings
 AWS_PRIVATE_STORAGE_BUCKET_NAME = os.environ.get("AWS_PRIVATE_STORAGE_BUCKET_NAME")
 AWS_PRIVATE_DEFAULT_ACL = "private"
-PRIVATE_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+PRIVATE_FILE_STORAGE = "plane.settings.storage.PrivateS3Storage"
 ## End Storage settings
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
