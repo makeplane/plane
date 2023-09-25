@@ -12,21 +12,22 @@ class PublicS3Storage(S3Boto3Storage):
     # For self hosted docker and minio
     if settings.DOCKERIZED and settings.USE_MINIO:
         parsed_url = urlparse(settings.WEB_URL)
-        custom_domain = f"{parsed_url.netloc}/{settings.bucket_name}"
+        custom_domain = f"{parsed_url.netloc}/{bucket_name}"
         url_protocol = f"{parsed_url.scheme}:"
-
 
 
 class PrivateS3Storage(S3Boto3Storage):
     """Configuration for the Private bucket storage"""
     bucket_name = settings.AWS_PRIVATE_STORAGE_BUCKET_NAME
-    default_acl = settings.AWS_PRIVATE_DEFAULT_ACL
-    file_overwrite = settings.AWS_S3_PRIVATE_FILE_OVERWRITE
     region_name = settings.AWS_REGION_NAME
     addressing_style = settings.AWS_S3_ADDRESSING_STYLE
+    default_acl = settings.AWS_PRIVATE_DEFAULT_ACL
 
     # For self hosted docker and minio
     if settings.DOCKERIZED and settings.USE_MINIO:
         parsed_url = urlparse(settings.WEB_URL)
-        custom_domain = f"{parsed_url.netloc}/{settings.bucket_name}"
+        custom_domain = f"{parsed_url.netloc}/{bucket_name}"
         url_protocol = f"{parsed_url.scheme}:"
+        default_acl = None
+        querystring_auth = True
+        addressing_style = None
