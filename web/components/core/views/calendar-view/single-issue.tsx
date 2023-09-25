@@ -41,6 +41,7 @@ type Props = {
   provided: DraggableProvided;
   snapshot: DraggableStateSnapshot;
   issue: IIssue;
+  projectId: string;
   user: ICurrentUserResponse | undefined;
   isNotAllowed: boolean;
 };
@@ -52,11 +53,12 @@ export const SingleCalendarIssue: React.FC<Props> = ({
   provided,
   snapshot,
   issue,
+  projectId,
   user,
   isNotAllowed,
 }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+  const { workspaceSlug, cycleId, moduleId, viewId } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -310,6 +312,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
             {properties.state && (
               <StateSelect
                 value={issue.state_detail}
+                projectId={projectId}
                 onChange={handleStateChange}
                 hideDropdownArrow
                 disabled={isNotAllowed}
@@ -334,6 +337,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
             {properties.labels && issue.labels.length > 0 && (
               <LabelSelect
                 value={issue.labels}
+                projectId={projectId}
                 onChange={handleLabelChange}
                 labelsDetails={issue.label_details}
                 hideDropdownArrow
@@ -345,6 +349,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
             {properties.assignee && (
               <MembersSelect
                 value={issue.assignees}
+                projectId={projectId}
                 onChange={handleAssigneeChange}
                 membersDetails={issue.assignee_details}
                 hideDropdownArrow
