@@ -23,14 +23,14 @@ export const FilterExtraOptions = observer(() => {
     ].values.includes(option);
 
   return (
-    <div>
+    <>
       <FilterHeader
         title="Extra Options"
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
-        <div className="space-y-[2px] pt-1">
+        <div>
           {ISSUE_EXTRA_OPTIONS.map((option) => {
             if (!isExtraOptionEnabled(option.key)) return null;
 
@@ -44,6 +44,6 @@ export const FilterExtraOptions = observer(() => {
           })}
         </div>
       )}
-    </div>
+    </>
   );
 });

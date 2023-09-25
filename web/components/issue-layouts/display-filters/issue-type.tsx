@@ -33,14 +33,14 @@ export const FilterIssueType = observer(() => {
   };
 
   return (
-    <div>
+    <>
       <FilterHeader
         title="Issue Type"
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
-        <div className="space-y-1 pt-1">
+        <div>
           {ISSUE_FILTER_OPTIONS.map((issueType) => (
             <FilterOption
               key={issueType?.key}
@@ -52,6 +52,6 @@ export const FilterIssueType = observer(() => {
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 });

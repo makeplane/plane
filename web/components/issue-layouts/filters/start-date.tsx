@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 // mobx
 import { observer } from "mobx-react-lite";
@@ -7,20 +7,22 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { FilterHeader, FilterOption } from "components/issue-layouts";
 
 export const FilterStartDate = observer(() => {
+  const [previewEnabled, setPreviewEnabled] = useState(true);
+
   const store = useMobxStore();
   const { issueFilter: issueFilterStore } = store;
 
-  const [previewEnabled, setPreviewEnabled] = React.useState(true);
+  const appliedFiltersCount = issueFilterStore.userFilters?.start_date?.length ?? 0;
 
   return (
-    <div>
+    <>
       <FilterHeader
-        title={`Start Date (${issueFilterStore?.userFilters?.start_date?.length})`}
+        title={`Start date${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
-        <div className="space-y-1 pt-1">
+        <div>
           {issueFilterStore?.userFilters?.start_date &&
             issueFilterStore?.userFilters?.start_date.length > 0 &&
             issueFilterStore?.userFilters?.start_date.map((_startDate) => (
@@ -33,6 +35,6 @@ export const FilterStartDate = observer(() => {
             ))}
         </div>
       )}
-    </div>
+    </>
   );
 });

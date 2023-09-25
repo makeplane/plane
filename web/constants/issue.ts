@@ -117,11 +117,11 @@ export const ISSUE_LAYOUTS: {
   title: string;
   icon: any;
 }[] = [
-  { key: "list", title: "List View", icon: List },
-  { key: "kanban", title: "Kanban View", icon: Kanban },
-  { key: "calendar", title: "Calendar View", icon: Calendar },
-  { key: "spreadsheet", title: "Spreadsheet View", icon: Sheet },
-  { key: "gantt_chart", title: "Gantt Chart View", icon: GanttChart },
+  { key: "list", title: "List Layout", icon: List },
+  { key: "kanban", title: "Kanban Layout", icon: Kanban },
+  { key: "calendar", title: "Calendar Layout", icon: Calendar },
+  { key: "spreadsheet", title: "Spreadsheet Layout", icon: Sheet },
+  { key: "gantt_chart", title: "Gantt Chart Layout", icon: GanttChart },
 ];
 
 export const ISSUE_LIST_FILTERS = [

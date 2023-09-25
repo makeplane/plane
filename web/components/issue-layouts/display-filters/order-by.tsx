@@ -33,14 +33,14 @@ export const FilterOrderBy = observer(() => {
   };
 
   return (
-    <div>
+    <>
       <FilterHeader
         title={"Order By"}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
-        <div className="space-y-[2px] pt-1">
+        <div>
           {ISSUE_ORDER_BY_OPTIONS.map((orderBy) => (
             <FilterOption
               key={orderBy?.key}
@@ -52,6 +52,6 @@ export const FilterOrderBy = observer(() => {
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 });

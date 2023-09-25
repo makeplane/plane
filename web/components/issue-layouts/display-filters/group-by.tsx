@@ -33,14 +33,14 @@ export const FilterGroupBy = observer(() => {
   };
 
   return (
-    <div>
+    <>
       <FilterHeader
         title="Group By"
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
-        <div className="space-y-1 pt-1">
+        <div>
           {ISSUE_GROUP_BY_OPTIONS.map((groupBy) => (
             <FilterOption
               key={groupBy?.key}
@@ -52,6 +52,6 @@ export const FilterGroupBy = observer(() => {
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 });
