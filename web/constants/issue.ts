@@ -198,6 +198,7 @@ export const ISSUE_GANTT_DISPLAY_FILTERS = [
   { key: "sub_issue", title: "Sub Issue" },
 ];
 
+// TODO: update this later
 export const ISSUE_EXTRA_DISPLAY_PROPERTIES = {
   list: {
     access: true,

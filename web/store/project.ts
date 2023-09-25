@@ -62,7 +62,10 @@ export interface IProjectStore {
   fetchProjectLabels: (workspaceSlug: string, projectSlug: string) => Promise<void>;
   fetchProjectMembers: (workspaceSlug: string, projectSlug: string) => Promise<void>;
 
-  handleProjectLeaveModal: (project: IProject | null) => void;
+  addProjectToFavorites: (workspaceSlug: string, projectSlug: string) => Promise<any>;
+  removeProjectFromFavorites: (workspaceSlug: string, projectSlug: string) => Promise<any>;
+
+  handleProjectLeaveModal: (project: any | null) => void;
 
   leaveProject: (workspaceSlug: string, projectSlug: string, user: any) => Promise<void>;
 }
@@ -143,6 +146,9 @@ class ProjectStore implements IProjectStore {
       fetchProjectStates: action,
       fetchProjectLabels: action,
       fetchProjectMembers: action,
+
+      addProjectToFavorites: action,
+      removeProjectFromFavorites: action,
 
       handleProjectLeaveModal: action,
       leaveProject: action,
@@ -389,6 +395,29 @@ class ProjectStore implements IProjectStore {
       console.error("Failed to fetch project pages in project store", error);
       this.loader = false;
       this.error = error;
+    }
+  };
+
+  addProjectToFavorites = async (workspaceSlug: string, projectId: string) => {
+    try {
+      const response = await this.projectService.addProjectToFavorites(workspaceSlug, projectId);
+      console.log("res", response);
+      await this.rootStore.workspace.getWorkspaceProjects(workspaceSlug);
+      return response;
+    } catch (error) {
+      console.log("Failed to add project to favorite");
+      throw error;
+    }
+  };
+
+  removeProjectFromFavorites = async (workspaceSlug: string, projectId: string) => {
+    try {
+      const response = this.projectService.removeProjectFromFavorites(workspaceSlug, projectId);
+      this.rootStore.workspace.getWorkspaceProjects(workspaceSlug);
+      return response;
+    } catch (error) {
+      console.log("Failed to add project to favorite");
+      throw error;
     }
   };
 

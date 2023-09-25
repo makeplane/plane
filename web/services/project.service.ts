@@ -300,13 +300,8 @@ export class ProjectService extends APIService {
       });
   }
 
-  async addProjectToFavorites(
-    workspaceSlug: string,
-    data: {
-      project: string;
-    }
-  ): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/user-favorite-projects/`, data)
+  async addProjectToFavorites(workspaceSlug: string, project: string): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/user-favorite-projects/`, { project })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

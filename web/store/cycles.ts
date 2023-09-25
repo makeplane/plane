@@ -4,21 +4,24 @@ import { RootStore } from "./root";
 // services
 import { ProjectService } from "services/project.service";
 import { IssueService } from "services/issue.service";
+import { ICycle } from "types";
 
 export interface ICycleStore {
   loader: boolean;
   error: any | null;
 
-  cycleId: string | null;
-
-  setCycleId: (cycleSlug: string) => void;
+  cycles: {
+    [cycle_id: string]: ICycle;
+  };
 }
 
 class CycleStore implements ICycleStore {
   loader: boolean = false;
   error: any | null = null;
 
-  cycleId: string | null = null;
+  cycles: {
+    [cycle_id: string]: ICycle;
+  } = {};
 
   // root store
   rootStore;
@@ -31,12 +34,11 @@ class CycleStore implements ICycleStore {
       loader: observable,
       error: observable.ref,
 
-      cycleId: observable.ref,
+      cycles: observable.ref,
 
       // computed
 
       // actions
-      setCycleId: action,
     });
 
     this.rootStore = _rootStore;
@@ -47,9 +49,6 @@ class CycleStore implements ICycleStore {
   // computed
 
   // actions
-  setCycleId = (cycleSlug: string) => {
-    this.cycleId = cycleSlug ?? null;
-  };
 }
 
 export default CycleStore;

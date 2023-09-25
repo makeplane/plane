@@ -17,12 +17,14 @@ export interface IWorkspaceStore {
   workspaceSlug: string | null;
   // computed
   currentWorkspace: IWorkspace | null;
-  workspaceLabels: IIssueLabels[] | null;
+  workspaceLabels: IIssueLabels[];
+  workspaceJoinedProjects: IProject[];
+  workspaceFavoriteProjects: IProject[];
   // actions
   setWorkspaceSlug: (workspaceSlug: string) => void;
   getWorkspaceBySlug: (workspaceSlug: string) => IWorkspace | null;
   getWorkspaceLabelById: (workspaceSlug: string, labelId: string) => IIssueLabels | null;
-  getWorkspaceProjects: (workspaceSlug: string) => IProject[];
+  getWorkspaceProjects: (workspaceSlug: string) => void;
   fetchWorkspaces: () => Promise<void>;
   fetchWorkspaceLabels: (workspaceSlug: string) => Promise<void>;
 }
@@ -44,15 +46,18 @@ class WorkspaceStore implements IWorkspaceStore {
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
-      loader: observable,
+      loader: observable.ref,
       error: observable.ref,
       // objects
       workspaces: observable.ref,
       labels: observable.ref,
       workspaceSlug: observable.ref,
+      projects: observable.ref,
       // computed
       currentWorkspace: computed,
       workspaceLabels: computed,
+      workspaceJoinedProjects: computed,
+      workspaceFavoriteProjects: computed,
       // actions
       setWorkspaceSlug: action,
       getWorkspaceBySlug: action,
@@ -82,7 +87,17 @@ class WorkspaceStore implements IWorkspaceStore {
   get workspaceLabels() {
     if (!this.workspaceSlug) return [];
     const _labels = this.labels?.[this.workspaceSlug];
-    return _labels && Object.keys(_labels).length > 0 ? _labels : null;
+    return _labels && Object.keys(_labels).length > 0 ? _labels : [];
+  }
+
+  get workspaceJoinedProjects() {
+    if (!this.workspaceSlug) return [];
+    return this.projects?.[this.workspaceSlug]?.filter((p) => p.is_member);
+  }
+
+  get workspaceFavoriteProjects() {
+    if (!this.workspaceSlug) return [];
+    return this.projects?.[this.workspaceSlug]?.filter((p) => p.is_favorite);
   }
 
   /**
@@ -96,17 +111,25 @@ class WorkspaceStore implements IWorkspaceStore {
    * fetch workspace info from the array of workspaces in the store.
    * @param workspaceSlug
    */
-  getWorkspaceBySlug = (workspaceSlug: string) => {
-    return this.workspaces.find((w) => w.slug == workspaceSlug) || null;
-  };
+  getWorkspaceBySlug = (workspaceSlug: string) => this.workspaces.find((w) => w.slug == workspaceSlug) || null;
 
   /**
    * get Workspace projects using workspace slug
    * @param workspaceSlug
    * @returns
    */
-  getWorkspaceProjects = (workspaceSlug: string) => {
-    return this.projects[workspaceSlug];
+  getWorkspaceProjects = async (workspaceSlug: string) => {
+    try {
+      const projects = await this.projectService.getProjects(workspaceSlug, { is_favorite: "all" });
+      runInAction(() => {
+        this.projects = {
+          ...this.projects,
+          [workspaceSlug]: projects,
+        };
+      });
+    } catch (error) {
+      console.log("Failed to fetch project from workspace store");
+    }
   };
 
   /**
@@ -114,9 +137,8 @@ class WorkspaceStore implements IWorkspaceStore {
    * @param labelId
    * @returns
    */
-  getWorkspaceLabelById = (workspaceSlug: string, labelId: string) => {
-    return this.labels?.[workspaceSlug].find((label) => label.id === labelId) || null;
-  };
+  getWorkspaceLabelById = (workspaceSlug: string, labelId: string) =>
+    this.labels?.[workspaceSlug].find((label) => label.id === labelId) || null;
 
   /**
    * fetch user workspaces from API
