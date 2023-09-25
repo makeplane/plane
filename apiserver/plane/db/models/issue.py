@@ -267,7 +267,7 @@ class IssueAttachment(ProjectBaseModel):
         validators=[
             file_size,
         ],
-        storage=PrivateS3Storage,
+        storage=PrivateS3Storage(),
     )
     issue = models.ForeignKey(
         "db.Issue", on_delete=models.CASCADE, related_name="issue_attachment"

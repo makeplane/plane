@@ -32,7 +32,7 @@ class FileAsset(BaseModel):
         validators=[
             file_size,
         ],
-        storage=PublicS3Storage,
+        storage=PublicS3Storage(),
     )
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, null=True, related_name="assets"

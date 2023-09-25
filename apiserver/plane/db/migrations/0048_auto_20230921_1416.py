@@ -31,7 +31,7 @@ def move_s3_objects(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("db", "0046_auto_20230919_1421"),
+        ("db", "0047_auto_20230921_0758"),
     ]
 
     operations = [
