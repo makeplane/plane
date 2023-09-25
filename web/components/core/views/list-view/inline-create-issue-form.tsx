@@ -46,10 +46,17 @@ const InlineInput = () => {
 };
 
 export const ListInlineCreateIssueForm: React.FC<Props> = (props) => (
-  <InlineCreateIssueFormWrapper
-    className="flex py-3 px-4 items-center gap-x-5 bg-custom-background-100 shadow-custom-shadow-md"
-    {...props}
-  >
-    <InlineInput />
-  </InlineCreateIssueFormWrapper>
+  <>
+    <InlineCreateIssueFormWrapper
+      className="flex py-3 px-4 items-center gap-x-5 bg-custom-background-100 shadow-custom-shadow-md"
+      {...props}
+    >
+      <InlineInput />
+    </InlineCreateIssueFormWrapper>
+    {props.isOpen && (
+      <p className="text-xs ml-3 mt-3 italic text-custom-text-200">
+        Press {"'"}Enter{"'"} to add another issue
+      </p>
+    )}
+  </>
 );

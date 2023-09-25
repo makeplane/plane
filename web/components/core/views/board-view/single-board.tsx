@@ -63,6 +63,10 @@ export const SingleBoard: React.FC<Props> = (props) => {
   const router = useRouter();
   const { cycleId, moduleId } = router.query;
 
+  const isMyIssuesPage = router.pathname.split("/")[3] === "my-issues";
+  const isProfileIssuesPage = router.pathname.split("/")[2] === "profile";
+  const isDraftIssuesPage = router.pathname.split("/")[4] === "draft-issues";
+
   const type = cycleId ? "cycle" : moduleId ? "module" : "issue";
 
   // Check if it has at least 4 tickets since it is enough to accommodate the Calendar height
@@ -214,7 +218,11 @@ export const SingleBoard: React.FC<Props> = (props) => {
                         <button
                           type="button"
                           className="flex items-center gap-2 font-medium text-custom-primary outline-none p-1"
-                          onClick={() => onCreateClick()}
+                          onClick={() => {
+                            if (isDraftIssuesPage || isMyIssuesPage || isProfileIssuesPage) {
+                              addIssueToGroup();
+                            } else onCreateClick();
+                          }}
                         >
                           <PlusIcon className="h-4 w-4" />
                           Add Issue
