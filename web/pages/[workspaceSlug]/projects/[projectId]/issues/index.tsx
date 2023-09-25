@@ -27,7 +27,14 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 // types
 import type { NextPage } from "next";
 // fetch-keys
-import { PROJECT_DETAILS, INBOX_LIST } from "constants/fetch-keys";
+import {
+  PROJECT_DETAILS,
+  INBOX_LIST,
+  STATES_LIST,
+  PROJECT_ISSUE_LABELS,
+  PROJECT_MEMBERS,
+  USER_PROJECT_VIEW,
+} from "constants/fetch-keys";
 
 const ProjectIssues: NextPage = () => {
   const [analyticsModal, setAnalyticsModal] = useState(false);

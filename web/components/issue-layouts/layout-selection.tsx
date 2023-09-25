@@ -1,10 +1,11 @@
 import React from "react";
 
+// ui
+import { Tooltip } from "components/ui";
 // types
 import { TIssueLayouts } from "types";
 // constants
 import { ISSUE_LAYOUTS } from "constants/issue";
-import { Tooltip } from "components/ui";
 
 type Props = {
   layouts: TIssueLayouts[];
