@@ -97,6 +97,11 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
     setActiveProject(null);
   };
 
+  const onDiscard = () => {
+    clearDraftIssueLocalStorage();
+    onClose();
+  };
+
   useEffect(() => {
     setPreloadedData(prePopulateDataProps ?? {});
 
@@ -386,6 +391,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
                     createMore={createMore}
                     setCreateMore={setCreateMore}
                     handleClose={onClose}
+                    handleDiscard={onDiscard}
                     projectId={activeProject ?? ""}
                     setActiveProject={setActiveProject}
                     status={data ? true : false}
