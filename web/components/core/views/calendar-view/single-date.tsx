@@ -71,6 +71,7 @@ export const SingleCalendarDate: React.FC<Props> = (props) => {
                     provided={provided}
                     snapshot={snapshot}
                     issue={issue}
+                    projectId={issue.project_detail.id}
                     handleEditIssue={() => handleIssueAction(issue, "edit")}
                     handleDeleteIssue={() => handleIssueAction(issue, "delete")}
                     user={user}
