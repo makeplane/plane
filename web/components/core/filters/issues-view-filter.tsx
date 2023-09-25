@@ -25,11 +25,11 @@ import {
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 // types
-import { Properties, TIssueViewOptions } from "types";
+import { Properties, TIssueLayouts } from "types";
 // constants
 import { ISSUE_GROUP_BY_OPTIONS, ISSUE_ORDER_BY_OPTIONS, ISSUE_FILTER_OPTIONS } from "constants/issue";
 
-const issueViewOptions: { type: TIssueViewOptions; Icon: any }[] = [
+const issueViewOptions: { type: TIssueLayouts; Icon: any }[] = [
   {
     type: "list",
     Icon: FormatListBulletedOutlined,
@@ -52,7 +52,7 @@ const issueViewOptions: { type: TIssueViewOptions; Icon: any }[] = [
   },
 ];
 
-const issueViewForDraftIssues: { type: TIssueViewOptions; Icon: any }[] = [
+const issueViewForDraftIssues: { type: TIssueLayouts; Icon: any }[] = [
   {
     type: "list",
     Icon: FormatListBulletedOutlined,

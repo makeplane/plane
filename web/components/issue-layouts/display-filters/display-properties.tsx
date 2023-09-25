@@ -1,49 +1,58 @@
 import React from "react";
+
+import { useRouter } from "next/router";
+
+// mobx
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { FilterHeader } from "../helpers/filter-header";
-// mobx react lite
-import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
+// types
+import { IIssueDisplayProperties } from "types";
+// constants
 import { ISSUE_DISPLAY_PROPERTIES } from "constants/issue";
 
 export const FilterDisplayProperties = observer(() => {
-  const store: RootStore = useMobxStore();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
+  const store = useMobxStore();
   const { issueFilter: issueFilterStore } = store;
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
-  const handleDisplayProperties = (key: string, value: boolean) => {
-    // issueFilterStore.handleUserFilter("display_properties", key, !value);
+  const handleDisplayProperties = (property: Partial<IIssueDisplayProperties>) => {
+    if (!workspaceSlug || !projectId) return;
+
+    issueFilterStore.updateDisplayProperties(workspaceSlug.toString(), projectId.toString(), property);
   };
 
   return (
     <div>
       <FilterHeader
-        title={"Display Properties"}
+        title="Display Properties"
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
-        <div className="space-y-[2px] pt-1 px-1 flex items-center whitespace-nowrap gap-2 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap mx-1 mt-1">
           {ISSUE_DISPLAY_PROPERTIES.map((displayProperty) => (
-            <div
-              key={displayProperty?.key}
-              className={`cursor-pointer rounded-sm transition-all text-xs border p-0.5 px-1.5 ${
-                issueFilterStore?.userDisplayProperties?.[displayProperty?.key]
-                  ? `bg-custom-primary-200 border-custom-primary-200 text-white`
-                  : `hover:bg-custom-border-100 border-custom-border-100`
+            <button
+              key={displayProperty.key}
+              type="button"
+              className={`rounded transition-all text-xs border px-2 py-0.5 ${
+                issueFilterStore?.userDisplayProperties?.[displayProperty.key]
+                  ? "bg-custom-primary-100 border-custom-primary-100 text-white"
+                  : "border-custom-border-200 hover:bg-custom-background-80"
               }`}
-              onClick={() => {
-                handleDisplayProperties(
-                  displayProperty?.key,
-                  issueFilterStore?.userDisplayProperties?.[displayProperty?.key]
-                );
-              }}
+              onClick={() =>
+                handleDisplayProperties({
+                  [displayProperty.key]: !issueFilterStore?.userDisplayProperties?.[displayProperty.key],
+                })
+              }
             >
-              {displayProperty?.title}
-            </div>
+              {displayProperty.title}
+            </button>
           ))}
         </div>
       )}

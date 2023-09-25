@@ -490,6 +490,7 @@ export const IssuesView: React.FC<Props> = ({ openIssuesListModal, disableUserAc
                   labels: null,
                   priority: null,
                   state: null,
+                  state_group: null,
                   start_date: null,
                   target_date: null,
                 })

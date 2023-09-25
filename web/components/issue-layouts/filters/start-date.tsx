@@ -1,45 +1,32 @@
 import React from "react";
-// components
-import { FilterHeader } from "../helpers/filter-header";
-import { FilterOption } from "../helpers/filter-option";
-// mobx react lite
+
+// mobx
 import { observer } from "mobx-react-lite";
-// mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
+// components
+import { FilterHeader, FilterOption } from "components/issue-layouts";
 
 export const FilterStartDate = observer(() => {
-  const store: RootStore = useMobxStore();
-  const { issueFilters: issueFilterStore } = store;
+  const store = useMobxStore();
+  const { issueFilter: issueFilterStore } = store;
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
-
-  const handleFilter = (key: string, value: string) => {
-    const _value = [value];
-    issueFilterStore.handleUserFilter("filters", key, _value);
-  };
 
   return (
     <div>
       <FilterHeader
-        title={`Start Date (${issueFilterStore?.issueRenderFilters?.start_date?.length})`}
+        title={`Start Date (${issueFilterStore?.userFilters?.start_date?.length})`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
-        <div className="space-y-[2px] pt-1">
-          {issueFilterStore?.issueRenderFilters?.start_date &&
-            issueFilterStore?.issueRenderFilters?.start_date.length > 0 &&
-            issueFilterStore?.issueRenderFilters?.start_date.map((_startDate) => (
+        <div className="space-y-1 pt-1">
+          {issueFilterStore?.userFilters?.start_date &&
+            issueFilterStore?.userFilters?.start_date.length > 0 &&
+            issueFilterStore?.userFilters?.start_date.map((_startDate) => (
               <FilterOption
                 key={_startDate?.key}
-                isChecked={
-                  issueFilterStore?.userFilters?.filters?.start_date != null &&
-                  issueFilterStore?.userFilters?.filters?.start_date.includes(_startDate?.key)
-                    ? true
-                    : false
-                }
-                onClick={() => handleFilter("start_date", _startDate?.key)}
+                isChecked={issueFilterStore?.userFilters?.start_date?.includes(_startDate?.key) ? true : false}
                 title={_startDate.title}
                 multiple={false}
               />

@@ -2,27 +2,34 @@ import React from "react";
 // lucide icons
 import { Check } from "lucide-react";
 
-interface IFilterOption {
-  isChecked: boolean;
+type Props = {
   icon?: React.ReactNode;
-  title: string;
-  multiple?: boolean;
+  isChecked: boolean;
+  title: React.ReactNode;
   onClick?: () => void;
-}
+  multiple?: boolean;
+};
 
-export const FilterOption = ({ isChecked, icon, title, multiple = true, onClick }: IFilterOption) => (
-  <div
-    className="flex items-center gap-3 cursor-pointer rounded p-[6px] py-[5px] transition-all hover:bg-custom-border-100"
-    onClick={onClick}
-  >
-    <div
-      className={`flex-shrink-0 w-[14px] h-[14px] flex justify-center items-center border border-custom-border-300 bg-custom-background-90 ${
-        isChecked ? `bg-custom-primary-300 text-white` : ``
-      } ${multiple ? `rounded-sm` : `rounded-full`}`}
+export const FilterOption: React.FC<Props> = (props) => {
+  const { icon, isChecked, multiple = true, onClick, title } = props;
+
+  return (
+    <button
+      type="button"
+      className="flex items-center gap-2 rounded p-1.5 hover:bg-custom-background-80 w-full"
+      onClick={onClick}
     >
-      {isChecked && <Check size={10} strokeWidth={2} />}
-    </div>
-    {icon}
-    <div className="hyphens-auto line-clamp-1 text-custom-text-200 text-xs w-full">{title}</div>
-  </div>
-);
+      <div
+        className={`flex-shrink-0 w-3 h-3 grid place-items-center bg-custom-background-90 border ${
+          isChecked ? "bg-custom-primary-100 border-custom-primary-100 text-white" : "border-custom-border-300"
+        } ${multiple ? "rounded-sm" : "rounded-full"}`}
+      >
+        {isChecked && <Check size={10} strokeWidth={3} />}
+      </div>
+      <div className="flex items-center gap-2 truncate">
+        <div className="flex-shrink-0 grid place-items-center">{icon}</div>
+        <div className="flex-grow truncate text-custom-text-200 text-xs">{title}</div>
+      </div>
+    </button>
+  );
+};
