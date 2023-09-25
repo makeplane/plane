@@ -1,18 +1,14 @@
-import React from "react";
-// next imports
+import { FC } from "react";
 import { useRouter } from "next/router";
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { observer } from "mobx-react-lite";
 // ui
 import { DangerButton, Input, SecondaryButton } from "components/ui";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
 // mobx react lite
-import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
@@ -33,16 +29,17 @@ const defaultValues: FormData = {
   confirmLeave: "",
 };
 
-export const ConfirmProjectLeaveModal: React.FC = observer(() => {
+export const LeaveProjectModal: FC<> = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const store: RootStore = useMobxStore();
-  const { project } = store;
-
+  // store
+  const { project: projectStore } = useMobxStore();
+  // user
   const { user } = useUser();
+  // project
   const { mutateProjects } = useProjects();
-
+  // toast
   const { setToastAlert } = useToast();
 
   const {
@@ -50,23 +47,21 @@ export const ConfirmProjectLeaveModal: React.FC = observer(() => {
     formState: { isSubmitting },
     handleSubmit,
     reset,
-    watch,
   } = useForm({ defaultValues });
 
   const handleClose = () => {
-    project.handleProjectLeaveModal(null);
-
+    projectStore.handleProjectLeaveModal(null);
     reset({ ...defaultValues });
   };
 
   const onSubmit = async (data: any) => {
     if (data) {
-      if (data.projectName === project?.projectLeaveDetails?.name) {
+      if (data.projectName === projectStore?.projectLeaveDetails?.name) {
         if (data.confirmLeave === "Leave Project") {
-          return project
+          return projectStore
             .leaveProject(
-              project.projectLeaveDetails.workspaceSlug.toString(),
-              project.projectLeaveDetails.id.toString(),
+              projectStore.projectLeaveDetails.workspaceSlug.toString(),
+              projectStore.projectLeaveDetails.id.toString(),
               user
             )
             .then((res) => {
@@ -105,7 +100,7 @@ export const ConfirmProjectLeaveModal: React.FC = observer(() => {
   };
 
   return (
-    <Transition.Root show={project.projectLeaveModal} as={React.Fragment}>
+    <Transition.Root show={projectStore.projectLeaveModal} as={React.Fragment}>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
           as={React.Fragment}
@@ -134,10 +129,7 @@ export const ConfirmProjectLeaveModal: React.FC = observer(() => {
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-500/20 p-4">
-                      <ExclamationTriangleIcon
-                        className="h-6 w-6 text-red-600"
-                        aria-hidden="true"
-                      />
+                      <ExclamationTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">
                       <h3 className="text-xl font-medium 2xl:text-2xl">Leave Project</h3>
@@ -155,10 +147,8 @@ export const ConfirmProjectLeaveModal: React.FC = observer(() => {
                   <div className="text-custom-text-200">
                     <p className="break-words text-sm ">
                       Enter the project name{" "}
-                      <span className="font-medium text-custom-text-100">
-                        {project?.projectLeaveDetails?.name}
-                      </span>{" "}
-                      to continue:
+                      <span className="font-medium text-custom-text-100">{project?.projectLeaveDetails?.name}</span> to
+                      continue:
                     </p>
                     <Controller
                       control={control}
@@ -177,8 +167,7 @@ export const ConfirmProjectLeaveModal: React.FC = observer(() => {
 
                   <div className="text-custom-text-200">
                     <p className="text-sm">
-                      To confirm, type{" "}
-                      <span className="font-medium text-custom-text-100">Leave Project</span> below:
+                      To confirm, type <span className="font-medium text-custom-text-100">Leave Project</span> below:
                     </p>
                     <Controller
                       control={control}

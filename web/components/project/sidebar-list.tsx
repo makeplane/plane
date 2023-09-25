@@ -9,7 +9,8 @@ import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 import useProjects from "hooks/use-projects";
 // components
-import { CreateProjectModal, DeleteProjectModal, ProjectSidebarListItem } from "components/project";
+import { CreateProjectModal, DeleteProjectModal, ProjectSidebarListItem, LeaveProjectModal } from "components/project";
+import { PublishProjectModal } from "components/project/publish-project/modal";
 // services
 import projectService from "services/project.service";
 // icons
@@ -26,7 +27,7 @@ import { PROJECTS_LIST } from "constants/fetch-keys";
 import { useMobxStore } from "lib/mobx/store-provider";
 
 export const ProjectSidebarList: FC = observer(() => {
-  const { theme: themeStore, workspace: workspaceStore } = useMobxStore();
+  const { theme: themeStore, workspace: workspaceStore, project: projectStore } = useMobxStore();
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -39,11 +40,8 @@ export const ProjectSidebarList: FC = observer(() => {
   const [isFavoriteProjectCreate, setIsFavoriteProjectCreate] = useState(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [deleteProjectModal, setDeleteProjectModal] = useState(false);
-  const [projectToDelete, setProjectToDelete] = useState<IProject | null>(null);
-  const [projectToLeaveId, setProjectToLeaveId] = useState<string | null>(null);
 
-  // router
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false); // scroll animation state
 
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -53,9 +51,6 @@ export const ProjectSidebarList: FC = observer(() => {
   const joinedProjects = workspaceSlug && workspaceStore.workspaceJoinedProjects;
   const favoriteProjects = workspaceSlug && workspaceStore.workspaceFavoriteProjects;
 
-  console.log("workspaceJoinedProjects", workspaceStore.workspaceJoinedProjects);
-  console.log("workspaceFavoriteProjects", workspaceStore.workspaceFavoriteProjects);
-
   const orderedJoinedProjects: IProject[] | undefined = joinedProjects
     ? orderArrayBy(joinedProjects, "sort_order", "ascending")
     : undefined;
@@ -63,11 +58,6 @@ export const ProjectSidebarList: FC = observer(() => {
   const orderedFavProjects: IProject[] | undefined = favoriteProjects
     ? orderArrayBy(favoriteProjects, "sort_order", "ascending")
     : undefined;
-
-  const handleDeleteProject = (project: IProject) => {
-    setProjectToDelete(project);
-    setDeleteProjectModal(true);
-  };
 
   const handleCopyText = (projectId: string) => {
     const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
@@ -87,36 +77,11 @@ export const ProjectSidebarList: FC = observer(() => {
 
     if (source.index === destination.index) return;
 
-    const projectsList =
-      (destination.droppableId === "joined-projects" ? orderedJoinedProjects : orderedFavProjects) ?? [];
+    const updatedSortOrder = projectStore.orderProjectsWithSortOrder(source.index, destination.index, draggableId);
 
-    let updatedSortOrder = projectsList[source.index].sort_order;
-
-    if (destination.index === 0) updatedSortOrder = (projectsList[0].sort_order as number) - 1000;
-    else if (destination.index === projectsList.length - 1)
-      updatedSortOrder = (projectsList[projectsList.length - 1].sort_order as number) + 1000;
-    else {
-      const destinationSortingOrder = projectsList[destination.index].sort_order as number;
-      const relativeDestinationSortingOrder =
-        source.index < destination.index
-          ? (projectsList[destination.index + 1].sort_order as number)
-          : (projectsList[destination.index - 1].sort_order as number);
-
-      updatedSortOrder = (destinationSortingOrder + relativeDestinationSortingOrder) / 2;
-    }
-
-    mutate<IProject[]>(
-      PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
-      (prevData) => {
-        if (!prevData) return prevData;
-        return prevData.map((p) => (p.id === draggableId ? { ...p, sort_order: updatedSortOrder } : p));
-      },
-      false
-    );
-
-    await projectService
-      .setProjectView(workspaceSlug as string, draggableId, { sort_order: updatedSortOrder })
-      .catch(() => {
+    projectStore
+      .updateProjectView(workspaceSlug.toString(), draggableId, { sort_order: updatedSortOrder })
+      .catch((error) => {
         setToastAlert({
           type: "error",
           title: "Error!",
@@ -125,20 +90,20 @@ export const ProjectSidebarList: FC = observer(() => {
       });
   };
 
-  const handleScroll = () => {
-    if (containerRef.current) {
-      const scrollTop = containerRef.current.scrollTop;
-      setIsScrolled(scrollTop > 0);
-    }
-  };
-
+  /**
+   * Implementing scroll animation styles based on the scroll length of the container
+   */
   useEffect(() => {
+    const handleScroll = () => {
+      if (containerRef.current) {
+        const scrollTop = containerRef.current.scrollTop;
+        setIsScrolled(scrollTop > 0);
+      }
+    };
     const currentContainerRef = containerRef.current;
-
     if (currentContainerRef) {
       currentContainerRef.addEventListener("scroll", handleScroll);
     }
-
     return () => {
       if (currentContainerRef) {
         currentContainerRef.removeEventListener("scroll", handleScroll);
@@ -160,6 +125,10 @@ export const ProjectSidebarList: FC = observer(() => {
         data={projectToDelete}
         user={user}
       />
+      {/* project leave modal */}
+      <LeaveProjectModal />
+      {/* publish project modal */}
+      <PublishProjectModal />
       <div
         ref={containerRef}
         className={`h-full overflow-y-auto px-4 space-y-3 pt-3 ${
