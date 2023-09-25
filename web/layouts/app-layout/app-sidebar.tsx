@@ -8,8 +8,11 @@ import {
   WorkspaceSidebarMenu,
 } from "components/workspace";
 
-const WorkspaceSidebarQuickAction = dynamic(
-  () => import("components/workspace").then((mod) => mod.WorkspaceSidebarQuickAction),
+const WorkspaceSidebarQuickAction = dynamic<{}>(
+  () =>
+    import("components/workspace/sidebar-quick-action").then(
+      (mod) => mod.WorkspaceSidebarQuickAction
+    ),
   {
     ssr: false,
   }
