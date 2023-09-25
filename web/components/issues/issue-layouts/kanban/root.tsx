@@ -1,11 +1,10 @@
 import React from "react";
-
 // mobx
 import { observer } from "mobx-react-lite";
 // store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
-import { KanBanSwimLanes } from "./swinlanes";
+import { KanBanSwimLanes } from "./swimlanes";
 import { KanBan } from "./default";
 
 export interface IKanBanLayout {
@@ -15,15 +14,14 @@ export interface IKanBanLayout {
 }
 
 export const KanBanLayout: React.FC<IKanBanLayout> = observer(({}) => {
-  const { issue: issueStore }: RootStore = useMobxStore();
-
-  console.log("---");
-  console.log("issues", issueStore?.getIssues);
-  console.log("---");
+  const { issueFilter: issueFilterStore }: RootStore = useMobxStore();
+  const currentKanBanView: "swimlanes" | "default" = issueFilterStore?.userDisplayFilters?.sub_group_by
+    ? "swimlanes"
+    : "default";
 
   return (
-    <div className="border border-red-500 relative w-full h-full overflow-hidden">
-      {"swinlanes" === "swinlanes" ? <KanBanSwimLanes /> : <KanBan />}
+    <div className="relative w-full h-full bg-custom-background-90">
+      {currentKanBanView === "default" ? <KanBan /> : <KanBanSwimLanes />}
     </div>
   );
 });

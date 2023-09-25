@@ -45,7 +45,6 @@ type Props = {
   snapshot?: DraggableStateSnapshot;
   handleDeleteProject: () => void;
   handleCopyText: () => void;
-  handleProjectLeave: () => void;
   shortContextMenu?: boolean;
 };
 
@@ -82,7 +81,7 @@ const navigation = (workspaceSlug: string, projectId: string) => [
   },
 ];
 
-export const SingleSidebarProject: React.FC<Props> = observer((props) => {
+export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   const {
     project,
     sidebarCollapse,
@@ -90,62 +89,41 @@ export const SingleSidebarProject: React.FC<Props> = observer((props) => {
     snapshot,
     handleDeleteProject,
     handleCopyText,
-    handleProjectLeave,
     shortContextMenu = false,
   } = props;
-
-  const store: RootStore = useMobxStore();
-  const { projectPublish, project: projectStore } = store;
-
+  // store
+  const { projectPublish, project: projectStore }: RootStore = useMobxStore();
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
+  // toast
   const { setToastAlert } = useToast();
 
   const isAdmin = project.member_role === 20;
-
   const isViewerOrGuest = project.member_role === 10 || project.member_role === 5;
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug) return;
 
-    mutate<IProject[]>(
-      PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
-      (prevData) =>
-        (prevData ?? []).map((p) => (p.id === project.id ? { ...p, is_favorite: true } : p)),
-      false
-    );
-
-    projectService
-      .addProjectToFavorites(workspaceSlug as string, {
-        project: project.id,
-      })
-      .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't remove the project from favorites. Please try again.",
-        })
-      );
+    projectStore.addProjectToFavorites(workspaceSlug.toString(), project.id).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Couldn't remove the project from favorites. Please try again.",
+      });
+    });
   };
 
   const handleRemoveFromFavorites = () => {
     if (!workspaceSlug) return;
 
-    mutate<IProject[]>(
-      PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
-      (prevData) =>
-        (prevData ?? []).map((p) => (p.id === project.id ? { ...p, is_favorite: false } : p)),
-      false
-    );
-
-    projectService.removeProjectFromFavorites(workspaceSlug as string, project.id).catch(() =>
+    projectStore.removeProjectFromFavorites(workspaceSlug.toString(), project.id).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
         message: "Couldn't remove the project from favorites. Please try again.",
-      })
-    );
+      });
+    });
   };
 
   return (
@@ -159,11 +137,7 @@ export const SingleSidebarProject: React.FC<Props> = observer((props) => {
           >
             {provided && (
               <Tooltip
-                tooltipContent={
-                  project.sort_order === null
-                    ? "Join the project to rearrange"
-                    : "Drag to rearrange"
-                }
+                tooltipContent={project.sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"}
                 position="top-right"
               >
                 <button
@@ -178,12 +152,7 @@ export const SingleSidebarProject: React.FC<Props> = observer((props) => {
                 </button>
               </Tooltip>
             )}
-            <Tooltip
-              tooltipContent={`${project.name}`}
-              position="right"
-              className="ml-2"
-              disabled={!sidebarCollapse}
-            >
+            <Tooltip tooltipContent={`${project.name}`} position="right" className="ml-2" disabled={!sidebarCollapse}>
               <Disclosure.Button
                 as="div"
                 className={`flex items-center flex-grow truncate cursor-pointer select-none text-left text-sm font-medium ${
@@ -210,9 +179,7 @@ export const SingleSidebarProject: React.FC<Props> = observer((props) => {
                   )}
 
                   {!sidebarCollapse && (
-                    <p className={`truncate ${open ? "" : "text-custom-sidebar-text-200"}`}>
-                      {project.name}
-                    </p>
+                    <p className={`truncate ${open ? "" : "text-custom-sidebar-text-200"}`}>{project.name}</p>
                   )}
                 </div>
                 {!sidebarCollapse && (
@@ -265,9 +232,7 @@ export const SingleSidebarProject: React.FC<Props> = observer((props) => {
 
                 {/* publish project settings */}
                 {isAdmin && (
-                  <CustomMenu.MenuItem
-                    onClick={() => projectPublish.handleProjectModal(project?.id)}
-                  >
+                  <CustomMenu.MenuItem onClick={() => projectPublish.handleProjectModal(project?.id)}>
                     <div className="flex-shrink-0 relative flex items-center justify-start gap-2">
                       <div className="rounded transition-all w-4 h-4 flex justify-center items-center text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 duration-300 cursor-pointer">
                         <Icon iconName="ios_share" className="!text-base" />
@@ -279,9 +244,7 @@ export const SingleSidebarProject: React.FC<Props> = observer((props) => {
 
                 {project.archive_in > 0 && (
                   <CustomMenu.MenuItem
-                    onClick={() =>
-                      router.push(`/${workspaceSlug}/projects/${project?.id}/archived-issues/`)
-                    }
+                    onClick={() => router.push(`/${workspaceSlug}/projects/${project?.id}/archived-issues/`)}
                   >
                     <div className="flex items-center justify-start gap-2">
                       <ArchiveOutlined fontSize="small" />
@@ -290,18 +253,14 @@ export const SingleSidebarProject: React.FC<Props> = observer((props) => {
                   </CustomMenu.MenuItem>
                 )}
                 <CustomMenu.MenuItem
-                  onClick={() =>
-                    router.push(`/${workspaceSlug}/projects/${project?.id}/draft-issues`)
-                  }
+                  onClick={() => router.push(`/${workspaceSlug}/projects/${project?.id}/draft-issues`)}
                 >
                   <div className="flex items-center justify-start gap-2">
                     <PenSquare className="!text-base !leading-4 w-[14px] h-[14px] text-custom-text-300" />
                     <span>Draft Issues</span>
                   </div>
                 </CustomMenu.MenuItem>
-                <CustomMenu.MenuItem
-                  onClick={() => router.push(`/${workspaceSlug}/projects/${project?.id}/settings`)}
-                >
+                <CustomMenu.MenuItem onClick={() => router.push(`/${workspaceSlug}/projects/${project?.id}/settings`)}>
                   <div className="flex items-center justify-start gap-2">
                     <Icon iconName="settings" className="!text-base !leading-4" />
                     <span>Settings</span>

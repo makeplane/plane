@@ -2,21 +2,21 @@ import React from "react";
 // components
 import { HeaderCard } from "./card";
 // constants
-import { issueStateGroupByKey } from "constants/issue";
+import { issuePriorityByKey } from "constants/issue";
 // mobx
 import { observer } from "mobx-react-lite";
 // mobx
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 
-export interface IStateGroupHeader {
+export interface IPriorityHeader {
   column_id: string;
 }
 
-export const StateGroupHeader: React.FC<IStateGroupHeader> = observer(({ column_id }) => {
+export const PriorityHeader: React.FC<IPriorityHeader> = observer(({ column_id }) => {
   const {}: RootStore = useMobxStore();
 
-  const stateGroup = column_id && issueStateGroupByKey(column_id);
+  const stateGroup = column_id && issuePriorityByKey(column_id);
 
   return <>{stateGroup && <HeaderCard title={stateGroup?.title || ""} />}</>;
 });

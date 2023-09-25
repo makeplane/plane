@@ -28,8 +28,7 @@ class ThemeStore {
 
   setSidebarCollapsed(collapsed: boolean | null = null) {
     if (collapsed === null) {
-      let _sidebarCollapsed: string | boolean | null =
-        localStorage.getItem("app_sidebar_collapsed");
+      let _sidebarCollapsed: string | boolean | null = localStorage.getItem("app_sidebar_collapsed");
       _sidebarCollapsed = _sidebarCollapsed ? (_sidebarCollapsed === "true" ? true : false) : false;
       this.sidebarCollapsed = _sidebarCollapsed;
     } else {
@@ -38,7 +37,7 @@ class ThemeStore {
     }
   }
 
-  setTheme = async (_theme: { theme: ICurrentUserSettings }) => {
+  setTheme = async (_theme: { theme: any }) => {
     try {
       const currentTheme: string = _theme?.theme?.theme?.toString();
 

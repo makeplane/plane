@@ -106,10 +106,18 @@ export const AllViews: React.FC<Props> = ({
     [trashBox, setTrashBox]
   );
 
-  const { issue: issueStore }: RootStore = useMobxStore();
+  const { issue: issueStore, project: projectStore, issueFilter: issueFilterStore }: RootStore = useMobxStore();
 
-  useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES` : null, () => {
-    if (workspaceSlug && projectId) issueStore.fetchIssues(workspaceSlug, projectId);
+  useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES` : null, async () => {
+    if (workspaceSlug && projectId) {
+      await issueFilterStore.fetchUserFilters(workspaceSlug, projectId);
+
+      await projectStore.fetchProjectStates(workspaceSlug, projectId);
+      await projectStore.fetchProjectLabels(workspaceSlug, projectId);
+      await projectStore.fetchProjectMembers(workspaceSlug, projectId);
+
+      await issueStore.fetchIssues(workspaceSlug, projectId);
+    }
   });
 
   return (
@@ -225,7 +233,7 @@ export const AllViews: React.FC<Props> = ({
     //     </div>
     //   )}
     // </DragDropContext>
-    <div className="border border-red-500 relative w-full h-full overflow-hidden">
+    <div className="relative w-full h-full">
       <KanBanLayout />
     </div>
   );

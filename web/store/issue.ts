@@ -30,7 +30,7 @@ export interface IIssueStore {
   getIssueType: IIssueType | null;
   getIssues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null;
   // action
-  fetchIssues: (workspaceSlug: string, projectId: string) => void;
+  fetchIssues: (workspaceSlug: string, projectId: string) => Promise<any>;
   updateIssueStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
 }
 
@@ -75,8 +75,9 @@ class IssueStore implements IIssueStore {
     const groupedLayouts = ["kanban", "list"];
     const ungroupedLayouts = ["calendar", "spreadsheet", "gantt_chart"];
 
-    const issueLayout = "kanban";
-    const issueSubGroup = null;
+    const issueLayout = this.rootStore?.issueFilter?.userDisplayFilters?.layout || null;
+    const issueSubGroup = this.rootStore?.issueFilter?.userDisplayFilters?.sub_group_by || null;
+    if (!issueLayout || !issueSubGroup) return null;
 
     const _issueState = groupedLayouts.includes(issueLayout)
       ? issueSubGroup
@@ -92,8 +93,8 @@ class IssueStore implements IIssueStore {
   get getIssues() {
     const projectId: string | null = this.rootStore?.project?.projectId;
     const issueType = this.getIssueType;
-
     if (!projectId || !issueType) return null;
+
     return this.issues?.[projectId]?.[issueType] || null;
   }
 
@@ -141,7 +142,8 @@ class IssueStore implements IIssueStore {
       this.rootStore.workspace.setWorkspaceSlug(workspaceSlug);
       this.rootStore.project.setProjectId(projectId);
 
-      const params = { group_by: "state" };
+      // TODO: replace this once the issue filter is completed
+      const params = { group_by: "state", order_by: "-created_at" };
       const issueResponse = await this.issueService.getIssuesWithParams(workspaceSlug, projectId, params);
 
       const issueType = this.getIssueType;

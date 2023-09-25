@@ -7,7 +7,8 @@ export interface IKanBanSwimLanes {
 }
 
 export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = ({}) => {
-  console.log("kanaban layout");
+  console.log("");
+
   return (
     <div>
       <div>header</div>

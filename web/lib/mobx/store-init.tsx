@@ -3,19 +3,19 @@ import { useEffect } from "react";
 import { useTheme } from "next-themes";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
+import { useRouter } from "next/router";
 
 const MobxStoreInit = () => {
-  const store: any = useMobxStore();
+  const { theme: themeStore, user: userStore, workspace: workspaceStore, project: projectStore } = useMobxStore();
   const { setTheme } = useTheme();
+
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   useEffect(() => {
     // sidebar collapsed toggle
-    if (
-      localStorage &&
-      localStorage.getItem("app_sidebar_collapsed") &&
-      store?.theme?.sidebarCollapsed === null
-    )
-      store.theme.setSidebarCollapsed(
+    if (localStorage && localStorage.getItem("app_sidebar_collapsed") && themeStore?.sidebarCollapsed === null)
+      themeStore.setSidebarCollapsed(
         localStorage.getItem("app_sidebar_collapsed")
           ? localStorage.getItem("app_sidebar_collapsed") === "true"
             ? true
@@ -24,25 +24,30 @@ const MobxStoreInit = () => {
       );
 
     // theme
-    if (store.theme.theme === null && store?.user?.currentUserSettings) {
+    if (themeStore.theme === null && userStore?.currentUserSettings) {
       let currentTheme = localStorage.getItem("theme");
       currentTheme = currentTheme ? currentTheme : "system";
 
       // validating the theme and applying for initial state
       if (currentTheme) {
         setTheme(currentTheme);
-        store.theme.setTheme({ theme: { theme: currentTheme } });
+        themeStore.setTheme({ theme: { theme: currentTheme } });
       }
     }
-  }, [store?.theme, store?.user, setTheme]);
+  }, [themeStore, userStore, setTheme]);
 
   useEffect(() => {
     // current user
-    if (store?.user?.currentUser === null) store.user.setCurrentUser();
+    if (userStore?.currentUser === null) userStore.setCurrentUser();
 
     // current user settings
-    if (store?.user?.currentUserSettings === null) store.user.setCurrentUserSettings();
-  }, [store?.user]);
+    if (userStore?.currentUserSettings === null) userStore.setCurrentUserSettings();
+  }, [userStore]);
+
+  useEffect(() => {
+    if (workspaceSlug) workspaceStore.setWorkspaceSlug(workspaceSlug.toString());
+    if (projectId) projectStore.setProjectId(projectId.toString());
+  }, [workspaceSlug, projectId, workspaceStore, projectStore]);
 
   return <></>;
 };

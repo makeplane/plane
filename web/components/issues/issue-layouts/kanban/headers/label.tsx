@@ -6,14 +6,14 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 
-export interface IStateHeader {
+export interface ILabelHeader {
   column_id: string;
 }
 
-export const StateHeader: React.FC<IStateHeader> = observer(({ column_id }) => {
+export const LabelHeader: React.FC<ILabelHeader> = observer(({ column_id }) => {
   const { project: projectStore }: RootStore = useMobxStore();
 
-  const state = (column_id && projectStore?.getProjectStateById(column_id)) ?? null;
+  const label = (column_id && projectStore?.getProjectLabelById(column_id)) ?? null;
 
-  return <>{state && <HeaderCard title={state?.name || ""} />}</>;
+  return <>{label && <HeaderCard title={label?.name || ""} />}</>;
 });

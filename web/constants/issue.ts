@@ -6,6 +6,8 @@ export const ISSUE_PRIORITIES = [
   { key: "none", title: "None" },
 ];
 
+export const issuePriorityByKey = (key: string) => ISSUE_PRIORITIES.find((item) => item.key === key) || null;
+
 export const ISSUE_STATE_GROUPS = [
   { key: "backlog", title: "Backlog" },
   { key: "unstarted", title: "Unstarted" },
@@ -13,6 +15,8 @@ export const ISSUE_STATE_GROUPS = [
   { key: "completed", title: "Completed" },
   { key: "cancelled", title: "Cancelled" },
 ];
+
+export const issueStateGroupByKey = (key: string) => ISSUE_STATE_GROUPS.find((item) => item.key === key) || null;
 
 export const ISSUE_START_DATE_OPTIONS = [
   { key: "last_week", title: "Last Week" },

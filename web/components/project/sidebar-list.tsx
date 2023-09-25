@@ -1,18 +1,15 @@
 import React, { useState, FC, useRef, useEffect } from "react";
-
 import { useRouter } from "next/router";
-import { mutate } from "swr";
-
-// react-beautiful-dnd
+import useSWR, { mutate } from "swr";
 import { DragDropContext, Draggable, DropResult, Droppable } from "react-beautiful-dnd";
-// headless ui
 import { Disclosure, Transition } from "@headlessui/react";
+import { observer } from "mobx-react-lite";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 import useProjects from "hooks/use-projects";
 // components
-import { CreateProjectModal, DeleteProjectModal, SingleSidebarProject } from "components/project";
+import { CreateProjectModal, DeleteProjectModal, ProjectSidebarListItem } from "components/project";
 // services
 import projectService from "services/project.service";
 // icons
@@ -28,9 +25,17 @@ import { PROJECTS_LIST } from "constants/fetch-keys";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 
-export const ProjectSidebarList: FC = () => {
-  const store: any = useMobxStore();
-
+export const ProjectSidebarList: FC = observer(() => {
+  const { theme: themeStore, workspace: workspaceStore } = useMobxStore();
+  // router
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+  // swr
+  useSWR(
+    workspaceSlug ? "PROJECTS_LIST" : null,
+    workspaceSlug ? () => workspaceStore.getWorkspaceProjects(workspaceSlug?.toString()) : null
+  );
+  // states
   const [isFavoriteProjectCreate, setIsFavoriteProjectCreate] = useState(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [deleteProjectModal, setDeleteProjectModal] = useState(false);
@@ -42,16 +47,14 @@ export const ProjectSidebarList: FC = () => {
 
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
   const { user } = useUserAuth();
   const { setToastAlert } = useToast();
 
-  const { projects: allProjects } = useProjects();
+  const joinedProjects = workspaceSlug && workspaceStore.workspaceJoinedProjects;
+  const favoriteProjects = workspaceSlug && workspaceStore.workspaceFavoriteProjects;
 
-  const joinedProjects = allProjects?.filter((p) => p.is_member);
-  const favoriteProjects = allProjects?.filter((p) => p.is_favorite);
+  console.log("workspaceJoinedProjects", workspaceStore.workspaceJoinedProjects);
+  console.log("workspaceFavoriteProjects", workspaceStore.workspaceFavoriteProjects);
 
   const orderedJoinedProjects: IProject[] | undefined = joinedProjects
     ? orderArrayBy(joinedProjects, "sort_order", "ascending")
@@ -67,8 +70,7 @@ export const ProjectSidebarList: FC = () => {
   };
 
   const handleCopyText = (projectId: string) => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
     copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues`).then(() => {
       setToastAlert({
         type: "success",
@@ -86,9 +88,7 @@ export const ProjectSidebarList: FC = () => {
     if (source.index === destination.index) return;
 
     const projectsList =
-      (destination.droppableId === "joined-projects"
-        ? orderedJoinedProjects
-        : orderedFavProjects) ?? [];
+      (destination.droppableId === "joined-projects" ? orderedJoinedProjects : orderedFavProjects) ?? [];
 
     let updatedSortOrder = projectsList[source.index].sort_order;
 
@@ -109,9 +109,7 @@ export const ProjectSidebarList: FC = () => {
       PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
       (prevData) => {
         if (!prevData) return prevData;
-        return prevData.map((p) =>
-          p.id === draggableId ? { ...p, sort_order: updatedSortOrder } : p
-        );
+        return prevData.map((p) => (p.id === draggableId ? { ...p, sort_order: updatedSortOrder } : p));
       },
       false
     );
@@ -176,7 +174,7 @@ export const ProjectSidebarList: FC = () => {
                   <Disclosure as="div" className="flex flex-col space-y-2" defaultOpen={true}>
                     {({ open }) => (
                       <>
-                        {!store?.theme?.sidebarCollapsed && (
+                        {!themeStore?.sidebarCollapsed && (
                           <div className="group flex justify-between items-center text-xs px-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 w-full">
                             <Disclosure.Button
                               as="button"
@@ -210,15 +208,14 @@ export const ProjectSidebarList: FC = () => {
                             >
                               {(provided, snapshot) => (
                                 <div ref={provided.innerRef} {...provided.draggableProps}>
-                                  <SingleSidebarProject
+                                  <ProjectSidebarListItem
                                     key={project.id}
                                     project={project}
-                                    sidebarCollapse={store?.theme?.sidebarCollapsed}
+                                    sidebarCollapse={themeStore?.sidebarCollapsed || false}
                                     provided={provided}
                                     snapshot={snapshot}
                                     handleDeleteProject={() => handleDeleteProject(project)}
                                     handleCopyText={() => handleCopyText(project.id)}
-                                    handleProjectLeave={() => setProjectToLeaveId(project.id)}
                                     shortContextMenu
                                   />
                                 </div>
@@ -243,7 +240,7 @@ export const ProjectSidebarList: FC = () => {
                   <Disclosure as="div" className="flex flex-col space-y-2" defaultOpen={true}>
                     {({ open }) => (
                       <>
-                        {!store?.theme?.sidebarCollapsed && (
+                        {!themeStore?.sidebarCollapsed && (
                           <div className="group flex justify-between items-center text-xs px-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 w-full">
                             <Disclosure.Button
                               as="button"
@@ -280,14 +277,13 @@ export const ProjectSidebarList: FC = () => {
                               <Draggable key={project.id} draggableId={project.id} index={index}>
                                 {(provided, snapshot) => (
                                   <div ref={provided.innerRef} {...provided.draggableProps}>
-                                    <SingleSidebarProject
+                                    <ProjectSidebarListItem
                                       key={project.id}
                                       project={project}
-                                      sidebarCollapse={store?.theme?.sidebarCollapsed}
+                                      sidebarCollapse={themeStore?.sidebarCollapsed || false}
                                       provided={provided}
                                       snapshot={snapshot}
                                       handleDeleteProject={() => handleDeleteProject(project)}
-                                      handleProjectLeave={() => setProjectToLeaveId(project.id)}
                                       handleCopyText={() => handleCopyText(project.id)}
                                     />
                                   </div>
@@ -318,10 +314,10 @@ export const ProjectSidebarList: FC = () => {
             }}
           >
             <PlusIcon className="h-5 w-5" />
-            {!store?.theme?.sidebarCollapsed && "Add Project"}
+            {!themeStore?.sidebarCollapsed && "Add Project"}
           </button>
         )}
       </div>
     </>
   );
-};
+});
