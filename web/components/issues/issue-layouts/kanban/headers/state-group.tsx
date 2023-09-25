@@ -11,6 +11,7 @@ import { RootStore } from "store/root";
 
 export interface IStateGroupHeader {
   column_id: string;
+  swimlanes?: boolean;
 }
 
 export const StateGroupHeader: React.FC<IStateGroupHeader> = observer(({ column_id }) => {

@@ -77,7 +77,7 @@ class IssueStore implements IIssueStore {
 
     const issueLayout = this.rootStore?.issueFilter?.userDisplayFilters?.layout || null;
     const issueSubGroup = this.rootStore?.issueFilter?.userDisplayFilters?.sub_group_by || null;
-    if (!issueLayout || !issueSubGroup) return null;
+    if (!issueLayout) return null;
 
     const _issueState = groupedLayouts.includes(issueLayout)
       ? issueSubGroup

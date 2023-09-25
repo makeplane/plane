@@ -11,18 +11,18 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 
-export interface IKanBanHeaderRoot {
+export interface IKanBanGroupByHeaderRoot {
   column_id: string;
 }
 
-export const KanBanHeaderRoot: React.FC<IKanBanHeaderRoot> = observer(({ column_id }) => {
+export const KanBanGroupByHeaderRoot: React.FC<IKanBanGroupByHeaderRoot> = observer(({ column_id }) => {
   const { issueFilter: issueFilterStore }: RootStore = useMobxStore();
   const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
 
   return (
     <>
       {group_by && group_by === "state" && <StateHeader column_id={column_id} />}
-      {group_by && group_by === "state.group" && <StateGroupHeader column_id={column_id} />}
+      {group_by && group_by === "state_detail.group" && <StateGroupHeader column_id={column_id} />}
       {group_by && group_by === "priority" && <PriorityHeader column_id={column_id} />}
       {group_by && group_by === "labels" && <LabelHeader column_id={column_id} />}
       {group_by && group_by === "assignees" && <AssigneesHeader column_id={column_id} />}

@@ -110,7 +110,7 @@ export const AllViews: React.FC<Props> = ({
 
   useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES` : null, async () => {
     if (workspaceSlug && projectId) {
-      await issueFilterStore.fetchUserFilters(workspaceSlug, projectId);
+      await issueFilterStore.fetchUserProjectFilters(workspaceSlug, projectId);
 
       await projectStore.fetchProjectStates(workspaceSlug, projectId);
       await projectStore.fetchProjectLabels(workspaceSlug, projectId);
@@ -233,7 +233,7 @@ export const AllViews: React.FC<Props> = ({
     //     </div>
     //   )}
     // </DragDropContext>
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full overflow-auto">
       <KanBanLayout />
     </div>
   );

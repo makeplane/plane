@@ -1,6 +1,9 @@
 import React from "react";
+// react beautiful dnd
+import { Droppable } from "@hello-pangea/dnd";
 // components
-import { KanBanHeaderRoot } from "./headers/root";
+import { KanBanGroupByHeaderRoot } from "./headers/group-by-root";
+import { IssueBlock } from "./block";
 // constants
 import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 // mobx
@@ -12,48 +15,65 @@ import { RootStore } from "store/root";
 export interface IKanBan {
   issues?: any;
   handleIssues?: () => void;
-  handleDragDrop?: () => void;
+  handleDragDrop?: (result: any) => void | undefined;
+  sub_group_id?: string;
 }
 
-export const KanBan: React.FC<IKanBan> = observer(({}) => {
-  const { issue: issueStore, project: projectStore, issueFilter: issueFilterStore }: RootStore = useMobxStore();
+export const KanBan: React.FC<IKanBan> = observer(({ issues, sub_group_id = "null" }) => {
+  const { project: projectStore, issueFilter: issueFilterStore }: RootStore = useMobxStore();
 
   const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
-
-  // console.log("issueStore", issueStore?.getIssues);
-  // console.log("issueStore", projectStore?.projectStates);
-  // console.log("issueStore", projectStore?.projectLabels);
-  // console.log("issueStore", projectStore?.projectMembers);
-  // console.log("issueFilterStore", issueFilterStore);
-  // issueStore?.getIssues && Object.keys(issueStore?.getIssues) && Object.keys(issueStore?.getIssues).length > 0
+  const sub_group_by: string | null = issueFilterStore?.userDisplayFilters?.sub_group_by || null;
 
   return (
-    <div className="relative w-full h-full overflow-y-auto">
+    <div className="relative w-full h-full">
       {group_by && group_by === "state" && (
         <div className="relative w-full h-full flex">
           {projectStore?.projectStates &&
             projectStore?.projectStates.length > 0 &&
             projectStore?.projectStates.map((state) => (
-              <div className="flex-shrink-0 flex flex-col border border-red-500 w-[300px] h-full">
-                <div className="flex-shrink-0 w-full">
-                  <KanBanHeaderRoot column_id={state?.id} />
+              <div className="flex-shrink-0 flex flex-col w-[340px]">
+                {sub_group_by === null && (
+                  <div className="flex-shrink-0 w-full bg-custom-background-90 py-1 sticky top-0 z-[2]">
+                    <KanBanGroupByHeaderRoot column_id={state?.id} />
+                  </div>
+                )}
+
+                <div className="w-full h-full">
+                  <Droppable droppableId={`${sub_group_id}-${state?.id}`}>
+                    {(provided: any, snapshot: any) => (
+                      <div
+                        className={`w-full h-full relative transition-all ${
+                          snapshot.isDraggingOver ? `bg-custom-background-80` : ``
+                        }`}
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                      >
+                        {issues && (
+                          <IssueBlock sub_group_id={sub_group_id} columnId={state?.id} issues={issues[state?.id]} />
+                        )}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
                 </div>
-                <div className="w-full h-full">content</div>
-                <div className="flex-shrink-0 w-full">footer</div>
               </div>
             ))}
         </div>
       )}
 
-      {group_by && group_by === "state.group" && (
+      {group_by && group_by === "state_detail.group" && (
         <div className="relative w-full h-full flex">
           {ISSUE_STATE_GROUPS &&
             ISSUE_STATE_GROUPS.length > 0 &&
-            ISSUE_STATE_GROUPS.map((state) => (
-              <div className="flex-shrink-0 flex flex-col border border-red-500 w-[300px] h-full">
-                <KanBanHeaderRoot column_id={state?.key} />
-                <div>content</div>
-                <div>footer</div>
+            ISSUE_STATE_GROUPS.map((stateGroup) => (
+              <div className="flex-shrink-0 flex flex-col w-[300px] h-full">
+                {sub_group_by === null && (
+                  <div className="flex-shrink-0 w-full">
+                    <KanBanGroupByHeaderRoot column_id={stateGroup?.key} />
+                  </div>
+                )}
+                <div className="w-full h-full">content</div>
               </div>
             ))}
         </div>
@@ -63,11 +83,14 @@ export const KanBan: React.FC<IKanBan> = observer(({}) => {
         <div className="relative w-full h-full flex">
           {ISSUE_PRIORITIES &&
             ISSUE_PRIORITIES.length > 0 &&
-            ISSUE_PRIORITIES.map((state) => (
-              <div className="flex-shrink-0 flex flex-col border border-red-500 w-[300px] h-full">
-                <KanBanHeaderRoot column_id={state?.key} />
-                <div>content</div>
-                <div>footer</div>
+            ISSUE_PRIORITIES.map((priority) => (
+              <div className="flex-shrink-0 flex flex-col w-[300px] h-full">
+                {sub_group_by === null && (
+                  <div className="flex-shrink-0 w-full">
+                    <KanBanGroupByHeaderRoot column_id={priority?.key} />
+                  </div>
+                )}
+                <div className="w-full h-full">content</div>
               </div>
             ))}
         </div>
@@ -77,11 +100,14 @@ export const KanBan: React.FC<IKanBan> = observer(({}) => {
         <div className="relative w-full h-full flex">
           {projectStore?.projectLabels &&
             projectStore?.projectLabels.length > 0 &&
-            projectStore?.projectLabels.map((state) => (
-              <div className="flex-shrink-0 flex flex-col border border-red-500 w-[300px] h-full">
-                <KanBanHeaderRoot column_id={state?.id} />
-                <div>content</div>
-                <div>footer</div>
+            projectStore?.projectLabels.map((label) => (
+              <div className="flex-shrink-0 flex flex-col w-[300px] h-full">
+                {sub_group_by === null && (
+                  <div className="flex-shrink-0 w-full">
+                    <KanBanGroupByHeaderRoot column_id={label?.id} />
+                  </div>
+                )}
+                <div className="w-full h-full">content</div>
               </div>
             ))}
         </div>
@@ -91,11 +117,14 @@ export const KanBan: React.FC<IKanBan> = observer(({}) => {
         <div className="relative w-full h-full flex">
           {projectStore?.projectMembers &&
             projectStore?.projectMembers.length > 0 &&
-            projectStore?.projectMembers.map((state) => (
-              <div className="flex-shrink-0 flex flex-col border border-red-500 w-[300px] h-full">
-                <KanBanHeaderRoot column_id={state?.id} />
-                <div>content</div>
-                <div>footer</div>
+            projectStore?.projectMembers.map((member) => (
+              <div className="flex-shrink-0 flex flex-col w-[300px] h-full">
+                {sub_group_by === null && (
+                  <div className="flex-shrink-0 w-full">
+                    <KanBanGroupByHeaderRoot column_id={member?.id} />
+                  </div>
+                )}
+                <div className="w-full h-full">content</div>
               </div>
             ))}
         </div>
@@ -105,11 +134,14 @@ export const KanBan: React.FC<IKanBan> = observer(({}) => {
         <div className="relative w-full h-full flex">
           {projectStore?.projectMembers &&
             projectStore?.projectMembers.length > 0 &&
-            projectStore?.projectMembers.map((state) => (
-              <div className="flex-shrink-0 flex flex-col border border-red-500 w-[300px] h-full">
-                <KanBanHeaderRoot column_id={state?.id} />
-                <div>content</div>
-                <div>footer</div>
+            projectStore?.projectMembers.map((member) => (
+              <div className="flex-shrink-0 flex flex-col w-[300px] h-full">
+                {sub_group_by === null && (
+                  <div className="flex-shrink-0 w-full">
+                    <KanBanGroupByHeaderRoot column_id={member?.id} />
+                  </div>
+                )}
+                <div className="w-full h-full">content</div>
               </div>
             ))}
         </div>
