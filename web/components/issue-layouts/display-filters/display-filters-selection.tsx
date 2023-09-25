@@ -23,8 +23,8 @@ export const DisplayFiltersSelection = observer(() => {
     );
 
   return (
-    <div className="w-full h-full overflow-hidden select-none relative flex flex-col divide-y divide-custom-border-200">
-      <div className="flex-shrink-0 p-2 text-sm">Search container</div>
+    <div className="w-full h-full overflow-hidden select-none relative flex flex-col divide-y divide-custom-border-200 px-0.5">
+      {/* <div className="flex-shrink-0 p-2 text-sm">Search container</div> */}
       <div className="w-full h-full overflow-hidden overflow-y-auto relative pb-2 divide-y divide-custom-border-200">
         {/* display properties */}
         {issueFilterVisibilityData.issues.display_properties[issueFilterStore.userDisplayFilters.layout ?? "list"] && (
