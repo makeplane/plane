@@ -1,7 +1,3 @@
-from django.utils.timezone import make_aware
-from django.utils.dateparse import parse_datetime
-
-
 def filter_state(params, filter, method):
     if method == "GET":
         states = params.get("state").split(",")

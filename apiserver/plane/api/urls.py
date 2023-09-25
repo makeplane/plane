@@ -105,7 +105,6 @@ from plane.api.views import (
     GlobalViewViewSet,
     GlobalViewIssuesViewSet,
     IssueViewViewSet,
-    ViewIssuesEndpoint,
     IssueViewFavoriteViewSet,
     ## End Views
     # Cycles
@@ -648,11 +647,6 @@ urlpatterns = [
             }
         ),
         name="project-view",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/views/<uuid:view_id>/issues/",
-        ViewIssuesEndpoint.as_view(),
-        name="project-view-issues",
     ),
     path(
         "workspaces/<str:slug>/views/",

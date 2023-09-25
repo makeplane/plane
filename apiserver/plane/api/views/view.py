@@ -243,51 +243,6 @@ class IssueViewViewSet(BaseViewSet):
         )
 
 
-class ViewIssuesEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-
-    def get(self, request, slug, project_id, view_id):
-        try:
-            view = IssueView.objects.get(pk=view_id)
-            queries = view.query
-
-            filters = issue_filters(request.query_params, "GET")
-
-            issues = (
-                Issue.issue_objects.filter(
-                    **queries, project_id=project_id, workspace__slug=slug
-                )
-                .filter(**filters)
-                .select_related("project")
-                .select_related("workspace")
-                .select_related("state")
-                .select_related("parent")
-                .prefetch_related("assignees")
-                .prefetch_related("labels")
-                .prefetch_related(
-                    Prefetch(
-                        "issue_reactions",
-                        queryset=IssueReaction.objects.select_related("actor"),
-                    )
-                )
-            )
-
-            serializer = IssueLiteSerializer(issues, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except IssueView.DoesNotExist:
-            return Response(
-                {"error": "Issue View does not exist"}, status=status.HTTP_404_NOT_FOUND
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-
 class IssueViewFavoriteViewSet(BaseViewSet):
     serializer_class = IssueViewFavoriteSerializer
     model = IssueViewFavorite
