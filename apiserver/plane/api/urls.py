@@ -80,7 +80,7 @@ from plane.api.views import (
     BulkDeleteIssuesEndpoint,
     BulkImportIssuesEndpoint,
     ProjectUserViewsEndpoint,
-    IssuePropertyViewSet,
+    IssueUserDisplayPropertyEndpoint,
     LabelViewSet,
     SubIssuesEndpoint,
     IssueLinkViewSet,
@@ -991,26 +991,9 @@ urlpatterns = [
     ## End Comment Reactions
     ## IssueProperty
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-properties/",
-        IssuePropertyViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
-        name="project-issue-roadmap",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-properties/<uuid:pk>/",
-        IssuePropertyViewSet.as_view(
-            {
-                "get": "retrieve",
-                "put": "update",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
-        ),
-        name="project-issue-roadmap",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-display-properties/",
+        IssueUserDisplayPropertyEndpoint.as_view(),
+        name="project-issue-display-properties",
     ),
     ## IssueProperty Ebd
     ## Issue Archives

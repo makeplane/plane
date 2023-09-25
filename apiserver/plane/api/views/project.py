@@ -66,6 +66,7 @@ from plane.db.models import (
     ModuleMember,
     Inbox,
     ProjectDeployBoard,
+    IssueProperty,
 )
 
 from plane.bgtasks.project_invitation_task import project_invitation
@@ -213,6 +214,11 @@ class ProjectViewSet(BaseViewSet):
                 project_member = ProjectMember.objects.create(
                     project_id=serializer.data["id"], member=request.user, role=20
                 )
+                # Also create the issue property for the user
+                _ = IssueProperty.objects.create(
+                    project_id=serializer.data["id"],
+                    user=request.user,
+                )
 
                 if serializer.data["project_lead"] is not None and str(
                     serializer.data["project_lead"]
@@ -221,6 +227,11 @@ class ProjectViewSet(BaseViewSet):
                         project_id=serializer.data["id"],
                         member_id=serializer.data["project_lead"],
                         role=20,
+                    )
+                    # Also create the issue property for the user
+                    IssueProperty.objects.create(
+                        project_id=serializer.data["id"],
+                        user_id=serializer.data["project_lead"],
                     )
 
                 # Default states
@@ -424,6 +435,8 @@ class InviteProjectEndpoint(BaseAPIView):
                 member=user, project_id=project_id, role=role
             )
 
+            _ = IssueProperty.objects.create(user=user, project_id=project_id)
+
             return Response(
                 ProjectMemberSerializer(project_member).data, status=status.HTTP_200_OK
             )
@@ -473,6 +486,18 @@ class UserProjectInvitationsViewset(BaseViewSet):
                         workspace=invitation.project.workspace,
                         member=request.user,
                         role=invitation.role,
+                        created_by=request.user,
+                    )
+                    for invitation in project_invitations
+                ]
+            )
+
+            IssueProperty.objects.bulk_create(
+                [
+                    ProjectMember(
+                        project=invitation.project,
+                        workspace=invitation.project.workspace,
+                        user=request.user,
                         created_by=request.user,
                     )
                     for invitation in project_invitations
@@ -617,7 +642,8 @@ class ProjectMemberViewSet(BaseViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except ProjectMember.DoesNotExist:
             return Response(
-                {"error": "Project Member does not exist"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Project Member does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
             capture_exception(e)
@@ -642,6 +668,7 @@ class AddMemberToProjectEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             bulk_project_members = []
+            bulk_issue_props = []
 
             project_members = (
                 ProjectMember.objects.filter(
@@ -668,11 +695,22 @@ class AddMemberToProjectEndpoint(BaseAPIView):
                         sort_order=sort_order[0] - 10000 if len(sort_order) else 65535,
                     )
                 )
+                bulk_issue_props.append(
+                    IssueProperty(
+                        user_id=member.get("member_id"),
+                        project_id=project_id,
+                        workspace_id=project.workspace_id,
+                    )
+                )
 
             project_members = ProjectMember.objects.bulk_create(
                 bulk_project_members,
                 batch_size=10,
                 ignore_conflicts=True,
+            )
+
+            _ = IssueProperty.objects.bulk_create(
+                bulk_issue_props, batch_size=10, ignore_conflicts=True
             )
 
             serializer = ProjectMemberSerializer(project_members, many=True)
@@ -718,6 +756,7 @@ class AddTeamToProjectEndpoint(BaseAPIView):
             workspace = Workspace.objects.get(slug=slug)
 
             project_members = []
+            issue_props = []
             for member in team_members:
                 project_members.append(
                     ProjectMember(
@@ -727,9 +766,21 @@ class AddTeamToProjectEndpoint(BaseAPIView):
                         created_by=request.user,
                     )
                 )
+                issue_props.append(
+                    IssueProperty(
+                        project_id=project_id,
+                        user_id=member,
+                        workspace=workspace,
+                        created_by=request.user,
+                    )
+                )
 
             ProjectMember.objects.bulk_create(
                 project_members, batch_size=10, ignore_conflicts=True
+            )
+
+            _ = IssueProperty.objects.bulk_create(
+                issue_props, batch_size=10, ignore_conflicts=True
             )
 
             serializer = ProjectMemberSerializer(project_members, many=True)
@@ -871,6 +922,19 @@ class ProjectJoinEndpoint(BaseAPIView):
                         role=20
                         if workspace_role >= 15
                         else (15 if workspace_role == 10 else workspace_role),
+                        workspace=workspace,
+                        created_by=request.user,
+                    )
+                    for project_id in project_ids
+                ],
+                ignore_conflicts=True,
+            )
+
+            IssueProperty.objects.bulk_create(
+                [
+                    IssueProperty(
+                        project_id=project_id,
+                        user=request.user,
                         workspace=workspace,
                         created_by=request.user,
                     )
