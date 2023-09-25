@@ -86,6 +86,7 @@ export const SpreadsheetView: React.FC<Props> = ({
                 key={`${issue.id}_${index}`}
                 index={index}
                 issue={issue}
+                projectId={issue.project_detail.id}
                 expandedIssues={expandedIssues}
                 setExpandedIssues={setExpandedIssues}
                 gridTemplateColumns={gridTemplateColumns}

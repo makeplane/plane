@@ -9,6 +9,7 @@ import { ICurrentUserResponse, IIssue, Properties, UserAuth } from "types";
 
 type Props = {
   issue: IIssue;
+  projectId: string;
   index: number;
   expandedIssues: string[];
   setExpandedIssues: React.Dispatch<React.SetStateAction<string[]>>;
@@ -24,6 +25,7 @@ type Props = {
 export const SpreadsheetIssues: React.FC<Props> = ({
   index,
   issue,
+  projectId,
   expandedIssues,
   setExpandedIssues,
   gridTemplateColumns,
@@ -55,7 +57,7 @@ export const SpreadsheetIssues: React.FC<Props> = ({
     <div>
       <SingleSpreadsheetIssue
         issue={issue}
-        projectId={issue.project_detail.id}
+        projectId={projectId}
         index={index}
         expanded={isExpanded}
         handleToggleExpand={handleToggleExpand}
@@ -77,6 +79,7 @@ export const SpreadsheetIssues: React.FC<Props> = ({
           <SpreadsheetIssues
             key={subIssue.id}
             issue={subIssue}
+            projectId={subIssue.project_detail.id}
             index={index}
             expandedIssues={expandedIssues}
             setExpandedIssues={setExpandedIssues}

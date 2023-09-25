@@ -20,6 +20,7 @@ import {
 // hooks
 import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 import useToast from "hooks/use-toast";
+import useWorkspaceIssuesFilters from "hooks/use-worskpace-issue-filter";
 // services
 import issuesService from "services/issues.service";
 import trackEventServices from "services/track-event.service";
@@ -32,6 +33,7 @@ import {
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   SUB_ISSUES,
   VIEW_ISSUES,
+  WORKSPACE_VIEW_ISSUES,
 } from "constants/fetch-keys";
 // types
 import {
@@ -82,11 +84,50 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
 
   const router = useRouter();
 
-  const { workspaceSlug, cycleId, moduleId, viewId } = router.query;
+  const { workspaceSlug, cycleId, moduleId, viewId, workspaceViewId } = router.query;
 
   const { params } = useSpreadsheetIssuesView();
 
   const { setToastAlert } = useToast();
+
+  const workspaceIssuesPath = [
+    {
+      params: {
+        sub_issue: false,
+      },
+      path: "workspace-views/all-issues",
+    },
+    {
+      params: {
+        assignees: user?.id ?? undefined,
+        sub_issue: false,
+      },
+      path: "workspace-views/assigned",
+    },
+    {
+      params: {
+        created_by: user?.id ?? undefined,
+        sub_issue: false,
+      },
+      path: "workspace-views/created",
+    },
+    {
+      params: {
+        subscriber: user?.id ?? undefined,
+        sub_issue: false,
+      },
+      path: "workspace-views/subscribed",
+    },
+  ];
+
+  const currentWorkspaceIssuePath = workspaceIssuesPath.find((path) =>
+    router.pathname.includes(path.path)
+  );
+
+  const { params: workspaceViewParams } = useWorkspaceIssuesFilters(
+    workspaceSlug?.toString(),
+    workspaceViewId?.toString()
+  );
 
   const partialUpdateIssue = useCallback(
     (formData: Partial<IIssue>, issue: IIssue) => {
@@ -98,6 +139,10 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), params)
         : viewId
         ? VIEW_ISSUES(viewId.toString(), params)
+        : workspaceViewId
+        ? WORKSPACE_VIEW_ISSUES(workspaceSlug.toString(), workspaceViewParams)
+        : currentWorkspaceIssuePath
+        ? WORKSPACE_VIEW_ISSUES(workspaceSlug.toString(), currentWorkspaceIssuePath?.params)
         : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId, params);
 
       if (issue.parent)
@@ -153,7 +198,18 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
           console.log(error);
         });
     },
-    [workspaceSlug, projectId, cycleId, moduleId, viewId, params, user]
+    [
+      workspaceSlug,
+      projectId,
+      cycleId,
+      moduleId,
+      viewId,
+      workspaceViewId,
+      currentWorkspaceIssuePath,
+      workspaceViewParams,
+      params,
+      user,
+    ]
   );
 
   const openPeekOverview = () => {

@@ -25,7 +25,7 @@ import { PhotoFilterOutlined } from "@mui/icons-material";
 import emptyView from "public/empty-state/view.svg";
 // types
 import type { NextPage } from "next";
-import { IWorkspaceView } from "types/workspace-view";
+import { IView } from "types";
 // constants
 import { WORKSPACE_VIEWS_LIST } from "constants/fetch-keys";
 // helper
@@ -33,17 +33,17 @@ import { truncateText } from "helpers/string.helper";
 
 const WorkspaceViews: NextPage = () => {
   const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);
-  const [selectedViewToUpdate, setSelectedViewToUpdate] = useState<IWorkspaceView | null>(null);
+  const [selectedViewToUpdate, setSelectedViewToUpdate] = useState<IView | null>(null);
 
   const [deleteViewModal, setDeleteViewModal] = useState(false);
-  const [selectedViewToDelete, setSelectedViewToDelete] = useState<IWorkspaceView | null>(null);
+  const [selectedViewToDelete, setSelectedViewToDelete] = useState<IView | null>(null);
 
-  const handleEditView = (view: IWorkspaceView) => {
+  const handleEditView = (view: IView) => {
     setSelectedViewToUpdate(view);
     setCreateUpdateViewModal(true);
   };
 
-  const handleDeleteView = (view: IWorkspaceView) => {
+  const handleDeleteView = (view: IView) => {
     setSelectedViewToDelete(view);
     setDeleteViewModal(true);
   };

@@ -14,9 +14,9 @@ import {
   ICurrentUserResponse,
   IWorkspaceBulkInviteFormData,
   IWorkspaceViewProps,
+  IView,
   IIssueFilterOptions,
 } from "types";
-import { IWorkspaceView } from "types/workspace-view";
 
 class WorkspaceService extends APIService {
   constructor() {
@@ -264,7 +264,7 @@ class WorkspaceService extends APIService {
       });
   }
 
-  async createView(workspaceSlug: string, data: IWorkspaceView): Promise<any> {
+  async createView(workspaceSlug: string, data: IView): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/views/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -272,11 +272,7 @@ class WorkspaceService extends APIService {
       });
   }
 
-  async updateView(
-    workspaceSlug: string,
-    viewId: string,
-    data: Partial<IWorkspaceView>
-  ): Promise<any> {
+  async updateView(workspaceSlug: string, viewId: string, data: Partial<IView>): Promise<any> {
     return this.patch(`/api/workspaces/${workspaceSlug}/views/${viewId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -292,7 +288,7 @@ class WorkspaceService extends APIService {
       });
   }
 
-  async getAllViews(workspaceSlug: string): Promise<IWorkspaceView[]> {
+  async getAllViews(workspaceSlug: string): Promise<IView[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/views/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -300,7 +296,7 @@ class WorkspaceService extends APIService {
       });
   }
 
-  async getViewDetails(workspaceSlug: string, viewId: string): Promise<IWorkspaceView> {
+  async getViewDetails(workspaceSlug: string, viewId: string): Promise<IView> {
     return this.get(`/api/workspaces/${workspaceSlug}/views/${viewId}/`)
       .then((response) => response?.data)
       .catch((error) => {

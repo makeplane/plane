@@ -14,6 +14,11 @@ export interface IView {
   query_data: IIssueFilterOptions;
   project: string;
   workspace: string;
+  workspace_detail: {
+    id: string;
+    name: string;
+    slug: string;
+  };
 }
 
 export interface IQuery {
@@ -25,4 +30,5 @@ export interface IQuery {
   start_date: string[] | null;
   target_date: string[] | null;
   type: "active" | "backlog" | null;
+  projects: string[] | null;
 }

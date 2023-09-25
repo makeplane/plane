@@ -17,7 +17,6 @@ import { DangerButton, SecondaryButton } from "components/ui";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
 import type { ICurrentUserResponse, IView } from "types";
-import { IWorkspaceView } from "types/workspace-view";
 // fetch-keys
 import { VIEWS_LIST, WORKSPACE_VIEWS_LIST } from "constants/fetch-keys";
 
@@ -25,7 +24,7 @@ type Props = {
   isOpen: boolean;
   viewType: "project" | "workspace";
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  data: IView | IWorkspaceView | null;
+  data: IView | null;
   user: ICurrentUserResponse | undefined;
 };
 
