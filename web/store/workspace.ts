@@ -12,19 +12,15 @@ export interface IWorkspaceStore {
   error: any | null;
   // observables
   workspaces: IWorkspace[];
-  projects: { [key: string]: IProject[] };
   labels: { [key: string]: IIssueLabels[] } | {}; // workspace_id: labels[]
   workspaceSlug: string | null;
   // computed
   currentWorkspace: IWorkspace | null;
   workspaceLabels: IIssueLabels[];
-  workspaceJoinedProjects: IProject[];
-  workspaceFavoriteProjects: IProject[];
   // actions
   setWorkspaceSlug: (workspaceSlug: string) => void;
   getWorkspaceBySlug: (workspaceSlug: string) => IWorkspace | null;
   getWorkspaceLabelById: (workspaceSlug: string, labelId: string) => IIssueLabels | null;
-  getWorkspaceProjects: (workspaceSlug: string) => void;
   fetchWorkspaces: () => Promise<void>;
   fetchWorkspaceLabels: (workspaceSlug: string) => Promise<void>;
 }
@@ -52,17 +48,13 @@ class WorkspaceStore implements IWorkspaceStore {
       workspaces: observable.ref,
       labels: observable.ref,
       workspaceSlug: observable.ref,
-      projects: observable.ref,
       // computed
       currentWorkspace: computed,
       workspaceLabels: computed,
-      workspaceJoinedProjects: computed,
-      workspaceFavoriteProjects: computed,
       // actions
       setWorkspaceSlug: action,
       getWorkspaceBySlug: action,
       getWorkspaceLabelById: action,
-      getWorkspaceProjects: action,
       fetchWorkspaces: action,
       fetchWorkspaceLabels: action,
     });
@@ -90,16 +82,6 @@ class WorkspaceStore implements IWorkspaceStore {
     return _labels && Object.keys(_labels).length > 0 ? _labels : [];
   }
 
-  get workspaceJoinedProjects() {
-    if (!this.workspaceSlug) return [];
-    return this.projects?.[this.workspaceSlug]?.filter((p) => p.is_member);
-  }
-
-  get workspaceFavoriteProjects() {
-    if (!this.workspaceSlug) return [];
-    return this.projects?.[this.workspaceSlug]?.filter((p) => p.is_favorite);
-  }
-
   /**
    * set workspace slug in the store
    * @param workspaceSlug
@@ -112,25 +94,6 @@ class WorkspaceStore implements IWorkspaceStore {
    * @param workspaceSlug
    */
   getWorkspaceBySlug = (workspaceSlug: string) => this.workspaces.find((w) => w.slug == workspaceSlug) || null;
-
-  /**
-   * get Workspace projects using workspace slug
-   * @param workspaceSlug
-   * @returns
-   */
-  getWorkspaceProjects = async (workspaceSlug: string) => {
-    try {
-      const projects = await this.projectService.getProjects(workspaceSlug, { is_favorite: "all" });
-      runInAction(() => {
-        this.projects = {
-          ...this.projects,
-          [workspaceSlug]: projects,
-        };
-      });
-    } catch (error) {
-      console.log("Failed to fetch project from workspace store");
-    }
-  };
 
   /**
    * get workspace label information from the workspace labels
@@ -188,50 +151,6 @@ class WorkspaceStore implements IWorkspaceStore {
       this.error = error;
     }
   };
-
-  // getMyIssuesAsync = async (workspaceId: string, fetchFilterToggle: boolean = true) => {
-  //   try {
-  //     this.loader = true;
-  //     this.error = null;
-
-  //     if (fetchFilterToggle) await this.rootStore.issueFilters.getWorkspaceMyIssuesFilters(workspaceId);
-  //     const filteredParams = this.rootStore.issueFilters.getComputedFilters(
-  //       workspaceId,
-  //       null,
-  //       null,
-  //       null,
-  //       null,
-  //       "my_issues"
-  //     );
-  //     const issuesResponse = await this.userService.userIssues(workspaceId, filteredParams);
-
-  //     if (issuesResponse) {
-  //       const _issueResponse: any = {
-  //         ...this.issues,
-  //         [workspaceId]: {
-  //           ...this?.issues[workspaceId],
-  //           my_issues: {
-  //             ...this?.issues[workspaceId]?.my_issues,
-  //             [this.rootStore?.issueFilters?.userFilters?.display_filters?.layout as string]: issuesResponse,
-  //           },
-  //         },
-  //       };
-
-  //       runInAction(() => {
-  //         this.issues = _issueResponse;
-  //         this.loader = false;
-  //         this.error = null;
-  //       });
-  //     }
-
-  //     return issuesResponse;
-  //   } catch (error) {
-  //     console.warn("error in fetching the my issues", error);
-  //     this.loader = false;
-  //     this.error = null;
-  //     return error;
-  //   }
-  // };
 }
 
 export default WorkspaceStore;

@@ -124,8 +124,8 @@ export class ProjectService extends APIService {
       });
   }
 
-  async joinProject(workspaceSlug: string, data: any): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/join/`, data)
+  async joinProject(workspaceSlug: string, project_ids: string[]): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/join/`, { project_ids })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

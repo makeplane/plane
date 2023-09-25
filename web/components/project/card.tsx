@@ -1,18 +1,16 @@
-import React from "react";
-
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-
 import { mutate } from "swr";
-
+import { observer } from "mobx-react-lite";
+// icons
+import { CalendarDaysIcon, LinkIcon, PencilIcon, PlusIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
 // services
 import projectService from "services/project.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
 import { CustomMenu, Tooltip } from "components/ui";
-// icons
-import { CalendarDaysIcon, LinkIcon, PencilIcon, PlusIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
@@ -21,18 +19,23 @@ import { renderEmoji } from "helpers/emoji.helper";
 import type { IProject } from "types";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
+// components
+import { DeleteProjectModal, JoinProjectModal } from "components/project";
 
 export type ProjectCardProps = {
   project: IProject;
-  setToJoinProject: (id: string | null) => void;
-  setDeleteProject: (id: string | null) => void;
 };
 
-export const SingleProjectCard: React.FC<ProjectCardProps> = ({ project, setToJoinProject, setDeleteProject }) => {
+export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
+  const { project } = props;
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
+  // toast
   const { setToastAlert } = useToast();
+  // states
+  const [deleteProjectModalOpen, setDeleteProjectModal] = useState(false);
+  const [joinProjectModalOpen, setJoinProjectModal] = useState(false);
 
   const isOwner = project.member_role === 20;
   const isMember = project.member_role === 15;
@@ -105,6 +108,22 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({ project, setToJo
 
   return (
     <>
+      {/* Delete Project Modal  */}
+      <DeleteProjectModal
+        project={project}
+        isOpen={deleteProjectModalOpen}
+        onClose={() => setDeleteProjectModal(false)}
+      />
+      {workspaceSlug && (
+        <JoinProjectModal
+          workspaceSlug={workspaceSlug?.toString()}
+          project={project}
+          isOpen={joinProjectModalOpen}
+          handleClose={() => setJoinProjectModal(false)}
+        />
+      )}
+
+      {/* Card Information */}
       <div className="flex flex-col rounded-[10px] bg-custom-background-90 shadow">
         <Link href={`/${workspaceSlug as string}/projects/${project.id}/issues`}>
           <a>
@@ -124,7 +143,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({ project, setToJo
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      setToJoinProject(project.id);
+                      setJoinProjectModal(true);
                     }}
                     className="flex cursor-pointer items-center gap-1 rounded bg-green-600 px-2 py-1 text-xs"
                   >
@@ -180,7 +199,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({ project, setToJo
                 )}
                 <CustomMenu width="auto" verticalEllipsis>
                   {isOwner && (
-                    <CustomMenu.MenuItem onClick={() => setDeleteProject(project.id)}>
+                    <CustomMenu.MenuItem onClick={() => setDeleteProjectModal(true)}>
                       <span className="flex items-center justify-start gap-2">
                         <TrashIcon className="h-4 w-4" />
                         <span>Delete project</span>
@@ -216,4 +235,4 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({ project, setToJo
       </div>
     </>
   );
-};
+});

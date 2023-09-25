@@ -34,12 +34,11 @@ export const ProjectSidebarList: FC = observer(() => {
   // swr
   useSWR(
     workspaceSlug ? "PROJECTS_LIST" : null,
-    workspaceSlug ? () => workspaceStore.getWorkspaceProjects(workspaceSlug?.toString()) : null
+    workspaceSlug ? () => projectStore.fetchProjects(workspaceSlug?.toString()) : null
   );
   // states
   const [isFavoriteProjectCreate, setIsFavoriteProjectCreate] = useState(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
-  const [deleteProjectModal, setDeleteProjectModal] = useState(false);
 
   const [isScrolled, setIsScrolled] = useState(false); // scroll animation state
 
@@ -48,8 +47,8 @@ export const ProjectSidebarList: FC = observer(() => {
   const { user } = useUserAuth();
   const { setToastAlert } = useToast();
 
-  const joinedProjects = workspaceSlug && workspaceStore.workspaceJoinedProjects;
-  const favoriteProjects = workspaceSlug && workspaceStore.workspaceFavoriteProjects;
+  const joinedProjects = workspaceSlug && projectStore.joinedProjects;
+  const favoriteProjects = workspaceSlug && projectStore.favoriteProjects;
 
   const orderedJoinedProjects: IProject[] | undefined = joinedProjects
     ? orderArrayBy(joinedProjects, "sort_order", "ascending")
