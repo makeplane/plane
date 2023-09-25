@@ -98,11 +98,13 @@ services:
         createbuckets:
                 image: minio/mc
                 entrypoint: >
-                        /bin/sh -c " /usr/bin/mc config host add plane-minio http://plane-minio:9000 \$AWS_ACCESS_KEY_ID \$AWS_SECRET_ACCESS_KEY; 
+                        /bin/sh -c "
+                        /usr/bin/mc config host add plane-minio http://plane-minio:9000 \$AWS_ACCESS_KEY_ID \$AWS_SECRET_ACCESS_KEY; 
                         /usr/bin/mc mb plane-minio/\$AWS_PUBLIC_STORAGE_BUCKET_NAME; 
-                        /usr/bin/mc anonymous set download plane-minio/\$AWS_PUBLIC_STORAGE_BUCKET_NAME; exit 0; 
+                        /usr/bin/mc anonymous set download plane-minio/\$AWS_PUBLIC_STORAGE_BUCKET_NAME;
                         /usr/bin/mc config host add plane-minio http://plane-minio:9000 \$AWS_ACCESS_KEY_ID \$AWS_SECRET_ACCESS_KEY;
                         /usr/bin/mc mb plane-minio/\$AWS_PRIVATE_STORAGE_BUCKET_NAME;
+                        /usr/bin/mc anonymous set none plane-minio/\$AWS_PRIVATE_STORAGE_BUCKET_NAME; exit 0;
                         "
                 env_file:
                         - .env
