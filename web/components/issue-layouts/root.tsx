@@ -2,7 +2,7 @@ import React from "react";
 // components
 import { LayoutSelection } from "./layout-selection";
 import { IssueDropdown } from "./helpers/dropdown";
-import { FilterSelection } from "./filters";
+import { FilterSelection } from "./filters/filter-selection";
 import { DisplayFiltersSelection } from "./display-filters";
 
 import { FilterPreview } from "./filters-preview";

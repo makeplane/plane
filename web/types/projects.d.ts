@@ -1,15 +1,4 @@
-import type {
-  IIssueFilterOptions,
-  IUserLite,
-  IWorkspace,
-  IWorkspaceLite,
-  IUserMemberLite,
-  TIssueGroupByOptions,
-  TIssueOrderByOptions,
-  TIssueViewOptions,
-  TStateGroups,
-  IProjectViewProps,
-} from ".";
+import type { IUserLite, IWorkspace, IWorkspaceLite, IUserMemberLite, TStateGroups, IProjectViewProps } from ".";
 
 export interface IProject {
   archive_in: number;

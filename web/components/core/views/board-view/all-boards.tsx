@@ -65,28 +65,21 @@ export const AllBoards: React.FC<Props> = ({
 
   const { displayFilters, groupedIssues } = viewProps;
 
-  console.log("viewProps", viewProps);
-
   return (
     <>
       <IssuePeekOverview
-        handleMutation={() =>
-          isMyIssue ? mutateMyIssues() : isProfileIssue ? mutateProfileIssues() : mutateIssues()
-        }
+        handleMutation={() => (isMyIssue ? mutateMyIssues() : isProfileIssue ? mutateProfileIssues() : mutateIssues())}
         projectId={myIssueProjectId ? myIssueProjectId : projectId?.toString() ?? ""}
         workspaceSlug={workspaceSlug?.toString() ?? ""}
         readOnly={disableUserActions}
       />
       {groupedIssues ? (
-        <div className="horizontal-scroll-enable flex h-full gap-x-4 p-8 bg-custom-background-90">
+        <div className="horizontal-scroll-enable flex h-full gap-x-4 p-5 bg-custom-background-90">
           {Object.keys(groupedIssues).map((singleGroup, index) => {
             const currentState =
-              displayFilters?.group_by === "state"
-                ? states?.find((s) => s.id === singleGroup)
-                : null;
+              displayFilters?.group_by === "state" ? states?.find((s) => s.id === singleGroup) : null;
 
-            if (!displayFilters?.show_empty_groups && groupedIssues[singleGroup].length === 0)
-              return null;
+            if (!displayFilters?.show_empty_groups && groupedIssues[singleGroup].length === 0) return null;
 
             return (
               <SingleBoard
@@ -115,15 +108,13 @@ export const AllBoards: React.FC<Props> = ({
               <div className="space-y-3">
                 {Object.keys(groupedIssues).map((singleGroup, index) => {
                   const currentState =
-                    displayFilters?.group_by === "state"
-                      ? states?.find((s) => s.id === singleGroup)
-                      : null;
+                    displayFilters?.group_by === "state" ? states?.find((s) => s.id === singleGroup) : null;
 
                   if (groupedIssues[singleGroup].length === 0)
                     return (
                       <div
                         key={index}
-                        className="flex items-center justify-between gap-2 rounded bg-custom-background-90 p-2 shadow"
+                        className="flex items-center justify-between gap-2 rounded bg-custom-background-100 p-2 shadow-custom-shadow-2xs"
                       >
                         <div className="flex items-center gap-2">
                           {currentState && (

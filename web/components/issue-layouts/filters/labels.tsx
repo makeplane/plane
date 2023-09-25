@@ -1,66 +1,60 @@
-import React from "react";
+import React, { useState } from "react";
+
 // components
-import { FilterHeader } from "../helpers/filter-header";
-import { FilterOption } from "../helpers/filter-option";
+import { FilterHeader, FilterOption } from "components/issue-layouts";
 // mobx react lite
 import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
 
 const LabelIcons = ({ color }: { color: string }) => (
-  <div className="flex-shrink-0 rounded-sm overflow-hidden w-[20px] h-[20px] flex justify-center items-center">
-    <div className={`w-[12px] h-[12px] rounded-full`} style={{ backgroundColor: color }} />
-  </div>
+  <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
 );
 
-export const FilterLabels = observer(() => {
-  const store: RootStore = useMobxStore();
-  const { issueFilters: issueFilterStore } = store;
+type Props = {
+  workspaceSlug: string;
+  projectId: string;
+};
 
-  const [previewEnabled, setPreviewEnabled] = React.useState(true);
+export const FilterLabels: React.FC<Props> = observer((props) => {
+  const { workspaceSlug, projectId } = props;
 
-  const handleFilter = (key: string, value: string) => {
-    let _value =
-      issueFilterStore?.userFilters?.filters?.[key] != null
-        ? issueFilterStore?.userFilters?.filters?.[key].includes(value)
-          ? issueFilterStore?.userFilters?.filters?.[key].filter((p: string) => p != value)
-          : [...issueFilterStore?.userFilters?.filters?.[key], value]
-        : [value];
-    _value = _value && _value.length > 0 ? _value : null;
-    issueFilterStore.handleUserFilter("filters", key, _value);
+  const [previewEnabled, setPreviewEnabled] = useState(true);
+
+  const store = useMobxStore();
+  const { issueFilter: issueFilterStore, project: projectStore } = store;
+
+  const handleUpdateLabels = (value: string) => {
+    const newValues = issueFilterStore.userFilters?.labels ?? [];
+
+    if (issueFilterStore.userFilters?.labels?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+    else newValues.push(value);
+
+    issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
+      filters: {
+        labels: newValues,
+      },
+    });
   };
-
-  const handleLabels =
-    issueFilterStore.issueView && issueFilterStore.issueView === "my_issues"
-      ? issueFilterStore?.workspaceLabels
-      : issueFilterStore?.projectLabels;
 
   return (
     <div>
       <FilterHeader
-        title={`Labels (${(handleLabels && handleLabels?.length) || 0})`}
+        title={`Labels (${issueFilterStore.userFilters?.labels?.length ?? 0})`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
         <div className="space-y-[2px] pt-1">
-          {handleLabels &&
-            handleLabels.length > 0 &&
-            handleLabels.map((_label) => (
-              <FilterOption
-                key={_label?.id}
-                isChecked={
-                  issueFilterStore?.userFilters?.filters?.labels != null &&
-                  issueFilterStore?.userFilters?.filters?.labels.includes(_label?.id)
-                    ? true
-                    : false
-                }
-                onClick={() => handleFilter("labels", _label?.id)}
-                icon={<LabelIcons color={_label.color} />}
-                title={_label.name}
-              />
-            ))}
+          {projectStore.labels?.[projectId?.toString() ?? ""]?.map((label) => (
+            <FilterOption
+              key={label?.id}
+              isChecked={issueFilterStore?.userFilters?.labels?.includes(label?.id) ? true : false}
+              onClick={() => handleUpdateLabels(label?.id)}
+              icon={<LabelIcons color={label.color} />}
+              title={label.name}
+            />
+          ))}
         </div>
       )}
     </div>

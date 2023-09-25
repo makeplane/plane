@@ -1,4 +1,4 @@
-export type TIssueViewOptions = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
+export type TIssueLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
 
 export type TIssueGroupByOptions =
   | "state"
@@ -28,6 +28,25 @@ export type TIssueOrderByOptions =
   | "start_date"
   | "-start_date";
 
+export type TIssueTypeFilters = "active" | "backlog" | null;
+
+export type TIssueParams =
+  | "priority"
+  | "state_group"
+  | "state"
+  | "assignees"
+  | "created_by"
+  | "labels"
+  | "start_date"
+  | "target_date"
+  | "group_by"
+  | "order_by"
+  | "type"
+  | "sub_issue"
+  | "show_empty_groups"
+  | "calendar_date_range"
+  | "start_target_date";
+
 export interface IIssueFilterOptions {
   assignees?: string[] | null;
   created_by?: string[] | null;
@@ -43,12 +62,27 @@ export interface IIssueFilterOptions {
 export interface IIssueDisplayFilterOptions {
   calendar_date_range?: string;
   group_by?: TIssueGroupByOptions;
-  layout?: TIssueViewOptions;
+  layout?: TIssueLayouts;
   order_by?: TIssueOrderByOptions;
   show_empty_groups?: boolean;
   start_target_date?: boolean;
   sub_issue?: boolean;
-  type?: "active" | "backlog" | null;
+  type?: TIssueTypeFilters;
+}
+export interface IIssueDisplayProperties {
+  assignee: boolean;
+  start_date: boolean;
+  due_date: boolean;
+  labels: boolean;
+  key: boolean;
+  priority: boolean;
+  state: boolean;
+  sub_issue_count: boolean;
+  link: boolean;
+  attachment_count: boolean;
+  estimate: boolean;
+  created_on: boolean;
+  updated_on: boolean;
 }
 
 export interface IProjectViewProps {
