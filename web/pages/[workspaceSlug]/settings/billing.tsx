@@ -50,7 +50,7 @@ const BillingSettings: NextPage = () => {
         <section className="pr-9 py-8 w-full overflow-y-auto">
           <div>
             <div className="flex  items-center py-3.5 border-b border-custom-border-200">
-              <h3 className="text-xl font-medium">Billing & Plan</h3>
+              <h3 className="text-xl font-medium">Billing & Plans</h3>
             </div>
           </div>
           <div className="px-4 py-6">

@@ -36,6 +36,7 @@ const useGanttChartIssues = (workspaceSlug: string | undefined, projectId: strin
   return {
     ganttIssues,
     mutateGanttIssues,
+    params,
   };
 };
 
