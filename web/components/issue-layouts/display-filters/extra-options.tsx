@@ -6,10 +6,8 @@ import { useMobxStore } from "lib/mobx/store-provider";
 
 // components
 import { FilterHeader, FilterOption } from "components/issue-layouts";
-// helpers
-import { issueFilterVisibilityData } from "helpers/issue.helper";
 // constants
-import { ISSUE_EXTRA_OPTIONS } from "constants/issue";
+import { ISSUE_EXTRA_OPTIONS, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 
 export const FilterExtraOptions = observer(() => {
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -18,7 +16,7 @@ export const FilterExtraOptions = observer(() => {
   const { issueFilter: issueFilterStore } = store;
 
   const isExtraOptionEnabled = (option: string) =>
-    issueFilterVisibilityData.issues.extra_options[
+    ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues.extra_options[
       issueFilterStore.userDisplayFilters.layout ?? "list"
     ].values.includes(option);
 

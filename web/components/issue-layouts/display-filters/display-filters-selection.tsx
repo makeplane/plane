@@ -10,22 +10,25 @@ import {
   FilterGroupBy,
   FilterIssueType,
   FilterOrderBy,
+  FilterSubGroupBy,
 } from "components/issue-layouts";
 // helpers
-import { issueFilterVisibilityData } from "helpers/issue.helper";
+import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 
 export const DisplayFiltersSelection = observer(() => {
   const { issueFilter: issueFilterStore } = useMobxStore();
 
   const isDisplayFilterEnabled = (displayFilter: string) =>
-    issueFilterVisibilityData.issues.display_filters[issueFilterStore.userDisplayFilters.layout ?? "list"].includes(
-      displayFilter
-    );
+    ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues.display_filters[
+      issueFilterStore.userDisplayFilters.layout ?? "list"
+    ].includes(displayFilter);
 
   return (
     <div className="w-full h-full overflow-hidden overflow-y-auto relative px-2.5 divide-y divide-custom-border-200">
       {/* display properties */}
-      {issueFilterVisibilityData.issues.display_properties[issueFilterStore.userDisplayFilters.layout ?? "list"] && (
+      {ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues.display_properties[
+        issueFilterStore.userDisplayFilters.layout ?? "list"
+      ] && (
         <div className="py-2">
           <FilterDisplayProperties />
         </div>
@@ -35,6 +38,13 @@ export const DisplayFiltersSelection = observer(() => {
       {isDisplayFilterEnabled("group_by") && (
         <div className="py-2">
           <FilterGroupBy />
+        </div>
+      )}
+
+      {/* sub-group by */}
+      {isDisplayFilterEnabled("sub_group_by") && (
+        <div className="py-2">
+          <FilterSubGroupBy />
         </div>
       )}
 
@@ -53,7 +63,8 @@ export const DisplayFiltersSelection = observer(() => {
       )}
 
       {/* Options */}
-      {issueFilterVisibilityData.issues.extra_options[issueFilterStore.userDisplayFilters.layout ?? "list"].access && (
+      {ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues.extra_options[issueFilterStore.userDisplayFilters.layout ?? "list"]
+        .access && (
         <div className="py-2">
           <FilterExtraOptions />
         </div>
