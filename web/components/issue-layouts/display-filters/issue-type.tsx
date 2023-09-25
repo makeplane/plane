@@ -6,8 +6,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { FilterHeader } from "../helpers/filter-header";
-import { FilterOption } from "../helpers/filter-option";
+import { FilterHeader, FilterOption } from "components/issue-layouts";
 // types
 import { TIssueTypeFilters } from "types";
 // constants
@@ -33,14 +32,14 @@ export const FilterIssueType = observer(() => {
   };
 
   return (
-    <div>
+    <>
       <FilterHeader
         title="Issue Type"
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
-        <div className="space-y-1 pt-1">
+        <div>
           {ISSUE_FILTER_OPTIONS.map((issueType) => (
             <FilterOption
               key={issueType?.key}
@@ -52,6 +51,6 @@ export const FilterIssueType = observer(() => {
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 });

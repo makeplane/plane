@@ -67,7 +67,8 @@ export interface IProjectStore {
 
   handleProjectLeaveModal: (project: any | null) => void;
 
-  leaveProject: (workspaceSlug: string, projectSlug: string, user: any) => Promise<void>;
+  leaveProject: (workspaceSlug: string, projectSlug: string) => Promise<void>;
+  deleteProject: (workspaceSlug: string, projectSlug: string) => Promise<void>;
 }
 
 class ProjectStore implements IProjectStore {
@@ -484,12 +485,13 @@ class ProjectStore implements IProjectStore {
     }
   };
 
-  leaveProject = async (workspaceSlug: string, projectSlug: string, user: any) => {
+  leaveProject = async (workspaceSlug: string, projectSlug: string) => {
     try {
       this.loader = true;
       this.error = null;
 
-      const response = await this.projectService.leaveProject(workspaceSlug, projectSlug, user);
+      const response = await this.projectService.leaveProject(workspaceSlug, projectSlug, this.rootStore.user);
+      await this.rootStore.workspace.getWorkspaceProjects(workspaceSlug);
 
       runInAction(() => {
         this.loader = false;
@@ -501,6 +503,15 @@ class ProjectStore implements IProjectStore {
       this.loader = false;
       this.error = error;
       return error;
+    }
+  };
+
+  deleteProject = async (workspaceSlug: string, projectId: string) => {
+    try {
+      await this.projectService.deleteProject(workspaceSlug, projectId, this.rootStore.user.currentUser);
+      await this.rootStore.workspace.getWorkspaceProjects(workspaceSlug);
+    } catch (error) {
+      console.log("Failed to delete project from project store");
     }
   };
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -12,21 +12,21 @@ import { TIssueGroupByOptions } from "types";
 // constants
 import { ISSUE_GROUP_BY_OPTIONS } from "constants/issue";
 
-export const FilterGroupBy = observer(() => {
+export const FilterSubGroupBy = observer(() => {
+  const [previewEnabled, setPreviewEnabled] = useState(true);
+
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   const store = useMobxStore();
   const { issueFilter: issueFilterStore } = store;
 
-  const [previewEnabled, setPreviewEnabled] = React.useState(true);
-
-  const handleGroupBy = (value: TIssueGroupByOptions) => {
+  const handleSubGroupBy = (value: TIssueGroupByOptions) => {
     if (!workspaceSlug || !projectId) return;
 
     issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
       display_filters: {
-        group_by: value,
+        sub_group_by: value,
       },
     });
   };
@@ -34,21 +34,29 @@ export const FilterGroupBy = observer(() => {
   return (
     <>
       <FilterHeader
-        title="Group by"
+        title="Sub-group by"
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
         <div>
-          {ISSUE_GROUP_BY_OPTIONS.map((groupBy) => (
-            <FilterOption
-              key={groupBy?.key}
-              isChecked={issueFilterStore?.userDisplayFilters?.group_by === groupBy?.key ? true : false}
-              onClick={() => handleGroupBy(groupBy.key)}
-              title={groupBy.title}
-              multiple={false}
-            />
-          ))}
+          {ISSUE_GROUP_BY_OPTIONS.map((subGroupBy) => {
+            if (
+              issueFilterStore.userDisplayFilters.group_by !== null &&
+              issueFilterStore.userDisplayFilters.sub_group_by === issueFilterStore.userDisplayFilters.group_by
+            )
+              return null;
+
+            return (
+              <FilterOption
+                key={subGroupBy?.key}
+                isChecked={issueFilterStore?.userDisplayFilters?.sub_group_by === subGroupBy?.key ? true : false}
+                onClick={() => handleSubGroupBy(subGroupBy.key)}
+                title={subGroupBy.title}
+                multiple={false}
+              />
+            );
+          })}
         </div>
       )}
     </>

@@ -2,6 +2,8 @@ import { observable, action, computed, makeObservable, runInAction } from "mobx"
 // services
 import { ProjectService } from "services/project.service";
 import { IssueService } from "services/issue.service";
+// helpers
+import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 // types
 import { RootStore } from "./root";
 import {
@@ -11,7 +13,6 @@ import {
   IProjectViewProps,
   TIssueParams,
 } from "types";
-import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 
 export interface IIssueFilterStore {
   loader: boolean;
@@ -21,6 +22,7 @@ export interface IIssueFilterStore {
   userFilters: IIssueFilterOptions;
   defaultDisplayFilters: IIssueDisplayFilterOptions;
   defaultFilters: IIssueFilterOptions;
+  filtersSearchQuery: string;
 
   // action
   fetchUserProjectFilters: (workspaceSlug: string, projectSlug: string) => Promise<void>;
@@ -34,6 +36,7 @@ export interface IIssueFilterStore {
     projectSlug: string,
     properties: Partial<IIssueDisplayProperties>
   ) => Promise<void>;
+  updateFiltersSearchQuery: (query: string) => void;
 
   // computed
   appliedFilters: TIssueParams[] | null;
@@ -64,6 +67,7 @@ class IssueFilterStore implements IIssueFilterStore {
     created_on: true,
     updated_on: true,
   };
+  filtersSearchQuery: string = "";
 
   // root store
   rootStore;
@@ -83,11 +87,13 @@ class IssueFilterStore implements IIssueFilterStore {
       userDisplayProperties: observable.ref,
       userDisplayFilters: observable.ref,
       userFilters: observable.ref,
+      filtersSearchQuery: observable.ref,
 
       // actions
       fetchUserProjectFilters: action,
       updateUserFilters: action,
       updateDisplayProperties: action,
+      updateFiltersSearchQuery: action,
 
       // computed
       appliedFilters: computed,
@@ -182,6 +188,12 @@ class IssueFilterStore implements IIssueFilterStore {
 
       console.log("Failed to update user filters in issue filter store", error);
     }
+  };
+
+  updateFiltersSearchQuery: (query: string) => void = (query) => {
+    runInAction(() => {
+      this.filtersSearchQuery = query;
+    });
   };
 }
 

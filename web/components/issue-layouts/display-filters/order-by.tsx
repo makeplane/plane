@@ -6,8 +6,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { FilterHeader } from "../helpers/filter-header";
-import { FilterOption } from "../helpers/filter-option";
+import { FilterHeader, FilterOption } from "components/issue-layouts";
 // types
 import { TIssueOrderByOptions } from "types";
 // constants
@@ -33,14 +32,14 @@ export const FilterOrderBy = observer(() => {
   };
 
   return (
-    <div>
+    <>
       <FilterHeader
-        title={"Order By"}
+        title="Order by"
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
-        <div className="space-y-[2px] pt-1">
+        <div>
           {ISSUE_ORDER_BY_OPTIONS.map((orderBy) => (
             <FilterOption
               key={orderBy?.key}
@@ -52,6 +51,6 @@ export const FilterOrderBy = observer(() => {
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 });

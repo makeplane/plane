@@ -10,58 +10,65 @@ import {
   FilterGroupBy,
   FilterIssueType,
   FilterOrderBy,
+  FilterSubGroupBy,
 } from "components/issue-layouts";
 // helpers
-import { issueFilterVisibilityData } from "helpers/issue.helper";
+import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 
 export const DisplayFiltersSelection = observer(() => {
   const { issueFilter: issueFilterStore } = useMobxStore();
 
   const isDisplayFilterEnabled = (displayFilter: string) =>
-    issueFilterVisibilityData.issues.display_filters[issueFilterStore.userDisplayFilters.layout ?? "list"].includes(
-      displayFilter
-    );
+    ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues.display_filters[
+      issueFilterStore.userDisplayFilters.layout ?? "list"
+    ].includes(displayFilter);
 
   return (
-    <div className="w-full h-full overflow-hidden select-none relative flex flex-col divide-y divide-custom-border-200 px-0.5">
-      {/* <div className="flex-shrink-0 p-2 text-sm">Search container</div> */}
-      <div className="w-full h-full overflow-hidden overflow-y-auto relative pb-2 divide-y divide-custom-border-200">
-        {/* display properties */}
-        {issueFilterVisibilityData.issues.display_properties[issueFilterStore.userDisplayFilters.layout ?? "list"] && (
-          <div className="pb-2 px-2">
-            <FilterDisplayProperties />
-          </div>
-        )}
+    <div className="w-full h-full overflow-hidden overflow-y-auto relative px-2.5 divide-y divide-custom-border-200">
+      {/* display properties */}
+      {ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues.display_properties[
+        issueFilterStore.userDisplayFilters.layout ?? "list"
+      ] && (
+        <div className="py-2">
+          <FilterDisplayProperties />
+        </div>
+      )}
 
-        {/* group by */}
-        {isDisplayFilterEnabled("group_by") && (
-          <div className="py-1 px-2">
-            <FilterGroupBy />
-          </div>
-        )}
+      {/* group by */}
+      {isDisplayFilterEnabled("group_by") && (
+        <div className="py-2">
+          <FilterGroupBy />
+        </div>
+      )}
 
-        {/* order by */}
-        {isDisplayFilterEnabled("order_by") && (
-          <div className="py-1 px-2">
-            <FilterOrderBy />
-          </div>
-        )}
+      {/* sub-group by */}
+      {isDisplayFilterEnabled("sub_group_by") && (
+        <div className="py-2">
+          <FilterSubGroupBy />
+        </div>
+      )}
 
-        {/* issue type */}
-        {isDisplayFilterEnabled("issue_type") && (
-          <div className="py-1 px-2">
-            <FilterIssueType />
-          </div>
-        )}
+      {/* order by */}
+      {isDisplayFilterEnabled("order_by") && (
+        <div className="py-2">
+          <FilterOrderBy />
+        </div>
+      )}
 
-        {/* Options */}
-        {issueFilterVisibilityData.issues.extra_options[issueFilterStore.userDisplayFilters.layout ?? "list"]
-          .access && (
-          <div className="pt-1 px-2">
-            <FilterExtraOptions />
-          </div>
-        )}
-      </div>
+      {/* issue type */}
+      {isDisplayFilterEnabled("issue_type") && (
+        <div className="py-2">
+          <FilterIssueType />
+        </div>
+      )}
+
+      {/* Options */}
+      {ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues.extra_options[issueFilterStore.userDisplayFilters.layout ?? "list"]
+        .access && (
+        <div className="py-2">
+          <FilterExtraOptions />
+        </div>
+      )}
     </div>
   );
 });

@@ -54,29 +54,30 @@ const ProjectIssues: NextPage = () => {
     workspaceSlug && projectId ? () => inboxService.getInboxes(workspaceSlug as string, projectId as string) : null
   );
 
+  // TODO: update the fetch keys
   useSWR(
-    workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
+    workspaceSlug && projectId ? "REVALIDATE_USER_PROJECT_FILTERS" : null,
     workspaceSlug && projectId
       ? () => issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString())
       : null
   );
 
   useSWR(
-    workspaceSlug && projectId ? STATES_LIST(projectId.toString()) : null,
+    workspaceSlug && projectId ? "REVALIDATE_PROJECT_STATES_LIST" : null,
     workspaceSlug && projectId
       ? () => projectStore.fetchProjectStates(workspaceSlug.toString(), projectId.toString())
       : null
   );
 
   useSWR(
-    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId.toString()) : null,
+    workspaceSlug && projectId ? "REVALIDATE_PROJECT_LABELS_LIST" : null,
     workspaceSlug && projectId
       ? () => projectStore.fetchProjectLabels(workspaceSlug.toString(), projectId.toString())
       : null
   );
 
   useSWR(
-    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId.toString()) : null,
+    workspaceSlug && projectId ? "REVALIDATE_PROJECT_MEMBERS_LIST" : null,
     workspaceSlug && projectId
       ? () => projectStore.fetchProjectMembers(workspaceSlug.toString(), projectId.toString())
       : null

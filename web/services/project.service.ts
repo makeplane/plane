@@ -87,7 +87,7 @@ export class ProjectService extends APIService {
       });
   }
 
-  async deleteProject(workspaceSlug: string, projectId: string, user: ICurrentUserResponse | undefined): Promise<any> {
+  async deleteProject(workspaceSlug: string, projectId: string, user: any | undefined): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`)
       .then((response) => {
         trackEventServices.trackProjectEvent({ projectId }, "DELETE_PROJECT", user);
@@ -132,7 +132,7 @@ export class ProjectService extends APIService {
       });
   }
 
-  async leaveProject(workspaceSlug: string, projectId: string, user: ICurrentUserResponse): Promise<any> {
+  async leaveProject(workspaceSlug: string, projectId: string, user: any): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/leave/`)
       .then((response) => {
         trackEventServices.trackProjectEvent(

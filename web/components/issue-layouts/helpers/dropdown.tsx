@@ -36,8 +36,8 @@ export const IssueDropdown = ({ children, title = "Dropdown" }: IIssueDropdown) 
             leaveFrom="opacity-100 translate-y-0"
             leaveTo="opacity-0 translate-y-1"
           >
-            <Popover.Panel className="absolute right-0 z-10 mt-1 w-[18.75rem] h-auto max-h-[37.5rem] bg-custom-background-100 border border-custom-border-200 shadow-custom-shadow-rg rounded overflow-y-auto">
-              {children}
+            <Popover.Panel className="absolute right-0 z-10 mt-1 bg-custom-background-100 border border-custom-border-200 shadow-custom-shadow-rg rounded overflow-hidden">
+              <div className="w-[18.75rem] max-h-[37.5rem] flex flex-col overflow-hidden">{children}</div>
             </Popover.Panel>
           </Transition>
         </>
