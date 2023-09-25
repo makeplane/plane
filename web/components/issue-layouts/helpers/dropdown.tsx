@@ -1,8 +1,9 @@
 import { Fragment } from "react";
+
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
-// lucide icons
-import { ChevronDown, ChevronUp } from "lucide-react";
+// icons
+import { ChevronUp } from "lucide-react";
 
 interface IIssueDropdown {
   children: React.ReactNode;

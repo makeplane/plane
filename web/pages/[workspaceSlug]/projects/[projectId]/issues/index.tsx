@@ -15,7 +15,7 @@ import { IssueViewContextProvider } from "contexts/issue-view.context";
 // helper
 import { truncateText } from "helpers/string.helper";
 // components
-import { FiltersLayout, IssuesFilterView, IssuesView } from "components/core";
+import { IssuesFilterView, IssuesView } from "components/core";
 import { AnalyticsProjectModal } from "components/analytics";
 import { ProjectIssuesHeader } from "components/headers";
 // ui
@@ -48,24 +48,24 @@ const ProjectIssues: NextPage = () => {
   );
 
   useSWR(
-    "REVALIDATE_ALL",
+    workspaceSlug && projectId ? "REVALIDATE_ALL" : null,
     workspaceSlug && projectId
       ? () => issueFilter.fetchUserFilters(workspaceSlug.toString(), projectId.toString())
       : null
   );
 
   useSWR(
-    "PROJECT_STATES",
+    workspaceSlug && projectId ? "PROJECT_STATES" : null,
     workspaceSlug && projectId ? () => project.fetchProjectStates(workspaceSlug.toString(), projectId.toString()) : null
   );
 
   useSWR(
-    "PROJECT_LABELS",
+    workspaceSlug && projectId ? "PROJECT_LABELS" : null,
     workspaceSlug && projectId ? () => project.fetchProjectLabels(workspaceSlug.toString(), projectId.toString()) : null
   );
 
   useSWR(
-    "PROJECT_MEMBERS",
+    workspaceSlug && projectId ? "PROJECT_MEMBERS" : null,
     workspaceSlug && projectId
       ? () => project.fetchProjectMembers(workspaceSlug.toString(), projectId.toString())
       : null

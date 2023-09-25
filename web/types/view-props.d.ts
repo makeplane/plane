@@ -30,6 +30,23 @@ export type TIssueOrderByOptions =
 
 export type TIssueTypeFilters = "active" | "backlog" | null;
 
+export type TIssueParams =
+  | "priority"
+  | "state_group"
+  | "state"
+  | "assignees"
+  | "created_by"
+  | "labels"
+  | "start_date"
+  | "target_date"
+  | "group_by"
+  | "order_by"
+  | "type"
+  | "sub_issue"
+  | "show_empty_groups"
+  | "calendar_date_range"
+  | "start_target_date";
+
 export interface IIssueFilterOptions {
   assignees?: string[] | null;
   created_by?: string[] | null;

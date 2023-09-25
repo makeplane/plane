@@ -43,7 +43,7 @@ export const FilterDisplayProperties = observer(() => {
               className={`rounded transition-all text-xs border px-2 py-0.5 ${
                 issueFilterStore?.userDisplayProperties?.[displayProperty.key]
                   ? "bg-custom-primary-100 border-custom-primary-100 text-white"
-                  : "border-custom-border-200"
+                  : "border-custom-border-200 hover:bg-custom-background-80"
               }`}
               onClick={() =>
                 handleDisplayProperties({

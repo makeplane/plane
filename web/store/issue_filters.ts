@@ -4,7 +4,14 @@ import { ProjectService } from "services/project.service";
 import { IssueService } from "services/issue.service";
 // types
 import { RootStore } from "./root";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, IProjectViewProps } from "types";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  IProjectViewProps,
+  TIssueParams,
+} from "types";
+import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 
 export interface IIssueFilterStore {
   loader: boolean;
@@ -15,6 +22,7 @@ export interface IIssueFilterStore {
   defaultDisplayFilters: IIssueDisplayFilterOptions;
   defaultFilters: IIssueFilterOptions;
 
+  // action
   fetchUserFilters: (workspaceSlug: string, projectSlug: string) => Promise<void>;
   updateUserFilters: (
     workspaceSlug: string,
@@ -26,6 +34,9 @@ export interface IIssueFilterStore {
     projectSlug: string,
     properties: Partial<IIssueDisplayProperties>
   ) => Promise<void>;
+
+  // computed
+  appliedFilters: TIssueParams[] | null;
 }
 
 class IssueFilterStore implements IIssueFilterStore {
@@ -79,12 +90,17 @@ class IssueFilterStore implements IIssueFilterStore {
       updateDisplayProperties: action,
 
       // computed
+      appliedFilters: computed,
     });
 
     this.rootStore = _rootStore;
 
     this.projectService = new ProjectService();
     this.issueService = new IssueService();
+  }
+
+  get appliedFilters(): TIssueParams[] | null {
+    return handleIssueQueryParamsByLayout(this.userDisplayFilters.layout);
   }
 
   fetchUserFilters = async (workspaceSlug: string, projectId: string) => {

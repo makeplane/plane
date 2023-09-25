@@ -4,24 +4,20 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { LayoutSelection } from "components/issue-layouts/layout-selection";
+import { DisplayFiltersSelection, FilterSelection, IssueDropdown, LayoutSelection } from "components/issue-layouts";
 // types
 import { TIssueLayouts } from "types";
-import { IssueDropdown } from "components/issue-layouts/helpers/dropdown";
-import { FilterSelection } from "components/issue-layouts/filters";
-import { DisplayFiltersSelection } from "components/issue-layouts/display-filters";
 
 export const ProjectIssuesHeader = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { issueFilter } = useMobxStore();
-  const { updateUserFilters } = issueFilter;
+  const { issueFilter: issueFilterStore } = useMobxStore();
 
   const handleLayoutChange = (layout: TIssueLayouts) => {
     if (!workspaceSlug || !projectId) return;
 
-    updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
+    issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
       display_filters: {
         layout,
       },
@@ -33,7 +29,7 @@ export const ProjectIssuesHeader = observer(() => {
       <LayoutSelection
         layouts={["calendar", "gantt_chart", "kanban", "list", "spreadsheet"]}
         onChange={(layout) => handleLayoutChange(layout)}
-        selectedLayout={issueFilter.userDisplayFilters.layout ?? "list"}
+        selectedLayout={issueFilterStore.userDisplayFilters.layout ?? "list"}
       />
       <IssueDropdown title="Filters">
         <FilterSelection />

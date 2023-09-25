@@ -1,15 +1,21 @@
+// icons
 import { Calendar, GanttChart, Kanban, List, Sheet } from "lucide-react";
+// types
 import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   TIssueGroupByOptions,
   TIssueLayouts,
   TIssueOrderByOptions,
+  TIssuePriorities,
   TIssueTypeFilters,
   TStateGroups,
 } from "types";
 
-export const ISSUE_PRIORITIES = [
+export const ISSUE_PRIORITIES: {
+  key: TIssuePriorities;
+  title: string;
+}[] = [
   { key: "urgent", title: "Urgent" },
   { key: "high", title: "High" },
   { key: "medium", title: "Medium" },
@@ -55,6 +61,7 @@ export const ISSUE_GROUP_BY_OPTIONS: {
   { key: "labels", title: "Labels" },
   { key: "assignees", title: "Assignees" },
   { key: "created_by", title: "Created By" },
+  { key: null, title: "None" },
 ];
 
 export const ISSUE_ORDER_BY_OPTIONS: {

@@ -4,8 +4,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { FilterHeader } from "../helpers/filter-header";
-import { FilterOption } from "../helpers/filter-option";
+import { FilterHeader, FilterOption } from "components/issue-layouts";
 // icons
 import { AlertCircle, SignalHigh, SignalMedium, SignalLow, Ban } from "lucide-react";
 // constants
@@ -51,15 +50,28 @@ const PriorityIcons = ({
   );
 };
 
-type Props = { onClick: (stateId: string) => void };
+type Props = { workspaceSlug: string; projectId: string };
 
 export const FilterPriority: React.FC<Props> = observer((props) => {
-  const { onClick } = props;
+  const { workspaceSlug, projectId } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
   const store = useMobxStore();
   const { issueFilter: issueFilterStore } = store;
+
+  const handleUpdatePriority = (value: string) => {
+    const newValues = issueFilterStore.userFilters?.priority ?? [];
+
+    if (issueFilterStore.userFilters?.priority?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+    else newValues.push(value);
+
+    issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
+      filters: {
+        priority: newValues,
+      },
+    });
+  };
 
   return (
     <div>
@@ -74,7 +86,7 @@ export const FilterPriority: React.FC<Props> = observer((props) => {
             <FilterOption
               key={priority.key}
               isChecked={issueFilterStore.userFilters?.priority?.includes(priority.key) ? true : false}
-              onClick={() => onClick(priority.key)}
+              onClick={() => handleUpdatePriority(priority.key)}
               icon={<PriorityIcons priority={priority.key} />}
               title={priority.title}
             />
