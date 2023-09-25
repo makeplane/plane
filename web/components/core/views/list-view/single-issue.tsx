@@ -51,6 +51,7 @@ import {
 type Props = {
   type?: string;
   issue: IIssue;
+  projectId: string;
   groupTitle?: string;
   editIssue: () => void;
   index: number;
@@ -69,6 +70,7 @@ type Props = {
 export const SingleListIssue: React.FC<Props> = ({
   type,
   issue,
+  projectId,
   editIssue,
   index,
   makeIssueCopy,
@@ -88,7 +90,7 @@ export const SingleListIssue: React.FC<Props> = ({
   const [contextMenuPosition, setContextMenuPosition] = useState<React.MouseEvent | null>(null);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, userId } = router.query;
+  const { workspaceSlug, cycleId, moduleId, userId } = router.query;
   const isArchivedIssues = router.pathname.includes("archived-issues");
   const isDraftIssues = router.pathname?.split("/")?.[4] === "draft-issues";
 
@@ -376,6 +378,7 @@ export const SingleListIssue: React.FC<Props> = ({
           {properties.state && (
             <StateSelect
               value={issue.state_detail}
+              projectId={projectId}
               onChange={handleStateChange}
               hideDropdownArrow
               disabled={isNotAllowed}
@@ -400,6 +403,7 @@ export const SingleListIssue: React.FC<Props> = ({
           {properties.labels && (
             <LabelSelect
               value={issue.labels}
+              projectId={projectId}
               onChange={handleLabelChange}
               labelsDetails={issue.label_details}
               hideDropdownArrow
@@ -411,6 +415,7 @@ export const SingleListIssue: React.FC<Props> = ({
           {properties.assignee && (
             <MembersSelect
               value={issue.assignees}
+              projectId={projectId}
               onChange={handleAssigneeChange}
               membersDetails={issue.assignee_details}
               hideDropdownArrow

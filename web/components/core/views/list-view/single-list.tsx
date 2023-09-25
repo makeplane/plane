@@ -250,6 +250,7 @@ export const SingleList: React.FC<Props> = ({
                       key={issue.id}
                       type={type}
                       issue={issue}
+                      projectId={issue.project_detail.id}
                       groupTitle={groupTitle}
                       index={index}
                       editIssue={() => handleIssueAction(issue, "edit")}

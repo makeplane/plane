@@ -134,6 +134,7 @@ export const SingleBoard: React.FC<Props> = ({
                         type={type}
                         index={index}
                         issue={issue}
+                        projectId={issue.project_detail.id}
                         groupTitle={groupTitle}
                         editIssue={() => handleIssueAction(issue, "edit")}
                         makeIssueCopy={() => handleIssueAction(issue, "copy")}

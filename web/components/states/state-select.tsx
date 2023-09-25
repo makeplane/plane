@@ -25,6 +25,7 @@ import { getStatesList } from "helpers/state.helper";
 type Props = {
   value: IState;
   onChange: (data: any, states: IState[] | undefined) => void;
+  projectId: string;
   className?: string;
   buttonClassName?: string;
   optionsClassName?: string;
@@ -35,6 +36,7 @@ type Props = {
 export const StateSelect: React.FC<Props> = ({
   value,
   onChange,
+  projectId,
   className = "",
   buttonClassName = "",
   optionsClassName = "",
@@ -50,12 +52,12 @@ export const StateSelect: React.FC<Props> = ({
   const [fetchStates, setFetchStates] = useState<boolean>(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
   const { data: stateGroups } = useSWR(
-    workspaceSlug && projectId && fetchStates ? STATES_LIST(projectId as string) : null,
+    workspaceSlug && projectId && fetchStates ? STATES_LIST(projectId) : null,
     workspaceSlug && projectId && fetchStates
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
+      ? () => stateService.getStates(workspaceSlug as string, projectId)
       : null
   );
 

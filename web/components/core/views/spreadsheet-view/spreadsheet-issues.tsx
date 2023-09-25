@@ -55,6 +55,7 @@ export const SpreadsheetIssues: React.FC<Props> = ({
     <div>
       <SingleSpreadsheetIssue
         issue={issue}
+        projectId={issue.project_detail.id}
         index={index}
         expanded={isExpanded}
         handleToggleExpand={handleToggleExpand}
