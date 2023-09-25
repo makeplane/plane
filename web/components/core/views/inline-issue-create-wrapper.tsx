@@ -39,6 +39,7 @@ import {
   CYCLE_DETAILS,
   MODULE_DETAILS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
+  PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS,
 } from "constants/fetch-keys";
 
 // types
@@ -119,6 +120,8 @@ export const InlineCreateIssueFormWrapper: React.FC<Props> = (props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
+  const isDraftIssues = router.pathname?.split("/")?.[4] === "draft-issues";
+
   const { user } = useUser();
 
   const { setToastAlert } = useToast();
@@ -184,8 +187,15 @@ export const InlineCreateIssueFormWrapper: React.FC<Props> = (props) => {
 
     reset({ ...defaultValues });
 
-    await issuesService
-      .createIssues(workspaceSlug.toString(), projectId.toString(), formData, user)
+    await (!isDraftIssues
+      ? issuesService.createIssues(workspaceSlug.toString(), projectId.toString(), formData, user)
+      : issuesService.createDraftIssue(
+          workspaceSlug.toString(),
+          projectId.toString(),
+          formData,
+          user
+        )
+    )
       .then(async (res) => {
         mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params));
         if (formData.cycle && formData.cycle !== "")
@@ -207,6 +217,8 @@ export const InlineCreateIssueFormWrapper: React.FC<Props> = (props) => {
             params
           );
 
+        if (isDraftIssues)
+          mutate(PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS(projectId.toString() ?? "", params));
         if (displayFilters.layout === "calendar") mutate(calendarFetchKey);
         if (displayFilters.layout === "gantt_chart") mutate(ganttFetchKey);
         if (displayFilters.layout === "spreadsheet") mutate(spreadsheetFetchKey);

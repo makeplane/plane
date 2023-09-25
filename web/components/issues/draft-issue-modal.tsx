@@ -97,6 +97,11 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
     setActiveProject(null);
   };
 
+  const onDiscard = () => {
+    clearDraftIssueLocalStorage();
+    onClose();
+  };
+
   useEffect(() => {
     setPreloadedData(prePopulateDataProps ?? {});
 
@@ -141,7 +146,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
     if (prePopulateData && prePopulateData.project && !activeProject)
       return setActiveProject(prePopulateData.project);
 
-    if (prePopulateData && prePopulateData.project)
+    if (prePopulateData && prePopulateData.project && !activeProject)
       return setActiveProject(prePopulateData.project);
 
     // if data is not present, set active project to the project
@@ -180,16 +185,8 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
     await issuesService
       .createDraftIssue(workspaceSlug as string, activeProject ?? "", payload, user)
       .then(async () => {
-        mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
         mutate(PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
 
-        if (displayFilters.layout === "calendar") mutate(calendarFetchKey);
-        if (displayFilters.layout === "gantt_chart")
-          mutate(ganttFetchKey, {
-            start_target_date: true,
-            order_by: "sort_order",
-          });
-        if (displayFilters.layout === "spreadsheet") mutate(spreadsheetFetchKey);
         if (groupedIssues) mutateMyIssues();
 
         setToastAlert({
@@ -200,8 +197,6 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
 
         if (payload.assignees_list?.some((assignee) => assignee === user?.id))
           mutate(USER_ISSUE(workspaceSlug as string));
-
-        if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
       })
       .catch(() => {
         setToastAlert({
@@ -396,6 +391,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
                     createMore={createMore}
                     setCreateMore={setCreateMore}
                     handleClose={onClose}
+                    handleDiscard={onDiscard}
                     projectId={activeProject ?? ""}
                     setActiveProject={setActiveProject}
                     status={data ? true : false}
