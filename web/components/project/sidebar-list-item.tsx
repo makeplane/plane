@@ -1,16 +1,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { mutate } from "swr";
 import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
 import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
-// services
-import projectService from "services/project.service";
-// hooks
-import useToast from "hooks/use-toast";
-// ui
-import { CustomMenu, Icon, Tooltip } from "components/ui";
 // icons
 import { EllipsisVerticalIcon, LinkIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
 import {
@@ -23,24 +16,26 @@ import {
   PhotoFilterOutlined,
   SettingsOutlined,
 } from "@mui/icons-material";
+// hooks
+import useToast from "hooks/use-toast";
+// ui
+import { CustomMenu, Icon, Tooltip } from "components/ui";
 import { PenSquare } from "lucide-react";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
 // types
 import { IProject } from "types";
-// fetch-keys
-import { PROJECTS_LIST } from "constants/fetch-keys";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
-import { LeaveProjectModal } from "./leave-project-modal";
+// components
+import { LeaveProjectModal, DeleteProjectModal } from "components/project";
 
 type Props = {
   project: IProject;
   sidebarCollapse: boolean;
   provided?: DraggableProvided;
   snapshot?: DraggableStateSnapshot;
-  handleDeleteProject: () => void;
   handleCopyText: () => void;
   shortContextMenu?: boolean;
 };
@@ -79,15 +74,7 @@ const navigation = (workspaceSlug: string, projectId: string) => [
 ];
 
 export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
-  const {
-    project,
-    sidebarCollapse,
-    provided,
-    snapshot,
-    handleDeleteProject,
-    handleCopyText,
-    shortContextMenu = false,
-  } = props;
+  const { project, sidebarCollapse, provided, snapshot, handleCopyText, shortContextMenu = false } = props;
   // store
   const { projectPublish, project: projectStore }: RootStore = useMobxStore();
   // router
@@ -97,6 +84,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   const { setToastAlert } = useToast();
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
+  const [deleteProjectModalOpen, setDeleteProjectModal] = useState(false);
 
   const isAdmin = project.member_role === 20;
   const isViewerOrGuest = project.member_role === 10 || project.member_role === 5;
@@ -129,9 +117,23 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
     setLeaveProjectModal(true);
   };
 
+  const handleLeaveProjectModalClose = () => {
+    setLeaveProjectModal(false);
+  };
+
+  const handleDeleteProjectClick = () => {
+    setDeleteProjectModal(true);
+  };
+
+  const handleDeleteProjectModalClose = () => {
+    setDeleteProjectModal(false);
+    router.push(`/${workspaceSlug}/projects`);
+  };
+
   return (
     <>
-      <LeaveProjectModal project={project} isOpen={leaveProjectModalOpen} onClose={} />
+      <DeleteProjectModal project={project} isOpen={deleteProjectModalOpen} onClose={handleDeleteProjectModalClose} />
+      <LeaveProjectModal project={project} isOpen={leaveProjectModalOpen} onClose={handleLeaveProjectModalClose} />
       <Disclosure key={project.id} defaultOpen={projectId === project.id}>
         {({ open }) => (
           <>
@@ -205,7 +207,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   ellipsis
                 >
                   {!shortContextMenu && isAdmin && (
-                    <CustomMenu.MenuItem onClick={handleDeleteProject}>
+                    <CustomMenu.MenuItem onClick={handleDeleteProjectClick}>
                       <span className="flex items-center justify-start gap-2 ">
                         <TrashIcon className="h-4 w-4" />
                         <span>Delete project</span>

@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, Fragment } from "react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
@@ -29,7 +29,14 @@ const defaultValues: FormData = {
   confirmLeave: "",
 };
 
-export const LeaveProjectModal: FC<> = observer(() => {
+export interface ILeaveProjectModal {
+  project: IProject;
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
+  const { project, isOpen, onClose } = props;
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -50,22 +57,18 @@ export const LeaveProjectModal: FC<> = observer(() => {
   } = useForm({ defaultValues });
 
   const handleClose = () => {
-    projectStore.handleProjectLeaveModal(null);
     reset({ ...defaultValues });
   };
 
   const onSubmit = async (data: any) => {
+    if (!workspaceSlug) return;
+
     if (data) {
-      if (data.projectName === projectStore?.projectLeaveDetails?.name) {
+      if (data.projectName === project?.name) {
         if (data.confirmLeave === "Leave Project") {
           return projectStore
-            .leaveProject(
-              projectStore.projectLeaveDetails.workspaceSlug.toString(),
-              projectStore.projectLeaveDetails.id.toString(),
-              user
-            )
+            .leaveProject(workspaceSlug.toString(), project.id)
             .then((res) => {
-              mutateProjects();
               handleClose();
               router.push(`/${workspaceSlug}/projects`);
             })
@@ -100,10 +103,10 @@ export const LeaveProjectModal: FC<> = observer(() => {
   };
 
   return (
-    <Transition.Root show={projectStore.projectLeaveModal} as={React.Fragment}>
+    <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
-          as={React.Fragment}
+          as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -117,7 +120,7 @@ export const LeaveProjectModal: FC<> = observer(() => {
         <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <Transition.Child
-              as={React.Fragment}
+              as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               enterTo="opacity-100 translate-y-0 sm:scale-100"
@@ -139,16 +142,15 @@ export const LeaveProjectModal: FC<> = observer(() => {
                   <span>
                     <p className="text-sm leading-7 text-custom-text-200">
                       Are you sure you want to leave the project -
-                      <span className="font-medium text-custom-text-100">{` "${project?.projectLeaveDetails?.name}" `}</span>
-                      ? All of the issues associated with you will become inaccessible.
+                      <span className="font-medium text-custom-text-100">{` "${project?.name}" `}</span>? All of the
+                      issues associated with you will become inaccessible.
                     </p>
                   </span>
 
                   <div className="text-custom-text-200">
                     <p className="break-words text-sm ">
-                      Enter the project name{" "}
-                      <span className="font-medium text-custom-text-100">{project?.projectLeaveDetails?.name}</span> to
-                      continue:
+                      Enter the project name <span className="font-medium text-custom-text-100">{project?.name}</span>{" "}
+                      to continue:
                     </p>
                     <Controller
                       control={control}

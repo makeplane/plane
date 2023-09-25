@@ -9,7 +9,7 @@ import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 import useProjects from "hooks/use-projects";
 // components
-import { CreateProjectModal, DeleteProjectModal, ProjectSidebarListItem, LeaveProjectModal } from "components/project";
+import { CreateProjectModal, ProjectSidebarListItem, LeaveProjectModal } from "components/project";
 import { PublishProjectModal } from "components/project/publish-project/modal";
 // services
 import projectService from "services/project.service";
@@ -119,14 +119,6 @@ export const ProjectSidebarList: FC = observer(() => {
         setToFavorite={isFavoriteProjectCreate}
         user={user}
       />
-      <DeleteProjectModal
-        isOpen={deleteProjectModal}
-        onClose={() => setDeleteProjectModal(false)}
-        data={projectToDelete}
-        user={user}
-      />
-      {/* project leave modal */}
-      <LeaveProjectModal />
       {/* publish project modal */}
       <PublishProjectModal />
       <div
@@ -183,7 +175,6 @@ export const ProjectSidebarList: FC = observer(() => {
                                     sidebarCollapse={themeStore?.sidebarCollapsed || false}
                                     provided={provided}
                                     snapshot={snapshot}
-                                    handleDeleteProject={() => handleDeleteProject(project)}
                                     handleCopyText={() => handleCopyText(project.id)}
                                     shortContextMenu
                                   />
@@ -252,7 +243,6 @@ export const ProjectSidebarList: FC = observer(() => {
                                       sidebarCollapse={themeStore?.sidebarCollapsed || false}
                                       provided={provided}
                                       snapshot={snapshot}
-                                      handleDeleteProject={() => handleDeleteProject(project)}
                                       handleCopyText={() => handleCopyText(project.id)}
                                     />
                                   </div>

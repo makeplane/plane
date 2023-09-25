@@ -1,15 +1,7 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import projectService from "services/project.service";
 // hooks
 import useToast from "hooks/use-toast";
 // icons
@@ -17,16 +9,14 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { DangerButton, Input, SecondaryButton } from "components/ui";
 // types
-import type { ICurrentUserResponse, IProject } from "types";
+import type { IProject } from "types";
 // fetch-keys
-import { PROJECTS_LIST } from "constants/fetch-keys";
+import { useMobxStore } from "lib/mobx/store-provider";
 
-type TConfirmProjectDeletionProps = {
+type DeleteProjectModal = {
   isOpen: boolean;
+  project: IProject;
   onClose: () => void;
-  onSuccess?: () => void;
-  data: IProject | null;
-  user: ICurrentUserResponse | undefined;
 };
 
 const defaultValues = {
@@ -34,18 +24,16 @@ const defaultValues = {
   confirmDelete: "",
 };
 
-export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
-  isOpen,
-  data,
-  onClose,
-  onSuccess,
-  user,
-}) => {
+export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
+  const { isOpen, project, onClose } = props;
+  // store
+  const { project: projectStore } = useMobxStore();
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
+  // toast
   const { setToastAlert } = useToast();
-
+  // form info
   const {
     control,
     formState: { isSubmitting },
@@ -54,8 +42,7 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
     watch,
   } = useForm({ defaultValues });
 
-  const canDelete =
-    watch("projectName") === data?.name && watch("confirmDelete") === "delete my project";
+  const canDelete = watch("projectName") === project?.name && watch("confirmDelete") === "delete my project";
 
   const handleClose = () => {
     const timer = setTimeout(() => {
@@ -67,30 +54,20 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
   };
 
   const onSubmit = async () => {
-    if (!data || !workspaceSlug || !canDelete) return;
+    if (!workspaceSlug || !canDelete) return;
 
-    await projectService
-      .deleteProject(workspaceSlug.toString(), data.id, user)
+    await projectStore
+      .deleteProject(workspaceSlug.toString(), project.id)
       .then(() => {
         handleClose();
-
-        mutate<IProject[]>(
-          PROJECTS_LIST(workspaceSlug.toString(), { is_favorite: "all" }),
-          (prevData) => prevData?.filter((project: IProject) => project.id !== data.id),
-          false
-        );
-
-        if (onSuccess) onSuccess();
-
-        if (projectId && projectId === data.id) router.push(`/${workspaceSlug}/projects`);
       })
-      .catch(() =>
+      .catch(() => {
         setToastAlert({
           type: "error",
           title: "Error!",
           message: "Something went wrong. Please try again later.",
-        })
-      );
+        });
+      });
   };
 
   return (
@@ -123,10 +100,7 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-500/20 p-4">
-                      <ExclamationTriangleIcon
-                        className="h-6 w-6 text-red-600"
-                        aria-hidden="true"
-                      />
+                      <ExclamationTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">
                       <h3 className="text-xl font-medium 2xl:text-2xl">Delete Project</h3>
@@ -135,16 +109,14 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
                   <span>
                     <p className="text-sm leading-7 text-custom-text-200">
                       Are you sure you want to delete project{" "}
-                      <span className="break-words font-semibold">{data?.name}</span>? All of the
-                      data related to the project will be permanently removed. This action cannot be
-                      undone
+                      <span className="break-words font-semibold">{project?.name}</span>? All of the data related to the
+                      project will be permanently removed. This action cannot be undone
                     </p>
                   </span>
                   <div className="text-custom-text-200">
                     <p className="break-words text-sm ">
-                      Enter the project name{" "}
-                      <span className="font-medium text-custom-text-100">{data?.name}</span> to
-                      continue:
+                      Enter the project name <span className="font-medium text-custom-text-100">{project?.name}</span>{" "}
+                      to continue:
                     </p>
                     <Controller
                       control={control}
@@ -162,8 +134,7 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
                   </div>
                   <div className="text-custom-text-200">
                     <p className="text-sm">
-                      To confirm, type{" "}
-                      <span className="font-medium text-custom-text-100">delete my project</span>{" "}
+                      To confirm, type <span className="font-medium text-custom-text-100">delete my project</span>{" "}
                       below:
                     </p>
                     <Controller
