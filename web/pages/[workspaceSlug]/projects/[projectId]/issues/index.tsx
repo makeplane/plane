@@ -1,10 +1,11 @@
 import { useState } from "react";
 
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import projectService from "services/project.service";
 import inboxService from "services/inbox.service";
@@ -15,7 +16,7 @@ import { IssueViewContextProvider } from "contexts/issue-view.context";
 // helper
 import { truncateText } from "helpers/string.helper";
 // components
-import { IssuesFilterView, IssuesView } from "components/core";
+import { IssuesView } from "components/core";
 import { AnalyticsProjectModal } from "components/analytics";
 import { ProjectIssuesHeader } from "components/headers";
 // ui
@@ -26,8 +27,14 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 // types
 import type { NextPage } from "next";
 // fetch-keys
-import { PROJECT_DETAILS, INBOX_LIST } from "constants/fetch-keys";
-import { useMobxStore } from "lib/mobx/store-provider";
+import {
+  PROJECT_DETAILS,
+  INBOX_LIST,
+  STATES_LIST,
+  PROJECT_ISSUE_LABELS,
+  PROJECT_MEMBERS,
+  USER_PROJECT_VIEW,
+} from "constants/fetch-keys";
 
 const ProjectIssues: NextPage = () => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
@@ -35,7 +42,7 @@ const ProjectIssues: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { issueFilter, project } = useMobxStore();
+  const { issueFilter: issueFilterStore, project: projectStore } = useMobxStore();
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -48,26 +55,30 @@ const ProjectIssues: NextPage = () => {
   );
 
   useSWR(
-    workspaceSlug && projectId ? "REVALIDATE_ALL" : null,
+    workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
     workspaceSlug && projectId
-      ? () => issueFilter.fetchUserFilters(workspaceSlug.toString(), projectId.toString())
+      ? () => issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString())
       : null
   );
 
   useSWR(
-    workspaceSlug && projectId ? "PROJECT_STATES" : null,
-    workspaceSlug && projectId ? () => project.fetchProjectStates(workspaceSlug.toString(), projectId.toString()) : null
-  );
-
-  useSWR(
-    workspaceSlug && projectId ? "PROJECT_LABELS" : null,
-    workspaceSlug && projectId ? () => project.fetchProjectLabels(workspaceSlug.toString(), projectId.toString()) : null
-  );
-
-  useSWR(
-    workspaceSlug && projectId ? "PROJECT_MEMBERS" : null,
+    workspaceSlug && projectId ? STATES_LIST(projectId.toString()) : null,
     workspaceSlug && projectId
-      ? () => project.fetchProjectMembers(workspaceSlug.toString(), projectId.toString())
+      ? () => projectStore.fetchProjectStates(workspaceSlug.toString(), projectId.toString())
+      : null
+  );
+
+  useSWR(
+    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId.toString()) : null,
+    workspaceSlug && projectId
+      ? () => projectStore.fetchProjectLabels(workspaceSlug.toString(), projectId.toString())
+      : null
+  );
+
+  useSWR(
+    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId.toString()) : null,
+    workspaceSlug && projectId
+      ? () => projectStore.fetchProjectMembers(workspaceSlug.toString(), projectId.toString())
       : null
   );
 
@@ -83,7 +94,6 @@ const ProjectIssues: NextPage = () => {
         right={
           <ProjectIssuesHeader />
           // <div className="flex items-center gap-2">
-          //   <IssuesFilterView />
           //   <SecondaryButton
           //     onClick={() => setAnalyticsModal(true)}
           //     className="!py-1.5 rounded-md font-normal text-custom-sidebar-text-200 border-custom-border-200 hover:text-custom-text-100 hover:bg-custom-sidebar-background-90"
