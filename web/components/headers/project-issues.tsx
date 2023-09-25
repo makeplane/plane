@@ -32,7 +32,7 @@ export const ProjectIssuesHeader = observer(() => {
         selectedLayout={issueFilterStore.userDisplayFilters.layout ?? "list"}
       />
       <IssueDropdown title="Filters">
-        <FilterSelection />
+        <FilterSelection workspaceSlug={workspaceSlug?.toString() ?? ""} projectId={projectId?.toString() ?? ""} />
       </IssueDropdown>
       <IssueDropdown title="View">
         <DisplayFiltersSelection />

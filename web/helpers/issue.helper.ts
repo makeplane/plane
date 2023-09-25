@@ -180,83 +180,116 @@ export const handleIssueParamsDateFormat = (key: string, start_date: any | null,
     return `${renderDateFormat(start_date)};after,${renderDateFormat(target_date)};before`;
 };
 
-// export const issueFilterVisibilityData: {
-//   [key: string]: {
-//     layout: TIssueLayouts[];
-//     filters: {
-//       [key in TIssueLayouts]: string[];
-//     };
-//   };
-// } = {
-//   my_issues: {
-//     layout: ["list", "kanban"],
-//     filters: {
-//       list: ["priority", "state_group", "labels", "start_date", "due_date"],
-//       kanban: ["priority", "state_group", "labels", "start_date", "due_date"],
-//     },
-//     display_properties: {
-//       list: true,
-//       kanban: true,
-//     },
-//     display_filters: {
-//       list: ["group_by", "order_by", "issue_type"],
-//       kanban: ["group_by", "order_by", "issue_type"],
-//     },
-//     extra_options: {
-//       list: {
-//         access: true,
-//         values: ["show_empty_groups"],
-//       },
-//       kanban: {
-//         access: true,
-//         values: ["show_empty_groups"],
-//       },
-//     },
-//   },
-//   issues: {
-//     layout: ["list", "kanban", "calendar", "spreadsheet", "gantt_chart"],
-//     filters: {
-//       list: ["priority", "state", "assignees", "created_by", "labels", "start_date", "due_date"],
-//       kanban: ["priority", "state", "assignees", "created_by", "labels", "start_date", "due_date"],
-//       calendar: ["priority", "state", "assignees", "created_by", "labels"],
-//       spreadsheet: ["priority", "state", "assignees", "created_by", "labels", "start_date", "due_date"],
-//       gantt_chart: ["priority", "state", "assignees", "created_by", "labels", "start_date", "due_date"],
-//     },
-//     display_properties: {
-//       list: true,
-//       kanban: true,
-//       calendar: true,
-//       spreadsheet: true,
-//       gantt_chart: false,
-//     },
-//     display_filters: {
-//       list: ["group_by", "order_by", "issue_type", "sub_issue", "show_empty_groups"],
-//       kanban: ["group_by", "order_by", "issue_type", "sub_issue", "show_empty_groups"],
-//       calendar: ["issue_type"],
-//       spreadsheet: ["issue_type"],
-//       gantt_chart: ["order_by", "issue_type", "sub_issue"],
-//     },
-//     extra_options: {
-//       list: {
-//         access: true,
-//         values: ["show_empty_groups", "sub_issue"],
-//       },
-//       kanban: {
-//         access: true,
-//         values: ["show_empty_groups", "sub_issue"],
-//       },
-//       calendar: {
-//         access: false,
-//         values: [],
-//       },
-//       spreadsheet: {
-//         access: false,
-//         values: [],
-//       },
-//       gantt_chart: {
-//         access: true,
-//         values: ["sub_issue"],
-//       },
-//     },
-//   },
-// };
+export const issueFilterVisibilityData: {
+  [key: string]: {
+    layout: TIssueLayouts[];
+    filters: {
+      [key in TIssueLayouts]: string[];
+    };
+    display_properties: {
+      [key in TIssueLayouts]: boolean;
+    };
+    display_filters: {
+      [key in TIssueLayouts]: string[];
+    };
+    extra_options: {
+      [key in TIssueLayouts]: {
+        access: boolean;
+        values: string[];
+      };
+    };
+  };
+} = {
+  my_issues: {
+    layout: ["list", "kanban"],
+    filters: {
+      list: ["priority", "state_group", "labels", "start_date", "due_date"],
+      kanban: ["priority", "state_group", "labels", "start_date", "due_date"],
+      calendar: [],
+      spreadsheet: [],
+      gantt_chart: [],
+    },
+    display_properties: {
+      list: true,
+      kanban: true,
+      calendar: true,
+      spreadsheet: true,
+      gantt_chart: false,
+    },
+    display_filters: {
+      list: ["group_by", "order_by", "issue_type"],
+      kanban: ["group_by", "order_by", "issue_type"],
+      calendar: ["issue_type"],
+      spreadsheet: ["issue_type"],
+      gantt_chart: ["order_by", "issue_type"],
+    },
+    extra_options: {
+      list: {
+        access: true,
+        values: ["show_empty_groups", "sub_issue"],
+      },
+      kanban: {
+        access: true,
+        values: ["show_empty_groups", "sub_issue"],
+      },
+      calendar: {
+        access: false,
+        values: [],
+      },
+      spreadsheet: {
+        access: false,
+        values: [],
+      },
+      gantt_chart: {
+        access: false,
+        values: [],
+      },
+    },
+  },
+  issues: {
+    layout: ["list", "kanban", "calendar", "spreadsheet", "gantt_chart"],
+    filters: {
+      list: ["priority", "state", "assignees", "created_by", "labels", "start_date", "due_date"],
+      kanban: ["priority", "state", "assignees", "created_by", "labels", "start_date", "due_date"],
+      calendar: ["priority", "state", "assignees", "created_by", "labels"],
+      spreadsheet: ["priority", "state", "assignees", "created_by", "labels", "start_date", "due_date"],
+      gantt_chart: ["priority", "state", "assignees", "created_by", "labels", "start_date", "due_date"],
+    },
+    display_properties: {
+      list: true,
+      kanban: true,
+      calendar: true,
+      spreadsheet: true,
+      gantt_chart: false,
+    },
+    display_filters: {
+      list: ["group_by", "order_by", "issue_type"],
+      kanban: ["group_by", "order_by", "issue_type"],
+      calendar: ["issue_type"],
+      spreadsheet: ["issue_type"],
+      gantt_chart: ["order_by", "issue_type"],
+    },
+    extra_options: {
+      list: {
+        access: true,
+        values: ["show_empty_groups", "sub_issue"],
+      },
+      kanban: {
+        access: true,
+        values: ["show_empty_groups", "sub_issue"],
+      },
+      calendar: {
+        access: false,
+        values: [],
+      },
+      spreadsheet: {
+        access: false,
+        values: [],
+      },
+      gantt_chart: {
+        access: true,
+        values: ["sub_issue"],
+      },
+    },
+  },
+};

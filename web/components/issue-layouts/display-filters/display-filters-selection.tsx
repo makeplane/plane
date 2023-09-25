@@ -1,5 +1,8 @@
 import React from "react";
 
+// mobx
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import {
   FilterDisplayProperties,
@@ -8,35 +11,57 @@ import {
   FilterIssueType,
   FilterOrderBy,
 } from "components/issue-layouts";
+// helpers
+import { issueFilterVisibilityData } from "helpers/issue.helper";
 
-export const DisplayFiltersSelection = () => (
-  <div className="w-full h-full overflow-hidden select-none relative flex flex-col divide-y divide-custom-border-200">
-    <div className="flex-shrink-0 p-2 text-sm">Search container</div>
-    <div className="w-full h-full overflow-hidden overflow-y-auto relative pb-2 divide-y divide-custom-border-200">
-      {/* display properties */}
-      <div className="pb-2 px-2">
-        <FilterDisplayProperties />
-      </div>
+export const DisplayFiltersSelection = observer(() => {
+  const { issueFilter: issueFilterStore } = useMobxStore();
 
-      {/* group by */}
-      <div className="py-1 px-2">
-        <FilterGroupBy />
-      </div>
+  const isDisplayFilterEnabled = (displayFilter: string) =>
+    issueFilterVisibilityData.issues.display_filters[issueFilterStore.userDisplayFilters.layout ?? "list"].includes(
+      displayFilter
+    );
 
-      {/* order by */}
-      <div className="py-1 px-2">
-        <FilterOrderBy />
-      </div>
+  return (
+    <div className="w-full h-full overflow-hidden select-none relative flex flex-col divide-y divide-custom-border-200">
+      <div className="flex-shrink-0 p-2 text-sm">Search container</div>
+      <div className="w-full h-full overflow-hidden overflow-y-auto relative pb-2 divide-y divide-custom-border-200">
+        {/* display properties */}
+        {issueFilterVisibilityData.issues.display_properties[issueFilterStore.userDisplayFilters.layout ?? "list"] && (
+          <div className="pb-2 px-2">
+            <FilterDisplayProperties />
+          </div>
+        )}
 
-      {/* issue type */}
-      <div className="py-1 px-2">
-        <FilterIssueType />
-      </div>
+        {/* group by */}
+        {isDisplayFilterEnabled("group_by") && (
+          <div className="py-1 px-2">
+            <FilterGroupBy />
+          </div>
+        )}
 
-      {/* Options */}
-      <div className="pt-1 px-2">
-        <FilterExtraOptions />
+        {/* order by */}
+        {isDisplayFilterEnabled("order_by") && (
+          <div className="py-1 px-2">
+            <FilterOrderBy />
+          </div>
+        )}
+
+        {/* issue type */}
+        {isDisplayFilterEnabled("issue_type") && (
+          <div className="py-1 px-2">
+            <FilterIssueType />
+          </div>
+        )}
+
+        {/* Options */}
+        {issueFilterVisibilityData.issues.extra_options[issueFilterStore.userDisplayFilters.layout ?? "list"]
+          .access && (
+          <div className="pt-1 px-2">
+            <FilterExtraOptions />
+          </div>
+        )}
       </div>
     </div>
-  </div>
-);
+  );
+});

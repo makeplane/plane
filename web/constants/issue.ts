@@ -102,7 +102,7 @@ export const ISSUE_DISPLAY_PROPERTIES: {
   { key: "estimate", title: "Estimate" },
 ];
 
-export const ISSUE_EXTRA_PROPERTIES: {
+export const ISSUE_EXTRA_OPTIONS: {
   key: keyof IIssueDisplayFilterOptions;
   title: string;
 }[] = [

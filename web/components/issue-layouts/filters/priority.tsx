@@ -74,7 +74,7 @@ export const FilterPriority: React.FC<Props> = observer((props) => {
   };
 
   return (
-    <div>
+    <>
       <FilterHeader
         title={`Priority (${issueFilterStore.userFilters?.priority?.length ?? 0})`}
         isPreviewEnabled={previewEnabled}
@@ -93,6 +93,6 @@ export const FilterPriority: React.FC<Props> = observer((props) => {
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 });
