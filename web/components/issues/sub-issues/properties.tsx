@@ -161,6 +161,7 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
         <div className="flex-shrink-0">
           <StateSelect
             value={issue.state_detail}
+            projectId={issue.project_detail.id}
             onChange={handleStateChange}
             hideDropdownArrow
             disabled={!editable}
@@ -194,6 +195,7 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
         <div className="flex-shrink-0">
           <MembersSelect
             value={issue.assignees}
+            projectId={issue.project_detail.id}
             onChange={handleAssigneeChange}
             membersDetails={issue.assignee_details}
             hideDropdownArrow
