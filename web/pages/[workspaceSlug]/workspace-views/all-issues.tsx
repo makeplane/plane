@@ -5,17 +5,21 @@ import useSWR from "swr";
 
 // hook
 import useUser from "hooks/use-user";
+import useWorkspaceMembers from "hooks/use-workspace-members";
+import useProjects from "hooks/use-projects";
 import useMyIssuesFilters from "hooks/my-issues/use-my-issues-filter";
+// context
+import { useProjectMyMembership } from "contexts/project-member.context";
 // services
 import workspaceService from "services/workspace.service";
+import projectIssuesServices from "services/issues.service";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
-import { SpreadsheetView } from "components/core";
+import { FiltersList, SpreadsheetView } from "components/core";
 import { WorkspaceViewsNavigation } from "components/workspace/views/workpace-view-navigation";
-import { WorkspaceIssuesViewOptions } from "components/issues/workspace-views/workspace-issue-view-option";
 import { CreateUpdateViewModal } from "components/views";
-import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
+import { CreateUpdateIssueModal, DeleteIssueModal, MyIssuesViewOptions } from "components/issues";
 // ui
 import { EmptyState, PrimaryButton } from "components/ui";
 // icons
@@ -24,9 +28,15 @@ import { CheckCircle } from "lucide-react";
 // images
 import emptyView from "public/empty-state/view.svg";
 // fetch-keys
-import { WORKSPACE_VIEW_DETAILS, WORKSPACE_VIEW_ISSUES } from "constants/fetch-keys";
+import {
+  WORKSPACE_LABELS,
+  WORKSPACE_VIEW_DETAILS,
+  WORKSPACE_VIEW_ISSUES,
+} from "constants/fetch-keys";
+// constants
+import { STATE_GROUP } from "constants/project";
 // types
-import { IIssue } from "types";
+import { IIssue, IIssueFilterOptions } from "types";
 
 const WorkspaceViewAllIssue: React.FC = () => {
   const [createViewModal, setCreateViewModal] = useState<any>(null);
@@ -50,7 +60,12 @@ const WorkspaceViewAllIssue: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, workspaceViewId } = router.query;
 
+  const { filters, setFilters } = useMyIssuesFilters(workspaceSlug?.toString());
+
   const { user } = useUser();
+  const { memberRole } = useProjectMyMembership();
+
+  const { workspaceMembers } = useWorkspaceMembers(workspaceSlug?.toString() ?? "");
 
   const { data: viewDetails, error } = useSWR(
     workspaceSlug && workspaceViewId ? WORKSPACE_VIEW_DETAILS(workspaceViewId.toString()) : null,
@@ -58,20 +73,20 @@ const WorkspaceViewAllIssue: React.FC = () => {
       ? () => workspaceService.getViewDetails(workspaceSlug.toString(), workspaceViewId.toString())
       : null
   );
-  const { displayFilters } = useMyIssuesFilters(workspaceSlug?.toString());
 
   const params: any = {
-    assignees: undefined,
-    state: undefined,
-    state_group: undefined,
-    subscriber: undefined,
-    priority: undefined,
-    labels: undefined,
-    created_by: undefined,
-    start_date: undefined,
-    target_date: undefined,
+    assignees: filters?.assignees ? filters?.assignees.join(",") : undefined,
+    subscriber: filters?.subscriber ? filters?.subscriber.join(",") : undefined,
+    state: filters?.state ? filters?.state.join(",") : undefined,
+    state_group: filters?.state_group ? filters?.state_group.join(",") : undefined,
+    priority: filters?.priority ? filters?.priority.join(",") : undefined,
+    labels: filters?.labels ? filters?.labels.join(",") : undefined,
+    created_by: filters?.created_by ? filters?.created_by.join(",") : undefined,
+    start_date: filters?.start_date ? filters?.start_date.join(",") : undefined,
+    target_date: filters?.target_date ? filters?.target_date.join(",") : undefined,
+    project: filters?.project ? filters?.project.join(",") : undefined,
     sub_issue: false,
-    type: displayFilters?.type ? displayFilters?.type : undefined,
+    type: undefined,
   };
 
   const { data: viewIssues, mutate: mutateIssues } = useSWR(
@@ -118,6 +133,23 @@ const WorkspaceViewAllIssue: React.FC = () => {
     [makeIssueCopy, handleEditIssue, handleDeleteIssue]
   );
 
+  const nullFilters =
+    filters &&
+    Object.keys(filters).filter((key) => filters[key as keyof IIssueFilterOptions] === null);
+
+  const areFiltersApplied =
+    filters &&
+    Object.keys(filters).length > 0 &&
+    nullFilters.length !== Object.keys(filters).length;
+
+  const { projects: allProjects } = useProjects();
+  const joinedProjects = allProjects?.filter((p) => p.is_member);
+
+  const { data: workspaceLabels } = useSWR(
+    workspaceSlug ? WORKSPACE_LABELS(workspaceSlug.toString()) : null,
+    workspaceSlug ? () => projectIssuesServices.getWorkspaceLabels(workspaceSlug.toString()) : null
+  );
+
   return (
     <WorkspaceAuthorizationLayout
       breadcrumbs={
@@ -130,7 +162,7 @@ const WorkspaceViewAllIssue: React.FC = () => {
       }
       right={
         <div className="flex items-center gap-2">
-          <WorkspaceIssuesViewOptions />
+          <MyIssuesViewOptions />
           <PrimaryButton
             className="flex items-center gap-2"
             onClick={() => {
@@ -193,18 +225,52 @@ const WorkspaceViewAllIssue: React.FC = () => {
             />
           ) : (
             <div className="h-full w-full flex flex-col">
+              {areFiltersApplied && (
+                <>
+                  <div className="flex items-center justify-between gap-2 px-5 pt-3 pb-0">
+                    <FiltersList
+                      filters={filters}
+                      setFilters={(updatedFilter) => setFilters(updatedFilter)}
+                      labels={workspaceLabels}
+                      members={workspaceMembers?.map((m) => m.member)}
+                      stateGroup={STATE_GROUP}
+                      project={joinedProjects}
+                      clearAllFilters={() =>
+                        setFilters({
+                          assignees: null,
+                          created_by: null,
+                          labels: null,
+                          priority: null,
+                          state_group: null,
+                          start_date: null,
+                          target_date: null,
+                          subscriber: null,
+                          project: null,
+                        })
+                      }
+                    />
+                    <PrimaryButton
+                      onClick={() => {
+                        setCreateViewModal({
+                          query: filters,
+                        });
+                      }}
+                      className="flex items-center gap-2 text-sm"
+                    >
+                      {!workspaceViewId && <PlusIcon className="h-4 w-4" />}
+                      {workspaceViewId ? "Update" : "Save"} view
+                    </PrimaryButton>
+                  </div>
+                  {<div className="mt-3 border-t border-custom-border-200" />}
+                </>
+              )}
               <SpreadsheetView
                 spreadsheetIssues={viewIssues}
                 mutateIssues={mutateIssues}
                 handleIssueAction={handleIssueAction}
                 disableUserActions={false}
                 user={user}
-                userAuth={{
-                  isGuest: false,
-                  isMember: false,
-                  isOwner: false,
-                  isViewer: false,
-                }}
+                userAuth={memberRole}
               />
             </div>
           )}

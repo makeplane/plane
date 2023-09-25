@@ -6,7 +6,8 @@ import useSWR from "swr";
 
 // hook
 import useUser from "hooks/use-user";
-import useMyIssuesFilters from "hooks/my-issues/use-my-issues-filter";
+// context
+import { useProjectMyMembership } from "contexts/project-member.context";
 // services
 import workspaceService from "services/workspace.service";
 // layouts
@@ -52,6 +53,12 @@ const WorkspaceViewCreatedIssue: React.FC = () => {
   const { workspaceSlug, workspaceViewId } = router.query;
 
   const { user } = useUser();
+  const { memberRole } = useProjectMyMembership();
+
+  const params: any = {
+    created_by: user?.id ?? undefined,
+    sub_issue: false,
+  };
 
   const { data: viewDetails, error } = useSWR(
     workspaceSlug && workspaceViewId ? WORKSPACE_VIEW_DETAILS(workspaceViewId.toString()) : null,
@@ -59,21 +66,6 @@ const WorkspaceViewCreatedIssue: React.FC = () => {
       ? () => workspaceService.getViewDetails(workspaceSlug.toString(), workspaceViewId.toString())
       : null
   );
-  const { displayFilters } = useMyIssuesFilters(workspaceSlug?.toString());
-
-  const params: any = {
-    assignees: undefined,
-    state: undefined,
-    state_group: undefined,
-    subscriber: undefined,
-    priority: undefined,
-    labels: undefined,
-    created_by: user?.id ?? undefined,
-    start_date: undefined,
-    target_date: undefined,
-    sub_issue: false,
-    type: displayFilters?.type ? displayFilters?.type : undefined,
-  };
 
   const { data: viewIssues, mutate: mutateIssues } = useSWR(
     workspaceSlug ? WORKSPACE_VIEW_ISSUES(workspaceSlug.toString(), params) : null,
@@ -200,12 +192,7 @@ const WorkspaceViewCreatedIssue: React.FC = () => {
                 handleIssueAction={handleIssueAction}
                 disableUserActions={false}
                 user={user}
-                userAuth={{
-                  isGuest: false,
-                  isMember: false,
-                  isOwner: false,
-                  isViewer: false,
-                }}
+                userAuth={memberRole}
               />
             </div>
           )}

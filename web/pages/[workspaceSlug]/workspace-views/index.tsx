@@ -32,26 +32,18 @@ import { WORKSPACE_VIEWS_LIST } from "constants/fetch-keys";
 import { truncateText } from "helpers/string.helper";
 
 const WorkspaceViews: NextPage = () => {
+  const [query, setQuery] = useState("");
+
   const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);
   const [selectedViewToUpdate, setSelectedViewToUpdate] = useState<IView | null>(null);
 
   const [deleteViewModal, setDeleteViewModal] = useState(false);
   const [selectedViewToDelete, setSelectedViewToDelete] = useState<IView | null>(null);
 
-  const handleEditView = (view: IView) => {
-    setSelectedViewToUpdate(view);
-    setCreateUpdateViewModal(true);
-  };
-
-  const handleDeleteView = (view: IView) => {
-    setSelectedViewToDelete(view);
-    setDeleteViewModal(true);
-  };
-
-  const [query, setQuery] = useState("");
-
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const { user } = useUser();
 
   const { data: workspaceViews } = useSWR(
     workspaceSlug ? WORKSPACE_VIEWS_LIST(workspaceSlug as string) : null,
@@ -93,7 +85,15 @@ const WorkspaceViews: NextPage = () => {
       ? workspaceViews
       : workspaceViews?.filter((option) => option.name.toLowerCase().includes(query.toLowerCase()));
 
-  const { user } = useUser();
+  const handleEditView = (view: IView) => {
+    setSelectedViewToUpdate(view);
+    setCreateUpdateViewModal(true);
+  };
+
+  const handleDeleteView = (view: IView) => {
+    setSelectedViewToDelete(view);
+    setDeleteViewModal(true);
+  };
 
   return (
     <WorkspaceAuthorizationLayout
@@ -197,10 +197,12 @@ const WorkspaceViews: NextPage = () => {
             />
           )
         ) : (
-          <Loader className="space-y-2 p-5">
-            <Loader.Item height="30px" />
-            <Loader.Item height="30px" />
-            <Loader.Item height="30px" />
+          <Loader className="space-y-1.5">
+            <Loader.Item height="72px" />
+            <Loader.Item height="72px" />
+            <Loader.Item height="72px" />
+            <Loader.Item height="72px" />
+            <Loader.Item height="72px" />
           </Loader>
         )}
       </div>
