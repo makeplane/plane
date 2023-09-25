@@ -21,6 +21,7 @@ import { getStatesList } from "helpers/state.helper";
 // types
 import { IQuery, IView } from "types";
 import issuesService from "services/issues.service";
+import { IWorkspaceView } from "types/workspace-view";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, STATES_LIST } from "constants/fetch-keys";
 
@@ -28,7 +29,7 @@ type Props = {
   handleFormSubmit: (values: IView) => Promise<void>;
   handleClose: () => void;
   status: boolean;
-  data?: IView | null;
+  data?: IView | IWorkspaceView | null;
   preLoadedData?: Partial<IView> | null;
 };
 
@@ -96,7 +97,6 @@ export const ViewForm: React.FC<Props> = ({
       state: null,
       start_date: null,
       target_date: null,
-      type: null,
     });
   };
 

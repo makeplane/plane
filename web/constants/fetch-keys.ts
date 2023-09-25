@@ -4,6 +4,7 @@ import { IAnalyticsParams, IJiraMetadata, INotificationParams } from "types";
 const paramsToKey = (params: any) => {
   const {
     state,
+    state_group,
     priority,
     assignees,
     created_by,
@@ -17,6 +18,7 @@ const paramsToKey = (params: any) => {
 
   let projectKey = project ? project.split(",") : [];
   let stateKey = state ? state.split(",") : [];
+  let stateGroupKey = state_group ? state_group.split(",") : [];
   let priorityKey = priority ? priority.split(",") : [];
   let assigneesKey = assignees ? assignees.split(",") : [];
   let createdByKey = created_by ? created_by.split(",") : [];
@@ -31,12 +33,13 @@ const paramsToKey = (params: any) => {
   // sorting each keys in ascending order
   projectKey = projectKey.sort().join("_");
   stateKey = stateKey.sort().join("_");
+  stateGroupKey = stateGroupKey.sort().join("_");
   priorityKey = priorityKey.sort().join("_");
   assigneesKey = assigneesKey.sort().join("_");
   createdByKey = createdByKey.sort().join("_");
   labelsKey = labelsKey.sort().join("_");
 
-  return `${projectKey}_${stateKey}_${priorityKey}_${assigneesKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${startDateKey}_${targetDateKey}_${sub_issue}_${startTargetDate}`;
+  return `${projectKey}_${stateGroupKey}_${stateKey}_${priorityKey}_${assigneesKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${startDateKey}_${targetDateKey}_${sub_issue}_${startTargetDate}`;
 };
 
 const inboxParamsToKey = (params: any) => {
@@ -154,14 +157,14 @@ export const PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS = (projectId: string, params?
 
 export const WORKSPACE_VIEWS_LIST = (workspaceSlug: string) =>
   `WORKSPACE_VIEWS_LIST_${workspaceSlug.toUpperCase()}`;
-export const WORKSPACE_VIEW_DETAILS = (viewId: string) =>
-  `WORKSPACE_VIEW_DETAILS_${viewId.toUpperCase()}`;
-export const WORKSPACE_VIEW_ISSUES = (viewId: string, params: any) => {
-  if (!params) return `WORKSPACE_VIEW_ISSUES_${viewId.toUpperCase()}`;
+export const WORKSPACE_VIEW_DETAILS = (workspaceViewId: string) =>
+  `WORKSPACE_VIEW_DETAILS_${workspaceViewId.toUpperCase()}`;
+export const WORKSPACE_VIEW_ISSUES = (workspaceViewId: string, params: any) => {
+  if (!params) return `WORKSPACE_VIEW_ISSUES_${workspaceViewId.toUpperCase()}`;
 
   const paramsKey = paramsToKey(params);
 
-  return `WORKSPACE_VIEW_ISSUES_${viewId.toUpperCase()}_${paramsKey.toUpperCase()}`;
+  return `WORKSPACE_VIEW_ISSUES_${workspaceViewId.toUpperCase()}_${paramsKey.toUpperCase()}`;
 };
 
 export const PROJECT_ISSUES_DETAILS = (issueId: string) =>

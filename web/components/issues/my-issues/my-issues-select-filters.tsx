@@ -23,7 +23,7 @@ import { GROUP_CHOICES, PRIORITIES } from "constants/project";
 import { DATE_FILTER_OPTIONS } from "constants/filters";
 
 type Props = {
-  filters: Partial<IIssueFilterOptions> | IQuery;
+  filters: Partial<IIssueFilterOptions>;
   onSelect: (option: any) => void;
   direction?: "left" | "right";
   height?: "sm" | "md" | "rg" | "lg";

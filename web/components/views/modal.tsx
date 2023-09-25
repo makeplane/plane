@@ -15,6 +15,7 @@ import useToast from "hooks/use-toast";
 import { ViewForm } from "components/views";
 // types
 import { ICurrentUserResponse, IView } from "types";
+import { IWorkspaceView } from "types/workspace-view";
 // fetch-keys
 import { VIEWS_LIST, WORKSPACE_VIEWS_LIST } from "constants/fetch-keys";
 
@@ -22,7 +23,7 @@ type Props = {
   isOpen: boolean;
   viewType: "project" | "workspace";
   handleClose: () => void;
-  data?: IView | null;
+  data?: IView | IWorkspaceView | null;
   preLoadedData?: Partial<IView> | null;
   user: ICurrentUserResponse | undefined;
 };

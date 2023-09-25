@@ -21,6 +21,7 @@ type Props = {
   labels: IIssueLabels[] | undefined;
   members: IUserLite[] | undefined;
   states: IState[] | undefined;
+  stateGroup?: string[] | undefined;
 };
 
 export const FiltersList: React.FC<Props> = ({

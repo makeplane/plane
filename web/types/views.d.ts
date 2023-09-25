@@ -1,3 +1,5 @@
+import { IIssueFilterOptions } from "./view-props";
+
 export interface IView {
   id: string;
   access: string;
@@ -8,8 +10,8 @@ export interface IView {
   updated_by: string;
   name: string;
   description: string;
-  query: IQuery;
-  query_data: IQuery;
+  query: IIssueFilterOptions;
+  query_data: IIssueFilterOptions;
   project: string;
   workspace: string;
 }
