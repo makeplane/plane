@@ -15,9 +15,6 @@ export interface IProjectStore {
   loader: boolean;
   error: any | null;
 
-  projectLeaveModal: boolean;
-  projectLeaveDetails: IProject | any;
-
   projectId: string | null;
 
   projects: {
@@ -64,6 +61,9 @@ export interface IProjectStore {
 
   addProjectToFavorites: (workspaceSlug: string, projectSlug: string) => Promise<any>;
   removeProjectFromFavorites: (workspaceSlug: string, projectSlug: string) => Promise<any>;
+
+  orderProjectsWithSortOrder: (sourceIndex: number, destinationIndex: number, projectId: string) => number;
+  updateProjectView: (workspaceSlug: string, projectId: string, viewProps: any) => Promise<any>;
 
   handleProjectLeaveModal: (project: any | null) => void;
 
@@ -149,6 +149,9 @@ class ProjectStore implements IProjectStore {
 
       addProjectToFavorites: action,
       removeProjectFromFavorites: action,
+
+      orderProjectsWithSortOrder: action,
+      updateProjectView: action,
 
       handleProjectLeaveModal: action,
       leaveProject: action,
@@ -417,6 +420,56 @@ class ProjectStore implements IProjectStore {
       return response;
     } catch (error) {
       console.log("Failed to add project to favorite");
+      throw error;
+    }
+  };
+
+  orderProjectsWithSortOrder = (sortIndex: number, destinationIndex: number, projectId: string) => {
+    try {
+      const workspaceSlug = this.rootStore.workspace.workspaceSlug;
+      if (!workspaceSlug) return 0;
+
+      const projectsList = this.rootStore.workspace.projects[workspaceSlug] || [];
+      let updatedSortOrder = projectsList[sortIndex].sort_order;
+
+      if (destinationIndex === 0) updatedSortOrder = (projectsList[0].sort_order as number) - 1000;
+      else if (destinationIndex === projectsList.length - 1)
+        updatedSortOrder = (projectsList[projectsList.length - 1].sort_order as number) + 1000;
+      else {
+        const destinationSortingOrder = projectsList[destinationIndex].sort_order as number;
+        const relativeDestinationSortingOrder =
+          sortIndex < destinationIndex
+            ? (projectsList[destinationIndex + 1].sort_order as number)
+            : (projectsList[destinationIndex - 1].sort_order as number);
+
+        updatedSortOrder = (destinationSortingOrder + relativeDestinationSortingOrder) / 2;
+      }
+
+      const updatedProjectsList = projectsList.map((p) =>
+        p.id === projectId ? { ...p, sort_order: updatedSortOrder } : p
+      );
+
+      runInAction(() => {
+        this.rootStore.workspace.projects = {
+          ...this.rootStore.workspace.projects,
+          [workspaceSlug]: updatedProjectsList,
+        };
+      });
+
+      return updatedSortOrder;
+    } catch (error) {
+      console.log("failed to update sort order of the projects");
+      return 0;
+    }
+  };
+
+  updateProjectView = async (workspaceSlug: string, projectId: string, viewProps: any) => {
+    try {
+      const response = await this.projectService.setProjectView(workspaceSlug, projectId, viewProps);
+      await this.rootStore.workspace.getWorkspaceProjects(workspaceSlug);
+      return response;
+    } catch (error) {
+      console.log("Failed to update sort order of the projects");
       throw error;
     }
   };

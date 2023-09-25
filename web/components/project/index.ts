@@ -5,7 +5,7 @@ export * from "./settings-sidebar";
 export * from "./single-integration-card";
 export * from "./single-project-card";
 export * from "./sidebar-list-item";
-export * from "./confirm-project-leave-modal";
+export * from "./leave-project-modal";
 export * from "./member-select";
 export * from "./members-select";
 export * from "./label-select";
