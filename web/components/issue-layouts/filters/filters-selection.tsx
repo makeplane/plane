@@ -89,7 +89,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="w-full h-full flex flex-col overflow-hidden">
       <div className="p-2.5 bg-custom-background-100 sticky top-0 z-[1]">
         <div className="bg-custom-background-90 border-[0.5px] border-custom-border-200 text-xs rounded flex items-center gap-1.5 px-1.5 py-1">
           <Search className="text-custom-text-400" size={12} strokeWidth={2} />
@@ -112,7 +112,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
           )}
         </div>
       </div>
-      <div className="w-full h-full divide-y divide-custom-border-20 px-2.5">
+      <div className="w-full h-full divide-y divide-custom-border-20 px-2.5 overflow-y-auto">
         {/* priority */}
         <div className="py-2">
           <FilterPriority
