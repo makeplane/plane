@@ -74,8 +74,24 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit }) => {
   return (
     <form className="w-full flex gap-x-2" onSubmit={handleSubmit(handleAddComment)}>
       <div className="relative flex-grow">
+        <Controller
+          name="comment_html"
+          control={control}
+          render={({ field: { value, onChange } }) => (
+            <TiptapEditorWithRef
+              uploadFile={fileService.uploadFile}
+              deleteFile={fileService.deleteImage}
+              workspaceSlug={workspaceSlug as string}
+              ref={editorRef}
+              value={!value || value === "" ? "<p></p>" : value}
+              customClassName="p-3 min-h-[100px] shadow-sm"
+              debouncedUpdatesEnabled={false}
+              onChange={(comment_json: Object, comment_html: string) => onChange(comment_html)}
+            />
+          )}
+        />
         {showAccessSpecifier && (
-          <div className="absolute bottom-2 left-3 z-[1]">
+          <div className="relative bottom-2 left-3 z-[1]">
             <Controller
               control={control}
               name="access"
@@ -102,22 +118,6 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit }) => {
             />
           </div>
         )}
-        <Controller
-          name="comment_html"
-          control={control}
-          render={({ field: { value, onChange } }) => (
-            <TiptapEditorWithRef
-              uploadFile={fileService.uploadFile}
-              deleteFile={fileService.deleteImage}
-              workspaceSlug={workspaceSlug as string}
-              ref={editorRef}
-              value={!value || value === "" ? "<p></p>" : value}
-              customClassName="p-3 min-h-[100px] shadow-sm"
-              debouncedUpdatesEnabled={false}
-              onChange={(comment_json: Object, comment_html: string) => onChange(comment_html)}
-            />
-          )}
-        />
       </div>
 
       <div className="inline">

@@ -11,6 +11,7 @@ import { TiptapEditorProps } from '@/ui/editor/props';
 import { UploadImage } from '@/types/upload-image';
 import { DeleteImage } from '@/types/delete-image';
 import { cn } from '@/lib/utils';
+import { FixedMenu } from './menus/fixed-menu';
 
 interface ITiptapEditor {
   value: string;
@@ -109,11 +110,17 @@ const TiptapEditor = ({
       }}
       className={`tiptap-editor-container cursor-text ${editorClassNames}`}
     >
-      {editor && <EditorBubbleMenu editor={editor} />}
-      <div className={`${editorContentCustomClassNames}`}>
-        <EditorContent editor={editor} />
-        <TableMenu editor={editor} />
-        {editor?.isActive("image") && <ImageResizer editor={editor} />}
+      <div className="flex flex-col">
+        <div className={`${editorContentCustomClassNames}`}>
+          <EditorContent editor={editor} />
+          <TableMenu editor={editor} />
+          {editor?.isActive("image") && <ImageResizer editor={editor} />}
+        </div>
+        {editor && editable !== false &&
+          (<div className="w-full mt-4 mb-6">
+            <FixedMenu editor={editor} />
+          </div>)
+        }
       </div>
     </div>
   );

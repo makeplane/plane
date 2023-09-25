@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@blueprintjs/popover2": "^2.0.10",
+    "@radix-ui/react-slot": "^1.0.2",
     "@tiptap/core": "^2.1.7",
     "@tiptap/extension-code-block-lowlight": "^2.0.4",
     "@tiptap/extension-color": "^2.1.11",
@@ -48,6 +49,7 @@
     "@types/node": "18.15.3",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
+    "class-variance-authority": "^0.7.0",
     "clsx": "^1.2.1",
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
