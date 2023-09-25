@@ -30,5 +30,5 @@ export interface IQuery {
   start_date: string[] | null;
   target_date: string[] | null;
   type: "active" | "backlog" | null;
-  projects: string[] | null;
+  project: string[] | null;
 }

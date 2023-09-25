@@ -39,7 +39,7 @@ export interface IIssueFilterOptions {
   subscriber?: string[] | null;
   target_date?: string[] | null;
   estimate_point?: string[] | null;
-  projects?: string[] | null;
+  project?: string[] | null;
 }
 
 export interface IIssueDisplayFilterOptions {
