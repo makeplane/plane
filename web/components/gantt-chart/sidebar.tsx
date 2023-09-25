@@ -155,31 +155,32 @@ export const GanttSidebar: React.FC<Props> = (props) => {
               )}
               {droppableProvided.placeholder}
             </>
-
-            <GanttInlineCreateIssueForm
-              isOpen={isCreateIssueFormOpen}
-              handleClose={() => setIsCreateIssueFormOpen(false)}
-              prePopulatedData={{
-                start_date: new Date(Date.now()).toISOString().split("T")[0],
-                target_date: new Date(Date.now() + 86400000).toISOString().split("T")[0],
-                ...(cycleId && { cycle: cycleId.toString() }),
-                ...(moduleId && { module: moduleId.toString() }),
-              }}
-            />
-
-            {!isCreateIssueFormOpen && (
-              <button
-                type="button"
-                onClick={() => setIsCreateIssueFormOpen(true)}
-                className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-1 rounded-md mt-3"
-              >
-                <PlusIcon className="h-4 w-4" />
-                <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
-              </button>
-            )}
           </div>
         )}
       </StrictModeDroppable>
+      <div className="pl-2.5">
+        <GanttInlineCreateIssueForm
+          isOpen={isCreateIssueFormOpen}
+          handleClose={() => setIsCreateIssueFormOpen(false)}
+          prePopulatedData={{
+            start_date: new Date(Date.now()).toISOString().split("T")[0],
+            target_date: new Date(Date.now() + 86400000).toISOString().split("T")[0],
+            ...(cycleId && { cycle: cycleId.toString() }),
+            ...(moduleId && { module: moduleId.toString() }),
+          }}
+        />
+
+        {!isCreateIssueFormOpen && (
+          <button
+            type="button"
+            onClick={() => setIsCreateIssueFormOpen(true)}
+            className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-1 rounded-md mt-3"
+          >
+            <PlusIcon className="h-4 w-4" />
+            <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
+          </button>
+        )}
+      </div>
     </DragDropContext>
   );
 };

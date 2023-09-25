@@ -155,15 +155,6 @@ export const InlineCreateIssueFormWrapper: React.FC<Props> = (props) => {
   }, [isOpen, reset]);
 
   useEffect(() => {
-    if (isSubmitting)
-      setToastAlert({
-        type: "info",
-        title: "Creating issue...",
-        message: "Please wait while we create your issue.",
-      });
-  }, [isSubmitting, setToastAlert]);
-
-  useEffect(() => {
     if (!errors) return;
 
     Object.keys(errors).forEach((key) => {
