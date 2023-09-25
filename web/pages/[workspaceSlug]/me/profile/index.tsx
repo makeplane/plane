@@ -253,6 +253,7 @@ const Profile: NextPage = () => {
                     placeholder="Enter your first name"
                     className="!px-3 !py-2 rounded-md font-medium"
                     autoComplete="off"
+                    maxLength={24}
                   />
                 </div>
 
@@ -266,6 +267,7 @@ const Profile: NextPage = () => {
                     placeholder="Enter your last name"
                     autoComplete="off"
                     className="!px-3 !py-2 rounded-md font-medium"
+                    maxLength={24}
                   />
                 </div>
 
