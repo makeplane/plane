@@ -62,6 +62,7 @@ export const SingleList: React.FC<Props> = (props) => {
     openIssuesListModal,
     handleDraftIssueAction,
     handleMyIssueOpen,
+    addIssueToGroup,
     removeIssue,
     disableUserActions,
     disableAddIssueOption = false,
@@ -74,6 +75,10 @@ export const SingleList: React.FC<Props> = (props) => {
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
   const [isCreateIssueFormOpen, setIsCreateIssueFormOpen] = useState(false);
+
+  const isMyIssuesPage = router.pathname.split("/")[3] === "my-issues";
+  const isProfileIssuesPage = router.pathname.split("/")[2] === "profile";
+  const isDraftIssuesPage = router.pathname.split("/")[4] === "draft-issues";
 
   const isArchivedIssues = router.pathname.includes("archived-issues");
 
@@ -295,7 +300,7 @@ export const SingleList: React.FC<Props> = (props) => {
               )}
 
               <ListInlineCreateIssueForm
-                isOpen={isCreateIssueFormOpen}
+                isOpen={isCreateIssueFormOpen && !disableAddIssueOption}
                 handleClose={() => setIsCreateIssueFormOpen(false)}
                 prePopulatedData={{
                   ...(cycleId && { cycle: cycleId.toString() }),
@@ -304,11 +309,15 @@ export const SingleList: React.FC<Props> = (props) => {
                 }}
               />
 
-              {!isCreateIssueFormOpen && (
+              {!disableAddIssueOption && !isCreateIssueFormOpen && (
                 <div className="w-full bg-custom-background-100 px-6 py-3">
                   <button
                     type="button"
-                    onClick={() => setIsCreateIssueFormOpen(true)}
+                    onClick={() => {
+                      if (isDraftIssuesPage || isMyIssuesPage || isProfileIssuesPage) {
+                        addIssueToGroup();
+                      } else setIsCreateIssueFormOpen(true);
+                    }}
                     className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-1 rounded-md"
                   >
                     <PlusIcon className="h-4 w-4" />
