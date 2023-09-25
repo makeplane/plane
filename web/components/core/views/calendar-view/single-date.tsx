@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 
+// next
+import { useRouter } from "next/router";
+
 // react-beautiful-dnd
 import { Draggable } from "react-beautiful-dnd";
 // component
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { SingleCalendarIssue } from "./single-issue";
+import { CalendarInlineCreateIssueForm } from "./inline-create-issue-form";
 // icons
 import { PlusSmallIcon } from "@heroicons/react/24/outline";
 // helper
@@ -26,17 +30,14 @@ type Props = {
   isNotAllowed: boolean;
 };
 
-export const SingleCalendarDate: React.FC<Props> = ({
-  handleIssueAction,
-  date,
-  index,
-  addIssueToDate,
-  isMonthlyView,
-  showWeekEnds,
-  user,
-  isNotAllowed,
-}) => {
+export const SingleCalendarDate: React.FC<Props> = (props) => {
+  const { handleIssueAction, date, index, isMonthlyView, showWeekEnds, user, isNotAllowed } = props;
+
+  const router = useRouter();
+  const { cycleId, moduleId } = router.query;
+
   const [showAllIssues, setShowAllIssues] = useState(false);
+  const [isCreateIssueFormOpen, setIsCreateIssueFormOpen] = useState(false);
 
   const totalIssues = date.issues.length;
 
@@ -70,6 +71,7 @@ export const SingleCalendarDate: React.FC<Props> = ({
                     provided={provided}
                     snapshot={snapshot}
                     issue={issue}
+                    projectId={issue.project_detail.id}
                     handleEditIssue={() => handleIssueAction(issue, "edit")}
                     handleDeleteIssue={() => handleIssueAction(issue, "delete")}
                     user={user}
@@ -78,6 +80,17 @@ export const SingleCalendarDate: React.FC<Props> = ({
                 )}
               </Draggable>
             ))}
+
+          <CalendarInlineCreateIssueForm
+            isOpen={isCreateIssueFormOpen}
+            handleClose={() => setIsCreateIssueFormOpen(false)}
+            prePopulatedData={{
+              target_date: date.date,
+              ...(cycleId && { cycle: cycleId.toString() }),
+              ...(moduleId && { module: moduleId.toString() }),
+            }}
+          />
+
           {totalIssues > 4 && (
             <button
               type="button"
@@ -93,7 +106,7 @@ export const SingleCalendarDate: React.FC<Props> = ({
           >
             <button
               className="flex items-center justify-center gap-1 text-center"
-              onClick={() => addIssueToDate(date.date)}
+              onClick={() => setIsCreateIssueFormOpen(true)}
             >
               <PlusSmallIcon className="h-4 w-4 text-custom-text-200" />
               Add issue

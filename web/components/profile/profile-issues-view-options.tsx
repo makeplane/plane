@@ -81,7 +81,7 @@ export const ProfileIssuesViewOptions: React.FC = () => {
           <Tooltip
             key={option.type}
             tooltipContent={
-              <span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} View</span>
+              <span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} Layout</span>
             }
             position="bottom"
           >

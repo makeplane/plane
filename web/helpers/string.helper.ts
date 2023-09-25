@@ -1,3 +1,10 @@
+import {
+  CYCLE_ISSUES_WITH_PARAMS,
+  MODULE_ISSUES_WITH_PARAMS,
+  PROJECT_ISSUES_LIST_WITH_PARAMS,
+  VIEW_ISSUES,
+} from "constants/fetch-keys";
+
 export const addSpaceIfCamelCase = (str: string) => str.replace(/([a-z])([A-Z])/g, "$1 $2");
 
 export const replaceUnderscoreIfSnakeCase = (str: string) => str.replace(/_/g, " ");
@@ -121,4 +128,66 @@ export const objToQueryParams = (obj: any) => {
   }
 
   return params.toString();
+};
+
+export const getFetchKeysForIssueMutation = (options: {
+  cycleId?: string | string[];
+  moduleId?: string | string[];
+  viewId?: string | string[];
+  projectId: string;
+  calendarParams: any;
+  spreadsheetParams: any;
+  viewGanttParams: any;
+  ganttParams: any;
+}) => {
+  const {
+    cycleId,
+    moduleId,
+    viewId,
+    projectId,
+    calendarParams,
+    spreadsheetParams,
+    viewGanttParams,
+    ganttParams,
+  } = options;
+
+  const calendarFetchKey = cycleId
+    ? { calendarFetchKey: CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), calendarParams) }
+    : moduleId
+    ? { calendarFetchKey: MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), calendarParams) }
+    : viewId
+    ? { calendarFetchKey: VIEW_ISSUES(viewId.toString(), calendarParams) }
+    : {
+        calendarFetchKey: PROJECT_ISSUES_LIST_WITH_PARAMS(
+          projectId?.toString() ?? "",
+          calendarParams
+        ),
+      };
+
+  const spreadsheetFetchKey = cycleId
+    ? { spreadsheetFetchKey: CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), spreadsheetParams) }
+    : moduleId
+    ? { spreadsheetFetchKey: MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), spreadsheetParams) }
+    : viewId
+    ? { spreadsheetFetchKey: VIEW_ISSUES(viewId.toString(), spreadsheetParams) }
+    : {
+        spreadsheetFetchKey: PROJECT_ISSUES_LIST_WITH_PARAMS(
+          projectId?.toString() ?? "",
+          spreadsheetParams
+        ),
+      };
+
+  const ganttFetchKey = cycleId
+    ? { ganttFetchKey: CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), ganttParams) }
+    : moduleId
+    ? { ganttFetchKey: MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), ganttParams) }
+    : viewId
+    ? { ganttFetchKey: VIEW_ISSUES(viewId.toString(), viewGanttParams) }
+    : { ganttFetchKey: PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", ganttParams) };
+
+  return {
+    ...calendarFetchKey,
+    ...spreadsheetFetchKey,
+    ...ganttFetchKey,
+  };
 };

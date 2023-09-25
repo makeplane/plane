@@ -1,3 +1,6 @@
+import { useState } from "react";
+// next
+import { useRouter } from "next/router";
 // react-beautiful-dnd
 import { DragDropContext, Draggable, DropResult } from "react-beautiful-dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
@@ -7,6 +10,9 @@ import { useChart } from "./hooks";
 import { Loader } from "components/ui";
 // icons
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
+import { PlusIcon } from "lucide-react";
+// components
+import { GanttInlineCreateIssueForm } from "components/core/views/gantt-chart-view/inline-create-issue-form";
 // types
 import { IBlockUpdateData, IGanttBlock } from "./types";
 
@@ -18,14 +24,15 @@ type Props = {
   enableReorder: boolean;
 };
 
-export const GanttSidebar: React.FC<Props> = ({
-  title,
-  blockUpdateHandler,
-  blocks,
-  SidebarBlockRender,
-  enableReorder,
-}) => {
+export const GanttSidebar: React.FC<Props> = (props) => {
+  const { title, blockUpdateHandler, blocks, SidebarBlockRender, enableReorder } = props;
+
+  const router = useRouter();
+  const { cycleId, moduleId } = router.query;
+
   const { activeBlock, dispatch } = useChart();
+
+  const [isCreateIssueFormOpen, setIsCreateIssueFormOpen] = useState(false);
 
   // update the active block on hover
   const updateActiveBlock = (block: IGanttBlock | null) => {
@@ -148,6 +155,28 @@ export const GanttSidebar: React.FC<Props> = ({
               )}
               {droppableProvided.placeholder}
             </>
+
+            <GanttInlineCreateIssueForm
+              isOpen={isCreateIssueFormOpen}
+              handleClose={() => setIsCreateIssueFormOpen(false)}
+              prePopulatedData={{
+                start_date: new Date(Date.now()).toISOString().split("T")[0],
+                target_date: new Date(Date.now() + 86400000).toISOString().split("T")[0],
+                ...(cycleId && { cycle: cycleId.toString() }),
+                ...(moduleId && { module: moduleId.toString() }),
+              }}
+            />
+
+            {!isCreateIssueFormOpen && (
+              <button
+                type="button"
+                onClick={() => setIsCreateIssueFormOpen(true)}
+                className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-1 rounded-md mt-3"
+              >
+                <PlusIcon className="h-4 w-4" />
+                <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
+              </button>
+            )}
           </div>
         )}
       </StrictModeDroppable>

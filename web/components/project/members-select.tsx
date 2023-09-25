@@ -18,6 +18,7 @@ import { IUser } from "types";
 
 type Props = {
   value: string | string[];
+  projectId: string;
   onChange: (data: any) => void;
   membersDetails: IUser[];
   renderWorkspaceMembers?: boolean;
@@ -30,6 +31,7 @@ type Props = {
 
 export const MembersSelect: React.FC<Props> = ({
   value,
+  projectId,
   onChange,
   membersDetails,
   renderWorkspaceMembers = false,
@@ -44,14 +46,14 @@ export const MembersSelect: React.FC<Props> = ({
   const [fetchStates, setFetchStates] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
   const dropdownBtn = useRef<any>(null);
   const dropdownOptions = useRef<any>(null);
 
   const { members } = useProjectMembers(
     workspaceSlug?.toString(),
-    projectId?.toString(),
+    projectId,
     fetchStates && !renderWorkspaceMembers
   );
 
@@ -82,7 +84,7 @@ export const MembersSelect: React.FC<Props> = ({
     <Tooltip
       tooltipHeading="Assignee"
       tooltipContent={
-        membersDetails.length > 0
+        membersDetails && membersDetails.length > 0
           ? membersDetails.map((assignee) => assignee?.display_name).join(", ")
           : "No Assignee"
       }
