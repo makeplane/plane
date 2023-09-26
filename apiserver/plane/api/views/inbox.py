@@ -173,12 +173,12 @@ class InboxIssueViewSet(BaseViewSet):
                 )
 
             # Check for valid priority
-            if not request.data.get("issue", {}).get("priority", None) in [
+            if not request.data.get("issue", {}).get("priority", "none") in [
                 "low",
                 "medium",
                 "high",
                 "urgent",
-                None,
+                "none",
             ]:
                 return Response(
                     {"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST
@@ -213,6 +213,7 @@ class InboxIssueViewSet(BaseViewSet):
                 issue_id=str(issue.id),
                 project_id=str(project_id),
                 current_instance=None,
+                epoch=int(timezone.now().timestamp())
             )
             # create an inbox issue
             InboxIssue.objects.create(
@@ -277,6 +278,7 @@ class InboxIssueViewSet(BaseViewSet):
                                 IssueSerializer(current_instance).data,
                                 cls=DjangoJSONEncoder,
                             ),
+                            epoch=int(timezone.now().timestamp())
                         )
                     issue_serializer.save()
                 else:
@@ -478,12 +480,12 @@ class InboxIssuePublicViewSet(BaseViewSet):
                 )
 
             # Check for valid priority
-            if not request.data.get("issue", {}).get("priority", None) in [
+            if not request.data.get("issue", {}).get("priority", "none") in [
                 "low",
                 "medium",
                 "high",
                 "urgent",
-                None,
+                "none",
             ]:
                 return Response(
                     {"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST
@@ -518,6 +520,7 @@ class InboxIssuePublicViewSet(BaseViewSet):
                 issue_id=str(issue.id),
                 project_id=str(project_id),
                 current_instance=None,
+                epoch=int(timezone.now().timestamp())
             )
             # create an inbox issue
             InboxIssue.objects.create(
@@ -582,6 +585,7 @@ class InboxIssuePublicViewSet(BaseViewSet):
                             IssueSerializer(current_instance).data,
                             cls=DjangoJSONEncoder,
                         ),
+                        epoch=int(timezone.now().timestamp())
                     )
                 issue_serializer.save()
                 return Response(issue_serializer.data, status=status.HTTP_200_OK)

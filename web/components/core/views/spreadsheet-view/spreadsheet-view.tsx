@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 
 // components
-import { SpreadsheetColumns, SpreadsheetIssues } from "components/core";
+import { SpreadsheetColumns, SpreadsheetIssues, ListInlineCreateIssueForm } from "components/core";
 import { CustomMenu, Spinner } from "components/ui";
 import { IssuePeekOverview } from "components/issues";
 // hooks
@@ -33,6 +33,7 @@ export const SpreadsheetView: React.FC<Props> = ({
   userAuth,
 }) => {
   const [expandedIssues, setExpandedIssues] = useState<string[]>([]);
+  const [isInlineCreateIssueFormOpen, setIsInlineCreateIssueFormOpen] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
@@ -72,7 +73,7 @@ export const SpreadsheetView: React.FC<Props> = ({
           <SpreadsheetColumns columnData={columnData} gridTemplateColumns={gridTemplateColumns} />
         </div>
         {spreadsheetIssues ? (
-          <div className="flex flex-col h-full w-full bg-custom-background-100 rounded-sm ">
+          <div className="flex flex-col h-full w-full bg-custom-background-100 rounded-sm">
             {spreadsheetIssues.map((issue: IIssue, index) => (
               <SpreadsheetIssues
                 key={`${issue.id}_${index}`}
@@ -88,54 +89,56 @@ export const SpreadsheetView: React.FC<Props> = ({
                 userAuth={userAuth}
               />
             ))}
-            <div
-              className="relative group grid auto-rows-[minmax(44px,1fr)] hover:rounded-sm hover:bg-custom-background-80 border-b border-custom-border-200 w-full min-w-max"
-              style={{ gridTemplateColumns }}
-            >
-              {type === "issue" ? (
-                <button
-                  className="flex gap-1.5 items-center  pl-7 py-2.5 text-sm sticky left-0 z-[1] text-custom-text-200 bg-custom-background-100 group-hover:text-custom-text-100 group-hover:bg-custom-background-80 border-custom-border-200 w-full"
-                  onClick={() => {
-                    const e = new KeyboardEvent("keydown", { key: "c" });
-                    document.dispatchEvent(e);
-                  }}
-                >
-                  <PlusIcon className="h-4 w-4" />
-                  Add Issue
-                </button>
-              ) : (
-                !disableUserActions && (
-                  <CustomMenu
-                    className="sticky left-0 z-[1]"
-                    customButton={
-                      <button
-                        className="flex gap-1.5 items-center  pl-7 py-2.5 text-sm sticky left-0 z-[1] text-custom-text-200 bg-custom-background-100 group-hover:text-custom-text-100 group-hover:bg-custom-background-80 border-custom-border-200 w-full"
-                        type="button"
-                      >
-                        <PlusIcon className="h-4 w-4" />
-                        Add Issue
-                      </button>
-                    }
-                    position="left"
-                    optionsClassName="left-5 !w-36"
-                    noBorder
-                  >
-                    <CustomMenu.MenuItem
-                      onClick={() => {
-                        const e = new KeyboardEvent("keydown", { key: "c" });
-                        document.dispatchEvent(e);
-                      }}
+
+            <div className="absolute bottom-0 left-0 z-10 group pb-2 hover:rounded-sm bg-custom-background-100 hover:bg-custom-background-80 border-b border-custom-border-200 w-full min-w-max">
+              <ListInlineCreateIssueForm
+                isOpen={isInlineCreateIssueFormOpen}
+                handleClose={() => setIsInlineCreateIssueFormOpen(false)}
+                prePopulatedData={{
+                  ...(cycleId && { cycle: cycleId.toString() }),
+                  ...(moduleId && { module: moduleId.toString() }),
+                }}
+              />
+
+              {type === "issue"
+                ? !disableUserActions &&
+                  !isInlineCreateIssueFormOpen && (
+                    <button
+                      className="flex gap-1.5 items-center  pl-7 py-2.5 text-sm sticky left-0 z-[1] text-custom-text-200 border-custom-border-200 w-full"
+                      onClick={() => setIsInlineCreateIssueFormOpen(true)}
                     >
-                      Create new
-                    </CustomMenu.MenuItem>
-                    {openIssuesListModal && (
-                      <CustomMenu.MenuItem onClick={openIssuesListModal}>
-                        Add an existing issue
+                      <PlusIcon className="h-4 w-4" />
+                      Add Issue
+                    </button>
+                  )
+                : !disableUserActions &&
+                  !isInlineCreateIssueFormOpen && (
+                    <CustomMenu
+                      className="sticky left-0 z-[1]"
+                      customButton={
+                        <button
+                          className="flex gap-1.5 items-center  pl-7 py-2.5 text-sm sticky left-0 z-[1] text-custom-text-200 border-custom-border-200 w-full"
+                          type="button"
+                        >
+                          <PlusIcon className="h-4 w-4" />
+                          Add Issue
+                        </button>
+                      }
+                      position="left"
+                      verticalPosition="top"
+                      optionsClassName="left-5 !w-36"
+                      noBorder
+                    >
+                      <CustomMenu.MenuItem onClick={() => setIsInlineCreateIssueFormOpen(true)}>
+                        Create new
                       </CustomMenu.MenuItem>
-                    )}
-                  </CustomMenu>
-                )
-              )}
+                      {openIssuesListModal && (
+                        <CustomMenu.MenuItem onClick={openIssuesListModal}>
+                          Add an existing issue
+                        </CustomMenu.MenuItem>
+                      )}
+                    </CustomMenu>
+                  )}
             </div>
           </div>
         ) : (

@@ -16,3 +16,7 @@ export const debounce = (func: any, wait: number, immediate: boolean = false) =>
     if (callNow) func(...args);
   };
 };
+
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
+  ? process.env.NEXT_PUBLIC_API_BASE_URL
+  : "";

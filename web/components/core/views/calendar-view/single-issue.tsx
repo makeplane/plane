@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
 
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { mutate } from "swr";
@@ -9,28 +8,23 @@ import { mutate } from "swr";
 import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
 // services
 import issuesService from "services/issues.service";
+import trackEventServices from "services/track-event.service";
 // hooks
 import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useIssuesProperties from "hooks/use-issue-properties";
 import useToast from "hooks/use-toast";
 // components
 import { CustomMenu, Tooltip } from "components/ui";
-import {
-  ViewAssigneeSelect,
-  ViewDueDateSelect,
-  ViewEstimateSelect,
-  ViewLabelSelect,
-  ViewPrioritySelect,
-  ViewStartDateSelect,
-  ViewStateSelect,
-} from "components/issues";
+import { ViewDueDateSelect, ViewEstimateSelect, ViewStartDateSelect } from "components/issues";
+import { LabelSelect, MembersSelect, PrioritySelect } from "components/project";
+import { StateSelect } from "components/states";
 // icons
 import { LinkIcon, PaperClipIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { LayerDiagonalIcon } from "components/icons";
 // helper
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // type
-import { ICurrentUserResponse, IIssue, ISubIssueResponse } from "types";
+import { ICurrentUserResponse, IIssue, IState, ISubIssueResponse, TIssuePriorities } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES_WITH_PARAMS,
@@ -47,6 +41,7 @@ type Props = {
   provided: DraggableProvided;
   snapshot: DraggableStateSnapshot;
   issue: IIssue;
+  projectId: string;
   user: ICurrentUserResponse | undefined;
   isNotAllowed: boolean;
 };
@@ -58,11 +53,12 @@ export const SingleCalendarIssue: React.FC<Props> = ({
   provided,
   snapshot,
   issue,
+  projectId,
   user,
   isNotAllowed,
 }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+  const { workspaceSlug, cycleId, moduleId, viewId } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -154,9 +150,98 @@ export const SingleCalendarIssue: React.FC<Props> = ({
     });
   };
 
+  const handleStateChange = (data: string, states: IState[] | undefined) => {
+    const oldState = states?.find((s) => s.id === issue.state);
+    const newState = states?.find((s) => s.id === data);
+
+    partialUpdateIssue(
+      {
+        state: data,
+        state_detail: newState,
+      },
+      issue
+    );
+    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+      {
+        workspaceSlug,
+        workspaceId: issue.workspace,
+        projectId: issue.project_detail.id,
+        projectIdentifier: issue.project_detail.identifier,
+        projectName: issue.project_detail.name,
+        issueId: issue.id,
+      },
+      "ISSUE_PROPERTY_UPDATE_STATE",
+      user
+    );
+    if (oldState?.group !== "completed" && newState?.group !== "completed") {
+      trackEventServices.trackIssueMarkedAsDoneEvent(
+        {
+          workspaceSlug: issue.workspace_detail.slug,
+          workspaceId: issue.workspace_detail.id,
+          projectId: issue.project_detail.id,
+          projectIdentifier: issue.project_detail.identifier,
+          projectName: issue.project_detail.name,
+          issueId: issue.id,
+        },
+        user
+      );
+    }
+  };
+
+  const handleAssigneeChange = (data: any) => {
+    const newData = issue.assignees ?? [];
+
+    if (newData.includes(data)) newData.splice(newData.indexOf(data), 1);
+    else newData.push(data);
+
+    partialUpdateIssue({ assignees_list: data }, issue);
+
+    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+      {
+        workspaceSlug,
+        workspaceId: issue.workspace,
+        projectId: issue.project_detail.id,
+        projectIdentifier: issue.project_detail.identifier,
+        projectName: issue.project_detail.name,
+        issueId: issue.id,
+      },
+      "ISSUE_PROPERTY_UPDATE_ASSIGNEE",
+      user
+    );
+  };
+
+  const handleLabelChange = (data: any) => {
+    partialUpdateIssue({ labels_list: data }, issue);
+  };
+
+  const handlePriorityChange = (data: TIssuePriorities) => {
+    partialUpdateIssue({ priority: data }, issue);
+    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+      {
+        workspaceSlug,
+        workspaceId: issue.workspace,
+        projectId: issue.project_detail.id,
+        projectIdentifier: issue.project_detail.identifier,
+        projectName: issue.project_detail.name,
+        issueId: issue.id,
+      },
+      "ISSUE_PROPERTY_UPDATE_PRIORITY",
+      user
+    );
+  };
+
   const displayProperties = properties
     ? Object.values(properties).some((value) => value === true)
     : false;
+
+  const openPeekOverview = () => {
+    const { query } = router;
+
+    router.push({
+      pathname: router.pathname,
+      query: { ...query, peekIssue: issue.id },
+    });
+  };
 
   return (
     <div
@@ -193,42 +278,44 @@ export const SingleCalendarIssue: React.FC<Props> = ({
             </CustomMenu>
           </div>
         )}
-        <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
-          <a className="flex w-full cursor-pointer flex-col items-start justify-center gap-1.5">
-            {properties.key && (
-              <Tooltip
-                tooltipHeading="Issue ID"
-                tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
-              >
-                <span className="flex-shrink-0 text-xs text-custom-text-200">
-                  {issue.project_detail?.identifier}-{issue.sequence_id}
-                </span>
-              </Tooltip>
-            )}
-            <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
-              <span className="text-xs text-custom-text-100">{truncateText(issue.name, 25)}</span>
+
+        <button
+          type="button"
+          className="flex w-full cursor-pointer flex-col items-start justify-center gap-1.5"
+          onClick={openPeekOverview}
+        >
+          {properties.key && (
+            <Tooltip
+              tooltipHeading="Issue ID"
+              tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
+            >
+              <span className="flex-shrink-0 text-xs text-custom-text-200">
+                {issue.project_detail?.identifier}-{issue.sequence_id}
+              </span>
             </Tooltip>
-          </a>
-        </Link>
+          )}
+          <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
+            <span className="text-xs text-custom-text-100">{truncateText(issue.name, 25)}</span>
+          </Tooltip>
+        </button>
+
         {displayProperties && (
           <div className="relative mt-1.5 w-full flex flex-wrap items-center gap-2 text-xs">
             {properties.priority && (
-              <ViewPrioritySelect
-                issue={issue}
-                partialUpdateIssue={partialUpdateIssue}
-                position="left"
-                user={user}
-                isNotAllowed={isNotAllowed}
+              <PrioritySelect
+                value={issue.priority}
+                onChange={handlePriorityChange}
+                hideDropdownArrow
+                disabled={isNotAllowed}
               />
             )}
             {properties.state && (
-              <ViewStateSelect
-                issue={issue}
-                partialUpdateIssue={partialUpdateIssue}
-                position="left"
-                className="max-w-full"
-                isNotAllowed={isNotAllowed}
-                user={user}
+              <StateSelect
+                value={issue.state_detail}
+                projectId={projectId}
+                onChange={handleStateChange}
+                hideDropdownArrow
+                disabled={isNotAllowed}
               />
             )}
             {properties.start_date && issue.start_date && (
@@ -248,21 +335,25 @@ export const SingleCalendarIssue: React.FC<Props> = ({
               />
             )}
             {properties.labels && issue.labels.length > 0 && (
-              <ViewLabelSelect
-                issue={issue}
-                partialUpdateIssue={partialUpdateIssue}
-                position="left"
+              <LabelSelect
+                value={issue.labels}
+                projectId={projectId}
+                onChange={handleLabelChange}
+                labelsDetails={issue.label_details}
+                hideDropdownArrow
+                maxRender={1}
                 user={user}
-                isNotAllowed={isNotAllowed}
+                disabled={isNotAllowed}
               />
             )}
             {properties.assignee && (
-              <ViewAssigneeSelect
-                issue={issue}
-                partialUpdateIssue={partialUpdateIssue}
-                position="left"
-                user={user}
-                isNotAllowed={isNotAllowed}
+              <MembersSelect
+                value={issue.assignees}
+                projectId={projectId}
+                onChange={handleAssigneeChange}
+                membersDetails={issue.assignee_details}
+                hideDropdownArrow
+                disabled={isNotAllowed}
               />
             )}
             {properties.estimate && issue.estimate_point !== null && (

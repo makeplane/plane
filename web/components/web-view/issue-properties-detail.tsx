@@ -4,8 +4,20 @@ import React, { useState } from "react";
 // next
 import { useRouter } from "next/router";
 
+// swr
+import { mutate } from "swr";
+
 // react hook forms
 import { Control, Controller, useWatch } from "react-hook-form";
+
+// services
+import issuesService from "services/issues.service";
+
+// hooks
+import useUser from "hooks/use-user";
+
+// fetch keys
+import { ISSUE_DETAILS } from "constants/fetch-keys";
 
 // icons
 import { BlockedIcon, BlockerIcon } from "components/icons";
@@ -26,6 +38,7 @@ import {
   EstimateSelect,
   ParentSelect,
   BlockerSelect,
+  BlockedSelect,
 } from "components/web-view";
 
 // types
@@ -39,15 +52,16 @@ type Props = {
 export const IssuePropertiesDetail: React.FC<Props> = (props) => {
   const { control, submitChanges } = props;
 
-  const blockerIssue = useWatch({
-    control,
-    name: "blocker_issues",
-  });
+  const blockerIssue =
+    useWatch({
+      control,
+      name: "issue_relations",
+    })?.filter((i) => i.relation_type === "blocked_by") || [];
 
   const blockedIssue = useWatch({
     control,
-    name: "blocked_issues",
-  });
+    name: "related_issues",
+  })?.filter((i) => i.relation_type === "blocked_by");
 
   const startDate = useWatch({
     control,
@@ -55,11 +69,27 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
   });
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId, issueId } = router.query;
+
+  const { user } = useUser();
 
   const [isViewAllOpen, setIsViewAllOpen] = useState(false);
 
   const { isEstimateActive } = useEstimateOption();
+
+  const handleMutation = (data: any) => {
+    mutate<IIssue>(
+      ISSUE_DETAILS(issueId as string),
+      (prevData) => {
+        if (!prevData) return prevData;
+        return {
+          ...prevData,
+          ...data,
+        };
+      },
+      false
+    );
+  };
 
   return (
     <div>
@@ -188,51 +218,80 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                   <span className="text-sm text-custom-text-400">Blocking</span>
                 </div>
                 <div>
-                  <Controller
-                    control={control}
-                    name="blocker_issues"
-                    render={({ field: { value } }) => (
-                      <BlockerSelect
-                        value={value}
-                        onChange={(val) =>
-                          submitChanges({
-                            blocker_issues: val,
-                            blockers_list: val?.map((i: any) => i.blocker_issue_detail?.id ?? ""),
-                          })
-                        }
-                      />
-                    )}
+                  <BlockerSelect
+                    value={null}
+                    onChange={(val) => {
+                      if (!user || !workspaceSlug || !projectId || !issueId) return;
+
+                      issuesService
+                        .createIssueRelation(
+                          workspaceSlug as string,
+                          projectId as string,
+                          issueId as string,
+                          user,
+                          {
+                            related_list: [
+                              ...val.map((issue: any) => ({
+                                issue: issue.blocker_issue_detail.id,
+                                relation_type: "blocked_by" as const,
+                                related_issue: issueId as string,
+                                related_issue_detail: issue.blocker_issue_detail,
+                              })),
+                            ],
+                          }
+                        )
+                        .then((response) => {
+                          handleMutation({
+                            issue_relations: [
+                              ...blockerIssue,
+                              ...(response ?? []).map((i: any) => ({
+                                id: i.id,
+                                relation_type: i.relation_type,
+                                issue_detail: i.related_issue_detail,
+                                issue: i.related_issue,
+                              })),
+                            ],
+                          });
+                        });
+                    }}
                   />
                 </div>
               </div>
               {blockerIssue &&
                 blockerIssue.map((issue) => (
                   <div
-                    key={issue.blocker_issue_detail?.id}
+                    key={issue.issue_detail?.id}
                     className="group inline-flex mr-1 cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-1.5 py-0.5 text-xs text-yellow-500 duration-300 hover:border-yellow-500/20 hover:bg-yellow-500/20"
                   >
                     <a
-                      href={`/${workspaceSlug}/projects/${issue.blocker_issue_detail?.project_detail.id}/issues/${issue.blocker_issue_detail?.id}`}
+                      href={`/${workspaceSlug}/projects/${issue.issue_detail?.project_detail.id}/issues/${issue.issue_detail?.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-1"
                     >
                       <BlockerIcon height={10} width={10} />
-                      {`${issue.blocker_issue_detail?.project_detail.identifier}-${issue.blocker_issue_detail?.sequence_id}`}
+                      {`${issue.issue_detail?.project_detail.identifier}-${issue.issue_detail?.sequence_id}`}
                     </a>
                     <button
                       type="button"
                       className="duration-300"
                       onClick={() => {
                         const updatedBlockers = blockerIssue.filter(
-                          (i) => i.blocker_issue_detail?.id !== issue.blocker_issue_detail?.id
+                          (i) => i.issue_detail?.id !== issue.issue_detail?.id
                         );
 
-                        submitChanges({
-                          blocker_issues: updatedBlockers,
-                          blockers_list: updatedBlockers.map(
-                            (i) => i.blocker_issue_detail?.id ?? ""
-                          ),
+                        if (!user) return;
+
+                        issuesService.deleteIssueRelation(
+                          workspaceSlug as string,
+                          projectId as string,
+                          issueId as string,
+                          issue.id,
+                          user
+                        );
+
+                        handleMutation({
+                          issue_relations: updatedBlockers,
                         });
                       }}
                     >
@@ -250,49 +309,78 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                   <span className="text-sm text-custom-text-400">Blocked by</span>
                 </div>
                 <div>
-                  <Controller
-                    control={control}
-                    name="blocked_issues"
-                    render={({ field: { value } }) => (
-                      <BlockerSelect
-                        value={value}
-                        onChange={(val) =>
-                          submitChanges({
-                            blocked_issues: val,
-                            blocks_list: val?.map((i: any) => i.blocker_issue_detail?.id ?? ""),
-                          })
-                        }
-                      />
-                    )}
+                  <BlockedSelect
+                    value={null}
+                    onChange={(val) => {
+                      if (!user || !workspaceSlug || !projectId || !issueId) return;
+
+                      issuesService
+                        .createIssueRelation(
+                          workspaceSlug as string,
+                          projectId as string,
+                          issueId as string,
+                          user,
+                          {
+                            related_list: [
+                              ...val.map((issue: any) => ({
+                                issue: issue.blocked_issue_detail.id,
+                                relation_type: "blocked_by" as const,
+                                related_issue: issueId as string,
+                                related_issue_detail: issue.blocked_issue_detail,
+                              })),
+                            ],
+                          }
+                        )
+                        .then((response) => {
+                          handleMutation({
+                            related_issues: [
+                              ...blockedIssue,
+                              ...(response ?? []).map((i: any) => ({
+                                id: i.id,
+                                relation_type: i.relation_type,
+                                issue_detail: i.related_issue_detail,
+                                issue: i.related_issue,
+                              })),
+                            ],
+                          });
+                        });
+                    }}
                   />
                 </div>
               </div>
               {blockedIssue &&
                 blockedIssue.map((issue) => (
                   <div
-                    key={issue.blocked_issue_detail?.id}
+                    key={issue.issue_detail?.id}
                     className="group inline-flex mr-1 cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-1.5 py-0.5 text-xs text-red-500 duration-300 hover:border-red-500/20 hover:bg-red-500/20"
                   >
                     <a
-                      href={`/${workspaceSlug}/projects/${issue.blocked_issue_detail?.project_detail.id}/issues/${issue.blocked_issue_detail?.id}`}
+                      href={`/${workspaceSlug}/projects/${issue.issue_detail?.project_detail.id}/issues/${issue.issue_detail?.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-1"
                     >
                       <BlockedIcon height={10} width={10} />
-                      {`${issue?.blocked_issue_detail?.project_detail?.identifier}-${issue?.blocked_issue_detail?.sequence_id}`}
+                      {`${issue?.issue_detail?.project_detail?.identifier}-${issue?.issue_detail?.sequence_id}`}
                     </a>
                     <button
                       type="button"
                       className="duration-300"
                       onClick={() => {
-                        const updatedBlocked = blockedIssue.filter(
-                          (i) => i.blocked_issue_detail?.id !== issue.blocked_issue_detail?.id
+                        const updatedBlocked = blockedIssue.filter((i) => i?.id !== issue?.id);
+
+                        if (!user) return;
+
+                        issuesService.deleteIssueRelation(
+                          workspaceSlug as string,
+                          projectId as string,
+                          issueId as string,
+                          issue.id,
+                          user
                         );
 
-                        submitChanges({
-                          blocked_issues: updatedBlocked,
-                          blocks_list: updatedBlocked.map((i) => i.blocked_issue_detail?.id ?? ""),
+                        handleMutation({
+                          related_issues: updatedBlocked,
                         });
                       }}
                     >

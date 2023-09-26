@@ -7,7 +7,6 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // hooks
-import useProjects from "hooks/use-projects";
 import useMyIssuesFilters from "hooks/my-issues/use-my-issues-filter";
 // components
 import { MyIssuesView, MyIssuesViewOptions } from "components/issues";

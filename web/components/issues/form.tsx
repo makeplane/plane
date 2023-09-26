@@ -23,14 +23,7 @@ import {
 import { CreateStateModal } from "components/states";
 import { CreateLabelModal } from "components/labels";
 // ui
-import {
-  CustomMenu,
-  Input,
-  Loader,
-  PrimaryButton,
-  SecondaryButton,
-  ToggleSwitch,
-} from "components/ui";
+import { CustomMenu, Input, PrimaryButton, SecondaryButton, ToggleSwitch } from "components/ui";
 import { TipTapEditor } from "components/tiptap";
 // icons
 import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -52,7 +45,7 @@ const defaultValues: Partial<IIssue> = {
   estimate_point: null,
   state: "",
   parent: null,
-  priority: null,
+  priority: "none",
   assignees: [],
   assignees_list: [],
   labels: [],
@@ -68,9 +61,10 @@ export interface IssueFormProps {
   setActiveProject: React.Dispatch<React.SetStateAction<string | null>>;
   createMore: boolean;
   setCreateMore: React.Dispatch<React.SetStateAction<boolean>>;
-  handleClose: () => void;
+  handleDiscardClose: () => void;
   status: boolean;
   user: ICurrentUserResponse | undefined;
+  handleFormDirty: (payload: Partial<IIssue> | null) => void;
   fieldsToShow: (
     | "project"
     | "name"
@@ -87,18 +81,21 @@ export interface IssueFormProps {
   )[];
 }
 
-export const IssueForm: FC<IssueFormProps> = ({
-  handleFormSubmit,
-  initialData,
-  projectId,
-  setActiveProject,
-  createMore,
-  setCreateMore,
-  handleClose,
-  status,
-  user,
-  fieldsToShow,
-}) => {
+export const IssueForm: FC<IssueFormProps> = (props) => {
+  const {
+    handleFormSubmit,
+    initialData,
+    projectId,
+    setActiveProject,
+    createMore,
+    setCreateMore,
+    handleDiscardClose,
+    status,
+    user,
+    fieldsToShow,
+    handleFormDirty,
+  } = props;
+
   const [stateModal, setStateModal] = useState(false);
   const [labelModal, setLabelModal] = useState(false);
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
@@ -116,7 +113,7 @@ export const IssueForm: FC<IssueFormProps> = ({
 
   const {
     register,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
     handleSubmit,
     reset,
     watch,
@@ -130,6 +127,27 @@ export const IssueForm: FC<IssueFormProps> = ({
   });
 
   const issueName = watch("name");
+
+  const payload: Partial<IIssue> = {
+    name: getValues("name"),
+    description: getValues("description"),
+    state: getValues("state"),
+    priority: getValues("priority"),
+    assignees: getValues("assignees"),
+    labels: getValues("labels"),
+    start_date: getValues("start_date"),
+    target_date: getValues("target_date"),
+    project: getValues("project"),
+    parent: getValues("parent"),
+    cycle: getValues("cycle"),
+    module: getValues("module"),
+  };
+
+  useEffect(() => {
+    if (isDirty) handleFormDirty(payload);
+    else handleFormDirty(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(payload), isDirty]);
 
   const handleCreateUpdateIssue = async (formData: Partial<IIssue>) => {
     await handleFormSubmit(formData);
@@ -550,7 +568,13 @@ export const IssueForm: FC<IssueFormProps> = ({
             <ToggleSwitch value={createMore} onChange={() => {}} size="md" />
           </div>
           <div className="flex items-center gap-2">
-            <SecondaryButton onClick={handleClose}>Discard</SecondaryButton>
+            <SecondaryButton
+              onClick={() => {
+                handleDiscardClose();
+              }}
+            >
+              Discard
+            </SecondaryButton>
             <PrimaryButton type="submit" loading={isSubmitting}>
               {status
                 ? isSubmitting

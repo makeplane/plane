@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { Draggable } from "react-beautiful-dnd";
 // components
-import { BoardHeader, SingleBoardIssue } from "components/core";
+import { BoardHeader, SingleBoardIssue, BoardInlineCreateIssueForm } from "components/core";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
@@ -24,36 +24,48 @@ type Props = {
   dragDisabled: boolean;
   groupTitle: string;
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
+  handleDraftIssueAction?: (issue: IIssue, action: "edit" | "delete") => void;
   handleTrashBox: (isDragging: boolean) => void;
   openIssuesListModal?: (() => void) | null;
+  handleMyIssueOpen?: (issue: IIssue) => void;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
   viewProps: IIssueViewProps;
 };
 
-export const SingleBoard: React.FC<Props> = ({
-  addIssueToGroup,
-  currentState,
-  groupTitle,
-  disableUserActions,
-  disableAddIssueOption = false,
-  dragDisabled,
-  handleIssueAction,
-  handleTrashBox,
-  openIssuesListModal,
-  removeIssue,
-  user,
-  userAuth,
-  viewProps,
-}) => {
+export const SingleBoard: React.FC<Props> = (props) => {
+  const {
+    addIssueToGroup,
+    currentState,
+    groupTitle,
+    disableUserActions,
+    disableAddIssueOption = false,
+    dragDisabled,
+    handleIssueAction,
+    handleDraftIssueAction,
+    handleTrashBox,
+    openIssuesListModal,
+    handleMyIssueOpen,
+    removeIssue,
+    user,
+    userAuth,
+    viewProps,
+  } = props;
+
   // collapse/expand
   const [isCollapsed, setIsCollapsed] = useState(true);
 
-  const { groupedIssues, groupByProperty: selectedGroup, orderBy, properties } = viewProps;
+  const [isInlineCreateIssueFormOpen, setIsInlineCreateIssueFormOpen] = useState(false);
+
+  const { displayFilters, groupedIssues } = viewProps;
 
   const router = useRouter();
   const { cycleId, moduleId } = router.query;
+
+  const isMyIssuesPage = router.pathname.split("/")[3] === "my-issues";
+  const isProfileIssuesPage = router.pathname.split("/")[2] === "profile";
+  const isDraftIssuesPage = router.pathname.split("/")[4] === "draft-issues";
 
   const type = cycleId ? "cycle" : moduleId ? "module" : "issue";
 
@@ -62,6 +74,24 @@ export const SingleBoard: React.FC<Props> = ({
   const hasMinimumNumberOfCards = issuesLength ? issuesLength >= 4 : false;
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disableUserActions;
+
+  const onCreateClick = () => {
+    setIsInlineCreateIssueFormOpen(true);
+
+    const boardListElement = document.getElementById(`board-list-${groupTitle}`);
+
+    // timeout is needed because the animation
+    // takes time to complete & we can scroll only after that
+    const timeoutId = setTimeout(() => {
+      if (boardListElement)
+        boardListElement.scrollBy({
+          top: boardListElement.scrollHeight,
+          left: 0,
+          behavior: "smooth",
+        });
+      clearTimeout(timeoutId);
+    }, 10);
+  };
 
   return (
     <div className={`flex-shrink-0 ${!isCollapsed ? "" : "flex h-full flex-col w-96"}`}>
@@ -80,14 +110,14 @@ export const SingleBoard: React.FC<Props> = ({
           {(provided, snapshot) => (
             <div
               className={`relative h-full ${
-                orderBy !== "sort_order" && snapshot.isDraggingOver
+                displayFilters?.order_by !== "sort_order" && snapshot.isDraggingOver
                   ? "bg-custom-background-100/20"
                   : ""
               } ${!isCollapsed ? "hidden" : "flex flex-col"}`}
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
-              {orderBy !== "sort_order" && (
+              {displayFilters?.order_by !== "sort_order" && (
                 <>
                   <div
                     className={`absolute ${
@@ -101,12 +131,17 @@ export const SingleBoard: React.FC<Props> = ({
                   >
                     This board is ordered by{" "}
                     {replaceUnderscoreIfSnakeCase(
-                      orderBy ? (orderBy[0] === "-" ? orderBy.slice(1) : orderBy) : "created_at"
+                      displayFilters?.order_by
+                        ? displayFilters?.order_by[0] === "-"
+                          ? displayFilters?.order_by.slice(1)
+                          : displayFilters?.order_by
+                        : "created_at"
                     )}
                   </div>
                 </>
               )}
               <div
+                id={`board-list-${groupTitle}`}
                 className={`pt-3 ${
                   hasMinimumNumberOfCards ? "overflow-hidden overflow-y-scroll" : ""
                 } `}
@@ -126,11 +161,23 @@ export const SingleBoard: React.FC<Props> = ({
                         type={type}
                         index={index}
                         issue={issue}
+                        projectId={issue.project_detail.id}
                         groupTitle={groupTitle}
                         editIssue={() => handleIssueAction(issue, "edit")}
                         makeIssueCopy={() => handleIssueAction(issue, "copy")}
                         handleDeleteIssue={() => handleIssueAction(issue, "delete")}
+                        handleDraftIssueEdit={
+                          handleDraftIssueAction
+                            ? () => handleDraftIssueAction(issue, "edit")
+                            : undefined
+                        }
+                        handleDraftIssueDelete={() =>
+                          handleDraftIssueAction
+                            ? handleDraftIssueAction(issue, "delete")
+                            : undefined
+                        }
                         handleTrashBox={handleTrashBox}
+                        handleMyIssueOpen={handleMyIssueOpen}
                         removeIssue={() => {
                           if (removeIssue && issue.bridge_id)
                             removeIssue(issue.bridge_id, issue.id);
@@ -145,20 +192,37 @@ export const SingleBoard: React.FC<Props> = ({
                 ))}
                 <span
                   style={{
-                    display: orderBy === "sort_order" ? "inline" : "none",
+                    display: displayFilters?.order_by === "sort_order" ? "inline" : "none",
                   }}
                 >
-                  {provided.placeholder}
+                  <>{provided.placeholder}</>
                 </span>
+
+                <BoardInlineCreateIssueForm
+                  isOpen={isInlineCreateIssueFormOpen}
+                  handleClose={() => setIsInlineCreateIssueFormOpen(false)}
+                  prePopulatedData={{
+                    ...(cycleId && { cycle: cycleId.toString() }),
+                    ...(moduleId && { module: moduleId.toString() }),
+                    [displayFilters?.group_by! === "labels"
+                      ? "labels_list"
+                      : displayFilters?.group_by!]:
+                      displayFilters?.group_by === "labels" ? [groupTitle] : groupTitle,
+                  }}
+                />
               </div>
-              {selectedGroup !== "created_by" && (
+              {displayFilters?.group_by !== "created_by" && (
                 <div>
                   {type === "issue"
                     ? !disableAddIssueOption && (
                         <button
                           type="button"
                           className="flex items-center gap-2 font-medium text-custom-primary outline-none p-1"
-                          onClick={addIssueToGroup}
+                          onClick={() => {
+                            if (isDraftIssuesPage || isMyIssuesPage || isProfileIssuesPage) {
+                              addIssueToGroup();
+                            } else onCreateClick();
+                          }}
                         >
                           <PlusIcon className="h-4 w-4" />
                           Add Issue
@@ -178,7 +242,7 @@ export const SingleBoard: React.FC<Props> = ({
                           position="left"
                           noBorder
                         >
-                          <CustomMenu.MenuItem onClick={addIssueToGroup}>
+                          <CustomMenu.MenuItem onClick={() => onCreateClick()}>
                             Create new
                           </CustomMenu.MenuItem>
                           {openIssuesListModal && (

@@ -1072,7 +1072,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
                 .order_by("state_group")
             )
 
-            priority_order = ["urgent", "high", "medium", "low", None]
+            priority_order = ["urgent", "high", "medium", "low", "none"]
 
             priority_distribution = (
                 Issue.issue_objects.filter(
@@ -1239,13 +1239,21 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                     .annotate(
                         created_issues=Count(
                             "project_issue",
-                            filter=Q(project_issue__created_by_id=user_id),
+                            filter=Q(
+                                project_issue__created_by_id=user_id,
+                                project_issue__archived_at__isnull=True,
+                                project_issue__is_draft=False,
+                            ),
                         )
                     )
                     .annotate(
                         assigned_issues=Count(
                             "project_issue",
-                            filter=Q(project_issue__assignees__in=[user_id]),
+                            filter=Q(
+                                project_issue__assignees__in=[user_id],
+                                project_issue__archived_at__isnull=True,
+                                project_issue__is_draft=False,
+                            ),
                         )
                     )
                     .annotate(
@@ -1254,6 +1262,8 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                             filter=Q(
                                 project_issue__completed_at__isnull=False,
                                 project_issue__assignees__in=[user_id],
+                                project_issue__archived_at__isnull=True,
+                                project_issue__is_draft=False,
                             ),
                         )
                     )
@@ -1267,6 +1277,8 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                                     "started",
                                 ],
                                 project_issue__assignees__in=[user_id],
+                                project_issue__archived_at__isnull=True,
+                                project_issue__is_draft=False,
                             ),
                         )
                     )
@@ -1317,6 +1329,11 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
     def get(self, request, slug, user_id):
         try:
             filters = issue_filters(request.query_params, "GET")
+
+            # Custom ordering for priority and state
+            priority_order = ["urgent", "high", "medium", "low", "none"]
+            state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
+
             order_by_param = request.GET.get("order_by", "-created_at")
             issue_queryset = (
                 Issue.issue_objects.filter(

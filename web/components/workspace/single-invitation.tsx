@@ -52,7 +52,7 @@ const SingleInvitation: React.FC<Props> = ({
               ? "bg-custom-background-80 text-custom-text-200"
               : "bg-custom-primary text-white"
           } text-sm px-4 py-2 border border-custom-border-200 rounded-3xl`}
-          onClick={(e) => {
+          onClick={() => {
             handleInvitation(
               invitation,
               invitationsRespond.includes(invitation.id) ? "withdraw" : "accepted"

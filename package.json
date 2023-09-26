@@ -16,8 +16,12 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.15",
     "eslint-config-custom": "*",
+    "postcss": "^8.4.29",
     "prettier": "latest",
+    "prettier-plugin-tailwindcss": "^0.5.4",
+    "tailwindcss": "^3.3.3",
     "turbo": "latest"
   },
   "packageManager": "yarn@1.22.19"

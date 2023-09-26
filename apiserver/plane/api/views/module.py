@@ -2,6 +2,7 @@
 import json
 
 # Django Imports
+from django.utils import timezone
 from django.db import IntegrityError
 from django.db.models import Prefetch, F, OuterRef, Func, Exists, Count, Q
 from django.core import serializers
@@ -38,6 +39,7 @@ from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
 from plane.utils.analytics_plot import burndown_plot
+
 
 class ModuleViewSet(BaseViewSet):
     model = Module
@@ -77,35 +79,63 @@ class ModuleViewSet(BaseViewSet):
                     queryset=ModuleLink.objects.select_related("module", "created_by"),
                 )
             )
-            .annotate(total_issues=Count("issue_module"))
+            .annotate(
+                total_issues=Count(
+                    "issue_module",
+                    filter=Q(
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
+                ),
+            )
             .annotate(
                 completed_issues=Count(
                     "issue_module__issue__state__group",
-                    filter=Q(issue_module__issue__state__group="completed"),
+                    filter=Q(
+                        issue_module__issue__state__group="completed",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
                 )
             )
             .annotate(
                 cancelled_issues=Count(
                     "issue_module__issue__state__group",
-                    filter=Q(issue_module__issue__state__group="cancelled"),
+                    filter=Q(
+                        issue_module__issue__state__group="cancelled",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
                 )
             )
             .annotate(
                 started_issues=Count(
                     "issue_module__issue__state__group",
-                    filter=Q(issue_module__issue__state__group="started"),
+                    filter=Q(
+                        issue_module__issue__state__group="started",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
                 )
             )
             .annotate(
                 unstarted_issues=Count(
                     "issue_module__issue__state__group",
-                    filter=Q(issue_module__issue__state__group="unstarted"),
+                    filter=Q(
+                        issue_module__issue__state__group="unstarted",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
                 )
             )
             .annotate(
                 backlog_issues=Count(
                     "issue_module__issue__state__group",
-                    filter=Q(issue_module__issue__state__group="backlog"),
+                    filter=Q(
+                        issue_module__issue__state__group="backlog",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                    ),
                 )
             )
             .order_by(order_by, "name")
@@ -129,6 +159,7 @@ class ModuleViewSet(BaseViewSet):
             issue_id=str(self.kwargs.get("pk", None)),
             project_id=str(self.kwargs.get("project_id", None)),
             current_instance=None,
+            epoch=int(timezone.now().timestamp())
         )
 
         return super().perform_destroy(instance)
@@ -177,18 +208,36 @@ class ModuleViewSet(BaseViewSet):
                 .annotate(assignee_id=F("assignees__id"))
                 .annotate(display_name=F("assignees__display_name"))
                 .annotate(avatar=F("assignees__avatar"))
-                .values("first_name", "last_name", "assignee_id", "avatar", "display_name")
-                .annotate(total_issues=Count("assignee_id"))
+                .values(
+                    "first_name", "last_name", "assignee_id", "avatar", "display_name"
+                )
+                .annotate(
+                    total_issues=Count(
+                        "assignee_id",
+                        filter=Q(
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    )
+                )
                 .annotate(
                     completed_issues=Count(
                         "assignee_id",
-                        filter=Q(completed_at__isnull=False),
+                        filter=Q(
+                            completed_at__isnull=False,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
                     )
                 )
                 .annotate(
                     pending_issues=Count(
                         "assignee_id",
-                        filter=Q(completed_at__isnull=True),
+                        filter=Q(
+                            completed_at__isnull=True,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
                     )
                 )
                 .order_by("first_name", "last_name")
@@ -204,17 +253,33 @@ class ModuleViewSet(BaseViewSet):
                 .annotate(color=F("labels__color"))
                 .annotate(label_id=F("labels__id"))
                 .values("label_name", "color", "label_id")
-                .annotate(total_issues=Count("label_id"))
+                .annotate(
+                    total_issues=Count(
+                        "label_id",
+                        filter=Q(
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
+                    ),
+                )
                 .annotate(
                     completed_issues=Count(
                         "label_id",
-                        filter=Q(completed_at__isnull=False),
+                        filter=Q(
+                            completed_at__isnull=False,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
                     )
                 )
                 .annotate(
                     pending_issues=Count(
                         "label_id",
-                        filter=Q(completed_at__isnull=True),
+                        filter=Q(
+                            completed_at__isnull=True,
+                            archived_at__isnull=True,
+                            is_draft=False,
+                        ),
                     )
                 )
                 .order_by("label_name")
@@ -277,6 +342,7 @@ class ModuleIssueViewSet(BaseViewSet):
             issue_id=str(self.kwargs.get("pk", None)),
             project_id=str(self.kwargs.get("project_id", None)),
             current_instance=None,
+            epoch=int(timezone.now().timestamp())
         )
         return super().perform_destroy(instance)
 
@@ -308,6 +374,7 @@ class ModuleIssueViewSet(BaseViewSet):
         try:
             order_by = request.GET.get("order_by", "created_at")
             group_by = request.GET.get("group_by", False)
+            sub_group_by = request.GET.get("sub_group_by", False)
             filters = issue_filters(request.query_params, "GET")
             issues = (
                 Issue.issue_objects.filter(issue_module__module_id=module_id)
@@ -346,9 +413,15 @@ class ModuleIssueViewSet(BaseViewSet):
 
             issues_data = IssueStateSerializer(issues, many=True).data
 
+            if sub_group_by and sub_group_by == group_by:
+                return Response(
+                    {"error": "Group by and sub group by cannot be same"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             if group_by:
                 return Response(
-                    group_results(issues_data, group_by),
+                    group_results(issues_data, group_by, sub_group_by),
                     status=status.HTTP_200_OK,
                 )
 
@@ -437,6 +510,7 @@ class ModuleIssueViewSet(BaseViewSet):
                         ),
                     }
                 ),
+                epoch=int(timezone.now().timestamp())
             )
 
             return Response(
@@ -483,7 +557,6 @@ class ModuleLinkViewSet(BaseViewSet):
 
 
 class ModuleFavoriteViewSet(BaseViewSet):
-
     serializer_class = ModuleFavoriteSerializer
     model = ModuleFavorite
 
