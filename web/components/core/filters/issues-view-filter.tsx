@@ -93,7 +93,9 @@ export const IssuesFilterView: React.FC = () => {
             <Tooltip
               key={option.type}
               tooltipContent={
-                <span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} Layout</span>
+                <span className="capitalize">
+                  {replaceUnderscoreIfSnakeCase(option.type)} Layout
+                </span>
               }
               position="bottom"
             >
@@ -318,7 +320,7 @@ export const IssuesFilterView: React.FC = () => {
                       displayFilters.layout !== "spreadsheet" &&
                       displayFilters.layout !== "gantt_chart" && (
                         <div className="flex items-center justify-between">
-                          <h4 className="text-custom-text-200">Show empty states</h4>
+                          <h4 className="text-custom-text-200">Show empty groups</h4>
                           <div className="w-28">
                             <ToggleSwitch
                               value={displayFilters.show_empty_groups ?? true}
