@@ -10,7 +10,14 @@ import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
-import { IIssueFilterOptions, IIssueLabels, IState, IUserLite, TStateGroups } from "types";
+import {
+  IIssueFilterOptions,
+  IIssueLabels,
+  IProject,
+  IState,
+  IUserLite,
+  TStateGroups,
+} from "types";
 // constants
 import { STATE_GROUP_COLORS } from "constants/state";
 
@@ -20,7 +27,9 @@ type Props = {
   clearAllFilters: (...args: any) => void;
   labels: IIssueLabels[] | undefined;
   members: IUserLite[] | undefined;
-  states: IState[] | undefined;
+  states?: IState[] | undefined;
+  stateGroup?: string[] | undefined;
+  project?: IProject[] | undefined;
 };
 
 export const FiltersList: React.FC<Props> = ({
@@ -30,6 +39,7 @@ export const FiltersList: React.FC<Props> = ({
   labels,
   members,
   states,
+  project,
 }) => {
   if (!filters) return <></>;
 
@@ -154,6 +164,29 @@ export const FiltersList: React.FC<Props> = ({
                       ))
                     : key === "assignees"
                     ? filters.assignees?.map((memberId: string) => {
+                        const member = members?.find((m) => m.id === memberId);
+                        return (
+                          <div
+                            key={memberId}
+                            className="inline-flex items-center gap-x-1 rounded-full bg-custom-background-90 px-1"
+                          >
+                            <Avatar user={member} />
+                            <span>{member?.display_name}</span>
+                            <span
+                              className="cursor-pointer"
+                              onClick={() =>
+                                setFilters({
+                                  assignees: filters.assignees?.filter((p: any) => p !== memberId),
+                                })
+                              }
+                            >
+                              <XMarkIcon className="h-3 w-3" />
+                            </span>
+                          </div>
+                        );
+                      })
+                    : key === "subscriber"
+                    ? filters.subscriber?.map((memberId: string) => {
                         const member = members?.find((m) => m.id === memberId);
 
                         return (
@@ -296,6 +329,30 @@ export const FiltersList: React.FC<Props> = ({
                               <XMarkIcon className="h-3 w-3" />
                             </span>
                           </div>
+                        );
+                      })
+                    : key === "project"
+                    ? filters.project?.map((projectId) => {
+                        const currentProject = project?.find((p) => p.id === projectId);
+                        console.log("currentProject", currentProject);
+                        console.log("currentProject", projectId);
+                        return (
+                          <p
+                            key={currentProject?.id}
+                            className="inline-flex items-center gap-x-1 rounded-full px-2 py-0.5 capitalize"
+                          >
+                            <span>{currentProject?.name}</span>
+                            <span
+                              className="cursor-pointer"
+                              onClick={() =>
+                                setFilters({
+                                  project: filters.project?.filter((p) => p !== projectId),
+                                })
+                              }
+                            >
+                              <XMarkIcon className="h-3 w-3" />
+                            </span>
+                          </p>
                         );
                       })
                     : (filters[key] as any)?.join(", ")}

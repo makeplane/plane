@@ -14,6 +14,8 @@ import {
   ICurrentUserResponse,
   IWorkspaceBulkInviteFormData,
   IWorkspaceViewProps,
+  IView,
+  IIssueFilterOptions,
 } from "types";
 
 class WorkspaceService extends APIService {
@@ -256,6 +258,56 @@ class WorkspaceService extends APIService {
   }
   async getProductUpdates(): Promise<IProductUpdateResponse[]> {
     return this.get("/api/release-notes/")
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async createView(workspaceSlug: string, data: IView): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/views/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateView(workspaceSlug: string, viewId: string, data: Partial<IView>): Promise<any> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/views/${viewId}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deleteView(workspaceSlug: string, viewId: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/views/${viewId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getAllViews(workspaceSlug: string): Promise<IView[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/views/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getViewDetails(workspaceSlug: string, viewId: string): Promise<IView> {
+    return this.get(`/api/workspaces/${workspaceSlug}/views/${viewId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getViewIssues(workspaceSlug: string, params: IIssueFilterOptions): Promise<any> {
+    return this.get(`/api/workspaces/${workspaceSlug}/issues/`, {
+      params,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

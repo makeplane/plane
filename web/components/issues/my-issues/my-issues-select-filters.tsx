@@ -4,18 +4,21 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
+// hook
+import useProjects from "hooks/use-projects";
+import useWorkspaceMembers from "hooks/use-workspace-members";
 // services
 import issuesService from "services/issues.service";
 // components
 import { DateFilterModal } from "components/core";
 // ui
-import { MultiLevelDropdown } from "components/ui";
+import { Avatar, MultiLevelDropdown } from "components/ui";
 // icons
 import { PriorityIcon, StateGroupIcon } from "components/icons";
 // helpers
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 // types
-import { IIssueFilterOptions, IQuery, TStateGroups } from "types";
+import { IIssueFilterOptions, TStateGroups } from "types";
 // fetch-keys
 import { WORKSPACE_LABELS } from "constants/fetch-keys";
 // constants
@@ -23,7 +26,7 @@ import { GROUP_CHOICES, PRIORITIES } from "constants/project";
 import { DATE_FILTER_OPTIONS } from "constants/filters";
 
 type Props = {
-  filters: Partial<IIssueFilterOptions> | IQuery;
+  filters: Partial<IIssueFilterOptions>;
   onSelect: (option: any) => void;
   direction?: "left" | "right";
   height?: "sm" | "md" | "rg" | "lg";
@@ -55,6 +58,11 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
       : null
   );
 
+  const { projects: allProjects } = useProjects();
+  const joinedProjects = allProjects?.filter((p) => p.is_member);
+
+  const { workspaceMembers } = useWorkspaceMembers(workspaceSlug?.toString() ?? "");
+
   return (
     <>
       {isDateFilterModalOpen && (
@@ -74,25 +82,19 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
         height={height}
         options={[
           {
-            id: "priority",
-            label: "Priority",
-            value: PRIORITIES,
+            id: "project",
+            label: "Project",
+            value: joinedProjects,
             hasChildren: true,
-            children: [
-              ...PRIORITIES.map((priority) => ({
-                id: priority === null ? "null" : priority,
-                label: (
-                  <div className="flex items-center gap-2 capitalize">
-                    <PriorityIcon priority={priority} /> {priority ?? "None"}
-                  </div>
-                ),
-                value: {
-                  key: "priority",
-                  value: priority === null ? "null" : priority,
-                },
-                selected: filters?.priority?.includes(priority === null ? "null" : priority),
-              })),
-            ],
+            children: joinedProjects?.map((project) => ({
+              id: project.id,
+              label: <div className="flex items-center gap-2">{project.name}</div>,
+              value: {
+                key: "project",
+                value: project.id,
+              },
+              selected: filters?.project?.includes(project.id),
+            })),
           },
           {
             id: "state_group",
@@ -140,6 +142,87 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
                 value: label.id,
               },
               selected: filters?.labels?.includes(label.id),
+            })),
+          },
+          {
+            id: "priority",
+            label: "Priority",
+            value: PRIORITIES,
+            hasChildren: true,
+            children: [
+              ...PRIORITIES.map((priority) => ({
+                id: priority === null ? "null" : priority,
+                label: (
+                  <div className="flex items-center gap-2 capitalize">
+                    <PriorityIcon priority={priority} /> {priority ?? "None"}
+                  </div>
+                ),
+                value: {
+                  key: "priority",
+                  value: priority === null ? "null" : priority,
+                },
+                selected: filters?.priority?.includes(priority === null ? "null" : priority),
+              })),
+            ],
+          },
+          {
+            id: "created_by",
+            label: "Created by",
+            value: workspaceMembers,
+            hasChildren: true,
+            children: workspaceMembers?.map((member) => ({
+              id: member.member.id,
+              label: (
+                <div className="flex items-center gap-2">
+                  <Avatar user={member.member} />
+                  {member.member.display_name}
+                </div>
+              ),
+              value: {
+                key: "created_by",
+                value: member.member.id,
+              },
+              selected: filters?.created_by?.includes(member.member.id),
+            })),
+          },
+          {
+            id: "assignees",
+            label: "Assignees",
+            value: workspaceMembers,
+            hasChildren: true,
+            children: workspaceMembers?.map((member) => ({
+              id: member.member.id,
+              label: (
+                <div className="flex items-center gap-2">
+                  <Avatar user={member.member} />
+                  {member.member.display_name}
+                </div>
+              ),
+              value: {
+                key: "assignees",
+                value: member.member.id,
+              },
+              selected: filters?.assignees?.includes(member.member.id),
+            })),
+          },
+          {
+            id: "subscriber",
+            label: "Subscriber",
+            value: workspaceMembers,
+            hasChildren: true,
+            children: workspaceMembers?.map((member) => ({
+              id: member.member.id,
+              label: (
+                <div className="flex items-center gap-2">
+                  <Avatar user={member.member} />
+                  {member.member.display_name}
+                </div>
+              ),
+              value: {
+                key: "subscriber",
+                value: member.member.id,
+              },
+              selected: filters?.subscriber?.includes(member.member.id),
             })),
           },
           {
