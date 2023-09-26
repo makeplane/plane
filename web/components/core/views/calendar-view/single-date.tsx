@@ -83,6 +83,7 @@ export const SingleCalendarDate: React.FC<Props> = (props) => {
 
           <CalendarInlineCreateIssueForm
             isOpen={isCreateIssueFormOpen}
+            dependencies={[showWeekEnds]}
             handleClose={() => setIsCreateIssueFormOpen(false)}
             prePopulatedData={{
               target_date: date.date,

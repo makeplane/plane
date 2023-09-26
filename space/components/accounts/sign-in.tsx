@@ -33,7 +33,7 @@ export const SignInView = observer(() => {
   const onSignInSuccess = (response: any) => {
     const isOnboarded = response?.user?.onboarding_step?.profile_complete || false;
 
-    const nextPath = router.asPath.includes("next_path") ? router.asPath.split("/?next_path=")[1] : "/";
+    const nextPath = router.asPath.includes("next_path") ? router.asPath.split("/?next_path=")[1] : "/login";
 
     userStore.setCurrentUser(response?.user);
 
@@ -41,7 +41,7 @@ export const SignInView = observer(() => {
       router.push(`/onboarding?next_path=${nextPath}`);
       return;
     }
-    router.push((nextPath ?? "/").toString());
+    router.push((nextPath ?? "/login").toString());
   };
 
   const handleGoogleSignIn = async ({ clientId, credential }: any) => {

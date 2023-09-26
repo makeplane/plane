@@ -218,11 +218,11 @@ export const InlineCreateIssueFormWrapper: React.FC<Props> = (props) => {
           );
 
         if (isDraftIssues)
-          mutate(PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS(projectId.toString() ?? "", params));
-        if (displayFilters.layout === "calendar") mutate(calendarFetchKey);
-        if (displayFilters.layout === "gantt_chart") mutate(ganttFetchKey);
-        if (displayFilters.layout === "spreadsheet") mutate(spreadsheetFetchKey);
-        if (groupedIssues) mutateMyIssues();
+          await mutate(PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS(projectId.toString() ?? "", params));
+        if (displayFilters.layout === "calendar") await mutate(calendarFetchKey);
+        if (displayFilters.layout === "gantt_chart") await mutate(ganttFetchKey);
+        if (displayFilters.layout === "spreadsheet") await mutate(spreadsheetFetchKey);
+        if (groupedIssues) await mutateMyIssues();
 
         setToastAlert({
           type: "success",

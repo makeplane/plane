@@ -92,6 +92,7 @@ export const GanttSidebar: React.FC<Props> = (props) => {
       <StrictModeDroppable droppableId="gantt-sidebar">
         {(droppableProvided) => (
           <div
+            id={`gantt-sidebar-${cycleId}`}
             className="h-full overflow-y-auto pl-2.5"
             ref={droppableProvided.innerRef}
             {...droppableProvided.droppableProps}
@@ -162,6 +163,19 @@ export const GanttSidebar: React.FC<Props> = (props) => {
         <GanttInlineCreateIssueForm
           isOpen={isCreateIssueFormOpen}
           handleClose={() => setIsCreateIssueFormOpen(false)}
+          onSuccess={() => {
+            const ganttSidebar = document.getElementById(`gantt-sidebar-${cycleId}`);
+
+            const timeoutId = setTimeout(() => {
+              if (ganttSidebar)
+                ganttSidebar.scrollBy({
+                  top: ganttSidebar.scrollHeight,
+                  left: 0,
+                  behavior: "smooth",
+                });
+              clearTimeout(timeoutId);
+            }, 10);
+          }}
           prePopulatedData={{
             start_date: new Date(Date.now()).toISOString().split("T")[0],
             target_date: new Date(Date.now() + 86400000).toISOString().split("T")[0],
