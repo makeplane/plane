@@ -34,7 +34,7 @@ import {
   UserAuth,
 } from "types";
 // fetch-keys
-import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS } from "constants/fetch-keys";
+import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, WORKSPACE_LABELS } from "constants/fetch-keys";
 // constants
 import { STATE_GROUP_COLORS } from "constants/state";
 
@@ -86,16 +86,33 @@ export const SingleList: React.FC<Props> = (props) => {
 
   const { displayFilters, groupedIssues } = viewProps;
 
-  const { data: issueLabels } = useSWR<IIssueLabels[]>(
-    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
+  const { data: issueLabels } = useSWR(
+    workspaceSlug && projectId && displayFilters?.group_by === "labels"
+      ? PROJECT_ISSUE_LABELS(projectId.toString())
+      : null,
+    workspaceSlug && projectId && displayFilters?.group_by === "labels"
+      ? () => issuesService.getIssueLabels(workspaceSlug.toString(), projectId.toString())
+      : null
+  );
+
+  const { data: workspaceLabels } = useSWR(
+    workspaceSlug && displayFilters?.group_by === "labels"
+      ? WORKSPACE_LABELS(workspaceSlug.toString())
+      : null,
+    workspaceSlug && displayFilters?.group_by === "labels"
+      ? () => issuesService.getWorkspaceLabels(workspaceSlug.toString())
       : null
   );
 
   const { data: members } = useSWR(
-    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
-    workspaceSlug && projectId
+    workspaceSlug &&
+      projectId &&
+      (displayFilters?.group_by === "created_by" || displayFilters?.group_by === "assignees")
+      ? PROJECT_MEMBERS(projectId as string)
+      : null,
+    workspaceSlug &&
+      projectId &&
+      (displayFilters?.group_by === "created_by" || displayFilters?.group_by === "assignees")
       ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
       : null
   );
@@ -110,7 +127,10 @@ export const SingleList: React.FC<Props> = (props) => {
         title = addSpaceIfCamelCase(currentState?.name ?? "");
         break;
       case "labels":
-        title = issueLabels?.find((label) => label.id === groupTitle)?.name ?? "None";
+        title =
+          [...(issueLabels ?? []), ...(workspaceLabels ?? [])]?.find(
+            (label) => label.id === groupTitle
+          )?.name ?? "None";
         break;
       case "project":
         title = projects?.find((p) => p.id === groupTitle)?.name ?? "None";
@@ -164,7 +184,9 @@ export const SingleList: React.FC<Props> = (props) => {
         break;
       case "labels":
         const labelColor =
-          issueLabels?.find((label) => label.id === groupTitle)?.color ?? "#000000";
+          [...(issueLabels ?? []), ...(workspaceLabels ?? [])]?.find(
+            (label) => label.id === groupTitle
+          )?.color ?? "#000000";
         icon = (
           <span
             className="h-3 w-3 flex-shrink-0 rounded-full"
