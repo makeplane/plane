@@ -43,7 +43,7 @@ export const FilterSubGroupBy = observer(() => {
           {ISSUE_GROUP_BY_OPTIONS.map((subGroupBy) => {
             if (
               issueFilterStore.userDisplayFilters.group_by !== null &&
-              issueFilterStore.userDisplayFilters.sub_group_by === issueFilterStore.userDisplayFilters.group_by
+              subGroupBy.key === issueFilterStore.userDisplayFilters.group_by
             )
               return null;
 

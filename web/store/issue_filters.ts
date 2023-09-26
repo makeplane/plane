@@ -136,6 +136,7 @@ class IssueFilterStore implements IIssueFilterStore {
       target_date: this.userFilters?.target_date || undefined,
       group_by: this.userDisplayFilters?.group_by || "state",
       order_by: this.userDisplayFilters?.order_by || "-created_at",
+      sub_group_by: this.userDisplayFilters?.sub_group_by || undefined,
       type: this.userDisplayFilters?.type || undefined,
       sub_issue: this.userDisplayFilters?.sub_issue || true,
       show_empty_groups: this.userDisplayFilters?.show_empty_groups || true,
