@@ -44,7 +44,9 @@ export const WorkspaceSidebarQuickAction = () => {
         >
           <button
             type="button"
-            className="relative flex items-center gap-2 flex-grow rounded flex-shrink-0 py-1.5"
+            className={`relative flex items-center gap-2 flex-grow rounded flex-shrink-0 py-1.5 ${
+              store?.theme?.sidebarCollapsed ? "justify-center" : ""
+            }`}
             onClick={() => {
               const e = new KeyboardEvent("keydown", { key: "c" });
               document.dispatchEvent(e);
@@ -61,11 +63,17 @@ export const WorkspaceSidebarQuickAction = () => {
 
           {storedValue && Object.keys(JSON.parse(storedValue)).length > 0 && (
             <>
-              <div className="h-8 w-0.5 bg-custom-sidebar-background-80" />
+              <div
+                className={`h-8 w-0.5 bg-custom-sidebar-background-80 ${
+                  store?.theme?.sidebarCollapsed ? "hidden" : "block"
+                }`}
+              />
 
               <button
                 type="button"
-                className="flex items-center justify-center rounded flex-shrink-0 py-1.5 ml-1.5"
+                className={`flex items-center justify-center rounded flex-shrink-0 py-1.5 ml-1.5 ${
+                  store?.theme?.sidebarCollapsed ? "hidden" : "block"
+                }`}
               >
                 <ChevronDown
                   size={16}
@@ -73,7 +81,11 @@ export const WorkspaceSidebarQuickAction = () => {
                 />
               </button>
 
-              <div className="absolute w-full h-10 pt-2 top-full left-0 opacity-0 group-hover:opacity-100 mt-0 pointer-events-none group-hover:pointer-events-auto">
+              <div
+                className={`fixed h-10 pt-2 w-[203px] left-4 opacity-0 group-hover:opacity-100 mt-0 pointer-events-none group-hover:pointer-events-auto ${
+                  store?.theme?.sidebarCollapsed ? "top-[5.5rem]" : "top-24"
+                }`}
+              >
                 <div className="w-full h-full">
                   <button
                     onClick={() => setIsDraftIssueModalOpen(true)}
