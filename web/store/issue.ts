@@ -72,8 +72,8 @@ class IssueStore implements IIssueStore {
   }
 
   get getIssueType() {
-    const groupedLayouts = ["kanban", "list"];
-    const ungroupedLayouts = ["calendar", "spreadsheet", "gantt_chart"];
+    const groupedLayouts = ["kanban", "list", "calendar"];
+    const ungroupedLayouts = ["spreadsheet", "gantt_chart"];
 
     const issueLayout = this.rootStore?.issueFilter?.userDisplayFilters?.layout || null;
     const issueSubGroup = this.rootStore?.issueFilter?.userDisplayFilters?.sub_group_by || null;
@@ -143,7 +143,11 @@ class IssueStore implements IIssueStore {
       this.rootStore.project.setProjectId(projectId);
 
       // TODO: replace this once the issue filter is completed
-      const params = { group_by: "state", order_by: "-created_at" };
+      const params = {
+        group_by: "target_date",
+        order_by: "-created_at",
+        target_date: "2023-09-01;after,2023-09-30;before",
+      };
       const issueResponse = await this.issueService.getIssuesWithParams(workspaceSlug, projectId, params);
 
       const issueType = this.getIssueType;
