@@ -1,3 +1,38 @@
+import re
+from datetime import timedelta
+from django.utils import timezone
+
+# The date from pattern
+pattern = re.compile(r"\d+_(weeks|months)$")
+
+
+# Get the 2_weeks, 3_months
+def date_filter(filter, duration, subsequent, term, date_filter, offset):
+    now = timezone.now().date()
+    if term == "months":
+        if subsequent == "after":
+            if offset == "fromnow":
+                filter[f"{date_filter}__gte"] = now + timedelta(days=duration * 30)
+            else:
+                filter[f"{date_filter}__gte"] = now - timedelta(days=duration * 30)
+        else:
+            if offset == "fromnow":
+                filter[f"{date_filter}__lte"] = now + timedelta(days=duration * 30)
+            else:
+                filter[f"{date_filter}__lte"] = now - timedelta(days=duration * 30)
+    if term == "weeks":
+        if subsequent == "after":
+            if offset == "fromnow":
+                filter[f"{date_filter}__gte"] = now + timedelta(weeks=duration)
+            else:
+                filter[f"{date_filter}__gte"] = now - timedelta(weeks=duration)
+        else:
+            if offset == "fromnow":
+                filter[f"{date_filter}__lte"] = now + timedelta(days=duration)
+            else:
+                filter[f"{date_filter}__lte"] = now - timedelta(days=duration)
+
+
 def filter_state(params, filter, method):
     if method == "GET":
         states = params.get("state").split(",")
@@ -95,18 +130,46 @@ def filter_created_at(params, filter, method):
         if len(created_ats) and "" not in created_ats:
             for query in created_ats:
                 created_at_query = query.split(";")
-                if len(created_at_query) == 2 and "after" in created_at_query:
-                    filter["created_at__date__gte"] = created_at_query[0]
-                else:
-                    filter["created_at__date__lte"] = created_at_query[0]
+                if len(created_at_query) >= 2:
+                    match = pattern.match(created_at_query[0])
+                    if match:
+                        if len(created_at_query) == 3:
+                            digit, term = created_at_query[0].split("_")
+                            date_filter(
+                                filter=filter,
+                                duration=digit,
+                                subsequent=created_at_query[1],
+                                term=term,
+                                date_filter="created_at__date",
+                                offset=created_at_query[2],
+                            )
+                    else:
+                        if "after" in created_at_query:
+                            filter["created_at__date__gte"] = created_at_query[0]
+                        else:
+                            filter["created_at__date__lte"] = created_at_query[0]
     else:
         if params.get("created_at", None) and len(params.get("created_at")):
             for query in params.get("created_at"):
                 created_at_query = query.split(";")
-                if len(created_at_query) == 2 and "after" in created_at_query:
-                    filter["created_at__date__gte"] = created_at_query[0]
-                else:
-                    filter["created_at__date__lte"] = created_at_query[0]
+                if len(created_at_query) == 2:
+                    match = pattern.match(created_at_query[0])
+                    if match:
+                        if len(created_at_query) == 3:
+                            digit, term = created_at_query[0].split("_")
+                            date_filter(
+                                filter=filter,
+                                duration=digit,
+                                subsequent=created_at_query[1],
+                                term=term,
+                                date_filter="created_at__date",
+                                offset=created_at_query[2],
+                            )
+                    else:
+                        if "after" in created_at_query:
+                            filter["created_at__date__gte"] = created_at_query[0]
+                        else:
+                            filter["created_at__date__lte"] = created_at_query[0]
     return filter
 
 
@@ -116,18 +179,46 @@ def filter_updated_at(params, filter, method):
         if len(updated_ats) and "" not in updated_ats:
             for query in updated_ats:
                 updated_at_query = query.split(";")
-                if len(updated_at_query) == 2 and "after" in updated_at_query:
-                    filter["updated_at__date__gte"] = updated_at_query[0]
-                else:
-                    filter["updated_at__date__lte"] = updated_at_query[0]
+                if len(updated_at_query) == 2:
+                    match = pattern.match(updated_at_query[0])
+                    if match:
+                        if len(updated_at_query) == 3:
+                            digit, term = updated_at_query[0].split("_")
+                            date_filter(
+                                filter=filter,
+                                duration=digit,
+                                subsequent=updated_at_query[1],
+                                term=term,
+                                date_filter="updated_at__date",
+                                offset=updated_at_query[2],
+                            )
+                    else:
+                        if "after" in updated_at_query:
+                            filter["updated_at__date__gte"] = updated_at_query[0]
+                        else:
+                            filter["updated_at__date__lte"] = updated_at_query[0]
     else:
         if params.get("updated_at", None) and len(params.get("updated_at")):
             for query in params.get("updated_at"):
                 updated_at_query = query.split(";")
-                if len(updated_at_query) == 2 and "after" in updated_at_query:
-                    filter["updated_at__date__gte"] = updated_at_query[0]
-                else:
-                    filter["updated_at__date__lte"] = updated_at_query[0]
+                if len(updated_at_query) == 2:
+                    match = pattern.match(updated_at_query[0])
+                    if match:
+                        if len(updated_at_query) == 3:
+                            digit, term = updated_at_query[0].split("_")
+                            date_filter(
+                                filter=filter,
+                                duration=digit,
+                                subsequent=updated_at_query[1],
+                                term=term,
+                                date_filter="updated_at__date",
+                                offset=updated_at_query[2],
+                            )
+                    else:
+                        if "after" in updated_at_query:
+                            filter["updated_at__date__gte"] = updated_at_query[0]
+                        else:
+                            filter["updated_at__date__lte"] = updated_at_query[0]
     return filter
 
 
@@ -137,18 +228,46 @@ def filter_start_date(params, filter, method):
         if len(start_dates) and "" not in start_dates:
             for query in start_dates:
                 start_date_query = query.split(";")
-                if len(start_date_query) == 2 and "after" in start_date_query:
-                    filter["start_date__gte"] = start_date_query[0]
-                else:
-                    filter["start_date__lte"] = start_date_query[0]
+                if len(start_date_query) >= 2:
+                    match = pattern.match(start_date_query[0])
+                    if match:
+                        if len(start_date_query) == 3:
+                            digit, term = start_date_query[0].split("_")
+                            date_filter(
+                                filter=filter,
+                                duration=float(digit),
+                                subsequent=start_date_query[1],
+                                term=term,
+                                date_filter="start_date",
+                                offset=start_date_query[2],
+                            )
+                    else:
+                        if "after" in start_date_query:
+                            filter["start_date__gte"] = start_date_query[0]
+                        else:
+                            filter["start_date__lte"] = start_date_query[0]
     else:
         if params.get("start_date", None) and len(params.get("start_date")):
             for query in params.get("start_date"):
                 start_date_query = query.split(";")
-                if len(start_date_query) == 2 and "after" in start_date_query:
-                    filter["start_date__gte"] = start_date_query[0]
-                else:
-                    filter["start_date__lte"] = start_date_query[0]
+                if len(start_date_query) == 2:
+                    match = pattern.match(start_date_query[0])
+                    if match:
+                        if len(start_date_query) == 3:
+                            digit, term = start_date_query[0].split("_")
+                            date_filter(
+                                filter=filter,
+                                duration=float(digit),
+                                subsequent=start_date_query[1],
+                                term=term,
+                                date_filter="start_date",
+                                offset=start_date_query[2],
+                            )
+                    else:
+                        if "after" in start_date_query:
+                            filter["start_date__gte"] = start_date_query[0]
+                        else:
+                            filter["start_date__lte"] = start_date_query[0]
     return filter
 
 
@@ -158,18 +277,46 @@ def filter_target_date(params, filter, method):
         if len(target_dates) and "" not in target_dates:
             for query in target_dates:
                 target_date_query = query.split(";")
-                if len(target_date_query) == 2 and "after" in target_date_query:
-                    filter["target_date__gt"] = target_date_query[0]
-                else:
-                    filter["target_date__lt"] = target_date_query[0]
+                if len(target_date_query) == 2:
+                    match = pattern.match(target_date_query[0])
+                    if match:
+                        if len(target_date_query) == 3:
+                            digit, term = target_date_query[0].split("_")
+                            date_filter(
+                                filter=filter,
+                                duration=digit,
+                                subsequent=target_date_query[1],
+                                term=term,
+                                date_filter="target_date",
+                                offset=target_date_query[2],
+                            )
+                    else:
+                        if "after" in target_date_query:
+                            filter["target_date__gt"] = target_date_query[0]
+                        else:
+                            filter["target_date__lt"] = target_date_query[0]
     else:
         if params.get("target_date", None) and len(params.get("target_date")):
             for query in params.get("target_date"):
                 target_date_query = query.split(";")
-                if len(target_date_query) == 2 and "after" in target_date_query:
-                    filter["target_date__gt"] = target_date_query[0]
-                else:
-                    filter["target_date__lt"] = target_date_query[0]
+                if len(target_date_query) == 2:
+                    match = pattern.match(target_date_query[0])
+                    if match:
+                        if len(target_date_query) == 3:
+                            digit, term = target_date_query[0].split("_")
+                            date_filter(
+                                filter=filter,
+                                duration=digit,
+                                subsequent=target_date_query[1],
+                                term=term,
+                                date_filter="target_date",
+                                offset=target_date_query[2],
+                            )
+                    else:
+                        if "after" in target_date_query:
+                            filter["target_date__gt"] = target_date_query[0]
+                        else:
+                            filter["target_date__lt"] = target_date_query[0]
 
     return filter
 
@@ -180,18 +327,45 @@ def filter_completed_at(params, filter, method):
         if len(completed_ats) and "" not in completed_ats:
             for query in completed_ats:
                 completed_at_query = query.split(";")
-                if len(completed_at_query) == 2 and "after" in completed_at_query:
-                    filter["completed_at__date__gte"] = completed_at_query[0]
+                if len(completed_at_query) == 2:
+                    match = pattern.match(completed_at_query[0])
+                    if match:
+                        if len(completed_at_query) == 3:
+                            digit, term = completed_at_query[0].split("_")
+                            date_filter(
+                                filter=filter,
+                                duration=digit,
+                                subsequent=completed_at_query[1],
+                                term=term,
+                                date_filter="completed_at__date",
+                                offset=completed_at_query[2],
+                            )
                 else:
-                    filter["completed_at__lte"] = completed_at_query[0]
+                    if "after" in completed_at_query:
+                        filter["completed_at__date__gte"] = completed_at_query[0]
+                    else:
+                        filter["completed_at__date__lte"] = completed_at_query[0]
     else:
         if params.get("completed_at", None) and len(params.get("completed_at")):
             for query in params.get("completed_at"):
                 completed_at_query = query.split(";")
-                if len(completed_at_query) == 2 and "after" in completed_at_query:
-                    filter["completed_at__date__gte"] = completed_at_query[0]
+                if len(completed_at_query) == 2:
+                    match = pattern.match(completed_at_query[0])
+                    if match:
+                        digit, term = match.group(1), match.group(2)
+                        date_filter(
+                            filter=filter,
+                            duration=digit,
+                            subsequent=completed_at_query[1],
+                            term=term,
+                            date_filter="completed_at__date",
+                            offset=completed_at_query[2],
+                        )
                 else:
-                    filter["completed_at__lte"] = completed_at_query[0]
+                    if "after" in completed_at_query:
+                        filter["completed_at__date__gte"] = completed_at_query[0]
+                    else:
+                        filter["completed_at__date__lte"] = completed_at_query[0]
     return filter
 
 
