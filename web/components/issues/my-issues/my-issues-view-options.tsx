@@ -234,7 +234,7 @@ export const MyIssuesViewOptions: React.FC = () => {
                       displayFilters?.layout !== "spreadsheet" && (
                         <>
                           <div className="flex items-center justify-between">
-                            <h4 className="text-custom-text-200">Show empty states</h4>
+                            <h4 className="text-custom-text-200">Show empty groups</h4>
                             <div className="w-28">
                               <ToggleSwitch
                                 value={displayFilters?.show_empty_groups ?? true}
