@@ -6,29 +6,6 @@ import django.db.models.deletion
 import uuid
 
 
-def update_issue_activity(apps, schema_editor):
-    IssueActivity = apps.get_model("db", "IssueActivity")
-    updated_issue_activity = []
-    for obj in IssueActivity.objects.all():
-        obj.epoch = int(obj.created_at.timestamp())
-
-        # Set the old and new value to none if it is empty for Priority
-        if obj.field == "priority":
-            obj.new_value = obj.new_value or "none"
-            obj.old_value = obj.old_value or "none"
-
-        #   Change the field name from blocks to blocked_by
-        if obj.field == "blocks":
-            obj.field = "blocked_by"
-
-        updated_issue_activity.append(obj)
-    IssueActivity.objects.bulk_update(
-        updated_issue_activity,
-        ["epoch", "field", "new_value", "old_value"],
-        batch_size=100,
-    )
-
-
 class Migration(migrations.Migration):
     dependencies = [
         ("db", "0044_auto_20230913_0709"),
@@ -61,6 +38,5 @@ class Migration(migrations.Migration):
             model_name="issueactivity",
             name="epoch",
             field=models.FloatField(null=True),
-        ),
-        migrations.RunPython(update_issue_activity),
+        ),    
     ]
