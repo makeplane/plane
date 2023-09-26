@@ -1094,7 +1094,7 @@ class ProjectMemberEndpoint(BaseAPIView):
                 project_id=project_id,
                 workspace__slug=slug,
                 member__is_bot=False,
-            ).select_related("project", "member")
+            ).select_related("project", "member", "workspace")
             serializer = ProjectMemberSerializer(project_members, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
