@@ -68,7 +68,11 @@ export const SpreadsheetView: React.FC<Props> = ({
         workspaceSlug={workspaceSlug?.toString() ?? ""}
         readOnly={disableUserActions}
       />
-      <div className="h-full rounded-lg text-custom-text-200 overflow-x-auto whitespace-nowrap bg-custom-background-100">
+      <div
+        className={`h-full rounded-lg text-custom-text-200 overflow-x-auto whitespace-nowrap bg-custom-background-100 ${
+          isInlineCreateIssueFormOpen ? "mb-24" : "mb-12"
+        }`}
+      >
         <div className="sticky z-[2] top-0 border-b border-custom-border-200 bg-custom-background-90 w-full min-w-max">
           <SpreadsheetColumns columnData={columnData} gridTemplateColumns={gridTemplateColumns} />
         </div>
