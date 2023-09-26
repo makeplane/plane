@@ -19,7 +19,6 @@ const initialValues: IIssueFilterOptions = {
   subscriber: null,
   start_date: null,
   target_date: null,
-  estimate_point: null,
   project: null,
 };
 
