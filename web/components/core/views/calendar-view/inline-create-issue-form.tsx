@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
+// next
+import { useRouter } from "next/router";
+
 // react hook form
 import { useFormContext } from "react-hook-form";
 
@@ -16,21 +19,29 @@ type Props = {
   handleClose: () => void;
   onSuccess?: (data: IIssue) => Promise<void> | void;
   prePopulatedData?: Partial<IIssue>;
+  dependencies: any[];
 };
 
-const useCheckIfThereIsSpaceOnRight = (ref: React.RefObject<HTMLDivElement>) => {
+const useCheckIfThereIsSpaceOnRight = (ref: React.RefObject<HTMLDivElement>, deps: any[]) => {
   const [isThereSpaceOnRight, setIsThereSpaceOnRight] = useState(true);
+
+  const router = useRouter();
+  const { moduleId, cycleId, viewId } = router.query;
+
+  const container = document.getElementById(`calendar-view-${cycleId ?? moduleId ?? viewId}`);
 
   useEffect(() => {
     if (!ref.current) return;
 
     const { right } = ref.current.getBoundingClientRect();
 
-    const width = right + 250;
+    const width = right;
 
-    if (width > window.innerWidth) setIsThereSpaceOnRight(false);
+    const innerWidth = container?.getBoundingClientRect().width ?? window.innerWidth;
+
+    if (width > innerWidth) setIsThereSpaceOnRight(false);
     else setIsThereSpaceOnRight(true);
-  }, [ref]);
+  }, [ref, deps, container]);
 
   return isThereSpaceOnRight;
 };
@@ -63,11 +74,11 @@ const InlineInput = () => {
 };
 
 export const CalendarInlineCreateIssueForm: React.FC<Props> = (props) => {
-  const { isOpen } = props;
+  const { isOpen, dependencies } = props;
 
   const ref = useRef<HTMLDivElement>(null);
 
-  const isSpaceOnRight = useCheckIfThereIsSpaceOnRight(ref);
+  const isSpaceOnRight = useCheckIfThereIsSpaceOnRight(ref, dependencies);
 
   return (
     <>
