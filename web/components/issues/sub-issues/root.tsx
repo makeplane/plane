@@ -10,6 +10,7 @@ import { ExistingIssuesListModal } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { SubIssuesRootList } from "./issues-list";
 import { ProgressBar } from "./progressbar";
+import { IssuePeekOverview } from "components/issues/peek-overview";
 // ui
 import { CustomMenu } from "components/ui";
 // hooks
@@ -41,7 +42,11 @@ export interface ISubIssuesRootLoadersHandler {
 
 export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug, projectId, peekIssue } = router.query as {
+    workspaceSlug: string;
+    projectId: string;
+    peekIssue: string;
+  };
 
   const { memberRole } = useProjectMyMembership();
   const { setToastAlert } = useToast();
@@ -54,6 +59,8 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
       ? () => issuesService.subIssues(workspaceSlug, projectId, parentIssue.id)
       : null
   );
+
+  const [peekParentId, setPeekParentId] = React.useState<string | null>("");
 
   const [issuesLoader, setIssuesLoader] = React.useState<ISubIssuesRootLoaders>({
     visibility: [parentIssue?.id],
@@ -230,15 +237,48 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
                     handleIssuesLoader={handleIssuesLoader}
                     copyText={copyText}
                     handleIssueCrudOperation={handleIssueCrudOperation}
+                    setPeekParentId={setPeekParentId}
                   />
                 </div>
               )}
+
+              <div>
+                <CustomMenu
+                  label={
+                    <>
+                      <Plus className="h-3 w-3" />
+                      Add sub-issue
+                    </>
+                  }
+                  buttonClassName="whitespace-nowrap"
+                  position="left"
+                  noBorder
+                  noChevron
+                >
+                  <CustomMenu.MenuItem
+                    onClick={() => {
+                      mutateSubIssues(parentIssue?.id);
+                      handleIssueCrudOperation("create", parentIssue?.id);
+                    }}
+                  >
+                    Create new
+                  </CustomMenu.MenuItem>
+                  <CustomMenu.MenuItem
+                    onClick={() => {
+                      mutateSubIssues(parentIssue?.id);
+                      handleIssueCrudOperation("existing", parentIssue?.id);
+                    }}
+                  >
+                    Add an existing issue
+                  </CustomMenu.MenuItem>
+                </CustomMenu>
+              </div>
             </>
           ) : (
             isEditable && (
-              <div className="text-xs py-2 text-custom-text-300 font-medium">
-                <div className="py-3 text-center">No sub issues are available</div>
-                <>
+              <div className="flex justify-between items-center">
+                <div className="text-xs py-2 text-custom-text-300 italic">No Sub-Issues yet</div>
+                <div>
                   <CustomMenu
                     label={
                       <>
@@ -268,7 +308,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
                       Add an existing issue
                     </CustomMenu.MenuItem>
                   </CustomMenu>
-                </>
+                </div>
               </div>
             )
           )}
@@ -323,6 +363,13 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
             )}
         </>
       )}
+
+      <IssuePeekOverview
+        handleMutation={() => peekParentId && peekIssue && mutateSubIssues(peekParentId)}
+        projectId={projectId ?? ""}
+        workspaceSlug={workspaceSlug ?? ""}
+        readOnly={!isEditable}
+      />
     </div>
   );
 };
