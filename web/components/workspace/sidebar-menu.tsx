@@ -35,7 +35,7 @@ const workspaceLinks = (workspaceSlug: string) => [
   {
     Icon: TaskAltOutlined,
     name: "Issues",
-    href: `/${workspaceSlug}/workspace-views`,
+    href: `/${workspaceSlug}/workspace-views/all-issues`,
   },
 ];
 
