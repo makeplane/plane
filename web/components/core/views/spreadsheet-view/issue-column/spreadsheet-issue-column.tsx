@@ -1,40 +1,34 @@
 import React from "react";
 
 // components
-import { SingleSpreadsheetIssue } from "components/core";
+import { IssueColumn } from "components/core";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
-import { ICurrentUserResponse, IIssue, Properties, UserAuth } from "types";
+import { IIssue, Properties, UserAuth } from "types";
 
 type Props = {
   issue: IIssue;
   projectId: string;
-  index: number;
   expandedIssues: string[];
   setExpandedIssues: React.Dispatch<React.SetStateAction<string[]>>;
   properties: Properties;
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
   setCurrentProjectId: React.Dispatch<React.SetStateAction<string | null>>;
-  gridTemplateColumns: string;
   disableUserActions: boolean;
-  user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
   nestingLevel?: number;
 };
 
-export const SpreadsheetIssues: React.FC<Props> = ({
-  index,
+export const SpreadsheetIssuesColumn: React.FC<Props> = ({
   issue,
   projectId,
   expandedIssues,
   setExpandedIssues,
-  gridTemplateColumns,
   properties,
   handleIssueAction,
   setCurrentProjectId,
   disableUserActions,
-  user,
   userAuth,
   nestingLevel = 0,
 }) => {
@@ -57,19 +51,16 @@ export const SpreadsheetIssues: React.FC<Props> = ({
 
   return (
     <div>
-      <SingleSpreadsheetIssue
+      <IssueColumn
         issue={issue}
         projectId={projectId}
-        index={index}
         expanded={isExpanded}
         handleToggleExpand={handleToggleExpand}
-        gridTemplateColumns={gridTemplateColumns}
         properties={properties}
         handleEditIssue={() => handleIssueAction(issue, "edit")}
         handleDeleteIssue={() => handleIssueAction(issue, "delete")}
         setCurrentProjectId={setCurrentProjectId}
         disableUserActions={disableUserActions}
-        user={user}
         userAuth={userAuth}
         nestingLevel={nestingLevel}
       />
@@ -79,19 +70,16 @@ export const SpreadsheetIssues: React.FC<Props> = ({
         subIssues &&
         subIssues.length > 0 &&
         subIssues.map((subIssue: IIssue) => (
-          <SpreadsheetIssues
+          <SpreadsheetIssuesColumn
             key={subIssue.id}
             issue={subIssue}
             projectId={subIssue.project_detail.id}
-            index={index}
             expandedIssues={expandedIssues}
             setExpandedIssues={setExpandedIssues}
-            gridTemplateColumns={gridTemplateColumns}
             properties={properties}
             handleIssueAction={handleIssueAction}
             setCurrentProjectId={setCurrentProjectId}
             disableUserActions={disableUserActions}
-            user={user}
             userAuth={userAuth}
             nestingLevel={nestingLevel + 1}
           />
