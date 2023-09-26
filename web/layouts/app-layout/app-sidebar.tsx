@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 // hooks
 import useTheme from "hooks/use-theme";
 // components
@@ -5,8 +6,18 @@ import {
   WorkspaceHelpSection,
   WorkspaceSidebarDropdown,
   WorkspaceSidebarMenu,
-  WorkspaceSidebarQuickAction,
 } from "components/workspace";
+
+const WorkspaceSidebarQuickAction = dynamic<{}>(
+  () =>
+    import("components/workspace/sidebar-quick-action").then(
+      (mod) => mod.WorkspaceSidebarQuickAction
+    ),
+  {
+    ssr: false,
+  }
+);
+
 import { ProjectSidebarList } from "components/project";
 import { PublishProjectModal } from "components/project/publish-project/modal";
 import { ConfirmProjectLeaveModal } from "components/project/confirm-project-leave-modal";
