@@ -184,7 +184,7 @@ export const CalendarView: React.FC<Props> = ({
         <div className="h-full overflow-y-auto">
           <DragDropContext onDragEnd={onDragEnd}>
             <div
-              id={`calendar-view-${cycleId ?? moduleId ?? viewId}`}
+              id={`calendar-view-${cycleId ?? moduleId ?? viewId ?? ""}`}
               className="h-full rounded-lg p-8 text-custom-text-200"
             >
               <CalendarHeader

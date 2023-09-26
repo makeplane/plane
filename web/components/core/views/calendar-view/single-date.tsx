@@ -39,6 +39,8 @@ export const SingleCalendarDate: React.FC<Props> = (props) => {
   const [showAllIssues, setShowAllIssues] = useState(false);
   const [isCreateIssueFormOpen, setIsCreateIssueFormOpen] = useState(false);
 
+  const [formPosition, setFormPosition] = useState({ x: 0, y: 0 });
+
   const totalIssues = date.issues.length;
 
   return (
@@ -81,16 +83,23 @@ export const SingleCalendarDate: React.FC<Props> = (props) => {
               </Draggable>
             ))}
 
-          <CalendarInlineCreateIssueForm
-            isOpen={isCreateIssueFormOpen}
-            dependencies={[showWeekEnds]}
-            handleClose={() => setIsCreateIssueFormOpen(false)}
-            prePopulatedData={{
-              target_date: date.date,
-              ...(cycleId && { cycle: cycleId.toString() }),
-              ...(moduleId && { module: moduleId.toString() }),
+          <div
+            className="fixed top-0 left-0 z-50"
+            style={{
+              transform: `translate(${formPosition.x}px, ${formPosition.y}px)`,
             }}
-          />
+          >
+            <CalendarInlineCreateIssueForm
+              isOpen={isCreateIssueFormOpen}
+              dependencies={[showWeekEnds]}
+              handleClose={() => setIsCreateIssueFormOpen(false)}
+              prePopulatedData={{
+                target_date: date.date,
+                ...(cycleId && { cycle: cycleId.toString() }),
+                ...(moduleId && { module: moduleId.toString() }),
+              }}
+            />
+          </div>
 
           {totalIssues > 4 && (
             <button
@@ -106,8 +115,11 @@ export const SingleCalendarDate: React.FC<Props> = (props) => {
             className={`absolute top-2 right-2 flex items-center justify-center rounded-md bg-custom-background-80 p-1 text-xs text-custom-text-200 opacity-0 group-hover:opacity-100`}
           >
             <button
+              onClick={(e) => {
+                setIsCreateIssueFormOpen(true);
+                setFormPosition({ x: e.clientX, y: e.clientY });
+              }}
               className="flex items-center justify-center gap-1 text-center"
-              onClick={() => setIsCreateIssueFormOpen(true)}
             >
               <PlusSmallIcon className="h-4 w-4 text-custom-text-200" />
               Add issue

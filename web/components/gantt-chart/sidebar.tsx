@@ -1,5 +1,3 @@
-import { useState } from "react";
-// next
 import { useRouter } from "next/router";
 // react-beautiful-dnd
 import { DragDropContext, Draggable, DropResult } from "react-beautiful-dnd";
@@ -10,9 +8,6 @@ import { useChart } from "./hooks";
 import { Loader } from "components/ui";
 // icons
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
-import { PlusIcon } from "lucide-react";
-// components
-import { GanttInlineCreateIssueForm } from "components/core/views/gantt-chart-view/inline-create-issue-form";
 // types
 import { IBlockUpdateData, IGanttBlock } from "./types";
 
@@ -28,11 +23,9 @@ export const GanttSidebar: React.FC<Props> = (props) => {
   const { title, blockUpdateHandler, blocks, SidebarBlockRender, enableReorder } = props;
 
   const router = useRouter();
-  const { cycleId, moduleId } = router.query;
+  const { cycleId } = router.query;
 
   const { activeBlock, dispatch } = useChart();
-
-  const [isCreateIssueFormOpen, setIsCreateIssueFormOpen] = useState(false);
 
   // update the active block on hover
   const updateActiveBlock = (block: IGanttBlock | null) => {
@@ -93,7 +86,7 @@ export const GanttSidebar: React.FC<Props> = (props) => {
         {(droppableProvided) => (
           <div
             id={`gantt-sidebar-${cycleId}`}
-            className="h-full overflow-y-auto pl-2.5"
+            className="max-h-full overflow-y-auto pl-2.5"
             ref={droppableProvided.innerRef}
             {...droppableProvided.droppableProps}
           >
@@ -159,42 +152,6 @@ export const GanttSidebar: React.FC<Props> = (props) => {
           </div>
         )}
       </StrictModeDroppable>
-      <div className="pl-2.5">
-        <GanttInlineCreateIssueForm
-          isOpen={isCreateIssueFormOpen}
-          handleClose={() => setIsCreateIssueFormOpen(false)}
-          onSuccess={() => {
-            const ganttSidebar = document.getElementById(`gantt-sidebar-${cycleId}`);
-
-            const timeoutId = setTimeout(() => {
-              if (ganttSidebar)
-                ganttSidebar.scrollBy({
-                  top: ganttSidebar.scrollHeight,
-                  left: 0,
-                  behavior: "smooth",
-                });
-              clearTimeout(timeoutId);
-            }, 10);
-          }}
-          prePopulatedData={{
-            start_date: new Date(Date.now()).toISOString().split("T")[0],
-            target_date: new Date(Date.now() + 86400000).toISOString().split("T")[0],
-            ...(cycleId && { cycle: cycleId.toString() }),
-            ...(moduleId && { module: moduleId.toString() }),
-          }}
-        />
-
-        {!isCreateIssueFormOpen && (
-          <button
-            type="button"
-            onClick={() => setIsCreateIssueFormOpen(true)}
-            className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-1 rounded-md mt-3"
-          >
-            <PlusIcon className="h-4 w-4" />
-            <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
-          </button>
-        )}
-      </div>
     </DragDropContext>
   );
 };

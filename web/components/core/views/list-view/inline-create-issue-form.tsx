@@ -48,7 +48,7 @@ const InlineInput = () => {
 export const ListInlineCreateIssueForm: React.FC<Props> = (props) => (
   <>
     <InlineCreateIssueFormWrapper
-      className="flex py-3 px-4 items-center gap-x-5 bg-custom-background-100 shadow-custom-shadow-md"
+      className="flex py-3 px-4 items-center gap-x-5 bg-custom-background-100 shadow-custom-shadow-sm z-10"
       {...props}
     >
       <InlineInput />
