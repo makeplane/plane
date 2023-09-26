@@ -14,7 +14,7 @@ import useUser from "hooks/use-user";
 import { useProjectMyMembership } from "contexts/project-member.context";
 // components
 import { AllLists, AllBoards, CalendarView, SpreadsheetView, GanttChartView } from "components/core";
-import { KanBanLayout } from "components/issues/issue-layouts";
+import { CalendarLayout, KanBanLayout } from "components/issues";
 // ui
 import { EmptyState, Spinner } from "components/ui";
 // icons
@@ -234,7 +234,8 @@ export const AllViews: React.FC<Props> = ({
     //   )}
     // </DragDropContext>
     <div className="relative w-full h-full overflow-auto">
-      <KanBanLayout />
+      {/* <KanBanLayout /> */}
+      <CalendarLayout />
     </div>
   );
 };

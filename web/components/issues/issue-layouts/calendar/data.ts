@@ -1,13 +1,17 @@
-export interface CalendarPayload {
-  [year: number]: {
-    [month: number]: {
-      [week: number]: (Date | null)[];
-    };
-  };
+export interface ICalendarWeek {
+  [weekNumber: number]: (Date | null)[];
 }
 
-export const generateCalendarData = (startYear: number, startMonth: number, numMonths: number): CalendarPayload => {
-  const calendarData: CalendarPayload = {};
+export interface ICalendarMonth {
+  [monthNumber: number]: ICalendarWeek;
+}
+
+export interface ICalendarPayload {
+  [year: number]: ICalendarMonth;
+}
+
+export const generateCalendarData = (startYear: number, startMonth: number, numMonths: number): ICalendarPayload => {
+  const calendarData: ICalendarPayload = {};
 
   for (let i = 0; i < numMonths; i++) {
     const currentDate = new Date(startYear, startMonth + i, 1);
