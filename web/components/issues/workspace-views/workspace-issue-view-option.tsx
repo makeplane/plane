@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 
 // hooks
 import useMyIssuesFilters from "hooks/my-issues/use-my-issues-filter";
+import useWorkspaceIssuesFilters from "hooks/use-worskpace-issue-filter";
 // components
 import { MyIssuesSelectFilters } from "components/issues";
 // ui
@@ -28,25 +29,24 @@ const issueViewOptions: { type: TIssueViewOptions; Icon: any }[] = [
   },
 ];
 
-export const MyIssuesViewOptions: React.FC = () => {
+export const WorkspaceIssuesViewOptions: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, workspaceViewId } = router.query;
 
-  const { displayFilters, setDisplayFilters, filters, setFilters } = useMyIssuesFilters(
-    workspaceSlug?.toString()
+  const { displayFilters, setDisplayFilters } = useMyIssuesFilters(workspaceSlug?.toString());
+
+  const { filters, setFilters } = useWorkspaceIssuesFilters(
+    workspaceSlug?.toString(),
+    workspaceViewId?.toString()
   );
 
-  const workspaceViewPathName = ["workspace-views/all-issues"];
-
-  const isWorkspaceViewPath = workspaceViewPathName.some((pathname) =>
-    router.pathname.includes(pathname)
-  );
+  const isWorkspaceViewPath = router.pathname.includes("workspace-views/all-issues");
 
   const showFilters = isWorkspaceViewPath || workspaceViewId;
 
   return (
     <div className="flex items-center gap-2">
-      <div className="flex items-center gap-x-1">
+      <div className="flex items-center gap-x- px-1 py-0.5 rounded bg-custom-sidebar-background-90 ">
         {issueViewOptions.map((option) => (
           <Tooltip
             key={option.type}
@@ -79,36 +79,42 @@ export const MyIssuesViewOptions: React.FC = () => {
           </Tooltip>
         ))}
       </div>
+
       {showFilters && (
-        <MyIssuesSelectFilters
-          filters={filters}
-          onSelect={(option) => {
-            const key = option.key as keyof typeof filters;
+        <>
+          <MyIssuesSelectFilters
+            filters={filters}
+            onSelect={(option) => {
+              const key = option.key as keyof typeof filters;
 
-            if (key === "start_date" || key === "target_date") {
-              const valueExists = checkIfArraysHaveSameElements(filters?.[key] ?? [], option.value);
+              if (key === "start_date" || key === "target_date") {
+                const valueExists = checkIfArraysHaveSameElements(
+                  filters?.[key] ?? [],
+                  option.value
+                );
 
-              setFilters({
-                [key]: valueExists ? null : option.value,
-              });
-            } else {
-              const valueExists = filters[key]?.includes(option.value);
-
-              if (valueExists)
                 setFilters({
-                  [option.key]: ((filters[key] ?? []) as any[])?.filter(
-                    (val) => val !== option.value
-                  ),
+                  [key]: valueExists ? null : option.value,
                 });
-              else
-                setFilters({
-                  [option.key]: [...((filters[key] ?? []) as any[]), option.value],
-                });
-            }
-          }}
-          direction="left"
-          height="rg"
-        />
+              } else {
+                const valueExists = filters[key]?.includes(option.value);
+
+                if (valueExists)
+                  setFilters({
+                    [option.key]: ((filters[key] ?? []) as any[])?.filter(
+                      (val) => val !== option.value
+                    ),
+                  });
+                else
+                  setFilters({
+                    [option.key]: [...((filters[key] ?? []) as any[]), option.value],
+                  });
+              }
+            }}
+            direction="left"
+            height="rg"
+          />
+        </>
       )}
     </div>
   );
