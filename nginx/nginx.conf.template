@@ -11,6 +11,11 @@ http {
 
         client_max_body_size ${FILE_SIZE_LIMIT};
 
+        add_header X-Content-Type-Options    "nosniff" always;
+        add_header Referrer-Policy           "no-referrer-when-downgrade" always;
+        add_header Permissions-Policy        "interest-cohort=()" always;
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+
         location / {
             proxy_pass http://web:3000/;
         }
@@ -20,6 +25,7 @@ http {
         }
 
         location /spaces/ {
+            rewrite ^/spaces/?$ /spaces/login break;
             proxy_pass http://space:3000/spaces/;
         }
 
