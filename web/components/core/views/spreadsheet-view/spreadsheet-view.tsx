@@ -68,7 +68,11 @@ export const SpreadsheetView: React.FC<Props> = ({
         workspaceSlug={workspaceSlug?.toString() ?? ""}
         readOnly={disableUserActions}
       />
-      <div className="h-full rounded-lg text-custom-text-200 overflow-x-auto whitespace-nowrap bg-custom-background-100">
+      <div
+        className={`h-full rounded-lg text-custom-text-200 overflow-x-auto whitespace-nowrap bg-custom-background-100 ${
+          isInlineCreateIssueFormOpen ? "mb-24" : "mb-12"
+        }`}
+      >
         <div className="sticky z-[2] top-0 border-b border-custom-border-200 bg-custom-background-90 w-full min-w-max">
           <SpreadsheetColumns columnData={columnData} gridTemplateColumns={gridTemplateColumns} />
         </div>
@@ -89,61 +93,65 @@ export const SpreadsheetView: React.FC<Props> = ({
                 userAuth={userAuth}
               />
             ))}
-
-            <div className="absolute bottom-0 left-0 z-10 group pb-2 hover:rounded-sm bg-custom-background-100 hover:bg-custom-background-80 border-b border-custom-border-200 w-full min-w-max">
-              <ListInlineCreateIssueForm
-                isOpen={isInlineCreateIssueFormOpen}
-                handleClose={() => setIsInlineCreateIssueFormOpen(false)}
-                prePopulatedData={{
-                  ...(cycleId && { cycle: cycleId.toString() }),
-                  ...(moduleId && { module: moduleId.toString() }),
-                }}
-              />
-
-              {type === "issue"
-                ? !disableUserActions &&
-                  !isInlineCreateIssueFormOpen && (
-                    <button
-                      className="flex gap-1.5 items-center  pl-7 py-2.5 text-sm sticky left-0 z-[1] text-custom-text-200 border-custom-border-200 w-full"
-                      onClick={() => setIsInlineCreateIssueFormOpen(true)}
-                    >
-                      <PlusIcon className="h-4 w-4" />
-                      Add Issue
-                    </button>
-                  )
-                : !disableUserActions &&
-                  !isInlineCreateIssueFormOpen && (
-                    <CustomMenu
-                      className="sticky left-0 z-[1]"
-                      customButton={
-                        <button
-                          className="flex gap-1.5 items-center  pl-7 py-2.5 text-sm sticky left-0 z-[1] text-custom-text-200 border-custom-border-200 w-full"
-                          type="button"
-                        >
-                          <PlusIcon className="h-4 w-4" />
-                          Add Issue
-                        </button>
-                      }
-                      position="left"
-                      verticalPosition="top"
-                      optionsClassName="left-5 !w-36"
-                      noBorder
-                    >
-                      <CustomMenu.MenuItem onClick={() => setIsInlineCreateIssueFormOpen(true)}>
-                        Create new
-                      </CustomMenu.MenuItem>
-                      {openIssuesListModal && (
-                        <CustomMenu.MenuItem onClick={openIssuesListModal}>
-                          Add an existing issue
-                        </CustomMenu.MenuItem>
-                      )}
-                    </CustomMenu>
-                  )}
-            </div>
           </div>
         ) : (
           <Spinner />
         )}
+      </div>
+
+      <div
+        className={`absolute bottom-0 left-0 z-10 group hover:rounded-sm bg-custom-background-100 hover:bg-custom-background-80 border-b border-custom-border-200 w-full min-w-max ${
+          isInlineCreateIssueFormOpen ? "pb-2" : ""
+        }`}
+      >
+        <ListInlineCreateIssueForm
+          isOpen={isInlineCreateIssueFormOpen}
+          handleClose={() => setIsInlineCreateIssueFormOpen(false)}
+          prePopulatedData={{
+            ...(cycleId && { cycle: cycleId.toString() }),
+            ...(moduleId && { module: moduleId.toString() }),
+          }}
+        />
+
+        {type === "issue"
+          ? !disableUserActions &&
+            !isInlineCreateIssueFormOpen && (
+              <button
+                className="flex gap-1.5 items-center pl-7 py-2.5 text-sm sticky left-0 z-[1] text-custom-text-200 border-custom-border-200 w-full"
+                onClick={() => setIsInlineCreateIssueFormOpen(true)}
+              >
+                <PlusIcon className="h-4 w-4" />
+                Add Issue
+              </button>
+            )
+          : !disableUserActions &&
+            !isInlineCreateIssueFormOpen && (
+              <CustomMenu
+                className="sticky left-0 z-[1] !w-full"
+                customButton={
+                  <button
+                    className="flex gap-1.5 items-center pl-7 py-2.5 text-sm sticky left-0 z-[1] text-custom-text-200 border-custom-border-200 w-full"
+                    type="button"
+                  >
+                    <PlusIcon className="h-4 w-4" />
+                    Add Issue
+                  </button>
+                }
+                position="left"
+                verticalPosition="top"
+                optionsClassName="left-5 !w-36"
+                noBorder
+              >
+                <CustomMenu.MenuItem onClick={() => setIsInlineCreateIssueFormOpen(true)}>
+                  Create new
+                </CustomMenu.MenuItem>
+                {openIssuesListModal && (
+                  <CustomMenu.MenuItem onClick={openIssuesListModal}>
+                    Add an existing issue
+                  </CustomMenu.MenuItem>
+                )}
+              </CustomMenu>
+            )}
       </div>
     </>
   );
