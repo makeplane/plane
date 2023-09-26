@@ -105,8 +105,49 @@ class IssueFilterStore implements IIssueFilterStore {
     this.issueService = new IssueService();
   }
 
+  computedFilter = (filters: any, filteredParams: any) => {
+    const computedFilters: any = {};
+    Object.keys(filters).map((key) => {
+      if (filters[key] != undefined && filteredParams.includes(key))
+        computedFilters[key] =
+          typeof filters[key] === "string" || typeof filters[key] === "boolean" ? filters[key] : filters[key].join(",");
+    });
+
+    return computedFilters;
+  };
+
   get appliedFilters(): TIssueParams[] | null {
-    return handleIssueQueryParamsByLayout(this.userDisplayFilters.layout);
+    if (
+      !this.userFilters ||
+      Object.keys(this.userFilters).length === 0 ||
+      !this.userDisplayFilters ||
+      Object.keys(this.userDisplayFilters).length === 0
+    )
+      return null;
+
+    let filteredRouteParams: any = {
+      priority: this.userFilters?.priority || undefined,
+      state_group: this.userFilters?.state_group || undefined,
+      state: this.userFilters?.state || undefined,
+      assignees: this.userFilters?.assignees || undefined,
+      created_by: this.userFilters?.created_by || undefined,
+      labels: this.userFilters?.labels || undefined,
+      start_date: this.userFilters?.start_date || undefined,
+      target_date: this.userFilters?.target_date || undefined,
+      group_by: this.userDisplayFilters?.group_by || "state",
+      order_by: this.userDisplayFilters?.order_by || "-created_at",
+      sub_group_by: this.userDisplayFilters?.sub_group_by || undefined,
+      type: this.userDisplayFilters?.type || undefined,
+      sub_issue: this.userDisplayFilters?.sub_issue || true,
+      show_empty_groups: this.userDisplayFilters?.show_empty_groups || true,
+      calendar_date_range: this.userDisplayFilters?.calendar_date_range || undefined,
+      start_target_date: this.userDisplayFilters?.start_target_date || true,
+    };
+
+    const filteredParams = handleIssueQueryParamsByLayout(this.userDisplayFilters.layout);
+    if (filteredParams) filteredRouteParams = this.computedFilter(filteredRouteParams, filteredParams);
+
+    return filteredRouteParams;
   }
 
   fetchUserProjectFilters = async (workspaceSlug: string, projectId: string) => {
