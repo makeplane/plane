@@ -90,6 +90,7 @@ from .issue import (
     IssueRetrievePublicEndpoint,
     ProjectIssuesPublicEndpoint,
     IssueDraftViewSet,
+    TransferProjectIssueEndpoint,
 )
 
 from .auth_extended import (
