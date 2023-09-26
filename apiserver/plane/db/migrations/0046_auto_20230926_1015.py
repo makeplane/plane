@@ -12,7 +12,7 @@ def update_issue_activity(apps, schema_editor):
     IssueActivity.objects.bulk_update(
         updated_issue_activity,
         ["epoch"],
-        batch_size=2000,
+        batch_size=5000,
     )
 
 class Migration(migrations.Migration):
