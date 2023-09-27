@@ -352,6 +352,7 @@ export const SingleListIssue: React.FC<Props> = ({
                 type="button"
                 className="truncate text-[0.825rem] text-custom-text-100"
                 onClick={() => {
+                  if (isArchivedIssues) return router.push(issuePath);
                   if (!isDraftIssues) openPeekOverview(issue);
                   if (isDraftIssues && handleDraftIssueSelect) handleDraftIssueSelect(issue);
                 }}
