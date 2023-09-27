@@ -33,8 +33,28 @@ const useCalendarIssuesView = () => {
 
   const [activeMonthDate, setActiveMonthDate] = useState(new Date());
 
-  const firstDayOfMonth = new Date(activeMonthDate.getFullYear(), activeMonthDate.getMonth(), 1);
-  const lastDayOfMonth = new Date(activeMonthDate.getFullYear(), activeMonthDate.getMonth() + 1, 0);
+  // previous month's first date
+  const previousMonthYear =
+    activeMonthDate.getMonth() === 0
+      ? activeMonthDate.getFullYear() - 1
+      : activeMonthDate.getFullYear();
+  const previousMonthMonth = activeMonthDate.getMonth() === 0 ? 11 : activeMonthDate.getMonth() - 1;
+
+  const previousMonthFirstDate = new Date(previousMonthYear, previousMonthMonth, 1);
+
+  // next month's last date
+  const nextMonthYear =
+    activeMonthDate.getMonth() === 11
+      ? activeMonthDate.getFullYear() + 1
+      : activeMonthDate.getFullYear();
+  const nextMonthMonth = (activeMonthDate.getMonth() + 1) % 12;
+  const nextMonthFirstDate = new Date(nextMonthYear, nextMonthMonth, 1);
+
+  const nextMonthLastDate = new Date(
+    nextMonthFirstDate.getFullYear(),
+    nextMonthFirstDate.getMonth() + 1,
+    0
+  );
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
@@ -47,8 +67,8 @@ const useCalendarIssuesView = () => {
     labels: filters?.labels ? filters?.labels.join(",") : undefined,
     created_by: filters?.created_by ? filters?.created_by.join(",") : undefined,
     start_date: filters?.start_date ? filters?.start_date.join(",") : undefined,
-    target_date: `${renderDateFormat(firstDayOfMonth)};after,${renderDateFormat(
-      lastDayOfMonth
+    target_date: `${renderDateFormat(previousMonthFirstDate)};after,${renderDateFormat(
+      nextMonthLastDate
     )};before`,
   };
 
