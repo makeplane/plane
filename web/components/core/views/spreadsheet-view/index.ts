@@ -10,5 +10,4 @@ export * from "./state-column";
 export * from "./updated-on-column";
 export * from "./spreadsheet-view";
 export * from "./issue-column/issue-column";
-export * from "./spreadsheet-columns";
 export * from "./issue-column/spreadsheet-issue-column";
