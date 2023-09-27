@@ -2400,27 +2400,6 @@ class IssueDraftViewSet(BaseViewSet):
     ]
     serializer_class = IssueFlatSerializer
     model = Issue
-
-
-    def perform_update(self, serializer):
-        requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
-        current_instance = (
-            self.get_queryset().filter(pk=self.kwargs.get("pk", None)).first()
-        )
-        if current_instance is not None:
-            issue_activity.delay(
-                type="issue_draft.activity.updated",
-                requested_data=requested_data,
-                actor_id=str(self.request.user.id),
-                issue_id=str(self.kwargs.get("pk", None)),
-                project_id=str(self.kwargs.get("project_id", None)),
-                current_instance=json.dumps(
-                    IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
-                ),
-                epoch=int(timezone.now().timestamp())
-            )
-
-        return super().perform_update(serializer)
     
 
     def perform_destroy(self, instance):
@@ -2611,6 +2590,47 @@ class IssueDraftViewSet(BaseViewSet):
         except Project.DoesNotExist:
             return Response(
                 {"error": "Project was not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+
+    def partial_update(self, request, slug, project_id, pk):
+        try:
+            issue = Issue.objects.get(
+                workspace__slug=slug, project_id=project_id, pk=pk
+            )
+            serializer = IssueSerializer(
+                issue, data=request.data, partial=True
+            )
+
+            if serializer.is_valid():
+                if(request.data.get("is_draft") is not None and not request.data.get("is_draft")):
+                    serializer.save(created_at=timezone.now(), updated_at=timezone.now())
+                else:
+                    serializer.save()
+                issue_activity.delay(
+                    type="issue_draft.activity.updated",
+                    requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+                    actor_id=str(self.request.user.id),
+                    issue_id=str(self.kwargs.get("pk", None)),
+                    project_id=str(self.kwargs.get("project_id", None)),
+                    current_instance=json.dumps(
+                        IssueSerializer(issue).data,
+                        cls=DjangoJSONEncoder,
+                    ),
+                    epoch=int(timezone.now().timestamp())
+                )
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Issue.DoesNotExist:
+            return Response(
+                {"error": "Issue does not exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
 
