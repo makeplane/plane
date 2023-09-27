@@ -87,7 +87,7 @@ const EstimatePoint = ({ point }: { point: string }) => {
     <span className="font-medium text-custom-text-100">
       {isEstimateActive
         ? estimateValue
-        : `${currentPoint} ${currentPoint > 1 ? "Points" : "point"}`}
+        : `${currentPoint} ${currentPoint > 1 ? "points" : "point"}`}
     </span>
   );
 };
