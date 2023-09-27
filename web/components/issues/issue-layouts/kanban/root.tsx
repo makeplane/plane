@@ -15,8 +15,30 @@ export interface IKanBanLayout {
   handleDragDrop?: (result: any) => void;
 }
 
+interface IIssueVisibility {
+  kanban: string[];
+  swimlanes: string[];
+}
+
 export const KanBanLayout: React.FC<IKanBanLayout> = observer(({}) => {
-  const { issue: issueStore, issueFilter: issueFilterStore }: RootStore = useMobxStore();
+  const [issueVisiility, setIssueVisibility] = React.useState<IIssueVisibility>({
+    kanban: [],
+    swimlanes: [],
+  });
+  const handleIssueVisibility = (key: "kanban" | "swimlanes", value: string) => {
+    setIssueVisibility((prevState: IIssueVisibility) => ({
+      ...prevState,
+      [key]: prevState[key].includes(value)
+        ? prevState[key].filter((item) => item !== value)
+        : [...prevState[key], value],
+    }));
+  };
+
+  const {
+    issue: issueStore,
+    issueFilter: issueFilterStore,
+    issueKanBanView: issueKanBanViewStore,
+  }: RootStore = useMobxStore();
   const currentKanBanView: "swimlanes" | "default" = issueFilterStore?.userDisplayFilters?.sub_group_by
     ? "swimlanes"
     : "default";
@@ -34,13 +56,14 @@ export const KanBanLayout: React.FC<IKanBanLayout> = observer(({}) => {
     )
       return;
 
-    console.log("result", result);
-    // issueKanBanViewStore?.handleDragDrop(result.source, result.destination);
+    currentKanBanView === "default"
+      ? issueKanBanViewStore?.handleDragDrop(result.source, result.destination)
+      : issueKanBanViewStore?.handleSwimlaneDragDrop(result.source, result.destination);
   };
 
   return (
-    <div className={`relative min-w-full w-max h-full bg-custom-background-90`}>
-      {/* <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90`}> */}
+    // <div className={`relative min-w-full w-max h-full bg-custom-background-90`}>
+    <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90`}>
       <DragDropContext onDragEnd={onDragEnd}>
         {currentKanBanView === "default" ? <KanBan issues={issues} /> : <KanBanSwimLanes issues={issues} />}
       </DragDropContext>

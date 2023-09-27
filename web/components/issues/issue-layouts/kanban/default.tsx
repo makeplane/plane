@@ -20,9 +20,17 @@ export interface IGroupByKanBan {
   issues?: any;
   handleIssues?: () => void;
   handleDragDrop?: (result: any) => void | undefined;
+  isDragDisabled: boolean;
 }
 
-const GroupByKanBan: React.FC<IGroupByKanBan> = ({ list, listKey, sub_group_by, sub_group_id = "null", issues }) => (
+const GroupByKanBan: React.FC<IGroupByKanBan> = ({
+  list,
+  listKey,
+  sub_group_by,
+  sub_group_id = "null",
+  issues,
+  isDragDisabled,
+}) => (
   <div className="relative w-full h-full flex">
     {list &&
       list.length > 0 &&
@@ -35,7 +43,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = ({ list, listKey, sub_group_by, 
           )}
 
           <div className="w-full min-h-[150px] h-full">
-            <Droppable droppableId={`${sub_group_id}-${getValueFromObject(_list, listKey) as string}`}>
+            <Droppable droppableId={`${getValueFromObject(_list, listKey) as string}__${sub_group_id}`}>
               {(provided: any, snapshot: any) => (
                 <div
                   className={`w-full h-full relative transition-all ${
@@ -44,12 +52,19 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = ({ list, listKey, sub_group_by, 
                   {...provided.droppableProps}
                   ref={provided.innerRef}
                 >
-                  {issues && (
+                  {issues ? (
                     <IssueBlock
                       sub_group_id={sub_group_id}
                       columnId={getValueFromObject(_list, listKey) as string}
                       issues={issues[getValueFromObject(_list, listKey) as string]}
+                      isDragDisabled={isDragDisabled}
                     />
+                  ) : (
+                    isDragDisabled && (
+                      <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+                        <div className="text-custom-text-300 text-sm">Drop here</div>
+                      </div>
+                    )
                   )}
                   {provided.placeholder}
                 </div>
@@ -69,7 +84,11 @@ export interface IKanBan {
 }
 
 export const KanBan: React.FC<IKanBan> = observer(({ issues, sub_group_id = "null" }) => {
-  const { project: projectStore, issueFilter: issueFilterStore }: RootStore = useMobxStore();
+  const {
+    project: projectStore,
+    issueFilter: issueFilterStore,
+    issueKanBanView: issueKanBanViewStore,
+  }: RootStore = useMobxStore();
 
   const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
   const sub_group_by: string | null = issueFilterStore?.userDisplayFilters?.sub_group_by || null;
@@ -83,6 +102,7 @@ export const KanBan: React.FC<IKanBan> = observer(({ issues, sub_group_id = "nul
           sub_group_by={sub_group_by}
           sub_group_id={sub_group_id}
           issues={issues}
+          isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
         />
       )}
 
@@ -93,6 +113,7 @@ export const KanBan: React.FC<IKanBan> = observer(({ issues, sub_group_id = "nul
           sub_group_by={sub_group_by}
           sub_group_id={sub_group_id}
           issues={issues}
+          isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
         />
       )}
 
@@ -103,6 +124,7 @@ export const KanBan: React.FC<IKanBan> = observer(({ issues, sub_group_id = "nul
           sub_group_by={sub_group_by}
           sub_group_id={sub_group_id}
           issues={issues}
+          isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
         />
       )}
 
@@ -113,6 +135,7 @@ export const KanBan: React.FC<IKanBan> = observer(({ issues, sub_group_id = "nul
           sub_group_by={sub_group_by}
           sub_group_id={sub_group_id}
           issues={issues}
+          isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
         />
       )}
 
@@ -123,6 +146,7 @@ export const KanBan: React.FC<IKanBan> = observer(({ issues, sub_group_id = "nul
           sub_group_by={sub_group_by}
           sub_group_id={sub_group_id}
           issues={issues}
+          isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
         />
       )}
 
@@ -133,6 +157,7 @@ export const KanBan: React.FC<IKanBan> = observer(({ issues, sub_group_id = "nul
           sub_group_by={sub_group_by}
           sub_group_id={sub_group_id}
           issues={issues}
+          isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
         />
       )}
     </div>

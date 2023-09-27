@@ -46,7 +46,10 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = ({ issues, list, listKey }
           </div>
 
           <div className="relative">
-            <KanBan issues={issues?.[_list?.[listKey]]} sub_group_id={getValueFromObject(_list, listKey) as string} />
+            <KanBan
+              issues={issues?.[getValueFromObject(_list, listKey) as string]}
+              sub_group_id={getValueFromObject(_list, listKey) as string}
+            />
           </div>
         </div>
       ))}
