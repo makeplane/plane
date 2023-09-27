@@ -1,3 +1,5 @@
+import { TCalendarLayouts } from "types";
+
 export const MONTHS_LIST: {
   [monthNumber: number]: {
     shortTitle: string;
@@ -87,5 +89,21 @@ export const DAYS_LIST: {
   7: {
     shortTitle: "Sun",
     title: "Sunday",
+  },
+};
+
+export const CALENDAR_LAYOUTS: {
+  [layout in TCalendarLayouts]: {
+    key: TCalendarLayouts;
+    title: string;
+  };
+} = {
+  month: {
+    key: "month",
+    title: "Month layout",
+  },
+  week: {
+    key: "week",
+    title: "Week layout",
   },
 };

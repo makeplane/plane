@@ -47,6 +47,8 @@ export type TIssueParams =
   | "show_empty_groups"
   | "start_target_date";
 
+export type TCalendarLayouts = "month" | "week";
+
 export interface IIssueFilterOptions {
   assignees?: string[] | null;
   created_by?: string[] | null;
@@ -61,9 +63,8 @@ export interface IIssueFilterOptions {
 
 export interface IIssueDisplayFilterOptions {
   calendar?: {
-    active_month?: string;
     show_weekends?: boolean;
-    layout?: "month" | "week";
+    layout?: TCalendarLayouts;
   };
   group_by?: TIssueGroupByOptions;
   sub_group_by?: TIssueGroupByOptions;

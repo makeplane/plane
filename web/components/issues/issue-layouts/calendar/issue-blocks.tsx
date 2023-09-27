@@ -13,7 +13,9 @@ export const CalendarIssueBlocks: React.FC<Props> = (props) => {
         <Draggable key={issue.id} draggableId={issue.id} index={index}>
           {(provided, snapshot) => (
             <div
-              className="border-[0.5px] h-8 w-full border-custom-border-200 shadow-custom-shadow-2xs rounded py-1.5 px-1 flex items-center gap-1.5 bg-custom-background-100"
+              className={`h-8 w-full shadow-custom-shadow-2xs rounded py-1.5 px-1 flex items-center gap-1.5 border-[0.5px] border-custom-border-200 ${
+                snapshot.isDragging ? "shadow-custom-shadow-rg bg-custom-background-90" : "bg-custom-background-100"
+              }`}
               {...provided.draggableProps}
               {...provided.dragHandleProps}
               ref={provided.innerRef}

@@ -13,7 +13,7 @@ export interface ICalendarDate {
 
 export interface ICalendarWeek {
   [weekNumber: number]: {
-    [date: string]: ICalendarDate | null;
+    [date: string]: ICalendarDate;
   };
 }
 
@@ -58,26 +58,23 @@ export const generateCalendarData = (
     const numWeeks = Math.ceil((numDaysInMonth + firstDayOfWeek) / 7);
 
     for (let week = 0; week < numWeeks; week++) {
-      const currentWeekObject: { [date: string]: ICalendarDate | null } = {};
+      const currentWeekObject: { [date: string]: ICalendarDate } = {};
 
       for (let i = 0; i < 7; i++) {
         const dayNumber = week * 7 + i - firstDayOfWeek + 1;
 
         const date = new Date(year, month, dayNumber);
 
-        currentWeekObject[renderDateFormat(date)] =
-          dayNumber >= 1 && dayNumber <= numDaysInMonth
-            ? {
-                date,
-                year,
-                month,
-                day: dayNumber,
-                week: getWeekNumber(date),
-                is_current_month: true,
-                is_current_week: getWeekNumber(date) === getWeekNumber(new Date()),
-                is_today: date.toDateString() === new Date().toDateString(),
-              }
-            : null;
+        currentWeekObject[renderDateFormat(date)] = {
+          date,
+          year,
+          month,
+          day: dayNumber,
+          week: getWeekNumber(date),
+          is_current_month: date.getMonth() === month,
+          is_current_week: getWeekNumber(date) === getWeekNumber(new Date()),
+          is_today: date.toDateString() === new Date().toDateString(),
+        };
       }
 
       calendarData[year][month][week] = currentWeekObject;
