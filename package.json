@@ -5,6 +5,7 @@
   "workspaces": [
     "web",
     "space",
+    "packages/editor/*",
     "packages/*"
   ],
   "scripts": {

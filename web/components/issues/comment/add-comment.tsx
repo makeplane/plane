@@ -22,7 +22,12 @@ type Props = {
   showAccessSpecifier?: boolean;
 };
 
-const commentAccess = [
+type commentAccessType = {
+  icon: string;
+  key: string;
+  label: "Private" | "Public";
+}
+const commentAccess: commentAccessType[] = [
   {
     icon: "lock",
     key: "INTERNAL",
@@ -67,51 +72,30 @@ export const AddComment: React.FC<Props> = ({
         <div>
           <div className="relative">
             <Controller
-              name="comment_html"
+              name="access"
               control={control}
-              render={({ field: { value, onChange } }) => (
-                <TiptapEditorWithRef
-                  uploadFile={fileService.uploadFile}
-                  deleteFile={fileService.deleteImage}
-                  workspaceSlug={workspaceSlug as string}
-                  ref={editorRef}
-                  value={!value || value === "" ? "<p></p>" : value}
-                  customClassName="p-3 min-h-[100px] shadow-sm"
-                  debouncedUpdatesEnabled={false}
-                  onChange={(comment_json: Object, comment_html: string) => onChange(comment_html)}
+              render={({ field: { onChange, value } }) => (
+                <Controller
+                  name="comment_html"
+                  control={control}
+                  render={({ field: { onChange: onCommentChange, value: commentValue } }) => (
+                    <TiptapEditorWithRef
+                      uploadFile={fileService.uploadFile}
+                      deleteFile={fileService.deleteImage}
+                      workspaceSlug={workspaceSlug as string}
+                      ref={editorRef}
+                      value={!commentValue || commentValue === "" ? "<p></p>" : commentValue}
+                      customClassName="p-3 min-h-[100px] shadow-sm"
+                      debouncedUpdatesEnabled={false}
+                      onChange={(comment_json: Object, comment_html: string) => onCommentChange(comment_html)}
+                      accessValue={value}
+                      onAccessChange={onChange}
+                      commentAccess={commentAccess}
+                    />
+                  )}
                 />
               )}
             />
-            {showAccessSpecifier && (
-              <div className="absolute bottom-2 left-3 z-[1]">
-                <Controller
-                  control={control}
-                  name="access"
-                  render={({ field: { onChange, value } }) => (
-                    <div className="flex border border-custom-border-300 divide-x divide-custom-border-300 rounded overflow-hidden">
-                      {commentAccess.map((access) => (
-                        <Tooltip key={access.key} tooltipContent={access.label}>
-                          <button
-                            type="button"
-                            onClick={() => onChange(access.key)}
-                            className={`grid place-items-center p-1 hover:bg-custom-background-80 ${value === access.key ? "bg-custom-background-80" : ""
-                              }`}
-                          >
-                            <Icon
-                              iconName={access.icon}
-                              className={`w-4 h-4 -mt-1 ${value === access.key
-                                ? "!text-custom-text-100"
-                                : "!text-custom-text-400"
-                                }`}
-                            />
-                          </button>
-                        </Tooltip>
-                      ))}
-                    </div>
-                  )}
-                />
-              </div>
-            )}
           </div>
 
           <SecondaryButton type="submit" disabled={isSubmitting || disabled} className="mt-2">
