@@ -1,4 +1,6 @@
 import { FC, useEffect, useState } from "react";
+// next
+import { useRouter } from "next/router";
 // icons
 import { ArrowsPointingInIcon, ArrowsPointingOutIcon } from "@heroicons/react/20/solid";
 // components
@@ -11,6 +13,8 @@ import { GanttSidebar } from "../sidebar";
 import { MonthChartView } from "./month";
 // import { QuarterChartView } from "./quarter";
 // import { YearChartView } from "./year";
+// icons
+import { PlusIcon } from "lucide-react";
 // views
 import {
   // generateHourChart,
@@ -25,6 +29,7 @@ import {
   getNumberOfDaysBetweenTwoDatesInYear,
   getMonthChartItemPositionWidthInMonth,
 } from "../views";
+import { GanttInlineCreateIssueForm } from "components/core/views/gantt-chart-view/inline-create-issue-form";
 // types
 import { ChartDataType, IBlockUpdateData, IGanttBlock, TGanttViews } from "../types";
 // data
@@ -64,11 +69,16 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   const [itemsContainerWidth, setItemsContainerWidth] = useState<number>(0);
   const [fullScreenMode, setFullScreenMode] = useState<boolean>(false);
 
+  const [isCreateIssueFormOpen, setIsCreateIssueFormOpen] = useState(false);
+
   // blocks state management starts
   const [chartBlocks, setChartBlocks] = useState<IGanttBlock[] | null>(null);
 
   const { currentView, currentViewData, renderView, dispatch, allViews, updateScrollLeft } =
     useChart();
+
+  const router = useRouter();
+  const { cycleId, moduleId } = router.query;
 
   const renderBlockStructure = (view: any, blocks: IGanttBlock[] | null) =>
     blocks && blocks.length > 0
@@ -294,9 +304,12 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
       >
         <div
           id="gantt-sidebar"
-          className="h-full w-1/4 flex flex-col border-r border-custom-border-200 space-y-3"
+          className="h-full w-1/4 flex flex-col border-r border-custom-border-200"
         >
-          <div className="h-[60px] border-b border-custom-border-200 box-border flex-shrink-0" />
+          <div className="h-[60px] border-b border-custom-border-200 box-border flex-shrink-0 flex items-end justify-between gap-2 text-sm text-custom-text-300 font-medium pb-2 pl-10 pr-4">
+            <h6>{title}</h6>
+            <h6>Duration</h6>
+          </div>
           <GanttSidebar
             title={title}
             blockUpdateHandler={blockUpdateHandler}
@@ -304,6 +317,44 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
             SidebarBlockRender={SidebarBlockRender}
             enableReorder={enableReorder}
           />
+          {chartBlocks && (
+            <div className="pl-2.5 py-3">
+              <GanttInlineCreateIssueForm
+                isOpen={isCreateIssueFormOpen}
+                handleClose={() => setIsCreateIssueFormOpen(false)}
+                onSuccess={() => {
+                  const ganttSidebar = document.getElementById(`gantt-sidebar-${cycleId}`);
+
+                  const timeoutId = setTimeout(() => {
+                    if (ganttSidebar)
+                      ganttSidebar.scrollBy({
+                        top: ganttSidebar.scrollHeight,
+                        left: 0,
+                        behavior: "smooth",
+                      });
+                    clearTimeout(timeoutId);
+                  }, 10);
+                }}
+                prePopulatedData={{
+                  start_date: new Date(Date.now()).toISOString().split("T")[0],
+                  target_date: new Date(Date.now() + 86400000).toISOString().split("T")[0],
+                  ...(cycleId && { cycle: cycleId.toString() }),
+                  ...(moduleId && { module: moduleId.toString() }),
+                }}
+              />
+
+              {!isCreateIssueFormOpen && (
+                <button
+                  type="button"
+                  onClick={() => setIsCreateIssueFormOpen(true)}
+                  className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-1 rounded-md"
+                >
+                  <PlusIcon className="h-4 w-4" />
+                  <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
+                </button>
+              )}
+            </div>
+          )}
         </div>
         <div
           className="relative flex h-full w-full flex-1 flex-col overflow-hidden overflow-x-auto horizontal-scroll-enable"

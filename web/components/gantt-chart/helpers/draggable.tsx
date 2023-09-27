@@ -179,11 +179,6 @@ export const ChartDraggable: React.FC<Props> = ({
 
     if (e.button !== 0) return;
 
-    e.preventDefault();
-    e.stopPropagation();
-
-    setIsMoving(true);
-
     const resizableDiv = resizableRef.current;
 
     const columnWidth = currentViewData.data.width;
@@ -193,6 +188,8 @@ export const ChartDraggable: React.FC<Props> = ({
     let initialMarginLeft = parseInt(resizableDiv.style.marginLeft);
 
     const handleMouseMove = (e: MouseEvent) => {
+      setIsMoving(true);
+
       let delWidth = 0;
 
       delWidth = checkScrollEnd(e);
@@ -295,7 +292,9 @@ export const ChartDraggable: React.FC<Props> = ({
           </>
         )}
         <div
-          className="relative z-[2] rounded h-8 w-full flex items-center"
+          className={`relative z-[2] rounded h-8 w-full flex items-center ${
+            isMoving ? "pointer-events-none" : ""
+          }`}
           onMouseDown={handleBlockMove}
         >
           <BlockRender data={block.data} />

@@ -75,9 +75,7 @@ export const SingleBoard: React.FC<Props> = (props) => {
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disableUserActions;
 
-  const onCreateClick = () => {
-    setIsInlineCreateIssueFormOpen(true);
-
+  const scrollToBottom = () => {
     const boardListElement = document.getElementById(`board-list-${groupTitle}`);
 
     // timeout is needed because the animation
@@ -91,6 +89,11 @@ export const SingleBoard: React.FC<Props> = (props) => {
         });
       clearTimeout(timeoutId);
     }, 10);
+  };
+
+  const onCreateClick = () => {
+    setIsInlineCreateIssueFormOpen(true);
+    scrollToBottom();
   };
 
   return (
@@ -201,6 +204,7 @@ export const SingleBoard: React.FC<Props> = (props) => {
                 <BoardInlineCreateIssueForm
                   isOpen={isInlineCreateIssueFormOpen}
                   handleClose={() => setIsInlineCreateIssueFormOpen(false)}
+                  onSuccess={() => scrollToBottom()}
                   prePopulatedData={{
                     ...(cycleId && { cycle: cycleId.toString() }),
                     ...(moduleId && { module: moduleId.toString() }),
