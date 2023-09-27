@@ -42,7 +42,6 @@ export interface IIssueFilterOptions {
 }
 
 export interface IIssueDisplayFilterOptions {
-  calendar_date_range?: string;
   group_by?: TIssueGroupByOptions;
   layout?: TIssueViewOptions;
   order_by?: TIssueOrderByOptions;
