@@ -197,7 +197,7 @@ export const InlineCreateIssueFormWrapper: React.FC<Props> = (props) => {
         )
     )
       .then(async (res) => {
-        mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params));
+        await mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params));
         if (formData.cycle && formData.cycle !== "")
           await addIssueToCycle(
             workspaceSlug.toString(),

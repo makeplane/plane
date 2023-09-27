@@ -80,23 +80,17 @@ export const SingleCalendarDate: React.FC<Props> = (props) => {
                   )}
                 </Draggable>
               ))}
-            <div
-              className="fixed top-0 left-0 z-50"
-              style={{
-                transform: `translate(${formPosition.x}px, ${formPosition.y}px)`,
+
+            <CalendarInlineCreateIssueForm
+              isOpen={isCreateIssueFormOpen}
+              dependencies={[showWeekEnds]}
+              handleClose={() => setIsCreateIssueFormOpen(false)}
+              prePopulatedData={{
+                target_date: date.date,
+                ...(cycleId && { cycle: cycleId.toString() }),
+                ...(moduleId && { module: moduleId.toString() }),
               }}
-            >
-              <CalendarInlineCreateIssueForm
-                isOpen={isCreateIssueFormOpen}
-                dependencies={[showWeekEnds]}
-                handleClose={() => setIsCreateIssueFormOpen(false)}
-                prePopulatedData={{
-                  target_date: date.date,
-                  ...(cycleId && { cycle: cycleId.toString() }),
-                  ...(moduleId && { module: moduleId.toString() }),
-                }}
-              />
-            </div>
+            />
 
             {totalIssues > 4 && (
               <button

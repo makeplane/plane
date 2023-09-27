@@ -288,14 +288,16 @@ export const SpreadsheetView: React.FC<Props> = ({
           </div>
 
           <div>
-            <ListInlineCreateIssueForm
-              isOpen={isInlineCreateIssueFormOpen}
-              handleClose={() => setIsInlineCreateIssueFormOpen(false)}
-              prePopulatedData={{
-                ...(cycleId && { cycle: cycleId.toString() }),
-                ...(moduleId && { module: moduleId.toString() }),
-              }}
-            />
+            <div className="mb-3 z-50 sticky bottom-0 left-0">
+              <ListInlineCreateIssueForm
+                isOpen={isInlineCreateIssueFormOpen}
+                handleClose={() => setIsInlineCreateIssueFormOpen(false)}
+                prePopulatedData={{
+                  ...(cycleId && { cycle: cycleId.toString() }),
+                  ...(moduleId && { module: moduleId.toString() }),
+                }}
+              />
+            </div>
 
             {type === "issue"
               ? !disableUserActions &&
