@@ -1,12 +1,14 @@
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 // constants
 import { DAYS_LIST } from "constants/calendar";
 
-type Props = {
-  showWeekends: boolean;
-};
+type Props = {};
 
-export const CalendarWeekHeader: React.FC<Props> = (props) => {
-  const { showWeekends } = props;
+export const CalendarWeekHeader: React.FC<Props> = observer((props) => {
+  const { issueFilter: issueFilterStore } = useMobxStore();
+
+  const showWeekends = issueFilterStore.userDisplayFilters.calendar?.show_weekends ?? false;
 
   return (
     <div
@@ -25,4 +27,4 @@ export const CalendarWeekHeader: React.FC<Props> = (props) => {
       })}
     </div>
   );
-};
+});

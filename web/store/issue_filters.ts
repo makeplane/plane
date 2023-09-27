@@ -25,15 +25,15 @@ export interface IIssueFilterStore {
   filtersSearchQuery: string;
 
   // action
-  fetchUserProjectFilters: (workspaceSlug: string, projectSlug: string) => Promise<void>;
+  fetchUserProjectFilters: (workspaceSlug: string, projectId: string) => Promise<void>;
   updateUserFilters: (
     workspaceSlug: string,
-    projectSlug: string,
+    projectId: string,
     filterToUpdate: Partial<IProjectViewProps>
   ) => Promise<void>;
   updateDisplayProperties: (
     workspaceSlug: string,
-    projectSlug: string,
+    projectId: string,
     properties: Partial<IIssueDisplayProperties>
   ) => Promise<void>;
   updateFiltersSearchQuery: (query: string) => void;
@@ -140,7 +140,6 @@ class IssueFilterStore implements IIssueFilterStore {
       type: this.userDisplayFilters?.type || undefined,
       sub_issue: this.userDisplayFilters?.sub_issue || true,
       show_empty_groups: this.userDisplayFilters?.show_empty_groups || true,
-      calendar_date_range: this.userDisplayFilters?.calendar_date_range || undefined,
       start_target_date: this.userDisplayFilters?.start_target_date || true,
     };
 

@@ -15,7 +15,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
 
   const { issue: issueStore } = useMobxStore();
 
-  if (!date) return <div className="border-[0.5px] border-custom-border-200 min-h-[9rem] p-2 space-y-1" />;
+  if (!date) return <div data-date="null" className="min-h-[9rem] p-2 space-y-1" />;
 
   const issues = issueStore.getIssues
     ? (issueStore.getIssues as IIssueGroupedStructure)[renderDateFormat(date.date)]
@@ -25,14 +25,15 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
     <Droppable droppableId={renderDateFormat(date.date)} isDropDisabled={date === null}>
       {(provided, snapshot) => (
         <div
-          className={`border-[0.5px] border-custom-border-200 min-h-[9rem] p-2 space-y-1 ${
+          className={`min-h-[9rem] p-2 space-y-1 ${
             snapshot.isDraggingOver ? "bg-custom-background-90" : "bg-custom-background-100"
           }`}
+          data-date={renderDateFormat(date.date)}
           {...provided.droppableProps}
           ref={provided.innerRef}
         >
           <>
-            {date && <div className="text-xs text-right">{date.date.getDate()}</div>}
+            {date && <div className="text-xs text-right sticky top-2">{date.date.getDate()}</div>}
             <div>
               <CalendarIssueBlocks issues={issues} />
             </div>

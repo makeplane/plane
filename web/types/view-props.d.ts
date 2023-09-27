@@ -45,7 +45,6 @@ export type TIssueParams =
   | "type"
   | "sub_issue"
   | "show_empty_groups"
-  | "calendar_date_range"
   | "start_target_date";
 
 export interface IIssueFilterOptions {
@@ -61,7 +60,11 @@ export interface IIssueFilterOptions {
 }
 
 export interface IIssueDisplayFilterOptions {
-  calendar_date_range?: string;
+  calendar?: {
+    active_month?: string;
+    show_weekends?: boolean;
+    layout?: "month" | "week";
+  };
   group_by?: TIssueGroupByOptions;
   sub_group_by?: TIssueGroupByOptions;
   layout?: TIssueLayouts;

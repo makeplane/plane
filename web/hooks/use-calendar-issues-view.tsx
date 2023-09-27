@@ -41,7 +41,6 @@ const useCalendarIssuesView = () => {
     labels: filters?.labels ? filters?.labels.join(",") : undefined,
     created_by: filters?.created_by ? filters?.created_by.join(",") : undefined,
     start_date: filters?.start_date ? filters?.start_date.join(",") : undefined,
-    target_date: displayFilters?.calendar_date_range,
   };
 
   const { data: projectCalendarIssues, mutate: mutateProjectCalendarIssues } = useSWR(

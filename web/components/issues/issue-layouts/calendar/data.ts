@@ -37,10 +37,15 @@ export const getWeekNumber = (date: Date): number => {
   return 1 + Math.round(((d.valueOf() - week1.valueOf()) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7);
 };
 
-export const generateCalendarData = (startYear: number, startMonth: number, numMonths: number): ICalendarPayload => {
-  const calendarData: ICalendarPayload = {};
+export const generateCalendarData = (
+  currentStructure: ICalendarPayload | null,
+  startYear: number,
+  startMonth: number,
+  numMonths: number
+): ICalendarPayload => {
+  const calendarData: ICalendarPayload = currentStructure ?? {};
 
-  for (let i = 0; i < numMonths; i++) {
+  for (let i = -Math.floor(numMonths / 2); i <= Math.floor(numMonths / 2); i++) {
     const currentDate = new Date(startYear, startMonth + i, 1);
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
