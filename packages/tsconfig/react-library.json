@@ -4,8 +4,9 @@
   "extends": "./base.json",
   "compilerOptions": {
     "jsx": "react",
-    "lib": ["ES2015"],
+    "lib": ["ES2015", "DOM"],
     "module": "ESNext",
-    "target": "es6"
+    "target": "es6",
+    "sourceMap": true
   }
 }

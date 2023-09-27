@@ -26,6 +26,7 @@
     "@nivo/line": "0.80.0",
     "@nivo/pie": "0.80.0",
     "@nivo/scatterplot": "0.80.0",
+    "@plane/ui": "*",
     "@sentry/nextjs": "^7.36.0",
     "@tiptap/extension-code-block-lowlight": "^2.0.4",
     "@tiptap/extension-color": "^2.0.4",
