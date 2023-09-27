@@ -9,11 +9,9 @@ import useSWR from "swr";
 import useProjects from "hooks/use-projects";
 import useUser from "hooks/use-user";
 import useWorkspaceMembers from "hooks/use-workspace-members";
-import useWorkspaceIssuesView from "hooks/use-workspace-issues-view";
-
+import { useWorkspaceView } from "hooks/use-workspace-issues-view";
 // context
 import { useProjectMyMembership } from "contexts/project-member.context";
-import { WorkspaceIssueViewContextProvider } from "contexts/workspace-view-context";
 // services
 import projectIssuesServices from "services/issues.service";
 // layouts
@@ -49,9 +47,8 @@ const WorkspaceView: React.FC = () => {
     workspaceSlug?.toString(),
     Boolean(workspaceSlug)
   );
-  const { state } = useWorkspaceIssuesView();
-
-  console.log("state", state);
+  const { filters } = useWorkspaceView();
+  console.log("filters", filters);
 
   const [createViewModal, setCreateViewModal] = useState<any>(null);
 
@@ -169,7 +166,7 @@ const WorkspaceView: React.FC = () => {
   // console.log("workspaceViewIssues", workspaceViewIssues);
 
   return (
-    <WorkspaceIssueViewContextProvider>
+    <>
       {/* <WorkspaceAuthorizationLayout
         breadcrumbs={
           <div className="flex gap-2 items-center">
@@ -300,7 +297,7 @@ const WorkspaceView: React.FC = () => {
           </div>
         </div>
       </WorkspaceAuthorizationLayout> */}
-    </WorkspaceIssueViewContextProvider>
+    </>
   );
 };
 
