@@ -21,11 +21,7 @@ export class ProjectService extends APIService {
     super(API_BASE_URL);
   }
 
-  async createProject(
-    workspaceSlug: string,
-    data: Partial<IProject>,
-    user: ICurrentUserResponse | undefined
-  ): Promise<IProject> {
+  async createProject(workspaceSlug: string, data: Partial<IProject>, user: any): Promise<IProject> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/`, data)
       .then((response) => {
         trackEventServices.trackProjectEvent(response.data, "CREATE_PROJECT", user);
@@ -71,12 +67,7 @@ export class ProjectService extends APIService {
       });
   }
 
-  async updateProject(
-    workspaceSlug: string,
-    projectId: string,
-    data: Partial<IProject>,
-    user: ICurrentUserResponse | undefined
-  ): Promise<IProject> {
+  async updateProject(workspaceSlug: string, projectId: string, data: Partial<IProject>, user: any): Promise<IProject> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`, data)
       .then((response) => {
         trackEventServices.trackProjectEvent(response.data, "UPDATE_PROJECT", user);

@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
-
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
-// react-hook-form
 import { useForm, Controller } from "react-hook-form";
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
+// icons
+import { XMarkIcon } from "@heroicons/react/24/outline";
 // services
 import projectServices from "services/project.service";
 // hooks
@@ -25,8 +22,6 @@ import {
   Avatar,
   CustomSearchSelect,
 } from "components/ui";
-// icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
 // components
 import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
@@ -38,6 +33,7 @@ import { ICurrentUserResponse, IProject } from "types";
 import { PROJECTS_LIST } from "constants/fetch-keys";
 // constants
 import { NETWORK_CHOICES } from "constants/project";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   isOpen: boolean;
@@ -75,12 +71,11 @@ const IsGuestCondition: React.FC<{
   return null;
 };
 
-export const CreateProjectModal: React.FC<Props> = ({
-  isOpen,
-  setIsOpen,
-  setToFavorite = false,
-  user,
-}) => {
+export const CreateProjectModal: React.FC<Props> = (props) => {
+  const { isOpen, setIsOpen, setToFavorite = false, user } = props;
+  // store
+  const { project: projectStore } = useMobxStore();
+  // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
 
   const { setToastAlert } = useToast();
@@ -113,24 +108,13 @@ export const CreateProjectModal: React.FC<Props> = ({
   const handleAddToFavorites = (projectId: string) => {
     if (!workspaceSlug) return;
 
-    mutate<IProject[]>(
-      PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
-      (prevData) =>
-        (prevData ?? []).map((p) => (p.id === projectId ? { ...p, is_favorite: true } : p)),
-      false
-    );
-
-    projectServices
-      .addProjectToFavorites(workspaceSlug as string, {
-        project: projectId,
-      })
-      .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't remove the project from favorites. Please try again.",
-        })
-      );
+    projectStore.addProjectToFavorites(workspaceSlug.toString(), projectId).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Couldn't remove the project from favorites. Please try again.",
+      });
+    });
   };
 
   const onSubmit = async (formData: IProject) => {
@@ -141,14 +125,9 @@ export const CreateProjectModal: React.FC<Props> = ({
     if (typeof formData.emoji_and_icon === "object") payload.icon_prop = formData.emoji_and_icon;
     else payload.emoji = formData.emoji_and_icon;
 
-    await projectServices
-      .createProject(workspaceSlug.toString(), payload, user)
+    await projectStore
+      .createProject(workspaceSlug.toString(), payload)
       .then((res) => {
-        mutate<IProject[]>(
-          PROJECTS_LIST(workspaceSlug.toString(), { is_favorite: "all" }),
-          (prevData) => [res, ...(prevData ?? [])],
-          false
-        );
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -206,8 +185,7 @@ export const CreateProjectModal: React.FC<Props> = ({
 
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === watch("network"));
 
-  if (memberDetails && isOpen)
-    if (memberDetails.role <= 10) return <IsGuestCondition setIsOpen={setIsOpen} />;
+  if (memberDetails && isOpen) if (memberDetails.role <= 10) return <IsGuestCondition setIsOpen={setIsOpen} />;
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -277,10 +255,7 @@ export const CreateProjectModal: React.FC<Props> = ({
                     />
                   </div>
                 </div>
-                <form
-                  onSubmit={handleSubmit(onSubmit)}
-                  className="divide-y-[0.5px] divide-custom-border-100 px-3"
-                >
+                <form onSubmit={handleSubmit(onSubmit)} className="divide-y-[0.5px] divide-custom-border-100 px-3">
                   <div className="mt-9 space-y-6 pb-5">
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-y-3 gap-x-2">
                       <div className="md:col-span-3">
@@ -316,8 +291,7 @@ export const CreateProjectModal: React.FC<Props> = ({
                           validations={{
                             required: "Identifier is required",
                             validate: (value) =>
-                              /^[A-Z0-9]+$/.test(value.toUpperCase()) ||
-                              "Identifier must be in uppercase.",
+                              /^[A-Z0-9]+$/.test(value.toUpperCase()) || "Identifier must be in uppercase.",
                             minLength: {
                               value: 1,
                               message: "Identifier must at least be of 1 character",
@@ -384,9 +358,7 @@ export const CreateProjectModal: React.FC<Props> = ({
                           name="project_lead"
                           control={control}
                           render={({ field: { value, onChange } }) => {
-                            const selectedMember = workspaceMembers?.find(
-                              (m) => m.member.id === value
-                            );
+                            const selectedMember = workspaceMembers?.find((m) => m.member.id === value);
 
                             return (
                               <CustomSearchSelect
@@ -409,10 +381,7 @@ export const CreateProjectModal: React.FC<Props> = ({
                                       </>
                                     ) : (
                                       <>
-                                        <Icon
-                                          iconName="group"
-                                          className="!text-sm text-custom-text-400"
-                                        />
+                                        <Icon iconName="group" className="!text-sm text-custom-text-400" />
                                         <span className="text-custom-text-400">Lead</span>
                                       </>
                                     )}
