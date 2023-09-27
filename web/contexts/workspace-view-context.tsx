@@ -88,19 +88,22 @@ export const WorkspaceViewProvider: React.FC<{ children: React.ReactNode }> = ({
     return computedFilters;
   };
 
-  const params: any = {
-    assignees: (filters && filters?.filters?.assignees) || undefined,
-    created_by: (filters && filters?.filters?.created_by) || undefined,
-    labels: (filters && filters?.filters?.labels) || undefined,
-    priority: (filters && filters?.filters?.priority) || undefined,
-    state_group: (filters && filters?.filters?.state_group) || undefined,
-    subscriber: (filters && filters?.filters?.subscriber) || undefined,
-    start_date: (filters && filters?.filters?.start_date) || undefined,
-    target_date: (filters && filters?.filters?.target_date) || undefined,
-    project: (filters && filters?.filters?.project) || undefined,
-    order_by: (filters && filters?.display_filters?.order_by) || "-created_at",
-    sub_issue: (filters && filters?.display_filters?.sub_issue) || false,
-    type: filters && filters?.display_filters?.type,
+  const computedParams = (filters: any) => {
+    const params: any = {
+      assignees: (filters && filters?.filters?.assignees) || undefined,
+      created_by: (filters && filters?.filters?.created_by) || undefined,
+      labels: (filters && filters?.filters?.labels) || undefined,
+      priority: (filters && filters?.filters?.priority) || undefined,
+      state_group: (filters && filters?.filters?.state_group) || undefined,
+      subscriber: (filters && filters?.filters?.subscriber) || undefined,
+      start_date: (filters && filters?.filters?.start_date) || undefined,
+      target_date: (filters && filters?.filters?.target_date) || undefined,
+      project: (filters && filters?.filters?.project) || undefined,
+      order_by: (filters && filters?.display_filters?.order_by) || "-created_at",
+      sub_issue: (filters && filters?.display_filters?.sub_issue) || false,
+      type: filters && filters?.display_filters?.type,
+    };
+    return params;
   };
 
   const { data: view, isLoading: viewLoading } = useSWR(
@@ -111,15 +114,19 @@ export const WorkspaceViewProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   const { data: viewIssues, isLoading: viewIssueLoading } = useSWR(
-    workspaceSlug && view && workspaceViewId
-      ? WORKSPACE_VIEW_ISSUES(workspaceViewId.toString(), params)
+    workspaceSlug && view && workspaceViewId && filters
+      ? WORKSPACE_VIEW_ISSUES(workspaceViewId.toString(), computedParams(filters))
       : null,
     workspaceSlug && view && workspaceViewId
-      ? () => workspaceService.getViewIssues(workspaceViewId.toString(), computedFilter(params))
+      ? () =>
+          workspaceService.getViewIssues(
+            workspaceViewId.toString(),
+            computedFilter(computedParams(filters))
+          )
       : null
   );
 
-  console.log("view", view);
+  // console.log("view", view);
   console.log("viewIssues", viewIssues);
 
   useEffect(() => {
