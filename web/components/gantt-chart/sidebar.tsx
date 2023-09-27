@@ -8,6 +8,8 @@ import { useChart } from "./hooks";
 import { Loader } from "components/ui";
 // icons
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
+// helpers
+import { findTotalDaysInRange } from "helpers/date-time.helper";
 // types
 import { IBlockUpdateData, IGanttBlock } from "./types";
 
@@ -92,47 +94,60 @@ export const GanttSidebar: React.FC<Props> = (props) => {
           >
             <>
               {blocks ? (
-                blocks.map((block, index) => (
-                  <Draggable
-                    key={`sidebar-block-${block.id}`}
-                    draggableId={`sidebar-block-${block.id}`}
-                    index={index}
-                    isDragDisabled={!enableReorder}
-                  >
-                    {(provided, snapshot) => (
-                      <div
-                        className={`h-11 ${
-                          snapshot.isDragging ? "bg-custom-background-80 rounded" : ""
-                        }`}
-                        onMouseEnter={() => updateActiveBlock(block)}
-                        onMouseLeave={() => updateActiveBlock(null)}
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                      >
+                blocks.map((block, index) => {
+                  const duration = findTotalDaysInRange(
+                    block.start_date ?? "",
+                    block.target_date ?? "",
+                    true
+                  );
+
+                  return (
+                    <Draggable
+                      key={`sidebar-block-${block.id}`}
+                      draggableId={`sidebar-block-${block.id}`}
+                      index={index}
+                      isDragDisabled={!enableReorder}
+                    >
+                      {(provided, snapshot) => (
                         <div
-                          id={`sidebar-block-${block.id}`}
-                          className={`group h-full w-full flex items-center gap-2 rounded-l px-2 pr-4 ${
-                            activeBlock?.id === block.id ? "bg-custom-background-80" : ""
+                          className={`h-11 ${
+                            snapshot.isDragging ? "bg-custom-background-80 rounded" : ""
                           }`}
+                          onMouseEnter={() => updateActiveBlock(block)}
+                          onMouseLeave={() => updateActiveBlock(null)}
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
                         >
-                          {enableReorder && (
-                            <button
-                              type="button"
-                              className="rounded p-0.5 text-custom-sidebar-text-200 flex flex-shrink-0 opacity-0 group-hover:opacity-100"
-                              {...provided.dragHandleProps}
-                            >
-                              <EllipsisVerticalIcon className="h-4" />
-                              <EllipsisVerticalIcon className="h-4 -ml-5" />
-                            </button>
-                          )}
-                          <div className="flex-grow truncate w-full h-full">
-                            <SidebarBlockRender data={block.data} />
+                          <div
+                            id={`sidebar-block-${block.id}`}
+                            className={`group h-full w-full flex items-center gap-2 rounded-l px-2 pr-4 ${
+                              activeBlock?.id === block.id ? "bg-custom-background-80" : ""
+                            }`}
+                          >
+                            {enableReorder && (
+                              <button
+                                type="button"
+                                className="rounded p-0.5 text-custom-sidebar-text-200 flex flex-shrink-0 opacity-0 group-hover:opacity-100"
+                                {...provided.dragHandleProps}
+                              >
+                                <EllipsisVerticalIcon className="h-4" />
+                                <EllipsisVerticalIcon className="h-4 -ml-5" />
+                              </button>
+                            )}
+                            <div className="flex-grow truncate h-full flex items-center justify-between gap-2">
+                              <div className="flex-grow truncate">
+                                <SidebarBlockRender data={block.data} />
+                              </div>
+                              <div className="flex-shrink-0 text-sm text-custom-text-200">
+                                {duration} day{duration > 1 ? "s" : ""}
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )}
-                  </Draggable>
-                ))
+                      )}
+                    </Draggable>
+                  );
+                })
               ) : (
                 <Loader className="pr-2 space-y-3">
                   <Loader.Item height="34px" />
