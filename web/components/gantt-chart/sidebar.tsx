@@ -8,6 +8,8 @@ import { useChart } from "./hooks";
 import { Loader } from "components/ui";
 // icons
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
+// helpers
+import { findTotalDaysInRange } from "helpers/date-time.helper";
 // types
 import { IBlockUpdateData, IGanttBlock } from "./types";
 
@@ -86,14 +88,20 @@ export const GanttSidebar: React.FC<Props> = (props) => {
         {(droppableProvided) => (
           <div
             id={`gantt-sidebar-${cycleId}`}
-            className="max-h-full overflow-y-auto pl-2.5"
+            className="max-h-full overflow-y-auto pl-2.5 mt-3"
             ref={droppableProvided.innerRef}
             {...droppableProvided.droppableProps}
           >
             <>
               {blocks ? (
-                blocks.length > 0 ? (
-                  blocks.map((block, index) => (
+                blocks.map((block, index) => {
+                  const duration = findTotalDaysInRange(
+                    block.start_date ?? "",
+                    block.target_date ?? "",
+                    true
+                  );
+
+                  return (
                     <Draggable
                       key={`sidebar-block-${block.id}`}
                       draggableId={`sidebar-block-${block.id}`}
@@ -126,19 +134,20 @@ export const GanttSidebar: React.FC<Props> = (props) => {
                                 <EllipsisVerticalIcon className="h-4 -ml-5" />
                               </button>
                             )}
-                            <div className="flex-grow truncate w-full h-full">
-                              <SidebarBlockRender data={block.data} />
+                            <div className="flex-grow truncate h-full flex items-center justify-between gap-2">
+                              <div className="flex-grow truncate">
+                                <SidebarBlockRender data={block.data} />
+                              </div>
+                              <div className="flex-shrink-0 text-sm text-custom-text-200">
+                                {duration} day{duration > 1 ? "s" : ""}
+                              </div>
                             </div>
                           </div>
                         </div>
                       )}
                     </Draggable>
-                  ))
-                ) : (
-                  <div className="text-custom-text-200 text-sm text-center mt-8">
-                    No <span className="lowercase">{title}</span> found
-                  </div>
-                )
+                  );
+                })
               ) : (
                 <Loader className="pr-2 space-y-3">
                   <Loader.Item height="34px" />
