@@ -240,7 +240,11 @@ export const SingleList: React.FC<Props> = (props) => {
                 <button
                   type="button"
                   className="p-1  text-custom-text-200 hover:bg-custom-background-80"
-                  onClick={() => setIsCreateIssueFormOpen(true)}
+                  onClick={() => {
+                    if (isDraftIssuesPage || isMyIssuesPage || isProfileIssuesPage) {
+                      addIssueToGroup();
+                    } else setIsCreateIssueFormOpen(true);
+                  }}
                 >
                   <PlusIcon className="h-4 w-4" />
                 </button>
