@@ -72,7 +72,7 @@ const CustomMenu = ({
                     : "cursor-pointer hover:bg-custom-background-80"
                 } ${buttonClassName}`}
               >
-                {label}
+                <span className="truncate">{label}</span>
                 {!noChevron && (
                   <ExpandMoreOutlined
                     sx={{
