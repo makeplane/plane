@@ -86,59 +86,53 @@ export const GanttSidebar: React.FC<Props> = (props) => {
         {(droppableProvided) => (
           <div
             id={`gantt-sidebar-${cycleId}`}
-            className="max-h-full overflow-y-auto pl-2.5"
+            className="max-h-full overflow-y-auto pl-2.5 mt-3"
             ref={droppableProvided.innerRef}
             {...droppableProvided.droppableProps}
           >
             <>
               {blocks ? (
-                blocks.length > 0 ? (
-                  blocks.map((block, index) => (
-                    <Draggable
-                      key={`sidebar-block-${block.id}`}
-                      draggableId={`sidebar-block-${block.id}`}
-                      index={index}
-                      isDragDisabled={!enableReorder}
-                    >
-                      {(provided, snapshot) => (
+                blocks.map((block, index) => (
+                  <Draggable
+                    key={`sidebar-block-${block.id}`}
+                    draggableId={`sidebar-block-${block.id}`}
+                    index={index}
+                    isDragDisabled={!enableReorder}
+                  >
+                    {(provided, snapshot) => (
+                      <div
+                        className={`h-11 ${
+                          snapshot.isDragging ? "bg-custom-background-80 rounded" : ""
+                        }`}
+                        onMouseEnter={() => updateActiveBlock(block)}
+                        onMouseLeave={() => updateActiveBlock(null)}
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                      >
                         <div
-                          className={`h-11 ${
-                            snapshot.isDragging ? "bg-custom-background-80 rounded" : ""
+                          id={`sidebar-block-${block.id}`}
+                          className={`group h-full w-full flex items-center gap-2 rounded-l px-2 pr-4 ${
+                            activeBlock?.id === block.id ? "bg-custom-background-80" : ""
                           }`}
-                          onMouseEnter={() => updateActiveBlock(block)}
-                          onMouseLeave={() => updateActiveBlock(null)}
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
                         >
-                          <div
-                            id={`sidebar-block-${block.id}`}
-                            className={`group h-full w-full flex items-center gap-2 rounded-l px-2 pr-4 ${
-                              activeBlock?.id === block.id ? "bg-custom-background-80" : ""
-                            }`}
-                          >
-                            {enableReorder && (
-                              <button
-                                type="button"
-                                className="rounded p-0.5 text-custom-sidebar-text-200 flex flex-shrink-0 opacity-0 group-hover:opacity-100"
-                                {...provided.dragHandleProps}
-                              >
-                                <EllipsisVerticalIcon className="h-4" />
-                                <EllipsisVerticalIcon className="h-4 -ml-5" />
-                              </button>
-                            )}
-                            <div className="flex-grow truncate w-full h-full">
-                              <SidebarBlockRender data={block.data} />
-                            </div>
+                          {enableReorder && (
+                            <button
+                              type="button"
+                              className="rounded p-0.5 text-custom-sidebar-text-200 flex flex-shrink-0 opacity-0 group-hover:opacity-100"
+                              {...provided.dragHandleProps}
+                            >
+                              <EllipsisVerticalIcon className="h-4" />
+                              <EllipsisVerticalIcon className="h-4 -ml-5" />
+                            </button>
+                          )}
+                          <div className="flex-grow truncate w-full h-full">
+                            <SidebarBlockRender data={block.data} />
                           </div>
                         </div>
-                      )}
-                    </Draggable>
-                  ))
-                ) : (
-                  <div className="text-custom-text-200 text-sm text-center mt-8">
-                    No <span className="lowercase">{title}</span> found
-                  </div>
-                )
+                      </div>
+                    )}
+                  </Draggable>
+                ))
               ) : (
                 <Loader className="pr-2 space-y-3">
                   <Loader.Item height="34px" />

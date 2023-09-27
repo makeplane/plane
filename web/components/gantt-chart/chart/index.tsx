@@ -304,7 +304,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
       >
         <div
           id="gantt-sidebar"
-          className="h-full w-1/4 flex flex-col border-r border-custom-border-200 space-y-3"
+          className="h-full w-1/4 flex flex-col border-r border-custom-border-200"
         >
           <div className="h-[60px] border-b border-custom-border-200 box-border flex-shrink-0" />
           <GanttSidebar
@@ -315,7 +315,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
             enableReorder={enableReorder}
           />
           {chartBlocks && (
-            <div className="pl-2.5">
+            <div className="pl-2.5 py-3">
               <GanttInlineCreateIssueForm
                 isOpen={isCreateIssueFormOpen}
                 handleClose={() => setIsCreateIssueFormOpen(false)}
