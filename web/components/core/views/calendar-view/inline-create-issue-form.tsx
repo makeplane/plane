@@ -90,7 +90,7 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = (props) => {
       >
         <InlineCreateIssueFormWrapper
           {...props}
-          className="flex w-full p-1 px-1.5 rounded z-50 items-center gap-x-3 bg-custom-background-100 shadow-custom-shadow-sm transition-opacity"
+          className="flex w-full p-1 px-1.5 rounded z-50 items-center gap-x-2 bg-custom-background-100 shadow-custom-shadow-sm transition-opacity"
         >
           <InlineInput />
         </InlineCreateIssueFormWrapper>
