@@ -48,6 +48,7 @@ export interface IProjectStore {
   getProjectStateById: (stateId: string) => IState | null;
   getProjectLabelById: (labelId: string) => IIssueLabels | null;
   getProjectMemberById: (memberId: string) => IProjectMember | null;
+  getProjectMemberByUserId: (memberId: string) => IProjectMember | null;
 
   fetchProjects: (workspaceSlug: string) => Promise<void>;
   fetchProjectStates: (workspaceSlug: string, projectSlug: string) => Promise<void>;
@@ -251,6 +252,14 @@ class ProjectStore implements IProjectStore {
     const members = this.projectMembers;
     if (!members) return null;
     const memberInfo: IProjectMember | null = members.find((member) => member.id === memberId) || null;
+    return memberInfo;
+  };
+
+  getProjectMemberByUserId = (memberId: string) => {
+    if (!this.projectId) return null;
+    const members = this.projectMembers;
+    if (!members) return null;
+    const memberInfo: IProjectMember | null = members.find((member) => member.member.id === memberId) || null;
     return memberInfo;
   };
 

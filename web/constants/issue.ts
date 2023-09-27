@@ -315,3 +315,13 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
     },
   },
 };
+
+export const getValueFromObject = (object: Object, key: string): string | number | boolean | null => {
+  const keys = key ? key.split(".") : [];
+
+  let value: any = object;
+  if (!value || keys.length === 0) return null;
+
+  for (const _key of keys) value = value[_key];
+  return value;
+};

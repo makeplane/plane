@@ -39,7 +39,8 @@ export const KanBanLayout: React.FC<IKanBanLayout> = observer(({}) => {
   };
 
   return (
-    <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90`}>
+    <div className={`relative min-w-full w-max h-full bg-custom-background-90`}>
+      {/* <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90`}> */}
       <DragDropContext onDragEnd={onDragEnd}>
         {currentKanBanView === "default" ? <KanBan issues={issues} /> : <KanBanSwimLanes issues={issues} />}
       </DragDropContext>

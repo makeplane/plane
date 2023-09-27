@@ -21,12 +21,12 @@ export const KanBanGroupByHeaderRoot: React.FC<IKanBanGroupByHeaderRoot> = obser
 
   return (
     <>
-      {group_by && group_by === "state" && <StateHeader column_id={column_id} />}
-      {group_by && group_by === "state_detail.group" && <StateGroupHeader column_id={column_id} />}
-      {group_by && group_by === "priority" && <PriorityHeader column_id={column_id} />}
-      {group_by && group_by === "labels" && <LabelHeader column_id={column_id} />}
-      {group_by && group_by === "assignees" && <AssigneesHeader column_id={column_id} />}
-      {group_by && group_by === "created_by" && <CreatedByHeader column_id={column_id} />}
+      {group_by && group_by === "state" && <StateHeader column_id={column_id} type={`group_by`} />}
+      {group_by && group_by === "state_detail.group" && <StateGroupHeader column_id={column_id} type={`group_by`} />}
+      {group_by && group_by === "priority" && <PriorityHeader column_id={column_id} type={`group_by`} />}
+      {group_by && group_by === "labels" && <LabelHeader column_id={column_id} type={`group_by`} />}
+      {group_by && group_by === "assignees" && <AssigneesHeader column_id={column_id} type={`group_by`} />}
+      {group_by && group_by === "created_by" && <CreatedByHeader column_id={column_id} type={`group_by`} />}
     </>
   );
 });

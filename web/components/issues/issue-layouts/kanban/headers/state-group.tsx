@@ -1,6 +1,7 @@
 import React from "react";
 // components
-import { HeaderCard } from "./card";
+import { HeaderGroupByCard } from "./group-by-card";
+import { HeaderSubGroupByCard } from "./sub-group-by-card";
 // constants
 import { issueStateGroupByKey } from "constants/issue";
 // mobx
@@ -11,13 +12,25 @@ import { RootStore } from "store/root";
 
 export interface IStateGroupHeader {
   column_id: string;
-  swimlanes?: boolean;
+  type?: "group_by" | "sub_group_by";
 }
 
-export const StateGroupHeader: React.FC<IStateGroupHeader> = observer(({ column_id }) => {
-  const {}: RootStore = useMobxStore();
+export const StateIcon = () => {};
+
+export const StateGroupHeader: React.FC<IStateGroupHeader> = observer(({ column_id, type }) => {
+  const { issueFilter: issueFilterStore }: RootStore = useMobxStore();
 
   const stateGroup = column_id && issueStateGroupByKey(column_id);
+  const sub_group_by = issueFilterStore?.userDisplayFilters?.sub_group_by ?? null;
 
-  return <>{stateGroup && <HeaderCard title={stateGroup?.title || ""} />}</>;
+  return (
+    <>
+      {stateGroup &&
+        (sub_group_by && type === "sub_group_by" ? (
+          <HeaderSubGroupByCard title={stateGroup?.key || ""} />
+        ) : (
+          <HeaderGroupByCard title={stateGroup?.key || ""} />
+        ))}
+    </>
+  );
 });
