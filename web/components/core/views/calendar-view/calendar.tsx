@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
-// react-beautiful-dnd
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 // services
 import issuesService from "services/issues.service";
@@ -50,31 +46,27 @@ export const CalendarView: React.FC<Props> = ({
   userAuth,
 }) => {
   const [showWeekEnds, setShowWeekEnds] = useState(false);
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [isMonthlyView, setIsMonthlyView] = useState(true);
+
+  const { calendarIssues, mutateIssues, params, activeMonthDate, setActiveMonthDate } =
+    useCalendarIssuesView();
 
   const [calendarDates, setCalendarDates] = useState<ICalendarRange>({
-    startDate: startOfWeek(currentDate),
-    endDate: lastDayOfWeek(currentDate),
+    startDate: startOfWeek(activeMonthDate),
+    endDate: lastDayOfWeek(activeMonthDate),
   });
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
-  const { calendarIssues, mutateIssues, params, displayFilters, setDisplayFilters } =
-    useCalendarIssuesView();
-
-  const totalDate = eachDayOfInterval({
-    start: calendarDates.startDate,
-    end: calendarDates.endDate,
-  });
-
-  const onlyWeekDays = weekDayInterval({
-    start: calendarDates.startDate,
-    end: calendarDates.endDate,
-  });
-
-  const currentViewDays = showWeekEnds ? totalDate : onlyWeekDays;
+  const currentViewDays = showWeekEnds
+    ? eachDayOfInterval({
+        start: calendarDates.startDate,
+        end: calendarDates.endDate,
+      })
+    : weekDayInterval({
+        start: calendarDates.startDate,
+        end: calendarDates.endDate,
+      });
 
   const currentViewDaysData = currentViewDays.map((date: Date) => {
     const filterIssue =
@@ -148,27 +140,12 @@ export const CalendarView: React.FC<Props> = ({
       .then(() => mutate(fetchKey));
   };
 
-  const changeDateRange = (startDate: Date, endDate: Date) => {
-    setCalendarDates({
-      startDate,
-      endDate,
-    });
-
-    setDisplayFilters({
-      calendar_date_range: `${renderDateFormat(startDate)};after,${renderDateFormat(
-        endDate
-      )};before`,
-    });
-  };
-
   useEffect(() => {
-    if (!displayFilters || displayFilters.calendar_date_range === "")
-      setDisplayFilters({
-        calendar_date_range: `${renderDateFormat(
-          startOfWeek(currentDate)
-        )};after,${renderDateFormat(lastDayOfWeek(currentDate))};before`,
-      });
-  }, [currentDate, displayFilters, setDisplayFilters]);
+    setCalendarDates({
+      startDate: startOfWeek(activeMonthDate),
+      endDate: lastDayOfWeek(activeMonthDate),
+    });
+  }, [activeMonthDate]);
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disableUserActions;
 
@@ -188,13 +165,10 @@ export const CalendarView: React.FC<Props> = ({
               className="h-full rounded-lg p-8 text-custom-text-200"
             >
               <CalendarHeader
-                isMonthlyView={isMonthlyView}
-                setIsMonthlyView={setIsMonthlyView}
                 showWeekEnds={showWeekEnds}
                 setShowWeekEnds={setShowWeekEnds}
-                currentDate={currentDate}
-                setCurrentDate={setCurrentDate}
-                changeDateRange={changeDateRange}
+                currentDate={activeMonthDate}
+                setCurrentDate={setActiveMonthDate}
               />
 
               <div
@@ -205,30 +179,15 @@ export const CalendarView: React.FC<Props> = ({
                 {weeks.map((date, index) => (
                   <div
                     key={index}
-                    className={`flex  items-center justify-start gap-2 border-custom-border-200 bg-custom-background-90 p-1.5 text-base font-medium text-custom-text-200 ${
-                      !isMonthlyView
-                        ? showWeekEnds
-                          ? (index + 1) % 7 === 0
-                            ? ""
-                            : "border-r"
-                          : (index + 1) % 5 === 0
-                          ? ""
-                          : "border-r"
-                        : ""
-                    }`}
+                    className={`flex  items-center justify-start gap-2 border-custom-border-200 bg-custom-background-90 p-1.5 text-base font-medium text-custom-text-200`}
                   >
-                    <span>
-                      {isMonthlyView
-                        ? formatDate(date, "eee").substring(0, 3)
-                        : formatDate(date, "eee")}
-                    </span>
-                    {!isMonthlyView && <span>{formatDate(date, "d")}</span>}
+                    <span>{formatDate(date, "eee").substring(0, 3)}</span>
                   </div>
                 ))}
               </div>
 
               <div
-                className={`grid h-full ${isMonthlyView ? "auto-rows-min" : ""} ${
+                className={`grid h-full auto-rows-min ${
                   showWeekEnds ? "grid-cols-7" : "grid-cols-5"
                 } `}
               >
@@ -239,7 +198,6 @@ export const CalendarView: React.FC<Props> = ({
                     date={date}
                     handleIssueAction={handleIssueAction}
                     addIssueToDate={addIssueToDate}
-                    isMonthlyView={isMonthlyView}
                     showWeekEnds={showWeekEnds}
                     user={user}
                     isNotAllowed={isNotAllowed}

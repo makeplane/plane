@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -10,6 +10,8 @@ import { issueViewContext } from "contexts/issue-view.context";
 import issuesService from "services/issues.service";
 import cyclesService from "services/cycles.service";
 import modulesService from "services/modules.service";
+// helpers
+import { renderDateFormat } from "helpers/date-time.helper";
 // types
 import { IIssue } from "types";
 // fetch-keys
@@ -23,12 +25,16 @@ import {
 const useCalendarIssuesView = () => {
   const {
     display_filters: displayFilters,
-    setDisplayFilters,
     filters,
     setFilters,
     resetFilterToDefault,
     setNewFilterDefaultView,
   } = useContext(issueViewContext);
+
+  const [activeMonthDate, setActiveMonthDate] = useState(new Date());
+
+  const firstDayOfMonth = new Date(activeMonthDate.getFullYear(), activeMonthDate.getMonth(), 1);
+  const lastDayOfMonth = new Date(activeMonthDate.getFullYear(), activeMonthDate.getMonth() + 1, 0);
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
@@ -41,7 +47,9 @@ const useCalendarIssuesView = () => {
     labels: filters?.labels ? filters?.labels.join(",") : undefined,
     created_by: filters?.created_by ? filters?.created_by.join(",") : undefined,
     start_date: filters?.start_date ? filters?.start_date.join(",") : undefined,
-    target_date: displayFilters?.calendar_date_range,
+    target_date: `${renderDateFormat(firstDayOfMonth)};after,${renderDateFormat(
+      lastDayOfMonth
+    )};before`,
   };
 
   const { data: projectCalendarIssues, mutate: mutateProjectCalendarIssues } = useSWR(
@@ -101,8 +109,8 @@ const useCalendarIssuesView = () => {
     : (projectCalendarIssues as IIssue[]);
 
   return {
-    displayFilters,
-    setDisplayFilters,
+    activeMonthDate,
+    setActiveMonthDate,
     calendarIssues: calendarIssues ?? [],
     mutateIssues: cycleId
       ? mutateCycleCalendarIssues
