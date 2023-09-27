@@ -159,12 +159,11 @@ export const WORKSPACE_VIEWS_LIST = (workspaceSlug: string) =>
   `WORKSPACE_VIEWS_LIST_${workspaceSlug.toUpperCase()}`;
 export const WORKSPACE_VIEW_DETAILS = (workspaceViewId: string) =>
   `WORKSPACE_VIEW_DETAILS_${workspaceViewId.toUpperCase()}`;
-export const WORKSPACE_VIEW_ISSUES = (workspaceViewId: string, params?: any) => {
+export const WORKSPACE_VIEW_ISSUES = (workspaceViewId: string, params: string | null) => {
   if (!params) return `WORKSPACE_VIEW_ISSUES_${workspaceViewId.toUpperCase()}`;
-
-  const paramsKey = paramsToKey(params);
-
-  return `WORKSPACE_VIEW_ISSUES_${workspaceViewId.toUpperCase()}_${paramsKey.toUpperCase()}`;
+  return `WORKSPACE_VIEW_ISSUES_${workspaceViewId.toUpperCase()}_${paramsToKey(
+    params
+  ).toUpperCase()}`;
 };
 
 export const PROJECT_ISSUES_DETAILS = (issueId: string) =>

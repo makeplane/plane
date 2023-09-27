@@ -17,6 +17,7 @@ import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 // types
 import { TIssueViewOptions } from "types";
+import useWorkspaceIssuesView from "hooks/use-workspace-issues-view";
 
 const issueViewOptions: { type: TIssueViewOptions; Icon: any }[] = [
   {
@@ -33,12 +34,14 @@ export const WorkspaceIssuesViewOptions: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, workspaceViewId } = router.query;
 
-  const { displayFilters, setDisplayFilters } = useMyIssuesFilters(workspaceSlug?.toString());
+  // const { displayFilters, setDisplayFilters } = useMyIssuesFilters(workspaceSlug?.toString());
 
-  const { filters, setFilters } = useWorkspaceIssuesFilters(
-    workspaceSlug?.toString(),
-    workspaceViewId?.toString()
-  );
+  // const { filters, setFilters } = useWorkspaceIssuesFilters(
+  //   workspaceSlug?.toString(),
+  //   workspaceViewId?.toString()
+  // );
+
+  const { filters, setFilters, displayFilters, setDisplayFilters } = useWorkspaceIssuesView();
 
   const isWorkspaceViewPath = router.pathname.includes("workspace-views/all-issues");
 

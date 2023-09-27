@@ -17,6 +17,7 @@ import { ViewForm } from "components/views";
 import { ICurrentUserResponse, IView } from "types";
 // fetch-keys
 import { VIEWS_LIST, WORKSPACE_VIEWS_LIST } from "constants/fetch-keys";
+import { IWorkspaceView } from "types/workspace-views";
 
 type Props = {
   isOpen: boolean;
@@ -50,47 +51,51 @@ export const CreateUpdateViewModal: React.FC<Props> = ({
       query_data: payload.query,
     };
 
-    if (viewType === "project") {
-      await viewsService
-        .createView(workspaceSlug as string, projectId as string, payload, user)
-        .then(() => {
-          mutate(VIEWS_LIST(projectId as string));
-          handleClose();
+    await viewsService
+      .createView(workspaceSlug as string, projectId as string, payload, user)
+      .then(() => {
+        mutate(VIEWS_LIST(projectId as string));
+        handleClose();
 
-          setToastAlert({
-            type: "success",
-            title: "Success!",
-            message: "View created successfully.",
-          });
-        })
-        .catch(() => {
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "View could not be created. Please try again.",
-          });
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "View created successfully.",
         });
-    } else {
-      await workspaceService
-        .createView(workspaceSlug as string, payload)
-        .then(() => {
-          mutate(WORKSPACE_VIEWS_LIST(workspaceSlug as string));
-          handleClose();
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "View could not be created. Please try again.",
+        });
+      });
+  };
+  const createWorkspaceView = async (payload: IWorkspaceView) => {
+    payload = {
+      ...payload,
+      query_data: payload.query,
+    };
 
-          setToastAlert({
-            type: "success",
-            title: "Success!",
-            message: "View created successfully.",
-          });
-        })
-        .catch(() => {
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "View could not be created. Please try again.",
-          });
+    await workspaceService
+      .createView(workspaceSlug as string, payload)
+      .then(() => {
+        mutate(WORKSPACE_VIEWS_LIST(workspaceSlug as string));
+        handleClose();
+
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "View created successfully.",
         });
-    }
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "View could not be created. Please try again.",
+        });
+      });
   };
 
   const updateView = async (payload: IView) => {
@@ -159,18 +164,19 @@ export const CreateUpdateViewModal: React.FC<Props> = ({
     }
   };
 
-  const handleFormSubmit = async (formData: IView) => {
-    if (viewType === "project") {
-      if (!workspaceSlug || !projectId) return;
+  const handleFormSubmit = async (formData: any) => {
+    if (!workspaceSlug) return;
 
-      if (!data) await createView(formData);
-      else await updateView(formData);
-    } else {
-      if (!workspaceSlug) return;
-
-      if (!data) await createView(formData);
-      else await updateView(formData);
+    if (!data) {
+      if (viewType === "project") await createView(formData);
+      else createWorkspaceView(formData);
     }
+    // else await updateView(formData);
+    // } else if {
+    //   if (!workspaceSlug) return;
+
+    //   if (!data) await createView(formData);
+    //   else await updateView(formData);
   };
 
   return (
