@@ -49,16 +49,24 @@ class GlobalSearchEndpoint(BaseAPIView):
     def filter_issues(self, query, slug, project_id, workspace_search):
         fields = ["name", "sequence_id", "project__identifier"]
         q = Q()
+        q_and = Q()
         for field in fields:
-            if field == "sequence_id":
-                sequences = re.findall(r"\d+\.\d+|\d+", query)
-                for sequence_id in sequences:
-                    q |= Q(**{"sequence_id": sequence_id})
+            if field in ["sequence_id", "project__identifier"]:
+                # Condition to check sequence
+                if field == "sequence_id":
+                    sequences = re.findall(r"\d+\.\d+|\d+", query)
+                    for sequence_id in sequences:
+                        q_and &= Q(**{"sequence_id": int(sequence_id)})
+                # Condition to check identifier
+                if field == "project__identifier":
+                    identifiers = query.split("-")
+                    if identifiers:
+                        q_and &= Q(**{"project__identifier": identifiers[0]})
             else:
                 q |= Q(**{f"{field}__icontains": query})
-
+        final_q = q_and | q
         issues = Issue.issue_objects.filter(
-            q,
+            final_q,
             project__project_projectmember__member=self.request.user,
             workspace__slug=slug,
         )
