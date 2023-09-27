@@ -84,13 +84,13 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = (props) => {
     <>
       <div
         ref={ref}
-        className={`absolute -translate-x-1 top-5 transition-all z-20 ${
+        className={`absolute w-60 top-5 transition-all z-20 ${
           isOpen ? "opacity-100 scale-100" : "opacity-0 pointer-events-none scale-95"
-        } ${isSpaceOnRight ? "left-full" : "right-0"}`}
+        } right-0`}
       >
         <InlineCreateIssueFormWrapper
           {...props}
-          className="flex w-60 p-1 px-1.5 rounded items-center gap-x-3 bg-custom-background-100 shadow-custom-shadow-md transition-opacity"
+          className="flex w-full p-1 px-1.5 rounded z-50 items-center gap-x-3 bg-custom-background-100 shadow-custom-shadow-sm transition-opacity"
         >
           <InlineInput />
         </InlineCreateIssueFormWrapper>

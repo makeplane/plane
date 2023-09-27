@@ -67,7 +67,7 @@ export const IssuesFilterView: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, viewId } = router.query;
   const isArchivedIssues = router.pathname.includes("archived-issues");
-  const isDraftIssues = router.pathname.includes("draft-issues");
+  const isDraftIssues = router.pathname?.split("/")?.[4] === "draft-issues";
 
   const {
     displayFilters,
@@ -229,6 +229,9 @@ export const IssuesFilterView: React.FC = () => {
                                 if (displayFilters.layout === "kanban" && option.key === null)
                                   return null;
                                 if (option.key === "project") return null;
+
+                                if (isDraftIssues && option.key === "state_detail.group")
+                                  return null;
 
                                 return (
                                   <CustomMenu.MenuItem

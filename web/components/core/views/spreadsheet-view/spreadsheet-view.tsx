@@ -7,6 +7,7 @@ import { KeyedMutator, mutate } from "swr";
 
 // components
 import {
+  ListInlineCreateIssueForm,
   SpreadsheetAssigneeColumn,
   SpreadsheetCreatedOnColumn,
   SpreadsheetDueDateColumn,
@@ -18,7 +19,7 @@ import {
   SpreadsheetStateColumn,
   SpreadsheetUpdatedOnColumn,
 } from "components/core";
-import { Spinner } from "components/ui";
+import { CustomMenu, Spinner } from "components/ui";
 import { IssuePeekOverview } from "components/issues";
 // hooks
 import useIssuesProperties from "hooks/use-issue-properties";
@@ -38,6 +39,7 @@ import {
 import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 import projectIssuesServices from "services/issues.service";
 // icon
+import { PlusIcon } from "lucide-react";
 
 type Props = {
   spreadsheetIssues: IIssue[];
@@ -66,8 +68,12 @@ export const SpreadsheetView: React.FC<Props> = ({
   const [expandedIssues, setExpandedIssues] = useState<string[]>([]);
   const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
 
+  const [isInlineCreateIssueFormOpen, setIsInlineCreateIssueFormOpen] = useState(false);
+
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId, workspaceViewId } = router.query;
+
+  const type = cycleId ? "cycle" : moduleId ? "module" : "issue";
 
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
@@ -232,51 +238,106 @@ export const SpreadsheetView: React.FC<Props> = ({
         workspaceSlug={workspaceSlug?.toString() ?? ""}
         readOnly={disableUserActions}
       />
-      <div className="relative flex  h-full w-full rounded-lg text-custom-text-200 overflow-x-auto whitespace-nowrap bg-custom-background-100">
-        {spreadsheetIssues ? (
-          <>
-            <div className="sticky left-0 w-[28rem] z-[2]">
-              <div className="relative flex flex-col h-max w-full bg-custom-background-100 rounded-sm z-[2]">
-                <div className="flex items-center text-sm font-medium z-[2] h-11 w-full sticky top-0 bg-custom-background-90 border border-l-0 border-custom-border-200">
-                  <span className="flex items-center px-4 py-2.5 h-full w-20 flex-shrink-0">
-                    ID
-                  </span>
-                  <span className="flex items-center px-4 py-2.5 h-full w-full flex-grow">
-                    Issue
-                  </span>
-                </div>
+      <div className="relative flex h-full w-full rounded-lg text-custom-text-200 overflow-x-auto whitespace-nowrap bg-custom-background-100">
+        <div className="h-full w-full flex flex-col">
+          <div className="flex max-h-full overflow-y-auto">
+            {spreadsheetIssues ? (
+              <>
+                <div className="sticky left-0 w-[28rem] z-[2]">
+                  <div className="relative flex flex-col h-max w-full bg-custom-background-100 rounded-sm z-[2]">
+                    <div className="flex items-center text-sm font-medium z-[2] h-11 w-full sticky top-0 bg-custom-background-90 border border-l-0 border-custom-border-200">
+                      <span className="flex items-center px-4 py-2.5 h-full w-20 flex-shrink-0">
+                        ID
+                      </span>
+                      <span className="flex items-center px-4 py-2.5 h-full w-full flex-grow">
+                        Issue
+                      </span>
+                    </div>
 
-                {spreadsheetIssues.map((issue: IIssue, index) => (
-                  <SpreadsheetIssuesColumn
-                    key={`${issue.id}_${index}`}
-                    issue={issue}
-                    projectId={issue.project_detail.id}
-                    expandedIssues={expandedIssues}
-                    setExpandedIssues={setExpandedIssues}
-                    setCurrentProjectId={setCurrentProjectId}
-                    properties={properties}
-                    handleIssueAction={handleIssueAction}
-                    disableUserActions={disableUserActions}
-                    userAuth={userAuth}
-                  />
-                ))}
+                    {spreadsheetIssues.map((issue: IIssue, index) => (
+                      <SpreadsheetIssuesColumn
+                        key={`${issue.id}_${index}`}
+                        issue={issue}
+                        projectId={issue.project_detail.id}
+                        expandedIssues={expandedIssues}
+                        setExpandedIssues={setExpandedIssues}
+                        setCurrentProjectId={setCurrentProjectId}
+                        properties={properties}
+                        handleIssueAction={handleIssueAction}
+                        disableUserActions={disableUserActions}
+                        userAuth={userAuth}
+                      />
+                    ))}
+                  </div>
+                </div>
+                {renderColumn("State", SpreadsheetStateColumn)}
+                {renderColumn("Priority", SpreadsheetPriorityColumn)}
+                {renderColumn("Assignees", SpreadsheetAssigneeColumn)}
+                {renderColumn("Label", SpreadsheetLabelColumn)}
+                {renderColumn("Start Date", SpreadsheetStartDateColumn)}
+                {renderColumn("Due Date", SpreadsheetDueDateColumn)}
+                {renderColumn("Estimate", SpreadsheetEstimateColumn)}
+                {renderColumn("Created On", SpreadsheetCreatedOnColumn)}
+                {renderColumn("Updated On", SpreadsheetUpdatedOnColumn)}
+              </>
+            ) : (
+              <div className="flex flex-col justify-center items-center h-full w-full">
+                <Spinner />
               </div>
-            </div>
-            {renderColumn("State", SpreadsheetStateColumn)}
-            {renderColumn("Priority", SpreadsheetPriorityColumn)}
-            {renderColumn("Assignees", SpreadsheetAssigneeColumn)}
-            {renderColumn("Label", SpreadsheetLabelColumn)}
-            {renderColumn("Start Date", SpreadsheetStartDateColumn)}
-            {renderColumn("Due Date", SpreadsheetDueDateColumn)}
-            {renderColumn("Estimate", SpreadsheetEstimateColumn)}
-            {renderColumn("Created On", SpreadsheetCreatedOnColumn)}
-            {renderColumn("Updated On", SpreadsheetUpdatedOnColumn)}
-          </>
-        ) : (
-          <div className="flex flex-col justify-center items-center h-full w-full">
-            <Spinner />
+            )}
           </div>
-        )}
+
+          <div>
+            <ListInlineCreateIssueForm
+              isOpen={isInlineCreateIssueFormOpen}
+              handleClose={() => setIsInlineCreateIssueFormOpen(false)}
+              prePopulatedData={{
+                ...(cycleId && { cycle: cycleId.toString() }),
+                ...(moduleId && { module: moduleId.toString() }),
+              }}
+            />
+
+            {type === "issue"
+              ? !disableUserActions &&
+                !isInlineCreateIssueFormOpen && (
+                  <button
+                    className="flex gap-1.5 items-center text-custom-primary-100 pl-7 py-2.5 text-sm sticky left-0 z-[1] border-custom-border-200 w-full"
+                    onClick={() => setIsInlineCreateIssueFormOpen(true)}
+                  >
+                    <PlusIcon className="h-4 w-4" />
+                    Add Issue
+                  </button>
+                )
+              : !disableUserActions &&
+                !isInlineCreateIssueFormOpen && (
+                  <CustomMenu
+                    className="sticky left-0 z-10"
+                    customButton={
+                      <button
+                        className="flex gap-1.5 items-center text-custom-primary-100 pl-7 py-2.5 text-sm sticky left-0 z-[1] border-custom-border-200 w-full"
+                        type="button"
+                      >
+                        <PlusIcon className="h-4 w-4" />
+                        Add Issue
+                      </button>
+                    }
+                    position="left"
+                    verticalPosition="top"
+                    optionsClassName="left-5 !w-36"
+                    noBorder
+                  >
+                    <CustomMenu.MenuItem onClick={() => setIsInlineCreateIssueFormOpen(true)}>
+                      Create new
+                    </CustomMenu.MenuItem>
+                    {openIssuesListModal && (
+                      <CustomMenu.MenuItem onClick={openIssuesListModal}>
+                        Add an existing issue
+                      </CustomMenu.MenuItem>
+                    )}
+                  </CustomMenu>
+                )}
+          </div>
+        </div>
       </div>
     </>
   );
