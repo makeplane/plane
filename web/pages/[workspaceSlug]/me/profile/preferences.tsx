@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import useUserAuth from "hooks/use-user-auth";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
-import SettingsNavbar from "layouts/settings-navbar";
 // components
 import { CustomThemeSelector, ThemeSwitch } from "components/core";
 // ui
@@ -15,17 +14,15 @@ import { ICustomTheme } from "types";
 import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// next themes
-import { useTheme } from "next-themes";
+import { SettingsSidebar } from "components/project";
 
 const ProfilePreferences = observer(() => {
   const { user: myProfile } = useUserAuth();
 
   const store: any = useMobxStore();
-  const { theme } = useTheme();
 
-  console.log("store", store?.theme?.theme);
-  console.log("theme", theme);
+  // console.log("store", store?.theme?.theme);
+  // console.log("theme", theme);
 
   const [customThemeSelectorOptions, setCustomThemeSelectorOptions] = useState(false);
 
@@ -62,18 +59,16 @@ const ProfilePreferences = observer(() => {
       }
     >
       {myProfile ? (
-        <div className="p-8">
-          <div className="mb-8 space-y-6">
-            <div>
-              <h3 className="text-3xl font-semibold">Profile Settings</h3>
-              <p className="mt-1 text-custom-text-200">
-                This information will be visible to only you.
-              </p>
-            </div>
-            <SettingsNavbar profilePage />
+        <div className="flex flex-row gap-2 h-full">
+          <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
+            <SettingsSidebar />
           </div>
-          <div className="space-y-8 sm:space-y-12">
-            <div className="grid grid-cols-12 gap-4 sm:gap-16">
+
+          <div className="pr-9 py-8 w-full overflow-y-auto">
+            <div className="flex items-center py-3.5 border-b border-custom-border-200">
+              <h3 className="text-xl font-medium">Preferences</h3>
+            </div>
+            <div className="grid grid-cols-12 gap-4 sm:gap-16 py-6">
               <div className="col-span-12 sm:col-span-6">
                 <h4 className="text-lg font-semibold text-custom-text-100">Theme</h4>
                 <p className="text-sm text-custom-text-200">

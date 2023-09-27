@@ -56,7 +56,7 @@ from .workspace import (
     LeaveWorkspaceEndpoint,
 )
 from .state import StateViewSet
-from .view import IssueViewViewSet, ViewIssuesEndpoint, IssueViewFavoriteViewSet
+from .view import GlobalViewViewSet, GlobalViewIssuesViewSet, IssueViewViewSet, ViewIssuesEndpoint, IssueViewFavoriteViewSet
 from .cycle import (
     CycleViewSet,
     CycleIssueViewSet,
@@ -86,8 +86,10 @@ from .issue import (
     IssueReactionPublicViewSet,
     CommentReactionPublicViewSet,
     IssueVotePublicViewSet,
+    IssueRelationViewSet,
     IssueRetrievePublicEndpoint,
     ProjectIssuesPublicEndpoint,
+    IssueDraftViewSet,
 )
 
 from .auth_extended import (
@@ -167,6 +169,4 @@ from .analytic import (
 
 from .notification import NotificationViewSet, UnreadNotificationEndpoint, MarkAllReadNotificationViewSet
 
-from .exporter import (
-    ExportIssuesEndpoint,
-)
+from .exporter import ExportIssuesEndpoint

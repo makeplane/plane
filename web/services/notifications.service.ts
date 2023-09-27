@@ -1,8 +1,5 @@
 // services
 import APIService from "services/api.service";
-
-const { NEXT_PUBLIC_API_BASE_URL } = process.env;
-
 // types
 import type {
   IUserNotification,
@@ -11,10 +8,12 @@ import type {
   PaginatedUserNotification,
   IMarkAllAsReadPayload,
 } from "types";
+// helpers
+import { API_BASE_URL } from "helpers/common.helper";
 
 class UserNotificationsServices extends APIService {
   constructor() {
-    super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
+    super(API_BASE_URL);
   }
 
   async getUserNotifications(

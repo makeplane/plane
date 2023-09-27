@@ -38,10 +38,13 @@ export const orderArrayBy = (
 
 export const checkDuplicates = (array: any[]) => new Set(array).size !== array.length;
 
-export const findStringWithMostCharacters = (strings: string[]) =>
-  strings.reduce((longestString, currentString) =>
+export const findStringWithMostCharacters = (strings: string[]): string => {
+  if (!strings || strings.length === 0) return "";
+
+  return strings.reduce((longestString, currentString) =>
     currentString.length > longestString.length ? currentString : longestString
   );
+};
 
 export const checkIfArraysHaveSameElements = (arr1: any[] | null, arr2: any[] | null): boolean => {
   if (!arr1 || !arr2) return false;

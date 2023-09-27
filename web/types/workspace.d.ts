@@ -1,12 +1,4 @@
-import type {
-  IIssueFilterOptions,
-  IProjectMember,
-  IUser,
-  IUserMemberLite,
-  TIssueGroupByOptions,
-  TIssueOrderByOptions,
-  TIssueViewOptions,
-} from "types";
+import type { IProjectMember, IUser, IUserMemberLite, IWorkspaceViewProps } from "types";
 
 export interface IWorkspace {
   readonly id: string;
@@ -62,15 +54,6 @@ export type Properties = {
   created_on: boolean;
   updated_on: boolean;
 };
-
-export interface IWorkspaceViewProps {
-  properties: Properties;
-  issueView: TIssueViewOptions;
-  groupByProperty: TIssueGroupByOptions;
-  orderBy: TIssueOrderByOptions;
-  filters: Partial<IIssueFilterOptions>;
-  showEmptyGroups: boolean;
-}
 
 export interface IWorkspaceMember {
   readonly id: string;

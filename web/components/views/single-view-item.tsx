@@ -5,9 +5,9 @@ import { useRouter } from "next/router";
 
 // icons
 import { TrashIcon, StarIcon, PencilIcon } from "@heroicons/react/24/outline";
-import { StackedLayersIcon } from "components/icons";
+import { PhotoFilterOutlined } from "@mui/icons-material";
 //components
-import { CustomMenu, Tooltip } from "components/ui";
+import { CustomMenu } from "components/ui";
 // services
 import viewsService from "services/views.service";
 // types
@@ -18,15 +18,20 @@ import { VIEWS_LIST } from "constants/fetch-keys";
 import useToast from "hooks/use-toast";
 // helpers
 import { truncateText } from "helpers/string.helper";
-import { renderShortDateWithYearFormat, render24HourFormatTime } from "helpers/date-time.helper";
 
 type Props = {
   view: IView;
+  viewType: "project" | "workspace";
   handleEditView: () => void;
   handleDeleteView: () => void;
 };
 
-export const SingleViewItem: React.FC<Props> = ({ view, handleEditView, handleDeleteView }) => {
+export const SingleViewItem: React.FC<Props> = ({
+  view,
+  viewType,
+  handleEditView,
+  handleDeleteView,
+}) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -82,38 +87,46 @@ export const SingleViewItem: React.FC<Props> = ({ view, handleEditView, handleDe
       });
   };
 
+  const viewRedirectionUrl =
+    viewType === "project"
+      ? `/${workspaceSlug}/projects/${projectId}/views/${view.id}`
+      : `/${workspaceSlug}/workspace-views/${view.id}`;
+
   return (
-    <div className="first:rounded-t-[10px] last:rounded-b-[10px] hover:bg-custom-background-90">
-      <Link href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}>
-        <a>
-          <div className="relative rounded p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <StackedLayersIcon height={18} width={18} />
-                <p className="mr-2 truncate text-sm">{truncateText(view.name, 75)}</p>
+    <div className="group hover:bg-custom-background-90 border-b border-custom-border-200">
+      <Link href={viewRedirectionUrl}>
+        <a className="flex items-center justify-between relative rounded px-5 py-4 w-full">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-4">
+              <div
+                className={`flex items-center justify-center h-10 w-10 rounded bg-custom-background-90 group-hover:bg-custom-background-100`}
+              >
+                <PhotoFilterOutlined className="!text-base !leading-6" />
               </div>
-              <div className="ml-2 flex flex-shrink-0">
-                <div className="flex items-center gap-2">
-                  <p className="rounded-full bg-custom-background-80 py-0.5 px-2 text-xs text-custom-text-200">
-                    {Object.keys(view.query_data)
-                      .map((key: string) =>
-                        view.query_data[key as keyof typeof view.query_data] !== null
-                          ? (view.query_data[key as keyof typeof view.query_data] as any).length
-                          : 0
-                      )
-                      .reduce((curr, prev) => curr + prev, 0)}{" "}
-                    filters
-                  </p>
-                  <Tooltip
-                    tooltipContent={`Last updated at ${render24HourFormatTime(
-                      view.updated_at
-                    )} ${renderShortDateWithYearFormat(view.updated_at)}`}
-                  >
-                    <p className="text-sm text-custom-text-200">
-                      {render24HourFormatTime(view.updated_at)}
-                    </p>
-                  </Tooltip>
-                  {view.is_favorite ? (
+              <div className="flex flex-col">
+                <p className="truncate text-sm leading-4 font-medium">
+                  {truncateText(view.name, 75)}
+                </p>
+                {view?.description && (
+                  <p className="text-xs text-custom-text-200">{view.description}</p>
+                )}
+              </div>
+            </div>
+            <div className="ml-2 flex flex-shrink-0">
+              <div className="flex items-center gap-4">
+                <p className="rounded bg-custom-background-80 py-1 px-2 text-xs text-custom-text-200 opacity-0 group-hover:opacity-100">
+                  {Object.keys(view.query_data)
+                    .map((key: string) =>
+                      view.query_data[key as keyof typeof view.query_data] !== null
+                        ? (view.query_data[key as keyof typeof view.query_data] as any).length
+                        : 0
+                    )
+                    .reduce((curr, prev) => curr + prev, 0)}{" "}
+                  filters
+                </p>
+
+                {viewType === "project" ? (
+                  view.is_favorite ? (
                     <button
                       type="button"
                       onClick={(e) => {
@@ -135,41 +148,36 @@ export const SingleViewItem: React.FC<Props> = ({ view, handleEditView, handleDe
                     >
                       <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
                     </button>
-                  )}
-                  <CustomMenu width="auto" verticalEllipsis>
-                    <CustomMenu.MenuItem
-                      onClick={(e: any) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleEditView();
-                      }}
-                    >
-                      <span className="flex items-center justify-start gap-2">
-                        <PencilIcon className="h-3.5 w-3.5" />
-                        <span>Edit View</span>
-                      </span>
-                    </CustomMenu.MenuItem>
-                    <CustomMenu.MenuItem
-                      onClick={(e: any) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleDeleteView();
-                      }}
-                    >
-                      <span className="flex items-center justify-start gap-2">
-                        <TrashIcon className="h-3.5 w-3.5" />
-                        <span>Delete View</span>
-                      </span>
-                    </CustomMenu.MenuItem>
-                  </CustomMenu>
-                </div>
+                  )
+                ) : null}
+                <CustomMenu width="auto" ellipsis>
+                  <CustomMenu.MenuItem
+                    onClick={(e: any) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleEditView();
+                    }}
+                  >
+                    <span className="flex items-center justify-start gap-2">
+                      <PencilIcon className="h-3.5 w-3.5" />
+                      <span>Edit View</span>
+                    </span>
+                  </CustomMenu.MenuItem>
+                  <CustomMenu.MenuItem
+                    onClick={(e: any) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleDeleteView();
+                    }}
+                  >
+                    <span className="flex items-center justify-start gap-2">
+                      <TrashIcon className="h-3.5 w-3.5" />
+                      <span>Delete View</span>
+                    </span>
+                  </CustomMenu.MenuItem>
+                </CustomMenu>
               </div>
             </div>
-            {view?.description && (
-              <p className="px-[27px] text-sm font-normal leading-5 text-custom-text-200">
-                {view.description}
-              </p>
-            )}
           </div>
         </a>
       </Link>

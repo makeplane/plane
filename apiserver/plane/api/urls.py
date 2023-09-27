@@ -90,7 +90,9 @@ from plane.api.views import (
     IssueSubscriberViewSet,
     IssueCommentPublicViewSet,
     IssueReactionViewSet,
+    IssueRelationViewSet,
     CommentReactionViewSet,
+    IssueDraftViewSet,
     ## End Issues
     # States
     StateViewSet,
@@ -100,6 +102,8 @@ from plane.api.views import (
     BulkEstimatePointEndpoint,
     ## End Estimates
     # Views
+    GlobalViewViewSet,
+    GlobalViewIssuesViewSet,
     IssueViewViewSet,
     ViewIssuesEndpoint,
     IssueViewFavoriteViewSet,
@@ -182,7 +186,6 @@ from plane.api.views import (
     ## Exporter
     ExportIssuesEndpoint,
     ## End Exporter
-
 )
 
 
@@ -239,7 +242,11 @@ urlpatterns = [
         UpdateUserTourCompletedEndpoint.as_view(),
         name="user-tour",
     ),
-    path("users/workspaces/<str:slug>/activities/", UserActivityEndpoint.as_view(), name="user-activities"),
+    path(
+        "users/workspaces/<str:slug>/activities/",
+        UserActivityEndpoint.as_view(),
+        name="user-activities",
+    ),
     # user workspaces
     path(
         "users/me/workspaces/",
@@ -648,6 +655,37 @@ urlpatterns = [
         name="project-view-issues",
     ),
     path(
+        "workspaces/<str:slug>/views/",
+        GlobalViewViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="global-view",
+    ),
+    path(
+        "workspaces/<str:slug>/views/<uuid:pk>/",
+        GlobalViewViewSet.as_view(
+            {
+                "get": "retrieve",
+                "put": "update",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="global-view",
+    ),
+    path(
+        "workspaces/<str:slug>/issues/",
+        GlobalViewIssuesViewSet.as_view(
+            {
+                "get": "list",
+            }
+        ),
+        name="global-view-issues",
+    ),
+    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-views/",
         IssueViewFavoriteViewSet.as_view(
             {
@@ -764,11 +802,6 @@ urlpatterns = [
             }
         ),
         name="project-issue",
-    ),
-    path(
-        "workspaces/<str:slug>/issues/",
-        WorkSpaceIssuesEndpoint.as_view(),
-        name="workspace-issue",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-labels/",
@@ -1010,6 +1043,49 @@ urlpatterns = [
         name="project-issue-archive",
     ),
     ## End Issue Archives
+    ## Issue Relation
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-relation/",
+        IssueRelationViewSet.as_view(
+            {
+                "post": "create",
+            }
+        ),
+        name="issue-relation",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-relation/<uuid:pk>/",
+        IssueRelationViewSet.as_view(
+            {
+                "delete": "destroy",
+            }
+        ),
+        name="issue-relation",
+    ),
+    ## End Issue Relation
+    ## Issue Drafts
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-drafts/",
+        IssueDraftViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="project-issue-draft",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-drafts/<uuid:pk>/",
+        IssueDraftViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="project-issue-draft",
+    ),
+    ## End Issue Drafts
     ## File Assets
     path(
         "workspaces/<str:slug>/file-assets/",

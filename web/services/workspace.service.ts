@@ -1,9 +1,8 @@
 // services
 import APIService from "services/api.service";
 import trackEventServices from "services/track-event.service";
-
-const { NEXT_PUBLIC_API_BASE_URL } = process.env;
-
+// helpers
+import { API_BASE_URL } from "helpers/common.helper";
 // types
 import {
   IWorkspace,
@@ -15,14 +14,13 @@ import {
   ICurrentUserResponse,
   IWorkspaceBulkInviteFormData,
   IWorkspaceViewProps,
+  IView,
+  IIssueFilterOptions,
 } from "types";
-
-const trackEvent =
-  process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
 
 class WorkspaceService extends APIService {
   constructor() {
-    super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
+    super(API_BASE_URL);
   }
 
   async userWorkspaces(): Promise<IWorkspace[]> {
@@ -47,8 +45,7 @@ class WorkspaceService extends APIService {
   ): Promise<IWorkspace> {
     return this.post("/api/workspaces/", data)
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackWorkspaceEvent(response.data, "CREATE_WORKSPACE", user);
+        trackEventServices.trackWorkspaceEvent(response.data, "CREATE_WORKSPACE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -63,8 +60,7 @@ class WorkspaceService extends APIService {
   ): Promise<IWorkspace> {
     return this.patch(`/api/workspaces/${workspaceSlug}/`, data)
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackWorkspaceEvent(response.data, "UPDATE_WORKSPACE", user);
+        trackEventServices.trackWorkspaceEvent(response.data, "UPDATE_WORKSPACE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -78,8 +74,7 @@ class WorkspaceService extends APIService {
   ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/`)
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackWorkspaceEvent({ workspaceSlug }, "DELETE_WORKSPACE", user);
+        trackEventServices.trackWorkspaceEvent({ workspaceSlug }, "DELETE_WORKSPACE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -94,8 +89,7 @@ class WorkspaceService extends APIService {
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/invite/`, data)
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackWorkspaceEvent(response.data, "WORKSPACE_USER_INVITE", user);
+        trackEventServices.trackWorkspaceEvent(response.data, "WORKSPACE_USER_INVITE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -117,12 +111,7 @@ class WorkspaceService extends APIService {
       }
     )
       .then((response) => {
-        if (trackEvent)
-          trackEventServices.trackWorkspaceEvent(
-            response.data,
-            "WORKSPACE_USER_INVITE_ACCEPT",
-            user
-          );
+        trackEventServices.trackWorkspaceEvent(response.data, "WORKSPACE_USER_INVITE_ACCEPT", user);
         return response?.data;
       })
       .catch((error) => {
@@ -269,6 +258,56 @@ class WorkspaceService extends APIService {
   }
   async getProductUpdates(): Promise<IProductUpdateResponse[]> {
     return this.get("/api/release-notes/")
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async createView(workspaceSlug: string, data: IView): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/views/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateView(workspaceSlug: string, viewId: string, data: Partial<IView>): Promise<any> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/views/${viewId}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deleteView(workspaceSlug: string, viewId: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/views/${viewId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getAllViews(workspaceSlug: string): Promise<IView[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/views/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getViewDetails(workspaceSlug: string, viewId: string): Promise<IView> {
+    return this.get(`/api/workspaces/${workspaceSlug}/views/${viewId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getViewIssues(workspaceSlug: string, params: IIssueFilterOptions): Promise<any> {
+    return this.get(`/api/workspaces/${workspaceSlug}/issues/`, {
+      params,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

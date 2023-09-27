@@ -41,7 +41,7 @@ export const CommandPalette: React.FC = observer(() => {
   const [isCreateUpdatePageModalOpen, setIsCreateUpdatePageModalOpen] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, issueId, inboxId } = router.query;
+  const { workspaceSlug, projectId, issueId, inboxId, cycleId, moduleId } = router.query;
 
   const { user } = useUser();
 
@@ -161,6 +161,7 @@ export const CommandPalette: React.FC = observer(() => {
           />
           <CreateUpdateViewModal
             handleClose={() => setIsCreateViewModalOpen(false)}
+            viewType="project"
             isOpen={isCreateViewModalOpen}
             user={user}
           />
@@ -183,6 +184,13 @@ export const CommandPalette: React.FC = observer(() => {
         isOpen={isIssueModalOpen}
         handleClose={() => setIsIssueModalOpen(false)}
         fieldsToShow={inboxId ? ["name", "description", "priority"] : ["all"]}
+        prePopulateData={
+          cycleId
+            ? { cycle: cycleId.toString() }
+            : moduleId
+            ? { module: moduleId.toString() }
+            : undefined
+        }
       />
       <BulkDeleteIssuesModal
         isOpen={isBulkDeleteIssuesModalOpen}

@@ -17,6 +17,7 @@
     "next": "12.3.2",
     "react": "^18.2.0",
     "tsconfig": "*",
+    "tailwind-config-custom": "*",
     "typescript": "4.7.4"
   }
 }

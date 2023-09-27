@@ -1,0 +1,10 @@
+{
+  "name": "tailwind-config-custom",
+  "version": "0.0.1",
+  "description": "common tailwind configuration across monorepo",
+  "main": "index.js",
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.10",
+    "tailwindcss-animate": "^1.0.7"
+  }
+}

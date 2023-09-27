@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
+// headless ui
+import { Disclosure, Transition } from "@headlessui/react";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // layouts
@@ -11,7 +13,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // services
 import projectService from "services/project.service";
 // components
-import { DeleteProjectModal, SettingsHeader } from "components/project";
+import { DeleteProjectModal, SettingsSidebar } from "components/project";
 import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
 // hooks
@@ -23,13 +25,15 @@ import {
   TextArea,
   Loader,
   CustomSelect,
-  SecondaryButton,
   DangerButton,
+  Icon,
+  PrimaryButton,
 } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
 import { truncateText } from "helpers/string.helper";
+import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
 import { IProject, IWorkspace } from "types";
 import type { NextPage } from "next";
@@ -62,7 +66,7 @@ const GeneralSettings: NextPage = () => {
       : null
   );
 
-  const { data: memberDetails, error } = useSWR(
+  const { data: memberDetails } = useSWR(
     workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
     workspaceSlug && projectId
       ? () => projectService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
@@ -163,6 +167,7 @@ const GeneralSettings: NextPage = () => {
   };
 
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === projectDetails?.network);
+  const selectedNetwork = NETWORK_CHOICES.find((n) => n.key === watch("network"));
 
   const isAdmin = memberDetails?.role === 20;
 
@@ -185,231 +190,261 @@ const GeneralSettings: NextPage = () => {
         onClose={() => setSelectedProject(null)}
         user={user}
       />
-      <form onSubmit={handleSubmit(onSubmit)} className="p-8">
-        <SettingsHeader />
-        <div className={`space-y-8 sm:space-y-12 ${isAdmin ? "" : "opacity-60"}`}>
-          <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
-            <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold">Icon & Name</h4>
-              <p className="text-sm text-custom-text-200">
-                Select an icon and a name for your project.
-              </p>
-            </div>
-            <div className="col-span-12 flex gap-2 sm:col-span-6">
-              {projectDetails ? (
-                <div className="h-7 w-7 grid place-items-center">
-                  <Controller
-                    control={control}
-                    name="emoji_and_icon"
-                    render={({ field: { value, onChange } }) => (
-                      <EmojiIconPicker
-                        label={value ? renderEmoji(value) : "Icon"}
-                        value={value}
-                        onChange={onChange}
-                        disabled={!isAdmin}
-                      />
+      <div className="flex flex-row gap-2 h-full">
+        <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
+          <SettingsSidebar />
+        </div>
+        <div className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="relative h-44 w-full mt-6">
+              <img
+                src={watch("cover_image")!}
+                alt={watch("cover_image")!}
+                className="h-44 w-full rounded-md object-cover"
+              />
+              <div className="flex items-end justify-between gap-3 absolute bottom-4 w-full px-4">
+                <div className="flex gap-3 flex-grow truncate">
+                  <div className="flex items-center justify-center flex-shrink-0 bg-custom-background-90 h-[52px] w-[52px] rounded-lg">
+                    {projectDetails ? (
+                      <div className="h-7 w-7 grid place-items-center">
+                        <Controller
+                          control={control}
+                          name="emoji_and_icon"
+                          render={({ field: { value, onChange } }) => (
+                            <EmojiIconPicker
+                              label={value ? renderEmoji(value) : "Icon"}
+                              value={value}
+                              onChange={onChange}
+                              disabled={!isAdmin}
+                            />
+                          )}
+                        />
+                      </div>
+                    ) : (
+                      <Loader>
+                        <Loader.Item height="46px" width="46px" />
+                      </Loader>
                     )}
-                  />
-                </div>
-              ) : (
-                <Loader>
-                  <Loader.Item height="46px" width="46px" />
-                </Loader>
-              )}
-              {projectDetails ? (
-                <Input
-                  id="name"
-                  name="name"
-                  error={errors.name}
-                  register={register}
-                  placeholder="Project Name"
-                  validations={{
-                    required: "Name is required",
-                  }}
-                  disabled={!isAdmin}
-                />
-              ) : (
-                <Loader>
-                  <Loader.Item height="46px" width="225px" />
-                </Loader>
-              )}
-            </div>
-          </div>
-          <div className="grid grid-cols-12 gap-4 sm:gap-16">
-            <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold">Description</h4>
-              <p className="text-sm text-custom-text-200">Give a description to your project.</p>
-            </div>
-            <div className="col-span-12 sm:col-span-6">
-              {projectDetails ? (
-                <TextArea
-                  id="description"
-                  name="description"
-                  error={errors.description}
-                  register={register}
-                  placeholder="Enter project description"
-                  validations={{}}
-                  className="min-h-[46px] text-sm"
-                  disabled={!isAdmin}
-                />
-              ) : (
-                <Loader className="w-full">
-                  <Loader.Item height="46px" width="full" />
-                </Loader>
-              )}
-            </div>
-          </div>
-          <div className="grid grid-cols-12 gap-4 sm:gap-16">
-            <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold">Cover Photo</h4>
-              <p className="text-sm text-custom-text-200">
-                Select your cover photo from the given library.
-              </p>
-            </div>
-            <div className="col-span-12 sm:col-span-6">
-              {watch("cover_image") ? (
-                <div className="h-32 w-full rounded border border-custom-border-200 p-1">
-                  <div className="relative h-full w-full rounded">
-                    <img
-                      src={watch("cover_image")!}
-                      className="absolute top-0 left-0 h-full w-full object-cover rounded"
-                      alt={projectDetails?.name ?? "Cover image"}
-                    />
-                    <div className="absolute bottom-0 flex w-full justify-end">
-                      <ImagePickerPopover
-                        label={"Change cover"}
-                        onChange={(imageUrl) => {
-                          setValue("cover_image", imageUrl);
-                        }}
-                        value={watch("cover_image")}
-                        disabled={!isAdmin}
-                      />
-                    </div>
+                  </div>
+                  <div className="flex flex-col gap-1 text-white truncate">
+                    <span className="text-lg font-semibold truncate">{watch("name")}</span>
+                    <span className="flex items-center gap-2 text-sm">
+                      <span>
+                        {watch("identifier")} . {currentNetwork?.label}
+                      </span>
+                    </span>
                   </div>
                 </div>
-              ) : (
-                <Loader className="w-full">
-                  <Loader.Item height="46px" width="full" />
-                </Loader>
-              )}
-            </div>
-          </div>
-          <div className="grid grid-cols-12 gap-4 sm:gap-16">
-            <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold">Identifier</h4>
-              <p className="text-sm text-custom-text-200">
-                Create a 1-6 characters{"'"} identifier for the project.
-              </p>
-            </div>
-            <div className="col-span-12 sm:col-span-6">
-              {projectDetails ? (
-                <Input
-                  id="identifier"
-                  name="identifier"
-                  error={errors.identifier}
-                  register={register}
-                  placeholder="Enter identifier"
-                  onChange={handleIdentifierChange}
-                  validations={{
-                    required: "Identifier is required",
-                    validate: (value) =>
-                      /^[A-Z0-9]+$/.test(value.toUpperCase()) || "Identifier must be in uppercase.",
-                    minLength: {
-                      value: 1,
-                      message: "Identifier must at least be of 1 character",
-                    },
-                    maxLength: {
-                      value: 5,
-                      message: "Identifier must at most be of 5 characters",
-                    },
-                  }}
-                  disabled={!isAdmin}
-                />
-              ) : (
-                <Loader>
-                  <Loader.Item height="46px" width="160px" />
-                </Loader>
-              )}
-            </div>
-          </div>
-          <div className="grid grid-cols-12 gap-4 sm:gap-16">
-            <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold">Network</h4>
-              <p className="text-sm text-custom-text-200">Select privacy type for the project.</p>
-            </div>
-            <div className="col-span-12 sm:col-span-6">
-              {projectDetails ? (
-                <Controller
-                  name="network"
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <CustomSelect
-                      value={value}
-                      onChange={onChange}
-                      label={currentNetwork?.label ?? "Select network"}
-                      input
-                      disabled={!isAdmin}
-                    >
-                      {NETWORK_CHOICES.map((network) => (
-                        <CustomSelect.Option key={network.key} value={network.key}>
-                          {network.label}
-                        </CustomSelect.Option>
-                      ))}
-                    </CustomSelect>
-                  )}
-                />
-              ) : (
-                <Loader className="w-full">
-                  <Loader.Item height="46px" width="160px" />
-                </Loader>
-              )}
-            </div>
-          </div>
 
-          {isAdmin && (
-            <>
-              <div className="sm:text-right">
+                <div className="flex justify-center flex-shrink-0">
+                  {projectDetails ? (
+                    <div>
+                      <Controller
+                        control={control}
+                        name="cover_image"
+                        render={({ field: { value, onChange } }) => (
+                          <ImagePickerPopover
+                            label={"Change cover"}
+                            onChange={(imageUrl) => {
+                              setValue("cover_image", imageUrl);
+                            }}
+                            value={watch("cover_image")}
+                            disabled={!isAdmin}
+                          />
+                        )}
+                      />
+                    </div>
+                  ) : (
+                    <Loader>
+                      <Loader.Item height="32px" width="108px" />
+                    </Loader>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-8 my-8">
+              <div className="flex flex-col gap-1">
+                <h4 className="text-sm">Project Name</h4>
                 {projectDetails ? (
-                  <SecondaryButton type="submit" loading={isSubmitting} disabled={!isAdmin}>
-                    {isSubmitting ? "Updating Project..." : "Update Project"}
-                  </SecondaryButton>
+                  <Input
+                    id="name"
+                    name="name"
+                    error={errors.name}
+                    register={register}
+                    className="!p-3 rounded-md font-medium"
+                    placeholder="Project Name"
+                    validations={{
+                      required: "Name is required",
+                    }}
+                    disabled={!isAdmin}
+                  />
+                ) : (
+                  <Loader>
+                    <Loader.Item height="46px" width="100%" />
+                  </Loader>
+                )}
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <h4 className="text-sm">Description</h4>
+                {projectDetails ? (
+                  <TextArea
+                    id="description"
+                    name="description"
+                    error={errors.description}
+                    register={register}
+                    placeholder="Enter project description"
+                    validations={{}}
+                    className="min-h-[102px] text-sm"
+                    disabled={!isAdmin}
+                  />
+                ) : (
+                  <Loader className="w-full">
+                    <Loader.Item height="102px" width="full" />
+                  </Loader>
+                )}
+              </div>
+
+              <div className="flex items-center justify-between gap-10 w-full">
+                <div className="flex flex-col gap-1 w-1/2">
+                  <h4 className="text-sm">Identifier</h4>
+                  {projectDetails ? (
+                    <Input
+                      id="identifier"
+                      name="identifier"
+                      error={errors.identifier}
+                      register={register}
+                      placeholder="Enter identifier"
+                      onChange={handleIdentifierChange}
+                      validations={{
+                        required: "Identifier is required",
+                        validate: (value) =>
+                          /^[A-Z0-9]+$/.test(value.toUpperCase()) ||
+                          "Identifier must be in uppercase.",
+                        minLength: {
+                          value: 1,
+                          message: "Identifier must at least be of 1 character",
+                        },
+                        maxLength: {
+                          value: 5,
+                          message: "Identifier must at most be of 5 characters",
+                        },
+                      }}
+                      disabled={!isAdmin}
+                    />
+                  ) : (
+                    <Loader>
+                      <Loader.Item height="36px" width="100%" />
+                    </Loader>
+                  )}
+                </div>
+
+                <div className="flex flex-col gap-1 w-1/2">
+                  <h4 className="text-sm">Network</h4>
+                  {projectDetails ? (
+                    <Controller
+                      name="network"
+                      control={control}
+                      render={({ field: { value, onChange } }) => (
+                        <CustomSelect
+                          value={value}
+                          onChange={onChange}
+                          label={selectedNetwork?.label ?? "Select network"}
+                          className="!border-custom-border-200 !shadow-none"
+                          input
+                          disabled={!isAdmin}
+                        >
+                          {NETWORK_CHOICES.map((network) => (
+                            <CustomSelect.Option key={network.key} value={network.key}>
+                              {network.label}
+                            </CustomSelect.Option>
+                          ))}
+                        </CustomSelect>
+                      )}
+                    />
+                  ) : (
+                    <Loader className="w-full">
+                      <Loader.Item height="46px" width="100%" />
+                    </Loader>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between py-2">
+                {projectDetails ? (
+                  <>
+                    <PrimaryButton type="submit" loading={isSubmitting} disabled={!isAdmin}>
+                      {isSubmitting ? "Updating Project..." : "Update Project"}
+                    </PrimaryButton>
+                    <span className="text-sm text-custom-sidebar-text-400 italic">
+                      Created on {renderShortDateWithYearFormat(projectDetails?.created_at)}
+                    </span>
+                  </>
                 ) : (
                   <Loader className="mt-2 w-full">
                     <Loader.Item height="34px" width="100px" />
                   </Loader>
                 )}
               </div>
-              <div className="grid grid-cols-12 gap-4 sm:gap-16">
-                <div className="col-span-12 sm:col-span-6">
-                  <h4 className="text-lg font-semibold">Danger Zone</h4>
-                  <p className="text-sm text-custom-text-200">
-                    The danger zone of the project delete page is a critical area that requires
-                    careful consideration and attention. When deleting a project, all of the data
-                    and resources within that project will be permanently removed and cannot be
-                    recovered.
-                  </p>
-                </div>
-                <div className="col-span-12 sm:col-span-6">
-                  {projectDetails ? (
-                    <div>
-                      <DangerButton
-                        onClick={() => setSelectedProject(projectDetails.id ?? null)}
-                        outline
-                      >
-                        Delete Project
-                      </DangerButton>
-                    </div>
-                  ) : (
-                    <Loader className="mt-2 w-full">
-                      <Loader.Item height="46px" width="100px" />
-                    </Loader>
-                  )}
-                </div>
-              </div>
-            </>
-          )}
+            </div>
+            {isAdmin && (
+              <Disclosure as="div" className="border-t border-custom-border-400">
+                {({ open }) => (
+                  <div className="w-full">
+                    <Disclosure.Button
+                      as="button"
+                      type="button"
+                      className="flex items-center justify-between w-full py-4"
+                    >
+                      <span className="text-xl tracking-tight">Delete Project</span>
+                      <Icon iconName={open ? "expand_less" : "expand_more"} className="!text-2xl" />
+                    </Disclosure.Button>
+
+                    <Transition
+                      show={open}
+                      enter="transition duration-100 ease-out"
+                      enterFrom="transform opacity-0"
+                      enterTo="transform opacity-100"
+                      leave="transition duration-75 ease-out"
+                      leaveFrom="transform opacity-100"
+                      leaveTo="transform opacity-0"
+                    >
+                      <Disclosure.Panel>
+                        <div className="flex flex-col gap-8">
+                          <span className="text-sm tracking-tight">
+                            The danger zone of the project delete page is a critical area that
+                            requires careful consideration and attention. When deleting a project,
+                            all of the data and resources within that project will be permanently
+                            removed and cannot be recovered.
+                          </span>
+                          <div>
+                            {projectDetails ? (
+                              <div>
+                                <DangerButton
+                                  onClick={() => setSelectedProject(projectDetails.id ?? null)}
+                                  className="!text-sm"
+                                  outline
+                                >
+                                  Delete my project
+                                </DangerButton>
+                              </div>
+                            ) : (
+                              <Loader className="mt-2 w-full">
+                                <Loader.Item height="38px" width="144px" />
+                              </Loader>
+                            )}
+                          </div>
+                        </div>
+                      </Disclosure.Panel>
+                    </Transition>
+                  </div>
+                )}
+              </Disclosure>
+            )}
+          </form>
         </div>
-      </form>
+      </div>
     </ProjectAuthorizationWrapper>
   );
 };

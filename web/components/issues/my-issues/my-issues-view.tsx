@@ -57,8 +57,9 @@ export const MyIssuesView: React.FC<Props> = ({
   const { user } = useUserAuth();
 
   const { groupedIssues, mutateMyIssues, isEmpty, params } = useMyIssues(workspaceSlug?.toString());
-  const { filters, setFilters, issueView, groupBy, orderBy, properties, showEmptyGroups } =
-    useMyIssuesFilters(workspaceSlug?.toString());
+  const { filters, setFilters, displayFilters, properties } = useMyIssuesFilters(
+    workspaceSlug?.toString()
+  );
 
   const { data: labels } = useSWR(
     workspaceSlug && (filters?.labels ?? []).length > 0
@@ -81,7 +82,13 @@ export const MyIssuesView: React.FC<Props> = ({
     async (result: DropResult) => {
       setTrashBox(false);
 
-      if (!result.destination || !workspaceSlug || !groupedIssues || groupBy !== "priority") return;
+      if (
+        !result.destination ||
+        !workspaceSlug ||
+        !groupedIssues ||
+        displayFilters?.group_by !== "priority"
+      )
+        return;
 
       const { source, destination } = result;
 
@@ -96,7 +103,7 @@ export const MyIssuesView: React.FC<Props> = ({
         const sourceGroup = source.droppableId;
         const destinationGroup = destination.droppableId;
 
-        draggedItem[groupBy] = destinationGroup as TIssuePriorities;
+        draggedItem[displayFilters.group_by] = destinationGroup as TIssuePriorities;
 
         mutate<{
           [key: string]: IIssue[];
@@ -113,8 +120,14 @@ export const MyIssuesView: React.FC<Props> = ({
 
             return {
               ...prevData,
-              [sourceGroup]: orderArrayBy(sourceGroupArray, orderBy),
-              [destinationGroup]: orderArrayBy(destinationGroupArray, orderBy),
+              [sourceGroup]: orderArrayBy(
+                sourceGroupArray,
+                displayFilters.order_by ?? "-created_at"
+              ),
+              [destinationGroup]: orderArrayBy(
+                destinationGroupArray,
+                displayFilters.order_by ?? "-created_at"
+              ),
             };
           },
           false
@@ -134,7 +147,7 @@ export const MyIssuesView: React.FC<Props> = ({
           .catch(() => mutate(USER_ISSUES(workspaceSlug.toString(), params)));
       }
     },
-    [groupBy, groupedIssues, handleDeleteIssue, orderBy, params, user, workspaceSlug]
+    [displayFilters, groupedIssues, handleDeleteIssue, params, user, workspaceSlug]
   );
 
   const addIssueToGroup = useCallback(
@@ -143,19 +156,19 @@ export const MyIssuesView: React.FC<Props> = ({
 
       let preloadedValue: string | string[] = groupTitle;
 
-      if (groupBy === "labels") {
+      if (displayFilters?.group_by === "labels") {
         if (groupTitle === "None") preloadedValue = [];
         else preloadedValue = [groupTitle];
       }
 
-      if (groupBy)
+      if (displayFilters?.group_by)
         setPreloadedData({
-          [groupBy]: preloadedValue,
+          [displayFilters?.group_by]: preloadedValue,
           actionType: "createIssue",
         });
       else setPreloadedData({ actionType: "createIssue" });
     },
-    [setCreateIssueModal, setPreloadedData, groupBy]
+    [setCreateIssueModal, setPreloadedData, displayFilters?.group_by]
   );
 
   const addIssueToDate = useCallback(
@@ -192,7 +205,7 @@ export const MyIssuesView: React.FC<Props> = ({
   );
 
   const handleIssueAction = useCallback(
-    (issue: IIssue, action: "copy" | "edit" | "delete") => {
+    (issue: IIssue, action: "copy" | "edit" | "delete" | "updateDraft") => {
       if (action === "copy") makeIssueCopy(issue);
       else if (action === "edit") handleEditIssue(issue);
       else if (action === "delete") handleDeleteIssue(issue);
@@ -263,7 +276,6 @@ export const MyIssuesView: React.FC<Props> = ({
                   state_group: null,
                   start_date: null,
                   target_date: null,
-                  type: null,
                 })
               }
             />
@@ -275,7 +287,7 @@ export const MyIssuesView: React.FC<Props> = ({
         addIssueToDate={addIssueToDate}
         addIssueToGroup={addIssueToGroup}
         disableUserActions={disableUserActions}
-        dragDisabled={groupBy !== "priority"}
+        dragDisabled={displayFilters?.group_by !== "priority"}
         emptyState={{
           title: filters.assignees
             ? "You don't have any issue assigned to you yet"
@@ -304,15 +316,12 @@ export const MyIssuesView: React.FC<Props> = ({
         trashBox={trashBox}
         setTrashBox={setTrashBox}
         viewProps={{
-          groupByProperty: groupBy,
+          displayFilters,
           groupedIssues,
           isEmpty,
-          issueView,
           mutateIssues: mutateMyIssues,
-          orderBy,
           params,
           properties,
-          showEmptyGroups,
         }}
       />
     </>

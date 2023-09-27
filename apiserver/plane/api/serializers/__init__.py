@@ -23,7 +23,7 @@ from .project import (
     ProjectPublicMemberSerializer
 )
 from .state import StateSerializer, StateLiteSerializer
-from .view import IssueViewSerializer, IssueViewFavoriteSerializer
+from .view import GlobalViewSerializer, IssueViewSerializer, IssueViewFavoriteSerializer
 from .cycle import CycleSerializer, CycleIssueSerializer, CycleFavoriteSerializer, CycleWriteSerializer
 from .asset import FileAssetSerializer
 from .issue import (
@@ -31,8 +31,6 @@ from .issue import (
     IssueActivitySerializer,
     IssueCommentSerializer,
     IssuePropertySerializer,
-    BlockerIssueSerializer,
-    BlockedIssueSerializer,
     IssueAssigneeSerializer,
     LabelSerializer,
     IssueSerializer,
@@ -45,6 +43,8 @@ from .issue import (
     IssueReactionSerializer,
     CommentReactionSerializer,
     IssueVoteSerializer,
+    IssueRelationSerializer,
+    RelatedIssueSerializer,
     IssuePublicSerializer,
 )
 
