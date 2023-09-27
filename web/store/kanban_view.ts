@@ -1,6 +1,7 @@
 import { action, computed, makeObservable } from "mobx";
 // types
 import { RootStore } from "./root";
+import { IIssueType } from "./issue";
 
 export interface IIssueKanBanViewStore {
   handleDragDrop: (source: any, destination: any) => void;
@@ -26,12 +27,10 @@ class IssueKanBanViewStore implements IIssueKanBanViewStore {
 
   get canUserDragDrop() {
     if (
-      this.rootStore?.issueFilters?.issueView &&
-      this.rootStore?.issueFilters?.userFilters?.display_filters?.group_by &&
-      this.rootStore?.issueFilters?.userFilters?.display_filters?.order_by &&
-      !["my_issues"].includes(this.rootStore?.issueFilters?.issueView) &&
-      ["state", "priority"].includes(this.rootStore?.issueFilters?.userFilters?.display_filters?.group_by) &&
-      this.rootStore?.issueFilters?.userFilters?.display_filters?.order_by === "sort_order"
+      this.rootStore?.issueFilter?.userDisplayFilters?.group_by &&
+      this.rootStore?.issueFilter?.userDisplayFilters?.order_by &&
+      ["state", "priority"].includes(this.rootStore?.issueFilter?.userDisplayFilters?.group_by) &&
+      this.rootStore?.issueFilter?.userDisplayFilters?.order_by === "sort_order"
     ) {
       return true;
     }
@@ -45,26 +44,18 @@ class IssueKanBanViewStore implements IIssueKanBanViewStore {
   }
 
   handleDragDrop = async (source: any, destination: any) => {
-    const workspaceId = this.rootStore?.issueFilters?.workspaceId;
-    const projectId = this.rootStore?.issueFilters?.projectId;
-    const issueView = this.rootStore?.issueFilters?.issueView;
-    const issueLayout = this.rootStore?.issueFilters?.userFilters?.display_filters?.layout;
+    const workspaceSlug = this.rootStore?.workspace?.workspaceSlug;
+    const projectId = this.rootStore?.project?.projectId;
+    const issueType: IIssueType | null = this.rootStore?.issue?.getIssueType;
+    const issueLayout = this.rootStore?.issueFilter?.userDisplayFilters?.layout || null;
 
     const sortOrderDefaultValue = 10000;
 
-    if (
-      this.rootStore?.issueView?.getIssues &&
-      workspaceId &&
-      projectId &&
-      issueView &&
-      issueLayout &&
-      issueView != "my_issues"
-    ) {
-      const projectSortedIssues: any =
-        this.rootStore?.issueView.issues?.[workspaceId]?.project_issues?.[projectId]?.[issueView]?.[issueLayout];
+    if (workspaceSlug && projectId && issueType && issueLayout === "kanban" && this.rootStore.issue.getIssues) {
+      const currentIssues: any = this.rootStore.issue.getIssues;
 
       let updateIssue: any = {
-        workspaceId: workspaceId,
+        workspaceSlug: workspaceSlug,
         projectId: projectId,
       };
 
@@ -73,7 +64,7 @@ class IssueKanBanViewStore implements IIssueKanBanViewStore {
         // vertical
         if (source.droppableId === destination.droppableId) {
           const _columnId = source.droppableId;
-          const _issues = projectSortedIssues[_columnId];
+          const _issues = currentIssues[_columnId];
 
           // update the sort order
           if (destination.index === 0) {
@@ -92,7 +83,7 @@ class IssueKanBanViewStore implements IIssueKanBanViewStore {
           _issues.splice(destination.index, 0, { ...removed, sort_order: updateIssue.sort_order });
           updateIssue = { ...updateIssue, issueId: removed?.id };
 
-          projectSortedIssues[_columnId] = _issues;
+          currentIssues[_columnId] = _issues;
         }
 
         // horizontal
@@ -100,8 +91,8 @@ class IssueKanBanViewStore implements IIssueKanBanViewStore {
           const _sourceColumnId = source.droppableId;
           const _destinationColumnId = destination.droppableId;
 
-          const _sourceIssues = projectSortedIssues[_sourceColumnId];
-          const _destinationIssues = projectSortedIssues[_destinationColumnId];
+          const _sourceIssues = currentIssues[_sourceColumnId];
+          const _destinationIssues = currentIssues[_destinationColumnId];
 
           if (_destinationIssues.length > 0) {
             if (destination.index === 0) {
@@ -142,8 +133,8 @@ class IssueKanBanViewStore implements IIssueKanBanViewStore {
           });
           updateIssue = { ...updateIssue, issueId: removed?.id };
 
-          projectSortedIssues[_sourceColumnId] = _sourceIssues;
-          projectSortedIssues[_destinationColumnId] = _destinationIssues;
+          currentIssues[_sourceColumnId] = _sourceIssues;
+          currentIssues[_destinationColumnId] = _destinationIssues;
         }
       }
 
@@ -155,29 +146,23 @@ class IssueKanBanViewStore implements IIssueKanBanViewStore {
       if (this.canUserDragDropHorizontally && source.droppableId != destination.droppableId) {
       }
 
-      this.rootStore.issueView.issues = {
-        ...this.rootStore?.issueView.issues,
-        [workspaceId]: {
-          ...this.rootStore?.issueView.issues?.[workspaceId],
-          project_issues: {
-            ...this.rootStore?.issueView.issues?.[workspaceId]?.project_issues,
-            [projectId]: {
-              ...this.rootStore?.issueView.issues?.[workspaceId]?.project_issues?.[projectId],
-              [issueView]: {
-                ...this.rootStore?.issueView.issues?.[workspaceId]?.project_issues?.[projectId]?.[issueView],
-                [issueLayout]: projectSortedIssues,
-              },
-            },
+      this.rootStore.issue.issues = {
+        ...this.rootStore?.issue.issues,
+        [projectId]: {
+          ...this.rootStore?.issue.issues?.[projectId],
+          [issueType]: {
+            ...this.rootStore?.issue.issues?.[projectId]?.[issueType],
+            [issueType]: currentIssues,
           },
         },
       };
 
-      this.rootStore.issueDetail?.updateIssueAsync(
-        updateIssue.workspaceId,
-        updateIssue.projectId,
-        updateIssue.issueId,
-        updateIssue
-      );
+      // this.rootStore.issueDetail?.updateIssueAsync(
+      //   updateIssue.workspaceSlug,
+      //   updateIssue.projectId,
+      //   updateIssue.issueId,
+      //   updateIssue
+      // );
     }
   };
 }

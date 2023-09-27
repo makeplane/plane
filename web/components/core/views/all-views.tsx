@@ -14,6 +14,7 @@ import useUser from "hooks/use-user";
 import { useProjectMyMembership } from "contexts/project-member.context";
 // components
 import { AllLists, AllBoards, CalendarView, SpreadsheetView, GanttChartView } from "components/core";
+import { KanBanLayout } from "components/issues/issue-layouts";
 // ui
 import { EmptyState, Spinner } from "components/ui";
 // icons
@@ -27,6 +28,9 @@ import { getStatesList } from "helpers/state.helper";
 import { IIssue, IIssueViewProps } from "types";
 // fetch-keys
 import { STATES_LIST } from "constants/fetch-keys";
+// store
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   addIssueToDate: (date: string) => void;
@@ -71,7 +75,12 @@ export const AllViews: React.FC<Props> = ({
   viewProps,
 }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId } = router.query as {
+    workspaceSlug: string;
+    projectId: string;
+    cycleId: string;
+    moduleId: string;
+  };
 
   const [myIssueProjectId, setMyIssueProjectId] = useState<string | null>(null);
 
@@ -97,118 +106,135 @@ export const AllViews: React.FC<Props> = ({
     [trashBox, setTrashBox]
   );
 
+  const { issue: issueStore, project: projectStore, issueFilter: issueFilterStore }: RootStore = useMobxStore();
+
+  useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES` : null, async () => {
+    if (workspaceSlug && projectId) {
+      await issueFilterStore.fetchUserProjectFilters(workspaceSlug, projectId);
+
+      await projectStore.fetchProjectStates(workspaceSlug, projectId);
+      await projectStore.fetchProjectLabels(workspaceSlug, projectId);
+      await projectStore.fetchProjectMembers(workspaceSlug, projectId);
+
+      await issueStore.fetchIssues(workspaceSlug, projectId);
+    }
+  });
+
   return (
-    <DragDropContext onDragEnd={handleOnDragEnd}>
-      <StrictModeDroppable droppableId="trashBox">
-        {(provided, snapshot) => (
-          <div
-            className={`${
-              trashBox ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
-            } fixed top-4 left-1/2 -translate-x-1/2 z-40 w-72 flex items-center justify-center gap-2 rounded border-2 border-red-500/20 bg-custom-background-100 px-3 py-5 text-xs font-medium italic text-red-500 ${
-              snapshot.isDraggingOver ? "bg-red-500 blur-2xl opacity-70" : ""
-            } transition duration-300`}
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-          >
-            <TrashIcon className="h-4 w-4" />
-            Drop here to delete the issue.
-          </div>
-        )}
-      </StrictModeDroppable>
-      {groupedIssues ? (
-        !isEmpty ||
-        displayFilters?.layout === "kanban" ||
-        displayFilters?.layout === "calendar" ||
-        displayFilters?.layout === "gantt_chart" ? (
-          <>
-            {displayFilters?.layout === "list" ? (
-              <AllLists
-                states={states}
-                addIssueToGroup={addIssueToGroup}
-                handleIssueAction={handleIssueAction}
-                handleDraftIssueAction={handleDraftIssueAction}
-                openIssuesListModal={cycleId || moduleId ? openIssuesListModal : null}
-                removeIssue={removeIssue}
-                myIssueProjectId={myIssueProjectId}
-                handleMyIssueOpen={handleMyIssueOpen}
-                disableUserActions={disableUserActions}
-                disableAddIssueOption={disableAddIssueOption}
-                user={user}
-                userAuth={memberRole}
-                viewProps={viewProps}
-              />
-            ) : displayFilters?.layout === "kanban" ? (
-              <AllBoards
-                addIssueToGroup={addIssueToGroup}
-                disableUserActions={disableUserActions}
-                disableAddIssueOption={disableAddIssueOption}
-                dragDisabled={dragDisabled}
-                handleIssueAction={handleIssueAction}
-                handleDraftIssueAction={handleDraftIssueAction}
-                handleTrashBox={handleTrashBox}
-                openIssuesListModal={cycleId || moduleId ? openIssuesListModal : null}
-                myIssueProjectId={myIssueProjectId}
-                handleMyIssueOpen={handleMyIssueOpen}
-                removeIssue={removeIssue}
-                states={states}
-                user={user}
-                userAuth={memberRole}
-                viewProps={viewProps}
-              />
-            ) : displayFilters?.layout === "calendar" ? (
-              <CalendarView
-                handleIssueAction={handleIssueAction}
-                addIssueToDate={addIssueToDate}
-                disableUserActions={disableUserActions}
-                user={user}
-                userAuth={memberRole}
-              />
-            ) : displayFilters?.layout === "spreadsheet" ? (
-              <SpreadsheetView
-                handleIssueAction={handleIssueAction}
-                openIssuesListModal={cycleId || moduleId ? openIssuesListModal : null}
-                disableUserActions={disableUserActions}
-                user={user}
-                userAuth={memberRole}
-              />
-            ) : (
-              displayFilters?.layout === "gantt_chart" && <GanttChartView disableUserActions={disableUserActions} />
-            )}
-          </>
-        ) : router.pathname.includes("archived-issues") ? (
-          <EmptyState
-            title="Archived Issues will be shown here"
-            description="All the issues that have been in the completed or canceled groups for the configured period of time can be viewed here."
-            image={emptyIssueArchive}
-            primaryButton={{
-              text: "Go to Automation Settings",
-              onClick: () => {
-                router.push(`/${workspaceSlug}/projects/${projectId}/settings/automations`);
-              },
-            }}
-          />
-        ) : (
-          <EmptyState
-            title={emptyState.title}
-            description={emptyState.description}
-            image={emptyIssue}
-            primaryButton={
-              emptyState.primaryButton
-                ? {
-                    icon: emptyState.primaryButton.icon,
-                    text: emptyState.primaryButton.text,
-                    onClick: emptyState.primaryButton.onClick,
-                  }
-                : undefined
-            }
-            secondaryButton={emptyState.secondaryButton}
-          />
-        )
-      ) : (
-        <div className="flex h-full w-full items-center justify-center">
-          <Spinner />
-        </div>
-      )}
-    </DragDropContext>
+    // <DragDropContext onDragEnd={handleOnDragEnd}>
+    //   <StrictModeDroppable droppableId="trashBox">
+    //     {(provided, snapshot) => (
+    //       <div
+    //         className={`${
+    //           trashBox ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+    //         } fixed top-4 left-1/2 -translate-x-1/2 z-40 w-72 flex items-center justify-center gap-2 rounded border-2 border-red-500/20 bg-custom-background-100 px-3 py-5 text-xs font-medium italic text-red-500 ${
+    //           snapshot.isDraggingOver ? "bg-red-500 blur-2xl opacity-70" : ""
+    //         } transition duration-300`}
+    //         ref={provided.innerRef}
+    //         {...provided.droppableProps}
+    //       >
+    //         <TrashIcon className="h-4 w-4" />
+    //         Drop here to delete the issue.
+    //       </div>
+    //     )}
+    //   </StrictModeDroppable>
+    //   {groupedIssues ? (
+    //     !isEmpty ||
+    //     displayFilters?.layout === "kanban" ||
+    //     displayFilters?.layout === "calendar" ||
+    //     displayFilters?.layout === "gantt_chart" ? (
+    //       <>
+    //         {displayFilters?.layout === "list" ? (
+    //           <AllLists
+    //             states={states}
+    //             addIssueToGroup={addIssueToGroup}
+    //             handleIssueAction={handleIssueAction}
+    //             handleDraftIssueAction={handleDraftIssueAction}
+    //             openIssuesListModal={cycleId || moduleId ? openIssuesListModal : null}
+    //             removeIssue={removeIssue}
+    //             myIssueProjectId={myIssueProjectId}
+    //             handleMyIssueOpen={handleMyIssueOpen}
+    //             disableUserActions={disableUserActions}
+    //             disableAddIssueOption={disableAddIssueOption}
+    //             user={user}
+    //             userAuth={memberRole}
+    //             viewProps={viewProps}
+    //           />
+    //         ) : displayFilters?.layout === "kanban" ? (
+    //           <AllBoards
+    //             addIssueToGroup={addIssueToGroup}
+    //             disableUserActions={disableUserActions}
+    //             disableAddIssueOption={disableAddIssueOption}
+    //             dragDisabled={dragDisabled}
+    //             handleIssueAction={handleIssueAction}
+    //             handleDraftIssueAction={handleDraftIssueAction}
+    //             handleTrashBox={handleTrashBox}
+    //             openIssuesListModal={cycleId || moduleId ? openIssuesListModal : null}
+    //             myIssueProjectId={myIssueProjectId}
+    //             handleMyIssueOpen={handleMyIssueOpen}
+    //             removeIssue={removeIssue}
+    //             states={states}
+    //             user={user}
+    //             userAuth={memberRole}
+    //             viewProps={viewProps}
+    //           />
+    //         ) : displayFilters?.layout === "calendar" ? (
+    //           <CalendarView
+    //             handleIssueAction={handleIssueAction}
+    //             addIssueToDate={addIssueToDate}
+    //             disableUserActions={disableUserActions}
+    //             user={user}
+    //             userAuth={memberRole}
+    //           />
+    //         ) : displayFilters?.layout === "spreadsheet" ? (
+    //           <SpreadsheetView
+    //             handleIssueAction={handleIssueAction}
+    //             openIssuesListModal={cycleId || moduleId ? openIssuesListModal : null}
+    //             disableUserActions={disableUserActions}
+    //             user={user}
+    //             userAuth={memberRole}
+    //           />
+    //         ) : (
+    //           displayFilters?.layout === "gantt_chart" && <GanttChartView disableUserActions={disableUserActions} />
+    //         )}
+    //       </>
+    //     ) : router.pathname.includes("archived-issues") ? (
+    //       <EmptyState
+    //         title="Archived Issues will be shown here"
+    //         description="All the issues that have been in the completed or canceled groups for the configured period of time can be viewed here."
+    //         image={emptyIssueArchive}
+    //         primaryButton={{
+    //           text: "Go to Automation Settings",
+    //           onClick: () => {
+    //             router.push(`/${workspaceSlug}/projects/${projectId}/settings/automations`);
+    //           },
+    //         }}
+    //       />
+    //     ) : (
+    //       <EmptyState
+    //         title={emptyState.title}
+    //         description={emptyState.description}
+    //         image={emptyIssue}
+    //         primaryButton={
+    //           emptyState.primaryButton
+    //             ? {
+    //                 icon: emptyState.primaryButton.icon,
+    //                 text: emptyState.primaryButton.text,
+    //                 onClick: emptyState.primaryButton.onClick,
+    //               }
+    //             : undefined
+    //         }
+    //         secondaryButton={emptyState.secondaryButton}
+    //       />
+    //     )
+    //   ) : (
+    //     <div className="flex h-full w-full items-center justify-center">
+    //       <Spinner />
+    //     </div>
+    //   )}
+    // </DragDropContext>
+    <div className="relative w-full h-full overflow-auto">
+      <KanBanLayout />
+    </div>
   );
 };
