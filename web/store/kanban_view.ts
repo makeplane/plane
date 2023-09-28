@@ -1,24 +1,42 @@
-import { action, computed, makeObservable, runInAction } from "mobx";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // types
 import { RootStore } from "./root";
 import { IIssueType } from "./issue";
 
 export interface IIssueKanBanViewStore {
+  kanBanToggle: {
+    groupByHeaderMinMax: string[];
+    subgroupByIssuesVisibility: string[];
+  };
+  // computed
+  canUserDragDrop: boolean;
+  canUserDragDropVertically: boolean;
+  canUserDragDropHorizontally: boolean;
+  // actions
+  handleKanBanToggle: (toggle: "groupByHeaderMinMax" | "subgroupByIssuesVisibility", value: string) => void;
+  handleSwimlaneDragDrop: (source: any, destination: any) => void;
   handleDragDrop: (source: any, destination: any) => void;
 }
 
 class IssueKanBanViewStore implements IIssueKanBanViewStore {
+  kanBanToggle: {
+    groupByHeaderMinMax: string[];
+    subgroupByIssuesVisibility: string[];
+  } = { groupByHeaderMinMax: [], subgroupByIssuesVisibility: [] };
   // root store
   rootStore;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
+      kanBanToggle: observable,
       // computed
       canUserDragDrop: computed,
       canUserDragDropVertically: computed,
       canUserDragDropHorizontally: computed,
 
       // actions
+      handleKanBanToggle: action,
+      handleSwimlaneDragDrop: action,
       handleDragDrop: action,
     });
 
@@ -49,6 +67,15 @@ class IssueKanBanViewStore implements IIssueKanBanViewStore {
   get canUserDragDropHorizontally() {
     return false;
   }
+
+  handleKanBanToggle = (toggle: "groupByHeaderMinMax" | "subgroupByIssuesVisibility", value: string) => {
+    this.kanBanToggle = {
+      ...this.kanBanToggle,
+      [toggle]: this.kanBanToggle[toggle].includes(value)
+        ? this.kanBanToggle[toggle].filter((v) => v !== value)
+        : [...this.kanBanToggle[toggle], value],
+    };
+  };
 
   handleSwimlaneDragDrop = async (source: any, destination: any) => {
     const workspaceSlug = this.rootStore?.workspace?.workspaceSlug;

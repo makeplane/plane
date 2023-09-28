@@ -9,22 +9,29 @@ import { RootStore } from "store/root";
 
 export interface ILabelHeader {
   column_id: string;
-  type?: "group_by" | "sub_group_by";
+  sub_group_by: string | null;
+  group_by: string | null;
+  header_type: "group_by" | "sub_group_by";
 }
 
-export const LabelHeader: React.FC<ILabelHeader> = observer(({ column_id, type }) => {
-  const { project: projectStore, issueFilter: issueFilterStore }: RootStore = useMobxStore();
+export const LabelHeader: React.FC<ILabelHeader> = observer(({ column_id, sub_group_by, group_by, header_type }) => {
+  const { project: projectStore }: RootStore = useMobxStore();
 
   const label = (column_id && projectStore?.getProjectLabelById(column_id)) ?? null;
-  const sub_group_by = issueFilterStore?.userDisplayFilters?.sub_group_by ?? null;
 
   return (
     <>
       {label &&
-        (sub_group_by && type === "sub_group_by" ? (
-          <HeaderSubGroupByCard title={label?.name || ""} />
+        (sub_group_by && header_type === "sub_group_by" ? (
+          <HeaderSubGroupByCard title={label?.name || ""} column_id={column_id} count={0} />
         ) : (
-          <HeaderGroupByCard title={label?.name || ""} />
+          <HeaderGroupByCard
+            sub_group_by={sub_group_by}
+            group_by={group_by}
+            column_id={column_id}
+            title={label?.name || ""}
+            count={0}
+          />
         ))}
     </>
   );

@@ -9,23 +9,32 @@ import { RootStore } from "store/root";
 
 export interface IAssigneesHeader {
   column_id: string;
-  type?: "group_by" | "sub_group_by";
+  sub_group_by: string | null;
+  group_by: string | null;
+  header_type: "group_by" | "sub_group_by";
 }
 
-export const AssigneesHeader: React.FC<IAssigneesHeader> = observer(({ column_id, type }) => {
-  const { project: projectStore, issueFilter: issueFilterStore }: RootStore = useMobxStore();
+export const AssigneesHeader: React.FC<IAssigneesHeader> = observer(
+  ({ column_id, sub_group_by, group_by, header_type }) => {
+    const { project: projectStore }: RootStore = useMobxStore();
 
-  const assignee = (column_id && projectStore?.getProjectMemberByUserId(column_id)) ?? null;
-  const sub_group_by = issueFilterStore?.userDisplayFilters?.sub_group_by ?? null;
+    const assignee = (column_id && projectStore?.getProjectMemberByUserId(column_id)) ?? null;
 
-  return (
-    <>
-      {assignee &&
-        (sub_group_by && type === "sub_group_by" ? (
-          <HeaderSubGroupByCard title={assignee?.member?.display_name || ""} />
-        ) : (
-          <HeaderGroupByCard title={assignee?.member?.display_name || ""} />
-        ))}
-    </>
-  );
-});
+    return (
+      <>
+        {assignee &&
+          (sub_group_by && header_type === "sub_group_by" ? (
+            <HeaderSubGroupByCard column_id={column_id} title={assignee?.member?.display_name || ""} count={0} />
+          ) : (
+            <HeaderGroupByCard
+              sub_group_by={sub_group_by}
+              group_by={group_by}
+              column_id={column_id}
+              title={assignee?.member?.display_name || ""}
+              count={0}
+            />
+          ))}
+      </>
+    );
+  }
+);

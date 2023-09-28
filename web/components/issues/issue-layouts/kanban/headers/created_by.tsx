@@ -9,23 +9,32 @@ import { RootStore } from "store/root";
 
 export interface ICreatedByHeader {
   column_id: string;
-  type?: "group_by" | "sub_group_by";
+  sub_group_by: string | null;
+  group_by: string | null;
+  header_type: "group_by" | "sub_group_by";
 }
 
-export const CreatedByHeader: React.FC<ICreatedByHeader> = observer(({ column_id, type }) => {
-  const { project: projectStore, issueFilter: issueFilterStore }: RootStore = useMobxStore();
+export const CreatedByHeader: React.FC<ICreatedByHeader> = observer(
+  ({ column_id, sub_group_by, group_by, header_type }) => {
+    const { project: projectStore }: RootStore = useMobxStore();
 
-  const createdBy = (column_id && projectStore?.getProjectMemberByUserId(column_id)) ?? null;
-  const sub_group_by = issueFilterStore?.userDisplayFilters?.sub_group_by ?? null;
+    const createdBy = (column_id && projectStore?.getProjectMemberByUserId(column_id)) ?? null;
 
-  return (
-    <>
-      {createdBy &&
-        (sub_group_by && type === "sub_group_by" ? (
-          <HeaderSubGroupByCard title={createdBy?.member?.display_name || ""} />
-        ) : (
-          <HeaderGroupByCard title={createdBy?.member?.display_name || ""} />
-        ))}
-    </>
-  );
-});
+    return (
+      <>
+        {createdBy &&
+          (sub_group_by && header_type === "sub_group_by" ? (
+            <HeaderSubGroupByCard title={createdBy?.member?.display_name || ""} column_id={column_id} count={0} />
+          ) : (
+            <HeaderGroupByCard
+              sub_group_by={sub_group_by}
+              group_by={group_by}
+              column_id={column_id}
+              title={createdBy?.member?.display_name || ""}
+              count={0}
+            />
+          ))}
+      </>
+    );
+  }
+);

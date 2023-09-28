@@ -6,29 +6,33 @@ import { HeaderSubGroupByCard } from "./sub-group-by-card";
 import { issuePriorityByKey } from "constants/issue";
 // mobx
 import { observer } from "mobx-react-lite";
-// mobx
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
 
 export interface IPriorityHeader {
   column_id: string;
-  type?: "group_by" | "sub_group_by";
+  sub_group_by: string | null;
+  group_by: string | null;
+  header_type: "group_by" | "sub_group_by";
 }
 
-export const PriorityHeader: React.FC<IPriorityHeader> = observer(({ column_id, type }) => {
-  const { issueFilter: issueFilterStore }: RootStore = useMobxStore();
+export const PriorityHeader: React.FC<IPriorityHeader> = observer(
+  ({ column_id, sub_group_by, group_by, header_type }) => {
+    const priority = column_id && issuePriorityByKey(column_id);
 
-  const priority = column_id && issuePriorityByKey(column_id);
-  const sub_group_by = issueFilterStore?.userDisplayFilters?.sub_group_by ?? null;
-
-  return (
-    <>
-      {priority &&
-        (sub_group_by && type === "sub_group_by" ? (
-          <HeaderSubGroupByCard title={priority?.key || ""} />
-        ) : (
-          <HeaderGroupByCard title={priority?.key || ""} />
-        ))}
-    </>
-  );
-});
+    return (
+      <>
+        {priority &&
+          (sub_group_by && header_type === "sub_group_by" ? (
+            <HeaderSubGroupByCard title={priority?.key || ""} column_id={column_id} count={0} />
+          ) : (
+            <HeaderGroupByCard
+              sub_group_by={sub_group_by}
+              group_by={group_by}
+              column_id={column_id}
+              title={priority?.key || ""}
+              count={0}
+            />
+          ))}
+      </>
+    );
+  }
+);

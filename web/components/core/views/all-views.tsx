@@ -233,7 +233,8 @@ export const AllViews: React.FC<Props> = ({
     //     </div>
     //   )}
     // </DragDropContext>
-    <div className="relative w-full h-full overflow-auto">
+
+    <div className="relative w-full h-full overflow-auto px-5">
       <KanBanLayout />
     </div>
   );
