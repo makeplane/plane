@@ -61,19 +61,17 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
   if (typeof window !== "undefined" && !plane_deploy_url) {
     plane_deploy_url = window.location.protocol + "//" + window.location.host + "/spaces";
   }
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
+  // store
   const store: RootStore = useMobxStore();
   const { projectPublish } = store;
-
+  // hooks
   const { user } = useUser();
-
   const { mutateProjectDetails } = useProjectDetails();
-
   const { setToastAlert } = useToast();
-
+  // form info
   const {
     control,
     formState: { isSubmitting },
@@ -87,7 +85,6 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
 
   const handleClose = () => {
     projectPublish.handleProjectModal(null);
-
     setIsUpdateRequired(false);
     reset({ ...defaultValues });
   };
