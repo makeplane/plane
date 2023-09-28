@@ -24,8 +24,8 @@ const MobxStoreInit = () => {
       );
 
     // locale
-    if (store?.locale?.locale === null) {
-      const currentLocale = localStorage && localStorage.getItem("locale");
+    if (localStorage && store?.locale?.locale === null) {
+      const currentLocale = localStorage.getItem("locale");
       store.locale.setLocale(currentLocale ? currentLocale : "auto");
     }
 

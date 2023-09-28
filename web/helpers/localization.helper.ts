@@ -4,23 +4,35 @@
 import { LOCALES } from "constants/locales";
 
 export const localized = (key: string, localizationDataset: any = null): string => {
-  if (!localizationDataset) {
-    const locale = getLocale();
-    localizationDataset = require(`public/locales/${locale}.json`);
-  }
+  try {
+    if (!localizationDataset) {
+      const locale = getLocale();
+      localizationDataset = require(`public/locales/${locale}.json`);
+    }
 
-  return localizationDataset && localizationDataset[key] ? localizationDataset[key] : key;
+    return localizationDataset && localizationDataset[key] ? localizationDataset[key] : key;
+  } catch (e) {
+    return key;
+  }
 };
 
 export const getAutoLocale = (): string => {
-  const locale = window.navigator.language;
+  const locale = navigator.language;
   const mostSimilarLocale = findMostSimilarLocale(locale);
   return mostSimilarLocale;
 };
 
-export const getLocale = () => window.localStorage.getItem("locale") || "en_US";
+export const getLocale = () => {
+  try {
+    return localStorage.getItem("locale") || "en_US";
+  } catch (e) {
+    return "en_US";
+  }
+};
 export const setLocale = (locale: string): void => {
-  window.localStorage.setItem("locale", locale);
+  try {
+    localStorage.setItem("locale", locale);
+  } catch (e) {}
 };
 
 const findMostSimilarLocale = (locale: string): string => {
