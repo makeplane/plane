@@ -1,20 +1,21 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Draggable } from "@hello-pangea/dnd";
+import { observer } from "mobx-react-lite";
 
 // types
 import { IIssue } from "types";
 
 type Props = { issues: IIssue[] | null };
 
-export const CalendarIssueBlocks: React.FC<Props> = (props) => {
+export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
   const { issues } = props;
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
   return (
-    <div className="space-y-2 h-full w-full overflow-y-auto">
+    <div className="space-y-2 h-full w-full overflow-y-auto p-0.5">
       {issues?.map((issue, index) => (
         <Draggable key={issue.id} draggableId={issue.id} index={index}>
           {(provided, snapshot) => (
@@ -44,4 +45,4 @@ export const CalendarIssueBlocks: React.FC<Props> = (props) => {
       ))}
     </div>
   );
-};
+});

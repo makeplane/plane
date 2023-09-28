@@ -3,11 +3,9 @@ import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { CalendarOptionsDropdown } from "components/issues";
+import { CalendarMonthsDropdown, CalendarOptionsDropdown } from "components/issues";
 // icons
 import { ChevronLeft, ChevronRight } from "lucide-react";
-// constants
-import { MONTHS_LIST } from "constants/calendar";
 
 export const CalendarHeader: React.FC = observer(() => {
   const { issueFilter: issueFilterStore, calendar: calendarStore } = useMobxStore();
@@ -15,29 +13,6 @@ export const CalendarHeader: React.FC = observer(() => {
   const calendarLayout = issueFilterStore.userDisplayFilters.calendar?.layout ?? "month";
 
   const { activeMonthDate, activeWeekDate } = calendarStore.calendarFilters;
-
-  const getWeekLayoutHeader = (): string => {
-    const allDaysOfActiveWeek = calendarStore.allDaysOfActiveWeek;
-
-    if (!allDaysOfActiveWeek) return "Week view";
-
-    const daysList = Object.keys(allDaysOfActiveWeek);
-
-    const firstDay = new Date(daysList[0]);
-    const lastDay = new Date(daysList[daysList.length - 1]);
-
-    if (firstDay.getMonth() === lastDay.getMonth() && firstDay.getFullYear() === lastDay.getFullYear())
-      return `${MONTHS_LIST[firstDay.getMonth() + 1].shortTitle} ${firstDay.getFullYear()}`;
-
-    if (firstDay.getFullYear() !== lastDay.getFullYear()) {
-      return `${MONTHS_LIST[firstDay.getMonth() + 1].shortTitle} ${firstDay.getFullYear()} - ${
-        MONTHS_LIST[lastDay.getMonth() + 1].shortTitle
-      } ${lastDay.getFullYear()}`;
-    } else
-      return `${MONTHS_LIST[firstDay.getMonth() + 1].shortTitle} - ${
-        MONTHS_LIST[lastDay.getMonth() + 1].shortTitle
-      } ${lastDay.getFullYear()}`;
-  };
 
   const handlePrevious = () => {
     if (calendarLayout === "month") {
@@ -103,14 +78,10 @@ export const CalendarHeader: React.FC = observer(() => {
         <button type="button" className="grid place-items-center" onClick={handlePrevious}>
           <ChevronLeft size={16} strokeWidth={2} />
         </button>
-        <h2 className="text-xl font-semibold">
-          {calendarLayout === "month"
-            ? `${MONTHS_LIST[activeMonthDate.getMonth() + 1].title} ${activeMonthDate.getFullYear()}`
-            : getWeekLayoutHeader()}
-        </h2>
         <button type="button" className="grid place-items-center" onClick={handleNext}>
           <ChevronRight size={16} strokeWidth={2} />
         </button>
+        <CalendarMonthsDropdown />
       </div>
       <div className="flex items-center gap-1.5">
         <button

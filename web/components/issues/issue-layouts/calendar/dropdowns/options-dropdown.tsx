@@ -1,20 +1,20 @@
 import React from "react";
+import { useRouter } from "next/router";
 import { Popover, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
+// ui
+import { ToggleSwitch } from "components/ui";
 // icons
 import { Check, ChevronUp } from "lucide-react";
-import { useMobxStore } from "lib/mobx/store-provider";
-import { CALENDAR_LAYOUTS } from "constants/calendar";
+// types
 import { TCalendarLayouts } from "types";
-import { useRouter } from "next/router";
-import { ToggleSwitch } from "components/ui";
+// constants
+import { CALENDAR_LAYOUTS } from "constants/calendar";
 
-type Props = {};
-
-export const CalendarOptionsDropdown: React.FC<Props> = observer((props) => {
-  const {} = props;
-
+export const CalendarOptionsDropdown: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
