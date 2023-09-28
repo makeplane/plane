@@ -24,8 +24,6 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
 
   const allWeeksOfActiveMonth = calendarStore.allWeeksOfActiveMonth;
 
-  console.log("calendarPayload", calendarPayload);
-
   if (!calendarPayload)
     return (
       <div className="h-full w-full grid place-items-center">
@@ -38,23 +36,18 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
       <div className="h-full w-full flex flex-col overflow-hidden">
         <CalendarHeader />
         <CalendarWeekHeader />
-        {allWeeksOfActiveMonth ? (
-          <div className="h-full w-full overflow-y-auto">
-            {calendarLayout === "month" ? (
-              <div className="h-full w-full grid grid-cols-1">
-                {Object.values(allWeeksOfActiveMonth).map((week: ICalendarWeek, weekIndex) => (
+        <div className="h-full w-full overflow-y-auto">
+          {calendarLayout === "month" ? (
+            <div className="h-full w-full grid grid-cols-1">
+              {allWeeksOfActiveMonth &&
+                Object.values(allWeeksOfActiveMonth).map((week: ICalendarWeek, weekIndex) => (
                   <CalendarWeekDays key={weekIndex} week={week} issues={issues} />
                 ))}
-              </div>
-            ) : (
-              <CalendarWeekDays week={calendarStore.allDaysOfActiveWeek} issues={issues} />
-            )}
-          </div>
-        ) : (
-          <div className="h-full w-full grid place-items-center">
-            <Spinner />
-          </div>
-        )}
+            </div>
+          ) : (
+            <CalendarWeekDays week={calendarStore.allDaysOfActiveWeek} issues={issues} />
+          )}
+        </div>
       </div>
     </>
   );

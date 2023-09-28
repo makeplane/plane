@@ -11,6 +11,7 @@ import { IIssueGroupedStructure } from "store/issue";
 export const CalendarLayout: React.FC = observer(() => {
   const { issue: issueStore } = useMobxStore();
 
+  // TODO: add drag and drop functionality
   const onDragEnd = (result: DropResult) => {
     if (!result) return;
 
