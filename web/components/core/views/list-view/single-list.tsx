@@ -239,7 +239,7 @@ export const SingleList: React.FC<Props> = (props) => {
               !disableAddIssueOption && (
                 <button
                   type="button"
-                  className="p-1  text-custom-text-200 hover:bg-custom-background-80"
+                  className="p-1 text-custom-text-200 hover:bg-custom-background-80"
                   onClick={() => {
                     if (isDraftIssuesPage || isMyIssuesPage || isProfileIssuesPage) {
                       addIssueToGroup();
@@ -336,7 +336,8 @@ export const SingleList: React.FC<Props> = (props) => {
               />
 
               {!disableAddIssueOption && !isCreateIssueFormOpen && (
-                <div className="w-full bg-custom-background-100 px-6 py-3">
+                // TODO: add border here
+                <div className="w-full bg-custom-background-100 px-6 py-3 border-b border-custom-border-100">
                   <button
                     type="button"
                     onClick={() => {
