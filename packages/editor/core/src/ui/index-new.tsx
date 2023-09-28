@@ -1,7 +1,7 @@
 "use client"
 import * as React from 'react';
 import { useImperativeHandle, useRef, forwardRef } from "react";
-import { useEditor, EditorContent, Editor } from "@tiptap/react";
+import { useEditor, EditorContent, Editor, Extension } from "@tiptap/react";
 import { useDebouncedCallback } from "use-debounce";
 import { TableMenu } from '@/ui/menus/table-menu';
 import { TiptapExtensions } from '@/ui/extensions';
@@ -12,6 +12,7 @@ import { UploadImage } from '@/types/upload-image';
 import { DeleteImage } from '@/types/delete-image';
 import { cn } from '@/lib/utils';
 import { FixedMenu } from './menus/fixed-menu';
+import { EditorProps } from '@tiptap/pm/view';
 
 interface ITiptapEditor {
   value: string;
@@ -34,6 +35,8 @@ interface ITiptapEditor {
     key: string;
     label: "Private" | "Public";
   }[];
+  extensions?: Extension[];
+  editorProps?: EditorProps;
 }
 
 interface TiptapProps extends ITiptapEditor {
@@ -56,6 +59,8 @@ const TiptapEditor = ({
   editorContentCustomClassNames,
   value,
   uploadFile,
+  extensions = [],
+  editorProps = {},
   deleteFile,
   noBorder,
   borderOnFocus,
@@ -67,8 +72,11 @@ const TiptapEditor = ({
 }: TiptapProps) => {
   const editor = useEditor({
     editable: editable ?? true,
-    editorProps: TiptapEditorProps(uploadFile, setIsSubmitting),
-    extensions: TiptapExtensions(uploadFile, deleteFile, setIsSubmitting),
+    editorProps: {
+      ...TiptapEditorProps(uploadFile, setIsSubmitting),
+      ...editorProps,
+    },
+    extensions: [...TiptapExtensions(uploadFile, deleteFile, setIsSubmitting), ...extensions],
     content: (typeof value === "string" && value.trim() !== "") ? value : "<p></p>",
     onUpdate: async ({ editor }) => {
       // for instant feedback loop
