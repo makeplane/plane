@@ -18,6 +18,12 @@ export interface ICycleStore {
   cycle_details: {
     [cycle_id: string]: ICycle;
   };
+
+  fetchCycles: (
+    workspaceSlug: string,
+    projectSlug: string,
+    params: "all" | "current" | "upcoming" | "draft" | "completed" | "incomplete"
+  ) => Promise<void>;
 }
 
 class CycleStore implements ICycleStore {
@@ -47,8 +53,9 @@ class CycleStore implements ICycleStore {
       cycles: observable.ref,
 
       // computed
-
+      projectCycles: computed,
       // actions
+      fetchCycles: action,
     });
 
     this.rootStore = _rootStore;
@@ -64,12 +71,16 @@ class CycleStore implements ICycleStore {
   }
 
   // actions
-  fetchCycles = async (workspaceSlug: string, projectSlug: string) => {
+  fetchCycles = async (
+    workspaceSlug: string,
+    projectSlug: string,
+    params: "all" | "current" | "upcoming" | "draft" | "completed" | "incomplete"
+  ) => {
     try {
       this.loader = true;
       this.error = null;
 
-      const cyclesResponse = await this.cycleService.getCyclesWithParams(workspaceSlug, projectSlug, "all");
+      const cyclesResponse = await this.cycleService.getCyclesWithParams(workspaceSlug, projectSlug, params);
 
       runInAction(() => {
         this.cycles = {

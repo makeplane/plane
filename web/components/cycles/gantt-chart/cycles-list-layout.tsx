@@ -17,7 +17,7 @@ import { ICycle } from "types";
 
 type Props = {
   cycles: ICycle[];
-  mutateCycles: KeyedMutator<ICycle[]>;
+  mutateCycles?: KeyedMutator<ICycle[]>;
 };
 
 export const CyclesListGanttChartView: FC<Props> = ({ cycles, mutateCycles }) => {
@@ -29,33 +29,32 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles, mutateCycles }) =>
 
   const handleCycleUpdate = (cycle: ICycle, payload: IBlockUpdateData) => {
     if (!workspaceSlug || !user) return;
+    mutateCycles &&
+      mutateCycles((prevData: any) => {
+        if (!prevData) return prevData;
 
-    mutateCycles((prevData: any) => {
-      if (!prevData) return prevData;
+        const newList = prevData.map((p: any) => ({
+          ...p,
+          ...(p.id === cycle.id
+            ? {
+                start_date: payload.start_date ? payload.start_date : p.start_date,
+                target_date: payload.target_date ? payload.target_date : p.end_date,
+                sort_order: payload.sort_order ? payload.sort_order.newSortOrder : p.sort_order,
+              }
+            : {}),
+        }));
 
-      const newList = prevData.map((p: any) => ({
-        ...p,
-        ...(p.id === cycle.id
-          ? {
-              start_date: payload.start_date ? payload.start_date : p.start_date,
-              target_date: payload.target_date ? payload.target_date : p.end_date,
-              sort_order: payload.sort_order ? payload.sort_order.newSortOrder : p.sort_order,
-            }
-          : {}),
-      }));
+        if (payload.sort_order) {
+          const removedElement = newList.splice(payload.sort_order.sourceIndex, 1)[0];
+          newList.splice(payload.sort_order.destinationIndex, 0, removedElement);
+        }
 
-      if (payload.sort_order) {
-        const removedElement = newList.splice(payload.sort_order.sourceIndex, 1)[0];
-        newList.splice(payload.sort_order.destinationIndex, 0, removedElement);
-      }
-
-      return newList;
-    }, false);
+        return newList;
+      }, false);
 
     const newPayload: any = { ...payload };
 
-    if (newPayload.sort_order && payload.sort_order)
-      newPayload.sort_order = payload.sort_order.newSortOrder;
+    if (newPayload.sort_order && payload.sort_order) newPayload.sort_order = payload.sort_order.newSortOrder;
 
     cyclesService.patchCycle(workspaceSlug.toString(), cycle.project, cycle.id, newPayload, user);
   };
@@ -63,9 +62,7 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles, mutateCycles }) =>
   const blockFormat = (blocks: ICycle[]) =>
     blocks && blocks.length > 0
       ? blocks
-          .filter(
-            (b) => b.start_date && b.end_date && new Date(b.start_date) <= new Date(b.end_date)
-          )
+          .filter((b) => b.start_date && b.end_date && new Date(b.start_date) <= new Date(b.end_date))
           .map((block) => ({
             data: block,
             id: block.id,
