@@ -15,14 +15,12 @@ import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { SettingsSidebar } from "components/project";
+import { LocaleSwitch } from "components/core/localization";
 
 const ProfilePreferences = observer(() => {
   const { user: myProfile } = useUserAuth();
 
   const store: any = useMobxStore();
-
-  // console.log("store", store?.theme?.theme);
-  // console.log("theme", theme);
 
   const [customThemeSelectorOptions, setCustomThemeSelectorOptions] = useState(false);
 
@@ -84,6 +82,19 @@ const ProfilePreferences = observer(() => {
               </div>
             </div>
             {customThemeSelectorOptions && <CustomThemeSelector preLoadedData={preLoadedData} />}
+            <div className="grid grid-cols-12 gap-4 sm:gap-16 py-6">
+              <div className="col-span-12 sm:col-span-6">
+                <h4 className="text-lg font-semibold text-custom-text-100">
+                  {store.locale.localized("Language")}
+                </h4>
+                <p className="text-sm text-custom-text-200">
+                  {store.locale.localized("Change your language preference for the interface.")}
+                </p>
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                <LocaleSwitch />
+              </div>
+            </div>
           </div>
         </div>
       ) : (

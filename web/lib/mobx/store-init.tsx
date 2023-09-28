@@ -23,6 +23,12 @@ const MobxStoreInit = () => {
           : false
       );
 
+    // locale
+    if (store?.locale?.locale === null) {
+      const currentLocale = localStorage && localStorage.getItem("locale");
+      store.locale.setLocale(currentLocale ? currentLocale : "auto");
+    }
+
     // theme
     if (store.theme.theme === null && store?.user?.currentUserSettings) {
       let currentTheme = localStorage.getItem("theme");
@@ -34,7 +40,7 @@ const MobxStoreInit = () => {
         store.theme.setTheme({ theme: { theme: currentTheme } });
       }
     }
-  }, [store?.theme, store?.user, setTheme]);
+  }, [store?.theme, store?.user, store.locale, setTheme]);
 
   useEffect(() => {
     // current user
