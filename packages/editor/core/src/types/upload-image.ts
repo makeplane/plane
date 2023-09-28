@@ -1,1 +1,1 @@
-export type UploadImage = (workspaceSlug: string, formData: FormData) => Promise<any>;
+export type UploadImage = (file: File) => Promise<string>;

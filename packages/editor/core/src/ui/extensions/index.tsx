@@ -32,7 +32,6 @@ import "highlight.js/styles/github-dark.css";
 lowlight.registerLanguage("ts", ts);
 
 export const TiptapExtensions = (
-  workspaceSlug: string,
   uploadFile: UploadImage,
   deleteFile: DeleteImage,
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
@@ -126,7 +125,7 @@ export const TiptapExtensions = (
       },
       includeChildren: true,
     }),
-    SlashCommand(workspaceSlug, uploadFile, setIsSubmitting),
+    SlashCommand(uploadFile, setIsSubmitting),
     TiptapUnderline,
     TextStyle,
     Color,

@@ -59,7 +59,6 @@ const Command = Extension.create({
 
 const getSuggestionItems =
   (
-    workspaceSlug: string,
     uploadFile: UploadImage,
     setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
   ) =>
@@ -185,7 +184,7 @@ const getSuggestionItems =
               if (input.files?.length) {
                 const file = input.files[0];
                 const pos = editor.view.state.selection.from;
-                startImageUpload(file, editor.view, pos, workspaceSlug, uploadFile, setIsSubmitting);
+                startImageUpload(file, editor.view, pos, uploadFile, setIsSubmitting);
               }
             };
             input.click();
@@ -351,13 +350,12 @@ const renderItems = () => {
 };
 
 export const SlashCommand = (
-  workspaceSlug: string,
   uploadFile: UploadImage,
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
 ) =>
   Command.configure({
     suggestion: {
-      items: getSuggestionItems(workspaceSlug, uploadFile, setIsSubmitting),
+      items: getSuggestionItems(uploadFile, setIsSubmitting),
       render: renderItems,
     },
   });

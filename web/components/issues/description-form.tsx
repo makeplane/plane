@@ -135,10 +135,9 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
 
             return (
               <TiptapEditor
-                uploadFile={fileService.uploadFile}
+                uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
                 deleteFile={fileService.deleteImage}
                 value={value}
-                workspaceSlug={workspaceSlug}
                 debouncedUpdatesEnabled={true}
                 setShouldShowAlert={setShowAlert}
                 setIsSubmitting={setIsSubmitting}

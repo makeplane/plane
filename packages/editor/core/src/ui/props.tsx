@@ -4,7 +4,6 @@ import { startImageUpload } from "@/ui/plugins/upload-image";
 import { UploadImage } from "@/types/upload-image";
 
 export function TiptapEditorProps(
-  workspaceSlug: string,
   uploadFile: UploadImage,
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
 ): EditorProps {
@@ -37,7 +36,7 @@ export function TiptapEditorProps(
         event.preventDefault();
         const file = event.clipboardData.files[0];
         const pos = view.state.selection.from;
-        startImageUpload(file, view, pos, workspaceSlug, uploadFile, setIsSubmitting);
+        startImageUpload(file, view, pos, uploadFile, setIsSubmitting);
         return true;
       }
       return false;
@@ -61,7 +60,7 @@ export function TiptapEditorProps(
         });
         // here we deduct 1 from the pos or else the image will create an extra node
         if (coordinates) {
-          startImageUpload(file, view, coordinates.pos - 1, workspaceSlug, uploadFile, setIsSubmitting);
+          startImageUpload(file, view, coordinates.pos - 1, uploadFile, setIsSubmitting);
         }
         return true;
       }

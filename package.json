@@ -6,7 +6,10 @@
     "web",
     "space",
     "packages/editor/*",
-    "packages/*"
+    "packages/eslint-config-custom",
+    "packages/tailwind-config-custom",
+    "packages/tsconfig",
+    "packages/ui"
   ],
   "scripts": {
     "build": "turbo run build",

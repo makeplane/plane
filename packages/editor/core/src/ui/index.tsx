@@ -24,7 +24,6 @@ interface ITiptapEditor {
   onChange?: (json: any, html: string) => void;
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
   setShouldShowAlert?: (showAlert: boolean) => void;
-  workspaceSlug: string;
   editable?: boolean;
   forwardedRef?: any;
   debouncedUpdatesEnabled?: boolean;
@@ -59,7 +58,6 @@ const TiptapEditor = ({
   uploadFile,
   deleteFile,
   noBorder,
-  workspaceSlug,
   borderOnFocus,
   customClassName,
   forwardedRef,
@@ -69,9 +67,9 @@ const TiptapEditor = ({
 }: TiptapProps) => {
   const editor = useEditor({
     editable: editable ?? true,
-    editorProps: TiptapEditorProps(workspaceSlug, uploadFile, setIsSubmitting),
+    editorProps: TiptapEditorProps(uploadFile, setIsSubmitting),
     // @ts-expect-err
-    extensions: TiptapExtensions(workspaceSlug, uploadFile, deleteFile, setIsSubmitting),
+    extensions: TiptapExtensions(uploadFile, deleteFile, setIsSubmitting),
     content: (typeof value === "string" && value.trim() !== "") ? value : "<p></p>",
     onUpdate: async ({ editor }) => {
       // for instant feedback loop

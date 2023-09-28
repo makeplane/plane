@@ -57,7 +57,6 @@ export async function startImageUpload(
   file: File,
   view: EditorView,
   pos: number,
-  workspaceSlug: string,
   uploadFile: UploadImage,
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
 ) {
@@ -83,11 +82,8 @@ export async function startImageUpload(
     view.dispatch(tr);
   };
 
-  if (!workspaceSlug) {
-    return;
-  }
   setIsSubmitting?.("submitting");
-  const src = await UploadImageHandler(file, workspaceSlug, uploadFile);
+  const src = await UploadImageHandler(file, uploadFile);
   const { schema } = view.state;
   pos = findPlaceholder(view.state, id);
 
@@ -101,21 +97,13 @@ export async function startImageUpload(
   view.dispatch(transaction);
 }
 
-const UploadImageHandler = (file: File, workspaceSlug: string,
+const UploadImageHandler = (file: File,
   uploadFile: UploadImage
 ): Promise<string> => {
-  if (!workspaceSlug) {
-    return Promise.reject("Workspace slug is missing");
-  }
   try {
-    const formData = new FormData();
-    formData.append("asset", file);
-    formData.append("attributes", JSON.stringify({}));
-
     return new Promise(async (resolve, reject) => {
       try {
-        const imageUrl = await uploadFile(workspaceSlug, formData)
-          .then((response: { asset: string }) => response.asset);
+        const imageUrl = await uploadFile(file)
 
         const image = new Image();
         image.src = imageUrl;
