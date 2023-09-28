@@ -24,7 +24,6 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 from django.db import IntegrityError
-from django.conf import settings
 from django.db import IntegrityError
 
 # Third Party imports
@@ -58,7 +57,6 @@ from plane.api.serializers import (
     IssuePublicSerializer,
 )
 from plane.api.permissions import (
-    WorkspaceEntityPermission,
     ProjectEntityPermission,
     WorkSpaceAdminPermission,
     ProjectMemberPermission,
