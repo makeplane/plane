@@ -12,10 +12,11 @@ export interface IPriorityHeader {
   sub_group_by: string | null;
   group_by: string | null;
   header_type: "group_by" | "sub_group_by";
+  issues_count: number;
 }
 
 export const PriorityHeader: React.FC<IPriorityHeader> = observer(
-  ({ column_id, sub_group_by, group_by, header_type }) => {
+  ({ column_id, sub_group_by, group_by, header_type, issues_count }) => {
     const priority = column_id && issuePriorityByKey(column_id);
 
     return (
@@ -29,7 +30,7 @@ export const PriorityHeader: React.FC<IPriorityHeader> = observer(
               group_by={group_by}
               column_id={column_id}
               title={priority?.key || ""}
-              count={0}
+              count={issues_count}
             />
           ))}
       </>

@@ -72,8 +72,8 @@ class IssueStore implements IIssueStore {
   }
 
   get getIssueType() {
-    const groupedLayouts = ["kanban", "list"];
-    const ungroupedLayouts = ["calendar", "spreadsheet", "gantt_chart"];
+    const groupedLayouts = ["kanban", "list", "calendar"];
+    const ungroupedLayouts = ["spreadsheet", "gantt_chart"];
 
     const issueLayout = this.rootStore?.issueFilter?.userDisplayFilters?.layout || null;
     const issueSubGroup = this.rootStore?.issueFilter?.userDisplayFilters?.sub_group_by || null;

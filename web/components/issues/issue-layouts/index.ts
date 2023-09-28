@@ -1,2 +1,2 @@
+export * from "./calendar";
 export * from "./kanban";
-export * from "./calandar";

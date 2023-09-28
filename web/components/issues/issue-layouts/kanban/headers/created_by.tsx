@@ -12,10 +12,11 @@ export interface ICreatedByHeader {
   sub_group_by: string | null;
   group_by: string | null;
   header_type: "group_by" | "sub_group_by";
+  issues_count: number;
 }
 
 export const CreatedByHeader: React.FC<ICreatedByHeader> = observer(
-  ({ column_id, sub_group_by, group_by, header_type }) => {
+  ({ column_id, sub_group_by, group_by, header_type, issues_count }) => {
     const { project: projectStore }: RootStore = useMobxStore();
 
     const createdBy = (column_id && projectStore?.getProjectMemberByUserId(column_id)) ?? null;
@@ -31,7 +32,7 @@ export const CreatedByHeader: React.FC<ICreatedByHeader> = observer(
               group_by={group_by}
               column_id={column_id}
               title={createdBy?.member?.display_name || ""}
-              count={0}
+              count={issues_count}
             />
           ))}
       </>

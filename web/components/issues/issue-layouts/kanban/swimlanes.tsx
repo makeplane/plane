@@ -12,13 +12,21 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 
 interface ISubGroupSwimlaneHeader {
+  issues: any;
   sub_group_by: string | null;
   group_by: string | null;
   list: any;
   listKey: string;
 }
-const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({ sub_group_by, group_by, list, listKey }) => (
+const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
+  issues,
+  sub_group_by,
+  group_by,
+  list,
+  listKey,
+}) => (
   <div className="relative w-full min-h-full h-max flex items-center">
+    {console.log("issues", issues)}
     {list &&
       list.length > 0 &&
       list.map((_list: any) => (
@@ -27,6 +35,7 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({ sub_group_b
             column_id={getValueFromObject(_list, listKey) as string}
             sub_group_by={sub_group_by}
             group_by={group_by}
+            issues_count={0}
           />
         </div>
       ))}
@@ -51,6 +60,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer(({ issues, sub_gr
                   column_id={getValueFromObject(_list, listKey) as string}
                   sub_group_by={sub_group_by}
                   group_by={group_by}
+                  issues_count={0}
                 />
               </div>
               <div className="w-full border-b border-custom-border-400 border-dashed" />
@@ -88,6 +98,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer(({ issues, s
       <div className="sticky top-0 z-[2] bg-custom-background-90 h-[50px]">
         {group_by && group_by === "state" && (
           <SubGroupSwimlaneHeader
+            issues={issues}
             sub_group_by={sub_group_by}
             group_by={group_by}
             list={projectStore?.projectStates}
@@ -97,6 +108,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer(({ issues, s
 
         {group_by && group_by === "state_detail.group" && (
           <SubGroupSwimlaneHeader
+            issues={issues}
             sub_group_by={sub_group_by}
             group_by={group_by}
             list={ISSUE_STATE_GROUPS}
@@ -106,6 +118,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer(({ issues, s
 
         {group_by && group_by === "priority" && (
           <SubGroupSwimlaneHeader
+            issues={issues}
             sub_group_by={sub_group_by}
             group_by={group_by}
             list={ISSUE_PRIORITIES}
@@ -115,6 +128,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer(({ issues, s
 
         {group_by && group_by === "labels" && (
           <SubGroupSwimlaneHeader
+            issues={issues}
             sub_group_by={sub_group_by}
             group_by={group_by}
             list={projectStore?.projectLabels}
@@ -124,6 +138,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer(({ issues, s
 
         {group_by && group_by === "assignees" && (
           <SubGroupSwimlaneHeader
+            issues={issues}
             sub_group_by={sub_group_by}
             group_by={group_by}
             list={projectStore?.projectMembers}
@@ -133,6 +148,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer(({ issues, s
 
         {group_by && group_by === "created_by" && (
           <SubGroupSwimlaneHeader
+            issues={issues}
             sub_group_by={sub_group_by}
             group_by={group_by}
             list={projectStore?.projectMembers}

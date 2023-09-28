@@ -12,12 +12,13 @@ export interface IStateGroupHeader {
   sub_group_by: string | null;
   group_by: string | null;
   header_type: "group_by" | "sub_group_by";
+  issues_count: number;
 }
 
 export const StateIcon = () => {};
 
 export const StateGroupHeader: React.FC<IStateGroupHeader> = observer(
-  ({ column_id, sub_group_by, group_by, header_type }) => {
+  ({ column_id, sub_group_by, group_by, header_type, issues_count }) => {
     const stateGroup = column_id && issueStateGroupByKey(column_id);
 
     return (
@@ -31,7 +32,7 @@ export const StateGroupHeader: React.FC<IStateGroupHeader> = observer(
               group_by={group_by}
               column_id={column_id}
               title={stateGroup?.key || ""}
-              count={0}
+              count={issues_count}
             />
           ))}
       </>

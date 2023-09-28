@@ -125,7 +125,6 @@ export const handleIssueQueryParamsByLayout = (_layout: TIssueLayouts | undefine
       "start_date",
       "target_date",
       "type",
-      "calendar_date_range",
     ];
   if (_layout === "spreadsheet")
     return [

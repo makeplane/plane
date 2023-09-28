@@ -12,27 +12,30 @@ export interface IStateHeader {
   sub_group_by: string | null;
   group_by: string | null;
   header_type: "group_by" | "sub_group_by";
+  issues_count: number;
 }
 
-export const StateHeader: React.FC<IStateHeader> = observer(({ column_id, sub_group_by, group_by, header_type }) => {
-  const { project: projectStore }: RootStore = useMobxStore();
+export const StateHeader: React.FC<IStateHeader> = observer(
+  ({ column_id, sub_group_by, group_by, header_type, issues_count }) => {
+    const { project: projectStore }: RootStore = useMobxStore();
 
-  const state = (column_id && projectStore?.getProjectStateById(column_id)) ?? null;
+    const state = (column_id && projectStore?.getProjectStateById(column_id)) ?? null;
 
-  return (
-    <>
-      {state &&
-        (sub_group_by && header_type === "sub_group_by" ? (
-          <HeaderSubGroupByCard title={state?.name || ""} column_id={column_id} count={0} />
-        ) : (
-          <HeaderGroupByCard
-            sub_group_by={sub_group_by}
-            group_by={group_by}
-            column_id={column_id}
-            title={state?.name || ""}
-            count={0}
-          />
-        ))}
-    </>
-  );
-});
+    return (
+      <>
+        {state &&
+          (sub_group_by && header_type === "sub_group_by" ? (
+            <HeaderSubGroupByCard title={state?.name || ""} column_id={column_id} count={0} />
+          ) : (
+            <HeaderGroupByCard
+              sub_group_by={sub_group_by}
+              group_by={group_by}
+              column_id={column_id}
+              title={state?.name || ""}
+              count={issues_count}
+            />
+          ))}
+      </>
+    );
+  }
+);

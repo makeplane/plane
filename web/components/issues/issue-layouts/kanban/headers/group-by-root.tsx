@@ -15,13 +15,20 @@ export interface IKanBanGroupByHeaderRoot {
   column_id: string;
   sub_group_by: string | null;
   group_by: string | null;
+  issues_count: number;
 }
 
 export const KanBanGroupByHeaderRoot: React.FC<IKanBanGroupByHeaderRoot> = observer(
-  ({ column_id, sub_group_by, group_by }) => (
+  ({ column_id, sub_group_by, group_by, issues_count }) => (
     <>
       {group_by && group_by === "state" && (
-        <StateHeader column_id={column_id} sub_group_by={sub_group_by} group_by={group_by} header_type={`group_by`} />
+        <StateHeader
+          column_id={column_id}
+          sub_group_by={sub_group_by}
+          group_by={group_by}
+          header_type={`group_by`}
+          issues_count={issues_count}
+        />
       )}
       {group_by && group_by === "state_detail.group" && (
         <StateGroupHeader
@@ -29,6 +36,7 @@ export const KanBanGroupByHeaderRoot: React.FC<IKanBanGroupByHeaderRoot> = obser
           sub_group_by={sub_group_by}
           group_by={group_by}
           header_type={`group_by`}
+          issues_count={issues_count}
         />
       )}
       {group_by && group_by === "priority" && (
@@ -37,10 +45,17 @@ export const KanBanGroupByHeaderRoot: React.FC<IKanBanGroupByHeaderRoot> = obser
           sub_group_by={sub_group_by}
           group_by={group_by}
           header_type={`group_by`}
+          issues_count={issues_count}
         />
       )}
       {group_by && group_by === "labels" && (
-        <LabelHeader column_id={column_id} sub_group_by={sub_group_by} group_by={group_by} header_type={`group_by`} />
+        <LabelHeader
+          column_id={column_id}
+          sub_group_by={sub_group_by}
+          group_by={group_by}
+          header_type={`group_by`}
+          issues_count={issues_count}
+        />
       )}
       {group_by && group_by === "assignees" && (
         <AssigneesHeader
@@ -48,6 +63,7 @@ export const KanBanGroupByHeaderRoot: React.FC<IKanBanGroupByHeaderRoot> = obser
           sub_group_by={sub_group_by}
           group_by={group_by}
           header_type={`group_by`}
+          issues_count={issues_count}
         />
       )}
       {group_by && group_by === "created_by" && (
@@ -56,6 +72,7 @@ export const KanBanGroupByHeaderRoot: React.FC<IKanBanGroupByHeaderRoot> = obser
           sub_group_by={sub_group_by}
           group_by={group_by}
           header_type={`group_by`}
+          issues_count={issues_count}
         />
       )}
     </>

@@ -50,9 +50,9 @@ export const HeaderGroupByCard = observer(
           </div>
         )}
 
-        <div className="flex-shrink-0 w-[22px] h-[22px] rounded-sm overflow-hidden flex justify-center items-center hover:bg-custom-background-80 cursor-pointer transition-all">
+        {/* <div className="flex-shrink-0 w-[22px] h-[22px] rounded-sm overflow-hidden flex justify-center items-center hover:bg-custom-background-80 cursor-pointer transition-all">
           <Plus width={14} strokeWidth={2} />
-        </div>
+        </div> */}
       </div>
     );
   }

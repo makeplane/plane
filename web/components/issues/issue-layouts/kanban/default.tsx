@@ -42,6 +42,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer(
                     column_id={getValueFromObject(_list, listKey) as string}
                     sub_group_by={sub_group_by}
                     group_by={group_by}
+                    issues_count={issues[getValueFromObject(_list, listKey) as string].length || 0}
                   />
                 </div>
               )}

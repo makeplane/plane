@@ -12,10 +12,11 @@ export interface IAssigneesHeader {
   sub_group_by: string | null;
   group_by: string | null;
   header_type: "group_by" | "sub_group_by";
+  issues_count: number;
 }
 
 export const AssigneesHeader: React.FC<IAssigneesHeader> = observer(
-  ({ column_id, sub_group_by, group_by, header_type }) => {
+  ({ column_id, sub_group_by, group_by, header_type, issues_count }) => {
     const { project: projectStore }: RootStore = useMobxStore();
 
     const assignee = (column_id && projectStore?.getProjectMemberByUserId(column_id)) ?? null;
@@ -31,7 +32,7 @@ export const AssigneesHeader: React.FC<IAssigneesHeader> = observer(
               group_by={group_by}
               column_id={column_id}
               title={assignee?.member?.display_name || ""}
-              count={0}
+              count={issues_count}
             />
           ))}
       </>
