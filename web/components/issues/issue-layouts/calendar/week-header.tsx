@@ -1,11 +1,11 @@
 import { observer } from "mobx-react-lite";
+
+// mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // constants
 import { DAYS_LIST } from "constants/calendar";
 
-type Props = {};
-
-export const CalendarWeekHeader: React.FC<Props> = observer((props) => {
+export const CalendarWeekHeader: React.FC = observer(() => {
   const { issueFilter: issueFilterStore } = useMobxStore();
 
   const showWeekends = issueFilterStore.userDisplayFilters.calendar?.show_weekends ?? false;
@@ -20,7 +20,7 @@ export const CalendarWeekHeader: React.FC<Props> = observer((props) => {
         if (!showWeekends && (day.shortTitle === "Sat" || day.shortTitle === "Sun")) return null;
 
         return (
-          <div key={day.shortTitle} className="h-11 bg-custom-background-80 flex items-center px-4">
+          <div key={day.shortTitle} className="h-11 bg-custom-background-90 flex items-center px-4">
             {day.shortTitle}
           </div>
         );

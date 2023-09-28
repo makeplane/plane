@@ -63,32 +63,32 @@ export const DAYS_LIST: {
   };
 } = {
   1: {
+    shortTitle: "Sun",
+    title: "Sunday",
+  },
+  2: {
     shortTitle: "Mon",
     title: "Monday",
   },
-  2: {
+  3: {
     shortTitle: "Tue",
     title: "Tuesday",
   },
-  3: {
+  4: {
     shortTitle: "Wed",
     title: "Wednesday",
   },
-  4: {
+  5: {
     shortTitle: "Thu",
     title: "Thursday",
   },
-  5: {
+  6: {
     shortTitle: "Fri",
     title: "Friday",
   },
-  6: {
+  7: {
     shortTitle: "Sat",
     title: "Saturday",
-  },
-  7: {
-    shortTitle: "Sun",
-    title: "Sunday",
   },
 };
 

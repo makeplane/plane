@@ -7,30 +7,30 @@ import { CalendarDayTile } from "components/issues";
 // helpers
 import { renderDateFormat } from "helpers/date-time.helper";
 // types
-import { ICalendarDate, ICalendarWeek } from "./data";
+import { ICalendarDate, ICalendarWeek } from "./types";
 
 type Props = {
-  activeMonthDate: Date;
   week: ICalendarWeek;
 };
 
 export const CalendarWeekDays: React.FC<Props> = observer((props) => {
-  const { activeMonthDate, week } = props;
+  const { week } = props;
 
   const { issueFilter: issueFilterStore } = useMobxStore();
 
+  const calendarLayout = issueFilterStore.userDisplayFilters.calendar?.layout ?? "month";
   const showWeekends = issueFilterStore.userDisplayFilters.calendar?.show_weekends ?? false;
 
   return (
     <div
       className={`grid divide-x-[0.5px] divide-y-[0.5px] divide-custom-border-200 ${
         showWeekends ? "grid-cols-7" : "grid-cols-5"
-      }`}
+      } ${calendarLayout === "month" ? "" : "h-full"}`}
     >
-      {Object.values(week).map((date: ICalendarDate, index) => {
-        if (!showWeekends && (index === 5 || index === 6)) return null;
+      {Object.values(week).map((date: ICalendarDate) => {
+        if (!showWeekends && (date.date.getDay() === 0 || date.date.getDay() === 6)) return null;
 
-        return <CalendarDayTile key={renderDateFormat(date.date)} activeMonthDate={activeMonthDate} date={date} />;
+        return <CalendarDayTile key={renderDateFormat(date.date)} date={date} />;
       })}
     </div>
   );

@@ -18,7 +18,7 @@ export const CalendarOptionsDropdown: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { issueFilter: issueFilterStore } = useMobxStore();
+  const { issueFilter: issueFilterStore, calendar: calendarStore } = useMobxStore();
 
   const calendarLayout = issueFilterStore.userDisplayFilters.calendar?.layout ?? "month";
   const showWeekends = issueFilterStore.userDisplayFilters.calendar?.show_weekends ?? false;
@@ -34,6 +34,10 @@ export const CalendarOptionsDropdown: React.FC<Props> = observer((props) => {
         },
       },
     });
+
+    calendarStore.updateCalendarPayload(
+      layout === "month" ? calendarStore.calendarFilters.activeMonthDate : calendarStore.calendarFilters.activeWeekDate
+    );
   };
 
   const handleToggleWeekends = () => {

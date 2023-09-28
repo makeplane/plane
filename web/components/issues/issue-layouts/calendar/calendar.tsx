@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 
 // mobx store
@@ -7,28 +6,19 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { CalendarHeader, CalendarWeekDays, CalendarWeekHeader } from "components/issues";
 // ui
 import { Spinner } from "components/ui";
-// icons
-import { ICalendarPayload, ICalendarWeek, generateCalendarData } from "./data";
+// helpers
+import { getWeekNumberOfDate } from "helpers/date-time.helper";
+// types
+import { ICalendarWeek } from "./types";
 
-type Props = {};
+export const CalendarChart: React.FC = observer(() => {
+  const { issue: issueStore, issueFilter: issueFilterStore, calendar: calendarStore } = useMobxStore();
 
-export const CalendarChart: React.FC<Props> = observer((props) => {
-  const {} = props;
+  const activeMonthDate = calendarStore.calendarFilters.activeMonthDate;
+  const activeWeekDate = calendarStore.calendarFilters.activeWeekDate;
 
-  const [activeMonthDate, setActiveMonthDate] = useState(new Date());
-  const [activeWeekNumber, setActiveWeekNumber] = useState<number | null>(null);
-  const [calendarPayload, setCalendarPayload] = useState<ICalendarPayload | null>(null);
-
-  const { issue: issueStore, issueFilter: issueFilterStore } = useMobxStore();
-
-  // generate calendar payload
-  useEffect(() => {
-    console.log("Generating payload...");
-
-    setCalendarPayload(
-      generateCalendarData(calendarPayload, activeMonthDate.getFullYear(), activeMonthDate.getMonth(), 5)
-    );
-  }, [activeMonthDate, calendarPayload]);
+  const calendarLayout = issueFilterStore.userDisplayFilters.calendar?.layout ?? "month";
+  const calendarPayload = calendarStore.calendarPayload;
 
   if (!calendarPayload || !issueStore.getIssues)
     return (
@@ -37,24 +27,34 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
       </div>
     );
 
-  const calendarLayout = issueFilterStore.userDisplayFilters.calendar?.layout ?? "month";
-
   console.log("calendarPayload", calendarPayload);
 
+  // console.log("activeMonthDate", activeMonthDate);
+  // console.log("activeWeekDate", activeWeekDate);
+
+  const activeWeekNumber = getWeekNumberOfDate(activeWeekDate);
+
+  // console.log("activeWeekNumber", activeWeekNumber);
+
   const activeMonthAllWeeks = calendarPayload[activeMonthDate.getFullYear()][activeMonthDate.getMonth()];
+  const activeWeekAllDays = calendarPayload[activeWeekDate.getFullYear()][activeWeekDate.getMonth()][activeWeekNumber];
 
   return (
     <>
       <div className="h-full w-full flex flex-col overflow-hidden">
-        <CalendarHeader activeMonthDate={activeMonthDate} setActiveMonthDate={(date) => setActiveMonthDate(date)} />
+        <CalendarHeader />
         <CalendarWeekHeader />
         {activeMonthAllWeeks ? (
           <div className="h-full w-full overflow-y-auto">
-            {calendarLayout === "month"
-              ? Object.values(activeMonthAllWeeks).map((week: ICalendarWeek, weekIndex) => (
-                  <CalendarWeekDays key={weekIndex} activeMonthDate={activeMonthDate} week={week} />
-                ))
-              : "Week view, boys"}
+            {calendarLayout === "month" ? (
+              <div className="h-full w-full grid grid-cols-1">
+                {Object.values(activeMonthAllWeeks).map((week: ICalendarWeek, weekIndex) => (
+                  <CalendarWeekDays key={weekIndex} week={week} />
+                ))}
+              </div>
+            ) : (
+              <CalendarWeekDays week={activeWeekAllDays} />
+            )}
           </div>
         ) : (
           <div className="h-full w-full grid place-items-center">
