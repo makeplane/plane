@@ -2,6 +2,8 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
+// hook
+import useEstimateOption from "hooks/use-estimate-option";
 // services
 import issuesService from "services/issues.service";
 // icons
@@ -75,6 +77,18 @@ const LabelPill = ({ labelId }: { labelId: string }) => {
       }}
       aria-hidden="true"
     />
+  );
+};
+const EstimatePoint = ({ point }: { point: string }) => {
+  const { estimateValue, isEstimateActive } = useEstimateOption(Number(point));
+  const currentPoint = Number(point) + 1;
+
+  return (
+    <span className="font-medium text-custom-text-100">
+      {isEstimateActive
+        ? estimateValue
+        : `${currentPoint} ${currentPoint > 1 ? "points" : "point"}`}
+    </span>
   );
 };
 
@@ -324,8 +338,7 @@ const activityDetails: {
       else
         return (
           <>
-            set the estimate point to{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+            set the estimate point to <EstimatePoint point={activity.new_value} />
             {showIssue && (
               <>
                 {" "}
