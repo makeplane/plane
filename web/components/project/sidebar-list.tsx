@@ -1,18 +1,15 @@
 import React, { useState, FC, useRef, useEffect } from "react";
 import { useRouter } from "next/router";
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import { DragDropContext, Draggable, DropResult, Droppable } from "react-beautiful-dnd";
 import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
-import useProjects from "hooks/use-projects";
 // components
-import { CreateProjectModal, ProjectSidebarListItem, LeaveProjectModal } from "components/project";
-import { PublishProjectModal } from "components/project/publish-project/modal";
-// services
-import projectService from "services/project.service";
+import { CreateProjectModal, ProjectSidebarListItem } from "components/project";
+
 // icons
 import { Icon } from "components/ui";
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -21,13 +18,11 @@ import { copyTextToClipboard } from "helpers/string.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
 import { IProject } from "types";
-// fetch-keys
-import { PROJECTS_LIST } from "constants/fetch-keys";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 
 export const ProjectSidebarList: FC = observer(() => {
-  const { theme: themeStore, workspace: workspaceStore, project: projectStore } = useMobxStore();
+  const { theme: themeStore, project: projectStore } = useMobxStore();
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -80,7 +75,7 @@ export const ProjectSidebarList: FC = observer(() => {
 
     projectStore
       .updateProjectView(workspaceSlug.toString(), draggableId, { sort_order: updatedSortOrder })
-      .catch((error) => {
+      .catch(() => {
         setToastAlert({
           type: "error",
           title: "Error!",
@@ -118,8 +113,6 @@ export const ProjectSidebarList: FC = observer(() => {
         setToFavorite={isFavoriteProjectCreate}
         user={user}
       />
-      {/* publish project modal */}
-      <PublishProjectModal />
       <div
         ref={containerRef}
         className={`h-full overflow-y-auto px-4 space-y-3 pt-3 ${
