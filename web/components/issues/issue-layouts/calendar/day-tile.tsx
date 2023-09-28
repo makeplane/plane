@@ -12,24 +12,22 @@ import { IIssueGroupedStructure } from "store/issue";
 // constants
 import { MONTHS_LIST } from "constants/calendar";
 
-type Props = { date: ICalendarDate };
+type Props = { date: ICalendarDate; issues: IIssueGroupedStructure | null };
 
 export const CalendarDayTile: React.FC<Props> = observer((props) => {
-  const { date } = props;
+  const { date, issues } = props;
 
-  const { issue: issueStore, issueFilter: issueFilterStore } = useMobxStore();
+  const { issueFilter: issueFilterStore } = useMobxStore();
 
   const calendarLayout = issueFilterStore.userDisplayFilters.calendar?.layout ?? "month";
 
-  const issues = issueStore.getIssues
-    ? (issueStore.getIssues as IIssueGroupedStructure)[renderDateFormat(date.date)]
-    : null;
+  const issuesList = issues ? (issues as IIssueGroupedStructure)[renderDateFormat(date.date)] : null;
 
   return (
     <Droppable droppableId={renderDateFormat(date.date)}>
       {(provided, snapshot) => (
         <div
-          className={`flex-grow p-2 space-y-1 ${
+          className={`flex-grow p-2 space-y-1 w-full flex flex-col overflow-hidden ${
             snapshot.isDraggingOver || date.date.getDay() === 0 || date.date.getDay() === 6
               ? "bg-custom-background-90"
               : "bg-custom-background-100"
@@ -38,11 +36,19 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
           ref={provided.innerRef}
         >
           <>
-            <div className={`text-xs text-right ${date.is_current_month ? "font-medium" : "text-custom-text-300"}`}>
+            <div
+              className={`text-xs text-right ${
+                calendarLayout === "month" // if month layout, highlight current month days
+                  ? date.is_current_month
+                    ? "font-medium"
+                    : "text-custom-text-300"
+                  : "font-medium" // if week layout, highlight all days
+              }`}
+            >
               {date.date.getDate() === 1 && MONTHS_LIST[date.date.getMonth() + 1].shortTitle + " "}
               {date.date.getDate()}
             </div>
-            <CalendarIssueBlocks issues={issues} />
+            <CalendarIssueBlocks issues={issuesList} />
             {provided.placeholder}
           </>
         </div>

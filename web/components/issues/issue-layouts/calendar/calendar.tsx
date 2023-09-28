@@ -6,54 +6,48 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { CalendarHeader, CalendarWeekDays, CalendarWeekHeader } from "components/issues";
 // ui
 import { Spinner } from "components/ui";
-// helpers
-import { getWeekNumberOfDate } from "helpers/date-time.helper";
 // types
 import { ICalendarWeek } from "./types";
+import { IIssueGroupedStructure } from "store/issue";
 
-export const CalendarChart: React.FC = observer(() => {
-  const { issue: issueStore, issueFilter: issueFilterStore, calendar: calendarStore } = useMobxStore();
+type Props = {
+  issues: IIssueGroupedStructure | null;
+};
 
-  const activeMonthDate = calendarStore.calendarFilters.activeMonthDate;
-  const activeWeekDate = calendarStore.calendarFilters.activeWeekDate;
+export const CalendarChart: React.FC<Props> = observer((props) => {
+  const { issues } = props;
+
+  const { calendar: calendarStore, issueFilter: issueFilterStore } = useMobxStore();
 
   const calendarLayout = issueFilterStore.userDisplayFilters.calendar?.layout ?? "month";
   const calendarPayload = calendarStore.calendarPayload;
 
-  if (!calendarPayload || !issueStore.getIssues)
+  const allWeeksOfActiveMonth = calendarStore.allWeeksOfActiveMonth;
+
+  console.log("calendarPayload", calendarPayload);
+
+  if (!calendarPayload)
     return (
       <div className="h-full w-full grid place-items-center">
         <Spinner />
       </div>
     );
 
-  console.log("calendarPayload", calendarPayload);
-
-  // console.log("activeMonthDate", activeMonthDate);
-  // console.log("activeWeekDate", activeWeekDate);
-
-  const activeWeekNumber = getWeekNumberOfDate(activeWeekDate);
-
-  // console.log("activeWeekNumber", activeWeekNumber);
-
-  const activeMonthAllWeeks = calendarPayload[activeMonthDate.getFullYear()][activeMonthDate.getMonth()];
-  const activeWeekAllDays = calendarPayload[activeWeekDate.getFullYear()][activeWeekDate.getMonth()][activeWeekNumber];
-
   return (
     <>
       <div className="h-full w-full flex flex-col overflow-hidden">
         <CalendarHeader />
         <CalendarWeekHeader />
-        {activeMonthAllWeeks ? (
+        {allWeeksOfActiveMonth ? (
           <div className="h-full w-full overflow-y-auto">
             {calendarLayout === "month" ? (
               <div className="h-full w-full grid grid-cols-1">
-                {Object.values(activeMonthAllWeeks).map((week: ICalendarWeek, weekIndex) => (
-                  <CalendarWeekDays key={weekIndex} week={week} />
+                {Object.values(allWeeksOfActiveMonth).map((week: ICalendarWeek, weekIndex) => (
+                  <CalendarWeekDays key={weekIndex} week={week} issues={issues} />
                 ))}
               </div>
             ) : (
-              <CalendarWeekDays week={activeWeekAllDays} />
+              <CalendarWeekDays week={calendarStore.allDaysOfActiveWeek} issues={issues} />
             )}
           </div>
         ) : (

@@ -1,11 +1,15 @@
+import { observer } from "mobx-react-lite";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
+
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CalendarChart } from "components/issues";
+// types
+import { IIssueGroupedStructure } from "store/issue";
 
-type Props = {};
-
-export const CalendarLayout: React.FC<Props> = (props) => {
-  const {} = props;
+export const CalendarLayout: React.FC = observer(() => {
+  const { issue: issueStore } = useMobxStore();
 
   const onDragEnd = (result: DropResult) => {
     if (!result) return;
@@ -19,11 +23,13 @@ export const CalendarLayout: React.FC<Props> = (props) => {
     // issueKanBanViewStore?.handleDragDrop(result.source, result.destination);
   };
 
+  const issues = issueStore.getIssues;
+
   return (
     <div className="h-full w-full pt-4 bg-custom-background-100 overflow-hidden">
       <DragDropContext onDragEnd={onDragEnd}>
-        <CalendarChart />
+        <CalendarChart issues={issues as IIssueGroupedStructure | null} />
       </DragDropContext>
     </div>
   );
-};
+});

@@ -14,11 +14,11 @@ export interface ICalendarWeek {
 }
 
 export interface ICalendarMonth {
-  [monthNumber: number]: {
+  [monthIndex: string]: {
     [weekNumber: string]: ICalendarWeek;
   };
 }
 
 export interface ICalendarPayload {
-  [year: number]: ICalendarMonth;
+  [year: string]: ICalendarMonth;
 }

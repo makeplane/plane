@@ -378,16 +378,16 @@ export const getUserTimeZoneFromWindow = () => Intl.DateTimeFormat().resolvedOpt
  * @example getWeekNumber(new Date("2023-09-01")) // 35
  */
 export const getWeekNumberOfDate = (date: Date): number => {
-  const d = new Date(date);
+  const currentDate = new Date(date);
 
-  // Set the first day of the week to Sunday (0) and calculate the day of the week
-  d.setHours(0, 0, 0, 0);
-  const dayOfWeek: number = d.getDay();
+  // Adjust the starting day to Sunday (0) instead of Monday (1)
+  const startDate = new Date(currentDate.getFullYear(), 0, 1);
 
-  // Calculate the week number based on Sunday as the first day of the week
-  const weekStart: Date = new Date(d.getFullYear(), 0, 1);
-  const daysUntilDate: number = Math.ceil((d.getTime() - weekStart.getTime()) / (24 * 60 * 60 * 1000));
-  const weekNumber: number = Math.ceil((daysUntilDate + 1 + dayOfWeek) / 7);
+  // Calculate the number of days between currentDate and startDate
+  const days = Math.floor((currentDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000));
+
+  // Adjust the calculation for weekNumber
+  const weekNumber = Math.ceil((days + 1) / 7);
 
   return weekNumber;
 };

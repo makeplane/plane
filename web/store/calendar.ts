@@ -1,8 +1,11 @@
-import { observable, action, makeObservable, runInAction } from "mobx";
+import { observable, action, makeObservable, runInAction, computed } from "mobx";
 
+// helpers
+import { generateCalendarData } from "helpers/calendar.helper";
 // types
 import { RootStore } from "./root";
-import { ICalendarPayload, generateCalendarData } from "components/issues";
+import { ICalendarPayload, ICalendarWeek } from "components/issues";
+import { getWeekNumberOfDate } from "helpers/date-time.helper";
 
 export interface ICalendarStore {
   calendarFilters: {
@@ -14,6 +17,15 @@ export interface ICalendarStore {
   // action
   updateCalendarFilters: (filters: Partial<{ activeMonthDate: Date; activeWeekDate: Date }>) => void;
   updateCalendarPayload: (date: Date) => void;
+
+  // computed
+  allWeeksOfActiveMonth:
+    | {
+        [weekNumber: string]: ICalendarWeek;
+      }
+    | undefined;
+  activeWeekNumber: number;
+  allDaysOfActiveWeek: ICalendarWeek | undefined;
 }
 
 class CalendarStore implements ICalendarStore {
@@ -42,11 +54,38 @@ class CalendarStore implements ICalendarStore {
       // actions
       updateCalendarFilters: action,
       updateCalendarPayload: action,
+
+      //computed
+      allWeeksOfActiveMonth: computed,
+      activeWeekNumber: computed,
+      allDaysOfActiveWeek: computed,
     });
 
     this.rootStore = _rootStore;
 
     this.initCalendar();
+  }
+
+  get allWeeksOfActiveMonth() {
+    if (!this.calendarPayload) return undefined;
+
+    const { activeMonthDate } = this.calendarFilters;
+
+    return this.calendarPayload[`y-${activeMonthDate.getFullYear()}`][`m-${activeMonthDate.getMonth()}`];
+  }
+
+  get activeWeekNumber() {
+    return getWeekNumberOfDate(this.calendarFilters.activeWeekDate);
+  }
+
+  get allDaysOfActiveWeek() {
+    if (!this.calendarPayload) return undefined;
+
+    const { activeWeekDate } = this.calendarFilters;
+
+    return this.calendarPayload[`y-${activeWeekDate.getFullYear()}`][`m-${activeWeekDate.getMonth()}`][
+      `w-${this.activeWeekNumber}`
+    ];
   }
 
   updateCalendarFilters = (filters: Partial<{ activeMonthDate: Date; activeWeekDate: Date }>) => {

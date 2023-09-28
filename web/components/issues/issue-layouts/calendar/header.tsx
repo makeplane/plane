@@ -13,8 +13,31 @@ export const CalendarHeader: React.FC = observer(() => {
   const { issueFilter: issueFilterStore, calendar: calendarStore } = useMobxStore();
 
   const calendarLayout = issueFilterStore.userDisplayFilters.calendar?.layout ?? "month";
-  const activeMonthDate = calendarStore.calendarFilters.activeMonthDate;
-  const activeWeekDate = calendarStore.calendarFilters.activeWeekDate;
+
+  const { activeMonthDate, activeWeekDate } = calendarStore.calendarFilters;
+
+  const getWeekLayoutHeader = (): string => {
+    const allDaysOfActiveWeek = calendarStore.allDaysOfActiveWeek;
+
+    if (!allDaysOfActiveWeek) return "Week view";
+
+    const daysList = Object.keys(allDaysOfActiveWeek);
+
+    const firstDay = new Date(daysList[0]);
+    const lastDay = new Date(daysList[daysList.length - 1]);
+
+    if (firstDay.getMonth() === lastDay.getMonth() && firstDay.getFullYear() === lastDay.getFullYear())
+      return `${MONTHS_LIST[firstDay.getMonth() + 1].shortTitle} ${firstDay.getFullYear()}`;
+
+    if (firstDay.getFullYear() !== lastDay.getFullYear()) {
+      return `${MONTHS_LIST[firstDay.getMonth() + 1].shortTitle} ${firstDay.getFullYear()} - ${
+        MONTHS_LIST[lastDay.getMonth() + 1].shortTitle
+      } ${lastDay.getFullYear()}`;
+    } else
+      return `${MONTHS_LIST[firstDay.getMonth() + 1].shortTitle} - ${
+        MONTHS_LIST[lastDay.getMonth() + 1].shortTitle
+      } ${lastDay.getFullYear()}`;
+  };
 
   const handlePrevious = () => {
     if (calendarLayout === "month") {
@@ -70,6 +93,7 @@ export const CalendarHeader: React.FC = observer(() => {
 
     calendarStore.updateCalendarFilters({
       activeMonthDate: firstDayOfCurrentMonth,
+      activeWeekDate: today,
     });
   };
 
@@ -82,7 +106,7 @@ export const CalendarHeader: React.FC = observer(() => {
         <h2 className="text-xl font-semibold">
           {calendarLayout === "month"
             ? `${MONTHS_LIST[activeMonthDate.getMonth() + 1].title} ${activeMonthDate.getFullYear()}`
-            : "Week view"}
+            : getWeekLayoutHeader()}
         </h2>
         <button type="button" className="grid place-items-center" onClick={handleNext}>
           <ChevronRight size={16} strokeWidth={2} />

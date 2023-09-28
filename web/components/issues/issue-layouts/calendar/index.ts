@@ -1,5 +1,5 @@
 export * from "./calendar";
-export * from "./types";
+export * from "./types.d";
 export * from "./day-tile";
 export * from "./header";
 export * from "./issue-blocks";
