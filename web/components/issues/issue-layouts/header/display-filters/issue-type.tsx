@@ -2,7 +2,7 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 
 // components
-import { FilterHeader, FilterOption } from "components/issue-layouts";
+import { FilterHeader, FilterOption } from "components/issues";
 // types
 import { TIssueTypeFilters } from "types";
 // constants

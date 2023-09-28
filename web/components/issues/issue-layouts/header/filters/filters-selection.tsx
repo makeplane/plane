@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-
-// mobx
 import { observer } from "mobx-react-lite";
+
+// mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import {
@@ -11,7 +11,7 @@ import {
   FilterPriority,
   FilterState,
   FilterStateGroup,
-} from "components/issue-layouts";
+} from "components/issues";
 // icons
 import { Search, X } from "lucide-react";
 // helpers

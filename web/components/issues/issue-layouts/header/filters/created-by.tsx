@@ -4,13 +4,9 @@ import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { FilterHeader, FilterOption } from "components/issue-layouts";
+import { FilterHeader, FilterOption } from "components/issues";
 // ui
-import { Loader } from "components/ui";
-// icons
-import { StateGroupIcon } from "components/icons";
-// helpers
-import { getStatesList } from "helpers/state.helper";
+import { Avatar, Loader } from "components/ui";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -20,7 +16,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterState: React.FC<Props> = observer((props) => {
+export const FilterCreatedBy: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, itemsToRender, projectId, searchQuery } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -28,17 +24,16 @@ export const FilterState: React.FC<Props> = observer((props) => {
   const store = useMobxStore();
   const { project: projectStore } = store;
 
-  const statesByGroups = projectStore.states?.[projectId?.toString() ?? ""];
-  const statesList = getStatesList(statesByGroups);
-
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const filteredOptions = statesList?.filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredOptions = projectStore.members?.[projectId?.toString() ?? ""]?.filter((member) =>
+    member.member.display_name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <>
       <FilterHeader
-        title={`State${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`Created by${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -46,17 +41,17 @@ export const FilterState: React.FC<Props> = observer((props) => {
         <div>
           {filteredOptions ? (
             filteredOptions.length > 0 ? (
-              <>
-                {filteredOptions.slice(0, itemsToRender).map((state) => (
+              filteredOptions
+                .slice(0, itemsToRender)
+                .map((member) => (
                   <FilterOption
-                    key={state.id}
-                    isChecked={appliedFilters?.includes(state.id) ? true : false}
-                    onClick={() => handleUpdate(state.id)}
-                    icon={<StateGroupIcon stateGroup={state.group} color={state.color} />}
-                    title={state.name}
+                    key={`created-by-${member.member?.id}`}
+                    isChecked={appliedFilters?.includes(member.member?.id) ? true : false}
+                    onClick={() => handleUpdate(member.member?.id)}
+                    icon={<Avatar user={member.member} height="18px" width="18px" />}
+                    title={member.member?.display_name}
                   />
-                ))}
-              </>
+                ))
             ) : (
               <p className="text-xs text-custom-text-400 italic">No matches found</p>
             )

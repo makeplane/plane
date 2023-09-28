@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { DisplayFiltersSelection, FilterSelection, IssueDropdown, LayoutSelection } from "components/issue-layouts";
+import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 // types
 import { IIssueDisplayFilterOptions, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
@@ -44,8 +44,6 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const handleDisplayFiltersUpdate = (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
     if (!workspaceSlug || !projectId) return;
 
-    console.log("Triggered");
-
     issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
       display_filters: {
         ...updatedDisplayFilter,
@@ -60,21 +58,21 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
         onChange={(layout) => handleLayoutChange(layout)}
         selectedLayout={issueFilterStore.userDisplayFilters.layout ?? "list"}
       />
-      <IssueDropdown title="Filters">
+      <FiltersDropdown title="Filters">
         <FilterSelection
           filters={{}}
           handleFiltersUpdate={handleFiltersUpdate}
           layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues}
           projectId={projectId?.toString() ?? ""}
         />
-      </IssueDropdown>
-      <IssueDropdown title="View">
+      </FiltersDropdown>
+      <FiltersDropdown title="View">
         <DisplayFiltersSelection
           displayFilters={issueFilterStore.userDisplayFilters}
           handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
           layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues}
         />
-      </IssueDropdown>
+      </FiltersDropdown>
     </div>
   );
 });

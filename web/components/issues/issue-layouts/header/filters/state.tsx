@@ -4,13 +4,13 @@ import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { FilterHeader, FilterOption } from "components/issue-layouts";
+import { FilterHeader, FilterOption } from "components/issues";
 // ui
 import { Loader } from "components/ui";
-
-const LabelIcons = ({ color }: { color: string }) => (
-  <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
-);
+// icons
+import { StateGroupIcon } from "components/icons";
+// helpers
+import { getStatesList } from "helpers/state.helper";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -20,7 +20,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterLabels: React.FC<Props> = observer((props) => {
+export const FilterState: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, itemsToRender, projectId, searchQuery } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -28,16 +28,17 @@ export const FilterLabels: React.FC<Props> = observer((props) => {
   const store = useMobxStore();
   const { project: projectStore } = store;
 
+  const statesByGroups = projectStore.states?.[projectId?.toString() ?? ""];
+  const statesList = getStatesList(statesByGroups);
+
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const filteredOptions = projectStore.labels?.[projectId?.toString() ?? ""]?.filter((label) =>
-    label.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredOptions = statesList?.filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
     <>
       <FilterHeader
-        title={`Label${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`State${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -45,17 +46,17 @@ export const FilterLabels: React.FC<Props> = observer((props) => {
         <div>
           {filteredOptions ? (
             filteredOptions.length > 0 ? (
-              filteredOptions
-                .slice(0, itemsToRender)
-                .map((label) => (
+              <>
+                {filteredOptions.slice(0, itemsToRender).map((state) => (
                   <FilterOption
-                    key={label?.id}
-                    isChecked={appliedFilters?.includes(label?.id) ? true : false}
-                    onClick={() => handleUpdate(label?.id)}
-                    icon={<LabelIcons color={label.color} />}
-                    title={label.name}
+                    key={state.id}
+                    isChecked={appliedFilters?.includes(state.id) ? true : false}
+                    onClick={() => handleUpdate(state.id)}
+                    icon={<StateGroupIcon stateGroup={state.group} color={state.color} />}
+                    title={state.name}
                   />
-                ))
+                ))}
+              </>
             ) : (
               <p className="text-xs text-custom-text-400 italic">No matches found</p>
             )

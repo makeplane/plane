@@ -1,12 +1,16 @@
 import React, { useState } from "react";
-
-// mobx
 import { observer } from "mobx-react-lite";
+
+// mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { FilterHeader, FilterOption } from "components/issue-layouts";
+import { FilterHeader, FilterOption } from "components/issues";
 // ui
-import { Avatar, Loader } from "components/ui";
+import { Loader } from "components/ui";
+
+const LabelIcons = ({ color }: { color: string }) => (
+  <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
+);
 
 type Props = {
   appliedFilters: string[] | null;
@@ -16,7 +20,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterCreatedBy: React.FC<Props> = observer((props) => {
+export const FilterLabels: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, itemsToRender, projectId, searchQuery } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -26,14 +30,14 @@ export const FilterCreatedBy: React.FC<Props> = observer((props) => {
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const filteredOptions = projectStore.members?.[projectId?.toString() ?? ""]?.filter((member) =>
-    member.member.display_name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredOptions = projectStore.labels?.[projectId?.toString() ?? ""]?.filter((label) =>
+    label.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <>
       <FilterHeader
-        title={`Created by${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`Label${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -43,13 +47,13 @@ export const FilterCreatedBy: React.FC<Props> = observer((props) => {
             filteredOptions.length > 0 ? (
               filteredOptions
                 .slice(0, itemsToRender)
-                .map((member) => (
+                .map((label) => (
                   <FilterOption
-                    key={`created-by-${member.member?.id}`}
-                    isChecked={appliedFilters?.includes(member.member?.id) ? true : false}
-                    onClick={() => handleUpdate(member.member?.id)}
-                    icon={<Avatar user={member.member} height="18px" width="18px" />}
-                    title={member.member?.display_name}
+                    key={label?.id}
+                    isChecked={appliedFilters?.includes(label?.id) ? true : false}
+                    onClick={() => handleUpdate(label?.id)}
+                    icon={<LabelIcons color={label.color} />}
+                    title={label.name}
                   />
                 ))
             ) : (

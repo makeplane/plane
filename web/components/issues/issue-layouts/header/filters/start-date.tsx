@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-
-// mobx
 import { observer } from "mobx-react-lite";
+
+// mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { FilterHeader, FilterOption } from "components/issue-layouts";
+import { FilterHeader, FilterOption } from "components/issues";
 
 export const FilterStartDate = observer(() => {
   const [previewEnabled, setPreviewEnabled] = useState(true);

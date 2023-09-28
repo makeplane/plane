@@ -203,8 +203,6 @@ class IssueFilterStore implements IIssueFilterStore {
         this.userDisplayFilters = newViewProps.display_filters;
       });
 
-      console.log("Saving...");
-
       this.projectService.setProjectView(workspaceSlug, projectId, {
         view_props: newViewProps,
       });

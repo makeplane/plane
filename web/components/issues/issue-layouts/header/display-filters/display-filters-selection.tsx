@@ -9,7 +9,7 @@ import {
   FilterIssueType,
   FilterOrderBy,
   FilterSubGroupBy,
-} from "components/issue-layouts";
+} from "components/issues";
 // types
 import { IIssueDisplayFilterOptions } from "types";
 import { ILayoutDisplayFiltersOptions } from "constants/issue";
