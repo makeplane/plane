@@ -197,6 +197,9 @@ class IssueFilterStore implements IIssueFilterStore {
       },
     };
 
+    // set sub_group_by to null if group_by is set to null
+    if (newViewProps.display_filters.group_by === null) newViewProps.display_filters.sub_group_by = null;
+
     try {
       runInAction(() => {
         this.userFilters = newViewProps.filters;

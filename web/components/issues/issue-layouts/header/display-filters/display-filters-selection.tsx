@@ -23,8 +23,8 @@ type Props = {
 export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
   const { displayFilters, handleDisplayFiltersUpdate, layoutDisplayFiltersOptions } = props;
 
-  const isDisplayFilterEnabled = (displayFilter: string) =>
-    layoutDisplayFiltersOptions.display_filters.includes(displayFilter);
+  const isDisplayFilterEnabled = (displayFilter: keyof IIssueDisplayFilterOptions) =>
+    Object.keys(layoutDisplayFiltersOptions.display_filters).includes(displayFilter);
 
   return (
     <div className="w-full h-full overflow-hidden overflow-y-auto relative px-2.5 divide-y divide-custom-border-200">
@@ -40,6 +40,8 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
         <div className="py-2">
           <FilterGroupBy
             selectedGroupBy={displayFilters.group_by}
+            selectedSubGroupBy={displayFilters.sub_group_by}
+            groupByOptions={layoutDisplayFiltersOptions.display_filters.group_by}
             handleUpdate={(val) =>
               handleDisplayFiltersUpdate({
                 group_by: val,
@@ -50,7 +52,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
       )}
 
       {/* sub-group by */}
-      {isDisplayFilterEnabled("sub_group_by") && (
+      {isDisplayFilterEnabled("sub_group_by") && displayFilters.group_by !== null && (
         <div className="py-2">
           <FilterSubGroupBy
             selectedGroupBy={displayFilters.group_by}
@@ -60,6 +62,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
                 sub_group_by: val,
               })
             }
+            subGroupByOptions={layoutDisplayFiltersOptions.display_filters.sub_group_by}
           />
         </div>
       )}
@@ -79,7 +82,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
       )}
 
       {/* issue type */}
-      {isDisplayFilterEnabled("issue_type") && (
+      {isDisplayFilterEnabled("type") && (
         <div className="py-2">
           <FilterIssueType
             selectedIssueType={displayFilters.type}

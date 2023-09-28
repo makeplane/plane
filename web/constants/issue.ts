@@ -3,6 +3,7 @@ import { Calendar, GanttChart, Kanban, List, Sheet } from "lucide-react";
 // types
 import {
   IIssueDisplayProperties,
+  IIssueFilterOptions,
   TIssueExtraOptions,
   TIssueGroupByOptions,
   TIssueLayouts,
@@ -201,9 +202,14 @@ export const ISSUE_GANTT_DISPLAY_FILTERS = [
 ];
 
 export interface ILayoutDisplayFiltersOptions {
-  filters: string[];
+  filters: (keyof IIssueFilterOptions)[];
   display_properties: boolean;
-  display_filters: string[];
+  display_filters: {
+    group_by: TIssueGroupByOptions[];
+    sub_group_by: TIssueGroupByOptions[];
+    order_by: TIssueOrderByOptions[];
+    type: TIssueTypeFilters[];
+  };
   extra_options: {
     access: boolean;
     values: TIssueExtraOptions[];
@@ -215,65 +221,58 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
 } = {
   my_issues: {
     list: {
-      filters: ["priority", "state_group", "labels", "start_date", "due_date"],
+      filters: ["priority", "state_group", "labels", "start_date", "target_date"],
       display_properties: true,
-      display_filters: ["group_by", "sub_group_by", "order_by", "issue_type"],
+      display_filters: {
+        group_by: ["state_detail.group", "project", "priority", "labels", null],
+        sub_group_by: ["state_detail.group", "project", "priority", "labels", null],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
+        type: [null, "active", "backlog"],
+      },
       extra_options: {
         access: true,
         values: ["show_empty_groups", "sub_issue"],
       },
     },
     kanban: {
-      filters: ["priority", "state_group", "labels", "start_date", "due_date"],
+      filters: ["priority", "state_group", "labels", "start_date", "target_date"],
       display_properties: true,
-      display_filters: ["group_by", "sub_group_by", "order_by", "issue_type"],
+      display_filters: {
+        group_by: ["state_detail.group", "project", "priority", "labels", null],
+        sub_group_by: ["state_detail.group", "project", "priority", "labels", null],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
+        type: [null, "active", "backlog"],
+      },
       extra_options: {
         access: false,
-        values: [],
-      },
-    },
-    calendar: {
-      filters: [],
-      display_properties: true,
-      display_filters: [],
-      extra_options: {
-        access: false,
-        values: [],
-      },
-    },
-    spreadsheet: {
-      filters: [],
-      display_properties: false,
-      display_filters: [],
-      extra_options: {
-        access: false,
-        values: [],
-      },
-    },
-    gantt_chart: {
-      filters: [],
-      display_properties: false,
-      display_filters: [],
-      extra_options: {
-        access: true,
         values: [],
       },
     },
   },
   issues: {
     list: {
-      filters: ["priority", "state", "assignees", "created_by", "labels", "start_date", "due_date"],
+      filters: ["priority", "state", "assignees", "created_by", "labels", "start_date", "target_date"],
       display_properties: true,
-      display_filters: ["group_by", "sub_group_by", "order_by", "issue_type"],
+      display_filters: {
+        group_by: ["state", "priority", "labels", "assignees", "created_by", null],
+        sub_group_by: ["state", "priority", "labels", "assignees", "created_by", null],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
+        type: [null, "active", "backlog"],
+      },
       extra_options: {
         access: true,
         values: ["show_empty_groups", "sub_issue"],
       },
     },
     kanban: {
-      filters: ["priority", "state", "assignees", "created_by", "labels", "start_date", "due_date"],
+      filters: ["priority", "state", "assignees", "created_by", "labels", "start_date", "target_date"],
       display_properties: true,
-      display_filters: ["group_by", "sub_group_by", "order_by", "issue_type"],
+      display_filters: {
+        group_by: ["state", "priority", "labels", "assignees", "created_by", null],
+        sub_group_by: ["state", "priority", "labels", "assignees", "created_by", null],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
+        type: [null, "active", "backlog"],
+      },
       extra_options: {
         access: true,
         values: ["show_empty_groups", "sub_issue"],
@@ -282,25 +281,40 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
     calendar: {
       filters: ["priority", "state", "assignees", "created_by", "labels"],
       display_properties: true,
-      display_filters: ["issue_type"],
+      display_filters: {
+        group_by: [],
+        sub_group_by: [],
+        order_by: [],
+        type: [null, "active", "backlog"],
+      },
       extra_options: {
         access: false,
         values: [],
       },
     },
     spreadsheet: {
-      filters: ["priority", "state", "assignees", "created_by", "labels", "start_date", "due_date"],
+      filters: ["priority", "state", "assignees", "created_by", "labels", "start_date", "target_date"],
       display_properties: true,
-      display_filters: ["issue_type"],
+      display_filters: {
+        group_by: [],
+        sub_group_by: [],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
+        type: [null, "active", "backlog"],
+      },
       extra_options: {
         access: false,
         values: [],
       },
     },
     gantt_chart: {
-      filters: ["priority", "state", "assignees", "created_by", "labels", "start_date", "due_date"],
+      filters: ["priority", "state", "assignees", "created_by", "labels", "start_date", "target_date"],
       display_properties: false,
-      display_filters: ["order_by", "issue_type"],
+      display_filters: {
+        group_by: [],
+        sub_group_by: [],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
+        type: [null, "active", "backlog"],
+      },
       extra_options: {
         access: true,
         values: ["sub_issue"],

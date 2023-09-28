@@ -12,10 +12,11 @@ type Props = {
   selectedGroupBy: TIssueGroupByOptions | undefined;
   selectedSubGroupBy: TIssueGroupByOptions | undefined;
   handleUpdate: (val: TIssueGroupByOptions) => void;
+  subGroupByOptions: TIssueGroupByOptions[];
 };
 
 export const FilterSubGroupBy: React.FC<Props> = observer((props) => {
-  const { selectedGroupBy, selectedSubGroupBy, handleUpdate } = props;
+  const { selectedGroupBy, selectedSubGroupBy, handleUpdate, subGroupByOptions } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
@@ -28,7 +29,7 @@ export const FilterSubGroupBy: React.FC<Props> = observer((props) => {
       />
       {previewEnabled && (
         <div>
-          {ISSUE_GROUP_BY_OPTIONS.map((subGroupBy) => {
+          {ISSUE_GROUP_BY_OPTIONS.filter((option) => subGroupByOptions.includes(option.key)).map((subGroupBy) => {
             if (selectedGroupBy !== null && subGroupBy.key === selectedGroupBy) return null;
 
             return (

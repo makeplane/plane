@@ -92,6 +92,8 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
     return filterDetails.currentLength < filterDetails.totalLength;
   };
 
+  const isFilterEnabled = (filter: keyof IIssueFilterOptions) => layoutDisplayFiltersOptions.filters.includes(filter);
+
   return (
     <div className="w-full h-full flex flex-col overflow-hidden">
       <div className="p-2.5 bg-custom-background-100">
@@ -114,126 +116,142 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
       </div>
       <div className="w-full h-full divide-y divide-custom-border-20 px-2.5 overflow-y-auto">
         {/* priority */}
-        <div className="py-2">
-          <FilterPriority
-            appliedFilters={filters.priority ?? null}
-            handleUpdate={(val) => handleFiltersUpdate("priority", val)}
-            itemsToRender={filtersToRender.priority?.currentLength ?? 0}
-            searchQuery={filtersSearchQuery}
-          />
-          {isViewMoreVisible("priority") && (
-            <button
-              className="text-custom-primary-100 text-xs font-medium ml-7"
-              onClick={() => handleViewMore("priority")}
-            >
-              View more
-            </button>
-          )}
-        </div>
+        {isFilterEnabled("priority") && (
+          <div className="py-2">
+            <FilterPriority
+              appliedFilters={filters.priority ?? null}
+              handleUpdate={(val) => handleFiltersUpdate("priority", val)}
+              itemsToRender={filtersToRender.priority?.currentLength ?? 0}
+              searchQuery={filtersSearchQuery}
+            />
+            {isViewMoreVisible("priority") && (
+              <button
+                className="text-custom-primary-100 text-xs font-medium ml-7"
+                onClick={() => handleViewMore("priority")}
+              >
+                View more
+              </button>
+            )}
+          </div>
+        )}
 
         {/* state group */}
-        <div className="py-2">
-          <FilterStateGroup
-            appliedFilters={filters.state_group ?? null}
-            handleUpdate={(val) => handleFiltersUpdate("state_group", val)}
-            itemsToRender={filtersToRender.state_group?.currentLength ?? 0}
-            searchQuery={filtersSearchQuery}
-          />
-          {isViewMoreVisible("state_group") && (
-            <button
-              className="text-custom-primary-100 text-xs font-medium ml-7"
-              onClick={() => handleViewMore("state_group")}
-            >
-              View more
-            </button>
-          )}
-        </div>
+        {isFilterEnabled("state_group") && (
+          <div className="py-2">
+            <FilterStateGroup
+              appliedFilters={filters.state_group ?? null}
+              handleUpdate={(val) => handleFiltersUpdate("state_group", val)}
+              itemsToRender={filtersToRender.state_group?.currentLength ?? 0}
+              searchQuery={filtersSearchQuery}
+            />
+            {isViewMoreVisible("state_group") && (
+              <button
+                className="text-custom-primary-100 text-xs font-medium ml-7"
+                onClick={() => handleViewMore("state_group")}
+              >
+                View more
+              </button>
+            )}
+          </div>
+        )}
 
         {/* state */}
-        <div className="py-2">
-          <FilterState
-            appliedFilters={filters.state ?? null}
-            handleUpdate={(val) => handleFiltersUpdate("state", val)}
-            itemsToRender={filtersToRender.state?.currentLength ?? 0}
-            searchQuery={filtersSearchQuery}
-            projectId={projectId}
-          />
-          {isViewMoreVisible("state") && (
-            <button
-              className="text-custom-primary-100 text-xs font-medium ml-7"
-              onClick={() => handleViewMore("state")}
-            >
-              View more
-            </button>
-          )}
-        </div>
+        {isFilterEnabled("state") && (
+          <div className="py-2">
+            <FilterState
+              appliedFilters={filters.state ?? null}
+              handleUpdate={(val) => handleFiltersUpdate("state", val)}
+              itemsToRender={filtersToRender.state?.currentLength ?? 0}
+              searchQuery={filtersSearchQuery}
+              projectId={projectId}
+            />
+            {isViewMoreVisible("state") && (
+              <button
+                className="text-custom-primary-100 text-xs font-medium ml-7"
+                onClick={() => handleViewMore("state")}
+              >
+                View more
+              </button>
+            )}
+          </div>
+        )}
 
         {/* assignees */}
-        <div className="py-2">
-          <FilterAssignees
-            appliedFilters={filters.assignees ?? null}
-            handleUpdate={(val) => handleFiltersUpdate("assignees", val)}
-            itemsToRender={filtersToRender.assignees?.currentLength ?? 0}
-            projectId={projectId}
-            searchQuery={filtersSearchQuery}
-          />
-          {isViewMoreVisible("assignees") && (
-            <button
-              className="text-custom-primary-100 text-xs font-medium ml-7"
-              onClick={() => handleViewMore("assignees")}
-            >
-              View more
-            </button>
-          )}
-        </div>
+        {isFilterEnabled("assignees") && (
+          <div className="py-2">
+            <FilterAssignees
+              appliedFilters={filters.assignees ?? null}
+              handleUpdate={(val) => handleFiltersUpdate("assignees", val)}
+              itemsToRender={filtersToRender.assignees?.currentLength ?? 0}
+              projectId={projectId}
+              searchQuery={filtersSearchQuery}
+            />
+            {isViewMoreVisible("assignees") && (
+              <button
+                className="text-custom-primary-100 text-xs font-medium ml-7"
+                onClick={() => handleViewMore("assignees")}
+              >
+                View more
+              </button>
+            )}
+          </div>
+        )}
 
         {/* created_by */}
-        <div className="py-2">
-          <FilterCreatedBy
-            appliedFilters={filters.created_by ?? null}
-            handleUpdate={(val) => handleFiltersUpdate("created_by", val)}
-            itemsToRender={filtersToRender.created_by?.currentLength ?? 0}
-            projectId={projectId}
-            searchQuery={filtersSearchQuery}
-          />
-          {isViewMoreVisible("created_by") && (
-            <button
-              className="text-custom-primary-100 text-xs font-medium ml-7"
-              onClick={() => handleViewMore("created_by")}
-            >
-              View more
-            </button>
-          )}
-        </div>
+        {isFilterEnabled("created_by") && (
+          <div className="py-2">
+            <FilterCreatedBy
+              appliedFilters={filters.created_by ?? null}
+              handleUpdate={(val) => handleFiltersUpdate("created_by", val)}
+              itemsToRender={filtersToRender.created_by?.currentLength ?? 0}
+              projectId={projectId}
+              searchQuery={filtersSearchQuery}
+            />
+            {isViewMoreVisible("created_by") && (
+              <button
+                className="text-custom-primary-100 text-xs font-medium ml-7"
+                onClick={() => handleViewMore("created_by")}
+              >
+                View more
+              </button>
+            )}
+          </div>
+        )}
 
         {/* labels */}
-        <div className="py-2">
-          <FilterLabels
-            appliedFilters={filters.labels ?? null}
-            handleUpdate={(val) => handleFiltersUpdate("labels", val)}
-            itemsToRender={filtersToRender.labels?.currentLength ?? 0}
-            projectId={projectId}
-            searchQuery={filtersSearchQuery}
-          />
-          {isViewMoreVisible("labels") && (
-            <button
-              className="text-custom-primary-100 text-xs font-medium ml-7"
-              onClick={() => handleViewMore("labels")}
-            >
-              View more
-            </button>
-          )}
-        </div>
+        {isFilterEnabled("labels") && (
+          <div className="py-2">
+            <FilterLabels
+              appliedFilters={filters.labels ?? null}
+              handleUpdate={(val) => handleFiltersUpdate("labels", val)}
+              itemsToRender={filtersToRender.labels?.currentLength ?? 0}
+              projectId={projectId}
+              searchQuery={filtersSearchQuery}
+            />
+            {isViewMoreVisible("labels") && (
+              <button
+                className="text-custom-primary-100 text-xs font-medium ml-7"
+                onClick={() => handleViewMore("labels")}
+              >
+                View more
+              </button>
+            )}
+          </div>
+        )}
 
         {/* start_date */}
-        {/* <div>
-          <FilterStartDate />
-        </div> */}
+        {/* {isFilterEnabled("start_date") && (
+          <div className="py-2">
+            <FilterStartDate />
+          </div>
+        )} */}
 
         {/* due_date */}
-        {/* <div>
-          <FilterTargetDate />
-        </div> */}
+        {/* {isFilterEnabled("target_date") && (
+          <div className="py-2">
+            <FilterTargetDate />
+          </div>
+        )} */}
       </div>
     </div>
   );
