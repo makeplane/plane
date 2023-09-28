@@ -44,7 +44,7 @@ export const initialState: IWorkspaceGlobalViewProps = {
   },
   display_filters: {
     order_by: "-created_at",
-    sub_issue: true,
+    sub_issue: false,
     type: null,
     layout: "spreadsheet",
   },
