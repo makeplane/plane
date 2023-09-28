@@ -14,10 +14,11 @@ type Props = {
   itemsToRender: number;
   projectId: string;
   searchQuery: string;
+  viewButtons: React.ReactNode;
 };
 
 export const FilterAssignees: React.FC<Props> = observer((props) => {
-  const { appliedFilters, handleUpdate, itemsToRender, projectId, searchQuery } = props;
+  const { appliedFilters, handleUpdate, itemsToRender, projectId, searchQuery, viewButtons } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
@@ -41,9 +42,8 @@ export const FilterAssignees: React.FC<Props> = observer((props) => {
         <div>
           {filteredOptions ? (
             filteredOptions.length > 0 ? (
-              filteredOptions
-                .slice(0, itemsToRender)
-                .map((member) => (
+              <>
+                {filteredOptions.slice(0, itemsToRender).map((member) => (
                   <FilterOption
                     key={`assignees-${member?.member?.id}`}
                     isChecked={appliedFilters?.includes(member.member?.id) ? true : false}
@@ -51,7 +51,9 @@ export const FilterAssignees: React.FC<Props> = observer((props) => {
                     icon={<Avatar user={member.member} height="18px" width="18px" />}
                     title={member.member?.display_name}
                   />
-                ))
+                ))}
+                {viewButtons}
+              </>
             ) : (
               <p className="text-xs text-custom-text-400 italic">No matches found</p>
             )

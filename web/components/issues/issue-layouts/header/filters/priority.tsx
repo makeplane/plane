@@ -53,10 +53,11 @@ type Props = {
   handleUpdate: (val: string) => void;
   itemsToRender: number;
   searchQuery: string;
+  viewButtons: React.ReactNode;
 };
 
 export const FilterPriority: React.FC<Props> = observer((props) => {
-  const { appliedFilters, handleUpdate, itemsToRender, searchQuery } = props;
+  const { appliedFilters, handleUpdate, itemsToRender, searchQuery, viewButtons } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
@@ -74,9 +75,8 @@ export const FilterPriority: React.FC<Props> = observer((props) => {
       {previewEnabled && (
         <div>
           {filteredOptions.length > 0 ? (
-            filteredOptions
-              .slice(0, itemsToRender)
-              .map((priority) => (
+            <>
+              {filteredOptions.slice(0, itemsToRender).map((priority) => (
                 <FilterOption
                   key={priority.key}
                   isChecked={appliedFilters?.includes(priority.key) ? true : false}
@@ -84,7 +84,9 @@ export const FilterPriority: React.FC<Props> = observer((props) => {
                   icon={<PriorityIcons priority={priority.key} />}
                   title={priority.title}
                 />
-              ))
+              ))}
+              {viewButtons}
+            </>
           ) : (
             <p className="text-xs text-custom-text-400 italic">No matches found</p>
           )}

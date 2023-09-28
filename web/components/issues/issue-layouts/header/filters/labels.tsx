@@ -18,10 +18,11 @@ type Props = {
   itemsToRender: number;
   projectId: string;
   searchQuery: string;
+  viewButtons: React.ReactNode;
 };
 
 export const FilterLabels: React.FC<Props> = observer((props) => {
-  const { appliedFilters, handleUpdate, itemsToRender, projectId, searchQuery } = props;
+  const { appliedFilters, handleUpdate, itemsToRender, projectId, searchQuery, viewButtons } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
@@ -45,9 +46,8 @@ export const FilterLabels: React.FC<Props> = observer((props) => {
         <div>
           {filteredOptions ? (
             filteredOptions.length > 0 ? (
-              filteredOptions
-                .slice(0, itemsToRender)
-                .map((label) => (
+              <>
+                {filteredOptions.slice(0, itemsToRender).map((label) => (
                   <FilterOption
                     key={label?.id}
                     isChecked={appliedFilters?.includes(label?.id) ? true : false}
@@ -55,7 +55,9 @@ export const FilterLabels: React.FC<Props> = observer((props) => {
                     icon={<LabelIcons color={label.color} />}
                     title={label.name}
                   />
-                ))
+                ))}
+                {viewButtons}
+              </>
             ) : (
               <p className="text-xs text-custom-text-400 italic">No matches found</p>
             )
