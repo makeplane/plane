@@ -1,8 +1,6 @@
 import React from "react";
-
-// mobx
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
+
 // components
 import {
   FilterDisplayProperties,
@@ -12,23 +10,26 @@ import {
   FilterOrderBy,
   FilterSubGroupBy,
 } from "components/issue-layouts";
-// helpers
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+// types
+import { IIssueDisplayFilterOptions } from "types";
+import { ILayoutDisplayFiltersOptions } from "constants/issue";
 
-export const DisplayFiltersSelection = observer(() => {
-  const { issueFilter: issueFilterStore } = useMobxStore();
+type Props = {
+  displayFilters: IIssueDisplayFilterOptions;
+  handleDisplayFiltersUpdate: (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => void;
+  layoutDisplayFiltersOptions: ILayoutDisplayFiltersOptions;
+};
+
+export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
+  const { displayFilters, handleDisplayFiltersUpdate, layoutDisplayFiltersOptions } = props;
 
   const isDisplayFilterEnabled = (displayFilter: string) =>
-    ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues.display_filters[
-      issueFilterStore.userDisplayFilters.layout ?? "list"
-    ].includes(displayFilter);
+    layoutDisplayFiltersOptions.display_filters[displayFilters.layout ?? "list"].includes(displayFilter);
 
   return (
     <div className="w-full h-full overflow-hidden overflow-y-auto relative px-2.5 divide-y divide-custom-border-200">
       {/* display properties */}
-      {ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues.display_properties[
-        issueFilterStore.userDisplayFilters.layout ?? "list"
-      ] && (
+      {layoutDisplayFiltersOptions.display_properties[displayFilters.layout ?? "list"] && (
         <div className="py-2">
           <FilterDisplayProperties />
         </div>
@@ -37,36 +38,75 @@ export const DisplayFiltersSelection = observer(() => {
       {/* group by */}
       {isDisplayFilterEnabled("group_by") && (
         <div className="py-2">
-          <FilterGroupBy />
+          <FilterGroupBy
+            selectedGroupBy={displayFilters.group_by}
+            handleUpdate={(val) =>
+              handleDisplayFiltersUpdate({
+                group_by: val,
+              })
+            }
+          />
         </div>
       )}
 
       {/* sub-group by */}
       {isDisplayFilterEnabled("sub_group_by") && (
         <div className="py-2">
-          <FilterSubGroupBy />
+          <FilterSubGroupBy
+            selectedGroupBy={displayFilters.group_by}
+            selectedSubGroupBy={displayFilters.sub_group_by}
+            handleUpdate={(val) =>
+              handleDisplayFiltersUpdate({
+                sub_group_by: val,
+              })
+            }
+          />
         </div>
       )}
 
       {/* order by */}
       {isDisplayFilterEnabled("order_by") && (
         <div className="py-2">
-          <FilterOrderBy />
+          <FilterOrderBy
+            selectedOrderBy={displayFilters.order_by}
+            handleUpdate={(val) =>
+              handleDisplayFiltersUpdate({
+                order_by: val,
+              })
+            }
+          />
         </div>
       )}
 
       {/* issue type */}
       {isDisplayFilterEnabled("issue_type") && (
         <div className="py-2">
-          <FilterIssueType />
+          <FilterIssueType
+            selectedIssueType={displayFilters.type}
+            handleUpdate={(val) =>
+              handleDisplayFiltersUpdate({
+                type: val,
+              })
+            }
+          />
         </div>
       )}
 
       {/* Options */}
-      {ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues.extra_options[issueFilterStore.userDisplayFilters.layout ?? "list"]
-        .access && (
+      {layoutDisplayFiltersOptions.extra_options[displayFilters.layout ?? "list"].access && (
         <div className="py-2">
-          <FilterExtraOptions />
+          <FilterExtraOptions
+            selectedExtraOptions={{
+              show_empty_groups: displayFilters.show_empty_groups ?? false,
+              sub_issue: displayFilters.sub_issue ?? false,
+            }}
+            handleUpdate={(key, val) =>
+              handleDisplayFiltersUpdate({
+                [key]: val,
+              })
+            }
+            enabledExtraOptions={layoutDisplayFiltersOptions.extra_options[displayFilters.layout ?? "list"].values}
+          />
         </div>
       )}
     </div>

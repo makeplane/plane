@@ -30,6 +30,8 @@ export type TIssueOrderByOptions =
 
 export type TIssueTypeFilters = "active" | "backlog" | null;
 
+export type TIssueExtraOptions = "show_empty_groups" | "sub_issue";
+
 export type TIssueParams =
   | "priority"
   | "state_group"

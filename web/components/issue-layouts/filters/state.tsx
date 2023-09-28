@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-
-// mobx
 import { observer } from "mobx-react-lite";
+
+// mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { FilterHeader, FilterOption } from "components/issue-layouts";
@@ -12,37 +12,28 @@ import { StateGroupIcon } from "components/icons";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 
-type Props = { workspaceSlug: string; projectId: string; itemsToRender: number };
+type Props = {
+  appliedFilters: string[] | null;
+  handleUpdate: (val: string) => void;
+  itemsToRender: number;
+  projectId: string;
+  searchQuery: string;
+};
 
 export const FilterState: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, itemsToRender } = props;
+  const { appliedFilters, handleUpdate, itemsToRender, projectId, searchQuery } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
   const store = useMobxStore();
-  const { issueFilter: issueFilterStore, project: projectStore } = store;
+  const { project: projectStore } = store;
 
   const statesByGroups = projectStore.states?.[projectId?.toString() ?? ""];
   const statesList = getStatesList(statesByGroups);
 
-  const handleUpdateState = (value: string) => {
-    const newValues = issueFilterStore.userFilters?.state ?? [];
+  const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-    if (issueFilterStore.userFilters?.state?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-    else newValues.push(value);
-
-    issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-      filters: {
-        state: newValues,
-      },
-    });
-  };
-
-  const appliedFiltersCount = issueFilterStore.userFilters?.state?.length ?? 0;
-
-  const filteredOptions = statesList?.filter((s) =>
-    s.name.toLowerCase().includes(issueFilterStore.filtersSearchQuery.toLowerCase())
-  );
+  const filteredOptions = statesList?.filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
     <>
@@ -59,10 +50,10 @@ export const FilterState: React.FC<Props> = observer((props) => {
                 {filteredOptions.slice(0, itemsToRender).map((state) => (
                   <FilterOption
                     key={state.id}
-                    isChecked={issueFilterStore?.userFilters?.state?.includes(state?.id) ? true : false}
-                    onClick={() => handleUpdateState(state?.id)}
-                    icon={<StateGroupIcon stateGroup={state?.group} color={state?.color} />}
-                    title={state?.name}
+                    isChecked={appliedFilters?.includes(state.id) ? true : false}
+                    onClick={() => handleUpdate(state.id)}
+                    icon={<StateGroupIcon stateGroup={state.group} color={state.color} />}
+                    title={state.name}
                   />
                 ))}
               </>

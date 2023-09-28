@@ -1,10 +1,6 @@
 import React from "react";
-
-import { useRouter } from "next/router";
-
-// mobx
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
+
 // components
 import { FilterHeader, FilterOption } from "components/issue-layouts";
 // types
@@ -12,24 +8,15 @@ import { TIssueTypeFilters } from "types";
 // constants
 import { ISSUE_FILTER_OPTIONS } from "constants/issue";
 
-export const FilterIssueType = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+type Props = {
+  selectedIssueType: TIssueTypeFilters | undefined;
+  handleUpdate: (val: TIssueTypeFilters) => void;
+};
 
-  const store = useMobxStore();
-  const { issueFilter: issueFilterStore } = store;
+export const FilterIssueType: React.FC<Props> = observer((props) => {
+  const { selectedIssueType, handleUpdate } = props;
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
-
-  const handleIssueType = (value: TIssueTypeFilters) => {
-    if (!workspaceSlug || !projectId) return;
-
-    issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-      display_filters: {
-        type: value,
-      },
-    });
-  };
 
   return (
     <>
@@ -43,8 +30,8 @@ export const FilterIssueType = observer(() => {
           {ISSUE_FILTER_OPTIONS.map((issueType) => (
             <FilterOption
               key={issueType?.key}
-              isChecked={issueFilterStore?.userDisplayFilters?.type === issueType?.key ? true : false}
-              onClick={() => handleIssueType(issueType?.key)}
+              isChecked={selectedIssueType === issueType?.key ? true : false}
+              onClick={() => handleUpdate(issueType?.key)}
               title={issueType.title}
               multiple={false}
             />

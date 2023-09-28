@@ -1,24 +1,28 @@
 import React, { useState } from "react";
-
-// mobx
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
 
 // components
 import { FilterHeader, FilterOption } from "components/issue-layouts";
+// types
+import { IIssueDisplayFilterOptions, TIssueExtraOptions } from "types";
 // constants
-import { ISSUE_EXTRA_OPTIONS, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { ISSUE_EXTRA_OPTIONS } from "constants/issue";
 
-export const FilterExtraOptions = observer(() => {
+type Props = {
+  selectedExtraOptions: {
+    sub_issue: boolean;
+    show_empty_groups: boolean;
+  };
+  handleUpdate: (key: keyof IIssueDisplayFilterOptions, val: boolean) => void;
+  enabledExtraOptions: TIssueExtraOptions[];
+};
+
+export const FilterExtraOptions: React.FC<Props> = observer((props) => {
+  const { selectedExtraOptions, handleUpdate, enabledExtraOptions } = props;
+
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
-  const store = useMobxStore();
-  const { issueFilter: issueFilterStore } = store;
-
-  const isExtraOptionEnabled = (option: string) =>
-    ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues.extra_options[
-      issueFilterStore.userDisplayFilters.layout ?? "list"
-    ].values.includes(option);
+  const isExtraOptionEnabled = (option: TIssueExtraOptions) => enabledExtraOptions.includes(option);
 
   return (
     <>
@@ -35,7 +39,8 @@ export const FilterExtraOptions = observer(() => {
             return (
               <FilterOption
                 key={option.key}
-                isChecked={issueFilterStore?.userDisplayFilters?.[option.key] ? true : false}
+                isChecked={selectedExtraOptions?.[option.key] ? true : false}
+                onClick={() => handleUpdate(option.key, !selectedExtraOptions?.[option.key])}
                 title={option.title}
               />
             );

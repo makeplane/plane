@@ -2,8 +2,8 @@
 import { Calendar, GanttChart, Kanban, List, Sheet } from "lucide-react";
 // types
 import {
-  IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
+  TIssueExtraOptions,
   TIssueGroupByOptions,
   TIssueLayouts,
   TIssueOrderByOptions,
@@ -107,12 +107,11 @@ export const ISSUE_DISPLAY_PROPERTIES: {
 ];
 
 export const ISSUE_EXTRA_OPTIONS: {
-  key: keyof IIssueDisplayFilterOptions;
+  key: TIssueExtraOptions;
   title: string;
 }[] = [
   { key: "sub_issue", title: "Show sub-issues" }, // in spreadsheet its always false
   { key: "show_empty_groups", title: "Show empty states" }, // filter on front-end
-  { key: "start_target_date", title: "Start target Date" }, // gantt always be true
 ];
 
 export const ISSUE_LAYOUTS: {
@@ -201,25 +200,27 @@ export const ISSUE_GANTT_DISPLAY_FILTERS = [
   { key: "sub_issue", title: "Sub Issue" },
 ];
 
-export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
-  [key: string]: {
-    layout: TIssueLayouts[];
-    filters: {
-      [key in TIssueLayouts]: string[];
-    };
-    display_properties: {
-      [key in TIssueLayouts]: boolean;
-    };
-    display_filters: {
-      [key in TIssueLayouts]: string[];
-    };
-    extra_options: {
-      [key in TIssueLayouts]: {
-        access: boolean;
-        values: string[];
-      };
+export interface ILayoutDisplayFiltersOptions {
+  layout: TIssueLayouts[];
+  filters: {
+    [key in TIssueLayouts]: string[];
+  };
+  display_properties: {
+    [key in TIssueLayouts]: boolean;
+  };
+  display_filters: {
+    [key in TIssueLayouts]: string[];
+  };
+  extra_options: {
+    [key in TIssueLayouts]: {
+      access: boolean;
+      values: TIssueExtraOptions[];
     };
   };
+}
+
+export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
+  [layoutType: string]: ILayoutDisplayFiltersOptions;
 } = {
   my_issues: {
     layout: ["list", "kanban"],

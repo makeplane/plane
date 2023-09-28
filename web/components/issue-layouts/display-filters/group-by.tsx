@@ -1,10 +1,6 @@
-import React from "react";
-
-import { useRouter } from "next/router";
-
-// mobx
+import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
+
 // components
 import { FilterHeader, FilterOption } from "components/issue-layouts";
 // types
@@ -12,24 +8,15 @@ import { TIssueGroupByOptions } from "types";
 // constants
 import { ISSUE_GROUP_BY_OPTIONS } from "constants/issue";
 
-export const FilterGroupBy = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+type Props = {
+  selectedGroupBy: TIssueGroupByOptions | undefined;
+  handleUpdate: (val: TIssueGroupByOptions) => void;
+};
 
-  const store = useMobxStore();
-  const { issueFilter: issueFilterStore } = store;
+export const FilterGroupBy: React.FC<Props> = observer((props) => {
+  const { selectedGroupBy, handleUpdate } = props;
 
-  const [previewEnabled, setPreviewEnabled] = React.useState(true);
-
-  const handleGroupBy = (value: TIssueGroupByOptions) => {
-    if (!workspaceSlug || !projectId) return;
-
-    issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-      display_filters: {
-        group_by: value,
-      },
-    });
-  };
+  const [previewEnabled, setPreviewEnabled] = useState(true);
 
   return (
     <>
@@ -43,8 +30,8 @@ export const FilterGroupBy = observer(() => {
           {ISSUE_GROUP_BY_OPTIONS.map((groupBy) => (
             <FilterOption
               key={groupBy?.key}
-              isChecked={issueFilterStore?.userDisplayFilters?.group_by === groupBy?.key ? true : false}
-              onClick={() => handleGroupBy(groupBy.key)}
+              isChecked={selectedGroupBy === groupBy?.key ? true : false}
+              onClick={() => handleUpdate(groupBy.key)}
               title={groupBy.title}
               multiple={false}
             />

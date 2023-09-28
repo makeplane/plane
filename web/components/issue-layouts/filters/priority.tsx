@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-
-// mobx
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
+
 // components
 import { FilterHeader, FilterOption } from "components/issue-layouts";
 // icons
@@ -50,34 +48,21 @@ const PriorityIcons = ({
   );
 };
 
-type Props = { workspaceSlug: string; projectId: string; itemsToRender: number };
+type Props = {
+  appliedFilters: string[] | null;
+  handleUpdate: (val: string) => void;
+  itemsToRender: number;
+  searchQuery: string;
+};
 
 export const FilterPriority: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, itemsToRender } = props;
+  const { appliedFilters, handleUpdate, itemsToRender, searchQuery } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
-  const store = useMobxStore();
-  const { issueFilter: issueFilterStore } = store;
+  const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const handleUpdatePriority = (value: string) => {
-    const newValues = issueFilterStore.userFilters?.priority ?? [];
-
-    if (issueFilterStore.userFilters?.priority?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-    else newValues.push(value);
-
-    issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-      filters: {
-        priority: newValues,
-      },
-    });
-  };
-
-  const appliedFiltersCount = issueFilterStore.userFilters?.priority?.length ?? 0;
-
-  const filteredOptions = ISSUE_PRIORITIES.filter((p) =>
-    p.key.includes(issueFilterStore.filtersSearchQuery.toLowerCase())
-  );
+  const filteredOptions = ISSUE_PRIORITIES.filter((p) => p.key.includes(searchQuery.toLowerCase()));
 
   return (
     <>
@@ -94,8 +79,8 @@ export const FilterPriority: React.FC<Props> = observer((props) => {
               .map((priority) => (
                 <FilterOption
                   key={priority.key}
-                  isChecked={issueFilterStore.userFilters?.priority?.includes(priority.key) ? true : false}
-                  onClick={() => handleUpdatePriority(priority.key)}
+                  isChecked={appliedFilters?.includes(priority.key) ? true : false}
+                  onClick={() => handleUpdate(priority.key)}
                   icon={<PriorityIcons priority={priority.key} />}
                   title={priority.title}
                 />

@@ -19,17 +19,21 @@ import { getStatesList } from "helpers/state.helper";
 // types
 import { IIssueFilterOptions } from "types";
 // constants
-import { ISSUE_PRIORITIES, ISSUE_STATE_GROUPS } from "constants/issue";
+import { ILayoutDisplayFiltersOptions, ISSUE_PRIORITIES, ISSUE_STATE_GROUPS } from "constants/issue";
 
 type Props = {
-  workspaceSlug: string;
+  filters: IIssueFilterOptions;
+  handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string) => void;
+  layoutDisplayFiltersOptions: ILayoutDisplayFiltersOptions;
   projectId: string;
 };
 
 export const FilterSelection: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId } = props;
+  const { filters, handleFiltersUpdate, layoutDisplayFiltersOptions, projectId } = props;
 
-  const { issueFilter: issueFilterStore, project: projectStore } = useMobxStore();
+  const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
+
+  const { project: projectStore } = useMobxStore();
 
   const statesList = getStatesList(projectStore.states?.[projectId?.toString() ?? ""]);
 
@@ -97,16 +101,12 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
             type="text"
             className="bg-custom-background-90 placeholder:text-custom-text-400 w-full outline-none"
             placeholder="Search"
-            value={issueFilterStore.filtersSearchQuery}
-            onChange={(e) => issueFilterStore.updateFiltersSearchQuery(e.target.value)}
+            value={filtersSearchQuery}
+            onChange={(e) => setFiltersSearchQuery(e.target.value)}
             autoFocus
           />
-          {issueFilterStore.filtersSearchQuery !== "" && (
-            <button
-              type="button"
-              className="grid place-items-center"
-              onClick={() => issueFilterStore.updateFiltersSearchQuery("")}
-            >
+          {filtersSearchQuery !== "" && (
+            <button type="button" className="grid place-items-center" onClick={() => setFiltersSearchQuery("")}>
               <X className="text-custom-text-300" size={12} strokeWidth={2} />
             </button>
           )}
@@ -116,9 +116,10 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
         {/* priority */}
         <div className="py-2">
           <FilterPriority
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
+            appliedFilters={filters.priority ?? null}
+            handleUpdate={(val) => handleFiltersUpdate("priority", val)}
             itemsToRender={filtersToRender.priority?.currentLength ?? 0}
+            searchQuery={filtersSearchQuery}
           />
           {isViewMoreVisible("priority") && (
             <button
@@ -133,9 +134,10 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
         {/* state group */}
         <div className="py-2">
           <FilterStateGroup
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
+            appliedFilters={filters.state_group ?? null}
+            handleUpdate={(val) => handleFiltersUpdate("state_group", val)}
             itemsToRender={filtersToRender.state_group?.currentLength ?? 0}
+            searchQuery={filtersSearchQuery}
           />
           {isViewMoreVisible("state_group") && (
             <button
@@ -150,9 +152,11 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
         {/* state */}
         <div className="py-2">
           <FilterState
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
+            appliedFilters={filters.state ?? null}
+            handleUpdate={(val) => handleFiltersUpdate("state", val)}
             itemsToRender={filtersToRender.state?.currentLength ?? 0}
+            searchQuery={filtersSearchQuery}
+            projectId={projectId}
           />
           {isViewMoreVisible("state") && (
             <button
@@ -167,9 +171,11 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
         {/* assignees */}
         <div className="py-2">
           <FilterAssignees
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
+            appliedFilters={filters.assignees ?? null}
+            handleUpdate={(val) => handleFiltersUpdate("assignees", val)}
             itemsToRender={filtersToRender.assignees?.currentLength ?? 0}
+            projectId={projectId}
+            searchQuery={filtersSearchQuery}
           />
           {isViewMoreVisible("assignees") && (
             <button
@@ -184,9 +190,11 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
         {/* created_by */}
         <div className="py-2">
           <FilterCreatedBy
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
+            appliedFilters={filters.created_by ?? null}
+            handleUpdate={(val) => handleFiltersUpdate("created_by", val)}
             itemsToRender={filtersToRender.created_by?.currentLength ?? 0}
+            projectId={projectId}
+            searchQuery={filtersSearchQuery}
           />
           {isViewMoreVisible("created_by") && (
             <button
@@ -201,9 +209,11 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
         {/* labels */}
         <div className="py-2">
           <FilterLabels
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
+            appliedFilters={filters.labels ?? null}
+            handleUpdate={(val) => handleFiltersUpdate("labels", val)}
             itemsToRender={filtersToRender.labels?.currentLength ?? 0}
+            projectId={projectId}
+            searchQuery={filtersSearchQuery}
           />
           {isViewMoreVisible("labels") && (
             <button
