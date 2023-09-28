@@ -1389,7 +1389,7 @@ def issue_activity(
             ):
                 issue_subscribers = issue_subscribers + [issue.created_by_id]
 
-            for subscriber in issue_subscribers:
+            for subscriber in  list(set(issue_subscribers)):
                 for issue_activity in issue_activities_created:
                     bulk_notifications.append(
                         Notification(
