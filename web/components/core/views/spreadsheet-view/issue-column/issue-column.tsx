@@ -82,10 +82,10 @@ export const IssueColumn: React.FC<Props> = ({
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
-    <div className="group flex items-center w-[28rem] text-sm h-11 sticky top-0 bg-custom-background-100 truncate border-b border-r border-custom-border-100">
+    <div className="group flex items-center w-[28rem] text-sm h-11 sticky top-0 bg-custom-background-100 truncate border-b border-r border-custom-border-200">
       <div
-        className="flex gap-1.5 px-4 pr-0 py-2.5 items-center"
-        style={issue.parent ? { paddingLeft } : {}}
+        className="flex gap-1.5 px-4 pr-0 py-2.5 items-center w-24"
+        style={issue.parent && nestingLevel !== 0 ? { paddingLeft } : {}}
       >
         <div className="relative flex items-center cursor-pointer text-xs text-center hover:text-custom-text-100">
           {properties.key && (

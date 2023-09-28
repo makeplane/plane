@@ -14,6 +14,7 @@ const paramsToKey = (params: any) => {
     sub_issue,
     start_target_date,
     project,
+    layout,
     subscriber,
   } = params;
 
@@ -31,6 +32,7 @@ const paramsToKey = (params: any) => {
   const type = params.type ? params.type.toUpperCase() : "NULL";
   const groupBy = params.group_by ? params.group_by.toUpperCase() : "NULL";
   const orderBy = params.order_by ? params.order_by.toUpperCase() : "NULL";
+  const layoutKey = layout ? layout.toUpperCase() : "";
 
   // sorting each keys in ascending order
   projectKey = projectKey.sort().join("_");
@@ -42,7 +44,7 @@ const paramsToKey = (params: any) => {
   labelsKey = labelsKey.sort().join("_");
   subscriberKey = subscriberKey.sort().join("_");
 
-  return `${projectKey}_${stateGroupKey}_${stateKey}_${priorityKey}_${assigneesKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${startDateKey}_${targetDateKey}_${sub_issue}_${startTargetDate}_${subscriberKey}`;
+  return `${layoutKey}_${projectKey}_${stateGroupKey}_${stateKey}_${priorityKey}_${assigneesKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${startDateKey}_${targetDateKey}_${sub_issue}_${startTargetDate}_${subscriberKey}`;
 };
 
 const inboxParamsToKey = (params: any) => {
@@ -162,12 +164,11 @@ export const WORKSPACE_VIEWS_LIST = (workspaceSlug: string) =>
   `WORKSPACE_VIEWS_LIST_${workspaceSlug.toUpperCase()}`;
 export const WORKSPACE_VIEW_DETAILS = (workspaceViewId: string) =>
   `WORKSPACE_VIEW_DETAILS_${workspaceViewId.toUpperCase()}`;
-export const WORKSPACE_VIEW_ISSUES = (workspaceViewId: string, params?: any) => {
+export const WORKSPACE_VIEW_ISSUES = (workspaceViewId: string, params: any) => {
   if (!params) return `WORKSPACE_VIEW_ISSUES_${workspaceViewId.toUpperCase()}`;
-
-  const paramsKey = paramsToKey(params);
-
-  return `WORKSPACE_VIEW_ISSUES_${workspaceViewId.toUpperCase()}_${paramsKey.toUpperCase()}`;
+  return `WORKSPACE_VIEW_ISSUES_${workspaceViewId.toUpperCase()}_${paramsToKey(
+    params
+  ).toUpperCase()}`;
 };
 
 export const PROJECT_ISSUES_DETAILS = (issueId: string) =>

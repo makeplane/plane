@@ -8,13 +8,13 @@ import useSWR from "swr";
 
 // services
 import workspaceService from "services/workspace.service";
-// hooks
-import useUser from "hooks/use-user";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
-import { CreateUpdateViewModal, DeleteViewModal, SingleViewItem } from "components/views";
+import { SingleViewItem } from "components/views";
 import { WorkspaceIssuesViewOptions } from "components/issues/workspace-views/workspace-issue-view-option";
+import { CreateUpdateWorkspaceViewModal } from "components/workspace/views/modal";
+import { DeleteWorkspaceViewModal } from "components/workspace/views/delete-workspace-view-modal";
 // ui
 import { EmptyState, Input, Loader, PrimaryButton } from "components/ui";
 // icons
@@ -25,7 +25,7 @@ import { PhotoFilterOutlined } from "@mui/icons-material";
 import emptyView from "public/empty-state/view.svg";
 // types
 import type { NextPage } from "next";
-import { IView } from "types";
+import { IWorkspaceView } from "types/workspace-views";
 // constants
 import { WORKSPACE_VIEWS_LIST } from "constants/fetch-keys";
 // helper
@@ -35,15 +35,13 @@ const WorkspaceViews: NextPage = () => {
   const [query, setQuery] = useState("");
 
   const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);
-  const [selectedViewToUpdate, setSelectedViewToUpdate] = useState<IView | null>(null);
+  const [selectedViewToUpdate, setSelectedViewToUpdate] = useState<IWorkspaceView | null>(null);
 
   const [deleteViewModal, setDeleteViewModal] = useState(false);
-  const [selectedViewToDelete, setSelectedViewToDelete] = useState<IView | null>(null);
+  const [selectedViewToDelete, setSelectedViewToDelete] = useState<IWorkspaceView | null>(null);
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { user } = useUser();
 
   const { data: workspaceViews } = useSWR(
     workspaceSlug ? WORKSPACE_VIEWS_LIST(workspaceSlug as string) : null,
@@ -85,12 +83,12 @@ const WorkspaceViews: NextPage = () => {
       ? workspaceViews
       : workspaceViews?.filter((option) => option.name.toLowerCase().includes(query.toLowerCase()));
 
-  const handleEditView = (view: IView) => {
+  const handleEditView = (view: IWorkspaceView) => {
     setSelectedViewToUpdate(view);
     setCreateUpdateViewModal(true);
   };
 
-  const handleDeleteView = (view: IView) => {
+  const handleDeleteView = (view: IWorkspaceView) => {
     setSelectedViewToDelete(view);
     setDeleteViewModal(true);
   };
@@ -116,22 +114,18 @@ const WorkspaceViews: NextPage = () => {
         </div>
       }
     >
-      <CreateUpdateViewModal
+      <CreateUpdateWorkspaceViewModal
         isOpen={createUpdateViewModal}
         handleClose={() => {
           setCreateUpdateViewModal(false);
           setSelectedViewToUpdate(null);
         }}
         data={selectedViewToUpdate}
-        viewType="workspace"
-        user={user}
       />
-      <DeleteViewModal
+      <DeleteWorkspaceViewModal
         isOpen={deleteViewModal}
         data={selectedViewToDelete}
         setIsOpen={setDeleteViewModal}
-        viewType="workspace"
-        user={user}
       />
       <div className="flex flex-col">
         <div className="h-full w-full flex flex-col overflow-hidden">

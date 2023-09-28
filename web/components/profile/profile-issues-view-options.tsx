@@ -10,7 +10,7 @@ import useEstimateOption from "hooks/use-estimate-option";
 // components
 import { MyIssuesSelectFilters } from "components/issues";
 // ui
-import { CustomMenu, CustomSearchSelect, ToggleSwitch, Tooltip } from "components/ui";
+import { CustomMenu, ToggleSwitch, Tooltip } from "components/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { FormatListBulletedOutlined, GridViewOutlined } from "@mui/icons-material";
@@ -21,7 +21,6 @@ import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 import { Properties, TIssueViewOptions } from "types";
 // constants
 import { GROUP_BY_OPTIONS, ORDER_BY_OPTIONS, FILTER_ISSUE_OPTIONS } from "constants/issue";
-import useProjects from "hooks/use-projects";
 
 const issueViewOptions: { type: TIssueViewOptions; Icon: any }[] = [
   {
@@ -37,9 +36,6 @@ const issueViewOptions: { type: TIssueViewOptions; Icon: any }[] = [
 export const ProfileIssuesViewOptions: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
-
-  const { projects } = useProjects();
-
   const {
     displayFilters,
     setDisplayFilters,
@@ -51,28 +47,12 @@ export const ProfileIssuesViewOptions: React.FC = () => {
 
   const { isEstimateActive } = useEstimateOption();
 
-  const options = projects?.map((project) => ({
-    value: project.id,
-    query: project.name + " " + project.identifier,
-    content: project.name,
-  }));
-
   if (
     !router.pathname.includes("assigned") &&
     !router.pathname.includes("created") &&
     !router.pathname.includes("subscribed")
   )
     return null;
-  // return (
-  //   <CustomSearchSelect
-  //     value={projects ?? null}
-  //     onChange={(val: string[] | null) => console.log(val)}
-  //     label="Filters"
-  //     options={options}
-  //     position="right"
-  //     multiple
-  //   />
-  // );
 
   return (
     <div className="flex items-center gap-2">
@@ -287,38 +267,39 @@ export const ProfileIssuesViewOptions: React.FC = () => {
                   <div className="space-y-2 py-3">
                     <h4 className="text-sm text-custom-text-200">Display Properties</h4>
                     <div className="flex flex-wrap items-center gap-2 text-custom-text-200">
-                      {Object.keys(displayProperties).map((key) => {
-                        if (key === "estimate" && !isEstimateActive) return null;
+                      {displayProperties &&
+                        Object.keys(displayProperties).map((key) => {
+                          if (key === "estimate" && !isEstimateActive) return null;
 
-                        if (
-                          displayFilters?.layout === "spreadsheet" &&
-                          (key === "attachment_count" ||
-                            key === "link" ||
-                            key === "sub_issue_count")
-                        )
-                          return null;
+                          if (
+                            displayFilters?.layout === "spreadsheet" &&
+                            (key === "attachment_count" ||
+                              key === "link" ||
+                              key === "sub_issue_count")
+                          )
+                            return null;
 
-                        if (
-                          displayFilters?.layout !== "spreadsheet" &&
-                          (key === "created_on" || key === "updated_on")
-                        )
-                          return null;
+                          if (
+                            displayFilters?.layout !== "spreadsheet" &&
+                            (key === "created_on" || key === "updated_on")
+                          )
+                            return null;
 
-                        return (
-                          <button
-                            key={key}
-                            type="button"
-                            className={`rounded border px-2 py-1 text-xs capitalize ${
-                              displayProperties[key as keyof Properties]
-                                ? "border-custom-primary bg-custom-primary text-white"
-                                : "border-custom-border-200"
-                            }`}
-                            onClick={() => setProperties(key as keyof Properties)}
-                          >
-                            {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
-                          </button>
-                        );
-                      })}
+                          return (
+                            <button
+                              key={key}
+                              type="button"
+                              className={`rounded border px-2 py-1 text-xs capitalize ${
+                                displayProperties[key as keyof Properties]
+                                  ? "border-custom-primary bg-custom-primary text-white"
+                                  : "border-custom-border-200"
+                              }`}
+                              onClick={() => setProperties(key as keyof Properties)}
+                            >
+                              {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
+                            </button>
+                          );
+                        })}
                     </div>
                   </div>
                 </div>

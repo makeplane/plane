@@ -483,7 +483,6 @@ export const IssuesView: React.FC<Props> = ({
       <CreateUpdateViewModal
         isOpen={createViewModal !== null}
         handleClose={() => setCreateViewModal(null)}
-        viewType="project"
         preLoadedData={createViewModal}
         user={user}
       />

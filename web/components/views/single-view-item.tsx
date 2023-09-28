@@ -12,6 +12,7 @@ import { CustomMenu } from "components/ui";
 import viewsService from "services/views.service";
 // types
 import { IView } from "types";
+import { IWorkspaceView } from "types/workspace-views";
 // fetch keys
 import { VIEWS_LIST } from "constants/fetch-keys";
 // hooks
@@ -20,7 +21,7 @@ import useToast from "hooks/use-toast";
 import { truncateText } from "helpers/string.helper";
 
 type Props = {
-  view: IView;
+  view: IView | IWorkspaceView;
   viewType: "project" | "workspace";
   handleEditView: () => void;
   handleDeleteView: () => void;

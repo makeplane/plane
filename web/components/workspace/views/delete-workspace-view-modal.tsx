@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import viewsService from "services/views.service";
+import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -15,22 +15,21 @@ import { DangerButton, SecondaryButton } from "components/ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
-import type { ICurrentUserResponse, IView } from "types";
+import { IWorkspaceView } from "types/workspace-views";
 // fetch-keys
-import { VIEWS_LIST } from "constants/fetch-keys";
+import { WORKSPACE_VIEWS_LIST } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  data: IView | null;
-  user: ICurrentUserResponse | undefined;
+  data: IWorkspaceView | null;
 };
 
-export const DeleteViewModal: React.FC<Props> = ({ isOpen, data, setIsOpen, user }) => {
+export const DeleteWorkspaceViewModal: React.FC<Props> = ({ isOpen, data, setIsOpen }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -41,12 +40,13 @@ export const DeleteViewModal: React.FC<Props> = ({ isOpen, data, setIsOpen, user
 
   const handleDeletion = async () => {
     setIsDeleteLoading(true);
-    if (!workspaceSlug || !data || !projectId) return;
 
-    await viewsService
-      .deleteView(workspaceSlug as string, projectId as string, data.id, user)
+    if (!workspaceSlug || !data) return;
+
+    await workspaceService
+      .deleteView(workspaceSlug as string, data.id)
       .then(() => {
-        mutate<IView[]>(VIEWS_LIST(projectId as string), (views) =>
+        mutate<IWorkspaceView[]>(WORKSPACE_VIEWS_LIST(workspaceSlug as string), (views) =>
           views?.filter((view) => view.id !== data.id)
         );
 
