@@ -16,11 +16,9 @@ import {
   PhotoFilterOutlined,
   SettingsOutlined,
 } from "@mui/icons-material";
+import { PenSquare } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
-// ui
-import { CustomMenu, Icon, Tooltip } from "components/ui";
-import { PenSquare } from "lucide-react";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
 // types
@@ -29,7 +27,9 @@ import { IProject } from "types";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 // components
+import { CustomMenu, Icon, Tooltip } from "components/ui";
 import { LeaveProjectModal, DeleteProjectModal } from "components/project";
+import { PublishProjectModal } from "components/project/publish-project";
 
 type Props = {
   project: IProject;
@@ -132,6 +132,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
 
   return (
     <>
+      <PublishProjectModal />
       <DeleteProjectModal project={project} isOpen={deleteProjectModalOpen} onClose={handleDeleteProjectModalClose} />
       <LeaveProjectModal project={project} isOpen={leaveProjectModalOpen} onClose={handleLeaveProjectModalClose} />
       <Disclosure key={project.id} defaultOpen={projectId === project.id}>
