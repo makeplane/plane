@@ -1,11 +1,11 @@
-import React from "react";
+// mobx
+import { observer } from "mobx-react-lite";
 // components
 import { HeaderGroupByCard } from "./group-by-card";
 import { HeaderSubGroupByCard } from "./sub-group-by-card";
+import { StateGroupIcon } from "components/icons";
 // constants
 import { issueStateGroupByKey } from "constants/issue";
-// mobx
-import { observer } from "mobx-react-lite";
 
 export interface IStateGroupHeader {
   column_id: string;
@@ -15,22 +15,34 @@ export interface IStateGroupHeader {
   issues_count: number;
 }
 
-export const StateIcon = () => {};
+export const Icon = ({ stateGroup, color }: { stateGroup: any; color?: any }) => (
+  <div className="w-[14px] h-[14px] rounded-full">
+    <StateGroupIcon stateGroup={stateGroup} color={color || null} width="14" height="14" />
+  </div>
+);
 
 export const StateGroupHeader: React.FC<IStateGroupHeader> = observer(
   ({ column_id, sub_group_by, group_by, header_type, issues_count }) => {
     const stateGroup = column_id && issueStateGroupByKey(column_id);
 
+    console.log("stateGroup", stateGroup);
+
     return (
       <>
         {stateGroup &&
           (sub_group_by && header_type === "sub_group_by" ? (
-            <HeaderSubGroupByCard title={stateGroup?.key || ""} column_id={column_id} count={issues_count} />
+            <HeaderSubGroupByCard
+              column_id={column_id}
+              icon={<Icon stateGroup={stateGroup?.key} />}
+              title={stateGroup?.key || ""}
+              count={issues_count}
+            />
           ) : (
             <HeaderGroupByCard
               sub_group_by={sub_group_by}
               group_by={group_by}
               column_id={column_id}
+              icon={<Icon stateGroup={stateGroup?.key} />}
               title={stateGroup?.key || ""}
               count={issues_count}
             />

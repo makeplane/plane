@@ -28,7 +28,7 @@ export const HeaderGroupByCard = observer(
           verticalAlignPosition ? `flex-col items-center w-[44px]` : `flex-row items-center w-full`
         }`}
       >
-        <div className="flex-shrink-0 w-[22px] h-[22px] rounded-sm overflow-hidden flex justify-center items-center">
+        <div className="flex-shrink-0 w-[20px] h-[20px] rounded-sm overflow-hidden flex justify-center items-center">
           {icon ? icon : <Circle width={14} strokeWidth={2} />}
         </div>
 
@@ -45,7 +45,7 @@ export const HeaderGroupByCard = observer(
 
         {sub_group_by === null && (
           <div
-            className="flex-shrink-0 w-[22px] h-[22px] rounded-sm overflow-hidden flex justify-center items-center hover:bg-custom-background-80 cursor-pointer transition-all"
+            className="flex-shrink-0 w-[20px] h-[20px] rounded-sm overflow-hidden flex justify-center items-center hover:bg-custom-background-80 cursor-pointer transition-all"
             onClick={() => issueKanBanViewStore?.handleKanBanToggle("groupByHeaderMinMax", column_id)}
           >
             {verticalAlignPosition ? (
@@ -56,7 +56,7 @@ export const HeaderGroupByCard = observer(
           </div>
         )}
 
-        {/* <div className="flex-shrink-0 w-[22px] h-[22px] rounded-sm overflow-hidden flex justify-center items-center hover:bg-custom-background-80 cursor-pointer transition-all">
+        {/* <div className="flex-shrink-0 w-[20px] h-[20px] rounded-sm overflow-hidden flex justify-center items-center hover:bg-custom-background-80 cursor-pointer transition-all">
           <Plus width={14} strokeWidth={2} />
         </div> */}
       </div>

@@ -48,7 +48,7 @@ export const IssueBlock = ({ sub_group_id, columnId, issues, isDragDisabled }: I
     ) : (
       !isDragDisabled && (
         <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
-          <div className="text-custom-text-300 text-sm">Drop here</div>
+          {/* <div className="text-custom-text-300 text-sm">Drop here</div> */}
         </div>
       )
     )}

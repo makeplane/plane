@@ -1,8 +1,9 @@
+// mobx
+import { observer } from "mobx-react-lite";
 // components
 import { HeaderGroupByCard } from "./group-by-card";
 import { HeaderSubGroupByCard } from "./sub-group-by-card";
-// mobx
-import { observer } from "mobx-react-lite";
+import { Icon } from "./state-group";
 // store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
@@ -25,12 +26,18 @@ export const StateHeader: React.FC<IStateHeader> = observer(
       <>
         {state &&
           (sub_group_by && header_type === "sub_group_by" ? (
-            <HeaderSubGroupByCard title={state?.name || ""} column_id={column_id} count={issues_count} />
+            <HeaderSubGroupByCard
+              column_id={column_id}
+              icon={<Icon stateGroup={state?.group} color={state?.color} />}
+              title={state?.name || ""}
+              count={issues_count}
+            />
           ) : (
             <HeaderGroupByCard
               sub_group_by={sub_group_by}
               group_by={group_by}
               column_id={column_id}
+              icon={<Icon stateGroup={state?.group} color={state?.color} />}
               title={state?.name || ""}
               count={issues_count}
             />

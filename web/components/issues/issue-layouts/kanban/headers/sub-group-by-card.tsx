@@ -20,7 +20,7 @@ export const HeaderSubGroupByCard = observer(({ icon, title, count, column_id }:
   return (
     <div className={`flex-shrink-0 relative flex gap-2 rounded-sm flex-row items-center w-full p-1.5`}>
       <div
-        className="flex-shrink-0 w-[22px] h-[22px] rounded-sm overflow-hidden flex justify-center items-center hover:bg-custom-background-80 cursor-pointer transition-all"
+        className="flex-shrink-0 w-[20px] h-[20px] rounded-sm overflow-hidden flex justify-center items-center hover:bg-custom-background-80 cursor-pointer transition-all"
         onClick={() => issueKanBanViewStore?.handleKanBanToggle("subgroupByIssuesVisibility", column_id)}
       >
         {issueKanBanViewStore.kanBanToggle?.subgroupByIssuesVisibility.includes(column_id) ? (
@@ -30,7 +30,7 @@ export const HeaderSubGroupByCard = observer(({ icon, title, count, column_id }:
         )}
       </div>
 
-      <div className="flex-shrink-0 w-[14px] h-[14px] rounded-sm overflow-hidden flex justify-center items-center hover:bg-custom-background-80 cursor-pointer transition-all">
+      <div className="flex-shrink-0 w-[20px] h-[20px] rounded-sm overflow-hidden flex justify-center items-center">
         {icon ? icon : <Circle width={14} strokeWidth={2} />}
       </div>
 

@@ -68,7 +68,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer(
                         ) : (
                           isDragDisabled && (
                             <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
-                              <div className="text-custom-text-300 text-sm">Drop here</div>
+                              {/* <div className="text-custom-text-300 text-sm">Drop here</div> */}
                             </div>
                           )
                         )}
