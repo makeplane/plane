@@ -277,33 +277,35 @@ export const IssuesFilterView: React.FC = () => {
                           </div>
                         </div>
                       )}
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-custom-text-200">Issue type</h4>
-                      <div className="w-28">
-                        <CustomMenu
-                          label={
-                            FILTER_ISSUE_OPTIONS.find(
-                              (option) => option.key === displayFilters.type
-                            )?.name ?? "Select"
-                          }
-                          className="!w-full"
-                          buttonClassName="w-full"
-                        >
-                          {FILTER_ISSUE_OPTIONS.map((option) => (
-                            <CustomMenu.MenuItem
-                              key={option.key}
-                              onClick={() =>
-                                setDisplayFilters({
-                                  type: option.key,
-                                })
-                              }
-                            >
-                              {option.name}
-                            </CustomMenu.MenuItem>
-                          ))}
-                        </CustomMenu>
+                    {!isArchivedIssues && (
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-custom-text-200">Issue type</h4>
+                        <div className="w-28">
+                          <CustomMenu
+                            label={
+                              FILTER_ISSUE_OPTIONS.find(
+                                (option) => option.key === displayFilters.type
+                              )?.name ?? "Select"
+                            }
+                            className="!w-full"
+                            buttonClassName="w-full"
+                          >
+                            {FILTER_ISSUE_OPTIONS.map((option) => (
+                              <CustomMenu.MenuItem
+                                key={option.key}
+                                onClick={() =>
+                                  setDisplayFilters({
+                                    type: option.key,
+                                  })
+                                }
+                              >
+                                {option.name}
+                              </CustomMenu.MenuItem>
+                            ))}
+                          </CustomMenu>
+                        </div>
                       </div>
-                    </div>
+                    )}
 
                     {displayFilters.layout !== "calendar" &&
                       displayFilters.layout !== "spreadsheet" && (
