@@ -48,7 +48,7 @@ const InlineInput = () => {
 export const GanttInlineCreateIssueForm: React.FC<Props> = (props) => (
   <>
     <InlineCreateIssueFormWrapper
-      className="flex py-3 px-4 mr-2.5 items-center rounded gap-x-2 border bg-custom-background-100 shadow-custom-shadow-sm"
+      className="flex py-3 px-4 border-[0.5px] border-custom-border-100 mr-2.5 items-center rounded gap-x-2 bg-custom-background-100 shadow-custom-shadow-sm"
       {...props}
     >
       <InlineInput />
