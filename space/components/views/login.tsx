@@ -4,7 +4,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { SignInView, UserLoggedIn } from "components/accounts";
 
-export const HomeView = observer(() => {
+export const LoginView = observer(() => {
   const { user: userStore } = useMobxStore();
 
   if (!userStore.currentUser) return <SignInView />;

@@ -69,6 +69,7 @@ interface IssueFormProps {
   createMore: boolean;
   setCreateMore: React.Dispatch<React.SetStateAction<boolean>>;
   handleClose: () => void;
+  handleDiscard: () => void;
   status: boolean;
   user: ICurrentUserResponse | undefined;
   fieldsToShow: (
@@ -100,6 +101,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
     status,
     user,
     fieldsToShow,
+    handleDiscard,
   } = props;
 
   const [stateModal, setStateModal] = useState(false);
@@ -574,7 +576,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
             <ToggleSwitch value={createMore} onChange={() => {}} size="md" />
           </div>
           <div className="flex items-center gap-2">
-            <SecondaryButton onClick={onClose}>Discard</SecondaryButton>
+            <SecondaryButton onClick={handleDiscard}>Discard</SecondaryButton>
             <SecondaryButton
               loading={isSubmitting}
               onClick={handleSubmit((formData) =>

@@ -58,8 +58,17 @@ class WorkspaceEntityPermission(BasePermission):
         if request.user.is_anonymous:
             return False
 
+        ## Safe Methods -> Handle the filtering logic in queryset
+        if request.method in SAFE_METHODS:
+            return WorkspaceMember.objects.filter(
+                workspace__slug=view.workspace_slug,
+                member=request.user,
+            ).exists()
+
         return WorkspaceMember.objects.filter(
-            member=request.user, workspace__slug=view.workspace_slug
+            member=request.user,
+            workspace__slug=view.workspace_slug,
+            role__in=[Owner, Admin],
         ).exists()
 
 

@@ -63,6 +63,10 @@ export const SingleBoard: React.FC<Props> = (props) => {
   const router = useRouter();
   const { cycleId, moduleId } = router.query;
 
+  const isMyIssuesPage = router.pathname.split("/")[3] === "my-issues";
+  const isProfileIssuesPage = router.pathname.split("/")[2] === "profile";
+  const isDraftIssuesPage = router.pathname.split("/")[4] === "draft-issues";
+
   const type = cycleId ? "cycle" : moduleId ? "module" : "issue";
 
   // Check if it has at least 4 tickets since it is enough to accommodate the Calendar height
@@ -71,9 +75,7 @@ export const SingleBoard: React.FC<Props> = (props) => {
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disableUserActions;
 
-  const onCreateClick = () => {
-    setIsInlineCreateIssueFormOpen(true);
-
+  const scrollToBottom = () => {
     const boardListElement = document.getElementById(`board-list-${groupTitle}`);
 
     // timeout is needed because the animation
@@ -87,6 +89,11 @@ export const SingleBoard: React.FC<Props> = (props) => {
         });
       clearTimeout(timeoutId);
     }, 10);
+  };
+
+  const onCreateClick = () => {
+    setIsInlineCreateIssueFormOpen(true);
+    scrollToBottom();
   };
 
   return (
@@ -157,6 +164,7 @@ export const SingleBoard: React.FC<Props> = (props) => {
                         type={type}
                         index={index}
                         issue={issue}
+                        projectId={issue.project_detail.id}
                         groupTitle={groupTitle}
                         editIssue={() => handleIssueAction(issue, "edit")}
                         makeIssueCopy={() => handleIssueAction(issue, "copy")}
@@ -196,6 +204,7 @@ export const SingleBoard: React.FC<Props> = (props) => {
                 <BoardInlineCreateIssueForm
                   isOpen={isInlineCreateIssueFormOpen}
                   handleClose={() => setIsInlineCreateIssueFormOpen(false)}
+                  onSuccess={() => scrollToBottom()}
                   prePopulatedData={{
                     ...(cycleId && { cycle: cycleId.toString() }),
                     ...(moduleId && { module: moduleId.toString() }),
@@ -213,7 +222,11 @@ export const SingleBoard: React.FC<Props> = (props) => {
                         <button
                           type="button"
                           className="flex items-center gap-2 font-medium text-custom-primary outline-none p-1"
-                          onClick={() => onCreateClick()}
+                          onClick={() => {
+                            if (isDraftIssuesPage || isMyIssuesPage || isProfileIssuesPage) {
+                              addIssueToGroup();
+                            } else onCreateClick();
+                          }}
                         >
                           <PlusIcon className="h-4 w-4" />
                           Add Issue

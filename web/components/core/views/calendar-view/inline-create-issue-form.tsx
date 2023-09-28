@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
+// next
+import { useRouter } from "next/router";
+
 // react hook form
 import { useFormContext } from "react-hook-form";
 
@@ -16,21 +19,29 @@ type Props = {
   handleClose: () => void;
   onSuccess?: (data: IIssue) => Promise<void> | void;
   prePopulatedData?: Partial<IIssue>;
+  dependencies: any[];
 };
 
-const useCheckIfThereIsSpaceOnRight = (ref: React.RefObject<HTMLDivElement>) => {
+const useCheckIfThereIsSpaceOnRight = (ref: React.RefObject<HTMLDivElement>, deps: any[]) => {
   const [isThereSpaceOnRight, setIsThereSpaceOnRight] = useState(true);
+
+  const router = useRouter();
+  const { moduleId, cycleId, viewId } = router.query;
+
+  const container = document.getElementById(`calendar-view-${cycleId ?? moduleId ?? viewId}`);
 
   useEffect(() => {
     if (!ref.current) return;
 
     const { right } = ref.current.getBoundingClientRect();
 
-    const width = right + 250;
+    const width = right;
 
-    if (width > window.innerWidth) setIsThereSpaceOnRight(false);
+    const innerWidth = container?.getBoundingClientRect().width ?? window.innerWidth;
+
+    if (width > innerWidth) setIsThereSpaceOnRight(false);
     else setIsThereSpaceOnRight(true);
-  }, [ref]);
+  }, [ref, deps, container]);
 
   return isThereSpaceOnRight;
 };
@@ -56,30 +67,30 @@ const InlineInput = () => {
         {...register("name", {
           required: "Issue title is required.",
         })}
-        className="w-full px-2 py-1.5 rounded-md bg-transparent text-sm font-medium leading-5 text-custom-text-200 outline-none"
+        className="w-full pr-2 py-2.5 rounded-md bg-transparent text-sm font-medium leading-5 text-custom-text-200 outline-none"
       />
     </>
   );
 };
 
 export const CalendarInlineCreateIssueForm: React.FC<Props> = (props) => {
-  const { isOpen } = props;
+  const { isOpen, dependencies } = props;
 
   const ref = useRef<HTMLDivElement>(null);
 
-  const isSpaceOnRight = useCheckIfThereIsSpaceOnRight(ref);
+  const isSpaceOnRight = useCheckIfThereIsSpaceOnRight(ref, dependencies);
 
   return (
     <>
       <div
         ref={ref}
-        className={`absolute -translate-x-1 top-5 transition-all z-20 ${
+        className={`absolute top-10 transition-all z-20 w-full max-w-[calc(100%-1.25rem)] ${
           isOpen ? "opacity-100 scale-100" : "opacity-0 pointer-events-none scale-95"
-        } ${isSpaceOnRight ? "left-full" : "right-0"}`}
+        } right-2.5`}
       >
         <InlineCreateIssueFormWrapper
           {...props}
-          className="flex w-60 p-1 px-1.5 rounded items-center gap-x-3 bg-custom-background-100 shadow-custom-shadow-md transition-opacity"
+          className="flex w-full px-1.5 border-[0.5px] border-custom-border-100 rounded z-50 items-center gap-x-2 bg-custom-background-100 shadow-custom-shadow-sm transition-opacity"
         >
           <InlineInput />
         </InlineCreateIssueFormWrapper>

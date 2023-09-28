@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -10,6 +10,8 @@ import { issueViewContext } from "contexts/issue-view.context";
 import issuesService from "services/issues.service";
 import cyclesService from "services/cycles.service";
 import modulesService from "services/modules.service";
+// helpers
+import { renderDateFormat } from "helpers/date-time.helper";
 // types
 import { IIssue } from "types";
 // fetch-keys
@@ -23,12 +25,36 @@ import {
 const useCalendarIssuesView = () => {
   const {
     display_filters: displayFilters,
-    setDisplayFilters,
     filters,
     setFilters,
     resetFilterToDefault,
     setNewFilterDefaultView,
   } = useContext(issueViewContext);
+
+  const [activeMonthDate, setActiveMonthDate] = useState(new Date());
+
+  // previous month's first date
+  const previousMonthYear =
+    activeMonthDate.getMonth() === 0
+      ? activeMonthDate.getFullYear() - 1
+      : activeMonthDate.getFullYear();
+  const previousMonthMonth = activeMonthDate.getMonth() === 0 ? 11 : activeMonthDate.getMonth() - 1;
+
+  const previousMonthFirstDate = new Date(previousMonthYear, previousMonthMonth, 1);
+
+  // next month's last date
+  const nextMonthYear =
+    activeMonthDate.getMonth() === 11
+      ? activeMonthDate.getFullYear() + 1
+      : activeMonthDate.getFullYear();
+  const nextMonthMonth = (activeMonthDate.getMonth() + 1) % 12;
+  const nextMonthFirstDate = new Date(nextMonthYear, nextMonthMonth, 1);
+
+  const nextMonthLastDate = new Date(
+    nextMonthFirstDate.getFullYear(),
+    nextMonthFirstDate.getMonth() + 1,
+    0
+  );
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
@@ -41,7 +67,9 @@ const useCalendarIssuesView = () => {
     labels: filters?.labels ? filters?.labels.join(",") : undefined,
     created_by: filters?.created_by ? filters?.created_by.join(",") : undefined,
     start_date: filters?.start_date ? filters?.start_date.join(",") : undefined,
-    target_date: displayFilters?.calendar_date_range,
+    target_date: `${renderDateFormat(previousMonthFirstDate)};after,${renderDateFormat(
+      nextMonthLastDate
+    )};before`,
   };
 
   const { data: projectCalendarIssues, mutate: mutateProjectCalendarIssues } = useSWR(
@@ -101,8 +129,8 @@ const useCalendarIssuesView = () => {
     : (projectCalendarIssues as IIssue[]);
 
   return {
-    displayFilters,
-    setDisplayFilters,
+    activeMonthDate,
+    setActiveMonthDate,
     calendarIssues: calendarIssues ?? [],
     mutateIssues: cycleId
       ? mutateCycleCalendarIssues

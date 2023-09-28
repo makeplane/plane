@@ -35,7 +35,7 @@ export const ToggleSwitch: React.FC<Props> = (props) => {
                 : size === "md"
                 ? "translate-x-4"
                 : "translate-x-5") + " bg-white"
-            : "translate-x-1 bg-custom-background-90"
+            : "translate-x-0.5 bg-custom-background-90"
         }`}
       />
     </Switch>

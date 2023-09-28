@@ -81,7 +81,7 @@ export const ProfileIssuesViewOptions: React.FC = () => {
           <Tooltip
             key={option.type}
             tooltipContent={
-              <span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} View</span>
+              <span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} Layout</span>
             }
             position="bottom"
           >
@@ -239,9 +239,11 @@ export const ProfileIssuesViewOptions: React.FC = () => {
                       <div className="w-28">
                         <CustomMenu
                           label={
-                            FILTER_ISSUE_OPTIONS.find(
-                              (option) => option.key === displayFilters?.type
-                            )?.name ?? "Select"
+                            <span className="truncate">
+                              {FILTER_ISSUE_OPTIONS.find(
+                                (option) => option.key === displayFilters?.type
+                              )?.name ?? "Select"}
+                            </span>
                           }
                           className="!w-full"
                           buttonClassName="w-full"
@@ -266,7 +268,7 @@ export const ProfileIssuesViewOptions: React.FC = () => {
                       displayFilters?.layout !== "spreadsheet" && (
                         <>
                           <div className="flex items-center justify-between">
-                            <h4 className="text-custom-text-200">Show empty states</h4>
+                            <h4 className="text-custom-text-200">Show empty groups</h4>
                             <div className="w-28">
                               <ToggleSwitch
                                 value={displayFilters?.show_empty_groups ?? true}
