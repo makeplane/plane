@@ -4,9 +4,10 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
+// hook
+import useProjects from "hooks/use-projects";
+import useWorkspaceMembers from "hooks/use-workspace-members";
 // services
-import stateService from "services/state.service";
-import projectService from "services/project.service";
 import issuesService from "services/issues.service";
 // components
 import { DateFilterModal } from "components/core";
@@ -15,24 +16,23 @@ import { Avatar, MultiLevelDropdown } from "components/ui";
 // icons
 import { PriorityIcon, StateGroupIcon } from "components/icons";
 // helpers
-import { getStatesList } from "helpers/state.helper";
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 // types
-import { IIssueFilterOptions } from "types";
+import { IWorkspaceIssueFilterOptions, TStateGroups } from "types";
 // fetch-keys
-import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, STATES_LIST } from "constants/fetch-keys";
+import { WORKSPACE_LABELS } from "constants/fetch-keys";
 // constants
-import { PRIORITIES } from "constants/project";
+import { GROUP_CHOICES, PRIORITIES } from "constants/project";
 import { DATE_FILTER_OPTIONS } from "constants/filters";
 
 type Props = {
-  filters: Partial<IIssueFilterOptions>;
+  filters: Partial<IWorkspaceIssueFilterOptions>;
   onSelect: (option: any) => void;
   direction?: "left" | "right";
   height?: "sm" | "md" | "rg" | "lg";
 };
 
-export const SelectFilters: React.FC<Props> = ({
+export const GlobalSelectFilters: React.FC<Props> = ({
   filters,
   onSelect,
   direction = "right",
@@ -48,31 +48,81 @@ export const SelectFilters: React.FC<Props> = ({
   });
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
-  const { data: states } = useSWR(
-    workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
-      : null
-  );
-  const statesList = getStatesList(states);
+  const { workspaceMembers } = useWorkspaceMembers(workspaceSlug?.toString() ?? "");
 
-  const { data: members } = useSWR(
-    projectId ? PROJECT_MEMBERS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
-      : null
+  const { data: workspaceLabels } = useSWR(
+    workspaceSlug ? WORKSPACE_LABELS(workspaceSlug.toString()) : null,
+    workspaceSlug ? () => issuesService.getWorkspaceLabels(workspaceSlug.toString()) : null
   );
 
-  const { data: issueLabels } = useSWR(
-    projectId ? PROJECT_ISSUE_LABELS(projectId.toString()) : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId.toString())
-      : null
-  );
+  const { projects: allProjects } = useProjects();
+  const joinedProjects = allProjects?.filter((p) => p.is_member);
 
-  const projectFilterOption = [
+  const workspaceFilterOption = [
+    {
+      id: "project",
+      label: "Project",
+      value: joinedProjects,
+      hasChildren: true,
+      children: joinedProjects?.map((project) => ({
+        id: project.id,
+        label: <div className="flex items-center gap-2">{project.name}</div>,
+        value: {
+          key: "project",
+          value: project.id,
+        },
+        selected: filters?.project?.includes(project.id),
+      })),
+    },
+    {
+      id: "state_group",
+      label: "State groups",
+      value: GROUP_CHOICES,
+      hasChildren: true,
+      children: [
+        ...Object.keys(GROUP_CHOICES).map((key) => ({
+          id: key,
+          label: (
+            <div className="flex items-center gap-2">
+              <StateGroupIcon stateGroup={key as TStateGroups} />
+              {GROUP_CHOICES[key as keyof typeof GROUP_CHOICES]}
+            </div>
+          ),
+          value: {
+            key: "state_group",
+            value: key,
+          },
+          selected: filters?.state_group?.includes(key),
+        })),
+      ],
+    },
+    {
+      id: "labels",
+      label: "Labels",
+      value: workspaceLabels,
+      hasChildren: true,
+      children: workspaceLabels?.map((label) => ({
+        id: label.id,
+        label: (
+          <div className="flex items-center gap-2">
+            <div
+              className="h-2 w-2 rounded-full"
+              style={{
+                backgroundColor: label.color && label.color !== "" ? label.color : "#000000",
+              }}
+            />
+            {label.name}
+          </div>
+        ),
+        value: {
+          key: "labels",
+          value: label.id,
+        },
+        selected: filters?.labels?.includes(label.id),
+      })),
+    },
     {
       id: "priority",
       label: "Priority",
@@ -94,51 +144,11 @@ export const SelectFilters: React.FC<Props> = ({
       })),
     },
     {
-      id: "state",
-      label: "State",
-      value: statesList,
-      hasChildren: true,
-      children: statesList?.map((state) => ({
-        id: state.id,
-        label: (
-          <div className="flex items-center gap-2">
-            <StateGroupIcon stateGroup={state.group} color={state.color} />
-            {state.name}
-          </div>
-        ),
-        value: {
-          key: "state",
-          value: state.id,
-        },
-        selected: filters?.state?.includes(state.id),
-      })),
-    },
-    {
-      id: "assignees",
-      label: "Assignees",
-      value: members,
-      hasChildren: true,
-      children: members?.map((member) => ({
-        id: member.member.id,
-        label: (
-          <div className="flex items-center gap-2">
-            <Avatar user={member.member} />
-            {member.member.display_name}
-          </div>
-        ),
-        value: {
-          key: "assignees",
-          value: member.member.id,
-        },
-        selected: filters?.assignees?.includes(member.member.id),
-      })),
-    },
-    {
       id: "created_by",
       label: "Created by",
-      value: members,
+      value: workspaceMembers,
       hasChildren: true,
-      children: members?.map((member) => ({
+      children: workspaceMembers?.map((member) => ({
         id: member.member.id,
         label: (
           <div className="flex items-center gap-2">
@@ -154,28 +164,43 @@ export const SelectFilters: React.FC<Props> = ({
       })),
     },
     {
-      id: "labels",
-      label: "Labels",
-      value: issueLabels,
+      id: "assignees",
+      label: "Assignees",
+      value: workspaceMembers,
       hasChildren: true,
-      children: issueLabels?.map((label) => ({
-        id: label.id,
+      children: workspaceMembers?.map((member) => ({
+        id: member.member.id,
         label: (
           <div className="flex items-center gap-2">
-            <div
-              className="h-2 w-2 rounded-full"
-              style={{
-                backgroundColor: label.color && label.color !== "" ? label.color : "#000000",
-              }}
-            />
-            {label.name}
+            <Avatar user={member.member} />
+            {member.member.display_name}
           </div>
         ),
         value: {
-          key: "labels",
-          value: label.id,
+          key: "assignees",
+          value: member.member.id,
         },
-        selected: filters?.labels?.includes(label.id),
+        selected: filters?.assignees?.includes(member.member.id),
+      })),
+    },
+    {
+      id: "subscriber",
+      label: "Subscriber",
+      value: workspaceMembers,
+      hasChildren: true,
+      children: workspaceMembers?.map((member) => ({
+        id: member.member.id,
+        label: (
+          <div className="flex items-center gap-2">
+            <Avatar user={member.member} />
+            {member.member.display_name}
+          </div>
+        ),
+        value: {
+          key: "subscriber",
+          value: member.member.id,
+        },
+        selected: filters?.subscriber?.includes(member.member.id),
       })),
     },
     {
@@ -251,13 +276,14 @@ export const SelectFilters: React.FC<Props> = ({
       ],
     },
   ];
+
   return (
     <>
       {isDateFilterModalOpen && (
         <DateFilterModal
           title={dateFilterType.title}
           field={dateFilterType.type}
-          filters={filters as IIssueFilterOptions}
+          filters={filters as IWorkspaceIssueFilterOptions}
           handleClose={() => setIsDateFilterModalOpen(false)}
           isOpen={isDateFilterModalOpen}
           onSelect={onSelect}
@@ -268,7 +294,7 @@ export const SelectFilters: React.FC<Props> = ({
         onSelect={onSelect}
         direction={direction}
         height={height}
-        options={projectFilterOption}
+        options={workspaceFilterOption}
       />
     </>
   );

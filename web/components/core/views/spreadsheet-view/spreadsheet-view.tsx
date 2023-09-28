@@ -24,6 +24,7 @@ import { IssuePeekOverview } from "components/issues";
 // hooks
 import useIssuesProperties from "hooks/use-issue-properties";
 import useLocalStorage from "hooks/use-local-storage";
+import { useWorkspaceView } from "hooks/use-workspace-view";
 // types
 import {
   ICurrentUserResponse,
@@ -32,7 +33,6 @@ import {
   TIssueOrderByOptions,
   UserAuth,
 } from "types";
-import useWorkspaceIssuesFilters from "hooks/use-worskpace-issue-filter";
 import {
   CYCLE_DETAILS,
   CYCLE_ISSUES_WITH_PARAMS,
@@ -47,7 +47,6 @@ import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 import projectIssuesServices from "services/issues.service";
 // icon
 import { CheckIcon, ChevronDownIcon, PlusIcon } from "lucide-react";
-import useWorkspaceIssuesView from "hooks/use-workspace-issues-view";
 
 type Props = {
   spreadsheetIssues: IIssue[];
@@ -130,16 +129,7 @@ export const SpreadsheetView: React.FC<Props> = ({
     router.pathname.includes(path.path)
   );
 
-  // const { params: workspaceViewParams } = useWorkspaceIssuesFilters(
-  //   workspaceSlug?.toString(),
-  //   workspaceViewId?.toString()
-  // );
-
-  const {
-    params: workspaceViewParams,
-    displayFilters: workspaceDisplayFilters,
-    setDisplayFilters: setWorkspaceDisplayFilters,
-  } = useWorkspaceIssuesView();
+  const { params: workspaceViewParams, handleFilters } = useWorkspaceView();
 
   const { params, displayFilters, setDisplayFilters } = useSpreadsheetIssuesView();
 
@@ -224,8 +214,8 @@ export const SpreadsheetView: React.FC<Props> = ({
       moduleId,
       viewId,
       workspaceViewId,
-      currentWorkspaceIssuePath,
       workspaceViewParams,
+      currentWorkspaceIssuePath,
       params,
       user,
     ]
@@ -235,7 +225,7 @@ export const SpreadsheetView: React.FC<Props> = ({
 
   const handleOrderBy = (order: TIssueOrderByOptions, itemKey: string) => {
     if (!workspaceViewId || !currentWorkspaceIssuePath)
-      setWorkspaceDisplayFilters({ order_by: order });
+      handleFilters("display_filters", { order_by: order });
     else setDisplayFilters({ order_by: order });
     setSelectedMenuItem(`${order}_${itemKey}`);
     setActiveSortingProperty(order === "-created_at" ? "" : itemKey);
@@ -248,7 +238,7 @@ export const SpreadsheetView: React.FC<Props> = ({
     ascendingOrder: TIssueOrderByOptions,
     descendingOrder: TIssueOrderByOptions
   ) => (
-    <div className="relative flex flex-col h-max w-full bg-custom-background-100 rounded-sm">
+    <div className="relative flex flex-col h-max w-full bg-custom-background-100">
       <div className="flex items-center min-w-[9rem] px-4 py-2.5 text-sm font-medium z-[1] h-11 w-full sticky top-0 bg-custom-background-90 border border-l-0 border-custom-border-200">
         <CustomMenu
           customButtonClassName="!w-full"
@@ -490,19 +480,19 @@ export const SpreadsheetView: React.FC<Props> = ({
         workspaceSlug={workspaceSlug?.toString() ?? ""}
         readOnly={disableUserActions}
       />
-      <div className="relative flex h-full w-full rounded-lg text-custom-text-200 overflow-x-auto whitespace-nowrap bg-custom-background-100">
+      <div className="relative flex h-full w-full rounded-lg text-custom-text-200 overflow-x-auto whitespace-nowrap bg-custom-background-200">
         <div className="h-full w-full flex flex-col">
           <div ref={containerRef} className="flex max-h-full h-full overflow-y-auto">
             {spreadsheetIssues ? (
               <>
                 <div className="sticky left-0 w-[28rem] z-[2]">
                   <div
-                    className={`relative flex flex-col h-max w-full bg-custom-background-100 rounded-sm z-[2] ${
+                    className={`relative flex flex-col h-max w-full bg-custom-background-100 z-[2] ${
                       isScrolled ? "shadow-r shadow-custom-shadow-xs" : ""
                     }`}
                   >
                     <div className="flex items-center text-sm font-medium z-[2] h-11 w-full sticky top-0 bg-custom-background-90 border border-l-0 border-custom-border-200">
-                      <span className="flex items-center px-4 py-2.5 h-full w-20 flex-shrink-0">
+                      <span className="flex items-center px-4 py-2.5 h-full w-24 flex-shrink-0">
                         ID
                       </span>
                       <span className="flex items-center px-4 py-2.5 h-full w-full flex-grow">

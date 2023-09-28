@@ -88,14 +88,12 @@ const ProjectViews: NextPage = () => {
     >
       <CreateUpdateViewModal
         isOpen={createUpdateViewModal}
-        viewType="project"
         handleClose={() => setCreateUpdateViewModal(false)}
         data={selectedViewToUpdate}
         user={user}
       />
       <DeleteViewModal
         isOpen={deleteViewModal}
-        viewType="project"
         data={selectedViewToDelete}
         setIsOpen={setDeleteViewModal}
         user={user}

@@ -1,22 +1,33 @@
-import { WORKSPACE_LABELS } from "constants/fetch-keys";
+import React, { useCallback, useState } from "react";
+
+import useSWR from "swr";
+
+import { useRouter } from "next/router";
+
+// context
 import { useProjectMyMembership } from "contexts/project-member.context";
+// service
+import projectIssuesServices from "services/issues.service";
+// hooks
 import useProjects from "hooks/use-projects";
 import useUser from "hooks/use-user";
-import { useWorkspaceView } from "hooks/use-workspace-issues-view";
+import { useWorkspaceView } from "hooks/use-workspace-view";
 import useWorkspaceMembers from "hooks/use-workspace-members";
-import { useRouter } from "next/router";
-import React, { useCallback, useState } from "react";
-import projectIssuesServices from "services/issues.service";
-import useSWR from "swr";
-import { IIssue, IWorkspaceIssueFilterOptions } from "types";
-import { CreateUpdateIssueModal } from "../modal";
-import { DeleteIssueModal } from "../delete-issue-modal";
-import { CreateUpdateViewModal } from "components/views";
+// components
 import { WorkspaceViewsNavigation } from "components/workspace/views/workpace-view-navigation";
 import { EmptyState, PrimaryButton } from "components/ui";
+import { SpreadsheetView, WorkspaceFiltersList } from "components/core";
+import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
+import { CreateUpdateWorkspaceViewModal } from "components/workspace/views/modal";
+// icon
+import { PlusIcon } from "components/icons";
+// image
 import emptyView from "public/empty-state/view.svg";
-import { FiltersList, SpreadsheetView } from "components/core";
+// constants
+import { WORKSPACE_LABELS } from "constants/fetch-keys";
 import { STATE_GROUP } from "constants/project";
+// types
+import { IIssue, IWorkspaceIssueFilterOptions } from "types";
 
 export const WorkspaceViewIssues = () => {
   const router = useRouter();
@@ -28,11 +39,7 @@ export const WorkspaceViewIssues = () => {
     workspaceSlug?.toString(),
     Boolean(workspaceSlug)
   );
-  const { filters, view, viewIssues, handleFilters } = useWorkspaceView();
-  // console.log("filters", filters);
-  // console.log("view", view);
-  // console.log("viewIssues", viewIssues);
-  // console.log("handleFilters", handleFilters);
+  const { filters, viewIssues, mutateViewIssues, handleFilters } = useWorkspaceView();
 
   const [createViewModal, setCreateViewModal] = useState<any>(null);
 
@@ -61,39 +68,6 @@ export const WorkspaceViewIssues = () => {
   );
 
   const { workspaceMembers } = useWorkspaceMembers(workspaceSlug?.toString() ?? "");
-
-  // const updateView = async (payload: Partial<IWorkspaceView>) => {
-  //   const payloadData = {
-  //     query_data: payload,
-  //   };
-
-  //   await workspaceService
-  //     .updateView(workspaceSlug as string, workspaceViewId as string, payloadData)
-  //     .then((res) => {
-  //       mutate<IView[]>(
-  //         WORKSPACE_VIEWS_LIST(workspaceSlug as string),
-  //         (prevData) =>
-  //           prevData?.map((p) => {
-  //             if (p.id === res.id) return { ...p, ...payloadData };
-
-  //             return p;
-  //           }),
-  //         false
-  //       );
-  //       setToastAlert({
-  //         type: "success",
-  //         title: "Success!",
-  //         message: "View updated successfully.",
-  //       });
-  //     })
-  //     .catch(() => {
-  //       setToastAlert({
-  //         type: "error",
-  //         title: "Error!",
-  //         message: "View could not be updated. Please try again.",
-  //       });
-  //     });
-  // };
 
   const makeIssueCopy = useCallback(
     (issue: IIssue) => {
@@ -141,9 +115,9 @@ export const WorkspaceViewIssues = () => {
     );
 
   const areFiltersApplied =
-    filters &&
-    Object.keys(filters).length > 0 &&
-    nullFilters.length !== Object.keys(filters).length;
+    filters.filters &&
+    Object.keys(filters.filters).length > 0 &&
+    nullFilters.length !== Object.keys(filters.filters).length;
 
   const isNotAllowed = isGuest || isViewer;
   return (
@@ -154,33 +128,25 @@ export const WorkspaceViewIssues = () => {
         prePopulateData={{
           ...preloadedData,
         }}
-        onSubmit={async () => {
-          // mutateWorkspaceIssues();
-        }}
+        onSubmit={async () => mutateViewIssues()}
       />
       <CreateUpdateIssueModal
         isOpen={editIssueModal && issueToEdit?.actionType !== "delete"}
         handleClose={() => setEditIssueModal(false)}
         data={issueToEdit}
-        onSubmit={async () => {
-          // mutateWorkspaceIssues();
-        }}
+        onSubmit={async () => mutateViewIssues()}
       />
       <DeleteIssueModal
         handleClose={() => setDeleteIssueModal(false)}
         isOpen={deleteIssueModal}
         data={issueToDelete}
         user={user}
-        onSubmit={async () => {
-          // mutateWorkspaceIssues();
-        }}
+        onSubmit={async () => mutateViewIssues()}
       />
-      <CreateUpdateViewModal
+      <CreateUpdateWorkspaceViewModal
         isOpen={createViewModal !== null}
         handleClose={() => setCreateViewModal(null)}
-        viewType="workspace"
         preLoadedData={createViewModal}
-        user={user}
       />
       <div className="h-full flex flex-col overflow-hidden bg-custom-background-100">
         <div className="h-full w-full border-b border-custom-border-300">
@@ -200,7 +166,7 @@ export const WorkspaceViewIssues = () => {
               {areFiltersApplied && (
                 <>
                   <div className="flex items-center justify-between gap-2 px-5 pt-3 pb-0">
-                    <FiltersList
+                    <WorkspaceFiltersList
                       filters={filters.filters}
                       setFilters={(updatedFilter) => handleFilters("filters", updatedFilter)}
                       labels={workspaceLabels}
@@ -223,12 +189,10 @@ export const WorkspaceViewIssues = () => {
                     />
                     <PrimaryButton
                       onClick={() => {
-                        if (workspaceViewId) {
-                          // updateView(filters);
-                          console.log("update");
-                        } else
+                        if (workspaceViewId) handleFilters("filters", filters.filters, true);
+                        else
                           setCreateViewModal({
-                            query: filters,
+                            query: filters.filters,
                           });
                       }}
                       className="flex items-center gap-2 text-sm"
@@ -242,7 +206,7 @@ export const WorkspaceViewIssues = () => {
               )}
               <SpreadsheetView
                 spreadsheetIssues={viewIssues}
-                mutateIssues={viewIssues}
+                mutateIssues={mutateViewIssues}
                 handleIssueAction={handleIssueAction}
                 disableUserActions={isNotAllowed ?? false}
                 user={user}

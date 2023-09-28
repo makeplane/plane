@@ -14,6 +14,7 @@ const paramsToKey = (params: any) => {
     sub_issue,
     start_target_date,
     project,
+    layout,
   } = params;
 
   let projectKey = project ? project.split(",") : [];
@@ -29,6 +30,7 @@ const paramsToKey = (params: any) => {
   const type = params.type ? params.type.toUpperCase() : "NULL";
   const groupBy = params.group_by ? params.group_by.toUpperCase() : "NULL";
   const orderBy = params.order_by ? params.order_by.toUpperCase() : "NULL";
+  const layoutKey = layout ? layout.toUpperCase() : "";
 
   // sorting each keys in ascending order
   projectKey = projectKey.sort().join("_");
@@ -39,7 +41,7 @@ const paramsToKey = (params: any) => {
   createdByKey = createdByKey.sort().join("_");
   labelsKey = labelsKey.sort().join("_");
 
-  return `${projectKey}_${stateGroupKey}_${stateKey}_${priorityKey}_${assigneesKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${startDateKey}_${targetDateKey}_${sub_issue}_${startTargetDate}`;
+  return `${layoutKey}_${projectKey}_${stateGroupKey}_${stateKey}_${priorityKey}_${assigneesKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${startDateKey}_${targetDateKey}_${sub_issue}_${startTargetDate}`;
 };
 
 const inboxParamsToKey = (params: any) => {
@@ -159,7 +161,7 @@ export const WORKSPACE_VIEWS_LIST = (workspaceSlug: string) =>
   `WORKSPACE_VIEWS_LIST_${workspaceSlug.toUpperCase()}`;
 export const WORKSPACE_VIEW_DETAILS = (workspaceViewId: string) =>
   `WORKSPACE_VIEW_DETAILS_${workspaceViewId.toUpperCase()}`;
-export const WORKSPACE_VIEW_ISSUES = (workspaceViewId: string, params: string | null) => {
+export const WORKSPACE_VIEW_ISSUES = (workspaceViewId: string, params: any) => {
   if (!params) return `WORKSPACE_VIEW_ISSUES_${workspaceViewId.toUpperCase()}`;
   return `WORKSPACE_VIEW_ISSUES_${workspaceViewId.toUpperCase()}_${paramsToKey(
     params

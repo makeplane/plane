@@ -2,21 +2,27 @@ import { createContext, useEffect, useState } from "react";
 // next imports
 import { useRouter } from "next/router";
 // swr
-import useSWR from "swr";
+import useSWR, { KeyedMutator } from "swr";
 // services
 import workspaceService from "services/workspace.service";
 // types
-import { IWorkspaceViewProps } from "types";
+import { IIssue, IWorkspaceGlobalViewProps } from "types";
+import { IWorkspaceView } from "types/workspace-views";
 // fetch-keys
 import { WORKSPACE_VIEW_DETAILS, WORKSPACE_VIEW_ISSUES } from "constants/fetch-keys";
 
 export interface IWorkspaceViewContext {
-  view: any;
-  viewIssues: any;
-  filters: IWorkspaceViewProps;
+  params: any;
+  view: IWorkspaceView | undefined;
+  viewLoading: boolean;
+  viewIssues: IIssue[];
+  mutateViewIssues: KeyedMutator<any>;
+  viewIssueLoading: boolean;
+  filters: IWorkspaceGlobalViewProps;
   handleFilters: (
     filterType: "filters" | "display_filters" | "display_properties",
-    payload: { [key: string]: any }
+    payload: { [key: string]: any },
+    saveFiltersToServer?: boolean
   ) => void;
 }
 
@@ -24,7 +30,7 @@ export const WorkspaceIssueViewContext = createContext<IWorkspaceViewContext | u
   undefined
 );
 
-export const initialState: IWorkspaceViewProps = {
+export const initialState: IWorkspaceGlobalViewProps = {
   filters: {
     assignees: null,
     created_by: null,
@@ -40,6 +46,7 @@ export const initialState: IWorkspaceViewProps = {
     order_by: "-created_at",
     sub_issue: true,
     type: null,
+    layout: "spreadsheet",
   },
   display_properties: {
     assignee: true,
@@ -58,22 +65,40 @@ export const initialState: IWorkspaceViewProps = {
   },
 };
 
+const saveViewFilters = async (
+  workspaceSlug: string,
+  workspaceViewId: string,
+  state: IWorkspaceGlobalViewProps
+) => {
+  await workspaceService.updateView(workspaceSlug, workspaceViewId, {
+    query_data: state,
+  });
+};
+
 export const WorkspaceViewProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const router = useRouter();
-  const { workspaceSlug, workspaceViewId } = router.query;
+  const { workspaceSlug, workspaceViewId } = router.query as {
+    workspaceSlug: string;
+    workspaceViewId: string;
+  };
 
-  const [filters, setFilters] = useState<IWorkspaceViewProps>(initialState);
+  const [filters, setFilters] = useState<IWorkspaceGlobalViewProps>(initialState);
+
   const handleFilters = (
     filterType: "filters" | "display_filters" | "display_properties",
-    payload: { [key: string]: any }
+    payload: { [key: string]: any },
+    saveFiltersToServer?: boolean
   ) => {
-    setFilters((prevData: IWorkspaceViewProps) => ({
-      ...prevData,
+    const updatedFilterPayload = {
+      ...filters,
       [filterType]: {
-        ...prevData[filterType],
+        ...filters[filterType],
         ...payload,
       },
-    }));
+    };
+    setFilters(() => updatedFilterPayload);
+
+    if (saveFiltersToServer) saveViewFilters(workspaceSlug, workspaceViewId, updatedFilterPayload);
   };
 
   const computedFilter = (filters: any) => {
@@ -106,6 +131,25 @@ export const WorkspaceViewProvider: React.FC<{ children: React.ReactNode }> = ({
     return params;
   };
 
+  const params: any = {
+    assignees: filters?.filters.assignees ? filters?.filters?.assignees.join(",") : undefined,
+    created_by: filters?.filters.created_by ? filters?.filters?.created_by.join(",") : undefined,
+    labels: filters?.filters.labels ? filters?.filters?.labels.join(",") : undefined,
+    priority: filters?.filters.priority ? filters?.filters?.priority.join(",") : undefined,
+    state_group: filters?.filters.state_group ? filters?.filters?.state_group.join(",") : undefined,
+    subscriber: filters?.filters.subscriber ? filters?.filters?.subscriber.join(",") : undefined,
+    start_date: filters?.filters.start_date ? filters?.filters?.start_date.join(",") : undefined,
+    target_date: filters?.filters.target_date ? filters?.filters?.target_date.join(",") : undefined,
+    project: filters?.filters.project ? filters?.filters?.project.join(",") : undefined,
+
+    order_by: filters?.display_filters?.order_by
+      ? filters?.display_filters?.order_by
+      : "-created_at",
+    sub_issue: filters?.display_filters?.sub_issue ? filters?.display_filters?.sub_issue : false,
+    type: filters?.display_filters?.type ? filters?.display_filters?.type : undefined,
+    layout: filters?.display_filters?.layout ? filters?.display_filters?.layout : undefined,
+  };
+
   const { data: view, isLoading: viewLoading } = useSWR(
     workspaceSlug && workspaceViewId ? WORKSPACE_VIEW_DETAILS(workspaceViewId.toString()) : null,
     workspaceSlug && workspaceViewId
@@ -113,21 +157,22 @@ export const WorkspaceViewProvider: React.FC<{ children: React.ReactNode }> = ({
       : null
   );
 
-  const { data: viewIssues, isLoading: viewIssueLoading } = useSWR(
+  const {
+    data: viewIssues,
+    mutate: mutateViewIssues,
+    isLoading: viewIssueLoading,
+  } = useSWR(
     workspaceSlug && view && workspaceViewId && filters
-      ? WORKSPACE_VIEW_ISSUES(workspaceViewId.toString(), computedParams(filters))
+      ? WORKSPACE_VIEW_ISSUES(workspaceViewId.toString(), params)
       : null,
     workspaceSlug && view && workspaceViewId
       ? () =>
           workspaceService.getViewIssues(
-            workspaceViewId.toString(),
+            workspaceSlug.toString(),
             computedFilter(computedParams(filters))
           )
       : null
   );
-
-  // console.log("view", view);
-  console.log("viewIssues", viewIssues);
 
   useEffect(() => {
     if (view && view?.query_data) {
@@ -171,14 +216,19 @@ export const WorkspaceViewProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [view, setFilters]);
 
-  // const saveViewFilters = async (workspaceSlug: string, workspaceViewId: string, state: any) => {
-  //   await workspaceService.updateView(workspaceSlug, workspaceViewId, {
-  //     query_data: state,
-  //   });
-  // };
-
   return (
-    <WorkspaceIssueViewContext.Provider value={{ view, viewIssues, filters, handleFilters }}>
+    <WorkspaceIssueViewContext.Provider
+      value={{
+        params,
+        view,
+        viewLoading,
+        viewIssues,
+        mutateViewIssues,
+        viewIssueLoading,
+        filters,
+        handleFilters,
+      }}
+    >
       {children}
     </WorkspaceIssueViewContext.Provider>
   );

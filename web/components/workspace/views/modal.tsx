@@ -7,33 +7,31 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import viewsService from "services/views.service";
+import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
-import { ViewForm } from "components/views";
+import { WorkspaceViewForm } from "components/workspace/views/form";
 // types
-import { ICurrentUserResponse, IView } from "types";
+import { IWorkspaceView } from "types/workspace-views";
 // fetch-keys
-import { VIEWS_LIST } from "constants/fetch-keys";
+import { WORKSPACE_VIEWS_LIST } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
-  data?: IView | null;
-  preLoadedData?: Partial<IView> | null;
-  user: ICurrentUserResponse | undefined;
+  data?: IWorkspaceView | null;
+  preLoadedData?: Partial<IWorkspaceView> | null;
 };
 
-export const CreateUpdateViewModal: React.FC<Props> = ({
+export const CreateUpdateWorkspaceViewModal: React.FC<Props> = ({
   isOpen,
   handleClose,
   data,
   preLoadedData,
-  user,
 }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -41,15 +39,17 @@ export const CreateUpdateViewModal: React.FC<Props> = ({
     handleClose();
   };
 
-  const createView = async (payload: IView) => {
-    payload = {
+  const createView = async (payload: any) => {
+    const payloadData = {
       ...payload,
-      query_data: payload.query,
+      query_data: {
+        filters: payload.query,
+      },
     };
-    await viewsService
-      .createView(workspaceSlug as string, projectId as string, payload, user)
+    await workspaceService
+      .createView(workspaceSlug as string, payloadData)
       .then(() => {
-        mutate(VIEWS_LIST(projectId as string));
+        mutate(WORKSPACE_VIEWS_LIST(workspaceSlug as string));
         handleClose();
 
         setToastAlert({
@@ -67,16 +67,18 @@ export const CreateUpdateViewModal: React.FC<Props> = ({
       });
   };
 
-  const updateView = async (payload: IView) => {
+  const updateView = async (payload: any) => {
     const payloadData = {
       ...payload,
-      query_data: payload.query,
+      query_data: {
+        filters: payload.query,
+      },
     };
-    await viewsService
-      .updateView(workspaceSlug as string, projectId as string, data?.id ?? "", payloadData, user)
+    await workspaceService
+      .updateView(workspaceSlug as string, data?.id ?? "", payloadData)
       .then((res) => {
-        mutate<IView[]>(
-          VIEWS_LIST(projectId as string),
+        mutate<IWorkspaceView[]>(
+          WORKSPACE_VIEWS_LIST(workspaceSlug as string),
           (prevData) =>
             prevData?.map((p) => {
               if (p.id === res.id) return { ...p, ...payloadData };
@@ -102,8 +104,8 @@ export const CreateUpdateViewModal: React.FC<Props> = ({
       });
   };
 
-  const handleFormSubmit = async (formData: IView) => {
-    if (!workspaceSlug || !projectId) return;
+  const handleFormSubmit = async (formData: any) => {
+    if (!workspaceSlug) return;
 
     if (!data) await createView(formData);
     else await updateView(formData);
@@ -136,7 +138,7 @@ export const CreateUpdateViewModal: React.FC<Props> = ({
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
-                <ViewForm
+                <WorkspaceViewForm
                   handleFormSubmit={handleFormSubmit}
                   handleClose={handleClose}
                   status={data ? true : false}

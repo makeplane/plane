@@ -14,7 +14,7 @@ import {
   ICurrentUserResponse,
   IWorkspaceBulkInviteFormData,
   IWorkspaceViewProps,
-  IIssueFilterOptions,
+  IWorkspaceViewIssuesParams,
 } from "types";
 import { IWorkspaceView } from "types/workspace-views";
 
@@ -308,7 +308,7 @@ class WorkspaceService extends APIService {
       });
   }
 
-  async getViewIssues(workspaceSlug: string, params: IIssueFilterOptions): Promise<any> {
+  async getViewIssues(workspaceSlug: string, params: IWorkspaceViewIssuesParams): Promise<any> {
     return this.get(`/api/workspaces/${workspaceSlug}/issues/`, {
       params,
     })

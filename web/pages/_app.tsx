@@ -20,8 +20,6 @@ import { SITE_TITLE } from "constants/seo-variables";
 // mobx store provider
 import { MobxStoreProvider } from "lib/mobx/store-provider";
 import MobxStoreInit from "lib/mobx/store-init";
-// context
-import { WorkspaceViewProvider } from "contexts/workspace-view-context";
 
 const CrispWithNoSSR = dynamic(() => import("constants/crisp"), { ssr: false });
 
@@ -38,15 +36,13 @@ function MyApp({ Component, pageProps }: AppProps) {
         <title>{SITE_TITLE}</title>
       </Head>
       <MobxStoreProvider {...pageProps}>
-        <WorkspaceViewProvider>
-          <ThemeProvider themes={THEMES} defaultTheme="system">
-            <ToastContextProvider>
-              <CrispWithNoSSR />
-              <MobxStoreInit />
-              <Component {...pageProps} />
-            </ToastContextProvider>
-          </ThemeProvider>
-        </WorkspaceViewProvider>
+        <ThemeProvider themes={THEMES} defaultTheme="system">
+          <ToastContextProvider>
+            <CrispWithNoSSR />
+            <MobxStoreInit />
+            <Component {...pageProps} />
+          </ToastContextProvider>
+        </ThemeProvider>
       </MobxStoreProvider>
     </>
   );

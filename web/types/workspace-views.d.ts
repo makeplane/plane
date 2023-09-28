@@ -1,4 +1,4 @@
-import { IWorkspaceViewProps } from "./view-props";
+import { IWorkspaceGlobalViewProps } from "./view-props";
 
 export interface IWorkspaceView {
   id: string;
@@ -10,8 +10,8 @@ export interface IWorkspaceView {
   updated_by: string;
   name: string;
   description: string;
-  query: IWorkspaceViewProps;
-  query_data: IWorkspaceViewProps;
+  query: IWorkspaceGlobalViewProps;
+  query_data: IWorkspaceGlobalViewProps;
   project: string;
   workspace: string;
   workspace_detail?: {
