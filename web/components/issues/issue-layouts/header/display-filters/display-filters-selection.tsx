@@ -41,7 +41,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
           <FilterGroupBy
             selectedGroupBy={displayFilters.group_by}
             selectedSubGroupBy={displayFilters.sub_group_by}
-            groupByOptions={layoutDisplayFiltersOptions.display_filters.group_by}
+            groupByOptions={layoutDisplayFiltersOptions.display_filters.group_by ?? []}
             handleUpdate={(val) =>
               handleDisplayFiltersUpdate({
                 group_by: val,
@@ -62,7 +62,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
                 sub_group_by: val,
               })
             }
-            subGroupByOptions={layoutDisplayFiltersOptions.display_filters.sub_group_by}
+            subGroupByOptions={layoutDisplayFiltersOptions.display_filters.sub_group_by ?? []}
           />
         </div>
       )}

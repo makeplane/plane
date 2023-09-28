@@ -205,10 +205,10 @@ export interface ILayoutDisplayFiltersOptions {
   filters: (keyof IIssueFilterOptions)[];
   display_properties: boolean;
   display_filters: {
-    group_by: TIssueGroupByOptions[];
-    sub_group_by: TIssueGroupByOptions[];
-    order_by: TIssueOrderByOptions[];
-    type: TIssueTypeFilters[];
+    group_by?: TIssueGroupByOptions[];
+    sub_group_by?: TIssueGroupByOptions[];
+    order_by?: TIssueOrderByOptions[];
+    type?: TIssueTypeFilters[];
   };
   extra_options: {
     access: boolean;
@@ -282,9 +282,6 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       filters: ["priority", "state", "assignees", "created_by", "labels"],
       display_properties: true,
       display_filters: {
-        group_by: [],
-        sub_group_by: [],
-        order_by: [],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -296,8 +293,6 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       filters: ["priority", "state", "assignees", "created_by", "labels", "start_date", "target_date"],
       display_properties: true,
       display_filters: {
-        group_by: [],
-        sub_group_by: [],
         order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
       },
@@ -310,8 +305,6 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       filters: ["priority", "state", "assignees", "created_by", "labels", "start_date", "target_date"],
       display_properties: false,
       display_filters: {
-        group_by: [],
-        sub_group_by: [],
         order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
       },
