@@ -347,7 +347,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsCreateIssueFormOpen(true)}
-                  className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-1 rounded-md"
+                  className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 pl-[1.875rem] py-1 rounded-md"
                 >
                   <PlusIcon className="h-4 w-4" />
                   <span className="text-sm font-medium text-custom-primary-100">New Issue</span>

@@ -67,7 +67,7 @@ const InlineInput = () => {
         {...register("name", {
           required: "Issue title is required.",
         })}
-        className="w-full pr-2 py-1.5 rounded-md bg-transparent text-sm font-medium leading-5 text-custom-text-200 outline-none"
+        className="w-full pr-2 py-2.5 rounded-md bg-transparent text-sm font-medium leading-5 text-custom-text-200 outline-none"
       />
     </>
   );
@@ -90,7 +90,7 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = (props) => {
       >
         <InlineCreateIssueFormWrapper
           {...props}
-          className="flex w-full p-1 px-1.5 rounded z-50 items-center gap-x-2 bg-custom-background-100 shadow-custom-shadow-sm transition-opacity"
+          className="flex w-full px-1.5 border-[0.5px] border-custom-border-100 rounded z-50 items-center gap-x-2 bg-custom-background-100 shadow-custom-shadow-sm transition-opacity"
         >
           <InlineInput />
         </InlineCreateIssueFormWrapper>

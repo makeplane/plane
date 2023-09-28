@@ -287,7 +287,7 @@ export const SpreadsheetView: React.FC<Props> = ({
             )}
           </div>
 
-          <div>
+          <div className="border-t border-custom-border-100">
             <div className="mb-3 z-50 sticky bottom-0 left-0">
               <ListInlineCreateIssueForm
                 isOpen={isInlineCreateIssueFormOpen}
@@ -303,11 +303,11 @@ export const SpreadsheetView: React.FC<Props> = ({
               ? !disableUserActions &&
                 !isInlineCreateIssueFormOpen && (
                   <button
-                    className="flex gap-1.5 items-center text-custom-primary-100 pl-7 py-2.5 text-sm sticky left-0 z-[1] border-custom-border-200 w-full"
+                    className="flex gap-1.5 items-center text-custom-primary-100 pl-4 py-2.5 text-sm sticky left-0 z-[1] w-full"
                     onClick={() => setIsInlineCreateIssueFormOpen(true)}
                   >
                     <PlusIcon className="h-4 w-4" />
-                    Add Issue
+                    New Issue
                   </button>
                 )
               : !disableUserActions &&
@@ -316,11 +316,11 @@ export const SpreadsheetView: React.FC<Props> = ({
                     className="sticky left-0 z-10"
                     customButton={
                       <button
-                        className="flex gap-1.5 items-center text-custom-primary-100 pl-7 py-2.5 text-sm sticky left-0 z-[1] border-custom-border-200 w-full"
+                        className="flex gap-1.5 items-center text-custom-primary-100 pl-4 py-2.5 text-sm sticky left-0 z-[1] border-custom-border-200 w-full"
                         type="button"
                       >
                         <PlusIcon className="h-4 w-4" />
-                        Add Issue
+                        New Issue
                       </button>
                     }
                     position="left"

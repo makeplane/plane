@@ -239,9 +239,11 @@ export const ProfileIssuesViewOptions: React.FC = () => {
                       <div className="w-28">
                         <CustomMenu
                           label={
-                            FILTER_ISSUE_OPTIONS.find(
-                              (option) => option.key === displayFilters?.type
-                            )?.name ?? "Select"
+                            <span className="truncate">
+                              {FILTER_ISSUE_OPTIONS.find(
+                                (option) => option.key === displayFilters?.type
+                              )?.name ?? "Select"}
+                            </span>
                           }
                           className="!w-full"
                           buttonClassName="w-full"
