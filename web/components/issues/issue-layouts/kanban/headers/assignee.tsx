@@ -25,7 +25,11 @@ export const AssigneesHeader: React.FC<IAssigneesHeader> = observer(
       <>
         {assignee &&
           (sub_group_by && header_type === "sub_group_by" ? (
-            <HeaderSubGroupByCard column_id={column_id} title={assignee?.member?.display_name || ""} count={0} />
+            <HeaderSubGroupByCard
+              column_id={column_id}
+              title={assignee?.member?.display_name || ""}
+              count={issues_count}
+            />
           ) : (
             <HeaderGroupByCard
               sub_group_by={sub_group_by}

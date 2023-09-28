@@ -33,8 +33,14 @@ export const HeaderGroupByCard = observer(
         </div>
 
         <div className={`flex items-center gap-1 ${verticalAlignPosition ? `flex-col` : `flex-row w-full`}`}>
-          <div className={`font-medium line-clamp-1 ${verticalAlignPosition ? `vertical-lr` : ``}`}>{title}</div>
-          <div className={verticalAlignPosition ? `` : `pl-2`}>{count || 0}</div>
+          <div
+            className={`font-medium line-clamp-1 text-custom-text-100 ${verticalAlignPosition ? `vertical-lr` : ``}`}
+          >
+            {title}
+          </div>
+          <div className={`text-sm font-medium text-custom-text-300 ${verticalAlignPosition ? `` : `pl-2`}`}>
+            {count || 0}
+          </div>
         </div>
 
         {sub_group_by === null && (

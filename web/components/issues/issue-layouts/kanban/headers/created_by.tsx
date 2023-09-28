@@ -25,7 +25,11 @@ export const CreatedByHeader: React.FC<ICreatedByHeader> = observer(
       <>
         {createdBy &&
           (sub_group_by && header_type === "sub_group_by" ? (
-            <HeaderSubGroupByCard title={createdBy?.member?.display_name || ""} column_id={column_id} count={0} />
+            <HeaderSubGroupByCard
+              title={createdBy?.member?.display_name || ""}
+              column_id={column_id}
+              count={issues_count}
+            />
           ) : (
             <HeaderGroupByCard
               sub_group_by={sub_group_by}

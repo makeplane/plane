@@ -25,7 +25,7 @@ export const StateGroupHeader: React.FC<IStateGroupHeader> = observer(
       <>
         {stateGroup &&
           (sub_group_by && header_type === "sub_group_by" ? (
-            <HeaderSubGroupByCard title={stateGroup?.key || ""} column_id={column_id} count={0} />
+            <HeaderSubGroupByCard title={stateGroup?.key || ""} column_id={column_id} count={issues_count} />
           ) : (
             <HeaderGroupByCard
               sub_group_by={sub_group_by}

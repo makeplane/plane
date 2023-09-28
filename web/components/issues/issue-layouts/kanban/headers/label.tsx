@@ -25,7 +25,7 @@ export const LabelHeader: React.FC<ILabelHeader> = observer(
       <>
         {label &&
           (sub_group_by && header_type === "sub_group_by" ? (
-            <HeaderSubGroupByCard title={label?.name || ""} column_id={column_id} count={0} />
+            <HeaderSubGroupByCard title={label?.name || ""} column_id={column_id} count={issues_count} />
           ) : (
             <HeaderGroupByCard
               sub_group_by={sub_group_by}

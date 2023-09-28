@@ -23,7 +23,7 @@ export const PriorityHeader: React.FC<IPriorityHeader> = observer(
       <>
         {priority &&
           (sub_group_by && header_type === "sub_group_by" ? (
-            <HeaderSubGroupByCard title={priority?.key || ""} column_id={column_id} count={0} />
+            <HeaderSubGroupByCard title={priority?.key || ""} column_id={column_id} count={issues_count} />
           ) : (
             <HeaderGroupByCard
               sub_group_by={sub_group_by}
