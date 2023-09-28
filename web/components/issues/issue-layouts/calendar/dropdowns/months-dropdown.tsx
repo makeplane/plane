@@ -96,7 +96,9 @@ export const CalendarMonthsDropdown: React.FC = observer(() => {
                     <button
                       key={month.shortTitle}
                       type="button"
-                      className="text-xs hover:bg-custom-background-80 rounded"
+                      className={`text-xs hover:bg-custom-background-80 rounded py-0.5 ${
+                        activeMonthDate.getMonth() === index ? "bg-custom-background-80" : ""
+                      }`}
                       onClick={() => {
                         const newDate = new Date(activeMonthDate.getFullYear(), index, 1);
                         handleDateChange(newDate);

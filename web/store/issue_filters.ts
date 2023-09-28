@@ -4,6 +4,7 @@ import { ProjectService } from "services/project.service";
 import { IssueService } from "services/issue.service";
 // helpers
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
+import { renderDateFormat } from "helpers/date-time.helper";
 // types
 import { RootStore } from "./root";
 import {
@@ -116,6 +117,22 @@ class IssueFilterStore implements IIssueFilterStore {
     return computedFilters;
   };
 
+  calendarLayoutDateRange = () => {
+    const { activeMonthDate, activeWeekDate } = this.rootStore.calendar.calendarFilters;
+
+    const calendarLayout = this.userDisplayFilters.calendar?.layout ?? "month";
+
+    let filterDate = new Date();
+
+    if (calendarLayout === "month") filterDate = activeMonthDate;
+    else filterDate = activeWeekDate;
+
+    const startOfMonth = renderDateFormat(new Date(filterDate.getFullYear(), filterDate.getMonth(), 1));
+    const endOfMonth = renderDateFormat(new Date(filterDate.getFullYear(), filterDate.getMonth() + 1, 0));
+
+    return [`${startOfMonth};after`, `${endOfMonth};before`];
+  };
+
   get appliedFilters(): TIssueParams[] | null {
     if (
       !this.userFilters ||
@@ -142,6 +159,8 @@ class IssueFilterStore implements IIssueFilterStore {
       show_empty_groups: this.userDisplayFilters?.show_empty_groups || true,
       start_target_date: this.userDisplayFilters?.start_target_date || true,
     };
+
+    if (this.userDisplayFilters.layout === "calendar") filteredRouteParams.target_date = this.calendarLayoutDateRange();
 
     const filteredParams = handleIssueQueryParamsByLayout(this.userDisplayFilters.layout);
     if (filteredParams) filteredRouteParams = this.computedFilter(filteredRouteParams, filteredParams);
