@@ -24,12 +24,12 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
   const { displayFilters, handleDisplayFiltersUpdate, layoutDisplayFiltersOptions } = props;
 
   const isDisplayFilterEnabled = (displayFilter: string) =>
-    layoutDisplayFiltersOptions.display_filters[displayFilters.layout ?? "list"].includes(displayFilter);
+    layoutDisplayFiltersOptions.display_filters.includes(displayFilter);
 
   return (
     <div className="w-full h-full overflow-hidden overflow-y-auto relative px-2.5 divide-y divide-custom-border-200">
       {/* display properties */}
-      {layoutDisplayFiltersOptions.display_properties[displayFilters.layout ?? "list"] && (
+      {layoutDisplayFiltersOptions.display_properties && (
         <div className="py-2">
           <FilterDisplayProperties />
         </div>
@@ -93,7 +93,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
       )}
 
       {/* Options */}
-      {layoutDisplayFiltersOptions.extra_options[displayFilters.layout ?? "list"].access && (
+      {layoutDisplayFiltersOptions.extra_options.access && (
         <div className="py-2">
           <FilterExtraOptions
             selectedExtraOptions={{
@@ -105,7 +105,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
                 [key]: val,
               })
             }
-            enabledExtraOptions={layoutDisplayFiltersOptions.extra_options[displayFilters.layout ?? "list"].values}
+            enabledExtraOptions={layoutDisplayFiltersOptions.extra_options.values}
           />
         </div>
       )}

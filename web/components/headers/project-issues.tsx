@@ -54,7 +54,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   return (
     <div className="flex items-center gap-2">
       <LayoutSelection
-        layouts={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues.layout}
+        layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
         onChange={(layout) => handleLayoutChange(layout)}
         selectedLayout={issueFilterStore.userDisplayFilters.layout ?? "list"}
       />
@@ -62,7 +62,9 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
         <FilterSelection
           filters={{}}
           handleFiltersUpdate={handleFiltersUpdate}
-          layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues}
+          layoutDisplayFiltersOptions={
+            ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[issueFilterStore.userDisplayFilters.layout ?? "list"]
+          }
           projectId={projectId?.toString() ?? ""}
         />
       </FiltersDropdown>
@@ -70,7 +72,9 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
         <DisplayFiltersSelection
           displayFilters={issueFilterStore.userDisplayFilters}
           handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
-          layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues}
+          layoutDisplayFiltersOptions={
+            ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[issueFilterStore.userDisplayFilters.layout ?? "list"]
+          }
         />
       </FiltersDropdown>
     </div>
