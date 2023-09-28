@@ -22,12 +22,7 @@ import {
   IProjectViewProps,
 } from "types";
 // fetch-keys
-import {
-  CYCLE_DETAILS,
-  MODULE_DETAILS,
-  USER_PROJECT_VIEW,
-  VIEW_DETAILS,
-} from "constants/fetch-keys";
+import { CYCLE_DETAILS, MODULE_DETAILS, USER_PROJECT_VIEW, VIEW_DETAILS } from "constants/fetch-keys";
 
 export const issueViewContext = createContext<ContextType>({} as ContextType);
 
@@ -48,7 +43,6 @@ type ReducerFunctionType = (state: StateType, action: ReducerActionType) => Stat
 
 export const initialState: StateType = {
   display_filters: {
-    calendar_date_range: "",
     group_by: null,
     layout: "list",
     order_by: "-created_at",
@@ -123,11 +117,7 @@ export const reducer: ReducerFunctionType = (state, action) => {
   }
 };
 
-const saveDataToServer = async (
-  workspaceSlug: string,
-  projectId: string,
-  state: IProjectViewProps
-) => {
+const saveDataToServer = async (workspaceSlug: string, projectId: string, state: IProjectViewProps) => {
   mutate<IProjectMember>(
     workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId as string) : null,
     (prevData) => {
@@ -238,36 +228,21 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
   const { data: viewDetails, mutate: mutateViewDetails } = useSWR(
     workspaceSlug && projectId && viewId ? VIEW_DETAILS(viewId as string) : null,
     workspaceSlug && projectId && viewId
-      ? () =>
-          viewsService.getViewDetails(
-            workspaceSlug as string,
-            projectId as string,
-            viewId as string
-          )
+      ? () => viewsService.getViewDetails(workspaceSlug as string, projectId as string, viewId as string)
       : null
   );
 
   const { data: cycleDetails, mutate: mutateCycleDetails } = useSWR(
     workspaceSlug && projectId && cycleId ? CYCLE_DETAILS(cycleId as string) : null,
     workspaceSlug && projectId && cycleId
-      ? () =>
-          cyclesService.getCycleDetails(
-            workspaceSlug.toString(),
-            projectId.toString(),
-            cycleId.toString()
-          )
+      ? () => cyclesService.getCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString())
       : null
   );
 
   const { data: moduleDetails, mutate: mutateModuleDetails } = useSWR(
     workspaceSlug && projectId && moduleId ? MODULE_DETAILS(moduleId.toString()) : null,
     workspaceSlug && projectId && moduleId
-      ? () =>
-          modulesService.getModuleDetails(
-            workspaceSlug.toString(),
-            projectId.toString(),
-            moduleId.toString()
-          )
+      ? () => modulesService.getModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString())
       : null
   );
 
@@ -288,11 +263,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
         order_by: displayFilter.order_by ?? state.display_filters?.order_by,
       };
 
-      if (
-        displayFilter.layout &&
-        displayFilter.layout === "kanban" &&
-        state.display_filters?.group_by === null
-      ) {
+      if (displayFilter.layout && displayFilter.layout === "kanban" && state.display_filters?.group_by === null) {
         additionalProperties.group_by = "state";
         dispatch({
           type: "SET_DISPLAY_FILTERS",
@@ -343,8 +314,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
   const setFilters = useCallback(
     (property: Partial<IIssueFilterOptions>, saveToServer = true) => {
       Object.keys(property).forEach((key) => {
-        if (property[key as keyof typeof property]?.length === 0)
-          property[key as keyof typeof property] = null;
+        if (property[key as keyof typeof property]?.length === 0) property[key as keyof typeof property] = null;
       });
 
       dispatch({

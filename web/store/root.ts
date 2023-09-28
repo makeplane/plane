@@ -14,6 +14,7 @@ import ViewStore, { IViewStore } from "./views";
 import IssueFilterStore, { IIssueFilterStore } from "./issue_filters";
 import IssueViewDetailStore from "./issue_detail";
 import IssueKanBanViewStore from "./kanban_view";
+import CalendarStore, { ICalendarStore } from "./calendar";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -31,6 +32,7 @@ export class RootStore {
   issueFilter: IIssueFilterStore;
   issueDetail: IssueViewDetailStore;
   issueKanBanView: IssueKanBanViewStore;
+  calendar: ICalendarStore;
 
   constructor() {
     this.user = new UserStore(this);
@@ -46,5 +48,6 @@ export class RootStore {
     this.issueDetail = new IssueViewDetailStore(this);
     this.issueKanBanView = new IssueKanBanViewStore(this);
     this.draftIssuesStore = new DraftIssuesStore(this);
+    this.calendar = new CalendarStore(this);
   }
 }

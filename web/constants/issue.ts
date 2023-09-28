@@ -112,7 +112,6 @@ export const ISSUE_EXTRA_OPTIONS: {
 }[] = [
   { key: "sub_issue", title: "Show sub-issues" }, // in spreadsheet its always false
   { key: "show_empty_groups", title: "Show empty states" }, // filter on front-end
-  { key: "calendar_date_range", title: "Calendar Date Range" }, // calendar date range yyyy-mm-dd;before range yyyy-mm-dd;after
   { key: "start_target_date", title: "Start target Date" }, // gantt always be true
 ];
 
