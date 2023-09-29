@@ -1,5 +1,6 @@
 export type DropdownProps = {
   buttonClassName?: string;
+  customButtonClassName?: string;
   className?: string;
   customButton?: JSX.Element;
   disabled?: boolean;

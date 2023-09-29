@@ -14,9 +14,9 @@ import {
   ICurrentUserResponse,
   IWorkspaceBulkInviteFormData,
   IWorkspaceViewProps,
-  IView,
-  IIssueFilterOptions,
+  IWorkspaceViewIssuesParams,
 } from "types";
+import { IWorkspaceView } from "types/workspace-views";
 
 class WorkspaceService extends APIService {
   constructor() {
@@ -264,7 +264,7 @@ class WorkspaceService extends APIService {
       });
   }
 
-  async createView(workspaceSlug: string, data: IView): Promise<any> {
+  async createView(workspaceSlug: string, data: IWorkspaceView): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/views/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -272,7 +272,11 @@ class WorkspaceService extends APIService {
       });
   }
 
-  async updateView(workspaceSlug: string, viewId: string, data: Partial<IView>): Promise<any> {
+  async updateView(
+    workspaceSlug: string,
+    viewId: string,
+    data: Partial<IWorkspaceView>
+  ): Promise<any> {
     return this.patch(`/api/workspaces/${workspaceSlug}/views/${viewId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -288,7 +292,7 @@ class WorkspaceService extends APIService {
       });
   }
 
-  async getAllViews(workspaceSlug: string): Promise<IView[]> {
+  async getAllViews(workspaceSlug: string): Promise<IWorkspaceView[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/views/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -296,7 +300,7 @@ class WorkspaceService extends APIService {
       });
   }
 
-  async getViewDetails(workspaceSlug: string, viewId: string): Promise<IView> {
+  async getViewDetails(workspaceSlug: string, viewId: string): Promise<IWorkspaceView> {
     return this.get(`/api/workspaces/${workspaceSlug}/views/${viewId}/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -304,7 +308,7 @@ class WorkspaceService extends APIService {
       });
   }
 
-  async getViewIssues(workspaceSlug: string, params: IIssueFilterOptions): Promise<any> {
+  async getViewIssues(workspaceSlug: string, params: IWorkspaceViewIssuesParams): Promise<any> {
     return this.get(`/api/workspaces/${workspaceSlug}/issues/`, {
       params,
     })

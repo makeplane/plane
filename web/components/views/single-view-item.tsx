@@ -12,6 +12,7 @@ import { CustomMenu } from "components/ui";
 import viewsService from "services/views.service";
 // types
 import { IView } from "types";
+import { IWorkspaceView } from "types/workspace-views";
 // fetch keys
 import { VIEWS_LIST } from "constants/fetch-keys";
 // hooks
@@ -20,7 +21,7 @@ import useToast from "hooks/use-toast";
 import { truncateText } from "helpers/string.helper";
 
 type Props = {
-  view: IView;
+  view: IView | IWorkspaceView;
   viewType: "project" | "workspace";
   handleEditView: () => void;
   handleDeleteView: () => void;
@@ -90,7 +91,7 @@ export const SingleViewItem: React.FC<Props> = ({
   const viewRedirectionUrl =
     viewType === "project"
       ? `/${workspaceSlug}/projects/${projectId}/views/${view.id}`
-      : `/${workspaceSlug}/workspace-views/${view.id}`;
+      : `/${workspaceSlug}/workspace-views/issues?viewId=${view.id}`;
 
   return (
     <div className="group hover:bg-custom-background-90 border-b border-custom-border-200">

@@ -3,10 +3,9 @@ import React from "react";
 import { useRouter } from "next/router";
 
 // hooks
-import useMyIssuesFilters from "hooks/my-issues/use-my-issues-filter";
-import useWorkspaceIssuesFilters from "hooks/use-worskpace-issue-filter";
+import { useWorkspaceView } from "hooks/use-workspace-view";
 // components
-import { MyIssuesSelectFilters } from "components/issues";
+import { GlobalSelectFilters } from "components/workspace/views/global-select-filters";
 // ui
 import { Tooltip } from "components/ui";
 // icons
@@ -33,12 +32,7 @@ export const WorkspaceIssuesViewOptions: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, workspaceViewId } = router.query;
 
-  const { displayFilters, setDisplayFilters } = useMyIssuesFilters(workspaceSlug?.toString());
-
-  const { filters, setFilters } = useWorkspaceIssuesFilters(
-    workspaceSlug?.toString(),
-    workspaceViewId?.toString()
-  );
+  const { filters, handleFilters } = useWorkspaceView();
 
   const isWorkspaceViewPath = router.pathname.includes("workspace-views/all-issues");
 
@@ -58,12 +52,12 @@ export const WorkspaceIssuesViewOptions: React.FC = () => {
             <button
               type="button"
               className={`grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-100 duration-300 ${
-                displayFilters?.layout === option.type
+                filters.display_filters?.layout === option.type
                   ? "bg-custom-sidebar-background-100 shadow-sm"
                   : "text-custom-sidebar-text-200"
               }`}
               onClick={() => {
-                setDisplayFilters({ layout: option.type });
+                handleFilters("display_filters", { layout: option.type }, true);
                 if (option.type === "spreadsheet")
                   router.push(`/${workspaceSlug}/workspace-views/all-issues`);
                 else router.push(`/${workspaceSlug}/workspace-views`);
@@ -82,37 +76,38 @@ export const WorkspaceIssuesViewOptions: React.FC = () => {
 
       {showFilters && (
         <>
-          <MyIssuesSelectFilters
-            filters={filters}
+          <GlobalSelectFilters
+            filters={filters.filters}
             onSelect={(option) => {
-              const key = option.key as keyof typeof filters;
+              const key = option.key as keyof typeof filters.filters;
 
               if (key === "start_date" || key === "target_date") {
                 const valueExists = checkIfArraysHaveSameElements(
-                  filters?.[key] ?? [],
+                  filters.filters?.[key] ?? [],
                   option.value
                 );
 
-                setFilters({
+                handleFilters("filters", {
+                  ...filters,
                   [key]: valueExists ? null : option.value,
                 });
               } else {
-                const valueExists = filters[key]?.includes(option.value);
-
-                if (valueExists)
-                  setFilters({
-                    [option.key]: ((filters[key] ?? []) as any[])?.filter(
-                      (val) => val !== option.value
+                if (!filters?.filters?.[key]?.includes(option.value))
+                  handleFilters("filters", {
+                    ...filters,
+                    [key]: [...((filters?.filters?.[key] as any[]) ?? []), option.value],
+                  });
+                else {
+                  handleFilters("filters", {
+                    ...filters,
+                    [key]: (filters?.filters?.[key] as any[])?.filter(
+                      (item) => item !== option.value
                     ),
                   });
-                else
-                  setFilters({
-                    [option.key]: [...((filters[key] ?? []) as any[]), option.value],
-                  });
+                }
               }
             }}
             direction="left"
-            height="rg"
           />
         </>
       )}

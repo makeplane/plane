@@ -7,37 +7,40 @@ import useSWR from "swr";
 // react-hook-form
 import { useForm } from "react-hook-form";
 // services
-import stateService from "services/state.service";
+import issuesService from "services/issues.service";
+
 // hooks
-import useProjectMembers from "hooks/use-project-members";
+import useProjects from "hooks/use-projects";
+import useWorkspaceMembers from "hooks/use-workspace-members";
 // components
-import { FiltersList } from "components/core";
-import { SelectFilters } from "components/views";
+import { WorkspaceFiltersList } from "components/core";
+import { GlobalSelectFilters } from "components/workspace/views/global-select-filters";
+
 // ui
 import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // helpers
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
-import { getStatesList } from "helpers/state.helper";
 // types
-import { IQuery, IView } from "types";
-import issuesService from "services/issues.service";
+import { IQuery } from "types";
+import { IWorkspaceView } from "types/workspace-views";
 // fetch-keys
-import { PROJECT_ISSUE_LABELS, STATES_LIST } from "constants/fetch-keys";
+import { WORKSPACE_LABELS } from "constants/fetch-keys";
+import { STATE_GROUP } from "constants/project";
 
 type Props = {
-  handleFormSubmit: (values: IView) => Promise<void>;
+  handleFormSubmit: (values: IWorkspaceView) => Promise<void>;
   handleClose: () => void;
   status: boolean;
-  data?: IView | null;
-  preLoadedData?: Partial<IView> | null;
+  data?: IWorkspaceView | null;
+  preLoadedData?: Partial<IWorkspaceView> | null;
 };
 
-const defaultValues: Partial<IView> = {
+const defaultValues: Partial<IWorkspaceView> = {
   name: "",
   description: "",
 };
 
-export const ViewForm: React.FC<Props> = ({
+export const WorkspaceViewForm: React.FC<Props> = ({
   handleFormSubmit,
   handleClose,
   status,
@@ -45,7 +48,7 @@ export const ViewForm: React.FC<Props> = ({
   preLoadedData,
 }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
   const {
     register,
@@ -54,32 +57,24 @@ export const ViewForm: React.FC<Props> = ({
     reset,
     watch,
     setValue,
-  } = useForm<IView>({
+  } = useForm<any>({
     defaultValues,
   });
   const filters = watch("query");
 
-  const { data: stateGroups } = useSWR(
-    workspaceSlug && projectId && (filters?.state ?? []).length > 0
-      ? STATES_LIST(projectId as string)
-      : null,
-    workspaceSlug && (filters?.state ?? []).length > 0
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
-      : null
+  const { data: labelOptions } = useSWR(
+    workspaceSlug ? WORKSPACE_LABELS(workspaceSlug.toString()) : null,
+    workspaceSlug ? () => issuesService.getWorkspaceLabels(workspaceSlug.toString()) : null
   );
-  const states = getStatesList(stateGroups);
 
-  const { data: labels } = useSWR(
-    workspaceSlug && projectId && (filters?.labels ?? []).length > 0
-      ? PROJECT_ISSUE_LABELS(projectId.toString())
-      : null,
-    workspaceSlug && projectId && (filters?.labels ?? []).length > 0
-      ? () => issuesService.getIssueLabels(workspaceSlug.toString(), projectId.toString())
-      : null
-  );
-  const { members } = useProjectMembers(workspaceSlug?.toString(), projectId?.toString());
+  const { workspaceMembers } = useWorkspaceMembers(workspaceSlug?.toString() ?? "");
 
-  const handleCreateUpdateView = async (formData: IView) => {
+  const memberOptions = workspaceMembers?.map((m) => m.member);
+
+  const { projects: allProjects } = useProjects();
+  const joinedProjects = allProjects?.filter((p) => p.is_member);
+
+  const handleCreateUpdateView = async (formData: IWorkspaceView) => {
     await handleFormSubmit(formData);
 
     reset({
@@ -91,12 +86,13 @@ export const ViewForm: React.FC<Props> = ({
     setValue("query", {
       assignees: null,
       created_by: null,
+      subscriber: null,
       labels: null,
       priority: null,
-      state: null,
+      state_group: null,
       start_date: null,
       target_date: null,
-      type: null,
+      project: null,
     });
   };
 
@@ -151,7 +147,7 @@ export const ViewForm: React.FC<Props> = ({
             />
           </div>
           <div>
-            <SelectFilters
+            <GlobalSelectFilters
               filters={filters}
               onSelect={(option) => {
                 const key = option.key as keyof typeof filters;
@@ -183,11 +179,12 @@ export const ViewForm: React.FC<Props> = ({
             />
           </div>
           <div>
-            <FiltersList
+            <WorkspaceFiltersList
               filters={filters}
-              labels={labels}
-              members={members?.map((m) => m.member)}
-              states={states}
+              labels={labelOptions}
+              members={memberOptions}
+              project={joinedProjects}
+              stateGroup={STATE_GROUP}
               clearAllFilters={clearAllFilters}
               setFilters={(query: any) => {
                 setValue("query", {

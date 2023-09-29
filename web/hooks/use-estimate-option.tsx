@@ -32,7 +32,9 @@ const useEstimateOption = (estimateKey?: number | null) => {
   );
 
   const estimateValue: any =
-    (estimateKey && estimateDetails?.points?.find((e) => e.key === estimateKey)?.value) ?? "None";
+    estimateKey || estimateKey === 0
+      ? estimateDetails?.points?.find((e) => e.key === estimateKey)?.value
+      : "None";
 
   return {
     isEstimateActive: projectDetails?.estimate ? true : false,

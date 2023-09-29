@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 // next
 import { useRouter } from "next/router";
@@ -19,13 +19,20 @@ import {
   SpreadsheetStateColumn,
   SpreadsheetUpdatedOnColumn,
 } from "components/core";
-import { CustomMenu, Spinner } from "components/ui";
+import { CustomMenu, Icon, Spinner } from "components/ui";
 import { IssuePeekOverview } from "components/issues";
 // hooks
 import useIssuesProperties from "hooks/use-issue-properties";
+import useLocalStorage from "hooks/use-local-storage";
+import { useWorkspaceView } from "hooks/use-workspace-view";
 // types
-import { ICurrentUserResponse, IIssue, ISubIssueResponse, UserAuth } from "types";
-import useWorkspaceIssuesFilters from "hooks/use-worskpace-issue-filter";
+import {
+  ICurrentUserResponse,
+  IIssue,
+  ISubIssueResponse,
+  TIssueOrderByOptions,
+  UserAuth,
+} from "types";
 import {
   CYCLE_DETAILS,
   CYCLE_ISSUES_WITH_PARAMS,
@@ -39,7 +46,7 @@ import {
 import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 import projectIssuesServices from "services/issues.service";
 // icon
-import { PlusIcon } from "lucide-react";
+import { CheckIcon, ChevronDownIcon, PlusIcon } from "lucide-react";
 
 type Props = {
   spreadsheetIssues: IIssue[];
@@ -70,12 +77,23 @@ export const SpreadsheetView: React.FC<Props> = ({
 
   const [isInlineCreateIssueFormOpen, setIsInlineCreateIssueFormOpen] = useState(false);
 
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId, workspaceViewId } = router.query;
 
   const type = cycleId ? "cycle" : moduleId ? "module" : "issue";
 
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
+
+  const { storedValue: selectedMenuItem, setValue: setSelectedMenuItem } = useLocalStorage(
+    "spreadsheetViewSorting",
+    ""
+  );
+  const { storedValue: activeSortingProperty, setValue: setActiveSortingProperty } =
+    useLocalStorage("spreadsheetViewActiveSortingProperty", "");
 
   const workspaceIssuesPath = [
     {
@@ -111,12 +129,9 @@ export const SpreadsheetView: React.FC<Props> = ({
     router.pathname.includes(path.path)
   );
 
-  const { params: workspaceViewParams } = useWorkspaceIssuesFilters(
-    workspaceSlug?.toString(),
-    workspaceViewId?.toString()
-  );
+  const { params: workspaceViewParams, handleFilters } = useWorkspaceView();
 
-  const { params } = useSpreadsheetIssuesView();
+  const { params, displayFilters, setDisplayFilters } = useSpreadsheetIssuesView();
 
   const partialUpdateIssue = useCallback(
     (formData: Partial<IIssue>, issue: IIssue) => {
@@ -199,8 +214,8 @@ export const SpreadsheetView: React.FC<Props> = ({
       moduleId,
       viewId,
       workspaceViewId,
-      currentWorkspaceIssuePath,
       workspaceViewParams,
+      currentWorkspaceIssuePath,
       params,
       user,
     ]
@@ -208,10 +223,216 @@ export const SpreadsheetView: React.FC<Props> = ({
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
-  const renderColumn = (header: string, Component: React.ComponentType<any>) => (
-    <div className="relative flex flex-col h-max w-full bg-custom-background-100 rounded-sm">
-      <div className="flex items-center min-w-[9rem] px-4 py-2.5 text-sm font-medium z-[1] h-11 w-full sticky top-0 bg-custom-background-90 border border-l-0 border-custom-border-200">
-        {header}
+  const handleOrderBy = (order: TIssueOrderByOptions, itemKey: string) => {
+    if (!workspaceViewId || !currentWorkspaceIssuePath)
+      handleFilters("display_filters", { order_by: order });
+    else setDisplayFilters({ order_by: order });
+    setSelectedMenuItem(`${order}_${itemKey}`);
+    setActiveSortingProperty(order === "-created_at" ? "" : itemKey);
+  };
+
+  const renderColumn = (
+    header: string,
+    propertyName: string,
+    Component: React.ComponentType<any>,
+    ascendingOrder: TIssueOrderByOptions,
+    descendingOrder: TIssueOrderByOptions
+  ) => (
+    <div className="relative flex flex-col h-max w-full bg-custom-background-100">
+      <div className="flex items-center min-w-[9rem] px-4 py-2.5 text-sm font-medium z-[1] h-11 w-full sticky top-0 bg-custom-background-90 border border-l-0 border-custom-border-100">
+        <CustomMenu
+          customButtonClassName="!w-full"
+          className="!w-full"
+          position="left"
+          customButton={
+            <div
+              className={`relative group flex items-center justify-between gap-1.5 cursor-pointer text-sm text-custom-text-200 hover:text-custom-text-100 w-full py-3 px-2 ${
+                activeSortingProperty === propertyName ? "bg-custom-background-80" : ""
+              }`}
+            >
+              {activeSortingProperty === propertyName && (
+                <div className="absolute top-1 right-1.5">
+                  <Icon
+                    iconName="filter_list"
+                    className="flex items-center justify-center h-3.5 w-3.5 rounded-full bg-custom-primary text-xs text-white"
+                  />
+                </div>
+              )}
+
+              {header}
+              <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+            </div>
+          }
+          width="xl"
+        >
+          <CustomMenu.MenuItem
+            onClick={() => {
+              handleOrderBy(ascendingOrder, propertyName);
+            }}
+          >
+            <div
+              className={`group flex gap-1.5 px-1 items-center justify-between ${
+                selectedMenuItem === `${ascendingOrder}_${propertyName}`
+                  ? "text-custom-text-100"
+                  : "text-custom-text-200 hover:text-custom-text-100"
+              }`}
+            >
+              <div className="flex gap-2 items-center">
+                {propertyName === "assignee" || propertyName === "labels" ? (
+                  <>
+                    <span className="relative flex items-center h-6 w-6">
+                      <Icon
+                        iconName="east"
+                        className="absolute left-0 rotate-90 text-xs leading-3"
+                      />
+                      <Icon iconName="sort" className="absolute right-0 text-sm" />
+                    </span>
+                    <span>A</span>
+                    <Icon iconName="east" className="text-sm" />
+                    <span>Z</span>
+                  </>
+                ) : propertyName === "due_date" ||
+                  propertyName === "created_on" ||
+                  propertyName === "updated_on" ? (
+                  <>
+                    <span className="relative flex items-center h-6 w-6">
+                      <Icon
+                        iconName="east"
+                        className="absolute left-0 rotate-90 text-xs leading-3"
+                      />
+                      <Icon iconName="sort" className="absolute right-0 text-sm" />
+                    </span>
+                    <span>New</span>
+                    <Icon iconName="east" className="text-sm" />
+                    <span>Old</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="relative flex items-center h-6 w-6">
+                      <Icon
+                        iconName="east"
+                        className="absolute left-0 rotate-90 text-xs leading-3"
+                      />
+                      <Icon iconName="sort" className="absolute right-0 text-sm" />
+                    </span>
+                    <span>First</span>
+                    <Icon iconName="east" className="text-sm" />
+                    <span>Last</span>
+                  </>
+                )}
+              </div>
+
+              <CheckIcon
+                className={`h-3.5 w-3.5 opacity-0 group-hover:opacity-100 ${
+                  selectedMenuItem === `${ascendingOrder}_${propertyName}` ? "opacity-100" : ""
+                }`}
+              />
+            </div>
+          </CustomMenu.MenuItem>
+          <CustomMenu.MenuItem
+            className={`mt-0.5 ${
+              selectedMenuItem === `${descendingOrder}_${propertyName}`
+                ? "bg-custom-background-80"
+                : ""
+            }`}
+            key={propertyName}
+            onClick={() => {
+              handleOrderBy(descendingOrder, propertyName);
+            }}
+          >
+            <div
+              className={`group flex gap-1.5 px-1 items-center justify-between ${
+                selectedMenuItem === `${descendingOrder}_${propertyName}`
+                  ? "text-custom-text-100"
+                  : "text-custom-text-200 hover:text-custom-text-100"
+              }`}
+            >
+              <div className="flex gap-2 items-center">
+                {propertyName === "assignee" || propertyName === "labels" ? (
+                  <>
+                    <span className="relative flex items-center h-6 w-6">
+                      <Icon
+                        iconName="east"
+                        className="absolute left-0 -rotate-90 text-xs leading-3"
+                      />
+                      <Icon
+                        iconName="sort"
+                        className="absolute rotate-180 transform scale-x-[-1] right-0 text-sm"
+                      />
+                    </span>
+                    <span>Z</span>
+                    <Icon iconName="east" className="text-sm" />
+                    <span>A</span>
+                  </>
+                ) : propertyName === "due_date" ? (
+                  <>
+                    <span className="relative flex items-center h-6 w-6">
+                      <Icon
+                        iconName="east"
+                        className="absolute left-0 -rotate-90 text-xs leading-3"
+                      />
+                      <Icon
+                        iconName="sort"
+                        className="absolute rotate-180 transform scale-x-[-1] right-0 text-sm"
+                      />
+                    </span>
+                    <span>Old</span>
+                    <Icon iconName="east" className="text-sm" />
+                    <span>New</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="relative flex items-center h-6 w-6">
+                      <Icon
+                        iconName="east"
+                        className="absolute left-0 -rotate-90 text-xs leading-3"
+                      />
+                      <Icon
+                        iconName="sort"
+                        className="absolute rotate-180 transform scale-x-[-1] right-0 text-sm"
+                      />
+                    </span>
+                    <span>Last</span>
+                    <Icon iconName="east" className="text-sm" />
+                    <span>First</span>
+                  </>
+                )}
+              </div>
+
+              <CheckIcon
+                className={`h-3.5 w-3.5 opacity-0 group-hover:opacity-100 ${
+                  selectedMenuItem === `${descendingOrder}_${propertyName}` ? "opacity-100" : ""
+                }`}
+              />
+            </div>
+          </CustomMenu.MenuItem>
+          {selectedMenuItem &&
+            selectedMenuItem !== "" &&
+            displayFilters?.order_by !== "-created_at" &&
+            selectedMenuItem.includes(propertyName) && (
+              <CustomMenu.MenuItem
+                className={`mt-0.5${
+                  selectedMenuItem === `-created_at_${propertyName}`
+                    ? "bg-custom-background-80"
+                    : ""
+                }`}
+                key={propertyName}
+                onClick={() => {
+                  handleOrderBy("-created_at", propertyName);
+                }}
+              >
+                <div className={`group flex gap-1.5 px-1 items-center justify-between `}>
+                  <div className="flex gap-1.5 items-center">
+                    <span className="relative flex items-center justify-center h-6 w-6">
+                      <Icon iconName="ink_eraser" className="text-sm" />
+                    </span>
+
+                    <span>Clear sorting</span>
+                  </div>
+                </div>
+              </CustomMenu.MenuItem>
+            )}
+        </CustomMenu>
       </div>
       <div className="h-full min-w-[9rem] w-full">
         {spreadsheetIssues.map((issue: IIssue, index) => (
@@ -230,6 +451,27 @@ export const SpreadsheetView: React.FC<Props> = ({
     </div>
   );
 
+  const handleScroll = () => {
+    if (containerRef.current) {
+      const scrollLeft = containerRef.current.scrollLeft;
+      setIsScrolled(scrollLeft > 0);
+    }
+  };
+
+  useEffect(() => {
+    const currentContainerRef = containerRef.current;
+
+    if (currentContainerRef) {
+      currentContainerRef.addEventListener("scroll", handleScroll);
+    }
+
+    return () => {
+      if (currentContainerRef) {
+        currentContainerRef.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, []);
+
   return (
     <>
       <IssuePeekOverview
@@ -238,15 +480,19 @@ export const SpreadsheetView: React.FC<Props> = ({
         workspaceSlug={workspaceSlug?.toString() ?? ""}
         readOnly={disableUserActions}
       />
-      <div className="relative flex h-full w-full rounded-lg text-custom-text-200 overflow-x-auto whitespace-nowrap bg-custom-background-100">
+      <div className="relative flex h-full w-full rounded-lg text-custom-text-200 overflow-x-auto whitespace-nowrap bg-custom-background-200">
         <div className="h-full w-full flex flex-col">
-          <div className="flex max-h-full overflow-y-auto">
+          <div ref={containerRef} className="flex max-h-full h-full overflow-y-auto">
             {spreadsheetIssues ? (
               <>
                 <div className="sticky left-0 w-[28rem] z-[2]">
-                  <div className="relative flex flex-col h-max w-full bg-custom-background-100 rounded-sm z-[2]">
-                    <div className="flex items-center text-sm font-medium z-[2] h-11 w-full sticky top-0 bg-custom-background-90 border border-l-0 border-custom-border-200">
-                      <span className="flex items-center px-4 py-2.5 h-full w-20 flex-shrink-0">
+                  <div
+                    className={`relative flex flex-col h-max w-full bg-custom-background-100 z-[2] ${
+                      isScrolled ? "shadow-r shadow-custom-shadow-xs" : ""
+                    }`}
+                  >
+                    <div className="flex items-center text-sm font-medium z-[2] h-11 w-full sticky top-0 bg-custom-background-90 border border-l-0 border-custom-border-100">
+                      <span className="flex items-center px-4 py-2.5 h-full w-24 flex-shrink-0">
                         ID
                       </span>
                       <span className="flex items-center px-4 py-2.5 h-full w-full flex-grow">
@@ -270,15 +516,69 @@ export const SpreadsheetView: React.FC<Props> = ({
                     ))}
                   </div>
                 </div>
-                {renderColumn("State", SpreadsheetStateColumn)}
-                {renderColumn("Priority", SpreadsheetPriorityColumn)}
-                {renderColumn("Assignees", SpreadsheetAssigneeColumn)}
-                {renderColumn("Label", SpreadsheetLabelColumn)}
-                {renderColumn("Start Date", SpreadsheetStartDateColumn)}
-                {renderColumn("Due Date", SpreadsheetDueDateColumn)}
-                {renderColumn("Estimate", SpreadsheetEstimateColumn)}
-                {renderColumn("Created On", SpreadsheetCreatedOnColumn)}
-                {renderColumn("Updated On", SpreadsheetUpdatedOnColumn)}
+                {renderColumn(
+                  "State",
+                  "state",
+                  SpreadsheetStateColumn,
+                  "state__name",
+                  "-state__name"
+                )}
+                {renderColumn(
+                  "Priority",
+                  "priority",
+                  SpreadsheetPriorityColumn,
+                  "priority",
+                  "-priority"
+                )}
+                {renderColumn(
+                  "Assignees",
+                  "assignee",
+                  SpreadsheetAssigneeColumn,
+                  "assignees__first_name",
+                  "-assignees__first_name"
+                )}
+                {renderColumn(
+                  "Label",
+                  "labels",
+                  SpreadsheetLabelColumn,
+                  "labels__name",
+                  "-labels__name"
+                )}
+                {renderColumn(
+                  "Start Date",
+                  "start_date",
+                  SpreadsheetStartDateColumn,
+                  "-start_date",
+                  "start_date"
+                )}
+                {renderColumn(
+                  "Due Date",
+                  "due_date",
+                  SpreadsheetDueDateColumn,
+                  "-target_date",
+                  "target_date"
+                )}
+                {renderColumn(
+                  "Estimate",
+                  "estimate",
+                  SpreadsheetEstimateColumn,
+                  "estimate_point",
+                  "-estimate_point"
+                )}
+                {renderColumn(
+                  "Created On",
+                  "created_on",
+                  SpreadsheetCreatedOnColumn,
+                  "-created_at",
+                  "created_at"
+                )}
+                {renderColumn(
+                  "Updated On",
+                  "updated_on",
+                  SpreadsheetUpdatedOnColumn,
+                  "-updated_at",
+                  "updated_at"
+                )}
               </>
             ) : (
               <div className="flex flex-col justify-center items-center h-full w-full">
@@ -287,7 +587,7 @@ export const SpreadsheetView: React.FC<Props> = ({
             )}
           </div>
 
-          <div>
+          <div className="border-t border-custom-border-100">
             <div className="mb-3 z-50 sticky bottom-0 left-0">
               <ListInlineCreateIssueForm
                 isOpen={isInlineCreateIssueFormOpen}
@@ -303,11 +603,11 @@ export const SpreadsheetView: React.FC<Props> = ({
               ? !disableUserActions &&
                 !isInlineCreateIssueFormOpen && (
                   <button
-                    className="flex gap-1.5 items-center text-custom-primary-100 pl-7 py-2.5 text-sm sticky left-0 z-[1] border-custom-border-200 w-full"
+                    className="flex gap-1.5 items-center text-custom-primary-100 pl-4 py-2.5 text-sm sticky left-0 z-[1] w-full"
                     onClick={() => setIsInlineCreateIssueFormOpen(true)}
                   >
                     <PlusIcon className="h-4 w-4" />
-                    Add Issue
+                    New Issue
                   </button>
                 )
               : !disableUserActions &&
@@ -316,11 +616,11 @@ export const SpreadsheetView: React.FC<Props> = ({
                     className="sticky left-0 z-10"
                     customButton={
                       <button
-                        className="flex gap-1.5 items-center text-custom-primary-100 pl-7 py-2.5 text-sm sticky left-0 z-[1] border-custom-border-200 w-full"
+                        className="flex gap-1.5 items-center text-custom-primary-100 pl-4 py-2.5 text-sm sticky left-0 z-[1] border-custom-border-200 w-full"
                         type="button"
                       >
                         <PlusIcon className="h-4 w-4" />
-                        Add Issue
+                        New Issue
                       </button>
                     }
                     position="left"

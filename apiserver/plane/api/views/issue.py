@@ -24,7 +24,6 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 from django.db import IntegrityError
-from django.conf import settings
 from django.db import IntegrityError
 
 # Third Party imports
@@ -58,7 +57,6 @@ from plane.api.serializers import (
     IssuePublicSerializer,
 )
 from plane.api.permissions import (
-    WorkspaceEntityPermission,
     ProjectEntityPermission,
     WorkSpaceAdminPermission,
     ProjectMemberPermission,
@@ -714,10 +712,18 @@ class LabelViewSet(BaseViewSet):
         ProjectMemberPermission,
     ]
 
-    def perform_create(self, serializer):
-        serializer.save(
-            project_id=self.kwargs.get("project_id"),
-        )
+    def create(self, request, slug, project_id):
+        try:
+            serializer = LabelSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(project_id=project_id)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except IntegrityError:
+            return Response({"error": "Label with the same name already exists in the project"}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            capture_exception(e)
+            return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_400_BAD_REQUEST)
 
     def get_queryset(self):
         return self.filter_queryset(
