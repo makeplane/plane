@@ -115,8 +115,6 @@ class IssueDetailStore implements IIssueDetailStore {
 
       const response = await this.issueService.createIssues(workspaceId, projectId, data, user);
 
-      if (response) this.rootStore.issue.addIssueToIssuesStore(projectId, response);
-
       runInAction(() => {
         this.loader = false;
         this.error = null;
@@ -137,7 +135,7 @@ class IssueDetailStore implements IIssueDetailStore {
     projectId: string,
     issueId: string,
     data: Partial<IIssue>,
-    user: ICurrentUserResponse
+    user: ICurrentUserResponse | undefined
   ) => {
     const newIssues = { ...this.issues };
     newIssues[issueId] = {
@@ -153,8 +151,6 @@ class IssueDetailStore implements IIssueDetailStore {
       });
 
       const response = await this.issueService.patchIssue(workspaceId, projectId, issueId, data, user);
-
-      if (response) this.rootStore.issue.updateIssueInIssuesStore(projectId, response);
 
       runInAction(() => {
         this.loader = false;
@@ -191,8 +187,6 @@ class IssueDetailStore implements IIssueDetailStore {
       });
 
       await this.issueService.deleteIssue(workspaceId, projectId, issueId, user);
-
-      this.rootStore.issue.deleteIssueFromIssuesStore(projectId, issueId);
 
       runInAction(() => {
         this.loader = false;

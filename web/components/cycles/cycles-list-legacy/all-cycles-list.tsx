@@ -20,8 +20,7 @@ export const AllCyclesList: React.FC<Props> = ({ viewType }) => {
   const { data: allCyclesList, mutate } = useSWR(
     workspaceSlug && projectId ? CYCLES_LIST(projectId.toString()) : null,
     workspaceSlug && projectId
-      ? () =>
-          cyclesService.getCyclesWithParams(workspaceSlug.toString(), projectId.toString(), "all")
+      ? () => cyclesService.getCyclesWithParams(workspaceSlug.toString(), projectId.toString(), "all")
       : null
   );
 

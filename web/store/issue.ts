@@ -142,12 +142,7 @@ class IssueStore implements IIssueStore {
       this.rootStore.workspace.setWorkspaceSlug(workspaceSlug);
       this.rootStore.project.setProjectId(projectId);
 
-      // TODO: replace this once the issue filter is completed
-      const params = {
-        group_by: "target_date",
-        order_by: "-created_at",
-        target_date: "2023-09-01;after,2023-09-30;before",
-      };
+      const params = this.rootStore?.issueFilter?.appliedFilters;
       const issueResponse = await this.issueService.getIssuesWithParams(workspaceSlug, projectId, params);
 
       const issueType = this.getIssueType;
