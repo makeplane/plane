@@ -69,6 +69,11 @@ class Migration(migrations.Migration):
             name='issue_props',
             field=models.JSONField(default=plane.db.models.workspace.get_issue_props),
         ),
+        migrations.AddField(
+            model_name='issueactivity',
+            name='epoch',
+            field=models.FloatField(null=True),
+        ),
         migrations.RunPython(update_issue_activity_priority),
         migrations.RunPython(update_issue_activity_blocked),
     ]
