@@ -51,7 +51,6 @@ export const GanttLayout: React.FC = observer(() => {
           enableBlockRightResize={isAllowed}
           enableBlockMove={isAllowed}
           enableReorder={appliedDisplayFilters.order_by === "sort_order" && isAllowed}
-          bottomSpacing
         />
       </div>
     </>
