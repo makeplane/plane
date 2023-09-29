@@ -82,7 +82,7 @@ export const SpreadsheetView: React.FC<Props> = ({
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, viewId, workspaceViewId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, viewId, globalViewId } = router.query;
 
   const type = cycleId ? "cycle" : moduleId ? "module" : "issue";
 
@@ -129,7 +129,17 @@ export const SpreadsheetView: React.FC<Props> = ({
     router.pathname.includes(path.path)
   );
 
-  const { params: workspaceViewParams, handleFilters } = useWorkspaceView();
+  const {
+    params: workspaceViewParams,
+    filters: workspaceViewFilters,
+    handleFilters,
+  } = useWorkspaceView();
+
+  const workspaceViewProperties = workspaceViewFilters.display_properties;
+
+  const isWorkspaceView = globalViewId || currentWorkspaceIssuePath;
+
+  const currentViewProperties = isWorkspaceView ? workspaceViewProperties : properties;
 
   const { params, displayFilters, setDisplayFilters } = useSpreadsheetIssuesView();
 
@@ -143,8 +153,8 @@ export const SpreadsheetView: React.FC<Props> = ({
         ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), params)
         : viewId
         ? VIEW_ISSUES(viewId.toString(), params)
-        : workspaceViewId
-        ? WORKSPACE_VIEW_ISSUES(workspaceSlug.toString(), workspaceViewParams)
+        : globalViewId
+        ? WORKSPACE_VIEW_ISSUES(globalViewId.toString(), workspaceViewParams)
         : currentWorkspaceIssuePath
         ? WORKSPACE_VIEW_ISSUES(workspaceSlug.toString(), currentWorkspaceIssuePath?.params)
         : PROJECT_ISSUES_LIST_WITH_PARAMS(issue.project_detail.id, params);
@@ -213,7 +223,7 @@ export const SpreadsheetView: React.FC<Props> = ({
       cycleId,
       moduleId,
       viewId,
-      workspaceViewId,
+      globalViewId,
       workspaceViewParams,
       currentWorkspaceIssuePath,
       params,
@@ -224,7 +234,7 @@ export const SpreadsheetView: React.FC<Props> = ({
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   const handleOrderBy = (order: TIssueOrderByOptions, itemKey: string) => {
-    if (!workspaceViewId || !currentWorkspaceIssuePath)
+    if (!globalViewId || !currentWorkspaceIssuePath)
       handleFilters("display_filters", { order_by: order });
     else setDisplayFilters({ order_by: order });
     setSelectedMenuItem(`${order}_${itemKey}`);
@@ -442,7 +452,7 @@ export const SpreadsheetView: React.FC<Props> = ({
             projectId={issue.project_detail.id}
             partialUpdateIssue={partialUpdateIssue}
             expandedIssues={expandedIssues}
-            properties={properties}
+            properties={currentViewProperties}
             user={user}
             isNotAllowed={isNotAllowed}
           />
@@ -492,9 +502,11 @@ export const SpreadsheetView: React.FC<Props> = ({
                     }`}
                   >
                     <div className="flex items-center text-sm font-medium z-[2] h-11 w-full sticky top-0 bg-custom-background-90 border border-l-0 border-custom-border-100">
-                      <span className="flex items-center px-4 py-2.5 h-full w-24 flex-shrink-0">
-                        ID
-                      </span>
+                      {currentViewProperties.key && (
+                        <span className="flex items-center px-4 py-2.5 h-full w-24 flex-shrink-0">
+                          ID
+                        </span>
+                      )}
                       <span className="flex items-center px-4 py-2.5 h-full w-full flex-grow">
                         Issue
                       </span>
@@ -508,7 +520,7 @@ export const SpreadsheetView: React.FC<Props> = ({
                         expandedIssues={expandedIssues}
                         setExpandedIssues={setExpandedIssues}
                         setCurrentProjectId={setCurrentProjectId}
-                        properties={properties}
+                        properties={currentViewProperties}
                         handleIssueAction={handleIssueAction}
                         disableUserActions={disableUserActions}
                         userAuth={userAuth}
@@ -516,69 +528,79 @@ export const SpreadsheetView: React.FC<Props> = ({
                     ))}
                   </div>
                 </div>
-                {renderColumn(
-                  "State",
-                  "state",
-                  SpreadsheetStateColumn,
-                  "state__name",
-                  "-state__name"
-                )}
-                {renderColumn(
-                  "Priority",
-                  "priority",
-                  SpreadsheetPriorityColumn,
-                  "priority",
-                  "-priority"
-                )}
-                {renderColumn(
-                  "Assignees",
-                  "assignee",
-                  SpreadsheetAssigneeColumn,
-                  "assignees__first_name",
-                  "-assignees__first_name"
-                )}
-                {renderColumn(
-                  "Label",
-                  "labels",
-                  SpreadsheetLabelColumn,
-                  "labels__name",
-                  "-labels__name"
-                )}
-                {renderColumn(
-                  "Start Date",
-                  "start_date",
-                  SpreadsheetStartDateColumn,
-                  "-start_date",
-                  "start_date"
-                )}
-                {renderColumn(
-                  "Due Date",
-                  "due_date",
-                  SpreadsheetDueDateColumn,
-                  "-target_date",
-                  "target_date"
-                )}
-                {renderColumn(
-                  "Estimate",
-                  "estimate",
-                  SpreadsheetEstimateColumn,
-                  "estimate_point",
-                  "-estimate_point"
-                )}
-                {renderColumn(
-                  "Created On",
-                  "created_on",
-                  SpreadsheetCreatedOnColumn,
-                  "-created_at",
-                  "created_at"
-                )}
-                {renderColumn(
-                  "Updated On",
-                  "updated_on",
-                  SpreadsheetUpdatedOnColumn,
-                  "-updated_at",
-                  "updated_at"
-                )}
+                {currentViewProperties.state &&
+                  renderColumn(
+                    "State",
+                    "state",
+                    SpreadsheetStateColumn,
+                    "state__name",
+                    "-state__name"
+                  )}
+
+                {currentViewProperties.priority &&
+                  renderColumn(
+                    "Priority",
+                    "priority",
+                    SpreadsheetPriorityColumn,
+                    "priority",
+                    "-priority"
+                  )}
+                {currentViewProperties.assignee &&
+                  renderColumn(
+                    "Assignees",
+                    "assignee",
+                    SpreadsheetAssigneeColumn,
+                    "assignees__first_name",
+                    "-assignees__first_name"
+                  )}
+                {currentViewProperties.labels &&
+                  renderColumn(
+                    "Label",
+                    "labels",
+                    SpreadsheetLabelColumn,
+                    "labels__name",
+                    "-labels__name"
+                  )}
+                {currentViewProperties.start_date &&
+                  renderColumn(
+                    "Start Date",
+                    "start_date",
+                    SpreadsheetStartDateColumn,
+                    "-start_date",
+                    "start_date"
+                  )}
+                {currentViewProperties.due_date &&
+                  renderColumn(
+                    "Due Date",
+                    "due_date",
+                    SpreadsheetDueDateColumn,
+                    "-target_date",
+                    "target_date"
+                  )}
+                {currentViewProperties.estimate &&
+                  renderColumn(
+                    "Estimate",
+                    "estimate",
+                    SpreadsheetEstimateColumn,
+                    "estimate_point",
+                    "-estimate_point"
+                  )}
+                {currentViewProperties.created_on &&
+                  renderColumn(
+                    "Created On",
+                    "created_on",
+                    SpreadsheetCreatedOnColumn,
+                    "-created_at",
+                    "created_at"
+                  )}
+                {currentViewProperties.updated_on &&
+                  renderColumn(
+                    "Updated On",
+                    "updated_on",
+                    SpreadsheetUpdatedOnColumn,
+                    "-updated_at",
+                    "updated_at"
+                  )}
               </>
             ) : (
               <div className="flex flex-col justify-center items-center h-full w-full">

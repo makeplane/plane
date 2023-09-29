@@ -103,5 +103,5 @@ export interface IWorkspaceViewProps {
 export interface IWorkspaceGlobalViewProps {
   filters: IWorkspaceIssueFilterOptions;
   display_filters: IWorkspaceIssueDisplayFilterOptions | undefined;
-  display_properties: Properties | undefined;
+  display_properties: Properties;
 }

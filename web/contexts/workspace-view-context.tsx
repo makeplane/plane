@@ -67,19 +67,19 @@ export const initialState: IWorkspaceGlobalViewProps = {
 
 const saveViewFilters = async (
   workspaceSlug: string,
-  viewId: string,
+  globalViewId: string,
   state: IWorkspaceGlobalViewProps
 ) => {
-  await workspaceService.updateView(workspaceSlug, viewId, {
+  await workspaceService.updateView(workspaceSlug, globalViewId, {
     query_data: state,
   });
 };
 
 export const WorkspaceViewProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const router = useRouter();
-  const { workspaceSlug, viewId } = router.query as {
+  const { workspaceSlug, globalViewId } = router.query as {
     workspaceSlug: string;
-    viewId: string;
+    globalViewId: string;
   };
 
   const [filters, setFilters] = useState<IWorkspaceGlobalViewProps>(initialState);
@@ -98,7 +98,7 @@ export const WorkspaceViewProvider: React.FC<{ children: React.ReactNode }> = ({
     };
     setFilters(() => updatedFilterPayload);
 
-    if (saveFiltersToServer) saveViewFilters(workspaceSlug, viewId, updatedFilterPayload);
+    if (saveFiltersToServer) saveViewFilters(workspaceSlug, globalViewId, updatedFilterPayload);
   };
 
   const computedFilter = (filters: any) => {
@@ -151,9 +151,9 @@ export const WorkspaceViewProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const { data: view, isLoading: viewLoading } = useSWR(
-    workspaceSlug && viewId ? WORKSPACE_VIEW_DETAILS(viewId.toString()) : null,
-    workspaceSlug && viewId
-      ? () => workspaceService.getViewDetails(workspaceSlug.toString(), viewId.toString())
+    workspaceSlug && globalViewId ? WORKSPACE_VIEW_DETAILS(globalViewId.toString()) : null,
+    workspaceSlug && globalViewId
+      ? () => workspaceService.getViewDetails(workspaceSlug.toString(), globalViewId.toString())
       : null
   );
 
@@ -162,10 +162,10 @@ export const WorkspaceViewProvider: React.FC<{ children: React.ReactNode }> = ({
     mutate: mutateViewIssues,
     isLoading: viewIssueLoading,
   } = useSWR(
-    workspaceSlug && view && viewId && filters
-      ? WORKSPACE_VIEW_ISSUES(viewId.toString(), params)
+    workspaceSlug && view && globalViewId && filters
+      ? WORKSPACE_VIEW_ISSUES(globalViewId.toString(), params)
       : null,
-    workspaceSlug && view && viewId
+    workspaceSlug && view && globalViewId
       ? () =>
           workspaceService.getViewIssues(
             workspaceSlug.toString(),

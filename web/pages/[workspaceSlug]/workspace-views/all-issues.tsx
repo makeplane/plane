@@ -18,7 +18,6 @@ const WorkspaceViewAllIssue = () => (
     }
     right={
       <div className="flex items-center gap-2">
-        {/* <MyIssuesViewOptions /> */}
         <WorkspaceIssuesViewOptions />
 
         <PrimaryButton

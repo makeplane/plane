@@ -50,13 +50,6 @@ export const WorkspaceAssignedIssue = () => {
     sub_issue: false,
   };
 
-  //   const { data: viewDetails, error } = useSWR(
-  //     workspaceSlug && workspaceViewId ? WORKSPACE_VIEW_DETAILS(workspaceViewId.toString()) : null,
-  //     workspaceSlug && workspaceViewId
-  //       ? () => workspaceService.getViewDetails(workspaceSlug.toString(), workspaceViewId.toString())
-  //       : null
-  //   );
-
   const { data: viewIssues, mutate: mutateIssues } = useSWR(
     workspaceSlug ? WORKSPACE_VIEW_ISSUES(workspaceSlug.toString(), params) : null,
     workspaceSlug ? () => workspaceService.getViewIssues(workspaceSlug.toString(), params) : null

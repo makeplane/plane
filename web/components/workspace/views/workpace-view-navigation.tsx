@@ -17,7 +17,7 @@ type Props = {
 
 export const WorkspaceViewsNavigation: React.FC<Props> = ({ handleAddView }) => {
   const router = useRouter();
-  const { workspaceSlug, viewId } = router.query;
+  const { workspaceSlug, globalViewId } = router.query;
 
   const { data: workspaceViews } = useSWR(
     workspaceSlug ? WORKSPACE_VIEWS_LIST(workspaceSlug.toString()) : null,
@@ -28,7 +28,7 @@ export const WorkspaceViewsNavigation: React.FC<Props> = ({ handleAddView }) => 
   React.useEffect(() => {
     const activeTabElement = document.getElementById("active-tab-global-view");
     if (activeTabElement) activeTabElement.scrollIntoView({ behavior: "smooth", inline: "center" });
-  }, [viewId, workspaceViews]);
+  }, [globalViewId, workspaceViews]);
 
   const tabsList = [
     {
@@ -80,13 +80,13 @@ export const WorkspaceViewsNavigation: React.FC<Props> = ({ handleAddView }) => 
         workspaceViews?.map((view) => (
           <button
             className={`border-b-2 min-w-min p-3 text-sm font-medium outline-none whitespace-nowrap flex-shrink-0 ${
-              view.id === viewId
+              view.id === globalViewId
                 ? "border-custom-primary-100 text-custom-primary-100"
                 : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
             }`}
-            id={view.id === viewId ? `active-tab-global-view` : ``}
+            id={view.id === globalViewId ? `active-tab-global-view` : ``}
             onClick={() =>
-              router.replace(`/${workspaceSlug}/workspace-views/issues?viewId=${view.id}`)
+              router.replace(`/${workspaceSlug}/workspace-views/issues?globalViewId=${view.id}`)
             }
           >
             {view.name}
