@@ -22,10 +22,6 @@ files.forEach((file) => {
 			// Replace concatenation of strings to a single string
 			localized_string = localized_string.replace(/['`"][\s\n]*\+[\s\n]*['`"]/g, '').replace(/\s+/g, ' ');
 
-			// Replace "\n" in the string with an actual \n, simulating what JS would do
-			// when evaluating it in quotes. 
-			localized_string = localized_string.replace(/\\n/g, '\n').replace(/\\r/g, '\r');
-
 			// add to sourceTerms
 			sourceTerms[localized_string] = localized_string;
 
@@ -47,7 +43,7 @@ function collectFiles(dir) {
 		const p = path.join(dir, file);
 		if (fs.lstatSync(p).isDirectory()) {
 			collectFiles(p);
-		} else if (p.endsWith('.js') || p.endsWith('.jsx') || p.endsWith('.ts') || p.endsWith('.tsx')) {
+		} else if (p.endsWith('.ts') || p.endsWith('.tsx')) {
 			files.push(p);
 		}
 	});
