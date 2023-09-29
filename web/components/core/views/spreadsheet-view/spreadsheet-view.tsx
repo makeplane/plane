@@ -82,7 +82,7 @@ export const SpreadsheetView: React.FC<Props> = ({
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, viewId, workspaceViewId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, viewId, globalViewId } = router.query;
 
   const type = cycleId ? "cycle" : moduleId ? "module" : "issue";
 
@@ -129,7 +129,17 @@ export const SpreadsheetView: React.FC<Props> = ({
     router.pathname.includes(path.path)
   );
 
-  const { params: workspaceViewParams, handleFilters } = useWorkspaceView();
+  const {
+    params: workspaceViewParams,
+    filters: workspaceViewFilters,
+    handleFilters,
+  } = useWorkspaceView();
+
+  const workspaceViewProperties = workspaceViewFilters.display_properties;
+
+  const isWorkspaceView = globalViewId || currentWorkspaceIssuePath;
+
+  const currentViewProperties = isWorkspaceView ? workspaceViewProperties : properties;
 
   const { params, displayFilters, setDisplayFilters } = useSpreadsheetIssuesView();
 
@@ -143,8 +153,8 @@ export const SpreadsheetView: React.FC<Props> = ({
         ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), params)
         : viewId
         ? VIEW_ISSUES(viewId.toString(), params)
-        : workspaceViewId
-        ? WORKSPACE_VIEW_ISSUES(workspaceSlug.toString(), workspaceViewParams)
+        : globalViewId
+        ? WORKSPACE_VIEW_ISSUES(globalViewId.toString(), workspaceViewParams)
         : currentWorkspaceIssuePath
         ? WORKSPACE_VIEW_ISSUES(workspaceSlug.toString(), currentWorkspaceIssuePath?.params)
         : PROJECT_ISSUES_LIST_WITH_PARAMS(issue.project_detail.id, params);
@@ -213,7 +223,7 @@ export const SpreadsheetView: React.FC<Props> = ({
       cycleId,
       moduleId,
       viewId,
-      workspaceViewId,
+      globalViewId,
       workspaceViewParams,
       currentWorkspaceIssuePath,
       params,
@@ -224,8 +234,7 @@ export const SpreadsheetView: React.FC<Props> = ({
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   const handleOrderBy = (order: TIssueOrderByOptions, itemKey: string) => {
-    if (!workspaceViewId || !currentWorkspaceIssuePath)
-      handleFilters("display_filters", { order_by: order });
+    if (globalViewId) handleFilters("display_filters", { order_by: order });
     else setDisplayFilters({ order_by: order });
     setSelectedMenuItem(`${order}_${itemKey}`);
     setActiveSortingProperty(order === "-created_at" ? "" : itemKey);
@@ -240,199 +249,203 @@ export const SpreadsheetView: React.FC<Props> = ({
   ) => (
     <div className="relative flex flex-col h-max w-full bg-custom-background-100">
       <div className="flex items-center min-w-[9rem] px-4 py-2.5 text-sm font-medium z-[1] h-11 w-full sticky top-0 bg-custom-background-90 border border-l-0 border-custom-border-100">
-        <CustomMenu
-          customButtonClassName="!w-full"
-          className="!w-full"
-          position="left"
-          customButton={
-            <div
-              className={`relative group flex items-center justify-between gap-1.5 cursor-pointer text-sm text-custom-text-200 hover:text-custom-text-100 w-full py-3 px-2 ${
-                activeSortingProperty === propertyName ? "bg-custom-background-80" : ""
-              }`}
-            >
-              {activeSortingProperty === propertyName && (
-                <div className="absolute top-1 right-1.5">
-                  <Icon
-                    iconName="filter_list"
-                    className="flex items-center justify-center h-3.5 w-3.5 rounded-full bg-custom-primary text-xs text-white"
-                  />
-                </div>
-              )}
-
-              {header}
-              <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
-            </div>
-          }
-          width="xl"
-        >
-          <CustomMenu.MenuItem
-            onClick={() => {
-              handleOrderBy(ascendingOrder, propertyName);
-            }}
-          >
-            <div
-              className={`group flex gap-1.5 px-1 items-center justify-between ${
-                selectedMenuItem === `${ascendingOrder}_${propertyName}`
-                  ? "text-custom-text-100"
-                  : "text-custom-text-200 hover:text-custom-text-100"
-              }`}
-            >
-              <div className="flex gap-2 items-center">
-                {propertyName === "assignee" || propertyName === "labels" ? (
-                  <>
-                    <span className="relative flex items-center h-6 w-6">
-                      <Icon
-                        iconName="east"
-                        className="absolute left-0 rotate-90 text-xs leading-3"
-                      />
-                      <Icon iconName="sort" className="absolute right-0 text-sm" />
-                    </span>
-                    <span>A</span>
-                    <Icon iconName="east" className="text-sm" />
-                    <span>Z</span>
-                  </>
-                ) : propertyName === "due_date" ||
-                  propertyName === "created_on" ||
-                  propertyName === "updated_on" ? (
-                  <>
-                    <span className="relative flex items-center h-6 w-6">
-                      <Icon
-                        iconName="east"
-                        className="absolute left-0 rotate-90 text-xs leading-3"
-                      />
-                      <Icon iconName="sort" className="absolute right-0 text-sm" />
-                    </span>
-                    <span>New</span>
-                    <Icon iconName="east" className="text-sm" />
-                    <span>Old</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="relative flex items-center h-6 w-6">
-                      <Icon
-                        iconName="east"
-                        className="absolute left-0 rotate-90 text-xs leading-3"
-                      />
-                      <Icon iconName="sort" className="absolute right-0 text-sm" />
-                    </span>
-                    <span>First</span>
-                    <Icon iconName="east" className="text-sm" />
-                    <span>Last</span>
-                  </>
-                )}
-              </div>
-
-              <CheckIcon
-                className={`h-3.5 w-3.5 opacity-0 group-hover:opacity-100 ${
-                  selectedMenuItem === `${ascendingOrder}_${propertyName}` ? "opacity-100" : ""
+        {currentWorkspaceIssuePath ? (
+          <span>{header}</span>
+        ) : (
+          <CustomMenu
+            customButtonClassName="!w-full"
+            className="!w-full"
+            position="left"
+            customButton={
+              <div
+                className={`relative group flex items-center justify-between gap-1.5 cursor-pointer text-sm text-custom-text-200 hover:text-custom-text-100 w-full py-3 px-2 ${
+                  activeSortingProperty === propertyName ? "bg-custom-background-80" : ""
                 }`}
-              />
-            </div>
-          </CustomMenu.MenuItem>
-          <CustomMenu.MenuItem
-            className={`mt-0.5 ${
-              selectedMenuItem === `${descendingOrder}_${propertyName}`
-                ? "bg-custom-background-80"
-                : ""
-            }`}
-            key={propertyName}
-            onClick={() => {
-              handleOrderBy(descendingOrder, propertyName);
-            }}
-          >
-            <div
-              className={`group flex gap-1.5 px-1 items-center justify-between ${
-                selectedMenuItem === `${descendingOrder}_${propertyName}`
-                  ? "text-custom-text-100"
-                  : "text-custom-text-200 hover:text-custom-text-100"
-              }`}
-            >
-              <div className="flex gap-2 items-center">
-                {propertyName === "assignee" || propertyName === "labels" ? (
-                  <>
-                    <span className="relative flex items-center h-6 w-6">
-                      <Icon
-                        iconName="east"
-                        className="absolute left-0 -rotate-90 text-xs leading-3"
-                      />
-                      <Icon
-                        iconName="sort"
-                        className="absolute rotate-180 transform scale-x-[-1] right-0 text-sm"
-                      />
-                    </span>
-                    <span>Z</span>
-                    <Icon iconName="east" className="text-sm" />
-                    <span>A</span>
-                  </>
-                ) : propertyName === "due_date" ? (
-                  <>
-                    <span className="relative flex items-center h-6 w-6">
-                      <Icon
-                        iconName="east"
-                        className="absolute left-0 -rotate-90 text-xs leading-3"
-                      />
-                      <Icon
-                        iconName="sort"
-                        className="absolute rotate-180 transform scale-x-[-1] right-0 text-sm"
-                      />
-                    </span>
-                    <span>Old</span>
-                    <Icon iconName="east" className="text-sm" />
-                    <span>New</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="relative flex items-center h-6 w-6">
-                      <Icon
-                        iconName="east"
-                        className="absolute left-0 -rotate-90 text-xs leading-3"
-                      />
-                      <Icon
-                        iconName="sort"
-                        className="absolute rotate-180 transform scale-x-[-1] right-0 text-sm"
-                      />
-                    </span>
-                    <span>Last</span>
-                    <Icon iconName="east" className="text-sm" />
-                    <span>First</span>
-                  </>
-                )}
-              </div>
-
-              <CheckIcon
-                className={`h-3.5 w-3.5 opacity-0 group-hover:opacity-100 ${
-                  selectedMenuItem === `${descendingOrder}_${propertyName}` ? "opacity-100" : ""
-                }`}
-              />
-            </div>
-          </CustomMenu.MenuItem>
-          {selectedMenuItem &&
-            selectedMenuItem !== "" &&
-            displayFilters?.order_by !== "-created_at" &&
-            selectedMenuItem.includes(propertyName) && (
-              <CustomMenu.MenuItem
-                className={`mt-0.5${
-                  selectedMenuItem === `-created_at_${propertyName}`
-                    ? "bg-custom-background-80"
-                    : ""
-                }`}
-                key={propertyName}
-                onClick={() => {
-                  handleOrderBy("-created_at", propertyName);
-                }}
               >
-                <div className={`group flex gap-1.5 px-1 items-center justify-between `}>
-                  <div className="flex gap-1.5 items-center">
-                    <span className="relative flex items-center justify-center h-6 w-6">
-                      <Icon iconName="ink_eraser" className="text-sm" />
-                    </span>
-
-                    <span>Clear sorting</span>
+                {activeSortingProperty === propertyName && (
+                  <div className="absolute top-1 right-1.5">
+                    <Icon
+                      iconName="filter_list"
+                      className="flex items-center justify-center h-3.5 w-3.5 rounded-full bg-custom-primary text-xs text-white"
+                    />
                   </div>
+                )}
+
+                {header}
+                <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+              </div>
+            }
+            width="xl"
+          >
+            <CustomMenu.MenuItem
+              onClick={() => {
+                handleOrderBy(ascendingOrder, propertyName);
+              }}
+            >
+              <div
+                className={`group flex gap-1.5 px-1 items-center justify-between ${
+                  selectedMenuItem === `${ascendingOrder}_${propertyName}`
+                    ? "text-custom-text-100"
+                    : "text-custom-text-200 hover:text-custom-text-100"
+                }`}
+              >
+                <div className="flex gap-2 items-center">
+                  {propertyName === "assignee" || propertyName === "labels" ? (
+                    <>
+                      <span className="relative flex items-center h-6 w-6">
+                        <Icon
+                          iconName="east"
+                          className="absolute left-0 rotate-90 text-xs leading-3"
+                        />
+                        <Icon iconName="sort" className="absolute right-0 text-sm" />
+                      </span>
+                      <span>A</span>
+                      <Icon iconName="east" className="text-sm" />
+                      <span>Z</span>
+                    </>
+                  ) : propertyName === "due_date" ||
+                    propertyName === "created_on" ||
+                    propertyName === "updated_on" ? (
+                    <>
+                      <span className="relative flex items-center h-6 w-6">
+                        <Icon
+                          iconName="east"
+                          className="absolute left-0 rotate-90 text-xs leading-3"
+                        />
+                        <Icon iconName="sort" className="absolute right-0 text-sm" />
+                      </span>
+                      <span>New</span>
+                      <Icon iconName="east" className="text-sm" />
+                      <span>Old</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="relative flex items-center h-6 w-6">
+                        <Icon
+                          iconName="east"
+                          className="absolute left-0 rotate-90 text-xs leading-3"
+                        />
+                        <Icon iconName="sort" className="absolute right-0 text-sm" />
+                      </span>
+                      <span>First</span>
+                      <Icon iconName="east" className="text-sm" />
+                      <span>Last</span>
+                    </>
+                  )}
                 </div>
-              </CustomMenu.MenuItem>
-            )}
-        </CustomMenu>
+
+                <CheckIcon
+                  className={`h-3.5 w-3.5 opacity-0 group-hover:opacity-100 ${
+                    selectedMenuItem === `${ascendingOrder}_${propertyName}` ? "opacity-100" : ""
+                  }`}
+                />
+              </div>
+            </CustomMenu.MenuItem>
+            <CustomMenu.MenuItem
+              className={`mt-0.5 ${
+                selectedMenuItem === `${descendingOrder}_${propertyName}`
+                  ? "bg-custom-background-80"
+                  : ""
+              }`}
+              key={propertyName}
+              onClick={() => {
+                handleOrderBy(descendingOrder, propertyName);
+              }}
+            >
+              <div
+                className={`group flex gap-1.5 px-1 items-center justify-between ${
+                  selectedMenuItem === `${descendingOrder}_${propertyName}`
+                    ? "text-custom-text-100"
+                    : "text-custom-text-200 hover:text-custom-text-100"
+                }`}
+              >
+                <div className="flex gap-2 items-center">
+                  {propertyName === "assignee" || propertyName === "labels" ? (
+                    <>
+                      <span className="relative flex items-center h-6 w-6">
+                        <Icon
+                          iconName="east"
+                          className="absolute left-0 -rotate-90 text-xs leading-3"
+                        />
+                        <Icon
+                          iconName="sort"
+                          className="absolute rotate-180 transform scale-x-[-1] right-0 text-sm"
+                        />
+                      </span>
+                      <span>Z</span>
+                      <Icon iconName="east" className="text-sm" />
+                      <span>A</span>
+                    </>
+                  ) : propertyName === "due_date" ? (
+                    <>
+                      <span className="relative flex items-center h-6 w-6">
+                        <Icon
+                          iconName="east"
+                          className="absolute left-0 -rotate-90 text-xs leading-3"
+                        />
+                        <Icon
+                          iconName="sort"
+                          className="absolute rotate-180 transform scale-x-[-1] right-0 text-sm"
+                        />
+                      </span>
+                      <span>Old</span>
+                      <Icon iconName="east" className="text-sm" />
+                      <span>New</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="relative flex items-center h-6 w-6">
+                        <Icon
+                          iconName="east"
+                          className="absolute left-0 -rotate-90 text-xs leading-3"
+                        />
+                        <Icon
+                          iconName="sort"
+                          className="absolute rotate-180 transform scale-x-[-1] right-0 text-sm"
+                        />
+                      </span>
+                      <span>Last</span>
+                      <Icon iconName="east" className="text-sm" />
+                      <span>First</span>
+                    </>
+                  )}
+                </div>
+
+                <CheckIcon
+                  className={`h-3.5 w-3.5 opacity-0 group-hover:opacity-100 ${
+                    selectedMenuItem === `${descendingOrder}_${propertyName}` ? "opacity-100" : ""
+                  }`}
+                />
+              </div>
+            </CustomMenu.MenuItem>
+            {selectedMenuItem &&
+              selectedMenuItem !== "" &&
+              displayFilters?.order_by !== "-created_at" &&
+              selectedMenuItem.includes(propertyName) && (
+                <CustomMenu.MenuItem
+                  className={`mt-0.5${
+                    selectedMenuItem === `-created_at_${propertyName}`
+                      ? "bg-custom-background-80"
+                      : ""
+                  }`}
+                  key={propertyName}
+                  onClick={() => {
+                    handleOrderBy("-created_at", propertyName);
+                  }}
+                >
+                  <div className={`group flex gap-1.5 px-1 items-center justify-between `}>
+                    <div className="flex gap-1.5 items-center">
+                      <span className="relative flex items-center justify-center h-6 w-6">
+                        <Icon iconName="ink_eraser" className="text-sm" />
+                      </span>
+
+                      <span>Clear sorting</span>
+                    </div>
+                  </div>
+                </CustomMenu.MenuItem>
+              )}
+          </CustomMenu>
+        )}
       </div>
       <div className="h-full min-w-[9rem] w-full">
         {spreadsheetIssues.map((issue: IIssue, index) => (
@@ -442,7 +455,7 @@ export const SpreadsheetView: React.FC<Props> = ({
             projectId={issue.project_detail.id}
             partialUpdateIssue={partialUpdateIssue}
             expandedIssues={expandedIssues}
-            properties={properties}
+            properties={currentViewProperties}
             user={user}
             isNotAllowed={isNotAllowed}
           />
@@ -492,9 +505,11 @@ export const SpreadsheetView: React.FC<Props> = ({
                     }`}
                   >
                     <div className="flex items-center text-sm font-medium z-[2] h-11 w-full sticky top-0 bg-custom-background-90 border border-l-0 border-custom-border-100">
-                      <span className="flex items-center px-4 py-2.5 h-full w-24 flex-shrink-0">
-                        ID
-                      </span>
+                      {currentViewProperties.key && (
+                        <span className="flex items-center px-4 py-2.5 h-full w-24 flex-shrink-0">
+                          ID
+                        </span>
+                      )}
                       <span className="flex items-center px-4 py-2.5 h-full w-full flex-grow">
                         Issue
                       </span>
@@ -508,7 +523,7 @@ export const SpreadsheetView: React.FC<Props> = ({
                         expandedIssues={expandedIssues}
                         setExpandedIssues={setExpandedIssues}
                         setCurrentProjectId={setCurrentProjectId}
-                        properties={properties}
+                        properties={currentViewProperties}
                         handleIssueAction={handleIssueAction}
                         disableUserActions={disableUserActions}
                         userAuth={userAuth}
@@ -516,69 +531,79 @@ export const SpreadsheetView: React.FC<Props> = ({
                     ))}
                   </div>
                 </div>
-                {renderColumn(
-                  "State",
-                  "state",
-                  SpreadsheetStateColumn,
-                  "state__name",
-                  "-state__name"
-                )}
-                {renderColumn(
-                  "Priority",
-                  "priority",
-                  SpreadsheetPriorityColumn,
-                  "priority",
-                  "-priority"
-                )}
-                {renderColumn(
-                  "Assignees",
-                  "assignee",
-                  SpreadsheetAssigneeColumn,
-                  "assignees__first_name",
-                  "-assignees__first_name"
-                )}
-                {renderColumn(
-                  "Label",
-                  "labels",
-                  SpreadsheetLabelColumn,
-                  "labels__name",
-                  "-labels__name"
-                )}
-                {renderColumn(
-                  "Start Date",
-                  "start_date",
-                  SpreadsheetStartDateColumn,
-                  "-start_date",
-                  "start_date"
-                )}
-                {renderColumn(
-                  "Due Date",
-                  "due_date",
-                  SpreadsheetDueDateColumn,
-                  "-target_date",
-                  "target_date"
-                )}
-                {renderColumn(
-                  "Estimate",
-                  "estimate",
-                  SpreadsheetEstimateColumn,
-                  "estimate_point",
-                  "-estimate_point"
-                )}
-                {renderColumn(
-                  "Created On",
-                  "created_on",
-                  SpreadsheetCreatedOnColumn,
-                  "-created_at",
-                  "created_at"
-                )}
-                {renderColumn(
-                  "Updated On",
-                  "updated_on",
-                  SpreadsheetUpdatedOnColumn,
-                  "-updated_at",
-                  "updated_at"
-                )}
+                {currentViewProperties.state &&
+                  renderColumn(
+                    "State",
+                    "state",
+                    SpreadsheetStateColumn,
+                    "state__name",
+                    "-state__name"
+                  )}
+
+                {currentViewProperties.priority &&
+                  renderColumn(
+                    "Priority",
+                    "priority",
+                    SpreadsheetPriorityColumn,
+                    "priority",
+                    "-priority"
+                  )}
+                {currentViewProperties.assignee &&
+                  renderColumn(
+                    "Assignees",
+                    "assignee",
+                    SpreadsheetAssigneeColumn,
+                    "assignees__first_name",
+                    "-assignees__first_name"
+                  )}
+                {currentViewProperties.labels &&
+                  renderColumn(
+                    "Label",
+                    "labels",
+                    SpreadsheetLabelColumn,
+                    "labels__name",
+                    "-labels__name"
+                  )}
+                {currentViewProperties.start_date &&
+                  renderColumn(
+                    "Start Date",
+                    "start_date",
+                    SpreadsheetStartDateColumn,
+                    "-start_date",
+                    "start_date"
+                  )}
+                {currentViewProperties.due_date &&
+                  renderColumn(
+                    "Due Date",
+                    "due_date",
+                    SpreadsheetDueDateColumn,
+                    "-target_date",
+                    "target_date"
+                  )}
+                {currentViewProperties.estimate &&
+                  renderColumn(
+                    "Estimate",
+                    "estimate",
+                    SpreadsheetEstimateColumn,
+                    "estimate_point",
+                    "-estimate_point"
+                  )}
+                {currentViewProperties.created_on &&
+                  renderColumn(
+                    "Created On",
+                    "created_on",
+                    SpreadsheetCreatedOnColumn,
+                    "-created_at",
+                    "created_at"
+                  )}
+                {currentViewProperties.updated_on &&
+                  renderColumn(
+                    "Updated On",
+                    "updated_on",
+                    SpreadsheetUpdatedOnColumn,
+                    "-updated_at",
+                    "updated_at"
+                  )}
               </>
             ) : (
               <div className="flex flex-col justify-center items-center h-full w-full">

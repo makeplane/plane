@@ -13,6 +13,7 @@ import useProjects from "hooks/use-projects";
 import useUser from "hooks/use-user";
 import { useWorkspaceView } from "hooks/use-workspace-view";
 import useWorkspaceMembers from "hooks/use-workspace-members";
+import useToast from "hooks/use-toast";
 // components
 import { WorkspaceViewsNavigation } from "components/workspace/views/workpace-view-navigation";
 import { EmptyState, PrimaryButton } from "components/ui";
@@ -31,7 +32,9 @@ import { IIssue, IWorkspaceIssueFilterOptions } from "types";
 
 export const WorkspaceViewIssues = () => {
   const router = useRouter();
-  const { workspaceSlug, viewId } = router.query;
+  const { workspaceSlug, globalViewId } = router.query;
+
+  const { setToastAlert } = useToast();
 
   const { memberRole } = useProjectMyMembership();
   const { user } = useUser();
@@ -111,7 +114,9 @@ export const WorkspaceViewIssues = () => {
   const nullFilters =
     filters.filters &&
     Object.keys(filters.filters).filter(
-      (key) => filters.filters[key as keyof IWorkspaceIssueFilterOptions] === null
+      (key) =>
+        filters.filters[key as keyof IWorkspaceIssueFilterOptions] === null ||
+        (filters.filters[key as keyof IWorkspaceIssueFilterOptions]?.length ?? 0) <= 0
     );
 
   const areFiltersApplied =
@@ -189,16 +194,22 @@ export const WorkspaceViewIssues = () => {
                     />
                     <PrimaryButton
                       onClick={() => {
-                        if (viewId) handleFilters("filters", filters.filters, true);
-                        else
+                        if (globalViewId) {
+                          handleFilters("filters", filters.filters, true);
+                          setToastAlert({
+                            title: "View updated",
+                            message: "Your view has been updated",
+                            type: "success",
+                          });
+                        } else
                           setCreateViewModal({
                             query: filters.filters,
                           });
                       }}
                       className="flex items-center gap-2 text-sm"
                     >
-                      {!viewId && <PlusIcon className="h-4 w-4" />}
-                      {viewId ? "Update" : "Save"} view
+                      {!globalViewId && <PlusIcon className="h-4 w-4" />}
+                      {globalViewId ? "Update" : "Save"} view
                     </PrimaryButton>
                   </div>
                   {<div className="mt-3 border-t border-custom-border-200" />}

@@ -31,7 +31,7 @@ import { IIssue, IWorkspaceIssueFilterOptions } from "types";
 
 export const WorkspaceAllIssue = () => {
   const router = useRouter();
-  const { workspaceSlug, viewId } = router.query;
+  const { workspaceSlug, globalViewId } = router.query;
 
   const [createViewModal, setCreateViewModal] = useState<any>(null);
 
@@ -128,7 +128,9 @@ export const WorkspaceAllIssue = () => {
   const nullFilters =
     filters.filters &&
     Object.keys(filters.filters).filter(
-      (key) => filters.filters[key as keyof IWorkspaceIssueFilterOptions] === null
+      (key) =>
+        filters.filters[key as keyof IWorkspaceIssueFilterOptions] === null ||
+        (filters.filters[key as keyof IWorkspaceIssueFilterOptions]?.length ?? 0) <= 0
     );
 
   const areFiltersApplied =
@@ -203,7 +205,7 @@ export const WorkspaceAllIssue = () => {
                   />
                   <PrimaryButton
                     onClick={() => {
-                      if (viewId) handleFilters("filters", filters.filters, true);
+                      if (globalViewId) handleFilters("filters", filters.filters, true);
                       else
                         setCreateViewModal({
                           query: filters.filters,
@@ -211,8 +213,8 @@ export const WorkspaceAllIssue = () => {
                     }}
                     className="flex items-center gap-2 text-sm"
                   >
-                    {!viewId && <PlusIcon className="h-4 w-4" />}
-                    {viewId ? "Update" : "Save"} view
+                    {!globalViewId && <PlusIcon className="h-4 w-4" />}
+                    {globalViewId ? "Update" : "Save"} view
                   </PrimaryButton>
                 </div>
                 {<div className="mt-3 border-t border-custom-border-200" />}
