@@ -52,22 +52,26 @@ const issueViewOptions: { type: TIssueViewOptions; Icon: any }[] = [
   },
 ];
 
+const issueViewForDraftIssues: { type: TIssueViewOptions; Icon: any }[] = [
+  {
+    type: "list",
+    Icon: FormatListBulletedOutlined,
+  },
+  {
+    type: "kanban",
+    Icon: GridViewOutlined,
+  },
+];
+
 export const IssuesFilterView: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, viewId } = router.query;
   const isArchivedIssues = router.pathname.includes("archived-issues");
+  const isDraftIssues = router.pathname?.split("/")?.[4] === "draft-issues";
 
   const {
-    issueView,
-    setIssueView,
-    groupByProperty,
-    setGroupByProperty,
-    orderBy,
-    setOrderBy,
-    showEmptyGroups,
-    showSubIssues,
-    setShowSubIssues,
-    setShowEmptyGroups,
+    displayFilters,
+    setDisplayFilters,
     filters,
     setFilters,
     resetFilterToDefault,
@@ -83,9 +87,41 @@ export const IssuesFilterView: React.FC = () => {
 
   return (
     <div className="flex items-center gap-2">
-      {!isArchivedIssues && (
+      {!isArchivedIssues && !isDraftIssues && (
         <div className="flex items-center gap-x-1">
           {issueViewOptions.map((option) => (
+            <Tooltip
+              key={option.type}
+              tooltipContent={
+                <span className="capitalize">
+                  {replaceUnderscoreIfSnakeCase(option.type)} Layout
+                </span>
+              }
+              position="bottom"
+            >
+              <button
+                type="button"
+                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80 duration-300 ${
+                  displayFilters.layout === option.type
+                    ? "bg-custom-sidebar-background-80"
+                    : "text-custom-sidebar-text-200"
+                }`}
+                onClick={() => setDisplayFilters({ layout: option.type })}
+              >
+                <option.Icon
+                  sx={{
+                    fontSize: 16,
+                  }}
+                  className={option.type === "gantt_chart" ? "rotate-90" : ""}
+                />
+              </button>
+            </Tooltip>
+          ))}
+        </div>
+      )}
+      {isDraftIssues && (
+        <div className="flex items-center gap-x-1">
+          {issueViewForDraftIssues.map((option) => (
             <Tooltip
               key={option.type}
               tooltipContent={
@@ -96,11 +132,11 @@ export const IssuesFilterView: React.FC = () => {
               <button
                 type="button"
                 className={`grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80 duration-300 ${
-                  issueView === option.type
+                  displayFilters.layout === option.type
                     ? "bg-custom-sidebar-background-80"
                     : "text-custom-sidebar-text-200"
                 }`}
-                onClick={() => setIssueView(option.type)}
+                onClick={() => setDisplayFilters({ layout: option.type })}
               >
                 <option.Icon
                   sx={{
@@ -174,28 +210,33 @@ export const IssuesFilterView: React.FC = () => {
               <Popover.Panel className="absolute right-0 z-30 mt-1 w-screen max-w-xs transform rounded-lg border border-custom-border-200 bg-custom-background-90 p-3 shadow-lg">
                 <div className="relative divide-y-2 divide-custom-border-200">
                   <div className="space-y-4 pb-3 text-xs">
-                    {issueView !== "calendar" &&
-                      issueView !== "spreadsheet" &&
-                      issueView !== "gantt_chart" && (
+                    {displayFilters.layout !== "calendar" &&
+                      displayFilters.layout !== "spreadsheet" &&
+                      displayFilters.layout !== "gantt_chart" && (
                         <div className="flex items-center justify-between">
                           <h4 className="text-custom-text-200">Group by</h4>
                           <div className="w-28">
                             <CustomMenu
                               label={
-                                GROUP_BY_OPTIONS.find((option) => option.key === groupByProperty)
-                                  ?.name ?? "Select"
+                                GROUP_BY_OPTIONS.find(
+                                  (option) => option.key === displayFilters.group_by
+                                )?.name ?? "Select"
                               }
                               className="!w-full"
                               buttonClassName="w-full"
                             >
                               {GROUP_BY_OPTIONS.map((option) => {
-                                if (issueView === "kanban" && option.key === null) return null;
+                                if (displayFilters.layout === "kanban" && option.key === null)
+                                  return null;
                                 if (option.key === "project") return null;
+
+                                if (isDraftIssues && option.key === "state_detail.group")
+                                  return null;
 
                                 return (
                                   <CustomMenu.MenuItem
                                     key={option.key}
-                                    onClick={() => setGroupByProperty(option.key)}
+                                    onClick={() => setDisplayFilters({ group_by: option.key })}
                                   >
                                     {option.name}
                                   </CustomMenu.MenuItem>
@@ -205,88 +246,101 @@ export const IssuesFilterView: React.FC = () => {
                           </div>
                         </div>
                       )}
-                    {issueView !== "calendar" && issueView !== "spreadsheet" && (
+                    {displayFilters.layout !== "calendar" &&
+                      displayFilters.layout !== "spreadsheet" && (
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-custom-text-200">Order by</h4>
+                          <div className="w-28">
+                            <CustomMenu
+                              label={
+                                ORDER_BY_OPTIONS.find(
+                                  (option) => option.key === displayFilters.order_by
+                                )?.name ?? "Select"
+                              }
+                              className="!w-full"
+                              buttonClassName="w-full"
+                            >
+                              {ORDER_BY_OPTIONS.map((option) =>
+                                displayFilters.group_by === "priority" &&
+                                option.key === "priority" ? null : (
+                                  <CustomMenu.MenuItem
+                                    key={option.key}
+                                    onClick={() => {
+                                      setDisplayFilters({ order_by: option.key });
+                                    }}
+                                  >
+                                    {option.name}
+                                  </CustomMenu.MenuItem>
+                                )
+                              )}
+                            </CustomMenu>
+                          </div>
+                        </div>
+                      )}
+                    {!isArchivedIssues && (
                       <div className="flex items-center justify-between">
-                        <h4 className="text-custom-text-200">Order by</h4>
+                        <h4 className="text-custom-text-200">Issue type</h4>
                         <div className="w-28">
                           <CustomMenu
                             label={
-                              ORDER_BY_OPTIONS.find((option) => option.key === orderBy)?.name ??
-                              "Select"
+                              FILTER_ISSUE_OPTIONS.find(
+                                (option) => option.key === displayFilters.type
+                              )?.name ?? "Select"
                             }
                             className="!w-full"
                             buttonClassName="w-full"
                           >
-                            {ORDER_BY_OPTIONS.map((option) =>
-                              groupByProperty === "priority" && option.key === "priority" ? null : (
-                                <CustomMenu.MenuItem
-                                  key={option.key}
-                                  onClick={() => {
-                                    setOrderBy(option.key);
-                                  }}
-                                >
-                                  {option.name}
-                                </CustomMenu.MenuItem>
-                              )
-                            )}
+                            {FILTER_ISSUE_OPTIONS.map((option) => (
+                              <CustomMenu.MenuItem
+                                key={option.key}
+                                onClick={() =>
+                                  setDisplayFilters({
+                                    type: option.key,
+                                  })
+                                }
+                              >
+                                {option.name}
+                              </CustomMenu.MenuItem>
+                            ))}
                           </CustomMenu>
                         </div>
                       </div>
                     )}
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-custom-text-200">Issue type</h4>
-                      <div className="w-28">
-                        <CustomMenu
-                          label={
-                            FILTER_ISSUE_OPTIONS.find((option) => option.key === filters.type)
-                              ?.name ?? "Select"
-                          }
-                          className="!w-full"
-                          buttonClassName="w-full"
-                        >
-                          {FILTER_ISSUE_OPTIONS.map((option) => (
-                            <CustomMenu.MenuItem
-                              key={option.key}
-                              onClick={() =>
-                                setFilters({
-                                  type: option.key,
-                                })
-                              }
-                            >
-                              {option.name}
-                            </CustomMenu.MenuItem>
-                          ))}
-                        </CustomMenu>
-                      </div>
-                    </div>
 
-                    {issueView !== "calendar" && issueView !== "spreadsheet" && (
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-custom-text-200">Show sub-issues</h4>
-                        <div className="w-28">
-                          <ToggleSwitch
-                            value={showSubIssues}
-                            onChange={() => setShowSubIssues(!showSubIssues)}
-                          />
-                        </div>
-                      </div>
-                    )}
-                    {issueView !== "calendar" &&
-                      issueView !== "spreadsheet" &&
-                      issueView !== "gantt_chart" && (
+                    {displayFilters.layout !== "calendar" &&
+                      displayFilters.layout !== "spreadsheet" && (
                         <div className="flex items-center justify-between">
-                          <h4 className="text-custom-text-200">Show empty states</h4>
+                          <h4 className="text-custom-text-200">Show sub-issues</h4>
                           <div className="w-28">
                             <ToggleSwitch
-                              value={showEmptyGroups}
-                              onChange={() => setShowEmptyGroups(!showEmptyGroups)}
+                              value={displayFilters.sub_issue ?? true}
+                              onChange={() =>
+                                setDisplayFilters({ sub_issue: !displayFilters.sub_issue })
+                              }
                             />
                           </div>
                         </div>
                       )}
-                    {issueView !== "calendar" &&
-                      issueView !== "spreadsheet" &&
-                      issueView !== "gantt_chart" && (
+                    {displayFilters.layout !== "calendar" &&
+                      displayFilters.layout !== "spreadsheet" &&
+                      displayFilters.layout !== "gantt_chart" && (
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-custom-text-200">Show empty groups</h4>
+                          <div className="w-28">
+                            <ToggleSwitch
+                              value={displayFilters.show_empty_groups ?? true}
+                              onChange={() =>
+                                setDisplayFilters({
+                                  show_empty_groups: !displayFilters.show_empty_groups,
+                                })
+                              }
+                            />
+                          </div>
+                        </div>
+                      )}
+                    {displayFilters.layout !== "calendar" &&
+                      displayFilters.layout !== "spreadsheet" &&
+                      displayFilters.layout !== "gantt_chart" && (
                         <div className="relative flex justify-end gap-x-3">
                           <button type="button" onClick={() => resetFilterToDefault()}>
                             Reset to default
@@ -302,7 +356,7 @@ export const IssuesFilterView: React.FC = () => {
                       )}
                   </div>
 
-                  {issueView !== "gantt_chart" && (
+                  {displayFilters.layout !== "gantt_chart" && (
                     <div className="space-y-2 py-3">
                       <h4 className="text-sm text-custom-text-200">Display Properties</h4>
                       <div className="flex flex-wrap items-center gap-2 text-custom-text-200">
@@ -310,7 +364,7 @@ export const IssuesFilterView: React.FC = () => {
                           if (key === "estimate" && !isEstimateActive) return null;
 
                           if (
-                            issueView === "spreadsheet" &&
+                            displayFilters.layout === "spreadsheet" &&
                             (key === "attachment_count" ||
                               key === "link" ||
                               key === "sub_issue_count")
@@ -318,7 +372,7 @@ export const IssuesFilterView: React.FC = () => {
                             return null;
 
                           if (
-                            issueView !== "spreadsheet" &&
+                            displayFilters.layout !== "spreadsheet" &&
                             (key === "created_on" || key === "updated_on")
                           )
                             return null;

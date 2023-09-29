@@ -6,20 +6,24 @@ import { IssueGanttChartView } from "components/issues";
 import { ModuleIssuesGanttChartView } from "components/modules";
 import { ViewIssuesGanttChartView } from "components/views";
 
-export const GanttChartView = () => {
+type Props = {
+  disableUserActions: boolean;
+};
+
+export const GanttChartView: React.FC<Props> = ({ disableUserActions }) => {
   const router = useRouter();
   const { cycleId, moduleId, viewId } = router.query;
 
   return (
     <>
       {cycleId ? (
-        <CycleIssuesGanttChartView />
+        <CycleIssuesGanttChartView disableUserActions={disableUserActions} />
       ) : moduleId ? (
-        <ModuleIssuesGanttChartView />
+        <ModuleIssuesGanttChartView disableUserActions={disableUserActions} />
       ) : viewId ? (
-        <ViewIssuesGanttChartView />
+        <ViewIssuesGanttChartView disableUserActions={disableUserActions} />
       ) : (
-        <IssueGanttChartView />
+        <IssueGanttChartView disableUserActions={disableUserActions} />
       )}
     </>
   );

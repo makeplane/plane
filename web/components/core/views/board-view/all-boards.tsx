@@ -1,5 +1,12 @@
+import { useRouter } from "next/router";
+
+//hook
+import useMyIssues from "hooks/my-issues/use-my-issues";
+import useIssuesView from "hooks/use-issues-view";
+import useProfileIssues from "hooks/use-profile-issues";
 // components
 import { SingleBoard } from "components/core/views/board-view/single-board";
+import { IssuePeekOverview } from "components/issues";
 // icons
 import { StateGroupIcon } from "components/icons";
 // helpers
@@ -13,9 +20,12 @@ type Props = {
   disableAddIssueOption?: boolean;
   dragDisabled: boolean;
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
+  handleDraftIssueAction?: (issue: IIssue, action: "edit" | "delete") => void;
   handleTrashBox: (isDragging: boolean) => void;
   openIssuesListModal?: (() => void) | null;
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
+  myIssueProjectId?: string | null;
+  handleMyIssueOpen?: (issue: IIssue) => void;
   states: IState[] | undefined;
   user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
@@ -28,25 +38,53 @@ export const AllBoards: React.FC<Props> = ({
   disableAddIssueOption = false,
   dragDisabled,
   handleIssueAction,
+  handleDraftIssueAction,
   handleTrashBox,
   openIssuesListModal,
+  myIssueProjectId,
+  handleMyIssueOpen,
   removeIssue,
   states,
   user,
   userAuth,
   viewProps,
 }) => {
-  const { groupByProperty: selectedGroup, groupedIssues, showEmptyGroups } = viewProps;
+  const router = useRouter();
+  const { workspaceSlug, projectId, userId } = router.query;
+
+  const isProfileIssue =
+    router.pathname.includes("assigned") ||
+    router.pathname.includes("created") ||
+    router.pathname.includes("subscribed");
+
+  const isMyIssue = router.pathname.includes("my-issues");
+
+  const { mutateIssues } = useIssuesView();
+  const { mutateMyIssues } = useMyIssues(workspaceSlug?.toString());
+  const { mutateProfileIssues } = useProfileIssues(workspaceSlug?.toString(), userId?.toString());
+
+  const { displayFilters, groupedIssues } = viewProps;
 
   return (
     <>
+      <IssuePeekOverview
+        handleMutation={() =>
+          isMyIssue ? mutateMyIssues() : isProfileIssue ? mutateProfileIssues() : mutateIssues()
+        }
+        projectId={myIssueProjectId ? myIssueProjectId : projectId?.toString() ?? ""}
+        workspaceSlug={workspaceSlug?.toString() ?? ""}
+        readOnly={disableUserActions}
+      />
       {groupedIssues ? (
-        <div className="horizontal-scroll-enable flex h-full gap-x-4 p-8">
+        <div className="horizontal-scroll-enable flex h-full gap-x-4 p-8 bg-custom-background-90">
           {Object.keys(groupedIssues).map((singleGroup, index) => {
             const currentState =
-              selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;
+              displayFilters?.group_by === "state"
+                ? states?.find((s) => s.id === singleGroup)
+                : null;
 
-            if (!showEmptyGroups && groupedIssues[singleGroup].length === 0) return null;
+            if (!displayFilters?.show_empty_groups && groupedIssues[singleGroup].length === 0)
+              return null;
 
             return (
               <SingleBoard
@@ -58,8 +96,10 @@ export const AllBoards: React.FC<Props> = ({
                 dragDisabled={dragDisabled}
                 groupTitle={singleGroup}
                 handleIssueAction={handleIssueAction}
+                handleDraftIssueAction={handleDraftIssueAction}
                 handleTrashBox={handleTrashBox}
                 openIssuesListModal={openIssuesListModal ?? null}
+                handleMyIssueOpen={handleMyIssueOpen}
                 removeIssue={removeIssue}
                 user={user}
                 userAuth={userAuth}
@@ -67,13 +107,15 @@ export const AllBoards: React.FC<Props> = ({
               />
             );
           })}
-          {!showEmptyGroups && (
+          {!displayFilters?.show_empty_groups && (
             <div className="h-full w-96 flex-shrink-0 space-y-2 p-1">
               <h2 className="text-lg font-semibold">Hidden groups</h2>
               <div className="space-y-3">
                 {Object.keys(groupedIssues).map((singleGroup, index) => {
                   const currentState =
-                    selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;
+                    displayFilters?.group_by === "state"
+                      ? states?.find((s) => s.id === singleGroup)
+                      : null;
 
                   if (groupedIssues[singleGroup].length === 0)
                     return (
@@ -91,7 +133,7 @@ export const AllBoards: React.FC<Props> = ({
                             />
                           )}
                           <h4 className="text-sm capitalize">
-                            {selectedGroup === "state"
+                            {displayFilters?.group_by === "state"
                               ? addSpaceIfCamelCase(currentState?.name ?? "")
                               : addSpaceIfCamelCase(singleGroup)}
                           </h4>

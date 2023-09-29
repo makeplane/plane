@@ -11,6 +11,11 @@ import type {
   IStateLite,
   TStateGroups,
   Properties,
+  IIssueFilterOptions,
+  TIssueGroupByOptions,
+  TIssueViewOptions,
+  TIssueOrderByOptions,
+  IIssueDisplayFilterOptions,
 } from "types";
 
 export interface IIssueCycle {
@@ -66,6 +71,17 @@ export interface linkDetails {
   url: string;
 }
 
+export type IssueRelationType = "duplicate" | "relates_to" | "blocked_by";
+
+export interface IssueRelation {
+  id: string;
+  issue: string;
+  issue_detail: BlockeIssueDetail;
+  relation_type: IssueRelationType;
+  related_issue: string;
+  relation: "blocking" | null;
+}
+
 export interface IIssue {
   archived_at: string;
   assignees: string[];
@@ -73,10 +89,8 @@ export interface IIssue {
   assignees_list: string[];
   attachment_count: number;
   attachments: any[];
-  blocked_issues: { blocked_issue_detail?: BlockeIssueDetail }[];
-  blocker_issues: { blocker_issue_detail?: BlockeIssueDetail }[];
-  blockers_list: string[];
-  blocks_list: string[];
+  issue_relations: IssueRelation[];
+  related_issues: IssueRelation[];
   bridge_id?: string | null;
   completed_at: Date;
   created_at: string;
@@ -94,6 +108,7 @@ export interface IIssue {
   issue_module: IIssueModule | null;
   labels: string[];
   label_details: any[];
+  is_draft: boolean;
   labels_list: string[];
   links_list: IIssueLink[];
   link_count: number;
@@ -213,55 +228,6 @@ export interface IIssueLite {
   workspace__slug: string;
 }
 
-export interface IIssueFilterOptions {
-  type: "active" | "backlog" | null;
-  assignees: string[] | null;
-  start_date: string[] | null;
-  target_date: string[] | null;
-  state: string[] | null;
-  state_group: TStateGroups[] | null;
-  subscriber: string[] | null;
-  labels: string[] | null;
-  priority: string[] | null;
-  created_by: string[] | null;
-}
-
-export type TIssueViewOptions = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
-
-export type TIssueGroupByOptions =
-  | "state"
-  | "priority"
-  | "labels"
-  | "created_by"
-  | "state_detail.group"
-  | "project"
-  | "assignees"
-  | null;
-
-export type TIssueOrderByOptions =
-  | "-created_at"
-  | "-updated_at"
-  | "priority"
-  | "sort_order"
-  | "state__name"
-  | "-state__name"
-  | "assignees__name"
-  | "-assignees__name"
-  | "labels__name"
-  | "-labels__name"
-  | "target_date"
-  | "-target_date"
-  | "estimate__point"
-  | "-estimate__point"
-  | "start_date"
-  | "-start_date";
-
-export interface IIssueViewOptions {
-  group_by: TIssueGroupByOptions;
-  order_by: TIssueOrderByOptions;
-  filters: IIssueFilterOptions;
-}
-
 export interface IIssueAttachment {
   asset: string;
   attributes: {
@@ -280,19 +246,16 @@ export interface IIssueAttachment {
 
 export interface IIssueViewProps {
   groupedIssues: { [key: string]: IIssue[] } | undefined;
-  groupByProperty: TIssueGroupByOptions;
+  displayFilters: IIssueDisplayFilterOptions | undefined;
   isEmpty: boolean;
-  issueView: TIssueViewOptions;
   mutateIssues: KeyedMutator<
     | IIssue[]
     | {
         [key: string]: IIssue[];
       }
   >;
-  orderBy: TIssueOrderByOptions;
   params: any;
   properties: Properties;
-  showEmptyGroups: boolean;
 }
 
-export type TIssuePriorities = "urgent" | "high" | "medium" | "low" | null;
+export type TIssuePriorities = "urgent" | "high" | "medium" | "low" | "none";

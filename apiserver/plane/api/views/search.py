@@ -220,7 +220,7 @@ class IssueSearchEndpoint(BaseAPIView):
             query = request.query_params.get("search", False)
             workspace_search = request.query_params.get("workspace_search", "false")
             parent = request.query_params.get("parent", "false")
-            blocker_blocked_by = request.query_params.get("blocker_blocked_by", "false")
+            issue_relation = request.query_params.get("issue_relation", "false")
             cycle = request.query_params.get("cycle", "false")
             module = request.query_params.get("module", "false")
             sub_issue = request.query_params.get("sub_issue", "false")
@@ -247,12 +247,12 @@ class IssueSearchEndpoint(BaseAPIView):
                         "parent_id", flat=True
                     )
                 )
-            if blocker_blocked_by == "true" and issue_id:
+            if issue_relation == "true" and issue_id:
                 issue = Issue.issue_objects.get(pk=issue_id)
                 issues = issues.filter(
                     ~Q(pk=issue_id),
-                    ~Q(blocked_issues__block=issue),
-                    ~Q(blocker_issues__blocked_by=issue),
+                    ~Q(issue_related__issue=issue),
+                    ~Q(issue_relation__related_issue=issue),
                 )
             if sub_issue == "true" and issue_id:
                 issue = Issue.issue_objects.get(pk=issue_id)

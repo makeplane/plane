@@ -149,7 +149,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                   </button>
                 ) : (
                   <span className="cursor-default rounded bg-green-600 px-2 py-1 text-xs">
-                    Member
+                    Joined
                   </span>
                 )}
                 {project.is_favorite && (

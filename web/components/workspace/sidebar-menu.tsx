@@ -1,13 +1,10 @@
 import React from "react";
-
 import Link from "next/link";
 import { useRouter } from "next/router";
-
 // hooks
 import useTheme from "hooks/use-theme";
 // components
 import { NotificationPopover } from "components/notifications";
-// ui
 import { Tooltip } from "components/ui";
 // icons
 import {
@@ -37,8 +34,8 @@ const workspaceLinks = (workspaceSlug: string) => [
   },
   {
     Icon: TaskAltOutlined,
-    name: "My Issues",
-    href: `/${workspaceSlug}/me/my-issues`,
+    name: "All Issues",
+    href: `/${workspaceSlug}/workspace-views/all-issues`,
   },
 ];
 

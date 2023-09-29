@@ -21,7 +21,9 @@ export const GROUP_CHOICES = {
   cancelled: "Cancelled",
 };
 
-export const PRIORITIES: TIssuePriorities[] = ["urgent", "high", "medium", "low", null];
+export const STATE_GROUP = ["Backlog", "Unstarted", "Started", "Completed", "Cancelled"];
+
+export const PRIORITIES: TIssuePriorities[] = ["urgent", "high", "medium", "low", "none"];
 
 export const MONTHS = [
   "January",

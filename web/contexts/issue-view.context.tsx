@@ -11,14 +11,15 @@ import projectService from "services/project.service";
 import cyclesService from "services/cycles.service";
 import modulesService from "services/modules.service";
 import viewsService from "services/views.service";
+// hooks
+import useUserAuth from "hooks/use-user-auth";
 // types
 import {
   IIssueFilterOptions,
-  TIssueViewOptions,
   IProjectMember,
-  TIssueGroupByOptions,
-  TIssueOrderByOptions,
   ICurrentUserResponse,
+  IIssueDisplayFilterOptions,
+  IProjectViewProps,
 } from "types";
 // fetch-keys
 import {
@@ -27,66 +28,33 @@ import {
   USER_PROJECT_VIEW,
   VIEW_DETAILS,
 } from "constants/fetch-keys";
-import useUserAuth from "hooks/use-user-auth";
 
 export const issueViewContext = createContext<ContextType>({} as ContextType);
 
-type IssueViewProps = {
-  issueView: TIssueViewOptions;
-  groupByProperty: TIssueGroupByOptions;
-  orderBy: TIssueOrderByOptions;
-  showEmptyGroups: boolean;
-  showSubIssues: boolean;
-  calendarDateRange: string;
-  filters: IIssueFilterOptions;
-};
-
 type ReducerActionType = {
-  type:
-    | "REHYDRATE_THEME"
-    | "SET_ISSUE_VIEW"
-    | "SET_ORDER_BY_PROPERTY"
-    | "SET_SHOW_EMPTY_STATES"
-    | "SET_CALENDAR_DATE_RANGE"
-    | "SET_FILTERS"
-    | "SET_GROUP_BY_PROPERTY"
-    | "RESET_TO_DEFAULT"
-    | "SET_SHOW_SUB_ISSUES";
-  payload?: Partial<IssueViewProps>;
+  type: "REHYDRATE_THEME" | "SET_DISPLAY_FILTERS" | "SET_FILTERS" | "RESET_TO_DEFAULT";
+  payload?: Partial<IProjectViewProps>;
 };
 
-type ContextType = IssueViewProps & {
-  setGroupByProperty: (property: TIssueGroupByOptions) => void;
-  setOrderBy: (property: TIssueOrderByOptions) => void;
-  setShowEmptyGroups: (property: boolean) => void;
-  setShowSubIssues: (value: boolean) => void;
-  setCalendarDateRange: (property: string) => void;
+type ContextType = IProjectViewProps & {
+  setDisplayFilters: (displayFilter: Partial<IIssueDisplayFilterOptions>) => void;
   setFilters: (filters: Partial<IIssueFilterOptions>, saveToServer?: boolean) => void;
   resetFilterToDefault: () => void;
   setNewFilterDefaultView: () => void;
-  setIssueView: (property: TIssueViewOptions) => void;
 };
 
-type StateType = {
-  issueView: TIssueViewOptions;
-  groupByProperty: TIssueGroupByOptions;
-  orderBy: TIssueOrderByOptions;
-  showEmptyGroups: boolean;
-  showSubIssues: boolean;
-  calendarDateRange: string;
-  filters: IIssueFilterOptions;
-};
+type StateType = IProjectViewProps;
 type ReducerFunctionType = (state: StateType, action: ReducerActionType) => StateType;
 
 export const initialState: StateType = {
-  issueView: "list",
-  groupByProperty: null,
-  orderBy: "-created_at",
-  showEmptyGroups: true,
-  showSubIssues: true,
-  calendarDateRange: "",
+  display_filters: {
+    group_by: null,
+    layout: "list",
+    order_by: "-created_at",
+    show_empty_groups: true,
+    sub_issue: true,
+  },
   filters: {
-    type: null,
     priority: null,
     assignees: null,
     labels: null,
@@ -110,70 +78,14 @@ export const reducer: ReducerFunctionType = (state, action) => {
       return { ...initialState, ...payload, collapsed };
     }
 
-    case "SET_ISSUE_VIEW": {
+    case "SET_DISPLAY_FILTERS": {
       const newState = {
         ...state,
-        issueView: payload?.issueView || "list",
-      };
-
-      return {
-        ...state,
-        ...newState,
-      };
-    }
-
-    case "SET_GROUP_BY_PROPERTY": {
-      const newState = {
-        ...state,
-        groupByProperty: payload?.groupByProperty || null,
-      };
-
-      return {
-        ...state,
-        ...newState,
-      };
-    }
-
-    case "SET_ORDER_BY_PROPERTY": {
-      const newState = {
-        ...state,
-        orderBy: payload?.orderBy || "-created_at",
-      };
-
-      return {
-        ...state,
-        ...newState,
-      };
-    }
-
-    case "SET_SHOW_EMPTY_STATES": {
-      const newState = {
-        ...state,
-        showEmptyGroups: payload?.showEmptyGroups || true,
-      };
-
-      return {
-        ...state,
-        ...newState,
-      };
-    }
-
-    case "SET_SHOW_SUB_ISSUES": {
-      const newState = {
-        ...state,
-        showSubIssues: payload?.showSubIssues || true,
-      };
-
-      return {
-        ...state,
-        ...newState,
-      };
-    }
-
-    case "SET_CALENDAR_DATE_RANGE": {
-      const newState = {
-        ...state,
-        calendarDateRange: payload?.calendarDateRange || "",
+        display_filters: {
+          ...state.display_filters,
+          ...payload,
+        },
+        issueView: payload?.display_filters?.layout || "list",
       };
 
       return {
@@ -210,9 +122,13 @@ export const reducer: ReducerFunctionType = (state, action) => {
   }
 };
 
-const saveDataToServer = async (workspaceSlug: string, projectID: string, state: any) => {
+const saveDataToServer = async (
+  workspaceSlug: string,
+  projectId: string,
+  state: IProjectViewProps
+) => {
   mutate<IProjectMember>(
-    workspaceSlug && projectID ? USER_PROJECT_VIEW(projectID as string) : null,
+    workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId as string) : null,
     (prevData) => {
       if (!prevData) return prevData;
 
@@ -224,7 +140,7 @@ const saveDataToServer = async (workspaceSlug: string, projectID: string, state:
     false
   );
 
-  await projectService.setProjectView(workspaceSlug, projectID, {
+  await projectService.setProjectView(workspaceSlug, projectId, {
     view_props: state,
   });
 };
@@ -354,44 +270,57 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
       : null
   );
 
-  const setIssueView = useCallback(
-    (property: TIssueViewOptions) => {
+  const setDisplayFilters = useCallback(
+    (displayFilter: Partial<IIssueDisplayFilterOptions>) => {
       dispatch({
-        type: "SET_ISSUE_VIEW",
+        type: "SET_DISPLAY_FILTERS",
         payload: {
-          issueView: property,
+          display_filters: {
+            ...state.display_filters,
+            ...displayFilter,
+          },
         },
       });
 
-      const additionalProperties = {
-        groupByProperty: state.groupByProperty,
-        orderBy: state.orderBy,
+      const additionalProperties: Partial<IIssueDisplayFilterOptions> = {
+        group_by: displayFilter.group_by ?? state.display_filters?.group_by,
+        order_by: displayFilter.order_by ?? state.display_filters?.order_by,
       };
 
-      if (property === "kanban" && state.groupByProperty === null) {
-        additionalProperties.groupByProperty = "state";
+      if (
+        displayFilter.layout &&
+        displayFilter.layout === "kanban" &&
+        state.display_filters?.group_by === null
+      ) {
+        additionalProperties.group_by = "state";
         dispatch({
-          type: "SET_GROUP_BY_PROPERTY",
+          type: "SET_DISPLAY_FILTERS",
           payload: {
-            groupByProperty: "state",
+            display_filters: {
+              group_by: "state",
+            },
           },
         });
       }
-      if (property === "calendar") {
-        additionalProperties.groupByProperty = null;
+      if (displayFilter.layout && displayFilter.layout === "calendar") {
+        additionalProperties.group_by = null;
         dispatch({
-          type: "SET_GROUP_BY_PROPERTY",
+          type: "SET_DISPLAY_FILTERS",
           payload: {
-            groupByProperty: null,
+            display_filters: {
+              group_by: null,
+            },
           },
         });
       }
-      if (property === "gantt_chart") {
-        additionalProperties.orderBy = "sort_order";
+      if (displayFilter.layout && displayFilter.layout === "gantt_chart") {
+        additionalProperties.order_by = "sort_order";
         dispatch({
-          type: "SET_ORDER_BY_PROPERTY",
+          type: "SET_DISPLAY_FILTERS",
           payload: {
-            orderBy: "sort_order",
+            display_filters: {
+              order_by: "sort_order",
+            },
           },
         });
       }
@@ -400,166 +329,14 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
 
       saveDataToServer(workspaceSlug as string, projectId as string, {
         ...state,
-        issueView: property,
-        ...additionalProperties,
+        display_filters: {
+          ...state.display_filters,
+          ...displayFilter,
+          ...additionalProperties,
+        },
       });
     },
     [workspaceSlug, projectId, state]
-  );
-
-  const setGroupByProperty = useCallback(
-    (property: TIssueGroupByOptions) => {
-      dispatch({
-        type: "SET_GROUP_BY_PROPERTY",
-        payload: {
-          groupByProperty: property,
-        },
-      });
-
-      if (!workspaceSlug || !projectId) return;
-
-      mutateMyViewProps((prevData: any) => {
-        if (!prevData) return prevData;
-
-        return {
-          ...prevData,
-          view_props: {
-            ...state,
-            groupByProperty: property,
-          },
-        };
-      }, false);
-
-      saveDataToServer(workspaceSlug as string, projectId as string, {
-        ...state,
-        groupByProperty: property,
-      });
-    },
-    [projectId, workspaceSlug, state, mutateMyViewProps]
-  );
-
-  const setOrderBy = useCallback(
-    (property: TIssueOrderByOptions) => {
-      dispatch({
-        type: "SET_ORDER_BY_PROPERTY",
-        payload: {
-          orderBy: property,
-        },
-      });
-
-      if (!workspaceSlug || !projectId) return;
-
-      mutateMyViewProps((prevData: any) => {
-        if (!prevData) return prevData;
-
-        return {
-          ...prevData,
-          view_props: {
-            ...state,
-            orderBy: property,
-          },
-        };
-      }, false);
-
-      saveDataToServer(workspaceSlug as string, projectId as string, {
-        ...state,
-        orderBy: property,
-      });
-    },
-    [projectId, workspaceSlug, state, mutateMyViewProps]
-  );
-
-  const setShowEmptyGroups = useCallback(
-    (property: boolean) => {
-      dispatch({
-        type: "SET_SHOW_EMPTY_STATES",
-        payload: {
-          showEmptyGroups: property,
-        },
-      });
-
-      if (!workspaceSlug || !projectId) return;
-
-      mutateMyViewProps((prevData: any) => {
-        if (!prevData) return prevData;
-
-        return {
-          ...prevData,
-          view_props: {
-            ...state,
-            showEmptyGroups: property,
-          },
-        };
-      }, false);
-
-      saveDataToServer(workspaceSlug as string, projectId as string, {
-        ...state,
-        showEmptyGroups: property,
-      });
-    },
-    [projectId, workspaceSlug, state, mutateMyViewProps]
-  );
-
-  const setShowSubIssues = useCallback(
-    (property: boolean) => {
-      dispatch({
-        type: "SET_SHOW_SUB_ISSUES",
-        payload: {
-          showSubIssues: property,
-        },
-      });
-
-      if (!workspaceSlug || !projectId) return;
-
-      mutateMyViewProps((prevData: any) => {
-        if (!prevData) return prevData;
-
-        return {
-          ...prevData,
-          view_props: {
-            ...state,
-            showSubIssues: property,
-          },
-        };
-      }, false);
-
-      saveDataToServer(workspaceSlug as string, projectId as string, {
-        ...state,
-        showSubIssues: property,
-      });
-    },
-    [projectId, workspaceSlug, state, mutateMyViewProps]
-  );
-
-  const setCalendarDateRange = useCallback(
-    (value: string) => {
-      dispatch({
-        type: "SET_CALENDAR_DATE_RANGE",
-        payload: {
-          calendarDateRange: value,
-        },
-      });
-
-      if (!workspaceSlug || !projectId) return;
-
-      mutateMyViewProps((prevData: any) => {
-        if (!prevData) return prevData;
-
-        return {
-          ...prevData,
-          view_props: {
-            ...state,
-            calendarDateRange: value,
-          },
-        };
-      }, false);
-
-      saveDataToServer(workspaceSlug as string, projectId as string, {
-        ...state,
-        calendarDateRange: value,
-      });
-    },
-    [projectId, workspaceSlug, state, mutateMyViewProps]
   );
 
   const setFilters = useCallback(
@@ -717,9 +494,9 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
       payload: myViewProps?.default_props,
     });
 
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !projectId || !myViewProps) return;
 
-    saveDataToServer(workspaceSlug as string, projectId as string, myViewProps?.default_props);
+    saveDataToServer(workspaceSlug as string, projectId as string, myViewProps.default_props);
   }, [projectId, workspaceSlug, myViewProps]);
 
   useEffect(() => {
@@ -743,22 +520,12 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
   return (
     <issueViewContext.Provider
       value={{
-        issueView: state.issueView,
-        groupByProperty: state.groupByProperty,
-        setGroupByProperty,
-        orderBy: state.orderBy,
-        showEmptyGroups: state.showEmptyGroups,
-        showSubIssues: state.showSubIssues,
-        calendarDateRange: state.calendarDateRange,
-        setCalendarDateRange,
-        setOrderBy,
-        setShowEmptyGroups,
-        setShowSubIssues,
+        display_filters: state.display_filters,
+        setDisplayFilters,
         filters: state.filters,
         setFilters,
         resetFilterToDefault: resetToDefault,
         setNewFilterDefaultView: setNewDefaultView,
-        setIssueView,
       }}
     >
       <ToastAlert />

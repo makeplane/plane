@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { mutate } from "swr";
@@ -14,19 +13,14 @@ import {
 } from "react-beautiful-dnd";
 // services
 import issuesService from "services/issues.service";
+import trackEventServices from "services/track-event.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
-import {
-  ViewAssigneeSelect,
-  ViewDueDateSelect,
-  ViewEstimateSelect,
-  ViewIssueLabel,
-  ViewPrioritySelect,
-  ViewStartDateSelect,
-  ViewStateSelect,
-} from "components/issues";
+import { ViewDueDateSelect, ViewEstimateSelect, ViewStartDateSelect } from "components/issues";
+import { MembersSelect, LabelSelect, PrioritySelect } from "components/project";
+import { StateSelect } from "components/states";
 // ui
 import { ContextMenu, CustomMenu, Tooltip } from "components/ui";
 // icons
@@ -45,7 +39,15 @@ import { LayerDiagonalIcon } from "components/icons";
 import { handleIssuesMutation } from "constants/issue";
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import { ICurrentUserResponse, IIssue, IIssueViewProps, ISubIssueResponse, UserAuth } from "types";
+import {
+  ICurrentUserResponse,
+  IIssue,
+  IIssueViewProps,
+  IState,
+  ISubIssueResponse,
+  TIssuePriorities,
+  UserAuth,
+} from "types";
 // fetch-keys
 import { CYCLE_DETAILS, MODULE_DETAILS, SUB_ISSUES } from "constants/fetch-keys";
 
@@ -54,12 +56,16 @@ type Props = {
   provided: DraggableProvided;
   snapshot: DraggableStateSnapshot;
   issue: IIssue;
+  projectId: string;
   groupTitle?: string;
   index: number;
   editIssue: () => void;
   makeIssueCopy: () => void;
+  handleMyIssueOpen?: (issue: IIssue) => void;
   removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
+  handleDraftIssueEdit?: () => void;
+  handleDraftIssueDelete?: () => void;
   handleTrashBox: (isDragging: boolean) => void;
   disableUserActions: boolean;
   user: ICurrentUserResponse | undefined;
@@ -72,12 +78,16 @@ export const SingleBoardIssue: React.FC<Props> = ({
   provided,
   snapshot,
   issue,
+  projectId,
   index,
   editIssue,
   makeIssueCopy,
+  handleMyIssueOpen,
   removeIssue,
   groupTitle,
   handleDeleteIssue,
+  handleDraftIssueEdit,
+  handleDraftIssueDelete,
   handleTrashBox,
   disableUserActions,
   user,
@@ -93,10 +103,12 @@ export const SingleBoardIssue: React.FC<Props> = ({
 
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
 
-  const { groupByProperty: selectedGroup, orderBy, properties, mutateIssues } = viewProps;
+  const { displayFilters, properties, mutateIssues } = viewProps;
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, cycleId, moduleId } = router.query;
+
+  const isDraftIssue = router.pathname.includes("draft-issues");
 
   const { setToastAlert } = useToast();
 
@@ -131,9 +143,9 @@ export const SingleBoardIssue: React.FC<Props> = ({
             handleIssuesMutation(
               formData,
               groupTitle ?? "",
-              selectedGroup,
+              displayFilters?.group_by ?? null,
               index,
-              orderBy,
+              displayFilters?.order_by ?? "-created_at",
               prevData
             ),
           false
@@ -149,24 +161,14 @@ export const SingleBoardIssue: React.FC<Props> = ({
           if (moduleId) mutate(MODULE_DETAILS(moduleId as string));
         });
     },
-    [
-      workspaceSlug,
-      cycleId,
-      moduleId,
-      groupTitle,
-      index,
-      selectedGroup,
-      mutateIssues,
-      orderBy,
-      user,
-    ]
+    [displayFilters, workspaceSlug, cycleId, moduleId, groupTitle, index, mutateIssues, user]
   );
 
   const getStyle = (
     style: DraggingStyle | NotDraggingStyle | undefined,
     snapshot: DraggableStateSnapshot
   ) => {
-    if (orderBy === "sort_order") return style;
+    if (displayFilters?.order_by === "sort_order") return style;
     if (!snapshot.isDragging) return {};
     if (!snapshot.isDropAnimating) return style;
 
@@ -191,11 +193,102 @@ export const SingleBoardIssue: React.FC<Props> = ({
     });
   };
 
+  const handleStateChange = (data: string, states: IState[] | undefined) => {
+    const oldState = states?.find((s) => s.id === issue.state);
+    const newState = states?.find((s) => s.id === data);
+
+    partialUpdateIssue(
+      {
+        state: data,
+        state_detail: newState,
+      },
+      issue
+    );
+    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+      {
+        workspaceSlug,
+        workspaceId: issue.workspace,
+        projectId: issue.project_detail.id,
+        projectIdentifier: issue.project_detail.identifier,
+        projectName: issue.project_detail.name,
+        issueId: issue.id,
+      },
+      "ISSUE_PROPERTY_UPDATE_STATE",
+      user
+    );
+    if (oldState?.group !== "completed" && newState?.group !== "completed") {
+      trackEventServices.trackIssueMarkedAsDoneEvent(
+        {
+          workspaceSlug: issue.workspace_detail.slug,
+          workspaceId: issue.workspace_detail.id,
+          projectId: issue.project_detail.id,
+          projectIdentifier: issue.project_detail.identifier,
+          projectName: issue.project_detail.name,
+          issueId: issue.id,
+        },
+        user
+      );
+    }
+  };
+
+  const handleAssigneeChange = (data: any) => {
+    const newData = issue.assignees ?? [];
+
+    if (newData.includes(data)) newData.splice(newData.indexOf(data), 1);
+    else newData.push(data);
+
+    partialUpdateIssue({ assignees_list: data }, issue);
+
+    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+      {
+        workspaceSlug,
+        workspaceId: issue.workspace,
+        projectId: issue.project_detail.id,
+        projectIdentifier: issue.project_detail.identifier,
+        projectName: issue.project_detail.name,
+        issueId: issue.id,
+      },
+      "ISSUE_PROPERTY_UPDATE_ASSIGNEE",
+      user
+    );
+  };
+
+  const handleLabelChange = (data: any) => {
+    partialUpdateIssue({ labels_list: data }, issue);
+  };
+
+  const handlePriorityChange = (data: TIssuePriorities) => {
+    partialUpdateIssue({ priority: data }, issue);
+    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+      {
+        workspaceSlug,
+        workspaceId: issue.workspace,
+        projectId: issue.project_detail.id,
+        projectIdentifier: issue.project_detail.identifier,
+        projectName: issue.project_detail.name,
+        issueId: issue.id,
+      },
+      "ISSUE_PROPERTY_UPDATE_PRIORITY",
+      user
+    );
+  };
+
   useEffect(() => {
     if (snapshot.isDragging) handleTrashBox(snapshot.isDragging);
   }, [snapshot, handleTrashBox]);
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
+
+  const openPeekOverview = () => {
+    const { query } = router;
+
+    if (handleMyIssueOpen) handleMyIssueOpen(issue);
+
+    router.push({
+      pathname: router.pathname,
+      query: { ...query, peekIssue: issue.id },
+    });
+  };
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disableUserActions;
 
@@ -209,29 +302,47 @@ export const SingleBoardIssue: React.FC<Props> = ({
       >
         {!isNotAllowed && (
           <>
-            <ContextMenu.Item Icon={PencilIcon} onClick={editIssue}>
+            <ContextMenu.Item
+              Icon={PencilIcon}
+              onClick={() => {
+                if (isDraftIssue && handleDraftIssueEdit) handleDraftIssueEdit();
+                else editIssue();
+              }}
+            >
               Edit issue
             </ContextMenu.Item>
-            <ContextMenu.Item Icon={ClipboardDocumentCheckIcon} onClick={makeIssueCopy}>
-              Make a copy...
-            </ContextMenu.Item>
-            <ContextMenu.Item Icon={TrashIcon} onClick={() => handleDeleteIssue(issue)}>
+            {!isDraftIssue && (
+              <ContextMenu.Item Icon={ClipboardDocumentCheckIcon} onClick={makeIssueCopy}>
+                Make a copy...
+              </ContextMenu.Item>
+            )}
+            <ContextMenu.Item
+              Icon={TrashIcon}
+              onClick={() => {
+                if (isDraftIssue && handleDraftIssueDelete) handleDraftIssueDelete();
+                else handleDeleteIssue(issue);
+              }}
+            >
               Delete issue
             </ContextMenu.Item>
           </>
         )}
-        <ContextMenu.Item Icon={LinkIcon} onClick={handleCopyText}>
-          Copy issue link
-        </ContextMenu.Item>
-        <a
-          href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}
-          target="_blank"
-          rel="noreferrer noopener"
-        >
-          <ContextMenu.Item Icon={ArrowTopRightOnSquareIcon}>
-            Open issue in new tab
+        {!isDraftIssue && (
+          <ContextMenu.Item Icon={LinkIcon} onClick={handleCopyText}>
+            Copy issue link
           </ContextMenu.Item>
-        </a>
+        )}
+        {!isDraftIssue && (
+          <a
+            href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            <ContextMenu.Item Icon={ArrowTopRightOnSquareIcon}>
+              Open issue in new tab
+            </ContextMenu.Item>
+          </a>
+        )}
       </ContextMenu>
       <div
         className={`mb-3 rounded bg-custom-background-100 shadow ${
@@ -266,13 +377,18 @@ export const SingleBoardIssue: React.FC<Props> = ({
                     </button>
                   }
                 >
-                  <CustomMenu.MenuItem onClick={editIssue}>
+                  <CustomMenu.MenuItem
+                    onClick={() => {
+                      if (isDraftIssue && handleDraftIssueEdit) handleDraftIssueEdit();
+                      else editIssue();
+                    }}
+                  >
                     <div className="flex items-center justify-start gap-2">
                       <PencilIcon className="h-4 w-4" />
                       <span>Edit issue</span>
                     </div>
                   </CustomMenu.MenuItem>
-                  {type !== "issue" && removeIssue && (
+                  {type !== "issue" && removeIssue && !isDraftIssue && (
                     <CustomMenu.MenuItem onClick={removeIssue}>
                       <div className="flex items-center justify-start gap-2">
                         <XMarkIcon className="h-4 w-4" />
@@ -280,53 +396,67 @@ export const SingleBoardIssue: React.FC<Props> = ({
                       </div>
                     </CustomMenu.MenuItem>
                   )}
-                  <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
+                  <CustomMenu.MenuItem
+                    onClick={() => {
+                      if (isDraftIssue && handleDraftIssueDelete) handleDraftIssueDelete();
+                      else handleDeleteIssue(issue);
+                    }}
+                  >
                     <div className="flex items-center justify-start gap-2">
                       <TrashIcon className="h-4 w-4" />
                       <span>Delete issue</span>
                     </div>
                   </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem onClick={handleCopyText}>
-                    <div className="flex items-center justify-start gap-2">
-                      <LinkIcon className="h-4 w-4" />
-                      <span>Copy issue Link</span>
-                    </div>
-                  </CustomMenu.MenuItem>
+                  {!isDraftIssue && (
+                    <CustomMenu.MenuItem onClick={handleCopyText}>
+                      <div className="flex items-center justify-start gap-2">
+                        <LinkIcon className="h-4 w-4" />
+                        <span>Copy issue Link</span>
+                      </div>
+                    </CustomMenu.MenuItem>
+                  )}
                 </CustomMenu>
               )}
             </div>
           )}
-          <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
-            <a className="flex flex-col gap-1.5">
-              {properties.key && (
-                <div className="text-xs font-medium text-custom-text-200">
-                  {issue.project_detail.identifier}-{issue.sequence_id}
-                </div>
-              )}
-              <h5 className="text-sm break-words line-clamp-2">{issue.name}</h5>
-            </a>
-          </Link>
+
+          <div className="flex flex-col gap-1.5">
+            {properties.key && (
+              <div className="text-xs font-medium text-custom-text-200">
+                {issue.project_detail.identifier}-{issue.sequence_id}
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={() => {
+                if (isDraftIssue && handleDraftIssueEdit) handleDraftIssueEdit();
+                else openPeekOverview();
+              }}
+            >
+              <span className="text-sm text-left break-words line-clamp-2">{issue.name}</span>
+            </button>
+          </div>
+
           <div
             className={`flex items-center gap-2 text-xs ${
               isDropdownActive ? "" : "overflow-x-scroll"
             }`}
           >
             {properties.priority && (
-              <ViewPrioritySelect
-                issue={issue}
-                partialUpdateIssue={partialUpdateIssue}
-                isNotAllowed={isNotAllowed}
-                user={user}
-                selfPositioned
+              <PrioritySelect
+                value={issue.priority}
+                onChange={handlePriorityChange}
+                hideDropdownArrow
+                disabled={isNotAllowed}
               />
             )}
             {properties.state && (
-              <ViewStateSelect
-                issue={issue}
-                partialUpdateIssue={partialUpdateIssue}
-                isNotAllowed={isNotAllowed}
-                user={user}
-                selfPositioned
+              <StateSelect
+                value={issue.state_detail}
+                onChange={handleStateChange}
+                projectId={projectId}
+                hideDropdownArrow
+                disabled={isNotAllowed}
               />
             )}
             {properties.start_date && issue.start_date && (
@@ -350,16 +480,24 @@ export const SingleBoardIssue: React.FC<Props> = ({
               />
             )}
             {properties.labels && issue.labels.length > 0 && (
-              <ViewIssueLabel labelDetails={issue.label_details} maxRender={2} />
+              <LabelSelect
+                value={issue.labels}
+                projectId={projectId}
+                onChange={handleLabelChange}
+                labelsDetails={issue.label_details}
+                hideDropdownArrow
+                user={user}
+                disabled={isNotAllowed}
+              />
             )}
             {properties.assignee && (
-              <ViewAssigneeSelect
-                issue={issue}
-                partialUpdateIssue={partialUpdateIssue}
-                isNotAllowed={isNotAllowed}
-                customButton
-                user={user}
-                selfPositioned
+              <MembersSelect
+                value={issue.assignees}
+                projectId={projectId}
+                onChange={handleAssigneeChange}
+                membersDetails={issue.assignee_details}
+                hideDropdownArrow
+                disabled={isNotAllowed}
               />
             )}
             {properties.estimate && issue.estimate_point !== null && (

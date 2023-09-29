@@ -173,12 +173,12 @@ class InboxIssueViewSet(BaseViewSet):
                 )
 
             # Check for valid priority
-            if not request.data.get("issue", {}).get("priority", None) in [
+            if not request.data.get("issue", {}).get("priority", "none") in [
                 "low",
                 "medium",
                 "high",
                 "urgent",
-                None,
+                "none",
             ]:
                 return Response(
                     {"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST
@@ -213,6 +213,7 @@ class InboxIssueViewSet(BaseViewSet):
                 issue_id=str(issue.id),
                 project_id=str(project_id),
                 current_instance=None,
+                epoch=int(timezone.now().timestamp())
             )
             # create an inbox issue
             InboxIssue.objects.create(
@@ -277,6 +278,7 @@ class InboxIssueViewSet(BaseViewSet):
                                 IssueSerializer(current_instance).data,
                                 cls=DjangoJSONEncoder,
                             ),
+                            epoch=int(timezone.now().timestamp())
                         )
                     issue_serializer.save()
                 else:
@@ -367,6 +369,11 @@ class InboxIssueViewSet(BaseViewSet):
 
             if project_member.role <= 10 and str(inbox_issue.created_by_id) != str(request.user.id):
                 return Response({"error": "You cannot delete inbox issue"}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Check the issue status
+            if inbox_issue.status in [-2, -1, 0, 2]:
+                # Delete the issue also
+                Issue.objects.filter(workspace__slug=slug, project_id=project_id, pk=inbox_issue.issue_id).delete() 
 
             inbox_issue.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -478,12 +485,12 @@ class InboxIssuePublicViewSet(BaseViewSet):
                 )
 
             # Check for valid priority
-            if not request.data.get("issue", {}).get("priority", None) in [
+            if not request.data.get("issue", {}).get("priority", "none") in [
                 "low",
                 "medium",
                 "high",
                 "urgent",
-                None,
+                "none",
             ]:
                 return Response(
                     {"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST
@@ -518,6 +525,7 @@ class InboxIssuePublicViewSet(BaseViewSet):
                 issue_id=str(issue.id),
                 project_id=str(project_id),
                 current_instance=None,
+                epoch=int(timezone.now().timestamp())
             )
             # create an inbox issue
             InboxIssue.objects.create(
@@ -582,6 +590,7 @@ class InboxIssuePublicViewSet(BaseViewSet):
                             IssueSerializer(current_instance).data,
                             cls=DjangoJSONEncoder,
                         ),
+                        epoch=int(timezone.now().timestamp())
                     )
                 issue_serializer.save()
                 return Response(issue_serializer.data, status=status.HTTP_200_OK)

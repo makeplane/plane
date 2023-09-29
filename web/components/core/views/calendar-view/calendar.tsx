@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
-// react-beautiful-dnd
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 // services
 import issuesService from "services/issues.service";
@@ -12,6 +8,7 @@ import issuesService from "services/issues.service";
 import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 // components
 import { SingleCalendarDate, CalendarHeader } from "components/core";
+import { IssuePeekOverview } from "components/issues";
 // ui
 import { Spinner } from "components/ui";
 // helpers
@@ -49,30 +46,27 @@ export const CalendarView: React.FC<Props> = ({
   userAuth,
 }) => {
   const [showWeekEnds, setShowWeekEnds] = useState(false);
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [isMonthlyView, setIsMonthlyView] = useState(true);
+
+  const { calendarIssues, mutateIssues, params, activeMonthDate, setActiveMonthDate } =
+    useCalendarIssuesView();
 
   const [calendarDates, setCalendarDates] = useState<ICalendarRange>({
-    startDate: startOfWeek(currentDate),
-    endDate: lastDayOfWeek(currentDate),
+    startDate: startOfWeek(activeMonthDate),
+    endDate: lastDayOfWeek(activeMonthDate),
   });
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
-  const { calendarIssues, params, setCalendarDateRange } = useCalendarIssuesView();
-
-  const totalDate = eachDayOfInterval({
-    start: calendarDates.startDate,
-    end: calendarDates.endDate,
-  });
-
-  const onlyWeekDays = weekDayInterval({
-    start: calendarDates.startDate,
-    end: calendarDates.endDate,
-  });
-
-  const currentViewDays = showWeekEnds ? totalDate : onlyWeekDays;
+  const currentViewDays = showWeekEnds
+    ? eachDayOfInterval({
+        start: calendarDates.startDate,
+        end: calendarDates.endDate,
+      })
+    : weekDayInterval({
+        start: calendarDates.startDate,
+        end: calendarDates.endDate,
+      });
 
   const currentViewDaysData = currentViewDays.map((date: Date) => {
     const filterIssue =
@@ -146,96 +140,78 @@ export const CalendarView: React.FC<Props> = ({
       .then(() => mutate(fetchKey));
   };
 
-  const changeDateRange = (startDate: Date, endDate: Date) => {
-    setCalendarDates({
-      startDate,
-      endDate,
-    });
-
-    setCalendarDateRange(
-      `${renderDateFormat(startDate)};after,${renderDateFormat(endDate)};before`
-    );
-  };
-
   useEffect(() => {
-    setCalendarDateRange(
-      `${renderDateFormat(startOfWeek(currentDate))};after,${renderDateFormat(
-        lastDayOfWeek(currentDate)
-      )};before`
-    );
-  }, [currentDate]);
+    setCalendarDates({
+      startDate: startOfWeek(activeMonthDate),
+      endDate: lastDayOfWeek(activeMonthDate),
+    });
+  }, [activeMonthDate]);
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disableUserActions;
 
-  return calendarIssues ? (
-    <div className="h-full overflow-y-auto">
-      <DragDropContext onDragEnd={onDragEnd}>
-        <div className="h-full rounded-lg p-8 text-custom-text-200">
-          <CalendarHeader
-            isMonthlyView={isMonthlyView}
-            setIsMonthlyView={setIsMonthlyView}
-            showWeekEnds={showWeekEnds}
-            setShowWeekEnds={setShowWeekEnds}
-            currentDate={currentDate}
-            setCurrentDate={setCurrentDate}
-            changeDateRange={changeDateRange}
-          />
+  return (
+    <>
+      <IssuePeekOverview
+        handleMutation={() => mutateIssues()}
+        projectId={projectId?.toString() ?? ""}
+        workspaceSlug={workspaceSlug?.toString() ?? ""}
+        readOnly={disableUserActions}
+      />
+      {calendarIssues ? (
+        <div className="h-full overflow-y-auto">
+          <DragDropContext onDragEnd={onDragEnd}>
+            <div
+              id={`calendar-view-${cycleId ?? moduleId ?? viewId ?? ""}`}
+              className="h-full rounded-lg p-8 text-custom-text-200"
+            >
+              <CalendarHeader
+                showWeekEnds={showWeekEnds}
+                setShowWeekEnds={setShowWeekEnds}
+                currentDate={activeMonthDate}
+                setCurrentDate={setActiveMonthDate}
+              />
 
-          <div
-            className={`grid auto-rows-[minmax(36px,1fr)] rounded-lg ${
-              showWeekEnds ? "grid-cols-7" : "grid-cols-5"
-            }`}
-          >
-            {weeks.map((date, index) => (
               <div
-                key={index}
-                className={`flex  items-center justify-start gap-2 border-custom-border-200 bg-custom-background-90 p-1.5 text-base font-medium text-custom-text-200 ${
-                  !isMonthlyView
-                    ? showWeekEnds
-                      ? (index + 1) % 7 === 0
-                        ? ""
-                        : "border-r"
-                      : (index + 1) % 5 === 0
-                      ? ""
-                      : "border-r"
-                    : ""
+                className={`grid auto-rows-[minmax(36px,1fr)] rounded-lg ${
+                  showWeekEnds ? "grid-cols-7" : "grid-cols-5"
                 }`}
               >
-                <span>
-                  {isMonthlyView
-                    ? formatDate(date, "eee").substring(0, 3)
-                    : formatDate(date, "eee")}
-                </span>
-                {!isMonthlyView && <span>{formatDate(date, "d")}</span>}
+                {weeks.map((date, index) => (
+                  <div
+                    key={index}
+                    className={`flex  items-center justify-start gap-2 border-custom-border-200 bg-custom-background-90 p-1.5 text-base font-medium text-custom-text-200`}
+                  >
+                    <span>{formatDate(date, "eee").substring(0, 3)}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          <div
-            className={`grid h-full ${isMonthlyView ? "auto-rows-min" : ""} ${
-              showWeekEnds ? "grid-cols-7" : "grid-cols-5"
-            } `}
-          >
-            {currentViewDaysData.map((date, index) => (
-              <SingleCalendarDate
-                key={`${date}-${index}`}
-                index={index}
-                date={date}
-                handleIssueAction={handleIssueAction}
-                addIssueToDate={addIssueToDate}
-                isMonthlyView={isMonthlyView}
-                showWeekEnds={showWeekEnds}
-                user={user}
-                isNotAllowed={isNotAllowed}
-              />
-            ))}
-          </div>
+              <div
+                className={`grid h-full auto-rows-min ${
+                  showWeekEnds ? "grid-cols-7" : "grid-cols-5"
+                } `}
+              >
+                {currentViewDaysData.map((date, index) => (
+                  <SingleCalendarDate
+                    key={`${date}-${index}`}
+                    index={index}
+                    date={date}
+                    handleIssueAction={handleIssueAction}
+                    addIssueToDate={addIssueToDate}
+                    showWeekEnds={showWeekEnds}
+                    user={user}
+                    isNotAllowed={isNotAllowed}
+                  />
+                ))}
+              </div>
+            </div>
+          </DragDropContext>
         </div>
-      </DragDropContext>
-    </div>
-  ) : (
-    <div className="flex h-full w-full items-center justify-center">
-      <Spinner />
-    </div>
+      ) : (
+        <div className="flex h-full w-full items-center justify-center">
+          <Spinner />
+        </div>
+      )}
+    </>
   );
 };

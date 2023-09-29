@@ -32,6 +32,7 @@ from .issue import (
     IssueAssignee,
     Label,
     IssueBlocker,
+    IssueRelation,
     IssueLink,
     IssueSequence,
     IssueAttachment,
@@ -49,7 +50,7 @@ from .state import State
 
 from .cycle import Cycle, CycleIssue, CycleFavorite
 
-from .view import IssueView, IssueViewFavorite
+from .view import GlobalView, IssueView, IssueViewFavorite
 
 from .module import Module, ModuleMember, ModuleIssue, ModuleLink, ModuleFavorite
 

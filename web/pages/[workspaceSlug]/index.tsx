@@ -31,15 +31,53 @@ import { BoltOutlined, GridViewOutlined } from "@mui/icons-material";
 import emptyDashboard from "public/empty-state/dashboard.svg";
 import githubBlackImage from "/public/logos/github-black.png";
 import githubWhiteImage from "/public/logos/github-white.png";
-// helpers
-import { render12HourFormatTime, renderShortDate } from "helpers/date-time.helper";
 // types
 import { ICurrentUserResponse } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { CURRENT_USER, USER_WORKSPACE_DASHBOARD } from "constants/fetch-keys";
-// constants
-import { DAYS } from "constants/project";
+
+const Greeting = ({ user }: { user: ICurrentUserResponse | undefined }) => {
+  const currentTime = new Date();
+
+  const hour = new Intl.DateTimeFormat("en-US", {
+    hour12: false,
+    hour: "numeric",
+  }).format(currentTime);
+
+  const date = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+  }).format(currentTime);
+
+  const weekDay = new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+  }).format(currentTime);
+
+  const timeString = new Intl.DateTimeFormat("en-US", {
+    timeZone: user?.user_timezone,
+    hour12: false, // Use 24-hour format
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(currentTime);
+
+  const greeting =
+    parseInt(hour, 10) < 12 ? "morning" : parseInt(hour, 10) < 18 ? "afternoon" : "evening";
+
+  return (
+    <div>
+      <h3 className="text-2xl font-semibold">
+        Good {greeting}, {user?.first_name} {user?.last_name}
+      </h3>
+      <h6 className="text-custom-text-400 font-medium flex items-center gap-2">
+        <div>{greeting === "morning" ? "🌤️" : greeting === "afternoon" ? "🌥️" : "🌙️"}</div>
+        <div>
+          {weekDay}, {date} {timeString}
+        </div>
+      </h6>
+    </div>
+  );
+};
 
 const WorkspacePage: NextPage = () => {
   const [month, setMonth] = useState(new Date().getMonth() + 1);
@@ -57,10 +95,6 @@ const WorkspacePage: NextPage = () => {
     workspaceSlug ? USER_WORKSPACE_DASHBOARD(workspaceSlug as string) : null,
     workspaceSlug ? () => userService.userWorkspaceDashboard(workspaceSlug as string, month) : null
   );
-
-  const today = new Date();
-  const greeting =
-    today.getHours() < 12 ? "morning" : today.getHours() < 18 ? "afternoon" : "evening";
 
   useEffect(() => {
     if (!workspaceSlug) return;
@@ -127,9 +161,11 @@ const WorkspacePage: NextPage = () => {
           />
         </div>
       )}
-      {projects ? (
-        projects.length > 0 ? (
-          <div className="p-8">
+      <div className="p-8 space-y-8">
+        <Greeting user={user} />
+
+        {projects ? (
+          projects.length > 0 ? (
             <div className="flex flex-col gap-8">
               <IssuesStats data={workspaceDashboardData} />
               <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
@@ -143,17 +179,8 @@ const WorkspacePage: NextPage = () => {
                 />
               </div>
             </div>
-          </div>
-        ) : (
-          <div className="p-8">
-            <h3 className="text-2xl font-semibold">
-              Good {greeting}, {user?.first_name} {user?.last_name}
-            </h3>
-            <h6 className="text-custom-text-400 font-medium">
-              {greeting === "morning" ? "🌤️" : greeting === "afternoon" ? "🌥️" : "🌙️"}
-              {DAYS[today.getDay()]}, {renderShortDate(today)} {render12HourFormatTime(today)}
-            </h6>
-            <div className="mt-7 bg-custom-primary-100/5 flex justify-between gap-5 md:gap-8">
+          ) : (
+            <div className="bg-custom-primary-100/5 flex justify-between gap-5 md:gap-8">
               <div className="p-5 md:p-8 pr-0">
                 <h5 className="text-xl font-semibold">Create a project</h5>
                 <p className="mt-2 mb-5">
@@ -174,9 +201,9 @@ const WorkspacePage: NextPage = () => {
                 <Image src={emptyDashboard} alt="Empty Dashboard" />
               </div>
             </div>
-          </div>
-        )
-      ) : null}
+          )
+        ) : null}
+      </div>
     </WorkspaceAuthorizationLayout>
   );
 };

@@ -46,32 +46,38 @@ const IntegrationGuide = () => {
 
   return (
     <>
-      <div className="h-full space-y-2">
+      <div className="h-full w-full">
         <>
-          <div className="space-y-2">
+          <div>
             {EXPORTERS_LIST.map((service) => (
               <div
                 key={service.provider}
-                className="rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4"
+                className="flex items-center justify-between gap-2 border-b border-custom-border-200 bg-custom-background-100 px-4 py-6"
               >
-                <div className="flex items-center gap-4 whitespace-nowrap">
-                  <div className="relative h-10 w-10 flex-shrink-0">
-                    <Image
-                      src={service.logo}
-                      layout="fill"
-                      objectFit="cover"
-                      alt={`${service.title} Logo`}
-                    />
-                  </div>
-                  <div className="w-full">
-                    <h3>{service.title}</h3>
-                    <p className="text-sm text-custom-text-200">{service.description}</p>
+                <div className="flex items-start justify-between gap-4 w-full">
+                  <div className="flex item-center gap-2.5">
+                    <div className="relative h-10 w-10 flex-shrink-0">
+                      <Image
+                        src={service.logo}
+                        layout="fill"
+                        objectFit="cover"
+                        alt={`${service.title} Logo`}
+                      />
+                    </div>
+                    <div>
+                      <h3 className="flex items-center gap-4 text-sm font-medium">
+                        {service.title}
+                      </h3>
+                      <p className="text-sm text-custom-text-200 tracking-tight">
+                        {service.description}
+                      </p>
+                    </div>
                   </div>
                   <div className="flex-shrink-0">
                     <Link href={`/${workspaceSlug}/settings/exports?provider=${service.provider}`}>
                       <a>
                         <PrimaryButton>
-                          <span className="capitalize">{service.type}</span> now
+                          <span className="capitalize">{service.type}</span>
                         </PrimaryButton>
                       </a>
                     </Link>
@@ -80,10 +86,11 @@ const IntegrationGuide = () => {
               </div>
             ))}
           </div>
-          <div className="rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4">
-            <h3 className="mb-2 flex gap-2 text-lg font-medium justify-between">
-              <div className="flex gap-2">
-                <div className="">Previous Exports</div>
+          <div>
+            <div className="flex items-center justify-between pt-7 pb-3.5 border-b border-custom-border-200">
+              <div className="flex gap-2 items-center">
+                <h3 className="flex gap-2 text-xl font-medium">Previous Exports</h3>
+
                 <button
                   type="button"
                   className="flex flex-shrink-0 items-center gap-1 rounded bg-custom-background-80 py-1 px-1.5 text-xs outline-none"
@@ -128,27 +135,31 @@ const IntegrationGuide = () => {
                   <Icon iconName="keyboard_arrow_right" className="!text-lg" />
                 </button>
               </div>
-            </h3>
-            {exporterServices && exporterServices?.results ? (
-              exporterServices?.results?.length > 0 ? (
-                <div className="space-y-2">
-                  <div className="divide-y divide-custom-border-200">
-                    {exporterServices?.results.map((service) => (
-                      <SingleExport key={service.id} service={service} refreshing={refreshing} />
-                    ))}
+            </div>
+            <div className="flex flex-col">
+              {exporterServices && exporterServices?.results ? (
+                exporterServices?.results?.length > 0 ? (
+                  <div>
+                    <div className="divide-y divide-custom-border-200">
+                      {exporterServices?.results.map((service) => (
+                        <SingleExport key={service.id} service={service} refreshing={refreshing} />
+                      ))}
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <p className="text-sm text-custom-text-200 px-4 py-6">
+                    No previous export available.
+                  </p>
+                )
               ) : (
-                <p className="py-2 text-sm text-custom-text-200">No previous export available.</p>
-              )
-            ) : (
-              <Loader className="mt-6 grid grid-cols-1 gap-3">
-                <Loader.Item height="40px" width="100%" />
-                <Loader.Item height="40px" width="100%" />
-                <Loader.Item height="40px" width="100%" />
-                <Loader.Item height="40px" width="100%" />
-              </Loader>
-            )}
+                <Loader className="mt-6 grid grid-cols-1 gap-3">
+                  <Loader.Item height="40px" width="100%" />
+                  <Loader.Item height="40px" width="100%" />
+                  <Loader.Item height="40px" width="100%" />
+                  <Loader.Item height="40px" width="100%" />
+                </Loader>
+              )}
+            </div>
           </div>
         </>
         {provider && (

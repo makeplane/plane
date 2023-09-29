@@ -1,9 +1,10 @@
 import { useRouter } from "next/router";
 
 // icons
+import { CopyPlus } from "lucide-react";
 import { Icon, Tooltip } from "components/ui";
 import { Squares2X2Icon } from "@heroicons/react/24/outline";
-import { BlockedIcon, BlockerIcon } from "components/icons";
+import { BlockedIcon, BlockerIcon, RelatedIcon } from "components/icons";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { capitalizeFirstLetter } from "helpers/string.helper";
@@ -73,7 +74,7 @@ const activityDetails: {
         .
       </>
     ),
-    icon: <Icon iconName="group" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="group" className="!text-2xl" aria-hidden="true" />,
   },
 
   archived_at: {
@@ -81,7 +82,7 @@ const activityDetails: {
       if (activity.new_value === "restore") return "restored the issue.";
       else return "archived the issue.";
     },
-    icon: <Icon iconName="archive" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="archive" className="!text-2xl" aria-hidden="true" />,
   },
 
   attachment: {
@@ -99,7 +100,7 @@ const activityDetails: {
         {showIssue && <IssueLink activity={activity} />}
       </>
     ),
-    icon: <Icon iconName="attach_file" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="attach_file" className="!text-2xl" aria-hidden="true" />,
   },
 
   blocking: {
@@ -117,7 +118,7 @@ const activityDetails: {
     icon: <BlockerIcon height="12" width="12" color="#6b7280" />,
   },
 
-  blocks: {
+  blocked_by: {
     message: (activity) => (
       <>
         {activity.old_value === ""
@@ -130,6 +131,36 @@ const activityDetails: {
       </>
     ),
     icon: <BlockedIcon height="12" width="12" color="#6b7280" />,
+  },
+
+  duplicate: {
+    message: (activity) => (
+      <>
+        {activity.old_value === ""
+          ? "marked this issue as duplicate of "
+          : "removed this issue as a duplicate of "}
+        <span className="font-medium text-custom-text-100">
+          {activity.verb === "created" ? activity.new_value : activity.old_value}
+        </span>
+        .
+      </>
+    ),
+    icon: <CopyPlus size={12} color="#6b7280" />,
+  },
+
+  relates_to: {
+    message: (activity) => (
+      <>
+        {activity.old_value === ""
+          ? "marked that this issue relates to "
+          : "removed the relation from "}
+        <span className="font-medium text-custom-text-100">
+          {activity.old_value === "" ? activity.new_value : activity.old_value}
+        </span>
+        .
+      </>
+    ),
+    icon: <RelatedIcon height="12" width="12" color="#6b7280" />,
   },
 
   cycles: {
@@ -156,7 +187,7 @@ const activityDetails: {
         </button>
       </>
     ),
-    icon: <Icon iconName="contrast" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="contrast" className="!text-2xl" aria-hidden="true" />,
   },
 
   description: {
@@ -172,7 +203,7 @@ const activityDetails: {
         .
       </>
     ),
-    icon: <Icon iconName="chat" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="chat" className="!text-2xl" aria-hidden="true" />,
   },
 
   estimate_point: {
@@ -190,7 +221,7 @@ const activityDetails: {
         )}
       </>
     ),
-    icon: <Icon iconName="change_history" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="change_history" className="!text-2xl" aria-hidden="true" />,
   },
 
   issue: {
@@ -198,7 +229,7 @@ const activityDetails: {
       if (activity.verb === "created") return "created the issue.";
       else return "deleted an issue.";
     },
-    icon: <Icon iconName="stack" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="stack" className="!text-2xl" aria-hidden="true" />,
   },
 
   labels: {
@@ -225,7 +256,7 @@ const activityDetails: {
         )}
       </>
     ),
-    icon: <Icon iconName="sell" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="sell" className="!text-2xl" aria-hidden="true" />,
   },
 
   link: {
@@ -255,7 +286,7 @@ const activityDetails: {
         .
       </>
     ),
-    icon: <Icon iconName="link" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="link" className="!text-2xl" aria-hidden="true" />,
   },
 
   modules: {
@@ -279,7 +310,7 @@ const activityDetails: {
         .
       </>
     ),
-    icon: <Icon iconName="dataset" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="dataset" className="!text-2xl" aria-hidden="true" />,
   },
 
   name: {
@@ -295,7 +326,7 @@ const activityDetails: {
         .
       </>
     ),
-    icon: <Icon iconName="chat" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="chat" className="!text-2xl" aria-hidden="true" />,
   },
 
   parent: {
@@ -314,7 +345,7 @@ const activityDetails: {
         .
       </>
     ),
-    icon: <Icon iconName="supervised_user_circle" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="supervised_user_circle" className="!text-2xl" aria-hidden="true" />,
   },
 
   priority: {
@@ -333,7 +364,7 @@ const activityDetails: {
         .
       </>
     ),
-    icon: <Icon iconName="signal_cellular_alt" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="signal_cellular_alt" className="!text-2xl" aria-hidden="true" />,
   },
 
   start_date: {
@@ -351,7 +382,7 @@ const activityDetails: {
         )}
       </>
     ),
-    icon: <Icon iconName="calendar_today" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="calendar_today" className="!text-2xl" aria-hidden="true" />,
   },
 
   state: {
@@ -389,7 +420,7 @@ const activityDetails: {
         )}
       </>
     ),
-    icon: <Icon iconName="calendar_today" className="!text-sm" aria-hidden="true" />,
+    icon: <Icon iconName="calendar_today" className="!text-2xl" aria-hidden="true" />,
   },
 };
 

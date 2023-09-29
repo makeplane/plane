@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
@@ -10,21 +12,15 @@ import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
-import SettingsNavbar from "layouts/settings-navbar";
 // components
 import { ImagePickerPopover, ImageUploadModal } from "components/core";
+import { SettingsSidebar } from "components/project";
 // ui
-import {
-  CustomSearchSelect,
-  CustomSelect,
-  DangerButton,
-  Input,
-  SecondaryButton,
-  Spinner,
-} from "components/ui";
+import { CustomSearchSelect, CustomSelect, Input, PrimaryButton, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { UserIcon } from "@heroicons/react/24/outline";
+import { UserCircle } from "lucide-react";
 // types
 import type { NextPage } from "next";
 import type { IUser } from "types";
@@ -45,6 +41,9 @@ const defaultValues: Partial<IUser> = {
 const Profile: NextPage = () => {
   const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
+
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
   const {
     register,
@@ -126,6 +125,7 @@ const Profile: NextPage = () => {
               if (!prevData) return prevData;
               return { ...prevData, avatar: "" };
             }, false);
+            setIsRemoving(false);
           })
           .catch(() => {
             setToastAlert({
@@ -155,6 +155,8 @@ const Profile: NextPage = () => {
       <ImageUploadModal
         isOpen={isImageUploadModalOpen}
         onClose={() => setIsImageUploadModalOpen(false)}
+        isRemoving={isRemoving}
+        handleDelete={() => handleDelete(myProfile?.avatar, true)}
         onSuccess={(url) => {
           setValue("avatar", url);
           handleSubmit(onSubmit)();
@@ -164,81 +166,49 @@ const Profile: NextPage = () => {
         userImage
       />
       {myProfile ? (
-        <div className="p-8">
-          <div className="mb-8 space-y-6">
-            <div>
-              <h3 className="text-3xl font-semibold">Profile Settings</h3>
-              <p className="mt-1 text-custom-text-200">
-                This information will be visible to only you.
-              </p>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="flex flex-row gap-2 h-full">
+            <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
+              <SettingsSidebar />
             </div>
-            <SettingsNavbar profilePage />
-          </div>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 sm:space-y-12">
-            <div className="grid grid-cols-12 gap-4 sm:gap-16">
-              <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold text-custom-text-100">Profile Picture</h4>
-                <p className="text-sm text-custom-text-200">
-                  Max file size is 5MB. Supported file types are .jpg and .png.
-                </p>
-              </div>
-              <div className="col-span-12 sm:col-span-6">
-                <div className="flex items-center gap-4">
-                  <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
-                    {!watch("avatar") || watch("avatar") === "" ? (
-                      <div className="h-12 w-12 rounded-md bg-custom-background-80 p-2">
-                        <UserIcon className="h-full w-full text-custom-text-200" />
-                      </div>
-                    ) : (
-                      <div className="relative h-12 w-12 overflow-hidden">
-                        <img
-                          src={watch("avatar")}
-                          className="absolute top-0 left-0 h-full w-full object-cover rounded-md"
-                          onClick={() => setIsImageUploadModalOpen(true)}
-                          alt={myProfile.display_name}
-                        />
-                      </div>
-                    )}
-                  </button>
-                  <div className="flex items-center gap-2">
-                    <SecondaryButton
-                      onClick={() => {
-                        setIsImageUploadModalOpen(true);
-                      }}
-                    >
-                      Upload
-                    </SecondaryButton>
-                    {myProfile.avatar && myProfile.avatar !== "" && (
-                      <DangerButton
-                        onClick={() => handleDelete(myProfile.avatar, true)}
-                        loading={isRemoving}
-                      >
-                        {isRemoving ? "Removing..." : "Remove"}
-                      </DangerButton>
-                    )}
+            <div className={`flex flex-col gap-8 pr-9 py-9 w-full overflow-y-auto`}>
+              <div className="relative h-44 w-full mt-6">
+                <img
+                  src={
+                    watch("cover_image") ??
+                    "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"
+                  }
+                  className="h-44 w-full rounded-lg object-cover"
+                  alt={myProfile?.name ?? "Cover image"}
+                />
+                <div className="flex items-end justify-between absolute left-8 -bottom-6">
+                  <div className="flex gap-3">
+                    <div className="flex items-center justify-center bg-custom-background-90 h-16 w-16 rounded-lg">
+                      <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
+                        {!watch("avatar") || watch("avatar") === "" ? (
+                          <div className="h-16 w-16 rounded-md bg-custom-background-80 p-2">
+                            <UserIcon className="h-full w-full text-custom-text-200" />
+                          </div>
+                        ) : (
+                          <div className="relative h-16 w-16 overflow-hidden">
+                            <img
+                              src={watch("avatar")}
+                              className="absolute top-0 left-0 h-full w-full object-cover rounded-lg"
+                              onClick={() => setIsImageUploadModalOpen(true)}
+                              alt={myProfile.display_name}
+                            />
+                          </div>
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            <div className="grid grid-cols-12 gap-4 sm:gap-16">
-              <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold">Cover Photo</h4>
-                <p className="text-sm text-custom-text-200">
-                  Select your cover photo from the given library.
-                </p>
-              </div>
-              <div className="col-span-12 sm:col-span-6">
-                <div className="h-32 w-full rounded border border-custom-border-200 p-1">
-                  <div className="relative h-full w-full rounded">
-                    <img
-                      src={
-                        watch("cover_image") ??
-                        "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"
-                      }
-                      className="absolute top-0 left-0 h-full w-full object-cover rounded"
-                      alt={myProfile?.name ?? "Cover image"}
-                    />
-                    <div className="absolute bottom-0 flex w-full justify-end">
+
+                <div className="flex absolute right-3 bottom-3">
+                  <Controller
+                    control={control}
+                    name="cover_image"
+                    render={() => (
                       <ImagePickerPopover
                         label={"Change cover"}
                         onChange={(imageUrl) => {
@@ -249,157 +219,169 @@ const Profile: NextPage = () => {
                           "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"
                         }
                       />
-                    </div>
+                    )}
+                  />
+                </div>
+              </div>
+
+              <div className="flex item-center justify-between px-8 mt-4">
+                <div className="flex flex-col">
+                  <div className="flex item-center text-lg font-semibold text-custom-text-100">
+                    <span>{`${watch("first_name")} ${watch("last_name")}`}</span>
                   </div>
+                  <span className="text-sm tracking-tight">{watch("email")}</span>
+                </div>
+
+                <Link href={`/${workspaceSlug}/profile/${myProfile.id}`}>
+                  <a className="flex item-center cursor-pointer gap-2 h-4 leading-4 text-sm text-custom-primary-100">
+                    <span className="h-4 w-4">
+                      <UserCircle className="h-4 w-4" />
+                    </span>
+                    View Profile
+                  </a>
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6 px-8">
+                <div className="flex flex-col gap-1">
+                  <h4 className="text-sm">First Name</h4>
+                  <Input
+                    name="first_name"
+                    id="first_name"
+                    register={register}
+                    error={errors.first_name}
+                    placeholder="Enter your first name"
+                    className="!px-3 !py-2 rounded-md font-medium"
+                    autoComplete="off"
+                    maxLength={24}
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <h4 className="text-sm">Last Name</h4>
+                  <Input
+                    name="last_name"
+                    register={register}
+                    error={errors.last_name}
+                    id="last_name"
+                    placeholder="Enter your last name"
+                    autoComplete="off"
+                    className="!px-3 !py-2 rounded-md font-medium"
+                    maxLength={24}
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <h4 className="text-sm">Email</h4>
+                  <Input
+                    id="email"
+                    name="email"
+                    autoComplete="off"
+                    register={register}
+                    className="!px-3 !py-2 rounded-md font-medium"
+                    error={errors.name}
+                    disabled
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <h4 className="text-sm">Role</h4>
+                  <Controller
+                    name="role"
+                    control={control}
+                    rules={{ required: "This field is required" }}
+                    render={({ field: { value, onChange } }) => (
+                      <CustomSelect
+                        value={value}
+                        onChange={onChange}
+                        label={value ? value.toString() : "Select your role"}
+                        buttonClassName={errors.role ? "border-red-500 bg-red-500/10" : ""}
+                        width="w-full"
+                        input
+                        verticalPosition="top"
+                        position="right"
+                      >
+                        {USER_ROLES.map((item) => (
+                          <CustomSelect.Option key={item.value} value={item.value}>
+                            {item.label}
+                          </CustomSelect.Option>
+                        ))}
+                      </CustomSelect>
+                    )}
+                  />
+                  {errors.role && (
+                    <span className="text-xs text-red-500">Please select a role</span>
+                  )}
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <h4 className="text-sm">Display name </h4>
+
+                  <Input
+                    id="display_name"
+                    name="display_name"
+                    autoComplete="off"
+                    register={register}
+                    error={errors.display_name}
+                    className="w-full"
+                    placeholder="Enter your display name"
+                    validations={{
+                      required: "Display name is required.",
+                      validate: (value) => {
+                        if (value.trim().length < 1) return "Display name can't be empty.";
+
+                        if (value.split("  ").length > 1)
+                          return "Display name can't have two consecutive spaces.";
+
+                        if (value.replace(/\s/g, "").length < 1)
+                          return "Display name must be at least 1 characters long.";
+
+                        if (value.replace(/\s/g, "").length > 20)
+                          return "Display name must be less than 20 characters long.";
+
+                        return true;
+                      },
+                    }}
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <h4 className="text-sm">Timezone </h4>
+
+                  <Controller
+                    name="user_timezone"
+                    control={control}
+                    rules={{ required: "This field is required" }}
+                    render={({ field: { value, onChange } }) => (
+                      <CustomSearchSelect
+                        value={value}
+                        label={
+                          value
+                            ? TIME_ZONES.find((t) => t.value === value)?.label ?? value
+                            : "Select a timezone"
+                        }
+                        options={timeZoneOptions}
+                        onChange={onChange}
+                        verticalPosition="top"
+                        optionsClassName="w-full"
+                        input
+                      />
+                    )}
+                  />
+                  {errors.role && (
+                    <span className="text-xs text-red-500">Please select a role</span>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between py-2">
+                  <PrimaryButton type="submit" loading={isSubmitting}>
+                    {isSubmitting ? "Updating Project..." : "Update Project"}
+                  </PrimaryButton>
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-12 gap-4 sm:gap-16">
-              <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold text-custom-text-100">Full Name</h4>
-              </div>
-              <div className="col-span-12 flex items-center gap-2 sm:col-span-6">
-                <Input
-                  name="first_name"
-                  id="first_name"
-                  register={register}
-                  error={errors.first_name}
-                  placeholder="Enter your first name"
-                  autoComplete="off"
-                />
-                <Input
-                  name="last_name"
-                  register={register}
-                  error={errors.last_name}
-                  id="last_name"
-                  placeholder="Enter your last name"
-                  autoComplete="off"
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-12 gap-4 sm:gap-16">
-              <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold text-custom-text-100">Display Name</h4>
-                <p className="text-sm text-custom-text-200">
-                  This could be your first name, or a nickname — however you{"'"}d like people to
-                  refer to you in Plane.
-                </p>
-              </div>
-              <div className="col-span-12 sm:col-span-6">
-                <Input
-                  id="display_name"
-                  name="display_name"
-                  autoComplete="off"
-                  register={register}
-                  error={errors.display_name}
-                  className="w-full"
-                  placeholder="Enter your display name"
-                  validations={{
-                    required: "Display name is required.",
-                    validate: (value) => {
-                      if (value.trim().length < 1) return "Display name can't be empty.";
-
-                      if (value.split("  ").length > 1)
-                        return "Display name can't have two consecutive spaces.";
-
-                      if (value.replace(/\s/g, "").length < 1)
-                        return "Display name must be at least 1 characters long.";
-
-                      if (value.replace(/\s/g, "").length > 20)
-                        return "Display name must be less than 20 characters long.";
-
-                      return true;
-                    },
-                  }}
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-12 gap-4 sm:gap-16">
-              <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold text-custom-text-100">Email</h4>
-                <p className="text-sm text-custom-text-200">
-                  The email address that you are using.
-                </p>
-              </div>
-              <div className="col-span-12 sm:col-span-6">
-                <Input
-                  id="email"
-                  name="email"
-                  autoComplete="off"
-                  register={register}
-                  error={errors.name}
-                  className="w-full"
-                  disabled
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-12 gap-4 sm:gap-16">
-              <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold text-custom-text-100">Role</h4>
-                <p className="text-sm text-custom-text-200">Add your role.</p>
-              </div>
-              <div className="col-span-12 sm:col-span-6">
-                <Controller
-                  name="role"
-                  control={control}
-                  rules={{ required: "This field is required" }}
-                  render={({ field: { value, onChange } }) => (
-                    <CustomSelect
-                      value={value}
-                      onChange={onChange}
-                      label={value ? value.toString() : "Select your role"}
-                      buttonClassName={errors.role ? "border-red-500 bg-red-500/10" : ""}
-                      width="w-full"
-                      input
-                      position="right"
-                    >
-                      {USER_ROLES.map((item) => (
-                        <CustomSelect.Option key={item.value} value={item.value}>
-                          {item.label}
-                        </CustomSelect.Option>
-                      ))}
-                    </CustomSelect>
-                  )}
-                />
-                {errors.role && <span className="text-xs text-red-500">Please select a role</span>}
-              </div>
-            </div>
-            <div className="grid grid-cols-12 gap-4 sm:gap-16">
-              <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold text-custom-text-100">Timezone</h4>
-                <p className="text-sm text-custom-text-200">Select a timezone</p>
-              </div>
-              <div className="col-span-12 sm:col-span-6">
-                <Controller
-                  name="user_timezone"
-                  control={control}
-                  rules={{ required: "This field is required" }}
-                  render={({ field: { value, onChange } }) => (
-                    <CustomSearchSelect
-                      value={value}
-                      label={
-                        value
-                          ? TIME_ZONES.find((t) => t.value === value)?.label ?? value
-                          : "Select a timezone"
-                      }
-                      options={timeZoneOptions}
-                      onChange={onChange}
-                      verticalPosition="top"
-                      optionsClassName="w-full"
-                      input
-                    />
-                  )}
-                />
-                {errors.role && <span className="text-xs text-red-500">Please select a role</span>}
-              </div>
-            </div>
-            <div className="sm:text-right">
-              <SecondaryButton type="submit" loading={isSubmitting}>
-                {isSubmitting ? "Updating..." : "Update profile"}
-              </SecondaryButton>
-            </div>
-          </form>
-        </div>
+          </div>
+        </form>
       ) : (
         <div className="grid h-full w-full place-items-center px-4 sm:px-0">
           <Spinner />

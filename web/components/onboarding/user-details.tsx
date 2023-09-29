@@ -9,13 +9,16 @@ import useToast from "hooks/use-toast";
 // services
 import userService from "services/user.service";
 // ui
-import { CustomSelect, Input, PrimaryButton } from "components/ui";
+import { CustomSearchSelect, CustomSelect, Input, PrimaryButton } from "components/ui";
 // types
 import { ICurrentUserResponse, IUser } from "types";
 // fetch-keys
 import { CURRENT_USER } from "constants/fetch-keys";
+// helpers
+import { getUserTimeZoneFromWindow } from "helpers/date-time.helper";
 // constants
 import { USER_ROLES } from "constants/workspace";
+import { TIME_ZONES } from "constants/timezones";
 
 const defaultValues: Partial<IUser> = {
   first_name: "",
@@ -26,6 +29,12 @@ const defaultValues: Partial<IUser> = {
 type Props = {
   user?: IUser;
 };
+
+const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
+  value: timeZone.value,
+  query: timeZone.label + " " + timeZone.value,
+  content: timeZone.label,
+}));
 
 export const UserDetails: React.FC<Props> = ({ user }) => {
   const { setToastAlert } = useToast();
@@ -84,6 +93,7 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
         first_name: user.first_name,
         last_name: user.last_name,
         role: user.role,
+        user_timezone: getUserTimeZoneFromWindow(),
       });
     }
   }, [user, reset]);
@@ -111,6 +121,10 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
             register={register}
             validations={{
               required: "First name is required",
+              maxLength: {
+                value: 24,
+                message: "First name cannot exceed the limit of 24 characters",
+              },
             }}
             error={errors.first_name}
           />
@@ -125,6 +139,10 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
             placeholder="Enter your last name..."
             validations={{
               required: "Last name is required",
+              maxLength: {
+                value: 24,
+                message: "Last name cannot exceed the limit of 24 characters",
+              },
             }}
             error={errors.last_name}
           />
@@ -160,6 +178,34 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
               )}
             />
             {errors.role && <span className="text-sm text-red-500">{errors.role.message}</span>}
+          </div>
+        </div>
+        <div className="space-y-1 text-sm">
+          <span>What time zone are you in? </span>
+          <div className="w-full">
+            <Controller
+              name="user_timezone"
+              control={control}
+              rules={{ required: "This field is required" }}
+              render={({ field: { value, onChange } }) => (
+                <CustomSearchSelect
+                  value={value}
+                  label={
+                    value
+                      ? TIME_ZONES.find((t) => t.value === value)?.label ?? value
+                      : "Select a timezone"
+                  }
+                  options={timeZoneOptions}
+                  onChange={onChange}
+                  verticalPosition="top"
+                  optionsClassName="w-full"
+                  input
+                />
+              )}
+            />
+            {errors?.user_timezone && (
+              <span className="text-sm text-red-500">{errors.user_timezone.message}</span>
+            )}
           </div>
         </div>
       </div>
