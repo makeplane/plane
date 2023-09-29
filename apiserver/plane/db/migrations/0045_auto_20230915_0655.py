@@ -38,5 +38,5 @@ class Migration(migrations.Migration):
             model_name="issueactivity",
             name="epoch",
             field=models.FloatField(null=True),
-        ),    
+        ),
     ]
