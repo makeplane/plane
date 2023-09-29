@@ -9,8 +9,10 @@ import {
   FilterCreatedBy,
   FilterLabels,
   FilterPriority,
+  FilterStartDate,
   FilterState,
   FilterStateGroup,
+  FilterTargetDate,
 } from "components/issues";
 // icons
 import { Search, X } from "lucide-react";
@@ -20,10 +22,11 @@ import { getStatesList } from "helpers/state.helper";
 import { IIssueFilterOptions } from "types";
 // constants
 import { ILayoutDisplayFiltersOptions, ISSUE_PRIORITIES, ISSUE_STATE_GROUPS } from "constants/issue";
+import { DATE_FILTER_OPTIONS } from "constants/filters";
 
 type Props = {
   filters: IIssueFilterOptions;
-  handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string) => void;
+  handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string | string[]) => void;
   layoutDisplayFiltersOptions: ILayoutDisplayFiltersOptions;
   projectId: string;
 };
@@ -66,6 +69,14 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
     state: {
       currentLength: 5,
       totalLength: statesList?.length ?? 0,
+    },
+    start_date: {
+      currentLength: 5,
+      totalLength: DATE_FILTER_OPTIONS.length + 1,
+    },
+    target_date: {
+      currentLength: 5,
+      totalLength: DATE_FILTER_OPTIONS.length + 1,
     },
   });
 
@@ -118,7 +129,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden">
-      <div className="p-2.5 bg-custom-background-100">
+      <div className="p-2.5 pb-0 bg-custom-background-100">
         <div className="bg-custom-background-90 border-[0.5px] border-custom-border-200 text-xs rounded flex items-center gap-1.5 px-1.5 py-1">
           <Search className="text-custom-text-400" size={12} strokeWidth={2} />
           <input
@@ -328,18 +339,28 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
         )}
 
         {/* start_date */}
-        {/* {isFilterEnabled("start_date") && (
+        {isFilterEnabled("start_date") && (
           <div className="py-2">
-            <FilterStartDate />
+            <FilterStartDate
+              appliedFilters={filters.start_date ?? null}
+              handleUpdate={(val) => handleFiltersUpdate("start_date", val)}
+              itemsToRender={filtersToRender.start_date?.currentLength ?? 0}
+              searchQuery={filtersSearchQuery}
+            />
           </div>
-        )} */}
+        )}
 
-        {/* due_date */}
-        {/* {isFilterEnabled("target_date") && (
+        {/* target_date */}
+        {isFilterEnabled("target_date") && (
           <div className="py-2">
-            <FilterTargetDate />
+            <FilterTargetDate
+              appliedFilters={filters.target_date ?? null}
+              handleUpdate={(val) => handleFiltersUpdate("target_date", val)}
+              itemsToRender={filtersToRender.target_date?.currentLength ?? 0}
+              searchQuery={filtersSearchQuery}
+            />
           </div>
-        )} */}
+        )}
       </div>
     </div>
   );

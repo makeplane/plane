@@ -31,13 +31,19 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   );
 
   const handleFiltersUpdate = useCallback(
-    (key: keyof IIssueFilterOptions, value: string) => {
+    (key: keyof IIssueFilterOptions, value: string | string[]) => {
       if (!workspaceSlug || !projectId) return;
 
       const newValues = issueFilterStore.userFilters?.[key] ?? [];
 
-      if (issueFilterStore.userFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-      else newValues.push(value);
+      if (Array.isArray(value)) {
+        value.forEach((val) => {
+          if (!newValues.includes(val)) newValues.push(val);
+        });
+      } else {
+        if (issueFilterStore.userFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+        else newValues.push(value);
+      }
 
       issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
         filters: {

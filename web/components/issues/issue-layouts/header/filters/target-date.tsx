@@ -1,38 +1,67 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { FilterHeader, FilterOption } from "components/issues";
+import { DateFilterModal } from "components/core";
+// constants
+import { DATE_FILTER_OPTIONS } from "constants/filters";
 
-export const FilterTargetDate = observer(() => {
+type Props = {
+  appliedFilters: string[] | null;
+  handleUpdate: (val: string | string[]) => void;
+  itemsToRender: number;
+  searchQuery: string;
+};
+
+export const FilterTargetDate: React.FC<Props> = observer((props) => {
+  const { appliedFilters, handleUpdate, itemsToRender, searchQuery } = props;
+
   const [previewEnabled, setPreviewEnabled] = useState(true);
+  const [isDateFilterModalOpen, setIsDateFilterModalOpen] = useState(false);
 
-  const store = useMobxStore();
-  const { issueFilter: issueFilterStore } = store;
+  const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const appliedFiltersCount = issueFilterStore.userFilters?.target_date?.length ?? 0;
+  const filteredOptions = DATE_FILTER_OPTIONS.filter((d) => d.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
     <>
+      {isDateFilterModalOpen && (
+        <DateFilterModal
+          handleClose={() => setIsDateFilterModalOpen(false)}
+          isOpen={isDateFilterModalOpen}
+          onSelect={(val) => handleUpdate(val)}
+          title="Due date"
+        />
+      )}
       <FilterHeader
         title={`Target date${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
       {previewEnabled && (
-        <div className="space-y-[2px] pt-1">
-          {issueFilterStore?.userFilters?.target_date &&
-            issueFilterStore?.userFilters?.target_date.length > 0 &&
-            issueFilterStore?.userFilters?.target_date.map((_targetDate) => (
+        <div>
+          {filteredOptions.length > 0 ? (
+            <>
+              {filteredOptions.slice(0, itemsToRender).map((option) => (
+                <FilterOption
+                  key={option.value}
+                  isChecked={appliedFilters?.includes(option.value) ? true : false}
+                  onClick={() => handleUpdate(option.value)}
+                  title={option.name}
+                  multiple={false}
+                />
+              ))}
               <FilterOption
-                key={_targetDate?.key}
-                isChecked={issueFilterStore?.userFilters?.target_date?.includes(_targetDate?.key) ? true : false}
-                title={_targetDate.title}
+                isChecked={false}
+                onClick={() => setIsDateFilterModalOpen(true)}
+                title="Custom"
                 multiple={false}
               />
-            ))}
+            </>
+          ) : (
+            <p className="text-xs text-custom-text-400 italic">No matches found</p>
+          )}
         </div>
       )}
     </>
