@@ -1,9 +1,9 @@
 import React from "react";
 // components
-import { LayoutSelection } from "./layout-selection";
-import { IssueDropdown } from "./helpers/dropdown";
-import { FilterSelection } from "./filters/filters-selection";
-import { DisplayFiltersSelection } from "./display-filters";
+import { LayoutSelection } from "../issues/issue-layouts/header/layout-selection";
+import { IssueDropdown } from "../issues/issue-layouts/header/helpers/dropdown";
+import { FilterSelection } from "../issues/issue-layouts/header/filters/filters-selection";
+import { DisplayFiltersSelection } from "../issues/issue-layouts/header/display-filters";
 
 import { FilterPreview } from "./filters-preview";
 

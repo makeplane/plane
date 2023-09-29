@@ -23,7 +23,6 @@ export interface IIssueFilterStore {
   userFilters: IIssueFilterOptions;
   defaultDisplayFilters: IIssueDisplayFilterOptions;
   defaultFilters: IIssueFilterOptions;
-  filtersSearchQuery: string;
 
   // action
   fetchUserProjectFilters: (workspaceSlug: string, projectId: string) => Promise<void>;
@@ -37,7 +36,6 @@ export interface IIssueFilterStore {
     projectId: string,
     properties: Partial<IIssueDisplayProperties>
   ) => Promise<void>;
-  updateFiltersSearchQuery: (query: string) => void;
 
   // computed
   appliedFilters: TIssueParams[] | null;
@@ -68,7 +66,6 @@ class IssueFilterStore implements IIssueFilterStore {
     created_on: true,
     updated_on: true,
   };
-  filtersSearchQuery: string = "";
 
   // root store
   rootStore;
@@ -88,13 +85,11 @@ class IssueFilterStore implements IIssueFilterStore {
       userDisplayProperties: observable.ref,
       userDisplayFilters: observable.ref,
       userFilters: observable.ref,
-      filtersSearchQuery: observable.ref,
 
       // actions
       fetchUserProjectFilters: action,
       updateUserFilters: action,
       updateDisplayProperties: action,
-      updateFiltersSearchQuery: action,
 
       // computed
       appliedFilters: computed,
@@ -162,7 +157,7 @@ class IssueFilterStore implements IIssueFilterStore {
 
     if (this.userDisplayFilters.layout === "calendar") filteredRouteParams.target_date = this.calendarLayoutDateRange();
 
-    const filteredParams = handleIssueQueryParamsByLayout(this.userDisplayFilters.layout);
+    const filteredParams = handleIssueQueryParamsByLayout(this.userDisplayFilters.layout, "issues");
     if (filteredParams) filteredRouteParams = this.computedFilter(filteredRouteParams, filteredParams);
 
     return filteredRouteParams;
@@ -202,13 +197,16 @@ class IssueFilterStore implements IIssueFilterStore {
       },
     };
 
+    // set sub_group_by to null if group_by is set to null
+    if (newViewProps.display_filters.group_by === null) newViewProps.display_filters.sub_group_by = null;
+
     try {
       runInAction(() => {
         this.userFilters = newViewProps.filters;
         this.userDisplayFilters = newViewProps.display_filters;
       });
 
-      await this.projectService.setProjectView(workspaceSlug, projectId, {
+      this.projectService.setProjectView(workspaceSlug, projectId, {
         view_props: newViewProps,
       });
     } catch (error) {
@@ -247,12 +245,6 @@ class IssueFilterStore implements IIssueFilterStore {
 
       console.log("Failed to update user filters in issue filter store", error);
     }
-  };
-
-  updateFiltersSearchQuery: (query: string) => void = (query) => {
-    runInAction(() => {
-      this.filtersSearchQuery = query;
-    });
   };
 }
 
