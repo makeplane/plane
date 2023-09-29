@@ -52,7 +52,7 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = ({
         mutate(WORKSPACE_VIEWS_LIST(workspaceSlug as string));
         handleClose();
 
-        router.replace(`/${workspaceSlug}/workspace-views/issues?viewId=${res.id}`);
+        router.replace(`/${workspaceSlug}/workspace-views/issues?globalViewId=${res.id}`);
 
         setToastAlert({
           type: "success",
