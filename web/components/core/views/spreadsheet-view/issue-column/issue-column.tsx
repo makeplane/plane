@@ -83,88 +83,89 @@ export const IssueColumn: React.FC<Props> = ({
 
   return (
     <div className="group flex items-center w-[28rem] text-sm h-11 sticky top-0 bg-custom-background-100 truncate border-b border-r border-custom-border-100">
-      <div
-        className="flex gap-1.5 px-4 pr-0 py-2.5 items-center w-24"
-        style={issue.parent && nestingLevel !== 0 ? { paddingLeft } : {}}
-      >
-        <div className="relative flex items-center cursor-pointer text-xs text-center hover:text-custom-text-100">
-          {properties.key && (
-            <span className="flex items-center justify-center font-medium opacity-100 group-hover:opacity-0">
+      {properties.key && (
+        <div
+          className="flex gap-1.5 px-4 pr-0 py-2.5 items-center min-w-[96px]"
+          style={issue.parent && nestingLevel !== 0 ? { paddingLeft } : {}}
+        >
+          <div className="relative flex items-center cursor-pointer text-xs text-center hover:text-custom-text-100">
+            <span className="flex items-center justify-center font-medium opacity-100 group-hover:opacity-0 ">
               {issue.project_detail?.identifier}-{issue.sequence_id}
             </span>
-          )}
-          {!isNotAllowed && !disableUserActions && (
-            <div className="absolute top-0 left-2.5 opacity-0 group-hover:opacity-100">
-              <Popover2
-                isOpen={isOpen}
-                canEscapeKeyClose
-                onInteraction={(nextOpenState) => setIsOpen(nextOpenState)}
-                content={
-                  <div
-                    className={`flex flex-col gap-1.5 overflow-y-scroll whitespace-nowrap rounded-md border p-1 text-xs shadow-lg focus:outline-none max-h-44 min-w-full border-custom-border-100 bg-custom-background-90`}
-                  >
-                    <button
-                      type="button"
-                      className="hover:text-custom-text-200 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80"
-                      onClick={() => {
-                        handleEditIssue(issue);
-                        setIsOpen(false);
-                      }}
-                    >
-                      <div className="flex items-center justify-start gap-2">
-                        <PencilIcon className="h-4 w-4" />
-                        <span>Edit issue</span>
-                      </div>
-                    </button>
 
-                    <button
-                      type="button"
-                      className="hover:text-custom-text-200 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80"
-                      onClick={() => {
-                        handleDeleteIssue(issue);
-                        setIsOpen(false);
-                      }}
+            {!isNotAllowed && !disableUserActions && (
+              <div className="absolute top-0 left-2.5 opacity-0 group-hover:opacity-100">
+                <Popover2
+                  isOpen={isOpen}
+                  canEscapeKeyClose
+                  onInteraction={(nextOpenState) => setIsOpen(nextOpenState)}
+                  content={
+                    <div
+                      className={`flex flex-col gap-1.5 overflow-y-scroll whitespace-nowrap rounded-md border p-1 text-xs shadow-lg focus:outline-none max-h-44 min-w-full border-custom-border-100 bg-custom-background-90`}
                     >
-                      <div className="flex items-center justify-start gap-2">
-                        <TrashIcon className="h-4 w-4" />
-                        <span>Delete issue</span>
-                      </div>
-                    </button>
+                      <button
+                        type="button"
+                        className="hover:text-custom-text-200 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80"
+                        onClick={() => {
+                          handleEditIssue(issue);
+                          setIsOpen(false);
+                        }}
+                      >
+                        <div className="flex items-center justify-start gap-2">
+                          <PencilIcon className="h-4 w-4" />
+                          <span>Edit issue</span>
+                        </div>
+                      </button>
 
-                    <button
-                      type="button"
-                      className="hover:text-custom-text-200 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80"
-                      onClick={() => {
-                        handleCopyText();
-                        setIsOpen(false);
-                      }}
-                    >
-                      <div className="flex items-center justify-start gap-2">
-                        <LinkIcon className="h-4 w-4" />
-                        <span>Copy issue link</span>
-                      </div>
-                    </button>
-                  </div>
-                }
-                placement="bottom-start"
+                      <button
+                        type="button"
+                        className="hover:text-custom-text-200 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80"
+                        onClick={() => {
+                          handleDeleteIssue(issue);
+                          setIsOpen(false);
+                        }}
+                      >
+                        <div className="flex items-center justify-start gap-2">
+                          <TrashIcon className="h-4 w-4" />
+                          <span>Delete issue</span>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        className="hover:text-custom-text-200 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80"
+                        onClick={() => {
+                          handleCopyText();
+                          setIsOpen(false);
+                        }}
+                      >
+                        <div className="flex items-center justify-start gap-2">
+                          <LinkIcon className="h-4 w-4" />
+                          <span>Copy issue link</span>
+                        </div>
+                      </button>
+                    </div>
+                  }
+                  placement="bottom-start"
+                >
+                  <EllipsisHorizontalIcon className="h-5 w-5 text-custom-text-200" />
+                </Popover2>
+              </div>
+            )}
+          </div>
+
+          {issue.sub_issues_count > 0 && (
+            <div className="h-6 w-6 flex justify-center items-center">
+              <button
+                className="h-5 w-5 hover:bg-custom-background-90 hover:text-custom-text-100 rounded-sm cursor-pointer"
+                onClick={() => handleToggleExpand(issue.id)}
               >
-                <EllipsisHorizontalIcon className="h-5 w-5 text-custom-text-200" />
-              </Popover2>
+                <Icon iconName="chevron_right" className={`${expanded ? "rotate-90" : ""}`} />
+              </button>
             </div>
           )}
         </div>
-
-        {issue.sub_issues_count > 0 && (
-          <div className="h-6 w-6 flex justify-center items-center">
-            <button
-              className="h-5 w-5 hover:bg-custom-background-90 hover:text-custom-text-100 rounded-sm cursor-pointer"
-              onClick={() => handleToggleExpand(issue.id)}
-            >
-              <Icon iconName="chevron_right" className={`${expanded ? "rotate-90" : ""}`} />
-            </button>
-          </div>
-        )}
-      </div>
+      )}
       <span className="flex items-center px-4 py-2.5 h-full  truncate flex-grow">
         <button
           type="button"
