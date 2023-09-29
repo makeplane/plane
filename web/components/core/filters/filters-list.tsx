@@ -167,7 +167,9 @@ export const FiltersList: React.FC<Props> = ({
                               className="cursor-pointer"
                               onClick={() =>
                                 setFilters({
-                                  assignees: filters.assignees?.filter((p: any) => p !== memberId),
+                                  subscriber: filters.subscriber?.filter(
+                                    (p: any) => p !== memberId
+                                  ),
                                 })
                               }
                             >

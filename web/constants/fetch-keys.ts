@@ -4,6 +4,7 @@ import { IAnalyticsParams, IJiraMetadata, INotificationParams } from "types";
 const paramsToKey = (params: any) => {
   const {
     state,
+    state_group,
     priority,
     assignees,
     created_by,
@@ -12,28 +13,38 @@ const paramsToKey = (params: any) => {
     target_date,
     sub_issue,
     start_target_date,
+    project,
+    layout,
+    subscriber,
   } = params;
 
+  let projectKey = project ? project.split(",") : [];
   let stateKey = state ? state.split(",") : [];
+  let stateGroupKey = state_group ? state_group.split(",") : [];
   let priorityKey = priority ? priority.split(",") : [];
   let assigneesKey = assignees ? assignees.split(",") : [];
   let createdByKey = created_by ? created_by.split(",") : [];
   let labelsKey = labels ? labels.split(",") : [];
+  let subscriberKey = subscriber ? subscriber.split(",") : [];
   const startTargetDate = start_target_date ? `${start_target_date}`.toUpperCase() : "FALSE";
   const startDateKey = start_date ?? "";
   const targetDateKey = target_date ?? "";
   const type = params.type ? params.type.toUpperCase() : "NULL";
   const groupBy = params.group_by ? params.group_by.toUpperCase() : "NULL";
   const orderBy = params.order_by ? params.order_by.toUpperCase() : "NULL";
+  const layoutKey = layout ? layout.toUpperCase() : "";
 
   // sorting each keys in ascending order
+  projectKey = projectKey.sort().join("_");
   stateKey = stateKey.sort().join("_");
+  stateGroupKey = stateGroupKey.sort().join("_");
   priorityKey = priorityKey.sort().join("_");
   assigneesKey = assigneesKey.sort().join("_");
   createdByKey = createdByKey.sort().join("_");
   labelsKey = labelsKey.sort().join("_");
+  subscriberKey = subscriberKey.sort().join("_");
 
-  return `${stateKey}_${priorityKey}_${assigneesKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${startDateKey}_${targetDateKey}_${sub_issue}_${startTargetDate}`;
+  return `${layoutKey}_${projectKey}_${stateGroupKey}_${stateKey}_${priorityKey}_${assigneesKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${startDateKey}_${targetDateKey}_${sub_issue}_${startTargetDate}_${subscriberKey}`;
 };
 
 const inboxParamsToKey = (params: any) => {
@@ -147,6 +158,15 @@ export const PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS = (projectId: string, params?
   const paramsKey = paramsToKey(params);
 
   return `PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS${projectId.toUpperCase()}_${paramsKey}`;
+};
+
+export const WORKSPACE_VIEWS_LIST = (workspaceSlug: string) =>
+  `WORKSPACE_VIEWS_LIST_${workspaceSlug.toUpperCase()}`;
+export const WORKSPACE_VIEW_DETAILS = (globalViewId: string) =>
+  `WORKSPACE_VIEW_DETAILS_${globalViewId.toUpperCase()}`;
+export const WORKSPACE_VIEW_ISSUES = (globalViewId: string, params: any) => {
+  if (!params) return `WORKSPACE_VIEW_ISSUES_${globalViewId.toUpperCase()}`;
+  return `WORKSPACE_VIEW_ISSUES_${globalViewId.toUpperCase()}_${paramsToKey(params).toUpperCase()}`;
 };
 
 export const PROJECT_ISSUES_DETAILS = (issueId: string) =>

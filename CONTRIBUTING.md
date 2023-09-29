@@ -41,13 +41,17 @@ chmod +x setup.sh
 2. Run setup.sh
 
 ```bash
-./setup.sh http://localhost
+./setup.sh
 ```
 
-3. Define `NEXT_PUBLIC_API_BASE_URL=http://localhost` in **.env** file
+3. Define `NEXT_PUBLIC_API_BASE_URL=http://localhost` in **web/.env** and **space/.env** file
 
 ```bash
-echo "\nNEXT_PUBLIC_API_BASE_URL=http://localhost\n" >> .env
+echo "\nNEXT_PUBLIC_API_BASE_URL=http://localhost\n" >> ./web/.env
+```
+
+```bash
+echo "\nNEXT_PUBLIC_API_BASE_URL=http://localhost\n" >> ./space/.env
 ```
 
 4. Run Docker compose up
@@ -59,13 +63,13 @@ docker compose up -d
 5. Install dependencies
 
 ```bash
-yarn install # bun install
+yarn install
 ```
 
 6. Run the web app in development mode
 
 ```bash
-yarn dev # bun run dev
+yarn dev
 ```
 
 ## Missing a Feature?

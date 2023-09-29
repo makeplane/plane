@@ -44,9 +44,9 @@ export const WorkspaceSidebarMenu = () => {
     },
     {
       Icon: TaskAltOutlined,
-      name: store.locale.localized("My Issues"),
-      key: "my-issues",
-      href: `/${workspaceSlug}/me/my-issues`,
+      name: store.locale.localized("All Issues"),
+      key: "all-issues",
+      href: `/${workspaceSlug}/workspace-views/all-issues`,
     },
   ];
 

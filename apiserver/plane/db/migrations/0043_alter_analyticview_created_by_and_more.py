@@ -33,9 +33,8 @@ def create_issue_relation(apps, schema_editor):
 def update_issue_priority_choice(apps, schema_editor):
     IssueModel = apps.get_model("db", "Issue")
     updated_issues = []
-    for obj in IssueModel.objects.all():
-        if obj.priority is None:
-            obj.priority = "none"
+    for obj in IssueModel.objects.filter(priority=None):
+        obj.priority = "none"
         updated_issues.append(obj)
     IssueModel.objects.bulk_update(updated_issues, ["priority"], batch_size=100)
 

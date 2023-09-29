@@ -124,6 +124,10 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
             register={register}
             validations={{
               required: "First name is required",
+              maxLength: {
+                value: 24,
+                message: "First name cannot exceed the limit of 24 characters",
+              },
             }}
             error={errors.first_name}
           />
@@ -138,6 +142,10 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
             placeholder="Enter your last name..."
             validations={{
               required: "Last name is required",
+              maxLength: {
+                value: 24,
+                message: "Last name cannot exceed the limit of 24 characters",
+              },
             }}
             error={errors.last_name}
           />

@@ -1,13 +1,4 @@
-import type {
-  IIssueFilterOptions,
-  IProjectMember,
-  IUser,
-  IUserMemberLite,
-  IWorkspaceViewProps,
-  TIssueGroupByOptions,
-  TIssueOrderByOptions,
-  TIssueViewOptions,
-} from "types";
+import type { IProjectMember, IUser, IUserMemberLite, IWorkspaceViewProps } from "types";
 
 export interface IWorkspace {
   readonly id: string;
