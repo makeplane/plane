@@ -6,7 +6,7 @@ import useSWR from "swr";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { CalendarLayout, GanttLayout, KanBanLayout } from "components/issues";
+import { CalendarLayout, GanttLayout, KanBanLayout, SpreadsheetLayout } from "components/issues";
 
 export const AllViews: React.FC = observer(() => {
   const router = useRouter();
@@ -41,6 +41,8 @@ export const AllViews: React.FC = observer(() => {
         <CalendarLayout />
       ) : activeLayout === "gantt_chart" ? (
         <GanttLayout />
+      ) : activeLayout === "spreadsheet" ? (
+        <SpreadsheetLayout />
       ) : null}
     </div>
   );
