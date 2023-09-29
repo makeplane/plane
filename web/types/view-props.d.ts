@@ -38,6 +38,7 @@ export type TIssueParams =
   | "state"
   | "assignees"
   | "created_by"
+  | "subscriber"
   | "labels"
   | "start_date"
   | "target_date"

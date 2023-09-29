@@ -279,14 +279,14 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       },
     },
     calendar: {
-      filters: ["priority", "state", "assignees", "created_by", "labels"],
+      filters: ["priority", "state", "assignees", "created_by", "labels", "start_date"],
       display_properties: true,
       display_filters: {
         type: [null, "active", "backlog"],
       },
       extra_options: {
-        access: false,
-        values: [],
+        access: true,
+        values: ["sub_issue"],
       },
     },
     spreadsheet: {
