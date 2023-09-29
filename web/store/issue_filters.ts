@@ -156,6 +156,7 @@ class IssueFilterStore implements IIssueFilterStore {
     };
 
     if (this.userDisplayFilters.layout === "calendar") filteredRouteParams.target_date = this.calendarLayoutDateRange();
+    if (this.userDisplayFilters.layout === "gantt_chart") filteredRouteParams.start_target_date = true;
 
     const filteredParams = handleIssueQueryParamsByLayout(this.userDisplayFilters.layout, "issues");
     if (filteredParams) filteredRouteParams = this.computedFilter(filteredRouteParams, filteredParams);
@@ -199,6 +200,10 @@ class IssueFilterStore implements IIssueFilterStore {
 
     // set sub_group_by to null if group_by is set to null
     if (newViewProps.display_filters.group_by === null) newViewProps.display_filters.sub_group_by = null;
+
+    // set group_by to state if layout is switched to kanban and group_by is null
+    if (newViewProps.display_filters.layout === "kanban" && newViewProps.display_filters.group_by === null)
+      newViewProps.display_filters.group_by = "state";
 
     try {
       runInAction(() => {
