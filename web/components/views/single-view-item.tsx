@@ -91,7 +91,7 @@ export const SingleViewItem: React.FC<Props> = ({
   const viewRedirectionUrl =
     viewType === "project"
       ? `/${workspaceSlug}/projects/${projectId}/views/${view.id}`
-      : `/${workspaceSlug}/workspace-views/${view.id}`;
+      : `/${workspaceSlug}/workspace-views/issues?viewId=${view.id}`;
 
   return (
     <div className="group hover:bg-custom-background-90 border-b border-custom-border-200">

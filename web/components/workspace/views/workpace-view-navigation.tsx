@@ -17,7 +17,7 @@ type Props = {
 
 export const WorkspaceViewsNavigation: React.FC<Props> = ({ handleAddView }) => {
   const router = useRouter();
-  const { workspaceSlug, workspaceViewId } = router.query;
+  const { workspaceSlug, viewId } = router.query;
 
   const { data: workspaceViews } = useSWR(
     workspaceSlug ? WORKSPACE_VIEWS_LIST(workspaceSlug.toString()) : null,
@@ -25,67 +25,80 @@ export const WorkspaceViewsNavigation: React.FC<Props> = ({ handleAddView }) => 
   );
 
   const isSelected = (pathName: string) => router.pathname.includes(pathName);
+  React.useEffect(() => {
+    const activeTabElement = document.getElementById("active-tab-global-view");
+    if (activeTabElement) activeTabElement.scrollIntoView({ behavior: "smooth", inline: "center" });
+  }, [viewId, workspaceViews]);
 
   const tabsList = [
     {
       key: "all",
       label: "All Issues",
       selected: isSelected("workspace-views/all-issues"),
-      onClick: () => router.push(`/${workspaceSlug}/workspace-views/all-issues`),
+      onClick: () => router.replace(`/${workspaceSlug}/workspace-views/all-issues`),
     },
     {
       key: "assigned",
       label: "Assigned",
       selected: isSelected("workspace-views/assigned"),
-      onClick: () => router.push(`/${workspaceSlug}/workspace-views/assigned`),
+      onClick: () => router.replace(`/${workspaceSlug}/workspace-views/assigned`),
     },
     {
       key: "created",
       label: "Created",
       selected: isSelected("workspace-views/created"),
-      onClick: () => router.push(`/${workspaceSlug}/workspace-views/created`),
+      onClick: () => router.replace(`/${workspaceSlug}/workspace-views/created`),
     },
     {
       key: "subscribed",
       label: "Subscribed",
       selected: isSelected("workspace-views/subscribed"),
-      onClick: () => router.push(`/${workspaceSlug}/workspace-views/subscribed`),
+      onClick: () => router.replace(`/${workspaceSlug}/workspace-views/subscribed`),
     },
   ];
 
   return (
-    <div className="group flex items-center overflow-x-scroll">
+    <div className="group flex items-center gap-x-1 overflow-x-scroll relative">
       {tabsList.map((tab) => (
         <button
           key={tab.key}
           type="button"
           onClick={tab.onClick}
-          className={`border-b-2 min-w-[96px] p-4 text-sm font-medium outline-none whitespace-nowrap ${
+          className={`border-b-2 min-w-min p-3 text-sm font-medium outline-none whitespace-nowrap flex-shrink-0 ${
             tab.selected
               ? "border-custom-primary-100 text-custom-primary-100"
-              : "border-transparent hover:border-custom-primary-100 hover:text-custom-primary-100"
+              : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
           }`}
+          id={tab.selected ? `active-tab-global-view` : ``}
         >
           {tab.label}
         </button>
       ))}
+
       {workspaceViews &&
         workspaceViews.length > 0 &&
         workspaceViews?.map((view) => (
           <button
-            className={`border-b-2 min-w-[96px] p-4 text-sm font-medium outline-none whitespace-nowrap ${
-              view.id === workspaceViewId
+            className={`border-b-2 min-w-min p-3 text-sm font-medium outline-none whitespace-nowrap flex-shrink-0 ${
+              view.id === viewId
                 ? "border-custom-primary-100 text-custom-primary-100"
-                : "border-transparent hover:border-custom-primary-100 hover:text-custom-primary-100"
+                : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
             }`}
-            onClick={() => router.push(`/${workspaceSlug}/workspace-views/${view.id}`)}
+            id={view.id === viewId ? `active-tab-global-view` : ``}
+            onClick={() =>
+              router.replace(`/${workspaceSlug}/workspace-views/issues?viewId=${view.id}`)
+            }
           >
             {view.name}
           </button>
         ))}
 
-      <button type="button" className="min-w-[96px] " onClick={handleAddView}>
-        <PlusIcon className="h-4 w-4 text-custom-primary-200 hover:text-current" />
+      <button
+        type="button"
+        className="flex items-center justify-center flex-shrink-0 sticky right-0 w-12 py-3 border-transparent bg-custom-background-100 hover:border-custom-border-200 hover:text-custom-text-400"
+        onClick={handleAddView}
+      >
+        <PlusIcon className="h-4 w-4 text-custom-primary-200" />
       </button>
     </div>
   );

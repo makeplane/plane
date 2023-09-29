@@ -239,7 +239,7 @@ export const SpreadsheetView: React.FC<Props> = ({
     descendingOrder: TIssueOrderByOptions
   ) => (
     <div className="relative flex flex-col h-max w-full bg-custom-background-100">
-      <div className="flex items-center min-w-[9rem] px-4 py-2.5 text-sm font-medium z-[1] h-11 w-full sticky top-0 bg-custom-background-90 border border-l-0 border-custom-border-200">
+      <div className="flex items-center min-w-[9rem] px-4 py-2.5 text-sm font-medium z-[1] h-11 w-full sticky top-0 bg-custom-background-90 border border-l-0 border-custom-border-100">
         <CustomMenu
           customButtonClassName="!w-full"
           className="!w-full"
@@ -491,7 +491,7 @@ export const SpreadsheetView: React.FC<Props> = ({
                       isScrolled ? "shadow-r shadow-custom-shadow-xs" : ""
                     }`}
                   >
-                    <div className="flex items-center text-sm font-medium z-[2] h-11 w-full sticky top-0 bg-custom-background-90 border border-l-0 border-custom-border-200">
+                    <div className="flex items-center text-sm font-medium z-[2] h-11 w-full sticky top-0 bg-custom-background-90 border border-l-0 border-custom-border-100">
                       <span className="flex items-center px-4 py-2.5 h-full w-24 flex-shrink-0">
                         ID
                       </span>
