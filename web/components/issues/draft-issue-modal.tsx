@@ -13,7 +13,6 @@ import useUser from "hooks/use-user";
 import useIssuesView from "hooks/use-issues-view";
 import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useToast from "hooks/use-toast";
-import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 import useLocalStorage from "hooks/use-local-storage";
 import useProjects from "hooks/use-projects";
 import useMyIssues from "hooks/my-issues/use-my-issues";
@@ -81,7 +80,6 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
   const { displayFilters, params } = useIssuesView();
   const { params: calendarParams } = useCalendarIssuesView();
   const { ...viewGanttParams } = params;
-  const { params: spreadsheetParams } = useSpreadsheetIssuesView();
 
   const { user } = useUser();
   const { projects } = useProjects();
@@ -156,14 +154,6 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
     ? VIEW_ISSUES(viewId.toString(), calendarParams)
     : PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject?.toString() ?? "", calendarParams);
 
-  const spreadsheetFetchKey = cycleId
-    ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), spreadsheetParams)
-    : moduleId
-    ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), spreadsheetParams)
-    : viewId
-    ? VIEW_ISSUES(viewId.toString(), spreadsheetParams)
-    : PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject?.toString() ?? "", spreadsheetParams);
-
   const ganttFetchKey = cycleId
     ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString())
     : moduleId
@@ -187,7 +177,6 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
             start_target_date: true,
             order_by: "sort_order",
           });
-        if (displayFilters.layout === "spreadsheet") mutate(spreadsheetFetchKey);
         if (groupedIssues) mutateMyIssues();
 
         setToastAlert({
@@ -222,7 +211,6 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
         } else {
           if (displayFilters.layout === "calendar") mutate(calendarFetchKey);
-          if (displayFilters.layout === "spreadsheet") mutate(spreadsheetFetchKey);
           if (payload.parent) mutate(SUB_ISSUES(payload.parent.toString()));
           mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
           mutate(PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
@@ -308,7 +296,6 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
             start_target_date: true,
             order_by: "sort_order",
           });
-        if (displayFilters.layout === "spreadsheet") mutate(spreadsheetFetchKey);
         if (groupedIssues) mutateMyIssues();
 
         setToastAlert({

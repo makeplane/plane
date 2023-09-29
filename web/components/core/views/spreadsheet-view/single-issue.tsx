@@ -1,38 +1,27 @@
 import React, { useCallback, useState } from "react";
-
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
+import { Popover2 } from "@blueprintjs/popover2";
 
+// icons
+import { Icon } from "components/ui";
+import { EllipsisHorizontalIcon, LinkIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+// services
+import issuesService from "services/issue.service";
+import trackEventServices from "services/track_event.service";
+// hooks
+import useToast from "hooks/use-toast";
 // components
 import { ViewDueDateSelect, ViewEstimateSelect, ViewStartDateSelect } from "components/issues";
 import { LabelSelect, MembersSelect, PrioritySelect } from "components/project";
 import { StateSelect } from "components/states";
-import { Popover2 } from "@blueprintjs/popover2";
-// icons
-import { Icon } from "components/ui";
-import { EllipsisHorizontalIcon, LinkIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
-// hooks
-import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
-import useToast from "hooks/use-toast";
-// services
-import issuesService from "services/issue.service";
-import trackEventServices from "services/track_event.service";
-// constant
-import {
-  CYCLE_DETAILS,
-  CYCLE_ISSUES_WITH_PARAMS,
-  MODULE_DETAILS,
-  MODULE_ISSUES_WITH_PARAMS,
-  PROJECT_ISSUES_LIST_WITH_PARAMS,
-  SUB_ISSUES,
-  VIEW_ISSUES,
-} from "constants/fetch-keys";
-// types
-import { ICurrentUserResponse, IIssue, IState, ISubIssueResponse, Properties, TIssuePriorities, UserAuth } from "types";
-// helper
+// helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 import { renderLongDetailDateFormat } from "helpers/date-time.helper";
+// types
+import { ICurrentUserResponse, IIssue, IState, Properties, TIssuePriorities, UserAuth } from "types";
+// constant
+import { CYCLE_DETAILS, MODULE_DETAILS, SUB_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   issue: IIssue;
@@ -67,9 +56,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
 
   const router = useRouter();
 
-  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
-
-  const { params } = useSpreadsheetIssuesView();
+  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -77,59 +64,12 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
     (formData: Partial<IIssue>, issue: IIssue) => {
       if (!workspaceSlug || !projectId) return;
 
-      const fetchKey = cycleId
-        ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), params)
-        : moduleId
-        ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), params)
-        : viewId
-        ? VIEW_ISSUES(viewId.toString(), params)
-        : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params);
-
-      if (issue.parent)
-        mutate<ISubIssueResponse>(
-          SUB_ISSUES(issue.parent.toString()),
-          (prevData) => {
-            if (!prevData) return prevData;
-
-            return {
-              ...prevData,
-              sub_issues: (prevData.sub_issues ?? []).map((i) => {
-                if (i.id === issue.id) {
-                  return {
-                    ...i,
-                    ...formData,
-                  };
-                }
-                return i;
-              }),
-            };
-          },
-          false
-        );
-      else
-        mutate<IIssue[]>(
-          fetchKey,
-          (prevData) =>
-            (prevData ?? []).map((p) => {
-              if (p.id === issue.id) {
-                return {
-                  ...p,
-                  ...formData,
-                };
-              }
-              return p;
-            }),
-          false
-        );
-
       issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issue.id as string, formData, user)
         .then(() => {
           if (issue.parent) {
             mutate(SUB_ISSUES(issue.parent as string));
           } else {
-            mutate(fetchKey);
-
             if (cycleId) mutate(CYCLE_DETAILS(cycleId as string));
             if (moduleId) mutate(MODULE_DETAILS(moduleId as string));
           }
@@ -138,7 +78,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
           console.log(error);
         });
     },
-    [workspaceSlug, projectId, cycleId, moduleId, viewId, params, user]
+    [workspaceSlug, projectId, cycleId, moduleId, user]
   );
 
   const openPeekOverview = () => {
