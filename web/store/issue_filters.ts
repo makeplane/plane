@@ -157,7 +157,7 @@ class IssueFilterStore implements IIssueFilterStore {
 
     if (this.userDisplayFilters.layout === "calendar") filteredRouteParams.target_date = this.calendarLayoutDateRange();
 
-    const filteredParams = handleIssueQueryParamsByLayout(this.userDisplayFilters.layout);
+    const filteredParams = handleIssueQueryParamsByLayout(this.userDisplayFilters.layout, "issues");
     if (filteredParams) filteredRouteParams = this.computedFilter(filteredRouteParams, filteredParams);
 
     return filteredRouteParams;
