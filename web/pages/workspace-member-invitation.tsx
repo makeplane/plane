@@ -155,7 +155,7 @@ const WorkspaceInvitation: NextPage = () => {
               Icon={ShareIcon}
               title={store.locale.localized("Join our Discord community")}
               action={() => {
-                router.push("https://discord.com/invite/8SR2N9PAcJ");
+                router.push("https://discord.com/invite/A92xrEGCge");
               }}
             />
           </EmptySpace>
