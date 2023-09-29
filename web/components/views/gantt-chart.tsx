@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 // hooks
 import useGanttChartViewIssues from "hooks/gantt-chart/view-issues-view";
 import useUser from "hooks/use-user";
-import { updateGanttIssue } from "components/gantt-chart/hooks/block-update";
 import useProjectDetails from "hooks/use-project-details";
 // components
 import { GanttChartRoot, renderIssueBlocksStructure } from "components/gantt-chart";
@@ -42,9 +41,7 @@ export const ViewIssuesGanttChartView: React.FC<Props> = ({ disableUserActions }
           title="Issues"
           loaderTitle="Issues"
           blocks={ganttIssues ? renderIssueBlocksStructure(ganttIssues as IIssue[]) : null}
-          blockUpdateHandler={(block, payload) =>
-            updateGanttIssue(block, payload, mutateGanttIssues, user, workspaceSlug?.toString())
-          }
+          blockUpdateHandler={(block, payload) => {}}
           SidebarBlockRender={IssueGanttSidebarBlock}
           BlockRender={IssueGanttBlock}
           enableBlockLeftResize={isAllowed}

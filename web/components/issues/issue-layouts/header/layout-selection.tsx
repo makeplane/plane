@@ -10,7 +10,7 @@ import { ISSUE_LAYOUTS } from "constants/issue";
 type Props = {
   layouts: TIssueLayouts[];
   onChange: (layout: TIssueLayouts) => void;
-  selectedLayout: TIssueLayouts;
+  selectedLayout: TIssueLayouts | undefined;
 };
 
 export const LayoutSelection: React.FC<Props> = (props) => {

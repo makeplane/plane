@@ -156,6 +156,7 @@ class IssueFilterStore implements IIssueFilterStore {
     };
 
     if (this.userDisplayFilters.layout === "calendar") filteredRouteParams.target_date = this.calendarLayoutDateRange();
+    if (this.userDisplayFilters.layout === "gantt_chart") filteredRouteParams.start_target_date = true;
 
     const filteredParams = handleIssueQueryParamsByLayout(this.userDisplayFilters.layout, "issues");
     if (filteredParams) filteredRouteParams = this.computedFilter(filteredRouteParams, filteredParams);
