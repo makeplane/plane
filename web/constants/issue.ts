@@ -238,7 +238,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       filters: ["priority", "state_group", "labels", "start_date", "target_date"],
       display_properties: true,
       display_filters: {
-        group_by: ["state_detail.group", "project", "priority", "labels", null],
+        group_by: ["state_detail.group", "project", "priority", "labels"],
         sub_group_by: ["state_detail.group", "project", "priority", "labels", null],
         order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
@@ -268,7 +268,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       filters: ["priority", "state", "assignees", "created_by", "labels", "start_date", "target_date"],
       display_properties: true,
       display_filters: {
-        group_by: ["state", "priority", "labels", "assignees", "created_by", null],
+        group_by: ["state", "priority", "labels", "assignees", "created_by"],
         sub_group_by: ["state", "priority", "labels", "assignees", "created_by", null],
         order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
