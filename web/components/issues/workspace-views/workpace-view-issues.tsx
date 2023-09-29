@@ -13,6 +13,7 @@ import useProjects from "hooks/use-projects";
 import useUser from "hooks/use-user";
 import { useWorkspaceView } from "hooks/use-workspace-view";
 import useWorkspaceMembers from "hooks/use-workspace-members";
+import useToast from "hooks/use-toast";
 // components
 import { WorkspaceViewsNavigation } from "components/workspace/views/workpace-view-navigation";
 import { EmptyState, PrimaryButton } from "components/ui";
@@ -32,6 +33,8 @@ import { IIssue, IWorkspaceIssueFilterOptions } from "types";
 export const WorkspaceViewIssues = () => {
   const router = useRouter();
   const { workspaceSlug, globalViewId } = router.query;
+
+  const { setToastAlert } = useToast();
 
   const { memberRole } = useProjectMyMembership();
   const { user } = useUser();
@@ -191,8 +194,14 @@ export const WorkspaceViewIssues = () => {
                     />
                     <PrimaryButton
                       onClick={() => {
-                        if (globalViewId) handleFilters("filters", filters.filters, true);
-                        else
+                        if (globalViewId) {
+                          handleFilters("filters", filters.filters, true);
+                          setToastAlert({
+                            title: "View updated",
+                            message: "Your view has been updated",
+                            type: "success",
+                          });
+                        } else
                           setCreateViewModal({
                             query: filters.filters,
                           });
