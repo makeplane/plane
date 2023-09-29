@@ -15,12 +15,15 @@ import {
 import { Loader, PrimaryButton } from "components/ui";
 // fetch-keys
 import { DEFAULT_ANALYTICS } from "constants/fetch-keys";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   fullScreen?: boolean;
 };
 
 export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
@@ -62,8 +65,10 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
                   count: user?.count,
                   id: user?.created_by__id,
                 }))}
-                title="Most issues created"
-                emptyStateMessage="Co-workers and the number issues created by them appears here."
+                title={store.locale.localized("Most issues created")}
+                emptyStateMessage={store.locale.localized(
+                  "Co-workers and the number issues created by them appears here."
+                )}
                 workspaceSlug={workspaceSlug?.toString() ?? ""}
               />
               <AnalyticsLeaderboard
@@ -75,8 +80,10 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
                   count: user?.count,
                   id: user?.assignees__id,
                 }))}
-                title="Most issues closed"
-                emptyStateMessage="Co-workers and the number issues closed by them appears here."
+                title={store.locale.localized("Most issues closed")}
+                emptyStateMessage={store.locale.localized(
+                  "Co-workers and the number issues closed by them appears here."
+                )}
                 workspaceSlug={workspaceSlug?.toString() ?? ""}
               />
               <div className={fullScreen ? "md:col-span-2" : ""}>
@@ -95,9 +102,13 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
       ) : (
         <div className="grid h-full place-items-center p-5">
           <div className="space-y-4 text-custom-text-200">
-            <p className="text-sm">There was some error in fetching the data.</p>
+            <p className="text-sm">
+              {store.locale.localized("There was some error in fetching the data.")}
+            </p>
             <div className="flex items-center justify-center gap-2">
-              <PrimaryButton onClick={() => mutateDefaultAnalytics()}>Refresh</PrimaryButton>
+              <PrimaryButton onClick={() => mutateDefaultAnalytics()}>
+                {store.locale.localized("Refresh")}
+              </PrimaryButton>
             </div>
           </div>
         </div>

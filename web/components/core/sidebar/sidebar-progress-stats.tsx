@@ -19,6 +19,8 @@ import {
 } from "types";
 // constants
 import { STATE_GROUP_COLORS } from "constants/state";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 // types
 type Props = {
   distribution: {
@@ -43,6 +45,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
   roundedTab,
   noBackground,
 }) => {
+  const store: RootStore = useMobxStore();
   const { filters, setFilters } = useIssuesView();
 
   const { storedValue: tab, setValue: setTab } = useLocalStorage("tab", "Assignees");
@@ -94,7 +97,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
             }`
           }
         >
-          Assignees
+          {store.locale.localized("Assignees")}
         </Tab>
         <Tab
           className={({ selected }) =>
@@ -105,7 +108,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
             }`
           }
         >
-          Labels
+          {store.locale.localized("Labels")}
         </Tab>
         <Tab
           className={({ selected }) =>
@@ -116,7 +119,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
             }`
           }
         >
-          States
+          {store.locale.localized("States")}
         </Tab>
       </Tab.List>
       <Tab.Panels className="flex w-full items-center justify-between pt-1 text-custom-text-200">
@@ -170,7 +173,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
                           alt="User"
                         />
                       </div>
-                      <span>No assignee</span>
+                      <span>{store.locale.localized("No Assignee")}</span>
                     </div>
                   }
                   completed={assignee.completed_issues}
@@ -191,7 +194,9 @@ export const SidebarProgressStats: React.FC<Props> = ({
                       backgroundColor: label.color ?? "transparent",
                     }}
                   />
-                  <span className="text-xs">{label.label_name ?? "No labels"}</span>
+                  <span className="text-xs">
+                    {label.label_name ?? store.locale.localized("No labels")}
+                  </span>
                 </div>
               }
               completed={label.completed_issues}

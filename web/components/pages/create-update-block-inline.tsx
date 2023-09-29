@@ -17,6 +17,9 @@ import { PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 import { ICurrentUserResponse, IPageBlock } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   handleClose: () => void;
@@ -46,6 +49,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
 
   const editorRef = React.useRef<any>(null);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
 
@@ -97,8 +101,8 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
         .catch(() => {
           setToastAlert({
             type: "error",
-            title: "Error!",
-            message: "Page could not be created. Please try again.",
+            title: store.locale.localized("Error!"),
+            message: store.locale.localized("Page could not be created. Please try again."),
           });
         })
         .finally(() => onClose());
@@ -172,7 +176,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
         projectId as string,
         {
           prompt: watch("name"),
-          task: "Generate a proper description for this issue.",
+          task: "Generate a proper description for this issue.", // TODO: should we localize this?
         },
         user
       )
@@ -180,9 +184,10 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
         if (res.response === "")
           setToastAlert({
             type: "error",
-            title: "Error!",
-            message:
-              "Block title isn't informative enough to generate the description. Please try with a different title.",
+            title: store.locale.localized("Error!"),
+            message: store.locale.localized(
+              "Block title isn't informative enough to generate the description. Please try with a different title."
+            ),
           });
         else {
           setValue("description", {});
@@ -194,15 +199,16 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
         if (err.status === 429)
           setToastAlert({
             type: "error",
-            title: "Error!",
-            message:
-              "You have reached the maximum number of requests of 50 requests per month per user.",
+            title: store.locale.localized("Error!"),
+            message: store.locale.localized(
+              "You have reached the maximum number of requests of 50 requests per month per user."
+            ),
           });
         else
           setToastAlert({
             type: "error",
-            title: "Error!",
-            message: "Some error occurred. Please try again.",
+            title: store.locale.localized("Error!"),
+            message: store.locale.localized("Some error occurred. Please try again."),
           });
       })
       .finally(() => setIAmFeelingLucky(false));
@@ -329,10 +335,11 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
                 disabled={iAmFeelingLucky}
               >
                 {iAmFeelingLucky ? (
-                  "Generating response..."
+                  store.locale.localized("Generating response...")
                 ) : (
                   <>
-                    <SparklesIcon className="h-4 w-4" />I{"'"}m feeling lucky
+                    <SparklesIcon className="h-4 w-4" />
+                    {store.locale.localized("I'm feeling lucky")}
                   </>
                 )}
               </button>
@@ -349,15 +356,17 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
           </div>
         </div>
         <div className="flex items-center justify-end gap-2 p-4">
-          <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+          <SecondaryButton onClick={handleClose}>
+            {store.locale.localized("Cancel")}
+          </SecondaryButton>
           <PrimaryButton type="submit" disabled={watch("name") === ""} loading={isSubmitting}>
             {data
               ? isSubmitting
-                ? "Updating..."
-                : "Update block"
+                ? store.locale.localized("Updating...")
+                : store.locale.localized("Update block")
               : isSubmitting
-              ? "Adding..."
-              : "Add block"}
+              ? store.locale.localized("Adding...")
+              : store.locale.localized("Add block")}
           </PrimaryButton>
         </div>
       </form>

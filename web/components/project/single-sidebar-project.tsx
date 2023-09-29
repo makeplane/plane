@@ -49,39 +49,6 @@ type Props = {
   shortContextMenu?: boolean;
 };
 
-const navigation = (workspaceSlug: string, projectId: string) => [
-  {
-    name: "Issues",
-    href: `/${workspaceSlug}/projects/${projectId}/issues`,
-    Icon: FilterNoneOutlined,
-  },
-  {
-    name: "Cycles",
-    href: `/${workspaceSlug}/projects/${projectId}/cycles`,
-    Icon: ContrastOutlined,
-  },
-  {
-    name: "Modules",
-    href: `/${workspaceSlug}/projects/${projectId}/modules`,
-    Icon: DatasetOutlined,
-  },
-  {
-    name: "Views",
-    href: `/${workspaceSlug}/projects/${projectId}/views`,
-    Icon: PhotoFilterOutlined,
-  },
-  {
-    name: "Pages",
-    href: `/${workspaceSlug}/projects/${projectId}/pages`,
-    Icon: ArticleOutlined,
-  },
-  {
-    name: "Settings",
-    href: `/${workspaceSlug}/projects/${projectId}/settings`,
-    Icon: SettingsOutlined,
-  },
-];
-
 export const SingleSidebarProject: React.FC<Props> = observer((props) => {
   const {
     project,
@@ -106,6 +73,45 @@ export const SingleSidebarProject: React.FC<Props> = observer((props) => {
 
   const isViewerOrGuest = project.member_role === 10 || project.member_role === 5;
 
+  const navigation = (workspaceSlug: string, projectId: string) => [
+    {
+      name: store.locale.localized("Issues"),
+      key: "issues",
+      href: `/${workspaceSlug}/projects/${projectId}/issues`,
+      Icon: FilterNoneOutlined,
+    },
+    {
+      name: store.locale.localized("Cycles"),
+      key: "cycles",
+      href: `/${workspaceSlug}/projects/${projectId}/cycles`,
+      Icon: ContrastOutlined,
+    },
+    {
+      name: store.locale.localized("Modules"),
+      key: "modules",
+      href: `/${workspaceSlug}/projects/${projectId}/modules`,
+      Icon: DatasetOutlined,
+    },
+    {
+      name: store.locale.localized("Views"),
+      key: "views",
+      href: `/${workspaceSlug}/projects/${projectId}/views`,
+      Icon: PhotoFilterOutlined,
+    },
+    {
+      name: store.locale.localized("Pages"),
+      key: "pages",
+      href: `/${workspaceSlug}/projects/${projectId}/pages`,
+      Icon: ArticleOutlined,
+    },
+    {
+      name: store.locale.localized("Settings"),
+      key: "settings",
+      href: `/${workspaceSlug}/projects/${projectId}/settings`,
+      Icon: SettingsOutlined,
+    },
+  ];
+
   const handleAddToFavorites = () => {
     if (!workspaceSlug) return;
 
@@ -123,8 +129,10 @@ export const SingleSidebarProject: React.FC<Props> = observer((props) => {
       .catch(() =>
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Couldn't remove the project from favorites. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized(
+            "Couldn't remove the project from favorites. Please try again."
+          ),
         })
       );
   };
@@ -142,8 +150,10 @@ export const SingleSidebarProject: React.FC<Props> = observer((props) => {
     projectService.removeProjectFromFavorites(workspaceSlug as string, project.id).catch(() =>
       setToastAlert({
         type: "error",
-        title: "Error!",
-        message: "Couldn't remove the project from favorites. Please try again.",
+        title: store.locale.localized("Error!"),
+        message: store.locale.localized(
+          "Couldn't remove the project from favorites. Please try again."
+        ),
       })
     );
   };
@@ -161,8 +171,8 @@ export const SingleSidebarProject: React.FC<Props> = observer((props) => {
               <Tooltip
                 tooltipContent={
                   project.sort_order === null
-                    ? "Join the project to rearrange"
-                    : "Drag to rearrange"
+                    ? store.locale.localized("Join the project to rearrange")
+                    : store.locale.localized("Drag to rearrange")
                 }
                 position="top-right"
               >
@@ -236,7 +246,7 @@ export const SingleSidebarProject: React.FC<Props> = observer((props) => {
                   <CustomMenu.MenuItem onClick={handleDeleteProject}>
                     <span className="flex items-center justify-start gap-2 ">
                       <TrashIcon className="h-4 w-4" />
-                      <span>Delete project</span>
+                      <span>{store.locale.localized("Delete project")}</span>
                     </span>
                   </CustomMenu.MenuItem>
                 )}
@@ -244,7 +254,7 @@ export const SingleSidebarProject: React.FC<Props> = observer((props) => {
                   <CustomMenu.MenuItem onClick={handleAddToFavorites}>
                     <span className="flex items-center justify-start gap-2">
                       <StarIcon className="h-4 w-4" />
-                      <span>Add to favorites</span>
+                      <span>{store.locale.localized("Add to favorites")}</span>
                     </span>
                   </CustomMenu.MenuItem>
                 )}
@@ -252,14 +262,14 @@ export const SingleSidebarProject: React.FC<Props> = observer((props) => {
                   <CustomMenu.MenuItem onClick={handleRemoveFromFavorites}>
                     <span className="flex items-center justify-start gap-2">
                       <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
-                      <span>Remove from favorites</span>
+                      <span>{store.locale.localized("Remove from favorites")}</span>
                     </span>
                   </CustomMenu.MenuItem>
                 )}
                 <CustomMenu.MenuItem onClick={handleCopyText}>
                   <span className="flex items-center justify-start gap-2">
                     <LinkIcon className="h-4 w-4" />
-                    <span>Copy project link</span>
+                    <span>{store.locale.localized("Copy project link")}</span>
                   </span>
                 </CustomMenu.MenuItem>
 
@@ -272,7 +282,11 @@ export const SingleSidebarProject: React.FC<Props> = observer((props) => {
                       <div className="rounded transition-all w-4 h-4 flex justify-center items-center text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 duration-300 cursor-pointer">
                         <Icon iconName="ios_share" className="!text-base" />
                       </div>
-                      <div>{project.is_deployed ? "Publish settings" : "Publish"}</div>
+                      <div>
+                        {project.is_deployed
+                          ? store.locale.localized("Publish settings")
+                          : store.locale.localized("Publish")}
+                      </div>
                     </div>
                   </CustomMenu.MenuItem>
                 )}
@@ -285,7 +299,7 @@ export const SingleSidebarProject: React.FC<Props> = observer((props) => {
                   >
                     <div className="flex items-center justify-start gap-2">
                       <ArchiveOutlined fontSize="small" />
-                      <span>Archived Issues</span>
+                      <span>{store.locale.localized("Archived Issues")}</span>Archived Issue
                     </div>
                   </CustomMenu.MenuItem>
                 )}
@@ -296,7 +310,7 @@ export const SingleSidebarProject: React.FC<Props> = observer((props) => {
                 >
                   <div className="flex items-center justify-start gap-2">
                     <PenSquare className="!text-base !leading-4 w-[14px] h-[14px] text-custom-text-300" />
-                    <span>Draft Issues</span>
+                    <span>{store.locale.localized("Draft Issues")}</span>
                   </div>
                 </CustomMenu.MenuItem>
                 <CustomMenu.MenuItem
@@ -304,7 +318,7 @@ export const SingleSidebarProject: React.FC<Props> = observer((props) => {
                 >
                   <div className="flex items-center justify-start gap-2">
                     <Icon iconName="settings" className="!text-base !leading-4" />
-                    <span>Settings</span>
+                    <span>{store.locale.localized("Settings")}</span>
                   </div>
                 </CustomMenu.MenuItem>
 
@@ -321,7 +335,7 @@ export const SingleSidebarProject: React.FC<Props> = observer((props) => {
                   >
                     <div className="flex items-center justify-start gap-2">
                       <Icon iconName="logout" className="!text-base !leading-4" />
-                      <span>Leave Project</span>
+                      <span>{store.locale.localized("Leave project")}</span>
                     </div>
                   </CustomMenu.MenuItem>
                 )}
@@ -340,15 +354,15 @@ export const SingleSidebarProject: React.FC<Props> = observer((props) => {
             <Disclosure.Panel className={`space-y-2 mt-1 ${sidebarCollapse ? "" : "ml-[2.25rem]"}`}>
               {navigation(workspaceSlug as string, project?.id).map((item) => {
                 if (
-                  (item.name === "Cycles" && !project.cycle_view) ||
-                  (item.name === "Modules" && !project.module_view) ||
-                  (item.name === "Views" && !project.issue_views_view) ||
-                  (item.name === "Pages" && !project.page_view)
+                  (item.key === "cycles" && !project.cycle_view) ||
+                  (item.key === "modules" && !project.module_view) ||
+                  (item.key === "views" && !project.issue_views_view) ||
+                  (item.key === "pages" && !project.page_view)
                 )
                   return;
 
                 return (
-                  <Link key={item.name} href={item.href}>
+                  <Link key={item.key} href={item.href}>
                     <a className="block w-full">
                       <Tooltip
                         tooltipContent={`${project?.name}: ${item.name}`}

@@ -40,11 +40,14 @@ import type { NextPage } from "next";
 import { CURRENT_USER, USER_WORKSPACE_DASHBOARD } from "constants/fetch-keys";
 // constants
 import { DAYS } from "constants/project";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const WorkspacePage: NextPage = () => {
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [isProductUpdatesModalOpen, setIsProductUpdatesModalOpen] = useState(false);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -59,8 +62,16 @@ const WorkspacePage: NextPage = () => {
   );
 
   const today = new Date();
-  const greeting =
+
+  const dayState =
     today.getHours() < 12 ? "morning" : today.getHours() < 18 ? "afternoon" : "evening";
+
+  const greeting =
+    dayState === "morning"
+      ? store.locale.localized("Good morning")
+      : dayState === "afternoon"
+      ? store.locale.localized("Good afternoon")
+      : store.locale.localized("Good evening");
 
   useEffect(() => {
     if (!workspaceSlug) return;
@@ -73,7 +84,7 @@ const WorkspacePage: NextPage = () => {
       left={
         <div className="flex items-center gap-2 pl-3">
           <GridViewOutlined fontSize="small" />
-          Dashboard
+          {store.locale.localized("Dashboard")}
         </div>
       }
       right={
@@ -83,7 +94,7 @@ const WorkspacePage: NextPage = () => {
             className="flex items-center gap-1.5 bg-custom-background-80 text-xs font-medium py-1.5 px-3 rounded"
           >
             <BoltOutlined fontSize="small" className="-my-1" />
-            What{"'"}s New?
+            {store.locale.localized("What's New?")}
           </button>
           <Link href="https://github.com/makeplane/plane" target="_blank" rel="noopener noreferrer">
             <a className="flex items-center gap-1.5 bg-custom-background-80 text-xs font-medium py-1.5 px-3 rounded">
@@ -93,7 +104,7 @@ const WorkspacePage: NextPage = () => {
                 width={16}
                 alt="GitHub Logo"
               />
-              Star us on GitHub
+              {store.locale.localized("Star us on GitHub")}
             </a>
           </Link>
         </div>
@@ -130,10 +141,10 @@ const WorkspacePage: NextPage = () => {
       <div className="p-8 space-y-8">
         <div>
           <h3 className="text-2xl font-semibold">
-            Good {greeting}, {user?.first_name} {user?.last_name}
+            {greeting}, {user?.first_name} {user?.last_name}
           </h3>
           <h6 className="text-custom-text-400 font-medium flex items-center gap-2">
-            <div>{greeting === "morning" ? "🌤️" : greeting === "afternoon" ? "🌥️" : "🌙️"}</div>
+            <div>{dayState === "morning" ? "🌤️" : dayState === "afternoon" ? "🌥️" : "🌙️"}</div>
             <div>
               {DAYS[today.getDay()]}, {renderShortDate(today)} {render12HourFormatTime(today)}
             </div>
@@ -158,9 +169,13 @@ const WorkspacePage: NextPage = () => {
           ) : (
             <div className="bg-custom-primary-100/5 flex justify-between gap-5 md:gap-8">
               <div className="p-5 md:p-8 pr-0">
-                <h5 className="text-xl font-semibold">Create a project</h5>
+                <h5 className="text-xl font-semibold">
+                  {store.locale.localized("Create a project")}
+                </h5>
                 <p className="mt-2 mb-5">
-                  Manage your projects by creating issues, cycles, modules, views and pages.
+                  {store.locale.localized(
+                    "Manage your projects by creating issues, cycles, modules, views and pages."
+                  )}
                 </p>
                 <PrimaryButton
                   onClick={() => {
@@ -170,11 +185,11 @@ const WorkspacePage: NextPage = () => {
                     document.dispatchEvent(e);
                   }}
                 >
-                  Create Project
+                  {store.locale.localized("Create Project")}
                 </PrimaryButton>
               </div>
               <div className="hidden md:block self-end overflow-hidden pt-8">
-                <Image src={emptyDashboard} alt="Empty Dashboard" />
+                <Image src={emptyDashboard} alt={store.locale.localized("Empty Dashboard")} />
               </div>
             </div>
           )

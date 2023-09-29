@@ -14,6 +14,9 @@ import useToast from "hooks/use-toast";
 import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // types
 import { IAnalyticsParams, ISaveAnalyticsFormData } from "types";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 // types
 type Props = {
@@ -33,6 +36,7 @@ const defaultValues: FormValues = {
 };
 
 export const CreateUpdateAnalyticsModal: React.FC<Props> = ({ isOpen, handleClose, params }) => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -71,16 +75,16 @@ export const CreateUpdateAnalyticsModal: React.FC<Props> = ({ isOpen, handleClos
       .then(() => {
         setToastAlert({
           type: "success",
-          title: "Success!",
-          message: "Analytics saved successfully.",
+          title: store.locale.localized("Success!"),
+          message: store.locale.localized("Analytics saved successfully."),
         });
         onClose();
       })
       .catch(() =>
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Analytics could not be saved. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized("Analytics could not be saved. Please try again."),
         })
       );
   };
@@ -118,26 +122,26 @@ export const CreateUpdateAnalyticsModal: React.FC<Props> = ({ isOpen, handleClos
                       as="h3"
                       className="text-lg font-medium leading-6 text-custom-text-100"
                     >
-                      Save Analytics
+                      {store.locale.localized("Save Analytics")}
                     </Dialog.Title>
                     <div className="mt-5">
                       <Input
                         type="text"
                         id="name"
                         name="name"
-                        placeholder="Title"
+                        placeholder={store.locale.localized("Title")}
                         autoComplete="off"
                         error={errors.name}
                         register={register}
                         width="full"
                         validations={{
-                          required: "Title is required",
+                          required: store.locale.localized("Title is required"),
                         }}
                       />
                       <TextArea
                         id="description"
                         name="description"
-                        placeholder="Description"
+                        placeholder={store.locale.localized("Description")}
                         className="mt-3 h-32 resize-none text-sm"
                         error={errors.description}
                         register={register}
@@ -145,9 +149,13 @@ export const CreateUpdateAnalyticsModal: React.FC<Props> = ({ isOpen, handleClos
                     </div>
                   </div>
                   <div className="mt-5 flex justify-end gap-2">
-                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
+                    <SecondaryButton onClick={onClose}>
+                      {store.locale.localized("Cancel")}
+                    </SecondaryButton>
                     <PrimaryButton type="submit" loading={isSubmitting}>
-                      {isSubmitting ? "Saving..." : "Save Analytics"}
+                      {isSubmitting
+                        ? store.locale.localized("Saving...")
+                        : store.locale.localized("Save Analytics")}
                     </PrimaryButton>
                   </div>
                 </form>

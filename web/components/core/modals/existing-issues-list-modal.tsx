@@ -27,6 +27,9 @@ import {
   MODULE_DETAILS,
   MODULE_ISSUES_WITH_PARAMS,
 } from "constants/fetch-keys";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   isOpen: boolean;
@@ -52,6 +55,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
 
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
@@ -70,8 +74,8 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
     if (selectedIssues.length === 0) {
       setToastAlert({
         type: "error",
-        title: "Error!",
-        message: "Please select at least one issue.",
+        title: store.locale.localized("Error!"),
+        message: store.locale.localized("Please select at least one issue"),
       });
 
       return;
@@ -94,9 +98,13 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
     handleClose();
 
     setToastAlert({
-      title: "Success",
+      title: store.locale.localized("Success"),
       type: "success",
-      message: `Issue${selectedIssues.length > 1 ? "s" : ""} added successfully`,
+      message: `${
+        selectedIssues.length > 1
+          ? store.locale.localized("Issues")
+          : store.locale.localized("Issue")
+      } ${store.locale.localized("added successfully")}`,
     });
   };
 
@@ -162,7 +170,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                     />
                     <Combobox.Input
                       className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none focus:ring-0 text-sm placeholder:text-custom-text-400"
-                      placeholder="Type to search..."
+                      placeholder={store.locale.localized("Type to search...")}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -193,7 +201,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                       </div>
                     ) : (
                       <div className="w-min text-xs border border-custom-border-200 bg-custom-background-80 p-2 rounded-md whitespace-nowrap">
-                        No issues selected
+                        {store.locale.localized("No issues selected")}
                       </div>
                     )}
                     {workspaceLevelToggle && (
@@ -212,7 +220,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                             onClick={() => setIsWorkspaceLevel((prevData) => !prevData)}
                             className="flex-shrink-0"
                           >
-                            Workspace Level
+                            {store.locale.localized("Workspace level")}
                           </button>
                         </div>
                       </Tooltip>
@@ -222,13 +230,13 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                   <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto">
                     {searchTerm !== "" && (
                       <h5 className="text-[0.825rem] text-custom-text-200 mx-2">
-                        Search results for{" "}
+                        {store.locale.localized("Search results for")}{" "}
                         <span className="text-custom-text-100">
                           {'"'}
                           {searchTerm}
                           {'"'}
                         </span>{" "}
-                        in project:
+                        {store.locale.localized("in project")}:
                       </h5>
                     )}
 
@@ -239,7 +247,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                         <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
                           <LayerDiagonalIcon height="52" width="52" />
                           <h3 className="text-custom-text-200">
-                            No issues found. Create a new issue with{" "}
+                            {store.locale.localized("No issues found. Create a new issue with")}{" "}
                             <pre className="inline rounded bg-custom-background-80 px-2 py-1 text-sm">
                               C
                             </pre>
@@ -309,9 +317,13 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                 </Combobox>
                 {selectedIssues.length > 0 && (
                   <div className="flex items-center justify-end gap-2 p-3">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                    <SecondaryButton onClick={handleClose}>
+                      {store.locale.localized("Cancel")}
+                    </SecondaryButton>
                     <PrimaryButton onClick={onSubmit} loading={isSubmitting}>
-                      {isSubmitting ? "Adding..." : "Add selected issues"}
+                      {isSubmitting
+                        ? store.locale.localized("Adding...")
+                        : store.locale.localized("Add selected issues")}
                     </PrimaryButton>
                   </div>
                 )}

@@ -10,12 +10,15 @@ import { SingleProgressStats } from "components/core";
 import { Avatar } from "components/ui";
 // types
 import { ICycle } from "types";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 // types
 type Props = {
   cycle: ICycle;
 };
 
 export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
+  const store: RootStore = useMobxStore();
   const { storedValue: tab, setValue: setTab } = useLocalStorage("activeCycleTab", "Assignees");
 
   const currentValue = (tab: string | null) => {
@@ -113,7 +116,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
                             alt="User"
                           />
                         </div>
-                        <span>No assignee</span>
+                        <span>{store.locale.localized("No assignee")}</span>
                       </div>
                     }
                     completed={assignee.completed_issues}
@@ -137,7 +140,9 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
                         backgroundColor: label.color ?? "transparent",
                       }}
                     />
-                    <span className="text-xs">{label.label_name ?? "No labels"}</span>
+                    <span className="text-xs">
+                      {label.label_name ?? store.locale.localized("No labels")}
+                    </span>
                   </div>
                 }
                 completed={label.completed_issues}
@@ -148,7 +153,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
         </Tab.Panels>
       ) : (
         <div className="grid place-items-center text-custom-text-200 text-sm text-center mt-4">
-          No issues present in the cycle.
+          {store.locale.localized("No issues present in the cycle.")}
         </div>
       )}
     </Tab.Group>

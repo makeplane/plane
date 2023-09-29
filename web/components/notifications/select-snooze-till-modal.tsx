@@ -25,6 +25,9 @@ import {
 
 // types
 import type { IUserNotification } from "types";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type SnoozeModalProps = {
   isOpen: boolean;
@@ -51,6 +54,7 @@ const timeStamps = getAllTimeIn30MinutesInterval();
 export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
   const { isOpen, onClose, notification, onSuccess, onSubmit: handleSubmitSnooze } = props;
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -114,8 +118,8 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
       handleClose();
       onSuccess();
       setToastAlert({
-        title: "Notification snoozed",
-        message: "Notification snoozed successfully",
+        title: store.locale.localized("Notification snoozed"),
+        message: store.locale.localized("Notification snoozed successfully"),
         type: "success",
       });
     });
@@ -162,7 +166,7 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
                       as="h3"
                       className="text-lg font-medium leading-6 text-custom-text-100"
                     >
-                      Customize Snooze Time
+                      {store.locale.localized("Customize Snooze Time")}
                     </Dialog.Title>
 
                     <div>
@@ -175,15 +179,15 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
                   <div className="mt-5 flex items-center gap-3">
                     <div className="flex-1">
                       <h6 className="block text-sm font-medium text-custom-text-400 mb-2">
-                        Pick a date
+                        {store.locale.localized("Pick a date")}
                       </h6>
                       <Controller
                         name="date"
                         control={control}
-                        rules={{ required: "Please select a date" }}
+                        rules={{ required: store.locale.localized("Please select a date") }}
                         render={({ field: { value, onChange } }) => (
                           <CustomDatePicker
-                            placeholder="Select date"
+                            placeholder={store.locale.localized("Select a date")}
                             value={value}
                             onChange={(val) => {
                               setValue("time", null);
@@ -198,12 +202,12 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
                     </div>
                     <div className="flex-1">
                       <h6 className="block text-sm font-medium text-custom-text-400 mb-2">
-                        Pick a time
+                        {store.locale.localized("Pick a time")}
                       </h6>
                       <Controller
                         control={control}
                         name="time"
-                        rules={{ required: "Please select a time" }}
+                        rules={{ required: store.locale.localized("Please select a time") }}
                         render={({ field: { value, onChange } }) => (
                           <CustomSelect
                             value={value}
@@ -216,7 +220,7 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
                                   </span>
                                 ) : (
                                   <span className="text-custom-text-400 text-sm">
-                                    Select a time
+                                    {store.locale.localized("Select a time")}
                                   </span>
                                 )}
                               </div>
@@ -260,7 +264,7 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
                               ))
                             ) : (
                               <p className="text-custom-text-200 text-center p-3">
-                                No available time for this date.
+                                {store.locale.localized("No time available for this date")}
                               </p>
                             )}
                           </CustomSelect>
@@ -271,9 +275,13 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
 
                   <div className="mt-5 flex items-center justify-between gap-2">
                     <div className="w-full flex items-center gap-2 justify-end">
-                      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                      <SecondaryButton onClick={handleClose}>
+                        {store.locale.localized("Cancel")}
+                      </SecondaryButton>
                       <PrimaryButton type="submit" loading={isSubmitting}>
-                        {isSubmitting ? "Submitting..." : "Submit"}
+                        {isSubmitting
+                          ? store.locale.localized("Submitting...")
+                          : store.locale.localized("Submit")}
                       </PrimaryButton>
                     </div>
                   </div>

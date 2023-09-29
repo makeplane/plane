@@ -19,8 +19,13 @@ import type { NextPage } from "next";
 import { WORKSPACE_DETAILS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 const BillingSettings: NextPage = () => {
+  const store: RootStore = useMobxStore();
+
   const {
     query: { workspaceSlug },
   } = useRouter();
@@ -35,11 +40,17 @@ const BillingSettings: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)}`}
+            title={`${truncateText(
+              activeWorkspace?.name ?? store.locale.localized("Workspace"),
+              32
+            )}`}
             link={`/${workspaceSlug}`}
             linkTruncate
           />
-          <BreadcrumbItem title="Billing & Plans Settings" unshrinkTitle />
+          <BreadcrumbItem
+            title={store.locale.localized("Billing & Plans Settings")}
+            unshrinkTitle
+          />
         </Breadcrumbs>
       }
     >
@@ -50,17 +61,17 @@ const BillingSettings: NextPage = () => {
         <section className="pr-9 py-8 w-full overflow-y-auto">
           <div>
             <div className="flex  items-center py-3.5 border-b border-custom-border-200">
-              <h3 className="text-xl font-medium">Billing & Plans</h3>
+              <h3 className="text-xl font-medium">{store.locale.localized("Billing & Plans")}</h3>
             </div>
           </div>
           <div className="px-4 py-6">
             <div>
-              <h4 className="text-md mb-1 leading-6">Current plan</h4>
+              <h4 className="text-md mb-1 leading-6">{store.locale.localized("Current plan")}</h4>
               <p className="mb-3 text-sm text-custom-text-200">
-                You are currently using the free plan
+                {store.locale.localized("You are currently using the free plan")}
               </p>
               <a href="https://plane.so/pricing" target="_blank" rel="noreferrer">
-                <SecondaryButton outline>View Plans</SecondaryButton>
+                <SecondaryButton outline>{store.locale.localized("View Plans")}</SecondaryButton>
               </a>
             </div>
           </div>

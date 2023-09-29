@@ -10,6 +10,9 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Input, PrimaryButton, SecondaryButton } from "components/ui";
 // types
 import type { IProject } from "types";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 // types
 type Props = {
@@ -27,6 +30,7 @@ export const SelectMonthModal: React.FC<Props> = ({
   handleClose,
   handleChange,
 }) => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -56,18 +60,20 @@ export const SelectMonthModal: React.FC<Props> = ({
         type="number"
         id={name}
         name={name}
-        placeholder="Enter Months"
+        placeholder={store.locale.localized("Enter Months")}
         autoComplete="off"
         register={register}
         width="full"
         validations={{
-          required: "Select a month between 1 and 12.",
+          required: store.locale.localized("Select a month between 1 and 12."),
           min: 1,
           max: 12,
         }}
         className="border-custom-border-200"
       />
-      <span className="absolute text-sm text-custom-text-200 top-2.5 right-8">Months</span>
+      <span className="absolute text-sm text-custom-text-200 top-2.5 right-8">
+        {store.locale.localized("Months")}
+      </span>
     </div>
   );
 
@@ -104,7 +110,7 @@ export const SelectMonthModal: React.FC<Props> = ({
                       as="h3"
                       className="text-lg font-medium leading-6 text-custom-text-100"
                     >
-                      Customise Time Range
+                      {store.locale.localized("Customise Time Range")}
                     </Dialog.Title>
                     <div className="mt-8 flex items-center gap-2">
                       <div className="flex w-full flex-col gap-1 justify-center">
@@ -113,7 +119,7 @@ export const SelectMonthModal: React.FC<Props> = ({
                             {inputSection("close_in")}
                             {errors.close_in && (
                               <span className="text-sm px-1 text-red-500">
-                                Select a month between 1 and 12.
+                                {store.locale.localized("Select a month between 1 and 12.")}
                               </span>
                             )}
                           </>
@@ -122,7 +128,7 @@ export const SelectMonthModal: React.FC<Props> = ({
                             {inputSection("archive_in")}
                             {errors.archive_in && (
                               <span className="text-sm px-1 text-red-500">
-                                Select a month between 1 and 12.
+                                {store.locale.localized("Select a month between 1 and 12.")}
                               </span>
                             )}
                           </>
@@ -131,9 +137,13 @@ export const SelectMonthModal: React.FC<Props> = ({
                     </div>
                   </div>
                   <div className="mt-5 flex justify-end gap-2">
-                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
+                    <SecondaryButton onClick={onClose}>
+                      {store.locale.localized("Cancel")}
+                    </SecondaryButton>
                     <PrimaryButton type="submit" loading={isSubmitting}>
-                      {isSubmitting ? "Submitting..." : "Submit"}
+                      {isSubmitting
+                        ? store.locale.localized("Submitting...")
+                        : store.locale.localized("Submit")}
                     </PrimaryButton>
                   </div>
                 </form>

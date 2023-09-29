@@ -7,6 +7,8 @@ import { getNumberCount } from "helpers/string.helper";
 
 // type
 import type { NotificationType, NotificationCount } from "types";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type NotificationHeaderProps = {
   notificationCount?: NotificationCount | null;
@@ -25,6 +27,7 @@ type NotificationHeaderProps = {
 };
 
 export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => {
+  const store: RootStore = useMobxStore();
   const {
     notificationCount,
     notificationMutate,
@@ -47,17 +50,17 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
     unreadCount?: number;
   }> = [
     {
-      label: "My Issues",
+      label: store.locale.localized("My Issues"),
       value: "assigned",
       unreadCount: notificationCount?.my_issues,
     },
     {
-      label: "Created by me",
+      label: store.locale.localized("Created by me"),
       value: "created",
       unreadCount: notificationCount?.created_issues,
     },
     {
-      label: "Subscribed",
+      label: store.locale.localized("Subscribed"),
       value: "watching",
       unreadCount: notificationCount?.watching_issues,
     },
@@ -66,7 +69,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
   return (
     <>
       <div className="flex items-center justify-between px-5 pt-5">
-        <h2 className="text-xl font-semibold mb-2">Notifications</h2>
+        <h2 className="text-xl font-semibold mb-2">{store.locale.localized("Notifications")}</h2>
         <div className="flex gap-x-4 justify-center items-center text-custom-text-200">
           <Tooltip tooltipContent="Refresh">
             <button
@@ -78,7 +81,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
               <Icon iconName="refresh" className={`${isRefreshing ? "animate-spin" : ""}`} />
             </button>
           </Tooltip>
-          <Tooltip tooltipContent="Unread notifications">
+          <Tooltip tooltipContent={store.locale.localized("Unread notifications")}>
             <button
               type="button"
               onClick={() => {
@@ -100,7 +103,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
             <CustomMenu.MenuItem renderAs="button" onClick={markAllNotificationsAsRead}>
               <div className="flex items-center gap-2">
                 <Icon iconName="done_all" />
-                Mark all as read
+                {store.locale.localized("Mark all as read")}
               </div>
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem
@@ -113,7 +116,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
             >
               <div className="flex items-center gap-2">
                 <Icon iconName="schedule" />
-                Show snoozed
+                {store.locale.localized("Show snoozed")}
               </div>
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem
@@ -126,7 +129,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
             >
               <div className="flex items-center gap-2">
                 <Icon iconName="archive" />
-                Show archived
+                {store.locale.localized("Show archived")}
               </div>
             </CustomMenu.MenuItem>
           </CustomMenu>
@@ -151,10 +154,10 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
               <Icon iconName="arrow_back" />
               <span className="ml-2 font-medium">
                 {snoozed
-                  ? "Snoozed Notifications"
+                  ? store.locale.localized("Snoozed Notifications")
                   : readNotification
-                  ? "Unread Notifications"
-                  : "Archived Notifications"}
+                  ? store.locale.localized("Unread Notifications")
+                  : store.locale.localized("Archived Notifications")}
               </span>
             </h4>
           </button>

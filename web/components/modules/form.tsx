@@ -8,6 +8,9 @@ import { ModuleLeadSelect, ModuleMembersSelect, ModuleStatusSelect } from "compo
 import { DateSelect, Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // types
 import { IModule } from "types";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   handleFormSubmit: (values: Partial<IModule>) => Promise<void>;
@@ -25,6 +28,7 @@ const defaultValues: Partial<IModule> = {
 };
 
 export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, status, data }) => {
+  const store: RootStore = useMobxStore();
   const {
     register,
     formState: { errors, isSubmitting },
@@ -64,7 +68,9 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
     <form onSubmit={handleSubmit(handleCreateUpdateModule)}>
       <div className="space-y-5">
         <h3 className="text-lg font-medium leading-6 text-custom-text-100">
-          {status ? "Update" : "Create"} Module
+          {status
+            ? store.locale.localized("Update Module")
+            : store.locale.localized("Create Module")}
         </h3>
         <div className="space-y-3">
           <div>
@@ -72,16 +78,16 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
               id="name"
               name="name"
               type="name"
-              placeholder="Title"
+              placeholder={store.locale.localized("Title")}
               autoComplete="off"
               className="resize-none text-xl"
               error={errors.name}
               register={register}
               validations={{
-                required: "Title is required",
+                required: store.locale.localized("Title is required"),
                 maxLength: {
                   value: 255,
-                  message: "Title should be less than 255 characters",
+                  message: store.locale.localized("Title should be less than 255 characters"),
                 },
               }}
             />
@@ -90,7 +96,7 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
             <TextArea
               id="description"
               name="description"
-              placeholder="Description"
+              placeholder={store.locale.localized("Description")}
               className="h-32 resize-none text-sm"
               error={errors.description}
               register={register}
@@ -102,7 +108,7 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
               name="start_date"
               render={({ field: { value, onChange } }) => (
                 <DateSelect
-                  label="Start date"
+                  label={store.locale.localized("Start date")}
                   value={value}
                   onChange={(val) => {
                     onChange(val);
@@ -116,7 +122,7 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
               name="target_date"
               render={({ field: { value, onChange } }) => (
                 <DateSelect
-                  label="Target date"
+                  label={store.locale.localized("Target date")}
                   value={value}
                   onChange={(val) => {
                     onChange(val);
@@ -144,15 +150,15 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
         </div>
       </div>
       <div className="-mx-5 mt-5 flex justify-end gap-2 border-t border-custom-border-200 px-5 pt-5">
-        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+        <SecondaryButton onClick={handleClose}>{store.locale.localized("Cancel")}</SecondaryButton>
         <PrimaryButton type="submit" loading={isSubmitting}>
           {status
             ? isSubmitting
-              ? "Updating Module..."
-              : "Update Module"
+              ? store.locale.localized("Updating Module...")
+              : store.locale.localized("Update Module")
             : isSubmitting
-            ? "Creating Module..."
-            : "Create Module"}
+            ? store.locale.localized("Creating Module...")
+            : store.locale.localized("Create Module")}
         </PrimaryButton>
       </div>
     </form>

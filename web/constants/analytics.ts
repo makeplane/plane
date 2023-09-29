@@ -1,65 +1,66 @@
 // types
+import { localized } from "helpers/localization.helper";
 import { TXAxisValues, TYAxisValues } from "types";
 
 export const ANALYTICS_X_AXIS_VALUES: { value: TXAxisValues; label: string }[] = [
   {
     value: "state__name",
-    label: "State name",
+    label: localized("State name"),
   },
   {
     value: "state__group",
-    label: "State group",
+    label: localized("State group"),
   },
   {
     value: "priority",
-    label: "Priority",
+    label: localized("Priority"),
   },
   {
     value: "labels__name",
-    label: "Label",
+    label: localized("Label"),
   },
   {
     value: "assignees__id",
-    label: "Assignee",
+    label: localized("Assignee"),
   },
   {
     value: "estimate_point",
-    label: "Estimate point",
+    label: localized("Estimate point"),
   },
   {
     value: "issue_cycle__cycle__name",
-    label: "Cycle",
+    label: localized("Cycle"),
   },
   {
     value: "issue_module__module__name",
-    label: "Module",
+    label: localized("Module"),
   },
   {
     value: "completed_at",
-    label: "Completed date",
+    label: localized("Completed date"),
   },
   {
     value: "target_date",
-    label: "Due date",
+    label: localized("Due date"),
   },
   {
     value: "start_date",
-    label: "Start date",
+    label: localized("Start date"),
   },
   {
     value: "created_at",
-    label: "Created date",
+    label: localized("Created date"),
   },
 ];
 
 export const ANALYTICS_Y_AXIS_VALUES: { value: TYAxisValues; label: string }[] = [
   {
     value: "issue_count",
-    label: "Issue Count",
+    label: localized("Issue count"),
   },
   {
     value: "estimate",
-    label: "Estimate",
+    label: localized("Estimate"),
   },
 ];
 

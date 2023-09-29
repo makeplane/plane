@@ -20,6 +20,9 @@ import { checkDuplicates } from "helpers/array.helper";
 import { ICurrentUserResponse, IEstimate, IEstimateFormData } from "types";
 // fetch-keys
 import { ESTIMATES_LIST, ESTIMATE_DETAILS } from "constants/fetch-keys";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   isOpen: boolean;
@@ -65,6 +68,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
     reset();
   };
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -83,14 +87,16 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
         if (err.status === 400)
           setToastAlert({
             type: "error",
-            title: "Error!",
-            message: "Estimate with that name already exists. Please try again with another name.",
+            title: store.locale.localized("Error!"),
+            message: store.locale.localized(
+              "Estimate with that name already exists. Please try again with another name."
+            ),
           });
         else
           setToastAlert({
             type: "error",
-            title: "Error!",
-            message: "Estimate could not be created. Please try again.",
+            title: store.locale.localized("Error!"),
+            message: store.locale.localized("Estimate could not be created. Please try again."),
           });
       });
   };
@@ -134,8 +140,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
       .catch(() => {
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Estimate could not be updated. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized("Estimate could not be updated. Please try again."),
         });
       });
 
@@ -146,8 +152,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
     if (!formData.name || formData.name === "") {
       setToastAlert({
         type: "error",
-        title: "Error!",
-        message: "Estimate title cannot be empty.",
+        title: store.locale.localized("Error!"),
+        message: store.locale.localized("Estimate title cannot be empty."),
       });
       return;
     }
@@ -162,8 +168,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
     ) {
       setToastAlert({
         type: "error",
-        title: "Error!",
-        message: "Estimate point cannot be empty.",
+        title: store.locale.localized("Error!"),
+        message: store.locale.localized("Estimate point cannot be empty."),
       });
       return;
     }
@@ -180,8 +186,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
     ) {
       setToastAlert({
         type: "error",
-        title: "Error!",
-        message: "Estimate points cannot have duplicate values.",
+        title: store.locale.localized("Error!"),
+        message: store.locale.localized("Estimate points cannot have duplicate values."),
       });
       return;
     }
@@ -258,14 +264,16 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="space-y-3">
                       <div className="text-lg font-medium leading-6">
-                        {data ? "Update" : "Create"} Estimate
+                        {data
+                          ? store.locale.localized("Update Estimate")
+                          : store.locale.localized("Create Estimate")}
                       </div>
                       <div>
                         <Input
                           id="name"
                           name="name"
                           type="name"
-                          placeholder="Title"
+                          placeholder={store.locale.localized("Title")}
                           autoComplete="off"
                           className="resize-none text-xl"
                           register={register}
@@ -275,7 +283,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                         <TextArea
                           id="description"
                           name="description"
-                          placeholder="Description"
+                          placeholder={store.locale.localized("Description")}
                           className="h-32 resize-none text-sm"
                           register={register}
                         />
@@ -290,7 +298,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                                 name="value1"
                                 type="name"
                                 className="rounded-l-none"
-                                placeholder="Point 1"
+                                placeholder={store.locale.localized("Point") + " 1"}
                                 autoComplete="off"
                                 register={register}
                               />
@@ -306,7 +314,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                                 name="value2"
                                 type="name"
                                 className="rounded-l-none"
-                                placeholder="Point 2"
+                                placeholder={store.locale.localized("Point") + " 2"}
                                 autoComplete="off"
                                 register={register}
                               />
@@ -322,7 +330,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                                 name="value3"
                                 type="name"
                                 className="rounded-l-none"
-                                placeholder="Point 3"
+                                placeholder={store.locale.localized("Point") + " 3"}
                                 autoComplete="off"
                                 register={register}
                               />
@@ -338,7 +346,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                                 name="value4"
                                 type="name"
                                 className="rounded-l-none"
-                                placeholder="Point 4"
+                                placeholder={store.locale.localized("Point") + " 4"}
                                 autoComplete="off"
                                 register={register}
                               />
@@ -354,7 +362,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                                 name="value5"
                                 type="name"
                                 className="rounded-l-none"
-                                placeholder="Point 5"
+                                placeholder={store.locale.localized("Point") + " 5"}
                                 autoComplete="off"
                                 register={register}
                               />
@@ -370,7 +378,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                                 name="value6"
                                 type="name"
                                 className="rounded-l-none"
-                                placeholder="Point 6"
+                                placeholder={store.locale.localized("Point") + " 6"}
                                 autoComplete="off"
                                 register={register}
                               />
@@ -380,15 +388,17 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                       </div>
                     </div>
                     <div className="mt-5 flex justify-end gap-2">
-                      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                      <SecondaryButton onClick={handleClose}>
+                        {store.locale.localized("Cancel")}
+                      </SecondaryButton>
                       <PrimaryButton type="submit" loading={isSubmitting}>
                         {data
                           ? isSubmitting
-                            ? "Updating Estimate..."
-                            : "Update Estimate"
+                            ? store.locale.localized("Updating Estimate...")
+                            : store.locale.localized("Update Estimate")
                           : isSubmitting
-                          ? "Creating Estimate..."
-                          : "Create Estimate"}
+                          ? store.locale.localized("Creating Estimate...")
+                          : store.locale.localized("Create Estimate")}
                       </PrimaryButton>
                     </div>
                   </form>

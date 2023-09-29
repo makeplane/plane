@@ -43,6 +43,8 @@ import {
 
 // types
 import type { IIssue } from "types";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -68,6 +70,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
     name: "start_date",
   });
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
@@ -93,12 +96,12 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
 
   return (
     <div>
-      <Label>Details</Label>
+      <Label>{store.locale.localized("Details")}</Label>
       <div className="mb-[6px]">
         <div className="border border-custom-border-200 rounded-[4px] p-2 flex justify-between items-center">
           <div className="flex items-center gap-1">
             <LayoutGrid className="h-4 w-4 flex-shrink-0 text-custom-text-400" />
-            <span className="text-sm text-custom-text-400">State</span>
+            <span className="text-sm text-custom-text-400">{store.locale.localized("State")}</span>
           </div>
           <div>
             <Controller
@@ -130,7 +133,9 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
               />
             </svg>
 
-            <span className="text-sm text-custom-text-400">Priority</span>
+            <span className="text-sm text-custom-text-400">
+              {store.locale.localized("Priority")}
+            </span>
           </div>
           <div>
             <Controller
@@ -150,7 +155,9 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
         <div className="border border-custom-border-200 rounded-[4px] p-2 flex justify-between items-center">
           <div className="flex items-center gap-1">
             <Users className="h-4 w-4 flex-shrink-0 text-custom-text-400" />
-            <span className="text-sm text-custom-text-400">Assignee</span>
+            <span className="text-sm text-custom-text-400">
+              {store.locale.localized("Assignee")}
+            </span>
           </div>
           <div>
             <Controller
@@ -173,7 +180,9 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
               <div className="border border-custom-border-200 rounded-[4px] p-2 flex justify-between items-center">
                 <div className="flex items-center gap-1">
                   <PlayIcon className="h-4 w-4 flex-shrink-0 -rotate-90 text-custom-text-400" />
-                  <span className="text-sm text-custom-text-400">Estimate</span>
+                  <span className="text-sm text-custom-text-400">
+                    {store.locale.localized("Estimate")}
+                  </span>
                 </div>
                 <div>
                   <Controller
@@ -194,7 +203,9 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
             <div className="border border-custom-border-200 rounded-[4px] p-2 flex justify-between items-center">
               <div className="flex items-center gap-1">
                 <User className="h-4 w-4 flex-shrink-0 text-custom-text-400" />
-                <span className="text-sm text-custom-text-400">Parent</span>
+                <span className="text-sm text-custom-text-400">
+                  {store.locale.localized("Parent")}
+                </span>
               </div>
               <div>
                 <Controller
@@ -215,7 +226,9 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-1">
                   <BlockerIcon height={16} width={16} />
-                  <span className="text-sm text-custom-text-400">Blocking</span>
+                  <span className="text-sm text-custom-text-400">
+                    {store.locale.localized("Blocking")}
+                  </span>
                 </div>
                 <div>
                   <BlockerSelect
@@ -306,7 +319,9 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-1">
                   <BlockedIcon height={16} width={16} />
-                  <span className="text-sm text-custom-text-400">Blocked by</span>
+                  <span className="text-sm text-custom-text-400">
+                    {store.locale.localized("Blocked by")}
+                  </span>
                 </div>
                 <div>
                   <BlockedSelect
@@ -396,7 +411,9 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-1">
                   <CalendarDays className="w-4 h-4 text-custom-text-400" />
-                  <span className="text-sm text-custom-text-400">Due date</span>
+                  <span className="text-sm text-custom-text-400">
+                    {store.locale.localized("Due date")}
+                  </span>
                 </div>
                 <div>
                   <Controller
@@ -404,7 +421,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                     name="target_date"
                     render={({ field: { value } }) => (
                       <CustomDatePicker
-                        placeholder="Due date"
+                        placeholder={store.locale.localized("Due date")}
                         value={value}
                         wrapperClassName="w-full"
                         onChange={(val) =>
@@ -430,7 +447,9 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
           className="w-full flex justify-center items-center gap-1 !py-2"
         >
           <span className="text-base text-custom-primary-100">
-            {isViewAllOpen ? "View less" : "View all"}
+            {isViewAllOpen
+              ? store.locale.localized("View less")
+              : store.locale.localized("View all")}
           </span>
           <ChevronDown
             size={16}

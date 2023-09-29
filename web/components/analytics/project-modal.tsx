@@ -27,6 +27,8 @@ import { IAnalyticsParams, IWorkspace } from "types";
 // fetch-keys
 import { ANALYTICS, CYCLE_DETAILS, MODULE_DETAILS, PROJECT_DETAILS } from "constants/fetch-keys";
 import useUserAuth from "hooks/use-user-auth";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   isOpen: boolean;
@@ -40,17 +42,21 @@ const defaultValues: IAnalyticsParams = {
   project: null,
 };
 
-const tabsList = ["Scope and Demand", "Custom Analytics"];
-
 export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const [fullScreen, setFullScreen] = useState(false);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
   const { user } = useUserAuth();
 
   const { control, watch, setValue } = useForm<IAnalyticsParams>({ defaultValues });
+
+  const tabsList = [
+    store.locale.localized("Scope and Demand"),
+    store.locale.localized("Custom Analytics"),
+  ];
 
   const params: IAnalyticsParams = {
     x_axis: watch("x_axis"),
@@ -135,7 +141,9 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
     }
 
     const eventType =
-      tab === "Scope and Demand" ? "SCOPE_AND_DEMAND_ANALYTICS" : "CUSTOM_ANALYTICS";
+      tab === store.locale.localized("Scope and Demand")
+        ? "SCOPE_AND_DEMAND_ANALYTICS"
+        : "CUSTOM_ANALYTICS";
 
     trackEventServices.trackAnalyticsEvent(
       eventPayload,
@@ -161,7 +169,7 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
       >
         <div className="flex items-center justify-between gap-4 bg-custom-background-100 px-5 py-4 text-sm">
           <h3 className="break-words">
-            Analytics for{" "}
+            {store.locale.localized("Analytics for")}{" "}
             {cycleId ? cycleDetails?.name : moduleId ? moduleDetails?.name : projectDetails?.name}
           </h3>
           <div className="flex items-center gap-2">

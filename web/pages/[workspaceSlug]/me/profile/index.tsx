@@ -27,6 +27,7 @@ import type { IUser } from "types";
 // constants
 import { USER_ROLES } from "constants/workspace";
 import { TIME_ZONES } from "constants/timezones";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const defaultValues: Partial<IUser> = {
   avatar: "",
@@ -42,6 +43,7 @@ const Profile: NextPage = () => {
   const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
 
+  const store: any = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -67,7 +69,7 @@ const Profile: NextPage = () => {
       setToastAlert({
         type: "error",
         title: "Error!",
-        message: "First and last names are required.",
+        message: store.locale.localized("First and last names are required."),
       });
 
       return;
@@ -94,14 +96,16 @@ const Profile: NextPage = () => {
         setToastAlert({
           type: "success",
           title: "Success!",
-          message: "Profile updated successfully.",
+          message: store.locale.localized("Profile updated successfully."),
         });
       })
       .catch(() =>
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "There was some error in updating your profile. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized(
+            "There was some error in updating your profile. Please try again."
+          ),
         })
       );
   };
@@ -118,8 +122,8 @@ const Profile: NextPage = () => {
           .then(() => {
             setToastAlert({
               type: "success",
-              title: "Success!",
-              message: "Profile picture removed successfully.",
+              title: store.locale.localized("Success!"),
+              message: store.locale.localized("Profile picture removed successfully."),
             });
             mutateUser((prevData: any) => {
               if (!prevData) return prevData;
@@ -130,8 +134,10 @@ const Profile: NextPage = () => {
           .catch(() => {
             setToastAlert({
               type: "error",
-              title: "Error!",
-              message: "There was some error in deleting your profile picture. Please try again.",
+              title: store.locale.localized("Error!"),
+              message: store.locale.localized(
+                "There was some error in deleting your profile picture. Please try again."
+              ),
             });
           })
           .finally(() => setIsRemoving(false));
@@ -148,7 +154,7 @@ const Profile: NextPage = () => {
     <WorkspaceAuthorizationLayout
       breadcrumbs={
         <Breadcrumbs>
-          <BreadcrumbItem title="My Profile" />
+          <BreadcrumbItem title={store.locale.localized("My Profile")} />
         </Breadcrumbs>
       }
     >
@@ -237,20 +243,20 @@ const Profile: NextPage = () => {
                     <span className="h-4 w-4">
                       <UserCircle className="h-4 w-4" />
                     </span>
-                    View Profile
+                    {store.locale.localized("View Profile")}
                   </a>
                 </Link>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6 px-8">
                 <div className="flex flex-col gap-1">
-                  <h4 className="text-sm">First Name</h4>
+                  <h4 className="text-sm">{store.locale.localized("First Name")}</h4>
                   <Input
                     name="first_name"
                     id="first_name"
                     register={register}
                     error={errors.first_name}
-                    placeholder="Enter your first name"
+                    placeholder={store.locale.localized("Enter your first name...")}
                     className="!px-3 !py-2 rounded-md font-medium"
                     autoComplete="off"
                     maxLength={24}
@@ -258,13 +264,13 @@ const Profile: NextPage = () => {
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <h4 className="text-sm">Last Name</h4>
+                  <h4 className="text-sm">{store.locale.localized("Last Name")}</h4>
                   <Input
                     name="last_name"
                     register={register}
                     error={errors.last_name}
                     id="last_name"
-                    placeholder="Enter your last name"
+                    placeholder={store.locale.localized("Enter your last name...")}
                     autoComplete="off"
                     className="!px-3 !py-2 rounded-md font-medium"
                     maxLength={24}
@@ -272,7 +278,7 @@ const Profile: NextPage = () => {
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <h4 className="text-sm">Email</h4>
+                  <h4 className="text-sm">{store.locale.localized("Email")}</h4>
                   <Input
                     id="email"
                     name="email"
@@ -289,12 +295,14 @@ const Profile: NextPage = () => {
                   <Controller
                     name="role"
                     control={control}
-                    rules={{ required: "This field is required" }}
+                    rules={{ required: store.locale.localized("This field is required") }}
                     render={({ field: { value, onChange } }) => (
                       <CustomSelect
                         value={value}
                         onChange={onChange}
-                        label={value ? value.toString() : "Select your role"}
+                        label={
+                          value ? value.toString() : store.locale.localized("Select your role...")
+                        }
                         buttonClassName={errors.role ? "border-red-500 bg-red-500/10" : ""}
                         width="w-full"
                         input
@@ -310,12 +318,14 @@ const Profile: NextPage = () => {
                     )}
                   />
                   {errors.role && (
-                    <span className="text-xs text-red-500">Please select a role</span>
+                    <span className="text-xs text-red-500">
+                      {store.locale.localized("Please select a role")}
+                    </span>
                   )}
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <h4 className="text-sm">Display name </h4>
+                  <h4 className="text-sm">{store.locale.localized("Display Name")}</h4>
 
                   <Input
                     id="display_name"
@@ -324,20 +334,27 @@ const Profile: NextPage = () => {
                     register={register}
                     error={errors.display_name}
                     className="w-full"
-                    placeholder="Enter your display name"
+                    placeholder={store.locale.localized("Enter your display name...")}
                     validations={{
-                      required: "Display name is required.",
+                      required: store.locale.localized("Display name is required"),
                       validate: (value) => {
-                        if (value.trim().length < 1) return "Display name can't be empty.";
+                        if (value.trim().length < 1)
+                          return store.locale.localized("Display name can't be empty.");
 
                         if (value.split("  ").length > 1)
-                          return "Display name can't have two consecutive spaces.";
+                          return store.locale.localized(
+                            "Display name can't have two consecutive spaces."
+                          );
 
                         if (value.replace(/\s/g, "").length < 1)
-                          return "Display name must be at least 1 characters long.";
+                          return store.locale.localized(
+                            "Display name must be at least 1 characters long."
+                          );
 
                         if (value.replace(/\s/g, "").length > 20)
-                          return "Display name must be less than 20 characters long.";
+                          return store.locale.localized(
+                            "Display name must be less than 20 characters long."
+                          );
 
                         return true;
                       },
@@ -346,19 +363,19 @@ const Profile: NextPage = () => {
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <h4 className="text-sm">Timezone </h4>
+                  <h4 className="text-sm">{store.locale.localized("Timezone")}</h4>
 
                   <Controller
                     name="user_timezone"
                     control={control}
-                    rules={{ required: "This field is required" }}
+                    rules={{ required: store.locale.localized("This field is required") }}
                     render={({ field: { value, onChange } }) => (
                       <CustomSearchSelect
                         value={value}
                         label={
                           value
                             ? TIME_ZONES.find((t) => t.value === value)?.label ?? value
-                            : "Select a timezone"
+                            : store.locale.localized("Select a timezone")
                         }
                         options={timeZoneOptions}
                         onChange={onChange}
@@ -369,13 +386,17 @@ const Profile: NextPage = () => {
                     )}
                   />
                   {errors.role && (
-                    <span className="text-xs text-red-500">Please select a role</span>
+                    <span className="text-xs text-red-500">
+                      {store.locale.localized("Please select a role")}
+                    </span>
                   )}
                 </div>
 
                 <div className="flex items-center justify-between py-2">
                   <PrimaryButton type="submit" loading={isSubmitting}>
-                    {isSubmitting ? "Updating Project..." : "Update Project"}
+                    {isSubmitting
+                      ? store.locale.localized("Updating Project...")
+                      : store.locale.localized("Update Project")}
                   </PrimaryButton>
                 </div>
               </div>

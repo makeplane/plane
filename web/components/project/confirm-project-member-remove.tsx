@@ -5,6 +5,9 @@ import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { SecondaryButton, DangerButton } from "components/ui";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   isOpen: boolean;
@@ -14,6 +17,7 @@ type Props = {
 };
 
 const ConfirmProjectMemberRemove: React.FC<Props> = ({ isOpen, onClose, data, handleDelete }) => {
+  const store: RootStore = useMobxStore();
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const handleClose = () => {
@@ -67,22 +71,30 @@ const ConfirmProjectMemberRemove: React.FC<Props> = ({ isOpen, onClose, data, ha
                         as="h3"
                         className="text-lg font-medium leading-6 text-custom-text-100"
                       >
-                        Remove {data?.display_name}?
+                        {store.locale.localized("Remove")} {data?.display_name}?
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
-                          Are you sure you want to remove member-{" "}
-                          <span className="font-bold">{data?.display_name}</span>? They will no
-                          longer have access to this project. This action cannot be undone.
+                          {store.locale.localized("Are you sure you want to remove member")}
+                          {" - "}
+                          <span className="font-bold">{data?.display_name}</span>
+                          {"? "}
+                          {store.locale.localized(
+                            "They will no longer have access to this project. This action cannot be undone."
+                          )}
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="flex justify-end gap-2 p-4 sm:px-6">
-                  <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                  <SecondaryButton onClick={handleClose}>
+                    {store.locale.localized("Cancel")}
+                  </SecondaryButton>
                   <DangerButton onClick={handleDeletion} loading={isDeleteLoading}>
-                    {isDeleteLoading ? "Removing..." : "Remove"}
+                    {isDeleteLoading
+                      ? store.locale.localized("Removing...")
+                      : store.locale.localized("Remove")}
                   </DangerButton>
                 </div>
               </Dialog.Panel>

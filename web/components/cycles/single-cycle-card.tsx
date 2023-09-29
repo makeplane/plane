@@ -38,6 +38,9 @@ import {
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
 import { ICycle } from "types";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type TSingleStatProps = {
   cycle: ICycle;
@@ -47,34 +50,6 @@ type TSingleStatProps = {
   handleRemoveFromFavorites: () => void;
 };
 
-const stateGroups = [
-  {
-    key: "backlog_issues",
-    title: "Backlog",
-    color: "#dee2e6",
-  },
-  {
-    key: "unstarted_issues",
-    title: "Unstarted",
-    color: "#26b5ce",
-  },
-  {
-    key: "started_issues",
-    title: "Started",
-    color: "#f7ae59",
-  },
-  {
-    key: "cancelled_issues",
-    title: "Cancelled",
-    color: "#d687ff",
-  },
-  {
-    key: "completed_issues",
-    title: "Completed",
-    color: "#09a953",
-  },
-];
-
 export const SingleCycleCard: React.FC<TSingleStatProps> = ({
   cycle,
   handleEditCycle,
@@ -82,6 +57,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
   handleAddToFavorites,
   handleRemoveFromFavorites,
 }) => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -92,6 +68,34 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
   const endDate = new Date(cycle.end_date ?? "");
   const startDate = new Date(cycle.start_date ?? "");
 
+  const stateGroups = [
+    {
+      key: "backlog_issues",
+      title: store.locale.localized("Backlog"),
+      color: "#dee2e6",
+    },
+    {
+      key: "unstarted_issues",
+      title: store.locale.localized("Unstarted"),
+      color: "#26b5ce",
+    },
+    {
+      key: "started_issues",
+      title: store.locale.localized("Started"),
+      color: "#f7ae59",
+    },
+    {
+      key: "cancelled_issues",
+      title: store.locale.localized("Cancelled"),
+      color: "#d687ff",
+    },
+    {
+      key: "completed_issues",
+      title: store.locale.localized("Completed"),
+      color: "#09a953",
+    },
+  ];
+
   const handleCopyText = () => {
     const originURL =
       typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
@@ -101,8 +105,8 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
     ).then(() => {
       setToastAlert({
         type: "success",
-        title: "Link Copied!",
-        message: "Cycle link copied to clipboard.",
+        title: store.locale.localized("Link copied!"),
+        message: store.locale.localized("Cycle link copied to clipboard."),
       });
     });
   };
@@ -173,12 +177,14 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                     {cycleStatus === "current" ? (
                       <span className="flex gap-1 whitespace-nowrap">
                         <PersonRunningIcon className="h-4 w-4" />
-                        {findHowManyDaysLeft(cycle.end_date ?? new Date())} Days Left
+                        {findHowManyDaysLeft(cycle.end_date ?? new Date())}{" "}
+                        {store.locale.localized("Days Left")}
                       </span>
                     ) : cycleStatus === "upcoming" ? (
                       <span className="flex gap-1 whitespace-nowrap">
                         <AlarmClockIcon className="h-4 w-4" />
-                        {findHowManyDaysLeft(cycle.start_date ?? new Date())} Days Left
+                        {findHowManyDaysLeft(cycle.start_date ?? new Date())}{" "}
+                        {store.locale.localized("Days Left")}
                       </span>
                     ) : cycleStatus === "completed" ? (
                       <span className="flex gap-1 whitespace-nowrap">
@@ -186,8 +192,10 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                           <Tooltip
                             tooltipContent={`${
                               cycle.total_issues - cycle.completed_issues
-                            } more pending ${
-                              cycle.total_issues - cycle.completed_issues === 1 ? "issue" : "issues"
+                            } ${store.locale.localized("more pending")} ${
+                              cycle.total_issues - cycle.completed_issues === 1
+                                ? store.locale.localized("issue")
+                                : store.locale.localized("issues")
                             }`}
                           >
                             <span>
@@ -195,7 +203,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                             </span>
                           </Tooltip>
                         )}{" "}
-                        Completed
+                        {store.locale.localized("Completed")}
                       </span>
                     ) : (
                       cycleStatus
@@ -241,7 +249,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
               <div className="flex justify-between items-end">
                 <div className="flex flex-col gap-2 text-xs text-custom-text-200">
                   <div className="flex items-center gap-2">
-                    <div className="w-16">Creator:</div>
+                    <div className="w-16">{store.locale.localized("Creator")}:</div>
                     <div className="flex items-center gap-2.5 text-custom-text-200">
                       {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
                         <img
@@ -260,13 +268,13 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                     </div>
                   </div>
                   <div className="flex h-5 items-center gap-2">
-                    <div className="w-16">Members:</div>
+                    <div className="w-16">{store.locale.localized("Members")}:</div>
                     {cycle.assignees.length > 0 ? (
                       <div className="flex items-center gap-1 text-custom-text-200">
                         <AssigneesList users={cycle.assignees} length={4} />
                       </div>
                     ) : (
-                      "No members"
+                      store.locale.localized("No members")
                     )}
                   </div>
                 </div>
@@ -294,7 +302,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                       >
                         <span className="flex items-center justify-start gap-2">
                           <TrashIcon className="h-4 w-4" />
-                          <span>Delete cycle</span>
+                          <span>{store.locale.localized("Delete cycle")}</span>
                         </span>
                       </CustomMenu.MenuItem>
                     )}
@@ -306,7 +314,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                     >
                       <span className="flex items-center justify-start gap-2">
                         <LinkIcon className="h-4 w-4" />
-                        <span>Copy cycle link</span>
+                        <span>{store.locale.localized("Copy cycle link")}</span>
                       </span>
                     </CustomMenu.MenuItem>
                   </CustomMenu>
@@ -325,7 +333,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                 }`}
               >
                 <div className="flex w-full items-center gap-2 px-4 py-1">
-                  <span>Progress</span>
+                  <span>{store.locale.localized("Progress")}</span>
                   <Tooltip
                     tooltipContent={
                       <div className="flex w-56 flex-col">

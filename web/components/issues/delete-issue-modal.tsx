@@ -28,6 +28,9 @@ import {
   SUB_ISSUES,
   VIEW_ISSUES,
 } from "constants/fetch-keys";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   isOpen: boolean;
@@ -48,6 +51,7 @@ export const DeleteIssueModal: React.FC<Props> = ({
 }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId, issueId } = router.query;
   const isArchivedIssues = router.pathname.includes("archived-issues");
@@ -129,9 +133,9 @@ export const DeleteIssueModal: React.FC<Props> = ({
 
         handleClose();
         setToastAlert({
-          title: "Success",
+          title: store.locale.localized("Success"),
           type: "success",
-          message: "Issue deleted successfully",
+          message: store.locale.localized("Issue deleted successfully"),
         });
 
         if (issueId && redirection) router.back();
@@ -153,9 +157,9 @@ export const DeleteIssueModal: React.FC<Props> = ({
         mutate(PROJECT_ARCHIVED_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
         handleClose();
         setToastAlert({
-          title: "Success",
+          title: store.locale.localized("Success"),
           type: "success",
-          message: "Issue deleted successfully",
+          message: store.locale.localized("Issue deleted successfully"),
         });
         router.back();
       })
@@ -204,23 +208,31 @@ export const DeleteIssueModal: React.FC<Props> = ({
                       />
                     </span>
                     <span className="flex items-center justify-start">
-                      <h3 className="text-xl font-medium 2xl:text-2xl">Delete Issue</h3>
+                      <h3 className="text-xl font-medium 2xl:text-2xl">
+                        {store.locale.localized("Delete Issue")}
+                      </h3>
                     </span>
                   </div>
                   <span>
                     <p className="text-sm text-custom-text-200">
-                      Are you sure you want to delete issue{" "}
+                      {store.locale.localized("Are you sure you want to delete issue")}{" "}
                       <span className="break-words font-medium text-custom-text-100">
                         {data?.project_detail.identifier}-{data?.sequence_id}
                       </span>
-                      {""}? All of the data related to the issue will be permanently removed. This
-                      action cannot be undone.
+                      {"? "}
+                      {store.locale.localized(
+                        "All of the data related to the issue will be permanently removed. This action cannot be undone."
+                      )}
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
-                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
+                    <SecondaryButton onClick={onClose}>
+                      {store.locale.localized("Cancel")}
+                    </SecondaryButton>
                     <DangerButton onClick={handleIssueDelete} loading={isDeleteLoading}>
-                      {isDeleteLoading ? "Deleting..." : "Delete Issue"}
+                      {isDeleteLoading
+                        ? store.locale.localized("Deleting...")
+                        : store.locale.localized("Delete Issue")}
                     </DangerButton>
                   </div>
                 </div>

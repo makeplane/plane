@@ -21,6 +21,9 @@ import type { ICurrentUserResponse, IIssueLabels, IState } from "types";
 // constants
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "constants/label";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 // types
 type Props = {
@@ -43,6 +46,7 @@ export const CreateLabelModal: React.FC<Props> = ({
   user,
   onSuccess,
 }) => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -119,7 +123,7 @@ export const CreateLabelModal: React.FC<Props> = ({
                       as="h3"
                       className="text-lg font-medium leading-6 text-custom-text-100"
                     >
-                      Create Label
+                      {store.locale.localized("Create Label")}
                     </Dialog.Title>
                     <div className="mt-8 flex items-center gap-2">
                       <Popover className="relative">
@@ -180,22 +184,26 @@ export const CreateLabelModal: React.FC<Props> = ({
                           type="text"
                           id="name"
                           name="name"
-                          placeholder="Label title"
+                          placeholder={store.locale.localized("Label title")}
                           autoComplete="off"
                           error={errors.name}
                           register={register}
                           width="full"
                           validations={{
-                            required: "Label title is required",
+                            required: store.locale.localized("Label title is required."),
                           }}
                         />
                       </div>
                     </div>
                   </div>
                   <div className="mt-5 flex justify-end gap-2">
-                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
+                    <SecondaryButton onClick={onClose}>
+                      {store.locale.localized("Cancel")}
+                    </SecondaryButton>
                     <PrimaryButton type="submit" loading={isSubmitting}>
-                      {isSubmitting ? "Creating Label..." : "Create Label"}
+                      {isSubmitting
+                        ? store.locale.localized("Creating Label...")
+                        : store.locale.localized("Create Label")}
                     </PrimaryButton>
                   </div>
                 </form>

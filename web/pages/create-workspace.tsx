@@ -24,6 +24,8 @@ import { ICurrentUserResponse, IWorkspace } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { CURRENT_USER } from "constants/fetch-keys";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const CreateWorkspace: NextPage = () => {
   const [defaultValues, setDefaultValues] = useState({
@@ -32,6 +34,7 @@ const CreateWorkspace: NextPage = () => {
     organization_size: "",
   });
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
 
   const { theme } = useTheme();
@@ -85,7 +88,9 @@ const CreateWorkspace: NextPage = () => {
           </div>
           <div className="relative flex justify-center sm:justify-start sm:items-center h-full px-8 pb-8 sm:p-0 sm:pr-[8.33%] sm:w-10/12 md:w-9/12 lg:w-4/5">
             <div className="w-full space-y-7 sm:space-y-10">
-              <h4 className="text-2xl font-semibold">Create your workspace</h4>
+              <h4 className="text-2xl font-semibold">
+                {store.locale.localized("Create your workspace")}
+              </h4>
               <div className="sm:w-3/4 md:w-2/5">
                 <CreateWorkspaceForm
                   onSubmit={onSubmit}

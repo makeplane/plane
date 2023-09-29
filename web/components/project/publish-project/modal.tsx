@@ -65,8 +65,8 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
 
   let plane_deploy_url = process.env.NEXT_PUBLIC_DEPLOY_URL;
 
-  if (typeof window !== 'undefined' && !plane_deploy_url) {
-    plane_deploy_url= window.location.protocol + "//" + window.location.host + "/spaces";
+  if (typeof window !== "undefined" && !plane_deploy_url) {
+    plane_deploy_url = window.location.protocol + "//" + window.location.host + "/spaces";
   }
 
   const router = useRouter();
@@ -183,8 +183,8 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
 
         setToastAlert({
           type: "success",
-          title: "Success!",
-          message: "Publish settings updated successfully!",
+          title: store.locale.localized("Success!"),
+          message: store.locale.localized("Publish settings updated successfully!"),
         });
 
         handleClose();
@@ -234,7 +234,7 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
         className="border border-custom-border-100 bg-custom-background-100 text-xs px-2 min-w-[30px] h-[30px] rounded flex justify-center items-center hover:bg-custom-background-90 cursor-pointer"
         onClick={() => copyText()}
       >
-        {status ? "Copied" : "Copy Link"}
+        {status ? store.locale.localized("Copied") : store.locale.localized("Copy Link")}
       </div>
     );
   };
@@ -243,8 +243,10 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
     if (!formData.views || formData.views.length === 0) {
       setToastAlert({
         type: "error",
-        title: "Error!",
-        message: "Please select at least one view layout to publish the project.",
+        title: store.locale.localized("Error!"),
+        message: store.locale.localized(
+          "Please select at least one view layout to publish the project."
+        ),
       });
       return;
     }
@@ -338,7 +340,7 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
                         className="!px-2 !py-1.5"
                         loading={isUnpublishing}
                       >
-                        {isUnpublishing ? "Unpublishing..." : "Unpublish"}
+                        {isUnpublishing ? store.locale.localized("Unpublishing...") : "Unpublish"}
                       </DangerButton>
                     )}
                   </div>
@@ -369,14 +371,16 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
                             <div className="w-5 h-5 overflow-hidden flex items-center">
                               <Icon iconName="radio_button_checked" className="!text-lg" />
                             </div>
-                            <div className="text-sm">This project is live on web</div>
+                            <div className="text-sm">
+                              {store.locale.localized("This project is live on web")}
+                            </div>
                           </div>
                         </>
                       )}
 
                       <div className="space-y-4 mt-6">
                         <div className="relative flex justify-between items-center gap-2">
-                          <div className="text-sm">Views</div>
+                          <div className="text-sm">{store.locale.localized("Views")}</div>
                           <Controller
                             control={control}
                             name="views"
@@ -390,7 +394,7 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
                                         .join(", ")
                                     : ``
                                 }
-                                placeholder="Select views"
+                                placeholder={store.locale.localized("Select views")}
                               >
                                 <>
                                   {viewOptions.map((option) => (
@@ -431,7 +435,7 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
                           />
                         </div>
                         <div className="relative flex justify-between items-center gap-2">
-                          <div className="text-sm">Allow comments</div>
+                          <div className="text-sm">{store.locale.localized("Allow comments")}</div>
                           <Controller
                             control={control}
                             name="comments"
@@ -448,7 +452,7 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
                           />
                         </div>
                         <div className="relative flex justify-between items-center gap-2">
-                          <div className="text-sm">Allow reactions</div>
+                          <div className="text-sm">{store.locale.localized("Allow reactions")}</div>
                           <Controller
                             control={control}
                             name="reactions"
@@ -465,7 +469,7 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
                           />
                         </div>
                         <div className="relative flex justify-between items-center gap-2">
-                          <div className="text-sm">Allow voting</div>
+                          <div className="text-sm">{store.locale.localized("Allow voting")}</div>
                           <Controller
                             control={control}
                             name="votes"
@@ -500,22 +504,28 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
                   <div className="border-t border-custom-border-200 px-6 py-5 relative flex justify-between items-center">
                     <div className="flex items-center gap-1 text-custom-text-400 text-sm">
                       <Icon iconName="public" className="!text-base" />
-                      <div className="text-sm">Anyone with the link can access</div>
+                      <div className="text-sm">
+                        {store.locale.localized("Anyone with the link can access")}
+                      </div>
                     </div>
                     {!projectPublish.fetchSettingsLoader && (
                       <div className="relative flex items-center gap-2">
-                        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                        <SecondaryButton onClick={handleClose}>
+                          {store.locale.localized("Cancel")}
+                        </SecondaryButton>
                         {watch("id") ? (
                           <>
                             {isUpdateRequired && (
                               <PrimaryButton type="submit" loading={isSubmitting}>
-                                {isSubmitting ? "Updating..." : "Update settings"}
+                                {isSubmitting
+                                  ? store.locale.localized("Updating...")
+                                  : "Update settings"}
                               </PrimaryButton>
                             )}
                           </>
                         ) : (
                           <PrimaryButton type="submit" loading={isSubmitting}>
-                            {isSubmitting ? "Publishing..." : "Publish"}
+                            {isSubmitting ? store.locale.localized("Publishing...") : "Publish"}
                           </PrimaryButton>
                         )}
                       </div>

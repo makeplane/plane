@@ -8,12 +8,16 @@ import { renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-ti
 import { IUserActivity } from "types";
 // constants
 import { DAYS, MONTHS } from "constants/project";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   activities: IUserActivity[] | undefined;
 };
 
 export const ActivityGraph: React.FC<Props> = ({ activities }) => {
+  const store: RootStore = useMobxStore();
   const ref = useRef<HTMLDivElement>(null);
 
   const [width, setWidth] = useState(0);
@@ -109,7 +113,9 @@ export const ActivityGraph: React.FC<Props> = ({ activities }) => {
                   key={`${date}-${index}`}
                   tooltipContent={`${
                     isActive ? isActive.activity_count : 0
-                  } activities on ${renderShortDateWithYearFormat(date)}`}
+                  } ${store.locale.localized("activities on")} ${renderShortDateWithYearFormat(
+                    date
+                  )}`}
                 >
                   <div
                     className={`${
@@ -125,13 +131,13 @@ export const ActivityGraph: React.FC<Props> = ({ activities }) => {
             })}
           </div>
           <div className="mt-8 flex items-center gap-2 text-xs">
-            <span>Less</span>
+            <span>{store.locale.localized("Less")}</span>
             <span className="h-4 w-4 rounded bg-custom-background-80" />
             <span className="h-4 w-4 rounded bg-custom-primary opacity-20" />
             <span className="h-4 w-4 rounded bg-custom-primary opacity-40" />
             <span className="h-4 w-4 rounded bg-custom-primary opacity-80" />
             <span className="h-4 w-4 rounded bg-custom-primary" />
-            <span>More</span>
+            <span>{store.locale.localized("More")}</span>
           </div>
         </div>
       </div>

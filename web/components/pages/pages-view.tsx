@@ -31,6 +31,8 @@ import {
   PROJECT_MEMBERS,
   RECENT_PAGES_LIST,
 } from "constants/fetch-keys";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   pages: IPage[] | undefined;
@@ -44,6 +46,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
   const [deletePageModal, setDeletePageModal] = useState(false);
   const [selectedPageToDelete, setSelectedPageToDelete] = useState<IPage | null>(null);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -105,15 +108,15 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
         mutate(RECENT_PAGES_LIST(projectId.toString()));
         setToastAlert({
           type: "success",
-          title: "Success!",
-          message: "Successfully added the page to favorites.",
+          title: store.locale.localized("Success!"),
+          message: store.locale.localized("Successfully added the page to favorites."),
         });
       })
       .catch(() => {
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Couldn't add the page to favorites. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized("Couldn't add the page to favorites. Please try again."),
         });
       });
   };
@@ -153,15 +156,17 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
         mutate(RECENT_PAGES_LIST(projectId.toString()));
         setToastAlert({
           type: "success",
-          title: "Success!",
-          message: "Successfully removed the page from favorites.",
+          title: store.locale.localized("Success!"),
+          message: store.locale.localized("Successfully removed the page from favorites."),
         });
       })
       .catch(() => {
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Couldn't remove the page from favorites. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized(
+            "Couldn't remove the page from favorites. Please try again."
+          ),
         });
       });
   };
@@ -257,12 +262,14 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
             )
           ) : (
             <EmptyState
-              title="Have your thoughts in place"
-              description="You can think of Pages as an AI-powered notepad."
+              title={store.locale.localized("Have your thoughts in place")}
+              description={store.locale.localized(
+                "You can think of Pages as an AI-powered notepad."
+              )}
               image={emptyPage}
               primaryButton={{
                 icon: <PlusIcon className="h-4 w-4" />,
-                text: "New Page",
+                text: store.locale.localized("New Page"),
                 onClick: () => {
                   const e = new KeyboardEvent("keydown", {
                     key: "d",

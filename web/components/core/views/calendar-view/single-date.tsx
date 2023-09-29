@@ -15,6 +15,8 @@ import { PlusSmallIcon } from "@heroicons/react/24/outline";
 import { formatDate } from "helpers/calendar.helper";
 // types
 import { ICurrentUserResponse, IIssue } from "types";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
@@ -33,6 +35,7 @@ type Props = {
 export const SingleCalendarDate: React.FC<Props> = (props) => {
   const { handleIssueAction, date, index, isMonthlyView, showWeekEnds, user, isNotAllowed } = props;
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { cycleId, moduleId } = router.query;
 
@@ -97,7 +100,9 @@ export const SingleCalendarDate: React.FC<Props> = (props) => {
               className="w-min whitespace-nowrap rounded-md border border-custom-border-200 bg-custom-background-80 px-1.5 py-1 text-xs"
               onClick={() => setShowAllIssues((prevData) => !prevData)}
             >
-              {showAllIssues ? "Hide" : totalIssues - 4 + " more"}
+              {showAllIssues
+                ? store.locale.localized("Hide")
+                : totalIssues - 4 + " " + store.locale.localized("more")}
             </button>
           )}
 
@@ -109,7 +114,7 @@ export const SingleCalendarDate: React.FC<Props> = (props) => {
               onClick={() => setIsCreateIssueFormOpen(true)}
             >
               <PlusSmallIcon className="h-4 w-4 text-custom-text-200" />
-              Add issue
+              {store.locale.localized("Add Issue")}
             </button>
           </div>
 

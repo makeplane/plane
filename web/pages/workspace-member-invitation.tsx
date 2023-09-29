@@ -1,7 +1,7 @@
 import React from "react";
 // next
 
-import { useRouter } from "next/router";
+import { Router, useRouter } from "next/router";
 import useSWR from "swr";
 import {
   CheckIcon,
@@ -26,8 +26,11 @@ import { EmptySpace, EmptySpaceItem } from "components/ui/empty-space";
 import type { NextPage } from "next";
 // constants
 import { WORKSPACE_INVITATION } from "constants/fetch-keys";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const WorkspaceInvitation: NextPage = () => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
 
   const { invitation_id, email } = router.query;
@@ -67,32 +70,46 @@ const WorkspaceInvitation: NextPage = () => {
           <>
             {error ? (
               <div className="flex w-full flex-col space-y-4 rounded border border-custom-border-200 bg-custom-background-100 px-4 py-8 text-center shadow-2xl md:w-1/3">
-                <h2 className="text-xl uppercase">INVITATION NOT FOUND</h2>
+                <h2 className="text-xl uppercase">
+                  {store.locale.localized("INVITATION NOT FOUND")}
+                </h2>
               </div>
             ) : (
               <>
                 {invitationDetail.accepted ? (
                   <>
                     <EmptySpace
-                      title={`You are already a member of ${invitationDetail.workspace.name}`}
-                      description="Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
+                      title={`${store.locale.localized("You are already a member of")} ${
+                        invitationDetail.workspace.name
+                      }`}
+                      description={store.locale.localized(
+                        "Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
+                      )}
                     >
                       <EmptySpaceItem
                         Icon={CubeIcon}
-                        title="Continue to Dashboard"
+                        title={store.locale.localized("Continue to Dashboard")}
                         action={() => router.push("/")}
                       />
                     </EmptySpace>
                   </>
                 ) : (
                   <EmptySpace
-                    title={`You have been invited to ${invitationDetail.workspace.name}`}
-                    description="Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
+                    title={`${store.locale.localized("You have been invited to")} ${
+                      invitationDetail.workspace.name
+                    }`}
+                    description={store.locale.localized(
+                      "Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
+                    )}
                   >
-                    <EmptySpaceItem Icon={CheckIcon} title="Accept" action={handleAccept} />
+                    <EmptySpaceItem
+                      Icon={CheckIcon}
+                      title={store.locale.localized("Accept")}
+                      action={handleAccept}
+                    />
                     <EmptySpaceItem
                       Icon={XMarkIcon}
-                      title="Ignore"
+                      title={store.locale.localized("Ignore")}
                       action={() => {
                         router.push("/");
                       }}
@@ -104,14 +121,16 @@ const WorkspaceInvitation: NextPage = () => {
           </>
         ) : error ? (
           <EmptySpace
-            title="This invitation link is not active anymore."
-            description="Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
-            link={{ text: "Or start from an empty project", href: "/" }}
+            title={store.locale.localized("This invitation link is not active anymore.")}
+            description={store.locale.localized(
+              "Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
+            )}
+            link={{ text: store.locale.localized("Or start from an empty project"), href: "/" }}
           >
             {!user ? (
               <EmptySpaceItem
                 Icon={UserIcon}
-                title="Sign in to continue"
+                title={store.locale.localized("Sign in to continue")}
                 action={() => {
                   router.push("/");
                 }}
@@ -119,7 +138,7 @@ const WorkspaceInvitation: NextPage = () => {
             ) : (
               <EmptySpaceItem
                 Icon={CubeIcon}
-                title="Continue to Dashboard"
+                title={store.locale.localized("Continue to Dashboard")}
                 action={() => {
                   router.push("/");
                 }}
@@ -127,14 +146,14 @@ const WorkspaceInvitation: NextPage = () => {
             )}
             <EmptySpaceItem
               Icon={StarIcon}
-              title="Star us on GitHub"
+              title={store.locale.localized("Star us on GitHub")}
               action={() => {
                 router.push("https://github.com/makeplane");
               }}
             />
             <EmptySpaceItem
               Icon={ShareIcon}
-              title="Join our community of active creators"
+              title={store.locale.localized("Join our Discord community")}
               action={() => {
                 router.push("https://discord.com/invite/8SR2N9PAcJ");
               }}

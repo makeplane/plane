@@ -10,6 +10,8 @@ export const localized = (key: string, localizationDataset: any = null): string 
       localizationDataset = require(`public/locales/${locale}.json`);
     }
 
+    key = key.replace(/\s+/g, " ");
+
     return localizationDataset && localizationDataset[key] ? localizationDataset[key] : key;
   } catch (e) {
     return key;

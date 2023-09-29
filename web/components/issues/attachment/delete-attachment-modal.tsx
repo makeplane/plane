@@ -20,6 +20,9 @@ import { getFileName } from "helpers/attachment.helper";
 import type { IIssueAttachment } from "types";
 // fetch-keys
 import { ISSUE_ATTACHMENTS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   isOpen: boolean;
@@ -28,6 +31,7 @@ type Props = {
 };
 
 export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data }) => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
@@ -57,8 +61,8 @@ export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data
       .catch(() => {
         setToastAlert({
           type: "error",
-          title: "error!",
-          message: "Something went wrong please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized("Something went wrong. Please try again."),
         });
       });
   };
@@ -108,24 +112,29 @@ export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data
                         </Dialog.Title>
                         <div className="mt-2">
                           <p className="text-sm text-custom-text-200">
-                            Are you sure you want to delete attachment-{" "}
-                            <span className="font-bold">{getFileName(data.attributes.name)}</span>?
-                            This attachment will be permanently removed. This action cannot be
-                            undone.
+                            {store.locale.localized("Are you sure you want to delete attachment")}
+                            {"- "}
+                            <span className="font-bold">{getFileName(data.attributes.name)}</span>
+                            {"? "}
+                            {store.locale.localized(
+                              "This attachment will be permanently removed. This action cannot be undone."
+                            )}
                           </p>
                         </div>
                       </div>
                     </div>
                   </div>
                   <div className="flex justify-end gap-2 bg-custom-background-90 p-4 sm:px-6">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                    <SecondaryButton onClick={handleClose}>
+                      {store.locale.localized("Cancel")}
+                    </SecondaryButton>
                     <DangerButton
                       onClick={() => {
                         handleDeletion(data.id);
                         handleClose();
                       }}
                     >
-                      Delete
+                      {store.locale.localized("Delete")}
                     </DangerButton>
                   </div>
                 </Dialog.Panel>

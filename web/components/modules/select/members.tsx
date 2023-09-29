@@ -12,6 +12,8 @@ import { AssigneesList, Avatar, CustomSearchSelect } from "components/ui";
 import { UserGroupIcon } from "@heroicons/react/24/outline";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   value: string[];
@@ -19,6 +21,7 @@ type Props = {
 };
 
 export const ModuleMembersSelect: React.FC<Props> = ({ value, onChange }) => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -47,12 +50,14 @@ export const ModuleMembersSelect: React.FC<Props> = ({ value, onChange }) => {
           {value && value.length > 0 && Array.isArray(value) ? (
             <div className="flex items-center justify-center gap-2">
               <AssigneesList userIds={value} length={3} showLength={false} />
-              <span className="text-custom-text-200">{value.length} Assignees</span>
+              <span className="text-custom-text-200">
+                {value.length} {store.locale.localized("Assignees")}
+              </span>
             </div>
           ) : (
             <div className="flex items-center justify-center gap-2">
               <UserGroupIcon className="h-4 w-4 text-custom-text-200" />
-              <span className="text-custom-text-200">Assignee</span>
+              <span className="text-custom-text-200">{store.locale.localized("Assignee")}</span>
             </div>
           )}
         </div>

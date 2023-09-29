@@ -6,6 +6,8 @@ import { CustomSelect } from "components/ui";
 import { IAnalyticsParams, TXAxisValues } from "types";
 // constants
 import { ANALYTICS_X_AXIS_VALUES } from "constants/analytics";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   value: TXAxisValues | null | undefined;
@@ -14,6 +16,7 @@ type Props = {
 };
 
 export const SelectSegment: React.FC<Props> = ({ value, onChange, params }) => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { cycleId, moduleId } = router.query;
 
@@ -23,7 +26,7 @@ export const SelectSegment: React.FC<Props> = ({ value, onChange, params }) => {
       label={
         <span>
           {ANALYTICS_X_AXIS_VALUES.find((v) => v.value === value)?.label ?? (
-            <span className="text-custom-text-200">No value</span>
+            <span className="text-custom-text-200">{store.locale.localized("No value")}</span>
           )}
         </span>
       }
@@ -31,7 +34,7 @@ export const SelectSegment: React.FC<Props> = ({ value, onChange, params }) => {
       width="w-full"
       maxHeight="lg"
     >
-      <CustomSelect.Option value={null}>No value</CustomSelect.Option>
+      <CustomSelect.Option value={null}>{store.locale.localized("No value")}</CustomSelect.Option>
       {ANALYTICS_X_AXIS_VALUES.map((item) => {
         if (params.x_axis === item.value) return null;
         if (cycleId && item.value === "issue_cycle__cycle__name") return null;

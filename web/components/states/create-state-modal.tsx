@@ -24,6 +24,8 @@ import type { ICurrentUserResponse, IState, IStateResponse } from "types";
 import { STATES_LIST } from "constants/fetch-keys";
 // constants
 import { GROUP_CHOICES } from "constants/project";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 // types
 type Props = {
@@ -41,6 +43,7 @@ const defaultValues: Partial<IState> = {
 };
 
 export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClose, user }) => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -90,14 +93,16 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
         if (err.status === 400)
           setToastAlert({
             type: "error",
-            title: "Error!",
-            message: "Another state exists with the same name. Please try again with another name.",
+            title: store.locale.localized("Error!"),
+            message: store.locale.localized(
+              "Another state exists with the same name. Please try again with another name."
+            ),
           });
         else
           setToastAlert({
             type: "error",
-            title: "Error!",
-            message: "State could not be created. Please try again.",
+            title: store.locale.localized("Error!"),
+            message: store.locale.localized("State could not be created. Please try again."),
           });
       });
   };
@@ -135,7 +140,7 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                       as="h3"
                       className="text-lg font-medium leading-6 text-custom-text-100"
                     >
-                      Create State
+                      {store.locale.localized("Create State")}
                     </Dialog.Title>
                     <div className="mt-2 space-y-3">
                       <div>
@@ -144,12 +149,12 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                           label="Name"
                           name="name"
                           type="name"
-                          placeholder="Enter name"
+                          placeholder={store.locale.localized("Enter name")}
                           autoComplete="off"
                           error={errors.name}
                           register={register}
                           validations={{
-                            required: "Name is required",
+                            required: store.locale.localized("Name is required"),
                           }}
                         />
                       </div>
@@ -184,7 +189,7 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                                   open ? "text-custom-text-100" : "text-custom-text-200"
                                 }`}
                               >
-                                <span>Color</span>
+                                <span>{store.locale.localized("Color")}</span>
                                 {watch("color") && watch("color") !== "" && (
                                   <span
                                     className="ml-2 h-4 w-4 rounded"
@@ -231,8 +236,8 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                         <TextArea
                           id="description"
                           name="description"
-                          label="Description"
-                          placeholder="Enter description"
+                          label={store.locale.localized("Description")}
+                          placeholder={store.locale.localized("Enter description")}
                           error={errors.description}
                           register={register}
                         />
@@ -240,9 +245,13 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                     </div>
                   </div>
                   <div className="mt-5 flex justify-end gap-2">
-                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
+                    <SecondaryButton onClick={onClose}>
+                      {store.locale.localized("Cancel")}
+                    </SecondaryButton>
                     <PrimaryButton type="submit" loading={isSubmitting}>
-                      {isSubmitting ? "Creating State..." : "Create State"}
+                      {isSubmitting
+                        ? store.locale.localized("Creating State...")
+                        : store.locale.localized("Create State")}
                     </PrimaryButton>
                   </div>
                 </form>

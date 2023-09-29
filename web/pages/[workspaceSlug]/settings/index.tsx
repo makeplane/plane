@@ -33,6 +33,9 @@ import type { NextPage } from "next";
 import { WORKSPACE_DETAILS, USER_WORKSPACES, WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 // constants
 import { ORGANIZATION_SIZE } from "constants/workspace";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
@@ -47,6 +50,7 @@ const WorkspaceSettings: NextPage = () => {
   const [isImageRemoving, setIsImageRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -104,9 +108,9 @@ const WorkspaceSettings: NextPage = () => {
           };
         });
         setToastAlert({
-          title: "Success",
+          title: store.locale.localized("Success"),
           type: "success",
-          message: "Workspace updated successfully",
+          message: store.locale.localized("Workspace updated successfully"),
         });
       })
       .catch((err) => console.error(err));
@@ -123,8 +127,8 @@ const WorkspaceSettings: NextPage = () => {
         .then((res) => {
           setToastAlert({
             type: "success",
-            title: "Success!",
-            message: "Workspace picture removed successfully.",
+            title: store.locale.localized("Success!"),
+            message: store.locale.localized("Workspace picture removed successfully."),
           });
           mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) =>
             prevData?.map((workspace) => (workspace.id === res.id ? res : workspace))
@@ -142,8 +146,10 @@ const WorkspaceSettings: NextPage = () => {
         .catch(() => {
           setToastAlert({
             type: "error",
-            title: "Error!",
-            message: "There was some error in deleting your profile picture. Please try again.",
+            title: store.locale.localized("Error!"),
+            message: store.locale.localized(
+              "There was some error in deleting your profile picture. Please try again."
+            ),
           });
         })
         .finally(() => setIsImageRemoving(false));
@@ -157,7 +163,10 @@ const WorkspaceSettings: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)} Settings`}
+            title={`${truncateText(
+              activeWorkspace?.name ?? store.locale.localized("Workspace"),
+              32
+            )} ${store.locale.localized("Settings")}`}
           />
         </Breadcrumbs>
       }
@@ -201,7 +210,7 @@ const WorkspaceSettings: NextPage = () => {
                       <img
                         src={watch("logo")!}
                         className="absolute top-0 left-0 h-full w-full object-cover rounded-md"
-                        alt="Workspace Logo"
+                        alt={store.locale.localized("Workspace Logo")}
                       />
                     </div>
                   ) : (
@@ -226,10 +235,10 @@ const WorkspaceSettings: NextPage = () => {
                     {watch("logo") && watch("logo") !== null && watch("logo") !== "" ? (
                       <>
                         <Pencil className="h-3 w-3" />
-                        Edit logo
+                        {store.locale.localized("Edit logo")}
                       </>
                     ) : (
-                      "Upload logo"
+                      store.locale.localized("Upload logo")
                     )}
                   </button>
                 </div>
@@ -239,7 +248,7 @@ const WorkspaceSettings: NextPage = () => {
             <div className="flex flex-col gap-8 my-10">
               <div className="grid grid-col grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 items-center justify-between gap-10 w-full">
                 <div className="flex flex-col gap-1 ">
-                  <h4 className="text-sm">Workspace Name</h4>
+                  <h4 className="text-sm">{store.locale.localized("Workspace Name")}</h4>
                   <Input
                     id="name"
                     name="name"
@@ -248,10 +257,12 @@ const WorkspaceSettings: NextPage = () => {
                     register={register}
                     error={errors.name}
                     validations={{
-                      required: "Name is required",
+                      required: store.locale.localized("Name is required"),
                       maxLength: {
                         value: 80,
-                        message: "Workspace name should not exceed 80 characters",
+                        message: store.locale.localized(
+                          "Workspace name should not exceed 80 characters"
+                        ),
                       },
                     }}
                     disabled={!isAdmin}
@@ -259,7 +270,7 @@ const WorkspaceSettings: NextPage = () => {
                 </div>
 
                 <div className="flex flex-col gap-1 ">
-                  <h4 className="text-sm">Company Size</h4>
+                  <h4 className="text-sm">{store.locale.localized("Company Size")}</h4>
                   <Controller
                     name="organization_size"
                     control={control}
@@ -268,7 +279,8 @@ const WorkspaceSettings: NextPage = () => {
                         value={value}
                         onChange={onChange}
                         label={
-                          ORGANIZATION_SIZE.find((c) => c === value) ?? "Select organization size"
+                          ORGANIZATION_SIZE.find((c) => c === value) ??
+                          store.locale.localized("Select organization size")
                         }
                         width="w-full"
                         input
@@ -285,7 +297,7 @@ const WorkspaceSettings: NextPage = () => {
                 </div>
 
                 <div className="flex flex-col gap-1 ">
-                  <h4 className="text-sm">Workspace URL</h4>
+                  <h4 className="text-sm">{store.locale.localized("Workspace URL")}</h4>
                   <Input
                     id="url"
                     name="url"
@@ -308,7 +320,9 @@ const WorkspaceSettings: NextPage = () => {
                   loading={isSubmitting}
                   disabled={!isAdmin}
                 >
-                  {isSubmitting ? "Updating..." : "Update Workspace"}
+                  {isSubmitting
+                    ? store.locale.localized("Updating...")
+                    : store.locale.localized("Update Workspace")}
                 </PrimaryButton>
               </div>
             </div>
@@ -321,7 +335,9 @@ const WorkspaceSettings: NextPage = () => {
                     type="button"
                     className="flex items-center justify-between w-full py-4"
                   >
-                    <span className="text-xl tracking-tight">Delete Workspace</span>
+                    <span className="text-xl tracking-tight">
+                      {store.locale.localized("Delete Workspace")}
+                    </span>
                     <Icon iconName={open ? "expand_less" : "expand_more"} className="!text-2xl" />
                   </Disclosure.Button>
 
@@ -337,10 +353,12 @@ const WorkspaceSettings: NextPage = () => {
                     <Disclosure.Panel>
                       <div className="flex flex-col gap-8">
                         <span className="text-sm tracking-tight">
-                          The danger zone of the workspace delete page is a critical area that
-                          requires careful consideration and attention. When deleting a workspace,
-                          all of the data and resources within that workspace will be permanently
-                          removed and cannot be recovered.
+                          {store.locale.localized(
+                            `The danger zone of the workspace delete page is a critical area that
+							requires careful consideration and attention. When deleting a workspace,
+							all of the data and resources within that workspace will be permanently
+							removed and cannot be recovered.`
+                          )}
                         </span>
                         <div>
                           <DangerButton
@@ -348,7 +366,7 @@ const WorkspaceSettings: NextPage = () => {
                             className="!text-sm"
                             outline
                           >
-                            Delete my workspace
+                            {store.locale.localized("Delete my workspace")}
                           </DangerButton>
                         </div>
                       </div>

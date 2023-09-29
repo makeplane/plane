@@ -18,8 +18,11 @@ import { renderLongDetailDateFormat } from "helpers/date-time.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // fetch-keys
 import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 export const ProfileSidebar = () => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
 
@@ -47,11 +50,11 @@ export const ProfileSidebar = () => {
 
   const userDetails = [
     {
-      label: "Joined on",
+      label: store.locale.localized("Joined on"),
       value: renderLongDetailDateFormat(userProjectsData?.user_data.date_joined ?? ""),
     },
     {
-      label: "Timezone",
+      label: store.locale.localized("Timezone"),
       value: (
         <span>
           {timeString}{" "}
@@ -223,30 +226,38 @@ export const ProfileSidebar = () => {
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
                                   <div className="h-2.5 w-2.5 bg-[#203b80] rounded-sm" />
-                                  Created
+                                  {store.locale.localized("Created")}
                                 </div>
-                                <div className="font-medium">{project.created_issues} Issues</div>
+                                <div className="font-medium">
+                                  {project.created_issues} {store.locale.localized("Issues")}
+                                </div>
                               </div>
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
                                   <div className="h-2.5 w-2.5 bg-[#3f76ff] rounded-sm" />
-                                  Assigned
+                                  {store.locale.localized("Assigned")}
                                 </div>
-                                <div className="font-medium">{project.assigned_issues} Issues</div>
+                                <div className="font-medium">
+                                  {project.assigned_issues} {store.locale.localized("Issues")}
+                                </div>
                               </div>
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
                                   <div className="h-2.5 w-2.5 bg-[#f59e0b] rounded-sm" />
-                                  Due
+                                  {store.locale.localized("Due")}
                                 </div>
-                                <div className="font-medium">{project.pending_issues} Issues</div>
+                                <div className="font-medium">
+                                  {project.pending_issues} {store.locale.localized("Issues")}
+                                </div>
                               </div>
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
                                   <div className="h-2.5 w-2.5 bg-[#16a34a] rounded-sm" />
-                                  Completed
+                                  {store.locale.localized("Completed")}
                                 </div>
-                                <div className="font-medium">{project.completed_issues} Issues</div>
+                                <div className="font-medium">
+                                  {project.completed_issues} {store.locale.localized("Issues")}
+                                </div>
                               </div>
                             </div>
                           </Disclosure.Panel>

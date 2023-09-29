@@ -21,8 +21,12 @@ import type { NextPage } from "next";
 import { WORKSPACE_DETAILS, APP_INTEGRATIONS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 const WorkspaceIntegrations: NextPage = () => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -40,11 +44,14 @@ const WorkspaceIntegrations: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)}`}
+            title={`${truncateText(
+              activeWorkspace?.name ?? store.locale.localized("Workspace"),
+              32
+            )}`}
             link={`/${workspaceSlug}`}
             linkTruncate
           />
-          <BreadcrumbItem title="Integrations Settings" unshrinkTitle />
+          <BreadcrumbItem title={store.locale.localized("Integrations Settings")} unshrinkTitle />
         </Breadcrumbs>
       }
     >
@@ -53,7 +60,7 @@ const WorkspaceIntegrations: NextPage = () => {
           <SettingsSidebar />
         </div>
         <section className="pr-9 py-8 w-full overflow-y-auto">
-          <IntegrationAndImportExportBanner bannerName="Integrations" />
+          <IntegrationAndImportExportBanner bannerName={store.locale.localized("Integrations")} />
           <div>
             {appIntegrations ? (
               appIntegrations.map((integration) => (

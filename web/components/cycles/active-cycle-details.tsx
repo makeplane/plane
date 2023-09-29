@@ -44,36 +44,12 @@ import { truncateText } from "helpers/string.helper";
 import { ICycle, IIssue } from "types";
 // fetch-keys
 import { CURRENT_CYCLE_LIST, CYCLES_LIST, CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
-
-const stateGroups = [
-  {
-    key: "backlog_issues",
-    title: "Backlog",
-    color: "#dee2e6",
-  },
-  {
-    key: "unstarted_issues",
-    title: "Unstarted",
-    color: "#26b5ce",
-  },
-  {
-    key: "started_issues",
-    title: "Started",
-    color: "#f7ae59",
-  },
-  {
-    key: "cancelled_issues",
-    title: "Cancelled",
-    color: "#d687ff",
-  },
-  {
-    key: "completed_issues",
-    title: "Completed",
-    color: "#09a953",
-  },
-];
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 export const ActiveCycleDetails: React.FC = () => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -155,6 +131,34 @@ export const ActiveCycleDetails: React.FC = () => {
   const endDate = new Date(cycle.end_date ?? "");
   const startDate = new Date(cycle.start_date ?? "");
 
+  const stateGroups = [
+    {
+      key: "backlog_issues",
+      title: store.locale.localized("Backlog"),
+      color: "#dee2e6",
+    },
+    {
+      key: "unstarted_issues",
+      title: store.locale.localized("Unstarted"),
+      color: "#26b5ce",
+    },
+    {
+      key: "started_issues",
+      title: store.locale.localized("Started"),
+      color: "#f7ae59",
+    },
+    {
+      key: "cancelled_issues",
+      title: store.locale.localized("Cancelled"),
+      color: "#d687ff",
+    },
+    {
+      key: "completed_issues",
+      title: store.locale.localized("Completed"),
+      color: "#09a953",
+    },
+  ];
+
   const groupedIssues: any = {
     backlog: cycle.backlog_issues,
     unstarted: cycle.unstarted_issues,
@@ -195,8 +199,8 @@ export const ActiveCycleDetails: React.FC = () => {
       .catch(() => {
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Couldn't add the cycle to favorites. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized("Couldn't add the cycle to favorites. Please try again."),
         });
       });
   };
@@ -229,8 +233,10 @@ export const ActiveCycleDetails: React.FC = () => {
       .catch(() => {
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Couldn't remove the cycle from favorites. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized(
+            "Couldn't remove the cycle from favorites. Please try again."
+          ),
         });
       });
   };
@@ -293,12 +299,14 @@ export const ActiveCycleDetails: React.FC = () => {
                     {cycleStatus === "current" ? (
                       <span className="flex gap-1 whitespace-nowrap">
                         <PersonRunningIcon className="h-4 w-4" />
-                        {findHowManyDaysLeft(cycle.end_date ?? new Date())} Days Left
+                        {findHowManyDaysLeft(cycle.end_date ?? new Date())}{" "}
+                        {store.locale.localized("Days Left")}
                       </span>
                     ) : cycleStatus === "upcoming" ? (
                       <span className="flex gap-1 whitespace-nowrap">
                         <AlarmClockIcon className="h-4 w-4" />
-                        {findHowManyDaysLeft(cycle.start_date ?? new Date())} Days Left
+                        {findHowManyDaysLeft(cycle.start_date ?? new Date())}{" "}
+                        {store.locale.localized("Days Left")}
                       </span>
                     ) : cycleStatus === "completed" ? (
                       <span className="flex gap-1 whitespace-nowrap">
@@ -307,7 +315,9 @@ export const ActiveCycleDetails: React.FC = () => {
                             tooltipContent={`${
                               cycle.total_issues - cycle.completed_issues
                             } more pending ${
-                              cycle.total_issues - cycle.completed_issues === 1 ? "issue" : "issues"
+                              cycle.total_issues - cycle.completed_issues === 1
+                                ? store.locale.localized("issue")
+                                : store.locale.localized("issues")
                             }`}
                           >
                             <span>
@@ -315,7 +325,7 @@ export const ActiveCycleDetails: React.FC = () => {
                             </span>
                           </Tooltip>
                         )}{" "}
-                        Completed
+                        {store.locale.localized("Completed")}
                       </span>
                     ) : (
                       cycleStatus
@@ -383,17 +393,17 @@ export const ActiveCycleDetails: React.FC = () => {
               <div className="flex items-center gap-4 text-custom-text-200">
                 <div className="flex gap-2">
                   <LayerDiagonalIcon className="h-4 w-4 flex-shrink-0" />
-                  {cycle.total_issues} issues
+                  {cycle.total_issues} {store.locale.localized("issues")}
                 </div>
                 <div className="flex items-center gap-2">
                   <StateGroupIcon stateGroup="completed" height="14px" width="14px" />
-                  {cycle.completed_issues} issues
+                  {cycle.completed_issues} {store.locale.localized("issues")}
                 </div>
               </div>
 
               <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
                 <a className="bg-custom-primary text-white px-4 rounded-md py-2 text-center text-sm font-medium w-full hover:bg-custom-primary/90">
-                  View Cycle
+                  {store.locale.localized("View Cycle")}
                 </a>
               </Link>
             </div>
@@ -403,7 +413,7 @@ export const ActiveCycleDetails: React.FC = () => {
           <div className="flex h-60 flex-col border-custom-border-200">
             <div className="flex h-full w-full flex-col text-custom-text-200 p-4">
               <div className="flex w-full items-center gap-2 py-1">
-                <span>Progress</span>
+                <span>{store.locale.localized("Progress")}</span>
                 <LinearProgressIndicator data={progressIndicatorData} />
               </div>
               <div className="flex flex-col mt-2 gap-1 items-center">
@@ -436,7 +446,9 @@ export const ActiveCycleDetails: React.FC = () => {
       <div className="grid grid-cols-1 divide-y border-custom-border-200 lg:divide-y-0 lg:divide-x lg:grid-cols-2">
         <div className="flex flex-col justify-between p-4">
           <div>
-            <div className="text-custom-primary">High Priority Issues</div>
+            <div className="text-custom-primary">
+              {store.locale.localized("High Priority Issues")}
+            </div>
             <div className="my-3 flex max-h-[240px] min-h-[240px] flex-col gap-2.5 overflow-y-scroll rounded-md">
               {issues ? (
                 issues.length > 0 ? (
@@ -461,7 +473,7 @@ export const ActiveCycleDetails: React.FC = () => {
                         </div>
                         <Tooltip
                           position="top-left"
-                          tooltipHeading="Title"
+                          tooltipHeading={store.locale.localized("Title")}
                           tooltipContent={issue.name}
                         >
                           <span className="text-[0.825rem] text-custom-text-100">
@@ -500,7 +512,7 @@ export const ActiveCycleDetails: React.FC = () => {
                   ))
                 ) : (
                   <div className="grid place-items-center text-custom-text-200 text-sm text-center">
-                    No issues present in the cycle.
+                    {store.locale.localized("No issues present in the cycle.")}
                   </div>
                 )
               ) : (
@@ -542,11 +554,11 @@ export const ActiveCycleDetails: React.FC = () => {
             <div className="flex items-center gap-3 text-custom-text-100">
               <div className="flex items-center justify-center gap-1">
                 <span className="h-2.5 w-2.5 rounded-full bg-[#a9bbd0]" />
-                <span>Ideal</span>
+                <span>{store.locale.localized("Ideal")}</span>
               </div>
               <div className="flex items-center justify-center gap-1">
                 <span className="h-2.5 w-2.5 rounded-full bg-[#4c8fff]" />
-                <span>Current</span>
+                <span>{store.locale.localized("Current")}</span>
               </div>
             </div>
             <div className="flex items-center gap-1">
@@ -554,7 +566,7 @@ export const ActiveCycleDetails: React.FC = () => {
                 <LayerDiagonalIcon className="h-5 w-5 flex-shrink-0 text-custom-text-200" />
               </span>
               <span>
-                Pending Issues -{" "}
+                {store.locale.localized("Pending Issues")} -{" "}
                 {cycle.total_issues - (cycle.completed_issues + cycle.cancelled_issues)}
               </span>
             </div>

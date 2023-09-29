@@ -22,6 +22,8 @@ import { IIssue, IIssueFilterOptions, TIssuePriorities } from "types";
 // fetch-keys
 import { USER_ISSUES, WORKSPACE_LABELS } from "constants/fetch-keys";
 import { PlusIcon } from "@heroicons/react/24/outline";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   openIssuesListModal?: () => void;
@@ -51,6 +53,7 @@ export const MyIssuesView: React.FC<Props> = ({
   // trash box
   const [trashBox, setTrashBox] = useState(false);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -186,7 +189,11 @@ export const MyIssuesView: React.FC<Props> = ({
     (issue: IIssue) => {
       setCreateIssueModal(true);
 
-      setPreloadedData({ ...issue, name: `${issue.name} (Copy)`, actionType: "createIssue" });
+      setPreloadedData({
+        ...issue,
+        name: `${issue.name} (${store.locale.localized("Copy")})`,
+        actionType: "createIssue",
+      });
     },
     [setCreateIssueModal, setPreloadedData]
   );
@@ -290,16 +297,16 @@ export const MyIssuesView: React.FC<Props> = ({
         dragDisabled={displayFilters?.group_by !== "priority"}
         emptyState={{
           title: filters.assignees
-            ? "You don't have any issue assigned to you yet"
+            ? store.locale.localized("You don't have any issue assigned to you yet")
             : filters.created_by
-            ? "You have not created any issue yet."
-            : "You have not subscribed to any issue yet.",
-          description: "Keep track of your work in a single place.",
+            ? store.locale.localized("You have not created any issue yet.")
+            : store.locale.localized("You have not subscribed to any issue yet."),
+          description: store.locale.localized("Keep track of your work in a single place."),
           primaryButton: filters.subscriber
             ? undefined
             : {
                 icon: <PlusIcon className="h-4 w-4" />,
-                text: "New Issue",
+                text: store.locale.localized("New Issue"),
                 onClick: () => {
                   const e = new KeyboardEvent("keydown", {
                     key: "c",

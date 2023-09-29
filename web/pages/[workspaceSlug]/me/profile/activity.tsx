@@ -20,8 +20,12 @@ import { USER_ACTIVITY } from "constants/fetch-keys";
 // helper
 import { timeAgo } from "helpers/date-time.helper";
 import { SettingsSidebar } from "components/project";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 const ProfileActivity = () => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -34,7 +38,7 @@ const ProfileActivity = () => {
     <WorkspaceAuthorizationLayout
       breadcrumbs={
         <Breadcrumbs>
-          <BreadcrumbItem title="My Profile Activity" />
+          <BreadcrumbItem title={store.locale.localized("My Profile Activity")} />
         </Breadcrumbs>
       }
     >
@@ -46,7 +50,7 @@ const ProfileActivity = () => {
         {userActivity ? (
           <section className="pr-9 py-8 w-full overflow-y-auto">
             <div className="flex items-center py-3.5 border-b border-custom-border-200">
-              <h3 className="text-xl font-medium">Activity</h3>
+              <h3 className="text-xl font-medium">{store.locale.localized("Activity")}</h3>
             </div>
             <div className={`flex flex-col gap-2 py-4 w-full`}>
               <ul role="list" className="-mb-4">
@@ -123,19 +127,20 @@ const ProfileActivity = () => {
                     activityItem.field !== "link" &&
                     activityItem.field !== "estimate" ? (
                       <span className="text-custom-text-200">
-                        created{" "}
+                        {store.locale.localized("created")}{" "}
                         <Link
                           href={`/${workspaceSlug}/projects/${activityItem.project}/issues/${activityItem.issue}`}
                         >
                           <a className="inline-flex items-center hover:underline">
-                            this issue. <ArrowTopRightOnSquareIcon className="ml-1 h-3.5 w-3.5" />
+                            {store.locale.localized("this issue")}.{" "}
+                            <ArrowTopRightOnSquareIcon className="ml-1 h-3.5 w-3.5" />
                           </a>
                         </Link>
                       </span>
                     ) : activityItem.field ? (
                       <ActivityMessage activity={activityItem} showIssue />
                     ) : (
-                      "created the issue."
+                      store.locale.localized("created the issue") + "."
                     );
 
                   if ("field" in activityItem && activityItem.field !== "updated_by") {

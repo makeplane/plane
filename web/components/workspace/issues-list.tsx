@@ -10,6 +10,8 @@ import { truncateText } from "helpers/string.helper";
 import { IIssueLite } from "types";
 import { Loader } from "components/ui";
 import { LayerDiagonalIcon } from "components/icons";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   issues: IIssueLite[] | undefined;
@@ -17,6 +19,7 @@ type Props = {
 };
 
 export const IssuesList: React.FC<Props> = ({ issues, type }) => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -35,7 +38,11 @@ export const IssuesList: React.FC<Props> = ({ issues, type }) => {
 
   return (
     <div>
-      <h3 className="mb-2 font-semibold capitalize">{type} Issues</h3>
+      <h3 className="mb-2 font-semibold capitalize">
+        {type === "overdue"
+          ? store.locale.localized("Overdue Issues")
+          : store.locale.localized("Upcoming Issues")}
+      </h3>
       {issues ? (
         <div className="h-[calc(100%-2.25rem)] rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 text-sm">
           <div
@@ -43,9 +50,17 @@ export const IssuesList: React.FC<Props> = ({ issues, type }) => {
               type === "overdue" ? "bg-red-500/20 bg-opacity-20" : "bg-custom-background-80"
             }`}
           >
-            <h4 className="capitalize">{type}</h4>
-            <h4 className="col-span-2">Issue</h4>
-            <h4>{type === "overdue" ? "Due" : "Start"} Date</h4>
+            <h4 className="capitalize">
+              {type === "overdue"
+                ? store.locale.localized("Overdue")
+                : store.locale.localized("Upcoming")}
+            </h4>
+            <h4 className="col-span-2">{store.locale.localized("Issue")}</h4>
+            <h4>
+              {type === "overdue"
+                ? store.locale.localized("Due Date")
+                : store.locale.localized("Start Date")}
+            </h4>
           </div>
           <div className="max-h-72 overflow-y-scroll">
             {issues.length > 0 ? (
@@ -73,7 +88,10 @@ export const IssuesList: React.FC<Props> = ({ issues, type }) => {
                           {type === "overdue" && (
                             <ExclamationTriangleIcon className="h-3.5 w-3.5" />
                           )}
-                          {dateDifference} {dateDifference > 1 ? "days" : "day"}
+                          {dateDifference}{" "}
+                          {dateDifference > 1
+                            ? store.locale.localized("days")
+                            : store.locale.localized("day")}
                         </h5>
                         <h5 className="col-span-2">{truncateText(issue.name, 30)}</h5>
                         <h5 className="cursor-default">
@@ -89,9 +107,9 @@ export const IssuesList: React.FC<Props> = ({ issues, type }) => {
                 <div className="my-5 flex flex-col items-center gap-4">
                   <LayerDiagonalIcon height={60} width={60} />
                   <span className="text-custom-text-200">
-                    No issues found. Use{" "}
+                    {store.locale.localized("No issues found. Use")}{" "}
                     <pre className="inline rounded bg-custom-background-80 px-2 py-1">C</pre>{" "}
-                    shortcut to create a new issue
+                    {store.locale.localized("shortcut to create a new issue")}
                   </span>
                 </div>
               </div>

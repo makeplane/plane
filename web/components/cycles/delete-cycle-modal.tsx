@@ -31,6 +31,9 @@ import {
   UPCOMING_CYCLES_LIST,
 } from "constants/fetch-keys";
 import { getDateRangeStatus } from "helpers/date-time.helper";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 export const DeleteCycleModal: React.FC<TConfirmCycleDeletionProps> = ({
   isOpen,
@@ -40,6 +43,7 @@ export const DeleteCycleModal: React.FC<TConfirmCycleDeletionProps> = ({
 }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -104,9 +108,9 @@ export const DeleteCycleModal: React.FC<TConfirmCycleDeletionProps> = ({
         handleClose();
 
         setToastAlert({
-          title: "Success",
+          title: store.locale.localized("Success"),
           type: "success",
-          message: "Cycle deleted successfully",
+          message: store.locale.localized("Cycle deleted successfully"),
         });
       })
       .catch(() => {
@@ -154,25 +158,32 @@ export const DeleteCycleModal: React.FC<TConfirmCycleDeletionProps> = ({
                         as="h3"
                         className="text-lg font-medium leading-6 text-custom-text-100"
                       >
-                        Delete Cycle
+                        {store.locale.localized("Delete cycle")}
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
-                          Are you sure you want to delete cycle-{" "}
+                          {store.locale.localized("Are you sure you want to delete cycle")}
+                          {"- "}
                           <span className="break-words font-medium text-custom-text-100">
                             {data?.name}
                           </span>
-                          ? All of the data related to the cycle will be permanently removed. This
-                          action cannot be undone.
+                          {"? "}
+                          {store.locale.localized(
+                            "All of the data related to the cycle will be permanently removed. This action cannot be undone."
+                          )}
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="flex justify-end gap-2 p-4 sm:px-6">
-                  <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                  <SecondaryButton onClick={handleClose}>
+                    {store.locale.localized("Cancel")}
+                  </SecondaryButton>
                   <DangerButton onClick={handleDeletion} loading={isDeleteLoading}>
-                    {isDeleteLoading ? "Deleting..." : "Delete"}
+                    {isDeleteLoading
+                      ? store.locale.localized("Deleting...")
+                      : store.locale.localized("Delete")}
                   </DangerButton>
                 </div>
               </Dialog.Panel>

@@ -29,6 +29,8 @@ import emptyAnalytics from "public/empty-state/analytics.svg";
 import { IAnalyticsParams } from "types";
 // fetch-keys
 import { ANALYTICS } from "constants/fetch-keys";
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 const defaultValues: IAnalyticsParams = {
   x_axis: "priority",
@@ -37,9 +39,8 @@ const defaultValues: IAnalyticsParams = {
   project: null,
 };
 
-const tabsList = ["Scope and Demand", "Custom Analytics"];
-
 const Analytics = () => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -47,6 +48,11 @@ const Analytics = () => {
   const { projects } = useProjects();
 
   const { control, watch, setValue } = useForm<IAnalyticsParams>({ defaultValues });
+
+  const tabsList = [
+    store.locale.localized("Scope and Demand"),
+    store.locale.localized("Custom Analytics"),
+  ];
 
   const params: IAnalyticsParams = {
     x_axis: watch("x_axis"),
@@ -66,7 +72,7 @@ const Analytics = () => {
     };
 
     const eventType =
-      tab === "Scope and Demand"
+      tab === store.locale.localized("Scope and Demand")
         ? "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS"
         : "WORKSPACE_CUSTOM_ANALYTICS";
 
@@ -88,7 +94,7 @@ const Analytics = () => {
     <WorkspaceAuthorizationLayout
       breadcrumbs={
         <Breadcrumbs>
-          <BreadcrumbItem title="Workspace Analytics" />
+          <BreadcrumbItem title={store.locale.localized("Workspace Analytics")} />
         </Breadcrumbs>
       }
     >
@@ -131,12 +137,14 @@ const Analytics = () => {
           </div>
         ) : (
           <EmptyState
-            title="You can see your all projects' analytics here"
-            description="Let's create your first project and analyse the stats with various graphs."
+            title={store.locale.localized("You can see your all projects' analytics here")}
+            description={store.locale.localized(
+              "Let's create your first project and analyse the stats with various graphs."
+            )}
             image={emptyAnalytics}
             primaryButton={{
               icon: <PlusIcon className="h-4 w-4" />,
-              text: "New Project",
+              text: store.locale.localized("New Project"),
               onClick: () => {
                 const e = new KeyboardEvent("keydown", {
                   key: "p",

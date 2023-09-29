@@ -37,6 +37,8 @@ import {
 import { ANALYTICS, CYCLE_DETAILS, MODULE_DETAILS, PROJECT_DETAILS } from "constants/fetch-keys";
 // constants
 import { NETWORK_CHOICES } from "constants/project";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   analytics: IAnalyticsResponse | undefined;
@@ -53,6 +55,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
   isProjectLevel = false,
   user,
 }) => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
@@ -163,7 +166,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
       .then((res) => {
         setToastAlert({
           type: "success",
-          title: "Success!",
+          title: store.locale.localized("Success!"),
           message: res.message,
         });
 
@@ -172,8 +175,10 @@ export const AnalyticsSidebar: React.FC<Props> = ({
       .catch(() =>
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "There was some error in exporting the analytics. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized(
+            "There was some error in exporting the analytics. Please try again."
+          ),
         })
       );
   };
@@ -192,7 +197,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
       <div className="flex items-center gap-2 flex-wrap">
         <div className="flex items-center gap-1 bg-custom-background-80 rounded-md px-3 py-1 text-custom-text-200 text-xs">
           <LayerDiagonalIcon height={14} width={14} />
-          {analytics ? analytics.total : "..."} Issues
+          {analytics ? analytics.total : "..."} {store.locale.localized("Issues")}
         </div>
         {isProjectLevel && (
           <div className="flex items-center gap-1 bg-custom-background-80 rounded-md px-3 py-1 text-custom-text-200 text-xs">
@@ -212,7 +217,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({
           <>
             {!isProjectLevel && selectedProjects && selectedProjects.length > 0 && (
               <div className="hidden h-full overflow-hidden md:flex md:flex-col">
-                <h4 className="font-medium">Selected Projects</h4>
+                <h4 className="font-medium">{store.locale.localized("Selected Projects")}</h4>
                 <div className="space-y-6 mt-4 h-full overflow-y-auto">
                   {selectedProjects.map((projectId) => {
                     const project = projects?.find((p) => p.id === projectId);
@@ -245,21 +250,21 @@ export const AnalyticsSidebar: React.FC<Props> = ({
                             <div className="flex items-center justify-between gap-2 text-xs">
                               <div className="flex items-center gap-2">
                                 <UserGroupIcon className="h-4 w-4 text-custom-text-200" />
-                                <h6>Total members</h6>
+                                <h6>{store.locale.localized("Total members")}</h6>
                               </div>
                               <span className="text-custom-text-200">{project.total_members}</span>
                             </div>
                             <div className="flex items-center justify-between gap-2 text-xs">
                               <div className="flex items-center gap-2">
                                 <ContrastIcon height={16} width={16} />
-                                <h6>Total cycles</h6>
+                                <h6>{store.locale.localized("Total cycles")}</h6>
                               </div>
                               <span className="text-custom-text-200">{project.total_cycles}</span>
                             </div>
                             <div className="flex items-center justify-between gap-2 text-xs">
                               <div className="flex items-center gap-2">
                                 <UserGroupIcon className="h-4 w-4 text-custom-text-200" />
-                                <h6>Total modules</h6>
+                                <h6>{store.locale.localized("Total modules")}</h6>
                               </div>
                               <span className="text-custom-text-200">{project.total_modules}</span>
                             </div>
@@ -273,52 +278,64 @@ export const AnalyticsSidebar: React.FC<Props> = ({
             {projectId ? (
               cycleId && cycleDetails ? (
                 <div className="hidden md:block h-full overflow-y-auto">
-                  <h4 className="font-medium break-words">Analytics for {cycleDetails.name}</h4>
+                  <h4 className="font-medium break-words">
+                    {store.locale.localized("Analytics for")} {cycleDetails.name}
+                  </h4>
                   <div className="space-y-4 mt-4">
                     <div className="flex items-center gap-2 text-xs">
                       <h6 className="text-custom-text-200">Lead</h6>
                       <span>{cycleDetails.owned_by?.display_name}</span>
                     </div>
                     <div className="flex items-center gap-2 text-xs">
-                      <h6 className="text-custom-text-200">Start Date</h6>
+                      <h6 className="text-custom-text-200">
+                        {store.locale.localized("Start Date")}
+                      </h6>
                       <span>
                         {cycleDetails.start_date && cycleDetails.start_date !== ""
                           ? renderShortDate(cycleDetails.start_date)
-                          : "No start date"}
+                          : store.locale.localized("No start date")}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-xs">
-                      <h6 className="text-custom-text-200">Target Date</h6>
+                      <h6 className="text-custom-text-200">
+                        {store.locale.localized("Target Date")}
+                      </h6>
                       <span>
                         {cycleDetails.end_date && cycleDetails.end_date !== ""
                           ? renderShortDate(cycleDetails.end_date)
-                          : "No end date"}
+                          : store.locale.localized("No end date")}
                       </span>
                     </div>
                   </div>
                 </div>
               ) : moduleId && moduleDetails ? (
                 <div className="hidden md:block h-full overflow-y-auto">
-                  <h4 className="font-medium break-words">Analytics for {moduleDetails.name}</h4>
+                  <h4 className="font-medium break-words">
+                    {store.locale.localized("Analytics for")} {moduleDetails.name}
+                  </h4>
                   <div className="space-y-4 mt-4">
                     <div className="flex items-center gap-2 text-xs">
                       <h6 className="text-custom-text-200">Lead</h6>
                       <span>{moduleDetails.lead_detail?.display_name}</span>
                     </div>
                     <div className="flex items-center gap-2 text-xs">
-                      <h6 className="text-custom-text-200">Start Date</h6>
+                      <h6 className="text-custom-text-200">
+                        {store.locale.localized("Start Date")}
+                      </h6>
                       <span>
                         {moduleDetails.start_date && moduleDetails.start_date !== ""
                           ? renderShortDate(moduleDetails.start_date)
-                          : "No start date"}
+                          : store.locale.localized("No start date")}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-xs">
-                      <h6 className="text-custom-text-200">Target Date</h6>
+                      <h6 className="text-custom-text-200">
+                        {store.locale.localized("Target Date")}
+                      </h6>
                       <span>
                         {moduleDetails.target_date && moduleDetails.target_date !== ""
                           ? renderShortDate(moduleDetails.target_date)
-                          : "No end date"}
+                          : store.locale.localized("No end date")}
                       </span>
                     </div>
                   </div>
@@ -366,13 +383,13 @@ export const AnalyticsSidebar: React.FC<Props> = ({
         >
           <div className="flex items-center gap-2 -my-1">
             <ArrowPathIcon className="h-3.5 w-3.5" />
-            Refresh
+            {store.locale.localized("Refresh")}
           </div>
         </SecondaryButton>
         <PrimaryButton onClick={exportAnalytics}>
           <div className="flex items-center gap-2 -my-1">
             <ArrowDownTrayIcon className="h-3.5 w-3.5" />
-            Export as CSV
+            {store.locale.localized("Export as CSV")}
           </div>
         </PrimaryButton>
       </div>

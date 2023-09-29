@@ -31,6 +31,9 @@ import {
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   VIEW_ISSUES,
 } from "constants/fetch-keys";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type FormInput = {
   delete_issue_ids: string[];
@@ -44,7 +47,7 @@ type Props = {
 
 export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user }) => {
   const [query, setQuery] = useState("");
-
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
@@ -86,8 +89,8 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
     if (!data.delete_issue_ids || data.delete_issue_ids.length === 0) {
       setToastAlert({
         type: "error",
-        title: "Error!",
-        message: "Please select at least one issue.",
+        title: store.locale.localized("Error!"),
+        message: store.locale.localized("Please select at least one issue."),
       });
       return;
     }
@@ -122,8 +125,8 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
       .then(() => {
         setToastAlert({
           type: "success",
-          title: "Success!",
-          message: "Issues deleted successfully!",
+          title: store.locale.localized("Success!"),
+          message: store.locale.localized("Issues deleted successfully!"),
         });
 
         if (displayFilters.layout === "calendar") mutate(calendarFetchKey);
@@ -143,8 +146,8 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
       .catch(() =>
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Something went wrong. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized("Something went wrong. Please try again."),
         })
       );
   };
@@ -207,7 +210,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
                       <li className="p-2">
                         {query === "" && (
                           <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-custom-text-100">
-                            Select issues to delete
+                            {store.locale.localized("Select issues to delete")}
                           </h2>
                         )}
                         <ul className="text-sm text-custom-text-200">
@@ -247,7 +250,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
                       <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
                         <LayerDiagonalIcon height="56" width="56" />
                         <h3 className="text-custom-text-200">
-                          No issues found. Create a new issue with{" "}
+                          {store.locale.localized("No issues found for")}{" "}
                           <pre className="inline rounded bg-custom-background-80 px-2 py-1">C</pre>.
                         </h3>
                       </div>
@@ -257,9 +260,13 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
 
                 {filteredIssues.length > 0 && (
                   <div className="flex items-center justify-end gap-2 p-3">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                    <SecondaryButton onClick={handleClose}>
+                      {store.locale.localized("Cancel")}
+                    </SecondaryButton>
                     <DangerButton onClick={handleSubmit(handleDelete)} loading={isSubmitting}>
-                      {isSubmitting ? "Deleting..." : "Delete selected issues"}
+                      {isSubmitting
+                        ? store.locale.localized("Deleting...")
+                        : "Delete selected issues"}
                     </DangerButton>
                   </div>
                 )}

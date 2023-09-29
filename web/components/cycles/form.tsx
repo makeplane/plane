@@ -7,6 +7,9 @@ import { Controller, useForm } from "react-hook-form";
 import { DateSelect, Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // types
 import { ICycle } from "types";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   handleFormSubmit: (values: Partial<ICycle>) => Promise<void>;
@@ -23,6 +26,7 @@ const defaultValues: Partial<ICycle> = {
 };
 
 export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, status, data }) => {
+  const store: RootStore = useMobxStore();
   const {
     register,
     formState: { errors, isSubmitting },
@@ -58,7 +62,7 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
     <form onSubmit={handleSubmit(handleCreateUpdateCycle)}>
       <div className="space-y-5">
         <h3 className="text-lg font-medium leading-6 text-custom-text-100">
-          {status ? "Update" : "Create"} Cycle
+          {status ? store.locale.localized("Update cycle") : store.locale.localized("Create cycle")}
         </h3>
         <div className="space-y-3">
           <div>
@@ -68,14 +72,14 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
               name="name"
               type="name"
               className="resize-none text-xl"
-              placeholder="Title"
+              placeholder={store.locale.localized("Name")}
               error={errors.name}
               register={register}
               validations={{
-                required: "Name is required",
+                required: store.locale.localized("Name is required"),
                 maxLength: {
                   value: 255,
-                  message: "Name should be less than 255 characters",
+                  message: store.locale.localized("Name cannot be more than 255 characters"),
                 },
               }}
             />
@@ -84,7 +88,7 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
             <TextArea
               id="description"
               name="description"
-              placeholder="Description"
+              placeholder={store.locale.localized("Description")}
               className="h-32 resize-none text-sm"
               error={errors.description}
               register={register}
@@ -98,7 +102,7 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
                 name="start_date"
                 render={({ field: { value, onChange } }) => (
                   <DateSelect
-                    label="Start date"
+                    label={store.locale.localized("Start date")}
                     value={value}
                     onChange={(val) => onChange(val)}
                     minDate={new Date()}
@@ -113,7 +117,7 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
                 name="end_date"
                 render={({ field: { value, onChange } }) => (
                   <DateSelect
-                    label="End date"
+                    label={store.locale.localized("End date")}
                     value={value}
                     onChange={(val) => onChange(val)}
                     minDate={minDate}
@@ -125,15 +129,15 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
         </div>
       </div>
       <div className="-mx-5 mt-5 flex justify-end gap-2 border-t border-custom-border-200 px-5 pt-5">
-        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+        <SecondaryButton onClick={handleClose}>{store.locale.localized("Cancel")}</SecondaryButton>
         <PrimaryButton type="submit" loading={isSubmitting}>
           {status
             ? isSubmitting
-              ? "Updating Cycle..."
-              : "Update Cycle"
+              ? store.locale.localized("Updating Cycle...")
+              : store.locale.localized("Update Cycle")
             : isSubmitting
-            ? "Creating Cycle..."
-            : "Create Cycle"}
+            ? store.locale.localized("Creating Cycle...")
+            : store.locale.localized("Create Cycle")}
         </PrimaryButton>
       </div>
     </form>

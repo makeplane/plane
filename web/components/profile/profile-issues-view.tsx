@@ -21,6 +21,8 @@ import { orderArrayBy } from "helpers/array.helper";
 import { IIssue, IIssueFilterOptions, TIssuePriorities } from "types";
 // fetch-keys
 import { USER_PROFILE_PROJECT_SEGREGATION, WORKSPACE_LABELS } from "constants/fetch-keys";
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 export const ProfileIssuesView = () => {
   // create issue modal
@@ -42,6 +44,7 @@ export const ProfileIssuesView = () => {
   // trash box
   const [trashBox, setTrashBox] = useState(false);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
 
@@ -184,7 +187,11 @@ export const ProfileIssuesView = () => {
     (issue: IIssue) => {
       setCreateIssueModal(true);
 
-      setPreloadedData({ ...issue, name: `${issue.name} (Copy)`, actionType: "createIssue" });
+      setPreloadedData({
+        ...issue,
+        name: `${issue.name} (${store.locale.localized("Copy")})`,
+        actionType: "createIssue",
+      });
     },
     [setCreateIssueModal, setPreloadedData]
   );
@@ -289,10 +296,16 @@ export const ProfileIssuesView = () => {
         dragDisabled={displayFilters?.group_by !== "priority"}
         emptyState={{
           title: router.pathname.includes("assigned")
-            ? `Issues assigned to ${profileData?.user_data.display_name} will appear here`
+            ? `${store.locale.localized("Issues assigned to")} ${
+                profileData?.user_data.display_name
+              } ${store.locale.localized("will appear here")}`
             : router.pathname.includes("created")
-            ? `Issues created by ${profileData?.user_data.display_name} will appear here`
-            : `Issues subscribed by ${profileData?.user_data.display_name} will appear here`,
+            ? `${store.locale.localized("Issues created by")} ${
+                profileData?.user_data.display_name
+              } ${store.locale.localized("will appear here")}`
+            : `${store.locale.localized("Issues subscribed by")} ${
+                profileData?.user_data.display_name
+              } ${store.locale.localized("will appear here")}`,
         }}
         handleOnDragEnd={handleOnDragEnd}
         handleIssueAction={handleIssueAction}

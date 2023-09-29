@@ -17,9 +17,11 @@ import type { NextPage } from "next";
 import { WORKSPACE_DETAILS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const ImportExport: NextPage = () => {
   const router = useRouter();
+  const store: any = useMobxStore();
   const { workspaceSlug } = router.query;
 
   const { data: activeWorkspace } = useSWR(
@@ -32,11 +34,14 @@ const ImportExport: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)}`}
+            title={`${truncateText(
+              activeWorkspace?.name ?? store.locale.localized("Workspace"),
+              32
+            )}`}
             link={`/${workspaceSlug}`}
             linkTruncate
           />
-          <BreadcrumbItem title="Export Settings" unshrinkTitle />
+          <BreadcrumbItem title={store.locale.localized("Export Settings")} unshrinkTitle />
         </Breadcrumbs>
       }
     >
@@ -46,7 +51,7 @@ const ImportExport: NextPage = () => {
         </div>
         <div className="pr-9 py-8 w-full overflow-y-auto">
           <div className="flex items-center py-3.5 border-b border-custom-border-200">
-            <h3 className="text-xl font-medium">Exports</h3>
+            <h3 className="text-xl font-medium">{store.locale.localized("Exports")}</h3>
           </div>
           <ExportGuide />
         </div>

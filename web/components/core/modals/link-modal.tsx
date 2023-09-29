@@ -8,6 +8,9 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Input, PrimaryButton, SecondaryButton } from "components/ui";
 // types
 import type { IIssueLink, linkDetails, ModuleLink } from "types";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   isOpen: boolean;
@@ -31,6 +34,7 @@ export const LinkModal: React.FC<Props> = ({
   status,
   data,
 }) => {
+  const store: RootStore = useMobxStore();
   const {
     register,
     formState: { errors, isSubmitting },
@@ -103,7 +107,9 @@ export const LinkModal: React.FC<Props> = ({
                         as="h3"
                         className="text-lg font-medium leading-6 text-custom-text-100"
                       >
-                        {status ? "Update Link" : "Add Link"}
+                        {status
+                          ? store.locale.localized("Update Link")
+                          : store.locale.localized("Add Link")}
                       </Dialog.Title>
                       <div className="mt-2 space-y-3">
                         <div>
@@ -117,17 +123,17 @@ export const LinkModal: React.FC<Props> = ({
                             error={errors.url}
                             register={register}
                             validations={{
-                              required: "URL is required",
+                              required: store.locale.localized("URL is required"),
                             }}
                           />
                         </div>
                         <div>
                           <Input
                             id="title"
-                            label="Title (optional)"
+                            label={store.locale.localized("Title (optional)")}
                             name="title"
                             type="text"
-                            placeholder="Enter title"
+                            placeholder={store.locale.localized("Enter title")}
                             autoComplete="off"
                             error={errors.title}
                             register={register}
@@ -137,15 +143,17 @@ export const LinkModal: React.FC<Props> = ({
                     </div>
                   </div>
                   <div className="mt-5 flex justify-end gap-2">
-                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
+                    <SecondaryButton onClick={onClose}>
+                      {store.locale.localized("Cancel")}
+                    </SecondaryButton>
                     <PrimaryButton type="submit" loading={isSubmitting}>
                       {status
                         ? isSubmitting
-                          ? "Updating Link..."
-                          : "Update Link"
+                          ? store.locale.localized("Updating Link...")
+                          : store.locale.localized("Update Link")
                         : isSubmitting
-                        ? "Adding Link..."
-                        : "Add Link"}
+                        ? store.locale.localized("Adding Link...")
+                        : store.locale.localized("Add Link")}
                     </PrimaryButton>
                   </div>
                 </form>

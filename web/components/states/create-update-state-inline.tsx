@@ -22,6 +22,8 @@ import type { ICurrentUserResponse, IState, IStateResponse } from "types";
 import { STATES_LIST } from "constants/fetch-keys";
 // constants
 import { GROUP_CHOICES } from "constants/project";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   data: IState | null;
@@ -46,6 +48,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
   user,
   groupLength,
 }) => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -109,22 +112,24 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
 
           setToastAlert({
             type: "success",
-            title: "Success!",
-            message: "State created successfully.",
+            title: store.locale.localized("Success!"),
+            message: store.locale.localized("State created successfully."),
           });
         })
         .catch((err) => {
           if (err.status === 400)
             setToastAlert({
               type: "error",
-              title: "Error!",
-              message: "State with that name already exists. Please try again with another name.",
+              title: store.locale.localized("Error!"),
+              message: store.locale.localized(
+                "State with that name already exists. Please try again with another name."
+              ),
             });
           else
             setToastAlert({
               type: "error",
-              title: "Error!",
-              message: "State could not be created. Please try again.",
+              title: store.locale.localized("Error!"),
+              message: store.locale.localized("State could not be created. Please try again."),
             });
         });
     } else {
@@ -144,23 +149,24 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
 
           setToastAlert({
             type: "success",
-            title: "Success!",
-            message: "State updated successfully.",
+            title: store.locale.localized("Success!"),
+            message: store.locale.localized("State updated successfully."),
           });
         })
         .catch((err) => {
           if (err.status === 400)
             setToastAlert({
               type: "error",
-              title: "Error!",
-              message:
-                "Another state exists with the same name. Please try again with another name.",
+              title: store.locale.localized("Error!"),
+              message: store.locale.localized(
+                "Another state exists with the same name. Please try again with another name."
+              ),
             });
           else
             setToastAlert({
               type: "error",
-              title: "Error!",
-              message: "State could not be updated. Please try again.",
+              title: store.locale.localized("Error!"),
+              message: store.locale.localized("State could not be updated. Please try again."),
             });
         });
     }
@@ -218,7 +224,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
         name="name"
         register={register}
         autoFocus
-        placeholder="Name"
+        placeholder={store.locale.localized("Name")}
         validations={{
           required: true,
         }}
@@ -231,7 +237,11 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
           control={control}
           render={({ field: { value, onChange } }) => (
             <Tooltip
-              tooltipContent={groupLength === 1 ? "Cannot have an empty group." : "Choose State"}
+              tooltipContent={
+                groupLength === 1
+                  ? store.locale.localized("Cannot have an empty group.")
+                  : store.locale.localized("Choose State")
+              }
             >
               <div>
                 <CustomSelect
@@ -241,7 +251,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
                   label={
                     Object.keys(GROUP_CHOICES).find((k) => k === value.toString())
                       ? GROUP_CHOICES[value.toString() as keyof typeof GROUP_CHOICES]
-                      : "Select group"
+                      : store.locale.localized("Select group")
                   }
                   input
                 >
@@ -260,13 +270,19 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
         id="description"
         name="description"
         register={register}
-        placeholder="Description"
+        placeholder={store.locale.localized("Description")}
         error={errors.description}
         autoComplete="off"
       />
-      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+      <SecondaryButton onClick={handleClose}>{store.locale.localized("Cancel")}</SecondaryButton>
       <PrimaryButton type="submit" loading={isSubmitting}>
-        {isSubmitting ? (data ? "Updating..." : "Creating...") : data ? "Update" : "Create"}
+        {isSubmitting
+          ? data
+            ? store.locale.localized("Updating...")
+            : store.locale.localized("Creating...")
+          : data
+          ? store.locale.localized("Update")
+          : store.locale.localized("Create")}
       </PrimaryButton>
     </form>
   );

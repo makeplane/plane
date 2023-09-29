@@ -27,12 +27,16 @@ import { IImporterService } from "types";
 import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
 // constants
 import { IMPORTERS_EXPORTERS_LIST } from "constants/workspace";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 const IntegrationGuide = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [deleteImportModal, setDeleteImportModal] = useState(false);
   const [importToDelete, setImportToDelete] = useState<IImporterService | null>(null);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, provider } = router.query;
 
@@ -113,7 +117,7 @@ const IntegrationGuide = () => {
             <div>
               <div className="flex items-center pt-7 pb-3.5 border-b border-custom-border-200">
                 <h3 className="flex gap-2 text-xl font-medium">
-                  Previous Imports
+                  {store.locale.localized("Previous Imports")}
                   <button
                     type="button"
                     className="flex flex-shrink-0 items-center gap-1 rounded bg-custom-background-80 py-1 px-1.5 text-xs outline-none"
@@ -125,7 +129,9 @@ const IntegrationGuide = () => {
                     }}
                   >
                     <ArrowPathIcon className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />{" "}
-                    {refreshing ? "Refreshing..." : "Refresh status"}
+                    {refreshing
+                      ? store.locale.localized("Refreshing...")
+                      : store.locale.localized("Refresh status")}
                   </button>
                 </h3>
               </div>
@@ -146,7 +152,7 @@ const IntegrationGuide = () => {
                     </div>
                   ) : (
                     <p className="text-sm text-custom-text-200 px-4 py-6">
-                      No previous imports available.
+                      {store.locale.localized("No previous imports available.")}
                     </p>
                   )
                 ) : (

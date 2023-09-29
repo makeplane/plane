@@ -4,6 +4,9 @@ import React, { useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { SecondaryButton, PrimaryButton } from "components/ui";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   isOpen: boolean;
@@ -13,6 +16,7 @@ type Props = {
 };
 
 export const ConfirmIssueDiscard: React.FC<Props> = (props) => {
+  const store: RootStore = useMobxStore();
   const { isOpen, handleClose, onDiscard, onConfirm } = props;
 
   const [isLoading, setIsLoading] = useState(false);
@@ -62,11 +66,11 @@ export const ConfirmIssueDiscard: React.FC<Props> = (props) => {
                         as="h3"
                         className="text-lg font-medium leading-6 text-custom-text-100"
                       >
-                        Draft Issue
+                        {store.locale.localized("Draft Issue")}
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
-                          Would you like to save this issue in drafts?
+                          {store.locale.localized("Would you like to save this issue in drafts?")}
                         </p>
                       </div>
                     </div>
@@ -74,12 +78,18 @@ export const ConfirmIssueDiscard: React.FC<Props> = (props) => {
                 </div>
                 <div className="flex justify-between gap-2 p-4 sm:px-6">
                   <div>
-                    <SecondaryButton onClick={onDiscard}>Discard</SecondaryButton>
+                    <SecondaryButton onClick={onDiscard}>
+                      {store.locale.localized("Discard")}
+                    </SecondaryButton>
                   </div>
                   <div className="space-x-2">
-                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
+                    <SecondaryButton onClick={onClose}>
+                      {store.locale.localized("Cancel")}
+                    </SecondaryButton>
                     <PrimaryButton onClick={handleDeletion} loading={isLoading}>
-                      {isLoading ? "Saving..." : "Save Draft"}
+                      {isLoading
+                        ? store.locale.localized("Saving...")
+                        : store.locale.localized("Save Draft")}
                     </PrimaryButton>
                   </div>
                 </div>

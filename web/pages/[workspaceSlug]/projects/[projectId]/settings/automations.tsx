@@ -24,8 +24,12 @@ import { IProject } from "types";
 import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 const AutomationsSettings: NextPage = () => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -56,8 +60,8 @@ const AutomationsSettings: NextPage = () => {
       .catch(() => {
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Something went wrong. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized("Something went wrong. Please try again."),
         });
       });
   };
@@ -67,11 +71,11 @@ const AutomationsSettings: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
+            title={`${truncateText(projectDetails?.name ?? store.locale.localized("Project"), 32)}`}
             link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
             linkTruncate
           />
-          <BreadcrumbItem title="Automations Settings" unshrinkTitle />
+          <BreadcrumbItem title={store.locale.localized("Automations Settings")} unshrinkTitle />
         </Breadcrumbs>
       }
     >
@@ -81,7 +85,7 @@ const AutomationsSettings: NextPage = () => {
         </div>
         <section className="pr-9 py-8 w-full overflow-y-auto">
           <div className="flex items-center py-3.5 border-b border-custom-border-200">
-            <h3 className="text-xl font-medium">Automations</h3>
+            <h3 className="text-xl font-medium">{store.locale.localized("Automations")}</h3>
           </div>
           <AutoArchiveAutomation projectDetails={projectDetails} handleChange={handleChange} />
           <AutoCloseAutomation projectDetails={projectDetails} handleChange={handleChange} />

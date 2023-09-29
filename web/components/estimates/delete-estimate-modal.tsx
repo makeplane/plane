@@ -9,6 +9,9 @@ import { IEstimate } from "types";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { SecondaryButton, DangerButton } from "components/ui";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   isOpen: boolean;
@@ -23,6 +26,7 @@ export const DeleteEstimateModal: React.FC<Props> = ({
   data,
   handleDelete,
 }) => {
+  const store: RootStore = useMobxStore();
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   useEffect(() => {
@@ -70,21 +74,28 @@ export const DeleteEstimateModal: React.FC<Props> = ({
                       />
                     </span>
                     <span className="flex items-center justify-start">
-                      <h3 className="text-xl font-medium 2xl:text-2xl">Delete Estimate</h3>
+                      <h3 className="text-xl font-medium 2xl:text-2xl">
+                        {store.locale.localized("Delete Estimate")}
+                      </h3>
                     </span>
                   </div>
                   <span>
                     <p className="break-words text-sm leading-7 text-custom-text-200">
-                      Are you sure you want to delete estimate-{" "}
+                      {store.locale.localized("Are you sure you want to delete estimate")}
+                      {"- "}
                       <span className="break-words font-medium text-custom-text-100">
                         {data.name}
                       </span>
-                      {""}? All of the data related to the estiamte will be permanently removed.
-                      This action cannot be undone.
+                      {"? "}
+                      {store.locale.localized(
+                        "All of the data related to the estimate will be permanently removed. This action cannot be undone."
+                      )}
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
-                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
+                    <SecondaryButton onClick={onClose}>
+                      {store.locale.localized("Cancel")}
+                    </SecondaryButton>
                     <DangerButton
                       onClick={() => {
                         setIsDeleteLoading(true);
@@ -92,7 +103,9 @@ export const DeleteEstimateModal: React.FC<Props> = ({
                       }}
                       loading={isDeleteLoading}
                     >
-                      {isDeleteLoading ? "Deleting..." : "Delete Estimate"}
+                      {isDeleteLoading
+                        ? store.locale.localized("Deleting...")
+                        : store.locale.localized("Delete Estimate")}
                     </DangerButton>
                   </div>
                 </div>

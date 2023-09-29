@@ -36,6 +36,8 @@ import { copyTextToClipboard } from "helpers/string.helper";
 import { IIssue, IWorkspaceSearchResults } from "types";
 // fetch-keys
 import { INBOX_LIST, ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   deleteIssue: () => void;
@@ -44,7 +46,10 @@ type Props = {
 };
 
 export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPaletteOpen }) => {
-  const [placeholder, setPlaceholder] = useState("Type a command or search...");
+  const store: RootStore = useMobxStore();
+  const [placeholder, setPlaceholder] = useState(
+    store.locale.localized("Type a command or search...")
+  );
 
   const [resultsCount, setResultsCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -155,13 +160,13 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
       .then(() => {
         setToastAlert({
           type: "success",
-          title: "Copied to clipboard",
+          title: store.locale.localized("Copied to clipboard!"),
         });
       })
       .catch(() => {
         setToastAlert({
           type: "error",
-          title: "Some error occurred",
+          title: store.locale.localized("Some error occurred"),
         });
       });
   }, [router, setToastAlert]);
@@ -261,7 +266,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                   if (e.key === "Escape" || (e.key === "Backspace" && !searchTerm)) {
                     e.preventDefault();
                     setPages((pages) => pages.slice(0, -1));
-                    setPlaceholder("Type a command or search...");
+                    setPlaceholder(store.locale.localized("Type a command or search..."));
                   }
                 }}
               >
@@ -284,7 +289,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                           onClick={() => setIsWorkspaceLevel((prevData) => !prevData)}
                           className="flex-shrink-0"
                         >
-                          Workspace Level
+                          {store.locale.localized("Workspace Level")}
                         </button>
                         <ToggleSwitch
                           value={isWorkspaceLevel}
@@ -314,13 +319,16 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                 <Command.List className="max-h-96 overflow-scroll p-2">
                   {searchTerm !== "" && (
                     <h5 className="text-xs text-custom-text-100 mx-[3px] my-4">
-                      Search results for{" "}
+                      {store.locale.localized("Search results for")}{" "}
                       <span className="font-medium">
                         {'"'}
                         {searchTerm}
                         {'"'}
                       </span>{" "}
-                      in {!projectId || isWorkspaceLevel ? "workspace" : "project"}:
+                      {!projectId || isWorkspaceLevel
+                        ? store.locale.localized("in workspace")
+                        : store.locale.localized("in project")}
+                      {":"}
                     </h5>
                   )}
 
@@ -328,7 +336,9 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                     resultsCount === 0 &&
                     searchTerm !== "" &&
                     debouncedSearchTerm !== "" && (
-                      <div className="my-4 text-center text-custom-text-200">No results found.</div>
+                      <div className="my-4 text-center text-custom-text-200">
+                        {store.locale.localized("No results found")}
+                      </div>
                     )}
 
                   {(isLoading || isSearching) && (
@@ -376,11 +386,11 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                   {!page && (
                     <>
                       {issueId && (
-                        <Command.Group heading="Issue actions">
+                        <Command.Group heading={store.locale.localized("Issue actions")}>
                           <Command.Item
                             onSelect={() => {
                               setIsPaletteOpen(false);
-                              setPlaceholder("Change state...");
+                              setPlaceholder(store.locale.localized("Change state..."));
                               setSearchTerm("");
                               setPages([...pages, "change-issue-state"]);
                             }}
@@ -388,12 +398,12 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                           >
                             <div className="flex items-center gap-2 text-custom-text-200">
                               <Icon iconName="grid_view" />
-                              Change state...
+                              {store.locale.localized("Change state...")}
                             </div>
                           </Command.Item>
                           <Command.Item
                             onSelect={() => {
-                              setPlaceholder("Change priority...");
+                              setPlaceholder(store.locale.localized("Change priority..."));
                               setSearchTerm("");
                               setPages([...pages, "change-issue-priority"]);
                             }}
@@ -401,12 +411,12 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                           >
                             <div className="flex items-center gap-2 text-custom-text-200">
                               <Icon iconName="bar_chart" />
-                              Change priority...
+                              {store.locale.localized("Change priority...")}
                             </div>
                           </Command.Item>
                           <Command.Item
                             onSelect={() => {
-                              setPlaceholder("Assign to...");
+                              setPlaceholder(store.locale.localized("Assign to..."));
                               setSearchTerm("");
                               setPages([...pages, "change-issue-assignee"]);
                             }}
@@ -414,7 +424,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                           >
                             <div className="flex items-center gap-2 text-custom-text-200">
                               <Icon iconName="group" />
-                              Assign to...
+                              {store.locale.localized("Assign to...")}
                             </div>
                           </Command.Item>
                           <Command.Item
@@ -428,12 +438,12 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                               {issueDetails?.assignees.includes(user.id) ? (
                                 <>
                                   <Icon iconName="person_remove" />
-                                  Un-assign from me
+                                  {store.locale.localized("Un-assign from me")}
                                 </>
                               ) : (
                                 <>
                                   <Icon iconName="person_add" />
-                                  Assign to me
+                                  {store.locale.localized("Assign to me")}
                                 </>
                               )}
                             </div>
@@ -441,7 +451,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                           <Command.Item onSelect={deleteIssue} className="focus:outline-none">
                             <div className="flex items-center gap-2 text-custom-text-200">
                               <Icon iconName="delete" />
-                              Delete issue
+                              {store.locale.localized("Delete issue")}
                             </div>
                           </Command.Item>
                           <Command.Item
@@ -453,12 +463,12 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                           >
                             <div className="flex items-center gap-2 text-custom-text-200">
                               <Icon iconName="link" />
-                              Copy issue URL
+                              {store.locale.localized("Copy issue URL")}
                             </div>
                           </Command.Item>
                         </Command.Group>
                       )}
-                      <Command.Group heading="Issue">
+                      <Command.Group heading={store.locale.localized("Issue")}>
                         <Command.Item
                           onSelect={() => {
                             setIsPaletteOpen(false);
@@ -471,14 +481,14 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         >
                           <div className="flex items-center gap-2 text-custom-text-200">
                             <Icon iconName="stack" />
-                            Create new issue
+                            {store.locale.localized("Create new issue")}
                           </div>
                           <kbd>C</kbd>
                         </Command.Item>
                       </Command.Group>
 
                       {workspaceSlug && (
-                        <Command.Group heading="Project">
+                        <Command.Group heading={store.locale.localized("Project")}>
                           <Command.Item
                             onSelect={() => {
                               setIsPaletteOpen(false);
@@ -491,7 +501,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                           >
                             <div className="flex items-center gap-2 text-custom-text-200">
                               <Icon iconName="create_new_folder" />
-                              Create new project
+                              {store.locale.localized("Create new project")}
                             </div>
                             <kbd>P</kbd>
                           </Command.Item>
@@ -500,7 +510,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
 
                       {projectId && (
                         <>
-                          <Command.Group heading="Cycle">
+                          <Command.Group heading={store.locale.localized("Cycle")}>
                             <Command.Item
                               onSelect={() => {
                                 setIsPaletteOpen(false);
@@ -513,12 +523,12 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                             >
                               <div className="flex items-center gap-2 text-custom-text-200">
                                 <Icon iconName="contrast" />
-                                Create new cycle
+                                {store.locale.localized("Create new cycle")}
                               </div>
                               <kbd>Q</kbd>
                             </Command.Item>
                           </Command.Group>
-                          <Command.Group heading="Module">
+                          <Command.Group heading={store.locale.localized("Module")}>
                             <Command.Item
                               onSelect={() => {
                                 setIsPaletteOpen(false);
@@ -531,12 +541,12 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                             >
                               <div className="flex items-center gap-2 text-custom-text-200">
                                 <Icon iconName="dataset" />
-                                Create new module
+                                {store.locale.localized("Create new module")}
                               </div>
                               <kbd>M</kbd>
                             </Command.Item>
                           </Command.Group>
-                          <Command.Group heading="View">
+                          <Command.Group heading={store.locale.localized("View")}>
                             <Command.Item
                               onSelect={() => {
                                 setIsPaletteOpen(false);
@@ -549,12 +559,12 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                             >
                               <div className="flex items-center gap-2 text-custom-text-200">
                                 <Icon iconName="photo_filter" />
-                                Create new view
+                                {store.locale.localized("Create new view")}
                               </div>
                               <kbd>V</kbd>
                             </Command.Item>
                           </Command.Group>
-                          <Command.Group heading="Page">
+                          <Command.Group heading={store.locale.localized("Page")}>
                             <Command.Item
                               onSelect={() => {
                                 setIsPaletteOpen(false);
@@ -567,13 +577,13 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                             >
                               <div className="flex items-center gap-2 text-custom-text-200">
                                 <Icon iconName="article" />
-                                Create new page
+                                {store.locale.localized("Create new page")}
                               </div>
                               <kbd>D</kbd>
                             </Command.Item>
                           </Command.Group>
                           {projectDetails && projectDetails.inbox_view && (
-                            <Command.Group heading="Inbox">
+                            <Command.Group heading={store.locale.localized("Inbox")}>
                               <Command.Item
                                 onSelect={() => {
                                   setIsPaletteOpen(false);
@@ -585,7 +595,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                               >
                                 <div className="flex items-center gap-2 text-custom-text-200">
                                   <InboxIcon className="h-4 w-4" color="#6b7280" />
-                                  Open inbox
+                                  {store.locale.localized("Open inbox")}
                                 </div>
                               </Command.Item>
                             </Command.Group>
@@ -593,10 +603,10 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         </>
                       )}
 
-                      <Command.Group heading="Workspace Settings">
+                      <Command.Group heading={store.locale.localized("Workspace Settings")}>
                         <Command.Item
                           onSelect={() => {
-                            setPlaceholder("Search workspace settings...");
+                            setPlaceholder(store.locale.localized("Search workspace settings..."));
                             setSearchTerm("");
                             setPages([...pages, "settings"]);
                           }}
@@ -604,20 +614,20 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         >
                           <div className="flex items-center gap-2 text-custom-text-200">
                             <Icon iconName="settings" />
-                            Search settings...
+                            {store.locale.localized("Search settings...")}
                           </div>
                         </Command.Item>
                       </Command.Group>
-                      <Command.Group heading="Account">
+                      <Command.Group heading={store.locale.localized("Account")}>
                         <Command.Item onSelect={createNewWorkspace} className="focus:outline-none">
                           <div className="flex items-center gap-2 text-custom-text-200">
                             <Icon iconName="create_new_folder" />
-                            Create new workspace
+                            {store.locale.localized("Create new workspace")}
                           </div>
                         </Command.Item>
                         <Command.Item
                           onSelect={() => {
-                            setPlaceholder("Change interface theme...");
+                            setPlaceholder(store.locale.localized("Change interface theme..."));
                             setSearchTerm("");
                             setPages([...pages, "change-interface-theme"]);
                           }}
@@ -625,11 +635,11 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         >
                           <div className="flex items-center gap-2 text-custom-text-200">
                             <Icon iconName="settings" />
-                            Change interface theme...
+                            {store.locale.localized("Change interface theme...")}
                           </div>
                         </Command.Item>
                       </Command.Group>
-                      <Command.Group heading="Help">
+                      <Command.Group heading={store.locale.localized("Help")}>
                         <Command.Item
                           onSelect={() => {
                             setIsPaletteOpen(false);
@@ -642,7 +652,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         >
                           <div className="flex items-center gap-2 text-custom-text-200">
                             <Icon iconName="rocket_launch" />
-                            Open keyboard shortcuts
+                            {store.locale.localized("Open keyboard shortcuts")}
                           </div>
                         </Command.Item>
                         <Command.Item
@@ -654,7 +664,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         >
                           <div className="flex items-center gap-2 text-custom-text-200">
                             <Icon iconName="article" />
-                            Open Plane documentation
+                            {store.locale.localized("Open Plane documentation")}
                           </div>
                         </Command.Item>
                         <Command.Item
@@ -666,7 +676,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         >
                           <div className="flex items-center gap-2 text-custom-text-200">
                             <DiscordIcon className="h-4 w-4" color="rgb(var(--color-text-200))" />
-                            Join our Discord
+                            {store.locale.localized("Join our Discord")}
                           </div>
                         </Command.Item>
                         <Command.Item
@@ -681,7 +691,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         >
                           <div className="flex items-center gap-2 text-custom-text-200">
                             <GithubIcon className="h-4 w-4" color="rgb(var(--color-text-200))" />
-                            Report a bug
+                            {store.locale.localized("Report a bug")}
                           </div>
                         </Command.Item>
                         <Command.Item
@@ -693,7 +703,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         >
                           <div className="flex items-center gap-2 text-custom-text-200">
                             <Icon iconName="sms" />
-                            Chat with us
+                            {store.locale.localized("Chat with us")}
                           </div>
                         </Command.Item>
                       </Command.Group>
@@ -708,7 +718,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                       >
                         <div className="flex items-center gap-2 text-custom-text-200">
                           <SettingIcon className="h-4 w-4 text-custom-text-200" />
-                          General
+                          {store.locale.localized("General")}
                         </div>
                       </Command.Item>
                       <Command.Item
@@ -717,7 +727,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                       >
                         <div className="flex items-center gap-2 text-custom-text-200">
                           <SettingIcon className="h-4 w-4 text-custom-text-200" />
-                          Members
+                          {store.locale.localized("Members")}
                         </div>
                       </Command.Item>
                       <Command.Item
@@ -726,7 +736,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                       >
                         <div className="flex items-center gap-2 text-custom-text-200">
                           <SettingIcon className="h-4 w-4 text-custom-text-200" />
-                          Billing and Plans
+                          {store.locale.localized("Billing and Plans")}
                         </div>
                       </Command.Item>
                       <Command.Item
@@ -735,7 +745,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                       >
                         <div className="flex items-center gap-2 text-custom-text-200">
                           <SettingIcon className="h-4 w-4 text-custom-text-200" />
-                          Integrations
+                          {store.locale.localized("Integrations")}
                         </div>
                       </Command.Item>
                       <Command.Item
@@ -744,7 +754,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                       >
                         <div className="flex items-center gap-2 text-custom-text-200">
                           <SettingIcon className="h-4 w-4 text-custom-text-200" />
-                          Import
+                          {store.locale.localized("Import")}
                         </div>
                       </Command.Item>
                       <Command.Item
@@ -753,7 +763,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                       >
                         <div className="flex items-center gap-2 text-custom-text-200">
                           <SettingIcon className="h-4 w-4 text-custom-text-200" />
-                          Export
+                          {store.locale.localized("Export")}
                         </div>
                       </Command.Item>
                     </>

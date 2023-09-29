@@ -6,6 +6,9 @@ import { useForm } from "react-hook-form";
 import { Input, Loader, PrimaryButton, SecondaryButton } from "components/ui";
 // types
 import { IPage } from "types";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   handleFormSubmit: (values: IPage) => Promise<void>;
@@ -20,6 +23,7 @@ const defaultValues = {
 };
 
 export const PageForm: React.FC<Props> = ({ handleFormSubmit, handleClose, status, data }) => {
+  const store: RootStore = useMobxStore();
   const {
     register,
     formState: { errors, isSubmitting },
@@ -48,7 +52,7 @@ export const PageForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
     <form onSubmit={handleSubmit(handleCreateUpdatePage)}>
       <div className="space-y-5">
         <h3 className="text-lg font-medium leading-6 text-custom-text-100">
-          {status ? "Update" : "Create"} Page
+          {status ? store.locale.localized("Update Page") : store.locale.localized("Create Page")}
         </h3>
         <div className="space-y-3">
           <div>
@@ -56,16 +60,16 @@ export const PageForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
               id="name"
               name="name"
               type="name"
-              placeholder="Title"
+              placeholder={store.locale.localized("Title")}
               className="resize-none text-xl"
               autoComplete="off"
               error={errors.name}
               register={register}
               validations={{
-                required: "Title is required",
+                required: store.locale.localized("Title is required"),
                 maxLength: {
                   value: 255,
-                  message: "Title should be less than 255 characters",
+                  message: store.locale.localized("Title should be less than 255 characters"),
                 },
               }}
             />
@@ -73,15 +77,15 @@ export const PageForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+        <SecondaryButton onClick={handleClose}>{store.locale.localized("Cancel")}</SecondaryButton>
         <PrimaryButton type="submit" loading={isSubmitting}>
           {status
             ? isSubmitting
-              ? "Updating Page..."
-              : "Update Page"
+              ? store.locale.localized("Updating Page...")
+              : store.locale.localized("Update Page")
             : isSubmitting
-            ? "Creating Page..."
-            : "Create Page"}
+            ? store.locale.localized("Creating Page...")
+            : store.locale.localized("Create Page")}
         </PrimaryButton>
       </div>
     </form>

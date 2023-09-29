@@ -38,6 +38,9 @@ import { ICurrentUserResponse, IProject } from "types";
 import { PROJECTS_LIST } from "constants/fetch-keys";
 // constants
 import { NETWORK_CHOICES } from "constants/project";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   isOpen: boolean;
@@ -85,6 +88,7 @@ export const CreateProjectModal: React.FC<Props> = ({
 
   const { setToastAlert } = useToast();
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -127,8 +131,10 @@ export const CreateProjectModal: React.FC<Props> = ({
       .catch(() =>
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Couldn't remove the project from favorites. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized(
+            "Couldn't remove the project from favorites. Please try again."
+          ),
         })
       );
   };
@@ -151,8 +157,8 @@ export const CreateProjectModal: React.FC<Props> = ({
         );
         setToastAlert({
           type: "success",
-          title: "Success!",
-          message: "Project created successfully.",
+          title: store.locale.localized("Success!"),
+          message: store.locale.localized("Project created successfully."),
         });
         if (setToFavorite) {
           handleAddToFavorites(res.id);
@@ -163,7 +169,7 @@ export const CreateProjectModal: React.FC<Props> = ({
         Object.keys(err.data).map((key) =>
           setToastAlert({
             type: "error",
-            title: "Error!",
+            title: store.locale.localized("Error!"),
             message: err.data[key],
           })
         );
@@ -288,15 +294,17 @@ export const CreateProjectModal: React.FC<Props> = ({
                           id="name"
                           name="name"
                           type="name"
-                          placeholder="Project Title"
+                          placeholder={store.locale.localized("Project Title")}
                           onChange={changeIdentifierOnNameChange}
                           error={errors.name}
                           register={register}
                           validations={{
-                            required: "Title is required",
+                            required: store.locale.localized("Title is required"),
                             maxLength: {
                               value: 255,
-                              message: "Title should be less than 255 characters",
+                              message: store.locale.localized(
+                                "Title should be less than 255 characters"
+                              ),
                             },
                           }}
                           autoComplete="off"
@@ -309,22 +317,26 @@ export const CreateProjectModal: React.FC<Props> = ({
                           name="identifier"
                           type="text"
                           className="text-sm"
-                          placeholder="Identifier"
+                          placeholder={store.locale.localized("Identifier")}
                           error={errors.identifier}
                           register={register}
                           onChange={handleIdentifierChange}
                           validations={{
-                            required: "Identifier is required",
+                            required: store.locale.localized("Identifier is required"),
                             validate: (value) =>
                               /^[A-Z0-9]+$/.test(value.toUpperCase()) ||
-                              "Identifier must be in uppercase.",
+                              store.locale.localized("Identifier must be in uppercase."),
                             minLength: {
                               value: 1,
-                              message: "Identifier must at least be of 1 character",
+                              message: store.locale.localized(
+                                "Identifier must at least be of 1 character"
+                              ),
                             },
                             maxLength: {
                               value: 12,
-                              message: "Identifier must at most be of 12 characters",
+                              message: store.locale.localized(
+                                "Identifier must at most be of 12 characters"
+                              ),
                             },
                           }}
                         />
@@ -334,7 +346,7 @@ export const CreateProjectModal: React.FC<Props> = ({
                           id="description"
                           name="description"
                           className="text-sm !h-24"
-                          placeholder="Description..."
+                          placeholder={store.locale.localized("Description...")}
                           error={errors.description}
                           register={register}
                         />
@@ -359,7 +371,9 @@ export const CreateProjectModal: React.FC<Props> = ({
                                       {currentNetwork.label}
                                     </>
                                   ) : (
-                                    <span className="text-custom-text-400">Select Network</span>
+                                    <span className="text-custom-text-400">
+                                      {store.locale.localized("Select Network")}
+                                    </span>
                                   )}
                                 </div>
                               }
@@ -413,7 +427,9 @@ export const CreateProjectModal: React.FC<Props> = ({
                                           iconName="group"
                                           className="!text-sm text-custom-text-400"
                                         />
-                                        <span className="text-custom-text-400">Lead</span>
+                                        <span className="text-custom-text-400">
+                                          {store.locale.localized("Lead")}
+                                        </span>
                                       </>
                                     )}
                                   </div>
@@ -429,9 +445,13 @@ export const CreateProjectModal: React.FC<Props> = ({
                   </div>
 
                   <div className="flex justify-end gap-2 pt-5">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                    <SecondaryButton onClick={handleClose}>
+                      {store.locale.localized("Cancel")}
+                    </SecondaryButton>
                     <PrimaryButton type="submit" size="sm" loading={isSubmitting}>
-                      {isSubmitting ? "Creating..." : "Create Project"}
+                      {isSubmitting
+                        ? store.locale.localized("Creating...")
+                        : store.locale.localized("Create Project")}
                     </PrimaryButton>
                   </div>
                 </form>

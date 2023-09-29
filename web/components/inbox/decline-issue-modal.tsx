@@ -8,6 +8,9 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { SecondaryButton, DangerButton } from "components/ui";
 // types
 import type { IInboxIssue } from "types";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   isOpen: boolean;
@@ -17,6 +20,7 @@ type Props = {
 };
 
 export const DeclineIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, onSubmit }) => {
+  const store: RootStore = useMobxStore();
   const [isDeclining, setIsDeclining] = useState(false);
 
   const onClose = () => {
@@ -66,22 +70,29 @@ export const DeclineIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, 
                       />
                     </span>
                     <span className="flex items-center justify-start">
-                      <h3 className="text-xl font-medium 2xl:text-2xl">Decline Issue</h3>
+                      <h3 className="text-xl font-medium 2xl:text-2xl">
+                        {store.locale.localized("Decline Issue")}
+                      </h3>
                     </span>
                   </div>
                   <span>
                     <p className="text-sm text-custom-text-200">
-                      Are you sure you want to decline issue{" "}
+                      {store.locale.localized("Are you sure you want to decline issue")}{" "}
                       <span className="break-words font-medium text-custom-text-100">
                         {data?.project_detail?.identifier}-{data?.sequence_id}
                       </span>
-                      {""}? This action cannot be undone.
+                      {"? "}
+                      {store.locale.localized("This action cannot be undone.")}
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
-                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
+                    <SecondaryButton onClick={onClose}>
+                      {store.locale.localized("Cancel")}
+                    </SecondaryButton>
                     <DangerButton onClick={handleDecline} loading={isDeclining}>
-                      {isDeclining ? "Declining..." : "Decline Issue"}
+                      {isDeclining
+                        ? store.locale.localized("Declining...")
+                        : store.locale.localized("Decline Issue")}
                     </DangerButton>
                   </div>
                 </div>

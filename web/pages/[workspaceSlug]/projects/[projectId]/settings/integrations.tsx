@@ -25,8 +25,12 @@ import type { NextPage } from "next";
 import { PROJECT_DETAILS, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 const ProjectIntegrations: NextPage = () => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -54,7 +58,7 @@ const ProjectIntegrations: NextPage = () => {
             link={`/${workspaceSlug}/projects/${projectId}/issues`}
             linkTruncate
           />
-          <BreadcrumbItem title="Integrations Settings" unshrinkTitle />
+          <BreadcrumbItem title={store.locale.localized("Integrations Settings")} unshrinkTitle />
         </Breadcrumbs>
       }
     >
@@ -64,7 +68,7 @@ const ProjectIntegrations: NextPage = () => {
         </div>
         <div className="pr-9 py-8 gap-10 w-full overflow-y-auto">
           <div className="flex items-center py-3.5 border-b border-custom-border-200">
-            <h3 className="text-xl font-medium">Integrations</h3>
+            <h3 className="text-xl font-medium">{store.locale.localized("Integrations")}</h3>
           </div>
           {workspaceIntegrations ? (
             workspaceIntegrations.length > 0 ? (
@@ -78,11 +82,13 @@ const ProjectIntegrations: NextPage = () => {
               </div>
             ) : (
               <EmptyState
-                title="You haven't configured integrations"
-                description="Configure GitHub and other integrations to sync your project issues."
+                title={store.locale.localized("You haven't configured integrations")}
+                description={store.locale.localized(
+                  "Configure GitHub and other integrations to sync your project issues."
+                )}
                 image={emptyIntegration}
                 primaryButton={{
-                  text: "Configure now",
+                  text: store.locale.localized("Configure now"),
                   onClick: () => router.push(`/${workspaceSlug}/settings/integrations`),
                 }}
               />

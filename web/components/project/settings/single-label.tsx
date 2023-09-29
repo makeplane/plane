@@ -12,6 +12,8 @@ import { CustomMenu, Input, PrimaryButton, SecondaryButton } from "components/ui
 import { PencilIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssueLabels } from "types";
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   label: IIssueLabels;
@@ -26,6 +28,7 @@ const defaultValues: Partial<IIssueLabels> = {
 };
 
 const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLabelDelete }) => {
+  const store: RootStore = useMobxStore();
   const [newLabelForm, setNewLabelForm] = useState(false);
 
   const {
@@ -53,9 +56,11 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
             </div>
             <CustomMenu ellipsis>
               {/* <CustomMenu.MenuItem>Convert to group</CustomMenu.MenuItem> */}
-              <CustomMenu.MenuItem onClick={() => editLabel(label)}>Edit</CustomMenu.MenuItem>
+              <CustomMenu.MenuItem onClick={() => editLabel(label)}>
+                {store.locale.localized("Edit")}
+              </CustomMenu.MenuItem>
               <CustomMenu.MenuItem onClick={() => handleLabelDelete(label.id)}>
-                Delete
+                {store.locale.localized("Delete")}
               </CustomMenu.MenuItem>
             </CustomMenu>
           </div>
@@ -111,28 +116,32 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
                 id="labelName"
                 name="name"
                 register={register}
-                placeholder="Label title"
+                placeholder={store.locale.localized("Label title")}
                 validations={{
-                  required: "Label title is required",
+                  required: store.locale.localized("Label title is required."),
                 }}
                 error={errors.name}
               />
             </div>
-            <SecondaryButton onClick={() => setNewLabelForm(false)}>Cancel</SecondaryButton>
-            <PrimaryButton loading={isSubmitting}>{isSubmitting ? "Adding" : "Add"}</PrimaryButton>
+            <SecondaryButton onClick={() => setNewLabelForm(false)}>
+              {store.locale.localized("Cancel")}
+            </SecondaryButton>
+            <PrimaryButton loading={isSubmitting}>
+              {isSubmitting ? store.locale.localized("Adding...") : store.locale.localized("Add")}
+            </PrimaryButton>
           </div>
         </div>
       ) : (
         <div className="rounded-md bg-custom-background-80 p-4 text-custom-text-100">
           <h3 className="flex items-center gap-2 font-medium leading-5">
             <RectangleGroupIcon className="h-5 w-5" />
-            This is the label group title
+            {store.locale.localized("This is the label group title")}
           </h3>
           <div className="mt-4 pl-5">
             <div className="group flex items-center justify-between rounded p-2 text-sm hover:bg-custom-background-90">
               <h5 className="flex items-center gap-2">
                 <div className="h-2 w-2 rounded-full bg-red-600" />
-                This is the label title
+                {store.locale.localized("This is the label title")}
               </h5>
               <button type="button" className="hidden group-hover:block">
                 <PencilIcon className="h-3 w-3" />

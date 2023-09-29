@@ -62,7 +62,7 @@ export const ConfirmProjectLeaveModal: React.FC = observer(() => {
   const onSubmit = async (data: any) => {
     if (data) {
       if (data.projectName === project?.projectLeaveDetails?.name) {
-        if (data.confirmLeave === "Leave Project") {
+        if (data.confirmLeave === store.locale.localized("Leave Project")) {
           return project
             .leaveProject(
               project.projectLeaveDetails.workspaceSlug.toString(),
@@ -77,29 +77,33 @@ export const ConfirmProjectLeaveModal: React.FC = observer(() => {
             .catch((err) => {
               setToastAlert({
                 type: "error",
-                title: "Error!",
-                message: "Something went wrong please try again later.",
+                title: store.locale.localized("Error!"),
+                message: store.locale.localized("Something went wrong. Please try again."),
               });
             });
         } else {
           setToastAlert({
             type: "error",
-            title: "Error!",
-            message: "Please confirm leaving the project by typing the 'Leave Project'.",
+            title: store.locale.localized("Error!"),
+            message: `${store.locale.localized(
+              "Please confirm leaving the project by typing the"
+            )} '${store.locale.localized("Leave Project")}'.`,
           });
         }
       } else {
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Please enter the project name as shown in the description.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized(
+            "Please enter the project name as shown in the description."
+          ),
         });
       }
     } else {
       setToastAlert({
         type: "error",
-        title: "Error!",
-        message: "Please fill all fields.",
+        title: store.locale.localized("Error!"),
+        message: store.locale.localized("Please fill all fields."),
       });
     }
   };
@@ -140,25 +144,32 @@ export const ConfirmProjectLeaveModal: React.FC = observer(() => {
                       />
                     </span>
                     <span className="flex items-center justify-start">
-                      <h3 className="text-xl font-medium 2xl:text-2xl">Leave Project</h3>
+                      <h3 className="text-xl font-medium 2xl:text-2xl">
+                        {store.locale.localized("Leave Project")}
+                      </h3>
                     </span>
                   </div>
 
                   <span>
                     <p className="text-sm leading-7 text-custom-text-200">
-                      Are you sure you want to leave the project -
-                      <span className="font-medium text-custom-text-100">{` "${project?.projectLeaveDetails?.name}" `}</span>
-                      ? All of the issues associated with you will become inaccessible.
+                      {store.locale.localized("Are you sure you want to leave the project")}
+                      {" - "}
+                      <span className="font-medium text-custom-text-100">{`"${project?.projectLeaveDetails?.name}"`}</span>
+                      {" ? "}
+                      {store.locale.localized(
+                        "All of the issues associated with you will become inaccessible."
+                      )}
                     </p>
                   </span>
 
                   <div className="text-custom-text-200">
                     <p className="break-words text-sm ">
-                      Enter the project name{" "}
+                      {store.locale.localized("Enter the project name")}{" "}
                       <span className="font-medium text-custom-text-100">
                         {project?.projectLeaveDetails?.name}
                       </span>{" "}
-                      to continue:
+                      {store.locale.localized("to continue")}
+                      {": "}
                     </p>
                     <Controller
                       control={control}
@@ -166,7 +177,7 @@ export const ConfirmProjectLeaveModal: React.FC = observer(() => {
                       render={({ field: { onChange, value } }) => (
                         <Input
                           type="text"
-                          placeholder="Enter project name"
+                          placeholder={store.locale.localized("Enter project name")}
                           className="mt-2"
                           value={value}
                           onChange={onChange}
@@ -177,8 +188,11 @@ export const ConfirmProjectLeaveModal: React.FC = observer(() => {
 
                   <div className="text-custom-text-200">
                     <p className="text-sm">
-                      To confirm, type{" "}
-                      <span className="font-medium text-custom-text-100">Leave Project</span> below:
+                      {store.locale.localized("To confirm, type")}{" "}
+                      <span className="font-medium text-custom-text-100">
+                        {store.locale.localized("Leave Project")}
+                      </span>{" "}
+                      {store.locale.localized("below")}:
                     </p>
                     <Controller
                       control={control}
@@ -186,7 +200,9 @@ export const ConfirmProjectLeaveModal: React.FC = observer(() => {
                       render={({ field: { onChange, value } }) => (
                         <Input
                           type="text"
-                          placeholder="Enter 'leave project'"
+                          placeholder={`${store.locale.localized(
+                            "Enter"
+                          )} '${store.locale.localized("Leave Project")}'`}
                           className="mt-2"
                           onChange={onChange}
                           value={value}
@@ -195,9 +211,13 @@ export const ConfirmProjectLeaveModal: React.FC = observer(() => {
                     />
                   </div>
                   <div className="flex justify-end gap-2">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                    <SecondaryButton onClick={handleClose}>
+                      {store.locale.localized("Cancel")}
+                    </SecondaryButton>
                     <DangerButton type="submit" loading={isSubmitting}>
-                      {isSubmitting ? "Leaving..." : "Leave Project"}
+                      {isSubmitting
+                        ? store.locale.localized("Leaving...")
+                        : store.locale.localized("Leave Project")}
                     </DangerButton>
                   </div>
                 </form>

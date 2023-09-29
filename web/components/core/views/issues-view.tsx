@@ -45,6 +45,8 @@ import {
   PROJECT_ISSUE_LABELS,
   STATES_LIST,
 } from "constants/fetch-keys";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   openIssuesListModal?: () => void;
@@ -55,6 +57,7 @@ export const IssuesView: React.FC<Props> = ({
   openIssuesListModal,
   disableUserActions = false,
 }) => {
+  const store: RootStore = useMobxStore();
   // create issue modal
   const [createIssueModal, setCreateIssueModal] = useState(false);
   const [createViewModal, setCreateViewModal] = useState<any>(null);
@@ -414,8 +417,8 @@ export const IssuesView: React.FC<Props> = ({
         )
         .then(() => {
           setToastAlert({
-            title: "Success",
-            message: "Issue removed successfully.",
+            title: store.locale.localized("Success"),
+            message: store.locale.localized("Issue removed successfully."),
             type: "success",
           });
         })
@@ -457,8 +460,8 @@ export const IssuesView: React.FC<Props> = ({
         )
         .then(() => {
           setToastAlert({
-            title: "Success",
-            message: "Issue removed successfully.",
+            title: store.locale.localized("Success"),
+            message: store.locale.localized("Issue removed successfully."),
             type: "success",
           });
         })
@@ -547,8 +550,8 @@ export const IssuesView: React.FC<Props> = ({
                 if (viewId) {
                   setFilters({}, true);
                   setToastAlert({
-                    title: "View updated",
-                    message: "Your view has been updated",
+                    title: store.locale.localized("View updated"),
+                    message: store.locale.localized("Your view has been updated"),
                     type: "success",
                   });
                 } else
@@ -559,7 +562,7 @@ export const IssuesView: React.FC<Props> = ({
               className="flex items-center gap-2 text-sm"
             >
               {!viewId && <PlusIcon className="h-4 w-4" />}
-              {viewId ? "Update" : "Save"} view
+              {viewId ? store.locale.localized("Update View") : store.locale.localized("Save View")}
             </PrimaryButton>
           </div>
           {<div className="mt-3 border-t border-custom-border-200" />}
@@ -577,19 +580,21 @@ export const IssuesView: React.FC<Props> = ({
         }
         emptyState={{
           title: isDraftIssues
-            ? "Draft issues will appear here"
+            ? store.locale.localized("Draft issues will appear here")
             : cycleId
-            ? "Cycle issues will appear here"
+            ? store.locale.localized("Cycle issues will appear here")
             : moduleId
-            ? "Module issues will appear here"
-            : "Project issues will appear here",
+            ? store.locale.localized("Module issues will appear here")
+            : store.locale.localized("Project issues will appear here"),
           description: isDraftIssues
-            ? "Draft issues are issues that are not yet created."
-            : "Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done.",
+            ? store.locale.localized("Draft issues are issues that are not yet created.")
+            : store.locale.localized(
+                "Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
+              ),
           primaryButton: !isDraftIssues
             ? {
                 icon: <PlusIcon className="h-4 w-4" />,
-                text: "New Issue",
+                text: store.locale.localized("New Issue"),
                 onClick: () => {
                   const e = new KeyboardEvent("keydown", {
                     key: "c",
@@ -605,7 +610,7 @@ export const IssuesView: React.FC<Props> = ({
                 onClick={openIssuesListModal ?? (() => {})}
               >
                 <PlusIcon className="h-4 w-4" />
-                Add an existing issue
+                {store.locale.localized("Add an existing issue")}
               </SecondaryButton>
             ) : null,
         }}

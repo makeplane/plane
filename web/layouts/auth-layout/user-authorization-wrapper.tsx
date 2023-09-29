@@ -14,6 +14,8 @@ type Props = {
 };
 
 export const UserAuthorizationLayout: React.FC<Props> = ({ children }) => {
+  // TODO: LOCALIZE THIS PAGE GENERATE A ERROR
+  // const store: RootStore = useMobxStore();
   const router = useRouter();
 
   const { data: currentUser, error } = useSWR(CURRENT_USER, () => userService.currentUser());

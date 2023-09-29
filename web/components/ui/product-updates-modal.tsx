@@ -12,6 +12,8 @@ import { Loader, MarkdownRenderer } from "components/ui";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 // helpers
 import { renderLongDateFormat } from "helpers/date-time.helper";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   isOpen: boolean;
@@ -19,6 +21,7 @@ type Props = {
 };
 
 export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
+  const store: RootStore = useMobxStore();
   const { data: updates } = useSWR("PRODUCT_UPDATES", () => workspaceService.getProductUpdates());
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -52,7 +55,7 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                     as="h3"
                     className="flex items-center justify-between text-lg font-semibold"
                   >
-                    <span>Product Updates</span>
+                    <span>{store.locale.localized("Product Updates")}</span>
                     <span>
                       <button type="button" onClick={() => setIsOpen(false)}>
                         <XMarkIcon
@@ -73,7 +76,7 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                             <span>{renderLongDateFormat(item.published_at)}</span>
                             {index === 0 && (
                               <span className="flex items-center rounded-full border border-custom-border-200 bg-custom-primary px-3 py-1.5 text-xs text-white">
-                                New
+                                {store.locale.localized("New")}
                               </span>
                             )}
                           </div>

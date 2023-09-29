@@ -9,9 +9,10 @@ import useLocalStorage from "hooks/use-local-storage";
 import { CreateUpdateDraftIssueModal } from "components/issues";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 export const WorkspaceSidebarQuickAction = () => {
-  const store: any = useMobxStore();
+  const store: RootStore = useMobxStore();
 
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
 
@@ -55,7 +56,7 @@ export const WorkspaceSidebarQuickAction = () => {
               className="!text-lg !leading-4 text-custom-sidebar-text-300"
             />
             {!store?.theme?.sidebarCollapsed && (
-              <span className="text-sm font-medium">New Issue</span>
+              <span className="text-sm font-medium">{store.locale.localized("New Issue")}</span>
             )}
           </button>
 
@@ -83,7 +84,7 @@ export const WorkspaceSidebarQuickAction = () => {
                       size={16}
                       className="!text-lg !leading-4 text-custom-sidebar-text-300 mr-2"
                     />
-                    Last Drafted Issue
+                    {store.locale.localized("Last Drafted Issue")}
                   </button>
                 </div>
               </div>

@@ -1,5 +1,7 @@
 // ui
 import { CustomSearchSelect } from "components/ui";
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 // types
 import { IProject } from "types";
 
@@ -10,6 +12,7 @@ type Props = {
 };
 
 export const SelectProject: React.FC<Props> = ({ value, onChange, projects }) => {
+  const store: RootStore = useMobxStore();
   const options = projects?.map((project) => ({
     value: project.id,
     query: project.name + project.identifier,
@@ -32,7 +35,7 @@ export const SelectProject: React.FC<Props> = ({ value, onChange, projects }) =>
               .filter((p) => value.includes(p.id))
               .map((p) => p.identifier)
               .join(", ")
-          : "All projects"
+          : store.locale.localized("All projects")
       }
       optionsClassName="min-w-full"
       multiple

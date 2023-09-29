@@ -15,35 +15,40 @@ import {
 } from "@mui/icons-material";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-
-const workspaceLinks = (workspaceSlug: string) => [
-  {
-    Icon: GridViewOutlined,
-    name: "Dashboard",
-    href: `/${workspaceSlug}`,
-  },
-  {
-    Icon: BarChartRounded,
-    name: "Analytics",
-    href: `/${workspaceSlug}/analytics`,
-  },
-  {
-    Icon: WorkOutlineOutlined,
-    name: "Projects",
-    href: `/${workspaceSlug}/projects`,
-  },
-  {
-    Icon: TaskAltOutlined,
-    name: "My Issues",
-    href: `/${workspaceSlug}/me/my-issues`,
-  },
-];
+import { RootStore } from "store/root";
 
 export const WorkspaceSidebarMenu = () => {
-  const store: any = useMobxStore();
+  const store: RootStore = useMobxStore();
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const workspaceLinks = (workspaceSlug: string) => [
+    {
+      Icon: GridViewOutlined,
+      name: store.locale.localized("Dashboard"),
+      key: "dashboard",
+      href: `/${workspaceSlug}`,
+    },
+    {
+      Icon: BarChartRounded,
+      name: store.locale.localized("Analytics"),
+      key: "analytics",
+      href: `/${workspaceSlug}/analytics`,
+    },
+    {
+      Icon: WorkOutlineOutlined,
+      name: store.locale.localized("Projects"),
+      key: "projects",
+      href: `/${workspaceSlug}/projects`,
+    },
+    {
+      Icon: TaskAltOutlined,
+      name: store.locale.localized("My Issues"),
+      key: "my-issues",
+      href: `/${workspaceSlug}/me/my-issues`,
+    },
+  ];
 
   const { collapsed: sidebarCollapse } = useTheme();
 
@@ -51,9 +56,7 @@ export const WorkspaceSidebarMenu = () => {
     <div className="w-full cursor-pointer space-y-1 p-4">
       {workspaceLinks(workspaceSlug as string).map((link, index) => {
         const isActive =
-          link.name === "Settings"
-            ? router.asPath.includes(link.href)
-            : router.asPath === link.href;
+          link.key === "settings" ? router.asPath.includes(link.href) : router.asPath === link.href;
 
         return (
           <Link key={index} href={link.href}>

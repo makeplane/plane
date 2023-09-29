@@ -6,6 +6,8 @@ import stateGraph from "public/empty-state/state_graph.svg";
 import { IUserProfileData, IUserStateDistribution } from "types";
 // constants
 import { STATE_GROUP_COLORS } from "constants/state";
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   stateDistribution: IUserStateDistribution[];
@@ -13,11 +15,12 @@ type Props = {
 };
 
 export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, userProfile }) => {
+  const store: RootStore = useMobxStore();
   if (!userProfile) return null;
 
   return (
     <div className="flex flex-col space-y-2">
-      <h3 className="text-lg font-medium">Issues by State</h3>
+      <h3 className="text-lg font-medium">{store.locale.localized("Issues by State")}</h3>
       <div className="flex-grow border border-custom-border-100 rounded p-7">
         {userProfile.state_distribution.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
@@ -43,7 +46,8 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
                 tooltip={(datum) => (
                   <div className="flex items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-90 p-2 text-xs">
                     <span className="text-custom-text-200 capitalize">
-                      {datum.datum.label} issues:
+                      {datum.datum.label} {store.locale.localized("issues")}
+                      {":"}
                     </span>{" "}
                     {datum.datum.value}
                   </div>
@@ -80,8 +84,10 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
           </div>
         ) : (
           <ProfileEmptyState
-            title="No Data yet"
-            description="Create issues to view the them by states in the graph for better analysis."
+            title={store.locale.localized("No Data yet")}
+            description={store.locale.localized(
+              "Create issues to view the them by states in the graph for better analysis."
+            )}
             image={stateGraph}
           />
         )}

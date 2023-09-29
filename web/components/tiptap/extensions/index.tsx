@@ -24,13 +24,17 @@ import { CustomTableCell } from "./table/table-cell";
 import { Table } from "./table/table";
 import { TableHeader } from "./table/table-header";
 import { TableRow } from "@tiptap/extension-table-row";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 lowlight.registerLanguage("ts", ts);
 
 export const TiptapExtensions = (
   workspaceSlug: string,
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
-) => [
+) => {
+  const store: RootStore = useMobxStore();
+  return [
     StarterKit.configure({
       bulletList: {
         HTMLAttributes: {
@@ -110,13 +114,13 @@ export const TiptapExtensions = (
     Placeholder.configure({
       placeholder: ({ node }) => {
         if (node.type.name === "heading") {
-          return `Heading ${node.attrs.level}`;
+          return `${store.locale.localized("Heading")} ${node.attrs.level}`;
         }
         if (node.type.name === "image" || node.type.name === "table") {
           return "";
         }
 
-        return "Press '/' for commands...";
+        return store.locale.localized("Press '/' for commands...");
       },
       includeChildren: true,
     }),
@@ -147,3 +151,4 @@ export const TiptapExtensions = (
     CustomTableCell,
     TableRow,
   ];
+};

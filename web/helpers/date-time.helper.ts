@@ -1,3 +1,5 @@
+import { localized } from "./localization.helper";
+
 export const renderDateFormat = (date: string | Date | null) => {
   if (!date) return "N/A";
 
@@ -62,33 +64,33 @@ export const timeAgo = (time: any) => {
   }
 
   var time_formats = [
-    [60, "seconds", 1], // 60
-    [120, "1 minute ago", "1 minute from now"], // 60*2
-    [3600, "minutes", 60], // 60*60, 60
-    [7200, "1 hour ago", "1 hour from now"], // 60*60*2
-    [86400, "hours", 3600], // 60*60*24, 60*60
-    [172800, "Yesterday", "Tomorrow"], // 60*60*24*2
-    [604800, "days", 86400], // 60*60*24*7, 60*60*24
-    [1209600, "Last week", "Next week"], // 60*60*24*7*4*2
-    [2419200, "weeks", 604800], // 60*60*24*7*4, 60*60*24*7
-    [4838400, "Last month", "Next month"], // 60*60*24*7*4*2
-    [29030400, "months", 2419200], // 60*60*24*7*4*12, 60*60*24*7*4
-    [58060800, "Last year", "Next year"], // 60*60*24*7*4*12*2
-    [2903040000, "years", 29030400], // 60*60*24*7*4*12*100, 60*60*24*7*4*12
-    [5806080000, "Last century", "Next century"], // 60*60*24*7*4*12*100*2
-    [58060800000, "centuries", 2903040000], // 60*60*24*7*4*12*100*20, 60*60*24*7*4*12*100
+    [60, localized("seconds"), 1], // 60
+    [120, localized("1 minute ago"), localized("1 minute from now")], // 60*2
+    [3600, localized("minutes"), 60], // 60*60, 60
+    [7200, localized("1 hour ago"), localized("1 hour from now")], // 60*60*2
+    [86400, localized("hours"), 3600], // 60*60*24, 60*60
+    [172800, localized("Yesterday"), localized("Tomorrow")], // 60*60*24*2
+    [604800, localized("days"), 86400], // 60*60*24*7, 60*60*24
+    [1209600, localized("Last week"), localized("Next week")], // 60*60*24*7*4*2
+    [2419200, localized("weeks"), 604800], // 60*60*24*7*4, 60*60*24*7
+    [4838400, localized("Last month"), localized("Next month")], // 60*60*24*7*4*2
+    [29030400, localized("months"), 2419200], // 60*60*24*7*4*12, 60*60*24*7*4
+    [58060800, localized("Last year"), localized("Next year")], // 60*60*24*7*4*12*2
+    [2903040000, localized("years"), 29030400], // 60*60*24*7*4*12*100, 60*60*24*7*4*12
+    [5806080000, localized("Last century"), localized("Next century")], // 60*60*24*7*4*12*100*2
+    [58060800000, localized("centuries"), 2903040000], // 60*60*24*7*4*12*100*20, 60*60*24*7*4*12*100
   ];
 
   var seconds = (+new Date() - time) / 1000,
-    token = "ago",
+    token = localized("ago"),
     list_choice = 1;
 
   if (seconds == 0) {
-    return "Just now";
+    return localized("Just now");
   }
   if (seconds < 0) {
     seconds = Math.abs(seconds);
-    token = "from now";
+    token = localized("from now");
     list_choice = 2;
   }
   var i = 0,
@@ -112,7 +114,7 @@ export const formatDateDistance = (date: string | Date) => {
     if (hours < 1) {
       const minutes = Math.ceil(timeDiff / (1000 * 60));
       if (minutes < 1) {
-        return "Just now";
+        return localized("Just now");
       } else {
         return `${minutes}m`;
       }
@@ -134,7 +136,7 @@ export const getDateRangeStatus = (
   startDate: string | null | undefined,
   endDate: string | null | undefined
 ) => {
-  if (!startDate || !endDate) return "draft";
+  if (!startDate || !endDate) return localized("draft");
 
   const today = renderDateFormat(new Date());
   const now = new Date(today);
@@ -142,11 +144,11 @@ export const getDateRangeStatus = (
   const end = new Date(endDate);
 
   if (start <= now && end >= now) {
-    return "current";
+    return localized("current");
   } else if (start > now) {
-    return "upcoming";
+    return localized("upcoming");
   } else {
-    return "completed";
+    return localized("completed");
   }
 };
 
@@ -156,18 +158,18 @@ export const renderShortDateWithYearFormat = (date: string | Date, placeholder?:
   date = new Date(date);
 
   const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
+    localized("Jan"),
+    localized("Feb"),
+    localized("Mar"),
+    localized("Apr"),
+    localized("May"),
+    localized("Jun"),
+    localized("Jul"),
+    localized("Aug"),
+    localized("Sep"),
+    localized("Oct"),
+    localized("Nov"),
+    localized("Dec"),
   ];
   const day = date.getDate();
   const month = months[date.getMonth()];
@@ -182,18 +184,18 @@ export const renderShortDate = (date: string | Date, placeholder?: string) => {
   date = new Date(date);
 
   const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
+    localized("Jan"),
+    localized("Feb"),
+    localized("Mar"),
+    localized("Apr"),
+    localized("May"),
+    localized("Jun"),
+    localized("Jul"),
+    localized("Aug"),
+    localized("Sep"),
+    localized("Oct"),
+    localized("Nov"),
+    localized("Dec"),
   ];
   const day = date.getDate();
   const month = months[date.getMonth()];
@@ -248,18 +250,18 @@ export const renderLongDateFormat = (dateString: string | Date) => {
   const day = date.getDate();
   const year = date.getFullYear();
   const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    localized("January"),
+    localized("February"),
+    localized("March"),
+    localized("April"),
+    localized("May"),
+    localized("June"),
+    localized("July"),
+    localized("August"),
+    localized("September"),
+    localized("October"),
+    localized("November"),
+    localized("December"),
   ];
   const monthIndex = date.getMonth();
   const monthName = monthNames[monthIndex];

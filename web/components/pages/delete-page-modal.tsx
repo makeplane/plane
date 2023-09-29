@@ -23,6 +23,9 @@ import {
   MY_PAGES_LIST,
   RECENT_PAGES_LIST,
 } from "constants/fetch-keys";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type TConfirmPageDeletionProps = {
   isOpen: boolean;
@@ -39,6 +42,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({
 }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -75,15 +79,15 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({
         handleClose();
         setToastAlert({
           type: "success",
-          title: "Success!",
-          message: "Page deleted successfully.",
+          title: store.locale.localized("Success!"),
+          message: store.locale.localized("Page deleted successfully."),
         });
       })
       .catch(() => {
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Page could not be deleted. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized("Page could not be deleted. Please try again."),
         });
       })
       .finally(() => {
@@ -131,25 +135,32 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({
                         as="h3"
                         className="text-lg font-medium leading-6 text-custom-text-100"
                       >
-                        Delete Page
+                        {store.locale.localized("Delete Page")}
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
-                          Are you sure you want to delete Page-{" "}
+                          {store.locale.localized("Are you sure you want to delete Page")}
+                          {"- "}
                           <span className="break-words font-medium text-custom-text-100">
                             {data?.name}
                           </span>
-                          ? All of the data related to the page will be permanently removed. This
-                          action cannot be undone.
+                          {"? "}
+                          {store.locale.localized(
+                            "All of the data related to the page will be permanently removed. This action cannot be undone."
+                          )}
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="flex justify-end gap-2 p-4 sm:px-6">
-                  <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                  <SecondaryButton onClick={handleClose}>
+                    {store.locale.localized("Cancel")}
+                  </SecondaryButton>
                   <DangerButton onClick={handleDeletion} loading={isDeleteLoading}>
-                    {isDeleteLoading ? "Deleting..." : "Delete"}
+                    {isDeleteLoading
+                      ? store.locale.localized("Deleting...")
+                      : store.locale.localized("Delete")}
                   </DangerButton>
                 </div>
               </Dialog.Panel>

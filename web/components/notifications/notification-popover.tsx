@@ -23,9 +23,10 @@ import emptyNotification from "public/empty-state/notification.svg";
 import { getNumberCount } from "helpers/string.helper";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 export const NotificationPopover = () => {
-  const store: any = useMobxStore();
+  const store: RootStore = useMobxStore();
 
   const {
     notifications,
@@ -79,7 +80,7 @@ export const NotificationPopover = () => {
           return (
             <>
               <Tooltip
-                tooltipContent="Notifications"
+                tooltipContent={store.locale.localized("Notifications")}
                 position="right"
                 className="ml-2"
                 disabled={!store?.theme?.sidebarCollapsed}
@@ -92,7 +93,9 @@ export const NotificationPopover = () => {
                   } ${store?.theme?.sidebarCollapsed ? "justify-center" : ""}`}
                 >
                   <NotificationsOutlined fontSize="small" />
-                  {store?.theme?.sidebarCollapsed ? null : <span>Notifications</span>}
+                  {store?.theme?.sidebarCollapsed ? null : (
+                    <span>{store.locale.localized("Notifications")}</span>
+                  )}
                   {totalNotificationCount && totalNotificationCount > 0 ? (
                     store?.theme?.sidebarCollapsed ? (
                       <span className="absolute right-3.5 top-2 h-2 w-2 bg-custom-primary-300 rounded-full" />
@@ -165,9 +168,11 @@ export const NotificationPopover = () => {
                                   fill="currentFill"
                                 />
                               </svg>
-                              <span className="sr-only">Loading...</span>
+                              <span className="sr-only">
+                                {store.locale.localized("Loading...")}
+                              </span>
                             </div>
-                            <p>Loading notifications</p>
+                            <p>{store.locale.localized("Loading notifications")}</p>
                           </div>
                         )}
                         {hasMore && !isLoadingMore && (
@@ -179,15 +184,19 @@ export const NotificationPopover = () => {
                               setSize((prev) => prev + 1);
                             }}
                           >
-                            Load More
+                            {store.locale.localized("Load More")}
                           </button>
                         )}
                       </div>
                     ) : (
                       <div className="grid h-full w-full place-items-center overflow-hidden scale-75">
                         <EmptyState
-                          title="You're updated with all the notifications"
-                          description="You have read all the notifications."
+                          title={store.locale.localized(
+                            "You're updated with all the notifications"
+                          )}
+                          description={store.locale.localized(
+                            "You have read all the notifications."
+                          )}
                           image={emptyNotification}
                           isFullScreen={false}
                         />

@@ -1,8 +1,12 @@
 import React from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 export const SettingsSidebar = () => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -11,35 +15,35 @@ export const SettingsSidebar = () => {
     href: string;
   }> = [
     {
-      label: "General",
+      label: store.locale.localized("General"),
       href: `/${workspaceSlug}/projects/${projectId}/settings`,
     },
     {
-      label: "Members",
+      label: store.locale.localized("Members"),
       href: `/${workspaceSlug}/projects/${projectId}/settings/members`,
     },
     {
-      label: "Features",
+      label: store.locale.localized("Features"),
       href: `/${workspaceSlug}/projects/${projectId}/settings/features`,
     },
     {
-      label: "States",
+      label: store.locale.localized("States"),
       href: `/${workspaceSlug}/projects/${projectId}/settings/states`,
     },
     {
-      label: "Labels",
+      label: store.locale.localized("Labels"),
       href: `/${workspaceSlug}/projects/${projectId}/settings/labels`,
     },
     {
-      label: "Integrations",
+      label: store.locale.localized("Integrations"),
       href: `/${workspaceSlug}/projects/${projectId}/settings/integrations`,
     },
     {
-      label: "Estimates",
+      label: store.locale.localized("Estimates"),
       href: `/${workspaceSlug}/projects/${projectId}/settings/estimates`,
     },
     {
-      label: "Automations",
+      label: store.locale.localized("Automations"),
       href: `/${workspaceSlug}/projects/${projectId}/settings/automations`,
     },
   ];
@@ -49,27 +53,27 @@ export const SettingsSidebar = () => {
     href: string;
   }> = [
     {
-      label: "General",
+      label: store.locale.localized("General"),
       href: `/${workspaceSlug}/settings`,
     },
     {
-      label: "Members",
+      label: store.locale.localized("Members"),
       href: `/${workspaceSlug}/settings/members`,
     },
     {
-      label: "Billing & Plans",
+      label: store.locale.localized("Billing & Plans"),
       href: `/${workspaceSlug}/settings/billing`,
     },
     {
-      label: "Integrations",
+      label: store.locale.localized("Integrations"),
       href: `/${workspaceSlug}/settings/integrations`,
     },
     {
-      label: "Imports",
+      label: store.locale.localized("Imports"),
       href: `/${workspaceSlug}/settings/imports`,
     },
     {
-      label: "Exports",
+      label: store.locale.localized("Exports"),
       href: `/${workspaceSlug}/settings/exports`,
     },
   ];
@@ -79,15 +83,15 @@ export const SettingsSidebar = () => {
     href: string;
   }> = [
     {
-      label: "Profile",
+      label: store.locale.localized("Profile"),
       href: `/${workspaceSlug}/me/profile`,
     },
     {
-      label: "Activity",
+      label: store.locale.localized("Activity"),
       href: `/${workspaceSlug}/me/profile/activity`,
     },
     {
-      label: "Preferences",
+      label: store.locale.localized("Preferences"),
       href: `/${workspaceSlug}/me/profile/preferences`,
     },
   ];
@@ -95,7 +99,9 @@ export const SettingsSidebar = () => {
   return (
     <div className="flex flex-col gap-6 w-80 px-5">
       <div className="flex flex-col gap-2">
-        <span className="text-xs text-custom-sidebar-text-400 font-semibold">SETTINGS</span>
+        <span className="text-xs text-custom-sidebar-text-400 font-semibold">
+          {store.locale.localized("Settings")}
+        </span>
         <div className="flex flex-col gap-1 w-full">
           {(projectId ? projectLinks : workspaceLinks).map((link) => (
             <Link key={link.href} href={link.href}>
@@ -120,7 +126,9 @@ export const SettingsSidebar = () => {
       </div>
       {!projectId && (
         <div className="flex flex-col gap-2">
-          <span className="text-xs text-custom-sidebar-text-400 font-semibold">My Account</span>
+          <span className="text-xs text-custom-sidebar-text-400 font-semibold">
+            {store.locale.localized("My Account")}
+          </span>
           <div className="flex flex-col gap-1 w-full">
             {profileLinks.map((link) => (
               <Link key={link.href} href={link.href}>

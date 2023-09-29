@@ -18,6 +18,8 @@ import { DangerButton, SecondaryButton } from "components/ui";
 import type { ICurrentUserResponse, IState, IStateResponse } from "types";
 // fetch-keys
 import { STATES_LIST } from "constants/fetch-keys";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   isOpen: boolean;
@@ -29,6 +31,7 @@ type Props = {
 export const DeleteStateModal: React.FC<Props> = ({ isOpen, onClose, data, user }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -69,15 +72,16 @@ export const DeleteStateModal: React.FC<Props> = ({ isOpen, onClose, data, user 
         if (err.status === 400)
           setToastAlert({
             type: "error",
-            title: "Error!",
-            message:
-              "This state contains some issues within it, please move them to some other state to delete this state.",
+            title: store.locale.localized("Error!"),
+            message: store.locale.localized(
+              "This state contains some issues within it, please move them to some other state to delete this state."
+            ),
           });
         else
           setToastAlert({
             type: "error",
-            title: "Error!",
-            message: "State could not be deleted. Please try again.",
+            title: store.locale.localized("Error!"),
+            message: store.locale.localized("State could not be deleted. Please try again."),
           });
       });
   };
@@ -122,23 +126,30 @@ export const DeleteStateModal: React.FC<Props> = ({ isOpen, onClose, data, user 
                         as="h3"
                         className="text-lg font-medium leading-6 text-custom-text-100"
                       >
-                        Delete State
+                        {store.locale.localized("Delete State")}
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
-                          Are you sure you want to delete state-{" "}
-                          <span className="font-medium text-custom-text-100">{data?.name}</span>?
-                          All of the data related to the state will be permanently removed. This
-                          action cannot be undone.
+                          {store.locale.localized("Are you sure you want to delete state")}
+                          {" - "}
+                          <span className="font-medium text-custom-text-100">{data?.name}</span>
+                          {"? "}
+                          {store.locale.localized(
+                            "All of the data related to the state will be permanently removed. This action cannot be undone."
+                          )}
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="flex justify-end gap-2 p-4 sm:px-6">
-                  <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                  <SecondaryButton onClick={handleClose}>
+                    {store.locale.localized("Cancel")}
+                  </SecondaryButton>
                   <DangerButton onClick={handleDeletion} loading={isDeleteLoading}>
-                    {isDeleteLoading ? "Deleting..." : "Delete"}
+                    {isDeleteLoading
+                      ? store.locale.localized("Deleting...")
+                      : store.locale.localized("Delete")}
                   </DangerButton>
                 </div>
               </Dialog.Panel>

@@ -7,46 +7,50 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { CommandIcon } from "components/icons";
 // ui
 import { Input } from "components/ui";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const shortcuts = [
-  {
-    title: "Navigation",
-    shortcuts: [
-      { keys: "Ctrl,K", description: "To open navigator" },
-      { keys: "↑", description: "Move up" },
-      { keys: "↓", description: "Move down" },
-      { keys: "←", description: "Move left" },
-      { keys: "→", description: "Move right" },
-    ],
-  },
-  {
-    title: "Common",
-    shortcuts: [
-      { keys: "P", description: "To create project" },
-      { keys: "C", description: "To create issue" },
-      { keys: "Q", description: "To create cycle" },
-      { keys: "M", description: "To create module" },
-      { keys: "V", description: "To create view" },
-      { keys: "D", description: "To create page" },
-      { keys: "Delete", description: "To bulk delete issues" },
-      { keys: "H", description: "To open shortcuts guide" },
-      {
-        keys: "Ctrl,Alt,C",
-        description: "To copy issue url when on issue detail page",
-      },
-    ],
-  },
-];
-
-const allShortcuts = shortcuts.map((i) => i.shortcuts).flat(1);
-
 export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
+  const store: RootStore = useMobxStore();
   const [query, setQuery] = useState("");
+
+  const shortcuts = [
+    {
+      title: store.locale.localized("Navigation"),
+      shortcuts: [
+        { keys: "Ctrl,K", description: store.locale.localized("To open navigator") },
+        { keys: "↑", description: store.locale.localized("Move up") },
+        { keys: "↓", description: store.locale.localized("Move down") },
+        { keys: "←", description: store.locale.localized("Move left") },
+        { keys: "→", description: store.locale.localized("Move right") },
+      ],
+    },
+    {
+      title: "Common",
+      shortcuts: [
+        { keys: "P", description: store.locale.localized("To create project") },
+        { keys: "C", description: store.locale.localized("To create issue") },
+        { keys: "Q", description: store.locale.localized("To create cycle") },
+        { keys: "M", description: store.locale.localized("To create module") },
+        { keys: "V", description: store.locale.localized("To create view") },
+        { keys: "D", description: store.locale.localized("To create page") },
+        { keys: "Delete", description: store.locale.localized("To bulk delete issues") },
+        { keys: "H", description: store.locale.localized("To open shortcuts guide") },
+        {
+          keys: "Ctrl,Alt,C",
+          description: store.locale.localized("To copy issue url when on issue detail page"),
+        },
+      ],
+    },
+  ];
+
+  const allShortcuts = shortcuts.map((i) => i.shortcuts).flat(1);
+
   const filteredShortcuts = allShortcuts.filter((shortcut) =>
     shortcut.description.toLowerCase().includes(query.trim().toLowerCase()) || query === ""
       ? true
@@ -91,7 +95,7 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                         as="h3"
                         className="flex justify-between text-lg font-medium leading-6 text-custom-text-100"
                       >
-                        <span>Keyboard Shortcuts</span>
+                        <span>{store.locale.localized("Keyboard Shortcuts")}</span>
                         <span>
                           <button type="button" onClick={() => setIsOpen(false)}>
                             <XMarkIcon
@@ -150,7 +154,7 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                           ) : (
                             <div className="flex flex-col gap-y-3">
                               <p className="text-sm text-custom-text-200">
-                                No shortcuts found for{" "}
+                                {store.locale.localized("No shortcuts found for")}{" "}
                                 <span className="font-semibold italic">
                                   {`"`}
                                   {query}

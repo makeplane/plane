@@ -34,12 +34,16 @@ import {
 import { ROLE } from "constants/workspace";
 // helper
 import { truncateText } from "helpers/string.helper";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 const MembersSettings: NextPage = () => {
   const [selectedRemoveMember, setSelectedRemoveMember] = useState<string | null>(null);
   const [selectedInviteRemoveMember, setSelectedInviteRemoveMember] = useState<string | null>(null);
   const [inviteModal, setInviteModal] = useState(false);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -108,11 +112,14 @@ const MembersSettings: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)}`}
+            title={`${truncateText(
+              activeWorkspace?.name ?? store.locale.localized("Workspace"),
+              32
+            )}`}
             link={`/${workspaceSlug}`}
             linkTruncate
           />
-          <BreadcrumbItem title="Members Settings" unshrinkTitle />
+          <BreadcrumbItem title={store.locale.localized("Members Settings")} unshrinkTitle />
         </Breadcrumbs>
       }
     >
@@ -138,8 +145,8 @@ const MembersSettings: NextPage = () => {
                 const error = err?.error;
                 setToastAlert({
                   type: "error",
-                  title: "Error",
-                  message: error || "Something went wrong",
+                  title: store.locale.localized("Error"),
+                  message: error || store.locale.localized("Something went wrong"),
                 });
               })
               .finally(() => {
@@ -159,16 +166,16 @@ const MembersSettings: NextPage = () => {
               .then(() => {
                 setToastAlert({
                   type: "success",
-                  title: "Success",
-                  message: "Member removed successfully",
+                  title: store.locale.localized("Success"),
+                  message: store.locale.localized("Member removed successfully"),
                 });
               })
               .catch((err) => {
                 const error = err?.error;
                 setToastAlert({
                   type: "error",
-                  title: "Error",
-                  message: error || "Something went wrong",
+                  title: store.locale.localized("Error"),
+                  message: error || store.locale.localized("Something went wrong"),
                 });
               })
               .finally(() => {
@@ -192,8 +199,10 @@ const MembersSettings: NextPage = () => {
         </div>
         <section className="pr-9 py-8 w-full overflow-y-auto">
           <div className="flex items-center justify-between gap-4 pt-2 pb-3.5 border-b border-custom-border-200">
-            <h4 className="text-xl font-medium">Members</h4>
-            <PrimaryButton onClick={() => setInviteModal(true)}>Add Member</PrimaryButton>
+            <h4 className="text-xl font-medium">{store.locale.localized("Members")}</h4>
+            <PrimaryButton onClick={() => setInviteModal(true)}>
+              {store.locale.localized("Add Member")}
+            </PrimaryButton>
           </div>
           {!workspaceMembers || !workspaceInvitations ? (
             <Loader className="space-y-5">
@@ -259,12 +268,12 @@ const MembersSettings: NextPage = () => {
                       <div className="flex items-center gap-3 text-xs">
                         {!member?.status && (
                           <div className="mr-2 flex items-center justify-center rounded-full bg-yellow-500/20 px-2 py-1 text-center text-xs text-yellow-500">
-                            <p>Pending</p>
+                            <p>{store.locale.localized("Pending")}</p>
                           </div>
                         )}
                         {member?.status && !member?.accountCreated && (
                           <div className="mr-2 flex items-center justify-center rounded-full bg-blue-500/20 px-2 py-1 text-center text-xs text-blue-500">
-                            <p>Account not created</p>
+                            <p>{store.locale.localized("Account not created")}</p>
                           </div>
                         )}
                         <CustomSelect
@@ -301,9 +310,10 @@ const MembersSettings: NextPage = () => {
                               .catch(() => {
                                 setToastAlert({
                                   type: "error",
-                                  title: "Error!",
-                                  message:
-                                    "An error occurred while updating member role. Please try again.",
+                                  title: store.locale.localized("Error!"),
+                                  message: store.locale.localized(
+                                    "An error occurred while updating member role. Please try again."
+                                  ),
                                 });
                               });
                           }}
@@ -346,7 +356,9 @@ const MembersSettings: NextPage = () => {
 
                               <span>
                                 {" "}
-                                {user?.id === member.memberId ? "Leave" : "Remove member"}
+                                {user?.id === member.memberId
+                                  ? store.locale.localized("Leave")
+                                  : store.locale.localized("Remove member")}
                               </span>
                             </span>
                           </CustomMenu.MenuItem>

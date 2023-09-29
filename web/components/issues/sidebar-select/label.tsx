@@ -22,6 +22,9 @@ import { PlusIcon, RectangleGroupIcon, TagIcon, XMarkIcon } from "@heroicons/rea
 import { IIssue, IIssueLabels } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   issueDetails: IIssue | undefined;
@@ -47,6 +50,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
 }) => {
   const [createLabelForm, setCreateLabelForm] = useState(false);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -231,7 +235,9 @@ export const SidebarLabelSelect: React.FC<Props> = ({
                                     );
                                 })
                               ) : (
-                                <div className="text-center">No labels found</div>
+                                <div className="text-center">
+                                  {store.locale.localized("No labels found")}
+                                </div>
                               )
                             ) : (
                               <Spinner />
@@ -257,11 +263,11 @@ export const SidebarLabelSelect: React.FC<Props> = ({
               >
                 {createLabelForm ? (
                   <>
-                    <XMarkIcon className="h-3 w-3" /> Cancel
+                    <XMarkIcon className="h-3 w-3" /> {store.locale.localized("Cancel")}
                   </>
                 ) : (
                   <>
-                    <PlusIcon className="h-3 w-3" /> New
+                    <PlusIcon className="h-3 w-3" /> {store.locale.localized("New")}
                   </>
                 )}
               </button>
@@ -312,10 +318,10 @@ export const SidebarLabelSelect: React.FC<Props> = ({
           <Input
             id="name"
             name="name"
-            placeholder="Title"
+            placeholder={store.locale.localized("Title")}
             register={register}
             validations={{
-              required: "This is required",
+              required: store.locale.localized("This is required"),
             }}
             autoComplete="off"
           />

@@ -32,6 +32,8 @@ const useMobileDetect = () => {
 };
 
 const WebViewLayout: React.FC<Props> = ({ children, fullScreen = true }) => {
+  // TODO: LOCALIZE THIS PAGE GENERATE A ERROR
+  // const store: RootStore = useMobxStore();
   const { data: currentUser, error } = useSWR(CURRENT_USER, () => userService.currentUser());
 
   const isWebview = useMobileDetect();

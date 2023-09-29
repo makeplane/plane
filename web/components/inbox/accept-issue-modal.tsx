@@ -8,6 +8,9 @@ import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import { SecondaryButton, PrimaryButton } from "components/ui";
 // types
 import type { IInboxIssue } from "types";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   isOpen: boolean;
@@ -17,6 +20,7 @@ type Props = {
 };
 
 export const AcceptIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, onSubmit }) => {
+  const store: RootStore = useMobxStore();
   const [isAccepting, setIsAccepting] = useState(false);
 
   const onClose = () => {
@@ -68,17 +72,24 @@ export const AcceptIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, o
                   </div>
                   <span>
                     <p className="text-sm text-custom-text-200">
-                      Are you sure you want to accept issue{" "}
+                      {store.locale.localized("Are you sure you want to accept issue")}{" "}
                       <span className="break-all font-medium text-custom-text-100">
                         {data?.project_detail?.identifier}-{data?.sequence_id}
                       </span>
-                      {""}? Once accepted, this issue will be added to the project issues list.
+                      {"? "}
+                      {store.locale.localized(
+                        "Once accepted, this issue will be added to the project issues list."
+                      )}
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
-                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
+                    <SecondaryButton onClick={onClose}>
+                      {store.locale.localized("Cancel")}
+                    </SecondaryButton>
                     <PrimaryButton onClick={handleAccept} loading={isAccepting}>
-                      {isAccepting ? "Accepting..." : "Accept Issue"}
+                      {isAccepting
+                        ? store.locale.localized("Accepting...")
+                        : store.locale.localized("Accept Issue")}
                     </PrimaryButton>
                   </div>
                 </div>

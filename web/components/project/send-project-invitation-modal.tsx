@@ -31,6 +31,9 @@ import { ICurrentUserResponse } from "types";
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   isOpen: boolean;
@@ -61,6 +64,7 @@ const defaultValues: FormValues = {
 const SendProjectInvitationModal: React.FC<Props> = (props) => {
   const { isOpen, setIsOpen, members, user, onSuccess } = props;
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -100,7 +104,7 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
         setToastAlert({
           title: "Success",
           type: "success",
-          message: "Member added successfully",
+          message: store.locale.localized("Member added successfully"),
         });
         onSuccess();
       })
@@ -182,11 +186,11 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
                       as="h3"
                       className="text-lg font-medium leading-6 text-custom-text-100"
                     >
-                      Invite Members
+                      {store.locale.localized("Invite Members")}
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm text-custom-text-200">
-                        Invite members to work on your project.
+                        {store.locale.localized("Invite members to work on your project.")}
                       </p>
                     </div>
 
@@ -200,7 +204,7 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
                             <Controller
                               control={control}
                               name={`members.${index}.member_id`}
-                              rules={{ required: "Please select a member" }}
+                              rules={{ required: store.locale.localized("Please select a member") }}
                               render={({ field: { value, onChange } }) => (
                                 <CustomSearchSelect
                                   value={value}
@@ -220,7 +224,7 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
                                         </div>
                                       ) : (
                                         <div className="flex items-center gap-2 py-0.5">
-                                          Select co-worker
+                                          {store.locale.localized("Select co-worker")}
                                         </div>
                                       )}
                                       <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
@@ -247,14 +251,16 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
                               <Controller
                                 name={`members.${index}.role`}
                                 control={control}
-                                rules={{ required: "Select Role" }}
+                                rules={{ required: store.locale.localized("Select Role") }}
                                 render={({ field }) => (
                                   <CustomSelect
                                     {...field}
                                     customButton={
                                       <button className="flex w-full items-center justify-between gap-1 rounded-md border border-custom-border-200 shadow-sm duration-300 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 focus:outline-none px-3 py-2.5 text-sm text-left">
                                         <span className="capitalize">
-                                          {field.value ? ROLE[field.value] : "Select role"}
+                                          {field.value
+                                            ? ROLE[field.value]
+                                            : store.locale.localized("Select Role")}
                                         </span>
                                         <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
                                       </button>
@@ -304,16 +310,24 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
                       onClick={appendField}
                     >
                       <PlusIcon className="h-4 w-4" />
-                      Add more
+                      {store.locale.localized("Add more")}
                     </button>
                     <div className="flex items-center gap-2">
-                      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                      <SecondaryButton onClick={handleClose}>
+                        {store.locale.localized("Cancel")}
+                      </SecondaryButton>
                       <PrimaryButton type="submit" loading={isSubmitting}>
                         {isSubmitting
                           ? `${
-                              fields && fields.length > 1 ? "Adding Members..." : "Adding Member..."
+                              fields && fields.length > 1
+                                ? store.locale.localized("Adding Members...")
+                                : store.locale.localized("Adding Member...")
                             }`
-                          : `${fields && fields.length > 1 ? "Add Members" : "Add Member"}`}
+                          : `${
+                              fields && fields.length > 1
+                                ? store.locale.localized("Add Members")
+                                : store.locale.localized("Add Member")
+                            }`}
                       </PrimaryButton>
                     </div>
                   </div>

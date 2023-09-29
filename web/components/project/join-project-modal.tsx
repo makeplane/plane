@@ -6,6 +6,8 @@ import { Transition, Dialog } from "@headlessui/react";
 import { PrimaryButton, SecondaryButton } from "components/ui";
 // types
 import type { IProject } from "types";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 // type
 type TJoinProjectModalProps = {
@@ -15,6 +17,7 @@ type TJoinProjectModalProps = {
 };
 
 export const JoinProjectModal: React.FC<TJoinProjectModalProps> = ({ onClose, onJoin, data }) => {
+  const store: RootStore = useMobxStore();
   const [isJoiningLoading, setIsJoiningLoading] = useState(false);
 
   const handleJoin = () => {
@@ -66,18 +69,22 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = ({ onClose, on
                     as="h3"
                     className="text-lg font-medium leading-6 text-custom-text-100"
                   >
-                    Join Project?
+                    {store.locale.localized("Join Project?")}
                   </Dialog.Title>
                   <p>
-                    Are you sure you want to join{" "}
+                    {store.locale.localized("Are you sure you want to join")}{" "}
                     <span className="font-semibold">{data?.name}</span>?
                   </p>
                   <div className="space-y-3" />
                 </div>
                 <div className="mt-5 flex justify-end gap-2">
-                  <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                  <SecondaryButton onClick={handleClose}>
+                    {store.locale.localized("Cancel")}
+                  </SecondaryButton>
                   <PrimaryButton type="submit" onClick={handleJoin} loading={isJoiningLoading}>
-                    {isJoiningLoading ? "Joining..." : "Join Project"}
+                    {isJoiningLoading
+                      ? store.locale.localized("Joining...")
+                      : store.locale.localized("Join Project")}
                   </PrimaryButton>
                 </div>
               </Dialog.Panel>

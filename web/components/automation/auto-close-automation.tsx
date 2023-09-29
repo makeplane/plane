@@ -20,6 +20,9 @@ import { STATES_LIST } from "constants/fetch-keys";
 import { IProject } from "types";
 // helper
 import { getStatesList } from "helpers/state.helper";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   projectDetails: IProject | undefined;
@@ -29,6 +32,7 @@ type Props = {
 export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleChange }) => {
   const [monthModal, setmonthModal] = useState(false);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -84,9 +88,11 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
               <ArchiveX className="h-4 w-4 text-red-500 flex-shrink-0" />
             </div>
             <div className="">
-              <h4 className="text-sm font-medium">Auto-close issues</h4>
+              <h4 className="text-sm font-medium">{store.locale.localized("Auto-close issues")}</h4>
               <p className="text-sm text-custom-text-200 tracking-tight">
-                Plane will automatically close issue that haven’t been completed or canceled.
+                {store.locale.localized(
+                  "Plane will automatically close issue that haven’t been completed or canceled."
+                )}
               </p>
             </div>
           </div>
@@ -106,13 +112,15 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
             <div className="flex flex-col rounded bg-custom-background-90 border border-custom-border-200 p-2">
               <div className="flex items-center justify-between px-5 py-4 gap-2 w-full">
                 <div className="w-1/2 text-sm font-medium">
-                  Auto-close issues that are inactive for
+                  {store.locale.localized("Auto-close issues that are inactive for")}
                 </div>
                 <div className="w-1/2">
                   <CustomSelect
                     value={projectDetails?.close_in}
                     label={`${projectDetails?.close_in} ${
-                      projectDetails?.close_in === 1 ? "Month" : "Months"
+                      projectDetails?.close_in === 1
+                        ? store.locale.localized("Month")
+                        : store.locale.localized("Months")
                     }`}
                     onChange={(val: number) => {
                       handleChange({ close_in: val });
@@ -131,7 +139,7 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
                         className="flex w-full select-none items-center rounded px-1 py-1.5 text-custom-text-200 hover:bg-custom-background-80"
                         onClick={() => setmonthModal(true)}
                       >
-                        Customise Time Range
+                        {store.locale.localized("Customise Time Range")}
                       </button>
                     </>
                   </CustomSelect>
@@ -139,7 +147,9 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
               </div>
 
               <div className="flex items-center justify-between px-5 py-4 gap-2 w-full">
-                <div className="w-1/2 text-sm font-medium">Auto-close Status</div>
+                <div className="w-1/2 text-sm font-medium">
+                  {store.locale.localized("Set the default state to")}
+                </div>
                 <div className="w-1/2 ">
                   <CustomSearchSelect
                     value={
@@ -167,7 +177,9 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
                         {selectedOption?.name
                           ? selectedOption.name
                           : currentDefaultState?.name ?? (
-                              <span className="text-custom-text-200">State</span>
+                              <span className="text-custom-text-200">
+                                {store.locale.localized("State")}
+                              </span>
                             )}
                       </div>
                     }

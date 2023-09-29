@@ -34,11 +34,14 @@ import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
 import userService from "services/user.service";
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 const OnBoard: NextPage = () => {
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
 
   const { theme } = useTheme();
@@ -68,8 +71,8 @@ const OnBoard: NextPage = () => {
     if (invitationsRespond.length === 0) {
       setToastAlert({
         type: "error",
-        title: "Error!",
-        message: "Please select at least one invitation.",
+        title: store.locale.localized("Error!"),
+        message: store.locale.localized("Please select at least one invitation."),
       });
       return;
     }
@@ -91,8 +94,8 @@ const OnBoard: NextPage = () => {
           .catch(() => {
             setToastAlert({
               type: "error",
-              title: "Error!",
-              message: "Something went wrong, Please try again.",
+              title: store.locale.localized("Error!"),
+              message: store.locale.localized("Something went wrong, Please try again."),
             });
             setIsJoiningWorkspaces(false);
           });
@@ -100,8 +103,8 @@ const OnBoard: NextPage = () => {
       .catch(() => {
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Something went wrong, Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized("Something went wrong, Please try again."),
         });
         setIsJoiningWorkspaces(false);
       });
@@ -130,8 +133,12 @@ const OnBoard: NextPage = () => {
             invitations.length > 0 ? (
               <div className="relative flex justify-center sm:justify-start sm:items-center h-full px-8 pb-8 sm:p-0 sm:pr-[8.33%] sm:w-10/12 md:w-9/12 lg:w-4/5">
                 <div className="w-full space-y-10">
-                  <h5 className="text-lg">We see that someone has invited you to</h5>
-                  <h4 className="text-2xl font-semibold">Join a workspace</h4>
+                  <h5 className="text-lg">
+                    {store.locale.localized("We see that someone has invited you to")}
+                  </h5>
+                  <h4 className="text-2xl font-semibold">
+                    {store.locale.localized("Join a workspace")}
+                  </h4>
                   <div className="max-h-[37vh] md:w-3/5 space-y-4 overflow-y-auto">
                     {invitations.map((invitation) => {
                       const isSelected = invitationsRespond.includes(invitation.id);
@@ -190,12 +197,12 @@ const OnBoard: NextPage = () => {
                       disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
                       loading={isJoiningWorkspaces}
                     >
-                      Accept & Join
+                      {store.locale.localized("Accept & Join")}
                     </PrimaryButton>
                     <Link href="/">
                       <a>
                         <SecondaryButton size="md" outline>
-                          Go Home
+                          {store.locale.localized("Go Home")}
                         </SecondaryButton>
                       </a>
                     </Link>
@@ -205,11 +212,13 @@ const OnBoard: NextPage = () => {
             ) : (
               <div className="fixed top-0 left-0 h-full w-full grid place-items-center">
                 <EmptyState
-                  title="No pending invites"
-                  description="You can see here if someone invites you to a workspace."
+                  title={store.locale.localized("No pending invites")}
+                  description={store.locale.localized(
+                    "You can see here if someone invites you to a workspace."
+                  )}
                   image={emptyInvitation}
                   primaryButton={{
-                    text: "Back to Dashboard",
+                    text: store.locale.localized("Back to Dashboard"),
                     onClick: () => router.push("/"),
                   }}
                 />

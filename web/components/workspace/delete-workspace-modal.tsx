@@ -20,6 +20,8 @@ import { DangerButton, Input, SecondaryButton } from "components/ui";
 import type { ICurrentUserResponse, IWorkspace } from "types";
 // fetch-keys
 import { USER_WORKSPACES } from "constants/fetch-keys";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   isOpen: boolean;
@@ -34,6 +36,7 @@ const defaultValues = {
 };
 
 export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, user }) => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
 
   const { setToastAlert } = useToast();
@@ -47,7 +50,8 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
   } = useForm({ defaultValues });
 
   const canDelete =
-    watch("workspaceName") === data?.name && watch("confirmDelete") === "delete my workspace";
+    watch("workspaceName") === data?.name &&
+    watch("confirmDelete") === store.locale.localized("delete my workspace");
 
   const handleClose = () => {
     const timer = setTimeout(() => {
@@ -68,22 +72,21 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
 
         router.push("/");
 
-        mutate<IWorkspace[]>(
-          USER_WORKSPACES,
-          (prevData) => prevData?.filter((workspace) => workspace.id !== data.id)
+        mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) =>
+          prevData?.filter((workspace) => workspace.id !== data.id)
         );
 
         setToastAlert({
           type: "success",
-          title: "Success!",
-          message: "Workspace deleted successfully.",
+          title: store.locale.localized("Success!"),
+          message: store.locale.localized("Workspace deleted successfully."),
         });
       })
       .catch(() =>
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Something went wrong. Please try again later.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized("Something went wrong. Please try again later."),
         })
       );
   };
@@ -124,24 +127,30 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
                       />
                     </span>
                     <span className="flex items-center justify-start">
-                      <h3 className="text-xl font-medium 2xl:text-2xl">Delete Workspace</h3>
+                      <h3 className="text-xl font-medium 2xl:text-2xl">
+                        {store.locale.localized("Delete Workspace")}
+                      </h3>
                     </span>
                   </div>
 
                   <span>
                     <p className="text-sm leading-7 text-custom-text-200">
-                      Are you sure you want to delete workspace{" "}
-                      <span className="break-words font-semibold">{data?.name}</span>? All of the
-                      data related to the workspace will be permanently removed. This action cannot
-                      be undone.
+                      {store.locale.localized("Are you sure you want to delete workspace")}
+                      {" - "}
+                      <span className="break-words font-semibold">{data?.name}</span>
+                      {"? "}
+                      {store.locale.localized(
+                        "All of the data related to the workspace will be permanently removed. This action cannot be undone."
+                      )}
                     </p>
                   </span>
 
                   <div className="text-custom-text-200">
                     <p className="break-words text-sm ">
-                      Enter the workspace name{" "}
-                      <span className="font-medium text-custom-text-100">{data?.name}</span> to
-                      continue:
+                      {store.locale.localized("Enter the workspace name")}{" "}
+                      <span className="font-medium text-custom-text-100">{data?.name}</span>{" "}
+                      {store.locale.localized("to continue")}
+                      {": "}
                     </p>
                     <Controller
                       control={control}
@@ -149,7 +158,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
                       render={({ field: { onChange, value } }) => (
                         <Input
                           type="text"
-                          placeholder="Workspace name"
+                          placeholder={store.locale.localized("Workspace name")}
                           className="mt-2"
                           onChange={onChange}
                           value={value}
@@ -160,9 +169,12 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
 
                   <div className="text-custom-text-200">
                     <p className="text-sm">
-                      To confirm, type{" "}
-                      <span className="font-medium text-custom-text-100">delete my workspace</span>{" "}
-                      below:
+                      {store.locale.localized("To confirm, type")}{" "}
+                      <span className="font-medium text-custom-text-100">
+                        {store.locale.localized("delete my workspace")}
+                      </span>{" "}
+                      {store.locale.localized("below")}
+                      {": "}
                     </p>
                     <Controller
                       control={control}
@@ -170,7 +182,9 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
                       render={({ field: { onChange, value } }) => (
                         <Input
                           type="text"
-                          placeholder="Enter 'delete my workspace'"
+                          placeholder={`${store.locale.localized(
+                            "Enter"
+                          )} '${store.locale.localized("delete my workspace")}'`}
                           className="mt-2"
                           onChange={onChange}
                           value={value}
@@ -180,9 +194,13 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
                   </div>
 
                   <div className="flex justify-end gap-2">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                    <SecondaryButton onClick={handleClose}>
+                      {store.locale.localized("Cancel")}
+                    </SecondaryButton>
                     <DangerButton type="submit" disabled={!canDelete} loading={isSubmitting}>
-                      {isSubmitting ? "Deleting..." : "Delete Workspace"}
+                      {isSubmitting
+                        ? store.locale.localized("Deleting...")
+                        : store.locale.localized("Delete Workspace")}
                     </DangerButton>
                   </div>
                 </form>

@@ -19,6 +19,9 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { LayerDiagonalIcon } from "components/icons";
 // fetch-keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   isOpen: boolean;
@@ -35,6 +38,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
 
   const { setToastAlert } = useToast();
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
@@ -64,7 +68,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
   const handleSubmit = () => {
     if (!selectedItem || selectedItem.length === 0)
       return setToastAlert({
-        title: "Error",
+        title: store.locale.localized("Error"),
         type: "error",
       });
     onSubmit(selectedItem);
@@ -129,7 +133,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                         <li className="p-2">
                           {query === "" && (
                             <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-custom-text-100">
-                              Select issue
+                              {store.locale.localized("Select issue")}
                             </h2>
                           )}
                           <ul className="text-sm text-custom-text-100">
@@ -170,7 +174,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                         <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
                           <LayerDiagonalIcon height="56" width="56" />
                           <h3 className="text-sm text-custom-text-200">
-                            No issues found. Create a new issue with{" "}
+                            {store.locale.localized("No issues found. Create a new issue with")}{" "}
                             <pre className="inline rounded bg-custom-background-80 px-2 py-1">
                               C
                             </pre>
@@ -183,8 +187,12 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
 
                   {filteredIssues.length > 0 && (
                     <div className="flex items-center justify-end gap-2 p-3">
-                      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                      <PrimaryButton onClick={handleSubmit}>Mark as original</PrimaryButton>
+                      <SecondaryButton onClick={handleClose}>
+                        {store.locale.localized("Cancel")}
+                      </SecondaryButton>
+                      <PrimaryButton onClick={handleSubmit}>
+                        {store.locale.localized("Mark as original")}
+                      </PrimaryButton>
                     </div>
                   )}
                 </Dialog.Panel>

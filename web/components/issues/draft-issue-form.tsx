@@ -29,6 +29,8 @@ import { TipTapEditor } from "components/tiptap";
 import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
 import type { ICurrentUserResponse, IIssue, ISearchIssueResponse } from "types";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const defaultValues: Partial<IIssue> = {
   project: "",
@@ -111,6 +113,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
 
   const editorRef = useRef<any>(null);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -195,9 +198,10 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
         if (res.response === "")
           setToastAlert({
             type: "error",
-            title: "Error!",
-            message:
-              "Issue title isn't informative enough to generate the description. Please try with a different title.",
+            title: store.locale.localized("Error!"),
+            message: store.locale.localized(
+              "Issue title isn't informative enough to generate the description. Please try with a different title."
+            ),
           });
         else handleAiAssistance(res.response_html);
       })
@@ -207,16 +211,18 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
         if (err.status === 429)
           setToastAlert({
             type: "error",
-            title: "Error!",
+            title: store.locale.localized("Error!"),
             message:
               error ||
-              "You have reached the maximum number of requests of 50 requests per month per user.",
+              store.locale.localized(
+                "You have reached the maximum number of requests of 50 requests per month per user."
+              ),
           });
         else
           setToastAlert({
             type: "error",
-            title: "Error!",
-            message: error || "Some error occurred. Please try again.",
+            title: store.locale.localized("Error!"),
+            message: error || store.locale.localized("Some error occurred. Please try again."),
           });
       })
       .finally(() => setIAmFeelingLucky(false));
@@ -294,7 +300,9 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
               />
             )}
             <h3 className="text-xl font-semibold leading-6 text-custom-text-100">
-              {status ? "Update" : "Create"} Issue
+              {status
+                ? store.locale.localized("Update Issue")
+                : store.locale.localized("Create Issue")}
             </h3>
           </div>
           {watch("parent") &&
@@ -332,15 +340,15 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                     id="name"
                     name="name"
                     className="resize-none text-xl"
-                    placeholder="Title"
+                    placeholder={store.locale.localized("Title")}
                     autoComplete="off"
                     error={errors.name}
                     register={register}
                     validations={{
-                      required: "Title is required",
+                      required: store.locale.localized("Title is required"),
                       maxLength: {
                         value: 255,
-                        message: "Title should be less than 255 characters",
+                        message: store.locale.localized("Title should be less than 255 characters"),
                       },
                     }}
                   />
@@ -359,10 +367,11 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                         disabled={iAmFeelingLucky}
                       >
                         {iAmFeelingLucky ? (
-                          "Generating response..."
+                          store.locale.localized("Generating response...")
                         ) : (
                           <>
-                            <SparklesIcon className="h-4 w-4" />I{"'"}m feeling lucky
+                            <SparklesIcon className="h-4 w-4" />
+                            {store.locale.localized("I'm feeling lucky")}
                           </>
                         )}
                       </button>
@@ -478,7 +487,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                       name="start_date"
                       render={({ field: { value, onChange } }) => (
                         <IssueDateSelect
-                          label="Start date"
+                          label={store.locale.localized("Start date")}
                           maxDate={maxDate ?? undefined}
                           onChange={onChange}
                           value={value}
@@ -494,7 +503,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                       name="target_date"
                       render={({ field: { value, onChange } }) => (
                         <IssueDateSelect
-                          label="Due date"
+                          label={store.locale.localized("Due date")}
                           minDate={minDate ?? undefined}
                           onChange={onChange}
                           value={value}
@@ -539,13 +548,13 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                           renderAs="button"
                           onClick={() => setParentIssueListModalOpen(true)}
                         >
-                          Change parent issue
+                          {store.locale.localized("Change Parent Issue")}
                         </CustomMenu.MenuItem>
                         <CustomMenu.MenuItem
                           renderAs="button"
                           onClick={() => setValue("parent", null)}
                         >
-                          Remove parent issue
+                          {store.locale.localized("Remove Parent Issue")}
                         </CustomMenu.MenuItem>
                       </>
                     ) : (
@@ -553,7 +562,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                         renderAs="button"
                         onClick={() => setParentIssueListModalOpen(true)}
                       >
-                        Select Parent Issue
+                        {store.locale.localized("Select Parent Issue")}
                       </CustomMenu.MenuItem>
                     )}
                   </CustomMenu>
@@ -567,18 +576,22 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
             className="flex cursor-pointer items-center gap-1"
             onClick={() => setCreateMore((prevData) => !prevData)}
           >
-            <span className="text-xs">Create more</span>
+            <span className="text-xs">{store.locale.localized("Create more")}</span>
             <ToggleSwitch value={createMore} onChange={() => {}} size="md" />
           </div>
           <div className="flex items-center gap-2">
-            <SecondaryButton onClick={handleDiscard}>Discard</SecondaryButton>
+            <SecondaryButton onClick={handleDiscard}>
+              {store.locale.localized("Discard")}
+            </SecondaryButton>
             <SecondaryButton
               loading={isSubmitting}
               onClick={handleSubmit((formData) =>
                 handleCreateUpdateIssue(formData, data?.id ? "updateDraft" : "createDraft")
               )}
             >
-              {isSubmitting ? "Saving..." : "Save Draft"}
+              {isSubmitting
+                ? store.locale.localized("Saving...")
+                : store.locale.localized("Save Draft")}
             </SecondaryButton>
             <PrimaryButton
               loading={isSubmitting}
@@ -586,7 +599,9 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                 handleCreateUpdateIssue(formData, data ? "convertToNewIssue" : "createNewIssue")
               )}
             >
-              {isSubmitting ? "Saving..." : "Add Issue"}
+              {isSubmitting
+                ? store.locale.localized("Saving...")
+                : store.locale.localized("Add Issue")}
             </PrimaryButton>
           </div>
         </div>

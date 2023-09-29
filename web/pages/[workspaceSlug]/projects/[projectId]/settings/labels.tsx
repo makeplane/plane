@@ -34,6 +34,9 @@ import type { NextPage } from "next";
 import { PROJECT_DETAILS, PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 const LabelsSettings: NextPage = () => {
   // create/edit label form
@@ -50,6 +53,7 @@ const LabelsSettings: NextPage = () => {
   // delete label
   const [selectDeleteLabel, setSelectDeleteLabel] = useState<IIssueLabels | null>(null);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -105,11 +109,14 @@ const LabelsSettings: NextPage = () => {
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
-              title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
+              title={`${truncateText(
+                projectDetails?.name ?? store.locale.localized("Project"),
+                32
+              )}`}
               link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
               linkTruncate
             />
-            <BreadcrumbItem title="Labels Settings" unshrinkTitle />
+            <BreadcrumbItem title={store.locale.localized("Labels Settings")} unshrinkTitle />
           </Breadcrumbs>
         }
       >
@@ -119,14 +126,14 @@ const LabelsSettings: NextPage = () => {
           </div>
           <section className="pr-9 py-8 gap-10 w-full overflow-y-auto">
             <div className="flex items-center justify-between pt-2 pb-3.5 border-b border-custom-border-200">
-              <h3 className="text-xl font-medium">Labels</h3>
+              <h3 className="text-xl font-medium">{store.locale.localized("Labels")}</h3>
 
               <PrimaryButton
                 onClick={newLabel}
                 size="sm"
                 className="flex items-center justify-center"
               >
-                Add label
+                {store.locale.localized("Add Label")}
               </PrimaryButton>
             </div>
             <div className="space-y-3 py-6 h-full w-full">
@@ -186,11 +193,13 @@ const LabelsSettings: NextPage = () => {
                     })
                   ) : (
                     <EmptyState
-                      title="No labels yet"
-                      description="Create labels to help organize and filter issues in you project"
+                      title={store.locale.localized("No labels yet")}
+                      description={store.locale.localized(
+                        "Create labels to help organize and filter issues in you project"
+                      )}
                       image={emptyLabel}
                       primaryButton={{
-                        text: "Add label",
+                        text: store.locale.localized("Add Label"),
                         onClick: () => newLabel(),
                       }}
                       isFullScreen={false}

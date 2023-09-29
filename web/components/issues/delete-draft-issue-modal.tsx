@@ -21,6 +21,9 @@ import { SecondaryButton, DangerButton } from "components/ui";
 import type { IIssue } from "types";
 // fetch-keys
 import { PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS } from "constants/fetch-keys";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   isOpen: boolean;
@@ -34,6 +37,7 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
 
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -64,8 +68,8 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
         handleClose();
         mutate(PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
         setToastAlert({
-          title: "Success",
-          message: "Draft Issue deleted successfully",
+          title: store.locale.localized("Success"),
+          message: store.locale.localized("Draft Issue deleted successfully"),
           type: "success",
         });
       })
@@ -73,8 +77,8 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
         console.log(error);
         handleClose();
         setToastAlert({
-          title: "Error",
-          message: "Something went wrong",
+          title: store.locale.localized("Error"),
+          message: store.locale.localized("Something went wrong"),
           type: "error",
         });
         setIsDeleteLoading(false);
@@ -118,23 +122,31 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
                       />
                     </span>
                     <span className="flex items-center justify-start">
-                      <h3 className="text-xl font-medium 2xl:text-2xl">Delete Draft Issue</h3>
+                      <h3 className="text-xl font-medium 2xl:text-2xl">
+                        {store.locale.localized("Delete Draft Issue")}
+                      </h3>
                     </span>
                   </div>
                   <span>
                     <p className="text-sm text-custom-text-200">
-                      Are you sure you want to delete issue{" "}
+                      {store.locale.localized("Are you sure you want to delete issue")}{" "}
                       <span className="break-words font-medium text-custom-text-100">
                         {data?.project_detail.identifier}-{data?.sequence_id}
                       </span>
-                      {""}? All of the data related to the draft issue will be permanently removed.
-                      This action cannot be undone.
+                      {"? "}
+                      {store.locale.localized(
+                        "All of the data related to the draft issue will be permanently removed. This action cannot be undone."
+                      )}
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
-                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
+                    <SecondaryButton onClick={onClose}>
+                      {store.locale.localized("Cancel")}
+                    </SecondaryButton>
                     <DangerButton onClick={handleDeletion} loading={isDeleteLoading}>
-                      {isDeleteLoading ? "Deleting..." : "Delete Issue"}
+                      {isDeleteLoading
+                        ? store.locale.localized("Deleting...")
+                        : store.locale.localized("Delete Issue")}
                     </DangerButton>
                   </div>
                 </div>

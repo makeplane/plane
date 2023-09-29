@@ -27,6 +27,9 @@ import {
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
 import { ICycle } from "types";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type TSingleStatProps = {
   cycle: ICycle;
@@ -35,34 +38,6 @@ type TSingleStatProps = {
   handleAddToFavorites: () => void;
   handleRemoveFromFavorites: () => void;
 };
-
-const stateGroups = [
-  {
-    key: "backlog_issues",
-    title: "Backlog",
-    color: "#dee2e6",
-  },
-  {
-    key: "unstarted_issues",
-    title: "Unstarted",
-    color: "#26b5ce",
-  },
-  {
-    key: "started_issues",
-    title: "Started",
-    color: "#f7ae59",
-  },
-  {
-    key: "cancelled_issues",
-    title: "Cancelled",
-    color: "#d687ff",
-  },
-  {
-    key: "completed_issues",
-    title: "Completed",
-    color: "#09a953",
-  },
-];
 
 type progress = {
   progress: number;
@@ -114,6 +89,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
   handleAddToFavorites,
   handleRemoveFromFavorites,
 }) => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -124,6 +100,34 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
   const endDate = new Date(cycle.end_date ?? "");
   const startDate = new Date(cycle.start_date ?? "");
 
+  const stateGroups = [
+    {
+      key: "backlog_issues",
+      title: store.locale.localized("Backlog"),
+      color: "#dee2e6",
+    },
+    {
+      key: "unstarted_issues",
+      title: store.locale.localized("Unstarted"),
+      color: "#26b5ce",
+    },
+    {
+      key: "started_issues",
+      title: store.locale.localized("Started"),
+      color: "#f7ae59",
+    },
+    {
+      key: "cancelled_issues",
+      title: store.locale.localized("Cancelled"),
+      color: "#d687ff",
+    },
+    {
+      key: "completed_issues",
+      title: store.locale.localized("Completed"),
+      color: "#09a953",
+    },
+  ];
+
   const handleCopyText = () => {
     const originURL =
       typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
@@ -133,8 +137,8 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
     ).then(() => {
       setToastAlert({
         type: "success",
-        title: "Link Copied!",
-        message: "Cycle link copied to clipboard.",
+        title: store.locale.localized("Link Copied!"),
+        message: store.locale.localized("Cycle link copied to clipboard."),
       });
     });
   };
@@ -208,12 +212,14 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                     {cycleStatus === "current" ? (
                       <span className="flex gap-1 whitespace-nowrap">
                         <PersonRunningIcon className="h-4 w-4" />
-                        {findHowManyDaysLeft(cycle.end_date ?? new Date())} days left
+                        {findHowManyDaysLeft(cycle.end_date ?? new Date())}{" "}
+                        {store.locale.localized("days left")}
                       </span>
                     ) : cycleStatus === "upcoming" ? (
                       <span className="flex gap-1">
                         <AlarmClockIcon className="h-4 w-4" />
-                        {findHowManyDaysLeft(cycle.start_date ?? new Date())} days left
+                        {findHowManyDaysLeft(cycle.start_date ?? new Date())}{" "}
+                        {store.locale.localized("days left")}
                       </span>
                     ) : cycleStatus === "completed" ? (
                       <span className="flex items-center gap-1">
@@ -221,8 +227,10 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                           <Tooltip
                             tooltipContent={`${
                               cycle.total_issues - cycle.completed_issues
-                            } more pending ${
-                              cycle.total_issues - cycle.completed_issues === 1 ? "issue" : "issues"
+                            } ${store.locale.localized("more pending")} ${
+                              cycle.total_issues - cycle.completed_issues === 1
+                                ? store.locale.localized("issue")
+                                : store.locale.localized("issues")
                             }`}
                           >
                             <span>
@@ -230,7 +238,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                             </span>
                           </Tooltip>
                         )}{" "}
-                        Completed
+                        {store.locale.localized("Completed")}
                       </span>
                     ) : (
                       cycleStatus
@@ -270,7 +278,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                     position="top-right"
                     tooltipContent={
                       <div className="flex w-80 items-center gap-2 px-4 py-1">
-                        <span>Progress</span>
+                        <span>{store.locale.localized("Progress")}</span>
                         <LinearProgressIndicator data={progressIndicatorData} />
                       </div>
                     }
@@ -301,12 +309,15 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                               </span>
                             </>
                           ) : (
-                            <span className="normal-case">No issues present</span>
+                            <span className="normal-case">
+                              {store.locale.localized("No issues present")}
+                            </span>
                           )}
                         </span>
                       ) : cycleStatus === "upcoming" ? (
                         <span className="flex gap-1">
-                          <RadialProgressBar progress={100} /> Yet to start
+                          <RadialProgressBar progress={100} />{" "}
+                          {store.locale.localized("Yet to start")}
                         </span>
                       ) : cycleStatus === "completed" ? (
                         <span className="flex gap-1">
@@ -353,7 +364,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                         >
                           <span className="flex items-center justify-start gap-2">
                             <PencilIcon className="h-4 w-4" />
-                            <span>Edit Cycle</span>
+                            <span>{store.locale.localized("Edit cycle")}</span>
                           </span>
                         </CustomMenu.MenuItem>
                       )}
@@ -366,7 +377,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                         >
                           <span className="flex items-center justify-start gap-2">
                             <TrashIcon className="h-4 w-4" />
-                            <span>Delete cycle</span>
+                            <span>{store.locale.localized("Delete cycle")}</span>
                           </span>
                         </CustomMenu.MenuItem>
                       )}
@@ -378,7 +389,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                       >
                         <span className="flex items-center justify-start gap-2">
                           <LinkIcon className="h-4 w-4" />
-                          <span>Copy cycle link</span>
+                          <span>{store.locale.localized("Copy cycle link")}</span>
                         </span>
                       </CustomMenu.MenuItem>
                     </CustomMenu>

@@ -19,6 +19,8 @@ import { ICurrentUserResponse } from "types";
 // constants
 import { ROLE } from "constants/workspace";
 import { WORKSPACE_INVITATIONS } from "constants/fetch-keys";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   isOpen: boolean;
@@ -47,6 +49,7 @@ const defaultValues: FormValues = {
 };
 
 const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
+  const store: RootStore = useMobxStore();
   const { isOpen, setIsOpen, workspace_slug, user, onSuccess } = props;
   const {
     control,
@@ -82,15 +85,15 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
         handleClose();
         setToastAlert({
           type: "success",
-          title: "Success!",
-          message: "Invitations sent successfully.",
+          title: store.locale.localized("Success!"),
+          message: store.locale.localized("Invitation sent successfully."),
         });
         onSuccess();
       })
       .catch((err) => {
         setToastAlert({
           type: "error",
-          title: "Error!",
+          title: store.locale.localized("Error!"),
           message: `${err.error}`,
         });
         console.log(err);
@@ -149,11 +152,11 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
                       as="h3"
                       className="text-lg font-medium leading-6 text-custom-text-100"
                     >
-                      Invite people to collaborate
+                      {store.locale.localized("Invite people to collaborate")}
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm text-custom-text-200">
-                        Invite members to work on your workspace.
+                        {store.locale.localized("Invite members to work on your workspace.")}
                       </p>
                     </div>
 
@@ -165,10 +168,10 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
                               control={control}
                               name={`emails.${index}.email`}
                               rules={{
-                                required: "Email ID is required",
+                                required: store.locale.localized("Email is required"),
                                 pattern: {
                                   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                  message: "Invalid Email ID",
+                                  message: store.locale.localized("Invalid email address"),
                                 },
                               }}
                               render={({ field }) => (
@@ -176,7 +179,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
                                   <Input
                                     {...field}
                                     className="text-xs sm:text-sm"
-                                    placeholder="Enter their email..."
+                                    placeholder={store.locale.localized("Enter their email...")}
                                   />
                                   {errors.emails?.[index]?.email && (
                                     <span className="ml-1 text-red-500 text-xs">
@@ -230,12 +233,16 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
                       onClick={appendField}
                     >
                       <PlusIcon className="h-4 w-4" />
-                      Add more
+                      {store.locale.localized("Add more")}
                     </button>
                     <div className="flex items-center gap-2">
-                      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                      <SecondaryButton onClick={handleClose}>
+                        {store.locale.localized("Cancel")}
+                      </SecondaryButton>
                       <PrimaryButton type="submit" loading={isSubmitting}>
-                        {isSubmitting ? "Sending Invitation..." : "Send Invitation"}
+                        {isSubmitting
+                          ? store.locale.localized("Sending invitation...")
+                          : store.locale.localized("Send invitation")}
                       </PrimaryButton>
                     </div>
                   </div>

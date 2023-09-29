@@ -19,6 +19,7 @@ import { getUserTimeZoneFromWindow } from "helpers/date-time.helper";
 // constants
 import { USER_ROLES } from "constants/workspace";
 import { TIME_ZONES } from "constants/timezones";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const defaultValues: Partial<IUser> = {
   first_name: "",
@@ -49,6 +50,8 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
     defaultValues,
   });
 
+  const store: any = useMobxStore();
+
   const onSubmit = async (formData: IUser) => {
     if (!user) return;
 
@@ -78,8 +81,8 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
 
         setToastAlert({
           type: "success",
-          title: "Success!",
-          message: "Details updated successfully.",
+          title: store.locale.localized("Success!"),
+          message: store.locale.localized("Details updated successfully."),
         });
       })
       .catch((err) => {
@@ -112,12 +115,12 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
 
       <div className="space-y-7 sm:w-3/4 md:w-2/5">
         <div className="space-y-1 text-sm">
-          <label htmlFor="firstName">First Name</label>
+          <label htmlFor="firstName">{store.locale.localized("First Name")}</label>
           <Input
             id="firstName"
             name="first_name"
             autoComplete="off"
-            placeholder="Enter your first name..."
+            placeholder={store.locale.localized("Enter your first name...")}
             register={register}
             validations={{
               required: "First name is required",

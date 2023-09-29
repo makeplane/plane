@@ -20,12 +20,16 @@ import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { EXPORT_SERVICES_LIST } from "constants/fetch-keys";
 // constants
 import { EXPORTERS_LIST } from "constants/workspace";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 const IntegrationGuide = () => {
   const [refreshing, setRefreshing] = useState(false);
   const per_page = 10;
   const [cursor, setCursor] = useState<string | undefined>(`10:0:0`);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, provider } = router.query;
 
@@ -89,7 +93,9 @@ const IntegrationGuide = () => {
           <div>
             <div className="flex items-center justify-between pt-7 pb-3.5 border-b border-custom-border-200">
               <div className="flex gap-2 items-center">
-                <h3 className="flex gap-2 text-xl font-medium">Previous Exports</h3>
+                <h3 className="flex gap-2 text-xl font-medium">
+                  {store.locale.localized("Previous Exports")}
+                </h3>
 
                 <button
                   type="button"
@@ -102,7 +108,9 @@ const IntegrationGuide = () => {
                   }}
                 >
                   <ArrowPathIcon className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />{" "}
-                  {refreshing ? "Refreshing..." : "Refresh status"}
+                  {refreshing
+                    ? store.locale.localized("Refreshing...")
+                    : store.locale.localized("Refresh status")}
                 </button>
               </div>
               <div className="flex gap-2 items-center text-xs">
@@ -118,7 +126,7 @@ const IntegrationGuide = () => {
                   }`}
                 >
                   <Icon iconName="keyboard_arrow_left" className="!text-lg" />
-                  <div className="pr-1">Prev</div>
+                  <div className="pr-1">{store.locale.localized("Prev")}</div>
                 </button>
                 <button
                   disabled={!exporterServices?.next_page_results}
@@ -131,7 +139,7 @@ const IntegrationGuide = () => {
                       : "cursor-not-allowed opacity-75"
                   }`}
                 >
-                  <div className="pl-1">Next</div>
+                  <div className="pl-1">{store.locale.localized("Next")}</div>
                   <Icon iconName="keyboard_arrow_right" className="!text-lg" />
                 </button>
               </div>
@@ -148,7 +156,7 @@ const IntegrationGuide = () => {
                   </div>
                 ) : (
                   <p className="text-sm text-custom-text-200 px-4 py-6">
-                    No previous export available.
+                    {store.locale.localized("No previous export available.")}
                   </p>
                 )
               ) : (

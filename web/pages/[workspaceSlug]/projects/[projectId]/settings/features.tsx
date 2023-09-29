@@ -28,47 +28,9 @@ import type { NextPage } from "next";
 import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
-
-const featuresList = [
-  {
-    title: "Cycles",
-    description:
-      "Cycles are enabled for all the projects in this workspace. Access them from the sidebar.",
-    icon: (
-      <ContrastOutlined className="!text-base !leading-4 text-purple-500 flex-shrink-0 rotate-180" />
-    ),
-
-    property: "cycle_view",
-  },
-  {
-    title: "Modules",
-    description:
-      "Modules are enabled for all the projects in this workspace. Access it from the sidebar.",
-    icon: <ModuleIcon width={16} height={16} className="flex-shrink-0" />,
-    property: "module_view",
-  },
-  {
-    title: "Views",
-    description:
-      "Views are enabled for all the projects in this workspace. Access it from the sidebar.",
-    icon: <Layers className="h-4 w-4 text-cyan-500 flex-shrink-0" />,
-    property: "issue_views_view",
-  },
-  {
-    title: "Pages",
-    description:
-      "Pages are enabled for all the projects in this workspace. Access it from the sidebar.",
-    icon: <FileText className="h-4 w-4 text-red-400 flex-shrink-0" />,
-    property: "page_view",
-  },
-  {
-    title: "Inbox",
-    description:
-      "Inbox are enabled for all the projects in this workspace. Access it from the issues views page.",
-    icon: <Inbox className="h-4 w-4 text-fuchsia-500 flex-shrink-0" />,
-    property: "inbox_view",
-  },
-];
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 const getEventType = (feature: string, toggle: boolean): MiscellaneousEventType => {
   switch (feature) {
@@ -88,6 +50,7 @@ const getEventType = (feature: string, toggle: boolean): MiscellaneousEventType 
 };
 
 const FeaturesSettings: NextPage = () => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -101,6 +64,52 @@ const FeaturesSettings: NextPage = () => {
       ? () => projectService.getProject(workspaceSlug as string, projectId as string)
       : null
   );
+
+  const featuresList = [
+    {
+      title: store.locale.localized("Cycles"),
+      description: store.locale.localized(
+        "Cycles are enabled for all the projects in this workspace. Access them from the sidebar."
+      ),
+      icon: (
+        <ContrastOutlined className="!text-base !leading-4 text-purple-500 flex-shrink-0 rotate-180" />
+      ),
+
+      property: "cycle_view",
+    },
+    {
+      title: store.locale.localized("Modules"),
+      description: store.locale.localized(
+        "Modules are enabled for all the projects in this workspace. Access it from the sidebar."
+      ),
+      icon: <ModuleIcon width={16} height={16} className="flex-shrink-0" />,
+      property: "module_view",
+    },
+    {
+      title: store.locale.localized("Views"),
+      description: store.locale.localized(
+        "Views are enabled for all the projects in this workspace. Access it from the sidebar."
+      ),
+      icon: <Layers className="h-4 w-4 text-cyan-500 flex-shrink-0" />,
+      property: "issue_views_view",
+    },
+    {
+      title: store.locale.localized("Pages"),
+      description: store.locale.localized(
+        "Pages are enabled for all the projects in this workspace. Access it from the sidebar."
+      ),
+      icon: <FileText className="h-4 w-4 text-red-400 flex-shrink-0" />,
+      property: "page_view",
+    },
+    {
+      title: store.locale.localized("Inbox"),
+      description: store.locale.localized(
+        "Inbox are enabled for all the projects in this workspace. Access it from the issues views page."
+      ),
+      icon: <Inbox className="h-4 w-4 text-fuchsia-500 flex-shrink-0" />,
+      property: "inbox_view",
+    },
+  ];
 
   const handleSubmit = async (formData: Partial<IProject>) => {
     if (!workspaceSlug || !projectId || !projectDetails) return;
@@ -125,8 +134,8 @@ const FeaturesSettings: NextPage = () => {
 
     setToastAlert({
       type: "success",
-      title: "Success!",
-      message: "Project feature updated successfully.",
+      title: store.locale.localized("Success!"),
+      message: store.locale.localized("Project feature updated successfully."),
     });
 
     await projectService
@@ -134,8 +143,10 @@ const FeaturesSettings: NextPage = () => {
       .catch(() =>
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Project feature could not be updated. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized(
+            "Project feature could not be updated. Please try again."
+          ),
         })
       );
   };
@@ -145,11 +156,11 @@ const FeaturesSettings: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
+            title={`${truncateText(projectDetails?.name ?? store.locale.localized("Project"), 32)}`}
             link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
             linkTruncate
           />
-          <BreadcrumbItem title="Features Settings" unshrinkTitle />
+          <BreadcrumbItem title={store.locale.localized("Features Settings")} unshrinkTitle />
         </Breadcrumbs>
       }
     >
@@ -159,7 +170,7 @@ const FeaturesSettings: NextPage = () => {
         </div>
         <section className="pr-9 py-8 w-full overflow-y-auto">
           <div className="flex items-center py-3.5 border-b border-custom-border-200">
-            <h3 className="text-xl font-medium">Features</h3>
+            <h3 className="text-xl font-medium">{store.locale.localized("Features")}</h3>
           </div>
           <div>
             {featuresList.map((feature) => (

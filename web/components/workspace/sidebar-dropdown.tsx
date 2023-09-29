@@ -24,35 +24,6 @@ import { IWorkspace } from "types";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 
-// Static Data
-const userLinks = (workspaceSlug: string, userId: string) => [
-  {
-    name: "Workspace Settings",
-    href: `/${workspaceSlug}/settings`,
-  },
-  {
-    name: "Workspace Invites",
-    href: "/invitations",
-  },
-  {
-    name: "My Profile",
-    href: `/${workspaceSlug}/profile/${userId}`,
-  },
-];
-
-const profileLinks = (workspaceSlug: string, userId: string) => [
-  {
-    name: "View profile",
-    icon: "account_circle",
-    link: `/${workspaceSlug}/profile/${userId}`,
-  },
-  {
-    name: "Settings",
-    icon: "settings",
-    link: `/${workspaceSlug}/me/profile`,
-  },
-];
-
 export const WorkspaceSidebarDropdown = () => {
   const store: any = useMobxStore();
 
@@ -67,6 +38,34 @@ export const WorkspaceSidebarDropdown = () => {
 
   const { activeWorkspace, workspaces } = useWorkspaces();
 
+  const userLinks = (workspaceSlug: string, userId: string) => [
+    {
+      name: store.locale.localized("Workspace Settings"),
+      href: `/${workspaceSlug}/settings`,
+    },
+    {
+      name: store.locale.localized("Workspace Invites"),
+      href: "/invitations",
+    },
+    {
+      name: store.locale.localized("My Profile"),
+      href: `/${workspaceSlug}/profile/${userId}`,
+    },
+  ];
+
+  const profileLinks = (workspaceSlug: string, userId: string) => [
+    {
+      name: store.locale.localized("View profile"),
+      icon: "account_circle",
+      link: `/${workspaceSlug}/profile/${userId}`,
+    },
+    {
+      name: store.locale.localized("Settings"),
+      icon: "settings",
+      link: `/${workspaceSlug}/me/profile`,
+    },
+  ];
+
   const handleWorkspaceNavigation = (workspace: IWorkspace) => {
     userService
       .updateUser({
@@ -79,8 +78,8 @@ export const WorkspaceSidebarDropdown = () => {
       .catch(() =>
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Failed to navigate to the workspace. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized("Failed to navigate to the workspace. Please try again."),
         })
       );
   };
@@ -96,8 +95,8 @@ export const WorkspaceSidebarDropdown = () => {
       .catch(() =>
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Failed to sign out. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized("Failed to sign out. Please try again."),
         })
       );
   };
@@ -116,7 +115,7 @@ export const WorkspaceSidebarDropdown = () => {
                 <img
                   src={activeWorkspace.logo}
                   className="absolute top-0 left-0 h-full w-full object-cover rounded"
-                  alt="Workspace Logo"
+                  alt={store.locale.localized("Workspace Logo")}
                 />
               ) : (
                 activeWorkspace?.name?.charAt(0) ?? "..."
@@ -125,7 +124,9 @@ export const WorkspaceSidebarDropdown = () => {
 
             {!store?.theme?.sidebarCollapsed && (
               <h4 className="text-custom-text-100">
-                {activeWorkspace?.name ? truncateText(activeWorkspace.name, 14) : "Loading..."}
+                {activeWorkspace?.name
+                  ? truncateText(activeWorkspace.name, 14)
+                  : store.locale.localized("Loading...")}
               </h4>
             )}
           </div>
@@ -145,7 +146,9 @@ export const WorkspaceSidebarDropdown = () => {
           border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 shadow-lg outline-none"
           >
             <div className="flex flex-col items-start justify-start gap-3 p-3">
-              <span className="text-sm font-medium text-custom-sidebar-text-200">Workspace</span>
+              <span className="text-sm font-medium text-custom-sidebar-text-200">
+                {store.locale.localized("Workspace")}
+              </span>
               {workspaces ? (
                 <div className="flex h-full w-full flex-col items-start justify-start gap-1.5">
                   {workspaces.length > 0 ? (
@@ -190,7 +193,7 @@ export const WorkspaceSidebarDropdown = () => {
                       </Menu.Item>
                     ))
                   ) : (
-                    <p>No workspace found!</p>
+                    <p>{store.locale.localized("No workspace found!")}</p>
                   )}
                   <Menu.Item
                     as="button"
@@ -201,7 +204,7 @@ export const WorkspaceSidebarDropdown = () => {
                     className="flex w-full items-center gap-2 px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
                   >
                     <PlusIcon className="h-4 w-4" />
-                    Create Workspace
+                    {store.locale.localized("Create Workspace")}
                   </Menu.Item>
                 </div>
               ) : (
@@ -233,7 +236,7 @@ export const WorkspaceSidebarDropdown = () => {
                 className="flex w-full items-center justify-start rounded px-2 py-1 text-sm text-red-600 hover:bg-custom-sidebar-background-80"
                 onClick={handleSignOut}
               >
-                Sign out
+                {store.locale.localized("Sign out")}
               </Menu.Item>
             </div>
           </Menu.Items>
@@ -282,7 +285,7 @@ export const WorkspaceSidebarDropdown = () => {
                   onClick={handleSignOut}
                 >
                   <Icon iconName="logout" className="!text-lg !leading-5" />
-                  Sign out
+                  {store.locale.localized("Sign out")}
                 </Menu.Item>
               </div>
             </Menu.Items>

@@ -28,6 +28,8 @@ import { renderEmoji } from "helpers/emoji.helper";
 import type { IProject } from "types";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 export type ProjectCardProps = {
   project: IProject;
@@ -40,6 +42,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
   setToJoinProject,
   setDeleteProject,
 }) => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -65,15 +68,17 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
       .then(() => {
         setToastAlert({
           type: "success",
-          title: "Success!",
-          message: "Successfully added the project to favorites.",
+          title: store.locale.localized("Success!"),
+          message: store.locale.localized("Successfully added the project to favorites."),
         });
       })
       .catch(() => {
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Couldn't remove the project from favorites. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized(
+            "Couldn't remove the project from favorites. Please try again."
+          ),
         });
       });
   };
@@ -93,15 +98,17 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
       .then(() => {
         setToastAlert({
           type: "success",
-          title: "Success!",
-          message: "Successfully removed the project from favorites.",
+          title: store.locale.localized("Success!"),
+          message: store.locale.localized("Successfully removed the project from favorites."),
         });
       })
       .catch(() => {
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Couldn't remove the project from favorites. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized(
+            "Couldn't remove the project from favorites. Please try again."
+          ),
         });
       });
   };
@@ -113,8 +120,8 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
     copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${project.id}/issues`).then(() => {
       setToastAlert({
         type: "success",
-        title: "Link Copied!",
-        message: "Project link copied to clipboard.",
+        title: store.locale.localized("Link Copied!"),
+        message: store.locale.localized("Project link copied to clipboard."),
       });
     });
   };
@@ -145,11 +152,11 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                     className="flex cursor-pointer items-center gap-1 rounded bg-green-600 px-2 py-1 text-xs"
                   >
                     <PlusIcon className="h-3 w-3" />
-                    <span>Select to Join</span>
+                    <span>{store.locale.localized("Select to Join")}</span>
                   </button>
                 ) : (
                   <span className="cursor-default rounded bg-green-600 px-2 py-1 text-xs">
-                    Joined
+                    {store.locale.localized("Joined")}
                   </span>
                 )}
                 {project.is_favorite && (
@@ -203,7 +210,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                     <CustomMenu.MenuItem onClick={() => setDeleteProject(project.id)}>
                       <span className="flex items-center justify-start gap-2">
                         <TrashIcon className="h-4 w-4" />
-                        <span>Delete project</span>
+                        <span>{store.locale.localized("Delete project")}</span>
                       </span>
                     </CustomMenu.MenuItem>
                   )}
@@ -211,21 +218,21 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                     <CustomMenu.MenuItem onClick={handleRemoveFromFavorites}>
                       <span className="flex items-center justify-start gap-2">
                         <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
-                        <span>Remove from favorites</span>
+                        <span>{store.locale.localized("Remove from favorites")}</span>
                       </span>
                     </CustomMenu.MenuItem>
                   ) : (
                     <CustomMenu.MenuItem onClick={handleAddToFavorites}>
                       <span className="flex items-center justify-start gap-2">
                         <StarIcon className="h-4 w-4" />
-                        <span>Add to favorites</span>
+                        <span>{store.locale.localized("Add to favorites")}</span>
                       </span>
                     </CustomMenu.MenuItem>
                   )}
                   <CustomMenu.MenuItem onClick={handleCopyText}>
                     <span className="flex items-center justify-start gap-2">
                       <LinkIcon className="h-4 w-4" />
-                      <span>Copy project link</span>
+                      <span>{store.locale.localized("Copy project link")}</span>
                     </span>
                   </CustomMenu.MenuItem>
                 </CustomMenu>

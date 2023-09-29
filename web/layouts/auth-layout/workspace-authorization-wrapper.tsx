@@ -41,6 +41,8 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
 }) => {
   const [toggleSidebar, setToggleSidebar] = useState(false);
 
+  // TODO: LOCALIZE THIS PAGE GENERATE A ERROR
+  //   const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 

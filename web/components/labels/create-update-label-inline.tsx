@@ -21,6 +21,9 @@ import { IIssueLabels } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "constants/label";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   labelForm: boolean;
@@ -39,6 +42,7 @@ export const CreateUpdateLabelInline = forwardRef<HTMLDivElement, Props>(
   function CreateUpdateLabelInline(props, ref) {
     const { labelForm, setLabelForm, isUpdating, labelToUpdate, onClose } = props;
 
+    const store: RootStore = useMobxStore();
     const router = useRouter();
     const { workspaceSlug, projectId } = router.query;
 
@@ -185,21 +189,25 @@ export const CreateUpdateLabelInline = forwardRef<HTMLDivElement, Props>(
             id="labelName"
             name="name"
             register={register}
-            placeholder="Label title"
+            placeholder={store.locale.localized("Label title")}
             validations={{
-              required: "Label title is required",
+              required: store.locale.localized("Label title is required"),
             }}
             error={errors.name}
           />
         </div>
-        <SecondaryButton onClick={() => handleClose()}>Cancel</SecondaryButton>
+        <SecondaryButton onClick={() => handleClose()}>
+          {store.locale.localized("Cancel")}
+        </SecondaryButton>
         {isUpdating ? (
           <PrimaryButton onClick={handleSubmit(handleLabelUpdate)} loading={isSubmitting}>
-            {isSubmitting ? "Updating" : "Update"}
+            {isSubmitting
+              ? store.locale.localized("Updating...")
+              : store.locale.localized("Update")}
           </PrimaryButton>
         ) : (
           <PrimaryButton onClick={handleSubmit(handleLabelCreate)} loading={isSubmitting}>
-            {isSubmitting ? "Adding" : "Add"}
+            {isSubmitting ? store.locale.localized("Adding...") : store.locale.localized("Add")}
           </PrimaryButton>
         )}
       </div>

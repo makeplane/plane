@@ -16,6 +16,9 @@ import { ICurrentUserResponse, IWorkspace } from "types";
 import { USER_WORKSPACES } from "constants/fetch-keys";
 // constants
 import { ORGANIZATION_SIZE } from "constants/workspace";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   onSubmit?: (res: IWorkspace) => Promise<void>;
@@ -63,6 +66,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
   const [slugError, setSlugError] = useState(false);
   const [invalidSlug, setInvalidSlug] = useState(false);
 
+  const store: RootStore = useMobxStore();
   const { setToastAlert } = useToast();
 
   const {
@@ -73,6 +77,12 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
     getValues,
     formState: { errors, isSubmitting, isValid },
   } = useForm<IWorkspace>({ defaultValues, mode: "onChange" });
+
+  primaryButtonText = {
+    ...primaryButtonText,
+    loading: store.locale.localized("Creating..."),
+    default: store.locale.localized("Create Workspace"),
+  };
 
   const handleCreateWorkspace = async (formData: IWorkspace) => {
     await workspaceService
@@ -86,8 +96,8 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
             .then(async (res) => {
               setToastAlert({
                 type: "success",
-                title: "Success!",
-                message: "Workspace created successfully.",
+                title: store.locale.localized("Success!"),
+                message: store.locale.localized("Workspace created successfully."),
               });
 
               mutate<IWorkspace[]>(
@@ -100,8 +110,10 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
             .catch(() =>
               setToastAlert({
                 type: "error",
-                title: "Error!",
-                message: "Workspace could not be created. Please try again.",
+                title: store.locale.localized("Error!"),
+                message: store.locale.localized(
+                  "Workspace could not be created. Please try again."
+                ),
               })
             );
         } else setSlugError(true);
@@ -109,8 +121,10 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
       .catch(() => {
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Some error occurred while creating workspace. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized(
+            "Some error occurred while creating workspace. Please try again."
+          ),
         });
       });
   };
@@ -127,7 +141,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
     <form className="space-y-6 sm:space-y-9" onSubmit={handleSubmit(handleCreateWorkspace)}>
       <div className="space-y-6 sm:space-y-7">
         <div className="space-y-1 text-sm">
-          <label htmlFor="workspaceName">Workspace Name</label>
+          <label htmlFor="workspaceName">{store.locale.localized("Workspace Name")}</label>
           <Input
             id="workspaceName"
             name="name"
@@ -137,21 +151,23 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
               setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"))
             }
             validations={{
-              required: "Workspace name is required",
+              required: store.locale.localized("Workspace name is required"),
               validate: (value) =>
                 /^[\w\s-]*$/.test(value) ||
-                `Name can only contain (" "), ( - ), ( _ ) & alphanumeric characters.`,
+                store.locale.localized(
+                  `Name can only contain alphanumeric characters, spaces, hyphens and underscores.`
+                ),
               maxLength: {
                 value: 80,
-                message: "Workspace name should not exceed 80 characters",
+                message: store.locale.localized("Workspace name should not exceed 80 characters"),
               },
             }}
-            placeholder="Enter workspace name..."
+            placeholder={store.locale.localized("Enter workspace name...")}
             error={errors.name}
           />
         </div>
         <div className="space-y-1 text-sm">
-          <label htmlFor="workspaceUrl">Workspace URL</label>
+          <label htmlFor="workspaceUrl">{store.locale.localized("Workspace URL")}</label>
           <div className="flex w-full items-center rounded-md border border-custom-border-200 px-3">
             <span className="whitespace-nowrap text-sm text-custom-text-200">
               {window && window.location.host}/
@@ -164,7 +180,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
               register={register}
               className="block w-full rounded-md bg-transparent py-2 !px-0 text-sm"
               validations={{
-                required: "Workspace URL is required",
+                required: store.locale.localized("Workspace URL is required"),
               }}
               onChange={(e) =>
                 /^[a-zA-Z0-9_-]+$/.test(e.target.value)
@@ -174,26 +190,34 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
             />
           </div>
           {slugError && (
-            <span className="-mt-3 text-sm text-red-500">Workspace URL is already taken!</span>
+            <span className="-mt-3 text-sm text-red-500">
+              {store.locale.localized("Workspace URL is already taken!")}
+            </span>
           )}
           {invalidSlug && (
-            <span className="text-sm text-red-500">{`URL can only contain ( - ), ( _ ) & alphanumeric characters.`}</span>
+            <span className="text-sm text-red-500">
+              {store.locale.localized(
+                `URL can only contain ( - ), ( _ ) & alphanumeric characters.`
+              )}
+            </span>
           )}
         </div>
         <div className="space-y-1 text-sm">
-          <span>What size is your organization?</span>
+          <span>{store.locale.localized("What size is your organization?")}</span>
           <div className="w-full">
             <Controller
               name="organization_size"
               control={control}
-              rules={{ required: "This field is required" }}
+              rules={{ required: store.locale.localized("This field is required") }}
               render={({ field: { value, onChange } }) => (
                 <CustomSelect
                   value={value}
                   onChange={onChange}
                   label={
                     ORGANIZATION_SIZE.find((c) => c === value) ?? (
-                      <span className="text-custom-text-200">Select organization size</span>
+                      <span className="text-custom-text-200">
+                        {store.locale.localized("Select organization size")}
+                      </span>
                     )
                   }
                   input

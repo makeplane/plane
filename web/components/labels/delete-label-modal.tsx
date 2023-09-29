@@ -18,6 +18,9 @@ import { DangerButton, SecondaryButton } from "components/ui";
 import type { ICurrentUserResponse, IIssueLabels } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   isOpen: boolean;
@@ -29,6 +32,7 @@ type Props = {
 export const DeleteLabelModal: React.FC<Props> = ({ isOpen, onClose, data, user }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -59,8 +63,8 @@ export const DeleteLabelModal: React.FC<Props> = ({ isOpen, onClose, data, user 
         mutate(PROJECT_ISSUE_LABELS(projectId.toString()));
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Label could not be deleted. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized("Label could not be deleted. Please try again."),
         });
       });
   };
@@ -105,22 +109,27 @@ export const DeleteLabelModal: React.FC<Props> = ({ isOpen, onClose, data, user 
                         as="h3"
                         className="text-lg font-medium leading-6 text-custom-text-100"
                       >
-                        Delete Label
+                        {store.locale.localized("Delete Label")}
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
-                          Are you sure you want to delete label-{" "}
+                          {store.locale.localized("Are you sure you want to delete label")}
+                          {" - "}
                           <span className="font-medium text-custom-text-100">{data?.name}</span>?
-                          The label will be removed from all the issues.
+                          {store.locale.localized("The label will be removed from all the issues.")}
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="flex justify-end gap-2 p-4 sm:px-6">
-                  <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                  <SecondaryButton onClick={handleClose}>
+                    {store.locale.localized("Cancel")}
+                  </SecondaryButton>
                   <DangerButton onClick={handleDeletion} loading={isDeleteLoading}>
-                    {isDeleteLoading ? "Deleting..." : "Delete"}
+                    {isDeleteLoading
+                      ? store.locale.localized("Deleting...")
+                      : store.locale.localized("Delete")}
                   </DangerButton>
                 </div>
               </Dialog.Panel>

@@ -18,6 +18,9 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { ICurrentUserResponse, IImporterService } from "types";
 // fetch-keys
 import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   isOpen: boolean;
@@ -30,6 +33,7 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, 
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [confirmDeleteImport, setConfirmDeleteImport] = useState(false);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -50,8 +54,8 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, 
       .catch(() =>
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Something went wrong. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized("Something went wrong. Please try again."),
         })
       )
       .finally(() => {
@@ -98,43 +102,57 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, 
                       />
                     </span>
                     <span className="flex items-center justify-start">
-                      <h3 className="text-xl font-medium 2xl:text-2xl">Delete Project</h3>
+                      <h3 className="text-xl font-medium 2xl:text-2xl">
+                        {store.locale.localized("Delete Project")}
+                      </h3>
                     </span>
                   </div>
                   <span>
                     <p className="text-sm leading-7 text-custom-text-200">
-                      Are you sure you want to delete import from{" "}
+                      {store.locale.localized("Are you sure you want to delete import from")}{" "}
                       <span className="break-words font-semibold capitalize text-custom-text-100">
                         {data?.service}
                       </span>
-                      ? All of the data related to the import will be permanently removed. This
-                      action cannot be undone.
+                      {"? "}
+                      {store.locale.localized(
+                        "All of the data related to the import will be permanently removed. This action cannot be undone."
+                      )}
                     </p>
                   </span>
                   <div>
                     <p className="text-sm text-custom-text-200">
-                      To confirm, type{" "}
-                      <span className="font-medium text-custom-text-100">delete import</span> below:
+                      {store.locale.localized("To confirm, type")}{" "}
+                      <span className="font-medium text-custom-text-100">
+                        {store.locale.localized("delete import")}
+                      </span>{" "}
+                      {store.locale.localized("below")}:
                     </p>
                     <Input
                       type="text"
                       name="typeDelete"
                       className="mt-2"
                       onChange={(e) => {
-                        if (e.target.value === "delete import") setConfirmDeleteImport(true);
+                        if (e.target.value === store.locale.localized("delete import"))
+                          setConfirmDeleteImport(true);
                         else setConfirmDeleteImport(false);
                       }}
-                      placeholder="Enter 'delete import'"
+                      placeholder={
+                        store.locale.localized("Enter '") +
+                        store.locale.localized("delete import") +
+                        "'"
+                      }
                     />
                   </div>
                   <div className="flex justify-end gap-2">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                    <SecondaryButton onClick={handleClose}>
+                      {store.locale.localized("Cancel")}
+                    </SecondaryButton>
                     <DangerButton
                       onClick={handleDeletion}
                       disabled={!confirmDeleteImport}
                       loading={deleteLoading}
                     >
-                      {deleteLoading ? "Deleting..." : "Delete Project"}
+                      {deleteLoading ? store.locale.localized("Deleting...") : "Delete Project"}
                     </DangerButton>
                   </div>
                 </div>

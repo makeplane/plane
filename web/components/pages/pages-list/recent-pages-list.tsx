@@ -21,8 +21,11 @@ import { TPagesListProps } from "./types";
 import { RecentPagesResponse } from "types";
 // fetch-keys
 import { RECENT_PAGES_LIST } from "constants/fetch-keys";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 export const RecentPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -53,8 +56,8 @@ export const RecentPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
           })
         ) : (
           <EmptyState
-            title="Have your thoughts in place"
-            description="You can think of Pages as an AI-powered notepad."
+            title={store.locale.localized("Have your thoughts in place")}
+            description={store.locale.localized("You can think of Pages as an AI-powered notepad.")}
             image={emptyPage}
             primaryButton={{
               icon: <PlusIcon className="h-4 w-4" />,

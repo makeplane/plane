@@ -31,12 +31,16 @@ import type { NextPage } from "next";
 import { ESTIMATES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 const EstimatesSettings: NextPage = () => {
   const [estimateFormOpen, setEstimateFormOpen] = useState(false);
 
   const [estimateToUpdate, setEstimateToUpdate] = useState<IEstimate | undefined>();
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -72,8 +76,8 @@ const EstimatesSettings: NextPage = () => {
       .catch(() => {
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Error: Estimate could not be deleted. Please try again",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized("Estimate could not be deleted. Please try again"),
         });
       });
   };
@@ -96,8 +100,8 @@ const EstimatesSettings: NextPage = () => {
       .catch(() =>
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Estimate could not be disabled. Please try again",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized("Estimate could not be disabled. Please try again"),
         })
       );
   };
@@ -117,11 +121,14 @@ const EstimatesSettings: NextPage = () => {
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
-              title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
+              title={`${truncateText(
+                projectDetails?.name ?? store.locale.localized("Project"),
+                32
+              )}`}
               link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
               linkTruncate
             />
-            <BreadcrumbItem title="Estimates Settings" unshrinkTitle />
+            <BreadcrumbItem title={store.locale.localized("Estimates Settings")} unshrinkTitle />
           </Breadcrumbs>
         }
       >
@@ -131,7 +138,7 @@ const EstimatesSettings: NextPage = () => {
           </div>
           <div className="pr-9 py-8 flex flex-col w-full overflow-y-auto">
             <section className="flex items-center justify-between pt-2 pb-3.5 border-b border-custom-border-200">
-              <h3 className="text-xl font-medium">Estimates</h3>
+              <h3 className="text-xl font-medium">{store.locale.localized("Estimates")}</h3>
               <div className="col-span-12 space-y-5 sm:col-span-7">
                 <div className="flex items-center gap-2">
                   <PrimaryButton
@@ -140,10 +147,12 @@ const EstimatesSettings: NextPage = () => {
                       setEstimateFormOpen(true);
                     }}
                   >
-                    Add Estimate
+                    {store.locale.localized("Add Estimate")}
                   </PrimaryButton>
                   {projectDetails?.estimate && (
-                    <SecondaryButton onClick={disableEstimates}>Disable Estimates</SecondaryButton>
+                    <SecondaryButton onClick={disableEstimates}>
+                      {store.locale.localized("Disable Estimates")}
+                    </SecondaryButton>
                   )}
                 </div>
               </div>
@@ -164,12 +173,14 @@ const EstimatesSettings: NextPage = () => {
               ) : (
                 <div className="h-full w-full overflow-y-auto">
                   <EmptyState
-                    title="No estimates yet"
-                    description="Estimates help you communicate the complexity of an issue."
+                    title={store.locale.localized("No estimates yet")}
+                    description={store.locale.localized(
+                      "Estimates help you communicate the complexity of an issue."
+                    )}
                     image={emptyEstimate}
                     primaryButton={{
                       icon: <PlusIcon className="h-4 w-4" />,
-                      text: "Add Estimate",
+                      text: store.locale.localized("Add Estimate"),
                       onClick: () => {
                         setEstimateToUpdate(undefined);
                         setEstimateFormOpen(true);

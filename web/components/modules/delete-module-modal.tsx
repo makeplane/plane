@@ -18,6 +18,9 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import type { ICurrentUserResponse, IModule } from "types";
 // fetch-keys
 import { MODULE_LIST } from "constants/fetch-keys";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   isOpen: boolean;
@@ -29,6 +32,7 @@ type Props = {
 export const DeleteModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, user }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
 
@@ -59,8 +63,8 @@ export const DeleteModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, us
       .catch(() => {
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Module could not be deleted. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized("Module could not be deleted. Please try again."),
         });
         setIsDeleteLoading(false);
       });
@@ -106,25 +110,32 @@ export const DeleteModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, us
                         as="h3"
                         className="text-lg font-medium leading-6 text-custom-text-100"
                       >
-                        Delete Module
+                        {store.locale.localized("Delete Module")}
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
-                          Are you sure you want to delete module-{" "}
+                          {store.locale.localized("Are you sure you want to delete module")}
+                          {" - "}
                           <span className="break-words font-medium text-custom-text-100">
                             {data?.name}
                           </span>
-                          ? All of the data related to the module will be permanently removed. This
-                          action cannot be undone.
+                          {" ? "}
+                          {store.locale.localized(
+                            "All of the data related to the module will be permanently removed. This action cannot be undone."
+                          )}
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="flex justify-end gap-2 p-4 sm:px-6">
-                  <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                  <SecondaryButton onClick={handleClose}>
+                    {store.locale.localized("Cancel")}
+                  </SecondaryButton>
                   <DangerButton onClick={handleDeletion} loading={isDeleteLoading}>
-                    {isDeleteLoading ? "Deleting..." : "Delete"}
+                    {isDeleteLoading
+                      ? store.locale.localized("Deleting...")
+                      : store.locale.localized("Delete")}
                   </DangerButton>
                 </div>
               </Dialog.Panel>

@@ -13,6 +13,9 @@ import { SecondaryButton, PrimaryButton, CustomSearchSelect } from "components/u
 import { ICurrentUserResponse, IImporterService } from "types";
 // fetch-keys
 import useProjects from "hooks/use-projects";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   isOpen: boolean;
@@ -31,6 +34,7 @@ export const Exporter: React.FC<Props> = ({
   mutateServices,
 }) => {
   const [exportLoading, setExportLoading] = useState(false);
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
   const { projects } = useProjects();
@@ -67,8 +71,8 @@ export const Exporter: React.FC<Props> = ({
           setExportLoading(false);
           setToastAlert({
             type: "success",
-            title: "Export Successful",
-            message: `You will be able to download the exported ${
+            title: store.locale.localized("Export Successful"),
+            message: `${store.locale.localized("You will be able to download the exported")} ${
               provider === "csv"
                 ? "CSV"
                 : provider === "xlsx"
@@ -76,15 +80,15 @@ export const Exporter: React.FC<Props> = ({
                 : provider === "json"
                 ? "JSON"
                 : ""
-            } from the previous export.`,
+            } ${store.locale.localized("from the previous export")}.`,
           });
         })
         .catch(() => {
           setExportLoading(false);
           setToastAlert({
             type: "error",
-            title: "Error!",
-            message: "Export was unsuccessful. Please try again.",
+            title: store.locale.localized("Error!"),
+            message: store.locale.localized("Export was unsuccessful. Please try again."),
           });
         });
     }
@@ -121,7 +125,7 @@ export const Exporter: React.FC<Props> = ({
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="flex items-center justify-start">
                       <h3 className="text-xl font-medium 2xl:text-2xl">
-                        Export to{" "}
+                        {store.locale.localized("Export to")}{" "}
                         {provider === "csv"
                           ? "CSV"
                           : provider === "xlsx"
@@ -145,7 +149,7 @@ export const Exporter: React.FC<Props> = ({
                               .filter((p) => value.includes(p.id))
                               .map((p) => p.identifier)
                               .join(", ")
-                          : "All projects"
+                          : store.locale.localized("All projects")
                       }
                       optionsClassName="min-w-full"
                       multiple
@@ -161,17 +165,19 @@ export const Exporter: React.FC<Props> = ({
                       onChange={() => setMultiple(!multiple)}
                     />
                     <div className="text-sm whitespace-nowrap">
-                      Export the data into separate files
+                      {store.locale.localized("Export the data into separate files")}
                     </div>
                   </div>
                   <div className="flex justify-end gap-2">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                    <SecondaryButton onClick={handleClose}>
+                      {store.locale.localized("Cancel")}
+                    </SecondaryButton>
                     <PrimaryButton
                       onClick={ExportCSVToMail}
                       disabled={exportLoading}
                       loading={exportLoading}
                     >
-                      {exportLoading ? "Exporting..." : "Export"}
+                      {exportLoading ? store.locale.localized("Exporting...") : "Export"}
                     </PrimaryButton>
                   </div>
                 </div>

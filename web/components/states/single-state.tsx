@@ -21,6 +21,9 @@ import { orderStateGroups } from "helpers/state.helper";
 import { ICurrentUserResponse, IState } from "types";
 // fetch-keys
 import { STATES_LIST } from "constants/fetch-keys";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   index: number;
@@ -41,6 +44,7 @@ export const SingleState: React.FC<Props> = ({
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -187,7 +191,9 @@ export const SingleState: React.FC<Props> = ({
 
         <div className=" items-center gap-2.5 hidden group-hover:flex">
           {state.default ? (
-            <span className="text-xs text-custom-text-200">Default</span>
+            <span className="text-xs text-custom-text-200">
+              {store.locale.localized("Default")}
+            </span>
           ) : (
             <button
               type="button"
@@ -195,7 +201,7 @@ export const SingleState: React.FC<Props> = ({
               onClick={handleMakeDefault}
               disabled={isSubmitting}
             >
-              Mark as default
+              {store.locale.localized("Mark as default")}
             </button>
           )}
           <button

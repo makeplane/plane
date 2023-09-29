@@ -41,6 +41,9 @@ import type { NextPage } from "next";
 import { PROJECTS_LIST, PROJECT_DETAILS, USER_PROJECT_VIEW } from "constants/fetch-keys";
 // constants
 import { NETWORK_CHOICES } from "constants/project";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 const defaultValues: Partial<IProject> = {
   name: "",
@@ -56,6 +59,7 @@ const GeneralSettings: NextPage = () => {
 
   const { setToastAlert } = useToast();
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -115,15 +119,15 @@ const GeneralSettings: NextPage = () => {
 
         setToastAlert({
           type: "success",
-          title: "Success!",
-          message: "Project updated successfully",
+          title: store.locale.localized("Success!"),
+          message: store.locale.localized("Project updated successfully"),
         });
       })
       .catch(() => {
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Project could not be updated. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized("Project could not be updated. Please try again."),
         });
       });
   };
@@ -151,7 +155,10 @@ const GeneralSettings: NextPage = () => {
       await projectService
         .checkProjectIdentifierAvailability(workspaceSlug as string, payload.identifier ?? "")
         .then(async (res) => {
-          if (res.exists) setError("identifier", { message: "Identifier already exists" });
+          if (res.exists)
+            setError("identifier", {
+              message: store.locale.localized("Identifier already exists"),
+            });
           else await updateProject(payload);
         });
     else await updateProject(payload);
@@ -176,11 +183,11 @@ const GeneralSettings: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
+            title={`${truncateText(projectDetails?.name ?? store.locale.localized("Project"), 32)}`}
             link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
             linkTruncate
           />
-          <BreadcrumbItem title="General Settings" unshrinkTitle />
+          <BreadcrumbItem title={store.locale.localized("General Settings")} unshrinkTitle />
         </Breadcrumbs>
       }
     >
@@ -265,7 +272,7 @@ const GeneralSettings: NextPage = () => {
 
             <div className="flex flex-col gap-8 my-8">
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm">Project Name</h4>
+                <h4 className="text-sm">{store.locale.localized("Project Name")}</h4>
                 {projectDetails ? (
                   <Input
                     id="name"
@@ -273,9 +280,9 @@ const GeneralSettings: NextPage = () => {
                     error={errors.name}
                     register={register}
                     className="!p-3 rounded-md font-medium"
-                    placeholder="Project Name"
+                    placeholder={store.locale.localized("Project Name")}
                     validations={{
-                      required: "Name is required",
+                      required: store.locale.localized("Name is required"),
                     }}
                     disabled={!isAdmin}
                   />
@@ -287,14 +294,14 @@ const GeneralSettings: NextPage = () => {
               </div>
 
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm">Description</h4>
+                <h4 className="text-sm">{store.locale.localized("Description")}</h4>
                 {projectDetails ? (
                   <TextArea
                     id="description"
                     name="description"
                     error={errors.description}
                     register={register}
-                    placeholder="Enter project description"
+                    placeholder={store.locale.localized("Enter project description")}
                     validations={{}}
                     className="min-h-[102px] text-sm"
                     disabled={!isAdmin}
@@ -308,27 +315,31 @@ const GeneralSettings: NextPage = () => {
 
               <div className="flex items-center justify-between gap-10 w-full">
                 <div className="flex flex-col gap-1 w-1/2">
-                  <h4 className="text-sm">Identifier</h4>
+                  <h4 className="text-sm">{store.locale.localized("Identifier")}</h4>
                   {projectDetails ? (
                     <Input
                       id="identifier"
                       name="identifier"
                       error={errors.identifier}
                       register={register}
-                      placeholder="Enter identifier"
+                      placeholder={store.locale.localized("Enter identifier")}
                       onChange={handleIdentifierChange}
                       validations={{
-                        required: "Identifier is required",
+                        required: store.locale.localized("Identifier is required"),
                         validate: (value) =>
                           /^[A-Z0-9]+$/.test(value.toUpperCase()) ||
-                          "Identifier must be in uppercase.",
+                          store.locale.localized("Identifier must be in uppercase."),
                         minLength: {
                           value: 1,
-                          message: "Identifier must at least be of 1 character",
+                          message: store.locale.localized(
+                            "Identifier must be at least 1 character"
+                          ),
                         },
                         maxLength: {
                           value: 5,
-                          message: "Identifier must at most be of 5 characters",
+                          message: store.locale.localized(
+                            "Identifier must at most be of 5 characters"
+                          ),
                         },
                       }}
                       disabled={!isAdmin}
@@ -341,7 +352,7 @@ const GeneralSettings: NextPage = () => {
                 </div>
 
                 <div className="flex flex-col gap-1 w-1/2">
-                  <h4 className="text-sm">Network</h4>
+                  <h4 className="text-sm">{store.locale.localized("Network")}</h4>
                   {projectDetails ? (
                     <Controller
                       name="network"
@@ -350,7 +361,7 @@ const GeneralSettings: NextPage = () => {
                         <CustomSelect
                           value={value}
                           onChange={onChange}
-                          label={selectedNetwork?.label ?? "Select network"}
+                          label={selectedNetwork?.label ?? store.locale.localized("Select Network")}
                           className="!border-custom-border-200 !shadow-none"
                           input
                           disabled={!isAdmin}
@@ -375,10 +386,13 @@ const GeneralSettings: NextPage = () => {
                 {projectDetails ? (
                   <>
                     <PrimaryButton type="submit" loading={isSubmitting} disabled={!isAdmin}>
-                      {isSubmitting ? "Updating Project..." : "Update Project"}
+                      {isSubmitting
+                        ? store.locale.localized("Updating Project...")
+                        : store.locale.localized("Update Project")}
                     </PrimaryButton>
                     <span className="text-sm text-custom-sidebar-text-400 italic">
-                      Created on {renderShortDateWithYearFormat(projectDetails?.created_at)}
+                      {store.locale.localized("Created on")}{" "}
+                      {renderShortDateWithYearFormat(projectDetails?.created_at)}
                     </span>
                   </>
                 ) : (
@@ -397,7 +411,9 @@ const GeneralSettings: NextPage = () => {
                       type="button"
                       className="flex items-center justify-between w-full py-4"
                     >
-                      <span className="text-xl tracking-tight">Delete Project</span>
+                      <span className="text-xl tracking-tight">
+                        {store.locale.localized("Delete Project")}
+                      </span>
                       <Icon iconName={open ? "expand_less" : "expand_more"} className="!text-2xl" />
                     </Disclosure.Button>
 
@@ -413,10 +429,12 @@ const GeneralSettings: NextPage = () => {
                       <Disclosure.Panel>
                         <div className="flex flex-col gap-8">
                           <span className="text-sm tracking-tight">
-                            The danger zone of the project delete page is a critical area that
-                            requires careful consideration and attention. When deleting a project,
-                            all of the data and resources within that project will be permanently
-                            removed and cannot be recovered.
+                            {store.locale.localized(`
+								The danger zone of the project delete page is a critical area that
+								requires careful consideration and attention. When deleting a project,
+								all of the data and resources within that project will be permanently
+								removed and cannot be recovered.
+							`)}
                           </span>
                           <div>
                             {projectDetails ? (
@@ -426,7 +444,7 @@ const GeneralSettings: NextPage = () => {
                                   className="!text-sm"
                                   outline
                                 >
-                                  Delete my project
+                                  {store.locale.localized("Delete my project")}
                                 </DangerButton>
                               </div>
                             ) : (

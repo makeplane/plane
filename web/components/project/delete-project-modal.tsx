@@ -20,6 +20,8 @@ import { DangerButton, Input, SecondaryButton } from "components/ui";
 import type { ICurrentUserResponse, IProject } from "types";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type TConfirmProjectDeletionProps = {
   isOpen: boolean;
@@ -41,6 +43,7 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
   onSuccess,
   user,
 }) => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -55,7 +58,8 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
   } = useForm({ defaultValues });
 
   const canDelete =
-    watch("projectName") === data?.name && watch("confirmDelete") === "delete my project";
+    watch("projectName") === data?.name &&
+    watch("confirmDelete") === store.locale.localized("delete my project");
 
   const handleClose = () => {
     const timer = setTimeout(() => {
@@ -87,8 +91,8 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
       .catch(() =>
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Something went wrong. Please try again later.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized("Something went wrong. Please try again later."),
         })
       );
   };
@@ -129,22 +133,28 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
                       />
                     </span>
                     <span className="flex items-center justify-start">
-                      <h3 className="text-xl font-medium 2xl:text-2xl">Delete Project</h3>
+                      <h3 className="text-xl font-medium 2xl:text-2xl">
+                        {store.locale.localized("Delete Project")}
+                      </h3>
                     </span>
                   </div>
                   <span>
                     <p className="text-sm leading-7 text-custom-text-200">
-                      Are you sure you want to delete project{" "}
-                      <span className="break-words font-semibold">{data?.name}</span>? All of the
-                      data related to the project will be permanently removed. This action cannot be
-                      undone
+                      {store.locale.localized("Are you sure you want to delete project")}
+                      {" - "}
+                      <span className="break-words font-semibold">{data?.name}</span>
+                      {" ? "}
+                      {store.locale.localized(
+                        "All of the data related to the project will be permanently removed. This action cannot be undone"
+                      )}
                     </p>
                   </span>
                   <div className="text-custom-text-200">
                     <p className="break-words text-sm ">
-                      Enter the project name{" "}
-                      <span className="font-medium text-custom-text-100">{data?.name}</span> to
-                      continue:
+                      {store.locale.localized("Enter the project name")}{" "}
+                      <span className="font-medium text-custom-text-100">{data?.name}</span>{" "}
+                      {store.locale.localized("to continue")}
+                      {": "}
                     </p>
                     <Controller
                       control={control}
@@ -152,7 +162,7 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
                       render={({ field: { onChange, value } }) => (
                         <Input
                           type="text"
-                          placeholder="Project name"
+                          placeholder={store.locale.localized("Project name")}
                           className="mt-2"
                           value={value}
                           onChange={onChange}
@@ -162,9 +172,12 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
                   </div>
                   <div className="text-custom-text-200">
                     <p className="text-sm">
-                      To confirm, type{" "}
-                      <span className="font-medium text-custom-text-100">delete my project</span>{" "}
-                      below:
+                      {store.locale.localized("To confirm, type")}{" "}
+                      <span className="font-medium text-custom-text-100">
+                        {store.locale.localized("delete my project")}
+                      </span>{" "}
+                      {store.locale.localized("below")}
+                      {": "}
                     </p>
                     <Controller
                       control={control}
@@ -172,7 +185,9 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
                       render={({ field: { onChange, value } }) => (
                         <Input
                           type="text"
-                          placeholder="Enter 'delete my project'"
+                          placeholder={`${store.locale.localized(
+                            "Enter"
+                          )} '${store.locale.localized("delete my project")}'`}
                           className="mt-2"
                           onChange={onChange}
                           value={value}
@@ -181,9 +196,11 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
                     />
                   </div>
                   <div className="flex justify-end gap-2">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                    <SecondaryButton onClick={handleClose}>
+                      {store.locale.localized("Cancel")}
+                    </SecondaryButton>
                     <DangerButton type="submit" disabled={!canDelete} loading={isSubmitting}>
-                      {isSubmitting ? "Deleting..." : "Delete Project"}
+                      {isSubmitting ? store.locale.localized("Deleting...") : "Delete Project"}
                     </DangerButton>
                   </div>
                 </form>
