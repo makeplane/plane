@@ -3,25 +3,31 @@ import React from "react";
 import { DragDropContext } from "@hello-pangea/dnd";
 // mobx
 import { observer } from "mobx-react-lite";
+// components
+import { KanBanSwimLanes } from "./swimlanes";
+import { KanBan } from "./default";
 // store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
-import { KanBanSwimLanes } from "./swimlanes";
-import { KanBan } from "./default";
 
-export interface IKanBanLayout {
-  issues?: any;
-  handleIssues?: () => void;
-  handleDragDrop?: (result: any) => void;
-}
+export interface IKanBanLayout {}
 
-export const KanBanLayout: React.FC<IKanBanLayout> = observer(({}) => {
-  const { issue: issueStore, issueFilter: issueFilterStore }: RootStore = useMobxStore();
+export const KanBanLayout: React.FC = observer(() => {
+  const {
+    issue: issueStore,
+    issueFilter: issueFilterStore,
+    issueKanBanView: issueKanBanViewStore,
+  }: RootStore = useMobxStore();
+
+  const issues = issueStore?.getIssues;
+
+  const sub_group_by: string | null = issueFilterStore?.userDisplayFilters?.sub_group_by || null;
+
+  const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
+
   const currentKanBanView: "swimlanes" | "default" = issueFilterStore?.userDisplayFilters?.sub_group_by
     ? "swimlanes"
     : "default";
-
-  const issues = issueStore?.getIssues;
 
   const onDragEnd = (result: any) => {
     if (!result) return;
@@ -34,14 +40,19 @@ export const KanBanLayout: React.FC<IKanBanLayout> = observer(({}) => {
     )
       return;
 
-    console.log("result", result);
-    // issueKanBanViewStore?.handleDragDrop(result.source, result.destination);
+    currentKanBanView === "default"
+      ? issueKanBanViewStore?.handleDragDrop(result.source, result.destination)
+      : issueKanBanViewStore?.handleSwimlaneDragDrop(result.source, result.destination);
   };
 
   return (
     <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90`}>
       <DragDropContext onDragEnd={onDragEnd}>
-        {currentKanBanView === "default" ? <KanBan issues={issues} /> : <KanBanSwimLanes issues={issues} />}
+        {currentKanBanView === "default" ? (
+          <KanBan issues={issues} sub_group_by={sub_group_by} group_by={group_by} />
+        ) : (
+          <KanBanSwimLanes issues={issues} sub_group_by={sub_group_by} group_by={group_by} />
+        )}
       </DragDropContext>
     </div>
   );
