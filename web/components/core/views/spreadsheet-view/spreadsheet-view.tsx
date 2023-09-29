@@ -500,9 +500,10 @@ export const SpreadsheetView: React.FC<Props> = ({
               <>
                 <div className="sticky left-0 w-[28rem] z-[2]">
                   <div
-                    className={`relative flex flex-col h-max w-full bg-custom-background-100 z-[2] ${
-                      isScrolled ? "shadow-r shadow-custom-shadow-xs" : ""
-                    }`}
+                    className="relative flex flex-col h-max w-full bg-custom-background-100 z-[2]"
+                    style={{
+                      boxShadow: isScrolled ? "8px -9px 12px rgba(0, 0, 0, 0.15)" : "",
+                    }}
                   >
                     <div className="flex items-center text-sm font-medium z-[2] h-11 w-full sticky top-0 bg-custom-background-90 border border-l-0 border-custom-border-100">
                       {currentViewProperties.key && (
