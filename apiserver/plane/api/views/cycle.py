@@ -206,12 +206,6 @@ class CycleViewSet(BaseViewSet):
 
             queryset = queryset.order_by(order_by)
 
-            # All Cycles
-            if cycle_view == "all":
-                return Response(
-                    CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
-                )
-
             # Current Cycle
             if cycle_view == "current":
                 queryset = queryset.filter(
@@ -348,10 +342,11 @@ class CycleViewSet(BaseViewSet):
                     CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
                 )
 
-            return Response(
-                {"error": "No matching view found"}, status=status.HTTP_400_BAD_REQUEST
-            )
 
+            # Default return - All Cycles
+            return Response(
+                CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
+            )
         except Exception as e:
             capture_exception(e)
             return Response(
