@@ -11,7 +11,7 @@ import workspaceService from "services/workspace.service";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
-import { SingleViewItem } from "components/views";
+import { SingleWorkspaceViewItem } from "components/workspace/views/single-workspace-view-item";
 import { WorkspaceIssuesViewOptions } from "components/issues/workspace-views/workspace-issue-view-option";
 import { CreateUpdateWorkspaceViewModal } from "components/workspace/views/modal";
 import { DeleteWorkspaceViewModal } from "components/workspace/views/delete-workspace-view-modal";
@@ -169,10 +169,9 @@ const WorkspaceViews: NextPage = () => {
           filteredOptions.length > 0 ? (
             <div>
               {filteredOptions.map((view) => (
-                <SingleViewItem
+                <SingleWorkspaceViewItem
                   key={view.id}
                   view={view}
-                  viewType="workspace"
                   handleEditView={() => handleEditView(view)}
                   handleDeleteView={() => handleDeleteView(view)}
                 />

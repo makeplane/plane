@@ -107,7 +107,6 @@ const ProjectViews: NextPage = () => {
                 <SingleViewItem
                   key={view.id}
                   view={view}
-                  viewType="project"
                   handleEditView={() => handleEditView(view)}
                   handleDeleteView={() => handleDeleteView(view)}
                 />
