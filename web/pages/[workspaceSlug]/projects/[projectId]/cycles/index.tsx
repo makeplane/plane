@@ -8,7 +8,7 @@ import useUserAuth from "hooks/use-user-auth";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
-import { CyclesList, ActiveCycleDetails, CreateUpdateCycleModal } from "components/cycles";
+import { CyclesView, ActiveCycleDetails, CreateUpdateCycleModal } from "components/cycles";
 // ui
 import { EmptyState, Icon, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -27,6 +27,7 @@ import { observer } from "mobx-react-lite";
 import { CYCLE_TAB_LIST, CYCLE_VIEWS } from "constants/cycle";
 
 type ICycleAPIFilter = "all" | "current" | "upcoming" | "draft" | "completed" | "incomplete";
+type ICycleView = "list" | "board" | "gantt";
 
 const ProjectCyclesPage: NextPage = observer(() => {
   // router
@@ -167,19 +168,27 @@ const ProjectCyclesPage: NextPage = observer(() => {
           </div>
           <Tab.Panels as={React.Fragment}>
             <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
-              {cycleTab && <CyclesList filter={cycleTab as ICycleAPIFilter} />}
+              {cycleTab && cyclesView && (
+                <CyclesView filter={cycleTab as ICycleAPIFilter} view={cyclesView as ICycleView} />
+              )}
             </Tab.Panel>
             <Tab.Panel as="div" className="p-4 sm:p-5 space-y-5 h-full overflow-y-auto">
               <ActiveCycleDetails />
             </Tab.Panel>
             <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
-              {cycleTab && <CyclesList filter={cycleTab as ICycleAPIFilter} />}
+              {cycleTab && cyclesView && (
+                <CyclesView filter={cycleTab as ICycleAPIFilter} view={cyclesView as ICycleView} />
+              )}
             </Tab.Panel>
             <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
-              {cycleTab && <CyclesList filter={cycleTab as ICycleAPIFilter} />}
+              {cycleTab && cyclesView && (
+                <CyclesView filter={cycleTab as ICycleAPIFilter} view={cyclesView as ICycleView} />
+              )}
             </Tab.Panel>
             <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
-              {cycleTab && <CyclesList filter={cycleTab as ICycleAPIFilter} />}
+              {cycleTab && cyclesView && (
+                <CyclesView filter={cycleTab as ICycleAPIFilter} view={cyclesView as ICycleView} />
+              )}
             </Tab.Panel>
           </Tab.Panels>
         </Tab.Group>

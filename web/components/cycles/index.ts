@@ -1,4 +1,4 @@
-export * from "./cycles-list";
+export * from "./cycles-view";
 export * from "./active-cycle-details";
 export * from "./active-cycle-stats";
 export * from "./gantt-chart";
@@ -12,3 +12,6 @@ export * from "./single-cycle-card";
 export * from "./single-cycle-list";
 export * from "./transfer-issues-modal";
 export * from "./transfer-issues";
+export * from "./cycles-list";
+export * from "./cycles-board";
+export * from "./cycles-gantt";

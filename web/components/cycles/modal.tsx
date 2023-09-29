@@ -1,10 +1,6 @@
 import { Fragment } from "react";
-
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import cycleService from "services/cycles.service";
@@ -34,12 +30,7 @@ type CycleModalProps = {
   user: ICurrentUserResponse | undefined;
 };
 
-export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
-  isOpen,
-  handleClose,
-  data,
-  user,
-}) => {
+export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({ isOpen, handleClose, data, user }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -116,10 +107,7 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
             mutate(DRAFT_CYCLES_LIST(projectId.toString()));
         }
         mutate(CYCLES_LIST(projectId.toString()));
-        if (
-          getDateRangeStatus(data?.start_date, data?.end_date) !=
-          getDateRangeStatus(res.start_date, res.end_date)
-        ) {
+        if (getDateRangeStatus(data?.start_date, data?.end_date) != getDateRangeStatus(res.start_date, res.end_date)) {
           switch (getDateRangeStatus(res.start_date, res.end_date)) {
             case "completed":
               mutate(COMPLETED_CYCLES_LIST(projectId.toString()));
@@ -141,7 +129,7 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
           message: "Cycle updated successfully.",
         });
       })
-      .catch((err) => {
+      .catch(() => {
         setToastAlert({
           type: "error",
           title: "Error!",
@@ -153,11 +141,9 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
   const dateChecker = async (payload: CycleDateCheckData) => {
     let status = false;
 
-    await cycleService
-      .cycleDateCheck(workspaceSlug as string, projectId as string, payload)
-      .then((res) => {
-        status = res.status;
-      });
+    await cycleService.cycleDateCheck(workspaceSlug as string, projectId as string, payload).then((res) => {
+      status = res.status;
+    });
 
     return status;
   };
@@ -194,8 +180,7 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
       setToastAlert({
         type: "error",
         title: "Error!",
-        message:
-          "You already have a cycle on the given dates, if you want to create a draft cycle, remove the dates.",
+        message: "You already have a cycle on the given dates, if you want to create a draft cycle, remove the dates.",
       });
   };
 
@@ -225,12 +210,7 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
-                <CycleForm
-                  handleFormSubmit={handleFormSubmit}
-                  handleClose={handleClose}
-                  status={data ? true : false}
-                  data={data}
-                />
+                <CycleForm handleFormSubmit={handleFormSubmit} handleClose={handleClose} data={data} />
               </Dialog.Panel>
             </Transition.Child>
           </div>
