@@ -82,7 +82,7 @@ export const IssueColumn: React.FC<Props> = ({
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
-    <div className="group flex items-center w-[28rem] text-sm h-11 sticky top-0 bg-custom-background-100 truncate border-b border-r border-custom-border-200">
+    <div className="group flex items-center w-[28rem] text-sm h-11 sticky top-0 bg-custom-background-100 truncate border-b border-r border-custom-border-100">
       <div
         className="flex gap-1.5 px-4 pr-0 py-2.5 items-center w-24"
         style={issue.parent && nestingLevel !== 0 ? { paddingLeft } : {}}
@@ -101,7 +101,7 @@ export const IssueColumn: React.FC<Props> = ({
                 onInteraction={(nextOpenState) => setIsOpen(nextOpenState)}
                 content={
                   <div
-                    className={`flex flex-col gap-1.5 overflow-y-scroll whitespace-nowrap rounded-md border p-1 text-xs shadow-lg focus:outline-none max-h-44 min-w-full border-custom-border-200 bg-custom-background-90`}
+                    className={`flex flex-col gap-1.5 overflow-y-scroll whitespace-nowrap rounded-md border p-1 text-xs shadow-lg focus:outline-none max-h-44 min-w-full border-custom-border-100 bg-custom-background-90`}
                   >
                     <button
                       type="button"

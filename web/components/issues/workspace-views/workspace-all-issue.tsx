@@ -31,7 +31,7 @@ import { IIssue, IWorkspaceIssueFilterOptions } from "types";
 
 export const WorkspaceAllIssue = () => {
   const router = useRouter();
-  const { workspaceSlug, workspaceViewId } = router.query;
+  const { workspaceSlug, viewId } = router.query;
 
   const [createViewModal, setCreateViewModal] = useState<any>(null);
 
@@ -203,7 +203,7 @@ export const WorkspaceAllIssue = () => {
                   />
                   <PrimaryButton
                     onClick={() => {
-                      if (workspaceViewId) handleFilters("filters", filters.filters, true);
+                      if (viewId) handleFilters("filters", filters.filters, true);
                       else
                         setCreateViewModal({
                           query: filters.filters,
@@ -211,8 +211,8 @@ export const WorkspaceAllIssue = () => {
                     }}
                     className="flex items-center gap-2 text-sm"
                   >
-                    {!workspaceViewId && <PlusIcon className="h-4 w-4" />}
-                    {workspaceViewId ? "Update" : "Save"} view
+                    {!viewId && <PlusIcon className="h-4 w-4" />}
+                    {viewId ? "Update" : "Save"} view
                   </PrimaryButton>
                 </div>
                 {<div className="mt-3 border-t border-custom-border-200" />}

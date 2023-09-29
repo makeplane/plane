@@ -48,9 +48,11 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = ({
     };
     await workspaceService
       .createView(workspaceSlug as string, payloadData)
-      .then(() => {
+      .then((res) => {
         mutate(WORKSPACE_VIEWS_LIST(workspaceSlug as string));
         handleClose();
+
+        router.replace(`/${workspaceSlug}/workspace-views/issues?viewId=${res.id}`);
 
         setToastAlert({
           type: "success",

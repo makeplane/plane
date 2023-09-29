@@ -312,51 +312,52 @@ const WorkspaceSettings: NextPage = () => {
                 </PrimaryButton>
               </div>
             </div>
+            {isAdmin && (
+              <Disclosure as="div" className="border-t border-custom-border-400">
+                {({ open }) => (
+                  <div className="w-full">
+                    <Disclosure.Button
+                      as="button"
+                      type="button"
+                      className="flex items-center justify-between w-full py-4"
+                    >
+                      <span className="text-xl tracking-tight">Delete Workspace</span>
+                      <Icon iconName={open ? "expand_less" : "expand_more"} className="!text-2xl" />
+                    </Disclosure.Button>
 
-            <Disclosure as="div" className="border-t border-custom-border-400">
-              {({ open }) => (
-                <div className="w-full">
-                  <Disclosure.Button
-                    as="button"
-                    type="button"
-                    className="flex items-center justify-between w-full py-4"
-                  >
-                    <span className="text-xl tracking-tight">Delete Workspace</span>
-                    <Icon iconName={open ? "expand_less" : "expand_more"} className="!text-2xl" />
-                  </Disclosure.Button>
-
-                  <Transition
-                    show={open}
-                    enter="transition duration-100 ease-out"
-                    enterFrom="transform opacity-0"
-                    enterTo="transform opacity-100"
-                    leave="transition duration-75 ease-out"
-                    leaveFrom="transform opacity-100"
-                    leaveTo="transform opacity-0"
-                  >
-                    <Disclosure.Panel>
-                      <div className="flex flex-col gap-8">
-                        <span className="text-sm tracking-tight">
-                          The danger zone of the workspace delete page is a critical area that
-                          requires careful consideration and attention. When deleting a workspace,
-                          all of the data and resources within that workspace will be permanently
-                          removed and cannot be recovered.
-                        </span>
-                        <div>
-                          <DangerButton
-                            onClick={() => setIsOpen(true)}
-                            className="!text-sm"
-                            outline
-                          >
-                            Delete my workspace
-                          </DangerButton>
+                    <Transition
+                      show={open}
+                      enter="transition duration-100 ease-out"
+                      enterFrom="transform opacity-0"
+                      enterTo="transform opacity-100"
+                      leave="transition duration-75 ease-out"
+                      leaveFrom="transform opacity-100"
+                      leaveTo="transform opacity-0"
+                    >
+                      <Disclosure.Panel>
+                        <div className="flex flex-col gap-8">
+                          <span className="text-sm tracking-tight">
+                            The danger zone of the workspace delete page is a critical area that
+                            requires careful consideration and attention. When deleting a workspace,
+                            all of the data and resources within that workspace will be permanently
+                            removed and cannot be recovered.
+                          </span>
+                          <div>
+                            <DangerButton
+                              onClick={() => setIsOpen(true)}
+                              className="!text-sm"
+                              outline
+                            >
+                              Delete my workspace
+                            </DangerButton>
+                          </div>
                         </div>
-                      </div>
-                    </Disclosure.Panel>
-                  </Transition>
-                </div>
-              )}
-            </Disclosure>
+                      </Disclosure.Panel>
+                    </Transition>
+                  </div>
+                )}
+              </Disclosure>
+            )}
           </div>
         ) : (
           <div className="flex items-center justify-center h-full w-full px-4 sm:px-0">
