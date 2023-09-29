@@ -299,8 +299,6 @@ export const WorkspaceFiltersList: React.FC<Props> = ({
                     : key === "project"
                     ? filters.project?.map((projectId) => {
                         const currentProject = project?.find((p) => p.id === projectId);
-                        console.log("currentProject", currentProject);
-                        console.log("currentProject", projectId);
                         return (
                           <p
                             key={currentProject?.id}
