@@ -85,7 +85,7 @@ export const AppliedFiltersList: React.FC = observer(() => {
         return (
           <div
             key={filterKey}
-            className="capitalize py-1 px-2 border border-custom-border-200 rounded-md flex items-center gap-2 flex-wrap"
+            className="capitalize py-1 px-2 border border-custom-border-200 rounded-md flex items-center gap-2 flex-wrap self-stretch"
           >
             <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
             {(filterKey === "assignees" || filterKey === "created_by" || filterKey === "subscriber") && (
