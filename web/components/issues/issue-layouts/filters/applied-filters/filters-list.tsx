@@ -78,14 +78,14 @@ export const AppliedFiltersList: React.FC = observer(() => {
   if (Object.keys(appliedFilters).length === 0) return null;
 
   return (
-    <div className="flex items-center gap-2 flex-wrap bg-custom-background-100 p-4">
+    <div className="flex items-stretch gap-2 flex-wrap bg-custom-background-100 p-4">
       {Object.entries(appliedFilters).map(([key, value]) => {
         const filterKey = key as keyof IIssueFilterOptions;
 
         return (
           <div
             key={filterKey}
-            className="capitalize py-1 px-2 border border-custom-border-200 rounded-md flex items-center gap-2 flex-wrap self-stretch"
+            className="capitalize py-1 px-2 border border-custom-border-200 rounded-md flex items-center gap-2 flex-wrap"
           >
             <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
             {(filterKey === "assignees" || filterKey === "created_by" || filterKey === "subscriber") && (
@@ -131,7 +131,7 @@ export const AppliedFiltersList: React.FC = observer(() => {
       <button
         type="button"
         onClick={handleClearAllFilters}
-        className="flex items-center gap-2 text-xs border border-custom-border-200 py-1 px-2 rounded-md text-custom-text-300 hover:text-custom-text-200 self-stretch"
+        className="flex items-center gap-2 text-xs border border-custom-border-200 py-1 px-2 rounded-md text-custom-text-300 hover:text-custom-text-200"
       >
         Clear all
         <X size={12} strokeWidth={2} />
