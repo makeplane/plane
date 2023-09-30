@@ -147,7 +147,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
           )}
         </div>
       </div>
-      <div className="w-full h-full divide-y divide-custom-border-20 px-2.5 overflow-y-auto">
+      <div className="w-full h-full divide-y divide-custom-border-200 px-2.5 overflow-y-auto">
         {/* priority */}
         {isFilterEnabled("priority") && (
           <div className="py-2">
