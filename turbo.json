@@ -44,7 +44,7 @@
       "cache": false,
       "persistent": true,
       "dependsOn": [
-        "@plane/editor#build"
+        "@plane/editor-core#build"
       ]
     },
     "test": {

@@ -1,40 +1,26 @@
 import StarterKit from "@tiptap/starter-kit";
-import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import TiptapLink from "@tiptap/extension-link";
-import Placeholder from "@tiptap/extension-placeholder";
 import TiptapUnderline from "@tiptap/extension-underline";
 import TextStyle from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import { Markdown } from "tiptap-markdown";
-import Highlight from "@tiptap/extension-highlight";
-import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-import { InputRule } from "@tiptap/core";
 import Gapcursor from "@tiptap/extension-gapcursor";
-import { Table } from "@/ui/extensions/table/table";
-import { TableHeader } from "@/ui/extensions/table/table-header";
-import { TableRow } from "@tiptap/extension-table-row";
-import { CustomTableCell } from "@/ui/extensions/table/table-cell";
 
-import UpdatedImage from "@/ui/extensions/image/updated-image";
-import SlashCommand from "@/ui/extensions/slash-command";
+import { CustomTableCell } from "./table/table-cell";
+import { Table } from "./table/table";
+import { TableHeader } from "./table/table-header";
+import { TableRow } from "@tiptap/extension-table-row";
+
+import ImageExtension from "@/ui/extensions/image";
 
 import { DeleteImage } from "@/types/delete-image";
-import { UploadImage } from "@/types/upload-image";
 
 import isValidHttpUrl from "@/ui/menus/bubble-menu/utils"
 
-import ts from "highlight.js/lib/languages/typescript";
-import { lowlight } from "lowlight/lib/core";
-import "highlight.js/styles/github-dark.css";
-
-lowlight.registerLanguage("ts", ts);
-
 export const TiptapExtensions = (
-  uploadFile: UploadImage,
   deleteFile: DeleteImage,
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
 ) => [
     StarterKit.configure({
       bulletList: {
@@ -72,32 +58,6 @@ export const TiptapExtensions = (
       },
       gapcursor: false,
     }),
-    CodeBlockLowlight.configure({
-      lowlight,
-    }),
-    HorizontalRule.extend({
-      addInputRules() {
-        return [
-          new InputRule({
-            find: /^(?:---|—-|___\s|\*\*\*\s)$/,
-            handler: ({ state, range, commands }) => {
-              commands.splitBlock();
-
-              const attributes = {};
-              const { tr } = state;
-              const start = range.from;
-              const end = range.to;
-              // @ts-ignore
-              tr.replaceWith(start - 1, end, this.type.create(attributes));
-            },
-          }),
-        ];
-      },
-    }).configure({
-      HTMLAttributes: {
-        class: "mb-6 border-t border-custom-border-300",
-      },
-    }),
     Gapcursor,
     TiptapLink.configure({
       protocols: ["http", "https"],
@@ -107,31 +67,14 @@ export const TiptapExtensions = (
           "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
       },
     }),
-    UpdatedImage(deleteFile).configure({
+    ImageExtension(deleteFile).configure({
       HTMLAttributes: {
         class: "rounded-lg border border-custom-border-300",
       },
     }),
-    Placeholder.configure({
-      placeholder: ({ node }) => {
-        if (node.type.name === "heading") {
-          return `Heading ${node.attrs.level}`;
-        }
-        if (node.type.name === "image" || node.type.name === "table") {
-          return "";
-        }
-
-        return "Press '/' for commands...";
-      },
-      includeChildren: true,
-    }),
-    SlashCommand(uploadFile, setIsSubmitting),
     TiptapUnderline,
     TextStyle,
     Color,
-    Highlight.configure({
-      multicolor: true,
-    }),
     TaskList.configure({
       HTMLAttributes: {
         class: "not-prose pl-2",

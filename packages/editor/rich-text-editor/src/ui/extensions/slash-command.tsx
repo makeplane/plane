@@ -17,9 +17,8 @@ import {
   ImageIcon,
   Table,
 } from "lucide-react";
-import { startImageUpload } from "@/ui/plugins/upload-image";
-import { cn } from "@/lib/utils";
-import { UploadImage } from "@/types/upload-image";
+import { UploadImage } from "..";
+import { cn, startImageUpload } from "@plane/editor-core";
 
 interface CommandItemProps {
   title: string;

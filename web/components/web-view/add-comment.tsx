@@ -10,7 +10,7 @@ import { useForm, Controller } from "react-hook-form";
 import useProjectDetails from "hooks/use-project-details";
 
 // components
-import { TiptapEditorWithRef } from "@plane/editor";
+import { TiptapEditorWithRef } from "@plane/rich-text-editor";
 
 // icons
 import { Send } from "lucide-react";
@@ -79,9 +79,8 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit }) => {
           control={control}
           render={({ field: { value, onChange } }) => (
             <TiptapEditorWithRef
-              uploadFile={fileService.uploadFile}
+              uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
               deleteFile={fileService.deleteImage}
-              workspaceSlug={workspaceSlug as string}
               ref={editorRef}
               value={!value || value === "" ? "<p></p>" : value}
               customClassName="p-3 min-h-[100px] shadow-sm"

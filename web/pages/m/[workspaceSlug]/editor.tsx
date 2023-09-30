@@ -14,7 +14,7 @@ import { Controller, useForm } from "react-hook-form";
 import WebViewLayout from "layouts/web-view-layout";
 
 // components
-import { TiptapEditor } from "@plane/editor";
+import { RichTextEditor } from "@plane/rich-text-editor";
 import { PrimaryButton, Spinner } from "components/ui";
 // services
 import fileService from "@/services/file.service";
@@ -54,8 +54,8 @@ const Editor: NextPage = () => {
             name="data_html"
             control={control}
             render={({ field: { value, onChange } }) => (
-              <TiptapEditor
-                uploadFile={fileService.uploadFile}
+              <RichTextEditor
+                uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                 deleteFile={fileService.deleteImage}
                 borderOnFocus={false}
                 value={
@@ -67,7 +67,6 @@ const Editor: NextPage = () => {
                 }
                 editable={isEditable}
                 noBorder={true}
-                workspaceSlug={workspaceSlug?.toString() ?? ""}
                 debouncedUpdatesEnabled={true}
                 customClassName="min-h-[150px] shadow-sm"
                 editorContentCustomClassNames="pb-9"

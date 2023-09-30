@@ -3,7 +3,7 @@ import TrackImageDeletionPlugin from "@/ui/plugins/delete-image";
 import UploadImagesPlugin from "@/ui/plugins/upload-image";
 import { DeleteImage } from "@/types/delete-image";
 
-const UpdatedImage = (deleteImage: DeleteImage) => Image.extend({
+const ImageExtension = (deleteImage: DeleteImage) => Image.extend({
   addProseMirrorPlugins() {
     return [UploadImagesPlugin(), TrackImageDeletionPlugin(deleteImage)];
   },
@@ -20,4 +20,4 @@ const UpdatedImage = (deleteImage: DeleteImage) => Image.extend({
   },
 });
 
-export default UpdatedImage;
+export default ImageExtension;

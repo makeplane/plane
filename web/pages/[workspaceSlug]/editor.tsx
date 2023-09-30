@@ -1,4 +1,4 @@
-import { TiptapEditor } from "@plane/editor";
+import { RichTextEditor } from "@plane/rich-text-editor";
 import type { NextPage } from "next";
 import { useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -135,8 +135,8 @@ const Editor: NextPage = () => {
         name="description_html"
         control={control}
         render={({ field: { value, onChange } }) => (
-          <TiptapEditor
-            uploadFile={fileService.uploadFile}
+          <RichTextEditor
+            uploadFile={fileService.getUploadFileFunction(cookies.MOBILE_slug ?? "")}
             deleteFile={fileService.deleteImage}
             borderOnFocus={false}
             value={
@@ -148,7 +148,6 @@ const Editor: NextPage = () => {
             }
             editable={editable === "true"}
             noBorder={true}
-            workspaceSlug={cookies.MOBILE_slug ?? ""}
             debouncedUpdatesEnabled={true}
             setShouldShowAlert={setShowAlert}
             setIsSubmitting={setIsSubmitting}

@@ -9,7 +9,7 @@ import useUser from "hooks/use-user";
 // ui
 import { CustomMenu, Icon } from "components/ui";
 import { CommentReaction } from "components/issues";
-import { TiptapEditorWithRef } from "@plane/editor";
+import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
@@ -112,10 +112,9 @@ export const CommentCard: React.FC<Props> = ({
             onSubmit={handleSubmit(onEnter)}
           >
             <div>
-              <TiptapEditorWithRef
-                uploadFile={fileService.uploadFile}
+              <LiteTextEditorWithRef
+                uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                 deleteFile={fileService.deleteImage}
-                workspaceSlug={workspaceSlug as string}
                 ref={editorRef}
                 value={watch("comment_html")}
                 debouncedUpdatesEnabled={false}
@@ -152,10 +151,9 @@ export const CommentCard: React.FC<Props> = ({
                 />
               </div>
             )}
-            <TiptapEditorWithRef
-              uploadFile={fileService.uploadFile}
+            <LiteTextEditorWithRef
+              uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
               deleteFile={fileService.deleteImage}
-              workspaceSlug={workspaceSlug as string}
               ref={showEditorRef}
               value={comment.comment_html}
               editable={false}

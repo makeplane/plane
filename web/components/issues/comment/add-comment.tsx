@@ -3,9 +3,9 @@ import { useRouter } from "next/router";
 // react-hook-form
 import { useForm, Controller } from "react-hook-form";
 // components
-import { TiptapEditorWithRef } from "@plane/editor";
+import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
 // ui
-import { Icon, SecondaryButton, Tooltip } from "components/ui";
+import { SecondaryButton } from "components/ui";
 // types
 import type { IIssueComment } from "types";
 // services
@@ -74,23 +74,20 @@ export const AddComment: React.FC<Props> = ({
             <Controller
               name="access"
               control={control}
-              render={({ field: { onChange, value } }) => (
+              render={({ field: { onChange: onAccessChange, value: accessValue } }) => (
                 <Controller
                   name="comment_html"
                   control={control}
                   render={({ field: { onChange: onCommentChange, value: commentValue } }) => (
-                    <TiptapEditorWithRef
-                      uploadFile={fileService.uploadFile}
+                    <LiteTextEditorWithRef
+                      uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                       deleteFile={fileService.deleteImage}
-                      workspaceSlug={workspaceSlug as string}
                       ref={editorRef}
                       value={!commentValue || commentValue === "" ? "<p></p>" : commentValue}
                       customClassName="p-3 min-h-[100px] shadow-sm"
                       debouncedUpdatesEnabled={false}
                       onChange={(comment_json: Object, comment_html: string) => onCommentChange(comment_html)}
-                      accessValue={value}
-                      onAccessChange={onChange}
-                      commentAccess={commentAccess}
+                      commentAccessSpecifier={{ accessValue, onAccessChange, showAccessSpecifier, commentAccess }}
                     />
                   )}
                 />

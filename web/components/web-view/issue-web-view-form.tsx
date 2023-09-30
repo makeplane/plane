@@ -16,7 +16,7 @@ import useReloadConfirmations from "hooks/use-reload-confirmation";
 import { TextArea } from "components/ui";
 
 // components
-import { TiptapEditor } from "@plane/editor";
+import { RichTextEditor } from "@plane/rich-text-editor";
 import { Label } from "components/web-view";
 
 // types
@@ -123,8 +123,8 @@ export const IssueWebViewForm: React.FC<Props> = (props) => {
               if (!value) return <></>;
 
               return (
-                <TiptapEditor
-                  uploadFile={fileService.uploadFile}
+                <RichTextEditor
+                  uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                   deleteFile={fileService.deleteImage}
                   value={
                     !value ||
@@ -133,7 +133,6 @@ export const IssueWebViewForm: React.FC<Props> = (props) => {
                       ? "<p></p>"
                       : value
                   }
-                  workspaceSlug={workspaceSlug!.toString()}
                   debouncedUpdatesEnabled={true}
                   setShouldShowAlert={setShowAlert}
                   setIsSubmitting={setIsSubmitting}

@@ -11,7 +11,7 @@ import useUserAuth from "hooks/use-user-auth";
 // ui
 import { Input, PrimaryButton, SecondaryButton } from "components/ui";
 // components
-import { TiptapEditor, TiptapEditorWithRef } from "@plane/editor";
+import { RichTextEditor, RichTextEditorWithRef } from "@plane/rich-text-editor";
 // types
 import { IIssue, IPageBlock } from "types";
 // services
@@ -143,10 +143,9 @@ export const GptAssistantModal: React.FC<Props> = ({
       {((content && content !== "") || (htmlContent && htmlContent !== "<p></p>")) && (
         <div className="text-sm">
           Content:
-          <TiptapEditorWithRef
-            uploadFile={fileService.uploadFile}
+          <RichTextEditorWithRef
+            uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
             deleteFile={fileService.deleteImage}
-            workspaceSlug={workspaceSlug as string}
             value={htmlContent ?? `<p>${content}</p>`}
             customClassName="-m-3"
             noBorder
@@ -159,10 +158,9 @@ export const GptAssistantModal: React.FC<Props> = ({
       {response !== "" && (
         <div className="page-block-section text-sm">
           Response:
-          <TiptapEditor
-            uploadFile={fileService.uploadFile}
+          <RichTextEditor
+            uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
             deleteFile={fileService.deleteImage}
-            workspaceSlug={workspaceSlug as string}
             value={`<p>${response}</p>`}
             customClassName="-mx-3 -my-3"
             noBorder

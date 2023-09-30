@@ -19,7 +19,7 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { GptAssistantModal } from "components/core";
 import { CreateUpdateBlockInline } from "components/pages";
-import { TiptapEditor } from "@plane/editor";
+import { RichTextEditor } from "@plane/rich-text-editor";
 // ui
 import { CustomMenu, TextArea } from "components/ui";
 // icons
@@ -452,10 +452,9 @@ export const SinglePageBlock: React.FC<Props> = ({
 
                   {showBlockDetails
                     ? block.description_html.length > 7 && (
-                        <TiptapEditor
-                          uploadFile={fileService.uploadFile}
+                        <RichTextEditor
+                          uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                           deleteFile={fileService.deleteImage}
-                          workspaceSlug={workspaceSlug as string}
                           value={block.description_html}
                           customClassName="text-sm min-h-[150px]"
                           noBorder

@@ -9,7 +9,7 @@ import { Menu, Transition } from "@headlessui/react";
 // lib
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { TiptapEditorWithRef } from "@plane/editor";
+import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 
 import { CommentReactions } from "components/issues/peek-overview";
 // icons
@@ -103,10 +103,9 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                 control={control}
                 name="comment_html"
                 render={({ field: { onChange, value } }) => (
-                  <TiptapEditorWithRef
-                    uploadFile={fileService.uploadFile}
+                  <RichTextEditorWithRef
+                    uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
                     deleteFile={fileService.deleteImage}
-                    workspaceSlug={workspaceSlug as string}
                     ref={editorRef}
                     value={value}
                     debouncedUpdatesEnabled={false}
@@ -136,10 +135,9 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             </div>
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
-            <TiptapEditorWithRef
-              uploadFile={fileService.uploadFile}
+            <RichTextEditorWithRef
+              uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
               deleteFile={fileService.deleteImage}
-              workspaceSlug={workspaceSlug as string}
               ref={showEditorRef}
               value={comment.comment_html}
               editable={false}

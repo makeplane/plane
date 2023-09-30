@@ -1,13 +1,10 @@
 "use client"
 import * as React from 'react';
-import { Extension } from "@tiptap/react";
-import { UploadImage } from '@/types/upload-image';
-import { DeleteImage } from '@/types/delete-image';
-import { getEditorClassNames } from '@/lib/utils';
-import { EditorProps } from '@tiptap/pm/view';
-import { useEditor } from './hooks/useEditor';
-import { EditorContainer } from '@/ui/editor-container';
-import { EditorContentWrapper } from '@/ui/editor-content';
+import { EditorContainer, EditorContentWrapper, getEditorClassNames, useEditor } from '@plane/editor-core';
+import { FixedMenu } from './menus/fixed-menu';
+
+export type UploadImage = (file: File) => Promise<string>;
+export type DeleteImage = (assetUrlWithWorkspaceId: string) => Promise<any>;
 
 interface ITiptapEditor {
   value: string;
@@ -23,15 +20,16 @@ interface ITiptapEditor {
   editable?: boolean;
   forwardedRef?: any;
   debouncedUpdatesEnabled?: boolean;
-  accessValue: string;
-  onAccessChange: (accessKey: string) => void;
-  commentAccess: {
-    icon: string;
-    key: string;
-    label: "Private" | "Public";
-  }[];
-  extensions?: Extension[];
-  editorProps?: EditorProps;
+  commentAccessSpecifier?: {
+    accessValue: string,
+    onAccessChange: (accessKey: string) => void,
+    showAccessSpecifier: boolean,
+    commentAccess: {
+      icon: string;
+      key: string;
+      label: "Private" | "Public";
+    }[]
+  }
 }
 
 interface TiptapProps extends ITiptapEditor {
@@ -43,7 +41,7 @@ interface EditorHandle {
   setEditorValue: (content: string) => void;
 }
 
-const TiptapEditor = ({
+const LiteTextEditor = ({
   onChange,
   debouncedUpdatesEnabled,
   editable,
@@ -57,6 +55,7 @@ const TiptapEditor = ({
   borderOnFocus,
   customClassName,
   forwardedRef,
+  commentAccessSpecifier,
 }: TiptapProps) => {
   const editor = useEditor({
     onChange,
@@ -78,15 +77,20 @@ const TiptapEditor = ({
     <EditorContainer editor={editor} editorClassNames={editorClassNames}>
       <div className="flex flex-col">
         <EditorContentWrapper editor={editor} editorContentCustomClassNames={editorContentCustomClassNames} />
+        {(editable !== false) &&
+          (<div className="w-full mt-4">
+            <FixedMenu editor={editor} commentAccessSpecifier={commentAccessSpecifier} />
+          </div>)
+        }
       </div>
     </EditorContainer >
   );
 };
 
-const TiptapEditorWithRef = React.forwardRef<EditorHandle, ITiptapEditor>((props, ref) => (
-  <TiptapEditor {...props} forwardedRef={ref} />
+const LiteTextEditorWithRef = React.forwardRef<EditorHandle, ITiptapEditor>((props, ref) => (
+  <LiteTextEditor {...props} forwardedRef={ref} />
 ));
 
-TiptapEditorWithRef.displayName = "TiptapEditorWithRef";
+LiteTextEditorWithRef.displayName = "LiteTextEditorWithRef";
 
-export { TiptapEditor, TiptapEditorWithRef };
+export { LiteTextEditor, LiteTextEditorWithRef };

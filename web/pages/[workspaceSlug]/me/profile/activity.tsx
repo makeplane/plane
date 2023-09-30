@@ -9,7 +9,7 @@ import userService from "services/user.service";
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
 import { ActivityIcon, ActivityMessage } from "components/core";
-import { TiptapEditor } from "@plane/editor";
+import { RichTextEditor } from "@plane/rich-text-editor";
 // icons
 import { ArrowTopRightOnSquareIcon, ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
 // ui
@@ -98,10 +98,9 @@ const ProfileActivity = () => {
                               </p>
                             </div>
                             <div className="issue-comments-section p-0">
-                              <TiptapEditor
-                                uploadFile={fileService.uploadFile}
+                              <RichTextEditor
+                                uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                                 deleteFile={fileService.deleteImage}
-                                workspaceSlug={workspaceSlug as string}
                                 value={
                                   activityItem?.new_value !== ""
                                     ? activityItem.new_value

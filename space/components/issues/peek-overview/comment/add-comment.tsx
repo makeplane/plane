@@ -11,7 +11,7 @@ import { SecondaryButton } from "components/ui";
 // types
 import { Comment } from "types/issue";
 // components
-import { TiptapEditorWithRef } from "@plane/editor";
+import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 // service
 import fileService from "@/services/file.service";
 
@@ -71,10 +71,9 @@ export const AddComment: React.FC<Props> = observer((props) => {
           name="comment_html"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <TiptapEditorWithRef
-              uploadFile={fileService.uploadFile}
+            <RichTextEditorWithRef
+              uploadFile={fileService.getUploadFileFunction(workspace_slug as string)}
               deleteFile={fileService.deleteImage}
-              workspaceSlug={workspace_slug as string}
               ref={editorRef}
               value={
                 !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)

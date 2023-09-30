@@ -1,5 +1,5 @@
 import { IssueReactions } from "components/issues/peek-overview";
-import { TiptapEditor } from "@plane/editor";
+import { RichTextEditor } from "@plane/rich-text-editor";
 import { useRouter } from "next/router";
 // types
 import { IIssue } from "types/issue";
@@ -21,10 +21,9 @@ export const PeekOverviewIssueDetails: React.FC<Props> = ({ issueDetails }) => {
       </h6>
       <h4 className="break-words text-2xl font-semibold">{issueDetails.name}</h4>
       {issueDetails.description_html !== "" && issueDetails.description_html !== "<p></p>" && (
-        <TiptapEditor
-          uploadFile={fileService.uploadFile}
+        <RichTextEditor
+          uploadFile={fileService.getUploadFileFunction(workspace_slug as string)}
           deleteFile={fileService.deleteImage}
-          workspaceSlug={workspace_slug as string}
           value={
             !issueDetails.description_html ||
             issueDetails.description_html === "" ||

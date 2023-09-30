@@ -33,11 +33,27 @@ class FileService extends APIService {
   }
 
   async uploadFile(workspaceSlug: string, file: FormData): Promise<any> {
-    return this.mediaUpload(`/api/workspaces/${workspaceSlug}/file-assets/`, file)
+    return this.post(`/api/workspaces/${workspaceSlug}/file-assets/`, file, {
+      headers: {
+        ...this.getHeaders(),
+        "Content-Type": "multipart/form-data",
+      },
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
+  }
+
+  getUploadFileFunction(workspaceSlug: string): (file: File) => Promise<string> {
+    return async (file: File) => {
+      const formData = new FormData();
+      formData.append("asset", file);
+      formData.append("attributes", JSON.stringify({}));
+
+      const data = await this.uploadFile(workspaceSlug, formData);
+      return data.asset;
+    };
   }
 
   async deleteImage(assetUrlWithWorkspaceId: string): Promise<any> {

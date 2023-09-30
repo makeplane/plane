@@ -1,13 +1,11 @@
 "use client"
 import * as React from 'react';
-import { Extension } from "@tiptap/react";
-import { UploadImage } from '@/types/upload-image';
-import { DeleteImage } from '@/types/delete-image';
-import { getEditorClassNames } from '@/lib/utils';
-import { EditorProps } from '@tiptap/pm/view';
-import { useEditor } from './hooks/useEditor';
-import { EditorContainer } from '@/ui/editor-container';
-import { EditorContentWrapper } from '@/ui/editor-content';
+import { EditorContainer, EditorContentWrapper, getEditorClassNames, useEditor } from '@plane/editor-core';
+import { EditorBubbleMenu } from './menus/bubble-menu';
+import { RichTextEditorExtensions } from './extensions';
+
+export type UploadImage = (file: File) => Promise<string>;
+export type DeleteImage = (assetUrlWithWorkspaceId: string) => Promise<any>;
 
 interface ITiptapEditor {
   value: string;
@@ -23,15 +21,6 @@ interface ITiptapEditor {
   editable?: boolean;
   forwardedRef?: any;
   debouncedUpdatesEnabled?: boolean;
-  accessValue: string;
-  onAccessChange: (accessKey: string) => void;
-  commentAccess: {
-    icon: string;
-    key: string;
-    label: "Private" | "Public";
-  }[];
-  extensions?: Extension[];
-  editorProps?: EditorProps;
 }
 
 interface TiptapProps extends ITiptapEditor {
@@ -43,7 +32,7 @@ interface EditorHandle {
   setEditorValue: (content: string) => void;
 }
 
-const TiptapEditor = ({
+const RichTextEditor = ({
   onChange,
   debouncedUpdatesEnabled,
   editable,
@@ -68,6 +57,7 @@ const TiptapEditor = ({
     uploadFile,
     deleteFile,
     forwardedRef,
+    extensions: RichTextEditorExtensions(uploadFile, setIsSubmitting)
   });
 
   const editorClassNames = getEditorClassNames({ noBorder, borderOnFocus, customClassName });
@@ -76,6 +66,7 @@ const TiptapEditor = ({
 
   return (
     <EditorContainer editor={editor} editorClassNames={editorClassNames}>
+      {editor && <EditorBubbleMenu editor={editor} />}
       <div className="flex flex-col">
         <EditorContentWrapper editor={editor} editorContentCustomClassNames={editorContentCustomClassNames} />
       </div>
@@ -83,10 +74,10 @@ const TiptapEditor = ({
   );
 };
 
-const TiptapEditorWithRef = React.forwardRef<EditorHandle, ITiptapEditor>((props, ref) => (
-  <TiptapEditor {...props} forwardedRef={ref} />
+const RichTextEditorWithRef = React.forwardRef<EditorHandle, ITiptapEditor>((props, ref) => (
+  <RichTextEditor {...props} forwardedRef={ref} />
 ));
 
-TiptapEditorWithRef.displayName = "TiptapEditorWithRef";
+RichTextEditorWithRef.displayName = "RichTextEditorWithRef";
 
-export { TiptapEditor, TiptapEditorWithRef };
+export { RichTextEditor, RichTextEditorWithRef};

@@ -25,7 +25,7 @@ import { CreateLabelModal } from "components/labels";
 // ui
 import { CustomMenu, Input, PrimaryButton, SecondaryButton, ToggleSwitch } from "components/ui";
 // components
-import { TiptapEditorWithRef } from "@plane/editor";
+import { TiptapEditorWithRef } from "@plane/rich-text-editor";
 
 // icons
 import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -385,9 +385,8 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
 
                       return (
                         <TiptapEditorWithRef
-                          uploadFile={fileService.uploadFile}
+                          uploadFile={fileService.getUploadFileFunction(workspaceSlug  as string)}
                           deleteFile={fileService.deleteImage}
-                          workspaceSlug={workspaceSlug as string}
                           ref={editorRef}
                           debouncedUpdatesEnabled={false}
                           value={
