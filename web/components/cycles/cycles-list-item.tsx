@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
@@ -23,12 +23,12 @@ import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
 import { ICycle } from "types";
 
-type TCycledListItem = {
+type TCyclesListItem = {
   cycle: ICycle;
-  handleEditCycle: () => void;
-  handleDeleteCycle: () => void;
-  handleAddToFavorites: () => void;
-  handleRemoveFromFavorites: () => void;
+  handleEditCycle?: () => void;
+  handleDeleteCycle?: () => void;
+  handleAddToFavorites?: () => void;
+  handleRemoveFromFavorites?: () => void;
 };
 
 const stateGroups = [
@@ -59,12 +59,12 @@ const stateGroups = [
   },
 ];
 
-export const CycledListItem: FC<TCycledListItem> = (props) => {
-  const { cycle, handleEditCycle, handleDeleteCycle, handleAddToFavorites, handleRemoveFromFavorites } = props;
+export const CyclesListItem: FC<TCyclesListItem> = (props) => {
+  const { cycle } = props;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
+  // toast
   const { setToastAlert } = useToast();
 
   const cycleStatus = getDateRangeStatus(cycle.start_date, cycle.end_date);
@@ -90,6 +90,11 @@ export const CycledListItem: FC<TCycledListItem> = (props) => {
     value: cycle.total_issues > 0 ? ((cycle[group.key as keyof ICycle] as number) / cycle.total_issues) * 100 : 0,
     color: group.color,
   }));
+
+  const handleAddToFavorites = () => {};
+  const handleRemoveFromFavorites = () => {};
+  const handleEditCycle = () => {};
+  const handleDeleteCycle = () => {};
 
   return (
     <div>
@@ -246,33 +251,18 @@ export const CycledListItem: FC<TCycledListItem> = (props) => {
                     </span>
                   </Tooltip>
                   {cycle.is_favorite ? (
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleRemoveFromFavorites();
-                      }}
-                    >
+                    <button type="button" onClick={handleRemoveFromFavorites}>
                       <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
                     </button>
                   ) : (
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleAddToFavorites();
-                      }}
-                    >
+                    <button type="button" onClick={handleAddToFavorites}>
                       <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
                     </button>
                   )}
                   <div className="flex items-center">
                     <CustomMenu width="auto" verticalEllipsis>
                       {!isCompleted && (
-                        <CustomMenu.MenuItem
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleEditCycle();
-                          }}
-                        >
+                        <CustomMenu.MenuItem onClick={handleEditCycle}>
                           <span className="flex items-center justify-start gap-2">
                             <PencilIcon className="h-4 w-4" />
                             <span>Edit Cycle</span>
@@ -280,24 +270,14 @@ export const CycledListItem: FC<TCycledListItem> = (props) => {
                         </CustomMenu.MenuItem>
                       )}
                       {!isCompleted && (
-                        <CustomMenu.MenuItem
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleDeleteCycle();
-                          }}
-                        >
+                        <CustomMenu.MenuItem onClick={handleDeleteCycle}>
                           <span className="flex items-center justify-start gap-2">
                             <TrashIcon className="h-4 w-4" />
                             <span>Delete cycle</span>
                           </span>
                         </CustomMenu.MenuItem>
                       )}
-                      <CustomMenu.MenuItem
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleCopyText();
-                        }}
-                      >
+                      <CustomMenu.MenuItem onClick={handleCopyText}>
                         <span className="flex items-center justify-start gap-2">
                           <LinkIcon className="h-4 w-4" />
                           <span>Copy cycle link</span>

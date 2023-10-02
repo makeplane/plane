@@ -168,26 +168,46 @@ const ProjectCyclesPage: NextPage = observer(() => {
           </div>
           <Tab.Panels as={React.Fragment}>
             <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
-              {cycleTab && cyclesView && (
-                <CyclesView filter={cycleTab as ICycleAPIFilter} view={cyclesView as ICycleView} />
+              {cycleTab && cyclesView && workspaceSlug && projectId && (
+                <CyclesView
+                  filter={cycleTab as ICycleAPIFilter}
+                  view={cyclesView as ICycleView}
+                  workspaceSlug={workspaceSlug?.toString()}
+                  projectId={projectId?.toString()}
+                />
               )}
             </Tab.Panel>
             <Tab.Panel as="div" className="p-4 sm:p-5 space-y-5 h-full overflow-y-auto">
               <ActiveCycleDetails />
             </Tab.Panel>
             <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
-              {cycleTab && cyclesView && (
-                <CyclesView filter={cycleTab as ICycleAPIFilter} view={cyclesView as ICycleView} />
+              {cycleTab && cyclesView && workspaceSlug && projectId && (
+                <CyclesView
+                  filter={cycleTab as ICycleAPIFilter}
+                  view={cyclesView as ICycleView}
+                  workspaceSlug={workspaceSlug?.toString()}
+                  projectId={projectId?.toString()}
+                />
               )}
             </Tab.Panel>
             <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
-              {cycleTab && cyclesView && (
-                <CyclesView filter={cycleTab as ICycleAPIFilter} view={cyclesView as ICycleView} />
+              {cycleTab && cyclesView && workspaceSlug && projectId && (
+                <CyclesView
+                  filter={cycleTab as ICycleAPIFilter}
+                  view={cyclesView as ICycleView}
+                  workspaceSlug={workspaceSlug?.toString()}
+                  projectId={projectId?.toString()}
+                />
               )}
             </Tab.Panel>
             <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
-              {cycleTab && cyclesView && (
-                <CyclesView filter={cycleTab as ICycleAPIFilter} view={cyclesView as ICycleView} />
+              {cycleTab && cyclesView && workspaceSlug && projectId && (
+                <CyclesView
+                  filter={cycleTab as ICycleAPIFilter}
+                  view={cyclesView as ICycleView}
+                  workspaceSlug={workspaceSlug?.toString()}
+                  projectId={projectId?.toString()}
+                />
               )}
             </Tab.Panel>
           </Tab.Panels>

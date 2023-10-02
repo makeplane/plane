@@ -59,7 +59,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                   name="name"
                   type="text"
                   placeholder="Cycle Name"
-                  className="resize-none text-xl"
+                  className="resize-none text-xl w-full p-2"
                   value={value}
                   onChange={onChange}
                   hasError={Boolean(errors?.name)}

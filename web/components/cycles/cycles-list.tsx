@@ -3,13 +3,15 @@ import { FC } from "react";
 import { Loader } from "components/ui";
 // types
 import { ICycle } from "types";
+import { CyclesListItem } from "./cycles-list-item";
 
 export interface ICyclesList {
   cycles: ICycle[];
+  filter: string;
 }
 
 export const CyclesList: FC<ICyclesList> = (props) => {
-  const { cycles } = props;
+  const { cycles, filter } = props;
 
   return (
     <div>
@@ -18,16 +20,9 @@ export const CyclesList: FC<ICyclesList> = (props) => {
           {cycles.length > 0 ? (
             <div className="divide-y divide-custom-border-200">
               {cycles.map((cycle) => (
-                <div className="hover:bg-custom-background-80">
+                <div className="hover:bg-custom-background-80" key={cycle.id}>
                   <div className="flex flex-col border-custom-border-200">
-                    <SingleCycleList
-                      key={cycle.id}
-                      cycle={cycle}
-                      handleDeleteCycle={() => handleDeleteCycle(cycle)}
-                      handleEditCycle={() => handleEditCycle(cycle)}
-                      handleAddToFavorites={() => handleAddToFavorites(cycle)}
-                      handleRemoveFromFavorites={() => handleRemoveFromFavorites(cycle)}
-                    />
+                    <CyclesListItem cycle={cycle} />
                   </div>
                 </div>
               ))}
@@ -45,7 +40,7 @@ export const CyclesList: FC<ICyclesList> = (props) => {
                   </svg>
                 </div>
                 <h4 className="text-sm text-custom-text-200">
-                  {cycleTab === "all" ? "No cycles" : `No ${cycleTab} cycles`}
+                  {filter === "all" ? "No cycles" : `No ${filter} cycles`}
                 </h4>
                 <button
                   type="button"
