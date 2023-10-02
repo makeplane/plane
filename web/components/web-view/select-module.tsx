@@ -68,6 +68,18 @@ export const ModuleSelect: React.FC<Props> = (props) => {
   const removeIssueFromModule = (bridgeId?: string, moduleId?: string) => {
     if (!workspaceSlug || !projectId || !moduleId || !bridgeId) return;
 
+    mutate(
+      ISSUE_DETAILS(issueId as string),
+      (prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          issue_module: null,
+        };
+      },
+      false
+    );
+
     modulesService
       .removeIssueFromModule(workspaceSlug as string, projectId as string, moduleId, bridgeId)
       .then(() => {
@@ -79,25 +91,6 @@ export const ModuleSelect: React.FC<Props> = (props) => {
       });
   };
 
-  //   ...(Array.from(
-  //     (modules || [])?.map(
-  //       (mod) =>
-  //         (mod.id !== value?.id && {
-  //           checked: mod.id === value?.id,
-  //           label: mod.name,
-  //           value: mod.id,
-  //           onClick: () => handleModuleChange(mod),
-  //         }) ||
-  //         []
-  //     )
-  //   ),
-  //   {
-  //     checked: !value,
-  //     label: "None",
-  //     onClick: () => removeIssueFromModule(value?.id, value?.module),
-  //     value: "none",
-  //   })}
-
   return (
     <>
       <WebViewModal
@@ -105,7 +98,28 @@ export const ModuleSelect: React.FC<Props> = (props) => {
         onClose={() => setIsBottomSheetOpen(false)}
         modalTitle="Select Module"
       >
-        <WebViewModal.Options options={[]} />
+        <WebViewModal.Options
+          options={[
+            ...(modules ?? []).map((mod) => ({
+              checked: mod.id === value?.module,
+              label: mod.name,
+              value: mod.id,
+              onClick: () => {
+                handleModuleChange(mod);
+                setIsBottomSheetOpen(false);
+              },
+            })),
+            {
+              checked: !value,
+              label: "None",
+              onClick: () => {
+                setIsBottomSheetOpen(false);
+                removeIssueFromModule(value?.id, value?.module);
+              },
+              value: "none",
+            },
+          ]}
+        />
       </WebViewModal>
 
       <button
@@ -116,7 +130,9 @@ export const ModuleSelect: React.FC<Props> = (props) => {
           "relative w-full px-2.5 py-0.5 text-base flex justify-between items-center gap-0.5 text-custom-text-100"
         }
       >
-        <span className="text-custom-text-200">Select module</span>
+        <span className="text-custom-text-200">
+          {value?.module_detail?.name ?? "Select module"}
+        </span>
         <ChevronDown className="w-4 h-4 text-custom-text-200" />
       </button>
     </>

@@ -512,7 +512,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                   <span className="text-sm text-custom-text-400">Module</span>
                 </div>
                 <div>
-                  <ModuleSelect />
+                  <ModuleSelect value={watch("issue_module")} />
                 </div>
               </div>
             </div>
