@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { EditorContainer, EditorContentWrapper, getEditorClassNames, useEditor } from '@plane/editor-core';
 import { FixedMenu } from './menus/fixed-menu';
+import { LiteTextEditorExtensions } from './extensions';
 
 export type UploadImage = (file: File) => Promise<string>;
 export type DeleteImage = (assetUrlWithWorkspaceId: string) => Promise<any>;
@@ -67,6 +68,7 @@ const LiteTextEditor = ({
     uploadFile,
     deleteFile,
     forwardedRef,
+    extensions: LiteTextEditorExtensions(),
   });
 
   const editorClassNames = getEditorClassNames({ noBorder, borderOnFocus, customClassName });
