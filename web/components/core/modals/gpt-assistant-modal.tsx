@@ -11,11 +11,9 @@ import useUserAuth from "hooks/use-user-auth";
 // ui
 import { Input, PrimaryButton, SecondaryButton } from "components/ui";
 // components
-import { RichTextEditor, RichTextEditorWithRef } from "@plane/rich-text-editor";
+import { RichReadOnlyEditor, RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
 // types
 import { IIssue, IPageBlock } from "types";
-// services
-import fileService from "@/services/file.service";
 
 type Props = {
   isOpen: boolean;
@@ -136,21 +134,17 @@ export const GptAssistantModal: React.FC<Props> = ({
 
   return (
     <div
-      className={`absolute ${inset} z-20 w-full space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow ${
-        isOpen ? "block" : "hidden"
-      }`}
+      className={`absolute ${inset} z-20 w-full space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow ${isOpen ? "block" : "hidden"
+        }`}
     >
       {((content && content !== "") || (htmlContent && htmlContent !== "<p></p>")) && (
         <div className="text-sm">
           Content:
-          <RichTextEditorWithRef
-            uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-            deleteFile={fileService.deleteImage}
+          <RichReadOnlyEditorWithRef
             value={htmlContent ?? `<p>${content}</p>`}
             customClassName="-m-3"
             noBorder
             borderOnFocus={false}
-            editable={false}
             ref={editorRef}
           />
         </div>
@@ -158,14 +152,11 @@ export const GptAssistantModal: React.FC<Props> = ({
       {response !== "" && (
         <div className="page-block-section text-sm">
           Response:
-          <RichTextEditor
-            uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-            deleteFile={fileService.deleteImage}
+          <RichReadOnlyEditor
             value={`<p>${response}</p>`}
             customClassName="-mx-3 -my-3"
             noBorder
             borderOnFocus={false}
-            editable={false}
           />
         </div>
       )}
@@ -179,11 +170,10 @@ export const GptAssistantModal: React.FC<Props> = ({
         type="text"
         name="task"
         register={register}
-        placeholder={`${
-          content && content !== ""
-            ? "Tell AI what action to perform on this content..."
-            : "Ask AI anything..."
-        }`}
+        placeholder={`${content && content !== ""
+          ? "Tell AI what action to perform on this content..."
+          : "Ask AI anything..."
+          }`}
         autoComplete="off"
       />
       <div className={`flex gap-2 ${response === "" ? "justify-end" : "justify-between"}`}>
@@ -219,8 +209,8 @@ export const GptAssistantModal: React.FC<Props> = ({
             {isSubmitting
               ? "Generating response..."
               : response === ""
-              ? "Generate response"
-              : "Generate again"}
+                ? "Generate response"
+                : "Generate again"}
           </PrimaryButton>
         </div>
       </div>

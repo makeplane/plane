@@ -6,8 +6,8 @@ import { DeleteImage } from '@/types/delete-image';
 import { getEditorClassNames } from '@/lib/utils';
 import { EditorProps } from '@tiptap/pm/view';
 import { useEditor } from './hooks/useEditor';
-import { EditorContainer } from '@/ui/editor-container';
-import { EditorContentWrapper } from '@/ui/editor-content';
+import { EditorContainer } from '@/ui/components/editor-container';
+import { EditorContentWrapper } from '@/ui/components/editor-content';
 
 interface ICoreEditor {
   value: string;

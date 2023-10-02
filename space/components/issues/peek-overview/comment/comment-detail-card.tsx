@@ -9,7 +9,7 @@ import { Menu, Transition } from "@headlessui/react";
 // lib
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { RichTextEditorWithRef } from "@plane/rich-text-editor";
+import { LiteReadOnlyEditorWithRef, LiteTextEditorWithRef } from "@plane/lite-text-editor";
 
 import { CommentReactions } from "components/issues/peek-overview";
 // icons
@@ -103,7 +103,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                 control={control}
                 name="comment_html"
                 render={({ field: { onChange, value } }) => (
-                  <RichTextEditorWithRef
+                  <LiteTextEditorWithRef
                     uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
                     deleteFile={fileService.deleteImage}
                     ref={editorRef}
@@ -135,12 +135,9 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             </div>
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
-            <RichTextEditorWithRef
-              uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
-              deleteFile={fileService.deleteImage}
+            <LiteReadOnlyEditorWithRef
               ref={showEditorRef}
               value={comment.comment_html}
-              editable={false}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
             />
             <CommentReactions commentId={comment.id} projectId={comment.project} />
