@@ -21,8 +21,10 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
           {(provided, snapshot) => (
             <Link href={`/${workspaceSlug?.toString()}/projects/${issue.project}/issues/${issue.id}`}>
               <a
-                className={`h-8 w-full shadow-custom-shadow-2xs rounded py-1.5 px-1 flex items-center gap-1.5 border-[0.5px] border-custom-border-200 ${
-                  snapshot.isDragging ? "shadow-custom-shadow-rg bg-custom-background-90" : "bg-custom-background-100"
+                className={`h-8 w-full shadow-custom-shadow-2xs rounded py-1.5 px-1 flex items-center gap-1.5 border-[0.5px] border-custom-border-100 ${
+                  snapshot.isDragging
+                    ? "shadow-custom-shadow-rg bg-custom-background-90"
+                    : "bg-custom-background-100 hover:bg-custom-background-90"
                 }`}
                 {...provided.draggableProps}
                 {...provided.dragHandleProps}

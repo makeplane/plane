@@ -25,9 +25,6 @@ export const GanttLayout: React.FC = observer(() => {
 
   const isAllowed = projectDetails?.member_role === 20 || projectDetails?.member_role === 15;
 
-  console.log("issues", issues);
-  console.log("appliedFilters", issueFilterStore.appliedFilters);
-
   return (
     <>
       <IssuePeekOverview
@@ -51,7 +48,6 @@ export const GanttLayout: React.FC = observer(() => {
           enableBlockRightResize={isAllowed}
           enableBlockMove={isAllowed}
           enableReorder={appliedDisplayFilters.order_by === "sort_order" && isAllowed}
-          bottomSpacing
         />
       </div>
     </>
