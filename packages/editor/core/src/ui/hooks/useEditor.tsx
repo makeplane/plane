@@ -1,4 +1,4 @@
-import { useEditor as useCustomEditor, Editor, Extension } from "@tiptap/react";
+import { useEditor as useCustomEditor, Editor, Extension, Node, Mark } from "@tiptap/react";
 import { useImperativeHandle, useRef, MutableRefObject, forwardRef } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { UploadImage } from '@/types/upload-image';
@@ -18,7 +18,7 @@ interface CustomEditorProps {
   deleteFile: DeleteImage;
   debouncedUpdatesEnabled?: boolean;
   onChange?: (json: any, html: string) => void;
-  extensions?: Extension[];
+  extensions?: any;
   editorProps?: EditorProps;
   forwardedRef?: any;
 }

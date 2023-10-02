@@ -1,5 +1,6 @@
 const convertToRGB = (variableName) => `rgba(var(${variableName}))`;
 
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: "class",
   content: [
@@ -8,6 +9,7 @@ module.exports = {
     "./layouts/**/*.tsx",
     "./pages/**/*.tsx",
     "./ui/**/*.tsx",
+    "../../packages/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {

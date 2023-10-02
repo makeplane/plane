@@ -2,8 +2,8 @@ import { Editor } from "@tiptap/react";
 import { BoldIcon, ItalicIcon, UnderlineIcon, StrikethroughIcon, CodeIcon } from "lucide-react";
 
 import { cn } from "@plane/editor-core";
-import { Tooltip } from "./tooltip";
 import { Icon } from "./icon";
+import { Tooltip } from "@/ui/tooltip";
 
 export interface BubbleMenuItem {
   name: string;
@@ -81,7 +81,7 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
               >
                 <Icon
                   iconName={access.icon}
-                  className={`w-4 h-4 -mt-1 ${props.accessValue === access.key
+                  className={`w-4 h-4 -mt-1 ${props.commentAccessSpecifier?.accessValue === access.key
                     ? "!text-custom-text-100"
                     : "!text-custom-text-400"
                     }`}
