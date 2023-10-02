@@ -189,25 +189,27 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
               handleUpdate={(val) => handleFiltersUpdate("state_group", val)}
               itemsToRender={filtersToRender.state_group?.currentLength ?? 0}
               searchQuery={filtersSearchQuery}
+              viewButtons={
+                <div className="flex items-center gap-2 ml-7 mt-1">
+                  {isViewMoreVisible("state_group") && (
+                    <button
+                      className="text-custom-primary-100 text-xs font-medium ml-7"
+                      onClick={() => handleViewMore("state_group")}
+                    >
+                      View more
+                    </button>
+                  )}
+                  {isViewLessVisible("state_group") && (
+                    <button
+                      className="text-custom-primary-100 text-xs font-medium"
+                      onClick={() => handleViewLess("state_group")}
+                    >
+                      View less
+                    </button>
+                  )}
+                </div>
+              }
             />
-            <div className="flex items-center gap-2 ml-7 mt-1">
-              {isViewMoreVisible("state_group") && (
-                <button
-                  className="text-custom-primary-100 text-xs font-medium ml-7"
-                  onClick={() => handleViewMore("state_group")}
-                >
-                  View more
-                </button>
-              )}
-              {isViewLessVisible("state_group") && (
-                <button
-                  className="text-custom-primary-100 text-xs font-medium"
-                  onClick={() => handleViewLess("state_group")}
-                >
-                  View less
-                </button>
-              )}
-            </div>
           </div>
         )}
 
@@ -219,23 +221,28 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
               handleUpdate={(val) => handleFiltersUpdate("state", val)}
               itemsToRender={filtersToRender.state?.currentLength ?? 0}
               searchQuery={filtersSearchQuery}
-              projectId={projectId}
+              states={projectStore.states?.[projectId]}
+              viewButtons={
+                <div className="flex items-center gap-2 ml-7 mt-1">
+                  {isViewMoreVisible("state") && (
+                    <button
+                      className="text-custom-primary-100 text-xs font-medium ml-7"
+                      onClick={() => handleViewMore("state")}
+                    >
+                      View more
+                    </button>
+                  )}
+                  {isViewLessVisible("state") && (
+                    <button
+                      className="text-custom-primary-100 text-xs font-medium"
+                      onClick={() => handleViewLess("state")}
+                    >
+                      View less
+                    </button>
+                  )}
+                </div>
+              }
             />
-            <div className="flex items-center gap-2 ml-7 mt-1">
-              {isViewMoreVisible("state") && (
-                <button
-                  className="text-custom-primary-100 text-xs font-medium ml-7"
-                  onClick={() => handleViewMore("state")}
-                >
-                  View more
-                </button>
-              )}
-              {isViewLessVisible("state") && (
-                <button className="text-custom-primary-100 text-xs font-medium" onClick={() => handleViewLess("state")}>
-                  View less
-                </button>
-              )}
-            </div>
           </div>
         )}
 
@@ -246,7 +253,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
               appliedFilters={filters.assignees ?? null}
               handleUpdate={(val) => handleFiltersUpdate("assignees", val)}
               itemsToRender={filtersToRender.assignees?.currentLength ?? 0}
-              projectId={projectId}
+              members={projectStore.members?.[projectId]?.map((m) => m.member) ?? undefined}
               searchQuery={filtersSearchQuery}
               viewButtons={
                 <div className="flex items-center gap-2 ml-7 mt-1">
@@ -279,7 +286,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
               appliedFilters={filters.created_by ?? null}
               handleUpdate={(val) => handleFiltersUpdate("created_by", val)}
               itemsToRender={filtersToRender.created_by?.currentLength ?? 0}
-              projectId={projectId}
+              members={projectStore.members?.[projectId]?.map((m) => m.member) ?? undefined}
               searchQuery={filtersSearchQuery}
               viewButtons={
                 <div className="flex items-center gap-2 ml-7 mt-1">
@@ -312,7 +319,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
               appliedFilters={filters.labels ?? null}
               handleUpdate={(val) => handleFiltersUpdate("labels", val)}
               itemsToRender={filtersToRender.labels?.currentLength ?? 0}
-              projectId={projectId}
+              labels={projectStore.labels?.[projectId] ?? undefined}
               searchQuery={filtersSearchQuery}
               viewButtons={
                 <div className="flex items-center gap-2 ml-7 mt-1">
