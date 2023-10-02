@@ -13,51 +13,46 @@ import { Table } from "@/ui/extensions/table";
 import { TableHeader } from "@/ui/extensions/table/table-header";
 import { TableRow } from "@tiptap/extension-table-row";
 
-import ImageExtension from "@/ui/extensions/image";
+import isValidHttpUrl from "@/ui/menus/bubble-menu/utils";
+import ReadOnlyImageExtension from "@/ui/extensions/image/read-only-image";
 
-import { DeleteImage } from "@/types/delete-image";
-
-import isValidHttpUrl from "@/ui/menus/bubble-menu/utils"
-
-export const CoreEditorExtensions = (
-  deleteFile: DeleteImage,
-) => [
-    StarterKit.configure({
-      bulletList: {
-        HTMLAttributes: {
-          class: "list-disc list-outside leading-3 -mt-2",
-        },
+export const CoreReadOnlyEditorExtensions  = [
+  StarterKit.configure({
+    bulletList: {
+      HTMLAttributes: {
+        class: "list-disc list-outside leading-3 -mt-2",
       },
-      orderedList: {
-        HTMLAttributes: {
-          class: "list-decimal list-outside leading-3 -mt-2",
-        },
+    },
+    orderedList: {
+      HTMLAttributes: {
+        class: "list-decimal list-outside leading-3 -mt-2",
       },
-      listItem: {
-        HTMLAttributes: {
-          class: "leading-normal -mb-2",
-        },
+    },
+    listItem: {
+      HTMLAttributes: {
+        class: "leading-normal -mb-2",
       },
-      blockquote: {
-        HTMLAttributes: {
-          class: "border-l-4 border-custom-border-300",
-        },
+    },
+    blockquote: {
+      HTMLAttributes: {
+        class: "border-l-4 border-custom-border-300",
       },
-      code: {
-        HTMLAttributes: {
-          class:
-            "rounded-md bg-custom-primary-30 mx-1 px-1 py-1 font-mono font-medium text-custom-text-1000",
-          spellcheck: "false",
-        },
+    },
+    code: {
+      HTMLAttributes: {
+        class:
+          "rounded-md bg-custom-primary-30 mx-1 px-1 py-1 font-mono font-medium text-custom-text-1000",
+        spellcheck: "false",
       },
-      codeBlock: false,
-      horizontalRule: false,
-      dropcursor: {
-        color: "rgba(var(--color-text-100))",
-        width: 2,
-      },
-      gapcursor: false,
-    }),
+    },
+    codeBlock: false,
+    horizontalRule: false,
+    dropcursor: {
+      color: "rgba(var(--color-text-100))",
+      width: 2,
+    },
+    gapcursor: false,
+  }),
     Gapcursor,
     TiptapLink.configure({
       protocols: ["http", "https"],
@@ -67,7 +62,7 @@ export const CoreEditorExtensions = (
           "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
       },
     }),
-    ImageExtension(deleteFile).configure({
+    ReadOnlyImageExtension.configure({
       HTMLAttributes: {
         class: "rounded-lg border border-custom-border-300",
       },

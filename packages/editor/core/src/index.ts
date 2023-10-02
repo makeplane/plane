@@ -1,9 +1,16 @@
+// styles
 import "@/styles/tailwind.css";
 import "@/styles/editor.css";
-export { startImageUpload } from "@/ui/plugins/upload-image";
 
-export { useEditor } from "@/ui/hooks/useEditor";
+// utils
 export { cn } from "@/lib/utils";
 export { getEditorClassNames } from "@/lib/utils";
-export { EditorContainer } from "@/ui/editor-container";
-export { EditorContentWrapper } from "@/ui/editor-content";
+export { startImageUpload } from "@/ui/plugins/upload-image";
+
+// components
+export { EditorContainer } from "@/ui/components/editor-container";
+export { EditorContentWrapper } from "@/ui/components/editor-content";
+
+// hooks
+export { useEditor } from "@/ui/hooks/useEditor";
+export { useReadOnlyEditor } from "@/ui/hooks/useReadOnlyEditor";

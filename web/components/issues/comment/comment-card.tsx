@@ -9,7 +9,7 @@ import useUser from "hooks/use-user";
 // ui
 import { CustomMenu, Icon } from "components/ui";
 import { CommentReaction } from "components/issues";
-import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
+import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-text-editor";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
@@ -151,12 +151,9 @@ export const CommentCard: React.FC<Props> = ({
                 />
               </div>
             )}
-            <LiteTextEditorWithRef
-              uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-              deleteFile={fileService.deleteImage}
+            <LiteReadOnlyEditorWithRef
               ref={showEditorRef}
               value={comment.comment_html}
-              editable={false}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
             />
             <CommentReaction projectId={comment.project} commentId={comment.id} />

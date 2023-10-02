@@ -1,7 +1,7 @@
 import { Editor, EditorContent } from "@tiptap/react";
 import { ReactNode } from "react";
 import { ImageResizer } from "@/ui/extensions/image/image-resize";
-import { TableMenu } from "./menus/table-menu";
+import { TableMenu } from "@/ui/menus/table-menu";
 
 interface EditorContentProps {
   editor: Editor | null;
