@@ -35,7 +35,7 @@ jobs:
 
       - name: Create Pull Request
         env:
-            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GH_TOKEN: ${{ secrets.TOKEN }}
         run: |
             TARGET_REPO="makeplane/${{ secrets.REPO_NAME }}"
             TARGET_BRANCH="${{ secrets.REPO_TARGET_BRANCH }}"
