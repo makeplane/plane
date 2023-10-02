@@ -15,7 +15,7 @@ import useProjectMembers from "hooks/use-project-members";
 import useProjectDetails from "hooks/use-project-details";
 import { Controller, useForm } from "react-hook-form";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import ConfirmProjectMemberRemove from "components/project/confirm-project-member-remove";
 import SendProjectInvitationModal from "components/project/send-project-invitation-modal";
@@ -80,9 +80,8 @@ const MembersSettings: NextPage = () => {
     formState: { isSubmitting },
   } = useForm<IProject>({ defaultValues });
 
-  const { data: activeWorkspace } = useSWR(
-    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
-    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
+  const { data: activeWorkspace } = useSWR(workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null, () =>
+    workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null
   );
 
   const { data: people } = useSWR(
@@ -93,21 +92,16 @@ const MembersSettings: NextPage = () => {
   );
 
   const { data: projectMembers, mutate: mutateMembers } = useSWR(
-    workspaceSlug && projectId
-      ? PROJECT_MEMBERS_WITH_EMAIL(workspaceSlug.toString(), projectId.toString())
-      : null,
+    workspaceSlug && projectId ? PROJECT_MEMBERS_WITH_EMAIL(workspaceSlug.toString(), projectId.toString()) : null,
     workspaceSlug && projectId
       ? () => projectService.projectMembersWithEmail(workspaceSlug as string, projectId as string)
       : null
   );
 
   const { data: projectInvitations, mutate: mutateInvitations } = useSWR(
+    workspaceSlug && projectId ? PROJECT_INVITATIONS_WITH_EMAIL(workspaceSlug.toString(), projectId.toString()) : null,
     workspaceSlug && projectId
-      ? PROJECT_INVITATIONS_WITH_EMAIL(workspaceSlug.toString(), projectId.toString())
-      : null,
-    workspaceSlug && projectId
-      ? () =>
-          projectService.projectInvitationsWithEmail(workspaceSlug as string, projectId as string)
+      ? () => projectService.projectInvitationsWithEmail(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -231,21 +225,12 @@ const MembersSettings: NextPage = () => {
           setSelectedRemoveMember(null);
           setSelectedInviteRemoveMember(null);
         }}
-        data={members.find(
-          (item) => item.id === selectedRemoveMember || item.id === selectedInviteRemoveMember
-        )}
+        data={members.find((item) => item.id === selectedRemoveMember || item.id === selectedInviteRemoveMember)}
         handleDelete={async () => {
           if (!activeWorkspace || !projectDetails) return;
           if (selectedRemoveMember) {
-            await projectService.deleteProjectMember(
-              activeWorkspace.slug,
-              projectDetails.id,
-              selectedRemoveMember
-            );
-            mutateMembers(
-              (prevData: any) => prevData?.filter((item: any) => item.id !== selectedRemoveMember),
-              false
-            );
+            await projectService.deleteProjectMember(activeWorkspace.slug, projectDetails.id, selectedRemoveMember);
+            mutateMembers((prevData: any) => prevData?.filter((item: any) => item.id !== selectedRemoveMember), false);
           }
           if (selectedInviteRemoveMember) {
             await projectService.deleteProjectInvitation(
@@ -254,8 +239,7 @@ const MembersSettings: NextPage = () => {
               selectedInviteRemoveMember
             );
             mutateInvitations(
-              (prevData: any) =>
-                prevData?.filter((item: any) => item.id !== selectedInviteRemoveMember),
+              (prevData: any) => prevData?.filter((item: any) => item.id !== selectedInviteRemoveMember),
               false
             );
           }
@@ -348,10 +332,7 @@ const MembersSettings: NextPage = () => {
             <div className="divide-y divide-custom-border-200">
               {members.length > 0
                 ? members.map((member) => (
-                    <div
-                      key={member.id}
-                      className="flex items-center justify-between px-3.5 py-[18px]"
-                    >
+                    <div key={member.id} className="flex items-center justify-between px-3.5 py-[18px]">
                       <div className="flex items-center gap-x-6 gap-y-2">
                         {member.avatar && member.avatar !== "" ? (
                           <div className="relative flex h-10 w-10 items-center justify-center rounded-lg p-4 capitalize text-white">
@@ -377,19 +358,13 @@ const MembersSettings: NextPage = () => {
                                 <span>
                                   {member.first_name} {member.last_name}
                                 </span>
-                                <span className="text-custom-text-300 text-sm ml-2">
-                                  ({member.display_name})
-                                </span>
+                                <span className="text-custom-text-300 text-sm ml-2">({member.display_name})</span>
                               </a>
                             </Link>
                           ) : (
                             <h4 className="text-sm">{member.display_name || member.email}</h4>
                           )}
-                          {isOwner && (
-                            <p className="mt-0.5 text-xs text-custom-sidebar-text-300">
-                              {member.email}
-                            </p>
-                          )}
+                          {isOwner && <p className="mt-0.5 text-xs text-custom-sidebar-text-300">{member.email}</p>}
                         </div>
                       </div>
                       <div className="flex items-center gap-3 text-xs">
@@ -419,27 +394,19 @@ const MembersSettings: NextPage = () => {
 
                             mutateMembers(
                               (prevData: any) =>
-                                prevData.map((m: any) =>
-                                  m.id === member.id ? { ...m, role: value } : m
-                                ),
+                                prevData.map((m: any) => (m.id === member.id ? { ...m, role: value } : m)),
                               false
                             );
 
                             projectService
-                              .updateProjectMember(
-                                activeWorkspace.slug,
-                                projectDetails.id,
-                                member.id,
-                                {
-                                  role: value,
-                                }
-                              )
+                              .updateProjectMember(activeWorkspace.slug, projectDetails.id, member.id, {
+                                role: value,
+                              })
                               .catch(() => {
                                 setToastAlert({
                                   type: "error",
                                   title: "Error!",
-                                  message:
-                                    "An error occurred while updating member role. Please try again.",
+                                  message: "An error occurred while updating member role. Please try again.",
                                 });
                               });
                           }}
@@ -447,18 +414,11 @@ const MembersSettings: NextPage = () => {
                           disabled={
                             member.memberId === user?.id ||
                             !member.member ||
-                            (currentUser &&
-                              currentUser.role !== 20 &&
-                              currentUser.role < member.role)
+                            (currentUser && currentUser.role !== 20 && currentUser.role < member.role)
                           }
                         >
                           {Object.keys(ROLE).map((key) => {
-                            if (
-                              currentUser &&
-                              currentUser.role !== 20 &&
-                              currentUser.role < parseInt(key)
-                            )
-                              return null;
+                            if (currentUser && currentUser.role !== 20 && currentUser.role < parseInt(key)) return null;
 
                             return (
                               <CustomSelect.Option key={key} value={key}>
@@ -477,10 +437,7 @@ const MembersSettings: NextPage = () => {
                             <span className="flex items-center justify-start gap-2">
                               <XMarkIcon className="h-4 w-4" />
 
-                              <span>
-                                {" "}
-                                {member.memberId !== user?.id ? "Remove member" : "Leave project"}
-                              </span>
+                              <span> {member.memberId !== user?.id ? "Remove member" : "Leave project"}</span>
                             </span>
                           </CustomMenu.MenuItem>
                         </CustomMenu>

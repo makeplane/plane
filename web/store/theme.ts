@@ -2,8 +2,6 @@
 import { action, observable, makeObservable } from "mobx";
 // helper
 import { applyTheme, unsetCustomCssVariables } from "helpers/theme.helper";
-// interfaces
-import { ICurrentUserSettings } from "types";
 
 class ThemeStore {
   sidebarCollapsed: boolean | null = null;
@@ -14,8 +12,8 @@ class ThemeStore {
   constructor(_rootStore: any | null = null) {
     makeObservable(this, {
       // observable
-      sidebarCollapsed: observable,
-      theme: observable,
+      sidebarCollapsed: observable.ref,
+      theme: observable.ref,
       // action
       setSidebarCollapsed: action,
       setTheme: action,

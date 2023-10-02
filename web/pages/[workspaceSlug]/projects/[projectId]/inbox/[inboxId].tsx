@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 // hooks
 import useProjectDetails from "hooks/use-project-details";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // contexts
 import { InboxViewContextProvider } from "contexts/inbox-view-context";
 // components
@@ -30,9 +30,7 @@ const ProjectInbox: NextPage = () => {
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-            <BreadcrumbItem
-              title={`${truncateText(projectDetails?.name ?? "Project", 32)} Inbox`}
-            />
+            <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Inbox`} />
           </Breadcrumbs>
         }
         right={

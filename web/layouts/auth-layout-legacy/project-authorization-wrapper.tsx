@@ -6,8 +6,8 @@ import { useRouter } from "next/router";
 // contexts
 import { useProjectMyMembership, ProjectMemberProvider } from "contexts/project-member.context";
 // layouts
-import AppHeader from "layouts/app-layout/app-header";
-import AppSidebar from "layouts/app-layout/app-sidebar";
+import AppHeader from "layouts/app-layout-legacy/app-header";
+import AppSidebar from "layouts/app-layout-legacy/app-sidebar";
 // components
 import { NotAuthorizedView, JoinProject } from "components/auth-screens";
 import { CommandPalette } from "components/command-palette";

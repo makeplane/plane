@@ -13,7 +13,7 @@ import fileService from "services/file.service";
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // layouts
-import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // components
 import { ImageUploadModal } from "components/core";
 import { DeleteWorkspaceModal } from "components/workspace";
@@ -59,9 +59,8 @@ const WorkspaceSettings: NextPage = () => {
 
   const { setToastAlert } = useToast();
 
-  const { data: activeWorkspace } = useSWR(
-    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
-    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
+  const { data: activeWorkspace } = useSWR(workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null, () =>
+    workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null
   );
 
   const {
@@ -156,9 +155,7 @@ const WorkspaceSettings: NextPage = () => {
     <WorkspaceAuthorizationLayout
       breadcrumbs={
         <Breadcrumbs>
-          <BreadcrumbItem
-            title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)} Settings`}
-          />
+          <BreadcrumbItem title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)} Settings`} />
         </Breadcrumbs>
       }
     >
@@ -191,11 +188,7 @@ const WorkspaceSettings: NextPage = () => {
           <div className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
             <div className="flex gap-5 items-center pb-7 border-b border-custom-border-200">
               <div className="flex flex-col gap-1">
-                <button
-                  type="button"
-                  onClick={() => setIsImageUploadModalOpen(true)}
-                  disabled={!isAdmin}
-                >
+                <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!isAdmin}>
                   {watch("logo") && watch("logo") !== null && watch("logo") !== "" ? (
                     <div className="relative mx-auto flex h-14 w-14">
                       <img
@@ -214,8 +207,7 @@ const WorkspaceSettings: NextPage = () => {
               <div className="flex flex-col gap-1">
                 <h3 className="text-lg font-semibold leading-6">{watch("name")}</h3>
                 <span className="text-sm tracking-tight">{`${
-                  typeof window !== "undefined" &&
-                  window.location.origin.replace("http://", "").replace("https://", "")
+                  typeof window !== "undefined" && window.location.origin.replace("http://", "").replace("https://", "")
                 }/${activeWorkspace.slug}`}</span>
                 <div className="flex item-center gap-2.5">
                   <button
@@ -267,9 +259,7 @@ const WorkspaceSettings: NextPage = () => {
                       <CustomSelect
                         value={value}
                         onChange={onChange}
-                        label={
-                          ORGANIZATION_SIZE.find((c) => c === value) ?? "Select organization size"
-                        }
+                        label={ORGANIZATION_SIZE.find((c) => c === value) ?? "Select organization size"}
                         width="w-full"
                         input
                         disabled={!isAdmin}
@@ -303,11 +293,7 @@ const WorkspaceSettings: NextPage = () => {
               </div>
 
               <div className="flex items-center justify-between py-2">
-                <PrimaryButton
-                  onClick={handleSubmit(onSubmit)}
-                  loading={isSubmitting}
-                  disabled={!isAdmin}
-                >
+                <PrimaryButton onClick={handleSubmit(onSubmit)} loading={isSubmitting} disabled={!isAdmin}>
                   {isSubmitting ? "Updating..." : "Update Workspace"}
                 </PrimaryButton>
               </div>
@@ -337,17 +323,12 @@ const WorkspaceSettings: NextPage = () => {
                     <Disclosure.Panel>
                       <div className="flex flex-col gap-8">
                         <span className="text-sm tracking-tight">
-                          The danger zone of the project delete page is a critical area that
-                          requires careful consideration and attention. When deleting a project, all
-                          of the data and resources within that project will be permanently removed
-                          and cannot be recovered.
+                          The danger zone of the project delete page is a critical area that requires careful
+                          consideration and attention. When deleting a project, all of the data and resources within
+                          that project will be permanently removed and cannot be recovered.
                         </span>
                         <div>
-                          <DangerButton
-                            onClick={() => setIsOpen(true)}
-                            className="!text-sm"
-                            outline
-                          >
+                          <DangerButton onClick={() => setIsOpen(true)} className="!text-sm" outline>
                             Delete my project
                           </DangerButton>
                         </div>

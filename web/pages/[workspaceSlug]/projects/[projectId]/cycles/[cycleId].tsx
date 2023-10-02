@@ -7,7 +7,7 @@ import useSWR from "swr";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { CyclesIcon } from "components/icons";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components

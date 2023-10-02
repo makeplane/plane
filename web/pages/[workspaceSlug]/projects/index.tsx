@@ -9,7 +9,7 @@ import useProjects from "hooks/use-projects";
 import useWorkspaces from "hooks/use-workspaces";
 import useUserAuth from "hooks/use-user-auth";
 // layouts
-import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // ui
 import { Icon, PrimaryButton } from "components/ui";
 import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";

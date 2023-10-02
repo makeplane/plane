@@ -9,19 +9,14 @@ import useSWR, { mutate } from "swr";
 // next-themes
 import { useTheme } from "next-themes";
 // layouts
-import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // services
 import userService from "services/user.service";
 // hooks
 import useUser from "hooks/use-user";
 import useProjects from "hooks/use-projects";
 // components
-import {
-  CompletedIssuesGraph,
-  IssuesList,
-  IssuesPieChart,
-  IssuesStats,
-} from "components/workspace";
+import { CompletedIssuesGraph, IssuesList, IssuesPieChart, IssuesStats } from "components/workspace";
 import { TourRoot } from "components/onboarding";
 // ui
 import { PrimaryButton, ProductUpdatesModal } from "components/ui";
@@ -59,8 +54,7 @@ const WorkspacePage: NextPage = () => {
   );
 
   const today = new Date();
-  const greeting =
-    today.getHours() < 12 ? "morning" : today.getHours() < 18 ? "afternoon" : "evening";
+  const greeting = today.getHours() < 12 ? "morning" : today.getHours() < 18 ? "afternoon" : "evening";
 
   useEffect(() => {
     if (!workspaceSlug) return;
@@ -100,10 +94,7 @@ const WorkspacePage: NextPage = () => {
       }
     >
       {isProductUpdatesModalOpen && (
-        <ProductUpdatesModal
-          isOpen={isProductUpdatesModalOpen}
-          setIsOpen={setIsProductUpdatesModalOpen}
-        />
+        <ProductUpdatesModal isOpen={isProductUpdatesModalOpen} setIsOpen={setIsProductUpdatesModalOpen} />
       )}
       {user && !user.is_tour_completed && (
         <div className="fixed top-0 left-0 h-full w-full bg-custom-backdrop bg-opacity-50 transition-opacity z-20 grid place-items-center">
@@ -156,9 +147,7 @@ const WorkspacePage: NextPage = () => {
             <div className="mt-7 bg-custom-primary-100/5 flex justify-between gap-5 md:gap-8">
               <div className="p-5 md:p-8 pr-0">
                 <h5 className="text-xl font-semibold">Create a project</h5>
-                <p className="mt-2 mb-5">
-                  Manage your projects by creating issues, cycles, modules, views and pages.
-                </p>
+                <p className="mt-2 mb-5">Manage your projects by creating issues, cycles, modules, views and pages.</p>
                 <PrimaryButton
                   onClick={() => {
                     const e = new KeyboardEvent("keydown", {
