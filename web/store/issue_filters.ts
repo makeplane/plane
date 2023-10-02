@@ -112,22 +112,6 @@ class IssueFilterStore implements IIssueFilterStore {
     return computedFilters;
   };
 
-  calendarLayoutDateRange = () => {
-    const { activeMonthDate, activeWeekDate } = this.rootStore.calendar.calendarFilters;
-
-    const calendarLayout = this.userDisplayFilters.calendar?.layout ?? "month";
-
-    let filterDate = new Date();
-
-    if (calendarLayout === "month") filterDate = activeMonthDate;
-    else filterDate = activeWeekDate;
-
-    const startOfMonth = renderDateFormat(new Date(filterDate.getFullYear(), filterDate.getMonth(), 1));
-    const endOfMonth = renderDateFormat(new Date(filterDate.getFullYear(), filterDate.getMonth() + 1, 0));
-
-    return [`${startOfMonth};after`, `${endOfMonth};before`];
-  };
-
   get appliedFilters(): TIssueParams[] | null {
     if (
       !this.userFilters ||
@@ -155,11 +139,11 @@ class IssueFilterStore implements IIssueFilterStore {
       start_target_date: this.userDisplayFilters?.start_target_date || true,
     };
 
-    if (this.userDisplayFilters.layout === "calendar") filteredRouteParams.target_date = this.calendarLayoutDateRange();
-    if (this.userDisplayFilters.layout === "gantt_chart") filteredRouteParams.start_target_date = true;
-
     const filteredParams = handleIssueQueryParamsByLayout(this.userDisplayFilters.layout, "issues");
     if (filteredParams) filteredRouteParams = this.computedFilter(filteredRouteParams, filteredParams);
+
+    if (this.userDisplayFilters.layout === "calendar") filteredRouteParams.group_by = "target_date";
+    if (this.userDisplayFilters.layout === "gantt_chart") filteredRouteParams.start_target_date = true;
 
     return filteredRouteParams;
   }
