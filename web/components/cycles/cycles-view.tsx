@@ -19,20 +19,19 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
   // store
   const { cycle: cycleStore } = useMobxStore();
   // api call to fetch cycles list
-  useSWR(
-    workspaceSlug && projectId ? `CYCLES_LIST_${projectId}` : null,
+  const { isLoading } = useSWR(
+    workspaceSlug && projectId ? `CYCLES_LIST_${projectId}_${filter}` : null,
     workspaceSlug && projectId ? () => cycleStore.fetchCycles(workspaceSlug, projectId, filter) : null
   );
 
-  const cyclesList = cycleStore.cycles?.[projectId]?.[filter];
-  console.log("cyclesList", cyclesList);
+  const cyclesList = cycleStore.cycles?.[projectId];
   console.log("cyclesList", cyclesList);
 
   return (
     <>
       {view === "list" && (
         <>
-          {cyclesList ? (
+          {!isLoading ? (
             <CyclesList cycles={cyclesList} filter={filter} />
           ) : (
             <Loader className="space-y-4">
@@ -45,7 +44,7 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
       )}
       {view === "board" && (
         <>
-          {cyclesList ? (
+          {!isLoading ? (
             <CyclesBoard cycles={cyclesList} filter={filter} />
           ) : (
             <Loader className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">

@@ -12,9 +12,7 @@ export interface ICycleStore {
   error: any | null;
 
   cycles: {
-    [project_id: string]: {
-      [filter_name: string]: ICycle[];
-    };
+    [project_id: string]: ICycle[];
   };
 
   cycle_details: {
@@ -26,8 +24,10 @@ export interface ICycleStore {
     projectId: string,
     params: "all" | "current" | "upcoming" | "draft" | "completed" | "incomplete"
   ) => Promise<void>;
+  createCycle: (workspaceSlug: string, projectId: string, data: any) => Promise<ICycle>;
 
-  createCycle: (workspaceSlug: string, projectId: string, data: any, filter: string) => Promise<ICycle>;
+  addCycleToFavorites: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<any>;
+  removeCycleFromFavorites: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
 }
 
 class CycleStore implements ICycleStore {
@@ -35,9 +35,7 @@ class CycleStore implements ICycleStore {
   error: any | null = null;
 
   cycles: {
-    [project_id: string]: {
-      [filter_name: string]: ICycle[];
-    };
+    [project_id: string]: ICycle[];
   } = {};
 
   cycle_details: {
@@ -63,6 +61,9 @@ class CycleStore implements ICycleStore {
       // actions
       fetchCycles: action,
       createCycle: action,
+
+      addCycleToFavorites: action,
+      removeCycleFromFavorites: action,
     });
 
     this.rootStore = _rootStore;
@@ -92,9 +93,7 @@ class CycleStore implements ICycleStore {
       runInAction(() => {
         this.cycles = {
           ...this.cycles,
-          [projectId]: {
-            [params]: cyclesResponse,
-          },
+          [projectId]: cyclesResponse,
         };
         this.loader = false;
         this.error = null;
@@ -106,7 +105,7 @@ class CycleStore implements ICycleStore {
     }
   };
 
-  createCycle = async (workspaceSlug: string, projectId: string, data: any, filter: string) => {
+  createCycle = async (workspaceSlug: string, projectId: string, data: any) => {
     try {
       const response = await this.cycleService.createCycle(
         workspaceSlug,
@@ -118,16 +117,74 @@ class CycleStore implements ICycleStore {
       runInAction(() => {
         this.cycles = {
           ...this.cycles,
-          [projectId]: {
-            ...this.cycles[projectId],
-            [filter]: [...this.cycles[projectId][filter], response],
-          },
+          [projectId]: [...this.cycles[projectId], response],
         };
       });
 
       return response;
     } catch (error) {
       console.log("Failed to create cycle from cycle store");
+      throw error;
+    }
+  };
+
+  addCycleToFavorites = async (workspaceSlug: string, projectId: string, cycleId: string) => {
+    try {
+      runInAction(() => {
+        this.cycles = {
+          ...this.cycles,
+          [projectId]: this.cycles[projectId].map((cycle) => {
+            if (cycle.id === cycleId) return { ...cycle, is_favorite: true };
+            return cycle;
+          }),
+        };
+      });
+      // updating through api.
+      const response = await this.cycleService.addCycleToFavorites(workspaceSlug, projectId, { cycle: cycleId });
+      return response;
+    } catch (error) {
+      console.log("Failed to add cycle to favorites in the cycles store", error);
+      // resetting the local state
+      runInAction(() => {
+        this.cycles = {
+          ...this.cycles,
+          [projectId]: this.cycles[projectId].map((cycle) => {
+            if (cycle.id === cycleId) return { ...cycle, is_favorite: false };
+            return cycle;
+          }),
+        };
+      });
+
+      throw error;
+    }
+  };
+
+  removeCycleFromFavorites = async (workspaceSlug: string, projectId: string, cycleId: string) => {
+    try {
+      runInAction(() => {
+        this.cycles = {
+          ...this.cycles,
+          [projectId]: this.cycles[projectId].map((cycle) => {
+            if (cycle.id === cycleId) return { ...cycle, is_favorite: false };
+            return cycle;
+          }),
+        };
+      });
+      // updating through api
+      const response = await this.cycleService.removeCycleFromFavorites(workspaceSlug, projectId, cycleId);
+      return response;
+    } catch (error) {
+      console.log("Failed to remove cycle from favorites - Cycle Store", error);
+      // resetting the local state
+      runInAction(() => {
+        this.cycles = {
+          ...this.cycles,
+          [projectId]: this.cycles[projectId].map((cycle) => {
+            if (cycle.id === cycleId) return { ...cycle, is_favorite: true };
+            return cycle;
+          }),
+        };
+      });
       throw error;
     }
   };

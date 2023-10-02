@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, MouseEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // hooks
@@ -22,6 +22,7 @@ import { getDateRangeStatus, renderShortDateWithYearFormat, findHowManyDaysLeft 
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
 import { ICycle } from "types";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type TCyclesListItem = {
   cycle: ICycle;
@@ -61,6 +62,8 @@ const stateGroups = [
 
 export const CyclesListItem: FC<TCyclesListItem> = (props) => {
   const { cycle } = props;
+  // store
+  const { cycle: cycleStore } = useMobxStore();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -91,10 +94,39 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
     color: group.color,
   }));
 
-  const handleAddToFavorites = () => {};
-  const handleRemoveFromFavorites = () => {};
-  const handleEditCycle = () => {};
-  const handleDeleteCycle = () => {};
+  const handleAddToFavorites = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (!workspaceSlug || !projectId) return;
+
+    cycleStore.addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycle.id).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Couldn't add the cycle to favorites. Please try again.",
+      });
+    });
+  };
+
+  const handleRemoveFromFavorites = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (!workspaceSlug || !projectId) return;
+
+    cycleStore.removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycle.id).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Couldn't add the cycle to favorites. Please try again.",
+      });
+    });
+  };
+
+  const handleEditCycle = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+  };
+
+  const handleDeleteCycle = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+  };
 
   return (
     <div>

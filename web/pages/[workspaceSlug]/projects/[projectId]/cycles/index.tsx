@@ -170,7 +170,7 @@ const ProjectCyclesPage: NextPage = observer(() => {
             <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
               {cycleTab && cyclesView && workspaceSlug && projectId && (
                 <CyclesView
-                  filter={cycleTab as ICycleAPIFilter}
+                  filter="all"
                   view={cyclesView as ICycleView}
                   workspaceSlug={workspaceSlug?.toString()}
                   projectId={projectId?.toString()}
@@ -183,7 +183,7 @@ const ProjectCyclesPage: NextPage = observer(() => {
             <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
               {cycleTab && cyclesView && workspaceSlug && projectId && (
                 <CyclesView
-                  filter={cycleTab as ICycleAPIFilter}
+                  filter="upcoming"
                   view={cyclesView as ICycleView}
                   workspaceSlug={workspaceSlug?.toString()}
                   projectId={projectId?.toString()}
@@ -193,7 +193,7 @@ const ProjectCyclesPage: NextPage = observer(() => {
             <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
               {cycleTab && cyclesView && workspaceSlug && projectId && (
                 <CyclesView
-                  filter={cycleTab as ICycleAPIFilter}
+                  filter="completed"
                   view={cyclesView as ICycleView}
                   workspaceSlug={workspaceSlug?.toString()}
                   projectId={projectId?.toString()}
@@ -203,7 +203,7 @@ const ProjectCyclesPage: NextPage = observer(() => {
             <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
               {cycleTab && cyclesView && workspaceSlug && projectId && (
                 <CyclesView
-                  filter={cycleTab as ICycleAPIFilter}
+                  filter="draft"
                   view={cyclesView as ICycleView}
                   workspaceSlug={workspaceSlug?.toString()}
                   projectId={projectId?.toString()}
