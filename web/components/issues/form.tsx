@@ -29,6 +29,8 @@ import { TipTapEditor } from "components/tiptap";
 import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
 import type { ICurrentUserResponse, IIssue, ISearchIssueResponse } from "types";
+import useProjectMembers from "hooks/use-project-members";
+import { IMentionSuggestion } from "components/tiptap/mentions/mentions";
 
 const defaultValues: Partial<IIssue> = {
   project: "",
@@ -108,6 +110,17 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const projectMembers = useProjectMembers( workspaceSlug as string | undefined, projectId ).members
+
+  const mention_suggestions: IMentionSuggestion[] = !projectMembers ? [] : projectMembers.map((member) => ({
+      id: member.member.id,
+      type: "User",
+      title: member.member.display_name,
+      subtitle: member.member.email,
+      avatar: member.member.avatar,
+   })
+  )
 
   const { setToastAlert } = useToast();
 
@@ -381,6 +394,7 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
 
                       return (
                         <TipTapEditor
+                          mentionSuggestions={mention_suggestions}
                           workspaceSlug={workspaceSlug as string}
                           ref={editorRef}
                           debouncedUpdatesEnabled={false}
