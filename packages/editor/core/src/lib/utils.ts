@@ -1,5 +1,17 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+interface EditorClassNames {
+  noBorder?: boolean;
+  borderOnFocus?: boolean;
+  customClassName?: string;
+}
+
+export const getEditorClassNames = ({ noBorder, borderOnFocus, customClassName }: EditorClassNames) => cn(
+  'relative w-full max-w-full sm:rounded-lg mt-2 p-3 relative focus:outline-none rounded-md',
+  noBorder ? '' : 'border border-custom-border-200',
+  borderOnFocus ? 'focus:border border-custom-border-300' : 'focus:border-0',
+  customClassName
+);
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -14,16 +26,8 @@ export const findTableAncestor = (
   return node as HTMLTableElement;
 };
 
-interface EditorClassNames {
-  noBorder?: boolean;
-  borderOnFocus?: boolean;
-  customClassName?: string;
+export const getTrimmedHTML = (html: string) => {
+  html = html.replace(/^(<p><\/p>)+/, '');
+  html = html.replace(/(<p><\/p>)+$/, '');
+  return html;
 }
-
-export const getEditorClassNames = ({ noBorder, borderOnFocus, customClassName }: EditorClassNames) => cn(
-  'relative w-full max-w-full sm:rounded-lg mt-2 p-3 relative focus:outline-none rounded-md',
-  noBorder ? '' : 'border border-custom-border-200',
-  borderOnFocus ? 'focus:border border-custom-border-300' : 'focus:border-0',
-  customClassName
-);
-

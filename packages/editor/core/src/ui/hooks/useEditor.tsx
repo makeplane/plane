@@ -6,6 +6,7 @@ import { DeleteImage } from '@/types/delete-image';
 import { CoreEditorProps } from "../props";
 import { CoreEditorExtensions } from "../extensions";
 import { EditorProps } from '@tiptap/pm/view';
+import { getTrimmedHTML } from "@/lib/utils";
 
 const DEBOUNCE_DELAY = 1500;
 
@@ -24,6 +25,7 @@ interface CustomEditorProps {
 }
 
 export const useEditor = ({ uploadFile, editable, deleteFile, editorProps = {}, value, extensions = [], onChange, setIsSubmitting, debouncedUpdatesEnabled, forwardedRef, setShouldShowAlert, }: CustomEditorProps) => {
+  console.log("content aaya", value)
   const editor = useCustomEditor({
     editable: editable ?? true,
     editorProps: {
@@ -39,7 +41,7 @@ export const useEditor = ({ uploadFile, editable, deleteFile, editorProps = {}, 
       if (debouncedUpdatesEnabled) {
         debouncedUpdates({ onChange: onChange, editor });
       } else {
-        onChange?.(editor.getJSON(), editor.getHTML());
+        onChange?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
       }
     },
   });
@@ -58,7 +60,7 @@ export const useEditor = ({ uploadFile, editable, deleteFile, editorProps = {}, 
 
   const debouncedUpdates = useDebouncedCallback(async ({ onChange, editor }) => {
     if (onChange) {
-      onChange(editor.getJSON(), editor.getHTML());
+      onChange(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
     }
   }, DEBOUNCE_DELAY);
 

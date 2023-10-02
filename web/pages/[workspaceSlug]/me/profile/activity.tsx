@@ -20,8 +20,6 @@ import { USER_ACTIVITY } from "constants/fetch-keys";
 // helper
 import { timeAgo } from "helpers/date-time.helper";
 import { SettingsSidebar } from "components/project";
-// services
-import fileService from "@/services/file.service";
 
 const ProfileActivity = () => {
   const router = useRouter();
