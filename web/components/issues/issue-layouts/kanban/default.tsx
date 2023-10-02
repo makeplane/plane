@@ -19,12 +19,12 @@ export interface IGroupByKanBan {
   sub_group_id: string;
   list: any;
   listKey: string;
-  handleIssues?: () => void;
   isDragDisabled: boolean;
+  handleIssues?: (sub_group_by: string | null, group_by: string | null, issue: any) => void;
 }
 
 const GroupByKanBan: React.FC<IGroupByKanBan> = observer(
-  ({ issues, sub_group_by, group_by, sub_group_id = "null", list, listKey, isDragDisabled }) => {
+  ({ issues, sub_group_by, group_by, sub_group_id = "null", list, listKey, isDragDisabled, handleIssues }) => {
     const { issueKanBanView: issueKanBanViewStore }: RootStore = useMobxStore();
 
     const verticalAlignPosition = (_list: any) =>
@@ -42,7 +42,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer(
                     column_id={getValueFromObject(_list, listKey) as string}
                     sub_group_by={sub_group_by}
                     group_by={group_by}
-                    issues_count={issues?.[getValueFromObject(_list, listKey) as string].length || 0}
+                    issues_count={issues?.[getValueFromObject(_list, listKey) as string]?.length || 0}
                   />
                 </div>
               )}
@@ -64,6 +64,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer(
                             columnId={getValueFromObject(_list, listKey) as string}
                             issues={issues[getValueFromObject(_list, listKey) as string]}
                             isDragDisabled={isDragDisabled}
+                            handleIssues={handleIssues}
                           />
                         ) : (
                           isDragDisabled && (
@@ -90,86 +91,94 @@ export interface IKanBan {
   sub_group_by: string | null;
   group_by: string | null;
   sub_group_id?: string;
-  handleIssues?: () => void;
   handleDragDrop?: (result: any) => void | undefined;
+  handleIssues?: (sub_group_by: string | null, group_by: string | null, issue: any) => void;
 }
 
-export const KanBan: React.FC<IKanBan> = observer(({ issues, sub_group_by, group_by, sub_group_id = "null" }) => {
-  const { project: projectStore, issueKanBanView: issueKanBanViewStore }: RootStore = useMobxStore();
+export const KanBan: React.FC<IKanBan> = observer(
+  ({ issues, sub_group_by, group_by, sub_group_id = "null", handleIssues }) => {
+    const { project: projectStore, issueKanBanView: issueKanBanViewStore }: RootStore = useMobxStore();
 
-  return (
-    <div className="relative w-full h-full">
-      {group_by && group_by === "state" && (
-        <GroupByKanBan
-          issues={issues}
-          group_by={group_by}
-          sub_group_by={sub_group_by}
-          sub_group_id={sub_group_id}
-          list={projectStore?.projectStates}
-          listKey={`id`}
-          isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
-        />
-      )}
+    return (
+      <div className="relative w-full h-full">
+        {group_by && group_by === "state" && (
+          <GroupByKanBan
+            issues={issues}
+            group_by={group_by}
+            sub_group_by={sub_group_by}
+            sub_group_id={sub_group_id}
+            list={projectStore?.projectStates}
+            listKey={`id`}
+            isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
+            handleIssues={handleIssues}
+          />
+        )}
 
-      {group_by && group_by === "state_detail.group" && (
-        <GroupByKanBan
-          issues={issues}
-          group_by={group_by}
-          sub_group_by={sub_group_by}
-          sub_group_id={sub_group_id}
-          list={ISSUE_STATE_GROUPS}
-          listKey={`key`}
-          isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
-        />
-      )}
+        {group_by && group_by === "state_detail.group" && (
+          <GroupByKanBan
+            issues={issues}
+            group_by={group_by}
+            sub_group_by={sub_group_by}
+            sub_group_id={sub_group_id}
+            list={ISSUE_STATE_GROUPS}
+            listKey={`key`}
+            isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
+            handleIssues={handleIssues}
+          />
+        )}
 
-      {group_by && group_by === "priority" && (
-        <GroupByKanBan
-          issues={issues}
-          group_by={group_by}
-          sub_group_by={sub_group_by}
-          sub_group_id={sub_group_id}
-          list={ISSUE_PRIORITIES}
-          listKey={`key`}
-          isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
-        />
-      )}
+        {group_by && group_by === "priority" && (
+          <GroupByKanBan
+            issues={issues}
+            group_by={group_by}
+            sub_group_by={sub_group_by}
+            sub_group_id={sub_group_id}
+            list={ISSUE_PRIORITIES}
+            listKey={`key`}
+            isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
+            handleIssues={handleIssues}
+          />
+        )}
 
-      {group_by && group_by === "labels" && (
-        <GroupByKanBan
-          issues={issues}
-          group_by={group_by}
-          sub_group_by={sub_group_by}
-          sub_group_id={sub_group_id}
-          list={projectStore?.projectLabels}
-          listKey={`id`}
-          isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
-        />
-      )}
+        {group_by && group_by === "labels" && (
+          <GroupByKanBan
+            issues={issues}
+            group_by={group_by}
+            sub_group_by={sub_group_by}
+            sub_group_id={sub_group_id}
+            list={projectStore?.projectLabels}
+            listKey={`id`}
+            isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
+            handleIssues={handleIssues}
+          />
+        )}
 
-      {group_by && group_by === "assignees" && (
-        <GroupByKanBan
-          issues={issues}
-          group_by={group_by}
-          sub_group_by={sub_group_by}
-          sub_group_id={sub_group_id}
-          list={projectStore?.projectMembers}
-          listKey={`member.id`}
-          isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
-        />
-      )}
+        {group_by && group_by === "assignees" && (
+          <GroupByKanBan
+            issues={issues}
+            group_by={group_by}
+            sub_group_by={sub_group_by}
+            sub_group_id={sub_group_id}
+            list={projectStore?.projectMembers}
+            listKey={`member.id`}
+            isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
+            handleIssues={handleIssues}
+          />
+        )}
 
-      {group_by && group_by === "created_by" && (
-        <GroupByKanBan
-          issues={issues}
-          group_by={group_by}
-          sub_group_by={sub_group_by}
-          sub_group_id={sub_group_id}
-          list={projectStore?.projectMembers}
-          listKey={`member.id`}
-          isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
-        />
-      )}
-    </div>
-  );
-});
+        {group_by && group_by === "created_by" && (
+          <GroupByKanBan
+            issues={issues}
+            group_by={group_by}
+            sub_group_by={sub_group_by}
+            sub_group_id={sub_group_id}
+            list={projectStore?.projectMembers}
+            listKey={`member.id`}
+            isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
+            handleIssues={handleIssues}
+          />
+        )}
+      </div>
+    );
+  }
+);

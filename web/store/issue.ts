@@ -99,6 +99,10 @@ class IssueStore implements IIssueStore {
   }
 
   updateIssueStructure = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
+    console.log("group_id", group_id);
+    console.log("sub_group_id", sub_group_id);
+    console.log("issue", issue);
+
     const projectId: string | null = issue?.project;
     const issueType: IIssueType | null = this.getIssueType;
     if (!projectId || !issueType) return null;
@@ -111,7 +115,7 @@ class IssueStore implements IIssueStore {
       issues = issues as IIssueGroupedStructure;
       issues = {
         ...issues,
-        [group_id]: issues[group_id].map((i: IIssue) => (i?.id === issue?.id ? issue : i)),
+        [group_id]: issues[group_id].map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i)),
       };
     }
     if (issueType === "groupWithSubGroups" && group_id && sub_group_id) {
@@ -120,13 +124,13 @@ class IssueStore implements IIssueStore {
         ...issues,
         [sub_group_id]: {
           ...issues[sub_group_id],
-          [group_id]: issues[sub_group_id][group_id].map((i: IIssue) => (i?.id === issue?.id ? issue : i)),
+          [group_id]: issues[sub_group_id][group_id].map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i)),
         },
       };
     }
     if (issueType === "ungrouped") {
       issues = issues as IIssueUnGroupedStructure;
-      issues = issues.map((i: IIssue) => (i?.id === issue?.id ? issue : i));
+      issues = issues.map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i));
     }
 
     runInAction(() => {

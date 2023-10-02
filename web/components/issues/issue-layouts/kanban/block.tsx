@@ -8,9 +8,10 @@ interface IssueBlockProps {
   columnId: string;
   issues: any;
   isDragDisabled: boolean;
+  handleIssues?: (sub_group_by: string | null, group_by: string | null, issue: any) => void;
 }
 
-export const IssueBlock = ({ sub_group_id, columnId, issues, isDragDisabled }: IssueBlockProps) => (
+export const IssueBlock = ({ sub_group_id, columnId, issues, isDragDisabled, handleIssues }: IssueBlockProps) => (
   <>
     {issues && issues.length > 0 ? (
       <>
@@ -37,7 +38,12 @@ export const IssueBlock = ({ sub_group_id, columnId, issues, isDragDisabled }: I
                   <div className="text-xs line-clamp-1 text-custom-text-300">ONE-{issue.sequence_id}</div>
                   <div className="line-clamp-2 h-[40px] text-sm font-medium text-custom-text-100">{issue.name}</div>
                   <div className="min-h-[22px]">
-                    <KanBanProperties />
+                    <KanBanProperties
+                      sub_group_id={sub_group_id}
+                      columnId={columnId}
+                      issue={issue}
+                      handleIssues={handleIssues}
+                    />
                   </div>
                 </div>
               </div>

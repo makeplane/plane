@@ -45,13 +45,20 @@ export const KanBanLayout: React.FC = observer(() => {
       : issueKanBanViewStore?.handleSwimlaneDragDrop(result.source, result.destination);
   };
 
+  const updateIssue = (sub_group_by: string | null, group_by: string | null, issue: any) => {
+    console.log("sub_group_by", sub_group_by);
+    console.log("group_by", group_by);
+    console.log("issue", issue);
+    issueStore.updateIssueStructure(group_by, sub_group_by, issue);
+  };
+
   return (
     <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90`}>
       <DragDropContext onDragEnd={onDragEnd}>
         {currentKanBanView === "default" ? (
-          <KanBan issues={issues} sub_group_by={sub_group_by} group_by={group_by} />
+          <KanBan issues={issues} sub_group_by={sub_group_by} group_by={group_by} handleIssues={updateIssue} />
         ) : (
-          <KanBanSwimLanes issues={issues} sub_group_by={sub_group_by} group_by={group_by} />
+          <KanBanSwimLanes issues={issues} sub_group_by={sub_group_by} group_by={group_by} handleIssues={updateIssue} />
         )}
       </DragDropContext>
     </div>
