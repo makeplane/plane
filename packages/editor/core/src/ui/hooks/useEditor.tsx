@@ -1,10 +1,10 @@
-import { useEditor as useCustomEditor, Editor, Extension, Node, Mark } from "@tiptap/react";
-import { useImperativeHandle, useRef, MutableRefObject, forwardRef } from "react";
+import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
+import { useImperativeHandle, useRef, MutableRefObject } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { UploadImage } from '@/types/upload-image';
 import { DeleteImage } from '@/types/delete-image';
-import { TiptapEditorProps } from "../props";
-import { TiptapExtensions } from "../extensions";
+import { CoreEditorProps } from "../props";
+import { CoreEditorExtensions } from "../extensions";
 import { EditorProps } from '@tiptap/pm/view';
 
 const DEBOUNCE_DELAY = 1500;
@@ -27,10 +27,10 @@ export const useEditor = ({ uploadFile, editable, deleteFile, editorProps = {}, 
   const editor = useCustomEditor({
     editable: editable ?? true,
     editorProps: {
-      ...TiptapEditorProps(uploadFile, setIsSubmitting),
+      ...CoreEditorProps(uploadFile, setIsSubmitting),
       ...editorProps,
     },
-    extensions: [...TiptapExtensions(deleteFile), ...extensions],
+    extensions: [...CoreEditorExtensions(deleteFile), ...extensions],
     content: (typeof value === "string" && value.trim() !== "") ? value : "<p></p>",
     onUpdate: async ({ editor }) => {
       // for instant feedback loop

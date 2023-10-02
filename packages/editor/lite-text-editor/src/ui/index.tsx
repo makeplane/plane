@@ -6,7 +6,7 @@ import { FixedMenu } from './menus/fixed-menu';
 export type UploadImage = (file: File) => Promise<string>;
 export type DeleteImage = (assetUrlWithWorkspaceId: string) => Promise<any>;
 
-interface ITiptapEditor {
+interface ILiteTextEditor {
   value: string;
   uploadFile: UploadImage;
   deleteFile: DeleteImage;
@@ -32,7 +32,7 @@ interface ITiptapEditor {
   }
 }
 
-interface TiptapProps extends ITiptapEditor {
+interface LiteTextEditorProps extends ILiteTextEditor {
   forwardedRef?: React.Ref<EditorHandle>;
 }
 
@@ -56,7 +56,7 @@ const LiteTextEditor = ({
   customClassName,
   forwardedRef,
   commentAccessSpecifier,
-}: TiptapProps) => {
+}: LiteTextEditorProps) => {
   const editor = useEditor({
     onChange,
     debouncedUpdatesEnabled,
@@ -87,7 +87,7 @@ const LiteTextEditor = ({
   );
 };
 
-const LiteTextEditorWithRef = React.forwardRef<EditorHandle, ITiptapEditor>((props, ref) => (
+const LiteTextEditorWithRef = React.forwardRef<EditorHandle, ILiteTextEditor>((props, ref) => (
   <LiteTextEditor {...props} forwardedRef={ref} />
 ));
 

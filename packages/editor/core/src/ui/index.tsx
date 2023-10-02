@@ -9,7 +9,7 @@ import { useEditor } from './hooks/useEditor';
 import { EditorContainer } from '@/ui/editor-container';
 import { EditorContentWrapper } from '@/ui/editor-content';
 
-interface ITiptapEditor {
+interface ICoreEditor {
   value: string;
   uploadFile: UploadImage;
   deleteFile: DeleteImage;
@@ -34,7 +34,7 @@ interface ITiptapEditor {
   editorProps?: EditorProps;
 }
 
-interface TiptapProps extends ITiptapEditor {
+interface EditorCoreProps extends ICoreEditor {
   forwardedRef?: React.Ref<EditorHandle>;
 }
 
@@ -43,7 +43,7 @@ interface EditorHandle {
   setEditorValue: (content: string) => void;
 }
 
-const TiptapEditor = ({
+const CoreEditor = ({
   onChange,
   debouncedUpdatesEnabled,
   editable,
@@ -57,7 +57,7 @@ const TiptapEditor = ({
   borderOnFocus,
   customClassName,
   forwardedRef,
-}: TiptapProps) => {
+}: EditorCoreProps) => {
   const editor = useEditor({
     onChange,
     debouncedUpdatesEnabled,
@@ -83,10 +83,10 @@ const TiptapEditor = ({
   );
 };
 
-const TiptapEditorWithRef = React.forwardRef<EditorHandle, ITiptapEditor>((props, ref) => (
-  <TiptapEditor {...props} forwardedRef={ref} />
+const CoreEditorWithRef = React.forwardRef<EditorHandle, ICoreEditor>((props, ref) => (
+  <CoreEditor {...props} forwardedRef={ref} />
 ));
 
-TiptapEditorWithRef.displayName = "TiptapEditorWithRef";
+CoreEditorWithRef.displayName = "CoreEditorWithRef";
 
-export { TiptapEditor, TiptapEditorWithRef };
+export { CoreEditor, CoreEditorWithRef };

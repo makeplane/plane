@@ -155,7 +155,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   }
 }
 
-#tiptap-container {
+#editor-container {
   table {
     border-collapse: collapse;
     table-layout: fixed;

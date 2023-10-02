@@ -11,7 +11,7 @@ import aiService from "services/ai.service";
 import useToast from "hooks/use-toast";
 // components
 import { GptAssistantModal } from "components/core";
-import { TiptapEditorWithRef } from "@plane/rich-text-editor";
+import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 import { PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // types
 import { ICurrentUserResponse, IPageBlock } from "types";
@@ -281,7 +281,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
               render={({ field: { value, onChange } }) => {
                 if (!data)
                   return (
-                    <TiptapEditorWithRef
+                    <RichTextEditorWithRef
                       uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                       deleteFile={fileService.deleteImage}
                       ref={editorRef}
@@ -302,7 +302,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
                   );
 
                 return (
-                  <TiptapEditorWithRef
+                  <RichTextEditorWithRef
                     uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                     deleteFile={fileService.deleteImage}
                     ref={editorRef}

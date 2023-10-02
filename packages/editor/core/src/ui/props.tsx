@@ -3,7 +3,7 @@ import { findTableAncestor } from "@/lib/utils";
 import { startImageUpload } from "@/ui/plugins/upload-image";
 import { UploadImage } from "@/types/upload-image";
 
-export function TiptapEditorProps(
+export function CoreEditorProps(
   uploadFile: UploadImage,
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
 ): EditorProps {

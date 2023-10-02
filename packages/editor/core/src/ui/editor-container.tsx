@@ -9,11 +9,11 @@ interface EditorContainerProps {
 
 export const EditorContainer = ({ editor, editorClassNames, children }: EditorContainerProps) => (
   <div
-    id="tiptap-container"
+    id="editor-container"
     onClick={() => {
       editor?.chain().focus().run();
     }}
-    className={`tiptap-editor-container cursor-text ${editorClassNames}`}
+    className={`cursor-text ${editorClassNames}`}
   >
     {children}
   </div>

@@ -25,7 +25,7 @@ import { CreateLabelModal } from "components/labels";
 // ui
 import { CustomMenu, Input, PrimaryButton, SecondaryButton, ToggleSwitch } from "components/ui";
 // components
-import { TiptapEditorWithRef } from "@plane/rich-text-editor";
+import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 // icons
 import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
@@ -386,7 +386,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                       if (!value && !watch("description_html")) return <></>;
 
                       return (
-                        <TiptapEditorWithRef
+                        <RichTextEditorWithRef
                           uploadFile={fileService.getUploadFileFunction(workspaceSlug  as string)}
                           deleteFile={fileService.deleteImage}
                           ref={editorRef}

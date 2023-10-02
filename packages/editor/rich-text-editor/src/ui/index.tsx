@@ -7,7 +7,7 @@ import { RichTextEditorExtensions } from './extensions';
 export type UploadImage = (file: File) => Promise<string>;
 export type DeleteImage = (assetUrlWithWorkspaceId: string) => Promise<any>;
 
-interface ITiptapEditor {
+interface IRichTextEditor {
   value: string;
   uploadFile: UploadImage;
   deleteFile: DeleteImage;
@@ -23,7 +23,7 @@ interface ITiptapEditor {
   debouncedUpdatesEnabled?: boolean;
 }
 
-interface TiptapProps extends ITiptapEditor {
+interface RichTextEditorProps extends IRichTextEditor {
   forwardedRef?: React.Ref<EditorHandle>;
 }
 
@@ -46,7 +46,7 @@ const RichTextEditor = ({
   borderOnFocus,
   customClassName,
   forwardedRef,
-}: TiptapProps) => {
+}: RichTextEditorProps) => {
   const editor = useEditor({
     onChange,
     debouncedUpdatesEnabled,
@@ -74,7 +74,7 @@ const RichTextEditor = ({
   );
 };
 
-const RichTextEditorWithRef = React.forwardRef<EditorHandle, ITiptapEditor>((props, ref) => (
+const RichTextEditorWithRef = React.forwardRef<EditorHandle, IRichTextEditor>((props, ref) => (
   <RichTextEditor {...props} forwardedRef={ref} />
 ));
 

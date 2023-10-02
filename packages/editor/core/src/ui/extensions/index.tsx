@@ -19,7 +19,7 @@ import { DeleteImage } from "@/types/delete-image";
 
 import isValidHttpUrl from "@/ui/menus/bubble-menu/utils"
 
-export const TiptapExtensions = (
+export const CoreEditorExtensions = (
   deleteFile: DeleteImage,
 ) => [
     StarterKit.configure({
