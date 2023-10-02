@@ -24,10 +24,13 @@ import { CustomTableCell } from "./table/table-cell";
 import { Table } from "./table/table";
 import { TableHeader } from "./table/table-header";
 import { TableRow } from "@tiptap/extension-table-row";
+import { Mentions } from "../mentions";
+import { IMentionSuggestion } from "../mentions/mentions";
 
 lowlight.registerLanguage("ts", ts);
 
 export const TiptapExtensions = (
+  mentionSuggestions: IMentionSuggestion[],
   workspaceSlug: string,
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
 ) => [
@@ -144,6 +147,7 @@ export const TiptapExtensions = (
     }),
     Table,
     TableHeader,
+    Mentions(mentionSuggestions),
     CustomTableCell,
     TableRow,
   ];

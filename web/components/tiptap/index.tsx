@@ -7,6 +7,7 @@ import { TiptapExtensions } from "./extensions";
 import { TiptapEditorProps } from "./props";
 import { ImageResizer } from "./extensions/image-resize";
 import { TableMenu } from "./table-menu";
+import { IMentionSuggestion } from "./mentions/mentions";
 
 export interface ITipTapRichTextEditor {
   value: string;
@@ -20,6 +21,7 @@ export interface ITipTapRichTextEditor {
   workspaceSlug: string;
   editable?: boolean;
   forwardedRef?: any;
+  mentionSuggestions?: IMentionSuggestion[];
   debouncedUpdatesEnabled?: boolean;
 }
 
@@ -34,15 +36,18 @@ const Tiptap = (props: ITipTapRichTextEditor) => {
     editorContentCustomClassNames,
     value,
     noBorder,
+    mentionSuggestions,
     workspaceSlug,
     borderOnFocus,
     customClassName,
   } = props;
 
+  // const projectMembersAsSuggestions = useProjectMembers(workspaceSlug)
+
   const editor = useEditor({
     editable: editable ?? true,
     editorProps: TiptapEditorProps(workspaceSlug, setIsSubmitting),
-    extensions: TiptapExtensions(workspaceSlug, setIsSubmitting),
+    extensions: TiptapExtensions(mentionSuggestions ?? [], workspaceSlug, setIsSubmitting),
     content: value,
     onUpdate: async ({ editor }) => {
       // for instant feedback loop
@@ -85,7 +90,7 @@ const Tiptap = (props: ITipTapRichTextEditor) => {
 
   return (
     <div
-      id="tiptap-container"
+      id="editor-container"
       onClick={() => {
         editor?.chain().focus().run();
       }}
