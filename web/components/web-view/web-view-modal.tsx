@@ -63,7 +63,7 @@ export const WebViewModal = (props: Props) => {
                     <XMarkIcon className="w-6 h-6 text-custom-text-200" />
                   </button>
                 </div>
-                <div className="mt-6 max-h-60 overflow-auto">{children}</div>
+                <div className="flex flex-col mt-6 max-h-60">{children}</div>
               </Dialog.Panel>
             </Transition.Child>
           </div>
@@ -84,14 +84,13 @@ type OptionsProps = {
 };
 
 const Options: React.FC<OptionsProps> = ({ options }) => (
-  <div className="divide-y">
+  <div className="divide-y flex-1 overflow-auto">
     {options.map((option) => (
       <div key={option.value} className="flex items-center justify-between gap-2 py-[14px]">
-        <div className="flex items-center gap-x-2">
+        <div onClick={option.onClick} className="flex items-center gap-x-2 w-full">
           <input
             type="checkbox"
             checked={option.checked}
-            onChange={option.onClick}
             className="rounded-full border border-custom-border-200 bg-custom-background-100 w-4 h-4"
           />
 
@@ -104,5 +103,16 @@ const Options: React.FC<OptionsProps> = ({ options }) => (
   </div>
 );
 
+type FooterProps = {
+  children: React.ReactNode;
+  className?: string;
+};
+
+const Footer: React.FC<FooterProps> = ({ children, className }) => (
+  <div className={`mt-2 flex-shrink-0 ${className ? className : ""}`}>{children}</div>
+);
+
 WebViewModal.Options = Options;
+WebViewModal.Footer = Footer;
 WebViewModal.Options.displayName = "WebViewModal.Options";
+WebViewModal.Footer.displayName = "WebViewModal.Footer";

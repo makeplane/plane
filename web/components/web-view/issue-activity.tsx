@@ -114,7 +114,7 @@ export const IssueActivity: React.FC<Props> = (props) => {
   return (
     <div>
       <Label>Activity</Label>
-      <div className="mt-1 space-y-[6px] p-2 border rounded-[4px]">
+      <div className="mt-1 space-y-[6px] p-2 border border-custom-border-200 rounded-[4px]">
         <ul role="list" className="-mb-4">
           {issueActivities?.map((activityItem, index) => {
             // determines what type of action is performed

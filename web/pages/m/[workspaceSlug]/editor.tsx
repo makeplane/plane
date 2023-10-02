@@ -15,7 +15,8 @@ import WebViewLayout from "layouts/web-view-layout";
 
 // components
 import { TipTapEditor } from "components/tiptap";
-import { PrimaryButton, Spinner } from "components/ui";
+import { PrimaryButton } from "components/ui";
+import { Spinner } from "components/web-view";
 
 const Editor: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -64,7 +65,6 @@ const Editor: NextPage = () => {
                 editable={isEditable}
                 noBorder={true}
                 workspaceSlug={workspaceSlug?.toString() ?? ""}
-                debouncedUpdatesEnabled={true}
                 customClassName="min-h-[150px] shadow-sm"
                 editorContentCustomClassNames="pb-9"
                 onChange={(description: Object, description_html: string) => {

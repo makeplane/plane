@@ -32,6 +32,33 @@ type Props = {
   issueDetails: IIssue;
 };
 
+type DeleteConfirmationProps = {
+  isOpen: boolean;
+  onCancel: () => void;
+  onConfirm: () => void;
+};
+
+const DeleteConfirmation: React.FC<DeleteConfirmationProps> = (props) => {
+  const { isOpen, onCancel, onConfirm } = props;
+
+  return (
+    <WebViewModal isOpen={isOpen} onClose={onCancel} modalTitle="Delete Link">
+      <div className="text-custom-text-200">
+        <p>Are you sure you want to delete this link?</p>
+      </div>
+      <div className="mt-4 flex gap-2">
+        <button
+          type="button"
+          onClick={onConfirm}
+          className="w-full py-2 flex items-center justify-center rounded-[4px] bg-red-500/10 text-red-500 border border-red-500 text-base font-medium"
+        >
+          Delete
+        </button>
+      </div>
+    </WebViewModal>
+  );
+};
+
 export const IssueLinks: React.FC<Props> = (props) => {
   const { issueDetails, allowed } = props;
 
@@ -39,6 +66,7 @@ export const IssueLinks: React.FC<Props> = (props) => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [selectedLink, setSelectedLink] = useState<string | null>(null);
+  const [deleteSelected, setDeleteSelected] = useState<string | null>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -56,7 +84,7 @@ export const IssueLinks: React.FC<Props> = (props) => {
 
     await issuesService
       .deleteIssueLink(workspaceSlug as string, projectId as string, issueDetails.id, linkId)
-      .then((res) => {
+      .then(() => {
         mutate(ISSUE_DETAILS(issueDetails.id));
       })
       .catch((err) => {
@@ -85,6 +113,16 @@ export const IssueLinks: React.FC<Props> = (props) => {
         />
       </WebViewModal>
 
+      <DeleteConfirmation
+        isOpen={!!deleteSelected}
+        onCancel={() => setDeleteSelected(null)}
+        onConfirm={() => {
+          if (!deleteSelected) return;
+          handleDeleteLink(deleteSelected);
+          setDeleteSelected(null);
+        }}
+      />
+
       <Label>Links</Label>
       <div className="mt-1 space-y-[6px]">
         {links?.map((link) => (
@@ -97,7 +135,7 @@ export const IssueLinks: React.FC<Props> = (props) => {
                 <span>
                   <LinkIcon className="w-4 h-4 inline-block mr-1" />
                 </span>
-                <span>{link.title}</span>
+                <span>{link.title || link.metadata?.title || link.url}</span>
               </a>
             </Link>
             {allowed && (
@@ -114,7 +152,7 @@ export const IssueLinks: React.FC<Props> = (props) => {
                 <button
                   type="button"
                   onClick={() => {
-                    handleDeleteLink(link.id);
+                    setDeleteSelected(link.id);
                   }}
                 >
                   <X className="w-[18px] h-[18px] text-custom-text-400" />

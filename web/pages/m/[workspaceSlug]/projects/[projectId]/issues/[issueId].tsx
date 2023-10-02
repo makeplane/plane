@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // react hook forms
-import { useForm } from "react-hook-form";
+import { useFormContext, useForm, FormProvider } from "react-hook-form";
 
 // services
 import issuesService from "services/issues.service";
@@ -23,9 +23,6 @@ import useProjectMembers from "hooks/use-project-members";
 // layouts
 import WebViewLayout from "layouts/web-view-layout";
 
-// ui
-import { Spinner } from "components/ui";
-
 // components
 import {
   IssueWebViewForm,
@@ -34,12 +31,13 @@ import {
   IssuePropertiesDetail,
   IssueLinks,
   IssueActivity,
+  Spinner,
 } from "components/web-view";
 
 // types
 import type { IIssue } from "types";
 
-const MobileWebViewIssueDetail = () => {
+const MobileWebViewIssueDetail_ = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
@@ -53,14 +51,8 @@ const MobileWebViewIssueDetail = () => {
 
   const { user } = useUser();
 
-  const { register, control, reset, handleSubmit, watch } = useForm<IIssue>({
-    defaultValues: {
-      name: "",
-      description: "",
-      description_html: "",
-      state: "",
-    },
-  });
+  const formContext = useFormContext<IIssue>();
+  const { register, handleSubmit, control, watch, reset } = formContext;
 
   const {
     data: issueDetails,
@@ -132,7 +124,6 @@ const MobileWebViewIssueDetail = () => {
         <div className="px-4 py-2 h-full">
           <div className="h-full flex justify-center items-center">
             <Spinner />
-            Loading...
           </div>
         </div>
       </WebViewLayout>
@@ -160,7 +151,7 @@ const MobileWebViewIssueDetail = () => {
 
         <SubIssueList issueDetails={issueDetails!} />
 
-        <IssuePropertiesDetail control={control} submitChanges={submitChanges} />
+        <IssuePropertiesDetail submitChanges={submitChanges} />
 
         <IssueAttachments allowed={isAllowed} />
 
@@ -169,6 +160,16 @@ const MobileWebViewIssueDetail = () => {
         <IssueActivity allowed={isAllowed} issueDetails={issueDetails!} />
       </div>
     </WebViewLayout>
+  );
+};
+
+const MobileWebViewIssueDetail = () => {
+  const methods = useForm();
+
+  return (
+    <FormProvider {...methods}>
+      <MobileWebViewIssueDetail_ />
+    </FormProvider>
   );
 };
 
