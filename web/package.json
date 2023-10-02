@@ -33,6 +33,7 @@
     "@tiptap/extension-horizontal-rule": "^2.0.4",
     "@tiptap/extension-image": "^2.0.4",
     "@tiptap/extension-link": "^2.0.4",
+    "@tiptap/extension-mention": "^2.1.11",
     "@tiptap/extension-placeholder": "^2.0.4",
     "@tiptap/extension-table": "^2.1.6",
     "@tiptap/extension-table-cell": "^2.1.6",
