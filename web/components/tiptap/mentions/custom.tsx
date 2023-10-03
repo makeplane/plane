@@ -47,7 +47,6 @@ export const CustomMention = Mention.extend<CustomMentionOptions>({
           id: node.getAttribute('data-mention-id') || '',
           type: node.getAttribute('data-mention-type') || '',
           label: node.innerText.slice(1) || '',
-          self: node.getAttribute('self') || ''
         }
       },
     }]
