@@ -85,10 +85,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
   }, [issue, reset]);
 
   const debouncedTitleSave = useDebouncedCallback(async () => {
-    setTimeout(async () => {
-      handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
-    }, 500);
-  }, 1000);
+    handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
+  }, 1500);
 
   return (
     <div className="relative">

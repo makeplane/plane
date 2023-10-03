@@ -14,3 +14,7 @@ export { EditorContentWrapper } from "./ui/components/editor-content";
 // hooks
 export { useEditor } from "./ui/hooks/useEditor";
 export { useReadOnlyEditor } from "./ui/hooks/useReadOnlyEditor";
+
+// helper items
+export * from "./ui/menus/menu-items";
+export * from "./lib/editor-commands";

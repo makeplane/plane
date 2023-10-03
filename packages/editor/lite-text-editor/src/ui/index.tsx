@@ -83,7 +83,7 @@ const LiteTextEditor = ({
         <EditorContentWrapper editor={editor} editorContentCustomClassNames={editorContentCustomClassNames} />
         {(editable !== false) &&
           (<div className="w-full mt-4">
-            <FixedMenu editor={editor} commentAccessSpecifier={commentAccessSpecifier} />
+            <FixedMenu editor={editor} uploadFile={uploadFile} setIsSubmitting={setIsSubmitting} commentAccessSpecifier={commentAccessSpecifier} />
           </div>)
         }
       </div>

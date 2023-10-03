@@ -309,6 +309,7 @@ const renderItems = () => {
     onStart: (props: { editor: Editor; clientRect: DOMRect }) => {
       component = new ReactRenderer(CommandList, {
         props,
+        // @ts-ignore
         editor: props.editor,
       });
 
