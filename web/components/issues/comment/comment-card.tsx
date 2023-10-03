@@ -113,6 +113,7 @@ export const CommentCard: React.FC<Props> = ({
           >
             <div>
               <LiteTextEditorWithRef
+                onEnterKeyPress={handleSubmit(onEnter)}
                 uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                 deleteFile={fileService.deleteImage}
                 ref={editorRef}

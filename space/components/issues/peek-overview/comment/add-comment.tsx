@@ -11,7 +11,7 @@ import { SecondaryButton } from "components/ui";
 // types
 import { Comment } from "types/issue";
 // components
-import { RichTextEditorWithRef } from "@plane/rich-text-editor";
+import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
 // service
 import fileService from "@/services/file.service";
 
@@ -71,7 +71,12 @@ export const AddComment: React.FC<Props> = observer((props) => {
           name="comment_html"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <RichTextEditorWithRef
+            <LiteTextEditorWithRef
+              onEnterKeyPress={(e) => {
+                userStore.requiredLogin(() => {
+                  handleSubmit(onSubmit)(e);
+                });
+              }}
               uploadFile={fileService.getUploadFileFunction(workspace_slug as string)}
               deleteFile={fileService.deleteImage}
               ref={editorRef}

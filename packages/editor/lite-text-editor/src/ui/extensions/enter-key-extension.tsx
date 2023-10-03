@@ -1,12 +1,14 @@
 import { Extension } from '@tiptap/core';
 
-export const EnterKeyExtension = Extension.create({
+export const EnterKeyExtension = (onEnterKeyPress?: () => void) => Extension.create({
   name: 'enterKey',
 
   addKeyboardShortcuts() {
     return {
       'Enter': () => {
-        console.log('Submit comment');
+        if (onEnterKeyPress) {
+          onEnterKeyPress();
+        }
         return true;
       },
     }

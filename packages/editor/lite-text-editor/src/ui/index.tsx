@@ -30,7 +30,8 @@ interface ILiteTextEditor {
       key: string;
       label: "Private" | "Public";
     }[]
-  }
+  };
+  onEnterKeyPress?: (e?: any) => void;
 }
 
 interface LiteTextEditorProps extends ILiteTextEditor {
@@ -57,6 +58,7 @@ const LiteTextEditor = ({
   customClassName,
   forwardedRef,
   commentAccessSpecifier,
+  onEnterKeyPress
 }: LiteTextEditorProps) => {
   const editor = useEditor({
     onChange,
@@ -68,7 +70,7 @@ const LiteTextEditor = ({
     uploadFile,
     deleteFile,
     forwardedRef,
-    extensions: LiteTextEditorExtensions(),
+    extensions: LiteTextEditorExtensions(onEnterKeyPress),
   });
 
   const editorClassNames = getEditorClassNames({ noBorder, borderOnFocus, customClassName });

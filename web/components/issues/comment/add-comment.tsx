@@ -80,6 +80,7 @@ export const AddComment: React.FC<Props> = ({
                   control={control}
                   render={({ field: { onChange: onCommentChange, value: commentValue } }) => (
                     <LiteTextEditorWithRef
+                      onEnterKeyPress={handleSubmit(handleAddComment)}
                       uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                       deleteFile={fileService.deleteImage}
                       ref={editorRef}

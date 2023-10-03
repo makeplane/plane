@@ -104,6 +104,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                 name="comment_html"
                 render={({ field: { onChange, value } }) => (
                   <LiteTextEditorWithRef
+                    onEnterKeyPress={handleSubmit(handleCommentUpdate)}
                     uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
                     deleteFile={fileService.deleteImage}
                     ref={editorRef}
@@ -149,7 +150,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
         <Menu as="div" className="relative w-min text-left">
           <Menu.Button
             type="button"
-            onClick={() => {}}
+            onClick={() => { }}
             className="relative grid place-items-center rounded p-1 text-custom-text-200 hover:text-custom-text-100 outline-none cursor-pointer hover:bg-custom-background-80"
           >
             <EllipsisVerticalIcon className="h-5 w-5 text-custom-text-200 duration-300" />
@@ -173,9 +174,8 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                       onClick={() => {
                         setIsEditing(true);
                       }}
-                      className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80 ${
-                        active ? "bg-custom-background-80" : ""
-                      }`}
+                      className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80 ${active ? "bg-custom-background-80" : ""
+                        }`}
                     >
                       Edit
                     </button>
@@ -188,9 +188,8 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                     <button
                       type="button"
                       onClick={handleDelete}
-                      className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80 ${
-                        active ? "bg-custom-background-80" : ""
-                      }`}
+                      className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80 ${active ? "bg-custom-background-80" : ""
+                        }`}
                     >
                       Delete
                     </button>
