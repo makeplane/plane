@@ -8,13 +8,13 @@ import TaskList from "@tiptap/extension-task-list";
 import { Markdown } from "tiptap-markdown";
 import Gapcursor from "@tiptap/extension-gapcursor";
 
-import { CustomTableCell } from "@/ui/extensions/table/table-cell";
-import { Table } from "@/ui/extensions/table";
-import { TableHeader } from "@/ui/extensions/table/table-header";
+import { CustomTableCell } from "../extensions/table/table-cell";
+import { Table } from "../extensions/table";
+import { TableHeader } from "../extensions/table/table-header";
 import { TableRow } from "@tiptap/extension-table-row";
 
-import isValidHttpUrl from "@/ui/menus/bubble-menu/utils";
-import ReadOnlyImageExtension from "@/ui/extensions/image/read-only-image";
+import isValidHttpUrl from "../menus/bubble-menu/utils";
+import ReadOnlyImageExtension from "../extensions/image/read-only-image";
 
 export const CoreReadOnlyEditorExtensions  = [
   StarterKit.configure({

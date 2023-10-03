@@ -1,7 +1,7 @@
 import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
 import { useImperativeHandle, useRef, MutableRefObject } from "react";
-import { CoreReadOnlyEditorExtensions } from "@/ui/read-only/extensions";
-import { CoreReadOnlyEditorProps } from "@/ui/read-only/props";
+import { CoreReadOnlyEditorExtensions } from "../../ui/read-only/extensions";
+import { CoreReadOnlyEditorProps } from "../../ui/read-only/props";
 
 interface CustomReadOnlyEditorProps {
   value: string;

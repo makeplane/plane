@@ -1,4 +1,4 @@
-import { UploadImage } from "@/types/upload-image";
+import { UploadImage } from "../../types/upload-image";
 import { EditorState, Plugin, PluginKey } from "@tiptap/pm/state";
 import { Decoration, DecorationSet, EditorView } from "@tiptap/pm/view";
 

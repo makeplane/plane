@@ -4,7 +4,7 @@ import InsertLeftTableIcon from "./InsertLeftTableIcon";
 import InsertRightTableIcon from "./InsertRightTableIcon";
 import InsertTopTableIcon from "./InsertTopTableIcon";
 import InsertBottomTableIcon from "./InsertBottomTableIcon";
-import { cn, findTableAncestor } from "@/lib/utils";
+import { cn, findTableAncestor } from "../../../lib/utils";
 import { Tooltip } from "./tooltip";
 
 interface TableMenuItem {

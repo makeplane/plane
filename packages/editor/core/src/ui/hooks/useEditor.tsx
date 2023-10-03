@@ -1,12 +1,12 @@
 import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
 import { useImperativeHandle, useRef, MutableRefObject } from "react";
 import { useDebouncedCallback } from "use-debounce";
-import { UploadImage } from '@/types/upload-image';
-import { DeleteImage } from '@/types/delete-image';
+import { DeleteImage } from '../../types/delete-image';
 import { CoreEditorProps } from "../props";
 import { CoreEditorExtensions } from "../extensions";
 import { EditorProps } from '@tiptap/pm/view';
-import { getTrimmedHTML } from "@/lib/utils";
+import { getTrimmedHTML } from "../../lib/utils";
+import { UploadImage } from "../../types/upload-image";
 
 const DEBOUNCE_DELAY = 1500;
 
@@ -25,7 +25,6 @@ interface CustomEditorProps {
 }
 
 export const useEditor = ({ uploadFile, editable, deleteFile, editorProps = {}, value, extensions = [], onChange, setIsSubmitting, debouncedUpdatesEnabled, forwardedRef, setShouldShowAlert, }: CustomEditorProps) => {
-  console.log("content aaya", value)
   const editor = useCustomEditor({
     editable: editable ?? true,
     editorProps: {

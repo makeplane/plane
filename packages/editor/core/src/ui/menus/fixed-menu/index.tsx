@@ -1,7 +1,7 @@
 import { Editor } from "@tiptap/react";
 import { BoldIcon, ItalicIcon, UnderlineIcon, StrikethroughIcon, CodeIcon } from "lucide-react";
 
-import { cn } from "@/lib/utils";
+import { cn } from "../../../lib/utils";
 import { Tooltip } from "../table-menu/tooltip";
 import { Icon } from "./icon";
 
