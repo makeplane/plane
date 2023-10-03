@@ -44,6 +44,41 @@
       "cache": false,
       "persistent": true,
       "dependsOn": [
+        "@plane/lite-text-editor#build",
+        "@plane/rich-text-editor#build"
+      ]
+    },
+    "space#develop": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": [
+        "@plane/lite-text-editor#build",
+        "@plane/rich-text-editor#build"
+      ]
+    },
+    "web#build": {
+      "cache": true,
+      "dependsOn": [
+        "@plane/lite-text-editor#build",
+        "@plane/rich-text-editor#build"
+      ]
+    },
+    "space#build": {
+      "cache": true,
+      "dependsOn": [
+        "@plane/lite-text-editor#build",
+        "@plane/rich-text-editor#build"
+      ]
+    },
+    "@plane/lite-text-editor#build": {
+      "cache": true,
+      "dependsOn": [
+        "@plane/editor-core#build"
+      ]
+    },
+    "@plane/rich-text-editor#build": {
+      "cache": true,
+      "dependsOn": [
         "@plane/editor-core#build"
       ]
     },
