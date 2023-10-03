@@ -49,21 +49,21 @@ const Greeting = ({ user }: { user: ICurrentUserResponse | undefined }) => {
     hour: "numeric",
   }).format(currentTime);
 
-  const date = new Intl.DateTimeFormat("en-US", {
+  const date = store.locale.formatDate(currentTime, {
     month: "short",
     day: "numeric",
-  }).format(currentTime);
+  });
 
-  const weekDay = new Intl.DateTimeFormat("en-US", {
+  const weekDay = store.locale.formatDate(currentTime, {
     weekday: "long",
-  }).format(currentTime);
+  });
 
-  const timeString = new Intl.DateTimeFormat("en-US", {
+  const timeString = store.locale.formatDate(currentTime, {
     timeZone: user?.user_timezone,
-    hour12: false, // Use 24-hour format
+    hour12: false,
     hour: "2-digit",
     minute: "2-digit",
-  }).format(currentTime);
+  });
 
   const dayState =
     parseInt(hour, 10) < 12 ? "morning" : parseInt(hour, 10) < 18 ? "afternoon" : "evening";

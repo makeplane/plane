@@ -1,5 +1,6 @@
 import { LOCALES } from "constants/locales";
 import { RootStore } from "store/root";
+import { capitalizeFirstLetter } from "./string.helper";
 
 export const localized = (key: string, localizationDataset: any = null): string => {
   try {
@@ -20,7 +21,10 @@ export const localized = (key: string, localizationDataset: any = null): string 
   }
 };
 
-export const formatDate = (params) => {};
+export const formatDate = (date: Date, params: Intl.DateTimeFormatOptions): string => {
+  const locale = getLocale().replace("_", "-");
+  return capitalizeFirstLetter(new Intl.DateTimeFormat(locale, params).format(date));
+};
 
 export const getAutoLocale = (): string => {
   const locale = navigator.language;

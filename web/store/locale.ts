@@ -44,8 +44,8 @@ class LocaleStore {
     return localized(key, this.localizedData);
   }
 
-  formatDate(params: any) {
-    return formatDate(params);
+  formatDate(date: Date, params: Intl.DateTimeFormatOptions) {
+    return formatDate(date, params);
   }
 
   initialLoad() {}
