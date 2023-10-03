@@ -3,7 +3,7 @@ import { BoldIcon, ItalicIcon, UnderlineIcon, StrikethroughIcon, CodeIcon } from
 
 import { cn } from "@plane/editor-core";
 import { Icon } from "./icon";
-import { Tooltip } from "@/ui/tooltip";
+import { Tooltip } from "../../tooltip";
 
 export interface BubbleMenuItem {
   name: string;
