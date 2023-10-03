@@ -15,7 +15,7 @@ import useUserAuth from "hooks/use-user-auth";
 // icons
 import { PlusIcon } from "components/icons";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import { RecentPagesList, CreateUpdatePageModal, TPagesListProps } from "components/pages";
 // ui
@@ -31,33 +31,21 @@ import { PROJECT_DETAILS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
 
-const AllPagesList = dynamic<TPagesListProps>(
-  () => import("components/pages").then((a) => a.AllPagesList),
-  {
-    ssr: false,
-  }
-);
+const AllPagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.AllPagesList), {
+  ssr: false,
+});
 
-const FavoritePagesList = dynamic<TPagesListProps>(
-  () => import("components/pages").then((a) => a.FavoritePagesList),
-  {
-    ssr: false,
-  }
-);
+const FavoritePagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.FavoritePagesList), {
+  ssr: false,
+});
 
-const MyPagesList = dynamic<TPagesListProps>(
-  () => import("components/pages").then((a) => a.MyPagesList),
-  {
-    ssr: false,
-  }
-);
+const MyPagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.MyPagesList), {
+  ssr: false,
+});
 
-const OtherPagesList = dynamic<TPagesListProps>(
-  () => import("components/pages").then((a) => a.OtherPagesList),
-  {
-    ssr: false,
-  }
-);
+const OtherPagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.OtherPagesList), {
+  ssr: false,
+});
 
 const tabsList = ["Recent", "All", "Favorites", "Created by me", "Created by others"];
 
@@ -75,9 +63,7 @@ const ProjectPages: NextPage = () => {
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => projectService.getProject(workspaceSlug as string, projectId as string) : null
   );
 
   const currentTabValue = (tab: string | null) => {
@@ -109,9 +95,7 @@ const ProjectPages: NextPage = () => {
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-            <BreadcrumbItem
-              title={`${truncateText(projectDetails?.name ?? "Project", 32)} Pages`}
-            />
+            <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Pages`} />
           </Breadcrumbs>
         }
         right={

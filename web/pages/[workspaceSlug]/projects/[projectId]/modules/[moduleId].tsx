@@ -12,7 +12,7 @@ import modulesService from "services/modules.service";
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
@@ -45,32 +45,20 @@ const SingleModule: React.FC = () => {
 
   const { data: modules } = useSWR(
     workspaceSlug && projectId ? MODULE_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => modulesService.getModules(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => modulesService.getModules(workspaceSlug as string, projectId as string) : null
   );
 
   const { data: moduleIssues } = useSWR(
     workspaceSlug && projectId && moduleId ? MODULE_ISSUES(moduleId as string) : null,
     workspaceSlug && projectId && moduleId
-      ? () =>
-          modulesService.getModuleIssues(
-            workspaceSlug as string,
-            projectId as string,
-            moduleId as string
-          )
+      ? () => modulesService.getModuleIssues(workspaceSlug as string, projectId as string, moduleId as string)
       : null
   );
 
   const { data: moduleDetails, error } = useSWR(
     moduleId ? MODULE_DETAILS(moduleId as string) : null,
     workspaceSlug && projectId
-      ? () =>
-          modulesService.getModuleDetails(
-            workspaceSlug as string,
-            projectId as string,
-            moduleId as string
-          )
+      ? () => modulesService.getModuleDetails(workspaceSlug as string, projectId as string, moduleId as string)
       : null
   );
 
@@ -82,13 +70,7 @@ const SingleModule: React.FC = () => {
     };
 
     await modulesService
-      .addIssuesToModule(
-        workspaceSlug as string,
-        projectId as string,
-        moduleId as string,
-        payload,
-        user
-      )
+      .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId as string, payload, user)
       .catch(() =>
         setToastAlert({
           type: "error",
@@ -176,10 +158,7 @@ const SingleModule: React.FC = () => {
           />
         ) : (
           <>
-            <AnalyticsProjectModal
-              isOpen={analyticsModal}
-              onClose={() => setAnalyticsModal(false)}
-            />
+            <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
             <div
               className={`h-full flex flex-col ${moduleSidebar ? "mr-[24rem]" : ""} ${
                 analyticsModal ? "mr-[50%]" : ""

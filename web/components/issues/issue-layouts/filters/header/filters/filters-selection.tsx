@@ -27,7 +27,7 @@ import { DATE_FILTER_OPTIONS } from "constants/filters";
 type Props = {
   filters: IIssueFilterOptions;
   handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string | string[]) => void;
-  layoutDisplayFiltersOptions: ILayoutDisplayFiltersOptions;
+  layoutDisplayFiltersOptions: ILayoutDisplayFiltersOptions | undefined;
   projectId: string;
 };
 
@@ -125,7 +125,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
     return filterDetails.currentLength > 5;
   };
 
-  const isFilterEnabled = (filter: keyof IIssueFilterOptions) => layoutDisplayFiltersOptions.filters.includes(filter);
+  const isFilterEnabled = (filter: keyof IIssueFilterOptions) => layoutDisplayFiltersOptions?.filters.includes(filter);
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden">
@@ -147,7 +147,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
           )}
         </div>
       </div>
-      <div className="w-full h-full divide-y divide-custom-border-20 px-2.5 overflow-y-auto">
+      <div className="w-full h-full divide-y divide-custom-border-200 px-2.5 overflow-y-auto">
         {/* priority */}
         {isFilterEnabled("priority") && (
           <div className="py-2">

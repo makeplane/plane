@@ -6,7 +6,7 @@ import Link from "next/link";
 // services
 import userService from "services/user.service";
 // layouts
-import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // components
 import { ActivityIcon, ActivityMessage } from "components/core";
 import { TipTapEditor } from "components/tiptap";
@@ -60,8 +60,7 @@ const ProfileActivity = () => {
                               activityItem.new_value === "restore" && (
                                 <Icon iconName="history" className="text-sm text-custom-text-200" />
                               )
-                            ) : activityItem.actor_detail.avatar &&
-                              activityItem.actor_detail.avatar !== "" ? (
+                            ) : activityItem.actor_detail.avatar && activityItem.actor_detail.avatar !== "" ? (
                               <img
                                 src={activityItem.actor_detail.avatar}
                                 alt={activityItem.actor_detail.display_name}
@@ -98,11 +97,7 @@ const ProfileActivity = () => {
                             <div className="issue-comments-section p-0">
                               <TipTapEditor
                                 workspaceSlug={workspaceSlug as string}
-                                value={
-                                  activityItem?.new_value !== ""
-                                    ? activityItem.new_value
-                                    : activityItem.old_value
-                                }
+                                value={activityItem?.new_value !== "" ? activityItem.new_value : activityItem.old_value}
                                 customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
                                 noBorder
                                 borderOnFocus={false}
@@ -124,9 +119,7 @@ const ProfileActivity = () => {
                     activityItem.field !== "estimate" ? (
                       <span className="text-custom-text-200">
                         created{" "}
-                        <Link
-                          href={`/${workspaceSlug}/projects/${activityItem.project}/issues/${activityItem.issue}`}
-                        >
+                        <Link href={`/${workspaceSlug}/projects/${activityItem.project}/issues/${activityItem.issue}`}>
                           <a className="inline-flex items-center hover:underline">
                             this issue. <ArrowTopRightOnSquareIcon className="ml-1 h-3.5 w-3.5" />
                           </a>
@@ -150,10 +143,7 @@ const ProfileActivity = () => {
                                     <div className="flex h-6 w-6 items-center justify-center">
                                       {activityItem.field ? (
                                         activityItem.new_value === "restore" ? (
-                                          <Icon
-                                            iconName="history"
-                                            className="!text-2xl text-custom-text-200"
-                                          />
+                                          <Icon iconName="history" className="!text-2xl text-custom-text-200" />
                                         ) : (
                                           <ActivityIcon activity={activityItem} />
                                         )
@@ -179,26 +169,19 @@ const ProfileActivity = () => {
                               </div>
                               <div className="min-w-0 flex-1 py-4 border-b border-custom-border-200">
                                 <div className="text-sm text-custom-text-200 break-words">
-                                  {activityItem.field === "archived_at" &&
-                                  activityItem.new_value !== "restore" ? (
+                                  {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
                                     <span className="text-gray font-medium">Plane</span>
                                   ) : activityItem.actor_detail.is_bot ? (
                                     <span className="text-gray font-medium">
                                       {activityItem.actor_detail.first_name} Bot
                                     </span>
                                   ) : (
-                                    <Link
-                                      href={`/${workspaceSlug}/profile/${activityItem.actor_detail.id}`}
-                                    >
-                                      <a className="text-gray font-medium">
-                                        {activityItem.actor_detail.display_name}
-                                      </a>
+                                    <Link href={`/${workspaceSlug}/profile/${activityItem.actor_detail.id}`}>
+                                      <a className="text-gray font-medium">{activityItem.actor_detail.display_name}</a>
                                     </Link>
                                   )}{" "}
                                   {message}{" "}
-                                  <span className="whitespace-nowrap">
-                                    {timeAgo(activityItem.created_at)}
-                                  </span>
+                                  <span className="whitespace-nowrap">{timeAgo(activityItem.created_at)}</span>
                                 </div>
                               </div>
                             </>

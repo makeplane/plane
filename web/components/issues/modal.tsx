@@ -16,7 +16,6 @@ import useIssuesView from "hooks/use-issues-view";
 import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useToast from "hooks/use-toast";
 import useInboxView from "hooks/use-inbox-view";
-import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 import useProjects from "hooks/use-projects";
 import useMyIssues from "hooks/my-issues/use-my-issues";
 import useLocalStorage from "hooks/use-local-storage";
@@ -87,7 +86,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const { params: calendarParams } = useCalendarIssuesView();
   const { ...viewGanttParams } = params;
   const { params: inboxParams } = useInboxView();
-  const { params: spreadsheetParams } = useSpreadsheetIssuesView();
 
   const { user } = useUser();
   const { projects } = useProjects();
@@ -280,14 +278,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     ? VIEW_ISSUES(viewId.toString(), calendarParams)
     : PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject?.toString() ?? "", calendarParams);
 
-  const spreadsheetFetchKey = cycleId
-    ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), spreadsheetParams)
-    : moduleId
-    ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), spreadsheetParams)
-    : viewId
-    ? VIEW_ISSUES(viewId.toString(), spreadsheetParams)
-    : PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject?.toString() ?? "", spreadsheetParams);
-
   const ganttFetchKey = cycleId
     ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString())
     : moduleId
@@ -314,7 +304,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
               start_target_date: true,
               order_by: "sort_order",
             });
-          if (displayFilters.layout === "spreadsheet") mutate(spreadsheetFetchKey);
           if (groupedIssues) mutateMyIssues();
 
           setToastAlert({
@@ -387,7 +376,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
         } else {
           if (displayFilters.layout === "calendar") mutate(calendarFetchKey);
-          if (displayFilters.layout === "spreadsheet") mutate(spreadsheetFetchKey);
           if (payload.parent) mutate(SUB_ISSUES(payload.parent.toString()));
           mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
         }

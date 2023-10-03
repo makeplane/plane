@@ -7,7 +7,7 @@ import useSWR from "swr";
 // services
 import workspaceService from "services/workspace.service";
 // layouts
-import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // component
 import { SettingsSidebar } from "components/project";
 // ui
@@ -25,9 +25,8 @@ const BillingSettings: NextPage = () => {
     query: { workspaceSlug },
   } = useRouter();
 
-  const { data: activeWorkspace } = useSWR(
-    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
-    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
+  const { data: activeWorkspace } = useSWR(workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null, () =>
+    workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null
   );
 
   return (
@@ -56,9 +55,7 @@ const BillingSettings: NextPage = () => {
           <div className="px-4 py-6">
             <div>
               <h4 className="text-md mb-1 leading-6">Current plan</h4>
-              <p className="mb-3 text-sm text-custom-text-200">
-                You are currently using the free plan
-              </p>
+              <p className="mb-3 text-sm text-custom-text-200">You are currently using the free plan</p>
               <a href="https://plane.so/pricing" target="_blank" rel="noreferrer">
                 <SecondaryButton outline>View Plans</SecondaryButton>
               </a>

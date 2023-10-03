@@ -34,12 +34,12 @@ export const ProjectSidebarList: FC = observer(() => {
   // states
   const [isFavoriteProjectCreate, setIsFavoriteProjectCreate] = useState(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
-
   const [isScrolled, setIsScrolled] = useState(false); // scroll animation state
-
+  // refs
   const containerRef = useRef<HTMLDivElement | null>(null);
-
+  // user
   const { user } = useUserAuth();
+  // toast
   const { setToastAlert } = useToast();
 
   const joinedProjects = workspaceSlug && projectStore.joinedProjects;

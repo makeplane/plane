@@ -11,7 +11,7 @@ import userService from "services/user.service";
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // layouts
-import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // components
 import { ImagePickerPopover, ImageUploadModal } from "components/core";
 import { SettingsSidebar } from "components/project";
@@ -174,10 +174,7 @@ const Profile: NextPage = () => {
             <div className={`flex flex-col gap-8 pr-9 py-9 w-full overflow-y-auto`}>
               <div className="relative h-44 w-full mt-6">
                 <img
-                  src={
-                    watch("cover_image") ??
-                    "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"
-                  }
+                  src={watch("cover_image") ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
                   className="h-44 w-full rounded-lg object-cover"
                   alt={myProfile?.name ?? "Cover image"}
                 />
@@ -214,10 +211,7 @@ const Profile: NextPage = () => {
                         onChange={(imageUrl) => {
                           setValue("cover_image", imageUrl);
                         }}
-                        value={
-                          watch("cover_image") ??
-                          "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"
-                        }
+                        value={watch("cover_image") ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
                       />
                     )}
                   />
@@ -307,9 +301,7 @@ const Profile: NextPage = () => {
                       </CustomSelect>
                     )}
                   />
-                  {errors.role && (
-                    <span className="text-xs text-red-500">Please select a role</span>
-                  )}
+                  {errors.role && <span className="text-xs text-red-500">Please select a role</span>}
                 </div>
 
                 <div className="flex flex-col gap-1">
@@ -328,8 +320,7 @@ const Profile: NextPage = () => {
                       validate: (value) => {
                         if (value.trim().length < 1) return "Display name can't be empty.";
 
-                        if (value.split("  ").length > 1)
-                          return "Display name can't have two consecutive spaces.";
+                        if (value.split("  ").length > 1) return "Display name can't have two consecutive spaces.";
 
                         if (value.replace(/\s/g, "").length < 1)
                           return "Display name must be at least 1 characters long.";
@@ -353,11 +344,7 @@ const Profile: NextPage = () => {
                     render={({ field: { value, onChange } }) => (
                       <CustomSearchSelect
                         value={value}
-                        label={
-                          value
-                            ? TIME_ZONES.find((t) => t.value === value)?.label ?? value
-                            : "Select a timezone"
-                        }
+                        label={value ? TIME_ZONES.find((t) => t.value === value)?.label ?? value : "Select a timezone"}
                         options={timeZoneOptions}
                         onChange={onChange}
                         verticalPosition="top"
@@ -366,9 +353,7 @@ const Profile: NextPage = () => {
                       />
                     )}
                   />
-                  {errors.role && (
-                    <span className="text-xs text-red-500">Please select a role</span>
-                  )}
+                  {errors.role && <span className="text-xs text-red-500">Please select a role</span>}
                 </div>
 
                 <div className="flex items-center justify-between py-2">

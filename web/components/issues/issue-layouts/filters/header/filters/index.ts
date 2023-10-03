@@ -1,4 +1,4 @@
-export * from "./assignees";
+export * from "./assignee";
 export * from "./created-by";
 export * from "./filters-selection";
 export * from "./labels";

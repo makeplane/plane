@@ -2,10 +2,11 @@ import * as React from "react";
 
 export interface TextAreaProps {
   id: string;
+  name: string;
   placeholder?: string;
   value?: string;
-  rows: number;
-  cols: number;
+  rows?: number;
+  cols?: number;
   disabled?: boolean;
   onChange: () => void;
   mode?: "primary" | "transparent";
@@ -35,10 +36,11 @@ const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
   (props, ref) => {
     const {
       id,
+      name,
       placeholder = "",
       value = "",
-      rows,
-      cols,
+      rows = 1,
+      cols = 1,
       disabled,
       onChange,
       mode = "primary",
@@ -53,6 +55,7 @@ const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
     return (
       <textarea
         id={id}
+        name={name}
         ref={textAreaRef}
         placeholder={placeholder}
         value={value}

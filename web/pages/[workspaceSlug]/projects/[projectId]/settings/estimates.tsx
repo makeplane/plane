@@ -10,7 +10,7 @@ import projectService from "services/project.service";
 // hooks
 import useProjectDetails from "hooks/use-project-details";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import { CreateUpdateEstimateModal, SingleEstimate } from "components/estimates";
 import { SettingsSidebar } from "components/project";

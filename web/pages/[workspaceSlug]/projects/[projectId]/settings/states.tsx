@@ -10,7 +10,7 @@ import stateService from "services/project_state.service";
 import useProjectDetails from "hooks/use-project-details";
 import useUserAuth from "hooks/use-user-auth";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import { CreateUpdateStateInline, DeleteStateModal, SingleState, StateGroup } from "components/states";
 import { SettingsSidebar } from "components/project";

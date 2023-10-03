@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
 import useSWR from "swr";
+import { observer } from "mobx-react-lite";
 // hooks
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
@@ -18,13 +18,10 @@ import { CreateUpdatePageModal } from "components/pages";
 import { copyTextToClipboard } from "helpers/string.helper";
 // services
 import issuesService from "services/issue.service";
-import inboxService from "services/inbox.service";
 // fetch keys
-import { INBOX_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
+import { ISSUE_DETAILS } from "constants/fetch-keys";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-import { observable } from "mobx";
-import { observer } from "mobx-react-lite";
 
 export const CommandPalette: React.FC = observer(() => {
   const store: any = useMobxStore();
@@ -75,7 +72,7 @@ export const CommandPalette: React.FC = observer(() => {
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      const { key, ctrlKey, metaKey, altKey, shiftKey } = e;
+      const { key, ctrlKey, metaKey, altKey } = e;
       if (!key) return;
 
       const keyPressed = key.toLowerCase();

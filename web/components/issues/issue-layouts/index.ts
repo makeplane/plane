@@ -1,3 +1,5 @@
 export * from "./calendar";
-export * from "./header";
+export * from "./filters";
+export * from "./gantt";
 export * from "./kanban";
+export * from "./spreadsheet";

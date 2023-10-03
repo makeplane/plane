@@ -17,19 +17,19 @@ import { ILayoutDisplayFiltersOptions } from "constants/issue";
 type Props = {
   displayFilters: IIssueDisplayFilterOptions;
   handleDisplayFiltersUpdate: (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => void;
-  layoutDisplayFiltersOptions: ILayoutDisplayFiltersOptions;
+  layoutDisplayFiltersOptions: ILayoutDisplayFiltersOptions | undefined;
 };
 
 export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
   const { displayFilters, handleDisplayFiltersUpdate, layoutDisplayFiltersOptions } = props;
 
   const isDisplayFilterEnabled = (displayFilter: keyof IIssueDisplayFilterOptions) =>
-    Object.keys(layoutDisplayFiltersOptions.display_filters).includes(displayFilter);
+    Object.keys(layoutDisplayFiltersOptions?.display_filters ?? {}).includes(displayFilter);
 
   return (
     <div className="w-full h-full overflow-hidden overflow-y-auto relative px-2.5 divide-y divide-custom-border-200">
       {/* display properties */}
-      {layoutDisplayFiltersOptions.display_properties && (
+      {layoutDisplayFiltersOptions?.display_properties && (
         <div className="py-2">
           <FilterDisplayProperties />
         </div>
@@ -41,7 +41,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
           <FilterGroupBy
             selectedGroupBy={displayFilters.group_by}
             selectedSubGroupBy={displayFilters.sub_group_by}
-            groupByOptions={layoutDisplayFiltersOptions.display_filters.group_by ?? []}
+            groupByOptions={layoutDisplayFiltersOptions?.display_filters.group_by ?? []}
             handleUpdate={(val) =>
               handleDisplayFiltersUpdate({
                 group_by: val,
@@ -62,7 +62,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
                 sub_group_by: val,
               })
             }
-            subGroupByOptions={layoutDisplayFiltersOptions.display_filters.sub_group_by ?? []}
+            subGroupByOptions={layoutDisplayFiltersOptions?.display_filters.sub_group_by ?? []}
           />
         </div>
       )}
@@ -96,7 +96,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
       )}
 
       {/* Options */}
-      {layoutDisplayFiltersOptions.extra_options.access && (
+      {layoutDisplayFiltersOptions?.extra_options.access && (
         <div className="py-2">
           <FilterExtraOptions
             selectedExtraOptions={{
@@ -108,7 +108,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
                 [key]: val,
               })
             }
-            enabledExtraOptions={layoutDisplayFiltersOptions.extra_options.values}
+            enabledExtraOptions={layoutDisplayFiltersOptions?.extra_options.values}
           />
         </div>
       )}

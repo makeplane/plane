@@ -6,9 +6,9 @@ import useSWR from "swr";
 import useLocalStorage from "hooks/use-local-storage";
 import useUserAuth from "hooks/use-user-auth";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
-import { CyclesList, ActiveCycleDetails, CreateUpdateCycleModal } from "components/cycles";
+import { CyclesView, ActiveCycleDetails, CreateUpdateCycleModal } from "components/cycles";
 // ui
 import { EmptyState, Icon, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -27,6 +27,7 @@ import { observer } from "mobx-react-lite";
 import { CYCLE_TAB_LIST, CYCLE_VIEWS } from "constants/cycle";
 
 type ICycleAPIFilter = "all" | "current" | "upcoming" | "draft" | "completed" | "incomplete";
+type ICycleView = "list" | "board" | "gantt";
 
 const ProjectCyclesPage: NextPage = observer(() => {
   // router
@@ -167,19 +168,47 @@ const ProjectCyclesPage: NextPage = observer(() => {
           </div>
           <Tab.Panels as={React.Fragment}>
             <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
-              {cycleTab && <CyclesList filter={cycleTab as ICycleAPIFilter} />}
+              {cycleTab && cyclesView && workspaceSlug && projectId && (
+                <CyclesView
+                  filter="all"
+                  view={cyclesView as ICycleView}
+                  workspaceSlug={workspaceSlug?.toString()}
+                  projectId={projectId?.toString()}
+                />
+              )}
             </Tab.Panel>
             <Tab.Panel as="div" className="p-4 sm:p-5 space-y-5 h-full overflow-y-auto">
               <ActiveCycleDetails />
             </Tab.Panel>
             <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
-              {cycleTab && <CyclesList filter={cycleTab as ICycleAPIFilter} />}
+              {cycleTab && cyclesView && workspaceSlug && projectId && (
+                <CyclesView
+                  filter="upcoming"
+                  view={cyclesView as ICycleView}
+                  workspaceSlug={workspaceSlug?.toString()}
+                  projectId={projectId?.toString()}
+                />
+              )}
             </Tab.Panel>
             <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
-              {cycleTab && <CyclesList filter={cycleTab as ICycleAPIFilter} />}
+              {cycleTab && cyclesView && workspaceSlug && projectId && (
+                <CyclesView
+                  filter="completed"
+                  view={cyclesView as ICycleView}
+                  workspaceSlug={workspaceSlug?.toString()}
+                  projectId={projectId?.toString()}
+                />
+              )}
             </Tab.Panel>
             <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
-              {cycleTab && <CyclesList filter={cycleTab as ICycleAPIFilter} />}
+              {cycleTab && cyclesView && workspaceSlug && projectId && (
+                <CyclesView
+                  filter="draft"
+                  view={cyclesView as ICycleView}
+                  workspaceSlug={workspaceSlug?.toString()}
+                  projectId={projectId?.toString()}
+                />
+              )}
             </Tab.Panel>
           </Tab.Panels>
         </Tab.Group>

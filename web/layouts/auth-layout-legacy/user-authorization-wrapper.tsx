@@ -22,7 +22,6 @@ export const UserAuthorizationLayout: React.FC<Props> = ({ children }) => {
     return (
       <div className="h-screen grid place-items-center p-4">
         <div className="flex flex-col items-center gap-3 text-center">
-          <h3 className="text-xl">Loading your profile...</h3>
           <Spinner />
         </div>
       </div>

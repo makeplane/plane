@@ -12,7 +12,6 @@ import issueServices from "services/issue.service";
 import useIssuesView from "hooks/use-issues-view";
 import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useToast from "hooks/use-toast";
-import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
@@ -54,7 +53,6 @@ export const DeleteIssueModal: React.FC<Props> = ({
 
   const { displayFilters, params } = useIssuesView();
   const { params: calendarParams } = useCalendarIssuesView();
-  const { params: spreadsheetParams } = useSpreadsheetIssuesView();
 
   const { setToastAlert } = useToast();
 
@@ -86,13 +84,6 @@ export const DeleteIssueModal: React.FC<Props> = ({
 
           mutate<IIssue[]>(calendarFetchKey, (prevData) => (prevData ?? []).filter((p) => p.id !== data.id), false);
         } else if (displayFilters.layout === "spreadsheet") {
-          const spreadsheetFetchKey = cycleId
-            ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), spreadsheetParams)
-            : moduleId
-            ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), spreadsheetParams)
-            : viewId
-            ? VIEW_ISSUES(viewId.toString(), spreadsheetParams)
-            : PROJECT_ISSUES_LIST_WITH_PARAMS(data.project, spreadsheetParams);
           if (data.parent) {
             mutate<ISubIssueResponse>(
               SUB_ISSUES(data.parent.toString()),
@@ -105,13 +96,6 @@ export const DeleteIssueModal: React.FC<Props> = ({
                   sub_issues: updatedArray,
                 };
               },
-              false
-            );
-            mutate<IIssue[]>(spreadsheetFetchKey);
-          } else {
-            mutate<IIssue[]>(
-              spreadsheetFetchKey,
-              (prevData) => (prevData ?? []).filter((p) => p.id !== data.id),
               false
             );
           }

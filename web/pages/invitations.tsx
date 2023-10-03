@@ -15,7 +15,7 @@ import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
 // layouts
 import DefaultLayout from "layouts/default-layout";
-import { UserAuthorizationLayout } from "layouts/auth-layout/user-authorization-wrapper";
+import { UserAuthorizationLayout } from "layouts/auth-layout-legacy/user-authorization-wrapper";
 // ui
 import { SecondaryButton, PrimaryButton, EmptyState } from "components/ui";
 // icons
@@ -51,16 +51,11 @@ const OnBoard: NextPage = () => {
     workspaceService.userWorkspaceInvitations()
   );
 
-  const handleInvitation = (
-    workspace_invitation: IWorkspaceMemberInvitation,
-    action: "accepted" | "withdraw"
-  ) => {
+  const handleInvitation = (workspace_invitation: IWorkspaceMemberInvitation, action: "accepted" | "withdraw") => {
     if (action === "accepted") {
       setInvitationsRespond((prevData) => [...prevData, workspace_invitation.id]);
     } else if (action === "withdraw") {
-      setInvitationsRespond((prevData) =>
-        prevData.filter((item: string) => item !== workspace_invitation.id)
-      );
+      setInvitationsRespond((prevData) => prevData.filter((item: string) => item !== workspace_invitation.id));
     }
   };
 
@@ -144,9 +139,7 @@ const OnBoard: NextPage = () => {
                               ? "border-custom-primary-100"
                               : "border-custom-border-200 hover:bg-custom-background-80"
                           }`}
-                          onClick={() =>
-                            handleInvitation(invitation, isSelected ? "withdraw" : "accepted")
-                          }
+                          onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
                         >
                           <div className="flex-shrink-0">
                             <div className="grid place-items-center h-9 w-9 rounded">
@@ -166,9 +159,7 @@ const OnBoard: NextPage = () => {
                             </div>
                           </div>
                           <div className="min-w-0 flex-1">
-                            <div className="text-sm font-medium">
-                              {truncateText(invitation.workspace.name, 30)}
-                            </div>
+                            <div className="text-sm font-medium">{truncateText(invitation.workspace.name, 30)}</div>
                             <p className="text-xs text-custom-text-200">{ROLE[invitation.role]}</p>
                           </div>
                           <span

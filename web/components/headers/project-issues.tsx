@@ -17,6 +17,8 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
 
   const { issueFilter: issueFilterStore } = useMobxStore();
 
+  const activeLayout = issueFilterStore.userDisplayFilters.layout;
+
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
       if (!workspaceSlug || !projectId) return;
@@ -72,15 +74,13 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
       <LayoutSelection
         layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
         onChange={(layout) => handleLayoutChange(layout)}
-        selectedLayout={issueFilterStore.userDisplayFilters.layout ?? "list"}
+        selectedLayout={activeLayout}
       />
       <FiltersDropdown title="Filters">
         <FilterSelection
           filters={issueFilterStore.userFilters}
           handleFiltersUpdate={handleFiltersUpdate}
-          layoutDisplayFiltersOptions={
-            ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[issueFilterStore.userDisplayFilters.layout ?? "list"]
-          }
+          layoutDisplayFiltersOptions={activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined}
           projectId={projectId?.toString() ?? ""}
         />
       </FiltersDropdown>
@@ -88,9 +88,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
         <DisplayFiltersSelection
           displayFilters={issueFilterStore.userDisplayFilters}
           handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
-          layoutDisplayFiltersOptions={
-            ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[issueFilterStore.userDisplayFilters.layout ?? "list"]
-          }
+          layoutDisplayFiltersOptions={activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined}
         />
       </FiltersDropdown>
     </div>

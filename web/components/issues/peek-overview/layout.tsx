@@ -18,7 +18,7 @@ import { IIssue } from "types";
 import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 type Props = {
-  handleMutation: () => void;
+  handleMutation?: () => void;
   projectId: string;
   readOnly: boolean;
   workspaceSlug: string;
@@ -57,14 +57,14 @@ export const IssuePeekOverview: React.FC<Props> = observer(({ handleMutation, pr
 
     await updateIssue(workspaceSlug, projectId, issue.id, formData, user);
     mutate(PROJECT_ISSUES_ACTIVITY(issue.id));
-    handleMutation();
+    if (handleMutation) handleMutation();
   };
 
   const handleDeleteIssue = async () => {
     if (!issue || !user) return;
 
     await deleteIssue(workspaceSlug, projectId, issue.id, user);
-    handleMutation();
+    if (handleMutation) handleMutation();
 
     handleClose();
   };
