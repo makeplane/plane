@@ -2,12 +2,9 @@ import { Mention, MentionOptions } from '@tiptap/extension-mention'
 import { mergeAttributes } from '@tiptap/core'
 import { ReactNodeViewRenderer } from '@tiptap/react'
 import mentionNodeView from './mentionNodeView'
+import { IMentionHighlight } from './mentions'
 export interface CustomMentionOptions extends MentionOptions {
-  HTMLAttributes: {
-    'class': string,
-    'data-mention-type': string | undefined,
-    'data-mention-id': string | undefined,
-  }
+  mentionHighlights: IMentionHighlight[]
 }
 
 export const CustomMention = Mention.extend<CustomMentionOptions>({
@@ -45,8 +42,9 @@ export const CustomMention = Mention.extend<CustomMentionOptions>({
         }
         return {
           id: node.getAttribute('data-mention-id') || '',
-          type: node.getAttribute('data-mention-type') || '',
+          target: node.getAttribute('data-mention-target') || '',
           label: node.innerText.slice(1) || '',
+          redirect_uri: node.getAttribute('redirect_uri')
         }
       },
     }]

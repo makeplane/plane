@@ -5,5 +5,6 @@ export type IMentionSuggestion = {
     title: string;
     subtitle: string;
     redirect_uri: string;
-    self: boolean;
 }
+
+export type IMentionHighlight = string

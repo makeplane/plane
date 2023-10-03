@@ -21,6 +21,7 @@ export interface ITipTapRichTextEditor {
   workspaceSlug: string;
   editable?: boolean;
   forwardedRef?: any;
+  mentionHighlights?: string[];
   mentionSuggestions?: IMentionSuggestion[];
   debouncedUpdatesEnabled?: boolean;
 }
@@ -36,6 +37,7 @@ const Tiptap = (props: ITipTapRichTextEditor) => {
     editorContentCustomClassNames,
     value,
     noBorder,
+    mentionHighlights,
     mentionSuggestions,
     workspaceSlug,
     borderOnFocus,
@@ -47,8 +49,33 @@ const Tiptap = (props: ITipTapRichTextEditor) => {
   const editor = useEditor({
     editable: editable ?? true,
     editorProps: TiptapEditorProps(workspaceSlug, setIsSubmitting),
-    extensions: TiptapExtensions(mentionSuggestions ?? [], workspaceSlug, setIsSubmitting),
+    extensions: TiptapExtensions({ mentionSuggestions: mentionSuggestions ?? [], mentionHighlights: mentionHighlights ?? []}, workspaceSlug, setIsSubmitting),
     content: value,
+    onCreate: async ({ editor }) => {
+      const jsonContent = editor.getJSON().content
+
+      // if json content is available for the editor
+      if (jsonContent){
+        // iterate through the content for finding out if we're dealing with a paragraph
+        const content = jsonContent.map((contentData) => {
+          if (contentData.type && contentData.type === 'paragraph' && contentData.content){
+            // iterate the nodes of the paragraph & mark the id of the mention
+            const paraContent = contentData.content.map((paraNode) => {
+              if (paraNode.type && paraNode.type === 'mention' && paraNode.attrs){
+                if (mentionHighlights && mentionHighlights.includes(paraNode.attrs.id)){
+                  paraNode.attrs.self = true
+                }
+              }
+              return paraNode
+            })
+            contentData.content = paraContent
+          }
+          return contentData
+        })
+
+        editor.commands.setContent(content)
+      }
+    },
     onUpdate: async ({ editor }) => {
       // for instant feedback loop
       setIsSubmitting?.("submitting");

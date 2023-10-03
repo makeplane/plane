@@ -25,6 +25,7 @@ export const PeekOverviewIssueDetails: React.FC<Props> = ({
       isAllowed={!readOnly}
       issue={{
         name: issue.name,
+        project_id: issue.project_detail.id,
         description_html: issue.description_html,
       }}
       workspaceSlug={workspaceSlug}

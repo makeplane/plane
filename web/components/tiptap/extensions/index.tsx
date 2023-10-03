@@ -30,7 +30,7 @@ import { IMentionSuggestion } from "../mentions/mentions";
 lowlight.registerLanguage("ts", ts);
 
 export const TiptapExtensions = (
-  mentionSuggestions: IMentionSuggestion[],
+  mentionConfig: { mentionSuggestions: IMentionSuggestion[], mentionHighlights: string[] },
   workspaceSlug: string,
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
 ) => [
@@ -147,7 +147,7 @@ export const TiptapExtensions = (
     }),
     Table,
     TableHeader,
-    Mentions(mentionSuggestions),
+    Mentions(mentionConfig.mentionSuggestions, mentionConfig.mentionHighlights),
     CustomTableCell,
     TableRow,
   ];

@@ -10,6 +10,9 @@ import { TextArea } from "components/ui";
 import { TipTapEditor } from "components/tiptap";
 // types
 import { IIssue } from "types";
+import { IMentionSuggestion } from "components/tiptap/mentions/mentions";
+import useProjectMembers from "hooks/use-project-members";
+import useUser from "hooks/use-user";
 
 export interface IssueDescriptionFormValues {
   name: string;
@@ -20,6 +23,7 @@ export interface IssueDetailsProps {
   issue: {
     name: string;
     description_html: string;
+    project_id?: string;
   };
   workspaceSlug: string;
   handleFormSubmit: (value: IssueDescriptionFormValues) => Promise<void>;
@@ -36,6 +40,21 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
   const [characterLimit, setCharacterLimit] = useState(false);
 
   const { setShowAlert } = useReloadConfirmations();
+
+  const projectMembers = useProjectMembers( workspaceSlug, issue.project_id ).members
+  const user = useUser().user
+
+  const mentionSuggestions: IMentionSuggestion[] = !projectMembers ? [] : projectMembers.map((member) => ({
+      id: member.member.id,
+      type: "User",
+      title: member.member.display_name,
+      subtitle: member.member.email,
+      avatar: member.member.avatar,
+      redirect_uri: `/${member.workspace.slug}/profile/${member.member.id}`,
+   })
+  )
+
+  const mentionHighlights = user ? [ user.id ] : []
 
   const {
     handleSubmit,
@@ -142,6 +161,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
                     ? "<p></p>"
                     : value
                 }
+                mentionSuggestions={mentionSuggestions}
+                mentionHighlights={mentionHighlights}
                 workspaceSlug={workspaceSlug}
                 debouncedUpdatesEnabled={true}
                 setShouldShowAlert={setShowAlert}
