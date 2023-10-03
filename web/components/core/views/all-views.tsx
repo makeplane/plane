@@ -19,17 +19,21 @@ export const AllViews: React.FC = observer(() => {
 
   const { issue: issueStore, project: projectStore, issueFilter: issueFilterStore } = useMobxStore();
 
-  useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES` : null, async () => {
-    if (workspaceSlug && projectId) {
-      await issueFilterStore.fetchUserProjectFilters(workspaceSlug, projectId);
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_ISSUES` : null,
+    async () => {
+      if (workspaceSlug && projectId) {
+        await issueFilterStore.fetchUserProjectFilters(workspaceSlug, projectId);
 
-      await projectStore.fetchProjectStates(workspaceSlug, projectId);
-      await projectStore.fetchProjectLabels(workspaceSlug, projectId);
-      await projectStore.fetchProjectMembers(workspaceSlug, projectId);
+        await projectStore.fetchProjectStates(workspaceSlug, projectId);
+        await projectStore.fetchProjectLabels(workspaceSlug, projectId);
+        await projectStore.fetchProjectMembers(workspaceSlug, projectId);
 
-      await issueStore.fetchIssues(workspaceSlug, projectId);
-    }
-  });
+        await issueStore.fetchIssues(workspaceSlug, projectId);
+      }
+    },
+    { revalidateOnFocus: false }
+  );
 
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
 

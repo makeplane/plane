@@ -99,10 +99,6 @@ class IssueStore implements IIssueStore {
   }
 
   updateIssueStructure = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
-    console.log("group_id", group_id);
-    console.log("sub_group_id", sub_group_id);
-    console.log("issue", issue);
-
     const projectId: string | null = issue?.project;
     const issueType: IIssueType | null = this.getIssueType;
     if (!projectId || !issueType) return null;

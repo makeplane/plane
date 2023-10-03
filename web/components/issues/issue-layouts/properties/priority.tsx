@@ -5,6 +5,8 @@ import { Combobox } from "@headlessui/react";
 import { ChevronDown, Search, X, Check, AlertCircle, SignalHigh, SignalMedium, SignalLow, Ban } from "lucide-react";
 // mobx
 import { observer } from "mobx-react-lite";
+// components
+import { Tooltip } from "components/ui";
 // hooks
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // constants
@@ -81,7 +83,7 @@ export const IssuePropertyPriority: React.FC<IIssuePropertyPriority> = observer(
     useDynamicDropdownPosition(isOpen, () => setIsOpen(false), dropdownBtn, dropdownOptions);
 
     const selectedOption: IFiltersOption | null | undefined =
-      (value && options.find((person: IFiltersOption) => person.id === value)) || null;
+      (value && options.find((_priority: IFiltersOption) => _priority.id === value)) || null;
 
     const filteredOptions: IFiltersOption[] =
       search === ""
@@ -89,8 +91,8 @@ export const IssuePropertyPriority: React.FC<IIssuePropertyPriority> = observer(
           ? options
           : []
         : options && options.length > 0
-        ? options.filter((person: IFiltersOption) =>
-            person.title.toLowerCase().replace(/\s+/g, "").includes(search.toLowerCase().replace(/\s+/g, ""))
+        ? options.filter((_priority: IFiltersOption) =>
+            _priority.title.toLowerCase().replace(/\s+/g, "").includes(search.toLowerCase().replace(/\s+/g, ""))
           )
         : [];
 
@@ -119,12 +121,14 @@ export const IssuePropertyPriority: React.FC<IIssuePropertyPriority> = observer(
                 } ${buttonClassName}`}
               >
                 {selectedOption ? (
-                  <div className="flex-shrink-0 flex justify-center items-center gap-1">
-                    <div className="flex-shrink-0 w-[16px] h-[16px] flex justify-center items-center">
-                      <Icon priority={selectedOption?.id} />
+                  <Tooltip tooltipHeading={`Priority`} tooltipContent={selectedOption?.title}>
+                    <div className="flex-shrink-0 flex justify-center items-center gap-1">
+                      <div className="flex-shrink-0 w-[16px] h-[16px] flex justify-center items-center">
+                        <Icon priority={selectedOption?.id} />
+                      </div>
+                      <div className="pl-0.5 pr-1 text-xs">{selectedOption?.title}</div>
                     </div>
-                    <div className="pl-0.5 pr-1 text-xs">{selectedOption?.title}</div>
-                  </div>
+                  </Tooltip>
                 ) : (
                   <div className="text-xs">Select option</div>
                 )}

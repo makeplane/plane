@@ -6,7 +6,7 @@ import { Circle, Layers, Link, Paperclip } from "lucide-react";
 import { IssuePropertyState } from "components/issues/issue-layouts/properties/state";
 import { IssuePropertyPriority } from "components/issues/issue-layouts/properties/priority";
 import { IssuePropertyLabels } from "components/issues/issue-layouts/properties/labels";
-import { IssuePropertyMember } from "components/issues/issue-layouts/properties/member";
+import { IssuePropertyAssignee } from "components/issues/issue-layouts/properties/assignee";
 import { IssuePropertyEstimates } from "components/issues/issue-layouts/properties/estimates";
 import { Tooltip } from "components/ui";
 
@@ -37,21 +37,21 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer(
         );
     };
 
-    const handleLabel = (id: string[]) => {
+    const handleLabel = (ids: string[]) => {
       if (handleIssues)
         handleIssues(
           !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
           !group_id && group_id === "null" ? null : group_id,
-          { ...issue, labels: id }
+          { ...issue, labels: ids }
         );
     };
 
-    const handleAssignee = (id: string) => {
+    const handleAssignee = (ids: string[]) => {
       if (handleIssues)
         handleIssues(
           !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
           !group_id && group_id === "null" ? null : group_id,
-          { ...issue, state: id }
+          { ...issue, assignees: ids }
         );
     };
 
@@ -105,17 +105,17 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer(
         <IssuePropertyLabels
           value={issue?.labels || null}
           dropdownArrow={false}
-          onChange={(id: string[]) => handleLabel(id)}
+          onChange={(ids: string[]) => handleLabel(ids)}
           disabled={false}
         />
 
         {/* assignee */}
-        {/* <IssuePropertyMember
+        <IssuePropertyAssignee
           value={issue?.assignees || null}
           dropdownArrow={false}
-          onChange={(id: string) => handleAssignee(id)}
+          onChange={(ids: string[]) => handleAssignee(ids)}
           disabled={false}
-        /> */}
+        />
 
         {/* start date */}
         {/* <div className="flex-shrink-0 border border-custom-border-300 min-w-[22px] h-[22px] overflow-hidden rounded-sm flex justify-center items-center">
@@ -143,34 +143,34 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer(
 
         {/* extra render properties */}
         {/* sub-issues */}
-        {/* <Tooltip tooltipHeading="Sub-issue" tooltipContent={`${issue.sub_issues_count}`}>
+        <Tooltip tooltipHeading="Sub-issue" tooltipContent={`${issue.sub_issues_count}`}>
           <div className="flex-shrink-0 border border-custom-border-300 min-w-[22px] h-[22px] overflow-hidden rounded-sm flex justify-center items-center cursor-pointer">
             <div className="flex-shrink-0  w-[16px] h-[16px] flex justify-center items-center">
               <Layers width={10} strokeWidth={2} />
             </div>
             <div className="pl-0.5 pr-1 text-xs">{issue.sub_issues_count}</div>
           </div>
-        </Tooltip> */}
+        </Tooltip>
 
         {/* attachments */}
-        {/* <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
+        <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
           <div className="flex-shrink-0 border border-custom-border-300 min-w-[22px] h-[22px] overflow-hidden rounded-sm flex justify-center items-center cursor-pointer">
             <div className="flex-shrink-0 w-[16px] h-[16px] flex justify-center items-center">
               <Paperclip width={10} strokeWidth={2} />
             </div>
             <div className="pl-0.5 pr-1 text-xs">{issue.attachment_count}</div>
           </div>
-        </Tooltip> */}
+        </Tooltip>
 
         {/* link */}
-        {/* <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
+        <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
           <div className="flex-shrink-0 border border-custom-border-300 min-w-[22px] h-[22px] overflow-hidden rounded-sm flex justify-center items-center cursor-pointer">
             <div className="flex-shrink-0  w-[16px] h-[16px] flex justify-center items-center">
               <Link width={10} strokeWidth={2} />
             </div>
             <div className="pl-0.5 pr-1 text-xs">{issue.link_count}</div>
           </div>
-        </Tooltip> */}
+        </Tooltip>
       </div>
     );
   }

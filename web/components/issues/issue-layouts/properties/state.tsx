@@ -6,6 +6,7 @@ import { ChevronDown, Search, X, Check } from "lucide-react";
 // mobx
 import { observer } from "mobx-react-lite";
 // components
+import { Tooltip } from "components/ui";
 import { StateGroupIcon } from "components/icons";
 // hooks
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
@@ -66,7 +67,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer(
     useDynamicDropdownPosition(isOpen, () => setIsOpen(false), dropdownBtn, dropdownOptions);
 
     const selectedOption: IFiltersOption | null | undefined =
-      (value && options.find((person: IFiltersOption) => person.id === value)) || null;
+      (value && options.find((_state: IFiltersOption) => _state.id === value)) || null;
 
     const filteredOptions: IFiltersOption[] =
       search === ""
@@ -74,8 +75,8 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer(
           ? options
           : []
         : options && options.length > 0
-        ? options.filter((person: IFiltersOption) =>
-            person.title.toLowerCase().replace(/\s+/g, "").includes(search.toLowerCase().replace(/\s+/g, ""))
+        ? options.filter((_state: IFiltersOption) =>
+            _state.title.toLowerCase().replace(/\s+/g, "").includes(search.toLowerCase().replace(/\s+/g, ""))
           )
         : [];
 
@@ -104,17 +105,19 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer(
                 } ${buttonClassName}`}
               >
                 {selectedOption ? (
-                  <div className="flex-shrink-0 flex justify-center items-center gap-1">
-                    <div className="flex-shrink-0 w-[12px] h-[12px] flex justify-center items-center">
-                      <StateGroupIcon
-                        stateGroup={selectedOption?.group as any}
-                        color={(selectedOption?.color || null) as any}
-                        width="12"
-                        height="12"
-                      />
+                  <Tooltip tooltipHeading={`State`} tooltipContent={selectedOption?.title}>
+                    <div className="flex-shrink-0 flex justify-center items-center gap-1">
+                      <div className="flex-shrink-0 w-[12px] h-[12px] flex justify-center items-center">
+                        <StateGroupIcon
+                          stateGroup={selectedOption?.group as any}
+                          color={(selectedOption?.color || null) as any}
+                          width="12"
+                          height="12"
+                        />
+                      </div>
+                      <div className="pl-0.5 pr-1 text-xs">{selectedOption?.title}</div>
                     </div>
-                    <div className="pl-0.5 pr-1 text-xs">{selectedOption?.title}</div>
-                  </div>
+                  </Tooltip>
                 ) : (
                   <div className="text-xs">Select option</div>
                 )}

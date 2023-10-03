@@ -46,9 +46,6 @@ export const KanBanLayout: React.FC = observer(() => {
   };
 
   const updateIssue = (sub_group_by: string | null, group_by: string | null, issue: any) => {
-    console.log("sub_group_by", sub_group_by);
-    console.log("group_by", group_by);
-    console.log("issue", issue);
     issueStore.updateIssueStructure(group_by, sub_group_by, issue);
   };
 

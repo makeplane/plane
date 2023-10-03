@@ -16,10 +16,10 @@ import { RootStore } from "store/root";
 interface IFiltersOption {
   id: string;
   title: string;
-  color: string | null;
+  avatar: string;
 }
 
-export interface IIssuePropertyLabels {
+export interface IIssuePropertyAssignee {
   value?: any;
   onChange?: (id: any, data: any) => void;
   disabled?: boolean;
@@ -30,7 +30,7 @@ export interface IIssuePropertyLabels {
   dropdownArrow?: boolean;
 }
 
-export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer(
+export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
   ({
     value,
     onChange,
@@ -50,19 +50,19 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer(
     const [search, setSearch] = React.useState<string>("");
 
     const options: IFiltersOption[] | [] =
-      (projectStore?.projectLabels &&
-        projectStore?.projectLabels?.length > 0 &&
-        projectStore?.projectLabels.map((_label: any) => ({
-          id: _label?.id,
-          title: _label?.name,
-          color: _label?.color || null,
+      (projectStore?.projectMembers &&
+        projectStore?.projectMembers?.length > 0 &&
+        projectStore?.projectMembers.map((_member: any) => ({
+          id: _member?.member?.id,
+          title: _member?.member?.display_name,
+          avatar: _member?.member?.avatar && _member?.member?.avatar !== "" ? _member?.member?.avatar : null,
         }))) ||
       [];
 
     useDynamicDropdownPosition(isOpen, () => setIsOpen(false), dropdownBtn, dropdownOptions);
 
     const selectedOption: IFiltersOption[] =
-      (value && value?.length > 0 && options.filter((_label: IFiltersOption) => value.includes(_label.id))) || [];
+      (value && value?.length > 0 && options.filter((_member: IFiltersOption) => value.includes(_member.id))) || [];
 
     const filteredOptions: IFiltersOption[] =
       search === ""
@@ -70,17 +70,19 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer(
           ? options
           : []
         : options && options.length > 0
-        ? options.filter((_label: IFiltersOption) =>
-            _label.title.toLowerCase().replace(/\s+/g, "").includes(search.toLowerCase().replace(/\s+/g, ""))
+        ? options.filter((_member: IFiltersOption) =>
+            _member.title.toLowerCase().replace(/\s+/g, "").includes(search.toLowerCase().replace(/\s+/g, ""))
           )
         : [];
+
+    const assigneeRenderLength = 5;
 
     return (
       <Combobox
         multiple={true}
         as="div"
         className={`${className}`}
-        value={selectedOption.map((_label: IFiltersOption) => _label.id) as string[]}
+        value={selectedOption.map((_member: IFiltersOption) => _member.id) as string[]}
         onChange={(data: string[]) => {
           if (onChange && selectedOption) onChange(data, selectedOption);
         }}
@@ -102,32 +104,55 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer(
               >
                 {selectedOption && selectedOption?.length > 0 ? (
                   <>
-                    {selectedOption?.length === 1 ? (
+                    {selectedOption?.length > 1 ? (
                       <Tooltip
-                        tooltipHeading={`Labels`}
+                        tooltipHeading={`Assignees`}
                         tooltipContent={(selectedOption.map((_label: IFiltersOption) => _label.title) || []).join(", ")}
                       >
-                        <div className="flex-shrink-0 flex justify-center items-center gap-1">
-                          <div
-                            className="flex-shrink-0 w-[10px] h-[10px] rounded-full"
-                            style={{
-                              backgroundColor: selectedOption[0]?.color || "#444",
-                            }}
-                          />
-                          <div className="pl-0.5 pr-1 text-xs">{selectedOption[0]?.title}</div>
+                        <div className="flex-shrink-0 flex justify-center items-center gap-1 pr-[8px]">
+                          {selectedOption.slice(0, assigneeRenderLength).map((_assignee) => (
+                            <div
+                              key={_assignee?.id}
+                              className="flex-shrink-0 w-[16px] h-[16px] rounded-sm bg-gray-700 flex justify-center items-center text-white capitalize relative -mr-[8px] text-xs overflow-hidden border border-custom-border-200"
+                            >
+                              {_assignee && _assignee.avatar ? (
+                                <img
+                                  src={_assignee.avatar}
+                                  className="absolute top-0 left-0 h-full w-full object-cover"
+                                  alt={_assignee.title}
+                                />
+                              ) : (
+                                _assignee.title[0]
+                              )}
+                            </div>
+                          ))}
+                          {selectedOption.length > assigneeRenderLength && (
+                            <div className="flex-shrink-0 h-[16px] px-0.5 rounded-sm bg-gray-700 flex justify-center items-center text-white capitalize relative -mr-[8px] text-xs overflow-hidden border border-custom-border-200">
+                              +{selectedOption?.length - assigneeRenderLength}
+                            </div>
+                          )}
                         </div>
                       </Tooltip>
                     ) : (
                       <Tooltip
-                        tooltipHeading={`Labels`}
+                        tooltipHeading={`Assignees`}
                         tooltipContent={(selectedOption.map((_label: IFiltersOption) => _label.title) || []).join(", ")}
                       >
-                        <div className="flex-shrink-0 flex justify-center items-center gap-1">
-                          <div
-                            className="flex-shrink-0 w-[10px] h-[10px] rounded-full"
-                            style={{ backgroundColor: "#444" }}
-                          />
-                          <div className="pl-0.5 pr-1 text-xs">{selectedOption?.length} Labels</div>
+                        <div className="flex-shrink-0 flex justify-center items-center gap-1 text-xs">
+                          <div className="flex-shrink-0 w-[14px] h-[14px] rounded-sm flex justify-center items-center text-white capitalize relative overflow-hidden text-xs">
+                            {selectedOption[0] && selectedOption[0].avatar ? (
+                              <img
+                                src={selectedOption[0].avatar}
+                                className="absolute top-0 left-0 h-full w-full object-cover"
+                                alt={selectedOption[0].title}
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-gray-700 flex justify-center items-center">
+                                {selectedOption[0].title[0]}
+                              </div>
+                            )}
+                          </div>
+                          <div className="line-clamp-1">{selectedOption[0].title}</div>
                         </div>
                       </Tooltip>
                     )}
@@ -195,12 +220,19 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer(
                                 }
                               >
                                 <div className="flex items-center gap-1 w-full px-1">
-                                  <div
-                                    className="flex-shrink-0 w-[10px] h-[10px] rounded-full"
-                                    style={{
-                                      backgroundColor: option.color || "#444",
-                                    }}
-                                  />
+                                  <div className="flex-shrink-0 w-[18px] h-[18px] rounded-sm flex justify-center items-center text-white capitalize relative overflow-hidden">
+                                    {option && option.avatar ? (
+                                      <img
+                                        src={option.avatar}
+                                        className="absolute top-0 left-0 h-full w-full object-cover"
+                                        alt={option.title}
+                                      />
+                                    ) : (
+                                      <div className="w-full h-full bg-gray-700 flex justify-center items-center">
+                                        {option.title[0]}
+                                      </div>
+                                    )}
+                                  </div>
                                   <div className="line-clamp-1">{option.title}</div>
                                   {value && value.length > 0 && value.includes(option?.id) && (
                                     <div className="flex-shrink-0 ml-auto w-[13px] h-[13px] flex justify-center items-center">
