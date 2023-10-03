@@ -1312,10 +1312,10 @@ def extract_mentions(issue_instance):
         data = json.loads(issue_instance)
         html = data.get("description_html")
         soup = BeautifulSoup(html, 'html.parser')
-        mention_tags = soup.find_all('span', {'class': "mention"})
+        mention_tags = soup.find_all('mention-component', attrs={'target': 'users'})
         
         for mention_tag in mention_tags:
-            mentions.append(mention_tag['data-mention-id'])
+            mentions.append(mention_tag['id'])
         
         return list(set(mentions))
     except Exception as e:
