@@ -4,7 +4,7 @@ const path = require('path');
 const PATH_TO_LANG = path.resolve(__dirname, '../locales');
 const PATH_TO_ENGLISH = path.join(PATH_TO_LANG, 'en_US.json');
 
-let sourceTerms = [];
+const sourceTerms = [];
 let found = 0;
 
 const files = [];
@@ -98,7 +98,7 @@ function updateLocales() {
 	fs.readdirSync(PATH_TO_LANG).forEach(filename => {
 		if (!filename.endsWith('.json') || filename === "en_US.json") return;
 		const localePath = path.join(PATH_TO_LANG, filename);
-		let localized = JSON.parse(fs.readFileSync(localePath).toString());
+		const localized = JSON.parse(fs.readFileSync(localePath).toString());
 		let not_localized = 0;
 
 		Object.keys(english).forEach(term => {

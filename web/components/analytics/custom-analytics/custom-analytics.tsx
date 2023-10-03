@@ -53,8 +53,6 @@ export const CustomAnalytics: React.FC<Props> = ({
   const yAxisKey = params.y_axis === "issue_count" ? "count" : "estimate";
   const barGraphData = convertResponseToBarGraphData(analytics?.distribution, params);
 
-  console.log(barGraphData);
-
   const { projects } = useProjects();
 
   return (
