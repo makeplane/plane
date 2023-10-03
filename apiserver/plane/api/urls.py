@@ -186,6 +186,9 @@ from plane.api.views import (
     ## Exporter
     ExportIssuesEndpoint,
     ## End Exporter
+    # Configuration
+    ConfigurationEndpoint,
+    ## End Configuration
 )
 
 
@@ -1728,4 +1731,11 @@ urlpatterns = [
         name="workspace-project-boards",
     ),
     ## End Public Boards
+    # Configuration
+    path(
+        "configs/",
+        ConfigurationEndpoint.as_view(),
+        name="configuration",
+    ),
+    ## End Configuration
 ]

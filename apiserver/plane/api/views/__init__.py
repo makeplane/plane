@@ -170,3 +170,5 @@ from .analytic import (
 from .notification import NotificationViewSet, UnreadNotificationEndpoint, MarkAllReadNotificationViewSet
 
 from .exporter import ExportIssuesEndpoint
+
+from .config import ConfigurationEndpoint
