@@ -10,7 +10,7 @@ import { IMentionSuggestion } from './mentions';
 
 interface MentionListProps {
   items: IMentionSuggestion[];
-  command: (item: { id: string, label: string, target: string, redirect_uri: string, self: boolean }) => void;
+  command: (item: { id: string, label: string, target: string, redirect_uri: string }) => void;
   editor: Editor;
 }
 
@@ -21,7 +21,7 @@ const MentionList = forwardRef((props: MentionListProps, ref) => {
     const item = props.items[index]
 
     if (item) {
-      props.command({ id: item.id, label: item.title, target: "users", redirect_uri: item.redirect_uri, self: item.self })
+      props.command({ id: item.id, label: item.title, target: "users", redirect_uri: item.redirect_uri })
     }
   }
 
@@ -65,10 +65,7 @@ const MentionList = forwardRef((props: MentionListProps, ref) => {
   return (
 
     <div className="items">
-      {props.items.length
-        ? props.items.map((item, index) => {
-          console.log(item)
-          return (
+      {props.items.length ? props.items.map((item, index) => (
             <div className={`item ${index === selectedIndex ? 'is-selected' : ''} w-72 flex items-center p-3 rounded shadow-md`} onClick={() => selectItem(index)}>
                 {item.avatar ? <div
                   className={`rounded border-[0.5px] ${index ? "border-custom-border-200 bg-custom-background-100" : "border-transparent"
@@ -103,7 +100,7 @@ const MentionList = forwardRef((props: MentionListProps, ref) => {
               </div>
             </div>
           )
-        })
+        )
         : <div className="item">No result</div>
       }
     </div>
