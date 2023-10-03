@@ -398,7 +398,7 @@ export const findTotalDaysInRange = (
 
   // find number of days between startDate and endDate
   const diffInTime = endDate.getTime() - startDate.getTime();
-  const diffInDays = diffInTime / (1000 * 3600 * 24);
+  const diffInDays = Math.round(diffInTime / (1000 * 3600 * 24));
 
   // if inclusive is true, add 1 to diffInDays
   if (inclusive) return diffInDays + 1;
