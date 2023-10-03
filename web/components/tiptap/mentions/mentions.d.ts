@@ -4,4 +4,6 @@ export type IMentionSuggestion = {
     avatar: string;
     title: string;
     subtitle: string;
+    redirect_uri: string;
+    self: boolean;
 }
