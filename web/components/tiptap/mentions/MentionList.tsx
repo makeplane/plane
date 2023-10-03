@@ -10,7 +10,7 @@ import { IMentionSuggestion } from './mentions';
 
 interface MentionListProps {
   items: IMentionSuggestion[];
-  command: (item: { id: string, label: string, target: string }) => void;
+  command: (item: { id: string, label: string, target: string, redirect_uri: string, self: boolean }) => void;
   editor: Editor;
 }
 
@@ -21,7 +21,7 @@ const MentionList = forwardRef((props: MentionListProps, ref) => {
     const item = props.items[index]
 
     if (item) {
-      props.command({ id: item.id, label: item.title, target: "users" })
+      props.command({ id: item.id, label: item.title, target: "users", redirect_uri: item.redirect_uri, self: item.self })
     }
   }
 
