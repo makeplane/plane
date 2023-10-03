@@ -119,6 +119,8 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
       title: member.member.display_name,
       subtitle: member.member.email,
       avatar: member.member.avatar,
+      redirect_uri: `/${member.workspace.slug}/profile/${member.member.id}`,
+      self: !user ? false : member.member.id === user.id
    })
   )
 
