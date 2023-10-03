@@ -168,7 +168,7 @@ export const NotificationPopover = () => {
                                   fill="currentFill"
                                 />
                               </svg>
-                              <span className="sr-only">
+                              <span className="sr-only" suppressHydrationWarning>
                                 {store.locale.localized("Loading...")}
                               </span>
                             </div>

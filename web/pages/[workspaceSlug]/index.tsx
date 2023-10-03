@@ -117,7 +117,7 @@ const WorkspacePage: NextPage = () => {
   return (
     <WorkspaceAuthorizationLayout
       left={
-        <div className="flex items-center gap-2 pl-3">
+        <div className="flex items-center gap-2 pl-3" suppressHydrationWarning>
           <GridViewOutlined fontSize="small" />
           {store.locale.localized("Dashboard")}
         </div>

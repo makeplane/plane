@@ -1,5 +1,5 @@
 // mobx
-import { localized, setLocale, getAutoLocale } from "helpers/localization.helper";
+import { localized, setLocale, getAutoLocale, setAutoLocale } from "helpers/localization.helper";
 import { action, makeObservable, observable } from "mobx";
 
 class LocaleStore {
@@ -28,6 +28,10 @@ class LocaleStore {
     setLocale(locale);
     this.locale = locale;
     this.localizedData = require(`public/locales/${locale}.json`);
+  }
+
+  setAutoLocale() {
+    return setAutoLocale(this.rootStore);
   }
 
   localized(key: string) {

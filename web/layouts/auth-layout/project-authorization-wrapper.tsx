@@ -18,6 +18,9 @@ import { EmptyState, PrimaryButton, Spinner } from "components/ui";
 import { LayerDiagonalIcon } from "components/icons";
 // images
 import emptyProject from "public/empty-state/project.svg";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   children: React.ReactNode;
@@ -46,8 +49,7 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
 }) => {
   const [toggleSidebar, setToggleSidebar] = useState(false);
 
-  // TODO: LOCALIZE THIS PAGE GENERATE A ERROR
-  // const store: RootStore = useMobxStore();
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -64,7 +66,9 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
         {loading ? (
           <div className="grid h-full w-full place-items-center p-4 bg-custom-background-100">
             <div className="flex flex-col items-center gap-3 text-center">
-              <h3 className="text-xl">Loading your project...</h3>
+              <h3 className="text-xl" suppressHydrationWarning>
+                {store.locale.localized("Loading your project...")}
+              </h3>
               <Spinner />
             </div>
           </div>
@@ -73,11 +77,11 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
         ) : error?.status === 404 ? (
           <div className="container grid h-screen place-items-center bg-custom-background-100">
             <EmptyState
-              title="No such project exists"
-              description="Try creating a new project"
+              title={store.locale.localized("No such project exists")}
+              description={store.locale.localized("Try creating a new project")}
               image={emptyProject}
               primaryButton={{
-                text: "Create Project",
+                text: store.locale.localized("Create Project"),
                 onClick: () => {
                   const e = new KeyboardEvent("keydown", {
                     key: "p",
@@ -93,7 +97,8 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
               <Link href={`/${workspaceSlug}/projects/${projectId}/issues`}>
                 <a>
                   <PrimaryButton className="flex items-center gap-1">
-                    <LayerDiagonalIcon height={16} width={16} color="white" /> Go to issues
+                    <LayerDiagonalIcon height={16} width={16} color="white" />{" "}
+                    {store.locale.localized("Go to issues")}
                   </PrimaryButton>
                 </a>
               </Link>

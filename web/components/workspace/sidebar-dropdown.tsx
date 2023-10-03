@@ -123,7 +123,7 @@ export const WorkspaceSidebarDropdown = () => {
             </div>
 
             {!store?.theme?.sidebarCollapsed && (
-              <h4 className="text-custom-text-100">
+              <h4 className="text-custom-text-100" suppressHydrationWarning>
                 {activeWorkspace?.name
                   ? truncateText(activeWorkspace.name, 14)
                   : store.locale.localized("Loading...")}

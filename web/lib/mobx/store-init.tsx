@@ -23,12 +23,6 @@ const MobxStoreInit = () => {
           : false
       );
 
-    // locale
-    if (localStorage && store?.locale?.locale === null) {
-      const currentLocale = localStorage.getItem("locale");
-      store.locale.setLocale(currentLocale ? currentLocale : "auto");
-    }
-
     // theme
     if (store.theme.theme === null && store?.user?.currentUserSettings) {
       let currentTheme = localStorage.getItem("theme");
@@ -48,7 +42,10 @@ const MobxStoreInit = () => {
 
     // current user settings
     if (store?.user?.currentUserSettings === null) store.user.setCurrentUserSettings();
-  }, [store?.user]);
+
+    // current locale
+    if (store?.locale?.locale === null) store.locale.setAutoLocale();
+  }, [store?.user, store?.locale]);
 
   return <></>;
 };

@@ -22,6 +22,8 @@ import { PrimaryButton, Spinner } from "components/ui";
 import { LayerDiagonalIcon } from "components/icons";
 // fetch-keys
 import { WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   children: React.ReactNode;
@@ -42,8 +44,7 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
 }) => {
   const [toggleSidebar, setToggleSidebar] = useState(false);
 
-  // TODO: LOCALIZE THIS PAGE GENERATE A ERROR
-  //   const store: RootStore = useMobxStore();
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -56,7 +57,9 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
     return (
       <div className="grid h-screen place-items-center p-4 bg-custom-background-100">
         <div className="flex flex-col items-center gap-3 text-center">
-          <h3 className="text-xl">Loading your workspace...</h3>
+          <h3 className="text-xl" suppressHydrationWarning>
+            {store.locale.localized("Loading your workspace...")}
+          </h3>
           <Spinner />
         </div>
       </div>

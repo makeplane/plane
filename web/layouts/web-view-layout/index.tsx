@@ -13,6 +13,10 @@ import { AlertCircle } from "lucide-react";
 // ui
 import { Spinner } from "components/ui";
 
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
+
 type Props = {
   children: React.ReactNode;
   fullScreen?: boolean;
@@ -32,8 +36,7 @@ const useMobileDetect = () => {
 };
 
 const WebViewLayout: React.FC<Props> = ({ children, fullScreen = true }) => {
-  // TODO: LOCALIZE THIS PAGE GENERATE A ERROR
-  // const store: RootStore = useMobxStore();
+  const store: RootStore = useMobxStore();
   const { data: currentUser, error } = useSWR(CURRENT_USER, () => userService.currentUser());
 
   const isWebview = useMobileDetect();
@@ -42,7 +45,7 @@ const WebViewLayout: React.FC<Props> = ({ children, fullScreen = true }) => {
     return (
       <div className="h-screen grid place-items-center p-4">
         <div className="flex flex-col items-center gap-3 text-center">
-          <h3 className="text-xl">Loading your profile...</h3>
+          <h3 className="text-xl">{store.locale.localized("Loading your profile...")}</h3>
           <Spinner />
         </div>
       </div>
@@ -54,7 +57,9 @@ const WebViewLayout: React.FC<Props> = ({ children, fullScreen = true }) => {
       {error || !isWebview ? (
         <div className="flex flex-col items-center justify-center gap-y-3 h-full text-center text-custom-text-200">
           <AlertCircle size={64} />
-          <h2 className="text-2xl font-semibold">You are not authorized to view this page.</h2>
+          <h2 className="text-2xl font-semibold">
+            {store.locale.localized("You are not authorized to view this page.")}
+          </h2>
         </div>
       ) : (
         children

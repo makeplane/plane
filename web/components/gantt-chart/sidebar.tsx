@@ -12,6 +12,9 @@ import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import { findTotalDaysInRange } from "helpers/date-time.helper";
 // types
 import { IBlockUpdateData, IGanttBlock } from "./types";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   title: string;
@@ -24,6 +27,7 @@ type Props = {
 export const GanttSidebar: React.FC<Props> = (props) => {
   const { title, blockUpdateHandler, blocks, SidebarBlockRender, enableReorder } = props;
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { cycleId } = router.query;
 
@@ -139,7 +143,10 @@ export const GanttSidebar: React.FC<Props> = (props) => {
                                 <SidebarBlockRender data={block.data} />
                               </div>
                               <div className="flex-shrink-0 text-sm text-custom-text-200">
-                                {duration} day{duration > 1 ? "s" : ""}
+                                {duration}{" "}
+                                {duration > 1
+                                  ? store.locale.localized("days")
+                                  : store.locale.localized("day")}
                               </div>
                             </div>
                           </div>

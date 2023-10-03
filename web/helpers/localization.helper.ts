@@ -1,10 +1,12 @@
-// TODO: localized should be an observable to re-render the component when the locale changes without having to reload the page
-// TODO: move locale from localstorage to database (?)
-
 import { LOCALES } from "constants/locales";
+import { RootStore } from "store/root";
 
 export const localized = (key: string, localizationDataset: any = null): string => {
   try {
+    if (typeof window === "undefined") {
+      throw new Error("window is undefined");
+    }
+
     if (!localizationDataset) {
       const locale = getLocale();
       localizationDataset = require(`public/locales/${locale}.json`);
@@ -24,16 +26,24 @@ export const getAutoLocale = (): string => {
   return mostSimilarLocale;
 };
 
+export const setAutoLocale = (store: RootStore): void => {
+  if (store?.locale?.locale === null && document.cookie && typeof window !== "undefined") {
+    const currentLocale = getCookie("locale");
+    store.locale.setLocale(currentLocale ? currentLocale : "auto");
+  }
+};
+
 export const getLocale = () => {
   try {
-    return localStorage.getItem("locale") || "en_US";
+    const currentLocale = getCookie("locale");
+    return currentLocale || "en_US";
   } catch (e) {
     return "en_US";
   }
 };
 export const setLocale = (locale: string): void => {
   try {
-    localStorage.setItem("locale", locale);
+    setCookie("locale", locale, 365);
   } catch (e) {}
 };
 
@@ -82,4 +92,25 @@ const levenshteinDistance = (str1: string, str2: string) => {
     }
   }
   return track[str2.length][str1.length];
+};
+
+const setCookie = (name: string, value: string, days: number) => {
+  let expires = "";
+  if (days) {
+    const date = new Date();
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    expires = "; expires=" + date.toUTCString();
+  }
+  document.cookie = name + "=" + (value || "") + expires + "; path=/";
+};
+
+const getCookie = (name: string) => {
+  const nameEQ = name + "=";
+  const ca = document.cookie.split(";");
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == " ") c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
 };
