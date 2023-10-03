@@ -10,6 +10,6 @@
     "node_modules"
   ],
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "."
   }
 }

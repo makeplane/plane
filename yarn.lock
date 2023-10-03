@@ -1892,13 +1892,6 @@
   dependencies:
     "@babel/runtime" "^7.13.10"
 
-"@radix-ui/react-compose-refs@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@radix-ui/react-compose-refs/-/react-compose-refs-1.0.1.tgz#7ed868b66946aa6030e580b1ffca386dd4d21989"
-  integrity sha512-fDSBgd44FKHa1FRMU59qBMPFcl2PZE+2nmqunj+BWFyYYjnhIDWL2ItDs3rrbJDQOtzt5nIebLCQc4QRfz6LJw==
-  dependencies:
-    "@babel/runtime" "^7.13.10"
-
 "@radix-ui/react-context@1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@radix-ui/react-context/-/react-context-1.0.0.tgz#f38e30c5859a9fb5e9aa9a9da452ee3ed9e0aee0"
@@ -1996,14 +1989,6 @@
   dependencies:
     "@babel/runtime" "^7.13.10"
     "@radix-ui/react-compose-refs" "1.0.0"
-
-"@radix-ui/react-slot@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@radix-ui/react-slot/-/react-slot-1.0.2.tgz#a9ff4423eade67f501ffb32ec22064bc9d3099ab"
-  integrity sha512-YeTpuq4deV+6DusvVUW4ivBgnkHwECUu0BiN43L5UCDFgdhsRUWAghhTF5MbvNTPzmiFOx90asDSUjWuCNapwg==
-  dependencies:
-    "@babel/runtime" "^7.13.10"
-    "@radix-ui/react-compose-refs" "1.0.1"
 
 "@radix-ui/react-use-callback-ref@1.0.0":
   version "1.0.0"
@@ -2382,11 +2367,6 @@
   resolved "https://registry.yarnpkg.com/@tiptap/extension-bullet-list/-/extension-bullet-list-2.1.10.tgz#e7d7fb578502da6c6208a4daa3e2fe4249ae6280"
   integrity sha512-e6aFr29OSOmXsjFZB2zt3p8aeCWOx0C9Ayrpdf4QBUCOUJtt6FQPxxiYc+XZcdrYbLGLznA7QJlulCK9SGv2Fw==
 
-"@tiptap/extension-code-block-lowlight@^2.0.4":
-  version "2.1.10"
-  resolved "https://registry.yarnpkg.com/@tiptap/extension-code-block-lowlight/-/extension-code-block-lowlight-2.1.10.tgz#22dabaa8c087bd03c160590f7b8bf9b1501752b5"
-  integrity sha512-HBrsgDX1sMx6FSoKxAhz2On8lwL8S1lqNryMQBTE63PemjOxcyxPNdGWZz+JfQmxyvymQoGhibaW5ImNAK84Zg==
-
 "@tiptap/extension-code-block-lowlight@^2.1.11":
   version "2.1.11"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-code-block-lowlight/-/extension-code-block-lowlight-2.1.11.tgz#6eec38c3b8662fae81ec2f117a2d18564f1fbb1a"
@@ -2439,17 +2419,12 @@
   resolved "https://registry.yarnpkg.com/@tiptap/extension-heading/-/extension-heading-2.1.10.tgz#1b32726551466c29987861181966e5675417b28c"
   integrity sha512-1OgmrRPMcY52WI7I4799xd4eIsEX/bI813B8mZvNYXLzZI75pLW1hmz1mUvBYyMwlcek74zVTGYgPy11o+2JEg==
 
-"@tiptap/extension-highlight@^2.1.7":
-  version "2.1.10"
-  resolved "https://registry.yarnpkg.com/@tiptap/extension-highlight/-/extension-highlight-2.1.10.tgz#8d94db01a2324e0ce380e6e7515fa0bc6004d9b9"
-  integrity sha512-HPD9T0MPEfrD40aSjcj23OcAYDnpsRLXxwQAYK1jw6Fvk7OtJZn8iaoAb4GcFfcKs3vgkpA9DC6DXlnvN0txYA==
-
 "@tiptap/extension-history@^2.1.10":
   version "2.1.10"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-history/-/extension-history-2.1.10.tgz#efa60d657a76818361a3af14769660672d4bc227"
   integrity sha512-tApuN8MIJMzc0dxvkYJPt3t5cea9NuZBGNiuVedJwMMUF6hbFpMZAt20GW2qwjBaZ76rQwbLp1s3KnImFsPe5A==
 
-"@tiptap/extension-horizontal-rule@^2.1.10", "@tiptap/extension-horizontal-rule@^2.1.7":
+"@tiptap/extension-horizontal-rule@^2.1.10":
   version "2.1.10"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-horizontal-rule/-/extension-horizontal-rule-2.1.10.tgz#cfdb67530be100054fc8511942d4ec3534acf828"
   integrity sha512-91lGpK2d6WMPhrMDPBURS8z8pEg1CUBYy7GmBenKvvgh+JzVhG+U6MtykfWNfm2R4iRXOl1xLbyUOCiOSUXodQ==
@@ -2490,11 +2465,6 @@
   version "2.1.10"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-paragraph/-/extension-paragraph-2.1.10.tgz#ee1238d2d6e9460b2a929b05a5fd43cfb58a6017"
   integrity sha512-kzuHbrxcxpWkha5P+JFzCKT54pNqb4IBKMU5qT9YGhZSdNTtU63ncdCHM+Ad1ukLuvXAv95zh1IQC5j+Z1Qk4A==
-
-"@tiptap/extension-placeholder@2.0.3":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@tiptap/extension-placeholder/-/extension-placeholder-2.0.3.tgz#69575353f09fc7524c9cdbfbf16c04f73c29d154"
-  integrity sha512-Z42jo0termRAf0S0L8oxrts94IWX5waU4isS2CUw8xCUigYyCFslkhQXkWATO1qRbjNFLKN2C9qvCgGf4UeBrw==
 
 "@tiptap/extension-placeholder@^2.1.11":
   version "2.1.11"

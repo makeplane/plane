@@ -1,6 +1,6 @@
 // styles
-import "./styles/tailwind.css";
-import "./styles/editor.css";
+// import "./styles/tailwind.css";
+// import "./styles/editor.css";
 
 // utils
 export { cn } from "./lib/utils";

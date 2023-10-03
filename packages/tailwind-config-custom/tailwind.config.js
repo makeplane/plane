@@ -3,14 +3,17 @@ const convertToRGB = (variableName) => `rgba(var(${variableName}))`;
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: "class",
-  content: [
-    "./components/**/*.tsx",
-    "./constants/**/*.{js,ts,jsx,tsx}",
-    "./layouts/**/*.tsx",
-    "./pages/**/*.tsx",
-    "./ui/**/*.tsx",
-    "../../packages/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: {
+    relative: true,
+    files: [
+      "./components/**/*.tsx",
+      "./constants/**/*.{js,ts,jsx,tsx}",
+      "./layouts/**/*.tsx",
+      "./pages/**/*.tsx",
+      "./ui/**/*.tsx",
+      "../packages/editor/**/*.{js,ts,jsx,tsx}"
+    ]
+  },
   theme: {
     extend: {
       boxShadow: {
