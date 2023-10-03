@@ -45,7 +45,7 @@ export const IssueLinks: React.FC<Props> = (props) => {
   const { workspaceSlug, projectId } = router.query;
 
   const handleDeleteLink = async (linkId: string) => {
-    if (!workspaceSlug || !projectId || !issueDetails) return;
+    if (!workspaceSlug || !projectId || !issueDetails || !allowed) return;
 
     const updatedLinks = issueDetails.issue_link.filter((l) => l.id !== linkId);
 
@@ -92,7 +92,7 @@ export const IssueLinks: React.FC<Props> = (props) => {
         isOpen={!!deleteSelected}
         onCancel={() => setDeleteSelected(null)}
         onConfirm={() => {
-          if (!deleteSelected) return;
+          if (!deleteSelected || !allowed) return;
           handleDeleteLink(deleteSelected);
           setDeleteSelected(null);
         }}

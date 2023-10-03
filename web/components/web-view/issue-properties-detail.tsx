@@ -98,6 +98,8 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
+  const isArchive = Boolean(router.query.archive);
+
   const { memberRole } = useProjectMyMembership();
 
   const { user } = useUser();
@@ -105,20 +107,6 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
   const [isViewAllOpen, setIsViewAllOpen] = useState(false);
 
   const { isEstimateActive } = useEstimateOption();
-
-  const handleMutation = (data: any) => {
-    mutate<IIssue>(
-      ISSUE_DETAILS(issueId as string),
-      (prevData) => {
-        if (!prevData) return prevData;
-        return {
-          ...prevData,
-          ...data,
-        };
-      },
-      false
-    );
-  };
 
   return (
     <div className="space-y-[6px]">
@@ -136,6 +124,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
               render={({ field: { value } }) => (
                 <StateSelect
                   value={value}
+                  disabled={isArchive || memberRole.isGuest || memberRole.isViewer}
                   onChange={(val: string) => submitChanges({ state: val })}
                 />
               )}
@@ -168,7 +157,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
               render={({ field: { value } }) => (
                 <PrioritySelect
                   value={value}
-                  disabled={memberRole.isGuest || memberRole.isViewer}
+                  disabled={isArchive || memberRole.isGuest || memberRole.isViewer}
                   onChange={(val) => submitChanges({ priority: val })}
                 />
               )}
@@ -189,7 +178,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
               render={({ field: { value } }) => (
                 <AssigneeSelect
                   value={value}
-                  disabled={memberRole.isGuest || memberRole.isViewer}
+                  disabled={isArchive || memberRole.isGuest || memberRole.isViewer}
                   onChange={(val: string) => {
                     const assignees = value?.includes(val)
                       ? value?.filter((i) => i !== val)
@@ -219,7 +208,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                     render={({ field: { value } }) => (
                       <EstimateSelect
                         value={value}
-                        disabled={memberRole.isGuest || memberRole.isViewer}
+                        disabled={isArchive || memberRole.isGuest || memberRole.isViewer}
                         onChange={(val) => submitChanges({ estimate_point: val })}
                       />
                     )}
@@ -241,7 +230,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                   render={({ field: { value } }) => (
                     <ParentSelect
                       value={value}
-                      disabled={memberRole.isGuest || memberRole.isViewer}
+                      disabled={isArchive || memberRole.isGuest || memberRole.isViewer}
                       onChange={(val) => submitChanges({ parent: val })}
                     />
                   )}
@@ -259,7 +248,9 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                   <span className="text-sm text-custom-text-400">Blocking</span>
                 </div>
                 <div>
-                  <BlockerSelect disabled={memberRole.isGuest || memberRole.isViewer} />
+                  <BlockerSelect
+                    disabled={isArchive || memberRole.isGuest || memberRole.isViewer}
+                  />
                 </div>
               </div>
               {blockerIssues &&
@@ -268,43 +259,45 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                     key={relation.issue_detail?.id}
                     className="group inline-flex mr-1 cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-1.5 py-0.5 text-xs text-yellow-500 duration-300 hover:border-yellow-500/20 hover:bg-yellow-500/20"
                   >
-                    <a
-                      href={`/${workspaceSlug}/projects/${relation.issue_detail?.project_detail.id}/issues/${relation.issue_detail?.id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <span
+                      onClick={() =>
+                        console.log(
+                          "issue",
+                          JSON.stringify({
+                            issue_id: relation.issue_detail?.id,
+                            project_id: relation.issue_detail?.project_detail.id,
+                          })
+                        )
+                      }
                       className="flex items-center gap-1"
                     >
                       <BlockerIcon height={10} width={10} />
                       {`${relation.issue_detail?.project_detail.identifier}-${relation.issue_detail?.sequence_id}`}
-                    </a>
-                    <button
-                      type="button"
-                      className="duration-300"
-                      onClick={() => {
-                        if (memberRole.isGuest || memberRole.isViewer || !user) return;
+                    </span>
+                    {!isArchive && (
+                      <button
+                        type="button"
+                        className="duration-300"
+                        onClick={() => {
+                          if (memberRole.isGuest || memberRole.isViewer || !user) return;
 
-                        const updatedBlockers = blockerIssues.filter(
-                          (i) => i.issue_detail?.id !== relation.issue_detail?.id
-                        );
-
-                        issuesService
-                          .deleteIssueRelation(
-                            workspaceSlug as string,
-                            projectId as string,
-                            issueId as string,
-                            relation.id,
-                            user
-                          )
-                          .then(() => {
-                            handleMutation({
-                              issue_relations: updatedBlockers,
+                          issuesService
+                            .deleteIssueRelation(
+                              workspaceSlug as string,
+                              projectId as string,
+                              relation.issue,
+                              relation.id,
+                              user
+                            )
+                            .then(() => {
+                              mutate(ISSUE_DETAILS(issueId as string));
+                              mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
                             });
-                            mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
-                          });
-                      }}
-                    >
-                      <X className="h-2 w-2" />
-                    </button>
+                        }}
+                      >
+                        <X className="h-2 w-2" />
+                      </button>
+                    )}
                   </div>
                 ))}
             </div>
@@ -319,7 +312,9 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                   <span className="text-sm text-custom-text-400">Blocked by</span>
                 </div>
                 <div>
-                  <BlockedBySelect disabled={memberRole.isGuest || memberRole.isViewer} />
+                  <BlockedBySelect
+                    disabled={isArchive || memberRole.isGuest || memberRole.isViewer}
+                  />
                 </div>
               </div>
               {blockedByIssues &&
@@ -328,43 +323,45 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                     key={relation.issue_detail?.id}
                     className="group inline-flex mr-1 cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-1.5 py-0.5 text-xs text-red-500 duration-300 hover:border-red-500/20 hover:bg-red-500/20"
                   >
-                    <a
-                      href={`/${workspaceSlug}/projects/${relation.issue_detail?.project_detail.id}/issues/${relation.issue_detail?.id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <span
+                      onClick={() =>
+                        console.log(
+                          "issue",
+                          JSON.stringify({
+                            issue_id: relation.issue_detail?.id,
+                            project_id: relation.issue_detail?.project_detail.id,
+                          })
+                        )
+                      }
                       className="flex items-center gap-1"
                     >
                       <BlockedIcon height={10} width={10} />
                       {`${relation?.issue_detail?.project_detail?.identifier}-${relation?.issue_detail?.sequence_id}`}
-                    </a>
-                    <button
-                      type="button"
-                      className="duration-300"
-                      onClick={() => {
-                        if (memberRole.isGuest || memberRole.isViewer || !user) return;
+                    </span>
+                    {!isArchive && !(memberRole.isGuest || memberRole.isViewer) && (
+                      <button
+                        type="button"
+                        className="duration-300"
+                        onClick={() => {
+                          if (memberRole.isGuest || memberRole.isViewer || !user) return;
 
-                        const updatedBlocked = blockedByIssues.filter(
-                          (i) => i?.id !== relation?.id
-                        );
-
-                        issuesService
-                          .deleteIssueRelation(
-                            workspaceSlug as string,
-                            projectId as string,
-                            issueId as string,
-                            relation.id,
-                            user
-                          )
-                          .then(() => {
-                            handleMutation({
-                              related_issues: updatedBlocked,
+                          issuesService
+                            .deleteIssueRelation(
+                              workspaceSlug as string,
+                              projectId as string,
+                              issueId as string,
+                              relation.id,
+                              user
+                            )
+                            .then(() => {
+                              mutate(ISSUE_DETAILS(issueId as string));
+                              mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
                             });
-                            mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
-                          });
-                      }}
-                    >
-                      <X className="h-2 w-2" />
-                    </button>
+                        }}
+                      >
+                        <X className="h-2 w-2" />
+                      </button>
+                    )}
                   </div>
                 ))}
             </div>
@@ -379,7 +376,9 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                   <span className="text-sm text-custom-text-400">Duplicate</span>
                 </div>
                 <div>
-                  <DuplicateSelect disabled={memberRole.isGuest || memberRole.isViewer} />
+                  <DuplicateSelect
+                    disabled={isArchive || memberRole.isGuest || memberRole.isViewer}
+                  />
                 </div>
               </div>
               {duplicateIssuesRelation &&
@@ -388,37 +387,45 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                     key={relation.issue_detail?.id}
                     className="group inline-flex mr-1 cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-1.5 py-0.5 text-xs text-red-500 duration-300 hover:border-red-500/20 hover:bg-red-500/20"
                   >
-                    <a
-                      href={`/${workspaceSlug}/projects/${relation.issue_detail?.project_detail.id}/issues/${relation.issue_detail?.id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <span
+                      onClick={() =>
+                        console.log(
+                          "issue",
+                          JSON.stringify({
+                            issue_id: relation.issue_detail?.id,
+                            project_id: relation.issue_detail?.project_detail.id,
+                          })
+                        )
+                      }
                       className="flex items-center gap-1"
                     >
                       <CopyPlus height={10} width={10} />
                       {`${relation?.issue_detail?.project_detail?.identifier}-${relation?.issue_detail?.sequence_id}`}
-                    </a>
-                    <button
-                      type="button"
-                      className="duration-300"
-                      onClick={() => {
-                        if (memberRole.isGuest || memberRole.isViewer || !user) return;
+                    </span>
+                    {!isArchive && !(memberRole.isGuest || memberRole.isViewer) && (
+                      <button
+                        type="button"
+                        className="duration-300"
+                        onClick={() => {
+                          if (memberRole.isGuest || memberRole.isViewer || !user) return;
 
-                        issuesService
-                          .deleteIssueRelation(
-                            workspaceSlug as string,
-                            projectId as string,
-                            issueId as string,
-                            relation.id,
-                            user
-                          )
-                          .then(() => {
-                            mutate(ISSUE_DETAILS(issueId as string));
-                            mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
-                          });
-                      }}
-                    >
-                      <X className="h-2 w-2" />
-                    </button>
+                          issuesService
+                            .deleteIssueRelation(
+                              workspaceSlug as string,
+                              projectId as string,
+                              issueId as string,
+                              relation.id,
+                              user
+                            )
+                            .then(() => {
+                              mutate(ISSUE_DETAILS(issueId as string));
+                              mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
+                            });
+                        }}
+                      >
+                        <X className="h-2 w-2" />
+                      </button>
+                    )}
                   </div>
                 ))}
             </div>
@@ -433,7 +440,9 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                   <span className="text-sm text-custom-text-400">Relates To</span>
                 </div>
                 <div>
-                  <RelatesSelect disabled={memberRole.isGuest || memberRole.isViewer} />
+                  <RelatesSelect
+                    disabled={isArchive || memberRole.isGuest || memberRole.isViewer}
+                  />
                 </div>
               </div>
               {relatedToIssueRelation &&
@@ -442,37 +451,45 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                     key={relation.issue_detail?.id}
                     className="group inline-flex mr-1 cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-1.5 py-0.5 text-xs text-red-500 duration-300 hover:border-red-500/20 hover:bg-red-500/20"
                   >
-                    <a
-                      href={`/${workspaceSlug}/projects/${relation.issue_detail?.project_detail.id}/issues/${relation.issue_detail?.id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <span
+                      onClick={() =>
+                        console.log(
+                          "issue",
+                          JSON.stringify({
+                            issue_id: relation.issue_detail?.id,
+                            project_id: relation.issue_detail?.project_detail.id,
+                          })
+                        )
+                      }
                       className="flex items-center gap-1"
                     >
                       <RelatedIcon height={10} width={10} />
                       {`${relation?.issue_detail?.project_detail?.identifier}-${relation?.issue_detail?.sequence_id}`}
-                    </a>
-                    <button
-                      type="button"
-                      className="duration-300"
-                      onClick={() => {
-                        if (memberRole.isGuest || memberRole.isViewer || !user) return;
+                    </span>
+                    {!isArchive && !(memberRole.isGuest || memberRole.isViewer) && (
+                      <button
+                        type="button"
+                        className="duration-300"
+                        onClick={() => {
+                          if (memberRole.isGuest || memberRole.isViewer || !user) return;
 
-                        issuesService
-                          .deleteIssueRelation(
-                            workspaceSlug as string,
-                            projectId as string,
-                            issueId as string,
-                            relation.id,
-                            user
-                          )
-                          .then(() => {
-                            mutate(ISSUE_DETAILS(issueId as string));
-                            mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
-                          });
-                      }}
-                    >
-                      <X className="h-2 w-2" />
-                    </button>
+                          issuesService
+                            .deleteIssueRelation(
+                              workspaceSlug as string,
+                              projectId as string,
+                              issueId as string,
+                              relation.id,
+                              user
+                            )
+                            .then(() => {
+                              mutate(ISSUE_DETAILS(issueId as string));
+                              mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
+                            });
+                        }}
+                      >
+                        <X className="h-2 w-2" />
+                      </button>
+                    )}
                   </div>
                 ))}
             </div>
@@ -494,7 +511,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                         placeholder="Due date"
                         value={value}
                         wrapperClassName="w-full"
-                        disabled={memberRole.isGuest || memberRole.isViewer}
+                        disabled={isArchive || memberRole.isGuest || memberRole.isViewer}
                         onChange={(val) =>
                           submitChanges({
                             target_date: val,
@@ -520,7 +537,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                 <div>
                   <ModuleSelect
                     value={watch("issue_module")}
-                    disabled={memberRole.isGuest || memberRole.isViewer}
+                    disabled={isArchive || memberRole.isGuest || memberRole.isViewer}
                   />
                 </div>
               </div>
@@ -540,7 +557,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                 <div>
                   <CycleSelect
                     value={watch("issue_cycle")}
-                    disabled={memberRole.isGuest || memberRole.isViewer}
+                    disabled={isArchive || memberRole.isGuest || memberRole.isViewer}
                   />
                 </div>
               </div>

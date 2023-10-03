@@ -24,10 +24,11 @@ type IssuesSelectBottomSheetProps = {
   onClose: () => void;
   onSubmit: (data: ISearchIssueResponse[]) => Promise<void>;
   searchParams: Partial<TProjectIssuesSearchParams>;
+  singleSelect?: boolean;
 };
 
 export const IssuesSelectBottomSheet: React.FC<IssuesSelectBottomSheetProps> = (props) => {
-  const { isOpen, onClose, onSubmit, searchParams } = props;
+  const { isOpen, onClose, onSubmit, searchParams, singleSelect = false } = props;
 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
@@ -87,7 +88,7 @@ export const IssuesSelectBottomSheet: React.FC<IssuesSelectBottomSheetProps> = (
   ]);
 
   return (
-    <WebViewModal isOpen={isOpen} onClose={onClose} modalTitle="Select issue">
+    <WebViewModal isOpen={isOpen} onClose={handleClose} modalTitle="Select issue">
       {!isSearching && issues.length === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && (
         <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
           <LayerDiagonalIcon height="52" width="52" />
@@ -145,6 +146,12 @@ export const IssuesSelectBottomSheet: React.FC<IssuesSelectBottomSheetProps> = (
             ),
             checked: selectedIssues.some((i) => i.id === issue.id),
             onClick() {
+              if (singleSelect) {
+                handleSelect([issue]);
+                handleClose();
+                return;
+              }
+
               if (selectedIssues.some((i) => i.id === issue.id)) {
                 setSelectedIssues(selectedIssues.filter((i) => i.id !== issue.id));
               } else {

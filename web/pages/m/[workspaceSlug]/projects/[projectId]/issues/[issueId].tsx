@@ -41,13 +41,15 @@ const MobileWebViewIssueDetail_ = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
+  const isArchive = Boolean(router.query.archive);
+
   const memberRole = useProjectMembers(
     workspaceSlug as string,
     projectId as string,
     !!workspaceSlug && !!projectId
   );
 
-  const isAllowed = Boolean(memberRole.isMember || memberRole.isOwner);
+  const isAllowed = Boolean((memberRole.isMember || memberRole.isOwner) && !isArchive);
 
   const { user } = useUser();
 
@@ -55,16 +57,31 @@ const MobileWebViewIssueDetail_ = () => {
   const { register, handleSubmit, control, watch, reset } = formContext;
 
   const {
-    data: issueDetails,
-    mutate: mutateIssueDetails,
+    data: issue,
+    mutate: mutateIssue,
     error,
   } = useSWR(
-    workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId.toString()) : null,
-    workspaceSlug && projectId && issueId
+    workspaceSlug && projectId && issueId && !isArchive ? ISSUE_DETAILS(issueId.toString()) : null,
+    workspaceSlug && projectId && issueId && !isArchive
       ? () =>
           issuesService.retrieve(workspaceSlug.toString(), projectId.toString(), issueId.toString())
       : null
   );
+
+  const { data: archiveIssueDetails, mutate: mutateaArchiveIssue } = useSWR<IIssue | undefined>(
+    workspaceSlug && projectId && issueId && isArchive ? ISSUE_DETAILS(issueId as string) : null,
+    workspaceSlug && projectId && issueId && isArchive
+      ? () =>
+          issuesService.retrieveArchivedIssue(
+            workspaceSlug.toString(),
+            projectId.toString(),
+            issueId.toString()
+          )
+      : null
+  );
+
+  const issueDetails = isArchive ? archiveIssueDetails : issue;
+  const mutateIssueDetails = isArchive ? mutateaArchiveIssue : mutateIssue;
 
   useEffect(() => {
     if (!issueDetails) return;
@@ -138,6 +155,10 @@ const MobileWebViewIssueDetail_ = () => {
 
   return (
     <WebViewLayout>
+      {isArchive && (
+        <div className="w-full h-screen top-0 left-0 fixed z-50 bg-white/20 pointer-events-none" />
+      )}
+
       <div className="px-6 py-2 h-full overflow-auto space-y-3">
         <IssueWebViewForm
           isAllowed={isAllowed}

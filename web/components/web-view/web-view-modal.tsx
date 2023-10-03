@@ -63,7 +63,7 @@ export const WebViewModal = (props: Props) => {
                     <XMarkIcon className="w-6 h-6 text-custom-text-200" />
                   </button>
                 </div>
-                <div className="flex flex-col mt-6 h-full max-h-[80vh]">{children}</div>
+                <div className="flex flex-col mt-6 h-full max-h-[70vh]">{children}</div>
               </Dialog.Panel>
             </Transition.Child>
           </div>
@@ -84,7 +84,7 @@ type OptionsProps = {
 };
 
 const Options: React.FC<OptionsProps> = ({ options }) => (
-  <div className="divide-y flex-1 overflow-auto">
+  <div className="divide-y divide-custom-border-300 flex-1 overflow-auto">
     {options.map((option) => (
       <div key={option.value} className="flex items-center justify-between gap-2 py-[14px]">
         <div onClick={option.onClick} className="flex items-center gap-x-2 w-full">

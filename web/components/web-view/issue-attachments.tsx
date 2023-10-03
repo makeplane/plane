@@ -47,7 +47,7 @@ export const IssueAttachments: React.FC<Props> = (props) => {
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      if (!acceptedFiles[0] || !workspaceSlug) return;
+      if (!acceptedFiles[0] || !workspaceSlug || !allowed) return;
 
       const formData = new FormData();
       formData.append("asset", acceptedFiles[0]);
@@ -97,7 +97,7 @@ export const IssueAttachments: React.FC<Props> = (props) => {
           );
         });
     },
-    [issueId, projectId, workspaceSlug]
+    [issueId, projectId, workspaceSlug, allowed]
   );
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -179,6 +179,7 @@ export const IssueAttachments: React.FC<Props> = (props) => {
         ))}
         <button
           type="button"
+          disabled={!allowed}
           onClick={() => setIsOpen(true)}
           className="bg-custom-primary-100/10 border border-dotted rounded-[4px] border-custom-primary-100 text-center py-2 w-full text-custom-primary-100"
         >

@@ -49,9 +49,10 @@ export const BlockedBySelect: React.FC<Props> = (props) => {
 
     if (data.length === 0)
       return console.log(
-        "error",
+        "toast",
         JSON.stringify({
-          type: "TODO: ask mobile team",
+          type: "error",
+          message: "Please select at least one issue.",
         })
       );
 

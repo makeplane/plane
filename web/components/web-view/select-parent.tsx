@@ -14,7 +14,7 @@ import issuesService from "services/issues.service";
 import { ISSUE_DETAILS } from "constants/fetch-keys";
 
 // components
-import { ParentIssuesListModal } from "components/issues";
+import { IssuesSelectBottomSheet } from "components/web-view";
 
 // types
 import { ISearchIssueResponse } from "types";
@@ -26,7 +26,7 @@ type Props = {
 };
 
 export const ParentSelect: React.FC<Props> = (props) => {
-  const { value, onChange, disabled = false } = props;
+  const { onChange, disabled = false } = props;
 
   const [isParentModalOpen, setIsParentModalOpen] = useState(false);
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
@@ -44,16 +44,20 @@ export const ParentSelect: React.FC<Props> = (props) => {
 
   return (
     <>
-      <ParentIssuesListModal
+      <IssuesSelectBottomSheet
         isOpen={isParentModalOpen}
-        handleClose={() => setIsParentModalOpen(false)}
-        onChange={(issue) => {
+        onClose={() => setIsParentModalOpen(false)}
+        singleSelect
+        onSubmit={async (issues) => {
           if (disabled) return;
+          const issue = issues[0];
           onChange(issue.id);
           setSelectedParentIssue(issue);
         }}
-        issueId={issueId as string}
-        projectId={projectId as string}
+        searchParams={{
+          parent: true,
+          issue_id: issueId as string,
+        }}
       />
 
       <button

@@ -107,20 +107,21 @@ const activityDetails: {
         {activity.old_value === ""
           ? "marked this issue is blocking issue "
           : "removed the blocking issue "}
-        <span
+        <button
+          type="button"
           onClick={() =>
             console.log(
               "issue",
               JSON.stringify({
                 project_id: activity.project,
-                issue_id: activity.issue,
+                issue_id: activity.new_identifier ?? activity.old_identifier,
               })
             )
           }
           className="font-medium text-custom-text-100"
         >
           {activity.old_value === "" ? activity.new_value : activity.old_value}
-        </span>
+        </button>
         .
       </>
     ),
@@ -133,20 +134,21 @@ const activityDetails: {
         {activity.old_value === ""
           ? "marked this issue is being blocked by issue "
           : "removed this issue being blocked by issue "}
-        <span
+        <button
+          type="button"
           onClick={() =>
             console.log(
               "issue",
               JSON.stringify({
                 project_id: activity.project,
-                issue_id: activity.issue,
+                issue_id: activity.new_identifier ?? activity.old_identifier,
               })
             )
           }
           className="font-medium text-custom-text-100"
         >
           {activity.old_value === "" ? activity.new_value : activity.old_value}
-        </span>
+        </button>
         .
       </>
     ),
@@ -159,20 +161,21 @@ const activityDetails: {
         {activity.old_value === ""
           ? "marked this issue as duplicate of "
           : "removed this issue as a duplicate of "}
-        <span
+        <button
+          type="button"
           onClick={() =>
             console.log(
               "issue",
               JSON.stringify({
                 project_id: activity.project,
-                issue_id: activity.issue,
+                issue_id: activity.new_identifier ?? activity.old_identifier,
               })
             )
           }
           className="font-medium text-custom-text-100"
         >
           {activity.verb === "created" ? activity.new_value : activity.old_value}
-        </span>
+        </button>
         .
       </>
     ),
@@ -185,20 +188,21 @@ const activityDetails: {
         {activity.old_value === ""
           ? "marked that this issue relates to "
           : "removed the relation from "}
-        <span
+        <button
+          type="button"
           onClick={() =>
             console.log(
               "issue",
               JSON.stringify({
                 project_id: activity.project,
-                issue_id: activity.issue,
+                issue_id: activity.new_identifier ?? activity.old_identifier,
               })
             )
           }
           className="font-medium text-custom-text-100"
         >
           {activity.old_value === "" ? activity.new_value : activity.old_value}
-        </span>
+        </button>
         .
       </>
     ),

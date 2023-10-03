@@ -38,6 +38,8 @@ export const SubIssueList: React.FC<Props> = (props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
+  const isArchive = Boolean(router.query.archive);
+
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [issueSelectedForDelete, setIssueSelectedForDelete] = useState<IIssue | null>(null);
 
@@ -78,7 +80,7 @@ export const SubIssueList: React.FC<Props> = (props) => {
   };
 
   const addAsSubIssueFromExistingIssues = async (data: ISearchIssueResponse[]) => {
-    if (!workspaceSlug || !projectId || !issueId) return;
+    if (!workspaceSlug || !projectId || !issueId || isArchive) return;
 
     const payload = {
       sub_issue_ids: data.map((i) => i.id),
@@ -105,6 +107,7 @@ export const SubIssueList: React.FC<Props> = (props) => {
         isOpen={!!issueSelectedForDelete}
         onCancel={() => setIssueSelectedForDelete(null)}
         onConfirm={() => {
+          if (isArchive) return;
           setIssueSelectedForDelete(null);
           handleSubIssueRemove(issueSelectedForDelete);
         }}
@@ -135,7 +138,9 @@ export const SubIssueList: React.FC<Props> = (props) => {
             </div>
             <button
               type="button"
+              disabled={isArchive}
               onClick={() => {
+                if (isArchive) return;
                 setIssueSelectedForDelete(subIssue);
               }}
             >
@@ -146,6 +151,7 @@ export const SubIssueList: React.FC<Props> = (props) => {
       </div>
       <button
         type="button"
+        disabled={isArchive}
         onClick={() => setIsBottomSheetOpen(true)}
         className="flex items-center gap-x-1 mt-3"
       >
