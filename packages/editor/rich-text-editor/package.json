@@ -21,7 +21,10 @@
     "check-types": "tsc --noEmit"
   },
   "peerDependencies": {
-    "react": "^18.2.0"
+    "next": "12.3.2",
+    "next-themes": "^0.2.1",
+    "react": "^18.2.0",
+    "react-dom": "18.2.0"
   },
   "dependencies": {
     "@plane/editor-core": "*",
@@ -30,13 +33,11 @@
     "@tiptap/extension-horizontal-rule": "^2.1.11",
     "@tiptap/extension-placeholder": "^2.1.11",
     "class-variance-authority": "^0.7.0",
+    "@tiptap/suggestion": "^2.1.7",
     "clsx": "^1.2.1",
     "highlight.js": "^11.8.0",
     "lowlight": "^3.0.0",
-    "lucide-react": "^0.244.0",
-    "next": "12.3.2",
-    "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "lucide-react": "^0.244.0"
   },
   "devDependencies": {
     "@types/node": "18.15.3",

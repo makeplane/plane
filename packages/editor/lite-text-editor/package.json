@@ -1,7 +1,7 @@
 {
   "name": "@plane/lite-text-editor",
   "version": "0.0.1",
-  "description": "Rich Text Editor that powers Plane",
+  "description": "Package that powers Plane's Comment Editor",
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
@@ -21,11 +21,14 @@
     "check-types": "tsc --noEmit"
   },
   "peerDependencies": {
-    "react": "^18.2.0"
+    "next": "12.3.2",
+    "next-themes": "^0.2.1",
+    "react": "^18.2.0",
+    "react-dom": "18.2.0"
   },
   "dependencies": {
+    "@types/react": "^18.2.5",
     "@types/node": "18.15.3",
-    "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
     "class-variance-authority": "^0.7.0",
     "clsx": "^1.2.1",
@@ -34,10 +37,7 @@
     "eventsource-parser": "^0.1.0",
     "lowlight": "^2.9.0",
     "lucide-react": "^0.244.0",
-    "next": "12.3.2",
-    "next-themes": "^0.2.1",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+   
     "react-markdown": "^8.0.7",
     "tailwind-merge": "^1.14.0",
     "tippy.js": "^6.3.7",
@@ -46,10 +46,8 @@
     "@plane/editor-core": "*"
   },
   "devDependencies": {
-    "@types/react": "^18.2.5",
     "eslint": "^7.32.0",
     "postcss": "^8.4.29",
-    "react": "^18.2.0",
     "tailwind-config-custom": "*",
     "tsconfig": "*",
     "tsup": "^7.2.0",
