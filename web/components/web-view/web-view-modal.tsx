@@ -63,7 +63,7 @@ export const WebViewModal = (props: Props) => {
                     <XMarkIcon className="w-6 h-6 text-custom-text-200" />
                   </button>
                 </div>
-                <div className="flex flex-col mt-6 max-h-60">{children}</div>
+                <div className="flex flex-col mt-6 h-full max-h-[80vh]">{children}</div>
               </Dialog.Panel>
             </Transition.Child>
           </div>
@@ -75,7 +75,7 @@ export const WebViewModal = (props: Props) => {
 
 type OptionsProps = {
   options: Array<{
-    label: string;
+    label: string | React.ReactNode;
     value: string | null;
     checked: boolean;
     icon?: any;
@@ -91,6 +91,7 @@ const Options: React.FC<OptionsProps> = ({ options }) => (
           <input
             type="checkbox"
             checked={option.checked}
+            readOnly
             className="rounded-full border border-custom-border-200 bg-custom-background-100 w-4 h-4"
           />
 

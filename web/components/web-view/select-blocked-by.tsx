@@ -17,7 +17,7 @@ import issuesService from "services/issues.service";
 import useUser from "hooks/use-user";
 
 // fetch keys
-import { ISSUE_DETAILS } from "constants/fetch-keys";
+import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 // icons
 import { ChevronDown } from "lucide-react";
@@ -45,7 +45,7 @@ export const BlockedBySelect: React.FC<Props> = (props) => {
   const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
 
   const onSubmit = async (data: ISearchIssueResponse[]) => {
-    if (!workspaceSlug || !projectId || !issueId || !user) return;
+    if (!workspaceSlug || !projectId || !issueId || !user || disabled) return;
 
     if (data.length === 0)
       return console.log(
@@ -92,12 +92,10 @@ export const BlockedBySelect: React.FC<Props> = (props) => {
           if (!prevData) return prevData;
           return {
             ...prevData,
-            related_issues: [
-              ...relatedIssues?.filter((i: any) => i.relation_type !== "blocked_by"),
-              ...response,
-            ],
+            related_issues: [...relatedIssues, ...response],
           };
         });
+        mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
       });
 
     setIsBlockedModalOpen(false);
@@ -109,6 +107,7 @@ export const BlockedBySelect: React.FC<Props> = (props) => {
         isOpen={isBlockedModalOpen}
         onSubmit={onSubmit}
         onClose={() => setIsBlockedModalOpen(false)}
+        searchParams={{ issue_relation: true }}
       />
 
       <button

@@ -41,9 +41,7 @@ const IssueLink = ({ activity }: { activity: IIssueActivity }) => (
 const UserLink = ({ activity }: { activity: IIssueActivity }) => (
   <button
     type="button"
-    onClick={() => {
-      console.log("user", activity.actor);
-    }}
+    onClick={() => console.log("user", activity.new_identifier ?? activity.old_identifier)}
     className="font-medium text-custom-text-100 inline-flex items-center hover:underline"
   >
     {activity.new_value && activity.new_value !== "" ? activity.new_value : activity.old_value}
@@ -62,7 +60,6 @@ const activityDetails: {
 } = {
   assignees: {
     message: (activity, showIssue) => (
-      // FIXME: same id is coming for both users
       <>
         {activity.old_value === "" ? "added a new assignee " : "removed the assignee "}
         <UserLink activity={activity} />
@@ -110,7 +107,18 @@ const activityDetails: {
         {activity.old_value === ""
           ? "marked this issue is blocking issue "
           : "removed the blocking issue "}
-        <span className="font-medium text-custom-text-100">
+        <span
+          onClick={() =>
+            console.log(
+              "issue",
+              JSON.stringify({
+                project_id: activity.project,
+                issue_id: activity.issue,
+              })
+            )
+          }
+          className="font-medium text-custom-text-100"
+        >
           {activity.old_value === "" ? activity.new_value : activity.old_value}
         </span>
         .
@@ -125,7 +133,18 @@ const activityDetails: {
         {activity.old_value === ""
           ? "marked this issue is being blocked by issue "
           : "removed this issue being blocked by issue "}
-        <span className="font-medium text-custom-text-100">
+        <span
+          onClick={() =>
+            console.log(
+              "issue",
+              JSON.stringify({
+                project_id: activity.project,
+                issue_id: activity.issue,
+              })
+            )
+          }
+          className="font-medium text-custom-text-100"
+        >
           {activity.old_value === "" ? activity.new_value : activity.old_value}
         </span>
         .
@@ -140,7 +159,18 @@ const activityDetails: {
         {activity.old_value === ""
           ? "marked this issue as duplicate of "
           : "removed this issue as a duplicate of "}
-        <span className="font-medium text-custom-text-100">
+        <span
+          onClick={() =>
+            console.log(
+              "issue",
+              JSON.stringify({
+                project_id: activity.project,
+                issue_id: activity.issue,
+              })
+            )
+          }
+          className="font-medium text-custom-text-100"
+        >
           {activity.verb === "created" ? activity.new_value : activity.old_value}
         </span>
         .
@@ -155,7 +185,18 @@ const activityDetails: {
         {activity.old_value === ""
           ? "marked that this issue relates to "
           : "removed the relation from "}
-        <span className="font-medium text-custom-text-100">
+        <span
+          onClick={() =>
+            console.log(
+              "issue",
+              JSON.stringify({
+                project_id: activity.project,
+                issue_id: activity.issue,
+              })
+            )
+          }
+          className="font-medium text-custom-text-100"
+        >
           {activity.old_value === "" ? activity.new_value : activity.old_value}
         </span>
         .
@@ -176,7 +217,7 @@ const activityDetails: {
             console.log(
               "cycle",
               JSON.stringify({
-                cycle_id: activity.new_identifier,
+                cycle_id: activity.new_identifier ?? activity.old_identifier,
                 project_id: activity.project,
                 cycle_name: activity.verb === "created" ? activity.new_value : activity.old_value,
               })
@@ -305,7 +346,7 @@ const activityDetails: {
             console.log(
               "module",
               JSON.stringify({
-                module_id: activity.new_identifier,
+                module_id: activity.new_identifier ?? activity.old_identifier,
                 project_id: activity.project,
                 module_name: activity.verb === "created" ? activity.new_value : activity.old_value,
               })
@@ -344,7 +385,18 @@ const activityDetails: {
     message: (activity, showIssue) => (
       <>
         {activity.new_value ? "set the parent to " : "removed the parent "}
-        <span className="font-medium text-custom-text-100">
+        <span
+          onClick={() =>
+            console.log(
+              "issue",
+              JSON.stringify({
+                project_id: activity.project,
+                issue_id: activity.issue,
+              })
+            )
+          }
+          className="font-medium text-custom-text-100"
+        >
           {activity.new_value ? activity.new_value : activity.old_value}
         </span>
         {showIssue && (

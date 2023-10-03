@@ -15,12 +15,13 @@ import issuesService from "services/issues.service";
 
 // hooks
 import useUser from "hooks/use-user";
+import { useProjectMyMembership } from "contexts/project-member.context";
+import useEstimateOption from "hooks/use-estimate-option";
 
 // fetch keys
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 // icons
-import { BlockedIcon, BlockerIcon, RelatedIcon } from "components/icons";
 import {
   ChevronDown,
   PlayIcon,
@@ -31,11 +32,8 @@ import {
   Users,
   CopyPlus,
 } from "lucide-react";
-
 import { RectangleGroupIcon } from "@heroicons/react/24/outline";
-
-// hooks
-import useEstimateOption from "hooks/use-estimate-option";
+import { BlockedIcon, BlockerIcon, RelatedIcon, ContrastIcon } from "components/icons";
 
 // ui
 import { SecondaryButton, CustomDatePicker } from "components/ui";
@@ -53,6 +51,7 @@ import {
   RelatesSelect,
   DuplicateSelect,
   ModuleSelect,
+  CycleSelect,
 } from "components/web-view";
 
 // types
@@ -99,9 +98,11 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
+  const { memberRole } = useProjectMyMembership();
+
   const { user } = useUser();
 
-  const [isViewAllOpen, setIsViewAllOpen] = useState(true);
+  const [isViewAllOpen, setIsViewAllOpen] = useState(false);
 
   const { isEstimateActive } = useEstimateOption();
 
@@ -167,6 +168,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
               render={({ field: { value } }) => (
                 <PrioritySelect
                   value={value}
+                  disabled={memberRole.isGuest || memberRole.isViewer}
                   onChange={(val) => submitChanges({ priority: val })}
                 />
               )}
@@ -187,6 +189,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
               render={({ field: { value } }) => (
                 <AssigneeSelect
                   value={value}
+                  disabled={memberRole.isGuest || memberRole.isViewer}
                   onChange={(val: string) => {
                     const assignees = value?.includes(val)
                       ? value?.filter((i) => i !== val)
@@ -216,6 +219,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                     render={({ field: { value } }) => (
                       <EstimateSelect
                         value={value}
+                        disabled={memberRole.isGuest || memberRole.isViewer}
                         onChange={(val) => submitChanges({ estimate_point: val })}
                       />
                     )}
@@ -237,6 +241,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                   render={({ field: { value } }) => (
                     <ParentSelect
                       value={value}
+                      disabled={memberRole.isGuest || memberRole.isViewer}
                       onChange={(val) => submitChanges({ parent: val })}
                     />
                   )}
@@ -254,7 +259,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                   <span className="text-sm text-custom-text-400">Blocking</span>
                 </div>
                 <div>
-                  <BlockerSelect />
+                  <BlockerSelect disabled={memberRole.isGuest || memberRole.isViewer} />
                 </div>
               </div>
               {blockerIssues &&
@@ -276,11 +281,11 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                       type="button"
                       className="duration-300"
                       onClick={() => {
+                        if (memberRole.isGuest || memberRole.isViewer || !user) return;
+
                         const updatedBlockers = blockerIssues.filter(
                           (i) => i.issue_detail?.id !== relation.issue_detail?.id
                         );
-
-                        if (!user) return;
 
                         issuesService
                           .deleteIssueRelation(
@@ -314,7 +319,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                   <span className="text-sm text-custom-text-400">Blocked by</span>
                 </div>
                 <div>
-                  <BlockedBySelect />
+                  <BlockedBySelect disabled={memberRole.isGuest || memberRole.isViewer} />
                 </div>
               </div>
               {blockedByIssues &&
@@ -336,11 +341,11 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                       type="button"
                       className="duration-300"
                       onClick={() => {
+                        if (memberRole.isGuest || memberRole.isViewer || !user) return;
+
                         const updatedBlocked = blockedByIssues.filter(
                           (i) => i?.id !== relation?.id
                         );
-
-                        if (!user) return;
 
                         issuesService
                           .deleteIssueRelation(
@@ -374,7 +379,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                   <span className="text-sm text-custom-text-400">Duplicate</span>
                 </div>
                 <div>
-                  <DuplicateSelect />
+                  <DuplicateSelect disabled={memberRole.isGuest || memberRole.isViewer} />
                 </div>
               </div>
               {duplicateIssuesRelation &&
@@ -396,7 +401,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                       type="button"
                       className="duration-300"
                       onClick={() => {
-                        if (!user) return;
+                        if (memberRole.isGuest || memberRole.isViewer || !user) return;
 
                         issuesService
                           .deleteIssueRelation(
@@ -428,7 +433,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                   <span className="text-sm text-custom-text-400">Relates To</span>
                 </div>
                 <div>
-                  <RelatesSelect />
+                  <RelatesSelect disabled={memberRole.isGuest || memberRole.isViewer} />
                 </div>
               </div>
               {relatedToIssueRelation &&
@@ -450,7 +455,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                       type="button"
                       className="duration-300"
                       onClick={() => {
-                        if (!user) return;
+                        if (memberRole.isGuest || memberRole.isViewer || !user) return;
 
                         issuesService
                           .deleteIssueRelation(
@@ -489,6 +494,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                         placeholder="Due date"
                         value={value}
                         wrapperClassName="w-full"
+                        disabled={memberRole.isGuest || memberRole.isViewer}
                         onChange={(val) =>
                           submitChanges({
                             target_date: val,
@@ -512,7 +518,30 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                   <span className="text-sm text-custom-text-400">Module</span>
                 </div>
                 <div>
-                  <ModuleSelect value={watch("issue_module")} />
+                  <ModuleSelect
+                    value={watch("issue_module")}
+                    disabled={memberRole.isGuest || memberRole.isViewer}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div className="border border-custom-border-200 rounded-[4px] p-2">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-1">
+                  <ContrastIcon
+                    color="rgba(var(--color-text-400))"
+                    className="h-4 w-4 flex-shrink-0"
+                  />
+                  <span className="text-sm text-custom-text-400">Cycle</span>
+                </div>
+                <div>
+                  <CycleSelect
+                    value={watch("issue_cycle")}
+                    disabled={memberRole.isGuest || memberRole.isViewer}
+                  />
                 </div>
               </div>
             </div>

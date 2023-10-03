@@ -16,7 +16,7 @@ import issuesService from "services/issues.service";
 import { Link as LinkIcon, Plus, Pencil, X } from "lucide-react";
 
 // components
-import { Label, WebViewModal, CreateUpdateLinkForm } from "components/web-view";
+import { Label, WebViewModal, CreateUpdateLinkForm, DeleteConfirmation } from "components/web-view";
 
 // ui
 import { SecondaryButton } from "components/ui";
@@ -30,33 +30,6 @@ import type { IIssue } from "types";
 type Props = {
   allowed: boolean;
   issueDetails: IIssue;
-};
-
-type DeleteConfirmationProps = {
-  isOpen: boolean;
-  onCancel: () => void;
-  onConfirm: () => void;
-};
-
-const DeleteConfirmation: React.FC<DeleteConfirmationProps> = (props) => {
-  const { isOpen, onCancel, onConfirm } = props;
-
-  return (
-    <WebViewModal isOpen={isOpen} onClose={onCancel} modalTitle="Delete Link">
-      <div className="text-custom-text-200">
-        <p>Are you sure you want to delete this link?</p>
-      </div>
-      <div className="mt-4 flex gap-2">
-        <button
-          type="button"
-          onClick={onConfirm}
-          className="w-full py-2 flex items-center justify-center rounded-[4px] bg-red-500/10 text-red-500 border border-red-500 text-base font-medium"
-        >
-          Delete
-        </button>
-      </div>
-    </WebViewModal>
-  );
 };
 
 export const IssueLinks: React.FC<Props> = (props) => {
@@ -114,6 +87,8 @@ export const IssueLinks: React.FC<Props> = (props) => {
       </WebViewModal>
 
       <DeleteConfirmation
+        title="Delete Link"
+        content="Are you sure you want to delete this link?"
         isOpen={!!deleteSelected}
         onCancel={() => setDeleteSelected(null)}
         onConfirm={() => {

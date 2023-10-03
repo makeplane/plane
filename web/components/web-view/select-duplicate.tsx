@@ -7,9 +7,6 @@ import { useRouter } from "next/router";
 // swr
 import { mutate } from "swr";
 
-// react hook form
-import { useFormContext } from "react-hook-form";
-
 // services
 import issuesService from "services/issues.service";
 
@@ -17,7 +14,7 @@ import issuesService from "services/issues.service";
 import useUser from "hooks/use-user";
 
 // fetch keys
-import { ISSUE_DETAILS } from "constants/fetch-keys";
+import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 // icons
 import { ChevronDown } from "lucide-react";
@@ -26,7 +23,7 @@ import { ChevronDown } from "lucide-react";
 import { IssuesSelectBottomSheet } from "components/web-view";
 
 // types
-import { BlockeIssueDetail, ISearchIssueResponse, IIssue } from "types";
+import { BlockeIssueDetail, ISearchIssueResponse } from "types";
 
 type Props = {
   disabled?: boolean;
@@ -40,11 +37,11 @@ export const DuplicateSelect: React.FC<Props> = (props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
-  const { watch } = useFormContext<IIssue>();
-
   const { user } = useUser();
 
   const onSubmit = async (data: ISearchIssueResponse[]) => {
+    if (!workspaceSlug || !projectId || !issueId || !user || disabled) return;
+
     if (data.length === 0)
       return console.log(
         "toast",
@@ -70,18 +67,25 @@ export const DuplicateSelect: React.FC<Props> = (props) => {
     if (!user) return;
 
     issuesService
-      .createIssueRelation(workspaceSlug as string, projectId as string, issueId as string, user, {
-        related_list: [
-          ...selectedIssues.map((issue) => ({
-            issue: issueId as string,
-            issue_detail: issue.blocker_issue_detail,
-            related_issue: issue.blocker_issue_detail.id,
-            relation_type: "duplicate" as const,
-          })),
-        ],
-      })
+      .createIssueRelation(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        issueId.toString(),
+        user,
+        {
+          related_list: [
+            ...selectedIssues.map((issue) => ({
+              issue: issueId as string,
+              issue_detail: issue.blocker_issue_detail,
+              related_issue: issue.blocker_issue_detail.id,
+              relation_type: "duplicate" as const,
+            })),
+          ],
+        }
+      )
       .then(() => {
         mutate(ISSUE_DETAILS(issueId as string));
+        mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
       });
 
     setIsBottomSheetOpen(false);
@@ -93,6 +97,7 @@ export const DuplicateSelect: React.FC<Props> = (props) => {
         isOpen={isBottomSheetOpen}
         onClose={() => setIsBottomSheetOpen(false)}
         onSubmit={onSubmit}
+        searchParams={{ issue_relation: true }}
       />
 
       <button

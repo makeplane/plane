@@ -17,16 +17,17 @@ import { LayerDiagonalIcon } from "components/icons";
 import { Loader, PrimaryButton, SecondaryButton, ToggleSwitch } from "components/ui";
 
 // types
-import { ISearchIssueResponse } from "types";
+import { ISearchIssueResponse, TProjectIssuesSearchParams } from "types";
 
 type IssuesSelectBottomSheetProps = {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: ISearchIssueResponse[]) => Promise<void>;
+  searchParams: Partial<TProjectIssuesSearchParams>;
 };
 
 export const IssuesSelectBottomSheet: React.FC<IssuesSelectBottomSheetProps> = (props) => {
-  const { isOpen, onClose, onSubmit } = props;
+  const { isOpen, onClose, onSubmit, searchParams } = props;
 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
@@ -69,13 +70,21 @@ export const IssuesSelectBottomSheet: React.FC<IssuesSelectBottomSheetProps> = (
     projectService
       .projectIssuesSearch(workspaceSlug as string, projectId as string, {
         search: debouncedSearchTerm,
-        issue_relation: true,
+        ...searchParams,
         issue_id: issueId.toString(),
         workspace_search: isWorkspaceLevel,
       })
       .then((res) => setIssues(res))
       .finally(() => setIsSearching(false));
-  }, [debouncedSearchTerm, isOpen, isWorkspaceLevel, issueId, projectId, workspaceSlug]);
+  }, [
+    debouncedSearchTerm,
+    isOpen,
+    isWorkspaceLevel,
+    issueId,
+    projectId,
+    workspaceSlug,
+    searchParams,
+  ]);
 
   return (
     <WebViewModal isOpen={isOpen} onClose={onClose} modalTitle="Select issue">
@@ -118,15 +127,28 @@ export const IssuesSelectBottomSheet: React.FC<IssuesSelectBottomSheetProps> = (
 
       {!isSearching && (
         <WebViewModal.Options
-          options={issues.map((issues) => ({
-            value: issues.id,
-            label: issues.name,
-            checked: selectedIssues.some((i) => i.id === issues.id),
+          options={issues.map((issue) => ({
+            value: issue.id,
+            label: (
+              <div className="flex items-center gap-2">
+                <span
+                  className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                  style={{
+                    backgroundColor: issue.state__color,
+                  }}
+                />
+                <span className="flex-shrink-0 text-xs">
+                  {issue.project__identifier}-{issue.sequence_id}
+                </span>
+                {issue.name}
+              </div>
+            ),
+            checked: selectedIssues.some((i) => i.id === issue.id),
             onClick() {
-              if (selectedIssues.some((i) => i.id === issues.id)) {
-                setSelectedIssues(selectedIssues.filter((i) => i.id !== issues.id));
+              if (selectedIssues.some((i) => i.id === issue.id)) {
+                setSelectedIssues(selectedIssues.filter((i) => i.id !== issue.id));
               } else {
-                setSelectedIssues([...selectedIssues, issues]);
+                setSelectedIssues([...selectedIssues, issue]);
               }
             },
           }))}
@@ -134,7 +156,7 @@ export const IssuesSelectBottomSheet: React.FC<IssuesSelectBottomSheetProps> = (
       )}
 
       {selectedIssues.length > 0 && (
-        <WebViewModal.Footer className="flex items-center justify-end gap-2 p-3">
+        <WebViewModal.Footer className="flex items-center justify-end gap-2">
           <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
           <PrimaryButton
             onClick={() => {

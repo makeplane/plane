@@ -8,7 +8,8 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // services
-import modulesService from "services/modules.service";
+import issuesService from "services/issues.service";
+import cyclesService from "services/cycles.service";
 
 // hooks
 import useUser from "hooks/use-user";
@@ -16,8 +17,8 @@ import useUser from "hooks/use-user";
 // fetch keys
 import {
   ISSUE_DETAILS,
-  MODULE_LIST,
-  MODULE_ISSUES,
+  INCOMPLETE_CYCLES_LIST,
+  CYCLE_ISSUES,
   PROJECT_ISSUES_ACTIVITY,
 } from "constants/fetch-keys";
 
@@ -28,14 +29,14 @@ import { ChevronDown } from "lucide-react";
 import { WebViewModal } from "components/web-view";
 
 // types
-import { IModule, IIssueModule } from "types";
+import { ICycle, IIssueCycle } from "types";
 
 type Props = {
   disabled?: boolean;
-  value?: IIssueModule | null;
+  value?: IIssueCycle | null;
 };
 
-export const ModuleSelect: React.FC<Props> = (props) => {
+export const CycleSelect: React.FC<Props> = (props) => {
   const { disabled = false, value } = props;
 
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
@@ -43,53 +44,59 @@ export const ModuleSelect: React.FC<Props> = (props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
-  const { data: modules } = useSWR(
-    workspaceSlug && projectId ? MODULE_LIST(projectId as string) : null,
+  const { data: incompleteCycles } = useSWR(
+    workspaceSlug && projectId ? INCOMPLETE_CYCLES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => modulesService.getModules(workspaceSlug as string, projectId as string)
+      ? () =>
+          cyclesService.getCyclesWithParams(
+            workspaceSlug as string,
+            projectId as string,
+            "incomplete"
+          )
       : null
   );
 
   const { user } = useUser();
 
-  const handleModuleChange = (moduleDetail: IModule) => {
+  const handleCycleChange = (cycleDetails: ICycle) => {
     if (!workspaceSlug || !projectId || !issueId || disabled) return;
 
-    modulesService
-      .addIssuesToModule(
+    issuesService
+      .addIssueToCycle(
         workspaceSlug as string,
         projectId as string,
-        moduleDetail.id,
+        cycleDetails.id,
         {
           issues: [issueId.toString()],
         },
         user
       )
       .then(() => {
-        mutate(ISSUE_DETAILS(issueId.toString()));
+        mutate(ISSUE_DETAILS(issueId as string));
         mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
       });
   };
 
-  const removeIssueFromModule = (bridgeId?: string, moduleId?: string) => {
-    if (!workspaceSlug || !projectId || !moduleId || !bridgeId || disabled) return;
+  const removeIssueFromCycle = (bridgeId?: string, cycleId?: string) => {
+    if (!workspaceSlug || !projectId || !bridgeId || !cycleId || disabled) return;
 
     mutate(
       ISSUE_DETAILS(issueId as string),
       (prev) => {
         if (!prev) return prev;
+
         return {
           ...prev,
-          issue_module: null,
+          issue_cycle: null,
         };
       },
       false
     );
 
-    modulesService
-      .removeIssueFromModule(workspaceSlug as string, projectId as string, moduleId, bridgeId)
+    issuesService
+      .removeIssueFromCycle(workspaceSlug.toString(), projectId.toString(), cycleId, bridgeId)
       .then(() => {
-        mutate(MODULE_ISSUES(moduleId));
+        mutate(CYCLE_ISSUES(cycleId));
         mutate(ISSUE_DETAILS(issueId as string));
         mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
       })
@@ -107,12 +114,12 @@ export const ModuleSelect: React.FC<Props> = (props) => {
       >
         <WebViewModal.Options
           options={[
-            ...(modules ?? []).map((mod) => ({
-              checked: mod.id === value?.module,
-              label: mod.name,
-              value: mod.id,
+            ...(incompleteCycles ?? []).map((cycle) => ({
+              checked: cycle.id === value?.cycle,
+              label: cycle.name,
+              value: cycle.id,
               onClick: () => {
-                handleModuleChange(mod);
+                handleCycleChange(cycle);
                 setIsBottomSheetOpen(false);
               },
             })),
@@ -121,7 +128,7 @@ export const ModuleSelect: React.FC<Props> = (props) => {
               label: "None",
               onClick: () => {
                 setIsBottomSheetOpen(false);
-                removeIssueFromModule(value?.id, value?.module);
+                removeIssueFromCycle(value?.id, value?.cycle);
               },
               value: "none",
             },
@@ -137,9 +144,7 @@ export const ModuleSelect: React.FC<Props> = (props) => {
           "relative w-full px-2.5 py-0.5 text-base flex justify-between items-center gap-0.5 text-custom-text-100"
         }
       >
-        <span className="text-custom-text-200">
-          {value?.module_detail?.name ?? "Select module"}
-        </span>
+        <span className="text-custom-text-200">{value?.cycle_detail.name ?? "Select cycle"}</span>
         <ChevronDown className="w-4 h-4 text-custom-text-200" />
       </button>
     </>

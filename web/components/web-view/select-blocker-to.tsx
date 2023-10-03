@@ -17,7 +17,7 @@ import issuesService from "services/issues.service";
 import useUser from "hooks/use-user";
 
 // fetch keys
-import { ISSUE_DETAILS } from "constants/fetch-keys";
+import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 // icons
 import { ChevronDown } from "lucide-react";
@@ -45,6 +45,8 @@ export const BlockerSelect: React.FC<Props> = (props) => {
   const { user } = useUser();
 
   const onSubmit = async (data: ISearchIssueResponse[]) => {
+    if (disabled) return;
+
     if (data.length === 0)
       return console.log(
         "toast",
@@ -100,6 +102,7 @@ export const BlockerSelect: React.FC<Props> = (props) => {
             ],
           };
         });
+        mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
       });
 
     setIsBlockerModalOpen(false);
@@ -111,6 +114,7 @@ export const BlockerSelect: React.FC<Props> = (props) => {
         isOpen={isBlockerModalOpen}
         onClose={() => setIsBlockerModalOpen(false)}
         onSubmit={onSubmit}
+        searchParams={{ issue_relation: true }}
       />
 
       <button

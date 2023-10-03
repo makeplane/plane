@@ -48,6 +48,7 @@ export const ParentSelect: React.FC<Props> = (props) => {
         isOpen={isParentModalOpen}
         handleClose={() => setIsParentModalOpen(false)}
         onChange={(issue) => {
+          if (disabled) return;
           onChange(issue.id);
           setSelectedParentIssue(issue);
         }}
