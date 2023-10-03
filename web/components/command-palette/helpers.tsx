@@ -1,4 +1,5 @@
 // types
+import { localized } from "helpers/localization.helper";
 import {
   IWorkspaceDefaultSearchResult,
   IWorkspaceIssueSearchResult,
@@ -25,7 +26,7 @@ export const commandGroups: {
     ),
     path: (cycle: IWorkspaceDefaultSearchResult) =>
       `/${cycle?.workspace__slug}/projects/${cycle?.project_id}/cycles/${cycle?.id}`,
-    title: "Cycles",
+    title: localized("Cycles"),
   },
   issue: {
     icon: "stack",
@@ -38,7 +39,7 @@ export const commandGroups: {
     ),
     path: (issue: IWorkspaceIssueSearchResult) =>
       `/${issue?.workspace__slug}/projects/${issue?.project_id}/issues/${issue?.id}`,
-    title: "Issues",
+    title: localized("Issues"),
   },
   issue_view: {
     icon: "photo_filter",
@@ -51,7 +52,7 @@ export const commandGroups: {
     ),
     path: (view: IWorkspaceDefaultSearchResult) =>
       `/${view?.workspace__slug}/projects/${view?.project_id}/views/${view?.id}`,
-    title: "Views",
+    title: localized("Views"),
   },
   module: {
     icon: "dataset",
@@ -64,7 +65,7 @@ export const commandGroups: {
     ),
     path: (module: IWorkspaceDefaultSearchResult) =>
       `/${module?.workspace__slug}/projects/${module?.project_id}/modules/${module?.id}`,
-    title: "Modules",
+    title: localized("Modules"),
   },
   page: {
     icon: "article",
@@ -77,19 +78,19 @@ export const commandGroups: {
     ),
     path: (page: IWorkspaceDefaultSearchResult) =>
       `/${page?.workspace__slug}/projects/${page?.project_id}/pages/${page?.id}`,
-    title: "Pages",
+    title: localized("Pages"),
   },
   project: {
     icon: "work",
     itemName: (project: IWorkspaceProjectSearchResult) => project?.name,
     path: (project: IWorkspaceProjectSearchResult) =>
       `/${project?.workspace__slug}/projects/${project?.id}/issues/`,
-    title: "Projects",
+    title: localized("Projects"),
   },
   workspace: {
     icon: "grid_view",
     itemName: (workspace: IWorkspaceSearchResult) => workspace?.name,
     path: (workspace: IWorkspaceSearchResult) => `/${workspace?.slug}/`,
-    title: "Workspaces",
+    title: localized("Workspaces"),
   },
 };

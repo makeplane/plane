@@ -55,6 +55,9 @@ import type { ICycle, IIssue, IIssueLink, linkDetails, IModule } from "types";
 // fetch-keys
 import { ISSUE_DETAILS } from "constants/fetch-keys";
 import { ContrastIcon } from "components/icons";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   control: any;
@@ -96,6 +99,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
   const [linkModal, setLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<linkDetails | null>(null);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
@@ -164,14 +168,14 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
         if (err.status === 400)
           setToastAlert({
             type: "error",
-            title: "Error!",
-            message: "This URL already exists for this issue.",
+            title: store.locale.localized("Error!"),
+            message: store.locale.localized("This URL already exists for this issue."),
           });
         else
           setToastAlert({
             type: "error",
-            title: "Error!",
-            message: "Something went wrong. Please try again.",
+            title: store.locale.localized("Error!"),
+            message: store.locale.localized("Something went wrong. Please try again."),
           });
       });
   };
@@ -243,8 +247,8 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
     ).then(() => {
       setToastAlert({
         type: "success",
-        title: "Link Copied!",
-        message: "Issue link copied to clipboard.",
+        title: store.locale.localized("Link Copied!"),
+        message: store.locale.localized("Issue link copied to clipboard."),
       });
     });
   };
@@ -316,13 +320,18 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 <button
                   type="button"
                   className="rounded-md flex items-center gap-2 border border-custom-primary-100 px-2 py-1 text-xs text-custom-primary-100 shadow-sm duration-300 focus:outline-none"
+                  suppressHydrationWarning
                   onClick={() => {
                     if (subscribed) handleUnsubscribe();
                     else handleSubscribe();
                   }}
                 >
                   <Icon iconName="notifications" />
-                  {loading ? "Loading..." : subscribed ? "Unsubscribe" : "Subscribe"}
+                  {loading
+                    ? store.locale.localized("Loading...")
+                    : subscribed
+                    ? store.locale.localized("Unsubscribe")
+                    : store.locale.localized("Subscribe")}
                 </button>
               )}
             {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
@@ -354,7 +363,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
                       <Squares2X2Icon className="h-4 w-4 flex-shrink-0" />
-                      <p>State</p>
+                      <p>{store.locale.localized("State")}</p>
                     </div>
                     <div className="sm:basis-1/2">
                       <Controller
@@ -375,7 +384,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
                       <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
-                      <p>Assignees</p>
+                      <p>{store.locale.localized("Assignees")}</p>
                     </div>
                     <div className="sm:basis-1/2">
                       <Controller
@@ -396,7 +405,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
                       <ChartBarIcon className="h-4 w-4 flex-shrink-0" />
-                      <p>Priority</p>
+                      <p>{store.locale.localized("Priority")}</p>
                     </div>
                     <div className="sm:basis-1/2">
                       <Controller
@@ -418,7 +427,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                     <div className="flex flex-wrap items-center py-2">
                       <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
                         <PlayIcon className="h-4 w-4 flex-shrink-0 -rotate-90" />
-                        <p>Estimate</p>
+                        <p>{store.locale.localized("Estimate")}</p>
                       </div>
                       <div className="sm:basis-1/2">
                         <Controller
@@ -445,7 +454,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
                       <UserIcon className="h-4 w-4 flex-shrink-0" />
-                      <p>Parent</p>
+                      <p>{store.locale.localized("Parent")}</p>
                     </div>
                     <div className="sm:basis-1/2">
                       <Controller
@@ -543,7 +552,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
                       <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
-                      <p>Start date</p>
+                      <p>{store.locale.localized("Start date")}</p>
                     </div>
                     <div className="sm:basis-1/2">
                       <Controller
@@ -551,7 +560,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                         name="start_date"
                         render={({ field: { value } }) => (
                           <CustomDatePicker
-                            placeholder="Start date"
+                            placeholder={store.locale.localized("Start date")}
                             value={value}
                             onChange={(val) =>
                               submitChanges({
@@ -571,7 +580,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
                       <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
-                      <p>Due date</p>
+                      <p>{store.locale.localized("Due date")}</p>
                     </div>
                     <div className="sm:basis-1/2">
                       <Controller
@@ -579,7 +588,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                         name="target_date"
                         render={({ field: { value } }) => (
                           <CustomDatePicker
-                            placeholder="Due date"
+                            placeholder={store.locale.localized("Due date")}
                             value={value}
                             onChange={(val) =>
                               submitChanges({
@@ -603,7 +612,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
                       <ContrastIcon className="h-4 w-4 flex-shrink-0" />
-                      <p>Cycle</p>
+                      <p>{store.locale.localized("Cycle")}</p>
                     </div>
                     <div className="space-y-1 sm:w-1/2">
                       <SidebarCycleSelect
@@ -618,7 +627,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
                       <RectangleGroupIcon className="h-4 w-4 flex-shrink-0" />
-                      <p>Module</p>
+                      <p>{store.locale.localized("Module")}</p>
                     </div>
                     <div className="space-y-1 sm:w-1/2">
                       <SidebarModuleSelect
@@ -645,7 +654,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
           {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
             <div className={`min-h-[116px] py-1 text-xs ${uneditable ? "opacity-60" : ""}`}>
               <div className="flex items-center justify-between gap-2">
-                <h4>Links</h4>
+                <h4>{store.locale.localized("Links")}</h4>
                 {!isNotAllowed && (
                   <button
                     type="button"

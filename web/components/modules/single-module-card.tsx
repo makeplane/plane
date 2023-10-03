@@ -30,6 +30,9 @@ import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { ICurrentUserResponse, IModule } from "types";
 // fetch-key
 import { MODULE_LIST } from "constants/fetch-keys";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   module: IModule;
@@ -40,6 +43,7 @@ type Props = {
 export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, user }) => {
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -74,8 +78,10 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
       .catch(() => {
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Couldn't add the module to favorites. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized(
+            "Couldn't add the module to favorites. Please try again."
+          ),
         });
       });
   };
@@ -98,8 +104,10 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
       .catch(() => {
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Couldn't remove the module from favorites. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized(
+            "Couldn't remove the module from favorites. Please try again."
+          ),
         });
       });
   };
@@ -113,8 +121,8 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
     ).then(() => {
       setToastAlert({
         type: "success",
-        title: "Link Copied!",
-        message: "Module link copied to clipboard.",
+        title: store.locale.localized("Link Copied!"),
+        message: store.locale.localized("Module link copied to clipboard."),
       });
     });
   };
@@ -163,19 +171,19 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
                   <CustomMenu.MenuItem onClick={handleEditModule}>
                     <span className="flex items-center justify-start gap-2">
                       <PencilIcon className="h-4 w-4" />
-                      <span>Edit module</span>
+                      <span>{store.locale.localized("Edit module")}</span>
                     </span>
                   </CustomMenu.MenuItem>
                   <CustomMenu.MenuItem onClick={handleDeleteModule}>
                     <span className="flex items-center justify-start gap-2">
                       <TrashIcon className="h-4 w-4" />
-                      <span>Delete module</span>
+                      <span>{store.locale.localized("Delete module")}</span>
                     </span>
                   </CustomMenu.MenuItem>
                   <CustomMenu.MenuItem onClick={handleCopyText}>
                     <span className="flex items-center justify-start gap-2">
                       <LinkIcon className="h-4 w-4" />
-                      <span>Copy module link</span>
+                      <span>{store.locale.localized("Copy module link")}</span>
                     </span>
                   </CustomMenu.MenuItem>
                 </CustomMenu>
@@ -184,20 +192,24 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
             <div className="grid grid-cols-2 gap-2 text-custom-text-200">
               <div className="flex items-start gap-1">
                 <CalendarDaysIcon className="h-4 w-4" />
-                <span>Start:</span>
-                <span>{renderShortDateWithYearFormat(startDate, "Not set")}</span>
+                <span>{store.locale.localized("Start")}:</span>
+                <span>
+                  {renderShortDateWithYearFormat(startDate, store.locale.localized("Not set"))}
+                </span>
               </div>
               <div className="flex items-start gap-1">
                 <TargetIcon className="h-4 w-4" />
-                <span>End:</span>
-                <span>{renderShortDateWithYearFormat(endDate, "Not set")}</span>
+                <span>{store.locale.localized("End")}:</span>
+                <span>
+                  {renderShortDateWithYearFormat(endDate, store.locale.localized("Not set"))}
+                </span>
               </div>
             </div>
           </div>
         </div>
         <div className="flex h-20 flex-col items-end bg-custom-background-80">
           <div className="flex w-full items-center justify-between gap-2 justify-self-end p-4 text-custom-text-200">
-            <span>Progress</span>
+            <span>{store.locale.localized("Progress")}</span>
             <div className="bar relative h-1 w-full rounded bg-custom-background-90">
               <div
                 className="absolute top-0 left-0 h-1 rounded bg-green-500 duration-300"
@@ -210,7 +222,8 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
           </div>
           <div className="item-center flex h-full w-full justify-between px-4 pb-4 text-custom-text-200">
             <p>
-              Last updated:
+              {store.locale.localized("Last updated")}
+              {": "}
               <span className="font-medium">{renderShortDateWithYearFormat(lastUpdated)}</span>
             </p>
             {module.members_detail.length > 0 && (

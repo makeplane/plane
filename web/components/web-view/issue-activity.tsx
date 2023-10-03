@@ -29,6 +29,10 @@ import { Icon } from "components/ui";
 // types
 import type { IIssue, IIssueComment } from "types";
 
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
+
 type Props = {
   allowed: boolean;
   issueDetails: IIssue;
@@ -37,6 +41,7 @@ type Props = {
 export const IssueActivity: React.FC<Props> = (props) => {
   const { issueDetails, allowed } = props;
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
@@ -104,8 +109,8 @@ export const IssueActivity: React.FC<Props> = (props) => {
           "toast",
           JSON.stringify({
             type: "error",
-            title: "Error!",
-            message: "Comment could not be posted. Please try again.",
+            title: store.locale.localized("Error!"),
+            message: store.locale.localized("Comment could not be posted. Please try again."),
           })
         )
       );
@@ -121,7 +126,7 @@ export const IssueActivity: React.FC<Props> = (props) => {
             const message = activityItem.field ? (
               <ActivityMessage activity={activityItem} />
             ) : (
-              "created the issue."
+              store.locale.localized("created the issue.")
             );
 
             if ("field" in activityItem && activityItem.field !== "updated_by") {

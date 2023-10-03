@@ -10,6 +10,9 @@ import { TextArea } from "components/ui";
 import { TipTapEditor } from "components/tiptap";
 // types
 import { IIssue } from "types";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 export interface IssueDescriptionFormValues {
   name: string;
@@ -32,6 +35,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
   workspaceSlug,
   isAllowed,
 }) => {
+  const store: RootStore = useMobxStore();
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   const [characterLimit, setCharacterLimit] = useState(false);
 
@@ -96,7 +100,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
           <TextArea
             id="name"
             name="name"
-            placeholder="Enter issue name"
+            placeholder={store.locale.localized("Enter issue name")}
             register={register}
             onFocus={() => setCharacterLimit(true)}
             onChange={(e) => {
@@ -168,7 +172,9 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
             isSubmitting === "saved" ? "fadeOut" : "fadeIn"
           }`}
         >
-          {isSubmitting === "submitting" ? "Saving..." : "Saved"}
+          {isSubmitting === "submitting"
+            ? store.locale.localized("Saving...")
+            : store.locale.localized("Saved")}
         </div>
       </div>
     </div>

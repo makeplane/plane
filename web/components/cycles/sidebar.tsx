@@ -41,6 +41,9 @@ import {
 import { ICurrentUserResponse, ICycle } from "types";
 // fetch-keys
 import { CYCLE_DETAILS } from "constants/fetch-keys";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   cycle: ICycle | undefined;
@@ -59,6 +62,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
 }) => {
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
 
@@ -96,13 +100,13 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
       .then(() => {
         setToastAlert({
           type: "success",
-          title: "Cycle link copied to clipboard",
+          title: store.locale.localized("Cycle link copied to clipboard"),
         });
       })
       .catch(() => {
         setToastAlert({
           type: "error",
-          title: "Some error occurred",
+          title: store.locale.localized("Some error occurred"),
         });
       });
   };
@@ -139,8 +143,10 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
       if (!isDateGreaterThanToday(`${watch("end_date")}`)) {
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Unable to create cycle in past date. Please enter a valid date.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized(
+            "Unable to create cycle in past date. Please enter a valid date."
+          ),
         });
         return;
       }
@@ -159,16 +165,17 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
           });
           setToastAlert({
             type: "success",
-            title: "Success!",
-            message: "Cycle updated successfully.",
+            title: store.locale.localized("Success!"),
+            message: store.locale.localized("Cycle updated successfully."),
           });
           return;
         } else {
           setToastAlert({
             type: "error",
-            title: "Error!",
-            message:
-              "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
+            title: store.locale.localized("Error!"),
+            message: store.locale.localized(
+              "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates"
+            ),
           });
           return;
         }
@@ -186,15 +193,16 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
         });
         setToastAlert({
           type: "success",
-          title: "Success!",
-          message: "Cycle updated successfully.",
+          title: store.locale.localized("Success!"),
+          message: store.locale.localized("Cycle updated successfully."),
         });
       } else {
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message:
-            "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized(
+            "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates"
+          ),
         });
       }
     }
@@ -213,8 +221,10 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
       if (!isDateGreaterThanToday(`${watch("end_date")}`)) {
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Unable to create cycle in past date. Please enter a valid date.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized(
+            "Unable to create cycle in past date. Please enter a valid date."
+          ),
         });
         return;
       }
@@ -233,16 +243,17 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
           });
           setToastAlert({
             type: "success",
-            title: "Success!",
-            message: "Cycle updated successfully.",
+            title: store.locale.localized("Success!"),
+            message: store.locale.localized("Cycle updated successfully."),
           });
           return;
         } else {
           setToastAlert({
             type: "error",
-            title: "Error!",
-            message:
-              "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
+            title: store.locale.localized("Error!"),
+            message: store.locale.localized(
+              "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates"
+            ),
           });
           return;
         }
@@ -260,15 +271,16 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
         });
         setToastAlert({
           type: "success",
-          title: "Success!",
-          message: "Cycle updated successfully.",
+          title: store.locale.localized("Success!"),
+          message: store.locale.localized("Cycle updated successfully."),
         });
       } else {
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message:
-            "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized(
+            "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates"
+          ),
         });
       }
     }
@@ -319,7 +331,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                               new Date(
                                 `${watch("start_date") ? watch("start_date") : cycle?.start_date}`
                               ),
-                              "Start date"
+                              store.locale.localized("Start date")
                             )}
                           </span>
                         </Popover.Button>
@@ -370,7 +382,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                               new Date(
                                 `${watch("end_date") ? watch("end_date") : cycle?.end_date}`
                               ),
-                              "End date"
+                              store.locale.localized("End date")
                             )}
                           </span>
                         </Popover.Button>
@@ -418,14 +430,14 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                         <CustomMenu.MenuItem onClick={() => setCycleDeleteModal(true)}>
                           <span className="flex items-center justify-start gap-2">
                             <TrashIcon className="h-4 w-4" />
-                            <span>Delete</span>
+                            <span>{store.locale.localized("Delete")}</span>
                           </span>
                         </CustomMenu.MenuItem>
                       )}
                       <CustomMenu.MenuItem onClick={handleCopyText}>
                         <span className="flex items-center justify-start gap-2">
                           <LinkIcon className="h-4 w-4" />
-                          <span>Copy link</span>
+                          <span>{store.locale.localized("Copy link")}</span>
                         </span>
                       </CustomMenu.MenuItem>
                     </CustomMenu>
@@ -440,7 +452,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                   <div className="flex items-center justify-start gap-1">
                     <div className="flex w-40 items-center justify-start gap-2 text-custom-text-200">
                       <UserCircleIcon className="h-5 w-5" />
-                      <span>Lead</span>
+                      <span>{store.locale.localized("Lead")}</span>
                     </div>
 
                     <div className="flex items-center gap-2.5">
@@ -464,7 +476,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                   <div className="flex items-center justify-start gap-1">
                     <div className="flex w-40 items-center justify-start gap-2 text-custom-text-200">
                       <ChartPieIcon className="h-5 w-5" />
-                      <span>Progress</span>
+                      <span>{store.locale.localized("Progress")}</span>
                     </div>
 
                     <div className="flex items-center gap-2.5 text-custom-text-200">
@@ -510,8 +522,8 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                           />
                           <span className="text-xs italic text-custom-text-200">
                             {cycleStatus === "upcoming"
-                              ? "Cycle is yet to start."
-                              : "Invalid date. Please enter valid date."}
+                              ? store.locale.localized("Cycle is yet to start.")
+                              : store.locale.localized("Cycle has ended.")}
                           </span>
                         </div>
                       )}
@@ -526,7 +538,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                                   <DocumentIcon className="h-3 w-3 text-custom-text-200" />
                                 </span>
                                 <span>
-                                  Pending Issues -{" "}
+                                  {store.locale.localized("Pending Issues")} -{" "}
                                   {cycle.total_issues -
                                     (cycle.completed_issues + cycle.cancelled_issues)}
                                 </span>
@@ -535,11 +547,11 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                               <div className="flex items-center gap-3 text-custom-text-100">
                                 <div className="flex items-center justify-center gap-1">
                                   <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
-                                  <span>Ideal</span>
+                                  <span>{store.locale.localized("Ideal")}</span>
                                 </div>
                                 <div className="flex items-center justify-center gap-1">
                                   <span className="h-2.5 w-2.5 rounded-full bg-[#4C8FFF]" />
-                                  <span>Current</span>
+                                  <span>{store.locale.localized("Current")}</span>
                                 </div>
                               </div>
                             </div>
@@ -569,7 +581,9 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                   >
                     <div className="flex w-full items-center justify-between gap-2">
                       <div className="flex items-center justify-start gap-2 text-sm">
-                        <span className="font-medium text-custom-text-200">Other Information</span>
+                        <span className="font-medium text-custom-text-200">
+                          {store.locale.localized("Other Information")}
+                        </span>
                       </div>
 
                       {cycle.total_issues > 0 ? (
@@ -587,7 +601,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                             className="fill-current text-custom-text-200"
                           />
                           <span className="text-xs italic text-custom-text-200">
-                            No issues found. Please add issue.
+                            {store.locale.localized("No issues found. Please add issue.")}
                           </span>
                         </div>
                       )}

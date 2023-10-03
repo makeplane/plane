@@ -3,7 +3,7 @@ import { PlayIcon } from "@heroicons/react/24/outline";
 // types
 import { IDefaultAnalyticsResponse, TStateGroups } from "types";
 // constants
-import { STATE_GROUP_COLORS } from "constants/state";
+import { STATE_GROUP_COLORS, STATE_GROUP_LABEL } from "constants/state";
 import { RootStore } from "store/root";
 import { useMobxStore } from "lib/mobx/store-provider";
 
@@ -36,7 +36,9 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => {
                       backgroundColor: STATE_GROUP_COLORS[group.state_group as TStateGroups],
                     }}
                   />
-                  <h6 className="capitalize">{group.state_group}</h6>
+                  <h6 className="capitalize">
+                    {STATE_GROUP_LABEL[group.state_group] ?? group.state_group}
+                  </h6>
                   <span className="ml-1 rounded-3xl bg-custom-background-80 px-2 py-0.5 text-[0.65rem] text-custom-text-200">
                     {group.state_count}
                   </span>

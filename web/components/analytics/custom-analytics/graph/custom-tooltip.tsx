@@ -1,7 +1,11 @@
 // nivo
 import { BarTooltipProps } from "@nivo/bar";
 import { DATE_KEYS } from "constants/analytics";
+import { PRIORITIES_LABEL } from "constants/project";
+import { STATE_GROUP_LABEL } from "constants/state";
 import { renderMonthAndYear } from "helpers/analytics.helper";
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 // types
 import { IAnalyticsParams, IAnalyticsResponse } from "types";
 
@@ -12,22 +16,27 @@ type Props = {
 };
 
 export const CustomTooltip: React.FC<Props> = ({ datum, analytics, params }) => {
+  const store: RootStore = useMobxStore();
   let tooltipValue: string | number = "";
 
   const renderAssigneeName = (assigneeId: string): string => {
     const assignee = analytics.extras.assignee_details.find((a) => a.assignees__id === assigneeId);
 
-    if (!assignee) return "No assignee";
+    if (!assignee) return store.locale.localized("No assignee");
 
-    return assignee.assignees__display_name || "No assignee";
+    return assignee.assignees__display_name || store.locale.localized("No assignee");
   };
 
   if (params.segment) {
     if (DATE_KEYS.includes(params.segment)) tooltipValue = renderMonthAndYear(datum.id);
-    else tooltipValue = datum.id;
+    else tooltipValue = STATE_GROUP_LABEL[datum.id] || (PRIORITIES_LABEL[datum.id] ?? datum.id);
   } else {
     if (DATE_KEYS.includes(params.x_axis)) tooltipValue = datum.indexValue;
-    else tooltipValue = datum.id === "count" ? "Issue count" : "Estimate";
+    else
+      tooltipValue =
+        datum.id === "count"
+          ? store.locale.localized("Issue count")
+          : store.locale.localized("Estimate");
   }
 
   return (

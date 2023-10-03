@@ -24,6 +24,9 @@ import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, STATES_LIST } from "constants/fe
 // constants
 import { PRIORITIES } from "constants/project";
 import { DATE_FILTER_OPTIONS } from "constants/filters";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   filters: Partial<IIssueFilterOptions>;
@@ -47,6 +50,7 @@ export const SelectFilters: React.FC<Props> = ({
     type: "start_date",
   });
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -75,7 +79,7 @@ export const SelectFilters: React.FC<Props> = ({
   const projectFilterOption = [
     {
       id: "priority",
-      label: "Priority",
+      label: store.locale.localized("Priority"),
       value: PRIORITIES,
       hasChildren: true,
       children: PRIORITIES.map((priority) => ({
@@ -95,7 +99,7 @@ export const SelectFilters: React.FC<Props> = ({
     },
     {
       id: "state",
-      label: "State",
+      label: store.locale.localized("State"),
       value: statesList,
       hasChildren: true,
       children: statesList?.map((state) => ({
@@ -115,7 +119,7 @@ export const SelectFilters: React.FC<Props> = ({
     },
     {
       id: "assignees",
-      label: "Assignees",
+      label: store.locale.localized("Assignees"),
       value: members,
       hasChildren: true,
       children: members?.map((member) => ({
@@ -135,7 +139,7 @@ export const SelectFilters: React.FC<Props> = ({
     },
     {
       id: "created_by",
-      label: "Created by",
+      label: store.locale.localized("Created by"),
       value: members,
       hasChildren: true,
       children: members?.map((member) => ({
@@ -155,7 +159,7 @@ export const SelectFilters: React.FC<Props> = ({
     },
     {
       id: "labels",
-      label: "Labels",
+      label: store.locale.localized("Labels"),
       value: issueLabels,
       hasChildren: true,
       children: issueLabels?.map((label) => ({
@@ -180,7 +184,7 @@ export const SelectFilters: React.FC<Props> = ({
     },
     {
       id: "start_date",
-      label: "Start date",
+      label: store.locale.localized("Start date"),
       value: DATE_FILTER_OPTIONS,
       hasChildren: true,
       children: [
@@ -195,20 +199,20 @@ export const SelectFilters: React.FC<Props> = ({
         })),
         {
           id: "custom",
-          label: "Custom",
+          label: store.locale.localized("Custom"),
           value: "custom",
           element: (
             <button
               onClick={() => {
                 setIsDateFilterModalOpen(true);
                 setDateFilterType({
-                  title: "Start date",
+                  title: store.locale.localized("Start date"),
                   type: "start_date",
                 });
               }}
               className="w-full rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80"
             >
-              Custom
+              {store.locale.localized("Custom")}
             </button>
           ),
         },
@@ -216,7 +220,7 @@ export const SelectFilters: React.FC<Props> = ({
     },
     {
       id: "target_date",
-      label: "Due date",
+      label: store.locale.localized("Due date"),
       value: DATE_FILTER_OPTIONS,
       hasChildren: true,
       children: [
@@ -231,20 +235,20 @@ export const SelectFilters: React.FC<Props> = ({
         })),
         {
           id: "custom",
-          label: "Custom",
+          label: store.locale.localized("Custom"),
           value: "custom",
           element: (
             <button
               onClick={() => {
                 setIsDateFilterModalOpen(true);
                 setDateFilterType({
-                  title: "Due date",
+                  title: store.locale.localized("Due date"),
                   type: "target_date",
                 });
               }}
               className="w-full rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80"
             >
-              Custom
+              {store.locale.localized("Custom")}
             </button>
           ),
         },
@@ -264,7 +268,7 @@ export const SelectFilters: React.FC<Props> = ({
         />
       )}
       <MultiLevelDropdown
-        label="Filters"
+        label={store.locale.localized("Filters")}
         onSelect={onSelect}
         direction={direction}
         height={height}

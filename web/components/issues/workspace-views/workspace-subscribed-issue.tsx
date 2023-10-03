@@ -19,6 +19,9 @@ import { CreateUpdateWorkspaceViewModal } from "components/workspace/views/modal
 import { WORKSPACE_VIEW_ISSUES } from "constants/fetch-keys";
 // types
 import { IIssue } from "types";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 export const WorkspaceSubscribedIssues = () => {
   const [createViewModal, setCreateViewModal] = useState<any>(null);
@@ -39,6 +42,7 @@ export const WorkspaceSubscribedIssues = () => {
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [issueToDelete, setIssueToDelete] = useState<IIssue | null>(null);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -59,9 +63,13 @@ export const WorkspaceSubscribedIssues = () => {
     (issue: IIssue) => {
       setCreateIssueModal(true);
 
-      setPreloadedData({ ...issue, name: `${issue.name} (Copy)`, actionType: "createIssue" });
+      setPreloadedData({
+        ...issue,
+        name: `${issue.name} (${store.locale.localized("Copy")})`,
+        actionType: "createIssue",
+      });
     },
-    [setCreateIssueModal, setPreloadedData]
+    [setCreateIssueModal, setPreloadedData, store.locale]
   );
 
   const handleEditIssue = useCallback(

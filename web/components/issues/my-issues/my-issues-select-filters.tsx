@@ -21,6 +21,9 @@ import { WORKSPACE_LABELS } from "constants/fetch-keys";
 // constants
 import { GROUP_CHOICES, PRIORITIES } from "constants/project";
 import { DATE_FILTER_OPTIONS } from "constants/filters";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   filters: Partial<IIssueFilterOptions> | IQuery;
@@ -45,6 +48,7 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
   });
   const [fetchLabels, setFetchLabels] = useState(false);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -68,14 +72,14 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
         />
       )}
       <MultiLevelDropdown
-        label="Filters"
+        label={store.locale.localized("Filters")}
         onSelect={onSelect}
         direction={direction}
         height={height}
         options={[
           {
             id: "priority",
-            label: "Priority",
+            label: store.locale.localized("Priority"),
             value: PRIORITIES,
             hasChildren: true,
             children: [
@@ -96,7 +100,7 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
           },
           {
             id: "state_group",
-            label: "State groups",
+            label: store.locale.localized("State groups"),
             value: GROUP_CHOICES,
             hasChildren: true,
             children: [
@@ -118,7 +122,7 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
           },
           {
             id: "labels",
-            label: "Labels",
+            label: store.locale.localized("Labels"),
             onClick: () => setFetchLabels(true),
             value: labels,
             hasChildren: true,
@@ -144,7 +148,7 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
           },
           {
             id: "start_date",
-            label: "Start date",
+            label: store.locale.localized("Start date"),
             value: DATE_FILTER_OPTIONS,
             hasChildren: true,
             children: [
@@ -159,14 +163,14 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
               })) ?? []),
               {
                 id: "custom",
-                label: "Custom",
+                label: store.locale.localized("Custom"),
                 value: "custom",
                 element: (
                   <button
                     onClick={() => {
                       setIsDateFilterModalOpen(true);
                       setDateFilterType({
-                        title: "Start date",
+                        title: store.locale.localized("Start date"),
                         type: "start_date",
                       });
                     }}
@@ -180,7 +184,7 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
           },
           {
             id: "target_date",
-            label: "Due date",
+            label: store.locale.localized("Due date"),
             value: DATE_FILTER_OPTIONS,
             hasChildren: true,
             children: [
@@ -195,20 +199,20 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
               })) ?? []),
               {
                 id: "custom",
-                label: "Custom",
+                label: store.locale.localized("Custom"),
                 value: "custom",
                 element: (
                   <button
                     onClick={() => {
                       setIsDateFilterModalOpen(true);
                       setDateFilterType({
-                        title: "Due date",
+                        title: store.locale.localized("Due date"),
                         type: "target_date",
                       });
                     }}
                     className="w-full rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80"
                   >
-                    Custom
+                    {store.locale.localized("Custom")}
                   </button>
                 ),
               },

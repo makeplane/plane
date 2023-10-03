@@ -9,6 +9,9 @@ import trackEventServices from "services/track-event.service";
 // types
 import { ICurrentUserResponse, IIssue } from "types";
 import useIssuesView from "hooks/use-issues-view";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   issue: IIssue;
@@ -31,6 +34,7 @@ export const ViewStartDateSelect: React.FC<Props> = ({
   user,
   isNotAllowed,
 }) => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -41,7 +45,7 @@ export const ViewStartDateSelect: React.FC<Props> = ({
 
   return (
     <Tooltip
-      tooltipHeading="Start date"
+      tooltipHeading={store.locale.localized("Start date")}
       tooltipContent={
         issue.start_date ? renderShortDateWithYearFormat(issue.start_date) ?? "N/A" : "N/A"
       }
@@ -49,7 +53,7 @@ export const ViewStartDateSelect: React.FC<Props> = ({
     >
       <div className="group flex-shrink-0 relative max-w-[6.5rem]">
         <CustomDatePicker
-          placeholder="Start date"
+          placeholder={store.locale.localized("Start date")}
           value={issue?.start_date}
           onChange={(val) => {
             partialUpdateIssue(

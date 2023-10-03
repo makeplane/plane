@@ -47,6 +47,9 @@ import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 import projectIssuesServices from "services/issues.service";
 // icon
 import { CheckIcon, ChevronDownIcon, PlusIcon } from "lucide-react";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   spreadsheetIssues: IIssue[];
@@ -81,6 +84,7 @@ export const SpreadsheetView: React.FC<Props> = ({
 
   const containerRef = useRef<HTMLDivElement | null>(null);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId, globalViewId } = router.query;
 
@@ -314,9 +318,9 @@ export const SpreadsheetView: React.FC<Props> = ({
                         />
                         <Icon iconName="sort" className="absolute right-0 text-sm" />
                       </span>
-                      <span>New</span>
+                      <span>{store.locale.localized("New")}</span>
                       <Icon iconName="east" className="text-sm" />
-                      <span>Old</span>
+                      <span>{store.locale.localized("Old")}</span>
                     </>
                   ) : (
                     <>
@@ -327,9 +331,9 @@ export const SpreadsheetView: React.FC<Props> = ({
                         />
                         <Icon iconName="sort" className="absolute right-0 text-sm" />
                       </span>
-                      <span>First</span>
+                      <span>{store.locale.localized("First")}</span>
                       <Icon iconName="east" className="text-sm" />
-                      <span>Last</span>
+                      <span>{store.locale.localized("Last")}</span>
                     </>
                   )}
                 </div>
@@ -388,9 +392,9 @@ export const SpreadsheetView: React.FC<Props> = ({
                           className="absolute rotate-180 transform scale-x-[-1] right-0 text-sm"
                         />
                       </span>
-                      <span>Old</span>
+                      <span>{store.locale.localized("Old")}</span>
                       <Icon iconName="east" className="text-sm" />
-                      <span>New</span>
+                      <span>{store.locale.localized("New")}</span>
                     </>
                   ) : (
                     <>
@@ -404,9 +408,9 @@ export const SpreadsheetView: React.FC<Props> = ({
                           className="absolute rotate-180 transform scale-x-[-1] right-0 text-sm"
                         />
                       </span>
-                      <span>Last</span>
+                      <span>{store.locale.localized("Last")}</span>
                       <Icon iconName="east" className="text-sm" />
-                      <span>First</span>
+                      <span>{store.locale.localized("First")}</span>
                     </>
                   )}
                 </div>
@@ -439,7 +443,7 @@ export const SpreadsheetView: React.FC<Props> = ({
                         <Icon iconName="ink_eraser" className="text-sm" />
                       </span>
 
-                      <span>Clear sorting</span>
+                      <span>{store.locale.localized("Clear sorting")}</span>
                     </div>
                   </div>
                 </CustomMenu.MenuItem>
@@ -512,7 +516,7 @@ export const SpreadsheetView: React.FC<Props> = ({
                         </span>
                       )}
                       <span className="flex items-center px-4 py-2.5 h-full w-full flex-grow">
-                        Issue
+                        {store.locale.localized("Issue")}
                       </span>
                     </div>
 
@@ -534,7 +538,7 @@ export const SpreadsheetView: React.FC<Props> = ({
                 </div>
                 {currentViewProperties.state &&
                   renderColumn(
-                    "State",
+                    store.locale.localized("State"),
                     "state",
                     SpreadsheetStateColumn,
                     "state__name",
@@ -543,7 +547,7 @@ export const SpreadsheetView: React.FC<Props> = ({
 
                 {currentViewProperties.priority &&
                   renderColumn(
-                    "Priority",
+                    store.locale.localized("Priority"),
                     "priority",
                     SpreadsheetPriorityColumn,
                     "priority",
@@ -551,7 +555,7 @@ export const SpreadsheetView: React.FC<Props> = ({
                   )}
                 {currentViewProperties.assignee &&
                   renderColumn(
-                    "Assignees",
+                    store.locale.localized("Assignees"),
                     "assignee",
                     SpreadsheetAssigneeColumn,
                     "assignees__first_name",
@@ -559,7 +563,7 @@ export const SpreadsheetView: React.FC<Props> = ({
                   )}
                 {currentViewProperties.labels &&
                   renderColumn(
-                    "Label",
+                    store.locale.localized("Labels"),
                     "labels",
                     SpreadsheetLabelColumn,
                     "labels__name",
@@ -567,7 +571,7 @@ export const SpreadsheetView: React.FC<Props> = ({
                   )}
                 {currentViewProperties.start_date &&
                   renderColumn(
-                    "Start Date",
+                    store.locale.localized("Start Date"),
                     "start_date",
                     SpreadsheetStartDateColumn,
                     "-start_date",
@@ -575,7 +579,7 @@ export const SpreadsheetView: React.FC<Props> = ({
                   )}
                 {currentViewProperties.due_date &&
                   renderColumn(
-                    "Due Date",
+                    store.locale.localized("Due Date"),
                     "due_date",
                     SpreadsheetDueDateColumn,
                     "-target_date",
@@ -583,7 +587,7 @@ export const SpreadsheetView: React.FC<Props> = ({
                   )}
                 {currentViewProperties.estimate &&
                   renderColumn(
-                    "Estimate",
+                    store.locale.localized("Estimate"),
                     "estimate",
                     SpreadsheetEstimateColumn,
                     "estimate_point",
@@ -591,7 +595,7 @@ export const SpreadsheetView: React.FC<Props> = ({
                   )}
                 {currentViewProperties.created_on &&
                   renderColumn(
-                    "Created On",
+                    store.locale.localized("Created On"),
                     "created_on",
                     SpreadsheetCreatedOnColumn,
                     "-created_at",
@@ -599,7 +603,7 @@ export const SpreadsheetView: React.FC<Props> = ({
                   )}
                 {currentViewProperties.updated_on &&
                   renderColumn(
-                    "Updated On",
+                    store.locale.localized("Updated On"),
                     "updated_on",
                     SpreadsheetUpdatedOnColumn,
                     "-updated_at",
@@ -633,7 +637,7 @@ export const SpreadsheetView: React.FC<Props> = ({
                     onClick={() => setIsInlineCreateIssueFormOpen(true)}
                   >
                     <PlusIcon className="h-4 w-4" />
-                    New Issue
+                    {store.locale.localized("New Issue")}
                   </button>
                 )
               : !disableUserActions &&
@@ -646,7 +650,7 @@ export const SpreadsheetView: React.FC<Props> = ({
                         type="button"
                       >
                         <PlusIcon className="h-4 w-4" />
-                        New Issue
+                        {store.locale.localized("New Issue")}
                       </button>
                     }
                     position="left"
@@ -655,11 +659,11 @@ export const SpreadsheetView: React.FC<Props> = ({
                     noBorder
                   >
                     <CustomMenu.MenuItem onClick={() => setIsInlineCreateIssueFormOpen(true)}>
-                      Create new
+                      {store.locale.localized("Create new")}
                     </CustomMenu.MenuItem>
                     {openIssuesListModal && (
                       <CustomMenu.MenuItem onClick={openIssuesListModal}>
-                        Add an existing issue
+                        {store.locale.localized("Add an existing issue")}
                       </CustomMenu.MenuItem>
                     )}
                   </CustomMenu>

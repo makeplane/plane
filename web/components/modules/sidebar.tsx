@@ -42,6 +42,9 @@ import { ICurrentUserResponse, IIssue, linkDetails, IModule, ModuleLink } from "
 import { MODULE_DETAILS } from "constants/fetch-keys";
 // constant
 import { MODULE_STATUS } from "constants/module";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const defaultValues: Partial<IModule> = {
   lead: "",
@@ -63,6 +66,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<linkDetails | null>(null);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
 
@@ -104,14 +108,14 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
         if (err.status === 400)
           setToastAlert({
             type: "error",
-            title: "Error!",
-            message: "This URL already exists for this module.",
+            title: store.locale.localized("Error!"),
+            message: store.locale.localized("This URL already exists for this module."),
           });
         else
           setToastAlert({
             type: "error",
-            title: "Error!",
-            message: "Something went wrong. Please try again.",
+            title: store.locale.localized("Error!"),
+            message: store.locale.localized("Something went wrong. Please try again."),
           });
       });
   };
@@ -176,13 +180,13 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
       .then(() => {
         setToastAlert({
           type: "success",
-          title: "Module link copied to clipboard",
+          title: store.locale.localized("Module link copied to clipboard"),
         });
       })
       .catch(() => {
         setToastAlert({
           type: "error",
-          title: "Some error occurred",
+          title: store.locale.localized("Some error occurred"),
         });
       });
   };
@@ -273,7 +277,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                           <span>
                             {renderShortDateWithYearFormat(
                               new Date(`${module.start_date}`),
-                              "Start date"
+                              store.locale.localized("Start date")
                             )}
                           </span>
                         </Popover.Button>
@@ -327,7 +331,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                           <span>
                             {renderShortDateWithYearFormat(
                               new Date(`${module?.target_date}`),
-                              "End date"
+                              store.locale.localized("End date")
                             )}
                           </span>
                         </Popover.Button>
@@ -380,13 +384,13 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                       <CustomMenu.MenuItem onClick={() => setModuleDeleteModal(true)}>
                         <span className="flex items-center justify-start gap-2">
                           <TrashIcon className="h-4 w-4" />
-                          <span>Delete</span>
+                          <span>{store.locale.localized("Delete")}</span>
                         </span>
                       </CustomMenu.MenuItem>
                       <CustomMenu.MenuItem onClick={handleCopyText}>
                         <span className="flex items-center justify-start gap-2">
                           <LinkIcon className="h-4 w-4" />
-                          <span>Copy link</span>
+                          <span>{store.locale.localized("Copy link")}</span>
                         </span>
                       </CustomMenu.MenuItem>
                     </CustomMenu>
@@ -426,7 +430,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                   <div className="flex items-center justify-start gap-1">
                     <div className="flex w-40 items-center justify-start gap-2 text-custom-text-200">
                       <ChartPieIcon className="h-5 w-5" />
-                      <span>Progress</span>
+                      <span>{store.locale.localized("Progress")}</span>
                     </div>
 
                     <div className="flex items-center gap-2.5 text-custom-text-200">
@@ -476,7 +480,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                             className="fill-current text-custom-text-200"
                           />
                           <span className="text-xs italic text-custom-text-200">
-                            Invalid date. Please enter valid date.
+                            {store.locale.localized("Invalid date. Please enter valid date.")}
                           </span>
                         </div>
                       )}
@@ -491,7 +495,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                                   <DocumentIcon className="h-3 w-3 text-custom-text-200" />
                                 </span>
                                 <span>
-                                  Pending Issues -{" "}
+                                  {store.locale.localized("Pending Issues")} -{" "}
                                   {module.total_issues -
                                     (module.completed_issues + module.cancelled_issues)}{" "}
                                 </span>
@@ -500,11 +504,11 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                               <div className="flex items-center gap-3 text-custom-text-100">
                                 <div className="flex items-center justify-center gap-1">
                                   <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
-                                  <span>Ideal</span>
+                                  <span>{store.locale.localized("Ideal")}</span>
                                 </div>
                                 <div className="flex items-center justify-center gap-1">
                                   <span className="h-2.5 w-2.5 rounded-full bg-[#4C8FFF]" />
-                                  <span>Current</span>
+                                  <span>{store.locale.localized("Current")}</span>
                                 </div>
                               </div>
                             </div>
@@ -535,7 +539,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                   >
                     <div className="flex w-full items-center justify-between gap-2    ">
                       <div className="flex items-center justify-start gap-2 text-sm">
-                        <span className="font-medium text-custom-text-200">Other Information</span>
+                        <span className="font-medium text-custom-text-200">
+                          {store.locale.localized("Other Information")}
+                        </span>
                       </div>
 
                       {module.total_issues > 0 ? (
@@ -553,7 +559,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                             className="fill-current text-custom-text-200"
                           />
                           <span className="text-xs italic text-custom-text-200">
-                            No issues found. Please add issue.
+                            {store.locale.localized("No issues found. Please add issue.")}
                           </span>
                         </div>
                       )}
@@ -589,7 +595,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
 
             <div className="flex w-full flex-col border-t border-custom-border-200 px-6 pt-6 pb-10 text-xs">
               <div className="flex w-full items-center justify-between">
-                <h4 className="text-sm font-medium text-custom-text-200">Links</h4>
+                <h4 className="text-sm font-medium text-custom-text-200">
+                  {store.locale.localized("Links")}
+                </h4>
                 <button
                   className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-90"
                   onClick={() => setModuleLinkModal(true)}

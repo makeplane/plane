@@ -65,6 +65,9 @@ import {
   PROJECT_ISSUE_LABELS,
   USER_PROJECT_VIEW,
 } from "constants/fetch-keys";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const SinglePage: NextPage = () => {
   const [createBlockForm, setCreateBlockForm] = useState(false);
@@ -73,6 +76,7 @@ const SinglePage: NextPage = () => {
 
   const scrollToRef = useRef<HTMLDivElement>(null);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
 
@@ -181,8 +185,8 @@ const SinglePage: NextPage = () => {
     ).then(() => {
       setToastAlert({
         type: "success",
-        title: "Success",
-        message: "Added to favorites",
+        title: store.locale.localized("Success"),
+        message: store.locale.localized("Added to favorites"),
       });
     });
 
@@ -204,8 +208,8 @@ const SinglePage: NextPage = () => {
     ).then(() => {
       setToastAlert({
         type: "success",
-        title: "Success",
-        message: "Removed from favorites",
+        title: store.locale.localized("Success"),
+        message: store.locale.localized("Removed from favorites"),
       });
     });
 
@@ -269,8 +273,8 @@ const SinglePage: NextPage = () => {
       () => {
         setToastAlert({
           type: "success",
-          title: "Link Copied!",
-          message: "Page link copied to clipboard.",
+          title: store.locale.localized("Link Copied!"),
+          message: store.locale.localized("Page link copied to clipboard."),
         });
       }
     );
@@ -307,8 +311,8 @@ const SinglePage: NextPage = () => {
       .catch(() => {
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Something went wrong. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized("Something went wrong. Please try again."),
         });
       });
   };
@@ -346,18 +350,28 @@ const SinglePage: NextPage = () => {
     <ProjectAuthorizationWrapper
       breadcrumbs={
         <Breadcrumbs>
-          <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-          <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Pages`} />
+          <BreadcrumbItem
+            title={store.locale.localized("Projects")}
+            link={`/${workspaceSlug}/projects`}
+          />
+          <BreadcrumbItem
+            title={`${truncateText(
+              projectDetails?.name ?? store.locale.localized("Project"),
+              32
+            )} ${store.locale.localized("Pages")}`}
+          />
         </Breadcrumbs>
       }
     >
       {error ? (
         <EmptyState
           image={emptyPage}
-          title="Page does not exist"
-          description="The page you are looking for does not exist or has been deleted."
+          title={store.locale.localized("Page does not exist")}
+          description={store.locale.localized(
+            "The page you are looking for does not exist or has been deleted."
+          )}
           primaryButton={{
-            text: "View other pages",
+            text: store.locale.localized("View other pages"),
             onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/pages`),
           }}
         />
@@ -378,7 +392,7 @@ const SinglePage: NextPage = () => {
                   <TextArea
                     id="name"
                     name="name"
-                    placeholder="Page Title"
+                    placeholder={store.locale.localized("Page Title")}
                     value={watch("name")}
                     onBlur={handleSubmit(updatePage)}
                     onChange={(e) => setValue("name", e.target.value)}
@@ -446,7 +460,7 @@ const SinglePage: NextPage = () => {
                       >
                         <span className="flex items-center justify-start gap-1 text-custom-text-200">
                           <PlusIcon className="h-4 w-4" aria-hidden="true" />
-                          <span>Create New Label</span>
+                          <span>{store.locale.localized("Create New Label")}</span>
                         </span>
                       </button>
                     }
@@ -476,7 +490,7 @@ const SinglePage: NextPage = () => {
                               : "text-custom-sidebar-text-200"
                           }`}
                         >
-                          Display
+                          {store.locale.localized("Display")}
                           <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
                         </Popover.Button>
 
@@ -493,7 +507,7 @@ const SinglePage: NextPage = () => {
                             <div className="relative divide-y-2 divide-custom-border-200">
                               <div className="flex items-center justify-between">
                                 <span className="text-sm text-custom-text-200">
-                                  Show full block content
+                                  {store.locale.localized("Show full block content")}
                                 </span>
                                 <ToggleSwitch
                                   value={showBlock}
@@ -585,8 +599,10 @@ const SinglePage: NextPage = () => {
                     <Tooltip
                       tooltipContent={`${
                         pageDetails.access
-                          ? "This page is only visible to you."
-                          : "This page can be viewed by anyone in the project."
+                          ? store.locale.localized("This page is only visible to you.")
+                          : store.locale.localized(
+                              "This page can be viewed by anyone in the project."
+                            )
                       }`}
                     >
                       {pageDetails.access ? (

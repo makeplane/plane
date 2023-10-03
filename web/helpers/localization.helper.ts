@@ -20,6 +20,8 @@ export const localized = (key: string, localizationDataset: any = null): string 
   }
 };
 
+export const formatDate = (params) => {};
+
 export const getAutoLocale = (): string => {
   const locale = navigator.language;
   const mostSimilarLocale = findMostSimilarLocale(locale);

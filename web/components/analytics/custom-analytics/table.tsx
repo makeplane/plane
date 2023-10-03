@@ -10,6 +10,11 @@ import { generateBarColor, renderMonthAndYear } from "helpers/analytics.helper";
 import { IAnalyticsParams, IAnalyticsResponse, TIssuePriorities } from "types";
 // constants
 import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES, DATE_KEYS } from "constants/analytics";
+import { PRIORITIES_LABEL } from "constants/project";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
+import { STATE_GROUP_LABEL } from "constants/state";
 
 type Props = {
   analytics: IAnalyticsResponse;
@@ -22,12 +27,13 @@ type Props = {
 };
 
 export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, params, yAxisKey }) => {
+  const store: RootStore = useMobxStore();
   const renderAssigneeName = (assigneeId: string): string => {
     const assignee = analytics.extras.assignee_details.find((a) => a.assignees__id === assigneeId);
 
-    if (!assignee) return "No assignee";
+    if (!assignee) return store.locale.localized("No assignee");
 
-    return assignee.assignees__display_name || "No assignee";
+    return assignee.assignees__display_name || store.locale.localized("No assignee");
   };
 
   return (
@@ -107,7 +113,9 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
                     )}
                     {params.x_axis === "assignees__id"
                       ? renderAssigneeName(`${item.name}`)
-                      : addSpaceIfCamelCase(`${item.name}`)}
+                      : PRIORITIES_LABEL[item.name] ??
+                        STATE_GROUP_LABEL[item.name] ??
+                        addSpaceIfCamelCase(`${item.name}`)}
                   </td>
                   {params.segment ? (
                     barGraphData.xAxisKeys.map((key, index) => (

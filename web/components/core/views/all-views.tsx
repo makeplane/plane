@@ -34,6 +34,9 @@ import { getStatesList } from "helpers/state.helper";
 import { IIssue, IIssueViewProps } from "types";
 // fetch-keys
 import { STATES_LIST } from "constants/fetch-keys";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   addIssueToDate: (date: string) => void;
@@ -77,6 +80,7 @@ export const AllViews: React.FC<Props> = ({
   setTrashBox,
   viewProps,
 }) => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
@@ -122,7 +126,7 @@ export const AllViews: React.FC<Props> = ({
             {...provided.droppableProps}
           >
             <TrashIcon className="h-4 w-4" />
-            Drop here to delete the issue.
+            {store.locale.localized("Drop here to delete the issue.")}
           </div>
         )}
       </StrictModeDroppable>
@@ -192,11 +196,13 @@ export const AllViews: React.FC<Props> = ({
           </>
         ) : router.pathname.includes("archived-issues") ? (
           <EmptyState
-            title="Archived Issues will be shown here"
-            description="All the issues that have been in the completed or canceled groups for the configured period of time can be viewed here."
+            title={store.locale.localized("Archived Issues will be shown here")}
+            description={store.locale.localized(
+              "All the issues that have been in the completed or canceled groups for the configured period of time can be viewed here."
+            )}
             image={emptyIssueArchive}
             primaryButton={{
-              text: "Go to Automation Settings",
+              text: store.locale.localized("Go to Automation Settings"),
               onClick: () => {
                 router.push(`/${workspaceSlug}/projects/${projectId}/settings/automations`);
               },

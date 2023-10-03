@@ -3,7 +3,7 @@ import { PieGraph } from "components/ui";
 // types
 import { IUserStateDistribution, TStateGroups } from "types";
 // constants
-import { STATE_GROUP_COLORS } from "constants/state";
+import { STATE_GROUP_COLORS, STATE_GROUP_LABEL } from "constants/state";
 import { RootStore } from "store/root";
 import { useMobxStore } from "lib/mobx/store-provider";
 
@@ -23,7 +23,8 @@ export const IssuesPieChart: React.FC<Props> = ({ groupedIssues }) => {
               data={
                 groupedIssues?.map((cell) => ({
                   id: cell.state_group,
-                  label: cell.state_group,
+                  state: cell.state_group,
+                  label: STATE_GROUP_LABEL[cell.state_group] ?? cell.state_group,
                   value: cell.state_count,
                   color: STATE_GROUP_COLORS[cell.state_group.toLowerCase() as TStateGroups],
                 })) ?? []
@@ -40,7 +41,7 @@ export const IssuesPieChart: React.FC<Props> = ({ groupedIssues }) => {
               tooltip={(datum) => (
                 <div className="flex items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-90 p-2 text-xs">
                   <span className="text-custom-text-200 capitalize">
-                    {datum.datum.label} {store.locale.localized("issues")}
+                    {datum.datum.label}
                     {":"}
                   </span>{" "}
                   {datum.datum.value}
@@ -65,7 +66,7 @@ export const IssuesPieChart: React.FC<Props> = ({ groupedIssues }) => {
                   style={{ backgroundColor: STATE_GROUP_COLORS[cell.state_group] }}
                 />
                 <div className="capitalize text-custom-text-200 text-xs whitespace-nowrap">
-                  {cell.state_group}- {cell.state_count}
+                  {STATE_GROUP_LABEL[cell.state_group] ?? cell.state_group} - {cell.state_count}
                 </div>
               </div>
             ))}

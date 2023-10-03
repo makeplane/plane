@@ -12,6 +12,9 @@ import { Icon, Loader, Tooltip } from "components/ui";
 import { render24HourFormatTime, renderLongDateFormat, timeAgo } from "helpers/date-time.helper";
 // types
 import { IIssueActivity, IIssueComment } from "types";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   activity: IIssueActivity[] | undefined;
@@ -26,6 +29,7 @@ export const IssueActivitySection: React.FC<Props> = ({
   handleCommentDelete,
   showAccessSpecifier = false,
 }) => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -55,7 +59,7 @@ export const IssueActivitySection: React.FC<Props> = ({
           const message = activityItem.field ? (
             <ActivityMessage activity={activityItem} />
           ) : (
-            "created the issue."
+            store.locale.localized("created the issue.")
           );
 
           if ("field" in activityItem && activityItem.field !== "updated_by") {
@@ -108,7 +112,7 @@ export const IssueActivitySection: React.FC<Props> = ({
                           <span className="text-gray font-medium">Plane</span>
                         ) : activityItem.actor_detail.is_bot ? (
                           <span className="text-gray font-medium">
-                            {activityItem.actor_detail.first_name} Bot
+                            {activityItem.actor_detail.first_name} {store.locale.localized("Bot")}
                           </span>
                         ) : (
                           <Link href={`/${workspaceSlug}/profile/${activityItem.actor_detail.id}`}>

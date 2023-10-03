@@ -22,9 +22,16 @@ export const GROUP_CHOICES = {
   cancelled: localized("Cancelled"),
 };
 
-export const STATE_GROUP = ["Backlog", "Unstarted", "Started", "Completed", "Cancelled"];
-
 export const PRIORITIES: TIssuePriorities[] = ["urgent", "high", "medium", "low", "none"];
+export const PRIORITIES_LABEL: {
+  [key: string]: string;
+} = {
+  urgent: localized("Urgent"),
+  high: localized("High"),
+  medium: localized("Medium"),
+  low: localized("Low"),
+  none: localized("None"),
+};
 
 export const MONTHS = [
   localized("January"),

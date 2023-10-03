@@ -26,6 +26,10 @@ import { IIssue } from "types";
 // components
 import { Label } from "components/web-view";
 
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
+
 type Props = {
   issueDetails?: IIssue;
 };
@@ -33,6 +37,7 @@ type Props = {
 export const SubIssueList: React.FC<Props> = (props) => {
   const { issueDetails } = props;
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -74,18 +79,20 @@ export const SubIssueList: React.FC<Props> = (props) => {
 
   return (
     <div>
-      <Label>Sub Issues</Label>
+      <Label>{store.locale.localized("Sub Issues")}</Label>
       <div className="p-3 border border-custom-border-200 rounded-[4px]">
         {!subIssuesResponse && (
-          <div className="flex justify-center items-center">
+          <div className="flex justify-center items-center" suppressHydrationWarning>
             <Spinner />
-            Loading...
+            {store.locale.localized("Loading...")}
           </div>
         )}
 
         {subIssuesResponse?.sub_issues.length === 0 && (
           <div className="flex justify-center items-center">
-            <p className="text-sm text-custom-text-200">No sub issues</p>
+            <p className="text-sm text-custom-text-200">
+              {store.locale.localized("No sub issues")}
+            </p>
           </div>
         )}
 

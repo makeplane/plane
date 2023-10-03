@@ -8,6 +8,7 @@ import { capitalizeFirstLetter } from "helpers/string.helper";
 import { IUserProfileData } from "types";
 import { RootStore } from "store/root";
 import { useMobxStore } from "lib/mobx/store-provider";
+import { PRIORITIES_LABEL } from "constants/project";
 
 type Props = {
   userProfile: IUserProfileData | undefined;
@@ -23,11 +24,16 @@ export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) =>
           {userProfile.priority_distribution.length > 0 ? (
             <BarGraph
               data={userProfile.priority_distribution.map((priority) => ({
-                priority: capitalizeFirstLetter(priority.priority ?? "None"),
+                priority: priority.priority,
+                priority_name: capitalizeFirstLetter(
+                  PRIORITIES_LABEL[priority.priority] ??
+                    priority.priority ??
+                    PRIORITIES_LABEL["None"]
+                ),
                 value: priority.priority_count,
               }))}
               height="300px"
-              indexBy="priority"
+              indexBy="priority_name"
               keys={["value"]}
               borderRadius={4}
               padding={0.7}
@@ -40,15 +46,17 @@ export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) =>
                       backgroundColor: datum.color,
                     }}
                   />
-                  <span className="font-medium text-custom-text-200">{datum.data.priority}:</span>
+                  <span className="font-medium text-custom-text-200">
+                    {datum.data.priority_name}:
+                  </span>
                   <span>{datum.value}</span>
                 </div>
               )}
               colors={(datum) => {
-                if (datum.data.priority === "Urgent") return "#991b1b";
-                else if (datum.data.priority === "High") return "#ef4444";
-                else if (datum.data.priority === "Medium") return "#f59e0b";
-                else if (datum.data.priority === "Low") return "#16a34a";
+                if (datum.data.priority === "urgent") return "#991b1b";
+                else if (datum.data.priority === "high") return "#ef4444";
+                else if (datum.data.priority === "medium") return "#f59e0b";
+                else if (datum.data.priority === "low") return "#16a34a";
                 else return "#e5e5e5";
               }}
               theme={{

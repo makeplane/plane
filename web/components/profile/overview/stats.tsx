@@ -5,12 +5,16 @@ import Link from "next/link";
 import { Icon, Loader } from "components/ui";
 // types
 import { IUserProfileData } from "types";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   userProfile: IUserProfileData | undefined;
 };
 
 export const ProfileStats: React.FC<Props> = ({ userProfile }) => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
 
@@ -18,26 +22,26 @@ export const ProfileStats: React.FC<Props> = ({ userProfile }) => {
     {
       icon: "new_window",
       route: "created",
-      title: "Issues created",
+      title: store.locale.localized("Issues created"),
       value: userProfile?.created_issues ?? "...",
     },
     {
       icon: "account_circle",
       route: "assigned",
-      title: "Issues assigned",
+      title: store.locale.localized("Issues assigned"),
       value: userProfile?.assigned_issues ?? "...",
     },
     {
       icon: "subscriptions",
       route: "subscribed",
-      title: "Issues subscribed",
+      title: store.locale.localized("Issues subscribed"),
       value: userProfile?.subscribed_issues ?? "...",
     },
   ];
 
   return (
     <div className="space-y-2">
-      <h3 className="text-lg font-medium">Overview</h3>
+      <h3 className="text-lg font-medium">{store.locale.localized("Overview")}</h3>
       {userProfile ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {overviewCards.map((card) => (

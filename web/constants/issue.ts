@@ -2,25 +2,25 @@ export const GROUP_BY_OPTIONS: Array<{
   name: string;
   key: TIssueGroupByOptions;
 }> = [
-  { name: "States", key: "state" },
-  { name: "State Groups", key: "state_detail.group" },
-  { name: "Priority", key: "priority" },
-  { name: "Project", key: "project" },
-  { name: "Labels", key: "labels" },
-  { name: "Assignees", key: "assignees" },
-  { name: "Created by", key: "created_by" },
-  { name: "None", key: null },
+  { name: localized("States"), key: "state" },
+  { name: localized("State Groups"), key: "state_detail.group" },
+  { name: localized("Priority"), key: "priority" },
+  { name: localized("Project"), key: "project" },
+  { name: localized("Labels"), key: "labels" },
+  { name: localized("Assignees"), key: "assignees" },
+  { name: localized("Created by"), key: "created_by" },
+  { name: localized("None"), key: null },
 ];
 
 export const ORDER_BY_OPTIONS: Array<{
   name: string;
   key: TIssueOrderByOptions;
 }> = [
-  { name: "Manual", key: "sort_order" },
-  { name: "Last created", key: "-created_at" },
-  { name: "Last updated", key: "-updated_at" },
-  { name: "Start date", key: "start_date" },
-  { name: "Priority", key: "priority" },
+  { name: localized("Manual"), key: "sort_order" },
+  { name: localized("Last created"), key: "-created_at" },
+  { name: localized("Last updated"), key: "-updated_at" },
+  { name: localized("Start date"), key: "start_date" },
+  { name: localized("Priority"), key: "priority" },
 ];
 
 export const FILTER_ISSUE_OPTIONS: Array<{
@@ -28,20 +28,21 @@ export const FILTER_ISSUE_OPTIONS: Array<{
   key: "active" | "backlog" | null;
 }> = [
   {
-    name: "All",
+    name: localized("All"),
     key: null,
   },
   {
-    name: "Active Issues",
+    name: localized("Active Issues"),
     key: "active",
   },
   {
-    name: "Backlog Issues",
+    name: localized("Backlog Issues"),
     key: "backlog",
   },
 ];
 
 import { orderArrayBy } from "helpers/array.helper";
+import { localized } from "helpers/localization.helper";
 import { IIssue, TIssueGroupByOptions, TIssueOrderByOptions } from "types";
 
 type THandleIssuesMutation = (

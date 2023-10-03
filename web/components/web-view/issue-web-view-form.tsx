@@ -22,6 +22,10 @@ import { Label } from "components/web-view";
 // types
 import type { IIssue } from "types";
 
+//mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
+
 type Props = {
   isAllowed: boolean;
   issueDetails: IIssue;
@@ -35,6 +39,7 @@ type Props = {
 export const IssueWebViewForm: React.FC<Props> = (props) => {
   const { isAllowed, issueDetails, submitChanges, register, control, watch, handleSubmit } = props;
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -75,13 +80,13 @@ export const IssueWebViewForm: React.FC<Props> = (props) => {
   return (
     <>
       <div className="flex flex-col">
-        <Label>Title</Label>
+        <Label>{store.locale.localized("Title")}</Label>
         <div className="relative">
           {isAllowed ? (
             <TextArea
               id="name"
               name="name"
-              placeholder="Enter issue name"
+              placeholder={store.locale.localized("Enter issue name")}
               register={register}
               onFocus={() => setCharacterLimit(true)}
               onChange={(e) => {
@@ -112,7 +117,7 @@ export const IssueWebViewForm: React.FC<Props> = (props) => {
         </div>
       </div>
       <div>
-        <Label>Description</Label>
+        <Label>{store.locale.localized("Description")}</Label>
         <div className="relative">
           <Controller
             name="description_html"
@@ -155,7 +160,9 @@ export const IssueWebViewForm: React.FC<Props> = (props) => {
               isSubmitting === "saved" ? "fadeOut" : "fadeIn"
             }`}
           >
-            {isSubmitting === "submitting" ? "Saving..." : "Saved"}
+            {isSubmitting === "submitting"
+              ? store.locale.localized("Saving...")
+              : store.locale.localized("Saved")}
           </div>
         </div>
       </div>

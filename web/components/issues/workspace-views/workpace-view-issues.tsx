@@ -26,11 +26,14 @@ import { PlusIcon } from "components/icons";
 import emptyView from "public/empty-state/view.svg";
 // constants
 import { WORKSPACE_LABELS } from "constants/fetch-keys";
-import { STATE_GROUP } from "constants/project";
+import { STATE_GROUP } from "constants/state";
 // types
 import { IIssue, IWorkspaceIssueFilterOptions } from "types";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 export const WorkspaceViewIssues = () => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, globalViewId } = router.query;
 
@@ -76,9 +79,13 @@ export const WorkspaceViewIssues = () => {
     (issue: IIssue) => {
       setCreateIssueModal(true);
 
-      setPreloadedData({ ...issue, name: `${issue.name} (Copy)`, actionType: "createIssue" });
+      setPreloadedData({
+        ...issue,
+        name: `${issue.name} (${store.locale.localized("Copy")})`,
+        actionType: "createIssue",
+      });
     },
-    [setCreateIssueModal, setPreloadedData]
+    [setCreateIssueModal, setPreloadedData, store.locale]
   );
 
   const handleEditIssue = useCallback(
@@ -159,10 +166,12 @@ export const WorkspaceViewIssues = () => {
           {false ? (
             <EmptyState
               image={emptyView}
-              title="View does not exist"
-              description="The view you are looking for does not exist or has been deleted."
+              title={store.locale.localized("View does not exist")}
+              description={store.locale.localized(
+                "The view you are looking for does not exist or has been deleted."
+              )}
               primaryButton={{
-                text: "View other views",
+                text: store.locale.localized("View other views"),
                 onClick: () => router.push(`/${workspaceSlug}/workspace-views`),
               }}
             />
@@ -197,8 +206,8 @@ export const WorkspaceViewIssues = () => {
                         if (globalViewId) {
                           handleFilters("filters", filters.filters, true);
                           setToastAlert({
-                            title: "View updated",
-                            message: "Your view has been updated",
+                            title: store.locale.localized("View updated"),
+                            message: store.locale.localized("Your view has been updated"),
                             type: "success",
                           });
                         } else
@@ -209,7 +218,9 @@ export const WorkspaceViewIssues = () => {
                       className="flex items-center gap-2 text-sm"
                     >
                       {!globalViewId && <PlusIcon className="h-4 w-4" />}
-                      {globalViewId ? "Update" : "Save"} view
+                      {globalViewId
+                        ? store.locale.localized("Update view")
+                        : store.locale.localized("Save view")}
                     </PrimaryButton>
                   </div>
                   {<div className="mt-3 border-t border-custom-border-200" />}

@@ -22,6 +22,10 @@ import { Spinner, ToggleSwitch } from "components/ui";
 
 import type { IJiraIntegrationData, TJiraIntegrationSteps } from ".";
 
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
+
 type Props = {
   setCurrentStep: React.Dispatch<React.SetStateAction<IJiraIntegrationData>>;
   setDisableTopBarAfter: React.Dispatch<React.SetStateAction<TJiraIntegrationSteps | null>>;
@@ -37,6 +41,7 @@ export const JiraProjectDetail: React.FC<Props> = (props) => {
     formState: { errors },
   } = useFormContext<IJiraImporterForm>();
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -103,15 +108,15 @@ export const JiraProjectDetail: React.FC<Props> = (props) => {
     return (
       <div className="flex h-full w-full items-center justify-center">
         <p className="text-sm text-custom-text-200">
-          Something went wrong. Please{" "}
+          {store.locale.localized("Something went wrong. Please")}{" "}
           <button
             onClick={() => setCurrentStep({ state: "import-configure" })}
             type="button"
             className="inline text-custom-primary underline"
           >
-            go back
+            {store.locale.localized("go back")}
           </button>{" "}
-          and check your Jira project details.
+          {store.locale.localized("and check your Jira project details.")}
         </p>
       </div>
     );
@@ -121,37 +126,41 @@ export const JiraProjectDetail: React.FC<Props> = (props) => {
     <div className="h-full w-full space-y-10 overflow-y-auto">
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
-          <h3 className="font-semibold">Import Data</h3>
-          <p className="text-sm text-custom-text-200">Import Completed. We have found:</p>
+          <h3 className="font-semibold">{store.locale.localized("Import Data")}</h3>
+          <p className="text-sm text-custom-text-200">
+            {store.locale.localized("Import Completed. We have found:")}
+          </p>
         </div>
         <div className="col-span-1 flex items-center justify-between">
           <div>
             <h4 className="mb-2 text-lg font-semibold">{projectInfo?.issues}</h4>
-            <p className="text-sm text-custom-text-200">Issues</p>
+            <p className="text-sm text-custom-text-200">{store.locale.localized("Issues")}</p>
           </div>
           <div>
             <h4 className="mb-2 text-lg font-semibold">{projectInfo?.states}</h4>
-            <p className="text-sm text-custom-text-200">States</p>
+            <p className="text-sm text-custom-text-200">{store.locale.localized("States")}</p>
           </div>
           <div>
             <h4 className="mb-2 text-lg font-semibold">{projectInfo?.modules}</h4>
-            <p className="text-sm text-custom-text-200">Modules</p>
+            <p className="text-sm text-custom-text-200">{store.locale.localized("Modules")}</p>
           </div>
           <div>
             <h4 className="mb-2 text-lg font-semibold">{projectInfo?.labels}</h4>
-            <p className="text-sm text-custom-text-200">Labels</p>
+            <p className="text-sm text-custom-text-200">{store.locale.localized("Labels")}</p>
           </div>
           <div>
             <h4 className="mb-2 text-lg font-semibold">{projectInfo?.users?.length}</h4>
-            <p className="text-sm text-custom-text-200">Users</p>
+            <p className="text-sm text-custom-text-200">{store.locale.localized("Users")}</p>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
-          <h3 className="font-semibold">Import Epics</h3>
-          <p className="text-sm text-custom-text-200">Import epics as modules</p>
+          <h3 className="font-semibold">{store.locale.localized("Import Epics")}</h3>
+          <p className="text-sm text-custom-text-200">
+            {store.locale.localized("Import epics as modules")}
+          </p>
         </div>
         <div className="col-span-1">
           <Controller

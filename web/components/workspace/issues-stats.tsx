@@ -83,7 +83,9 @@ export const IssuesStats: React.FC<Props> = ({ data }) => {
         <h3 className="mb-2 font-semibold capitalize flex items-center gap-2">
           {store.locale.localized("Activity Graph")}
           <Tooltip
-            tooltipContent="Your profile activity graph is a record of actions you've performed on issues across the workspace."
+            tooltipContent={store.locale.localized(
+              "Your profile activity graph is a record of actions you've performed on issues across the workspace."
+            )}
             className="w-72 border border-custom-border-200"
           >
             <InformationCircleIcon className="h-3 w-3" />

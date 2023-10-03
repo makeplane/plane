@@ -10,11 +10,12 @@ import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
 import { IIssueActivity } from "types";
+import { localized } from "helpers/localization.helper";
 
 const IssueLink = ({ activity }: { activity: IIssueActivity }) => (
   <Tooltip
     tooltipContent={
-      activity.issue_detail ? activity.issue_detail.name : "This issue has been deleted"
+      activity.issue_detail ? activity.issue_detail.name : localized("This issue has been deleted")
     }
   >
     <button
@@ -32,7 +33,7 @@ const IssueLink = ({ activity }: { activity: IIssueActivity }) => (
     >
       {activity.issue_detail
         ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}`
-        : "Issue"}
+        : localized("Issue")}
       <Icon iconName="launch" className="!text-xs" />
     </button>
   </Tooltip>
@@ -63,12 +64,14 @@ const activityDetails: {
   assignees: {
     message: (activity, showIssue) => (
       <>
-        {activity.old_value === "" ? "added a new assignee " : "removed the assignee "}
+        {activity.old_value === ""
+          ? localized("added a new assignee")
+          : localized("removed the assignee")}{" "}
         <UserLink activity={activity} />
         {showIssue && (
           <>
             {" "}
-            to <IssueLink activity={activity} />
+            {localized("to")} <IssueLink activity={activity} />
           </>
         )}
         .
@@ -79,8 +82,8 @@ const activityDetails: {
 
   archived_at: {
     message: (activity) => {
-      if (activity.new_value === "restore") return "restored the issue.";
-      else return "archived the issue.";
+      if (activity.new_value === "restore") return localized("restored the issue.");
+      else return localized("archived the issue.");
     },
     icon: <Icon iconName="archive" className="!text-2xl" aria-hidden="true" />,
   },
@@ -88,15 +91,17 @@ const activityDetails: {
   attachment: {
     message: (activity, showIssue) => (
       <>
-        {activity.verb === "created" ? "uploaded a new " : "removed an "}
+        {activity.verb === "created" ? localized("uploaded a new") : localized("removed an")}{" "}
         {activity.new_value && activity.new_value !== "" ? (
           <button type="button" onClick={() => console.log("attachment", activity.new_value)}>
-            attachment
+            {localized("attachment")}
           </button>
         ) : (
-          "attachment"
+          localized("attachment")
         )}
-        {showIssue && activity.verb === "created" ? " to " : " from "}
+        {showIssue && activity.verb === "created"
+          ? ` ${localized("to")} `
+          : ` ${localized("from")} `}
         {showIssue && <IssueLink activity={activity} />}
       </>
     ),
@@ -107,8 +112,8 @@ const activityDetails: {
     message: (activity) => (
       <>
         {activity.old_value === ""
-          ? "marked this issue is blocking issue "
-          : "removed the blocking issue "}
+          ? localized("marked this issue is blocking issue")
+          : localized("removed the blocking issue")}{" "}
         <span className="font-medium text-custom-text-100">
           {activity.old_value === "" ? activity.new_value : activity.old_value}
         </span>
@@ -122,8 +127,8 @@ const activityDetails: {
     message: (activity) => (
       <>
         {activity.old_value === ""
-          ? "marked this issue is being blocked by issue "
-          : "removed this issue being blocked by issue "}
+          ? localized("marked this issue is being blocked by issue")
+          : localized("removed this issue being blocked by issue")}{" "}
         <span className="font-medium text-custom-text-100">
           {activity.old_value === "" ? activity.new_value : activity.old_value}
         </span>
@@ -137,8 +142,8 @@ const activityDetails: {
     message: (activity) => (
       <>
         {activity.old_value === ""
-          ? "marked this issue as duplicate of "
-          : "removed this issue as a duplicate of "}
+          ? localized("marked this issue as duplicate of")
+          : localized("removed this issue as a duplicate of")}{" "}
         <span className="font-medium text-custom-text-100">
           {activity.verb === "created" ? activity.new_value : activity.old_value}
         </span>
@@ -152,8 +157,8 @@ const activityDetails: {
     message: (activity) => (
       <>
         {activity.old_value === ""
-          ? "marked that this issue relates to "
-          : "removed the relation from "}
+          ? localized("marked that this issue relates to")
+          : localized("removed the relation from")}{" "}
         <span className="font-medium text-custom-text-100">
           {activity.old_value === "" ? activity.new_value : activity.old_value}
         </span>
@@ -197,7 +202,7 @@ const activityDetails: {
         {showIssue && (
           <>
             {" "}
-            of <IssueLink activity={activity} />
+            {localized("of")} <IssueLink activity={activity} />
           </>
         )}
         .
@@ -209,14 +214,16 @@ const activityDetails: {
   estimate_point: {
     message: (activity, showIssue) => (
       <>
-        {activity.new_value ? "set the estimate point to " : "removed the estimate point "}
+        {activity.new_value
+          ? localized("set the estimate point to")
+          : localized("removed the estimate point")}{" "}
         {activity.new_value && (
           <span className="font-medium text-custom-text-100">{activity.new_value}</span>
         )}
         {showIssue && (
           <>
             {" "}
-            for <IssueLink activity={activity} />
+            {localized("for")} <IssueLink activity={activity} />
           </>
         )}
       </>
@@ -226,8 +233,8 @@ const activityDetails: {
 
   issue: {
     message: (activity) => {
-      if (activity.verb === "created") return "created the issue.";
-      else return "deleted an issue.";
+      if (activity.verb === "created") return localized("created the issue.");
+      else return localized("deleted the issue.");
     },
     icon: <Icon iconName="stack" className="!text-2xl" aria-hidden="true" />,
   },
@@ -235,7 +242,9 @@ const activityDetails: {
   labels: {
     message: (activity, showIssue) => (
       <>
-        {activity.old_value === "" ? "added a new label " : "removed the label "}
+        {activity.old_value === ""
+          ? localized("added a new label")
+          : localized("removed the label")}{" "}
         <span className="inline-flex items-center gap-3 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
           <span
             className="h-1.5 w-1.5 rounded-full"
@@ -251,7 +260,7 @@ const activityDetails: {
         {showIssue && (
           <>
             {" "}
-            to <IssueLink activity={activity} />
+            {localized("to")} <IssueLink activity={activity} />
           </>
         )}
       </>
@@ -274,13 +283,13 @@ const activityDetails: {
           }
           className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
         >
-          link
+          {localized("link")}
           <Icon iconName="launch" className="!text-xs" />
         </button>
         {showIssue && (
           <>
             {" "}
-            to <IssueLink activity={activity} />
+            {localized("to")} <IssueLink activity={activity} />
           </>
         )}
         .
@@ -304,7 +313,7 @@ const activityDetails: {
           }
           className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
         >
-          module
+          {localized("module")}
           <Icon iconName="launch" className="!text-xs" />
         </button>
         .
@@ -316,7 +325,7 @@ const activityDetails: {
   name: {
     message: (activity, showIssue) => (
       <>
-        set the name to {activity.new_value}
+        {localized("set the name to")} {activity.new_value}
         {showIssue && (
           <>
             {" "}
@@ -332,14 +341,14 @@ const activityDetails: {
   parent: {
     message: (activity, showIssue) => (
       <>
-        {activity.new_value ? "set the parent to " : "removed the parent "}
+        {activity.new_value ? localized("set the parent to") : localized("removed the parent")}{" "}
         <span className="font-medium text-custom-text-100">
           {activity.new_value ? activity.new_value : activity.old_value}
         </span>
         {showIssue && (
           <>
             {" "}
-            for <IssueLink activity={activity} />
+            {localized("for")} <IssueLink activity={activity} />
           </>
         )}
         .
@@ -351,14 +360,14 @@ const activityDetails: {
   priority: {
     message: (activity, showIssue) => (
       <>
-        set the priority to{" "}
+        {localized("set the priority to")}{" "}
         <span className="font-medium text-custom-text-100">
-          {activity.new_value ? capitalizeFirstLetter(activity.new_value) : "None"}
+          {activity.new_value ? capitalizeFirstLetter(activity.new_value) : localized("None")}
         </span>
         {showIssue && (
           <>
             {" "}
-            for <IssueLink activity={activity} />
+            {localized("for")} <IssueLink activity={activity} />
           </>
         )}
         .
@@ -370,14 +379,18 @@ const activityDetails: {
   start_date: {
     message: (activity, showIssue) => (
       <>
-        {activity.new_value ? "set the start date to " : "removed the start date "}
+        {activity.new_value
+          ? localized("set the start date to")
+          : localized("removed the start date")}{" "}
         <span className="font-medium text-custom-text-100">
-          {activity.new_value ? renderShortDateWithYearFormat(activity.new_value) : "None"}
+          {activity.new_value
+            ? renderShortDateWithYearFormat(activity.new_value)
+            : localized("None")}
         </span>
         {showIssue && (
           <>
             {" "}
-            for <IssueLink activity={activity} />
+            {localized("for")} <IssueLink activity={activity} />
           </>
         )}
       </>
@@ -388,12 +401,12 @@ const activityDetails: {
   state: {
     message: (activity, showIssue) => (
       <>
-        set the state to{" "}
+        {localized("set the state to")}{" "}
         <span className="font-medium text-custom-text-100">{activity.new_value}</span>
         {showIssue && (
           <>
             {" "}
-            for <IssueLink activity={activity} />
+            {localized("for")} <IssueLink activity={activity} />
           </>
         )}
         .
@@ -405,17 +418,18 @@ const activityDetails: {
   target_date: {
     message: (activity, showIssue) => (
       <>
-        {activity.new_value ? "set the target date to " : "removed the target date "}
+        {activity.new_value
+          ? localized("set the target date to")
+          : localized("removed the target date")}{" "}
         {activity.new_value && (
           <span className="font-medium text-custom-text-100">
             {renderShortDateWithYearFormat(activity.new_value)}
           </span>
         )}
-
         {showIssue && (
           <>
             {" "}
-            for <IssueLink activity={activity} />
+            {localized("for")} <IssueLink activity={activity} />
           </>
         )}
       </>

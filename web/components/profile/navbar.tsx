@@ -7,40 +7,43 @@ import Link from "next/link";
 import { ProfileIssuesViewOptions } from "components/profile";
 // types
 import { UserAuth } from "types";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   memberRole: UserAuth;
 };
 
-const viewerTabs = [
-  {
-    route: "",
-    label: "Overview",
-    selected: "/[workspaceSlug]/profile/[userId]",
-  },
-];
-
-const adminTabs = [
-  {
-    route: "assigned",
-    label: "Assigned",
-    selected: "/[workspaceSlug]/profile/[userId]/assigned",
-  },
-  {
-    route: "created",
-    label: "Created",
-    selected: "/[workspaceSlug]/profile/[userId]/created",
-  },
-  {
-    route: "subscribed",
-    label: "Subscribed",
-    selected: "/[workspaceSlug]/profile/[userId]/subscribed",
-  },
-];
-
 export const ProfileNavbar: React.FC<Props> = ({ memberRole }) => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
+
+  const viewerTabs = [
+    {
+      route: "",
+      label: store.locale.localized("Overview"),
+      selected: "/[workspaceSlug]/profile/[userId]",
+    },
+  ];
+
+  const adminTabs = [
+    {
+      route: "assigned",
+      label: store.locale.localized("Assigned"),
+      selected: "/[workspaceSlug]/profile/[userId]/assigned",
+    },
+    {
+      route: "created",
+      label: store.locale.localized("Created"),
+      selected: "/[workspaceSlug]/profile/[userId]/created",
+    },
+    {
+      route: "subscribed",
+      label: store.locale.localized("Subscribed"),
+      selected: "/[workspaceSlug]/profile/[userId]/subscribed",
+    },
+  ];
 
   const tabsList =
     memberRole.isOwner || memberRole.isMember || memberRole.isViewer

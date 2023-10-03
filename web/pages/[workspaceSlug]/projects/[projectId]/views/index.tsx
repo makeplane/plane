@@ -25,6 +25,9 @@ import { DeleteViewModal, CreateUpdateViewModal, SingleViewItem } from "componen
 // types
 import { IView } from "types";
 import type { NextPage } from "next";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 const ProjectViews: NextPage = () => {
   const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);
@@ -33,6 +36,7 @@ const ProjectViews: NextPage = () => {
   const [deleteViewModal, setDeleteViewModal] = useState(false);
   const [selectedViewToDelete, setSelectedViewToDelete] = useState<IView | null>(null);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -66,8 +70,15 @@ const ProjectViews: NextPage = () => {
     <ProjectAuthorizationWrapper
       breadcrumbs={
         <Breadcrumbs>
-          <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-          <BreadcrumbItem title={`${activeProject?.name ?? "Project"} Views`} />
+          <BreadcrumbItem
+            title={store.locale.localized("Projects")}
+            link={`/${workspaceSlug}/projects`}
+          />
+          <BreadcrumbItem
+            title={`${
+              activeProject?.name ?? store.locale.localized("Project")
+            } ${store.locale.localized("Views")}`}
+          />
         </Breadcrumbs>
       }
       right={
@@ -81,7 +92,7 @@ const ProjectViews: NextPage = () => {
             }}
           >
             <PlusIcon className="h-4 w-4" />
-            Create View
+            {store.locale.localized("Create View")}
           </PrimaryButton>
         </div>
       }
@@ -101,7 +112,9 @@ const ProjectViews: NextPage = () => {
       {views ? (
         views.length > 0 ? (
           <div className="space-y-5 p-8">
-            <h3 className="text-2xl font-semibold text-custom-text-100">Views</h3>
+            <h3 className="text-2xl font-semibold text-custom-text-100">
+              {store.locale.localized("Views")}
+            </h3>
             <div className="divide-y divide-custom-border-200 rounded-[10px] border border-custom-border-200">
               {views.map((view) => (
                 <SingleViewItem
@@ -115,12 +128,14 @@ const ProjectViews: NextPage = () => {
           </div>
         ) : (
           <EmptyState
-            title="Get focused with views"
-            description="Views aid in saving your issues by applying various filters and grouping options."
+            title={store.locale.localized("Get focused with views")}
+            description={store.locale.localized(
+              "Views aid in saving your issues by applying various filters and grouping options."
+            )}
             image={emptyView}
             primaryButton={{
               icon: <PlusIcon className="h-4 w-4" />,
-              text: "New View",
+              text: store.locale.localized("Create View"),
               onClick: () => {
                 const e = new KeyboardEvent("keydown", {
                   key: "v",

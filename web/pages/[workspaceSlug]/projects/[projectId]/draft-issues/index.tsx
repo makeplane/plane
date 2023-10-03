@@ -21,8 +21,12 @@ import { X, PenSquare } from "lucide-react";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS } from "constants/fetch-keys";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const ProjectDraftIssues: NextPage = () => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -38,9 +42,15 @@ const ProjectDraftIssues: NextPage = () => {
       <ProjectAuthorizationWrapper
         breadcrumbs={
           <Breadcrumbs>
-            <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
             <BreadcrumbItem
-              title={`${truncateText(projectDetails?.name ?? "Project", 32)} Draft Issues`}
+              title={store.locale.localized("Projects")}
+              link={`/${workspaceSlug}/projects`}
+            />
+            <BreadcrumbItem
+              title={`${truncateText(
+                projectDetails?.name ?? store.locale.localized("Project"),
+                32
+              )} ${store.locale.localized("Draft Issues")}`}
             />
           </Breadcrumbs>
         }
@@ -58,7 +68,7 @@ const ProjectDraftIssues: NextPage = () => {
               className="flex items-center gap-1.5 rounded border border-custom-border-200 px-3 py-1.5 text-xs"
             >
               <PenSquare className="h-3 w-3 text-custom-text-300" />
-              <span>Draft Issues</span>
+              <span>{store.locale.localized("Draft Issues")}</span>
 
               <X className="h-3 w-3" />
             </button>

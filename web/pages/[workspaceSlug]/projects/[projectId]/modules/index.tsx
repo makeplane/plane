@@ -31,6 +31,9 @@ import type { NextPage } from "next";
 import { MODULE_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 // helper
 import { replaceUnderscoreIfSnakeCase, truncateText } from "helpers/string.helper";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const moduleViewOptions: { type: "grid" | "gantt_chart"; icon: any }[] = [
   {
@@ -49,6 +52,7 @@ const ProjectModules: NextPage = () => {
 
   const [modulesView, setModulesView] = useState<"grid" | "gantt_chart">("grid");
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -86,8 +90,16 @@ const ProjectModules: NextPage = () => {
     <ProjectAuthorizationWrapper
       breadcrumbs={
         <Breadcrumbs>
-          <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-          <BreadcrumbItem title={`${truncateText(activeProject?.name ?? "Project", 32)} Modules`} />
+          <BreadcrumbItem
+            title={store.locale.localized("Projects")}
+            link={`/${workspaceSlug}/projects`}
+          />
+          <BreadcrumbItem
+            title={`${truncateText(
+              activeProject?.name ?? store.locale.localized("Project"),
+              32
+            )} ${store.locale.localized("Modules")}`}
+          />
         </Breadcrumbs>
       }
       right={
@@ -96,7 +108,9 @@ const ProjectModules: NextPage = () => {
             <Tooltip
               key={option.type}
               tooltipContent={
-                <span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} Layout</span>
+                <span className="capitalize">
+                  {replaceUnderscoreIfSnakeCase(option.type)} Layout
+                </span>
               }
               position="bottom"
             >
@@ -124,7 +138,7 @@ const ProjectModules: NextPage = () => {
             }}
           >
             <PlusIcon className="h-4 w-4" />
-            Add Module
+            {store.locale.localized("Add Module")}
           </PrimaryButton>
         </div>
       }
@@ -163,7 +177,7 @@ const ProjectModules: NextPage = () => {
             image={emptyModule}
             primaryButton={{
               icon: <PlusIcon className="h-4 w-4" />,
-              text: "New Module",
+              text: store.locale.localized("New Module"),
               onClick: () => {
                 const e = new KeyboardEvent("keydown", {
                   key: "m",

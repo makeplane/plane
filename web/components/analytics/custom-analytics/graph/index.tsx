@@ -9,6 +9,8 @@ import { findStringWithMostCharacters } from "helpers/array.helper";
 import { generateBarColor } from "helpers/analytics.helper";
 // types
 import { IAnalyticsParams, IAnalyticsResponse } from "types";
+import { STATE_GROUP_LABEL } from "constants/state";
+import { PRIORITIES_LABEL } from "constants/project";
 
 type Props = {
   analytics: IAnalyticsResponse;
@@ -57,16 +59,20 @@ export const AnalyticsGraph: React.FC<Props> = ({
     return data;
   };
 
+  barGraphData.data.map((d) => {
+    d.label = STATE_GROUP_LABEL[d.name] ?? PRIORITIES_LABEL[d.name] ?? d.name;
+  });
+
   const longestXAxisLabel = findStringWithMostCharacters(barGraphData.data.map((d) => `${d.name}`));
 
   return (
     <BarGraph
       data={barGraphData.data}
-      indexBy="name"
+      indexBy="label"
       keys={barGraphData.xAxisKeys}
       colors={(datum) =>
         generateBarColor(
-          params.segment ? `${datum.id}` : `${datum.indexValue}`,
+          params.segment ? `${datum.id}` : `${datum.data.name}`,
           analytics,
           params,
           params.segment ? "segment" : "x_axis"
@@ -109,10 +115,10 @@ export const AnalyticsGraph: React.FC<Props> = ({
                       <circle cy={18} r={8} fill="#374151" />
                       <text x={0} y={21} textAnchor="middle" fontSize={9} fill="#ffffff">
                         {params.x_axis === "assignees__id"
-                          ? datum.value && datum.value !== "None"
+                          ? datum.value && datum.value !== "none"
                             ? renderAssigneeName(datum.value)[0].toUpperCase()
                             : "?"
-                          : datum.value && datum.value !== "None"
+                          : datum.value && datum.value !== "none"
                           ? `${datum.value}`.toUpperCase()[0]
                           : "?"}
                       </text>

@@ -1,5 +1,11 @@
 // mobx
-import { localized, setLocale, getAutoLocale, setAutoLocale } from "helpers/localization.helper";
+import {
+  localized,
+  setLocale,
+  getAutoLocale,
+  setAutoLocale,
+  formatDate,
+} from "helpers/localization.helper";
 import { action, makeObservable, observable } from "mobx";
 
 class LocaleStore {
@@ -36,6 +42,10 @@ class LocaleStore {
 
   localized(key: string) {
     return localized(key, this.localizedData);
+  }
+
+  formatDate(params: any) {
+    return formatDate(params);
   }
 
   initialLoad() {}

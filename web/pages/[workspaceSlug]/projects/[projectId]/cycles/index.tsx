@@ -31,6 +31,9 @@ import { SelectCycleType } from "types";
 import type { NextPage } from "next";
 // helper
 import { truncateText } from "helpers/string.helper";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const tabsList = ["All", "Active", "Upcoming", "Completed", "Drafts"];
 
@@ -50,6 +53,7 @@ const cycleViews = [
 ];
 
 const ProjectCycles: NextPage = () => {
+  const store: RootStore = useMobxStore();
   const [selectedCycle, setSelectedCycle] = useState<SelectCycleType>();
   const [createUpdateCycleModal, setCreateUpdateCycleModal] = useState(false);
 
@@ -92,8 +96,16 @@ const ProjectCycles: NextPage = () => {
     <ProjectAuthorizationWrapper
       breadcrumbs={
         <Breadcrumbs>
-          <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-          <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Cycles`} />
+          <BreadcrumbItem
+            title={store.locale.localized("Projects")}
+            link={`/${workspaceSlug}/projects`}
+          />
+          <BreadcrumbItem
+            title={`${truncateText(
+              projectDetails?.name ?? store.locale.localized("Project"),
+              32
+            )} ${store.locale.localized("Cycles")}`}
+          />
         </Breadcrumbs>
       }
       right={
@@ -105,7 +117,7 @@ const ProjectCycles: NextPage = () => {
           }}
         >
           <PlusIcon className="h-4 w-4" />
-          Add Cycle
+          {store.locale.localized("Add Cycle")}
         </PrimaryButton>
       }
     >
@@ -118,12 +130,14 @@ const ProjectCycles: NextPage = () => {
       {projectDetails?.total_cycles === 0 ? (
         <div className="h-full grid place-items-center">
           <EmptyState
-            title="Plan your project with cycles"
-            description="Cycle is a custom time period in which a team works to complete items on their backlog."
+            title={store.locale.localized("Plan your project with cycles")}
+            description={store.locale.localized(
+              "Cycle is a custom time period in which a team works to complete items on their backlog."
+            )}
             image={emptyCycle}
             primaryButton={{
               icon: <PlusIcon className="h-4 w-4" />,
-              text: "New Cycle",
+              text: store.locale.localized("New Cycle"),
               onClick: () => {
                 const e = new KeyboardEvent("keydown", {
                   key: "q",

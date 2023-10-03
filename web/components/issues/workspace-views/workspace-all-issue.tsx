@@ -25,11 +25,15 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 // fetch-keys
 import { WORKSPACE_LABELS, WORKSPACE_VIEW_ISSUES } from "constants/fetch-keys";
 // constants
-import { STATE_GROUP } from "constants/project";
+import { STATE_GROUP } from "constants/state";
 // types
 import { IIssue, IWorkspaceIssueFilterOptions } from "types";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 export const WorkspaceAllIssue = () => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, globalViewId } = router.query;
 
@@ -90,9 +94,13 @@ export const WorkspaceAllIssue = () => {
     (issue: IIssue) => {
       setCreateIssueModal(true);
 
-      setPreloadedData({ ...issue, name: `${issue.name} (Copy)`, actionType: "createIssue" });
+      setPreloadedData({
+        ...issue,
+        name: `${issue.name} (${store.locale.localized("Copy")})`,
+        actionType: "createIssue",
+      });
     },
-    [setCreateIssueModal, setPreloadedData]
+    [setCreateIssueModal, setPreloadedData, store.locale]
   );
 
   const handleEditIssue = useCallback(
@@ -214,7 +222,9 @@ export const WorkspaceAllIssue = () => {
                     className="flex items-center gap-2 text-sm"
                   >
                     {!globalViewId && <PlusIcon className="h-4 w-4" />}
-                    {globalViewId ? "Update" : "Save"} view
+                    {globalViewId
+                      ? store.locale.localized("Save view")
+                      : store.locale.localized("Save view")}
                   </PrimaryButton>
                 </div>
                 {<div className="mt-3 border-t border-custom-border-200" />}

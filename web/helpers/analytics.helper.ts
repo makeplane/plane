@@ -1,7 +1,7 @@
 // nivo
 import { BarDatum } from "@nivo/bar";
 // helpers
-import { capitalizeFirstLetter, generateRandomColor } from "helpers/string.helper";
+import { generateRandomColor } from "helpers/string.helper";
 // types
 import { IAnalyticsData, IAnalyticsParams, IAnalyticsResponse, TStateGroups } from "types";
 // constants
@@ -26,18 +26,14 @@ export const convertResponseToBarGraphData = (
 
     if (params.segment) {
       response[key].map((item: any) => {
-        segments[item.segment ?? "None"] = item[yAxisKey] ?? 0;
+        segments[item.segment ?? "none"] = item[yAxisKey] ?? 0;
 
         // store the segment in the xAxisKeys array
-        if (!xAxisKeys.includes(item.segment ?? "None")) xAxisKeys.push(item.segment ?? "None");
+        if (!xAxisKeys.includes(item.segment ?? "none")) xAxisKeys.push(item.segment ?? "none");
       });
 
       data.push({
-        name: DATE_KEYS.includes(params.x_axis)
-          ? renderMonthAndYear(key)
-          : params.x_axis === "priority" || params.x_axis === "state__group"
-          ? capitalizeFirstLetter(key)
-          : key,
+        name: DATE_KEYS.includes(params.x_axis) ? renderMonthAndYear(key) : key,
         ...segments,
       });
     } else {
@@ -48,9 +44,7 @@ export const convertResponseToBarGraphData = (
       data.push({
         name: DATE_KEYS.includes(params.x_axis)
           ? renderMonthAndYear(item.dimension)
-          : params.x_axis === "priority" || params.x_axis === "state__group"
-          ? capitalizeFirstLetter(item.dimension ?? "None")
-          : item.dimension ?? "None",
+          : item.dimension ?? "none",
         [yAxisKey]: item[yAxisKey] ?? 0,
       });
     }

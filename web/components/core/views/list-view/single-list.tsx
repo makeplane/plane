@@ -37,6 +37,9 @@ import {
 import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, WORKSPACE_LABELS } from "constants/fetch-keys";
 // constants
 import { STATE_GROUP_COLORS } from "constants/state";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   currentState?: IState | null;
@@ -71,6 +74,7 @@ export const SingleList: React.FC<Props> = (props) => {
     viewProps,
   } = props;
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
@@ -130,15 +134,15 @@ export const SingleList: React.FC<Props> = (props) => {
         title =
           [...(issueLabels ?? []), ...(workspaceLabels ?? [])]?.find(
             (label) => label.id === groupTitle
-          )?.name ?? "None";
+          )?.name ?? store.locale.localized("None");
         break;
       case "project":
-        title = projects?.find((p) => p.id === groupTitle)?.name ?? "None";
+        title = projects?.find((p) => p.id === groupTitle)?.name ?? store.locale.localized("None");
         break;
       case "assignees":
       case "created_by":
         const member = members?.find((member) => member.member.id === groupTitle)?.member;
-        title = member ? member.display_name : "None";
+        title = member ? member.display_name : store.locale.localized("None");
         break;
     }
 
@@ -226,7 +230,7 @@ export const SingleList: React.FC<Props> = (props) => {
                     {getGroupTitle()}
                   </h2>
                 ) : (
-                  <h2 className="font-medium leading-5">All Issues</h2>
+                  <h2 className="font-medium leading-5">{store.locale.localized("All Issues")}</h2>
                 )}
                 <span className="text-custom-text-200 min-w-[2.5rem] rounded-full bg-custom-background-80 py-1 text-center text-xs">
                   {groupedIssues[groupTitle as keyof IIssue].length}
@@ -262,11 +266,11 @@ export const SingleList: React.FC<Props> = (props) => {
                 noBorder
               >
                 <CustomMenu.MenuItem onClick={() => setIsCreateIssueFormOpen(true)}>
-                  Create new
+                  {store.locale.localized("Create new")}
                 </CustomMenu.MenuItem>
                 {openIssuesListModal && (
                   <CustomMenu.MenuItem onClick={openIssuesListModal}>
-                    Add an existing issue
+                    {store.locale.localized("Add an existing issue")}
                   </CustomMenu.MenuItem>
                 )}
               </CustomMenu>
@@ -322,7 +326,12 @@ export const SingleList: React.FC<Props> = (props) => {
                   </p>
                 )
               ) : (
-                <div className="flex h-full w-full items-center justify-center">Loading...</div>
+                <div
+                  className="flex h-full w-full items-center justify-center"
+                  suppressHydrationWarning
+                >
+                  {store.locale.localized("Loading...")}
+                </div>
               )}
 
               <ListInlineCreateIssueForm
@@ -348,7 +357,9 @@ export const SingleList: React.FC<Props> = (props) => {
                     className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-1 rounded-md"
                   >
                     <PlusIcon className="h-4 w-4" />
-                    <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
+                    <span className="text-sm font-medium text-custom-primary-100">
+                      {store.locale.localized("New Issue")}
+                    </span>
                   </button>
                 </div>
               )}

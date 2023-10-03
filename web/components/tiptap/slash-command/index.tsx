@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { startImageUpload } from "../plugins/upload-image";
 import { cn } from "../utils";
+import { localized } from "helpers/localization.helper";
 
 interface CommandItemProps {
   title: string;
@@ -64,8 +65,8 @@ const getSuggestionItems =
   ({ query }: { query: string }) =>
     [
       {
-        title: "Text",
-        description: "Just start typing with plain text.",
+        title: localized("Text"),
+        description: localized("Just start typing with plain text."),
         searchTerms: ["p", "paragraph"],
         icon: <Text size={18} />,
         command: ({ editor, range }: CommandProps) => {
@@ -73,8 +74,8 @@ const getSuggestionItems =
         },
       },
       {
-        title: "Heading 1",
-        description: "Big section heading.",
+        title: localized("Heading 1"),
+        description: localized("Big section heading."),
         searchTerms: ["title", "big", "large"],
         icon: <Heading1 size={18} />,
         command: ({ editor, range }: CommandProps) => {
@@ -82,8 +83,8 @@ const getSuggestionItems =
         },
       },
       {
-        title: "Heading 2",
-        description: "Medium section heading.",
+        title: localized("Heading 2"),
+        description: localized("Medium section heading."),
         searchTerms: ["subtitle", "medium"],
         icon: <Heading2 size={18} />,
         command: ({ editor, range }: CommandProps) => {
@@ -91,8 +92,8 @@ const getSuggestionItems =
         },
       },
       {
-        title: "Heading 3",
-        description: "Small section heading.",
+        title: localized("Heading 3"),
+        description: localized("Small section heading."),
         searchTerms: ["subtitle", "small"],
         icon: <Heading3 size={18} />,
         command: ({ editor, range }: CommandProps) => {
@@ -100,8 +101,8 @@ const getSuggestionItems =
         },
       },
       {
-        title: "To-do List",
-        description: "Track tasks with a to-do list.",
+        title: localized("To-do List"),
+        description: localized("Track tasks with a to-do list."),
         searchTerms: ["todo", "task", "list", "check", "checkbox"],
         icon: <CheckSquare size={18} />,
         command: ({ editor, range }: CommandProps) => {
@@ -109,8 +110,8 @@ const getSuggestionItems =
         },
       },
       {
-        title: "Bullet List",
-        description: "Create a simple bullet list.",
+        title: localized("Bullet List"),
+        description: localized("Create a simple bullet list."),
         searchTerms: ["unordered", "point"],
         icon: <List size={18} />,
         command: ({ editor, range }: CommandProps) => {
@@ -118,8 +119,8 @@ const getSuggestionItems =
         },
       },
       {
-        title: "Divider",
-        description: "Visually divide blocks",
+        title: localized("Divider"),
+        description: localized("Visually divide blocks"),
         searchTerms: ["line", "divider", "horizontal", "rule", "separate"],
         icon: <MinusSquare size={18} />,
         command: ({ editor, range }: CommandProps) => {
@@ -127,8 +128,8 @@ const getSuggestionItems =
         },
       },
       {
-        title: "Table",
-        description: "Create a Table",
+        title: localized("Table"),
+        description: localized("Create a Table"),
         searchTerms: ["table", "cell", "db", "data", "tabular"],
         icon: <Table size={18} />,
         command: ({ editor, range }: CommandProps) => {
@@ -141,8 +142,8 @@ const getSuggestionItems =
         },
       },
       {
-        title: "Numbered List",
-        description: "Create a list with numbering.",
+        title: localized("Numbered List"),
+        description: localized("Create a list with numbering."),
         searchTerms: ["ordered"],
         icon: <ListOrdered size={18} />,
         command: ({ editor, range }: CommandProps) => {
@@ -150,8 +151,8 @@ const getSuggestionItems =
         },
       },
       {
-        title: "Quote",
-        description: "Capture a quote.",
+        title: localized("Quote"),
+        description: localized("Capture a quote."),
         searchTerms: ["blockquote"],
         icon: <TextQuote size={18} />,
         command: ({ editor, range }: CommandProps) =>
@@ -164,16 +165,16 @@ const getSuggestionItems =
             .run(),
       },
       {
-        title: "Code",
-        description: "Capture a code snippet.",
+        title: localized("Code"),
+        description: localized("Capture a code snippet."),
         searchTerms: ["codeblock"],
         icon: <Code size={18} />,
         command: ({ editor, range }: CommandProps) =>
           editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
       },
       {
-        title: "Image",
-        description: "Upload an image from your computer.",
+        title: localized("Image"),
+        description: localized("Upload an image from your computer."),
         searchTerms: ["photo", "picture", "media"],
         icon: <ImageIcon size={18} />,
         command: ({ editor, range }: CommandProps) => {

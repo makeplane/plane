@@ -20,6 +20,9 @@ import { CustomDatePicker, Icon } from "components/ui";
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { IIssue, TIssuePriorities } from "types";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   handleDeleteIssue: () => void;
@@ -38,6 +41,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
   readOnly,
   workspaceSlug,
 }) => {
+  const store: RootStore = useMobxStore();
   const { setToastAlert } = useToast();
 
   const startDate = issue.start_date;
@@ -55,8 +59,8 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
     copyTextToClipboard(urlToCopy).then(() => {
       setToastAlert({
         type: "success",
-        title: "Link copied!",
-        message: "Issue link copied to clipboard",
+        title: store.locale.localized("Link copied!"),
+        message: store.locale.localized("Issue link copied to clipboard"),
       });
     });
   };
@@ -99,7 +103,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
         <div className="flex items-center gap-2 text-sm">
           <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
             <Icon iconName="group" className="!text-base flex-shrink-0" />
-            <span className="flex-grow truncate">Assignees</span>
+            <span className="flex-grow truncate">{store.locale.localized("Assignees")}</span>
           </div>
           <div className="w-3/4">
             <SidebarAssigneeSelect
@@ -112,7 +116,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
         <div className="flex items-center gap-2 text-sm">
           <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
             <Icon iconName="signal_cellular_alt" className="!text-base flex-shrink-0" />
-            <span className="flex-grow truncate">Priority</span>
+            <span className="flex-grow truncate">{store.locale.localized("Priority")}</span>
           </div>
           <div className="w-3/4">
             <SidebarPrioritySelect
@@ -125,11 +129,11 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
         <div className="flex items-center gap-2 text-sm">
           <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
             <Icon iconName="calendar_today" className="!text-base flex-shrink-0" />
-            <span className="flex-grow truncate">Start date</span>
+            <span className="flex-grow truncate">{store.locale.localized("Start date")}</span>
           </div>
           <div>
             <CustomDatePicker
-              placeholder="Select start date"
+              placeholder={store.locale.localized("Select start date")}
               value={issue.start_date}
               onChange={(val) =>
                 handleUpdateIssue({
@@ -145,11 +149,11 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
         <div className="flex items-center gap-2 text-sm">
           <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
             <Icon iconName="calendar_today" className="!text-base flex-shrink-0" />
-            <span className="flex-grow truncate">Due date</span>
+            <span className="flex-grow truncate">{store.locale.localized("Due date")}</span>
           </div>
           <div>
             <CustomDatePicker
-              placeholder="Select due date"
+              placeholder={store.locale.localized("Select due date")}
               value={issue.target_date}
               onChange={(val) =>
                 handleUpdateIssue({

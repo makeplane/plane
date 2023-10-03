@@ -19,6 +19,9 @@ import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import type { IInboxIssue } from "types";
 // constants
 import { INBOX_STATUS } from "constants/inbox";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   issue: IInboxIssue;
@@ -28,6 +31,7 @@ type Props = {
 export const InboxIssueCard: React.FC<Props> = (props) => {
   const { issue, active } = props;
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query;
 
@@ -69,7 +73,7 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
               </div>
             </Tooltip>
             <Tooltip
-              tooltipHeading="Created on"
+              tooltipHeading={store.locale.localized("Created on")}
               tooltipContent={`${renderShortDateWithYearFormat(issue.created_at ?? "")}`}
             >
               <div className="flex items-center gap-1 rounded border border-custom-border-200 shadow-sm text-xs px-2 py-[0.19rem] text-custom-text-200">
@@ -88,31 +92,31 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
             {issueStatus === -2 ? (
               <>
                 <ExclamationTriangleIcon className="h-3.5 w-3.5" />
-                <span>Pending</span>
+                <span>{store.locale.localized("Pending")}</span>
               </>
             ) : issueStatus === -1 ? (
               <>
                 <XCircleIcon className="h-3.5 w-3.5" />
-                <span>Declined</span>
+                <span>{store.locale.localized("Declined")}</span>
               </>
             ) : issueStatus === 0 ? (
               <>
                 <ClockIcon className="h-3.5 w-3.5" />
                 <span>
                   {new Date(issue.issue_inbox[0].snoozed_till ?? "") < new Date()
-                    ? "Snoozed date passed"
-                    : "Snoozed"}
+                    ? store.locale.localized("Snoozed date passed")
+                    : store.locale.localized("Snoozed")}
                 </span>
               </>
             ) : issueStatus === 1 ? (
               <>
                 <CheckCircleIcon className="h-3.5 w-3.5" />
-                <span>Accepted</span>
+                <span>{store.locale.localized("Accepted")}</span>
               </>
             ) : (
               <>
                 <DocumentDuplicateIcon className="h-3.5 w-3.5" />
-                <span>Duplicate</span>
+                <span>{store.locale.localized("Duplicate")}</span>
               </>
             )}
           </div>

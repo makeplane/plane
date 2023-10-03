@@ -30,6 +30,8 @@ import type { NextPage } from "next";
 import { PROJECT_DETAILS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const AllPagesList = dynamic<TPagesListProps>(
   () => import("components/pages").then((a) => a.AllPagesList),
@@ -59,13 +61,12 @@ const OtherPagesList = dynamic<TPagesListProps>(
   }
 );
 
-const tabsList = ["Recent", "All", "Favorites", "Created by me", "Created by others"];
-
 const ProjectPages: NextPage = () => {
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
 
   const [viewType, setViewType] = useState<TPageViewProps>("list");
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -80,23 +81,30 @@ const ProjectPages: NextPage = () => {
       : null
   );
 
-  const currentTabValue = (tab: string | null) => {
-    switch (tab) {
-      case "Recent":
-        return 0;
-      case "All":
-        return 1;
-      case "Favorites":
-        return 2;
-      case "Created by me":
-        return 3;
-      case "Created by others":
-        return 4;
+  const tabsList = [
+    {
+      label: "Recent",
+      name: store.locale.localized("Recent"),
+    },
+    {
+      label: "All",
+      name: store.locale.localized("All"),
+    },
+    {
+      label: "Favorites",
+      name: store.locale.localized("Favorites"),
+    },
+    {
+      label: "Created by me",
+      name: store.locale.localized("Created by me"),
+    },
+    {
+      label: "Created by others",
+      name: store.locale.localized("Created by others"),
+    },
+  ];
 
-      default:
-        return 0;
-    }
-  };
+  const currentTabValue = (tab: string | null) => tabsList.findIndex((t) => t.label === tab);
 
   return (
     <>
@@ -108,9 +116,15 @@ const ProjectPages: NextPage = () => {
       <ProjectAuthorizationWrapper
         breadcrumbs={
           <Breadcrumbs>
-            <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
             <BreadcrumbItem
-              title={`${truncateText(projectDetails?.name ?? "Project", 32)} Pages`}
+              title={store.locale.localized("Projects")}
+              link={`/${workspaceSlug}/projects`}
+            />
+            <BreadcrumbItem
+              title={`${truncateText(
+                projectDetails?.name ?? store.locale.localized("Project"),
+                32
+              )} ${store.locale.localized("Pages")}`}
             />
           </Breadcrumbs>
         }
@@ -123,7 +137,7 @@ const ProjectPages: NextPage = () => {
             }}
           >
             <PlusIcon className="h-4 w-4" />
-            Create Page
+            {store.locale.localized("Create Page")}
           </PrimaryButton>
         }
       >
@@ -155,28 +169,15 @@ const ProjectPages: NextPage = () => {
             as={Fragment}
             defaultIndex={currentTabValue(pageTab)}
             onChange={(i) => {
-              switch (i) {
-                case 0:
-                  return setPageTab("Recent");
-                case 1:
-                  return setPageTab("All");
-                case 2:
-                  return setPageTab("Favorites");
-                case 3:
-                  return setPageTab("Created by me");
-                case 4:
-                  return setPageTab("Created by others");
-
-                default:
-                  return setPageTab("Recent");
-              }
+              const tab = tabsList[i] ?? tabsList[0];
+              setPageTab(tab.label);
             }}
           >
             <Tab.List as="div" className="mb-6 flex items-center justify-between">
               <div className="flex gap-4 items-center flex-wrap">
                 {tabsList.map((tab, index) => (
                   <Tab
-                    key={`${tab}-${index}`}
+                    key={`${tab.label}-${index}`}
                     className={({ selected }) =>
                       `rounded-full border px-5 py-1.5 text-sm outline-none ${
                         selected
@@ -185,7 +186,7 @@ const ProjectPages: NextPage = () => {
                       }`
                     }
                   >
-                    {tab}
+                    {tab.name}
                   </Tab>
                 ))}
               </div>

@@ -221,7 +221,7 @@ export const SingleState: React.FC<Props> = ({
             disabled={state.default || groupLength === 1}
           >
             {state.default ? (
-              <Tooltip tooltipContent="Cannot delete the default state.">
+              <Tooltip tooltipContent={store.locale.localized("Cannot delete the default state.")}>
                 <X
                   className={`h-4 w-4 ${
                     groupLength < 1 ? "text-custom-sidebar-text-400" : "text-red-500"
@@ -229,7 +229,7 @@ export const SingleState: React.FC<Props> = ({
                 />
               </Tooltip>
             ) : groupLength === 1 ? (
-              <Tooltip tooltipContent="Cannot have an empty group.">
+              <Tooltip tooltipContent={store.locale.localized("Cannot have an empty group.")}>
                 <X
                   className={`h-4 w-4 ${
                     groupLength < 1 ? "text-custom-sidebar-text-400" : "text-red-500"

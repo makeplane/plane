@@ -14,6 +14,9 @@ import { Loader, PrimaryButton, SecondaryButton } from "components/ui";
 import { IUserDetails, TFormValues, TIntegrationSteps } from "components/integration";
 // fetch-keys
 import { GITHUB_REPOSITORY_INFO } from "constants/fetch-keys";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   selectedRepo: any;
@@ -28,6 +31,7 @@ export const GithubRepoDetails: FC<Props> = ({
   setUsers,
   setValue,
 }) => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -63,27 +67,29 @@ export const GithubRepoDetails: FC<Props> = ({
         repoInfo.issue_count > 0 ? (
           <div className="flex items-center justify-between gap-4">
             <div>
-              <div className="font-medium">Repository Details</div>
-              <div className="text-sm text-custom-text-200">Import completed. We have found:</div>
+              <div className="font-medium">{store.locale.localized("Repository Details")}</div>
+              <div className="text-sm text-custom-text-200">
+                {store.locale.localized("Import completed. We have found:")}
+              </div>
             </div>
             <div className="mt-4 flex gap-16">
               <div className="flex-shrink-0 text-center">
                 <p className="text-3xl font-bold">{repoInfo.issue_count}</p>
-                <h6 className="text-sm text-custom-text-200">Issues</h6>
+                <h6 className="text-sm text-custom-text-200">{store.locale.localized("Issues")}</h6>
               </div>
               <div className="flex-shrink-0 text-center">
                 <p className="text-3xl font-bold">{repoInfo.labels}</p>
-                <h6 className="text-sm text-custom-text-200">Labels</h6>
+                <h6 className="text-sm text-custom-text-200">{store.locale.localized("Labels")}</h6>
               </div>
               <div className="flex-shrink-0 text-center">
                 <p className="text-3xl font-bold">{repoInfo.collaborators.length}</p>
-                <h6 className="text-sm text-custom-text-200">Users</h6>
+                <h6 className="text-sm text-custom-text-200">{store.locale.localized("Users")}</h6>
               </div>
             </div>
           </div>
         ) : (
           <div>
-            <h5>We didn{"'"}t find any issue in this repository.</h5>
+            <h5>{store.locale.localized("We didn't find any issue in this repository.")}</h5>
           </div>
         )
       ) : (
@@ -92,12 +98,14 @@ export const GithubRepoDetails: FC<Props> = ({
         </Loader>
       )}
       <div className="mt-6 flex items-center justify-end gap-2">
-        <SecondaryButton onClick={() => handleStepChange("import-data")}>Back</SecondaryButton>
+        <SecondaryButton onClick={() => handleStepChange("import-data")}>
+          {store.locale.localized("Back")}
+        </SecondaryButton>
         <PrimaryButton
           onClick={() => handleStepChange("import-users")}
           disabled={!repoInfo || repoInfo.issue_count === 0}
         >
-          Next
+          {store.locale.localized("Next")}
         </PrimaryButton>
       </div>
     </div>

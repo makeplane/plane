@@ -188,7 +188,9 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
           </Link>
           <div className="flex h-full items-end justify-between">
             <Tooltip
-              tooltipContent={`Created at ${renderShortDateWithYearFormat(project.created_at)}`}
+              tooltipContent={`${store.locale.localized(
+                "Created at"
+              )} ${renderShortDateWithYearFormat(project.created_at)}`}
               position="bottom"
             >
               <div className="flex cursor-default items-center gap-1.5 text-xs">

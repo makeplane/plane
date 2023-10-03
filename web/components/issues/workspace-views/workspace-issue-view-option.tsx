@@ -16,19 +16,12 @@ import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 // types
 import { TIssueViewOptions } from "types";
-
-const issueViewOptions: { type: TIssueViewOptions; Icon: any }[] = [
-  {
-    type: "list",
-    Icon: FormatListBulletedOutlined,
-  },
-  {
-    type: "spreadsheet",
-    Icon: CreditCard,
-  },
-];
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 export const WorkspaceIssuesViewOptions: React.FC = () => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, globalViewId } = router.query;
 
@@ -38,15 +31,26 @@ export const WorkspaceIssuesViewOptions: React.FC = () => {
 
   const showFilters = isWorkspaceViewPath || globalViewId;
 
+  const issueViewOptions: { type: TIssueViewOptions; name: string; Icon: any }[] = [
+    {
+      type: "list",
+      name: store.locale.localized("List View"),
+      Icon: FormatListBulletedOutlined,
+    },
+    {
+      type: "spreadsheet",
+      name: store.locale.localized("Spreadsheet View"),
+      Icon: CreditCard,
+    },
+  ];
+
   return (
     <div className="flex items-center gap-2">
       <div className="flex items-center gap-x- px-1 py-0.5 rounded bg-custom-sidebar-background-90 ">
         {issueViewOptions.map((option) => (
           <Tooltip
             key={option.type}
-            tooltipContent={
-              <span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} View</span>
-            }
+            tooltipContent={<span className="capitalize">{option.name}</span>}
             position="bottom"
           >
             <button

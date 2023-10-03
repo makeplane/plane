@@ -21,8 +21,12 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS } from "constants/fetch-keys";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const ProjectArchivedIssues: NextPage = () => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -38,9 +42,15 @@ const ProjectArchivedIssues: NextPage = () => {
       <ProjectAuthorizationWrapper
         breadcrumbs={
           <Breadcrumbs>
-            <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
             <BreadcrumbItem
-              title={`${truncateText(projectDetails?.name ?? "Project", 32)} Archived Issues`}
+              title={store.locale.localized("Projects")}
+              link={`/${workspaceSlug}/projects`}
+            />
+            <BreadcrumbItem
+              title={`${truncateText(
+                projectDetails?.name ?? store.locale.localized("Project"),
+                32
+              )} ${store.locale.localized("Archived Issues")}`}
             />
           </Breadcrumbs>
         }
@@ -58,7 +68,7 @@ const ProjectArchivedIssues: NextPage = () => {
               className="flex items-center gap-1.5 rounded-full border border-custom-border-200 px-3 py-1.5 text-xs"
             >
               <Icon iconName="archive" className="text-base" />
-              <span>Archived Issues</span>
+              <span>{store.locale.localized("Archived Issues")}</span>
 
               <XMarkIcon className="h-3 w-3" />
             </button>

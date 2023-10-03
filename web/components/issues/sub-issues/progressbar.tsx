@@ -1,9 +1,13 @@
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
+
 export interface IProgressBar {
   total: number;
   done: number;
 }
 
 export const ProgressBar = ({ total = 0, done = 0 }: IProgressBar) => {
+  const store: RootStore = useMobxStore();
   const calPercentage = (doneValue: number, totalValue: number): string => {
     if (doneValue === 0 || totalValue === 0) return (0).toFixed(0);
     return ((100 * doneValue) / totalValue).toFixed(0);
@@ -19,7 +23,9 @@ export const ProgressBar = ({ total = 0, done = 0 }: IProgressBar) => {
           />
         </div>
       </div>
-      <div className="flex-shrink-0 text-xs font-medium">{calPercentage(done, total)}% Done</div>
+      <div className="flex-shrink-0 text-xs font-medium">
+        {calPercentage(done, total)}% {store.locale.localized("Done")}
+      </div>
     </div>
   );
 };

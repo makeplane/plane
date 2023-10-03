@@ -14,6 +14,9 @@ import useToast from "hooks/use-toast";
 import { IIssueAttachment } from "types";
 // fetch-keys
 import { ISSUE_ATTACHMENTS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const maxFileSize = 5 * 1024 * 1024; // 5 MB
 
@@ -24,6 +27,7 @@ type Props = {
 export const IssueAttachmentUpload: React.FC<Props> = ({ disabled = false }) => {
   const [isLoading, setIsLoading] = useState(false);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
@@ -59,8 +63,8 @@ export const IssueAttachmentUpload: React.FC<Props> = ({ disabled = false }) => 
         mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
         setToastAlert({
           type: "success",
-          title: "Success!",
-          message: "File added successfully.",
+          title: store.locale.localized("Success!"),
+          message: store.locale.localized("File added successfully."),
         });
         setIsLoading(false);
       })
@@ -68,8 +72,10 @@ export const IssueAttachmentUpload: React.FC<Props> = ({ disabled = false }) => 
         setIsLoading(false);
         setToastAlert({
           type: "error",
-          title: "error!",
-          message: "Something went wrong. please check file type & size (max 5 MB)",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized(
+            "Something went wrong. please check file type & size (max 5 MB)"
+          ),
         });
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -84,7 +90,9 @@ export const IssueAttachmentUpload: React.FC<Props> = ({ disabled = false }) => 
 
   const fileError =
     fileRejections.length > 0
-      ? `Invalid file type or size (max ${maxFileSize / 1024 / 1024} MB)`
+      ? `${store.locale.localized("Invalid file type or size")} (max ${
+          maxFileSize / 1024 / 1024
+        } MB)`
       : null;
 
   return (
@@ -97,13 +105,13 @@ export const IssueAttachmentUpload: React.FC<Props> = ({ disabled = false }) => 
       <input {...getInputProps()} />
       <span className="flex items-center gap-2">
         {isDragActive ? (
-          <p>Drop here...</p>
+          <p>{store.locale.localized("Drop here ...")}</p>
         ) : fileError ? (
           <p className="text-center text-red-500">{fileError}</p>
         ) : isLoading ? (
-          <p className="text-center">Uploading...</p>
+          <p className="text-center">{store.locale.localized("Uploading ...")}</p>
         ) : (
-          <p className="text-center">Click or drag a file here</p>
+          <p className="text-center">{store.locale.localized("Click or drag a file here")}</p>
         )}
       </span>
     </div>

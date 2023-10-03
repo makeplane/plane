@@ -17,8 +17,12 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
 import type { NextPage } from "next";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 const ProjectInbox: NextPage = () => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -29,9 +33,15 @@ const ProjectInbox: NextPage = () => {
       <ProjectAuthorizationWrapper
         breadcrumbs={
           <Breadcrumbs>
-            <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
             <BreadcrumbItem
-              title={`${truncateText(projectDetails?.name ?? "Project", 32)} Inbox`}
+              title={store.locale.localized("Projects")}
+              link={`/${workspaceSlug}/projects`}
+            />
+            <BreadcrumbItem
+              title={`${truncateText(
+                projectDetails?.name ?? store.locale.localized("Project"),
+                32
+              )} ${store.locale.localized("Inbox")}`}
             />
           </Breadcrumbs>
         }
@@ -45,7 +55,7 @@ const ProjectInbox: NextPage = () => {
               }}
             >
               <PlusIcon className="h-4 w-4" />
-              Add Issue
+              {store.locale.localized("Add Issue")}
             </PrimaryButton>
           </div>
         }

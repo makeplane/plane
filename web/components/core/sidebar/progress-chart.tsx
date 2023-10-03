@@ -6,6 +6,9 @@ import { LineGraph } from "components/ui";
 import { getDatesInRange, renderShortNumericDateFormat } from "helpers/date-time.helper";
 //types
 import { TCompletionChartDistribution } from "types";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   distribution: TCompletionChartDistribution;
@@ -41,6 +44,7 @@ const DashedLine = ({ series, lineGenerator, xScale, yScale }: any) =>
   ));
 
 const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, totalIssues }) => {
+  const store: RootStore = useMobxStore();
   const chartData = Object.keys(distribution).map((key) => ({
     currentDate: renderShortNumericDateFormat(key),
     pending: distribution[key],
@@ -121,7 +125,10 @@ const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, tota
         sliceTooltip={(datum) => (
           <div className="rounded-md border border-custom-border-200 bg-custom-background-80 p-2 text-xs">
             {datum.slice.points[0].data.yFormatted}
-            <span className="text-custom-text-200"> issues pending on </span>
+            <span className="text-custom-text-200">
+              {" "}
+              {store.locale.localized("issues pending on")}{" "}
+            </span>
             {datum.slice.points[0].data.xFormatted}
           </div>
         )}

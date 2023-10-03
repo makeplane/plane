@@ -11,6 +11,8 @@ import DefaultLayout from "layouts/default-layout";
 import Image from "next/image";
 import userService from "services/user.service";
 import { useRouter } from "next/router";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const Editor: NextPage = () => {
   const [user, setUser] = useState<ICurrentUserResponse | undefined>();
@@ -19,6 +21,7 @@ const Editor: NextPage = () => {
   const { setShowAlert } = useReloadConfirmations();
   const [cookies, setCookies] = useState<any>({});
   const [issueDetail, setIssueDetail] = useState<IIssue | null>(null);
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { editable } = router.query;
   const {
@@ -168,7 +171,9 @@ const Editor: NextPage = () => {
           isSubmitting === "saved" ? "fadeOut" : "fadeIn"
         }`}
       >
-        {isSubmitting === "submitting" ? "Saving..." : "Saved"}
+        {isSubmitting === "submitting"
+          ? store.locale.localized("Saving...")
+          : store.locale.localized("Saved")}
       </div>
     </div>
   );

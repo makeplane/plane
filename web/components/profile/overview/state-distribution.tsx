@@ -5,9 +5,10 @@ import stateGraph from "public/empty-state/state_graph.svg";
 // types
 import { IUserProfileData, IUserStateDistribution } from "types";
 // constants
-import { STATE_GROUP_COLORS } from "constants/state";
+import { STATE_GROUP_COLORS, STATE_GROUP_LABEL } from "constants/state";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
+import { GROUP_CHOICES } from "constants/project";
 
 type Props = {
   stateDistribution: IUserStateDistribution[];
@@ -29,7 +30,8 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
                 data={
                   userProfile.state_distribution.map((group) => ({
                     id: group.state_group,
-                    label: group.state_group,
+                    state: group.state_group,
+                    label: STATE_GROUP_LABEL[group.state_group] ?? group.state_group,
                     value: group.state_count,
                     color: STATE_GROUP_COLORS[group.state_group],
                   })) ?? []
@@ -46,7 +48,7 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
                 tooltip={(datum) => (
                   <div className="flex items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-90 p-2 text-xs">
                     <span className="text-custom-text-200 capitalize">
-                      {datum.datum.label} {store.locale.localized("issues")}
+                      {datum.datum.label}
                       {":"}
                     </span>{" "}
                     {datum.datum.value}
@@ -74,7 +76,9 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
                           backgroundColor: STATE_GROUP_COLORS[group.state_group],
                         }}
                       />
-                      <div className="capitalize whitespace-nowrap">{group.state_group}</div>
+                      <div className="capitalize whitespace-nowrap">
+                        {GROUP_CHOICES[group.state_group] ?? group.state_group}
+                      </div>
                     </div>
                     <div>{group.state_count}</div>
                   </div>

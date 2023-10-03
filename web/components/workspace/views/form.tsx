@@ -25,7 +25,9 @@ import { IQuery } from "types";
 import { IWorkspaceView } from "types/workspace-views";
 // fetch-keys
 import { WORKSPACE_LABELS } from "constants/fetch-keys";
-import { STATE_GROUP } from "constants/project";
+import { STATE_GROUP } from "constants/state";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   handleFormSubmit: (values: IWorkspaceView) => Promise<void>;
@@ -47,6 +49,7 @@ export const WorkspaceViewForm: React.FC<Props> = ({
   data,
   preLoadedData,
 }) => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -114,7 +117,7 @@ export const WorkspaceViewForm: React.FC<Props> = ({
     <form onSubmit={handleSubmit(handleCreateUpdateView)}>
       <div className="space-y-5">
         <h3 className="text-lg font-medium leading-6 text-custom-text-100">
-          {status ? "Update" : "Create"} View
+          {status ? store.locale.localized("Update View") : store.locale.localized("Create View")}
         </h3>
         <div className="space-y-3">
           <div>
@@ -122,16 +125,16 @@ export const WorkspaceViewForm: React.FC<Props> = ({
               id="name"
               name="name"
               type="name"
-              placeholder="Title"
+              placeholder={store.locale.localized("Title")}
               autoComplete="off"
               className="resize-none text-xl"
               error={errors.name}
               register={register}
               validations={{
-                required: "Title is required",
+                required: store.locale.localized("Title is required"),
                 maxLength: {
                   value: 255,
-                  message: "Title should be less than 255 characters",
+                  message: store.locale.localized("Title should be less than 255 characters"),
                 },
               }}
             />
@@ -140,7 +143,7 @@ export const WorkspaceViewForm: React.FC<Props> = ({
             <TextArea
               id="description"
               name="description"
-              placeholder="Description"
+              placeholder={store.locale.localized("Description")}
               className="h-32 resize-none text-sm"
               error={errors.description}
               register={register}
@@ -197,15 +200,15 @@ export const WorkspaceViewForm: React.FC<Props> = ({
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+        <SecondaryButton onClick={handleClose}>{store.locale.localized("Cancel")}</SecondaryButton>
         <PrimaryButton type="submit" loading={isSubmitting}>
           {status
             ? isSubmitting
-              ? "Updating View..."
-              : "Update View"
+              ? store.locale.localized("Updating View...")
+              : store.locale.localized("Update View")
             : isSubmitting
-            ? "Creating View..."
-            : "Create View"}
+            ? store.locale.localized("Creating View...")
+            : store.locale.localized("Create View")}
         </PrimaryButton>
       </div>
     </form>

@@ -5,16 +5,17 @@ import {
   TagIcon,
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
+import { localized } from "helpers/localization.helper";
 
 export const SPREADSHEET_COLUMN = [
   {
     propertyName: "title",
-    colName: "Title",
+    colName: localized("Title"),
     colSize: "440px",
   },
   {
     propertyName: "state",
-    colName: "State",
+    colName: localized("State"),
     colSize: "128px",
     icon: Squares2X2Icon,
     ascendingOrder: "state__name",
@@ -22,14 +23,14 @@ export const SPREADSHEET_COLUMN = [
   },
   {
     propertyName: "priority",
-    colName: "Priority",
+    colName: localized("Priority"),
     colSize: "128px",
     ascendingOrder: "priority",
     descendingOrder: "-priority",
   },
   {
     propertyName: "assignee",
-    colName: "Assignees",
+    colName: localized("Assignees"),
     colSize: "128px",
     icon: UserGroupIcon,
     ascendingOrder: "assignees__id",
@@ -37,7 +38,7 @@ export const SPREADSHEET_COLUMN = [
   },
   {
     propertyName: "labels",
-    colName: "Labels",
+    colName: localized("Labels"),
     colSize: "128px",
     icon: TagIcon,
     ascendingOrder: "labels__name",
@@ -45,7 +46,7 @@ export const SPREADSHEET_COLUMN = [
   },
   {
     propertyName: "start_date",
-    colName: "Start Date",
+    colName: localized("Start Date"),
     colSize: "128px",
     icon: CalendarDaysIcon,
     ascendingOrder: "-start_date",
@@ -53,7 +54,7 @@ export const SPREADSHEET_COLUMN = [
   },
   {
     propertyName: "due_date",
-    colName: "Due Date",
+    colName: localized("Due Date"),
     colSize: "128px",
     icon: CalendarDaysIcon,
     ascendingOrder: "-target_date",
@@ -61,7 +62,7 @@ export const SPREADSHEET_COLUMN = [
   },
   {
     propertyName: "estimate",
-    colName: "Estimate",
+    colName: localized("Estimate"),
     colSize: "128px",
     icon: PlayIcon,
     ascendingOrder: "estimate_point",
@@ -69,7 +70,7 @@ export const SPREADSHEET_COLUMN = [
   },
   {
     propertyName: "created_on",
-    colName: "Created On",
+    colName: localized("Created On"),
     colSize: "144px",
     icon: CalendarDaysIcon,
     ascendingOrder: "-created_at",
@@ -77,7 +78,7 @@ export const SPREADSHEET_COLUMN = [
   },
   {
     propertyName: "updated_on",
-    colName: "Updated On",
+    colName: localized("Updated On"),
     colSize: "144px",
     icon: CalendarDaysIcon,
     ascendingOrder: "-updated_at",

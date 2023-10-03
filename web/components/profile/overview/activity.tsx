@@ -14,8 +14,12 @@ import recentActivityEmptyState from "public/empty-state/recent_activity.svg";
 import { timeAgo } from "helpers/date-time.helper";
 // fetch-keys
 import { USER_PROFILE_ACTIVITY } from "constants/fetch-keys";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 export const ProfileActivity = () => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
 
@@ -30,7 +34,7 @@ export const ProfileActivity = () => {
 
   return (
     <div className="space-y-2">
-      <h3 className="text-lg font-medium">Recent Activity</h3>
+      <h3 className="text-lg font-medium">{store.locale.localized("Recent Activity")}</h3>
       <div className="border border-custom-border-100 rounded p-6">
         {userProfileActivity ? (
           userProfileActivity.results.length > 0 ? (
@@ -61,14 +65,14 @@ export const ProfileActivity = () => {
                         <ActivityMessage activity={activity} showIssue />
                       ) : (
                         <span>
-                          created this{" "}
+                          {store.locale.localized("created this")}{" "}
                           <a
                             href={`/${workspaceSlug}/projects/${activity.project}/issues/${activity.issue}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
                           >
-                            Issue
+                            {store.locale.localized("Issue")}
                             <Icon iconName="launch" className="!text-xs" />
                           </a>
                         </span>
@@ -81,8 +85,8 @@ export const ProfileActivity = () => {
             </div>
           ) : (
             <ProfileEmptyState
-              title="No Data yet"
-              description="We couldn’t find data. Kindly view your inputs"
+              title={store.locale.localized("No Data yet")}
+              description={store.locale.localized("We couldn’t find data. Kindly view your inputs")}
               image={recentActivityEmptyState}
             />
           )

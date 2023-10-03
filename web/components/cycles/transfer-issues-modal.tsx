@@ -20,6 +20,9 @@ import { CYCLE_ISSUES_WITH_PARAMS, INCOMPLETE_CYCLES_LIST } from "constants/fetc
 import { ICycle } from "types";
 //helper
 import { getDateRangeStatus } from "helpers/date-time.helper";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   isOpen: boolean;
@@ -29,6 +32,7 @@ type Props = {
 export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) => {
   const [query, setQuery] = useState("");
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
 
@@ -43,15 +47,15 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
         mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
         setToastAlert({
           type: "success",
-          title: "Issues transfered successfully",
-          message: "Issues have been transferred successfully",
+          title: store.locale.localized("Issues transfered successfully"),
+          message: store.locale.localized("Issues have been transferred successfully"),
         });
       })
       .catch((err) => {
         setToastAlert({
           type: "error",
-          title: "Error!",
-          message: "Issues cannot be transfer. Please try again.",
+          title: store.locale.localized("Error!"),
+          message: store.locale.localized("Issues cannot be transfer. Please try again."),
         });
       });
   };
@@ -113,7 +117,9 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
                   <div className="flex items-center justify-between px-5">
                     <div className="flex items-center gap-3">
                       <TransferIcon className="h-4 w-5" color="#495057" />
-                      <h4 className="text-xl font-medium text-custom-text-100">Transfer Issues</h4>
+                      <h4 className="text-xl font-medium text-custom-text-100">
+                        {store.locale.localized("Transfer Issues")}
+                      </h4>
                     </div>
                     <button onClick={handleClose}>
                       <XMarkIcon className="h-4 w-4" />
@@ -123,7 +129,7 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
                     <MagnifyingGlassIcon className="h-4 w-4 text-custom-text-200" />
                     <input
                       className="bg-custom-background-90 outline-none"
-                      placeholder="Search for a cycle..."
+                      placeholder={store.locale.localized("Search for a cycle...")}
                       onChange={(e) => setQuery(e.target.value)}
                       value={query}
                     />
@@ -159,13 +165,16 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
                             className="fill-current text-custom-text-200"
                           />
                           <span className="text-center text-custom-text-200">
-                            You don’t have any current cycle. Please create one to transfer the
-                            issues.
+                            {store.locale.localized(
+                              "You don’t have any current cycle. Please create one to transfer the issues."
+                            )}
                           </span>
                         </div>
                       )
                     ) : (
-                      <p className="text-center text-custom-text-200">Loading...</p>
+                      <p className="text-center text-custom-text-200" suppressHydrationWarning>
+                        {store.locale.localized("Loading...")}
+                      </p>
                     )}
                   </div>
                 </div>

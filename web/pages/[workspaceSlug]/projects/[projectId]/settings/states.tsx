@@ -34,6 +34,7 @@ import { STATES_LIST } from "constants/fetch-keys";
 // mobx
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
+import { STATE_GROUP_LABEL } from "constants/state";
 
 const StatesSettings: NextPage = () => {
   const [activeGroup, setActiveGroup] = useState<StateGroup>(null);
@@ -96,7 +97,7 @@ const StatesSettings: NextPage = () => {
                       <div key={key} className="flex flex-col gap-2">
                         <div className="flex w-full justify-between">
                           <h4 className="text-base font-medium text-custom-text-200 capitalize">
-                            {key}
+                            {STATE_GROUP_LABEL[key] ?? key}
                           </h4>
                           <button
                             type="button"

@@ -30,6 +30,9 @@ import { IWorkspaceView } from "types/workspace-views";
 import { WORKSPACE_VIEWS_LIST } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const WorkspaceViews: NextPage = () => {
   const [query, setQuery] = useState("");
@@ -40,6 +43,7 @@ const WorkspaceViews: NextPage = () => {
   const [deleteViewModal, setDeleteViewModal] = useState(false);
   const [selectedViewToDelete, setSelectedViewToDelete] = useState<IWorkspaceView | null>(null);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -51,22 +55,22 @@ const WorkspaceViews: NextPage = () => {
   const defaultWorkspaceViewsList = [
     {
       key: "all",
-      label: "All Issues",
+      label: store.locale.localized("All Issues"),
       href: `/${workspaceSlug}/workspace-views/all-issues`,
     },
     {
       key: "assigned",
-      label: "Assigned",
+      label: store.locale.localized("Assigned"),
       href: `/${workspaceSlug}/workspace-views/assigned`,
     },
     {
       key: "created",
-      label: "Created",
+      label: store.locale.localized("Created"),
       href: `/${workspaceSlug}/workspace-views/created`,
     },
     {
       key: "subscribed",
-      label: "Subscribed",
+      label: store.locale.localized("Subscribed"),
       href: `/${workspaceSlug}/workspace-views/subscribed`,
     },
   ];
@@ -97,7 +101,7 @@ const WorkspaceViews: NextPage = () => {
     <WorkspaceAuthorizationLayout
       breadcrumbs={
         <div className="flex gap-2 items-center">
-          <span className="text-sm font-medium">Workspace Views</span>
+          <span className="text-sm font-medium">{store.locale.localized("Workspace Views")}</span>
         </div>
       }
       right={
@@ -109,7 +113,7 @@ const WorkspaceViews: NextPage = () => {
             onClick={() => setCreateUpdateViewModal(true)}
           >
             <PlusIcon className="h-4 w-4" />
-            New View
+            {store.locale.localized("New View")}
           </PrimaryButton>
         </div>
       }
@@ -179,12 +183,14 @@ const WorkspaceViews: NextPage = () => {
             </div>
           ) : (
             <EmptyState
-              title="Get focused with views"
-              description="Views aid in saving your issues by applying various filters and grouping options."
+              title={store.locale.localized("Get focused with views")}
+              description={store.locale.localized(
+                "Views aid in saving your issues by applying various filters and grouping options."
+              )}
               image={emptyView}
               primaryButton={{
                 icon: <PlusIcon className="h-4 w-4" />,
-                text: "New View",
+                text: store.locale.localized("New View"),
                 onClick: () => setCreateUpdateViewModal(true),
               }}
             />

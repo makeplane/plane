@@ -10,12 +10,15 @@ import { PlusIcon } from "lucide-react";
 import { WORKSPACE_VIEWS_LIST } from "constants/fetch-keys";
 // service
 import workspaceService from "services/workspace.service";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   handleAddView: () => void;
 };
 
 export const WorkspaceViewsNavigation: React.FC<Props> = ({ handleAddView }) => {
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, globalViewId } = router.query;
 
@@ -33,25 +36,25 @@ export const WorkspaceViewsNavigation: React.FC<Props> = ({ handleAddView }) => 
   const tabsList = [
     {
       key: "all",
-      label: "All Issues",
+      label: store.locale.localized("All Issues"),
       selected: isSelected("workspace-views/all-issues"),
       onClick: () => router.replace(`/${workspaceSlug}/workspace-views/all-issues`),
     },
     {
       key: "assigned",
-      label: "Assigned",
+      label: store.locale.localized("Assigned"),
       selected: isSelected("workspace-views/assigned"),
       onClick: () => router.replace(`/${workspaceSlug}/workspace-views/assigned`),
     },
     {
       key: "created",
-      label: "Created",
+      label: store.locale.localized("Created"),
       selected: isSelected("workspace-views/created"),
       onClick: () => router.replace(`/${workspaceSlug}/workspace-views/created`),
     },
     {
       key: "subscribed",
-      label: "Subscribed",
+      label: store.locale.localized("Subscribed"),
       selected: isSelected("workspace-views/subscribed"),
       onClick: () => router.replace(`/${workspaceSlug}/workspace-views/subscribed`),
     },

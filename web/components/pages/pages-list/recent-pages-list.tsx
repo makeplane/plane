@@ -61,7 +61,7 @@ export const RecentPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
             image={emptyPage}
             primaryButton={{
               icon: <PlusIcon className="h-4 w-4" />,
-              text: "New Page",
+              text: store.locale.localized("New Page"),
               onClick: () => {
                 const e = new KeyboardEvent("keydown", {
                   key: "d",
