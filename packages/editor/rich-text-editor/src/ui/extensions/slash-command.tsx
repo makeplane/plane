@@ -18,7 +18,7 @@ import {
   Table,
 } from "lucide-react";
 import { UploadImage } from "..";
-import { cn, startImageUpload } from "@plane/editor-core";
+import { cn, insertTableCommand, startImageUpload, toggleBulletList } from "@plane/editor-core";
 
 interface CommandItemProps {
   title: string;
@@ -114,8 +114,8 @@ const getSuggestionItems =
           searchTerms: ["unordered", "point"],
           icon: <List size={18} />,
           command: ({ editor, range }: CommandProps) => {
-            // @ts-ignore
-            editor.chain().focus().deleteRange(range).toggleBulletList().run();
+            // editor.chain().focus().deleteRange(range).toggleBulletList().run();
+            toggleBulletList(editor, range);
           },
         },
         {
@@ -133,12 +133,13 @@ const getSuggestionItems =
           searchTerms: ["table", "cell", "db", "data", "tabular"],
           icon: <Table size={18} />,
           command: ({ editor, range }: CommandProps) => {
-            editor
-              .chain()
-              .focus()
-              .deleteRange(range)
-              .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
-              .run();
+            insertTableCommand(editor, range);
+            // editor
+            //   .chain()
+            //   .focus()
+            //   .deleteRange(range)
+            //   .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+            //   .run();
           },
         },
         {

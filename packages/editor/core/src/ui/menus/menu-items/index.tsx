@@ -1,7 +1,7 @@
 import { BoldIcon, QuoteIcon, ImageIcon, TableIcon, ListIcon, ListOrderedIcon, ItalicIcon, UnderlineIcon, StrikethroughIcon, CodeIcon } from "lucide-react";
 import { Editor } from "@tiptap/react";
 import { UploadImage } from "../../../types/upload-image";
-import { insertImage, insertTable, toggleBlockquote, toggleBold, toggleBulletList, toggleCode, toggleItalic, toggleOrderedList, toggleStrike } from "../../../lib/editor-commands";
+import { insertImageCommand, insertTableCommand, toggleBlockquote, toggleBold, toggleBulletList, toggleCode, toggleItalic, toggleOrderedList, toggleStrike, } from "../../../lib/editor-commands";
 
 export interface EditorMenuItem {
   name: string;
@@ -69,13 +69,13 @@ export const QuoteItem = (editor: Editor): EditorMenuItem => ({
 export const TableItem = (editor: Editor): EditorMenuItem => ({
   name: "quote",
   isActive: () => editor?.isActive("table"),
-  command: () => insertTable(editor),
+  command: () => insertTableCommand(editor),
   icon: TableIcon
 })
 
 export const ImageItem = (editor: Editor, uploadFile: UploadImage, setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void): EditorMenuItem => ({
   name: "image",
   isActive: () => editor?.isActive("image"),
-  command: () => insertImage(editor, uploadFile, setIsSubmitting),
+  command: () => insertImageCommand(editor, uploadFile, setIsSubmitting),
   icon: ImageIcon,
 })

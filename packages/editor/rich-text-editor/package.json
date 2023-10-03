@@ -24,11 +24,11 @@
     "next": "12.3.2",
     "next-themes": "^0.2.1",
     "react": "^18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "@tiptap/core": "^2.1.11"
   },
   "dependencies": {
     "@plane/editor-core": "*",
-    "@tiptap/core": "^2.1.11",
     "@tiptap/extension-code-block-lowlight": "^2.1.11",
     "@tiptap/extension-horizontal-rule": "^2.1.11",
     "@tiptap/extension-placeholder": "^2.1.11",
