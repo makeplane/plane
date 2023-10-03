@@ -191,7 +191,9 @@ export const ImageUploadModal: React.FC<Props> = ({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <DangerButton onClick={handleDelete} outline disabled={!value}>
-                      {isRemoving ? store.locale.localized("Removing...") : "Remove"}
+                      {isRemoving
+                        ? store.locale.localized("Removing...")
+                        : store.locale.localized("Remove")}
                     </DangerButton>
                   </div>
                   <div className="flex items-center gap-2">
@@ -203,7 +205,9 @@ export const ImageUploadModal: React.FC<Props> = ({
                       disabled={!image}
                       loading={isImageUploading}
                     >
-                      {isImageUploading ? store.locale.localized("Uploading...") : "Upload & Save"}
+                      {isImageUploading
+                        ? store.locale.localized("Uploading...")
+                        : store.locale.localized("Upload & Save")}
                     </PrimaryButton>
                   </div>
                 </div>
