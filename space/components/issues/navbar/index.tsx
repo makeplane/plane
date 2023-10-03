@@ -69,15 +69,7 @@ const IssueNavbar = observer(() => {
       }
 
       if (currentBoard) {
-        if (projectStore?.activeBoard === null) {
-          projectStore.setActiveBoard(currentBoard);
-          router.push({
-            pathname: `/${workspace_slug}/${project_slug}`,
-            query: {
-              board: currentBoard,
-            },
-          });
-        } else if (projectStore?.activeBoard !== currentBoard) {
+        if (projectStore?.activeBoard === null || projectStore?.activeBoard !== currentBoard) {
           projectStore.setActiveBoard(currentBoard);
           router.push({
             pathname: `/${workspace_slug}/${project_slug}`,
