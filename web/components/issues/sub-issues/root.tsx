@@ -10,7 +10,6 @@ import { ExistingIssuesListModal } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { SubIssuesRootList } from "./issues-list";
 import { ProgressBar } from "./progressbar";
-import { IssuePeekOverview } from "components/issues/peek-overview";
 // ui
 import { CustomMenu } from "components/ui";
 // hooks
@@ -59,8 +58,6 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
       ? () => issuesService.subIssues(workspaceSlug, projectId, parentIssue.id)
       : null
   );
-
-  const [peekParentId, setPeekParentId] = React.useState<string | null>("");
 
   const [issuesLoader, setIssuesLoader] = React.useState<ISubIssuesRootLoaders>({
     visibility: [parentIssue?.id],
@@ -237,7 +234,6 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
                     handleIssuesLoader={handleIssuesLoader}
                     copyText={copyText}
                     handleIssueCrudOperation={handleIssueCrudOperation}
-                    setPeekParentId={setPeekParentId}
                   />
                 </div>
               )}
@@ -363,13 +359,6 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
             )}
         </>
       )}
-
-      <IssuePeekOverview
-        handleMutation={() => peekParentId && peekIssue && mutateSubIssues(peekParentId)}
-        projectId={projectId ?? ""}
-        workspaceSlug={workspaceSlug ?? ""}
-        readOnly={!isEditable}
-      />
     </div>
   );
 };

@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { Draggable } from "react-beautiful-dnd";
 // components
+import { CreateUpdateDraftIssueModal } from "components/issues";
 import { BoardHeader, SingleBoardIssue, BoardInlineCreateIssueForm } from "components/core";
 // ui
 import { CustomMenu } from "components/ui";
@@ -57,6 +58,7 @@ export const SingleBoard: React.FC<Props> = (props) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   const [isInlineCreateIssueFormOpen, setIsInlineCreateIssueFormOpen] = useState(false);
+  const [isCreateDraftIssueModalOpen, setIsCreateDraftIssueModalOpen] = useState(false);
 
   const { displayFilters, groupedIssues } = viewProps;
 
@@ -96,10 +98,27 @@ export const SingleBoard: React.FC<Props> = (props) => {
     scrollToBottom();
   };
 
+  const handleAddIssueToGroup = () => {
+    if (isDraftIssuesPage) setIsCreateDraftIssueModalOpen(true);
+    else if (isMyIssuesPage || isProfileIssuesPage) addIssueToGroup();
+    else onCreateClick();
+  };
+
   return (
     <div className={`flex-shrink-0 ${!isCollapsed ? "" : "flex h-full flex-col w-96"}`}>
+      <CreateUpdateDraftIssueModal
+        isOpen={isCreateDraftIssueModalOpen}
+        handleClose={() => setIsCreateDraftIssueModalOpen(false)}
+        prePopulateData={{
+          ...(cycleId && { cycle: cycleId.toString() }),
+          ...(moduleId && { module: moduleId.toString() }),
+          [displayFilters?.group_by! === "labels" ? "labels_list" : displayFilters?.group_by!]:
+            displayFilters?.group_by === "labels" ? [groupTitle] : groupTitle,
+        }}
+      />
+
       <BoardHeader
-        addIssueToGroup={addIssueToGroup}
+        addIssueToGroup={handleAddIssueToGroup}
         currentState={currentState}
         groupTitle={groupTitle}
         isCollapsed={isCollapsed}
@@ -218,21 +237,22 @@ export const SingleBoard: React.FC<Props> = (props) => {
               {displayFilters?.group_by !== "created_by" && (
                 <div>
                   {type === "issue"
-                    ? !disableAddIssueOption && (
+                    ? !disableAddIssueOption &&
+                      !isDraftIssuesPage && (
                         <button
                           type="button"
                           className="flex items-center gap-2 font-medium text-custom-primary outline-none p-1"
                           onClick={() => {
-                            if (isDraftIssuesPage || isMyIssuesPage || isProfileIssuesPage) {
-                              addIssueToGroup();
-                            } else onCreateClick();
+                            if (isMyIssuesPage || isProfileIssuesPage) addIssueToGroup();
+                            else onCreateClick();
                           }}
                         >
                           <PlusIcon className="h-4 w-4" />
                           Add Issue
                         </button>
                       )
-                    : !disableUserActions && (
+                    : !disableUserActions &&
+                      !isDraftIssuesPage && (
                         <CustomMenu
                           customButton={
                             <button
@@ -246,7 +266,13 @@ export const SingleBoard: React.FC<Props> = (props) => {
                           position="left"
                           noBorder
                         >
-                          <CustomMenu.MenuItem onClick={() => onCreateClick()}>
+                          <CustomMenu.MenuItem
+                            onClick={() => {
+                              if (isDraftIssuesPage) setIsCreateDraftIssueModalOpen(true);
+                              else if (isMyIssuesPage || isProfileIssuesPage) addIssueToGroup();
+                              else onCreateClick();
+                            }}
+                          >
                             Create new
                           </CustomMenu.MenuItem>
                           {openIssuesListModal && (
