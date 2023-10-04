@@ -36,15 +36,17 @@ export const AllViews: React.FC = observer(() => {
   return (
     <div className="relative w-full h-full flex flex-col overflow-auto">
       <AppliedFiltersRoot />
-      {activeLayout === "kanban" ? (
-        <KanBanLayout />
-      ) : activeLayout === "calendar" ? (
-        <CalendarLayout />
-      ) : activeLayout === "gantt_chart" ? (
-        <GanttLayout />
-      ) : activeLayout === "spreadsheet" ? (
-        <SpreadsheetLayout />
-      ) : null}
+      <div className="h-full w-full">
+        {activeLayout === "kanban" ? (
+          <KanBanLayout />
+        ) : activeLayout === "calendar" ? (
+          <CalendarLayout />
+        ) : activeLayout === "gantt_chart" ? (
+          <GanttLayout />
+        ) : activeLayout === "spreadsheet" ? (
+          <SpreadsheetLayout />
+        ) : null}
+      </div>
     </div>
   );
 });

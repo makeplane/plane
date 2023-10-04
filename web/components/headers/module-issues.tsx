@@ -13,9 +13,9 @@ import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 
 export const ModuleIssuesHeader: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, moduleId } = router.query;
 
-  const { issueFilter: issueFilterStore } = useMobxStore();
+  const { issueFilter: issueFilterStore, moduleFilter: moduleFilterStore } = useMobxStore();
 
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
 
@@ -34,26 +34,24 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug || !projectId || !moduleId) return;
 
-      const newValues = issueFilterStore.userFilters?.[key] ?? [];
+      const newValues = moduleFilterStore.userModuleFilters?.[key] ?? [];
 
       if (Array.isArray(value)) {
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
         });
       } else {
-        if (issueFilterStore.userFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+        if (moduleFilterStore.userModuleFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
 
-      issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-        filters: {
-          [key]: newValues,
-        },
+      moduleFilterStore.updateUserModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), {
+        [key]: newValues,
       });
     },
-    [issueFilterStore, projectId, workspaceSlug]
+    [moduleId, moduleFilterStore, projectId, workspaceSlug]
   );
 
   const handleDisplayFiltersUpdate = useCallback(
@@ -78,7 +76,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
       />
       <FiltersDropdown title="Filters">
         <FilterSelection
-          filters={issueFilterStore.userFilters}
+          filters={moduleFilterStore.userModuleFilters}
           handleFiltersUpdate={handleFiltersUpdate}
           layoutDisplayFiltersOptions={activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined}
           projectId={projectId?.toString() ?? ""}

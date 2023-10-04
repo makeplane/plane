@@ -28,7 +28,11 @@ export interface IModuleStore {
 
   setModuleId: (moduleSlug: string) => void;
 
-  fetchModules: (workspaceSlug: string, projectSlug: string) => void;
+  fetchModules: (workspaceSlug: string, projectId: string) => void;
+  fetchModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => void;
+  updateModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string, data: Partial<IModule>) => void;
+  deleteModule: (workspaceSlug: string, projectId: string, moduleId: string) => void;
+
   fetchIssues: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<any>;
   updateIssueStructure: (group_id: string | null, sub_group_id: string | null, moduleId: string, issue: IIssue) => void;
 
@@ -86,6 +90,10 @@ class ModuleStore implements IModuleStore {
       // actions
       setModuleId: action,
       fetchModules: action,
+      fetchModuleDetails: action,
+      updateModuleDetails: action,
+      deleteModule: action,
+
       updateIssueStructure: action,
       fetchIssues: action,
     });
@@ -116,25 +124,147 @@ class ModuleStore implements IModuleStore {
     this.moduleId = moduleSlug ?? null;
   };
 
-  fetchModules = async (workspaceSlug: string, projectSlug: string) => {
+  fetchModules = async (workspaceSlug: string, projectId: string) => {
     try {
-      this.loader = true;
-      this.error = null;
+      runInAction(() => {
+        this.loader = true;
+        this.error = null;
+      });
 
-      const modulesResponse = await this.moduleService.getModules(workspaceSlug, projectSlug);
+      const modulesResponse = await this.moduleService.getModules(workspaceSlug, projectId);
 
       runInAction(() => {
         this.modules = {
           ...this.modules,
-          [projectSlug]: modulesResponse,
+          [projectId]: modulesResponse,
         };
         this.loader = false;
         this.error = null;
       });
     } catch (error) {
-      console.error("Failed to fetch modules list in project store", error);
+      console.error("Failed to fetch modules list in module store", error);
+
+      runInAction(() => {
+        this.loader = false;
+        this.error = error;
+      });
+    }
+  };
+
+  fetchModuleDetails = async (workspaceSlug: string, projectId: string, moduleId: string) => {
+    try {
+      runInAction(() => {
+        this.loader = true;
+        this.error = null;
+      });
+
+      const response = await this.moduleService.getModuleDetails(workspaceSlug, projectId, moduleId);
+
+      if (!response) return null;
+
+      runInAction(() => {
+        this.moduleDetails = {
+          ...this.moduleDetails,
+          [moduleId]: response,
+        };
+        this.rootStore.moduleFilter.userModuleFilters = response.view_props?.filters ?? {};
+        this.loader = false;
+        this.error = null;
+      });
+    } catch (error) {
+      console.error("Failed to fetch module details in module store", error);
+
+      runInAction(() => {
+        this.loader = false;
+        this.error = error;
+      });
+    }
+  };
+
+  updateModuleDetails = async (workspaceSlug: string, projectId: string, moduleId: string, data: Partial<IModule>) => {
+    try {
+      const response = await this.moduleService.patchModule(workspaceSlug, projectId, moduleId, data, undefined);
+
+      if (!response) return null;
+
+      runInAction(() => {
+        this.moduleDetails = {
+          ...this.moduleDetails,
+          [moduleId]: {
+            ...this.moduleDetails[moduleId],
+            ...response,
+          },
+        };
+        this.loader = false;
+        this.error = null;
+      });
+    } catch (error) {
+      console.error("Failed to update module in module store", error);
+
+      runInAction(() => {
+        this.loader = false;
+        this.error = error;
+      });
+    }
+  };
+
+  deleteModule = async (workspaceSlug: string, projectId: string, moduleId: string) => {
+    try {
+      await this.moduleService.deleteModule(workspaceSlug, projectId, moduleId, undefined);
+
+      runInAction(() => {
+        this.loader = false;
+        this.error = null;
+      });
+    } catch (error) {
+      console.error("Failed to delete module in module store", error);
+
+      runInAction(() => {
+        this.loader = false;
+        this.error = error;
+      });
+    }
+  };
+
+  fetchIssues = async (workspaceSlug: string, projectId: string, moduleId: string) => {
+    try {
+      this.loader = true;
+      this.error = null;
+
+      this.rootStore.workspace.setWorkspaceSlug(workspaceSlug);
+      this.rootStore.project.setProjectId(projectId);
+
+      const params = this.rootStore?.issueFilter?.appliedFilters;
+      console.log("params", params);
+      const issueResponse = await this.moduleService.getModuleIssuesWithParams(
+        workspaceSlug,
+        projectId,
+        moduleId,
+        params
+      );
+
+      const issueType = this.rootStore.issue.getIssueType;
+      if (issueType != null) {
+        const _issues = {
+          ...this.issues,
+          [moduleId]: {
+            ...this.issues[moduleId],
+            [issueType]: issueResponse,
+          },
+        };
+        runInAction(() => {
+          this.issues = _issues;
+          this.loader = false;
+          this.error = null;
+        });
+      }
+
+      return issueResponse;
+    } catch (error) {
+      console.error("Error: Fetching error module issues in module store", error);
       this.loader = false;
       this.error = error;
+      return error;
     }
   };
 
@@ -177,48 +307,6 @@ class ModuleStore implements IModuleStore {
     runInAction(() => {
       this.issues = { ...this.issues, [moduleId]: { ...this.issues[moduleId], [issueType]: issues } };
     });
-  };
-
-  fetchIssues = async (workspaceSlug: string, projectId: string, moduleId: string) => {
-    try {
-      this.loader = true;
-      this.error = null;
-
-      this.rootStore.workspace.setWorkspaceSlug(workspaceSlug);
-      this.rootStore.project.setProjectId(projectId);
-
-      const params = this.rootStore?.issueFilter?.appliedFilters;
-      console.log("params", params);
-      const issueResponse = await this.moduleService.getModuleIssuesWithParams(
-        workspaceSlug,
-        projectId,
-        moduleId,
-        params
-      );
-
-      const issueType = this.rootStore.issue.getIssueType;
-      if (issueType != null) {
-        const _issues = {
-          ...this.issues,
-          [moduleId]: {
-            ...this.issues[moduleId],
-            [issueType]: issueResponse,
-          },
-        };
-        runInAction(() => {
-          this.issues = _issues;
-          this.loader = false;
-          this.error = null;
-        });
-      }
-
-      return issueResponse;
-    } catch (error) {
-      console.error("Error: Fetching error in issues", error);
-      this.loader = false;
-      this.error = error;
-      return error;
-    }
   };
 }
 

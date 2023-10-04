@@ -4,7 +4,6 @@ import { ProjectService } from "services/project.service";
 import { IssueService } from "services/issue.service";
 // helpers
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
-import { renderDateFormat } from "helpers/date-time.helper";
 // types
 import { RootStore } from "./root";
 import {

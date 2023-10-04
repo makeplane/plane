@@ -28,6 +28,7 @@ export const ModuleAllLayouts: React.FC = observer(() => {
       await projectStore.fetchProjectLabels(workspaceSlug.toString(), projectId.toString());
       await projectStore.fetchProjectMembers(workspaceSlug.toString(), projectId.toString());
 
+      await moduleStore.fetchModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString());
       await moduleStore.fetchIssues(workspaceSlug.toString(), projectId.toString(), moduleId.toString());
     }
   });
@@ -37,15 +38,17 @@ export const ModuleAllLayouts: React.FC = observer(() => {
   return (
     <div className="relative w-full h-full flex flex-col overflow-auto">
       <ModuleAppliedFiltersRoot />
-      {activeLayout === "kanban" ? (
-        <KanBanLayout />
-      ) : activeLayout === "calendar" ? (
-        <ModuleCalendarLayout />
-      ) : activeLayout === "gantt_chart" ? (
-        <ModuleGanttLayout />
-      ) : activeLayout === "spreadsheet" ? (
-        <ModuleSpreadsheetLayout />
-      ) : null}
+      <div className="h-full w-full">
+        {activeLayout === "kanban" ? (
+          <KanBanLayout />
+        ) : activeLayout === "calendar" ? (
+          <ModuleCalendarLayout />
+        ) : activeLayout === "gantt_chart" ? (
+          <ModuleGanttLayout />
+        ) : activeLayout === "spreadsheet" ? (
+          <ModuleSpreadsheetLayout />
+        ) : null}
+      </div>
     </div>
   );
 });

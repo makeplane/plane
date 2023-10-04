@@ -15,6 +15,7 @@ import IssueFilterStore, { IIssueFilterStore } from "./issue_filters";
 import IssueViewDetailStore from "./issue_detail";
 import IssueKanBanViewStore from "./kanban_view";
 import CalendarStore, { ICalendarStore } from "./calendar";
+import ModuleFilterStore, { IModuleFilterStore } from "./module_filters";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -27,6 +28,7 @@ export class RootStore {
   project: IProjectStore;
   issue: IIssueStore;
   module: IModuleStore;
+  moduleFilter: IModuleFilterStore;
   cycle: ICycleStore;
   view: IViewStore;
   issueFilter: IIssueFilterStore;
@@ -41,6 +43,7 @@ export class RootStore {
     this.project = new ProjectStore(this);
     this.projectPublish = new ProjectPublishStore(this);
     this.module = new ModuleStore(this);
+    this.moduleFilter = new ModuleFilterStore(this);
     this.cycle = new CycleStore(this);
     this.view = new ViewStore(this);
     this.issue = new IssueStore(this);
