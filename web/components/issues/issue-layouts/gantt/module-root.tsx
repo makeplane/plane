@@ -1,25 +1,27 @@
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
-import useIssuesView from "hooks/use-issues-view";
-import useUser from "hooks/use-user";
 import useProjectDetails from "hooks/use-project-details";
 // components
 import { GanttChartRoot, renderIssueBlocksStructure } from "components/gantt-chart";
 import { IssueGanttBlock, IssueGanttSidebarBlock, IssuePeekOverview } from "components/issues";
 // types
-import { IIssue } from "types";
+import { IIssueUnGroupedStructure } from "store/issue";
 
-type Props = { disableUserActions: boolean };
-
-export const ModuleIssuesGanttChartView: React.FC<Props> = ({ disableUserActions }) => {
+export const ModuleGanttLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
-  const { displayFilters } = useIssuesView();
-
-  const { user } = useUser();
   const { projectDetails } = useProjectDetails();
+
+  const { module: moduleStore, issueFilter: issueFilterStore } = useMobxStore();
+
+  const appliedDisplayFilters = issueFilterStore.userDisplayFilters;
+
+  const issues = moduleStore.getIssues;
 
   const isAllowed = projectDetails?.member_role === 20 || projectDetails?.member_role === 15;
 
@@ -28,24 +30,26 @@ export const ModuleIssuesGanttChartView: React.FC<Props> = ({ disableUserActions
       <IssuePeekOverview
         projectId={projectId?.toString() ?? ""}
         workspaceSlug={workspaceSlug?.toString() ?? ""}
-        readOnly={disableUserActions}
+        readOnly={!isAllowed}
       />
       <div className="w-full h-full">
         <GanttChartRoot
           border={false}
           title="Issues"
           loaderTitle="Issues"
-          blocks={null}
-          blockUpdateHandler={(block, payload) => {}}
-          SidebarBlockRender={IssueGanttSidebarBlock}
+          blocks={issues ? renderIssueBlocksStructure(issues as IIssueUnGroupedStructure) : null}
+          blockUpdateHandler={(block, payload) => {
+            // TODO: update mutation logic
+            // updateGanttIssue(block, payload, mutateGanttIssues, user, workspaceSlug?.toString())
+          }}
           BlockRender={IssueGanttBlock}
+          SidebarBlockRender={IssueGanttSidebarBlock}
           enableBlockLeftResize={isAllowed}
           enableBlockRightResize={isAllowed}
           enableBlockMove={isAllowed}
-          enableReorder={displayFilters.order_by === "sort_order" && isAllowed}
-          bottomSpacing
+          enableReorder={appliedDisplayFilters.order_by === "sort_order" && isAllowed}
         />
       </div>
     </>
   );
-};
+});

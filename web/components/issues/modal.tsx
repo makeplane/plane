@@ -13,7 +13,6 @@ import inboxServices from "services/inbox.service";
 // hooks
 import useUser from "hooks/use-user";
 import useIssuesView from "hooks/use-issues-view";
-import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useToast from "hooks/use-toast";
 import useInboxView from "hooks/use-inbox-view";
 import useProjects from "hooks/use-projects";
@@ -83,7 +82,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const { workspaceSlug, projectId, cycleId, moduleId, viewId, inboxId } = router.query;
 
   const { displayFilters, params } = useIssuesView();
-  const { params: calendarParams } = useCalendarIssuesView();
   const { ...viewGanttParams } = params;
   const { params: inboxParams } = useInboxView();
 
@@ -270,14 +268,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       });
   };
 
-  const calendarFetchKey = cycleId
-    ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), calendarParams)
-    : moduleId
-    ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), calendarParams)
-    : viewId
-    ? VIEW_ISSUES(viewId.toString(), calendarParams)
-    : PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject?.toString() ?? "", calendarParams);
-
   const ganttFetchKey = cycleId
     ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString())
     : moduleId
@@ -298,7 +288,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res.id, payload.cycle);
           if (payload.module && payload.module !== "") await addIssueToModule(res.id, payload.module);
 
-          if (displayFilters.layout === "calendar") mutate(calendarFetchKey);
           if (displayFilters.layout === "gantt_chart")
             mutate(ganttFetchKey, {
               start_target_date: true,
@@ -375,7 +364,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         if (isUpdatingSingleIssue) {
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
         } else {
-          if (displayFilters.layout === "calendar") mutate(calendarFetchKey);
           if (payload.parent) mutate(SUB_ISSUES(payload.parent.toString()));
           mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
         }

@@ -18,12 +18,7 @@ export class ModuleService extends APIService {
       });
   }
 
-  async createModule(
-    workspaceSlug: string,
-    projectId: string,
-    data: any,
-    user: ICurrentUserResponse | undefined
-  ): Promise<any> {
+  async createModule(workspaceSlug: string, projectId: string, data: any, user: any): Promise<IModule> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/`, data)
       .then((response) => {
         trackEventServices.trackModuleEvent(response?.data, "MODULE_CREATE", user);
@@ -64,7 +59,7 @@ export class ModuleService extends APIService {
     projectId: string,
     moduleId: string,
     data: Partial<IModule>,
-    user: ICurrentUserResponse | undefined
+    user: any
   ): Promise<any> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`, data)
       .then((response) => {
@@ -76,12 +71,7 @@ export class ModuleService extends APIService {
       });
   }
 
-  async deleteModule(
-    workspaceSlug: string,
-    projectId: string,
-    moduleId: string,
-    user: ICurrentUserResponse | undefined
-  ): Promise<any> {
+  async deleteModule(workspaceSlug: string, projectId: string, moduleId: string, user: any): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`)
       .then((response) => {
         trackEventServices.trackModuleEvent(response?.data, "MODULE_DELETE", user);

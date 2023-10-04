@@ -8,8 +8,6 @@ import { mutate } from "swr";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 // services
 import issuesService from "services/issue.service";
-// hooks
-import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 // components
 import { SingleCalendarDate, CalendarHeader } from "components/core";
 import { IssuePeekOverview } from "components/issues";
