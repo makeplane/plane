@@ -75,10 +75,8 @@ export const SidebarDuplicateSelect: React.FC<Props> = (props) => {
           })),
         ],
       })
-      .then((response) => {
-        submitChanges({
-          related_issues: [...watch("related_issues"), ...(response ?? [])],
-        });
+      .then(() => {
+        submitChanges();
       });
 
     handleClose();
