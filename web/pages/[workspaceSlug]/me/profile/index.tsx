@@ -375,7 +375,7 @@ const Profile: NextPage = () => {
 
                 <div className="flex items-center justify-between py-2">
                   <PrimaryButton type="submit" loading={isSubmitting}>
-                    {isSubmitting ? "Updating Project..." : "Update Project"}
+                    {isSubmitting ? "Updating Profile..." : "Update Profile"}
                   </PrimaryButton>
                 </div>
               </div>
