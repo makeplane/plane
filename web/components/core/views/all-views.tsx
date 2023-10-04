@@ -40,7 +40,7 @@ export const AllViews: React.FC = observer(() => {
 
   return (
     <div className="relative w-full h-full flex flex-col overflow-auto">
-      <AppliedFiltersList />
+      <AppliedFiltersRoot />
       <div className="w-full h-full">
         {activeLayout === "kanban" ? (
           <KanBanLayout />
