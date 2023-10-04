@@ -63,23 +63,7 @@ export const SignInView = observer(() => {
     }
   };
 
-  const handleGitHubSignIn = async (credential: string) => {
-    try {
-      if (process.env.NEXT_PUBLIC_GITHUB_ID && credential) {
-        const socialAuthPayload = {
-          medium: "github",
-          credential,
-          clientId: process.env.NEXT_PUBLIC_GITHUB_ID,
-        };
-        const response = await authenticationService.socialAuth(socialAuthPayload);
-        onSignInSuccess(response);
-      } else {
-        throw Error("Cant find credentials");
-      }
-    } catch (err: any) {
-      onSignInError(err);
-    }
-  };
+  const handleGitHubSignIn = async (credential: string) => {};
 
   const handlePasswordSignIn = async (formData: any) => {
     await authenticationService
