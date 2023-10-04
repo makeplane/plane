@@ -8,6 +8,7 @@ import { HeaderSubGroupByCard } from "./sub-group-by-card";
 // constants
 import { issuePriorityByKey } from "constants/issue";
 
+
 export interface IPriorityHeader {
   column_id: string;
   sub_group_by: string | null;

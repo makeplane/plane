@@ -111,7 +111,7 @@ class IssueStore implements IIssueStore {
       issues = issues as IIssueGroupedStructure;
       issues = {
         ...issues,
-        [group_id]: issues[group_id].map((i: IIssue) => (i?.id === issue?.id ? issue : i)),
+        [group_id]: issues[group_id].map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i)),
       };
     }
     if (issueType === "groupWithSubGroups" && group_id && sub_group_id) {
@@ -120,14 +120,16 @@ class IssueStore implements IIssueStore {
         ...issues,
         [sub_group_id]: {
           ...issues[sub_group_id],
-          [group_id]: issues[sub_group_id][group_id].map((i: IIssue) => (i?.id === issue?.id ? issue : i)),
+          [group_id]: issues[sub_group_id][group_id].map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i)),
         },
       };
     }
     if (issueType === "ungrouped") {
       issues = issues as IIssueUnGroupedStructure;
-      issues = issues.map((i: IIssue) => (i?.id === issue?.id ? issue : i));
+      issues = issues.map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i));
     }
+
+    // reorder issues based on the issue update
 
     runInAction(() => {
       this.issues = { ...this.issues, [projectId]: { ...this.issues[projectId], [issueType]: issues } };

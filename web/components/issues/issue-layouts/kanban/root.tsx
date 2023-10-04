@@ -25,6 +25,8 @@ export const KanBanLayout: React.FC = observer(() => {
 
   const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
 
+  const display_properties = issueFilterStore?.userDisplayProperties || null;
+
   const currentKanBanView: "swimlanes" | "default" = issueFilterStore?.userDisplayFilters?.sub_group_by
     ? "swimlanes"
     : "default";
@@ -45,13 +47,29 @@ export const KanBanLayout: React.FC = observer(() => {
       : issueKanBanViewStore?.handleSwimlaneDragDrop(result.source, result.destination);
   };
 
+  const updateIssue = (sub_group_by: string | null, group_by: string | null, issue: any) => {
+    issueStore.updateIssueStructure(group_by, sub_group_by, issue);
+  };
+
   return (
-    <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90`}>
+    <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
       <DragDropContext onDragEnd={onDragEnd}>
         {currentKanBanView === "default" ? (
-          <KanBan issues={issues} sub_group_by={sub_group_by} group_by={group_by} />
+          <KanBan
+            issues={issues}
+            sub_group_by={sub_group_by}
+            group_by={group_by}
+            handleIssues={updateIssue}
+            display_properties={display_properties}
+          />
         ) : (
-          <KanBanSwimLanes issues={issues} sub_group_by={sub_group_by} group_by={group_by} />
+          <KanBanSwimLanes
+            issues={issues}
+            sub_group_by={sub_group_by}
+            group_by={group_by}
+            handleIssues={updateIssue}
+            display_properties={display_properties}
+          />
         )}
       </DragDropContext>
     </div>

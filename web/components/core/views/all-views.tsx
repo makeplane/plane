@@ -19,24 +19,29 @@ export const AllViews: React.FC = observer(() => {
 
   const { issue: issueStore, project: projectStore, issueFilter: issueFilterStore } = useMobxStore();
 
-  useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES` : null, async () => {
-    if (workspaceSlug && projectId) {
-      await issueFilterStore.fetchUserProjectFilters(workspaceSlug, projectId);
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_ISSUES` : null,
+    async () => {
+      if (workspaceSlug && projectId) {
+        await issueFilterStore.fetchUserProjectFilters(workspaceSlug, projectId);
 
-      await projectStore.fetchProjectStates(workspaceSlug, projectId);
-      await projectStore.fetchProjectLabels(workspaceSlug, projectId);
-      await projectStore.fetchProjectMembers(workspaceSlug, projectId);
+        await projectStore.fetchProjectStates(workspaceSlug, projectId);
+        await projectStore.fetchProjectLabels(workspaceSlug, projectId);
+        await projectStore.fetchProjectMembers(workspaceSlug, projectId);
+        await projectStore.fetchProjectEstimates(workspaceSlug, projectId);
 
-      await issueStore.fetchIssues(workspaceSlug, projectId);
-    }
-  });
+        await issueStore.fetchIssues(workspaceSlug, projectId);
+      }
+    },
+    { revalidateOnFocus: false }
+  );
 
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
 
   return (
     <div className="relative w-full h-full flex flex-col overflow-auto">
       <AppliedFiltersRoot />
-      <div className="h-full w-full">
+      <div className="w-full h-full">
         {activeLayout === "kanban" ? (
           <KanBanLayout />
         ) : activeLayout === "calendar" ? (
