@@ -1239,6 +1239,5 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
 
             return Response(files, status=status.HTTP_200_OK)
         except Exception as e:
-            print(e)
             capture_exception(e)
             return Response([], status=status.HTTP_200_OK)
