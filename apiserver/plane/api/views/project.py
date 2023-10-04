@@ -495,7 +495,7 @@ class ProjectMemberViewSet(BaseViewSet):
     serializer_class = ProjectMemberAdminSerializer
     model = ProjectMember
     permission_classes = [
-        ProjectBasePermission,
+        ProjectMemberPermission,
     ]
 
     search_fields = [
