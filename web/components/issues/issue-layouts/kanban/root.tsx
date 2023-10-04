@@ -50,7 +50,7 @@ export const KanBanLayout: React.FC = observer(() => {
   };
 
   return (
-    <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90`}>
+    <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
       <DragDropContext onDragEnd={onDragEnd}>
         {currentKanBanView === "default" ? (
           <KanBan issues={issues} sub_group_by={sub_group_by} group_by={group_by} handleIssues={updateIssue} />

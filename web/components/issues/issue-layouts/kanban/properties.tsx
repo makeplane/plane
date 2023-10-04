@@ -73,12 +73,12 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer(
         );
     };
 
-    const handleEstimates = (id: string) => {
+    const handleEstimate = (id: string) => {
       if (handleIssues)
         handleIssues(
           !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
           !group_id && group_id === "null" ? null : group_id,
-          { ...issue, state: id }
+          { ...issue, estimate_point: id }
         );
     };
 
@@ -118,28 +118,30 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer(
         />
 
         {/* start date */}
-        {/* <div className="flex-shrink-0 border border-custom-border-300 min-w-[22px] h-[22px] overflow-hidden rounded-sm flex justify-center items-center">
+        <div className="flex-shrink-0 border border-custom-border-300 min-w-[22px] h-[22px] overflow-hidden rounded-sm flex justify-center items-center">
           <div className="flex-shrink-0  w-[16px] h-[16px] flex justify-center items-center">
             <Circle width={10} strokeWidth={2} />
           </div>
           <div className="pl-0.5 pr-1 text-xs">start date</div>
-        </div> */}
+        </div>
 
         {/* target/due date */}
-        {/* <div className="flex-shrink-0 border border-custom-border-300 min-w-[22px] h-[22px] overflow-hidden rounded-sm flex justify-center items-center">
+        <div className="flex-shrink-0 border border-custom-border-300 min-w-[22px] h-[22px] overflow-hidden rounded-sm flex justify-center items-center">
           <div className="flex-shrink-0  w-[16px] h-[16px] flex justify-center items-center">
             <Circle width={10} strokeWidth={2} />
           </div>
           <div className="pl-0.5 pr-1 text-xs">target/due date</div>
-        </div> */}
+        </div>
 
         {/* estimates */}
-        {/* <IssuePropertyEstimates
-          value={issue?.state || null}
+        <IssuePropertyEstimates
+          value={issue?.estimate_point?.toString() || null}
           dropdownArrow={false}
-          onChange={(id: string) => handleEstimates(id)}
+          onChange={(id: string) => handleEstimate(id)}
           disabled={false}
-        /> */}
+          workspaceSlug={issue?.workspace_detail?.slug || null}
+          projectId={issue?.project_detail?.id || null}
+        />
 
         {/* extra render properties */}
         {/* sub-issues */}

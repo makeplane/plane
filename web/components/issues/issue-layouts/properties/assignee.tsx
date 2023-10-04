@@ -113,7 +113,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
                           {selectedOption.slice(0, assigneeRenderLength).map((_assignee) => (
                             <div
                               key={_assignee?.id}
-                              className="flex-shrink-0 w-[16px] h-[16px] rounded-sm bg-gray-700 flex justify-center items-center text-white capitalize relative -mr-[8px] text-xs overflow-hidden border border-custom-border-200"
+                              className="flex-shrink-0 w-[16px] h-[16px] rounded-sm bg-gray-700 flex justify-center items-center text-white capitalize relative -mr-[8px] text-xs overflow-hidden border border-custom-border-300"
                             >
                               {_assignee && _assignee.avatar ? (
                                 <img
@@ -127,7 +127,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
                             </div>
                           ))}
                           {selectedOption.length > assigneeRenderLength && (
-                            <div className="flex-shrink-0 h-[16px] px-0.5 rounded-sm bg-gray-700 flex justify-center items-center text-white capitalize relative -mr-[8px] text-xs overflow-hidden border border-custom-border-200">
+                            <div className="flex-shrink-0 h-[16px] px-0.5 rounded-sm bg-gray-700 flex justify-center items-center text-white capitalize relative -mr-[8px] text-xs overflow-hidden border border-custom-border-300">
                               +{selectedOption?.length - assigneeRenderLength}
                             </div>
                           )}

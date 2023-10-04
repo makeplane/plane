@@ -2,30 +2,28 @@ import React from "react";
 // headless ui
 import { Combobox } from "@headlessui/react";
 // lucide icons
-import { ChevronDown, Search, X, Check } from "lucide-react";
+import { ChevronDown, Search, X, Check, Triangle } from "lucide-react";
 // mobx
 import { observer } from "mobx-react-lite";
-// components
-import { StateGroupIcon } from "components/icons";
 // hooks
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // mobx
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
-// types
-import { IState } from "types";
 
 interface IFiltersOption {
   id: string;
   title: string;
-  group: string;
-  color: string | null;
+  key: string;
 }
 
 export interface IIssuePropertyEstimates {
   value?: any;
-  onChange?: (id: any, data: IFiltersOption) => void;
+  onChange?: (id: any) => void;
   disabled?: boolean;
+
+  workspaceSlug?: string;
+  projectId?: string;
 
   className?: string;
   buttonClassName?: string;
@@ -38,6 +36,9 @@ export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observe
     value,
     onChange,
     disabled,
+
+    workspaceSlug,
+    projectId,
 
     className,
     buttonClassName,
@@ -52,21 +53,26 @@ export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observe
     const [isOpen, setIsOpen] = React.useState<boolean>(false);
     const [search, setSearch] = React.useState<string>("");
 
+    const projectDetail =
+      (workspaceSlug && projectId && projectStore?.getProjectById(workspaceSlug, projectId)) || null;
+    const projectEstimateId = (projectDetail && projectDetail?.estimate) || null;
+    const estimates = (projectEstimateId && projectStore?.getProjectEstimateById(projectEstimateId)) || null;
+
     const options: IFiltersOption[] | [] =
-      (projectStore?.projectStates &&
-        projectStore?.projectStates?.length > 0 &&
-        projectStore?.projectStates.map((_state: IState) => ({
-          id: _state?.id,
-          title: _state?.name,
-          group: _state?.group,
-          color: _state?.color || null,
+      (estimates &&
+        estimates.points &&
+        estimates.points.length > 0 &&
+        estimates.points.map((_estimate) => ({
+          id: _estimate?.id,
+          title: _estimate?.value,
+          key: _estimate?.key.toString(),
         }))) ||
       [];
 
     useDynamicDropdownPosition(isOpen, () => setIsOpen(false), dropdownBtn, dropdownOptions);
 
     const selectedOption: IFiltersOption | null | undefined =
-      (value && options.find((person: IFiltersOption) => person.id === value)) || null;
+      (value && options.find((_estimate: IFiltersOption) => _estimate.key === value)) || null;
 
     const filteredOptions: IFiltersOption[] =
       search === ""
@@ -74,8 +80,8 @@ export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observe
           ? options
           : []
         : options && options.length > 0
-        ? options.filter((person: IFiltersOption) =>
-            person.title.toLowerCase().replace(/\s+/g, "").includes(search.toLowerCase().replace(/\s+/g, ""))
+        ? options.filter((_estimate: IFiltersOption) =>
+            _estimate.title.toLowerCase().replace(/\s+/g, "").includes(search.toLowerCase().replace(/\s+/g, ""))
           )
         : [];
 
@@ -83,9 +89,9 @@ export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observe
       <Combobox
         as="div"
         className={`${className}`}
-        value={selectedOption && selectedOption.id}
+        value={selectedOption && selectedOption.key}
         onChange={(data: string) => {
-          if (onChange && selectedOption) onChange(data, selectedOption);
+          if (onChange) onChange(data);
         }}
         disabled={disabled}
       >
@@ -106,12 +112,7 @@ export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observe
                 {selectedOption ? (
                   <div className="flex-shrink-0 flex justify-center items-center gap-1">
                     <div className="flex-shrink-0 w-[12px] h-[12px] flex justify-center items-center">
-                      <StateGroupIcon
-                        stateGroup={selectedOption?.group as any}
-                        color={(selectedOption?.color || null) as any}
-                        width="12"
-                        height="12"
-                      />
+                      <Triangle width={14} strokeWidth={2} />
                     </div>
                     <div className="pl-0.5 pr-1 text-xs">{selectedOption?.title}</div>
                   </div>
@@ -163,8 +164,8 @@ export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observe
                           filteredOptions.length > 0 ? (
                             filteredOptions.map((option) => (
                               <Combobox.Option
-                                key={option.id}
-                                value={option.id}
+                                key={option.key}
+                                value={option.key}
                                 className={({ active, selected }) =>
                                   `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
                                     active || selected ? "bg-custom-background-80" : ""
@@ -174,12 +175,7 @@ export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observe
                                 {({ selected }) => (
                                   <div className="flex items-center gap-1 w-full px-1">
                                     <div className="flex-shrink-0 w-[13px] h-[13px] flex justify-center items-center">
-                                      <StateGroupIcon
-                                        stateGroup={option?.group as any}
-                                        color={(option?.color || null) as any}
-                                        width="13"
-                                        height="13"
-                                      />
+                                      <Triangle width={14} strokeWidth={2} />
                                     </div>
                                     <div className="line-clamp-1">{option.title}</div>
                                     {selected && (

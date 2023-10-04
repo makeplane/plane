@@ -28,6 +28,7 @@ export const AllViews: React.FC = observer(() => {
         await projectStore.fetchProjectStates(workspaceSlug, projectId);
         await projectStore.fetchProjectLabels(workspaceSlug, projectId);
         await projectStore.fetchProjectMembers(workspaceSlug, projectId);
+        await projectStore.fetchProjectEstimates(workspaceSlug, projectId);
 
         await issueStore.fetchIssues(workspaceSlug, projectId);
       }
@@ -40,15 +41,17 @@ export const AllViews: React.FC = observer(() => {
   return (
     <div className="relative w-full h-full flex flex-col overflow-auto">
       <AppliedFiltersList />
-      {activeLayout === "kanban" ? (
-        <KanBanLayout />
-      ) : activeLayout === "calendar" ? (
-        <CalendarLayout />
-      ) : activeLayout === "gantt_chart" ? (
-        <GanttLayout />
-      ) : activeLayout === "spreadsheet" ? (
-        <SpreadsheetLayout />
-      ) : null}
+      <div className="w-full h-full">
+        {activeLayout === "kanban" ? (
+          <KanBanLayout />
+        ) : activeLayout === "calendar" ? (
+          <CalendarLayout />
+        ) : activeLayout === "gantt_chart" ? (
+          <GanttLayout />
+        ) : activeLayout === "spreadsheet" ? (
+          <SpreadsheetLayout />
+        ) : null}
+      </div>
     </div>
   );
 });

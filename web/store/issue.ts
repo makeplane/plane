@@ -129,6 +129,8 @@ class IssueStore implements IIssueStore {
       issues = issues.map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i));
     }
 
+    // reorder issues based on the issue update
+
     runInAction(() => {
       this.issues = { ...this.issues, [projectId]: { ...this.issues[projectId], [issueType]: issues } };
     });
