@@ -72,7 +72,7 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
             >
               <Icon
                 iconName={access.icon}
-                className={`w-4 h-4 -mt-1 ${props.commentAccessSpecifier?.accessValue === access.key
+                className={`w-4 h-4 ${props.commentAccessSpecifier?.accessValue === access.key
                   ? "!text-custom-text-100"
                   : "!text-custom-text-400"
                   }`}
