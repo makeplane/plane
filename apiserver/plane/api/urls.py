@@ -150,12 +150,11 @@ from plane.api.views import (
     GlobalSearchEndpoint,
     IssueSearchEndpoint,
     ## End Search
-    # Gpt
+    # External
     GPTIntegrationEndpoint,
-    ## End Gpt
-    # Release Notes
     ReleaseNotesEndpoint,
-    ## End Release Notes
+    UnsplashEndpoint,
+    ## End External
     # Inbox
     InboxViewSet,
     InboxIssueViewSet,
@@ -1449,20 +1448,23 @@ urlpatterns = [
         name="project-issue-search",
     ),
     ## End Search
-    # Gpt
+    # External
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/ai-assistant/",
         GPTIntegrationEndpoint.as_view(),
         name="importer",
     ),
-    ## End Gpt
-    # Release Notes
     path(
         "release-notes/",
         ReleaseNotesEndpoint.as_view(),
         name="release-notes",
     ),
-    ## End Release Notes
+    path(
+        "unsplash/",
+        UnsplashEndpoint.as_view(),
+        name="release-notes",
+    ),
+    ## End External
     # Inbox
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/inboxes/",

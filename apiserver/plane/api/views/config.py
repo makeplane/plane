@@ -25,8 +25,12 @@ class ConfigurationEndpoint(BaseAPIView):
             data["google"] = os.environ.get("GOOGLE_CLIENT_ID", None)
             data["github"] = os.environ.get("GITHUB_CLIENT_ID", None)
             data["github_app_name"] = os.environ.get("GITHUB_APP_NAME", None)
-            data["magic_login"] = bool(settings.EMAIL_HOST_USER) and bool(settings.EMAIL_HOST_PASSWORD)
-            data["email_password_login"] = os.environ.get("ENABLE_EMAIL_PASSWORD", "0") == "1" 
+            data["magic_login"] = (
+                bool(settings.EMAIL_HOST_USER) and bool(settings.EMAIL_HOST_PASSWORD)
+            ) and os.environ.get("ENABLE_MAGIC_LINK_LOGIN", "0") == "1"
+            data["email_password_login"] = (
+                os.environ.get("ENABLE_EMAIL_PASSWORD", "0") == "1"
+            )
             return Response(data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)

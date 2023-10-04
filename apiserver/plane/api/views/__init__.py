@@ -147,15 +147,12 @@ from .page import (
 from .search import GlobalSearchEndpoint, IssueSearchEndpoint
 
 
-from .gpt import GPTIntegrationEndpoint
+from .external import GPTIntegrationEndpoint, ReleaseNotesEndpoint, UnsplashEndpoint
 
 from .estimate import (
     ProjectEstimatePointEndpoint,
     BulkEstimatePointEndpoint,
 )
-
-
-from .release import ReleaseNotesEndpoint
 
 from .inbox import InboxViewSet, InboxIssueViewSet, InboxIssuePublicViewSet
 
