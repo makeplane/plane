@@ -10,12 +10,7 @@ export class CycleService extends APIService {
     super(API_BASE_URL);
   }
 
-  async createCycle(
-    workspaceSlug: string,
-    projectId: string,
-    data: any,
-    user: ICurrentUserResponse | undefined
-  ): Promise<any> {
+  async createCycle(workspaceSlug: string, projectId: string, data: any, user: any): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/`, data)
       .then((response) => {
         trackEventServices.trackCycleEvent(response?.data, "CYCLE_CREATE", user);

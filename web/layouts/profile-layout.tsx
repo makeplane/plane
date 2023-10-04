@@ -1,7 +1,7 @@
 // hooks
 import { useWorkspaceMyMembership } from "contexts/workspace-member.context";
 // layouts
-import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // components
 import { ProfileNavbar, ProfileSidebar } from "components/profile";
 // ui

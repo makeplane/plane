@@ -10,7 +10,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import projectService from "services/project.service";
 import inboxService from "services/inbox.service";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // helper
 import { truncateText } from "helpers/string.helper";
 // components

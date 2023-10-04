@@ -10,8 +10,8 @@ import workspaceServices from "services/workspace.service";
 // contexts
 import { WorkspaceMemberProvider } from "contexts/workspace-member.context";
 // layouts
-import AppSidebar from "layouts/app-layout/app-sidebar";
-import AppHeader from "layouts/app-layout/app-header";
+import AppSidebar from "layouts/app-layout-legacy/app-sidebar";
+import AppHeader from "layouts/app-layout-legacy/app-header";
 import { UserAuthorizationLayout } from "./user-authorization-wrapper";
 // components
 import { NotAuthorizedView, NotAWorkspaceMember } from "components/auth-screens";

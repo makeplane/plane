@@ -13,7 +13,7 @@ import userService from "services/user.service";
 import useUser from "hooks/use-user";
 // layouts
 import DefaultLayout from "layouts/default-layout";
-import { UserAuthorizationLayout } from "layouts/auth-layout/user-authorization-wrapper";
+import { UserAuthorizationLayout } from "layouts/auth-layout-legacy/user-authorization-wrapper";
 // components
 import { CreateWorkspaceForm } from "components/workspace";
 // images
@@ -59,9 +59,7 @@ const CreateWorkspace: NextPage = () => {
       false
     );
 
-    await userService
-      .updateUser({ last_workspace_id: workspace.id })
-      .then(() => router.push(`/${workspace.slug}`));
+    await userService.updateUser({ last_workspace_id: workspace.id }).then(() => router.push(`/${workspace.slug}`));
   };
 
   return (

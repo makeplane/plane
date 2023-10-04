@@ -6,7 +6,7 @@ import useSWR from "swr";
 import projectService from "services/project.service";
 import viewsService from "services/views.service";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
@@ -30,27 +30,18 @@ const SingleView: React.FC = () => {
 
   const { data: activeProject } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => projectService.getProject(workspaceSlug as string, projectId as string) : null
   );
 
   const { data: views } = useSWR(
     workspaceSlug && projectId ? VIEWS_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => viewsService.getViews(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => viewsService.getViews(workspaceSlug as string, projectId as string) : null
   );
 
   const { data: viewDetails, error } = useSWR(
     workspaceSlug && projectId && viewId ? VIEW_DETAILS(viewId as string) : null,
     workspaceSlug && projectId && viewId
-      ? () =>
-          viewsService.getViewDetails(
-            workspaceSlug as string,
-            projectId as string,
-            viewId as string
-          )
+      ? () => viewsService.getViewDetails(workspaceSlug as string, projectId as string, viewId as string)
       : null
   );
 

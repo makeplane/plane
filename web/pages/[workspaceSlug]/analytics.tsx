@@ -15,7 +15,7 @@ import { Tab } from "@headlessui/react";
 import analyticsService from "services/analytics.service";
 import trackEventServices from "services/track_event.service";
 // layouts
-import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // components
 import { CustomAnalytics, ScopeAndDemand } from "components/analytics";
 // ui

@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // layouts
-import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // hooks
 import useMyIssuesFilters from "hooks/my-issues/use-my-issues-filter";
 // components
@@ -107,9 +107,7 @@ const MyIssuesPage: NextPage = () => {
                 type="button"
                 onClick={tab.onClick}
                 className={`border-b-2 p-4 text-sm font-medium outline-none whitespace-nowrap ${
-                  tab.selected
-                    ? "border-custom-primary-100 text-custom-primary-100"
-                    : "border-transparent"
+                  tab.selected ? "border-custom-primary-100 text-custom-primary-100" : "border-transparent"
                 }`}
               >
                 {tab.label}

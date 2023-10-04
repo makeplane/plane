@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // services
 import projectService from "services/project.service";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 import useProjectDetails from "hooks/use-project-details";
@@ -45,8 +45,7 @@ const AutomationsSettings: NextPage = () => {
 
     mutate<IProject[]>(
       PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
-      (prevData) =>
-        (prevData ?? []).map((p) => (p.id === projectDetails.id ? { ...p, ...formData } : p)),
+      (prevData) => (prevData ?? []).map((p) => (p.id === projectDetails.id ? { ...p, ...formData } : p)),
       false
     );
 

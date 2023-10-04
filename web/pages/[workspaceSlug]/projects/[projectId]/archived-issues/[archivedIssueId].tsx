@@ -12,7 +12,7 @@ import issuesService from "services/issue.service";
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import { IssueDetailsSidebar, IssueMainContent } from "components/issues";
 // ui

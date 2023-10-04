@@ -21,7 +21,7 @@ import issuesService from "services/issue.service";
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import { CreateUpdateBlockInline, SinglePageBlock } from "components/pages";
 import { CreateLabelModal } from "components/labels";

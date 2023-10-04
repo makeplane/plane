@@ -10,7 +10,7 @@ import useUserAuth from "hooks/use-user-auth";
 import viewsService from "services/views.service";
 import projectService from "services/project.service";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 //icons
@@ -40,16 +40,12 @@ const ProjectViews: NextPage = () => {
 
   const { data: activeProject } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => projectService.getProject(workspaceSlug as string, projectId as string) : null
   );
 
   const { data: views } = useSWR(
     workspaceSlug && projectId ? VIEWS_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => viewsService.getViews(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => viewsService.getViews(workspaceSlug as string, projectId as string) : null
   );
 
   const handleEditView = (view: IView) => {

@@ -8,7 +8,7 @@ import useSWR, { mutate } from "swr";
 import projectService from "services/project.service";
 import trackEventServices, { MiscellaneousEventType } from "services/track_event.service";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";

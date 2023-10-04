@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { FC } from 'react';
 
 declare const Button: () => JSX.Element;
 
@@ -17,4 +18,24 @@ interface InputProps {
 }
 declare const Input: React.ForwardRefExoticComponent<InputProps & React.RefAttributes<HTMLInputElement>>;
 
-export { Button, Input, InputProps };
+interface TextAreaProps {
+    id: string;
+    name: string;
+    placeholder?: string;
+    value?: string;
+    rows?: number;
+    cols?: number;
+    disabled?: boolean;
+    onChange: () => void;
+    mode?: "primary" | "transparent";
+    hasError?: boolean;
+    className?: string;
+}
+declare const TextArea: React.ForwardRefExoticComponent<TextAreaProps & React.RefAttributes<HTMLTextAreaElement>>;
+
+interface IRadialProgressBar {
+    progress: number;
+}
+declare const RadialProgressBar: FC<IRadialProgressBar>;
+
+export { Button, Input, InputProps, RadialProgressBar, TextArea, TextAreaProps };

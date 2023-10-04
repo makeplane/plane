@@ -10,7 +10,7 @@ import useUserAuth from "hooks/use-user-auth";
 import projectService from "services/project.service";
 import issuesService from "services/issue.service";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import {
   CreateUpdateLabelInline,

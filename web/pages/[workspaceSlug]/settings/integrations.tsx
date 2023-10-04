@@ -8,7 +8,7 @@ import useSWR from "swr";
 import workspaceService from "services/workspace.service";
 import IntegrationService from "services/integration.service";
 // layouts
-import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // components
 import { SingleIntegrationCard } from "components/integration";
 import { SettingsSidebar } from "components/project";
