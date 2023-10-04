@@ -11,20 +11,28 @@ export interface ICycleStore {
   loader: boolean;
   error: any | null;
 
+  cycleId: string | null;
   cycles: {
     [project_id: string]: ICycle[];
   };
-
   cycle_details: {
     [cycle_id: string]: ICycle;
   };
+
+  // computed
+  getCycleById: (cycleId: string) => ICycle | null;
+
+  // actions
+  setCycleId: (cycleId: string) => void;
 
   fetchCycles: (
     workspaceSlug: string,
     projectId: string,
     params: "all" | "current" | "upcoming" | "draft" | "completed" | "incomplete"
   ) => Promise<void>;
+  fetchCycleWithId: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
   createCycle: (workspaceSlug: string, projectId: string, data: any) => Promise<ICycle>;
+  updateCycle: (workspaceSlug: string, projectId: string, cycleId: string, data: any) => Promise<ICycle>;
 
   addCycleToFavorites: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<any>;
   removeCycleFromFavorites: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
@@ -34,6 +42,7 @@ class CycleStore implements ICycleStore {
   loader: boolean = false;
   error: any | null = null;
 
+  cycleId: string | null = null;
   cycles: {
     [project_id: string]: ICycle[];
   } = {};
@@ -54,12 +63,19 @@ class CycleStore implements ICycleStore {
       loader: observable,
       error: observable.ref,
 
+      cycleId: observable,
       cycles: observable.ref,
+      cycle_details: observable.ref,
 
       // computed
       projectCycles: computed,
+
       // actions
+      setCycleId: action,
+      getCycleById: action,
+
       fetchCycles: action,
+      fetchCycleWithId: action,
       createCycle: action,
 
       addCycleToFavorites: action,
@@ -78,7 +94,13 @@ class CycleStore implements ICycleStore {
     return this.cycles[this.rootStore.project.projectId] || null;
   }
 
+  getCycleById = (cycleId: string) => this.cycle_details[cycleId] || null;
+
   // actions
+  setCycleId = (cycleId: string) => {
+    this.cycleId = cycleId;
+  };
+
   fetchCycles = async (
     workspaceSlug: string,
     projectId: string,
@@ -105,6 +127,23 @@ class CycleStore implements ICycleStore {
     }
   };
 
+  fetchCycleWithId = async (workspaceSlug: string, projectId: string, cycleId: string) => {
+    try {
+      const response = await this.cycleService.getCycleDetails(workspaceSlug, projectId, cycleId);
+
+      runInAction(() => {
+        this.cycle_details = {
+          ...this.cycle_details,
+          [response?.id]: response,
+        };
+      });
+      
+    } catch (error) {
+      console.log("Failed to fetch cycle detail from cycle store");
+      throw error;
+    }
+  };
+
   createCycle = async (workspaceSlug: string, projectId: string, data: any) => {
     try {
       const response = await this.cycleService.createCycle(
@@ -124,6 +163,29 @@ class CycleStore implements ICycleStore {
       return response;
     } catch (error) {
       console.log("Failed to create cycle from cycle store");
+      throw error;
+    }
+  };
+
+  updateCycle = async (workspaceSlug: string, projectId: string, cycleId: string, data: any) => {
+    try {
+      const response = await this.cycleService.updateCycle(workspaceSlug, projectId, cycleId, data, undefined);
+
+      console.log("response", response);
+
+      runInAction(() => {
+        this.cycles = {
+          ...this.cycles,
+          [projectId]: this.cycles[projectId].map((cycle) => {
+            if (cycle.id === cycleId) return { ...cycle, ...response };
+            return cycle;
+          }),
+        };
+      });
+
+      return response;
+    } catch (error) {
+      console.log("Failed to update cycle from cycle store");
       throw error;
     }
   };

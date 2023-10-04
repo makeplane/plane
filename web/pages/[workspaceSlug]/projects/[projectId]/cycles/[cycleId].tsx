@@ -13,6 +13,7 @@ import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
 import { ExistingIssuesListModal, IssuesFilterView, IssuesView } from "components/core";
 import { CycleDetailsSidebar, TransferIssues, TransferIssuesModal } from "components/cycles";
+import { CycleLayoutRoot } from "components/issues/issue-layouts";
 // services
 import issuesService from "services/issue.service";
 import cycleServices from "services/cycles.service";
@@ -170,10 +171,10 @@ const SingleCycle: React.FC = () => {
               } duration-300`}
             >
               {cycleStatus === "completed" && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
-              <IssuesView
-                openIssuesListModal={openIssuesListModal}
-                disableUserActions={cycleStatus === "completed" ?? false}
-              />
+
+              <div className="relative w-full h-full overflow-hidden">
+                <CycleLayoutRoot />
+              </div>
             </div>
             <CycleDetailsSidebar
               cycleStatus={cycleStatus}

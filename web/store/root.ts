@@ -10,6 +10,9 @@ import WorkspaceStore, { IWorkspaceStore } from "./workspace";
 import ProjectStore, { IProjectStore } from "./project";
 import ModuleStore, { IModuleStore } from "./modules";
 import CycleStore, { ICycleStore } from "./cycles";
+import CycleIssueStore, { ICycleIssueStore } from "./cycle_issue";
+import CycleFilterStore, { ICycleFilterStore } from "./cycle_filters";
+import CycleKanBanViewStore, { ICycleKanBanViewStore } from "./cycle_kanban_view";
 import ViewStore, { IViewStore } from "./views";
 import IssueFilterStore, { IIssueFilterStore } from "./issue_filters";
 import IssueViewDetailStore from "./issue_detail";
@@ -29,7 +32,12 @@ export class RootStore {
   issue: IIssueStore;
   module: IModuleStore;
   moduleFilter: IModuleFilterStore;
+
   cycle: ICycleStore;
+  cycleIssue: ICycleIssueStore;
+  cycleFilter: ICycleFilterStore;
+  cycleKanBanView: ICycleKanBanViewStore;
+
   view: IViewStore;
   issueFilter: IIssueFilterStore;
   issueDetail: IssueViewDetailStore;
@@ -44,7 +52,12 @@ export class RootStore {
     this.projectPublish = new ProjectPublishStore(this);
     this.module = new ModuleStore(this);
     this.moduleFilter = new ModuleFilterStore(this);
+
     this.cycle = new CycleStore(this);
+    this.cycleIssue = new CycleIssueStore(this);
+    this.cycleFilter = new CycleFilterStore(this);
+    this.cycleKanBanView = new CycleKanBanViewStore(this);
+
     this.view = new ViewStore(this);
     this.issue = new IssueStore(this);
     this.issueFilter = new IssueFilterStore(this);
