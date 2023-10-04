@@ -38,7 +38,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
         <CalendarWeekHeader />
         <div className="h-full w-full overflow-y-auto">
           {calendarLayout === "month" ? (
-            <div className="h-full w-full grid grid-cols-1">
+            <div className="h-full w-full grid grid-cols-1 divide-y-[0.5px] divide-custom-border-200">
               {allWeeksOfActiveMonth &&
                 Object.values(allWeeksOfActiveMonth).map((week: ICalendarWeek, weekIndex) => (
                   <CalendarWeekDays key={weekIndex} week={week} issues={issues} />

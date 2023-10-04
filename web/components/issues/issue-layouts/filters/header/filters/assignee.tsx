@@ -1,34 +1,30 @@
 import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
 
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { FilterHeader, FilterOption } from "components/issues";
 // ui
 import { Avatar, Loader } from "components/ui";
+// types
+import { IUserLite } from "types";
 
 type Props = {
   appliedFilters: string[] | null;
   handleUpdate: (val: string) => void;
   itemsToRender: number;
-  projectId: string;
+  members: IUserLite[] | undefined;
   searchQuery: string;
   viewButtons: React.ReactNode;
 };
 
-export const FilterAssignees: React.FC<Props> = observer((props) => {
-  const { appliedFilters, handleUpdate, itemsToRender, projectId, searchQuery, viewButtons } = props;
+export const FilterAssignees: React.FC<Props> = (props) => {
+  const { appliedFilters, handleUpdate, itemsToRender, members, searchQuery, viewButtons } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
-  const store = useMobxStore();
-  const { project: projectStore } = store;
-
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const filteredOptions = projectStore.members?.[projectId?.toString() ?? ""]?.filter((member) =>
-    member.member.display_name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredOptions = members?.filter((member) =>
+    member.display_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -45,11 +41,11 @@ export const FilterAssignees: React.FC<Props> = observer((props) => {
               <>
                 {filteredOptions.slice(0, itemsToRender).map((member) => (
                   <FilterOption
-                    key={`assignees-${member?.member?.id}`}
-                    isChecked={appliedFilters?.includes(member.member?.id) ? true : false}
-                    onClick={() => handleUpdate(member.member?.id)}
-                    icon={<Avatar user={member.member} height="18px" width="18px" />}
-                    title={member.member?.display_name}
+                    key={`assignees-${member.id}`}
+                    isChecked={appliedFilters?.includes(member.id) ? true : false}
+                    onClick={() => handleUpdate(member.id)}
+                    icon={<Avatar user={member} height="18px" width="18px" />}
+                    title={member.display_name}
                   />
                 ))}
                 {viewButtons}
@@ -68,4 +64,4 @@ export const FilterAssignees: React.FC<Props> = observer((props) => {
       )}
     </>
   );
-});
+};

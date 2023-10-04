@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
 
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { FilterHeader, FilterOption } from "components/issues";
 // ui
 import { Loader } from "components/ui";
+// types
+import { IIssueLabels } from "types";
 
 const LabelIcons = ({ color }: { color: string }) => (
   <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
@@ -16,24 +15,19 @@ type Props = {
   appliedFilters: string[] | null;
   handleUpdate: (val: string) => void;
   itemsToRender: number;
-  projectId: string;
+  labels: IIssueLabels[] | undefined;
   searchQuery: string;
   viewButtons: React.ReactNode;
 };
 
-export const FilterLabels: React.FC<Props> = observer((props) => {
-  const { appliedFilters, handleUpdate, itemsToRender, projectId, searchQuery, viewButtons } = props;
+export const FilterLabels: React.FC<Props> = (props) => {
+  const { appliedFilters, handleUpdate, itemsToRender, labels, searchQuery, viewButtons } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
-  const store = useMobxStore();
-  const { project: projectStore } = store;
-
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const filteredOptions = projectStore.labels?.[projectId?.toString() ?? ""]?.filter((label) =>
-    label.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredOptions = labels?.filter((label) => label.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
     <>
@@ -72,4 +66,4 @@ export const FilterLabels: React.FC<Props> = observer((props) => {
       )}
     </>
   );
-});
+};
