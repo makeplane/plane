@@ -68,7 +68,6 @@ export const AutoArchiveAutomation: React.FC<Props> = ({ projectDetails, handleC
                     handleChange({ archive_in: val });
                   }}
                   input
-                  verticalPosition="bottom"
                   width="w-full"
                 >
                   <>

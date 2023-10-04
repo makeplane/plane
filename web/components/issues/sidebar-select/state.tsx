@@ -39,7 +39,7 @@ export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, disabled 
   return (
     <CustomSelect
       customButton={
-        <button type="button" className="bg-custom-background-80 text-xs rounded px-2.5 py-0.5">
+        <div className="bg-custom-background-80 text-xs rounded px-2.5 py-0.5">
           {selectedState ? (
             <div className="flex items-center gap-1.5 text-left text-custom-text-100">
               <StateGroupIcon stateGroup={selectedState.group} color={selectedState.color} />
@@ -53,12 +53,11 @@ export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, disabled 
           ) : (
             "None"
           )}
-        </button>
+        </div>
       }
       value={value}
       onChange={onChange}
       optionsClassName="w-min"
-      position="left"
       disabled={disabled}
     >
       {states ? (

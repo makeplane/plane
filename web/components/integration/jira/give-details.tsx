@@ -143,7 +143,6 @@ export const JiraGetImportDetail: React.FC = () => {
                     )}
                   </span>
                 }
-                verticalPosition="top"
               >
                 {projects && projects.length > 0 ? (
                   projects.map((project) => (

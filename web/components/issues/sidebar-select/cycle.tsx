@@ -91,7 +91,6 @@ export const SidebarCycleSelect: React.FC<Props> = ({
           : handleCycleChange(incompleteCycles?.find((c) => c.id === value) as ICycle);
       }}
       width="w-full"
-      position="right"
       maxHeight="rg"
       disabled={disabled}
     >

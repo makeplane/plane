@@ -33,7 +33,6 @@ export const IssueEstimateSelect: React.FC<Props> = ({ value, onChange }) => {
         </div>
       }
       onChange={onChange}
-      position="right"
       width="w-full min-w-[8rem]"
       noChevron
     >
