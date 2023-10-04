@@ -347,9 +347,7 @@ const MembersSettings: NextPage = () => {
 
           <div className="flex items-center justify-between gap-4 py-3.5 border-b border-custom-border-200">
             <h4 className="text-xl font-medium">Members</h4>
-            <PrimaryButton onClick={() => setInviteModal(true)} disabled={!isAdmin}>
-              Add Member
-            </PrimaryButton>
+            <PrimaryButton onClick={() => setInviteModal(true)}>Add Member</PrimaryButton>
           </div>
           {!projectMembers || !projectInvitations ? (
             <Loader className="space-y-5">
