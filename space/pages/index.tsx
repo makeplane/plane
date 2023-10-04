@@ -6,12 +6,12 @@ import { useRouter } from "next/router";
 
 const Index: NextPage = () => {
   const router = useRouter();
-  // using asPath instead of query because query can be undefined
-  const nextPath = router.asPath.split("next_path=")[1];
+  const { next_path } = router.query as { next_path: string };
 
   useEffect(() => {
-    router.push(`/login?next_path=${nextPath}`);
-  }, [nextPath, router]);
+    if (next_path) router.push(`/login?next_path=${next_path}`);
+    else router.push(`/login`);
+  }, [router, next_path]);
 
   return null;
 };
