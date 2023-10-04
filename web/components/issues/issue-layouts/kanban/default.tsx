@@ -21,10 +21,21 @@ export interface IGroupByKanBan {
   listKey: string;
   isDragDisabled: boolean;
   handleIssues?: (sub_group_by: string | null, group_by: string | null, issue: any) => void;
+  display_properties: any;
 }
 
 const GroupByKanBan: React.FC<IGroupByKanBan> = observer(
-  ({ issues, sub_group_by, group_by, sub_group_id = "null", list, listKey, isDragDisabled, handleIssues }) => {
+  ({
+    issues,
+    sub_group_by,
+    group_by,
+    sub_group_id = "null",
+    list,
+    listKey,
+    isDragDisabled,
+    handleIssues,
+    display_properties,
+  }) => {
     const { issueKanBanView: issueKanBanViewStore }: RootStore = useMobxStore();
 
     const verticalAlignPosition = (_list: any) =>
@@ -65,6 +76,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer(
                             issues={issues[getValueFromObject(_list, listKey) as string]}
                             isDragDisabled={isDragDisabled}
                             handleIssues={handleIssues}
+                            display_properties={display_properties}
                           />
                         ) : (
                           isDragDisabled && (
@@ -93,10 +105,11 @@ export interface IKanBan {
   sub_group_id?: string;
   handleDragDrop?: (result: any) => void | undefined;
   handleIssues?: (sub_group_by: string | null, group_by: string | null, issue: any) => void;
+  display_properties: any;
 }
 
 export const KanBan: React.FC<IKanBan> = observer(
-  ({ issues, sub_group_by, group_by, sub_group_id = "null", handleIssues }) => {
+  ({ issues, sub_group_by, group_by, sub_group_id = "null", handleIssues, display_properties }) => {
     const { project: projectStore, issueKanBanView: issueKanBanViewStore }: RootStore = useMobxStore();
 
     return (
@@ -111,6 +124,7 @@ export const KanBan: React.FC<IKanBan> = observer(
             listKey={`id`}
             isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
             handleIssues={handleIssues}
+            display_properties={display_properties}
           />
         )}
 
@@ -124,6 +138,7 @@ export const KanBan: React.FC<IKanBan> = observer(
             listKey={`key`}
             isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
             handleIssues={handleIssues}
+            display_properties={display_properties}
           />
         )}
 
@@ -137,6 +152,7 @@ export const KanBan: React.FC<IKanBan> = observer(
             listKey={`key`}
             isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
             handleIssues={handleIssues}
+            display_properties={display_properties}
           />
         )}
 
@@ -150,6 +166,7 @@ export const KanBan: React.FC<IKanBan> = observer(
             listKey={`id`}
             isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
             handleIssues={handleIssues}
+            display_properties={display_properties}
           />
         )}
 
@@ -163,6 +180,7 @@ export const KanBan: React.FC<IKanBan> = observer(
             listKey={`member.id`}
             isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
             handleIssues={handleIssues}
+            display_properties={display_properties}
           />
         )}
 
@@ -176,6 +194,7 @@ export const KanBan: React.FC<IKanBan> = observer(
             listKey={`member.id`}
             isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
             handleIssues={handleIssues}
+            display_properties={display_properties}
           />
         )}
       </div>

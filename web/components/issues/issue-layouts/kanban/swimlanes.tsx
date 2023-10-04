@@ -55,9 +55,10 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
 interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   issues: any;
   handleIssues?: (sub_group_by: string | null, group_by: string | null, issue: any) => void;
+  display_properties: any;
 }
 const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer(
-  ({ issues, sub_group_by, group_by, list, listKey, handleIssues }) => {
+  ({ issues, sub_group_by, group_by, list, listKey, handleIssues, display_properties }) => {
     const { issueKanBanView: issueKanBanViewStore }: RootStore = useMobxStore();
 
     const calculateIssueCount = (column_id: string) => {
@@ -96,6 +97,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer(
                     group_by={group_by}
                     sub_group_id={getValueFromObject(_list, listKey) as string}
                     handleIssues={handleIssues}
+                    display_properties={display_properties}
                   />
                 </div>
               )}
@@ -111,10 +113,11 @@ export interface IKanBanSwimLanes {
   sub_group_by: string | null;
   group_by: string | null;
   handleIssues?: (sub_group_by: string | null, group_by: string | null, issue: any) => void;
+  display_properties: any;
 }
 
 export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer(
-  ({ issues, sub_group_by, group_by, handleIssues }) => {
+  ({ issues, sub_group_by, group_by, handleIssues, display_properties }) => {
     const { project: projectStore }: RootStore = useMobxStore();
 
     return (
@@ -189,6 +192,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer(
             list={projectStore?.projectStates}
             listKey={`id`}
             handleIssues={handleIssues}
+            display_properties={display_properties}
           />
         )}
 
@@ -200,6 +204,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer(
             list={ISSUE_STATE_GROUPS}
             listKey={`key`}
             handleIssues={handleIssues}
+            display_properties={display_properties}
           />
         )}
 
@@ -211,6 +216,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer(
             list={ISSUE_PRIORITIES}
             listKey={`key`}
             handleIssues={handleIssues}
+            display_properties={display_properties}
           />
         )}
 
@@ -222,6 +228,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer(
             list={projectStore?.projectLabels}
             listKey={`id`}
             handleIssues={handleIssues}
+            display_properties={display_properties}
           />
         )}
 
@@ -233,6 +240,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer(
             list={projectStore?.projectMembers}
             listKey={`member.id`}
             handleIssues={handleIssues}
+            display_properties={display_properties}
           />
         )}
 
@@ -244,6 +252,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer(
             list={projectStore?.projectMembers}
             listKey={`member.id`}
             handleIssues={handleIssues}
+            display_properties={display_properties}
           />
         )}
       </div>

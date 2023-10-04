@@ -5,6 +5,8 @@ import { Combobox } from "@headlessui/react";
 import { ChevronDown, Search, X, Check, Triangle } from "lucide-react";
 // mobx
 import { observer } from "mobx-react-lite";
+// components
+import { Tooltip } from "components/ui";
 // hooks
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // mobx
@@ -110,12 +112,14 @@ export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observe
                 } ${buttonClassName}`}
               >
                 {selectedOption ? (
-                  <div className="flex-shrink-0 flex justify-center items-center gap-1">
-                    <div className="flex-shrink-0 w-[12px] h-[12px] flex justify-center items-center">
-                      <Triangle width={14} strokeWidth={2} />
+                  <Tooltip tooltipHeading={`Estimates`} tooltipContent={selectedOption?.title}>
+                    <div className="flex-shrink-0 flex justify-center items-center gap-1">
+                      <div className="flex-shrink-0 w-[12px] h-[12px] flex justify-center items-center">
+                        <Triangle width={14} strokeWidth={2} />
+                      </div>
+                      <div className="pl-0.5 pr-1 text-xs">{selectedOption?.title}</div>
                     </div>
-                    <div className="pl-0.5 pr-1 text-xs">{selectedOption?.title}</div>
-                  </div>
+                  </Tooltip>
                 ) : (
                   <div className="text-xs">Select option</div>
                 )}
