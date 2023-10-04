@@ -10,7 +10,6 @@ import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
 import issuesService from "services/issue.service";
 import trackEventServices from "services/track_event.service";
 // hooks
-import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useIssuesProperties from "hooks/use-issue-properties";
 import useToast from "hooks/use-toast";
 // components
@@ -60,7 +59,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
 
   const { setToastAlert } = useToast();
 
-  const { params } = useCalendarIssuesView();
+  const params = {};
 
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 

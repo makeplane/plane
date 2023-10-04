@@ -113,13 +113,7 @@ class IssueFilterStore implements IIssueFilterStore {
   };
 
   get appliedFilters(): TIssueParams[] | null {
-    if (
-      !this.userFilters ||
-      Object.keys(this.userFilters).length === 0 ||
-      !this.userDisplayFilters ||
-      Object.keys(this.userDisplayFilters).length === 0
-    )
-      return null;
+    if (!this.userFilters || !this.userDisplayFilters) return null;
 
     let filteredRouteParams: any = {
       priority: this.userFilters?.priority || undefined,

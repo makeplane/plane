@@ -13,7 +13,6 @@ import issuesServices from "services/issue.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
-import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 // ui
 import { DangerButton, SecondaryButton } from "components/ui";
 // icons
@@ -55,7 +54,6 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
 
   const { setToastAlert } = useToast();
   const { displayFilters, params } = useIssuesView();
-  const { params: calendarParams } = useCalendarIssuesView();
   const { order_by, group_by, ...viewGanttParams } = params;
 
   const {
@@ -90,14 +88,6 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
 
     if (!Array.isArray(data.delete_issue_ids)) data.delete_issue_ids = [data.delete_issue_ids];
 
-    const calendarFetchKey = cycleId
-      ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), calendarParams)
-      : moduleId
-      ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), calendarParams)
-      : viewId
-      ? VIEW_ISSUES(viewId.toString(), calendarParams)
-      : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", calendarParams);
-
     const ganttFetchKey = cycleId
       ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString())
       : moduleId
@@ -122,8 +112,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
           message: "Issues deleted successfully!",
         });
 
-        if (displayFilters.layout === "calendar") mutate(calendarFetchKey);
-        else if (displayFilters.layout === "gantt_chart") mutate(ganttFetchKey);
+        if (displayFilters.layout === "gantt_chart") mutate(ganttFetchKey);
         else {
           if (cycleId) {
             mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), params));
