@@ -6,11 +6,17 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { useRouter } from "next/router";
 
 const MobxStoreInit = () => {
-  const { theme: themeStore, user: userStore, workspace: workspaceStore, project: projectStore } = useMobxStore();
+  const {
+    theme: themeStore,
+    user: userStore,
+    workspace: workspaceStore,
+    project: projectStore,
+    module: moduleStore,
+  } = useMobxStore();
   const { setTheme } = useTheme();
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, moduleId } = router.query;
 
   useEffect(() => {
     // sidebar collapsed toggle
@@ -47,7 +53,8 @@ const MobxStoreInit = () => {
   useEffect(() => {
     if (workspaceSlug) workspaceStore.setWorkspaceSlug(workspaceSlug.toString());
     if (projectId) projectStore.setProjectId(projectId.toString());
-  }, [workspaceSlug, projectId, workspaceStore, projectStore]);
+    if (moduleId) moduleStore.setModuleId(moduleId.toString());
+  }, [workspaceSlug, projectId, moduleId, workspaceStore, projectStore, moduleStore]);
 
   return <></>;
 };

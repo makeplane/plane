@@ -8,13 +8,13 @@ import { AppliedFiltersList } from "components/issues";
 // types
 import { IIssueFilterOptions } from "types";
 
-export const AppliedFiltersRoot: React.FC = observer(() => {
+export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, moduleId } = router.query;
 
-  const { issueFilter: issueFilterStore, project: projectStore, moduleFilter: moduleFilterStore } = useMobxStore();
+  const { project: projectStore, moduleFilter: moduleFilterStore } = useMobxStore();
 
-  const userFilters = issueFilterStore.userFilters;
+  const userFilters = moduleFilterStore.userModuleFilters;
 
   // filters whose value not null or empty array
   const appliedFilters: IIssueFilterOptions = {};
@@ -27,39 +27,35 @@ export const AppliedFiltersRoot: React.FC = observer(() => {
   });
 
   const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !projectId || !moduleId) return;
 
     // remove all values of the key if value is null
     if (!value) {
-      issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-        filters: {
-          [key]: null,
-        },
+      moduleFilterStore.updateUserModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), {
+        [key]: null,
       });
       return;
     }
 
     // remove the passed value from the key
-    let newValues = issueFilterStore.userFilters?.[key] ?? [];
+    let newValues = moduleFilterStore.userModuleFilters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
 
-    issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-      filters: {
-        [key]: newValues,
-      },
+    moduleFilterStore.updateUserModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), {
+      [key]: newValues,
     });
   };
 
   const handleClearAllFilters = () => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !projectId || !moduleId) return;
 
     const newFilters: IIssueFilterOptions = {};
     Object.keys(userFilters).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
 
-    issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-      filters: { ...newFilters },
+    moduleFilterStore.updateUserModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId?.toString(), {
+      ...newFilters,
     });
   };
 
