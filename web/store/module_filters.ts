@@ -131,7 +131,7 @@ class ModuleFilterStore implements IModuleFilterStore {
             filters: newFilters,
           },
         },
-        undefined
+        this.rootStore.user.currentUser
       );
     } catch (error) {
       this.rootStore.module.fetchModuleDetails(workspaceSlug, projectId, moduleId);

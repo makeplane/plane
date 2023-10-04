@@ -29,7 +29,7 @@ export const ModuleAllLayouts: React.FC = observer(() => {
       await projectStore.fetchProjectMembers(workspaceSlug.toString(), projectId.toString());
 
       await moduleStore.fetchModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString());
-      await moduleStore.fetchIssues(workspaceSlug.toString(), projectId.toString(), moduleId.toString());
+      await moduleStore.fetchModuleIssues(workspaceSlug.toString(), projectId.toString(), moduleId.toString());
     }
   });
 
