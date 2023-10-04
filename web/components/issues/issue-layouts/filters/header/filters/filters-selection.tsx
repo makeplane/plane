@@ -31,6 +31,29 @@ type Props = {
   projectId: string;
 };
 
+type ViewButtonProps = {
+  handleLess: () => void;
+  handleMore: () => void;
+  isViewLessVisible: boolean;
+  isViewMoreVisible: boolean;
+};
+
+const ViewButtons = ({ handleLess, handleMore, isViewLessVisible, isViewMoreVisible }: ViewButtonProps) => (
+  <div className="flex items-center gap-2 ml-7 mt-1">
+    {/* TODO: handle view more and less in a better way */}
+    {isViewMoreVisible && (
+      <button className="text-custom-primary-100 text-xs font-medium" onClick={handleMore}>
+        View more
+      </button>
+    )}
+    {isViewLessVisible && (
+      <button className="text-custom-primary-100 text-xs font-medium" onClick={handleLess}>
+        View less
+      </button>
+    )}
+  </div>
+);
+
 export const FilterSelection: React.FC<Props> = observer((props) => {
   const { filters, handleFiltersUpdate, layoutDisplayFiltersOptions, projectId } = props;
 
@@ -157,25 +180,12 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
               itemsToRender={filtersToRender.priority?.currentLength ?? 0}
               searchQuery={filtersSearchQuery}
               viewButtons={
-                <div className="flex items-center gap-2 ml-7 mt-1">
-                  {/* TODO: handle view more and less in a better way */}
-                  {isViewMoreVisible("priority") && (
-                    <button
-                      className="text-custom-primary-100 text-xs font-medium"
-                      onClick={() => handleViewMore("priority")}
-                    >
-                      View more
-                    </button>
-                  )}
-                  {isViewLessVisible("priority") && (
-                    <button
-                      className="text-custom-primary-100 text-xs font-medium"
-                      onClick={() => handleViewLess("priority")}
-                    >
-                      View less
-                    </button>
-                  )}
-                </div>
+                <ViewButtons
+                  isViewLessVisible={isViewLessVisible("priority")}
+                  isViewMoreVisible={isViewMoreVisible("priority")}
+                  handleLess={() => handleViewLess("priority")}
+                  handleMore={() => handleViewMore("priority")}
+                />
               }
             />
           </div>
@@ -190,24 +200,12 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
               itemsToRender={filtersToRender.state_group?.currentLength ?? 0}
               searchQuery={filtersSearchQuery}
               viewButtons={
-                <div className="flex items-center gap-2 ml-7 mt-1">
-                  {isViewMoreVisible("state_group") && (
-                    <button
-                      className="text-custom-primary-100 text-xs font-medium ml-7"
-                      onClick={() => handleViewMore("state_group")}
-                    >
-                      View more
-                    </button>
-                  )}
-                  {isViewLessVisible("state_group") && (
-                    <button
-                      className="text-custom-primary-100 text-xs font-medium"
-                      onClick={() => handleViewLess("state_group")}
-                    >
-                      View less
-                    </button>
-                  )}
-                </div>
+                <ViewButtons
+                  isViewLessVisible={isViewLessVisible("state_group")}
+                  isViewMoreVisible={isViewMoreVisible("state_group")}
+                  handleLess={() => handleViewLess("state_group")}
+                  handleMore={() => handleViewMore("state_group")}
+                />
               }
             />
           </div>
@@ -223,24 +221,12 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
               searchQuery={filtersSearchQuery}
               states={projectStore.states?.[projectId]}
               viewButtons={
-                <div className="flex items-center gap-2 ml-7 mt-1">
-                  {isViewMoreVisible("state") && (
-                    <button
-                      className="text-custom-primary-100 text-xs font-medium ml-7"
-                      onClick={() => handleViewMore("state")}
-                    >
-                      View more
-                    </button>
-                  )}
-                  {isViewLessVisible("state") && (
-                    <button
-                      className="text-custom-primary-100 text-xs font-medium"
-                      onClick={() => handleViewLess("state")}
-                    >
-                      View less
-                    </button>
-                  )}
-                </div>
+                <ViewButtons
+                  isViewLessVisible={isViewLessVisible("state")}
+                  isViewMoreVisible={isViewMoreVisible("state")}
+                  handleLess={() => handleViewLess("state")}
+                  handleMore={() => handleViewMore("state")}
+                />
               }
             />
           </div>
@@ -256,24 +242,12 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
               members={projectStore.members?.[projectId]?.map((m) => m.member) ?? undefined}
               searchQuery={filtersSearchQuery}
               viewButtons={
-                <div className="flex items-center gap-2 ml-7 mt-1">
-                  {isViewMoreVisible("assignees") && (
-                    <button
-                      className="text-custom-primary-100 text-xs font-medium ml-7"
-                      onClick={() => handleViewMore("assignees")}
-                    >
-                      View more
-                    </button>
-                  )}
-                  {isViewLessVisible("assignees") && (
-                    <button
-                      className="text-custom-primary-100 text-xs font-medium"
-                      onClick={() => handleViewLess("assignees")}
-                    >
-                      View less
-                    </button>
-                  )}
-                </div>
+                <ViewButtons
+                  isViewLessVisible={isViewLessVisible("assignees")}
+                  isViewMoreVisible={isViewMoreVisible("assignees")}
+                  handleLess={() => handleViewLess("assignees")}
+                  handleMore={() => handleViewMore("assignees")}
+                />
               }
             />
           </div>
@@ -289,24 +263,12 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
               members={projectStore.members?.[projectId]?.map((m) => m.member) ?? undefined}
               searchQuery={filtersSearchQuery}
               viewButtons={
-                <div className="flex items-center gap-2 ml-7 mt-1">
-                  {isViewMoreVisible("created_by") && (
-                    <button
-                      className="text-custom-primary-100 text-xs font-medium ml-7"
-                      onClick={() => handleViewMore("created_by")}
-                    >
-                      View more
-                    </button>
-                  )}
-                  {isViewLessVisible("created_by") && (
-                    <button
-                      className="text-custom-primary-100 text-xs font-medium"
-                      onClick={() => handleViewLess("created_by")}
-                    >
-                      View less
-                    </button>
-                  )}
-                </div>
+                <ViewButtons
+                  isViewLessVisible={isViewLessVisible("created_by")}
+                  isViewMoreVisible={isViewMoreVisible("created_by")}
+                  handleLess={() => handleViewLess("created_by")}
+                  handleMore={() => handleViewMore("created_by")}
+                />
               }
             />
           </div>
@@ -322,24 +284,12 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
               labels={projectStore.labels?.[projectId] ?? undefined}
               searchQuery={filtersSearchQuery}
               viewButtons={
-                <div className="flex items-center gap-2 ml-7 mt-1">
-                  {isViewMoreVisible("labels") && (
-                    <button
-                      className="text-custom-primary-100 text-xs font-medium"
-                      onClick={() => handleViewMore("labels")}
-                    >
-                      View more
-                    </button>
-                  )}
-                  {isViewLessVisible("labels") && (
-                    <button
-                      className="text-custom-primary-100 text-xs font-medium"
-                      onClick={() => handleViewLess("labels")}
-                    >
-                      View less
-                    </button>
-                  )}
-                </div>
+                <ViewButtons
+                  isViewLessVisible={isViewLessVisible("labels")}
+                  isViewMoreVisible={isViewMoreVisible("labels")}
+                  handleLess={() => handleViewLess("labels")}
+                  handleMore={() => handleViewMore("labels")}
+                />
               }
             />
           </div>

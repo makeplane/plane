@@ -49,15 +49,10 @@ export const FilterTargetDate: React.FC<Props> = observer((props) => {
                   isChecked={appliedFilters?.includes(option.value) ? true : false}
                   onClick={() => handleUpdate(option.value)}
                   title={option.name}
-                  multiple={false}
+                  multiple
                 />
               ))}
-              <FilterOption
-                isChecked={false}
-                onClick={() => setIsDateFilterModalOpen(true)}
-                title="Custom"
-                multiple={false}
-              />
+              <FilterOption isChecked={false} onClick={() => setIsDateFilterModalOpen(true)} title="Custom" multiple />
             </>
           ) : (
             <p className="text-xs text-custom-text-400 italic">No matches found</p>
