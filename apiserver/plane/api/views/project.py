@@ -618,7 +618,8 @@ class ProjectMemberViewSet(BaseViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except ProjectMember.DoesNotExist:
             return Response(
-                {"error": "Project Member does not exist"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Project Member does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
             capture_exception(e)
@@ -1212,10 +1213,10 @@ class LeaveProjectEndpoint(BaseAPIView):
             )
 
 
-
 class ProjectPublicCoverImagesEndpoint(BaseAPIView):
-
-    permission_classes = [AllowAny,]
+    permission_classes = [
+        AllowAny,
+    ]
 
     def get(self, request):
         try:
@@ -1226,16 +1227,20 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
                 aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
             )
             params = {
-                'Bucket': settings.AWS_S3_BUCKET_NAME,
-                'Prefix': "static/project-cover/"
+                "Bucket": settings.AWS_S3_BUCKET_NAME,
+                "Prefix": "static/project-cover/",
             }
 
             response = s3.list_objects_v2(**params)
             # Extracting file keys from the response
-            if 'Contents' in response:
-                for content in response['Contents']:
-                    if not content['Key'].endswith('/'):  # This line ensures we're only getting files, not "sub-folders"
-                        files.append(f"https://{settings.AWS_S3_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{content['Key']}")
+            if "Contents" in response:
+                for content in response["Contents"]:
+                    if not content["Key"].endswith(
+                        "/"
+                    ):  # This line ensures we're only getting files, not "sub-folders"
+                        files.append(
+                            f"https://{settings.AWS_S3_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{content['Key']}"
+                        )
 
             return Response(files, status=status.HTTP_200_OK)
         except Exception as e:
