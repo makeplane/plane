@@ -11,6 +11,7 @@ interface EditorContentProps {
 
 export const EditorContentWrapper = ({ editor, editorContentCustomClassNames = '', children }: EditorContentProps) => (
   <div className={`${editorContentCustomClassNames}`}>
+    {/* @ts-ignore */}
     <EditorContent editor={editor} />
     <TableMenu editor={editor} />
     {editor?.isActive("image") && <ImageResizer editor={editor} />}
