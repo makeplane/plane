@@ -1,13 +1,13 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 
 import useSWR from "swr";
 
 import { useRouter } from "next/router";
 
+// react-popper
+import { usePopper } from "react-popper";
 // services
 import issuesService from "services/issues.service";
-// hooks
-import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // headless ui
 import { Combobox } from "@headlessui/react";
 // component
@@ -50,16 +50,19 @@ export const LabelSelect: React.FC<Props> = ({
   user,
 }) => {
   const [query, setQuery] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
   const [fetchStates, setFetchStates] = useState(false);
+
+  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
   const [labelModal, setLabelModal] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const dropdownBtn = useRef<any>(null);
-  const dropdownOptions = useRef<any>(null);
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: "bottom-start",
+  });
 
   const { data: issueLabels } = useSWR<IIssueLabels[]>(
     projectId && fetchStates ? PROJECT_ISSUE_LABELS(projectId) : null,
@@ -131,8 +134,6 @@ export const LabelSelect: React.FC<Props> = ({
     </div>
   );
 
-  useDynamicDropdownPosition(isOpen, () => setIsOpen(false), dropdownBtn, dropdownOptions);
-
   const footerOption = (
     <button
       type="button"
@@ -165,33 +166,35 @@ export const LabelSelect: React.FC<Props> = ({
         multiple
       >
         {({ open }: { open: boolean }) => {
-          if (open) {
-            if (!isOpen) setIsOpen(true);
-            setFetchStates(true);
-          } else if (isOpen) setIsOpen(false);
+          if (open) setFetchStates(true);
 
           return (
             <>
-              <Combobox.Button
-                ref={dropdownBtn}
-                type="button"
-                className={`flex items-center justify-between gap-1 w-full text-xs ${
-                  disabled
-                    ? "cursor-not-allowed text-custom-text-200"
-                    : value.length <= maxRender
-                    ? "cursor-pointer"
-                    : "cursor-pointer hover:bg-custom-background-80"
-                }  ${buttonClassName}`}
-              >
-                {label}
-                {!hideDropdownArrow && !disabled && (
-                  <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
-                )}
+              <Combobox.Button as={React.Fragment}>
+                <button
+                  ref={setReferenceElement}
+                  type="button"
+                  className={`flex items-center justify-between gap-1 w-full text-xs ${
+                    disabled
+                      ? "cursor-not-allowed text-custom-text-200"
+                      : value.length <= maxRender
+                      ? "cursor-pointer"
+                      : "cursor-pointer hover:bg-custom-background-80"
+                  }  ${buttonClassName}`}
+                >
+                  {label}
+                  {!hideDropdownArrow && !disabled && (
+                    <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+                  )}
+                </button>
               </Combobox.Button>
-              <div className={`${open ? "fixed z-20 top-0 left-0 h-full w-full cursor-auto" : ""}`}>
-                <Combobox.Options
-                  ref={dropdownOptions}
-                  className={`absolute z-10 border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-lg focus:outline-none w-48 whitespace-nowrap mt-1 ${optionsClassName}`}
+
+              <Combobox.Options>
+                <div
+                  className={`z-10 border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-custom-shadow-rg focus:outline-none w-48 whitespace-nowrap my-1 ${optionsClassName}`}
+                  ref={setPopperElement}
+                  style={styles.popper}
+                  {...attributes.popper}
                 >
                   <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
                     <MagnifyingGlassIcon className="h-3.5 w-3.5 text-custom-text-300" />
@@ -234,8 +237,8 @@ export const LabelSelect: React.FC<Props> = ({
                     )}
                   </div>
                   {footerOption}
-                </Combobox.Options>
-              </div>
+                </div>
+              </Combobox.Options>
             </>
           );
         }}
