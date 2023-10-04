@@ -286,7 +286,6 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
                       </>
                     }
                     buttonClassName="whitespace-nowrap"
-                    position="left"
                     noBorder
                     noChevron
                   >

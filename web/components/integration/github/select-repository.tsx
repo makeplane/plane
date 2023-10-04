@@ -92,7 +92,6 @@ export const SelectRepository: React.FC<Props> = ({
           )}
         </>
       }
-      position="right"
       optionsClassName="w-full"
     />
   );

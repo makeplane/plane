@@ -11,8 +11,5 @@ export type DropdownProps = {
   noChevron?: boolean;
   onOpen?: () => void;
   optionsClassName?: string;
-  position?: "right" | "left";
-  selfPositioned?: boolean;
-  verticalPosition?: "top" | "bottom";
   width?: "auto" | string;
 };

@@ -196,7 +196,6 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
                   }
                   options={timeZoneOptions}
                   onChange={onChange}
-                  verticalPosition="top"
                   optionsClassName="w-full"
                   input
                 />

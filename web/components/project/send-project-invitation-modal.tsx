@@ -230,7 +230,6 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
                                     onChange(val);
                                   }}
                                   options={options}
-                                  position="left"
                                   width="w-full min-w-[12rem]"
                                 />
                               )}

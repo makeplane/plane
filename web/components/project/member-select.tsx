@@ -76,7 +76,6 @@ export const MemberSelect: React.FC<Props> = ({ value, onChange }) => {
         ]
       }
       maxHeight="md"
-      position="right"
       width="w-full"
       onChange={onChange}
     />

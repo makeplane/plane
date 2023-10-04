@@ -360,7 +360,6 @@ const Profile: NextPage = () => {
                         }
                         options={timeZoneOptions}
                         onChange={onChange}
-                        verticalPosition="top"
                         optionsClassName="w-full"
                         input
                       />
