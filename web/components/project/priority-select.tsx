@@ -12,6 +12,7 @@ import { PriorityIcon } from "components/icons";
 import { Tooltip } from "components/ui";
 // types
 import { TIssuePriorities } from "types";
+import { Placement } from "@popperjs/core";
 // constants
 import { PRIORITIES } from "constants/project";
 
@@ -21,6 +22,7 @@ type Props = {
   className?: string;
   buttonClassName?: string;
   optionsClassName?: string;
+  placement?: Placement;
   hideDropdownArrow?: boolean;
   disabled?: boolean;
 };
@@ -31,6 +33,7 @@ export const PrioritySelect: React.FC<Props> = ({
   className = "",
   buttonClassName = "",
   optionsClassName = "",
+  placement,
   hideDropdownArrow = false,
   disabled = false,
 }) => {
@@ -40,7 +43,7 @@ export const PrioritySelect: React.FC<Props> = ({
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "bottom-start",
+    placement: placement ?? "bottom-start",
   });
 
   const options = PRIORITIES?.map((priority) => ({

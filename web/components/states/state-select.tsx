@@ -16,6 +16,7 @@ import { CheckIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { StateGroupIcon } from "components/icons";
 // types
 import { Tooltip } from "components/ui";
+import { Placement } from "@popperjs/core";
 // constants
 import { IState } from "types";
 import { STATES_LIST } from "constants/fetch-keys";
@@ -29,6 +30,7 @@ type Props = {
   className?: string;
   buttonClassName?: string;
   optionsClassName?: string;
+  placement?: Placement;
   hideDropdownArrow?: boolean;
   disabled?: boolean;
 };
@@ -40,6 +42,7 @@ export const StateSelect: React.FC<Props> = ({
   className = "",
   buttonClassName = "",
   optionsClassName = "",
+  placement,
   hideDropdownArrow = false,
   disabled = false,
 }) => {
@@ -51,7 +54,7 @@ export const StateSelect: React.FC<Props> = ({
   const [fetchStates, setFetchStates] = useState<boolean>(false);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "bottom-start",
+    placement: placement ?? "bottom-start",
   });
 
   const router = useRouter();

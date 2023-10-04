@@ -19,6 +19,7 @@ import { PlusIcon } from "lucide-react";
 // types
 import { Tooltip } from "components/ui";
 import { ICurrentUserResponse, IIssueLabels } from "types";
+import { Placement } from "@popperjs/core";
 // constants
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 
@@ -31,6 +32,7 @@ type Props = {
   buttonClassName?: string;
   optionsClassName?: string;
   maxRender?: number;
+  placement?: Placement;
   hideDropdownArrow?: boolean;
   disabled?: boolean;
   user: ICurrentUserResponse | undefined;
@@ -45,6 +47,7 @@ export const LabelSelect: React.FC<Props> = ({
   buttonClassName = "",
   optionsClassName = "",
   maxRender = 2,
+  placement,
   hideDropdownArrow = false,
   disabled = false,
   user,
@@ -61,7 +64,7 @@ export const LabelSelect: React.FC<Props> = ({
   const { workspaceSlug } = router.query;
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "bottom-start",
+    placement: placement ?? "bottom-start",
   });
 
   const { data: issueLabels } = useSWR<IIssueLabels[]>(

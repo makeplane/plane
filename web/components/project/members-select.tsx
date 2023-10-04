@@ -16,6 +16,7 @@ import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { CheckIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // types
 import { IUser } from "types";
+import { Placement } from "@popperjs/core";
 
 type Props = {
   value: string | string[];
@@ -26,6 +27,7 @@ type Props = {
   className?: string;
   buttonClassName?: string;
   optionsClassName?: string;
+  placement?: Placement;
   hideDropdownArrow?: boolean;
   disabled?: boolean;
 };
@@ -39,6 +41,7 @@ export const MembersSelect: React.FC<Props> = ({
   className = "",
   buttonClassName = "",
   optionsClassName = "",
+  placement,
   hideDropdownArrow = false,
   disabled = false,
 }) => {
@@ -52,7 +55,7 @@ export const MembersSelect: React.FC<Props> = ({
   const { workspaceSlug } = router.query;
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "bottom-start",
+    placement: placement ?? "bottom-start",
   });
 
   const { members } = useProjectMembers(
