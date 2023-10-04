@@ -7,6 +7,9 @@ import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { CheckIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // types
 import { DropdownProps } from "./types";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 export type CustomSearchSelectProps = DropdownProps & {
   footerOption?: JSX.Element;
@@ -47,6 +50,7 @@ export const CustomSearchSelect = ({
   verticalPosition = "bottom",
   width = "auto",
 }: CustomSearchSelectProps) => {
+  const store: RootStore = useMobxStore();
   const [query, setQuery] = useState("");
 
   const filteredOptions =
@@ -115,7 +119,7 @@ export const CustomSearchSelect = ({
                     className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Type to search..."
+                    placeholder={store.locale.localized("Type to search...")}
                     displayValue={(assigned: any) => assigned?.name}
                   />
                 </div>
@@ -168,11 +172,15 @@ export const CustomSearchSelect = ({
                       ))
                     ) : (
                       <span className="flex items-center gap-2 p-1">
-                        <p className="text-left text-custom-text-200 ">No matching results</p>
+                        <p className="text-left text-custom-text-200 ">
+                          {store.locale.localized("No matching results")}
+                        </p>
                       </span>
                     )
                   ) : (
-                    <p className="text-center text-custom-text-200">Loading...</p>
+                    <p className="text-center text-custom-text-200" suppressHydrationWarning>
+                      {store.locale.localized("Loading...")}
+                    </p>
                   )}
                 </div>
                 {footerOption}

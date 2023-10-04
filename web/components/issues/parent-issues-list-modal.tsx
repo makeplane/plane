@@ -17,6 +17,9 @@ import { LaunchOutlined } from "@mui/icons-material";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // types
 import { ISearchIssueResponse } from "types";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   isOpen: boolean;
@@ -42,6 +45,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
 
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -113,14 +117,16 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                     />
                     <Combobox.Input
                       className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none focus:ring-0 sm:text-sm placeholder:text-custom-text-400"
-                      placeholder="Type to search..."
+                      placeholder={store.locale.localized("Type to search...")}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       displayValue={() => ""}
                     />
                   </div>
                   <div className="flex sm:justify-end p-2">
-                    <Tooltip tooltipContent="Toggle workspace level search">
+                    <Tooltip
+                      tooltipContent={store.locale.localized("Toggle workspace level search")}
+                    >
                       <div
                         className={`flex-shrink-0 flex items-center gap-1 text-xs cursor-pointer ${
                           isWorkspaceLevel ? "text-custom-text-100" : "text-custom-text-200"
@@ -136,7 +142,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                           onClick={() => setIsWorkspaceLevel((prevData) => !prevData)}
                           className="flex-shrink-0"
                         >
-                          Workspace Level
+                          {store.locale.localized("Workspace Level")}
                         </button>
                       </div>
                     </Tooltip>
@@ -144,13 +150,13 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                   <Combobox.Options static className="max-h-80 scroll-py-2 overflow-y-auto">
                     {searchTerm !== "" && (
                       <h5 className="text-[0.825rem] text-custom-text-200 mx-2">
-                        Search results for{" "}
+                        {store.locale.localized("Search results for")}{" "}
                         <span className="text-custom-text-100">
                           {'"'}
                           {searchTerm}
                           {'"'}
                         </span>{" "}
-                        in project:
+                        {store.locale.localized("in project")}:
                       </h5>
                     )}
 
@@ -161,7 +167,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                         <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
                           <LayerDiagonalIcon height="52" width="52" />
                           <h3 className="text-custom-text-200">
-                            No issues found. Create a new issue with{" "}
+                            {store.locale.localized("No issues found. Create a new issue with")}{" "}
                             <pre className="inline rounded bg-custom-background-80 px-2 py-1 text-sm">
                               C
                             </pre>

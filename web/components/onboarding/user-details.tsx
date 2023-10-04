@@ -20,6 +20,7 @@ import { getUserTimeZoneFromWindow } from "helpers/date-time.helper";
 import { USER_ROLES } from "constants/workspace";
 import { TIME_ZONES } from "constants/timezones";
 import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 const defaultValues: Partial<IUser> = {
   first_name: "",
@@ -50,7 +51,7 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
     defaultValues,
   });
 
-  const store: any = useMobxStore();
+  const store: RootStore = useMobxStore();
 
   const onSubmit = async (formData: IUser) => {
     if (!user) return;
@@ -108,9 +109,11 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
     >
       <div className="relative sm:text-lg">
         <div className="text-custom-primary-100 absolute -top-1 -left-3">{'"'}</div>
-        <h5>Hey there 👋🏻</h5>
-        <h5 className="mt-5 mb-6">Let{"'"}s get you onboard!</h5>
-        <h4 className="text-xl sm:text-2xl font-semibold">Set up your Plane profile.</h4>
+        <h5>{store.locale.localized("Hey there")} 👋🏻</h5>
+        <h5 className="mt-5 mb-6">{store.locale.localized("Let's get you onboard!")}</h5>
+        <h4 className="text-xl sm:text-2xl font-semibold">
+          {store.locale.localized("Set up your Plane profile.")}
+        </h4>
       </div>
 
       <div className="space-y-7 sm:w-3/4 md:w-2/5">
@@ -123,40 +126,44 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
             placeholder={store.locale.localized("Enter your first name...")}
             register={register}
             validations={{
-              required: "First name is required",
+              required: store.locale.localized("First name is required"),
               maxLength: {
                 value: 24,
-                message: "First name cannot exceed the limit of 24 characters",
+                message: store.locale.localized(
+                  "First name cannot exceed the limit of 24 characters"
+                ),
               },
             }}
             error={errors.first_name}
           />
         </div>
         <div className="space-y-1 text-sm">
-          <label htmlFor="lastName">Last Name</label>
+          <label htmlFor="lastName">{store.locale.localized("Last Name")}</label>
           <Input
             id="lastName"
             name="last_name"
             autoComplete="off"
             register={register}
-            placeholder="Enter your last name..."
+            placeholder={store.locale.localized("Enter your last name...")}
             validations={{
-              required: "Last name is required",
+              required: store.locale.localized("Last name is required"),
               maxLength: {
                 value: 24,
-                message: "Last name cannot exceed the limit of 24 characters",
+                message: store.locale.localized(
+                  "Last name cannot exceed the limit of 24 characters"
+                ),
               },
             }}
             error={errors.last_name}
           />
         </div>
         <div className="space-y-1 text-sm">
-          <span>What{"'"}s your role?</span>
+          <span>{store.locale.localized("What's your role?")}</span>
           <div className="w-full">
             <Controller
               name="role"
               control={control}
-              rules={{ required: "This field is required" }}
+              rules={{ required: store.locale.localized("This field is required") }}
               render={({ field: { value, onChange } }) => (
                 <CustomSelect
                   value={value}
@@ -165,7 +172,9 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
                     value ? (
                       value.toString()
                     ) : (
-                      <span className="text-custom-text-400">Select your role...</span>
+                      <span className="text-custom-text-400">
+                        {store.locale.localized("Select your role...")}
+                      </span>
                     )
                   }
                   input
@@ -184,19 +193,19 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
           </div>
         </div>
         <div className="space-y-1 text-sm">
-          <span>What time zone are you in? </span>
+          <span>{store.locale.localized("What time zone are you in?")}</span>
           <div className="w-full">
             <Controller
               name="user_timezone"
               control={control}
-              rules={{ required: "This field is required" }}
+              rules={{ required: store.locale.localized("This field is required") }}
               render={({ field: { value, onChange } }) => (
                 <CustomSearchSelect
                   value={value}
                   label={
                     value
                       ? TIME_ZONES.find((t) => t.value === value)?.label ?? value
-                      : "Select a timezone"
+                      : store.locale.localized("Select a timezone")
                   }
                   options={timeZoneOptions}
                   onChange={onChange}
@@ -214,7 +223,7 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
       </div>
 
       <PrimaryButton type="submit" size="md" disabled={!isValid} loading={isSubmitting}>
-        {isSubmitting ? "Updating..." : "Continue"}
+        {isSubmitting ? store.locale.localized("Updating...") : store.locale.localized("Continue")}
       </PrimaryButton>
     </form>
   );
