@@ -27,9 +27,9 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
 
   return (
     <div
-      className={`grid divide-x-[0.5px] divide-y-[0.5px] divide-custom-border-200 ${
-        showWeekends ? "grid-cols-7" : "grid-cols-5"
-      } ${calendarLayout === "month" ? "" : "h-full"}`}
+      className={`grid divide-x-[0.5px] divide-custom-border-200 ${showWeekends ? "grid-cols-7" : "grid-cols-5"} ${
+        calendarLayout === "month" ? "" : "h-full"
+      }`}
     >
       {Object.values(week).map((date: ICalendarDate) => {
         if (!showWeekends && (date.date.getDay() === 0 || date.date.getDay() === 6)) return null;

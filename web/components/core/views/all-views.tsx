@@ -6,7 +6,7 @@ import useSWR from "swr";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { AppliedFiltersList, CalendarLayout, GanttLayout, KanBanLayout, SpreadsheetLayout } from "components/issues";
+import { AppliedFiltersRoot, CalendarLayout, GanttLayout, KanBanLayout, SpreadsheetLayout } from "components/issues";
 
 export const AllViews: React.FC = observer(() => {
   const router = useRouter();

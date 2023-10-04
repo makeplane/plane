@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
 
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { FilterHeader, FilterOption } from "components/issues";
 // ui
@@ -11,25 +8,24 @@ import { Loader } from "components/ui";
 import { StateGroupIcon } from "components/icons";
 // helpers
 import { getStatesList } from "helpers/state.helper";
+// types
+import { IStateResponse } from "types";
 
 type Props = {
   appliedFilters: string[] | null;
   handleUpdate: (val: string) => void;
   itemsToRender: number;
-  projectId: string;
   searchQuery: string;
+  states: IStateResponse | undefined;
+  viewButtons: React.ReactNode;
 };
 
-export const FilterState: React.FC<Props> = observer((props) => {
-  const { appliedFilters, handleUpdate, itemsToRender, projectId, searchQuery } = props;
+export const FilterState: React.FC<Props> = (props) => {
+  const { appliedFilters, handleUpdate, itemsToRender, searchQuery, states, viewButtons } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
-  const store = useMobxStore();
-  const { project: projectStore } = store;
-
-  const statesByGroups = projectStore.states?.[projectId?.toString() ?? ""];
-  const statesList = getStatesList(statesByGroups);
+  const statesList = getStatesList(states);
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
@@ -56,6 +52,7 @@ export const FilterState: React.FC<Props> = observer((props) => {
                     title={state.name}
                   />
                 ))}
+                {viewButtons}
               </>
             ) : (
               <p className="text-xs text-custom-text-400 italic">No matches found</p>
@@ -71,4 +68,4 @@ export const FilterState: React.FC<Props> = observer((props) => {
       )}
     </>
   );
-});
+};

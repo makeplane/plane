@@ -13,10 +13,11 @@ type Props = {
   handleUpdate: (val: string) => void;
   itemsToRender: number;
   searchQuery: string;
+  viewButtons: React.ReactNode;
 };
 
 export const FilterStateGroup: React.FC<Props> = observer((props) => {
-  const { appliedFilters, handleUpdate, itemsToRender, searchQuery } = props;
+  const { appliedFilters, handleUpdate, itemsToRender, searchQuery, viewButtons } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
@@ -34,9 +35,8 @@ export const FilterStateGroup: React.FC<Props> = observer((props) => {
       {previewEnabled && (
         <div>
           {filteredOptions.length > 0 ? (
-            filteredOptions
-              .slice(0, itemsToRender)
-              .map((stateGroup) => (
+            <>
+              {filteredOptions.slice(0, itemsToRender).map((stateGroup) => (
                 <FilterOption
                   key={stateGroup.key}
                   isChecked={appliedFilters?.includes(stateGroup.key) ? true : false}
@@ -44,7 +44,9 @@ export const FilterStateGroup: React.FC<Props> = observer((props) => {
                   icon={<StateGroupIcon stateGroup={stateGroup.key} />}
                   title={stateGroup.title}
                 />
-              ))
+              ))}
+              {viewButtons}
+            </>
           ) : (
             <p className="text-xs text-custom-text-400 italic">No matches found</p>
           )}
