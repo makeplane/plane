@@ -33,6 +33,7 @@ export const CustomSearchSelect = ({
   buttonClassName = "",
   className = "",
   customButton,
+  placement,
   disabled = false,
   footerOption,
   input = false,
@@ -53,7 +54,7 @@ export const CustomSearchSelect = ({
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "bottom-start",
+    placement: placement ?? "bottom-start",
   });
 
   const filteredOptions =

@@ -1,3 +1,5 @@
+import { Placement } from "@popperjs/core";
+
 export type DropdownProps = {
   customButtonClassName?: string;
   buttonClassName?: string;
@@ -12,4 +14,5 @@ export type DropdownProps = {
   onOpen?: () => void;
   optionsClassName?: string;
   width?: "auto" | string;
+  placement?: Placement;
 };

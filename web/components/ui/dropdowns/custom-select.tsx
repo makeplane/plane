@@ -19,6 +19,7 @@ export type CustomSelectProps = DropdownProps & {
 const CustomSelect = ({
   customButtonClassName = "",
   buttonClassName = "",
+  placement,
   children,
   className = "",
   customButton,
@@ -36,7 +37,7 @@ const CustomSelect = ({
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "bottom-start",
+    placement: placement ?? "bottom-start",
   });
 
   return (

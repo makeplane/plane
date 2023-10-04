@@ -22,6 +22,7 @@ export type CustomMenuProps = DropdownProps & {
 const CustomMenu = ({
   buttonClassName = "",
   customButtonClassName = "",
+  placement,
   children,
   className = "",
   customButton,
@@ -40,7 +41,7 @@ const CustomMenu = ({
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "bottom-start",
+    placement: placement ?? "bottom-start",
   });
   return (
     <Menu as="div" className={`relative w-min text-left ${className}`}>
