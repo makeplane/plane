@@ -395,8 +395,8 @@ const Profile: NextPage = () => {
                 <div className="flex items-center justify-between py-2">
                   <PrimaryButton type="submit" loading={isSubmitting}>
                     {isSubmitting
-                      ? store.locale.localized("Updating Project...")
-                      : store.locale.localized("Update Project")}
+                      ? store.locale.localized("Updating Profile...")
+                      : store.locale.localized("Update Profile")}
                   </PrimaryButton>
                 </div>
               </div>

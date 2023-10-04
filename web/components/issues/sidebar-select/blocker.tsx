@@ -15,7 +15,10 @@ import issuesService from "services/issues.service";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { BlockerIcon } from "components/icons";
 // types
-import { BlockeIssueDetail, IIssue, ISearchIssueResponse, UserAuth } from "types";
+import { BlockeIssueDetail, IIssue, ISearchIssueResponse } from "types";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   issueId?: string;
@@ -35,6 +38,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
   const { user } = useUser();
   const { setToastAlert } = useToast();
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -49,8 +53,8 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
     if (data.length === 0) {
       setToastAlert({
         type: "error",
-        title: "Error!",
-        message: "Please select at least one issue.",
+        title: store.locale.localized("Error!"),
+        message: store.locale.localized("Please select at least one issue."),
       });
 
       return;
@@ -166,7 +170,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
             onClick={() => setIsBlockerModalOpen(true)}
             disabled={disabled}
           >
-            Select issues
+            {store.locale.localized("Select issues")}
           </button>
         </div>
       </div>

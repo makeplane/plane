@@ -8,6 +8,7 @@ import { Controller, useForm } from "react-hook-form";
 import aiService from "services/ai.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useLocalStorage from "hooks/use-local-storage";
 // components
 import { GptAssistantModal } from "components/core";
 import { ParentIssuesListModal } from "components/issues";
@@ -62,6 +63,7 @@ interface IssueFormProps {
     action?: "createDraft" | "createNewIssue" | "updateDraft" | "convertToNewIssue"
   ) => Promise<void>;
   data?: Partial<IIssue> | null;
+  isOpen: boolean;
   prePopulatedData?: Partial<IIssue> | null;
   projectId: string;
   setActiveProject: React.Dispatch<React.SetStateAction<string | null>>;
@@ -91,6 +93,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
   const {
     handleFormSubmit,
     data,
+    isOpen,
     prePopulatedData,
     projectId,
     setActiveProject,
@@ -110,6 +113,8 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
 
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
+
+  const { setValue: setLocalStorageValue } = useLocalStorage("draftedIssue", {});
 
   const editorRef = useRef<any>(null);
 
@@ -135,6 +140,33 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
   });
 
   const issueName = watch("name");
+
+  const payload: Partial<IIssue> = {
+    name: watch("name"),
+    description: watch("description"),
+    description_html: watch("description_html"),
+    state: watch("state"),
+    priority: watch("priority"),
+    assignees: watch("assignees"),
+    labels: watch("labels"),
+    start_date: watch("start_date"),
+    target_date: watch("target_date"),
+    project: watch("project"),
+    parent: watch("parent"),
+    cycle: watch("cycle"),
+    module: watch("module"),
+  };
+
+  useEffect(() => {
+    if (!isOpen || data) return;
+
+    setLocalStorageValue(
+      JSON.stringify({
+        ...payload,
+      })
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(payload), isOpen, data]);
 
   const onClose = () => {
     handleClose();
@@ -279,7 +311,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
       )}
       <form
         onSubmit={handleSubmit((formData) =>
-          handleCreateUpdateIssue(formData, "convertToNewIssue")
+          handleCreateUpdateIssue(formData, data ? "convertToNewIssue" : "createDraft")
         )}
       >
         <div className="space-y-5">

@@ -14,7 +14,10 @@ import { ExistingIssuesListModal } from "components/core";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { BlockedIcon } from "components/icons";
 // types
-import { BlockeIssueDetail, IIssue, ISearchIssueResponse, UserAuth } from "types";
+import { BlockeIssueDetail, IIssue, ISearchIssueResponse } from "types";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 type Props = {
   issueId?: string;
@@ -34,6 +37,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
   const { user } = useUser();
   const { setToastAlert } = useToast();
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -41,12 +45,15 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
     setIsBlockedModalOpen(false);
   };
 
+  const blockedByIssue =
+    watch("related_issues")?.filter((i) => i.relation_type === "blocked_by") || [];
+
   const onSubmit = async (data: ISearchIssueResponse[]) => {
     if (data.length === 0) {
       setToastAlert({
-        title: "Error",
+        title: store.locale.localized("Error!"),
         type: "error",
-        message: "Please select at least one issue",
+        message: store.locale.localized("Please select at least one issue"),
       });
 
       return;
@@ -80,17 +87,12 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
       })
       .then((response) => {
         submitChanges({
-          related_issues: [
-            ...watch("related_issues")?.filter((i) => i.relation_type !== "blocked_by"),
-            ...response,
-          ],
+          related_issues: [...watch("related_issues"), ...response],
         });
       });
 
     handleClose();
   };
-
-  const blockedByIssue = watch("related_issues")?.filter((i) => i.relation_type === "blocked_by");
 
   return (
     <>
@@ -160,7 +162,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
             onClick={() => setIsBlockedModalOpen(true)}
             disabled={disabled}
           >
-            Select issues
+            {store.locale.localized("Select issues")}
           </button>
         </div>
       </div>

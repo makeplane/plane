@@ -15,6 +15,9 @@ import { ExistingIssuesListModal } from "components/core";
 import issuesService from "services/issues.service";
 // types
 import { BlockeIssueDetail, IIssue, ISearchIssueResponse } from "types";
+// mobx
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   issueId?: string;
@@ -31,6 +34,7 @@ export const SidebarRelatesSelect: React.FC<Props> = (props) => {
   const { user } = useUser();
   const { setToastAlert } = useToast();
 
+  const store: RootStore = useMobxStore();
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -42,8 +46,8 @@ export const SidebarRelatesSelect: React.FC<Props> = (props) => {
     if (data.length === 0) {
       setToastAlert({
         type: "error",
-        title: "Error!",
-        message: "Please select at least one issue.",
+        title: store.locale.localized("Error!"),
+        message: store.locale.localized("Please select at least one issue."),
       });
 
       return;
@@ -75,10 +79,8 @@ export const SidebarRelatesSelect: React.FC<Props> = (props) => {
           })),
         ],
       })
-      .then((response) => {
-        submitChanges({
-          related_issues: [...watch("related_issues"), ...(response ?? [])],
-        });
+      .then(() => {
+        submitChanges();
       });
 
     handleClose();
@@ -107,7 +109,7 @@ export const SidebarRelatesSelect: React.FC<Props> = (props) => {
       <div className="flex flex-wrap items-start py-2">
         <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
           <RelatedIcon className="h-4 w-4 flex-shrink-0" />
-          <p>Relates to</p>
+          <p>{store.locale.localized("Relates to")}</p>
         </div>
         <div className="space-y-1 sm:basis-1/2">
           <div className="flex flex-wrap gap-1">
@@ -159,7 +161,7 @@ export const SidebarRelatesSelect: React.FC<Props> = (props) => {
             onClick={() => setIsRelatesToModalOpen(true)}
             disabled={disabled}
           >
-            Select issues
+            {store.locale.localized("Select issues")}
           </button>
         </div>
       </div>
