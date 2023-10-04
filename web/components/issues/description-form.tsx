@@ -128,33 +128,24 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
         <Controller
           name="description_html"
           control={control}
-          render={({ field: { value, onChange } }) => {
-            if (!value) return <></>;
-
-            return (
+          render={({ field: { value, onChange } }) => (
               <RichTextEditor
-                uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
-                deleteFile={fileService.deleteImage}
-                value={value}
-                debouncedUpdatesEnabled={true}
-                setShouldShowAlert={setShowAlert}
-                setIsSubmitting={setIsSubmitting}
-                customClassName={
-                  isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200"
-                }
-                noBorder={!isAllowed}
-                onChange={(description: Object, description_html: string) => {
-                  setShowAlert(true);
-                  setIsSubmitting("submitting");
-                  onChange(description_html);
-                  handleSubmit(handleDescriptionFormSubmit)().finally(() =>
-                    setIsSubmitting("submitted")
-                  );
-                }}
-                editable={isAllowed}
-              />
-            );
-          }}
+                  uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
+                  deleteFile={fileService.deleteImage}
+                  value={value}
+                  debouncedUpdatesEnabled={true}
+                  setShouldShowAlert={setShowAlert}
+                  setIsSubmitting={setIsSubmitting}
+                  customClassName={isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200"}
+                  noBorder={!isAllowed}
+                  onChange={(description: Object, description_html: string) => {
+                      setShowAlert(true);
+                      setIsSubmitting("submitting");
+                      onChange(description_html);
+                      handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted")
+                      );
+                  } } />
+          )}
         />
         <div
           className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${isSubmitting === "saved" ? "fadeOut" : "fadeIn"
