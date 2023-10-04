@@ -59,9 +59,19 @@ jobs:
           PR_TITLE="${{ github.event.pull_request.title }}"
           PR_BODY="${{ github.event.pull_request.body }}"
 
+          # Remove double quotes
+          PR_TITLE_CLEANED="${PR_TITLE//\"/}"
+          PR_BODY_CLEANED="${PR_BODY//\"/}"
+
+          # Construct PR_BODY_CONTENT using a here-document
+          PR_BODY_CONTENT=$(cat <<EOF
+          $PR_BODY_CLEANED
+          EOF
+          )
+
           gh pr create \
             --base $TARGET_BRANCH \
             --head $SOURCE_BRANCH \
-            --title $PR_TITLE \
-            --body $PR_BODY \
+            --title "$PR_TITLE_CLEANED" \
+            --body "$PR_BODY_CONTENT" \
             --repo $TARGET_REPO
