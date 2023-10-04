@@ -3,7 +3,7 @@ import { WebViewModal } from "components/web-view";
 type DeleteConfirmationProps = {
   isOpen: boolean;
   title: string;
-  content: string;
+  content: string | React.ReactNode;
   onCancel: () => void;
   onConfirm: () => void;
 };

@@ -115,6 +115,10 @@ const activityDetails: {
               JSON.stringify({
                 project_id: activity.project,
                 issue_id: activity.new_identifier ?? activity.old_identifier,
+                issue_identifier:
+                  activity.new_value && activity.new_value !== ""
+                    ? activity.new_value
+                    : activity.old_value,
               })
             )
           }
@@ -142,6 +146,10 @@ const activityDetails: {
               JSON.stringify({
                 project_id: activity.project,
                 issue_id: activity.new_identifier ?? activity.old_identifier,
+                issue_identifier:
+                  activity.new_value && activity.new_value !== ""
+                    ? activity.new_value
+                    : activity.old_value,
               })
             )
           }
@@ -169,6 +177,10 @@ const activityDetails: {
               JSON.stringify({
                 project_id: activity.project,
                 issue_id: activity.new_identifier ?? activity.old_identifier,
+                issue_identifier:
+                  activity.new_value && activity.new_value !== ""
+                    ? activity.new_value
+                    : activity.old_value,
               })
             )
           }
@@ -196,6 +208,10 @@ const activityDetails: {
               JSON.stringify({
                 project_id: activity.project,
                 issue_id: activity.new_identifier ?? activity.old_identifier,
+                issue_identifier:
+                  activity.new_value && activity.new_value !== ""
+                    ? activity.new_value
+                    : activity.old_value,
               })
             );
           }}
@@ -397,6 +413,10 @@ const activityDetails: {
               JSON.stringify({
                 project_id: activity.project,
                 issue_id: activity.new_identifier ?? activity.old_identifier,
+                issue_identifier:
+                  activity.new_value && activity.new_value !== ""
+                    ? activity.new_value
+                    : activity.old_value,
               })
             );
           }}

@@ -21,8 +21,10 @@ import { ISSUE_ATTACHMENTS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys
 import { FileText, ChevronRight, X, Image as ImageIcon } from "lucide-react";
 
 // components
-import { Label, WebViewModal } from "components/web-view";
-import { DeleteAttachmentModal } from "components/issues";
+import { Label, WebViewModal, DeleteConfirmation } from "components/web-view";
+
+// helpers
+import { getFileName } from "helpers/attachment.helper";
 
 // types
 import type { IIssueAttachment } from "types";
@@ -100,6 +102,34 @@ export const IssueAttachments: React.FC<Props> = (props) => {
     [issueId, projectId, workspaceSlug, allowed]
   );
 
+  const handleDeletion = async (assetId: string) => {
+    if (!workspaceSlug || !projectId) return;
+
+    mutate<IIssueAttachment[]>(
+      ISSUE_ATTACHMENTS(issueId as string),
+      (prevData) => (prevData ?? [])?.filter((p) => p.id !== assetId),
+      false
+    );
+
+    await issuesService
+      .deleteIssueAttachment(
+        workspaceSlug as string,
+        projectId as string,
+        issueId as string,
+        assetId as string
+      )
+      .then(() => mutate(PROJECT_ISSUES_ACTIVITY(issueId as string)))
+      .catch(() => {
+        console.log(
+          "toast",
+          JSON.stringify({
+            type: "error",
+            message: "Something went wrong please try again.",
+          })
+        );
+      });
+  };
+
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     maxSize: 5 * 1024 * 1024,
@@ -120,10 +150,24 @@ export const IssueAttachments: React.FC<Props> = (props) => {
 
   return (
     <div>
-      <DeleteAttachmentModal
+      <DeleteConfirmation
+        title="Delete Attachment"
+        content={
+          <p className="text-sm text-custom-text-200">
+            Are you sure you want to delete attachment-{" "}
+            <span className="font-bold">
+              {getFileName(deleteAttachment?.attributes?.name ?? "")}
+            </span>
+            ? This attachment will be permanently removed. This action cannot be undone.
+          </p>
+        }
         isOpen={allowed && attachmentDeleteModal}
-        setIsOpen={setAttachmentDeleteModal}
-        data={deleteAttachment}
+        onCancel={() => setAttachmentDeleteModal(false)}
+        onConfirm={() => {
+          if (!deleteAttachment) return;
+          handleDeletion(deleteAttachment.id);
+          setAttachmentDeleteModal(false);
+        }}
       />
 
       <WebViewModal isOpen={isOpen} onClose={() => setIsOpen(false)} modalTitle="Insert file">
