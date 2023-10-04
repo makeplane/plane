@@ -43,6 +43,7 @@ import {
   PROJECT_INVITATIONS_WITH_EMAIL,
   PROJECT_MEMBERS,
   PROJECT_MEMBERS_WITH_EMAIL,
+  USER_PROJECT_VIEW,
   WORKSPACE_DETAILS,
 } from "constants/fetch-keys";
 // constants
@@ -112,6 +113,13 @@ const MembersSettings: NextPage = () => {
     workspaceSlug && projectId
       ? () =>
           projectService.projectInvitationsWithEmail(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: memberDetails } = useSWR(
+    workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
       : null
   );
 
@@ -216,6 +224,8 @@ const MembersSettings: NextPage = () => {
       });
   };
 
+  const isAdmin = memberDetails?.role === 20;
+
   return (
     <ProjectAuthorizationWrapper
       breadcrumbs={
@@ -281,7 +291,7 @@ const MembersSettings: NextPage = () => {
         <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
           <SettingsSidebar />
         </div>
-        <section className="pr-9 py-8 w-full overflow-y-auto">
+        <section className={`pr-9 py-8 w-full overflow-y-auto`}>
           <div className="flex items-center py-3.5 border-b border-custom-border-200">
             <h3 className="text-xl font-medium">{store.locale.localized("Defaults")}</h3>
           </div>
@@ -300,6 +310,7 @@ const MembersSettings: NextPage = () => {
                           onChange={(val: string) => {
                             submitChanges({ project_lead: val });
                           }}
+                          isDisabled={!isAdmin}
                         />
                       )}
                     />
@@ -324,6 +335,7 @@ const MembersSettings: NextPage = () => {
                           onChange={(val: string) => {
                             submitChanges({ default_assignee: val });
                           }}
+                          isDisabled={!isAdmin}
                         />
                       )}
                     />
@@ -474,7 +486,7 @@ const MembersSettings: NextPage = () => {
                             );
                           })}
                         </CustomSelect>
-                        <CustomMenu ellipsis>
+                        <CustomMenu ellipsis disabled={!isAdmin}>
                           <CustomMenu.MenuItem
                             onClick={() => {
                               if (member.member) setSelectedRemoveMember(member.id);
