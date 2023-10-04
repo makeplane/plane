@@ -235,15 +235,11 @@ export const SingleBoard: React.FC<Props> = (props) => {
                     : !disableUserActions && (
                         <CustomMenu
                           customButton={
-                            <button
-                              type="button"
-                              className="flex items-center gap-2 font-medium text-custom-primary outline-none whitespace-nowrap"
-                            >
+                            <div className="flex items-center gap-2 font-medium text-custom-primary outline-none whitespace-nowrap">
                               <PlusIcon className="h-4 w-4" />
                               Add Issue
-                            </button>
+                            </div>
                           }
-                          position="left"
                           noBorder
                         >
                           <CustomMenu.MenuItem onClick={() => onCreateClick()}>

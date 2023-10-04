@@ -1,4 +1,5 @@
 export type DropdownProps = {
+  customButtonClassName?: string;
   buttonClassName?: string;
   customButtonClassName?: string;
   className?: string;
