@@ -46,6 +46,7 @@ const CustomMenu = ({
             type="button"
             onClick={menuButtonOnClick}
             className={customButtonClassName}
+            disabled={disabled}
           >
             {customButton}
           </Menu.Button>
