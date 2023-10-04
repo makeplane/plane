@@ -190,15 +190,15 @@ const activityDetails: {
           : "removed the relation from "}
         <button
           type="button"
-          onClick={() =>
+          onClick={() => {
             console.log(
               "issue",
               JSON.stringify({
                 project_id: activity.project,
                 issue_id: activity.new_identifier ?? activity.old_identifier,
               })
-            )
-          }
+            );
+          }}
           className="font-medium text-custom-text-100"
         >
           {activity.old_value === "" ? activity.new_value : activity.old_value}
@@ -389,20 +389,21 @@ const activityDetails: {
     message: (activity, showIssue) => (
       <>
         {activity.new_value ? "set the parent to " : "removed the parent "}
-        <span
-          onClick={() =>
+        <button
+          type="button"
+          onClick={() => {
             console.log(
               "issue",
               JSON.stringify({
                 project_id: activity.project,
-                issue_id: activity.issue,
+                issue_id: activity.new_identifier ?? activity.old_identifier,
               })
-            )
-          }
+            );
+          }}
           className="font-medium text-custom-text-100"
         >
           {activity.new_value ? activity.new_value : activity.old_value}
-        </span>
+        </button>
         {showIssue && (
           <>
             {" "}

@@ -61,6 +61,14 @@ export const IssuesSelectBottomSheet: React.FC<IssuesSelectBottomSheetProps> = (
     });
 
     handleClose();
+
+    console.log(
+      "success",
+      JSON.stringify({
+        type: "success",
+        message: `Issue${data.length > 1 ? "s" : ""} added successfully.`,
+      })
+    );
   };
 
   useEffect(() => {

@@ -19,7 +19,6 @@ type Props = {
 };
 
 const getIfInWebview = (userAgent: NavigatorID["userAgent"]) => {
-  return true;
   const safari = /safari/.test(userAgent);
 
   if (safari) return false;
