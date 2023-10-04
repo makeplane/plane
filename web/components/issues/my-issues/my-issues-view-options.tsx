@@ -30,7 +30,7 @@ const issueViewOptions: { type: TIssueViewOptions; Icon: any }[] = [
 
 export const MyIssuesViewOptions: React.FC = () => {
   const router = useRouter();
-  const { workspaceSlug, workspaceViewId } = router.query;
+  const { workspaceSlug, globalViewId } = router.query;
 
   const { displayFilters, setDisplayFilters, filters, setFilters } = useMyIssuesFilters(
     workspaceSlug?.toString()
@@ -42,7 +42,7 @@ export const MyIssuesViewOptions: React.FC = () => {
     router.pathname.includes(pathname)
   );
 
-  const showFilters = isWorkspaceViewPath || workspaceViewId;
+  const showFilters = isWorkspaceViewPath || globalViewId;
 
   return (
     <div className="flex items-center gap-2">

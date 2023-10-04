@@ -88,14 +88,12 @@ const ProjectViews: NextPage = () => {
     >
       <CreateUpdateViewModal
         isOpen={createUpdateViewModal}
-        viewType="project"
         handleClose={() => setCreateUpdateViewModal(false)}
         data={selectedViewToUpdate}
         user={user}
       />
       <DeleteViewModal
         isOpen={deleteViewModal}
-        viewType="project"
         data={selectedViewToDelete}
         setIsOpen={setDeleteViewModal}
         user={user}
@@ -109,7 +107,6 @@ const ProjectViews: NextPage = () => {
                 <SingleViewItem
                   key={view.id}
                   view={view}
-                  viewType="project"
                   handleEditView={() => handleEditView(view)}
                   handleDeleteView={() => handleDeleteView(view)}
                 />

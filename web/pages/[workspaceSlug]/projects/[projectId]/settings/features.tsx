@@ -25,7 +25,7 @@ import { ContrastOutlined } from "@mui/icons-material";
 import { IProject } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+import { PROJECTS_LIST, PROJECT_DETAILS, USER_PROJECT_VIEW } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
 
@@ -102,6 +102,13 @@ const FeaturesSettings: NextPage = () => {
       : null
   );
 
+  const { data: memberDetails } = useSWR(
+    workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
+      : null
+  );
+
   const handleSubmit = async (formData: Partial<IProject>) => {
     if (!workspaceSlug || !projectId || !projectDetails) return;
 
@@ -140,6 +147,8 @@ const FeaturesSettings: NextPage = () => {
       );
   };
 
+  const isAdmin = memberDetails?.role === 20;
+
   return (
     <ProjectAuthorizationWrapper
       breadcrumbs={
@@ -157,7 +166,7 @@ const FeaturesSettings: NextPage = () => {
         <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
           <SettingsSidebar />
         </div>
-        <section className="pr-9 py-8 w-full overflow-y-auto">
+        <section className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
           <div className="flex items-center py-3.5 border-b border-custom-border-200">
             <h3 className="text-xl font-medium">Features</h3>
           </div>
@@ -199,6 +208,7 @@ const FeaturesSettings: NextPage = () => {
                       [feature.property]: !projectDetails?.[feature.property as keyof IProject],
                     });
                   }}
+                  disabled={!isAdmin}
                   size="sm"
                 />
               </div>

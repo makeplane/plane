@@ -54,7 +54,7 @@ chmod +x setup.sh
 - Run setup.sh
 
 ```bash
-./setup.sh http://localhost
+./setup.sh
 ```
 
 > If running in a cloud env replace localhost with public facing IP address of the VM

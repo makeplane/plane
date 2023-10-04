@@ -21,17 +21,11 @@ import { truncateText } from "helpers/string.helper";
 
 type Props = {
   view: IView;
-  viewType: "project" | "workspace";
   handleEditView: () => void;
   handleDeleteView: () => void;
 };
 
-export const SingleViewItem: React.FC<Props> = ({
-  view,
-  viewType,
-  handleEditView,
-  handleDeleteView,
-}) => {
+export const SingleViewItem: React.FC<Props> = ({ view, handleEditView, handleDeleteView }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -87,10 +81,7 @@ export const SingleViewItem: React.FC<Props> = ({
       });
   };
 
-  const viewRedirectionUrl =
-    viewType === "project"
-      ? `/${workspaceSlug}/projects/${projectId}/views/${view.id}`
-      : `/${workspaceSlug}/workspace-views/${view.id}`;
+  const viewRedirectionUrl = `/${workspaceSlug}/projects/${projectId}/views/${view.id}`;
 
   return (
     <div className="group hover:bg-custom-background-90 border-b border-custom-border-200">
@@ -125,31 +116,29 @@ export const SingleViewItem: React.FC<Props> = ({
                   filters
                 </p>
 
-                {viewType === "project" ? (
-                  view.is_favorite ? (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleRemoveFromFavorites();
-                      }}
-                    >
-                      <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleAddToFavorites();
-                      }}
-                    >
-                      <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
-                    </button>
-                  )
-                ) : null}
+                {view.is_favorite ? (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleRemoveFromFavorites();
+                    }}
+                  >
+                    <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleAddToFavorites();
+                    }}
+                  >
+                    <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
+                  </button>
+                )}
                 <CustomMenu width="auto" ellipsis>
                   <CustomMenu.MenuItem
                     onClick={(e: any) => {

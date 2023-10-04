@@ -10,8 +10,6 @@ import { useForm } from "react-hook-form";
 import stateService from "services/state.service";
 // hooks
 import useProjectMembers from "hooks/use-project-members";
-import useProjects from "hooks/use-projects";
-import useWorkspaceMembers from "hooks/use-workspace-members";
 // components
 import { FiltersList } from "components/core";
 import { SelectFilters } from "components/views";
@@ -24,14 +22,13 @@ import { getStatesList } from "helpers/state.helper";
 import { IQuery, IView } from "types";
 import issuesService from "services/issues.service";
 // fetch-keys
-import { PROJECT_ISSUE_LABELS, STATES_LIST, WORKSPACE_LABELS } from "constants/fetch-keys";
+import { PROJECT_ISSUE_LABELS, STATES_LIST } from "constants/fetch-keys";
 
 type Props = {
   handleFormSubmit: (values: IView) => Promise<void>;
   handleClose: () => void;
   status: boolean;
   data?: IView | null;
-  viewType?: "workspace" | "project";
   preLoadedData?: Partial<IView> | null;
 };
 
@@ -45,7 +42,6 @@ export const ViewForm: React.FC<Props> = ({
   handleClose,
   status,
   data,
-  viewType,
   preLoadedData,
 }) => {
   const router = useRouter();
@@ -81,25 +77,7 @@ export const ViewForm: React.FC<Props> = ({
       ? () => issuesService.getIssueLabels(workspaceSlug.toString(), projectId.toString())
       : null
   );
-
-  const { data: workspaceLabels } = useSWR(
-    workspaceSlug ? WORKSPACE_LABELS(workspaceSlug.toString()) : null,
-    workspaceSlug ? () => issuesService.getWorkspaceLabels(workspaceSlug.toString()) : null
-  );
-
-  const labelOptions = viewType === "workspace" ? workspaceLabels : labels;
-
   const { members } = useProjectMembers(workspaceSlug?.toString(), projectId?.toString());
-
-  const { workspaceMembers } = useWorkspaceMembers(workspaceSlug?.toString() ?? "");
-
-  const memberOptions =
-    viewType === "workspace"
-      ? workspaceMembers?.map((m) => m.member)
-      : members?.map((m) => m.member);
-
-  const { projects: allProjects } = useProjects();
-  const joinedProjects = allProjects?.filter((p) => p.is_member);
 
   const handleCreateUpdateView = async (formData: IView) => {
     await handleFormSubmit(formData);
@@ -113,14 +91,12 @@ export const ViewForm: React.FC<Props> = ({
     setValue("query", {
       assignees: null,
       created_by: null,
-      subscriber: null,
       labels: null,
       priority: null,
       state: null,
-      state_group: null,
       start_date: null,
       target_date: null,
-      project: null,
+      type: null,
     });
   };
 
@@ -209,10 +185,9 @@ export const ViewForm: React.FC<Props> = ({
           <div>
             <FiltersList
               filters={filters}
-              labels={labelOptions}
-              members={memberOptions}
+              labels={labels}
+              members={members?.map((m) => m.member)}
               states={states}
-              project={joinedProjects}
               clearAllFilters={clearAllFilters}
               setFilters={(query: any) => {
                 setValue("query", {

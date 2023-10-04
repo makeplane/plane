@@ -10,9 +10,12 @@ import githubWhiteImage from "public/logos/github-white.svg";
 
 export interface GithubLoginButtonProps {
   handleSignIn: React.Dispatch<string>;
+  clientId: string;
 }
 
-export const GithubLoginButton: FC<GithubLoginButtonProps> = ({ handleSignIn }) => {
+export const GithubLoginButton: FC<GithubLoginButtonProps> = (props) => {
+  const { handleSignIn, clientId } = props;
+  // states
   const [loginCallBackURL, setLoginCallBackURL] = useState(undefined);
   const [gitCode, setGitCode] = useState<null | string>(null);
 
@@ -38,7 +41,7 @@ export const GithubLoginButton: FC<GithubLoginButtonProps> = ({ handleSignIn }) 
     <div className="w-full flex justify-center items-center">
       <Link
         className="w-full"
-        href={`https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_ID}&redirect_uri=${loginCallBackURL}&scope=read:user,user:email`}
+        href={`https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${loginCallBackURL}&scope=read:user,user:email`}
       >
         <button className="flex w-full items-center justify-center gap-2 rounded border border-custom-border-300 p-2 text-sm font-medium text-custom-text-100 duration-300 hover:bg-custom-background-80 h-[46px]">
           <Image

@@ -8,7 +8,6 @@ import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import viewsService from "services/views.service";
-import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -18,17 +17,16 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
 import type { ICurrentUserResponse, IView } from "types";
 // fetch-keys
-import { VIEWS_LIST, WORKSPACE_VIEWS_LIST } from "constants/fetch-keys";
+import { VIEWS_LIST } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
-  viewType: "project" | "workspace";
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   data: IView | null;
   user: ICurrentUserResponse | undefined;
 };
 
-export const DeleteViewModal: React.FC<Props> = ({ isOpen, data, setIsOpen, viewType, user }) => {
+export const DeleteViewModal: React.FC<Props> = ({ isOpen, data, setIsOpen, user }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
@@ -43,64 +41,33 @@ export const DeleteViewModal: React.FC<Props> = ({ isOpen, data, setIsOpen, view
 
   const handleDeletion = async () => {
     setIsDeleteLoading(true);
+    if (!workspaceSlug || !data || !projectId) return;
 
-    if (viewType === "project") {
-      if (!workspaceSlug || !data || !projectId) return;
+    await viewsService
+      .deleteView(workspaceSlug as string, projectId as string, data.id, user)
+      .then(() => {
+        mutate<IView[]>(VIEWS_LIST(projectId as string), (views) =>
+          views?.filter((view) => view.id !== data.id)
+        );
 
-      await viewsService
-        .deleteView(workspaceSlug as string, projectId as string, data.id, user)
-        .then(() => {
-          mutate<IView[]>(VIEWS_LIST(projectId as string), (views) =>
-            views?.filter((view) => view.id !== data.id)
-          );
+        handleClose();
 
-          handleClose();
-
-          setToastAlert({
-            type: "success",
-            title: "Success!",
-            message: "View deleted successfully.",
-          });
-        })
-        .catch(() => {
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "View could not be deleted. Please try again.",
-          });
-        })
-        .finally(() => {
-          setIsDeleteLoading(false);
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "View deleted successfully.",
         });
-    } else {
-      if (!workspaceSlug || !data) return;
-
-      await workspaceService
-        .deleteView(workspaceSlug as string, data.id)
-        .then(() => {
-          mutate<IView[]>(WORKSPACE_VIEWS_LIST(workspaceSlug as string), (views) =>
-            views?.filter((view) => view.id !== data.id)
-          );
-
-          handleClose();
-
-          setToastAlert({
-            type: "success",
-            title: "Success!",
-            message: "View deleted successfully.",
-          });
-        })
-        .catch(() => {
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "View could not be deleted. Please try again.",
-          });
-        })
-        .finally(() => {
-          setIsDeleteLoading(false);
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "View could not be deleted. Please try again.",
         });
-    }
+      })
+      .finally(() => {
+        setIsDeleteLoading(false);
+      });
   };
 
   return (

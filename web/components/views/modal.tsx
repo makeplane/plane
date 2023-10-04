@@ -8,7 +8,6 @@ import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import viewsService from "services/views.service";
-import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -16,11 +15,10 @@ import { ViewForm } from "components/views";
 // types
 import { ICurrentUserResponse, IView } from "types";
 // fetch-keys
-import { VIEWS_LIST, WORKSPACE_VIEWS_LIST } from "constants/fetch-keys";
+import { VIEWS_LIST } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
-  viewType: "project" | "workspace";
   handleClose: () => void;
   data?: IView | null;
   preLoadedData?: Partial<IView> | null;
@@ -29,7 +27,6 @@ type Props = {
 
 export const CreateUpdateViewModal: React.FC<Props> = ({
   isOpen,
-  viewType,
   handleClose,
   data,
   preLoadedData,
@@ -49,48 +46,25 @@ export const CreateUpdateViewModal: React.FC<Props> = ({
       ...payload,
       query_data: payload.query,
     };
+    await viewsService
+      .createView(workspaceSlug as string, projectId as string, payload, user)
+      .then(() => {
+        mutate(VIEWS_LIST(projectId as string));
+        handleClose();
 
-    if (viewType === "project") {
-      await viewsService
-        .createView(workspaceSlug as string, projectId as string, payload, user)
-        .then(() => {
-          mutate(VIEWS_LIST(projectId as string));
-          handleClose();
-
-          setToastAlert({
-            type: "success",
-            title: "Success!",
-            message: "View created successfully.",
-          });
-        })
-        .catch(() => {
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "View could not be created. Please try again.",
-          });
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "View created successfully.",
         });
-    } else {
-      await workspaceService
-        .createView(workspaceSlug as string, payload)
-        .then(() => {
-          mutate(WORKSPACE_VIEWS_LIST(workspaceSlug as string));
-          handleClose();
-
-          setToastAlert({
-            type: "success",
-            title: "Success!",
-            message: "View created successfully.",
-          });
-        })
-        .catch(() => {
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "View could not be created. Please try again.",
-          });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "View could not be created. Please try again.",
         });
-    }
+      });
   };
 
   const updateView = async (payload: IView) => {
@@ -98,79 +72,41 @@ export const CreateUpdateViewModal: React.FC<Props> = ({
       ...payload,
       query_data: payload.query,
     };
-    if (viewType === "project") {
-      await viewsService
-        .updateView(workspaceSlug as string, projectId as string, data?.id ?? "", payloadData, user)
-        .then((res) => {
-          mutate<IView[]>(
-            VIEWS_LIST(projectId as string),
-            (prevData) =>
-              prevData?.map((p) => {
-                if (p.id === res.id) return { ...p, ...payloadData };
+    await viewsService
+      .updateView(workspaceSlug as string, projectId as string, data?.id ?? "", payloadData, user)
+      .then((res) => {
+        mutate<IView[]>(
+          VIEWS_LIST(projectId as string),
+          (prevData) =>
+            prevData?.map((p) => {
+              if (p.id === res.id) return { ...p, ...payloadData };
 
-                return p;
-              }),
-            false
-          );
-          onClose();
+              return p;
+            }),
+          false
+        );
+        onClose();
 
-          setToastAlert({
-            type: "success",
-            title: "Success!",
-            message: "View updated successfully.",
-          });
-        })
-        .catch(() => {
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "View could not be updated. Please try again.",
-          });
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "View updated successfully.",
         });
-    } else {
-      await workspaceService
-        .updateView(workspaceSlug as string, data?.id ?? "", payloadData)
-        .then((res) => {
-          mutate<IView[]>(
-            WORKSPACE_VIEWS_LIST(workspaceSlug as string),
-            (prevData) =>
-              prevData?.map((p) => {
-                if (p.id === res.id) return { ...p, ...payloadData };
-
-                return p;
-              }),
-            false
-          );
-          onClose();
-
-          setToastAlert({
-            type: "success",
-            title: "Success!",
-            message: "View updated successfully.",
-          });
-        })
-        .catch(() => {
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "View could not be updated. Please try again.",
-          });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "View could not be updated. Please try again.",
         });
-    }
+      });
   };
 
   const handleFormSubmit = async (formData: IView) => {
-    if (viewType === "project") {
-      if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !projectId) return;
 
-      if (!data) await createView(formData);
-      else await updateView(formData);
-    } else {
-      if (!workspaceSlug) return;
-
-      if (!data) await createView(formData);
-      else await updateView(formData);
-    }
+    if (!data) await createView(formData);
+    else await updateView(formData);
   };
 
   return (
@@ -205,7 +141,6 @@ export const CreateUpdateViewModal: React.FC<Props> = ({
                   handleClose={handleClose}
                   status={data ? true : false}
                   data={data}
-                  viewType={viewType}
                   preLoadedData={preLoadedData}
                 />
               </Dialog.Panel>

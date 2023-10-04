@@ -92,24 +92,6 @@ class FileService extends APIService {
         throw error?.response?.data;
       });
   }
-
-  async getUnsplashImages(page: number = 1, query?: string): Promise<UnSplashImage[]> {
-    const url = "/api/unsplash";
-
-    return this.request({
-      method: "get",
-      url,
-      params: {
-        page,
-        per_page: 20,
-        query,
-      },
-    })
-      .then((response) => response?.data?.results ?? response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
 }
 
 const fileService = new FileService();

@@ -76,7 +76,7 @@ export const StateColumn: React.FC<Props> = ({
             value={issue.state_detail}
             projectId={projectId}
             onChange={handleStateChange}
-            buttonClassName="!p-0 !rounded-none !shadow-none !border-0"
+            buttonClassName="!shadow-none !border-0"
             hideDropdownArrow
             disabled={isNotAllowed}
           />
