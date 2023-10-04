@@ -129,7 +129,7 @@ const IssueNavbar = observer(() => {
         </div>
       ) : (
         <div className="flex-shrink-0">
-          <Link href={`/?next_path=${router.asPath}`}>
+          <Link href={`/login/?next_path=${router.asPath}`}>
             <a>
               <PrimaryButton className="flex-shrink-0" outline>
                 Sign in
