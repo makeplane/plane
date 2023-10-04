@@ -5,4 +5,5 @@ export * from "./form";
 export * from "./gantt-chart";
 export * from "./modal";
 export * from "./sidebar";
-export * from "./single-module-card";
+export * from "./module-detail-card";
+export * from "./module-list";
