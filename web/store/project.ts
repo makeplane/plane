@@ -1,11 +1,12 @@
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // types
 import { RootStore } from "./root";
-import { IProject, IIssueLabels, IProjectMember, IStateResponse, IState } from "types";
+import { IProject, IIssueLabels, IProjectMember, IStateResponse, IState, IEstimate } from "types";
 // services
 import { ProjectService } from "services/project.service";
 import { IssueService } from "services/issue.service";
 import { ProjectStateServices } from "services/project_state.service";
+import { ProjectEstimateServices } from "services/project_estimates.service";
 import { CycleService } from "services/cycles.service";
 import { ModuleService } from "services/modules.service";
 import { ViewService } from "services/views.service";
@@ -30,6 +31,9 @@ export interface IProjectStore {
   members: {
     [projectId: string]: IProjectMember[] | null; // project_id: members
   } | null;
+  estimates: {
+    [projectId: string]: IEstimate[] | null; // project_id: members
+  } | null;
 
   // computed
   searchedProjects: IProject[];
@@ -37,6 +41,7 @@ export interface IProjectStore {
   projectStates: IState[] | null;
   projectLabels: IIssueLabels[] | null;
   projectMembers: IProjectMember[] | null;
+  projectEstimates: IEstimate[] | null;
 
   joinedProjects: IProject[];
   favoriteProjects: IProject[];
@@ -45,16 +50,19 @@ export interface IProjectStore {
   setProjectId: (projectId: string) => void;
   setSearchQuery: (query: string) => void;
 
+  getProjectById: (workspaceSlug: string, projectId: string) => IProject | null;
   getProjectStateById: (stateId: string) => IState | null;
   getProjectLabelById: (labelId: string) => IIssueLabels | null;
   getProjectMemberById: (memberId: string) => IProjectMember | null;
   getProjectMemberByUserId: (memberId: string) => IProjectMember | null;
+  getProjectEstimateById: (estimateId: string) => IEstimate | null;
 
   fetchProjects: (workspaceSlug: string) => Promise<void>;
   fetchProjectDetails: (workspaceSlug: string, projectId: string) => Promise<any>;
   fetchProjectStates: (workspaceSlug: string, projectId: string) => Promise<void>;
   fetchProjectLabels: (workspaceSlug: string, projectId: string) => Promise<void>;
   fetchProjectMembers: (workspaceSlug: string, projectId: string) => Promise<void>;
+  fetchProjectEstimates: (workspaceSlug: string, projectId: string) => Promise<void>;
 
   addProjectToFavorites: (workspaceSlug: string, projectId: string) => Promise<any>;
   removeProjectFromFavorites: (workspaceSlug: string, projectId: string) => Promise<any>;
@@ -88,6 +96,9 @@ class ProjectStore implements IProjectStore {
   members: {
     [key: string]: IProjectMember[]; // project_id: members
   } | null = {};
+  estimates: {
+    [key: string]: IEstimate[]; // project_id: estimates
+  } | null = {};
 
   // root store
   rootStore;
@@ -95,6 +106,7 @@ class ProjectStore implements IProjectStore {
   projectService;
   issueService;
   stateService;
+  estimateService;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
@@ -116,6 +128,7 @@ class ProjectStore implements IProjectStore {
       projectStates: computed,
       projectLabels: computed,
       projectMembers: computed,
+      projectEstimates: computed,
 
       joinedProjects: computed,
       favoriteProjects: computed,
@@ -126,6 +139,7 @@ class ProjectStore implements IProjectStore {
       fetchProjects: action,
       fetchProjectDetails: action,
 
+      getProjectById: action,
       getProjectStateById: action,
       getProjectLabelById: action,
       getProjectMemberById: action,
@@ -133,6 +147,7 @@ class ProjectStore implements IProjectStore {
       fetchProjectStates: action,
       fetchProjectLabels: action,
       fetchProjectMembers: action,
+      fetchProjectEstimates: action,
 
       addProjectToFavorites: action,
       removeProjectFromFavorites: action,
@@ -148,6 +163,7 @@ class ProjectStore implements IProjectStore {
     this.projectService = new ProjectService();
     this.issueService = new IssueService();
     this.stateService = new ProjectStateServices();
+    this.estimateService = new ProjectEstimateServices();
   }
 
   get searchedProjects() {
@@ -202,6 +218,11 @@ class ProjectStore implements IProjectStore {
     return this.members?.[this.projectId] || null;
   }
 
+  get projectEstimates() {
+    if (!this.projectId) return null;
+    return this.estimates?.[this.projectId] || null;
+  }
+
   // actions
   setProjectId = (projectSlug: string) => {
     this.projectId = projectSlug ?? null;
@@ -246,6 +267,14 @@ class ProjectStore implements IProjectStore {
     }
   };
 
+  getProjectById = (workspaceSlug: string, projectId: string) => {
+    if (!this.projectId) return null;
+    const projects = this.projects?.[workspaceSlug];
+    if (!projects) return null;
+    const projectInfo: IProject | null = projects.find((project) => project.id === projectId) || null;
+    return projectInfo;
+  };
+
   getProjectStateById = (stateId: string) => {
     if (!this.projectId) return null;
     const states = this.projectStates;
@@ -276,6 +305,14 @@ class ProjectStore implements IProjectStore {
     if (!members) return null;
     const memberInfo: IProjectMember | null = members.find((member) => member.member.id === memberId) || null;
     return memberInfo;
+  };
+
+  getProjectEstimateById = (estimateId: string) => {
+    if (!this.projectId) return null;
+    const estimates = this.projectEstimates;
+    if (!estimates) return null;
+    const estimateInfo: IEstimate | null = estimates.find((estimate) => estimate.id === estimateId) || null;
+    return estimateInfo;
   };
 
   fetchProjectStates = async (workspaceSlug: string, projectSlug: string) => {
@@ -337,6 +374,29 @@ class ProjectStore implements IProjectStore {
 
       runInAction(() => {
         this.members = _members;
+        this.loader = false;
+        this.error = null;
+      });
+    } catch (error) {
+      console.error(error);
+      this.loader = false;
+      this.error = error;
+    }
+  };
+
+  fetchProjectEstimates = async (workspaceSlug: string, projectSlug: string) => {
+    try {
+      this.loader = true;
+      this.error = null;
+
+      const estimatesResponse = await this.estimateService.getEstimatesList(workspaceSlug, projectSlug);
+      const _estimates = {
+        ...this.estimates,
+        [projectSlug]: estimatesResponse,
+      };
+
+      runInAction(() => {
+        this.estimates = _estimates;
         this.loader = false;
         this.error = null;
       });

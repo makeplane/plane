@@ -8,9 +8,18 @@ interface IssueBlockProps {
   columnId: string;
   issues: any;
   isDragDisabled: boolean;
+  handleIssues?: (sub_group_by: string | null, group_by: string | null, issue: any) => void;
+  display_properties: any;
 }
 
-export const IssueBlock = ({ sub_group_id, columnId, issues, isDragDisabled }: IssueBlockProps) => (
+export const IssueBlock = ({
+  sub_group_id,
+  columnId,
+  issues,
+  isDragDisabled,
+  handleIssues,
+  display_properties,
+}: IssueBlockProps) => (
   <>
     {issues && issues.length > 0 ? (
       <>
@@ -30,14 +39,22 @@ export const IssueBlock = ({ sub_group_id, columnId, issues, isDragDisabled }: I
                 ref={provided.innerRef}
               >
                 <div
-                  className={`min-h-[106px] text-sm rounded p-2 px-3 shadow-custom-shadow-2xs space-y-[8px] border transition-all bg-custom-background-100 hover:cursor-grab ${
+                  className={`text-sm rounded p-2 px-3 shadow-custom-shadow-2xs space-y-[8px] border transition-all bg-custom-background-100 hover:cursor-grab ${
                     snapshot.isDragging ? `border-custom-primary-100` : `border-transparent`
                   }`}
                 >
-                  <div className="text-xs line-clamp-1 text-custom-text-300">ONE-{issue.sequence_id}</div>
+                  {display_properties && display_properties?.key && (
+                    <div className="text-xs line-clamp-1 text-custom-text-300">ONE-{issue.sequence_id}</div>
+                  )}
                   <div className="line-clamp-2 h-[40px] text-sm font-medium text-custom-text-100">{issue.name}</div>
-                  <div className="min-h-[22px]">
-                    <KanBanProperties />
+                  <div>
+                    <KanBanProperties
+                      sub_group_id={sub_group_id}
+                      columnId={columnId}
+                      issue={issue}
+                      handleIssues={handleIssues}
+                      display_properties={display_properties}
+                    />
                   </div>
                 </div>
               </div>
