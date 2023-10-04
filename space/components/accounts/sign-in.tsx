@@ -19,6 +19,7 @@ export const SignInView = observer(() => {
   const { user: userStore } = useMobxStore();
 
   const router = useRouter();
+  const { next_path } = router.query as { next_path: string };
 
   const { setToastAlert } = useToast();
 
@@ -31,17 +32,17 @@ export const SignInView = observer(() => {
   };
 
   const onSignInSuccess = (response: any) => {
-    const isOnboarded = response?.user?.onboarding_step?.profile_complete || false;
-
-    const nextPath = router.asPath.includes("next_path") ? router.asPath.split("/?next_path=")[1] : "/login";
-
     userStore.setCurrentUser(response?.user);
 
-    if (!isOnboarded) {
-      router.push(`/onboarding?next_path=${nextPath}`);
-      return;
+    const isOnboard = response?.user?.onboarding_step?.profile_complete || false;
+
+    if (isOnboard) {
+      if (next_path) router.push(next_path);
+      else router.push("/login");
+    } else {
+      if (next_path) router.push(`/onboarding?next_path=${next_path}`);
+      else router.push("/onboarding");
     }
-    router.push((nextPath ?? "/login").toString());
   };
 
   const handleGoogleSignIn = async ({ clientId, credential }: any) => {
