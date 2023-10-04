@@ -203,7 +203,7 @@ const GeneralSettings: NextPage = () => {
                 className="h-44 w-full rounded-md object-cover"
               />
               <div className="flex items-end justify-between gap-3 absolute bottom-4 w-full px-4">
-                <div className="flex gap-3 flex-grow truncate">
+                <div className="flex gap-3 flex-grow">
                   <div className="flex items-center justify-center flex-shrink-0 bg-custom-background-90 h-[52px] w-[52px] rounded-lg">
                     {projectDetails ? (
                       <div className="h-7 w-7 grid place-items-center">
