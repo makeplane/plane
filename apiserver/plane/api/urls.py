@@ -70,6 +70,7 @@ from plane.api.views import (
     ProjectIdentifierEndpoint,
     ProjectFavoritesViewSet,
     LeaveProjectEndpoint,
+    ProjectPublicCoverImagesEndpoint,
     ## End Projects
     # Issues
     IssueViewSet,
@@ -574,6 +575,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/members/leave/",
         LeaveProjectEndpoint.as_view(),
         name="project",
+    ),
+    path(
+        "project-covers/",
+        ProjectPublicCoverImagesEndpoint.as_view(),
+        name="project-covers",
     ),
     # End Projects
     #  States

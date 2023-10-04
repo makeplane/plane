@@ -17,6 +17,7 @@ from .project import (
     ProjectMemberEndpoint,
     WorkspaceProjectDeployBoardEndpoint,
     LeaveProjectEndpoint,
+    ProjectPublicCoverImagesEndpoint,
 )
 from .user import (
     UserEndpoint,
