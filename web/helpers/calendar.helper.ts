@@ -112,18 +112,6 @@ export const formatDate = (date: Date, format: string): string => {
   return formattedDate;
 };
 
-export const subtractMonths = (date: Date, numMonths: number) => {
-  const result = new Date(date);
-  result.setMonth(result.getMonth() - numMonths);
-  return result;
-};
-
-export const addMonths = (date: Date, numMonths: number) => {
-  const result = new Date(date);
-  result.setMonth(result.getMonth() + numMonths);
-  return result;
-};
-
 export const updateDateWithYear = (yearString: string, date: Date) => {
   const year = parseInt(yearString);
   const month = date.getMonth();

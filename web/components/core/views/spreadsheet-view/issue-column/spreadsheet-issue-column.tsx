@@ -1,36 +1,34 @@
-import React, { useState } from "react";
+import React from "react";
 
 // components
-import { SingleSpreadsheetIssue } from "components/core";
+import { IssueColumn } from "components/core";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
-import { ICurrentUserResponse, IIssue, Properties, UserAuth } from "types";
+import { IIssue, Properties, UserAuth } from "types";
 
 type Props = {
   issue: IIssue;
-  index: number;
+  projectId: string;
   expandedIssues: string[];
   setExpandedIssues: React.Dispatch<React.SetStateAction<string[]>>;
   properties: Properties;
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
-  gridTemplateColumns: string;
+  setCurrentProjectId: React.Dispatch<React.SetStateAction<string | null>>;
   disableUserActions: boolean;
-  user: ICurrentUserResponse | undefined;
   userAuth: UserAuth;
   nestingLevel?: number;
 };
 
-export const SpreadsheetIssues: React.FC<Props> = ({
-  index,
+export const SpreadsheetIssuesColumn: React.FC<Props> = ({
   issue,
+  projectId,
   expandedIssues,
   setExpandedIssues,
-  gridTemplateColumns,
   properties,
   handleIssueAction,
+  setCurrentProjectId,
   disableUserActions,
-  user,
   userAuth,
   nestingLevel = 0,
 }) => {
@@ -49,22 +47,20 @@ export const SpreadsheetIssues: React.FC<Props> = ({
 
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
-  const { subIssues, isLoading } = useSubIssue(issue.id, isExpanded);
+  const { subIssues, isLoading } = useSubIssue(issue.project_detail.id, issue.id, isExpanded);
 
   return (
     <div>
-      <SingleSpreadsheetIssue
+      <IssueColumn
         issue={issue}
-        projectId={issue.project_detail.id}
-        index={index}
+        projectId={projectId}
         expanded={isExpanded}
         handleToggleExpand={handleToggleExpand}
-        gridTemplateColumns={gridTemplateColumns}
         properties={properties}
         handleEditIssue={() => handleIssueAction(issue, "edit")}
         handleDeleteIssue={() => handleIssueAction(issue, "delete")}
+        setCurrentProjectId={setCurrentProjectId}
         disableUserActions={disableUserActions}
-        user={user}
         userAuth={userAuth}
         nestingLevel={nestingLevel}
       />
@@ -74,17 +70,16 @@ export const SpreadsheetIssues: React.FC<Props> = ({
         subIssues &&
         subIssues.length > 0 &&
         subIssues.map((subIssue: IIssue) => (
-          <SpreadsheetIssues
+          <SpreadsheetIssuesColumn
             key={subIssue.id}
             issue={subIssue}
-            index={index}
+            projectId={subIssue.project_detail.id}
             expandedIssues={expandedIssues}
             setExpandedIssues={setExpandedIssues}
-            gridTemplateColumns={gridTemplateColumns}
             properties={properties}
             handleIssueAction={handleIssueAction}
+            setCurrentProjectId={setCurrentProjectId}
             disableUserActions={disableUserActions}
-            user={user}
             userAuth={userAuth}
             nestingLevel={nestingLevel + 1}
           />

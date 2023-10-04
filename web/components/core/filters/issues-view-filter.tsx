@@ -67,7 +67,7 @@ export const IssuesFilterView: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, viewId } = router.query;
   const isArchivedIssues = router.pathname.includes("archived-issues");
-  const isDraftIssues = router.pathname.includes("draft-issues");
+  const isDraftIssues = router.pathname?.split("/")?.[4] === "draft-issues";
 
   const {
     displayFilters,
@@ -93,7 +93,9 @@ export const IssuesFilterView: React.FC = () => {
             <Tooltip
               key={option.type}
               tooltipContent={
-                <span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} Layout</span>
+                <span className="capitalize">
+                  {replaceUnderscoreIfSnakeCase(option.type)} Layout
+                </span>
               }
               position="bottom"
             >
@@ -228,6 +230,9 @@ export const IssuesFilterView: React.FC = () => {
                                   return null;
                                 if (option.key === "project") return null;
 
+                                if (isDraftIssues && option.key === "state_detail.group")
+                                  return null;
+
                                 return (
                                   <CustomMenu.MenuItem
                                     key={option.key}
@@ -272,33 +277,35 @@ export const IssuesFilterView: React.FC = () => {
                           </div>
                         </div>
                       )}
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-custom-text-200">Issue type</h4>
-                      <div className="w-28">
-                        <CustomMenu
-                          label={
-                            FILTER_ISSUE_OPTIONS.find(
-                              (option) => option.key === displayFilters.type
-                            )?.name ?? "Select"
-                          }
-                          className="!w-full"
-                          buttonClassName="w-full"
-                        >
-                          {FILTER_ISSUE_OPTIONS.map((option) => (
-                            <CustomMenu.MenuItem
-                              key={option.key}
-                              onClick={() =>
-                                setDisplayFilters({
-                                  type: option.key,
-                                })
-                              }
-                            >
-                              {option.name}
-                            </CustomMenu.MenuItem>
-                          ))}
-                        </CustomMenu>
+                    {!isArchivedIssues && (
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-custom-text-200">Issue type</h4>
+                        <div className="w-28">
+                          <CustomMenu
+                            label={
+                              FILTER_ISSUE_OPTIONS.find(
+                                (option) => option.key === displayFilters.type
+                              )?.name ?? "Select"
+                            }
+                            className="!w-full"
+                            buttonClassName="w-full"
+                          >
+                            {FILTER_ISSUE_OPTIONS.map((option) => (
+                              <CustomMenu.MenuItem
+                                key={option.key}
+                                onClick={() =>
+                                  setDisplayFilters({
+                                    type: option.key,
+                                  })
+                                }
+                              >
+                                {option.name}
+                              </CustomMenu.MenuItem>
+                            ))}
+                          </CustomMenu>
+                        </div>
                       </div>
-                    </div>
+                    )}
 
                     {displayFilters.layout !== "calendar" &&
                       displayFilters.layout !== "spreadsheet" && (
@@ -318,7 +325,7 @@ export const IssuesFilterView: React.FC = () => {
                       displayFilters.layout !== "spreadsheet" &&
                       displayFilters.layout !== "gantt_chart" && (
                         <div className="flex items-center justify-between">
-                          <h4 className="text-custom-text-200">Show empty states</h4>
+                          <h4 className="text-custom-text-200">Show empty groups</h4>
                           <div className="w-28">
                             <ToggleSwitch
                               value={displayFilters.show_empty_groups ?? true}

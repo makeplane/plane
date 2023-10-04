@@ -227,7 +227,8 @@ export const ProfileIssuesView = () => {
       router.pathname.includes("my-issues")) ??
     false;
 
-  const disableAddIssueOption = isSubscribedIssuesRoute || isMySubscribedIssues;
+  const disableAddIssueOption =
+    isSubscribedIssuesRoute || isMySubscribedIssues || user?.id !== userId;
 
   return (
     <>

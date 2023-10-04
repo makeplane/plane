@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { Draggable } from "react-beautiful-dnd";
 // components
+import { CreateUpdateDraftIssueModal } from "components/issues";
 import { BoardHeader, SingleBoardIssue, BoardInlineCreateIssueForm } from "components/core";
 // ui
 import { CustomMenu } from "components/ui";
@@ -57,11 +58,16 @@ export const SingleBoard: React.FC<Props> = (props) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   const [isInlineCreateIssueFormOpen, setIsInlineCreateIssueFormOpen] = useState(false);
+  const [isCreateDraftIssueModalOpen, setIsCreateDraftIssueModalOpen] = useState(false);
 
   const { displayFilters, groupedIssues } = viewProps;
 
   const router = useRouter();
   const { cycleId, moduleId } = router.query;
+
+  const isMyIssuesPage = router.pathname.split("/")[3] === "my-issues";
+  const isProfileIssuesPage = router.pathname.split("/")[2] === "profile";
+  const isDraftIssuesPage = router.pathname.split("/")[4] === "draft-issues";
 
   const type = cycleId ? "cycle" : moduleId ? "module" : "issue";
 
@@ -71,9 +77,7 @@ export const SingleBoard: React.FC<Props> = (props) => {
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer || disableUserActions;
 
-  const onCreateClick = () => {
-    setIsInlineCreateIssueFormOpen(true);
-
+  const scrollToBottom = () => {
     const boardListElement = document.getElementById(`board-list-${groupTitle}`);
 
     // timeout is needed because the animation
@@ -89,10 +93,32 @@ export const SingleBoard: React.FC<Props> = (props) => {
     }, 10);
   };
 
+  const onCreateClick = () => {
+    setIsInlineCreateIssueFormOpen(true);
+    scrollToBottom();
+  };
+
+  const handleAddIssueToGroup = () => {
+    if (isDraftIssuesPage) setIsCreateDraftIssueModalOpen(true);
+    else if (isMyIssuesPage || isProfileIssuesPage) addIssueToGroup();
+    else onCreateClick();
+  };
+
   return (
     <div className={`flex-shrink-0 ${!isCollapsed ? "" : "flex h-full flex-col w-96"}`}>
+      <CreateUpdateDraftIssueModal
+        isOpen={isCreateDraftIssueModalOpen}
+        handleClose={() => setIsCreateDraftIssueModalOpen(false)}
+        prePopulateData={{
+          ...(cycleId && { cycle: cycleId.toString() }),
+          ...(moduleId && { module: moduleId.toString() }),
+          [displayFilters?.group_by! === "labels" ? "labels_list" : displayFilters?.group_by!]:
+            displayFilters?.group_by === "labels" ? [groupTitle] : groupTitle,
+        }}
+      />
+
       <BoardHeader
-        addIssueToGroup={addIssueToGroup}
+        addIssueToGroup={handleAddIssueToGroup}
         currentState={currentState}
         groupTitle={groupTitle}
         isCollapsed={isCollapsed}
@@ -197,6 +223,7 @@ export const SingleBoard: React.FC<Props> = (props) => {
                 <BoardInlineCreateIssueForm
                   isOpen={isInlineCreateIssueFormOpen}
                   handleClose={() => setIsInlineCreateIssueFormOpen(false)}
+                  onSuccess={() => scrollToBottom()}
                   prePopulatedData={{
                     ...(cycleId && { cycle: cycleId.toString() }),
                     ...(moduleId && { module: moduleId.toString() }),
@@ -210,17 +237,22 @@ export const SingleBoard: React.FC<Props> = (props) => {
               {displayFilters?.group_by !== "created_by" && (
                 <div>
                   {type === "issue"
-                    ? !disableAddIssueOption && (
+                    ? !disableAddIssueOption &&
+                      !isDraftIssuesPage && (
                         <button
                           type="button"
                           className="flex items-center gap-2 font-medium text-custom-primary outline-none p-1"
-                          onClick={() => onCreateClick()}
+                          onClick={() => {
+                            if (isMyIssuesPage || isProfileIssuesPage) addIssueToGroup();
+                            else onCreateClick();
+                          }}
                         >
                           <PlusIcon className="h-4 w-4" />
                           Add Issue
                         </button>
                       )
-                    : !disableUserActions && (
+                    : !disableUserActions &&
+                      !isDraftIssuesPage && (
                         <CustomMenu
                           customButton={
                             <button
@@ -234,7 +266,13 @@ export const SingleBoard: React.FC<Props> = (props) => {
                           position="left"
                           noBorder
                         >
-                          <CustomMenu.MenuItem onClick={() => onCreateClick()}>
+                          <CustomMenu.MenuItem
+                            onClick={() => {
+                              if (isDraftIssuesPage) setIsCreateDraftIssueModalOpen(true);
+                              else if (isMyIssuesPage || isProfileIssuesPage) addIssueToGroup();
+                              else onCreateClick();
+                            }}
+                          >
                             Create new
                           </CustomMenu.MenuItem>
                           {openIssuesListModal && (
