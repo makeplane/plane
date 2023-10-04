@@ -62,6 +62,6 @@ jobs:
           gh pr create \
             --base $TARGET_BRANCH \
             --head $SOURCE_BRANCH \
-            --title "$PR_TITLE" \
-            --body "$PR_BODY" \
+            --title $PR_TITLE \
+            --body $PR_BODY \
             --repo $TARGET_REPO
