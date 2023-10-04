@@ -6,7 +6,14 @@ import useSWR from "swr";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { AppliedFiltersRoot, CalendarLayout, GanttLayout, KanBanLayout, SpreadsheetLayout } from "components/issues";
+import {
+  AppliedFiltersRoot,
+  ListLayout,
+  CalendarLayout,
+  GanttLayout,
+  KanBanLayout,
+  SpreadsheetLayout,
+} from "components/issues";
 
 export const AllViews: React.FC = observer(() => {
   const router = useRouter();
@@ -42,7 +49,9 @@ export const AllViews: React.FC = observer(() => {
     <div className="relative w-full h-full flex flex-col overflow-auto">
       <AppliedFiltersRoot />
       <div className="w-full h-full">
-        {activeLayout === "kanban" ? (
+        {activeLayout === "list" ? (
+          <ListLayout />
+        ) : activeLayout === "kanban" ? (
           <KanBanLayout />
         ) : activeLayout === "calendar" ? (
           <CalendarLayout />
