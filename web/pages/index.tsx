@@ -85,11 +85,11 @@ const HomePage: NextPage = observer(() => {
 
   const handleGitHubSignIn = async (credential: string) => {
     try {
-      if (process.env.NEXT_PUBLIC_GITHUB_ID && credential) {
+      if (data && data.github && credential) {
         const socialAuthPayload = {
           medium: "github",
           credential,
-          clientId: process.env.NEXT_PUBLIC_GITHUB_ID,
+          clientId: data.github,
         };
         const response = await authenticationService.socialAuth(socialAuthPayload);
         if (response && response?.user) {
