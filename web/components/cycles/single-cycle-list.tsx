@@ -149,6 +149,10 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
     color: group.color,
   }));
 
+  const completedIssues = cycle.completed_issues + cycle.cancelled_issues;
+
+  const percentage = cycle.total_issues > 0 ? (completedIssues / cycle.total_issues) * 100 : 0;
+
   return (
     <div>
       <div className="flex flex-col text-xs hover:bg-custom-background-80">
@@ -307,7 +311,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                       ) : cycleStatus === "completed" ? (
                         <span className="flex gap-1">
                           <RadialProgressBar progress={100} />
-                          <span>{100} %</span>
+                          <span>{Math.round(percentage)} %</span>
                         </span>
                       ) : (
                         <span className="flex gap-1">

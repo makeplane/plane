@@ -365,7 +365,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                                 value={value}
                                 onChange={onChange}
                                 options={options}
-                                buttonClassName="!px-2 shadow-md"
+                                buttonClassName="border-[0.5px] !px-2 shadow-md"
                                 label={
                                   <div className="flex items-center justify-center gap-2 py-[1px]">
                                     {value ? (

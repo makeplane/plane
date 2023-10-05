@@ -46,7 +46,7 @@ const ProfileActivity = () => {
         {userActivity ? (
           <section className="pr-9 py-8 w-full overflow-y-auto">
             <div className="flex items-center py-3.5 border-b border-custom-border-200">
-              <h3 className="text-xl font-medium">Acitivity</h3>
+              <h3 className="text-xl font-medium">Activity</h3>
             </div>
             <div className={`flex flex-col gap-2 py-4 w-full`}>
               <ul role="list" className="-mb-4">

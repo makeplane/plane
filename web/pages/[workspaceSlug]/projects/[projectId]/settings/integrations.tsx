@@ -22,7 +22,7 @@ import emptyIntegration from "public/empty-state/integration.svg";
 import { IProject } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { PROJECT_DETAILS, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
+import { PROJECT_DETAILS, USER_PROJECT_VIEW, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
 
@@ -39,6 +39,15 @@ const ProjectIntegrations: NextPage = () => {
     workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug as string) : null,
     () => (workspaceSlug ? IntegrationService.getWorkspaceIntegrationsList(workspaceSlug as string) : null)
   );
+
+  const { data: memberDetails } = useSWR(
+    workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
+      : null
+  );
+
+  const isAdmin = memberDetails?.role === 20;
 
   return (
     <ProjectAuthorizationWrapper
@@ -57,7 +66,7 @@ const ProjectIntegrations: NextPage = () => {
         <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
           <SettingsSidebar />
         </div>
-        <div className="pr-9 py-8 gap-10 w-full overflow-y-auto">
+        <div className={`pr-9 py-8 gap-10 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
           <div className="flex items-center py-3.5 border-b border-custom-border-200">
             <h3 className="text-xl font-medium">Integrations</h3>
           </div>
@@ -77,6 +86,7 @@ const ProjectIntegrations: NextPage = () => {
                   text: "Configure now",
                   onClick: () => router.push(`/${workspaceSlug}/settings/integrations`),
                 }}
+                disabled={!isAdmin}
               />
             )
           ) : (

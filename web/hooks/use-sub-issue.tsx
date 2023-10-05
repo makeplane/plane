@@ -11,9 +11,9 @@ import { ISubIssueResponse } from "types";
 // fetch-keys
 import { SUB_ISSUES } from "constants/fetch-keys";
 
-const useSubIssue = (issueId: string, isExpanded: boolean) => {
+const useSubIssue = (projectId: string, issueId: string, isExpanded: boolean) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
   const shouldFetch = workspaceSlug && projectId && issueId && isExpanded;
 

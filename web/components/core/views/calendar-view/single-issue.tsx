@@ -40,6 +40,7 @@ type Props = {
   provided: DraggableProvided;
   snapshot: DraggableStateSnapshot;
   issue: IIssue;
+  projectId: string;
   user: ICurrentUserResponse | undefined;
   isNotAllowed: boolean;
 };
@@ -51,11 +52,12 @@ export const SingleCalendarIssue: React.FC<Props> = ({
   provided,
   snapshot,
   issue,
+  projectId,
   user,
   isNotAllowed,
 }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+  const { workspaceSlug, cycleId, moduleId, viewId } = router.query;
 
   const { setToastAlert } = useToast();
 

@@ -87,7 +87,7 @@ const ProjectModules: NextPage = () => {
           {moduleViewOptions.map((option) => (
             <Tooltip
               key={option.type}
-              tooltipContent={<span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} View</span>}
+              tooltipContent={<span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} Layout</span>}
               position="bottom"
             >
               <button

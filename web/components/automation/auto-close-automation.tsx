@@ -24,9 +24,14 @@ import { getStatesList } from "helpers/state.helper";
 type Props = {
   projectDetails: IProject | undefined;
   handleChange: (formData: Partial<IProject>) => Promise<void>;
+  disabled?: boolean;
 };
 
-export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleChange }) => {
+export const AutoCloseAutomation: React.FC<Props> = ({
+  projectDetails,
+  handleChange,
+  disabled = false,
+}) => {
   const [monthModal, setmonthModal] = useState(false);
 
   const router = useRouter();
@@ -94,6 +99,7 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
                 : handleChange({ close_in: 0, default_state: null })
             }
             size="sm"
+            disabled={disabled}
           />
         </div>
 
@@ -111,6 +117,7 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
                     }}
                     input
                     width="w-full"
+                    disabled={disabled}
                   >
                     <>
                       {PROJECT_AUTOMATION_MONTHS.map((month) => (

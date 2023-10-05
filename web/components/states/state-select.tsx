@@ -25,6 +25,7 @@ import { getStatesList } from "helpers/state.helper";
 type Props = {
   value: IState;
   onChange: (data: any, states: IState[] | undefined) => void;
+  projectId: string;
   className?: string;
   buttonClassName?: string;
   optionsClassName?: string;
@@ -35,6 +36,7 @@ type Props = {
 export const StateSelect: React.FC<Props> = ({
   value,
   onChange,
+  projectId,
   className = "",
   buttonClassName = "",
   optionsClassName = "",
@@ -50,12 +52,12 @@ export const StateSelect: React.FC<Props> = ({
   const [fetchStates, setFetchStates] = useState<boolean>(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
   const { data: stateGroups } = useSWR(
-    workspaceSlug && projectId && fetchStates ? STATES_LIST(projectId as string) : null,
+    workspaceSlug && projectId && fetchStates ? STATES_LIST(projectId) : null,
     workspaceSlug && projectId && fetchStates
-      ? () => projectStateService.getStates(workspaceSlug as string, projectId as string)
+      ? () => projectStateService.getStates(workspaceSlug as string, projectId)
       : null
   );
 
@@ -87,72 +89,83 @@ export const StateSelect: React.FC<Props> = ({
   useDynamicDropdownPosition(isOpen, () => setIsOpen(false), dropdownBtn, dropdownOptions);
 
   return (
-    <div className="fixed top-16 w-72">
-      <Combobox value={selected} onChange={setSelected}>
-        <div className="relative mt-1">
-          <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
-            <Combobox.Input
-              className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
-              displayValue={(person) => person.name}
-              onChange={(event) => setQuery(event.target.value)}
-            />
-            <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
-              <ChevronUpDownIcon
-                className="h-5 w-5 text-gray-400"
-                aria-hidden="true"
-              />
+    <Combobox
+      as="div"
+      className={`flex-shrink-0 text-left ${className}`}
+      value={value.id}
+      onChange={(data: string) => {
+        onChange(data, states);
+      }}
+      disabled={disabled}
+    >
+      {({ open }: { open: boolean }) => {
+        if (open) {
+          if (!isOpen) setIsOpen(true);
+          setFetchStates(true);
+        } else if (isOpen) setIsOpen(false);
+
+        return (
+          <>
+            <Combobox.Button
+              ref={dropdownBtn}
+              type="button"
+              className={`flex items-center justify-between gap-1 w-full text-xs px-2.5 py-1 rounded-md shadow-sm border border-custom-border-300 duration-300 focus:outline-none ${
+                disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
+              } ${buttonClassName}`}
+            >
+              {label}
+              {!hideDropdownArrow && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
             </Combobox.Button>
-          </div>
-          <Transition
-            as={Fragment}
-            leave="transition ease-in duration-100"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-            afterLeave={() => setQuery('')}
-          >
-            <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-              {filteredPeople.length === 0 && query !== '' ? (
-                <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
-                  Nothing found.
+            <div className={`${open ? "fixed z-20 top-0 left-0 h-full w-full cursor-auto" : ""}`}>
+              <Combobox.Options
+                ref={dropdownOptions}
+                className={`absolute z-10 border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-lg focus:outline-none w-48 whitespace-nowrap mt-1 ${optionsClassName}`}
+              >
+                <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
+                  <MagnifyingGlassIcon className="h-3.5 w-3.5 text-custom-text-300" />
+                  <Combobox.Input
+                    className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search"
+                    displayValue={(assigned: any) => assigned?.name}
+                  />
                 </div>
-              ) : (
-                filteredPeople.map((person) => (
-                  <Combobox.Option
-                    key={person.id}
-                    className={({ active }) =>
-                      `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                        active ? 'bg-teal-600 text-white' : 'text-gray-900'
-                      }`
-                    }
-                    value={person}
-                  >
-                    {({ selected, active }) => (
-                      <>
-                        <span
-                          className={`block truncate ${
-                            selected ? 'font-medium' : 'font-normal'
-                          }`}
+                <div className={`mt-2 space-y-1 max-h-48 overflow-y-scroll`}>
+                  {filteredOptions ? (
+                    filteredOptions.length > 0 ? (
+                      filteredOptions.map((option) => (
+                        <Combobox.Option
+                          key={option.value}
+                          value={option.value}
+                          className={({ active, selected }) =>
+                            `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
+                              active && !selected ? "bg-custom-background-80" : ""
+                            } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                          }
                         >
-                          {person.name}
-                        </span>
-                        {selected ? (
-                          <span
-                            className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                              active ? 'text-white' : 'text-teal-600'
-                            }`}
-                          >
-                            <CheckIcon className="h-5 w-5" aria-hidden="true" />
-                          </span>
-                        ) : null}
-                      </>
-                    )}
-                  </Combobox.Option>
-                ))
-              )}
-            </Combobox.Options>
-          </Transition>
-        </div>
-      </Combobox>
-    </div>
+                          {({ selected }) => (
+                            <>
+                              {option.content}
+                              {selected && <CheckIcon className={`h-3.5 w-3.5`} />}
+                            </>
+                          )}
+                        </Combobox.Option>
+                      ))
+                    ) : (
+                      <span className="flex items-center gap-2 p-1">
+                        <p className="text-left text-custom-text-200 ">No matching results</p>
+                      </span>
+                    )
+                  ) : (
+                    <p className="text-center text-custom-text-200">Loading...</p>
+                  )}
+                </div>
+              </Combobox.Options>
+            </div>
+          </>
+        );
+      }}
+    </Combobox>
   );
 };
