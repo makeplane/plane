@@ -73,3 +73,5 @@ pnpm-lock.yaml
 pnpm-workspace.yaml
 
 .npmrc
+.yarn
+.yarnrc.yml
