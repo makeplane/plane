@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 // components
 import { StateSelect } from "components/states";
 // services
-import trackEventServices from "services/track-event.service";
+import trackEventServices from "services/track_event.service";
 // types
 import { ICurrentUserResponse, IIssue, IState, Properties } from "types";
 

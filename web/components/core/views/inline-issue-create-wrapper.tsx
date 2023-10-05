@@ -14,7 +14,7 @@ import { Transition } from "@headlessui/react";
 
 // services
 import modulesService from "services/modules.service";
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 
 // hooks
 import useToast from "hooks/use-toast";
@@ -23,9 +23,7 @@ import useKeypress from "hooks/use-keypress";
 import useIssuesView from "hooks/use-issues-view";
 import useMyIssues from "hooks/my-issues/use-my-issues";
 import useGanttChartIssues from "hooks/gantt-chart/issue-view";
-import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 
 // helpers
 import { getFetchKeysForIssueMutation } from "helpers/string.helper";
@@ -127,14 +125,9 @@ export const InlineCreateIssueFormWrapper: React.FC<Props> = (props) => {
   const { setToastAlert } = useToast();
 
   const { displayFilters, params } = useIssuesView();
-  const { params: calendarParams } = useCalendarIssuesView();
   const { ...viewGanttParams } = params;
-  const { params: spreadsheetParams } = useSpreadsheetIssuesView();
   const { groupedIssues, mutateMyIssues } = useMyIssues(workspaceSlug?.toString());
-  const { params: ganttParams } = useGanttChartIssues(
-    workspaceSlug?.toString(),
-    projectId?.toString()
-  );
+  const { params: ganttParams } = useGanttChartIssues(workspaceSlug?.toString(), projectId?.toString());
 
   const method = useForm<IIssue>({ defaultValues });
   const {
@@ -171,13 +164,11 @@ export const InlineCreateIssueFormWrapper: React.FC<Props> = (props) => {
     });
   }, [errors, setToastAlert]);
 
-  const { calendarFetchKey, ganttFetchKey, spreadsheetFetchKey } = getFetchKeysForIssueMutation({
+  const { ganttFetchKey } = getFetchKeysForIssueMutation({
     cycleId: cycleId,
     moduleId: moduleId,
     viewId: viewId,
     projectId: projectId?.toString() ?? "",
-    calendarParams,
-    spreadsheetParams,
     viewGanttParams,
     ganttParams,
   });
@@ -189,39 +180,17 @@ export const InlineCreateIssueFormWrapper: React.FC<Props> = (props) => {
 
     await (!isDraftIssues
       ? issuesService.createIssues(workspaceSlug.toString(), projectId.toString(), formData, user)
-      : issuesService.createDraftIssue(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          formData,
-          user
-        )
+      : issuesService.createDraftIssue(workspaceSlug.toString(), projectId.toString(), formData, user)
     )
       .then(async (res) => {
         await mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params));
         if (formData.cycle && formData.cycle !== "")
-          await addIssueToCycle(
-            workspaceSlug.toString(),
-            projectId.toString(),
-            res.id,
-            formData.cycle,
-            user,
-            params
-          );
+          await addIssueToCycle(workspaceSlug.toString(), projectId.toString(), res.id, formData.cycle, user, params);
         if (formData.module && formData.module !== "")
-          await addIssueToModule(
-            workspaceSlug.toString(),
-            projectId.toString(),
-            res.id,
-            formData.module,
-            user,
-            params
-          );
+          await addIssueToModule(workspaceSlug.toString(), projectId.toString(), res.id, formData.module, user, params);
 
-        if (isDraftIssues)
-          await mutate(PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS(projectId.toString() ?? "", params));
-        if (displayFilters.layout === "calendar") await mutate(calendarFetchKey);
+        if (isDraftIssues) await mutate(PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS(projectId.toString() ?? "", params));
         if (displayFilters.layout === "gantt_chart") await mutate(ganttFetchKey);
-        if (displayFilters.layout === "spreadsheet") await mutate(spreadsheetFetchKey);
         if (groupedIssues) await mutateMyIssues();
 
         setToastAlert({
