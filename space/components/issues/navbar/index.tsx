@@ -44,19 +44,43 @@ const IssueNavbar = observer(() => {
   }, [projectStore, workspace_slug, project_slug]);
 
   useEffect(() => {
-    if (workspace_slug && project_slug) {
-      if (!board) {
-        router.push({
-          pathname: `/${workspace_slug}/${project_slug}`,
-          query: {
-            board: "list",
-          },
-        });
-        return projectStore.setActiveBoard("list");
+    if (workspace_slug && project_slug && projectStore?.deploySettings) {
+      const viewsAcceptable: string[] = [];
+      let currentBoard: string | null = null;
+
+      if (projectStore?.deploySettings?.views?.list) viewsAcceptable.push("list");
+      if (projectStore?.deploySettings?.views?.kanban) viewsAcceptable.push("kanban");
+      if (projectStore?.deploySettings?.views?.calendar) viewsAcceptable.push("calendar");
+      if (projectStore?.deploySettings?.views?.gantt) viewsAcceptable.push("gantt");
+      if (projectStore?.deploySettings?.views?.spreadsheet) viewsAcceptable.push("spreadsheet");
+
+      if (board) {
+        if (viewsAcceptable.includes(board.toString())) {
+          currentBoard = board.toString();
+        } else {
+          if (viewsAcceptable && viewsAcceptable.length > 0) {
+            currentBoard = viewsAcceptable[0];
+          }
+        }
+      } else {
+        if (viewsAcceptable && viewsAcceptable.length > 0) {
+          currentBoard = viewsAcceptable[0];
+        }
       }
-      projectStore.setActiveBoard(board.toString());
+
+      if (currentBoard) {
+        if (projectStore?.activeBoard === null || projectStore?.activeBoard !== currentBoard) {
+          projectStore.setActiveBoard(currentBoard);
+          router.push({
+            pathname: `/${workspace_slug}/${project_slug}`,
+            query: {
+              board: currentBoard,
+            },
+          });
+        }
+      }
     }
-  }, [board, workspace_slug, project_slug]);
+  }, [board, workspace_slug, project_slug, router, projectStore, projectStore?.deploySettings]);
 
   return (
     <div className="px-5 relative w-full flex items-center gap-4">
@@ -105,7 +129,7 @@ const IssueNavbar = observer(() => {
         </div>
       ) : (
         <div className="flex-shrink-0">
-          <Link href={`/?next_path=${router.asPath}`}>
+          <Link href={`/login/?next_path=${router.asPath}`}>
             <a>
               <PrimaryButton className="flex-shrink-0" outline>
                 Sign in
