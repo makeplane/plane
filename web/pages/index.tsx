@@ -155,7 +155,6 @@ const HomePage: NextPage = observer(() => {
     }
   };
 
-  
   return (
     <DefaultLayout>
       {isLoading ? (
