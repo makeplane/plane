@@ -13,6 +13,7 @@ import { StateGroupIcon } from "components/icons";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
 import { ICurrentUserResponse, IIssue, IIssueViewProps, IState, UserAuth } from "types";
+import { useEffect, useRef, useState } from "react";
 
 type Props = {
   addIssueToGroup: (groupTitle: string) => void;
@@ -65,6 +66,20 @@ export const AllBoards: React.FC<Props> = ({
 
   const { displayFilters, groupedIssues } = viewProps;
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const newScrollPosition = e.currentTarget.scrollLeft;
+    sessionStorage.setItem('scrollPosition', String(newScrollPosition));
+  };
+
+  useEffect(() => {
+    const savedScrollPosition = sessionStorage.getItem('scrollPosition');
+    if (savedScrollPosition && scrollRef.current) {
+      scrollRef.current.scrollLeft = Number(savedScrollPosition);
+    }
+  }, []);
+
   return (
     <>
       <IssuePeekOverview
@@ -76,7 +91,7 @@ export const AllBoards: React.FC<Props> = ({
         readOnly={disableUserActions}
       />
       {groupedIssues ? (
-        <div className="horizontal-scroll-enable flex h-full gap-x-4 p-8 bg-custom-background-90">
+        <div ref={scrollRef} onScroll={handleScroll} className="horizontal-scroll-enable flex h-full gap-x-4 p-8 bg-custom-background-90">
           {Object.keys(groupedIssues).map((singleGroup, index) => {
             const currentState =
               displayFilters?.group_by === "state"
