@@ -14,12 +14,12 @@ export interface ICycleKanBanLayout {}
 
 export const CycleKanBanLayout: React.FC = observer(() => {
   const {
-    issue: issueStore,
+    cycleIssue: cycleIssueStore,
     issueFilter: issueFilterStore,
-    issueKanBanView: issueKanBanViewStore,
+    cycleIssueKanBanView: cycleIssueKanBanViewStore,
   }: RootStore = useMobxStore();
 
-  const issues = issueStore?.getIssues;
+  const issues = cycleIssueStore?.getIssues;
 
   const sub_group_by: string | null = issueFilterStore?.userDisplayFilters?.sub_group_by || null;
 
@@ -43,12 +43,16 @@ export const CycleKanBanLayout: React.FC = observer(() => {
       return;
 
     currentKanBanView === "default"
-      ? issueKanBanViewStore?.handleDragDrop(result.source, result.destination)
-      : issueKanBanViewStore?.handleSwimlaneDragDrop(result.source, result.destination);
+      ? cycleIssueKanBanViewStore?.handleDragDrop(result.source, result.destination)
+      : cycleIssueKanBanViewStore?.handleSwimlaneDragDrop(result.source, result.destination);
   };
 
   const updateIssue = (sub_group_by: string | null, group_by: string | null, issue: any) => {
-    issueStore.updateIssueStructure(group_by, sub_group_by, issue);
+    cycleIssueStore.updateIssueStructure(group_by, sub_group_by, issue);
+  };
+
+  const handleKanBanToggle = (toggle: "groupByHeaderMinMax" | "subgroupByIssuesVisibility", value: string) => {
+    cycleIssueKanBanViewStore.handleKanBanToggle(toggle, value);
   };
 
   return (
@@ -61,6 +65,8 @@ export const CycleKanBanLayout: React.FC = observer(() => {
             group_by={group_by}
             handleIssues={updateIssue}
             display_properties={display_properties}
+            kanBanToggle={cycleIssueKanBanViewStore?.kanBanToggle}
+            handleKanBanToggle={handleKanBanToggle}
           />
         ) : (
           <KanBanSwimLanes
@@ -69,6 +75,8 @@ export const CycleKanBanLayout: React.FC = observer(() => {
             group_by={group_by}
             handleIssues={updateIssue}
             display_properties={display_properties}
+            kanBanToggle={cycleIssueKanBanViewStore?.kanBanToggle}
+            handleKanBanToggle={handleKanBanToggle}
           />
         )}
       </DragDropContext>

@@ -11,8 +11,8 @@ import ProjectStore, { IProjectStore } from "./project";
 import ModuleStore, { IModuleStore } from "./modules";
 import CycleStore, { ICycleStore } from "./cycles";
 import CycleIssueStore, { ICycleIssueStore } from "./cycle_issue";
-import CycleFilterStore, { ICycleFilterStore } from "./cycle_filters";
-import CycleKanBanViewStore, { ICycleKanBanViewStore } from "./cycle_kanban_view";
+import CycleIssueFilterStore, { ICycleIssueFilterStore } from "./cycle_issue_filters";
+import CycleIssueKanBanViewStore, { ICycleIssueKanBanViewStore } from "./cycle_issue_kanban_view";
 import ViewStore, { IViewStore } from "./views";
 import IssueFilterStore, { IIssueFilterStore } from "./issue_filters";
 import IssueViewDetailStore from "./issue_detail";
@@ -35,8 +35,8 @@ export class RootStore {
 
   cycle: ICycleStore;
   cycleIssue: ICycleIssueStore;
-  cycleFilter: ICycleFilterStore;
-  cycleKanBanView: ICycleKanBanViewStore;
+  cycleIssueFilter: ICycleIssueFilterStore;
+  cycleIssueKanBanView: ICycleIssueKanBanViewStore;
 
   view: IViewStore;
   issueFilter: IIssueFilterStore;
@@ -55,8 +55,8 @@ export class RootStore {
 
     this.cycle = new CycleStore(this);
     this.cycleIssue = new CycleIssueStore(this);
-    this.cycleFilter = new CycleFilterStore(this);
-    this.cycleKanBanView = new CycleKanBanViewStore(this);
+    this.cycleIssueFilter = new CycleIssueFilterStore(this);
+    this.cycleIssueKanBanView = new CycleIssueKanBanViewStore(this);
 
     this.view = new ViewStore(this);
     this.issue = new IssueStore(this);

@@ -14,10 +14,12 @@ export interface ICreatedByHeader {
   group_by: string | null;
   header_type: "group_by" | "sub_group_by";
   issues_count: number;
+  kanBanToggle: any;
+  handleKanBanToggle: any;
 }
 
 export const CreatedByHeader: React.FC<ICreatedByHeader> = observer(
-  ({ column_id, sub_group_by, group_by, header_type, issues_count }) => {
+  ({ column_id, sub_group_by, group_by, header_type, issues_count, kanBanToggle, handleKanBanToggle }) => {
     const { project: projectStore }: RootStore = useMobxStore();
 
     const createdBy = (column_id && projectStore?.getProjectMemberByUserId(column_id)) ?? null;
@@ -31,6 +33,8 @@ export const CreatedByHeader: React.FC<ICreatedByHeader> = observer(
               icon={<Icon user={createdBy?.member} />}
               title={createdBy?.member?.display_name || ""}
               count={issues_count}
+              kanBanToggle={kanBanToggle}
+              handleKanBanToggle={handleKanBanToggle}
             />
           ) : (
             <HeaderGroupByCard
@@ -40,6 +44,8 @@ export const CreatedByHeader: React.FC<ICreatedByHeader> = observer(
               icon={<Icon user={createdBy?.member} />}
               title={createdBy?.member?.display_name || ""}
               count={issues_count}
+              kanBanToggle={kanBanToggle}
+              handleKanBanToggle={handleKanBanToggle}
             />
           ))}
       </>

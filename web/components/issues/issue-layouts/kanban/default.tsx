@@ -22,6 +22,8 @@ export interface IGroupByKanBan {
   isDragDisabled: boolean;
   handleIssues?: (sub_group_by: string | null, group_by: string | null, issue: any) => void;
   display_properties: any;
+  kanBanToggle: any;
+  handleKanBanToggle: any;
 }
 
 const GroupByKanBan: React.FC<IGroupByKanBan> = observer(
@@ -35,11 +37,11 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer(
     isDragDisabled,
     handleIssues,
     display_properties,
+    kanBanToggle,
+    handleKanBanToggle,
   }) => {
-    const { issueKanBanView: issueKanBanViewStore }: RootStore = useMobxStore();
-
     const verticalAlignPosition = (_list: any) =>
-      issueKanBanViewStore.kanBanToggle?.groupByHeaderMinMax.includes(getValueFromObject(_list, listKey) as string);
+      kanBanToggle?.groupByHeaderMinMax.includes(getValueFromObject(_list, listKey) as string);
 
     return (
       <div className="relative w-full h-full flex">
@@ -54,6 +56,8 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer(
                     sub_group_by={sub_group_by}
                     group_by={group_by}
                     issues_count={issues?.[getValueFromObject(_list, listKey) as string]?.length || 0}
+                    kanBanToggle={kanBanToggle}
+                    handleKanBanToggle={handleKanBanToggle}
                   />
                 </div>
               )}
@@ -106,10 +110,21 @@ export interface IKanBan {
   handleDragDrop?: (result: any) => void | undefined;
   handleIssues?: (sub_group_by: string | null, group_by: string | null, issue: any) => void;
   display_properties: any;
+  kanBanToggle: any;
+  handleKanBanToggle: any;
 }
 
 export const KanBan: React.FC<IKanBan> = observer(
-  ({ issues, sub_group_by, group_by, sub_group_id = "null", handleIssues, display_properties }) => {
+  ({
+    issues,
+    sub_group_by,
+    group_by,
+    sub_group_id = "null",
+    handleIssues,
+    display_properties,
+    kanBanToggle,
+    handleKanBanToggle,
+  }) => {
     const { project: projectStore, issueKanBanView: issueKanBanViewStore }: RootStore = useMobxStore();
 
     return (
@@ -125,6 +140,8 @@ export const KanBan: React.FC<IKanBan> = observer(
             isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
             handleIssues={handleIssues}
             display_properties={display_properties}
+            kanBanToggle={kanBanToggle}
+            handleKanBanToggle={handleKanBanToggle}
           />
         )}
 
@@ -139,6 +156,8 @@ export const KanBan: React.FC<IKanBan> = observer(
             isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
             handleIssues={handleIssues}
             display_properties={display_properties}
+            kanBanToggle={kanBanToggle}
+            handleKanBanToggle={handleKanBanToggle}
           />
         )}
 
@@ -153,6 +172,8 @@ export const KanBan: React.FC<IKanBan> = observer(
             isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
             handleIssues={handleIssues}
             display_properties={display_properties}
+            kanBanToggle={kanBanToggle}
+            handleKanBanToggle={handleKanBanToggle}
           />
         )}
 
@@ -167,6 +188,8 @@ export const KanBan: React.FC<IKanBan> = observer(
             isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
             handleIssues={handleIssues}
             display_properties={display_properties}
+            kanBanToggle={kanBanToggle}
+            handleKanBanToggle={handleKanBanToggle}
           />
         )}
 
@@ -181,6 +204,8 @@ export const KanBan: React.FC<IKanBan> = observer(
             isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
             handleIssues={handleIssues}
             display_properties={display_properties}
+            kanBanToggle={kanBanToggle}
+            handleKanBanToggle={handleKanBanToggle}
           />
         )}
 
@@ -195,6 +220,8 @@ export const KanBan: React.FC<IKanBan> = observer(
             isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
             handleIssues={handleIssues}
             display_properties={display_properties}
+            kanBanToggle={kanBanToggle}
+            handleKanBanToggle={handleKanBanToggle}
           />
         )}
       </div>

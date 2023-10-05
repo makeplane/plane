@@ -21,28 +21,32 @@ export const CycleLayoutRoot: React.FC = observer(() => {
 
   const {
     project: projectStore,
-    cycle: cycleStore,
-    cycleFilter: cycleFilterStore,
+    issueFilter: issueFilterStore,
     cycleIssue: cycleIssueStore,
+    cycleIssueFilter: cycleIssueFilterStore,
   } = useMobxStore();
 
-  useSWR(workspaceSlug && projectId ? `MODULE_ISSUES` : null, async () => {
+  useSWR(workspaceSlug && projectId && cycleId ? `CYCLE_ISSUES` : null, async () => {
     if (workspaceSlug && projectId && cycleId) {
-      await cycleFilterStore.fetchUserProjectFilters(workspaceSlug, projectId);
-      await cycleStore.fetchCycleWithId(workspaceSlug, projectId, cycleId);
+      // fetching the project display filters and display properties
+      await issueFilterStore.fetchUserProjectFilters(workspaceSlug, projectId);
+      // fetching the cycle filters
+      await cycleIssueFilterStore.fetchCycleFilters(workspaceSlug, projectId, cycleId);
 
+      // fetching the project state, labels and members
       await projectStore.fetchProjectStates(workspaceSlug, projectId);
       await projectStore.fetchProjectLabels(workspaceSlug, projectId);
       await projectStore.fetchProjectMembers(workspaceSlug, projectId);
 
+      // fetching the cycle issues
       await cycleIssueStore.fetchIssues(workspaceSlug, projectId, cycleId);
     }
   });
 
-  const activeLayout = cycleFilterStore.userDisplayFilters.layout;
+  const activeLayout = issueFilterStore.userDisplayFilters.layout;
 
   return (
-    <div className="relative w-full h-full flex flex-col overflow-auto border border-red-500">
+    <div className="w-full h-full">
       {activeLayout === "list" ? <CycleListLayout /> : activeLayout === "kanban" ? <CycleKanBanLayout /> : null}
     </div>
   );

@@ -10,16 +10,16 @@ import { RootStore } from "store/root";
 export interface ICycleListLayout {}
 
 export const CycleListLayout: React.FC = observer(() => {
-  const { issue: issueStore, issueFilter: issueFilterStore }: RootStore = useMobxStore();
+  const { issueFilter: issueFilterStore, cycleIssue: cycleIssueStore }: RootStore = useMobxStore();
 
-  const issues = issueStore?.getIssues;
+  const issues = cycleIssueStore?.getIssues;
 
   const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
 
   const display_properties = issueFilterStore?.userDisplayProperties || null;
 
   const updateIssue = (group_by: string | null, issue: any) => {
-    issueStore.updateIssueStructure(group_by, null, issue);
+    cycleIssueStore.updateIssueStructure(group_by, null, issue);
   };
 
   return (

@@ -75,8 +75,9 @@ class CycleIssueStore implements ICycleIssueStore {
     const groupedLayouts = ["kanban", "list", "calendar"];
     const ungroupedLayouts = ["spreadsheet", "gantt_chart"];
 
-    const issueLayout = this.rootStore?.cycleFilter?.userDisplayFilters?.layout || null;
-    const issueSubGroup = this.rootStore?.cycleFilter?.userDisplayFilters?.sub_group_by || null;
+    const issueLayout = this.rootStore?.issueFilter?.userDisplayFilters?.layout || null;
+    const issueSubGroup = this.rootStore?.issueFilter?.userDisplayFilters?.sub_group_by || null;
+
     if (!issueLayout) return null;
 
     const _issueState = groupedLayouts.includes(issueLayout)
@@ -145,10 +146,13 @@ class CycleIssueStore implements ICycleIssueStore {
       this.rootStore.project.setProjectId(projectId);
       this.rootStore.cycle.setCycleId(cycleId);
 
-      const params = this.rootStore?.cycleFilter?.appliedFilters;
+      const params = this.rootStore?.cycleIssueFilter?.appliedFilters;
       console.log("params", params);
 
+      console.log("coming here...");
       const issueResponse = await this.cycleService.getCycleIssuesWithParams(workspaceSlug, projectId, cycleId, params);
+      console.log("coming here also...");
+      console.log("issueResponse", issueResponse);
 
       const issueType = this.getIssueType;
       if (issueType != null) {

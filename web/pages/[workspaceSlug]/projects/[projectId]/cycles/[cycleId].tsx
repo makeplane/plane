@@ -164,17 +164,17 @@ const SingleCycle: React.FC = () => {
         ) : (
           <>
             <TransferIssuesModal handleClose={() => setTransferIssuesModal(false)} isOpen={transferIssuesModal} />
+
             <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
+
             <div
-              className={`h-full flex flex-col ${cycleSidebar ? "mr-[24rem]" : ""} ${
+              className={`relative w-full h-full flex flex-col overflow-auto ${cycleSidebar ? "mr-[24rem]" : ""} ${
                 analyticsModal ? "mr-[50%]" : ""
               } duration-300`}
             >
               {cycleStatus === "completed" && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
 
-              <div className="relative w-full h-full overflow-hidden">
-                <CycleLayoutRoot />
-              </div>
+              <CycleLayoutRoot />
             </div>
             <CycleDetailsSidebar
               cycleStatus={cycleStatus}

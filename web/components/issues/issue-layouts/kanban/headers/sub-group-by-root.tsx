@@ -13,10 +13,12 @@ export interface IKanBanSubGroupByHeaderRoot {
   sub_group_by: string | null;
   group_by: string | null;
   issues_count: number;
+  kanBanToggle: any;
+  handleKanBanToggle: any;
 }
 
 export const KanBanSubGroupByHeaderRoot: React.FC<IKanBanSubGroupByHeaderRoot> = observer(
-  ({ column_id, sub_group_by, group_by, issues_count }) => (
+  ({ column_id, sub_group_by, group_by, issues_count, kanBanToggle, handleKanBanToggle }) => (
     <>
       {sub_group_by && sub_group_by === "state" && (
         <StateHeader
@@ -25,6 +27,8 @@ export const KanBanSubGroupByHeaderRoot: React.FC<IKanBanSubGroupByHeaderRoot> =
           group_by={group_by}
           header_type={`sub_group_by`}
           issues_count={issues_count}
+          kanBanToggle={kanBanToggle}
+          handleKanBanToggle={handleKanBanToggle}
         />
       )}
       {sub_group_by && sub_group_by === "state_detail.group" && (
@@ -34,6 +38,8 @@ export const KanBanSubGroupByHeaderRoot: React.FC<IKanBanSubGroupByHeaderRoot> =
           group_by={group_by}
           header_type={`sub_group_by`}
           issues_count={issues_count}
+          kanBanToggle={kanBanToggle}
+          handleKanBanToggle={handleKanBanToggle}
         />
       )}
       {sub_group_by && sub_group_by === "priority" && (
@@ -43,6 +49,8 @@ export const KanBanSubGroupByHeaderRoot: React.FC<IKanBanSubGroupByHeaderRoot> =
           group_by={group_by}
           header_type={`sub_group_by`}
           issues_count={issues_count}
+          kanBanToggle={kanBanToggle}
+          handleKanBanToggle={handleKanBanToggle}
         />
       )}
       {sub_group_by && sub_group_by === "labels" && (
@@ -52,6 +60,8 @@ export const KanBanSubGroupByHeaderRoot: React.FC<IKanBanSubGroupByHeaderRoot> =
           group_by={group_by}
           header_type={`sub_group_by`}
           issues_count={issues_count}
+          kanBanToggle={kanBanToggle}
+          handleKanBanToggle={handleKanBanToggle}
         />
       )}
       {sub_group_by && sub_group_by === "assignees" && (
@@ -61,6 +71,8 @@ export const KanBanSubGroupByHeaderRoot: React.FC<IKanBanSubGroupByHeaderRoot> =
           group_by={group_by}
           header_type={`sub_group_by`}
           issues_count={issues_count}
+          kanBanToggle={kanBanToggle}
+          handleKanBanToggle={handleKanBanToggle}
         />
       )}
       {sub_group_by && sub_group_by === "created_by" && (
@@ -70,6 +82,8 @@ export const KanBanSubGroupByHeaderRoot: React.FC<IKanBanSubGroupByHeaderRoot> =
           group_by={group_by}
           header_type={`sub_group_by`}
           issues_count={issues_count}
+          kanBanToggle={kanBanToggle}
+          handleKanBanToggle={handleKanBanToggle}
         />
       )}
     </>

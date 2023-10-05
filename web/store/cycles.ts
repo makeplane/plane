@@ -30,7 +30,7 @@ export interface ICycleStore {
     projectId: string,
     params: "all" | "current" | "upcoming" | "draft" | "completed" | "incomplete"
   ) => Promise<void>;
-  fetchCycleWithId: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
+  fetchCycleWithId: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<ICycle>;
   createCycle: (workspaceSlug: string, projectId: string, data: any) => Promise<ICycle>;
   updateCycle: (workspaceSlug: string, projectId: string, cycleId: string, data: any) => Promise<ICycle>;
 
@@ -137,7 +137,7 @@ class CycleStore implements ICycleStore {
           [response?.id]: response,
         };
       });
-      
+      return response;
     } catch (error) {
       console.log("Failed to fetch cycle detail from cycle store");
       throw error;
@@ -171,16 +171,21 @@ class CycleStore implements ICycleStore {
     try {
       const response = await this.cycleService.updateCycle(workspaceSlug, projectId, cycleId, data, undefined);
 
-      console.log("response", response);
+      const _cycles = {
+        ...this.cycles,
+        [projectId]: this.cycles[projectId].map((cycle) => {
+          if (cycle.id === cycleId) return { ...cycle, ...response };
+          return cycle;
+        }),
+      };
+      const _cycleDetails = {
+        ...this.cycle_details,
+        [cycleId]: { ...this.cycle_details[cycleId], ...response },
+      };
 
       runInAction(() => {
-        this.cycles = {
-          ...this.cycles,
-          [projectId]: this.cycles[projectId].map((cycle) => {
-            if (cycle.id === cycleId) return { ...cycle, ...response };
-            return cycle;
-          }),
-        };
+        this.cycles = _cycles;
+        this.cycle_details = _cycleDetails;
       });
 
       return response;
