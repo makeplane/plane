@@ -27,6 +27,9 @@ class UserStore implements IUserStore {
   constructor(_rootStore: any) {
     makeObservable(this, {
       // observable
+      loader: observable.ref,
+      error: observable.ref,
+
       currentUser: observable.ref,
       // actions
       setCurrentUser: action,
