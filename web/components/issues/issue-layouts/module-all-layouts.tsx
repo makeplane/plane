@@ -18,9 +18,14 @@ export const ModuleAllLayouts: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
 
-  const { module: moduleStore, project: projectStore, issueFilter: issueFilterStore } = useMobxStore();
+  const {
+    module: moduleStore,
+    moduleFilter: moduleFilterStore,
+    project: projectStore,
+    issueFilter: issueFilterStore,
+  } = useMobxStore();
 
-  useSWR(workspaceSlug && projectId ? `MODULE_ISSUES` : null, async () => {
+  useSWR(workspaceSlug && projectId && moduleId ? `MODULE_ISSUES_${moduleId.toString()}` : null, async () => {
     if (workspaceSlug && projectId && moduleId) {
       await issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
 
@@ -28,8 +33,8 @@ export const ModuleAllLayouts: React.FC = observer(() => {
       await projectStore.fetchProjectLabels(workspaceSlug.toString(), projectId.toString());
       await projectStore.fetchProjectMembers(workspaceSlug.toString(), projectId.toString());
 
-      await moduleStore.fetchModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString());
       await moduleStore.fetchModuleIssues(workspaceSlug.toString(), projectId.toString(), moduleId.toString());
+      await moduleFilterStore.fetchModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString());
     }
   });
 

@@ -178,7 +178,6 @@ class ModuleStore implements IModuleStore {
           ...this.moduleDetails,
           [moduleId]: response,
         };
-        this.rootStore.moduleFilter.userModuleFilters = response.view_props?.filters ?? {};
         this.loader = false;
         this.error = null;
       });
@@ -343,7 +342,6 @@ class ModuleStore implements IModuleStore {
       this.rootStore.project.setProjectId(projectId);
 
       const params = this.rootStore?.issueFilter?.appliedFilters;
-      console.log("params", params);
       const issueResponse = await this.moduleService.getModuleIssuesWithParams(
         workspaceSlug,
         projectId,
