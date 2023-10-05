@@ -70,7 +70,7 @@
     "eslint": "8.34.0",
     "eslint-config-custom": "*",
     "eslint-config-next": "13.2.1",
-    "tsconfig": "*",
-    "tailwind-config-custom": "*"
+    "tailwind-config-custom": "*",
+    "tsconfig": "*"
   }
 }

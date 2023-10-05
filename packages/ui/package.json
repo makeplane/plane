@@ -16,8 +16,8 @@
     "eslint-config-custom": "*",
     "next": "12.3.2",
     "react": "^18.2.0",
-    "tsconfig": "*",
     "tailwind-config-custom": "*",
+    "tsconfig": "*",
     "typescript": "4.7.4"
   }
 }

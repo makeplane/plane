@@ -52,6 +52,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
     control,
     reset,
     handleSubmit,
+    setValue,
     formState: { isSubmitting, errors },
   } = useForm<FormValues>();
 
@@ -110,6 +111,11 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
       append([{ email: "", role: 15 }]);
     }
   }, [fields, append]);
+
+  const onBlurHandler = (e: React.FocusEvent<HTMLInputElement>, index: number) => {
+    const trimmedValue = e.target.value.trimEnd();
+    setValue(`emails.${index}.email`, trimmedValue);
+  }
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -171,10 +177,11 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
                                   message: "Invalid Email ID",
                                 },
                               }}
-                              render={({ field }) => (
+                              render={({ field: { onBlur, ...rest } }) => (
                                 <>
                                   <Input
-                                    {...field}
+                                    onBlur={(e) => onBlurHandler(e, index)}
+                                    {...rest}
                                     className="text-xs sm:text-sm"
                                     placeholder="Enter their email..."
                                   />
