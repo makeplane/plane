@@ -1,7 +1,7 @@
 import { BoldIcon, QuoteIcon, ImageIcon, TableIcon, ListIcon, ListOrderedIcon, ItalicIcon, UnderlineIcon, StrikethroughIcon, CodeIcon } from "lucide-react";
 import { Editor } from "@tiptap/react";
 import { UploadImage } from "../../../types/upload-image";
-import { insertImageCommand, insertTableCommand, toggleBlockquote, toggleBold, toggleBulletList, toggleCode, toggleItalic, toggleOrderedList, toggleStrike, } from "../../../lib/editor-commands";
+import { insertImageCommand, insertTableCommand, toggleBlockquote, toggleBold, toggleBulletList, toggleCode, toggleItalic, toggleOrderedList, toggleStrike, toggleUnderline, } from "../../../lib/editor-commands";
 
 export interface EditorMenuItem {
   name: string;
@@ -27,7 +27,7 @@ export const ItalicItem = (editor: Editor): EditorMenuItem => ({
 export const UnderLineItem = (editor: Editor): EditorMenuItem => ({
   name: "underline",
   isActive: () => editor?.isActive("underline"),
-  command: () => UnderLineItem(editor),
+  command: () => toggleUnderline(editor),
   icon: UnderlineIcon,
 })
 
