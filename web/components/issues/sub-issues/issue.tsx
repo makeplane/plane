@@ -1,7 +1,8 @@
 import React from "react";
 // next imports
-import Link from "next/link";
 import { useRouter } from "next/router";
+// swr
+import { mutate } from "swr";
 // lucide icons
 import {
   ChevronDown,
@@ -13,6 +14,7 @@ import {
   Loader,
 } from "lucide-react";
 // components
+import { IssuePeekOverview } from "components/issues/peek-overview";
 import { SubIssuesRootList } from "./issues-list";
 import { IssueProperty } from "./properties";
 // ui
@@ -20,6 +22,8 @@ import { Tooltip, CustomMenu } from "components/ui";
 // types
 import { ICurrentUserResponse, IIssue } from "types";
 import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
+// fetch keys
+import { SUB_ISSUES } from "constants/fetch-keys";
 
 export interface ISubIssues {
   workspaceSlug: string;
@@ -38,7 +42,6 @@ export interface ISubIssues {
     issueId: string,
     issue?: IIssue | null
   ) => void;
-  setPeekParentId: (id: string) => void;
 }
 
 export const SubIssues: React.FC<ISubIssues> = ({
@@ -54,14 +57,12 @@ export const SubIssues: React.FC<ISubIssues> = ({
   handleIssuesLoader,
   copyText,
   handleIssueCrudOperation,
-  setPeekParentId,
 }) => {
   const router = useRouter();
+  const { query } = router;
+  const { peekIssue } = query as { peekIssue: string };
 
   const openPeekOverview = (issue_id: string) => {
-    const { query } = router;
-
-    setPeekParentId(parentIssue?.id);
     router.push({
       pathname: router.pathname,
       query: { ...query, peekIssue: issue_id },
@@ -199,7 +200,17 @@ export const SubIssues: React.FC<ISubIssues> = ({
           handleIssuesLoader={handleIssuesLoader}
           copyText={copyText}
           handleIssueCrudOperation={handleIssueCrudOperation}
-          setPeekParentId={setPeekParentId}
+        />
+      )}
+
+      {peekIssue && peekIssue === issue?.id && (
+        <IssuePeekOverview
+          handleMutation={() =>
+            parentIssue && parentIssue?.id && mutate(SUB_ISSUES(parentIssue?.id))
+          }
+          projectId={issue?.project ?? ""}
+          workspaceSlug={workspaceSlug ?? ""}
+          readOnly={!editable}
         />
       )}
     </div>

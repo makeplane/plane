@@ -129,18 +129,19 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
   const issueName = watch("name");
 
   const payload: Partial<IIssue> = {
-    name: getValues("name"),
-    description: getValues("description"),
-    state: getValues("state"),
-    priority: getValues("priority"),
-    assignees: getValues("assignees"),
-    labels: getValues("labels"),
-    start_date: getValues("start_date"),
-    target_date: getValues("target_date"),
-    project: getValues("project"),
-    parent: getValues("parent"),
-    cycle: getValues("cycle"),
-    module: getValues("module"),
+    name: watch("name"),
+    description: watch("description"),
+    description_html: watch("description_html"),
+    state: watch("state"),
+    priority: watch("priority"),
+    assignees: watch("assignees"),
+    labels: watch("labels"),
+    start_date: watch("start_date"),
+    target_date: watch("target_date"),
+    project: watch("project"),
+    parent: watch("parent"),
+    cycle: watch("cycle"),
+    module: watch("module"),
   };
 
   useEffect(() => {

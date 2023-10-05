@@ -1,6 +1,6 @@
 {
   "name": "space",
-  "version": "0.0.1",
+  "version": "0.13.2",
   "private": true,
   "scripts": {
     "dev": "next dev -p 4000",

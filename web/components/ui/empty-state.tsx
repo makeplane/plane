@@ -16,6 +16,7 @@ type Props = {
   };
   secondaryButton?: React.ReactNode;
   isFullScreen?: boolean;
+  disabled?: boolean;
 };
 
 export const EmptyState: React.FC<Props> = ({
@@ -25,6 +26,7 @@ export const EmptyState: React.FC<Props> = ({
   primaryButton,
   secondaryButton,
   isFullScreen = true,
+  disabled = false,
 }) => (
   <div
     className={`h-full w-full mx-auto grid place-items-center p-8 ${
@@ -37,7 +39,11 @@ export const EmptyState: React.FC<Props> = ({
       {description && <p className="text-custom-text-300 mb-7 sm:mb-8">{description}</p>}
       <div className="flex items-center gap-4">
         {primaryButton && (
-          <PrimaryButton className="flex items-center gap-1.5" onClick={primaryButton.onClick}>
+          <PrimaryButton
+            className="flex items-center gap-1.5"
+            onClick={primaryButton.onClick}
+            disabled={disabled}
+          >
             {primaryButton.icon}
             {primaryButton.text}
           </PrimaryButton>

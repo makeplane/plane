@@ -76,21 +76,23 @@ class FileServices extends APIService {
       });
   }
 
-  async getUnsplashImages(page: number = 1, query?: string): Promise<UnSplashImage[]> {
-    const url = "/api/unsplash";
-
-    return this.request({
-      method: "get",
-      url,
+  async getUnsplashImages(query?: string): Promise<UnSplashImage[]> {
+    return this.get(`/api/unsplash/`, {
       params: {
-        page,
-        per_page: 20,
         query,
       },
     })
-      .then((response) => response?.data?.results ?? response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
+      .then((res) => res?.data?.results ?? res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async getProjectCoverImages(): Promise<string[]> {
+    return this.get(`/api/project-covers/`)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
       });
   }
 }
