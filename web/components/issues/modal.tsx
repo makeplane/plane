@@ -415,6 +415,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         setFormDirtyState(null);
         setShowConfirmDiscard(false);
 
+        clearLocalStorageValue();
+
         if (payload.assignees_list?.some((assignee) => assignee === user?.id))
           mutate(USER_ISSUE(workspaceSlug as string));
 

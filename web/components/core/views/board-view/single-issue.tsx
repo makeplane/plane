@@ -108,13 +108,13 @@ export const SingleBoardIssue: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug, cycleId, moduleId } = router.query;
 
-  const isDraftIssue = router.pathname.includes("draft-issues");
+  const isDraftIssuePage = router.pathname?.split("/")?.[4] === "draft-issues";
 
   const { setToastAlert } = useToast();
 
   const partialUpdateIssue = useCallback(
     (formData: Partial<IIssue>, issue: IIssue) => {
-      if (!workspaceSlug || !issue) return;
+      if (!workspaceSlug || !issue || !user) return;
 
       if (issue.parent) {
         mutate<ISubIssueResponse>(
@@ -152,16 +152,33 @@ export const SingleBoardIssue: React.FC<Props> = ({
         );
       }
 
-      issuesService
-        .patchIssue(workspaceSlug as string, issue.project, issue.id, formData, user)
-        .then(() => {
-          mutateIssues();
+      (isDraftIssuePage
+        ? issuesService.updateDraftIssue(
+            workspaceSlug as string,
+            issue.project,
+            issue.id,
+            formData,
+            user
+          )
+        : issuesService.patchIssue(workspaceSlug as string, issue.project, issue.id, formData, user)
+      ).then(() => {
+        mutateIssues();
 
-          if (cycleId) mutate(CYCLE_DETAILS(cycleId as string));
-          if (moduleId) mutate(MODULE_DETAILS(moduleId as string));
-        });
+        if (cycleId) mutate(CYCLE_DETAILS(cycleId as string));
+        if (moduleId) mutate(MODULE_DETAILS(moduleId as string));
+      });
     },
-    [displayFilters, workspaceSlug, cycleId, moduleId, groupTitle, index, mutateIssues, user]
+    [
+      displayFilters,
+      workspaceSlug,
+      cycleId,
+      moduleId,
+      groupTitle,
+      index,
+      mutateIssues,
+      user,
+      isDraftIssuePage,
+    ]
   );
 
   const getStyle = (
@@ -305,13 +322,13 @@ export const SingleBoardIssue: React.FC<Props> = ({
             <ContextMenu.Item
               Icon={PencilIcon}
               onClick={() => {
-                if (isDraftIssue && handleDraftIssueEdit) handleDraftIssueEdit();
+                if (isDraftIssuePage && handleDraftIssueEdit) handleDraftIssueEdit();
                 else editIssue();
               }}
             >
               Edit issue
             </ContextMenu.Item>
-            {!isDraftIssue && (
+            {!isDraftIssuePage && (
               <ContextMenu.Item Icon={ClipboardDocumentCheckIcon} onClick={makeIssueCopy}>
                 Make a copy...
               </ContextMenu.Item>
@@ -319,7 +336,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
             <ContextMenu.Item
               Icon={TrashIcon}
               onClick={() => {
-                if (isDraftIssue && handleDraftIssueDelete) handleDraftIssueDelete();
+                if (isDraftIssuePage && handleDraftIssueDelete) handleDraftIssueDelete();
                 else handleDeleteIssue(issue);
               }}
             >
@@ -327,12 +344,12 @@ export const SingleBoardIssue: React.FC<Props> = ({
             </ContextMenu.Item>
           </>
         )}
-        {!isDraftIssue && (
+        {!isDraftIssuePage && (
           <ContextMenu.Item Icon={LinkIcon} onClick={handleCopyText}>
             Copy issue link
           </ContextMenu.Item>
         )}
-        {!isDraftIssue && (
+        {!isDraftIssuePage && (
           <a
             href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}
             target="_blank"
@@ -379,7 +396,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 >
                   <CustomMenu.MenuItem
                     onClick={() => {
-                      if (isDraftIssue && handleDraftIssueEdit) handleDraftIssueEdit();
+                      if (isDraftIssuePage && handleDraftIssueEdit) handleDraftIssueEdit();
                       else editIssue();
                     }}
                   >
@@ -388,7 +405,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                       <span>Edit issue</span>
                     </div>
                   </CustomMenu.MenuItem>
-                  {type !== "issue" && removeIssue && !isDraftIssue && (
+                  {type !== "issue" && removeIssue && !isDraftIssuePage && (
                     <CustomMenu.MenuItem onClick={removeIssue}>
                       <div className="flex items-center justify-start gap-2">
                         <XMarkIcon className="h-4 w-4" />
@@ -398,7 +415,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                   )}
                   <CustomMenu.MenuItem
                     onClick={() => {
-                      if (isDraftIssue && handleDraftIssueDelete) handleDraftIssueDelete();
+                      if (isDraftIssuePage && handleDraftIssueDelete) handleDraftIssueDelete();
                       else handleDeleteIssue(issue);
                     }}
                   >
@@ -407,7 +424,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                       <span>Delete issue</span>
                     </div>
                   </CustomMenu.MenuItem>
-                  {!isDraftIssue && (
+                  {!isDraftIssuePage && (
                     <CustomMenu.MenuItem onClick={handleCopyText}>
                       <div className="flex items-center justify-start gap-2">
                         <LinkIcon className="h-4 w-4" />
@@ -429,7 +446,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
             <button
               type="button"
               onClick={() => {
-                if (isDraftIssue && handleDraftIssueEdit) handleDraftIssueEdit();
+                if (isDraftIssuePage && handleDraftIssueEdit) handleDraftIssueEdit();
                 else openPeekOverview();
               }}
             >

@@ -100,7 +100,7 @@ export const SingleListIssue: React.FC<Props> = ({
 
   const partialUpdateIssue = useCallback(
     (formData: Partial<IIssue>, issue: IIssue) => {
-      if (!workspaceSlug || !issue) return;
+      if (!workspaceSlug || !issue || !user) return;
 
       if (issue.parent) {
         mutate<ISubIssueResponse>(
@@ -138,19 +138,26 @@ export const SingleListIssue: React.FC<Props> = ({
         );
       }
 
-      issuesService
-        .patchIssue(workspaceSlug as string, issue.project, issue.id, formData, user)
-        .then(() => {
-          mutateIssues();
+      (isDraftIssues
+        ? issuesService.updateDraftIssue(
+            workspaceSlug as string,
+            issue.project,
+            issue.id,
+            formData,
+            user
+          )
+        : issuesService.patchIssue(workspaceSlug as string, issue.project, issue.id, formData, user)
+      ).then(() => {
+        mutateIssues();
 
-          if (userId)
-            mutate<IUserProfileProjectSegregation>(
-              USER_PROFILE_PROJECT_SEGREGATION(workspaceSlug.toString(), userId.toString())
-            );
+        if (userId)
+          mutate<IUserProfileProjectSegregation>(
+            USER_PROFILE_PROJECT_SEGREGATION(workspaceSlug.toString(), userId.toString())
+          );
 
-          if (cycleId) mutate(CYCLE_DETAILS(cycleId as string));
-          if (moduleId) mutate(MODULE_DETAILS(moduleId as string));
-        });
+        if (cycleId) mutate(CYCLE_DETAILS(cycleId as string));
+        if (moduleId) mutate(MODULE_DETAILS(moduleId as string));
+      });
     },
     [
       displayFilters,
@@ -162,6 +169,7 @@ export const SingleListIssue: React.FC<Props> = ({
       index,
       mutateIssues,
       user,
+      isDraftIssues,
     ]
   );
 

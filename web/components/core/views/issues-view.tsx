@@ -44,6 +44,7 @@ import {
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   PROJECT_ISSUE_LABELS,
   STATES_LIST,
+  PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS,
 } from "constants/fetch-keys";
 
 type Props = {
@@ -254,49 +255,60 @@ export const IssuesView: React.FC<Props> = ({
         );
 
         // patch request
-        issuesService
-          .patchIssue(
-            workspaceSlug as string,
-            projectId as string,
-            draggedItem.id,
-            {
-              priority: draggedItem.priority,
-              state: draggedItem.state,
-              sort_order: draggedItem.sort_order,
-            },
-            user
+        (isDraftIssues
+          ? issuesService.updateDraftIssue(
+              workspaceSlug as string,
+              projectId as string,
+              draggedItem.id,
+              {
+                priority: draggedItem.priority,
+                state: draggedItem.state,
+                sort_order: draggedItem.sort_order,
+              },
+              user!
+            )
+          : issuesService.patchIssue(
+              workspaceSlug as string,
+              projectId as string,
+              draggedItem.id,
+              {
+                priority: draggedItem.priority,
+                state: draggedItem.state,
+                sort_order: draggedItem.sort_order,
+              },
+              user
+            )
+        ).then((response) => {
+          const sourceStateBeforeDrag = states?.find((state) => state.name === source.droppableId);
+
+          if (
+            sourceStateBeforeDrag?.group !== "completed" &&
+            response?.state_detail?.group === "completed"
           )
-          .then((response) => {
-            const sourceStateBeforeDrag = states?.find(
-              (state) => state.name === source.droppableId
+            trackEventServices.trackIssueMarkedAsDoneEvent(
+              {
+                workspaceSlug,
+                workspaceId: draggedItem.workspace,
+                projectName: draggedItem.project_detail.name,
+                projectIdentifier: draggedItem.project_detail.identifier,
+                projectId,
+                issueId: draggedItem.id,
+              },
+              user
             );
 
-            if (
-              sourceStateBeforeDrag?.group !== "completed" &&
-              response?.state_detail?.group === "completed"
-            )
-              trackEventServices.trackIssueMarkedAsDoneEvent(
-                {
-                  workspaceSlug,
-                  workspaceId: draggedItem.workspace,
-                  projectName: draggedItem.project_detail.name,
-                  projectIdentifier: draggedItem.project_detail.identifier,
-                  projectId,
-                  issueId: draggedItem.id,
-                },
-                user
-              );
-
-            if (cycleId) {
-              mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
-              mutate(CYCLE_DETAILS(cycleId as string));
-            }
-            if (moduleId) {
-              mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
-              mutate(MODULE_DETAILS(moduleId as string));
-            }
-            mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
-          });
+          if (cycleId) {
+            mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
+            mutate(CYCLE_DETAILS(cycleId as string));
+          }
+          if (moduleId) {
+            mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
+            mutate(MODULE_DETAILS(moduleId as string));
+          }
+          mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
+          if (isDraftIssues)
+            mutate(PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
+        });
       }
     },
     [
@@ -311,6 +323,7 @@ export const IssuesView: React.FC<Props> = ({
       params,
       states,
       user,
+      isDraftIssues,
     ]
   );
 
