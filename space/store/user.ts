@@ -7,12 +7,17 @@ import { ActorDetail } from "types/issue";
 import { IUser } from "types/user";
 
 export interface IUserStore {
+  loader: boolean;
+  error: any | null;
   currentUser: any | null;
   fetchCurrentUser: () => void;
   currentActor: () => any;
 }
 
 class UserStore implements IUserStore {
+  loader: boolean = false;
+  error: any | null = null;
+
   currentUser: IUser | null = null;
   // root store
   rootStore;
@@ -22,6 +27,9 @@ class UserStore implements IUserStore {
   constructor(_rootStore: any) {
     makeObservable(this, {
       // observable
+      loader: observable.ref,
+      error: observable.ref,
+
       currentUser: observable.ref,
       // actions
       setCurrentUser: action,
@@ -73,14 +81,19 @@ class UserStore implements IUserStore {
 
   fetchCurrentUser = async () => {
     try {
+      this.loader = true;
+      this.error = null;
       const response = await this.userService.currentUser();
       if (response) {
         runInAction(() => {
+          this.loader = false;
           this.currentUser = response;
         });
       }
     } catch (error) {
       console.error("Failed to fetch current user", error);
+      this.loader = false;
+      this.error = error;
     }
   };
 }

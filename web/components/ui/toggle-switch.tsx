@@ -21,7 +21,7 @@ export const ToggleSwitch: React.FC<Props> = (props) => {
         size === "sm" ? "h-4 w-6" : size === "md" ? "h-5 w-8" : "h-6 w-10"
       } flex-shrink-0 cursor-pointer rounded-full border border-custom-border-200 transition-colors duration-200 ease-in-out focus:outline-none ${
         value ? "bg-custom-primary-100" : "bg-gray-700"
-      } ${className || ""}`}
+      } ${className || ""} ${disabled ? "cursor-not-allowed" : ""}`}
     >
       <span className="sr-only">{label}</span>
       <span
@@ -35,8 +35,8 @@ export const ToggleSwitch: React.FC<Props> = (props) => {
                 : size === "md"
                 ? "translate-x-4"
                 : "translate-x-5") + " bg-white"
-            : "translate-x-1 bg-custom-background-90"
-        }`}
+            : "translate-x-0.5 bg-custom-background-90"
+        } ${disabled ? "cursor-not-allowed" : ""}`}
       />
     </Switch>
   );

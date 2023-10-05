@@ -93,6 +93,40 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
     setActiveProject(null);
   };
 
+  const onDiscard = () => {
+    clearDraftIssueLocalStorage();
+    onClose();
+  };
+
+  useEffect(() => {
+    setPreloadedData(prePopulateDataProps ?? {});
+
+    if (cycleId && !prePopulateDataProps?.cycle) {
+      setPreloadedData((prevData) => ({
+        ...(prevData ?? {}),
+        ...prePopulateDataProps,
+        cycle: cycleId.toString(),
+      }));
+    }
+    if (moduleId && !prePopulateDataProps?.module) {
+      setPreloadedData((prevData) => ({
+        ...(prevData ?? {}),
+        ...prePopulateDataProps,
+        module: moduleId.toString(),
+      }));
+    }
+    if (
+      (router.asPath.includes("my-issues") || router.asPath.includes("assigned")) &&
+      !prePopulateDataProps?.assignees
+    ) {
+      setPreloadedData((prevData) => ({
+        ...(prevData ?? {}),
+        ...prePopulateDataProps,
+        assignees: prePopulateDataProps?.assignees ?? [user?.id ?? ""],
+      }));
+    }
+  }, [prePopulateDataProps, cycleId, moduleId, router.asPath, user?.id]);
+
   useEffect(() => {
     setPreloadedData(prePopulateDataProps ?? {});
 
@@ -136,7 +170,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
 
     if (prePopulateData && prePopulateData.project && !activeProject) return setActiveProject(prePopulateData.project);
 
-    if (prePopulateData && prePopulateData.project) return setActiveProject(prePopulateData.project);
+    if (prePopulateData && prePopulateData.project && !activeProject) return setActiveProject(prePopulateData.project);
 
     // if data is not present, set active project to the project
     // in the url. This has the least priority.
@@ -158,14 +192,8 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
     await issuesService
       .createDraftIssue(workspaceSlug as string, activeProject ?? "", payload, user)
       .then(async () => {
-        mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
         mutate(PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
 
-        if (displayFilters.layout === "gantt_chart")
-          mutate(ganttFetchKey, {
-            start_target_date: true,
-            order_by: "sort_order",
-          });
         if (groupedIssues) mutateMyIssues();
 
         setToastAlert({
@@ -176,8 +204,6 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
 
         if (payload.assignees_list?.some((assignee) => assignee === user?.id))
           mutate(USER_ISSUE(workspaceSlug as string));
-
-        if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
       })
       .catch(() => {
         setToastAlert({
@@ -361,12 +387,14 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
               >
                 <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
                   <DraftIssueForm
+                    isOpen={isOpen}
                     handleFormSubmit={handleFormSubmit}
                     prePopulatedData={prePopulateData}
                     data={data}
                     createMore={createMore}
                     setCreateMore={setCreateMore}
                     handleClose={onClose}
+                    handleDiscard={onDiscard}
                     projectId={activeProject ?? ""}
                     setActiveProject={setActiveProject}
                     status={data ? true : false}

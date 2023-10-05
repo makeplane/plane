@@ -1,32 +1,23 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-
-// next
 import Image from "next/image";
 import { useRouter } from "next/router";
-
-// swr
 import useSWR from "swr";
-
-// react-dropdown
 import { useDropzone } from "react-dropzone";
-
-// headless ui
 import { Tab, Transition, Popover } from "@headlessui/react";
 
 // services
 import fileService from "services/file.service";
-
-// components
-import { Input, Spinner, PrimaryButton, SecondaryButton } from "components/ui";
 // hooks
 import useWorkspaceDetails from "hooks/use-workspace-details";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-
-const unsplashEnabled =
-  process.env.NEXT_PUBLIC_UNSPLASH_ENABLED === "true" ||
-  process.env.NEXT_PUBLIC_UNSPLASH_ENABLED === "1";
+// components
+import { Input, PrimaryButton, SecondaryButton, Loader } from "components/ui";
 
 const tabOptions = [
+  {
+    key: "unsplash",
+    title: "Unsplash",
+  },
   {
     key: "images",
     title: "Images",
@@ -64,8 +55,22 @@ export const ImagePickerPopover: React.FC<Props> = ({
     search: "",
   });
 
-  const { data: images } = useSWR(`UNSPLASH_IMAGES_${searchParams}`, () =>
-    fileService.getUnsplashImages(1, searchParams)
+  const { data: unsplashImages, error: unsplashError } = useSWR(
+    `UNSPLASH_IMAGES_${searchParams}`,
+    () => fileService.getUnsplashImages(searchParams),
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
+
+  const { data: projectCoverImages } = useSWR(
+    `PROJECT_COVER_IMAGES`,
+    () => fileService.getProjectCoverImages(),
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
   );
 
   const imagePickerRef = useRef<HTMLDivElement>(null);
@@ -115,18 +120,17 @@ export const ImagePickerPopover: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    if (!images || value !== null) return;
-    onChange(images[0].urls.regular);
-  }, [value, onChange, images]);
+    if (!unsplashImages || value !== null) return;
+
+    onChange(unsplashImages[0].urls.regular);
+  }, [value, onChange, unsplashImages]);
 
   useOutsideClickDetector(imagePickerRef, () => setIsOpen(false));
-
-  if (!unsplashEnabled) return null;
 
   return (
     <Popover className="relative z-[2]" ref={ref}>
       <Popover.Button
-        className="rounded-sm border border-custom-border-300 bg-custom-background-100 px-2 py-1 text-xs text-custom-text-200 hover:text-custom-text-100"
+        className="rounded border border-custom-border-300 bg-custom-background-100 px-2 py-1 text-xs text-custom-text-200 hover:text-custom-text-100"
         onClick={() => setIsOpen((prev) => !prev)}
         disabled={disabled}
       >
@@ -141,15 +145,19 @@ export const ImagePickerPopover: React.FC<Props> = ({
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Popover.Panel className="absolute right-0 z-10 mt-2 rounded-md border border-custom-border-200 bg-custom-background-80 shadow-lg">
+        <Popover.Panel className="absolute right-0 z-10 mt-2 rounded-md border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-sm">
           <div
             ref={imagePickerRef}
             className="h-96 md:h-[28rem] w-80 md:w-[36rem] flex flex-col overflow-auto rounded border border-custom-border-300 bg-custom-background-100 p-3 shadow-2xl"
           >
             <Tab.Group>
-              <div>
-                <Tab.List as="span" className="inline-block rounded bg-custom-background-80 p-1">
-                  {tabOptions.map((tab) => (
+              <Tab.List as="span" className="inline-block rounded bg-custom-background-80 p-1">
+                {tabOptions.map((tab) => {
+                  if (!unsplashImages && unsplashError && tab.key === "unsplash") return null;
+                  if (projectCoverImages && projectCoverImages.length === 0 && tab.key === "images")
+                    return null;
+
+                  return (
                     <Tab
                       key={tab.key}
                       className={({ selected }) =>
@@ -160,50 +168,106 @@ export const ImagePickerPopover: React.FC<Props> = ({
                     >
                       {tab.title}
                     </Tab>
-                  ))}
-                </Tab.List>
-              </div>
+                  );
+                })}
+              </Tab.List>
               <Tab.Panels className="h-full w-full flex-1 overflow-y-auto overflow-x-hidden">
-                <Tab.Panel className="h-full w-full space-y-4">
-                  <div className="flex gap-x-2 pt-7">
-                    <Input
-                      name="search"
-                      className="text-sm"
-                      id="search"
-                      value={formData.search}
-                      onChange={(e) => setFormData({ ...formData, search: e.target.value })}
-                      placeholder="Search for images"
-                    />
-                    <PrimaryButton onClick={() => setSearchParams(formData.search)} size="sm">
-                      Search
-                    </PrimaryButton>
-                  </div>
-                  {images ? (
-                    <div className="grid grid-cols-4 gap-4">
-                      {images.map((image) => (
-                        <div
-                          key={image.id}
-                          className="relative col-span-2 aspect-video md:col-span-1"
-                        >
-                          <img
-                            src={image.urls.small}
-                            alt={image.alt_description}
-                            className="cursor-pointer rounded absolute top-0 left-0 h-full w-full object-cover"
-                            onClick={() => {
-                              setIsOpen(false);
-                              onChange(image.urls.regular);
-                            }}
-                          />
+                {(unsplashImages || !unsplashError) && (
+                  <Tab.Panel className="h-full w-full space-y-4 mt-4">
+                    <div className="flex gap-x-2">
+                      <Input
+                        name="search"
+                        className="text-sm"
+                        id="search"
+                        value={formData.search}
+                        onChange={(e) => setFormData({ ...formData, search: e.target.value })}
+                        placeholder="Search for images"
+                      />
+                      <PrimaryButton onClick={() => setSearchParams(formData.search)} size="sm">
+                        Search
+                      </PrimaryButton>
+                    </div>
+                    {unsplashImages ? (
+                      unsplashImages.length > 0 ? (
+                        <div className="grid grid-cols-4 gap-4">
+                          {unsplashImages.map((image) => (
+                            <div
+                              key={image.id}
+                              className="relative col-span-2 aspect-video md:col-span-1"
+                              onClick={() => {
+                                setIsOpen(false);
+                                onChange(image.urls.regular);
+                              }}
+                            >
+                              <img
+                                src={image.urls.small}
+                                alt={image.alt_description}
+                                className="cursor-pointer rounded absolute top-0 left-0 h-full w-full object-cover"
+                              />
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="flex justify-center pt-20">
-                      <Spinner />
-                    </div>
-                  )}
-                </Tab.Panel>
-                <Tab.Panel className="h-full w-full pt-5">
+                      ) : (
+                        <p className="text-center text-custom-text-300 text-xs pt-7">
+                          No images found.
+                        </p>
+                      )
+                    ) : (
+                      <Loader className="grid grid-cols-4 gap-4">
+                        <Loader.Item height="80px" width="100%" />
+                        <Loader.Item height="80px" width="100%" />
+                        <Loader.Item height="80px" width="100%" />
+                        <Loader.Item height="80px" width="100%" />
+                        <Loader.Item height="80px" width="100%" />
+                        <Loader.Item height="80px" width="100%" />
+                        <Loader.Item height="80px" width="100%" />
+                        <Loader.Item height="80px" width="100%" />
+                      </Loader>
+                    )}
+                  </Tab.Panel>
+                )}
+                {(!projectCoverImages || projectCoverImages.length !== 0) && (
+                  <Tab.Panel className="h-full w-full space-y-4 mt-4">
+                    {projectCoverImages ? (
+                      projectCoverImages.length > 0 ? (
+                        <div className="grid grid-cols-4 gap-4">
+                          {projectCoverImages.map((image, index) => (
+                            <div
+                              key={image}
+                              className="relative col-span-2 aspect-video md:col-span-1"
+                              onClick={() => {
+                                setIsOpen(false);
+                                onChange(image);
+                              }}
+                            >
+                              <img
+                                src={image}
+                                alt={`Default project cover image- ${index}`}
+                                className="cursor-pointer rounded absolute top-0 left-0 h-full w-full object-cover"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-center text-custom-text-300 text-xs pt-7">
+                          No images found.
+                        </p>
+                      )
+                    ) : (
+                      <Loader className="grid grid-cols-4 gap-4 pt-4">
+                        <Loader.Item height="80px" width="100%" />
+                        <Loader.Item height="80px" width="100%" />
+                        <Loader.Item height="80px" width="100%" />
+                        <Loader.Item height="80px" width="100%" />
+                        <Loader.Item height="80px" width="100%" />
+                        <Loader.Item height="80px" width="100%" />
+                        <Loader.Item height="80px" width="100%" />
+                        <Loader.Item height="80px" width="100%" />
+                      </Loader>
+                    )}
+                  </Tab.Panel>
+                )}
+                <Tab.Panel className="h-full w-full mt-4">
                   <div className="w-full h-full flex flex-col gap-y-2">
                     <div className="flex items-center gap-3 w-full flex-1">
                       <div

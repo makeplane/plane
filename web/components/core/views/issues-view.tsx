@@ -76,7 +76,9 @@ export const IssuesView: React.FC<Props> = ({ openIssuesListModal, disableUserAc
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
-  const isDraftIssues = router.asPath.includes("draft-issues");
+
+  const isDraftIssues = router.pathname?.split("/")?.[4] === "draft-issues";
+  const isArchivedIssues = router.pathname?.split("/")?.[4] === "archived-issues";
 
   const { user } = useUserAuth();
 
@@ -575,6 +577,7 @@ export const IssuesView: React.FC<Props> = ({ openIssuesListModal, disableUserAc
           params,
           properties,
         }}
+        disableAddIssueOption={isArchivedIssues}
       />
     </>
   );

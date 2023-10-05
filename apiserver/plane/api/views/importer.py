@@ -384,7 +384,7 @@ class BulkImportIssuesEndpoint(BaseAPIView):
                         sort_order=largest_sort_order,
                         start_date=issue_data.get("start_date", None),
                         target_date=issue_data.get("target_date", None),
-                        priority=issue_data.get("priority", None),
+                        priority=issue_data.get("priority", "none"),
                         created_by=request.user,
                     )
                 )

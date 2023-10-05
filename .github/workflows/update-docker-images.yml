@@ -39,10 +39,10 @@ jobs:
             type=ref,event=tag
 
       - name: Extract metadata (tags, labels) for Docker (Docker Hub) from Github Release
-        id: metaDeploy
+        id: metaSpace
         uses: docker/metadata-action@v4.3.0
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-deploy
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space
           tags: |
             type=ref,event=tag
 
@@ -87,7 +87,7 @@ jobs:
           file: ./space/Dockerfile.space
           platforms: linux/amd64
           push: true
-          tags: ${{ steps.metaDeploy.outputs.tags }}
+          tags: ${{ steps.metaSpace.outputs.tags }}
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}

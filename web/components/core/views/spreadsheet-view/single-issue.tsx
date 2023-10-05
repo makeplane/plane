@@ -19,12 +19,21 @@ import { StateSelect } from "components/states";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { renderLongDetailDateFormat } from "helpers/date-time.helper";
 // types
-import { ICurrentUserResponse, IIssue, IState, Properties, TIssuePriorities, UserAuth } from "types";
+import { ICurrentUserResponse, IIssue, IState, ISubIssueResponse, Properties, TIssuePriorities, UserAuth } from "types";
 // constant
-import { CYCLE_DETAILS, MODULE_DETAILS, SUB_ISSUES } from "constants/fetch-keys";
+import {
+  CYCLE_DETAILS,
+  CYCLE_ISSUES_WITH_PARAMS,
+  MODULE_DETAILS,
+  MODULE_ISSUES_WITH_PARAMS,
+  PROJECT_ISSUES_LIST_WITH_PARAMS,
+  SUB_ISSUES,
+  VIEW_ISSUES,
+} from "constants/fetch-keys";
 
 type Props = {
   issue: IIssue;
+  projectId: string;
   index: number;
   expanded: boolean;
   handleToggleExpand: (issueId: string) => void;
@@ -40,6 +49,7 @@ type Props = {
 
 export const SingleSpreadsheetIssue: React.FC<Props> = ({
   issue,
+  projectId,
   index,
   expanded,
   handleToggleExpand,
@@ -56,7 +66,9 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
 
   const router = useRouter();
 
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, cycleId, moduleId, viewId } = router.query;
+
+  const params = {};
 
   const { setToastAlert } = useToast();
 
@@ -64,8 +76,53 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
     (formData: Partial<IIssue>, issue: IIssue) => {
       if (!workspaceSlug || !projectId) return;
 
+      const fetchKey = cycleId
+        ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), params)
+        : moduleId
+        ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), params)
+        : viewId
+        ? VIEW_ISSUES(viewId.toString(), params)
+        : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId, params);
+
+      if (issue.parent)
+        mutate<ISubIssueResponse>(
+          SUB_ISSUES(issue.parent.toString()),
+          (prevData) => {
+            if (!prevData) return prevData;
+
+            return {
+              ...prevData,
+              sub_issues: (prevData.sub_issues ?? []).map((i) => {
+                if (i.id === issue.id) {
+                  return {
+                    ...i,
+                    ...formData,
+                  };
+                }
+                return i;
+              }),
+            };
+          },
+          false
+        );
+      else
+        mutate<IIssue[]>(
+          fetchKey,
+          (prevData) =>
+            (prevData ?? []).map((p) => {
+              if (p.id === issue.id) {
+                return {
+                  ...p,
+                  ...formData,
+                };
+              }
+              return p;
+            }),
+          false
+        );
+
       issuesService
-        .patchIssue(workspaceSlug as string, projectId as string, issue.id as string, formData, user)
+        .patchIssue(workspaceSlug as string, projectId, issue.id as string, formData, user)
         .then(() => {
           if (issue.parent) {
             mutate(SUB_ISSUES(issue.parent as string));
@@ -286,6 +343,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
           <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
             <StateSelect
               value={issue.state_detail}
+              projectId={projectId}
               onChange={handleStateChange}
               buttonClassName="!p-0 !rounded-none !shadow-none !border-0"
               hideDropdownArrow
@@ -308,6 +366,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
           <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
             <MembersSelect
               value={issue.assignees}
+              projectId={projectId}
               onChange={handleAssigneeChange}
               membersDetails={issue.assignee_details}
               buttonClassName="!p-0 !rounded-none !shadow-none !border-0"
@@ -320,6 +379,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
           <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
             <LabelSelect
               value={issue.labels}
+              projectId={projectId}
               onChange={handleLabelChange}
               labelsDetails={issue.label_details}
               hideDropdownArrow

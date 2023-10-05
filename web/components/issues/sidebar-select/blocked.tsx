@@ -14,7 +14,7 @@ import { ExistingIssuesListModal } from "components/core";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { BlockedIcon } from "components/icons";
 // types
-import { BlockeIssueDetail, IIssue, ISearchIssueResponse, UserAuth } from "types";
+import { BlockeIssueDetail, IIssue, ISearchIssueResponse } from "types";
 
 type Props = {
   issueId?: string;
@@ -35,6 +35,8 @@ export const SidebarBlockedSelect: React.FC<Props> = ({ issueId, submitChanges, 
   const handleClose = () => {
     setIsBlockedModalOpen(false);
   };
+
+  const blockedByIssue = watch("related_issues")?.filter((i) => i.relation_type === "blocked_by") || [];
 
   const onSubmit = async (data: ISearchIssueResponse[]) => {
     if (data.length === 0) {
@@ -75,14 +77,12 @@ export const SidebarBlockedSelect: React.FC<Props> = ({ issueId, submitChanges, 
       })
       .then((response) => {
         submitChanges({
-          related_issues: [...watch("related_issues")?.filter((i) => i.relation_type !== "blocked_by"), ...response],
+          related_issues: [...watch("related_issues"), ...response],
         });
       });
 
     handleClose();
   };
-
-  const blockedByIssue = watch("related_issues")?.filter((i) => i.relation_type === "blocked_by");
 
   return (
     <>

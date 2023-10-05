@@ -32,7 +32,7 @@ const MobxStoreInit = () => {
     // theme
     if (themeStore.theme === null && userStore?.currentUserSettings) {
       let currentTheme = localStorage.getItem("theme");
-      currentTheme = currentTheme ? currentTheme : "system";
+      currentTheme = currentTheme && currentTheme != "undefined" ? currentTheme : "system";
 
       // validating the theme and applying for initial state
       if (currentTheme) {

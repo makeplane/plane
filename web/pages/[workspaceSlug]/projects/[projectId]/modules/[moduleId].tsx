@@ -140,9 +140,9 @@ const SingleModule: React.FC = () => {
           <>
             <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
             <div
-              className={`h-full flex flex-col ${moduleSidebar ? "mr-[24rem]" : ""} ${
-                analyticsModal ? "mr-[50%]" : ""
-              } duration-300`}
+              className={`relative overflow-y-auto h-full flex flex-col ${
+                moduleSidebar ? "mr-[24rem]" : ""
+              } ${analyticsModal ? "mr-[50%]" : ""} duration-300`}
             >
               <ModuleAllLayouts />
             </div>

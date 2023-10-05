@@ -61,7 +61,7 @@ class GlobalViewViewSet(BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("workspace")
-            .order_by("-created_at")
+            .order_by(self.request.GET.get("order_by", "-created_at"))
             .distinct()
         )
 
