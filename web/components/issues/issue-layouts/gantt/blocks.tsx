@@ -5,7 +5,7 @@ import { Tooltip } from "components/ui";
 // icons
 import { StateGroupIcon } from "components/icons";
 // helpers
-import { findTotalDaysInRange, renderShortDate } from "helpers/date-time.helper";
+import { renderShortDate } from "helpers/date-time.helper";
 // types
 import { IIssue } from "types";
 
@@ -52,8 +52,6 @@ export const IssueGanttBlock = ({ data }: { data: IIssue }) => {
 export const IssueGanttSidebarBlock = ({ data }: { data: IIssue }) => {
   const router = useRouter();
 
-  const duration = findTotalDaysInRange(data?.start_date ?? "", data?.target_date ?? "", true);
-
   const openPeekOverview = () => {
     const { query } = router;
 
@@ -72,12 +70,7 @@ export const IssueGanttSidebarBlock = ({ data }: { data: IIssue }) => {
       <div className="text-xs text-custom-text-300 flex-shrink-0">
         {data?.project_detail?.identifier} {data?.sequence_id}
       </div>
-      <div className="flex items-center justify-between gap-2 w-full flex-grow truncate">
-        <h6 className="text-sm font-medium flex-grow truncate">{data?.name}</h6>
-        <span className="flex-shrink-0 text-sm text-custom-text-200">
-          {duration} day{duration > 1 ? "s" : ""}
-        </span>
-      </div>
+      <h6 className="text-sm font-medium flex-grow truncate">{data?.name}</h6>
     </div>
   );
 };

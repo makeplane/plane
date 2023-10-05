@@ -80,8 +80,6 @@ export const TableMenu = ({ editor }: { editor: any }) => {
         const range = selection.getRangeAt(0);
         const tableNode = findTableAncestor(range.startContainer);
 
-        let parent = tableNode?.parentElement;
-
         if (tableNode) {
           const tableRect = tableNode.getBoundingClientRect();
           const tableCenter = tableRect.left + tableRect.width / 2;
@@ -90,18 +88,6 @@ export const TableMenu = ({ editor }: { editor: any }) => {
           const tableBottom = tableRect.bottom;
 
           setTableLocation({ bottom: tableBottom, left: menuLeft });
-
-          while (parent) {
-            if (!parent.classList.contains("disable-scroll"))
-              parent.classList.add("disable-scroll");
-            parent = parent.parentElement;
-          }
-        } else {
-          const scrollDisabledContainers = document.querySelectorAll(".disable-scroll");
-
-          scrollDisabledContainers.forEach((container) => {
-            container.classList.remove("disable-scroll");
-          });
         }
       }
     };
@@ -115,13 +101,9 @@ export const TableMenu = ({ editor }: { editor: any }) => {
 
   return (
     <section
-      className={`fixed left-1/2 transform -translate-x-1/2 overflow-hidden rounded border border-custom-border-300 bg-custom-background-100 shadow-custom-shadow-sm p-1 ${
+      className={`absolute z-20 left-1/2 -translate-x-1/2 overflow-hidden rounded border border-custom-border-300 bg-custom-background-100 shadow-custom-shadow-sm p-1 ${
         isOpen ? "block" : "hidden"
       }`}
-      style={{
-        bottom: `calc(100vh - ${tableLocation.bottom + 45}px)`,
-        left: `${tableLocation.left}px`,
-      }}
     >
       {items.map((item, index) => (
         <Tooltip key={index} tooltipContent={item.name}>

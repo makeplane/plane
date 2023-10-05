@@ -118,7 +118,7 @@ const useMyIssuesFilters = (workspaceSlug: string | undefined) => {
 
   const setProperty = useCallback(
     (key: keyof Properties) => {
-      if (!myWorkspace) return;
+      if (!myWorkspace?.view_props.display_properties) return;
 
       saveData({
         display_properties: {

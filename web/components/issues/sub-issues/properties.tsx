@@ -86,12 +86,14 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
   };
 
   const handleAssigneeChange = (data: any) => {
-    const newData = issue.assignees ?? [];
+    let newData = issue.assignees ?? [];
 
-    if (newData.includes(data)) newData.splice(newData.indexOf(data), 1);
-    else newData.push(data);
+    if (newData && newData.length > 0) {
+      if (newData.includes(data)) newData = newData.splice(newData.indexOf(data), 1);
+      else newData = [...newData, data];
+    } else newData = [...newData, data];
 
-    partialUpdateIssue({ assignees_list: data });
+    partialUpdateIssue({ assignees_list: data, assignees: data });
 
     trackEventServices.trackIssuePartialPropertyUpdateEvent(
       {
@@ -151,7 +153,13 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
 
       {properties.state && (
         <div className="flex-shrink-0">
-          <StateSelect value={issue.state_detail} onChange={handleStateChange} hideDropdownArrow disabled={!editable} />
+          <StateSelect
+            value={issue.state_detail}
+            projectId={issue.project_detail.id}
+            onChange={handleStateChange}
+            hideDropdownArrow
+            disabled={!editable}
+          />
         </div>
       )}
 
@@ -181,6 +189,7 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
         <div className="flex-shrink-0">
           <MembersSelect
             value={issue.assignees}
+            projectId={issue.project_detail.id}
             onChange={handleAssigneeChange}
             membersDetails={issue.assignee_details}
             hideDropdownArrow

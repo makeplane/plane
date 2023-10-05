@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
-
+import React, { useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-
 // next-themes
 import { useTheme } from "next-themes";
 // services
@@ -13,9 +11,7 @@ import useToast from "hooks/use-toast";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // components
-import { EmailPasswordForm } from "components/account";
-// ui
-import { Spinner } from "components/ui";
+import { EmailPasswordForm, EmailSignUpForm } from "components/account";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // types
@@ -27,8 +23,6 @@ type EmailPasswordFormValues = {
 };
 
 const SignUp: NextPage = () => {
-  const [isLoading, setIsLoading] = useState(true);
-
   const router = useRouter();
 
   const { setToastAlert } = useToast();
@@ -70,18 +64,6 @@ const SignUp: NextPage = () => {
     setTheme("system");
   }, [setTheme]);
 
-  useEffect(() => {
-    if (parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0")) router.push("/");
-    else setIsLoading(false);
-  }, [router]);
-
-  if (isLoading)
-    return (
-      <div className="grid place-items-center h-screen w-full">
-        <Spinner />
-      </div>
-    );
-
   return (
     <DefaultLayout>
       <>
@@ -96,7 +78,8 @@ const SignUp: NextPage = () => {
       </>
       <div className="grid place-items-center h-full w-full overflow-y-auto py-5 px-7">
         <div>
-          <EmailPasswordForm onSubmit={handleSignUp} />
+          <h1 className="text-2xl text-center font-">SignUp on Plane</h1>
+          <EmailSignUpForm onSubmit={handleSignUp} />
         </div>
       </div>
     </DefaultLayout>

@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 
 import { mutate } from "swr";
 
+import useUser from "hooks/use-user";
+
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
@@ -16,7 +18,7 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { SecondaryButton, DangerButton } from "components/ui";
 // types
-import type { IIssue, ICurrentUserResponse } from "types";
+import type { IIssue } from "types";
 // fetch-keys
 import { PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS } from "constants/fetch-keys";
 
@@ -24,12 +26,11 @@ type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data: IIssue | null;
-  user?: ICurrentUserResponse;
   onSubmit?: () => Promise<void> | void;
 };
 
 export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
-  const { isOpen, handleClose, data, user, onSubmit } = props;
+  const { isOpen, handleClose, data, onSubmit } = props;
 
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
@@ -39,6 +40,8 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
   const { params } = useIssuesView();
 
   const { setToastAlert } = useToast();
+
+  const { user } = useUser();
 
   useEffect(() => {
     setIsDeleteLoading(false);

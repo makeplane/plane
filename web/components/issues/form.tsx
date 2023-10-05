@@ -210,9 +210,7 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
           setToastAlert({
             type: "error",
             title: "Error!",
-            message:
-              error ||
-              "You have reached the maximum number of requests of 50 requests per month per user.",
+            message: error || "You have reached the maximum number of requests of 50 requests per month per user.",
           });
         else
           setToastAlert({
@@ -308,9 +306,7 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
                   <span className="flex-shrink-0 text-custom-text-200">
                     {selectedParentIssue.project__identifier}-{selectedParentIssue.sequence_id}
                   </span>
-                  <span className="truncate font-medium">
-                    {selectedParentIssue.name.substring(0, 50)}
-                  </span>
+                  <span className="truncate font-medium">{selectedParentIssue.name.substring(0, 50)}</span>
                   <XMarkIcon
                     className="h-3 w-3 cursor-pointer"
                     onClick={() => {
@@ -385,9 +381,7 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
                           ref={editorRef}
                           debouncedUpdatesEnabled={false}
                           value={
-                            !value ||
-                            value === "" ||
-                            (typeof value === "object" && Object.keys(value).length === 0)
+                            !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
                               ? watch("description_html")
                               : value
                           }
@@ -446,11 +440,7 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
                     control={control}
                     name="assignees"
                     render={({ field: { value, onChange } }) => (
-                      <IssueAssigneeSelect
-                        projectId={projectId}
-                        value={value}
-                        onChange={onChange}
-                      />
+                      <IssueAssigneeSelect projectId={projectId} value={value} onChange={onChange} />
                     )}
                   />
                 )}
@@ -532,24 +522,15 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
                   <CustomMenu ellipsis>
                     {watch("parent") ? (
                       <>
-                        <CustomMenu.MenuItem
-                          renderAs="button"
-                          onClick={() => setParentIssueListModalOpen(true)}
-                        >
+                        <CustomMenu.MenuItem renderAs="button" onClick={() => setParentIssueListModalOpen(true)}>
                           Change parent issue
                         </CustomMenu.MenuItem>
-                        <CustomMenu.MenuItem
-                          renderAs="button"
-                          onClick={() => setValue("parent", null)}
-                        >
+                        <CustomMenu.MenuItem renderAs="button" onClick={() => setValue("parent", null)}>
                           Remove parent issue
                         </CustomMenu.MenuItem>
                       </>
                     ) : (
-                      <CustomMenu.MenuItem
-                        renderAs="button"
-                        onClick={() => setParentIssueListModalOpen(true)}
-                      >
+                      <CustomMenu.MenuItem renderAs="button" onClick={() => setParentIssueListModalOpen(true)}>
                         Select Parent Issue
                       </CustomMenu.MenuItem>
                     )}

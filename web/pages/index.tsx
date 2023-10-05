@@ -1,13 +1,14 @@
-import React, { useEffect } from "react";
-
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
-
 import type { NextPage } from "next";
-
+import { useTheme } from "next-themes";
+import useSWR from "swr";
+import { observer } from "mobx-react-lite";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // services
 import authenticationService from "services/authentication.service";
+import { AppConfigService } from "services/app-config.service";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
@@ -17,18 +18,18 @@ import {
   GithubLoginButton,
   EmailCodeForm,
   EmailPasswordForm,
+  EmailResetPasswordForm,
 } from "components/account";
 // ui
 import { Spinner } from "components/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
-// mobx react lite
-import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// next themes
-import { useTheme } from "next-themes";
+// types
 import { IUser } from "types";
+
+const appConfig = new AppConfigService();
 
 // types
 type EmailPasswordFormValues = {
@@ -39,11 +40,16 @@ type EmailPasswordFormValues = {
 
 const HomePage: NextPage = observer(() => {
   const store: any = useMobxStore();
+  // theme
   const { setTheme } = useTheme();
-
+  // user
   const { isLoading, mutateUser } = useUserAuth("sign-in");
-
+  // states
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
+  // toast
   const { setToastAlert } = useToast();
+  // fetch app config
+  const { data } = useSWR("APP_CONFIG", () => appConfig.envConfig());
 
   const handleTheme = (user: IUser) => {
     const currentTheme = user.theme.theme ?? "system";
@@ -79,11 +85,11 @@ const HomePage: NextPage = observer(() => {
 
   const handleGitHubSignIn = async (credential: string) => {
     try {
-      if (process.env.NEXT_PUBLIC_GITHUB_ID && credential) {
+      if (data && data.github && credential) {
         const socialAuthPayload = {
           medium: "github",
           credential,
-          clientId: process.env.NEXT_PUBLIC_GITHUB_ID,
+          clientId: data.github,
         };
         const response = await authenticationService.socialAuth(socialAuthPayload);
         if (response && response?.user) {
@@ -149,10 +155,6 @@ const HomePage: NextPage = observer(() => {
     }
   };
 
-  useEffect(() => {
-    setTheme("system");
-  }, [setTheme]);
-
   return (
     <DefaultLayout>
       {isLoading ? (
@@ -173,38 +175,54 @@ const HomePage: NextPage = observer(() => {
           </>
           <div className="grid place-items-center h-full overflow-y-auto py-5 px-7">
             <div>
-              {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
+              <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
+                {isResettingPassword ? "Reset your password" : "Sign in to Plane"}
+              </h1>
+              {isResettingPassword ? (
+                <EmailResetPasswordForm setIsResettingPassword={setIsResettingPassword} />
+              ) : (
                 <>
-                  <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
-                    Sign in to Plane
-                  </h1>
-                  <div className="flex flex-col divide-y divide-custom-border-200">
-                    <div className="pb-7">
-                      <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
+                  {data?.email_password_login && (
+                    <EmailPasswordForm
+                      onSubmit={handlePasswordSignIn}
+                      setIsResettingPassword={setIsResettingPassword}
+                    />
+                  )}
+                  {data?.magic_login && (
+                    <div className="flex flex-col divide-y divide-custom-border-200">
+                      <div className="pb-7">
+                        <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
+                      </div>
                     </div>
-                    <div className="flex flex-col items-center justify-center gap-4 pt-7 sm:w-[360px] mx-auto overflow-hidden">
-                      <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
-                      <GithubLoginButton handleSignIn={handleGitHubSignIn} />
-                    </div>
+                  )}
+                  <div className="flex flex-col items-center justify-center gap-4 pt-7 sm:w-[360px] mx-auto overflow-hidden">
+                    {data?.google && (
+                      <GoogleLoginButton
+                        clientId={data?.google}
+                        handleSignIn={handleGoogleSignIn}
+                      />
+                    )}
+                    {data?.github && (
+                      <GithubLoginButton
+                        clientId={data?.github}
+                        handleSignIn={handleGitHubSignIn}
+                      />
+                    )}
                   </div>
                 </>
-              ) : (
-                <EmailPasswordForm onSubmit={handlePasswordSignIn} />
               )}
 
-              {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
-                <p className="pt-16 text-custom-text-200 text-sm text-center">
-                  By signing up, you agree to the{" "}
-                  <a
-                    href="https://plane.so/terms-and-conditions"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-medium underline"
-                  >
-                    Terms & Conditions
-                  </a>
-                </p>
-              ) : null}
+              <p className="pt-16 text-custom-text-200 text-sm text-center">
+                By signing up, you agree to the{" "}
+                <a
+                  href="https://plane.so/terms-and-conditions"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium underline"
+                >
+                  Terms & Conditions
+                </a>
+              </p>
             </div>
           </div>
         </>

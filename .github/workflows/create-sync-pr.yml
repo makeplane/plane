@@ -1,0 +1,77 @@
+name: Create PR in Plane EE Repository to sync the changes
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  create_pr:
+    # Only run the job when a PR is merged
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+    steps:
+      - name: Check SOURCE_REPO
+        id: check_repo
+        env:
+          SOURCE_REPO: ${{ secrets.SOURCE_REPO_NAME }}
+        run: |
+          echo "::set-output name=is_correct_repo::$(if [[ "$SOURCE_REPO" == "makeplane/plane" ]]; then echo 'true'; else echo 'false'; fi)"
+
+      - name: Checkout Code
+        if: steps.check_repo.outputs.is_correct_repo == 'true'
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Set up Branch Name
+        if: steps.check_repo.outputs.is_correct_repo == 'true'
+        run: |
+          echo "SOURCE_BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
+
+      - name: Setup GH CLI
+        if: steps.check_repo.outputs.is_correct_repo == 'true'
+        run: |
+          type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt update
+          sudo apt install gh -y
+
+      - name: Create Pull Request
+        if: steps.check_repo.outputs.is_correct_repo == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        run: |
+          TARGET_REPO="${{ secrets.TARGET_REPO_NAME }}"
+          TARGET_BRANCH="${{ secrets.TARGET_REPO_BRANCH }}"
+          SOURCE_BRANCH="${{ env.SOURCE_BRANCH_NAME }}"
+
+          git checkout $SOURCE_BRANCH
+          git remote add target "https://$GH_TOKEN@github.com/$TARGET_REPO.git"
+          git push target $SOURCE_BRANCH:$SOURCE_BRANCH
+
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_BODY="${{ github.event.pull_request.body }}"
+
+          # Remove double quotes
+          PR_TITLE_CLEANED="${PR_TITLE//\"/}"
+          PR_BODY_CLEANED="${PR_BODY//\"/}"
+
+          # Construct PR_BODY_CONTENT using a here-document
+          PR_BODY_CONTENT=$(cat <<EOF
+          $PR_BODY_CLEANED
+          EOF
+          )
+
+          gh pr create \
+            --base $TARGET_BRANCH \
+            --head $SOURCE_BRANCH \
+            --title "[SYNC] $PR_TITLE_CLEANED" \
+            --body "$PR_BODY_CONTENT" \
+            --repo $TARGET_REPO

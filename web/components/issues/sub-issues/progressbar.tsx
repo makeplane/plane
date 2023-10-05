@@ -14,7 +14,7 @@ export const ProgressBar = ({ total = 0, done = 0 }: IProgressBar) => {
       <div className="w-full">
         <div className="w-full rounded-full bg-custom-background-80 overflow-hidden shadow">
           <div
-            className="bg-green-500 h-[6px] rounded-full"
+            className="bg-green-500 h-[6px] rounded-full transition-all"
             style={{ width: `${calPercentage(done, total)}%` }}
           />
         </div>

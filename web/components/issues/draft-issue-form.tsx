@@ -8,6 +8,7 @@ import { Controller, useForm } from "react-hook-form";
 import aiService from "services/ai.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useLocalStorage from "hooks/use-local-storage";
 // components
 import { GptAssistantModal } from "components/core";
 import { ParentIssuesListModal } from "components/issues";
@@ -60,12 +61,14 @@ interface IssueFormProps {
     action?: "createDraft" | "createNewIssue" | "updateDraft" | "convertToNewIssue"
   ) => Promise<void>;
   data?: Partial<IIssue> | null;
+  isOpen: boolean;
   prePopulatedData?: Partial<IIssue> | null;
   projectId: string;
   setActiveProject: React.Dispatch<React.SetStateAction<string | null>>;
   createMore: boolean;
   setCreateMore: React.Dispatch<React.SetStateAction<boolean>>;
   handleClose: () => void;
+  handleDiscard: () => void;
   status: boolean;
   user: ICurrentUserResponse | undefined;
   fieldsToShow: (
@@ -88,6 +91,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
   const {
     handleFormSubmit,
     data,
+    isOpen,
     prePopulatedData,
     projectId,
     setActiveProject,
@@ -97,6 +101,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
     status,
     user,
     fieldsToShow,
+    handleDiscard,
   } = props;
 
   const [stateModal, setStateModal] = useState(false);
@@ -106,6 +111,8 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
 
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
+
+  const { setValue: setLocalStorageValue } = useLocalStorage("draftedIssue", {});
 
   const editorRef = useRef<any>(null);
 
@@ -130,6 +137,33 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
   });
 
   const issueName = watch("name");
+
+  const payload: Partial<IIssue> = {
+    name: watch("name"),
+    description: watch("description"),
+    description_html: watch("description_html"),
+    state: watch("state"),
+    priority: watch("priority"),
+    assignees: watch("assignees"),
+    labels: watch("labels"),
+    start_date: watch("start_date"),
+    target_date: watch("target_date"),
+    project: watch("project"),
+    parent: watch("parent"),
+    cycle: watch("cycle"),
+    module: watch("module"),
+  };
+
+  useEffect(() => {
+    if (!isOpen || data) return;
+
+    setLocalStorageValue(
+      JSON.stringify({
+        ...payload,
+      })
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(payload), isOpen, data]);
 
   const onClose = () => {
     handleClose();
@@ -206,9 +240,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
           setToastAlert({
             type: "error",
             title: "Error!",
-            message:
-              error ||
-              "You have reached the maximum number of requests of 50 requests per month per user.",
+            message: error || "You have reached the maximum number of requests of 50 requests per month per user.",
           });
         else
           setToastAlert({
@@ -271,7 +303,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
       )}
       <form
         onSubmit={handleSubmit((formData) =>
-          handleCreateUpdateIssue(formData, "convertToNewIssue")
+          handleCreateUpdateIssue(formData, data ? "convertToNewIssue" : "createDraft")
         )}
       >
         <div className="space-y-5">
@@ -309,9 +341,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                   <span className="flex-shrink-0 text-custom-text-200">
                     {selectedParentIssue.project__identifier}-{selectedParentIssue.sequence_id}
                   </span>
-                  <span className="truncate font-medium">
-                    {selectedParentIssue.name.substring(0, 50)}
-                  </span>
+                  <span className="truncate font-medium">{selectedParentIssue.name.substring(0, 50)}</span>
                   <XMarkIcon
                     className="h-3 w-3 cursor-pointer"
                     onClick={() => {
@@ -386,9 +416,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                           ref={editorRef}
                           debouncedUpdatesEnabled={false}
                           value={
-                            !value ||
-                            value === "" ||
-                            (typeof value === "object" && Object.keys(value).length === 0)
+                            !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
                               ? watch("description_html")
                               : value
                           }
@@ -447,11 +475,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                     control={control}
                     name="assignees"
                     render={({ field: { value, onChange } }) => (
-                      <IssueAssigneeSelect
-                        projectId={projectId}
-                        value={value}
-                        onChange={onChange}
-                      />
+                      <IssueAssigneeSelect projectId={projectId} value={value} onChange={onChange} />
                     )}
                   />
                 )}
@@ -533,24 +557,15 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                   <CustomMenu ellipsis>
                     {watch("parent") ? (
                       <>
-                        <CustomMenu.MenuItem
-                          renderAs="button"
-                          onClick={() => setParentIssueListModalOpen(true)}
-                        >
+                        <CustomMenu.MenuItem renderAs="button" onClick={() => setParentIssueListModalOpen(true)}>
                           Change parent issue
                         </CustomMenu.MenuItem>
-                        <CustomMenu.MenuItem
-                          renderAs="button"
-                          onClick={() => setValue("parent", null)}
-                        >
+                        <CustomMenu.MenuItem renderAs="button" onClick={() => setValue("parent", null)}>
                           Remove parent issue
                         </CustomMenu.MenuItem>
                       </>
                     ) : (
-                      <CustomMenu.MenuItem
-                        renderAs="button"
-                        onClick={() => setParentIssueListModalOpen(true)}
-                      >
+                      <CustomMenu.MenuItem renderAs="button" onClick={() => setParentIssueListModalOpen(true)}>
                         Select Parent Issue
                       </CustomMenu.MenuItem>
                     )}
@@ -569,7 +584,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
             <ToggleSwitch value={createMore} onChange={() => {}} size="md" />
           </div>
           <div className="flex items-center gap-2">
-            <SecondaryButton onClick={onClose}>Discard</SecondaryButton>
+            <SecondaryButton onClick={handleDiscard}>Discard</SecondaryButton>
             <SecondaryButton
               loading={isSubmitting}
               onClick={handleSubmit((formData) =>

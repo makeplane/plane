@@ -46,6 +46,7 @@ import { CYCLE_DETAILS, MODULE_DETAILS, SUB_ISSUES, USER_PROFILE_PROJECT_SEGREGA
 type Props = {
   type?: string;
   issue: IIssue;
+  projectId: string;
   groupTitle?: string;
   editIssue: () => void;
   index: number;
@@ -64,6 +65,7 @@ type Props = {
 export const SingleListIssue: React.FC<Props> = ({
   type,
   issue,
+  projectId,
   editIssue,
   index,
   makeIssueCopy,
@@ -83,7 +85,7 @@ export const SingleListIssue: React.FC<Props> = ({
   const [contextMenuPosition, setContextMenuPosition] = useState<React.MouseEvent | null>(null);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, userId } = router.query;
+  const { workspaceSlug, cycleId, moduleId, userId } = router.query;
   const isArchivedIssues = router.pathname.includes("archived-issues");
   const isDraftIssues = router.pathname?.split("/")?.[4] === "draft-issues";
 
@@ -303,7 +305,7 @@ export const SingleListIssue: React.FC<Props> = ({
       </ContextMenu>
 
       <div
-        className="flex items-center justify-between px-4 py-2.5 gap-10 border-b border-custom-border-200 bg-custom-background-100 last:border-b-0"
+        className="flex items-center justify-between px-4 py-2.5 gap-10 border-b-[0.5px] border-custom-border-100 bg-custom-background-100 last:border-b-0"
         onContextMenu={(e) => {
           e.preventDefault();
           setContextMenu(true);
@@ -327,6 +329,7 @@ export const SingleListIssue: React.FC<Props> = ({
                 type="button"
                 className="truncate text-[0.825rem] text-custom-text-100"
                 onClick={() => {
+                  if (isArchivedIssues) return router.push(issuePath);
                   if (!isDraftIssues) openPeekOverview(issue);
                   if (isDraftIssues && handleDraftIssueSelect) handleDraftIssueSelect(issue);
                 }}

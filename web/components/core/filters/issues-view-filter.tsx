@@ -67,7 +67,7 @@ export const IssuesFilterView: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, viewId } = router.query;
   const isArchivedIssues = router.pathname.includes("archived-issues");
-  const isDraftIssues = router.pathname.includes("draft-issues");
+  const isDraftIssues = router.pathname?.split("/")?.[4] === "draft-issues";
 
   const { displayFilters, setDisplayFilters, filters, setFilters, resetFilterToDefault, setNewFilterDefaultView } =
     useIssuesView();
@@ -83,7 +83,11 @@ export const IssuesFilterView: React.FC = () => {
           {issueViewOptions.map((option) => (
             <Tooltip
               key={option.type}
-              tooltipContent={<span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} View</span>}
+              tooltipContent={
+                <span className="capitalize">
+                  {replaceUnderscoreIfSnakeCase(option.type)} Layout
+                </span>
+              }
               position="bottom"
             >
               <button
@@ -209,6 +213,9 @@ export const IssuesFilterView: React.FC = () => {
                                 if (displayFilters.layout === "kanban" && option.key === null) return null;
                                 if (option.key === "project") return null;
 
+                                if (isDraftIssues && option.key === "state_detail.group")
+                                  return null;
+
                                 return (
                                   <CustomMenu.MenuItem
                                     key={option.key}
@@ -250,33 +257,36 @@ export const IssuesFilterView: React.FC = () => {
                             )}
                           </CustomMenu>
                         </div>
+                      )}
+                    {!isArchivedIssues && (
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-custom-text-200">Issue type</h4>
+                        <div className="w-28">
+                          <CustomMenu
+                            label={
+                              FILTER_ISSUE_OPTIONS.find(
+                                (option) => option.key === displayFilters.type
+                              )?.name ?? "Select"
+                            }
+                            className="!w-full"
+                            buttonClassName="w-full"
+                          >
+                            {FILTER_ISSUE_OPTIONS.map((option) => (
+                              <CustomMenu.MenuItem
+                                key={option.key}
+                                onClick={() =>
+                                  setDisplayFilters({
+                                    type: option.key,
+                                  })
+                                }
+                              >
+                                {option.name}
+                              </CustomMenu.MenuItem>
+                            ))}
+                          </CustomMenu>
+                        </div>
                       </div>
                     )}
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-custom-text-200">Issue type</h4>
-                      <div className="w-28">
-                        <CustomMenu
-                          label={
-                            ISSUE_FILTER_OPTIONS.find((option) => option.key === displayFilters.type)?.title ?? "Select"
-                          }
-                          className="!w-full"
-                          buttonClassName="w-full"
-                        >
-                          {ISSUE_FILTER_OPTIONS.map((option) => (
-                            <CustomMenu.MenuItem
-                              key={option.key}
-                              onClick={() => {
-                                // setDisplayFilters({
-                                //   type: option.key,
-                                // })
-                              }}
-                            >
-                              {option.title}
-                            </CustomMenu.MenuItem>
-                          ))}
-                        </CustomMenu>
-                      </div>
-                    </div>
 
                     {displayFilters.layout !== "calendar" && displayFilters.layout !== "spreadsheet" && (
                       <div className="flex items-center justify-between">
@@ -293,7 +303,7 @@ export const IssuesFilterView: React.FC = () => {
                       displayFilters.layout !== "spreadsheet" &&
                       displayFilters.layout !== "gantt_chart" && (
                         <div className="flex items-center justify-between">
-                          <h4 className="text-custom-text-200">Show empty states</h4>
+                          <h4 className="text-custom-text-200">Show empty groups</h4>
                           <div className="w-28">
                             <ToggleSwitch
                               value={displayFilters.show_empty_groups ?? true}

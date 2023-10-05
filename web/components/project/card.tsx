@@ -151,7 +151,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                     <span>Select to Join</span>
                   </button>
                 ) : (
-                  <span className="cursor-default rounded bg-green-600 px-2 py-1 text-xs">Member</span>
+                  <span className="cursor-default rounded bg-green-600 px-2 py-1 text-xs">Joined</span>
                 )}
                 {project.is_favorite && (
                   <span className="grid h-6 w-9 cursor-default place-items-center rounded bg-orange-400">

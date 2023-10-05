@@ -29,7 +29,7 @@ def get_default_props():
         },
         "display_filters": {
             "group_by": None,
-            "order_by": '-created_at',
+            "order_by": "-created_at",
             "type": None,
             "sub_issue": True,
             "show_empty_groups": True,
@@ -51,6 +51,15 @@ def get_default_props():
             "sub_issue_count": True,
             "updated_on": True,
         }
+    }
+
+
+def get_issue_props():
+    return {
+        "subscribed": True,
+        "assigned": True,
+        "created": True,
+        "all_issues": True,
     }
 
 
@@ -89,6 +98,7 @@ class WorkspaceMember(BaseModel):
     company_role = models.TextField(null=True, blank=True)
     view_props = models.JSONField(default=get_default_props)
     default_props = models.JSONField(default=get_default_props)
+    issue_props = models.JSONField(default=get_issue_props)
 
     class Meta:
         unique_together = ["workspace", "member"]

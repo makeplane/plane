@@ -121,36 +121,20 @@ def track_priority(
     epoch
 ):
     if current_instance.get("priority") != requested_data.get("priority"):
-        if requested_data.get("priority") == None:
-            issue_activities.append(
-                IssueActivity(
-                    issue_id=issue_id,
-                    actor=actor,
-                    verb="updated",
-                    old_value=current_instance.get("priority"),
-                    new_value=None,
-                    field="priority",
-                    project=project,
-                    workspace=project.workspace,
-                    comment=f"updated the priority to None",
-                    epoch=epoch,
-                )
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor=actor,
+                verb="updated",
+                old_value=current_instance.get("priority"),
+                new_value=requested_data.get("priority"),
+                field="priority",
+                project=project,
+                workspace=project.workspace,
+                comment=f"updated the priority to {requested_data.get('priority')}",
+                epoch=epoch,
             )
-        else:
-            issue_activities.append(
-                IssueActivity(
-                    issue_id=issue_id,
-                    actor=actor,
-                    verb="updated",
-                    old_value=current_instance.get("priority"),
-                    new_value=requested_data.get("priority"),
-                    field="priority",
-                    project=project,
-                    workspace=project.workspace,
-                    comment=f"updated the priority to {requested_data.get('priority')}",
-                    epoch=epoch,
-                )
-            )
+        )
 
 
 # Track chnages in state of the issue
@@ -1405,7 +1389,7 @@ def issue_activity(
             ):
                 issue_subscribers = issue_subscribers + [issue.created_by_id]
 
-            for subscriber in issue_subscribers:
+            for subscriber in  list(set(issue_subscribers)):
                 for issue_activity in issue_activities_created:
                     bulk_notifications.append(
                         Notification(
