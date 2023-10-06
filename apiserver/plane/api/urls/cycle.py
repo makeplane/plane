@@ -41,7 +41,7 @@ urlpatterns = [
                 "post": "create",
             }
         ),
-        name="project-cycle",
+        name="project-issue-cycle",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/cycle-issues/<uuid:pk>/",
@@ -53,12 +53,12 @@ urlpatterns = [
                 "delete": "destroy",
             }
         ),
-        name="project-cycle",
+        name="project-issue-cycle",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/date-check/",
         CycleDateCheckEndpoint.as_view(),
-        name="project-cycle",
+        name="project-cycle-date",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-cycles/",

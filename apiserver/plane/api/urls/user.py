@@ -70,7 +70,7 @@ urlpatterns = [
                 "get": "retrieve",
             }
         ),
-        name="workspace",
+        name="user-workspace-invitation",
     ),
     # user join workspace
     # User Graphs
@@ -99,6 +99,6 @@ urlpatterns = [
     path(
         "users/me/invitations/projects/",
         UserProjectInvitationsViewset.as_view({"get": "list", "post": "create"}),
-        name="user-project-invitaions",
+        name="user-project-invitations",
     ),
 ]

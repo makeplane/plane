@@ -14,6 +14,7 @@ from plane.api.views import (
     ProjectIdentifierEndpoint,
     ProjectFavoritesViewSet,
     LeaveProjectEndpoint,
+    ProjectPublicCoverImagesEndpoint
 )
 
 
@@ -48,12 +49,12 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/invite/",
         InviteProjectEndpoint.as_view(),
-        name="project",
+        name="invite-project",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/members/",
         ProjectMemberViewSet.as_view({"get": "list"}),
-        name="project",
+        name="project-member",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/members/<uuid:pk>/",
@@ -64,12 +65,12 @@ urlpatterns = [
                 "delete": "destroy",
             }
         ),
-        name="project",
+        name="project-member",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/project-members/",
         ProjectMemberEndpoint.as_view(),
-        name="project",
+        name="project-member",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/members/add/",
@@ -79,7 +80,7 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/join/",
         ProjectJoinEndpoint.as_view(),
-        name="project",
+        name="project-join",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/team-invite/",
@@ -89,7 +90,7 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/invitations/",
         ProjectMemberInvitationsViewset.as_view({"get": "list"}),
-        name="workspace",
+        name="project-member-invite",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/invitations/<uuid:pk>/",
@@ -99,7 +100,7 @@ urlpatterns = [
                 "delete": "destroy",
             }
         ),
-        name="project",
+        name="project-member-invite",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/project-views/",
@@ -109,7 +110,7 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/project-members/me/",
         ProjectMemberUserEndpoint.as_view(),
-        name="project-view",
+        name="project-member-view",
     ),
     path(
         "workspaces/<str:slug>/user-favorite-projects/",
@@ -118,7 +119,7 @@ urlpatterns = [
                 "post": "create",
             }
         ),
-        name="project",
+        name="project-favorite",
     ),
     path(
         "workspaces/<str:slug>/user-favorite-projects/<uuid:project_id>/",
@@ -127,11 +128,16 @@ urlpatterns = [
                 "delete": "destroy",
             }
         ),
-        name="project",
+        name="project-favorite",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/members/leave/",
         LeaveProjectEndpoint.as_view(),
-        name="project",
+        name="leave-project",
+    ),
+    path(
+        "project-covers/",
+        ProjectPublicCoverImagesEndpoint.as_view(),
+        name="project-covers",
     ),
 ]

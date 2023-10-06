@@ -53,12 +53,12 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/invite/",
         InviteWorkspaceEndpoint.as_view(),
-        name="workspace",
+        name="invite-workspace",
     ),
     path(
         "workspaces/<str:slug>/invitations/",
         WorkspaceInvitationsViewset.as_view({"get": "list"}),
-        name="workspace",
+        name="workspace-invitations",
     ),
     path(
         "workspaces/<str:slug>/invitations/<uuid:pk>/",
@@ -68,12 +68,12 @@ urlpatterns = [
                 "get": "retrieve",
             }
         ),
-        name="workspace",
+        name="workspace-invitations",
     ),
     path(
         "workspaces/<str:slug>/members/",
         WorkSpaceMemberViewSet.as_view({"get": "list"}),
-        name="workspace",
+        name="workspace-member",
     ),
     path(
         "workspaces/<str:slug>/members/<uuid:pk>/",
@@ -84,7 +84,7 @@ urlpatterns = [
                 "get": "retrieve",
             }
         ),
-        name="workspace",
+        name="workspace-member",
     ),
     path(
         "workspaces/<str:slug>/workspace-members/",
@@ -99,7 +99,7 @@ urlpatterns = [
                 "post": "create",
             }
         ),
-        name="workspace",
+        name="workspace-team-members",
     ),
     path(
         "workspaces/<str:slug>/teams/<uuid:pk>/",
@@ -111,7 +111,7 @@ urlpatterns = [
                 "get": "retrieve",
             }
         ),
-        name="workspace",
+        name="workspace-team-members",
     ),
     path(
         "users/last-visited-workspace/",
@@ -126,7 +126,7 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/workspace-views/",
         WorkspaceMemberUserViewsEndpoint.as_view(),
-        name="workspace-member-details",
+        name="workspace-member-views-details",
     ),
     path(
         "workspaces/<str:slug>/workspace-themes/",
@@ -177,6 +177,6 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/members/leave/",
         LeaveWorkspaceEndpoint.as_view(),
-        name="workspace-labels",
+        name="leave-workspace-members",
     ),
 ]

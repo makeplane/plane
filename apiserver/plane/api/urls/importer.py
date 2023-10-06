@@ -12,7 +12,7 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/importers/<str:service>/",
         ServiceIssueImportSummaryEndpoint.as_view(),
-        name="importer",
+        name="importer-summary",
     ),
     path(
         "workspaces/<str:slug>/projects/importers/<str:service>/",
@@ -32,6 +32,6 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/service/<str:service>/importers/<uuid:importer_id>/",
         UpdateServiceImportStatusEndpoint.as_view(),
-        name="importer",
+        name="importer-status",
     ),
 ]
