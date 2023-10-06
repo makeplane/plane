@@ -50,7 +50,7 @@ var Input = React2.forwardRef((props, ref) => {
     onChange,
     className = "",
     mode = "primary",
-    size = "md",
+    size = "sm",
     hasError = false,
     placeholder = "",
     disabled = false
@@ -64,7 +64,7 @@ var Input = React2.forwardRef((props, ref) => {
     onChange,
     placeholder,
     disabled,
-    className: `block rounded-md bg-transparent text-sm focus:outline-none placeholder-custom-text-400 ${mode === "primary" ? "rounded-md border border-custom-border-200" : mode === "transparent" ? "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-custom-primary" : mode === "true-transparent" ? "rounded border-none bg-transparent ring-0" : ""} ${hasError ? "border-red-500" : ""} ${hasError && mode === "primary" ? "bg-red-500/20" : ""} ${size === "sm" ? "px-3 py-2" : size === "lg" ? "p-3" : ""} ${className}`
+    className: `block rounded-md bg-transparent text-sm focus:outline-none placeholder-custom-text-400 ${mode === "primary" ? "rounded-md border border-custom-border-200" : mode === "transparent" ? "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-custom-primary" : mode === "true-transparent" ? "rounded border-none bg-transparent ring-0" : ""} ${hasError ? "border-red-500" : ""} ${hasError && mode === "primary" ? "bg-red-500/20" : ""} ${size === "sm" ? "px-3 py-2" : size === "md" ? "p-3" : ""} ${className}`
   });
 });
 Input.displayName = "form-input-field";

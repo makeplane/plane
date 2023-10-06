@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // react-hook-form
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // services
 import issuesService from "services/issues.service";
 
@@ -17,7 +17,8 @@ import { WorkspaceFiltersList } from "components/core";
 import { GlobalSelectFilters } from "components/workspace/views/global-select-filters";
 
 // ui
-import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { Input } from "@plane/ui";
 // helpers
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 // types
@@ -40,13 +41,7 @@ const defaultValues: Partial<IWorkspaceView> = {
   description: "",
 };
 
-export const WorkspaceViewForm: React.FC<Props> = ({
-  handleFormSubmit,
-  handleClose,
-  status,
-  data,
-  preLoadedData,
-}) => {
+export const WorkspaceViewForm: React.FC<Props> = ({ handleFormSubmit, handleClose, status, data, preLoadedData }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -54,6 +49,7 @@ export const WorkspaceViewForm: React.FC<Props> = ({
     register,
     formState: { errors, isSubmitting },
     handleSubmit,
+    control,
     reset,
     watch,
     setValue,
@@ -113,27 +109,32 @@ export const WorkspaceViewForm: React.FC<Props> = ({
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateView)}>
       <div className="space-y-5">
-        <h3 className="text-lg font-medium leading-6 text-custom-text-100">
-          {status ? "Update" : "Create"} View
-        </h3>
+        <h3 className="text-lg font-medium leading-6 text-custom-text-100">{status ? "Update" : "Create"} View</h3>
         <div className="space-y-3">
           <div>
-            <Input
-              id="name"
+            <Controller
+              control={control}
               name="name"
-              type="name"
-              placeholder="Title"
-              autoComplete="off"
-              className="resize-none text-xl"
-              error={errors.name}
-              register={register}
-              validations={{
+              rules={{
                 required: "Title is required",
                 maxLength: {
                   value: 255,
                   message: "Title should be less than 255 characters",
                 },
               }}
+              render={({ field: { value, onChange, ref } }) => (
+                <Input
+                  id="name"
+                  name="name"
+                  type="name"
+                  value={value}
+                  onChange={onChange}
+                  ref={ref}
+                  hasError={Boolean(errors.name)}
+                  placeholder="Title"
+                  className="resize-none text-xl w-full"
+                />
+              )}
             />
           </div>
           <div>
@@ -153,10 +154,7 @@ export const WorkspaceViewForm: React.FC<Props> = ({
                 const key = option.key as keyof typeof filters;
 
                 if (key === "start_date" || key === "target_date") {
-                  const valueExists = checkIfArraysHaveSameElements(
-                    filters?.[key] ?? [],
-                    option.value
-                  );
+                  const valueExists = checkIfArraysHaveSameElements(filters?.[key] ?? [], option.value);
 
                   setValue("query", {
                     ...filters,

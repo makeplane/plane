@@ -13,7 +13,8 @@ import { Dialog, Popover, Transition } from "@headlessui/react";
 // services
 import issuesService from "services/issue.service";
 // ui
-import { Input, PrimaryButton, SecondaryButton } from "components/ui";
+import { PrimaryButton, SecondaryButton } from "components/ui";
+import { Input } from "@plane/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 // types
@@ -163,18 +164,25 @@ export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                         )}
                       </Popover>
                       <div className="flex w-full flex-col gap-0.5 justify-center">
-                        <Input
-                          type="text"
-                          id="name"
+                        <Controller
+                          control={control}
                           name="name"
-                          placeholder="Label title"
-                          autoComplete="off"
-                          error={errors.name}
-                          register={register}
-                          width="full"
-                          validations={{
+                          rules={{
                             required: "Label title is required",
                           }}
+                          render={({ field: { value, onChange, ref } }) => (
+                            <Input
+                              id="name"
+                              name="name"
+                              type="text"
+                              value={value}
+                              onChange={onChange}
+                              ref={ref}
+                              hasError={Boolean(errors.name)}
+                              placeholder="Label title"
+                              className="resize-none text-xl w-full"
+                            />
+                          )}
                         />
                       </div>
                     </div>

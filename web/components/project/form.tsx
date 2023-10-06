@@ -3,8 +3,8 @@ import { Controller, useForm } from "react-hook-form";
 // components
 import EmojiIconPicker from "components/emoji-icon-picker";
 import { ImagePickerPopover } from "components/core";
-import { Input, TextArea, CustomSelect, PrimaryButton } from "components/ui";
-import { Input as InputElement } from "@plane/ui";
+import { TextArea, CustomSelect, PrimaryButton } from "components/ui";
+import { Input } from "@plane/ui";
 // types
 import { IProject, IWorkspace } from "types";
 // helpers
@@ -147,7 +147,13 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                 control={control}
                 name="cover_image"
                 render={({ field: { value, onChange } }) => (
-                  <ImagePickerPopover label={"Change cover"} onChange={onChange} value={value} disabled={!isAdmin} />
+                  <ImagePickerPopover
+                    label={"Change cover"}
+                    control={control}
+                    onChange={onChange}
+                    value={value}
+                    disabled={!isAdmin}
+                  />
                 )}
               />
             </div>
@@ -164,7 +170,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               required: "Name is required",
             }}
             render={({ field: { value, onChange, ref } }) => (
-              <InputElement
+              <Input
                 id="name"
                 name="name"
                 type="text"
@@ -197,14 +203,10 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         <div className="flex items-center justify-between gap-10 w-full">
           <div className="flex flex-col gap-1 w-1/2">
             <h4 className="text-sm">Identifier</h4>
-            <Input
-              id="identifier"
+            <Controller
+              control={control}
               name="identifier"
-              error={errors.identifier}
-              register={register}
-              placeholder="Enter identifier"
-              onChange={handleIdentifierChange}
-              validations={{
+              rules={{
                 required: "Identifier is required",
                 validate: (value) => /^[A-Z0-9]+$/.test(value.toUpperCase()) || "Identifier must be in uppercase.",
                 minLength: {
@@ -216,7 +218,20 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                   message: "Identifier must at most be of 5 characters",
                 },
               }}
-              disabled={!isAdmin}
+              render={({ field: { value, ref } }) => (
+                <Input
+                  id="identifier"
+                  name="identifier"
+                  type="text"
+                  value={value}
+                  onChange={handleIdentifierChange}
+                  ref={ref}
+                  hasError={Boolean(errors.identifier)}
+                  placeholder="Enter identifier"
+                  className="w-full"
+                  disabled={!isAdmin}
+                />
+              )}
             />
           </div>
 

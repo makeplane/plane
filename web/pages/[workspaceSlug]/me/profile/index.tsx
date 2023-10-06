@@ -16,7 +16,8 @@ import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 import { ImagePickerPopover, ImageUploadModal } from "components/core";
 import { SettingsSidebar } from "components/project";
 // ui
-import { CustomSearchSelect, CustomSelect, Input, PrimaryButton, Spinner } from "components/ui";
+import { CustomSearchSelect, CustomSelect, PrimaryButton, Spinner } from "components/ui";
+import { Input } from "@plane/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { UserIcon } from "@heroicons/react/24/outline";
@@ -211,6 +212,7 @@ const Profile: NextPage = () => {
                         onChange={(imageUrl) => {
                           setValue("cover_image", imageUrl);
                         }}
+                        control={control}
                         value={watch("cover_image") ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
                       />
                     )}
@@ -239,42 +241,66 @@ const Profile: NextPage = () => {
               <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6 px-8">
                 <div className="flex flex-col gap-1">
                   <h4 className="text-sm">First Name</h4>
-                  <Input
+                  <Controller
+                    control={control}
                     name="first_name"
-                    id="first_name"
-                    register={register}
-                    error={errors.first_name}
-                    placeholder="Enter your first name"
-                    className="!px-3 !py-2 rounded-md font-medium"
-                    autoComplete="off"
-                    maxLength={24}
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Input
+                        id="first_name"
+                        name="first_name"
+                        type="text"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        hasError={Boolean(errors.first_name)}
+                        placeholder="Enter your first name"
+                        className="rounded-md font-medium w-full"
+                      />
+                    )}
                   />
                 </div>
 
                 <div className="flex flex-col gap-1">
                   <h4 className="text-sm">Last Name</h4>
-                  <Input
+
+                  <Controller
+                    control={control}
                     name="last_name"
-                    register={register}
-                    error={errors.last_name}
-                    id="last_name"
-                    placeholder="Enter your last name"
-                    autoComplete="off"
-                    className="!px-3 !py-2 rounded-md font-medium"
-                    maxLength={24}
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Input
+                        id="last_name"
+                        name="last_name"
+                        type="text"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        hasError={Boolean(errors.last_name)}
+                        placeholder="Enter your last name"
+                        className="rounded-md font-medium w-full"
+                      />
+                    )}
                   />
                 </div>
 
                 <div className="flex flex-col gap-1">
                   <h4 className="text-sm">Email</h4>
-                  <Input
-                    id="email"
+                  <Controller
+                    control={control}
                     name="email"
-                    autoComplete="off"
-                    register={register}
-                    className="!px-3 !py-2 rounded-md font-medium"
-                    error={errors.name}
-                    disabled
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        hasError={Boolean(errors.email)}
+                        placeholder="Enter your last name"
+                        className="rounded-md font-medium w-full"
+                        disabled
+                      />
+                    )}
                   />
                 </div>
 
@@ -308,16 +334,10 @@ const Profile: NextPage = () => {
 
                 <div className="flex flex-col gap-1">
                   <h4 className="text-sm">Display name </h4>
-
-                  <Input
-                    id="display_name"
+                  <Controller
+                    control={control}
                     name="display_name"
-                    autoComplete="off"
-                    register={register}
-                    error={errors.display_name}
-                    className="w-full"
-                    placeholder="Enter your display name"
-                    validations={{
+                    rules={{
                       required: "Display name is required.",
                       validate: (value) => {
                         if (value.trim().length < 1) return "Display name can't be empty.";
@@ -333,6 +353,19 @@ const Profile: NextPage = () => {
                         return true;
                       },
                     }}
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Input
+                        id="display_name"
+                        name="display_name"
+                        type="text"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        hasError={Boolean(errors.display_name)}
+                        placeholder="Enter your display name"
+                        className="w-full"
+                      />
+                    )}
                   />
                 </div>
 

@@ -15,7 +15,8 @@ import { Popover, Transition } from "@headlessui/react";
 // services
 import issuesService from "services/issue.service";
 // ui
-import { Input, PrimaryButton, SecondaryButton } from "components/ui";
+import { PrimaryButton, SecondaryButton } from "components/ui";
+import { Input } from "@plane/ui";
 // types
 import { IIssueLabels } from "types";
 // fetch-keys
@@ -164,16 +165,25 @@ export const CreateUpdateLabelInline = forwardRef<HTMLDivElement, Props>(functio
         </Popover>
       </div>
       <div className="flex flex-1 flex-col justify-center">
-        <Input
-          type="text"
-          id="labelName"
+        <Controller
+          control={control}
           name="name"
-          register={register}
-          placeholder="Label title"
-          validations={{
+          rules={{
             required: "Label title is required",
           }}
-          error={errors.name}
+          render={({ field: { value, onChange, ref } }) => (
+            <Input
+              id="labelName"
+              name="name"
+              type="text"
+              value={value}
+              onChange={onChange}
+              ref={ref}
+              hasError={Boolean(errors.name)}
+              placeholder="Label title"
+              className="w-full"
+            />
+          )}
         />
       </div>
       <SecondaryButton onClick={() => handleClose()}>Cancel</SecondaryButton>

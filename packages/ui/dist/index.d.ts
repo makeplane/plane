@@ -8,10 +8,10 @@ interface InputProps {
     id: string;
     value: string;
     name: string;
-    onChange: () => void;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     className?: string;
     mode?: "primary" | "transparent" | "true-transparent";
-    size?: "sm" | "md" | "lg";
+    size?: "sm" | "md";
     hasError?: boolean;
     placeholder?: string;
     disabled?: boolean;

@@ -5,7 +5,8 @@ import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { observer } from "mobx-react-lite";
 // ui
-import { DangerButton, Input, SecondaryButton } from "components/ui";
+import { DangerButton, SecondaryButton } from "components/ui";
+import { Input } from "@plane/ui";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
 // mobx react lite
@@ -51,7 +52,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
 
   const {
     control,
-    formState: { isSubmitting },
+    formState: { errors, isSubmitting },
     handleSubmit,
     reset,
   } = useForm({ defaultValues });
@@ -155,13 +156,20 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
                     <Controller
                       control={control}
                       name="projectName"
-                      render={({ field: { onChange, value } }) => (
+                      rules={{
+                        required: "Label title is required",
+                      }}
+                      render={({ field: { value, onChange, ref } }) => (
                         <Input
+                          id="projectName"
+                          name="projectName"
                           type="text"
-                          placeholder="Enter project name"
-                          className="mt-2"
                           value={value}
                           onChange={onChange}
+                          ref={ref}
+                          hasError={Boolean(errors.projectName)}
+                          placeholder="Enter project name"
+                          className="mt-2 w-full"
                         />
                       )}
                     />
@@ -174,13 +182,17 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
                     <Controller
                       control={control}
                       name="confirmLeave"
-                      render={({ field: { onChange, value } }) => (
+                      render={({ field: { value, onChange, ref } }) => (
                         <Input
+                          id="confirmLeave"
+                          name="confirmLeave"
                           type="text"
-                          placeholder="Enter 'leave project'"
-                          className="mt-2"
-                          onChange={onChange}
                           value={value}
+                          onChange={onChange}
+                          ref={ref}
+                          hasError={Boolean(errors.confirmLeave)}
+                          placeholder="Enter 'leave project'"
+                          className="mt-2 w-full"
                         />
                       )}
                     />

@@ -5,13 +5,16 @@ import useSWR from "swr";
 import { useDropzone } from "react-dropzone";
 import { Tab, Transition, Popover } from "@headlessui/react";
 
+import { Control, Controller } from "react-hook-form";
+
 // services
 import fileService from "services/file.service";
 // hooks
 import useWorkspaceDetails from "hooks/use-workspace-details";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
-import { Input, PrimaryButton, SecondaryButton, Loader } from "components/ui";
+import { PrimaryButton, SecondaryButton, Loader } from "components/ui";
+import { Input } from "@plane/ui";
 
 const tabOptions = [
   {
@@ -31,16 +34,12 @@ const tabOptions = [
 type Props = {
   label: string | React.ReactNode;
   value: string | null;
+  control: Control<any>;
   onChange: (data: string) => void;
   disabled?: boolean;
 };
 
-export const ImagePickerPopover: React.FC<Props> = ({
-  label,
-  value,
-  onChange,
-  disabled = false,
-}) => {
+export const ImagePickerPopover: React.FC<Props> = ({ label, value, control, onChange, disabled = false }) => {
   const ref = useRef<HTMLDivElement>(null);
 
   const router = useRouter();
@@ -64,14 +63,10 @@ export const ImagePickerPopover: React.FC<Props> = ({
     }
   );
 
-  const { data: projectCoverImages } = useSWR(
-    `PROJECT_COVER_IMAGES`,
-    () => fileService.getProjectCoverImages(),
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
-  );
+  const { data: projectCoverImages } = useSWR(`PROJECT_COVER_IMAGES`, () => fileService.getProjectCoverImages(), {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  });
 
   const imagePickerRef = useRef<HTMLDivElement>(null);
 
@@ -154,8 +149,7 @@ export const ImagePickerPopover: React.FC<Props> = ({
               <Tab.List as="span" className="inline-block rounded bg-custom-background-80 p-1">
                 {tabOptions.map((tab) => {
                   if (!unsplashImages && unsplashError && tab.key === "unsplash") return null;
-                  if (projectCoverImages && projectCoverImages.length === 0 && tab.key === "images")
-                    return null;
+                  if (projectCoverImages && projectCoverImages.length === 0 && tab.key === "images") return null;
 
                   return (
                     <Tab
@@ -175,13 +169,21 @@ export const ImagePickerPopover: React.FC<Props> = ({
                 {(unsplashImages || !unsplashError) && (
                   <Tab.Panel className="h-full w-full space-y-4 mt-4">
                     <div className="flex gap-x-2">
-                      <Input
+                      <Controller
+                        control={control}
                         name="search"
-                        className="text-sm"
-                        id="search"
-                        value={formData.search}
-                        onChange={(e) => setFormData({ ...formData, search: e.target.value })}
-                        placeholder="Search for images"
+                        render={({ field: { value, ref } }) => (
+                          <Input
+                            id="search"
+                            name="search"
+                            type="text"
+                            value={value}
+                            onChange={(e) => setFormData({ ...formData, search: e.target.value })}
+                            ref={ref}
+                            placeholder="Search for images"
+                            className="text-sm w-full"
+                          />
+                        )}
                       />
                       <PrimaryButton onClick={() => setSearchParams(formData.search)} size="sm">
                         Search
@@ -208,9 +210,7 @@ export const ImagePickerPopover: React.FC<Props> = ({
                           ))}
                         </div>
                       ) : (
-                        <p className="text-center text-custom-text-300 text-xs pt-7">
-                          No images found.
-                        </p>
+                        <p className="text-center text-custom-text-300 text-xs pt-7">No images found.</p>
                       )
                     ) : (
                       <Loader className="grid grid-cols-4 gap-4">
@@ -249,9 +249,7 @@ export const ImagePickerPopover: React.FC<Props> = ({
                           ))}
                         </div>
                       ) : (
-                        <p className="text-center text-custom-text-300 text-xs pt-7">
-                          No images found.
-                        </p>
+                        <p className="text-center text-custom-text-300 text-xs pt-7">No images found.</p>
                       )
                     ) : (
                       <Loader className="grid grid-cols-4 gap-4 pt-4">
@@ -297,9 +295,7 @@ export const ImagePickerPopover: React.FC<Props> = ({
                         ) : (
                           <div>
                             <span className="mt-2 block text-sm font-medium text-custom-text-200">
-                              {isDragActive
-                                ? "Drop image here to upload"
-                                : "Drag & drop image here"}
+                              {isDragActive ? "Drop image here to upload" : "Drag & drop image here"}
                             </span>
                           </div>
                         )}

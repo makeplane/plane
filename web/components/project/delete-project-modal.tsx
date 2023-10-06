@@ -7,7 +7,8 @@ import useToast from "hooks/use-toast";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
-import { DangerButton, Input, SecondaryButton } from "components/ui";
+import { DangerButton, SecondaryButton } from "components/ui";
+import { Input } from "@plane/ui";
 // types
 import type { IProject } from "types";
 // fetch-keys
@@ -36,7 +37,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
   // form info
   const {
     control,
-    formState: { isSubmitting },
+    formState: { errors, isSubmitting },
     handleSubmit,
     reset,
     watch,
@@ -121,13 +122,17 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
                     <Controller
                       control={control}
                       name="projectName"
-                      render={({ field: { onChange, value } }) => (
+                      render={({ field: { value, onChange, ref } }) => (
                         <Input
+                          id="projectName"
+                          name="projectName"
                           type="text"
-                          placeholder="Project name"
-                          className="mt-2"
                           value={value}
                           onChange={onChange}
+                          ref={ref}
+                          hasError={Boolean(errors.projectName)}
+                          placeholder="Project name"
+                          className="mt-2 w-full"
                         />
                       )}
                     />
@@ -140,13 +145,17 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
                     <Controller
                       control={control}
                       name="confirmDelete"
-                      render={({ field: { onChange, value } }) => (
+                      render={({ field: { value, onChange, ref } }) => (
                         <Input
+                          id="confirmDelete"
+                          name="confirmDelete"
                           type="text"
-                          placeholder="Enter 'delete my project'"
-                          className="mt-2"
-                          onChange={onChange}
                           value={value}
+                          onChange={onChange}
+                          ref={ref}
+                          hasError={Boolean(errors.confirmDelete)}
+                          placeholder="Enter 'delete my project'"
+                          className="mt-2 w-full"
                         />
                       )}
                     />

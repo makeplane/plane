@@ -6,7 +6,7 @@ import Image from "next/image";
 // next-themes
 import { useTheme } from "next-themes";
 // react-hook-form
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // hooks
 import useToast from "hooks/use-toast";
 // services
@@ -14,7 +14,8 @@ import userService from "services/user.service";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // ui
-import { Input, PrimaryButton, Spinner } from "components/ui";
+import { PrimaryButton, Spinner } from "components/ui";
+import { Input } from "@plane/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // types
@@ -38,6 +39,7 @@ const ResetPasswordPage: NextPage = () => {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<FormData>();
 
@@ -73,9 +75,7 @@ const ResetPasswordPage: NextPage = () => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message:
-            err?.error ||
-            "Something went wrong. Please try again later or contact the support team.",
+          message: err?.error || "Something went wrong. Please try again later or contact the support team.",
         })
       );
   };
@@ -110,47 +110,54 @@ const ResetPasswordPage: NextPage = () => {
       </>
       <div className="grid place-items-center h-full w-full overflow-y-auto py-5 px-7">
         <div className="w-full">
-          <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
-            Reset your password
-          </h1>
+          <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">Reset your password</h1>
 
-          <form
-            className="space-y-4 mt-10 w-full sm:w-[360px] mx-auto"
-            onSubmit={handleSubmit(onSubmit)}
-          >
+          <form className="space-y-4 mt-10 w-full sm:w-[360px] mx-auto" onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-1">
-              <Input
-                id="password"
-                type="password"
+              <Controller
+                control={control}
                 name="password"
-                register={register}
-                validations={{
+                rules={{
                   required: "Password is required",
                 }}
-                error={errors.password}
-                placeholder="Enter new password..."
-                className="border-custom-border-300 h-[46px]"
+                render={({ field: { value, onChange, ref } }) => (
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    value={value}
+                    onChange={onChange}
+                    ref={ref}
+                    hasError={Boolean(errors.password)}
+                    placeholder="Enter new password..."
+                    className="border-custom-border-300 h-[46px] w-full"
+                  />
+                )}
               />
             </div>
             <div className="space-y-1">
-              <Input
-                id="confirmPassword"
-                type="password"
+              <Controller
+                control={control}
                 name="confirmPassword"
-                register={register}
-                validations={{
-                  required: "Password confirmation is required",
+                rules={{
+                  required: "Password is required",
                 }}
-                error={errors.confirmPassword}
-                placeholder="Confirm new password..."
-                className="border-custom-border-300 h-[46px]"
+                render={({ field: { value, onChange, ref } }) => (
+                  <Input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type="password"
+                    value={value}
+                    onChange={onChange}
+                    ref={ref}
+                    hasError={Boolean(errors.confirmPassword)}
+                    placeholder="Confirm new password..."
+                    className="border-custom-border-300 h-[46px] w-full"
+                  />
+                )}
               />
             </div>
-            <PrimaryButton
-              type="submit"
-              className="w-full text-center h-[46px]"
-              loading={isSubmitting}
-            >
+            <PrimaryButton type="submit" className="w-full text-center h-[46px]" loading={isSubmitting}>
               {isSubmitting ? "Resetting..." : "Reset"}
             </PrimaryButton>
           </form>

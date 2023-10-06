@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // react-hook-form
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // services
 import stateService from "services/project_state.service";
 // hooks
@@ -14,7 +14,8 @@ import useProjectMembers from "hooks/use-project-members";
 import { FiltersList } from "components/core";
 import { SelectFilters } from "components/views";
 // ui
-import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { Input } from "@plane/ui";
 // helpers
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 import { getStatesList } from "helpers/state.helper";
@@ -45,6 +46,7 @@ export const ViewForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
     register,
     formState: { errors, isSubmitting },
     handleSubmit,
+    control,
     reset,
     watch,
     setValue,
@@ -112,22 +114,29 @@ export const ViewForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
         <h3 className="text-lg font-medium leading-6 text-custom-text-100">{status ? "Update" : "Create"} View</h3>
         <div className="space-y-3">
           <div>
-            <Input
-              id="name"
+            <Controller
+              control={control}
               name="name"
-              type="name"
-              placeholder="Title"
-              autoComplete="off"
-              className="resize-none text-xl"
-              error={errors.name}
-              register={register}
-              validations={{
+              rules={{
                 required: "Title is required",
                 maxLength: {
                   value: 255,
                   message: "Title should be less than 255 characters",
                 },
               }}
+              render={({ field: { value, onChange, ref } }) => (
+                <Input
+                  id="name"
+                  name="name"
+                  type="text"
+                  value={value}
+                  onChange={onChange}
+                  ref={ref}
+                  hasError={Boolean(errors.name)}
+                  placeholder="Title"
+                  className="resize-none text-xl w-full"
+                />
+              )}
             />
           </div>
           <div>

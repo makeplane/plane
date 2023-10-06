@@ -15,7 +15,8 @@ import stateService from "services/project_state.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { CustomSelect, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { Input } from "@plane/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 // types
@@ -136,18 +137,30 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                     </Dialog.Title>
                     <div className="mt-2 space-y-3">
                       <div>
-                        <Input
-                          id="name"
-                          label="Name"
+                        <Controller
+                          control={control}
                           name="name"
-                          type="name"
-                          placeholder="Enter name"
-                          autoComplete="off"
-                          error={errors.name}
-                          register={register}
-                          validations={{
+                          rules={{
                             required: "Name is required",
                           }}
+                          render={({ field: { value, onChange, ref } }) => (
+                            <>
+                              <label htmlFor="name" className="text-custom-text-200 mb-2">
+                                Name
+                              </label>
+                              <Input
+                                id="name"
+                                name="name"
+                                type="text"
+                                value={value}
+                                onChange={onChange}
+                                ref={ref}
+                                hasError={Boolean(errors.name)}
+                                placeholder="Enter name"
+                                className="w-full"
+                              />
+                            </>
+                          )}
                         />
                       </div>
                       <div>

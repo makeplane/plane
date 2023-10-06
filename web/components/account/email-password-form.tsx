@@ -1,7 +1,8 @@
 import React from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // ui
-import { Input, PrimaryButton } from "components/ui";
+import { PrimaryButton } from "components/ui";
+import { Input } from "@plane/ui";
 // types
 type EmailPasswordFormValues = {
   email: string;
@@ -20,6 +21,7 @@ export const EmailPasswordForm: React.FC<Props> = (props) => {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isSubmitting, isValid, isDirty },
   } = useForm<EmailPasswordFormValues>({
     defaultValues: {
@@ -33,40 +35,53 @@ export const EmailPasswordForm: React.FC<Props> = (props) => {
 
   return (
     <>
-      <form
-        className="space-y-4 mt-10 w-full sm:w-[360px] mx-auto"
-        onSubmit={handleSubmit(onSubmit)}
-      >
+      <form className="space-y-4 mt-10 w-full sm:w-[360px] mx-auto" onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-1">
-          <Input
-            id="email"
-            type="email"
+          <Controller
+            control={control}
             name="email"
-            register={register}
-            validations={{
+            rules={{
               required: "Email address is required",
               validate: (value) =>
                 /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
                   value
                 ) || "Email address is not valid",
             }}
-            error={errors.email}
-            placeholder="Enter your email address..."
-            className="border-custom-border-300 h-[46px]"
+            render={({ field: { value, onChange, ref } }) => (
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                value={value}
+                onChange={onChange}
+                ref={ref}
+                hasError={Boolean(errors.email)}
+                placeholder="Enter your email address..."
+                className="border-custom-border-300 h-[46px] w-full "
+              />
+            )}
           />
         </div>
         <div className="space-y-1">
-          <Input
-            id="password"
-            type="password"
+          <Controller
+            control={control}
             name="password"
-            register={register}
-            validations={{
+            rules={{
               required: "Password is required",
             }}
-            error={errors.password}
-            placeholder="Enter your password..."
-            className="border-custom-border-300 h-[46px]"
+            render={({ field: { value, onChange, ref } }) => (
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                value={value ?? ""}
+                onChange={onChange}
+                ref={ref}
+                hasError={Boolean(errors.password)}
+                placeholder="Enter your password..."
+                className="border-custom-border-300 h-[46px] w-full"
+              />
+            )}
           />
         </div>
         <div className="text-right text-xs">

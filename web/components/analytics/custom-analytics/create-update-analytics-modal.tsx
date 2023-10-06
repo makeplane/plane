@@ -3,7 +3,7 @@ import React from "react";
 import { useRouter } from "next/router";
 
 // react-hook-form
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
@@ -11,7 +11,8 @@ import analyticsService from "services/analytics.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { Input } from "@plane/ui";
 // types
 import { IAnalyticsParams, ISaveAnalyticsFormData } from "types";
 
@@ -42,6 +43,7 @@ export const CreateUpdateAnalyticsModal: React.FC<Props> = ({ isOpen, handleClos
     register,
     formState: { errors, isSubmitting },
     handleSubmit,
+    control,
     reset,
   } = useForm<FormValues>({
     defaultValues,
@@ -114,25 +116,29 @@ export const CreateUpdateAnalyticsModal: React.FC<Props> = ({ isOpen, handleClos
               <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div>
-                    <Dialog.Title
-                      as="h3"
-                      className="text-lg font-medium leading-6 text-custom-text-100"
-                    >
+                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                       Save Analytics
                     </Dialog.Title>
                     <div className="mt-5">
-                      <Input
-                        type="text"
-                        id="name"
+                      <Controller
+                        control={control}
                         name="name"
-                        placeholder="Title"
-                        autoComplete="off"
-                        error={errors.name}
-                        register={register}
-                        width="full"
-                        validations={{
+                        rules={{
                           required: "Title is required",
                         }}
+                        render={({ field: { value, onChange, ref } }) => (
+                          <Input
+                            id="name"
+                            name="name"
+                            type="text"
+                            value={value}
+                            onChange={onChange}
+                            ref={ref}
+                            hasError={Boolean(errors.name)}
+                            placeholder="Title"
+                            className="w-full"
+                          />
+                        )}
                       />
                       <TextArea
                         id="description"

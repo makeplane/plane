@@ -1,7 +1,7 @@
 import React, { useEffect, useState, forwardRef, useRef } from "react";
 import { useRouter } from "next/router";
 // react-hook-form
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // services
 import aiService from "services/ai.service";
 import trackEventServices from "services/track_event.service";
@@ -9,8 +9,9 @@ import trackEventServices from "services/track_event.service";
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // ui
-import { Input, PrimaryButton, SecondaryButton } from "components/ui";
+import { PrimaryButton, SecondaryButton } from "components/ui";
 import { TipTapEditor } from "components/tiptap";
+import { Input } from "@plane/ui";
 // types
 import { IIssue, IPageBlock } from "types";
 
@@ -56,6 +57,7 @@ export const GptAssistantModal: React.FC<Props> = ({
 
   const {
     handleSubmit,
+    control,
     register,
     reset,
     setFocus,
@@ -167,14 +169,23 @@ export const GptAssistantModal: React.FC<Props> = ({
           No response could be generated. This may be due to insufficient content or task information. Please try again.
         </div>
       )}
-      <Input
-        type="text"
+      <Controller
+        control={control}
         name="task"
-        register={register}
-        placeholder={`${
-          content && content !== "" ? "Tell AI what action to perform on this content..." : "Ask AI anything..."
-        }`}
-        autoComplete="off"
+        render={({ field: { value, onChange, ref } }) => (
+          <Input
+            id="task"
+            name="task"
+            type="text"
+            value={value}
+            onChange={onChange}
+            ref={ref}
+            placeholder={`${
+              content && content !== "" ? "Tell AI what action to perform on this content..." : "Ask AI anything..."
+            }`}
+            className="w-full"
+          />
+        )}
       />
       <div className={`flex gap-2 ${response === "" ? "justify-end" : "justify-between"}`}>
         {response !== "" && (

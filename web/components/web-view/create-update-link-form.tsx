@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 
 // react hooks form
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 // services
 import issuesService from "services/issue.service";
@@ -20,10 +20,11 @@ import { ISSUE_DETAILS } from "constants/fetch-keys";
 import useToast from "hooks/use-toast";
 
 // ui
-import { PrimaryButton, Input } from "components/ui";
+import { PrimaryButton } from "components/ui";
+import { Input } from "@plane/ui";
 
 // types
-import type { linkDetails, IIssueLink } from "types";
+import type { linkDetails, IIssueLink, IIssue } from "types";
 
 type Props = {
   isOpen: boolean;
@@ -43,6 +44,7 @@ export const CreateUpdateLinkForm: React.FC<Props> = (props) => {
   const {
     register,
     handleSubmit,
+    control,
     reset,
     formState: { errors, isSubmitting },
   } = useForm({
@@ -122,30 +124,54 @@ export const CreateUpdateLinkForm: React.FC<Props> = (props) => {
         <div className="space-y-5">
           <div className="mt-2 space-y-3">
             <div>
-              <Input
-                id="url"
-                label="URL"
+              <Controller
+                control={control}
                 name="url"
-                type="url"
-                placeholder="https://..."
-                autoComplete="off"
-                error={errors.url}
-                register={register}
-                validations={{
+                rules={{
                   required: "URL is required",
                 }}
+                render={({ field: { value, onChange, ref } }) => (
+                  <>
+                    <label htmlFor="url" className="text-custom-text-200 mb-2">
+                      URL
+                    </label>
+                    <Input
+                      id="url"
+                      name="url"
+                      type="url"
+                      value={value}
+                      onChange={onChange}
+                      ref={ref}
+                      hasError={Boolean(errors.url)}
+                      placeholder="https://..."
+                      className="w-full"
+                    />
+                  </>
+                )}
               />
             </div>
             <div>
-              <Input
-                id="title"
-                label="Title (optional)"
+              <Controller
+                control={control}
                 name="title"
-                type="text"
-                placeholder="Enter title"
-                autoComplete="off"
-                error={errors.title}
-                register={register}
+                render={({ field: { value, onChange, ref } }) => (
+                  <>
+                    <label htmlFor="title" className="text-custom-text-200 mb-2">
+                      {`Title (optional)`}
+                    </label>
+                    <Input
+                      id="title"
+                      name="title"
+                      type="text"
+                      value={value}
+                      onChange={onChange}
+                      ref={ref}
+                      hasError={Boolean(errors.title)}
+                      placeholder="Enter title"
+                      className="w-full"
+                    />
+                  </>
+                )}
               />
             </div>
           </div>

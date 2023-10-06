@@ -5,10 +5,10 @@ export interface InputProps {
   id: string;
   value: string;
   name: string;
-  onChange: () => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
   mode?: "primary" | "transparent" | "true-transparent";
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md";
   hasError?: boolean;
   placeholder?: string;
   disabled?: boolean;
@@ -23,7 +23,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     onChange,
     className = "",
     mode = "primary",
-    size = "md",
+    size = "sm",
     hasError = false,
     placeholder = "",
     disabled = false,
@@ -50,7 +50,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
       } ${hasError ? "border-red-500" : ""} ${
         hasError && mode === "primary" ? "bg-red-500/20" : ""
       } ${
-        size === "sm" ? "px-3 py-2" : size === "lg" ? "p-3" : ""
+        size === "sm" ? "px-3 py-2" : size === "md" ? "p-3" : ""
       } ${className}`}
     />
   );

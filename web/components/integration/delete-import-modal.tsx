@@ -11,7 +11,8 @@ import IntegrationService from "services/integration.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { DangerButton, Input, SecondaryButton } from "components/ui";
+import { DangerButton, SecondaryButton } from "components/ui";
+import { Input } from "@plane/ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
@@ -110,14 +111,16 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, 
                       To confirm, type <span className="font-medium text-custom-text-100">delete import</span> below:
                     </p>
                     <Input
+                      id="typeDelete"
                       type="text"
                       name="typeDelete"
-                      className="mt-2"
+                      value=""
                       onChange={(e) => {
                         if (e.target.value === "delete import") setConfirmDeleteImport(true);
                         else setConfirmDeleteImport(false);
                       }}
                       placeholder="Enter 'delete import'"
+                      className="mt-2 w-full"
                     />
                   </div>
                   <div className="flex justify-end gap-2">

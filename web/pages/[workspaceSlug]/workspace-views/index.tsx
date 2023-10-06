@@ -16,7 +16,8 @@ import { WorkspaceIssuesViewOptions } from "components/issues/workspace-views/wo
 import { CreateUpdateWorkspaceViewModal } from "components/workspace/views/modal";
 import { DeleteWorkspaceViewModal } from "components/workspace/views/delete-workspace-view-modal";
 // ui
-import { EmptyState, Input, Loader, PrimaryButton } from "components/ui";
+import { EmptyState, Loader, PrimaryButton } from "components/ui";
+import { Input } from "@plane/ui";
 // icons
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { PlusIcon } from "lucide-react";
@@ -74,9 +75,7 @@ const WorkspaceViews: NextPage = () => {
   const filteredDefaultOptions =
     query === ""
       ? defaultWorkspaceViewsList
-      : defaultWorkspaceViewsList?.filter((option) =>
-          option.label.toLowerCase().includes(query.toLowerCase())
-        );
+      : defaultWorkspaceViewsList?.filter((option) => option.label.toLowerCase().includes(query.toLowerCase()));
 
   const filteredOptions =
     query === ""
@@ -104,10 +103,7 @@ const WorkspaceViews: NextPage = () => {
         <div className="flex items-center gap-2">
           <WorkspaceIssuesViewOptions />
 
-          <PrimaryButton
-            className="flex items-center gap-2"
-            onClick={() => setCreateUpdateViewModal(true)}
-          >
+          <PrimaryButton className="flex items-center gap-2" onClick={() => setCreateUpdateViewModal(true)}>
             <PlusIcon className="h-4 w-4" />
             New View
           </PrimaryButton>
@@ -122,21 +118,20 @@ const WorkspaceViews: NextPage = () => {
         }}
         data={selectedViewToUpdate}
       />
-      <DeleteWorkspaceViewModal
-        isOpen={deleteViewModal}
-        data={selectedViewToDelete}
-        setIsOpen={setDeleteViewModal}
-      />
+      <DeleteWorkspaceViewModal isOpen={deleteViewModal} data={selectedViewToDelete} setIsOpen={setDeleteViewModal} />
       <div className="flex flex-col">
         <div className="h-full w-full flex flex-col overflow-hidden">
           <div className="flex items-center gap-2.5 w-full px-5 py-3 border-b border-custom-border-200">
             <MagnifyingGlassIcon className="h-4 w-4 text-custom-text-200" />
             <Input
-              className="w-full bg-transparent text-xs leading-5 text-custom-text-200 placeholder:text-custom-text-400 !p-0 focus:outline-none"
+              id="search"
+              name="search"
+              type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search"
-              mode="trueTransparent"
+              className="w-full bg-transparent text-xs leading-5 text-custom-text-200 placeholder:text-custom-text-400 !p-0 focus:outline-none"
+              mode="true-transparent"
             />
           </div>
         </div>
@@ -154,9 +149,7 @@ const WorkspaceViews: NextPage = () => {
                         <PhotoFilterOutlined className="!text-base !leading-6" />
                       </div>
                       <div className="flex flex-col">
-                        <p className="truncate text-sm leading-4 font-medium">
-                          {truncateText(option.label, 75)}
-                        </p>
+                        <p className="truncate text-sm leading-4 font-medium">{truncateText(option.label, 75)}</p>
                       </div>
                     </div>
                   </div>

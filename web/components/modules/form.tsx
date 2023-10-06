@@ -5,7 +5,8 @@ import { Controller, useForm } from "react-hook-form";
 // components
 import { ModuleLeadSelect, ModuleMembersSelect, ModuleStatusSelect } from "components/modules";
 // ui
-import { DateSelect, Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { DateSelect, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { Input } from "@plane/ui";
 // types
 import { IModule } from "types";
 
@@ -63,27 +64,32 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateModule)}>
       <div className="space-y-5">
-        <h3 className="text-lg font-medium leading-6 text-custom-text-100">
-          {status ? "Update" : "Create"} Module
-        </h3>
+        <h3 className="text-lg font-medium leading-6 text-custom-text-100">{status ? "Update" : "Create"} Module</h3>
         <div className="space-y-3">
           <div>
-            <Input
-              id="name"
+            <Controller
+              control={control}
               name="name"
-              type="name"
-              placeholder="Title"
-              autoComplete="off"
-              className="resize-none text-xl"
-              error={errors.name}
-              register={register}
-              validations={{
+              rules={{
                 required: "Title is required",
                 maxLength: {
                   value: 255,
                   message: "Title should be less than 255 characters",
                 },
               }}
+              render={({ field: { value, onChange, ref } }) => (
+                <Input
+                  id="name"
+                  name="name"
+                  type="text"
+                  value={value}
+                  onChange={onChange}
+                  ref={ref}
+                  hasError={Boolean(errors.name)}
+                  placeholder="Title"
+                  className="resize-none text-xl w-full"
+                />
+              )}
             />
           </div>
           <div>
@@ -129,16 +135,12 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
             <Controller
               control={control}
               name="lead"
-              render={({ field: { value, onChange } }) => (
-                <ModuleLeadSelect value={value} onChange={onChange} />
-              )}
+              render={({ field: { value, onChange } }) => <ModuleLeadSelect value={value} onChange={onChange} />}
             />
             <Controller
               control={control}
               name="members"
-              render={({ field: { value, onChange } }) => (
-                <ModuleMembersSelect value={value} onChange={onChange} />
-              )}
+              render={({ field: { value, onChange } }) => <ModuleMembersSelect value={value} onChange={onChange} />}
             />
           </div>
         </div>
