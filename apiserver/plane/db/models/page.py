@@ -22,6 +22,15 @@ class Page(ProjectBaseModel):
     labels = models.ManyToManyField(
         "db.Label", blank=True, related_name="pages", through="db.PageLabel"
     )
+    parent = models.ForeignKey(
+        "self",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="parent_page",
+    )
+    archived_at = models.DateField(null=True)
+    is_locked = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Page"
@@ -32,6 +41,42 @@ class Page(ProjectBaseModel):
     def __str__(self):
         """Return owner email and page name"""
         return f"{self.owned_by.email} <{self.name}>"
+
+
+class PageTransaction(ProjectBaseModel):
+    TYPE_CHOICES = (
+        ("to_do", "To Do"),
+        ("issue", "issue"),
+        ("image", "Image"),
+        ("video", "Video"),
+        ("file", "File"),
+        ("link", "Link"),
+        ("cycle","Cycle"),
+        ("module", "Module"),
+        ("back_link", "Back Link"),
+        ("forward_link", "Forward Link"),
+        ("mention", "Mention"),
+    )
+    transaction = models.CharField(max_length=255)
+    page = models.ForeignKey(
+        Page, related_name="page_relation", on_delete=models.CASCADE
+    )
+    entity_identifier = models.UUIDField(null=True)
+    entity_name = models.CharField(
+        max_length=30,
+        choices=TYPE_CHOICES,
+        verbose_name="Transaction Type",
+        default="to_do",
+    )
+
+    class Meta:
+        verbose_name = "Page Transaction"
+        verbose_name_plural = "Page Transactions"
+        db_table = "page_transactions"
+        ordering = ("-created_at",)
+    
+    def __str__(self):
+        return f"{self.page.name} {self.type}"
 
 
 class PageBlock(ProjectBaseModel):
