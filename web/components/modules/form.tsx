@@ -5,8 +5,8 @@ import { Controller, useForm } from "react-hook-form";
 // components
 import { ModuleLeadSelect, ModuleMembersSelect, ModuleStatusSelect } from "components/modules";
 // ui
-import { DateSelect, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
-import { Input } from "@plane/ui";
+import { DateSelect, PrimaryButton, SecondaryButton } from "components/ui";
+import { Input, TextArea } from "@plane/ui";
 // types
 import { IModule } from "types";
 
@@ -93,13 +93,20 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
             />
           </div>
           <div>
-            <TextArea
-              id="description"
+            <Controller
               name="description"
-              placeholder="Description"
-              className="h-32 resize-none text-sm"
-              error={errors.description}
-              register={register}
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <TextArea
+                  id="description"
+                  name="description"
+                  value={value}
+                  placeholder="Description"
+                  onChange={onChange}
+                  className="h-32 resize-none text-sm"
+                  hasError={Boolean(errors?.description)}
+                />
+              )}
             />
           </div>
           <div className="flex flex-wrap items-center gap-2">

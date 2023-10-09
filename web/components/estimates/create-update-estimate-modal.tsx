@@ -13,8 +13,8 @@ import estimatesService from "services/project_estimates.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { PrimaryButton, SecondaryButton, TextArea } from "components/ui";
-import { Input } from "@plane/ui";
+import { PrimaryButton, SecondaryButton } from "components/ui";
+import { Input, TextArea } from "@plane/ui";
 // helpers
 import { checkDuplicates } from "helpers/array.helper";
 // types
@@ -53,7 +53,6 @@ const defaultValues: Partial<FormValues> = {
 
 export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, isOpen, user }) => {
   const {
-    register,
     formState: { errors, isSubmitting },
     handleSubmit,
     control,
@@ -274,12 +273,20 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                         />
                       </div>
                       <div>
-                        <TextArea
-                          id="description"
+                        <Controller
                           name="description"
-                          placeholder="Description"
-                          className="h-32 resize-none text-sm"
-                          register={register}
+                          control={control}
+                          render={({ field: { value, onChange } }) => (
+                            <TextArea
+                              id="description"
+                              name="description"
+                              value={value}
+                              placeholder="Description"
+                              onChange={onChange}
+                              className="mt-3 h-32 resize-none text-sm"
+                              hasError={Boolean(errors?.description)}
+                            />
+                          )}
                         />
                       </div>
                       <div className="grid grid-cols-3 gap-3">

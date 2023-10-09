@@ -11,8 +11,8 @@ import analyticsService from "services/analytics.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { PrimaryButton, SecondaryButton, TextArea } from "components/ui";
-import { Input } from "@plane/ui";
+import { PrimaryButton, SecondaryButton } from "components/ui";
+import { Input, TextArea } from "@plane/ui";
 // types
 import { IAnalyticsParams, ISaveAnalyticsFormData } from "types";
 
@@ -40,7 +40,6 @@ export const CreateUpdateAnalyticsModal: React.FC<Props> = ({ isOpen, handleClos
   const { setToastAlert } = useToast();
 
   const {
-    register,
     formState: { errors, isSubmitting },
     handleSubmit,
     control,
@@ -140,13 +139,20 @@ export const CreateUpdateAnalyticsModal: React.FC<Props> = ({ isOpen, handleClos
                           />
                         )}
                       />
-                      <TextArea
-                        id="description"
+                      <Controller
                         name="description"
-                        placeholder="Description"
-                        className="mt-3 h-32 resize-none text-sm"
-                        error={errors.description}
-                        register={register}
+                        control={control}
+                        render={({ field: { value, onChange } }) => (
+                          <TextArea
+                            id="description"
+                            name="description"
+                            placeholder="Description"
+                            className="mt-3 h-32 resize-none text-sm"
+                            hasError={Boolean(errors?.description)}
+                            value={value}
+                            onChange={onChange}
+                          />
+                        )}
                       />
                     </div>
                   </div>

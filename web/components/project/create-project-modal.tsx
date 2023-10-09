@@ -12,16 +12,8 @@ import useToast from "hooks/use-toast";
 import { useWorkspaceMyMembership } from "contexts/workspace-member.context";
 import useWorkspaceMembers from "hooks/use-workspace-members";
 // ui
-import {
-  TextArea,
-  CustomSelect,
-  PrimaryButton,
-  SecondaryButton,
-  Icon,
-  Avatar,
-  CustomSearchSelect,
-} from "components/ui";
-import { Input } from "@plane/ui";
+import { CustomSelect, PrimaryButton, SecondaryButton, Icon, Avatar, CustomSearchSelect } from "components/ui";
+import { Input, TextArea } from "@plane/ui";
 // components
 import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
@@ -318,13 +310,20 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                         />
                       </div>
                       <div className="md:col-span-4">
-                        <TextArea
-                          id="description"
+                        <Controller
                           name="description"
-                          className="text-sm !h-24"
-                          placeholder="Description..."
-                          error={errors.description}
-                          register={register}
+                          control={control}
+                          render={({ field: { value, onChange } }) => (
+                            <TextArea
+                              id="description"
+                              name="description"
+                              value={value}
+                              placeholder="Description..."
+                              onChange={onChange}
+                              className="text-sm !h-24"
+                              hasError={Boolean(errors?.name)}
+                            />
+                          )}
                         />
                       </div>
                     </div>

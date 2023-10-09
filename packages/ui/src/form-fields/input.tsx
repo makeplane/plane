@@ -1,32 +1,23 @@
 import * as React from "react";
 
-export interface InputProps {
-  type: string;
-  id: string;
-  value: string;
-  name: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  className?: string;
+export interface InputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
   mode?: "primary" | "transparent" | "true-transparent";
-  size?: "sm" | "md";
+  inputSize?: "sm" | "md";
   hasError?: boolean;
-  placeholder?: string;
-  disabled?: boolean;
+  className?: string;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   const {
     id,
     type,
-    value,
     name,
-    onChange,
-    className = "",
     mode = "primary",
-    size = "sm",
+    inputSize = "sm",
     hasError = false,
-    placeholder = "",
-    disabled = false,
+    className = "",
+    ...rest
   } = props;
 
   return (
@@ -34,11 +25,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
       id={id}
       ref={ref}
       type={type}
-      value={value}
       name={name}
-      onChange={onChange}
-      placeholder={placeholder}
-      disabled={disabled}
       className={`block rounded-md bg-transparent text-sm focus:outline-none placeholder-custom-text-400 ${
         mode === "primary"
           ? "rounded-md border border-custom-border-200"
@@ -50,8 +37,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
       } ${hasError ? "border-red-500" : ""} ${
         hasError && mode === "primary" ? "bg-red-500/20" : ""
       } ${
-        size === "sm" ? "px-3 py-2" : size === "md" ? "p-3" : ""
+        inputSize === "sm" ? "px-3 py-2" : inputSize === "md" ? "p-3" : ""
       } ${className}`}
+      {...rest}
     />
   );
 });

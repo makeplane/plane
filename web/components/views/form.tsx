@@ -14,8 +14,8 @@ import useProjectMembers from "hooks/use-project-members";
 import { FiltersList } from "components/core";
 import { SelectFilters } from "components/views";
 // ui
-import { PrimaryButton, SecondaryButton, TextArea } from "components/ui";
-import { Input } from "@plane/ui";
+import { PrimaryButton, SecondaryButton } from "components/ui";
+import { Input, TextArea } from "@plane/ui";
 // helpers
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 import { getStatesList } from "helpers/state.helper";
@@ -140,13 +140,20 @@ export const ViewForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
             />
           </div>
           <div>
-            <TextArea
-              id="description"
+            <Controller
               name="description"
-              placeholder="Description"
-              className="h-32 resize-none text-sm"
-              error={errors.description}
-              register={register}
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <TextArea
+                  id="description"
+                  name="description"
+                  value={value}
+                  placeholder="Description"
+                  onChange={onChange}
+                  hasError={Boolean(errors?.description)}
+                  className="h-32 resize-none text-sm"
+                />
+              )}
             />
           </div>
           <div>

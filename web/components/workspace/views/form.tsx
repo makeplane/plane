@@ -17,8 +17,8 @@ import { WorkspaceFiltersList } from "components/core";
 import { GlobalSelectFilters } from "components/workspace/views/global-select-filters";
 
 // ui
-import { PrimaryButton, SecondaryButton, TextArea } from "components/ui";
-import { Input } from "@plane/ui";
+import { PrimaryButton, SecondaryButton } from "components/ui";
+import { Input, TextArea } from "@plane/ui";
 // helpers
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 // types
@@ -138,13 +138,20 @@ export const WorkspaceViewForm: React.FC<Props> = ({ handleFormSubmit, handleClo
             />
           </div>
           <div>
-            <TextArea
-              id="description"
+            <Controller
               name="description"
-              placeholder="Description"
-              className="h-32 resize-none text-sm"
-              error={errors.description}
-              register={register}
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <TextArea
+                  id="description"
+                  name="description"
+                  value={value}
+                  placeholder="Description"
+                  onChange={onChange}
+                  className="h-32 resize-none text-sm"
+                  hasError={Boolean(errors?.description)}
+                />
+              )}
             />
           </div>
           <div>

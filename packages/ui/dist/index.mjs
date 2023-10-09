@@ -10,26 +10,20 @@ var Input = React2.forwardRef((props, ref) => {
   const {
     id,
     type,
-    value,
     name,
-    onChange,
-    className = "",
     mode = "primary",
-    size = "sm",
+    inputSize = "sm",
     hasError = false,
-    placeholder = "",
-    disabled = false
+    className = "",
+    ...rest
   } = props;
   return /* @__PURE__ */ React2.createElement("input", {
     id,
     ref,
     type,
-    value,
     name,
-    onChange,
-    placeholder,
-    disabled,
-    className: `block rounded-md bg-transparent text-sm focus:outline-none placeholder-custom-text-400 ${mode === "primary" ? "rounded-md border border-custom-border-200" : mode === "transparent" ? "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-custom-primary" : mode === "true-transparent" ? "rounded border-none bg-transparent ring-0" : ""} ${hasError ? "border-red-500" : ""} ${hasError && mode === "primary" ? "bg-red-500/20" : ""} ${size === "sm" ? "px-3 py-2" : size === "md" ? "p-3" : ""} ${className}`
+    className: `block rounded-md bg-transparent text-sm focus:outline-none placeholder-custom-text-400 ${mode === "primary" ? "rounded-md border border-custom-border-200" : mode === "transparent" ? "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-custom-primary" : mode === "true-transparent" ? "rounded border-none bg-transparent ring-0" : ""} ${hasError ? "border-red-500" : ""} ${hasError && mode === "primary" ? "bg-red-500/20" : ""} ${inputSize === "sm" ? "px-3 py-2" : inputSize === "md" ? "p-3" : ""} ${className}`,
+    ...rest
   });
 });
 Input.displayName = "form-input-field";
@@ -50,15 +44,13 @@ var TextArea = React3.forwardRef(
     const {
       id,
       name,
-      placeholder = "",
       value = "",
       rows = 1,
       cols = 1,
-      disabled,
-      onChange,
       mode = "primary",
       hasError = false,
-      className = ""
+      className = "",
+      ...rest
     } = props;
     const textAreaRef = React3.useRef(ref);
     ref && useAutoSizeTextArea(textAreaRef == null ? void 0 : textAreaRef.current, value);
@@ -66,13 +58,11 @@ var TextArea = React3.forwardRef(
       id,
       name,
       ref: textAreaRef,
-      placeholder,
       value,
       rows,
       cols,
-      disabled,
-      onChange,
-      className: `no-scrollbar w-full bg-transparent placeholder-custom-text-400 px-3 py-2 outline-none ${mode === "primary" ? "rounded-md border border-custom-border-200" : mode === "transparent" ? "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-theme" : ""} ${hasError ? "border-red-500" : ""} ${hasError && mode === "primary" ? "bg-red-100" : ""} ${className}`
+      className: `no-scrollbar w-full bg-transparent placeholder-custom-text-400 px-3 py-2 outline-none ${mode === "primary" ? "rounded-md border border-custom-border-200" : mode === "transparent" ? "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-theme" : ""} ${hasError ? "border-red-500" : ""} ${hasError && mode === "primary" ? "bg-red-100" : ""} ${className}`,
+      ...rest
     });
   }
 );

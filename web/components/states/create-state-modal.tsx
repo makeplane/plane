@@ -15,8 +15,8 @@ import stateService from "services/project_state.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
-import { Input } from "@plane/ui";
+import { CustomSelect, PrimaryButton, SecondaryButton } from "components/ui";
+import { Input, TextArea } from "@plane/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 // types
@@ -235,13 +235,22 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                         </Popover>
                       </div>
                       <div>
-                        <TextArea
-                          id="description"
+                        <label htmlFor="description" className="mb-2 text-custom-text-200">
+                          Description
+                        </label>
+                        <Controller
                           name="description"
-                          label="Description"
-                          placeholder="Enter description"
-                          error={errors.description}
-                          register={register}
+                          control={control}
+                          render={({ field: { value, onChange } }) => (
+                            <TextArea
+                              id="description"
+                              name="description"
+                              value={value}
+                              placeholder="Enter description"
+                              onChange={onChange}
+                              hasError={Boolean(errors?.description)}
+                            />
+                          )}
                         />
                       </div>
                     </div>

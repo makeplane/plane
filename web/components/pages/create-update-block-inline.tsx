@@ -12,7 +12,8 @@ import useToast from "hooks/use-toast";
 // components
 import { GptAssistantModal } from "components/core";
 import { TipTapEditor } from "components/tiptap";
-import { PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { PrimaryButton, SecondaryButton } from "components/ui";
+import { TextArea } from "@plane/ui";
 // types
 import { ICurrentUserResponse, IPageBlock } from "types";
 // fetch-keys
@@ -59,7 +60,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
     setValue,
     setFocus,
     reset,
-    formState: { isSubmitting },
+    formState: { errors, isSubmitting },
   } = useForm<IPageBlock>({
     defaultValues,
   });
@@ -261,14 +262,22 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
       >
         <div className="pt-2">
           <div className="flex justify-between">
-            <TextArea
-              id="name"
+            <Controller
               name="name"
-              placeholder="Title"
-              register={register}
-              className="min-h-10 font medium block w-full resize-none overflow-hidden border-none bg-transparent py-1 text-base"
-              autoComplete="off"
-              maxLength={255}
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <TextArea
+                  id="name"
+                  name="name"
+                  value={value}
+                  placeholder="Title"
+                  onChange={onChange}
+                  className="min-h-10 font medium block w-full resize-none overflow-hidden border-none bg-transparent py-1 text-base"
+                  autoComplete="off"
+                  maxLength={255}
+                  hasError={Boolean(errors?.name)}
+                />
+              )}
             />
           </div>
           <div className="page-block-section relative -mt-2 text-custom-text-200">

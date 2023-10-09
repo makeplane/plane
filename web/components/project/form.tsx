@@ -3,8 +3,8 @@ import { Controller, useForm } from "react-hook-form";
 // components
 import EmojiIconPicker from "components/emoji-icon-picker";
 import { ImagePickerPopover } from "components/core";
-import { TextArea, CustomSelect, PrimaryButton } from "components/ui";
-import { Input } from "@plane/ui";
+import { CustomSelect, PrimaryButton } from "components/ui";
+import { Input, TextArea } from "@plane/ui";
 // types
 import { IProject, IWorkspace } from "types";
 // helpers
@@ -188,15 +188,21 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
 
         <div className="flex flex-col gap-1">
           <h4 className="text-sm">Description</h4>
-          <TextArea
-            id="description"
+          <Controller
             name="description"
-            error={errors.description}
-            register={register}
-            placeholder="Enter project description"
-            validations={{}}
-            className="min-h-[102px] text-sm"
-            disabled={!isAdmin}
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <TextArea
+                id="description"
+                name="description"
+                value={value}
+                placeholder="Enter project description"
+                onChange={onChange}
+                className="min-h-[102px] text-sm"
+                hasError={Boolean(errors?.description)}
+                disabled={!isAdmin}
+              />
+            )}
           />
         </div>
 

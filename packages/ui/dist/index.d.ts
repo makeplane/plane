@@ -3,30 +3,15 @@ import { FC } from 'react';
 
 declare const Button: () => JSX.Element;
 
-interface InputProps {
-    type: string;
-    id: string;
-    value: string;
-    name: string;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    className?: string;
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     mode?: "primary" | "transparent" | "true-transparent";
-    size?: "sm" | "md";
+    inputSize?: "sm" | "md";
     hasError?: boolean;
-    placeholder?: string;
-    disabled?: boolean;
+    className?: string;
 }
 declare const Input: React.ForwardRefExoticComponent<InputProps & React.RefAttributes<HTMLInputElement>>;
 
-interface TextAreaProps {
-    id: string;
-    name: string;
-    placeholder?: string;
-    value?: string;
-    rows?: number;
-    cols?: number;
-    disabled?: boolean;
-    onChange: () => void;
+interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
     mode?: "primary" | "transparent";
     hasError?: boolean;
     className?: string;
