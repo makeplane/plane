@@ -7,23 +7,34 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // components
 import { GlobalViewsHeader } from "components/workspace";
+import { GlobalViewsAllLayouts } from "components/issues";
 // ui
 import { PrimaryButton } from "components/ui";
 // icons
 import { CheckCircle, Plus } from "lucide-react";
+// types
+import { NextPage } from "next";
 // fetch-keys
-import { GLOBAL_VIEW_ISSUES } from "constants/fetch-keys";
+import { GLOBAL_VIEWS_LIST, GLOBAL_VIEW_DETAILS } from "constants/fetch-keys";
+import { GlobalIssuesHeader } from "components/headers";
 
-const GlobalViewAllIssues = () => {
+const GlobalViewIssues: NextPage = () => {
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, globalViewId } = router.query;
 
-  const { globalViewIssues: globalViewIssuesStore } = useMobxStore();
+  const { globalViews: globalViewsStore } = useMobxStore();
 
-  // useSWR(
-  //   workspaceSlug ? GLOBAL_VIEW_ISSUES("all-issues", {}) : null,
-  //   workspaceSlug ? () => globalViewIssuesStore.fetchViewIssues(workspaceSlug.toString()) : null
-  // );
+  useSWR(
+    workspaceSlug ? GLOBAL_VIEWS_LIST(workspaceSlug.toString()) : null,
+    workspaceSlug ? () => globalViewsStore.fetchAllGlobalViews(workspaceSlug.toString()) : null
+  );
+
+  useSWR(
+    workspaceSlug && globalViewId ? GLOBAL_VIEW_DETAILS(globalViewId.toString()) : null,
+    workspaceSlug && globalViewId
+      ? () => globalViewsStore.fetchGlobalViewDetails(workspaceSlug.toString(), globalViewId.toString())
+      : null
+  );
 
   return (
     <WorkspaceAuthorizationLayout
@@ -33,26 +44,14 @@ const GlobalViewAllIssues = () => {
           <span className="text-sm font-medium">Workspace issues</span>
         </div>
       }
-      right={
-        <div className="flex items-center gap-2">
-          <PrimaryButton
-            className="flex items-center gap-2"
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", { key: "c" });
-              document.dispatchEvent(e);
-            }}
-          >
-            <Plus size={14} strokeWidth={1.5} />
-            Add Issue
-          </PrimaryButton>
-        </div>
-      }
+      right={<GlobalIssuesHeader />}
     >
       <div className="h-full flex flex-col overflow-hidden bg-custom-background-100">
         <div className="h-full w-full border-b border-custom-border-300">
           <GlobalViewsHeader />
           <div className="h-full w-full flex flex-col">
             {/* TODO: applied filters list */}
+            <GlobalViewsAllLayouts />
             {/* <SpreadsheetView
             spreadsheetIssues={viewIssues}
             mutateIssues={mutateViewIssues}
@@ -68,4 +67,4 @@ const GlobalViewAllIssues = () => {
   );
 };
 
-export default GlobalViewAllIssues;
+export default GlobalViewIssues;

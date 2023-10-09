@@ -1,15 +1,12 @@
 // layouts
-import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
-// components
-import { WorkspaceIssuesViewOptions } from "components/issues/workspace-views/workspace-issue-view-option";
-import { WorkspaceSubscribedIssues } from "components/issues/workspace-views/workspace-subscribed-issue";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // ui
 import { PrimaryButton } from "components/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { CheckCircle } from "lucide-react";
 
-const WorkspaceViewSubscribedIssue: React.FC = () => (
+const GlobalViewSubscribedIssues: React.FC = () => (
   <WorkspaceAuthorizationLayout
     breadcrumbs={
       <div className="flex gap-2 items-center">
@@ -19,7 +16,6 @@ const WorkspaceViewSubscribedIssue: React.FC = () => (
     }
     right={
       <div className="flex items-center gap-2">
-        <WorkspaceIssuesViewOptions />
         <PrimaryButton
           className="flex items-center gap-2"
           onClick={() => {
@@ -33,8 +29,8 @@ const WorkspaceViewSubscribedIssue: React.FC = () => (
       </div>
     }
   >
-    <WorkspaceSubscribedIssues />
+    Subscribed
   </WorkspaceAuthorizationLayout>
 );
 
-export default WorkspaceViewSubscribedIssue;
+export default GlobalViewSubscribedIssues;

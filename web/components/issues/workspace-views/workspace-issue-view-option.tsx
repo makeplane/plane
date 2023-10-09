@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 // hooks
 import { useWorkspaceView } from "hooks/use-workspace-view";
 // components
-import { GlobalSelectFilters } from "components/workspace/views/global-select-filters";
+import { GlobalSelectFilters } from "components/workspace/views-legacy/global-select-filters";
 // ui
 import { Tooltip } from "components/ui";
 // icons
@@ -44,9 +44,7 @@ export const WorkspaceIssuesViewOptions: React.FC = () => {
         {issueViewOptions.map((option) => (
           <Tooltip
             key={option.type}
-            tooltipContent={
-              <span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} View</span>
-            }
+            tooltipContent={<span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} View</span>}
             position="bottom"
           >
             <button
@@ -58,8 +56,7 @@ export const WorkspaceIssuesViewOptions: React.FC = () => {
               }`}
               onClick={() => {
                 handleFilters("display_filters", { layout: option.type }, true);
-                if (option.type === "spreadsheet")
-                  router.push(`/${workspaceSlug}/workspace-views/all-issues`);
+                if (option.type === "spreadsheet") router.push(`/${workspaceSlug}/workspace-views/all-issues`);
                 else router.push(`/${workspaceSlug}/workspace-views`);
               }}
             >
@@ -82,10 +79,7 @@ export const WorkspaceIssuesViewOptions: React.FC = () => {
               const key = option.key as keyof typeof filters.filters;
 
               if (key === "start_date" || key === "target_date") {
-                const valueExists = checkIfArraysHaveSameElements(
-                  filters.filters?.[key] ?? [],
-                  option.value
-                );
+                const valueExists = checkIfArraysHaveSameElements(filters.filters?.[key] ?? [], option.value);
 
                 handleFilters("filters", {
                   ...filters,
@@ -100,9 +94,7 @@ export const WorkspaceIssuesViewOptions: React.FC = () => {
                 else {
                   handleFilters("filters", {
                     ...filters,
-                    [key]: (filters?.filters?.[key] as any[])?.filter(
-                      (item) => item !== option.value
-                    ),
+                    [key]: (filters?.filters?.[key] as any[])?.filter((item) => item !== option.value),
                   });
                 }
               }

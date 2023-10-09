@@ -67,3 +67,22 @@ export const EXPORTERS_LIST = [
     logo: JSONLogo,
   },
 ];
+
+export const DEFAULT_GLOBAL_VIEWS_LIST = [
+  {
+    key: "all-issues",
+    label: "All issues",
+  },
+  {
+    key: "assigned",
+    label: "Assigned",
+  },
+  {
+    key: "created",
+    label: "Created",
+  },
+  {
+    key: "subscribed",
+    label: "Subscribed",
+  },
+];

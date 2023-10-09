@@ -11,7 +11,7 @@ import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
-import { WorkspaceViewForm } from "components/workspace/views/form";
+import { WorkspaceViewForm } from "components/workspace/views-legacy/form";
 // types
 import { IWorkspaceView } from "types/workspace-views";
 // fetch-keys
@@ -24,12 +24,7 @@ type Props = {
   preLoadedData?: Partial<IWorkspaceView> | null;
 };
 
-export const CreateUpdateWorkspaceViewModal: React.FC<Props> = ({
-  isOpen,
-  handleClose,
-  data,
-  preLoadedData,
-}) => {
+export const CreateUpdateWorkspaceViewModal: React.FC<Props> = ({ isOpen, handleClose, data, preLoadedData }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 

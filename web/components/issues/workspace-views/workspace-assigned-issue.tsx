@@ -11,9 +11,9 @@ import { useProjectMyMembership } from "contexts/project-member.context";
 import workspaceService from "services/workspace.service";
 // components
 import { SpreadsheetView } from "components/core";
-import { WorkspaceViewsNavigation } from "components/workspace/views/workpace-view-navigation";
+import { WorkspaceViewsNavigation } from "components/workspace/views-legacy/workpace-view-navigation";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
-import { CreateUpdateWorkspaceViewModal } from "components/workspace/views/modal";
+import { CreateUpdateWorkspaceViewModal } from "components/workspace/views-legacy/modal";
 // fetch-keys
 import { WORKSPACE_VIEW_ISSUES } from "constants/fetch-keys";
 // types
@@ -30,9 +30,7 @@ export const WorkspaceAssignedIssue = () => {
 
   // update issue modal
   const [editIssueModal, setEditIssueModal] = useState(false);
-  const [issueToEdit, setIssueToEdit] = useState<
-    (IIssue & { actionType: "edit" | "delete" }) | undefined
-  >(undefined);
+  const [issueToEdit, setIssueToEdit] = useState<(IIssue & { actionType: "edit" | "delete" }) | undefined>(undefined);
 
   // delete issue modal
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);

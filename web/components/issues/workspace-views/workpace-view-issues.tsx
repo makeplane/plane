@@ -15,11 +15,11 @@ import { useWorkspaceView } from "hooks/use-workspace-view";
 import useWorkspaceMembers from "hooks/use-workspace-members";
 import useToast from "hooks/use-toast";
 // components
-import { WorkspaceViewsNavigation } from "components/workspace/views/workpace-view-navigation";
+import { WorkspaceViewsNavigation } from "components/workspace/views-legacy/workpace-view-navigation";
 import { EmptyState, PrimaryButton } from "components/ui";
 import { SpreadsheetView, WorkspaceFiltersList } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
-import { CreateUpdateWorkspaceViewModal } from "components/workspace/views/modal";
+import { CreateUpdateWorkspaceViewModal } from "components/workspace/views-legacy/modal";
 // icon
 import { PlusIcon } from "components/icons";
 // image
@@ -38,10 +38,7 @@ export const WorkspaceViewIssues = () => {
 
   const { memberRole } = useProjectMyMembership();
   const { user } = useUser();
-  const { isGuest, isViewer } = useWorkspaceMembers(
-    workspaceSlug?.toString(),
-    Boolean(workspaceSlug)
-  );
+  const { isGuest, isViewer } = useWorkspaceMembers(workspaceSlug?.toString(), Boolean(workspaceSlug));
   const { filters, viewIssues, mutateViewIssues, handleFilters } = useWorkspaceView();
 
   const [createViewModal, setCreateViewModal] = useState<any>(null);
@@ -54,9 +51,7 @@ export const WorkspaceViewIssues = () => {
 
   // update issue modal
   const [editIssueModal, setEditIssueModal] = useState(false);
-  const [issueToEdit, setIssueToEdit] = useState<
-    (IIssue & { actionType: "edit" | "delete" }) | undefined
-  >(undefined);
+  const [issueToEdit, setIssueToEdit] = useState<(IIssue & { actionType: "edit" | "delete" }) | undefined>(undefined);
 
   // delete issue modal
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);

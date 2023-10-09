@@ -1,15 +1,12 @@
 // layouts
-import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
-// components
-import { WorkspaceIssuesViewOptions } from "components/issues/workspace-views/workspace-issue-view-option";
-import { WorkspaceCreatedIssues } from "components/issues/workspace-views/workspace-created-issues";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // ui
 import { PrimaryButton } from "components/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { CheckCircle } from "lucide-react";
 
-const WorkspaceViewCreatedIssue: React.FC = () => (
+const GlobalViewCreatedIssues: React.FC = () => (
   <WorkspaceAuthorizationLayout
     breadcrumbs={
       <div className="flex gap-2 items-center">
@@ -19,7 +16,6 @@ const WorkspaceViewCreatedIssue: React.FC = () => (
     }
     right={
       <div className="flex items-center gap-2">
-        <WorkspaceIssuesViewOptions />
         <PrimaryButton
           className="flex items-center gap-2"
           onClick={() => {
@@ -33,8 +29,8 @@ const WorkspaceViewCreatedIssue: React.FC = () => (
       </div>
     }
   >
-    <WorkspaceCreatedIssues />
+    Created
   </WorkspaceAuthorizationLayout>
 );
 
-export default WorkspaceViewCreatedIssue;
+export default GlobalViewCreatedIssues;

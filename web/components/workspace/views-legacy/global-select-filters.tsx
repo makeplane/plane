@@ -8,7 +8,7 @@ import useSWR from "swr";
 import useProjects from "hooks/use-projects";
 import useWorkspaceMembers from "hooks/use-workspace-members";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 // components
 import { DateFilterModal } from "components/core";
 // ui
@@ -32,12 +32,7 @@ type Props = {
   height?: "sm" | "md" | "rg" | "lg";
 };
 
-export const GlobalSelectFilters: React.FC<Props> = ({
-  filters,
-  onSelect,
-  direction = "right",
-  height = "md",
-}) => {
+export const GlobalSelectFilters: React.FC<Props> = ({ filters, onSelect, direction = "right", height = "md" }) => {
   const [isDateFilterModalOpen, setIsDateFilterModalOpen] = useState(false);
   const [dateFilterType, setDateFilterType] = useState<{
     title: string;

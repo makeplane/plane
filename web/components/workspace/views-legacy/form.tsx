@@ -7,14 +7,14 @@ import useSWR from "swr";
 // react-hook-form
 import { useForm } from "react-hook-form";
 // services
-import issuesService from "services/issues.service";
+import issuesService from "services/issue.service";
 
 // hooks
 import useProjects from "hooks/use-projects";
 import useWorkspaceMembers from "hooks/use-workspace-members";
 // components
 import { WorkspaceFiltersList } from "components/core";
-import { GlobalSelectFilters } from "components/workspace/views/global-select-filters";
+import { GlobalSelectFilters } from "components/workspace/views-legacy/global-select-filters";
 
 // ui
 import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
@@ -40,13 +40,7 @@ const defaultValues: Partial<IWorkspaceView> = {
   description: "",
 };
 
-export const WorkspaceViewForm: React.FC<Props> = ({
-  handleFormSubmit,
-  handleClose,
-  status,
-  data,
-  preLoadedData,
-}) => {
+export const WorkspaceViewForm: React.FC<Props> = ({ handleFormSubmit, handleClose, status, data, preLoadedData }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -113,9 +107,7 @@ export const WorkspaceViewForm: React.FC<Props> = ({
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateView)}>
       <div className="space-y-5">
-        <h3 className="text-lg font-medium leading-6 text-custom-text-100">
-          {status ? "Update" : "Create"} View
-        </h3>
+        <h3 className="text-lg font-medium leading-6 text-custom-text-100">{status ? "Update" : "Create"} View</h3>
         <div className="space-y-3">
           <div>
             <Input
@@ -153,10 +145,7 @@ export const WorkspaceViewForm: React.FC<Props> = ({
                 const key = option.key as keyof typeof filters;
 
                 if (key === "start_date" || key === "target_date") {
-                  const valueExists = checkIfArraysHaveSameElements(
-                    filters?.[key] ?? [],
-                    option.value
-                  );
+                  const valueExists = checkIfArraysHaveSameElements(filters?.[key] ?? [], option.value);
 
                   setValue("query", {
                     ...filters,

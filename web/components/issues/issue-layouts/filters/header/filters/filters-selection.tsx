@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import {
   FilterAssignees,
@@ -19,7 +17,7 @@ import { Search, X } from "lucide-react";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // types
-import { IIssueFilterOptions } from "types";
+import { IIssueFilterOptions, IIssueLabels, IStateResponse, IUserLite } from "types";
 // constants
 import { ILayoutDisplayFiltersOptions, ISSUE_PRIORITIES, ISSUE_STATE_GROUPS } from "constants/issue";
 import { DATE_FILTER_OPTIONS } from "constants/filters";
@@ -28,7 +26,9 @@ type Props = {
   filters: IIssueFilterOptions;
   handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string | string[]) => void;
   layoutDisplayFiltersOptions: ILayoutDisplayFiltersOptions | undefined;
-  projectId: string;
+  labels?: IIssueLabels[] | undefined;
+  members?: IUserLite[] | undefined;
+  states?: IStateResponse | undefined;
 };
 
 type ViewButtonProps = {
@@ -55,13 +55,11 @@ const ViewButtons = ({ handleLess, handleMore, isViewLessVisible, isViewMoreVisi
 );
 
 export const FilterSelection: React.FC<Props> = observer((props) => {
-  const { filters, handleFiltersUpdate, layoutDisplayFiltersOptions, projectId } = props;
+  const { filters, handleFiltersUpdate, layoutDisplayFiltersOptions, labels, members, states } = props;
 
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
 
-  const { project: projectStore } = useMobxStore();
-
-  const statesList = getStatesList(projectStore.states?.[projectId?.toString() ?? ""]);
+  const statesList = getStatesList(states);
 
   const [filtersToRender, setFiltersToRender] = useState<{
     [key in keyof IIssueFilterOptions]: {
@@ -71,15 +69,15 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
   }>({
     assignees: {
       currentLength: 5,
-      totalLength: projectStore.members?.[projectId]?.length ?? 0,
+      totalLength: members?.length ?? 0,
     },
     created_by: {
       currentLength: 5,
-      totalLength: projectStore.members?.[projectId]?.length ?? 0,
+      totalLength: members?.length ?? 0,
     },
     labels: {
       currentLength: 5,
-      totalLength: projectStore.labels?.[projectId]?.length ?? 0,
+      totalLength: labels?.length ?? 0,
     },
     priority: {
       currentLength: 5,
@@ -219,7 +217,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
               handleUpdate={(val) => handleFiltersUpdate("state", val)}
               itemsToRender={filtersToRender.state?.currentLength ?? 0}
               searchQuery={filtersSearchQuery}
-              states={projectStore.states?.[projectId]}
+              states={states}
               viewButtons={
                 <ViewButtons
                   isViewLessVisible={isViewLessVisible("state")}
@@ -239,7 +237,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
               appliedFilters={filters.assignees ?? null}
               handleUpdate={(val) => handleFiltersUpdate("assignees", val)}
               itemsToRender={filtersToRender.assignees?.currentLength ?? 0}
-              members={projectStore.members?.[projectId]?.map((m) => m.member) ?? undefined}
+              members={members}
               searchQuery={filtersSearchQuery}
               viewButtons={
                 <ViewButtons
@@ -260,7 +258,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
               appliedFilters={filters.created_by ?? null}
               handleUpdate={(val) => handleFiltersUpdate("created_by", val)}
               itemsToRender={filtersToRender.created_by?.currentLength ?? 0}
-              members={projectStore.members?.[projectId]?.map((m) => m.member) ?? undefined}
+              members={members}
               searchQuery={filtersSearchQuery}
               viewButtons={
                 <ViewButtons
@@ -281,7 +279,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
               appliedFilters={filters.labels ?? null}
               handleUpdate={(val) => handleFiltersUpdate("labels", val)}
               itemsToRender={filtersToRender.labels?.currentLength ?? 0}
-              labels={projectStore.labels?.[projectId] ?? undefined}
+              labels={labels}
               searchQuery={filtersSearchQuery}
               viewButtons={
                 <ViewButtons

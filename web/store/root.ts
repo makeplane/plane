@@ -16,6 +16,9 @@ import IssueViewDetailStore from "./issue_detail";
 import IssueKanBanViewStore from "./kanban_view";
 import CalendarStore, { ICalendarStore } from "./calendar";
 import ModuleFilterStore, { IModuleFilterStore } from "./module_filters";
+import GlobalViewsStore, { IGlobalViewsStore } from "./global_views";
+import GlobalViewIssuesStore, { IGlobalViewIssuesStore } from "./global_view_issues";
+import WorkspaceFilterStore, { IWorkspaceFilterStore } from "./workspace_filters";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -35,6 +38,9 @@ export class RootStore {
   issueDetail: IssueViewDetailStore;
   issueKanBanView: IssueKanBanViewStore;
   calendar: ICalendarStore;
+  globalViews: IGlobalViewsStore;
+  globalViewIssues: IGlobalViewIssuesStore;
+  workspaceFilter: IWorkspaceFilterStore;
 
   constructor() {
     this.user = new UserStore(this);
@@ -52,5 +58,8 @@ export class RootStore {
     this.issueKanBanView = new IssueKanBanViewStore(this);
     this.draftIssuesStore = new DraftIssuesStore(this);
     this.calendar = new CalendarStore(this);
+    this.globalViews = new GlobalViewsStore(this);
+    this.globalViewIssues = new GlobalViewIssuesStore(this);
+    this.workspaceFilter = new WorkspaceFilterStore(this);
   }
 }

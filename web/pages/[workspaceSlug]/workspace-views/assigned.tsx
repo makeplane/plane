@@ -1,15 +1,14 @@
 // layouts
-import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
-// components
-import { WorkspaceIssuesViewOptions } from "components/issues/workspace-views/workspace-issue-view-option";
-import { WorkspaceAssignedIssue } from "components/issues/workspace-views/workspace-assigned-issue";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // ui
 import { PrimaryButton } from "components/ui";
+// components
+import { GlobalViewsHeader } from "components/workspace";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { CheckCircle } from "lucide-react";
 
-const WorkspaceViewAssignedIssue: React.FC = () => (
+const GlobalViewAssignedIssues: React.FC = () => (
   <WorkspaceAuthorizationLayout
     breadcrumbs={
       <div className="flex gap-2 items-center">
@@ -19,7 +18,6 @@ const WorkspaceViewAssignedIssue: React.FC = () => (
     }
     right={
       <div className="flex items-center gap-2">
-        <WorkspaceIssuesViewOptions />
         <PrimaryButton
           className="flex items-center gap-2"
           onClick={() => {
@@ -33,8 +31,23 @@ const WorkspaceViewAssignedIssue: React.FC = () => (
       </div>
     }
   >
-    <WorkspaceAssignedIssue />
+    <div className="h-full flex flex-col overflow-hidden bg-custom-background-100">
+      <div className="h-full w-full border-b border-custom-border-300">
+        <GlobalViewsHeader />
+        <div className="h-full w-full flex flex-col">
+          {/* TODO: applied filters list */}
+          {/* <SpreadsheetView
+      spreadsheetIssues={viewIssues}
+      mutateIssues={mutateViewIssues}
+      handleIssueAction={handleIssueAction}
+      disableUserActions={false}
+      user={user}
+      userAuth={memberRole}
+    /> */}
+        </div>
+      </div>
+    </div>
   </WorkspaceAuthorizationLayout>
 );
 
-export default WorkspaceViewAssignedIssue;
+export default GlobalViewAssignedIssues;
