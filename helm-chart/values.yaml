@@ -1,8 +1,3 @@
-# helm upgrade --install plane ./ -f .[env].yaml --namespace plane
-
-nodeSelector:
-  Destination: default
-
 global:
   environmentVariablesConfigMapRef: plane-environment-variables
 
@@ -115,3 +110,107 @@ env:
   WEB_URL: 
 
 
+
+# -- Configuration values for the postgresql dependency.
+# ref: https://github.com/bitnami/charts/tree/main/bitnami/postgresql
+# @default -- see `values.yaml`
+postgresql:
+  ##
+  ## Use the PostgreSQL chart dependency.
+  ## Set to false if bringing your own PostgreSQL.
+  enabled: true
+
+  ## Authentication parameters
+  auth:
+    ## The name of an existing secret that contains the postgres password.
+    existingSecret:
+    ## PostgreSQL name for a custom user to create
+    username: superset
+    ## PostgreSQL password for the custom user to create. Ignored if `auth.existingSecret` with key `password` is provided
+    password: superset
+    ## PostgreSQL name for a custom database to create
+    database: superset
+
+  image:
+    tag: "14.6.0-debian-11-r13"
+
+  ## PostgreSQL Primary parameters
+  primary:
+    ##
+    ## Persistent Volume Storage configuration.
+    ## ref: https://kubernetes.io/docs/user-guide/persistent-volumes
+    persistence:
+      ##
+      ## Enable PostgreSQL persistence using Persistent Volume Claims.
+      enabled: true
+      ##
+      ## Persistent class
+      # storageClass: classname
+      ##
+      ## Access modes:
+      accessModes:
+        - ReadWriteOnce
+    ## PostgreSQL port
+    service:
+      ports:
+        postgresql: "5432"
+
+# -- Configuration values for the Redis dependency.
+# ref: https://github.com/bitnami/charts/blob/master/bitnami/redis
+# More documentation can be found here: https://artifacthub.io/packages/helm/bitnami/redis
+# @default -- see `values.yaml`
+redis:
+  ##
+  ## Use the redis chart dependency.
+  ##
+  ## If you are bringing your own redis, you can set the host in supersetNode.connections.redis_host
+  ##
+  ## Set to false if bringing your own redis.
+  enabled: true
+  ##
+  ## Set architecture to standalone/replication
+  architecture: standalone
+  ##
+  ## Auth configuration:
+  ##
+  auth:
+    ## Enable password authentication
+    enabled: false
+    ## The name of an existing secret that contains the redis password.
+    existingSecret: ""
+    ## Name of the key containing the secret.
+    existingSecretKey: ""
+    ## Redis password
+    password: superset
+  ##
+  ## Master configuration
+  ##
+  master:
+    ##
+    ## Image configuration
+    # image:
+    ##
+    ## docker registry secret names (list)
+    # pullSecrets: nil
+    ##
+    ## Configure persistance
+    persistence:
+      ##
+      ## Use a PVC to persist data.
+      enabled: false
+      ##
+      ## Persistent class
+      # storageClass: classname
+      ##
+      ## Access mode:
+      accessModes:
+        - ReadWriteOnce
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# -- TopologySpreadConstrains to be added to all deployments
+topologySpreadConstraints: []
