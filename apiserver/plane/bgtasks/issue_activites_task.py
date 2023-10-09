@@ -1525,23 +1525,17 @@ def issue_activity(
                         )
                     )
 
-            # Bulk create notifications
-            Notification.objects.bulk_create(
-                bulk_notifications, batch_size=100)
-
             # Add Mentioned as Issue Subscribers
             IssueSubscriber.objects.bulk_create(mention_subscribers, batch_size=100)
-            
-            mention_notifications = []
 
             # Send Notifications to the Mentioned and Add Mentioned as Subscribers
             for mention_id in new_mentions:
                 for issue_activity in issue_activities_created:
                     if (issue_activity.verb == "created" or issue_activity.verb == "updated"):
-                        mention_notifications.append(
+                        bulk_notifications.append(
                             Notification(
                                 workspace=project.workspace,
-                                sender="in_app:issue_activities",
+                                sender="in_app:issue_activities:mention",
                                 triggered_by_id=actor_id,
                                 receiver_id=mention_id,
                                 entity_identifier=issue_id,
@@ -1569,15 +1563,14 @@ def issue_activity(
                             )
                         )
 
-            # Send those Bulk Notifications
+            # Bulk create notifications
             Notification.objects.bulk_create(
-                mention_notifications, batch_size=100)
+                bulk_notifications, batch_size=100)
 
         return
     except Exception as e:
         # Print logs if in DEBUG mode
         if settings.DEBUG:
-            print("====================EXCEPTION OCCURED====================")
             print(e)
         capture_exception(e)
         return
