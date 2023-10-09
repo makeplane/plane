@@ -1,0 +1,247 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-web
+  labels:
+    component: web
+    release: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      component: web
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        component: web
+        release: {{ .Release.Name }}
+    spec:
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.web.dockerImage }}
+          imagePullPolicy: IfNotPresent
+          command: [ "/usr/local/bin/start.sh" ]
+          args: [ "web/server.js", "web" ]
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.global.environmentVariablesConfigMapRef }}
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          livenessProbe:
+            initialDelaySeconds: 30
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            initialDelaySeconds: 30
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{ toYaml .Values.web.resources | indent 12 }}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-api
+  labels:
+    component: api
+    release: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      component: api
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        component: api
+        release: {{ .Release.Name }}
+    spec:
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.api.dockerImage }}
+          imagePullPolicy: IfNotPresent
+          command: [ "./bin/takeoff" ]
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.global.environmentVariablesConfigMapRef }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            initialDelaySeconds: 60
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            initialDelaySeconds: 60
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{ toYaml .Values.api.resources | indent 12 }}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-api
+  labels:
+    component: api
+    release: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      component: api
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        component: api
+        release: {{ .Release.Name }}
+    spec:
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.api.dockerImage }}
+          imagePullPolicy: IfNotPresent
+          command: [ "./bin/takeoff" ]
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.global.environmentVariablesConfigMapRef }}
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          livenessProbe:
+            initialDelaySeconds: 60
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            initialDelaySeconds: 60
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{ toYaml .Values.api.resources | indent 12 }}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-worker
+  labels:
+    component: worker
+    release: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      component: worker
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        component: worker
+        release: {{ .Release.Name }}
+    spec:
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.worker.dockerImage }}
+          imagePullPolicy: IfNotPresent
+          command: [ "./bin/worker" ]
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.global.environmentVariablesConfigMapRef }}
+          resources:
+            {{ toYaml .Values.worker.resources | indent 12 }}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-beat
+  labels:
+    component: beat
+    release: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      component: beat
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        component: beat
+        release: {{ .Release.Name }}
+    spec:
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.beat.dockerImage }}
+          imagePullPolicy: IfNotPresent
+          command: [ "./bin/beat" ]
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.global.environmentVariablesConfigMapRef }}
+          resources:
+            {{ toYaml .Values.beat.resources | indent 12 }}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-redis
+  labels:
+    component: redis
+    release: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      component: redis
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        component: redis
+        release: {{ .Release.Name }}
+    spec:
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: redis:latest
+          imagePullPolicy: IfNotPresent
+          resources:
+            {{ toYaml .Values.redis.resources | indent 12 }}
+

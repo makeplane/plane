@@ -1,0 +1,16 @@
+apiVersion: v2
+description: 🔥🔥🔥 Open Source JIRA, Linear and Height Alternative. Plane helps you track your issues, epics, and product roadmaps in the simplest way possible.
+name: plane
+type: application
+version: 0.0.1
+appVersion: 0.12.1
+home: https://plane.so/
+
+keywords:
+  - project management
+sources:
+  - https://github.com/makeplane/plane
+maintainers:
+  - name: jordibeen
+    email: jordi@been.gg
+    url: https://github.com/jordibeen
