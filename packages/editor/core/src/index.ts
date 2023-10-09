@@ -3,8 +3,7 @@
 // import "./styles/editor.css";
 
 // utils
-export { cn } from "./lib/utils";
-export { getEditorClassNames } from "./lib/utils";
+export * from "./lib/utils";
 export { startImageUpload } from "./ui/plugins/upload-image";
 
 // components

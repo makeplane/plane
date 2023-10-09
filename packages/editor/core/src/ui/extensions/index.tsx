@@ -16,8 +16,8 @@ import { TableRow } from "@tiptap/extension-table-row";
 import ImageExtension from "./image";
 
 import { DeleteImage } from "../../types/delete-image";
+import { isValidHttpUrl } from "../../lib/utils";
 
-import isValidHttpUrl from "../menus/bubble-menu/utils"
 
 export const CoreEditorExtensions = (
   deleteFile: DeleteImage,

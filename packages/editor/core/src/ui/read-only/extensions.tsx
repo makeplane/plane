@@ -13,8 +13,8 @@ import { Table } from "../extensions/table";
 import { TableHeader } from "../extensions/table/table-header";
 import { TableRow } from "@tiptap/extension-table-row";
 
-import isValidHttpUrl from "../menus/bubble-menu/utils";
 import ReadOnlyImageExtension from "../extensions/image/read-only-image";
+import { isValidHttpUrl } from "../../lib/utils";
 
 export const CoreReadOnlyEditorExtensions  = [
   StarterKit.configure({

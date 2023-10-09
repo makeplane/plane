@@ -1,8 +1,7 @@
 import { Editor } from "@tiptap/core";
 import { Check, Trash } from "lucide-react";
 import { Dispatch, FC, SetStateAction, useCallback, useEffect, useRef } from "react";
-import isValidHttpUrl from "./utils";
-import { cn } from "@plane/editor-core";
+import { cn, isValidHttpUrl } from "@plane/editor-core";
 
 interface LinkSelectorProps {
   editor: Editor;
