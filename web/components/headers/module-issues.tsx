@@ -36,18 +36,18 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
       if (!workspaceSlug || !projectId || !moduleId) return;
 
-      const newValues = moduleFilterStore.userModuleFilters?.[key] ?? [];
+      const newValues = moduleFilterStore.moduleFilters?.[key] ?? [];
 
       if (Array.isArray(value)) {
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
         });
       } else {
-        if (moduleFilterStore.userModuleFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+        if (moduleFilterStore.moduleFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
 
-      moduleFilterStore.updateUserModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), {
+      moduleFilterStore.updateModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), {
         [key]: newValues,
       });
     },
@@ -76,7 +76,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
       />
       <FiltersDropdown title="Filters">
         <FilterSelection
-          filters={moduleFilterStore.userModuleFilters}
+          filters={moduleFilterStore.moduleFilters}
           handleFiltersUpdate={handleFiltersUpdate}
           layoutDisplayFiltersOptions={activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined}
           projectId={projectId?.toString() ?? ""}
