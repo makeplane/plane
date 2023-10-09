@@ -12,8 +12,7 @@ import useToast from "hooks/use-toast";
 // components
 import { GptAssistantModal } from "components/core";
 import { TipTapEditor } from "components/tiptap";
-import { PrimaryButton, SecondaryButton } from "components/ui";
-import { TextArea } from "@plane/ui";
+import { Button, TextArea } from "@plane/ui";
 // types
 import { ICurrentUserResponse, IPageBlock } from "types";
 // fetch-keys
@@ -355,10 +354,12 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
           </div>
         </div>
         <div className="flex items-center justify-end gap-2 p-4">
-          <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-          <PrimaryButton type="submit" disabled={watch("name") === ""} loading={isSubmitting}>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button variant="primary" type="submit" disabled={watch("name") === ""} loading={isSubmitting}>
             {data ? (isSubmitting ? "Updating..." : "Update block") : isSubmitting ? "Adding..." : "Add block"}
-          </PrimaryButton>
+          </Button>
         </div>
       </form>
       <GptAssistantModal

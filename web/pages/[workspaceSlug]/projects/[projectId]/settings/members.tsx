@@ -21,15 +21,8 @@ import ConfirmProjectMemberRemove from "components/project/confirm-project-membe
 import SendProjectInvitationModal from "components/project/send-project-invitation-modal";
 import { MemberSelect, SettingsSidebar } from "components/project";
 // ui
-import {
-  CustomMenu,
-  CustomSearchSelect,
-  CustomSelect,
-  Icon,
-  Loader,
-  PrimaryButton,
-  SecondaryButton,
-} from "components/ui";
+import { Button } from "@plane/ui";
+import { CustomMenu, CustomSearchSelect, CustomSelect, Icon, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -331,7 +324,9 @@ const MembersSettings: NextPage = () => {
 
           <div className="flex items-center justify-between gap-4 py-3.5 border-b border-custom-border-200">
             <h4 className="text-xl font-medium">Members</h4>
-            <PrimaryButton onClick={() => setInviteModal(true)}>Add Member</PrimaryButton>
+            <Button variant="primary" onClick={() => setInviteModal(true)}>
+              Add Member
+            </Button>
           </div>
           {!projectMembers || !projectInvitations ? (
             <Loader className="space-y-5">

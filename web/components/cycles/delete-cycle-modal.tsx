@@ -10,7 +10,7 @@ import cycleService from "services/cycles.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { DangerButton, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
@@ -32,12 +32,7 @@ import {
 } from "constants/fetch-keys";
 import { getDateRangeStatus } from "helpers/date-time.helper";
 
-export const DeleteCycleModal: React.FC<TConfirmCycleDeletionProps> = ({
-  isOpen,
-  setIsOpen,
-  data,
-  user,
-}) => {
+export const DeleteCycleModal: React.FC<TConfirmCycleDeletionProps> = ({ isOpen, setIsOpen, data, user }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
@@ -144,36 +139,29 @@ export const DeleteCycleModal: React.FC<TConfirmCycleDeletionProps> = ({
                 <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
                     <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-500/20 sm:mx-0 sm:h-10 sm:w-10">
-                      <ExclamationTriangleIcon
-                        className="h-6 w-6 text-red-600"
-                        aria-hidden="true"
-                      />
+                      <ExclamationTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </div>
                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                      <Dialog.Title
-                        as="h3"
-                        className="text-lg font-medium leading-6 text-custom-text-100"
-                      >
+                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                         Delete Cycle
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
                           Are you sure you want to delete cycle-{" "}
-                          <span className="break-words font-medium text-custom-text-100">
-                            {data?.name}
-                          </span>
-                          ? All of the data related to the cycle will be permanently removed. This
-                          action cannot be undone.
+                          <span className="break-words font-medium text-custom-text-100">{data?.name}</span>? All of the
+                          data related to the cycle will be permanently removed. This action cannot be undone.
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="flex justify-end gap-2 p-4 sm:px-6">
-                  <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                  <DangerButton onClick={handleDeletion} loading={isDeleteLoading}>
+                  <Button variant="secondary" onClick={handleClose}>
+                    Cancel
+                  </Button>
+                  <Button variant="danger" onClick={handleDeletion} loading={isDeleteLoading}>
                     {isDeleteLoading ? "Deleting..." : "Delete"}
-                  </DangerButton>
+                  </Button>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

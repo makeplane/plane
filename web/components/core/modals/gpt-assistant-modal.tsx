@@ -9,9 +9,8 @@ import trackEventServices from "services/track_event.service";
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // ui
-import { PrimaryButton, SecondaryButton } from "components/ui";
 import { TipTapEditor } from "components/tiptap";
-import { Input } from "@plane/ui";
+import { Button, Input } from "@plane/ui";
 // types
 import { IIssue, IPageBlock } from "types";
 
@@ -189,7 +188,8 @@ export const GptAssistantModal: React.FC<Props> = ({
       />
       <div className={`flex gap-2 ${response === "" ? "justify-end" : "justify-between"}`}>
         {response !== "" && (
-          <PrimaryButton
+          <Button
+            variant="primary"
             onClick={() => {
               onResponse(response);
               onClose();
@@ -198,13 +198,15 @@ export const GptAssistantModal: React.FC<Props> = ({
             }}
           >
             Use this response
-          </PrimaryButton>
+          </Button>
         )}
         <div className="flex items-center gap-2">
-          <SecondaryButton onClick={onClose}>Close</SecondaryButton>
-          <PrimaryButton type="button" onClick={handleSubmit(handleResponse)} loading={isSubmitting}>
+          <Button variant="secondary" onClick={onClose}>
+            Close
+          </Button>
+          <Button variant="primary" type="button" onClick={handleSubmit(handleResponse)} loading={isSubmitting}>
             {isSubmitting ? "Generating response..." : response === "" ? "Generate response" : "Generate again"}
-          </PrimaryButton>
+          </Button>
         </div>
       </div>
     </div>

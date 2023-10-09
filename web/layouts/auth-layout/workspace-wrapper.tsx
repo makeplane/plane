@@ -4,8 +4,9 @@ import Link from "next/link";
 import useSWR from "swr";
 // services
 import workspaceServices from "services/workspace.service";
-// icons
-import { Spinner, PrimaryButton, SecondaryButton } from "components/ui";
+// ui
+import { Spinner } from "components/ui";
+import { Button } from "@plane/ui";
 // fetch-keys
 import { WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 
@@ -54,12 +55,12 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = (props) => {
             <div className="flex items-center justify-center gap-2">
               <Link href="/invitations">
                 <a>
-                  <SecondaryButton>Check pending invites</SecondaryButton>
+                  <Button variant="secondary">Check pending invites</Button>
                 </a>
               </Link>
               <Link href="/create-workspace">
                 <a>
-                  <PrimaryButton>Create new workspace</PrimaryButton>
+                  <Button variant="primary">Create new workspace</Button>
                 </a>
               </Link>
             </div>

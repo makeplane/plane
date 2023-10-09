@@ -15,13 +15,8 @@ import { getAllTimeIn30MinutesInterval } from "helpers/date-time.helper";
 import useToast from "hooks/use-toast";
 
 // components
-import {
-  PrimaryButton,
-  SecondaryButton,
-  Icon,
-  CustomDatePicker,
-  CustomSelect,
-} from "components/ui";
+import { Button } from "@plane/ui";
+import { Icon, CustomDatePicker, CustomSelect } from "components/ui";
 
 // types
 import type { IUserNotification } from "types";
@@ -158,10 +153,7 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
               <Dialog.Panel className="relative transform rounded-lg border border-custom-border-100 bg-custom-background-100 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="flex justify-between items-center">
-                    <Dialog.Title
-                      as="h3"
-                      className="text-lg font-medium leading-6 text-custom-text-100"
-                    >
+                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                       Customize Snooze Time
                     </Dialog.Title>
 
@@ -174,9 +166,7 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
 
                   <div className="mt-5 flex items-center gap-3">
                     <div className="flex-1">
-                      <h6 className="block text-sm font-medium text-custom-text-400 mb-2">
-                        Pick a date
-                      </h6>
+                      <h6 className="block text-sm font-medium text-custom-text-400 mb-2">Pick a date</h6>
                       <Controller
                         name="date"
                         control={control}
@@ -197,9 +187,7 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
                       />
                     </div>
                     <div className="flex-1">
-                      <h6 className="block text-sm font-medium text-custom-text-400 mb-2">
-                        Pick a time
-                      </h6>
+                      <h6 className="block text-sm font-medium text-custom-text-400 mb-2">Pick a time</h6>
                       <Controller
                         control={control}
                         name="time"
@@ -215,9 +203,7 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
                                     {value} {watch("period").toLowerCase()}
                                   </span>
                                 ) : (
-                                  <span className="text-custom-text-400 text-sm">
-                                    Select a time
-                                  </span>
+                                  <span className="text-custom-text-400 text-sm">Select a time</span>
                                 )}
                               </div>
                             }
@@ -259,9 +245,7 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
                                 </CustomSelect.Option>
                               ))
                             ) : (
-                              <p className="text-custom-text-200 text-center p-3">
-                                No available time for this date.
-                              </p>
+                              <p className="text-custom-text-200 text-center p-3">No available time for this date.</p>
                             )}
                           </CustomSelect>
                         )}
@@ -271,10 +255,12 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
 
                   <div className="mt-5 flex items-center justify-between gap-2">
                     <div className="w-full flex items-center gap-2 justify-end">
-                      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                      <PrimaryButton type="submit" loading={isSubmitting}>
+                      <Button variant="secondary" onClick={handleClose}>
+                        Cancel
+                      </Button>
+                      <Button variant="primary" type="submit" loading={isSubmitting}>
                         {isSubmitting ? "Submitting..." : "Submit"}
-                      </PrimaryButton>
+                      </Button>
                     </div>
                   </div>
                 </form>

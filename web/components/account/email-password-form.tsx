@@ -1,8 +1,7 @@
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 // ui
-import { PrimaryButton } from "components/ui";
-import { Input } from "@plane/ui";
+import { Button, Input } from "@plane/ui";
 // types
 type EmailPasswordFormValues = {
   email: string;
@@ -94,14 +93,15 @@ export const EmailPasswordForm: React.FC<Props> = (props) => {
           </button>
         </div>
         <div>
-          <PrimaryButton
+          <Button
+            variant="primary"
             type="submit"
             className="w-full text-center h-[46px]"
             disabled={!isValid && isDirty}
             loading={isSubmitting}
           >
             {isSubmitting ? "Signing in..." : "Sign in"}
-          </PrimaryButton>
+          </Button>
         </div>
       </form>
     </>

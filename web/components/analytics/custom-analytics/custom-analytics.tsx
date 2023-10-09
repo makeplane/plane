@@ -7,14 +7,10 @@ import { Control, UseFormSetValue } from "react-hook-form";
 // hooks
 import useProjects from "hooks/use-projects";
 // components
-import {
-  AnalyticsGraph,
-  AnalyticsSelectBar,
-  AnalyticsSidebar,
-  AnalyticsTable,
-} from "components/analytics";
+import { Button } from "@plane/ui";
+import { AnalyticsGraph, AnalyticsSelectBar, AnalyticsSidebar, AnalyticsTable } from "components/analytics";
 // ui
-import { Loader, PrimaryButton } from "components/ui";
+import { Loader } from "components/ui";
 // helpers
 import { convertResponseToBarGraphData } from "helpers/analytics.helper";
 // types
@@ -52,11 +48,7 @@ export const CustomAnalytics: React.FC<Props> = ({
   const { projects } = useProjects();
 
   return (
-    <div
-      className={`overflow-hidden flex flex-col-reverse ${
-        fullScreen ? "md:grid md:grid-cols-4 md:h-full" : ""
-      }`}
-    >
+    <div className={`overflow-hidden flex flex-col-reverse ${fullScreen ? "md:grid md:grid-cols-4 md:h-full" : ""}`}>
       <div className="col-span-3 flex flex-col h-full overflow-hidden">
         <AnalyticsSelectBar
           control={control}
@@ -77,12 +69,7 @@ export const CustomAnalytics: React.FC<Props> = ({
                   yAxisKey={yAxisKey}
                   fullScreen={fullScreen}
                 />
-                <AnalyticsTable
-                  analytics={analytics}
-                  barGraphData={barGraphData}
-                  params={params}
-                  yAxisKey={yAxisKey}
-                />
+                <AnalyticsTable analytics={analytics} barGraphData={barGraphData} params={params} yAxisKey={yAxisKey} />
               </div>
             ) : (
               <div className="grid h-full place-items-center p-5">
@@ -107,7 +94,8 @@ export const CustomAnalytics: React.FC<Props> = ({
             <div className="space-y-4 text-custom-text-200">
               <p className="text-sm">There was some error in fetching the data.</p>
               <div className="flex items-center justify-center gap-2">
-                <PrimaryButton
+                <Button
+                  variant="primary"
                   onClick={() => {
                     if (!workspaceSlug) return;
 
@@ -115,7 +103,7 @@ export const CustomAnalytics: React.FC<Props> = ({
                   }}
                 >
                   Refresh
-                </PrimaryButton>
+                </Button>
               </div>
             </div>
           </div>

@@ -16,8 +16,8 @@ import { WorkspaceIssuesViewOptions } from "components/issues/workspace-views/wo
 import { CreateUpdateWorkspaceViewModal } from "components/workspace/views/modal";
 import { DeleteWorkspaceViewModal } from "components/workspace/views/delete-workspace-view-modal";
 // ui
-import { EmptyState, Loader, PrimaryButton } from "components/ui";
-import { Input } from "@plane/ui";
+import { EmptyState, Loader } from "components/ui";
+import { Button, Input } from "@plane/ui";
 // icons
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { PlusIcon } from "lucide-react";
@@ -103,10 +103,10 @@ const WorkspaceViews: NextPage = () => {
         <div className="flex items-center gap-2">
           <WorkspaceIssuesViewOptions />
 
-          <PrimaryButton className="flex items-center gap-2" onClick={() => setCreateUpdateViewModal(true)}>
+          <Button variant="primary" className="flex items-center gap-2" onClick={() => setCreateUpdateViewModal(true)}>
             <PlusIcon className="h-4 w-4" />
             New View
-          </PrimaryButton>
+          </Button>
         </div>
       }
     >

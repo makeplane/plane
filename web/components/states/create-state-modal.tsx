@@ -15,8 +15,8 @@ import stateService from "services/project_state.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, PrimaryButton, SecondaryButton } from "components/ui";
-import { Input, TextArea } from "@plane/ui";
+import { CustomSelect } from "components/ui";
+import { Button, Input, TextArea } from "@plane/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 // types
@@ -256,10 +256,12 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                     </div>
                   </div>
                   <div className="mt-5 flex justify-end gap-2">
-                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
-                    <PrimaryButton type="submit" loading={isSubmitting}>
+                    <Button variant="secondary" onClick={onClose}>
+                      Cancel
+                    </Button>
+                    <Button variant="primary" type="submit" loading={isSubmitting}>
                       {isSubmitting ? "Creating State..." : "Create State"}
-                    </PrimaryButton>
+                    </Button>
                   </div>
                 </form>
               </Dialog.Panel>

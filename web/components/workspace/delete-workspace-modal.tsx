@@ -15,8 +15,7 @@ import useToast from "hooks/use-toast";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
-import { DangerButton, SecondaryButton } from "components/ui";
-import { Input } from "@plane/ui";
+import { Button, Input } from "@plane/ui";
 // types
 import type { ICurrentUserResponse, IWorkspace } from "types";
 // fetch-keys
@@ -179,10 +178,12 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
                   </div>
 
                   <div className="flex justify-end gap-2">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <DangerButton type="submit" disabled={!canDelete} loading={isSubmitting}>
+                    <Button variant="secondary" onClick={handleClose}>
+                      Cancel
+                    </Button>
+                    <Button variant="danger" type="submit" disabled={!canDelete} loading={isSubmitting}>
                       {isSubmitting ? "Deleting..." : "Delete Workspace"}
-                    </DangerButton>
+                    </Button>
                   </div>
                 </form>
               </Dialog.Panel>

@@ -25,7 +25,7 @@ import {
   SelectDuplicateInboxIssueModal,
 } from "components/inbox";
 // ui
-import { PrimaryButton, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // icons
 import { InboxIcon, StackedLayersHorizontalIcon } from "components/icons";
 import {
@@ -74,9 +74,7 @@ export const InboxActionHeader = () => {
     mutateInboxIssues(
       (prevData: any) =>
         (prevData ?? []).map((i: any) =>
-          i.bridge_id === inboxIssueId
-            ? { ...i, issue_inbox: [{ ...i.issue_inbox[0], ...data }] }
-            : i
+          i.bridge_id === inboxIssueId ? { ...i, issue_inbox: [{ ...i.issue_inbox[0], ...data }] } : i
         ),
       false
     );
@@ -104,8 +102,7 @@ export const InboxActionHeader = () => {
   };
 
   const issue = inboxIssues?.find((issue) => issue.bridge_id === inboxIssueId);
-  const currentIssueIndex =
-    inboxIssues?.findIndex((issue) => issue.bridge_id === inboxIssueId) ?? 0;
+  const currentIssueIndex = inboxIssues?.findIndex((issue) => issue.bridge_id === inboxIssueId) ?? 0;
 
   useEffect(() => {
     if (!issue?.issue_inbox[0].snoozed_till) return;
@@ -126,10 +123,7 @@ export const InboxActionHeader = () => {
       <SelectDuplicateInboxIssueModal
         isOpen={selectDuplicateIssue}
         onClose={() => setSelectDuplicateIssue(false)}
-        value={
-          inboxIssues?.find((inboxIssue) => inboxIssue.bridge_id === inboxIssueId)?.issue_inbox[0]
-            .duplicate_to
-        }
+        value={inboxIssues?.find((inboxIssue) => inboxIssue.bridge_id === inboxIssueId)?.issue_inbox[0].duplicate_to}
         onSubmit={(dupIssueId: string) => {
           markInboxStatus({
             status: 2,
@@ -202,10 +196,10 @@ export const InboxActionHeader = () => {
                 <div className="flex-shrink-0">
                   <Popover className="relative">
                     <Popover.Button as="button" type="button">
-                      <SecondaryButton className="flex gap-x-1 items-center" size="sm">
+                      <Button variant="secondary" className="flex gap-x-1 items-center" size="sm">
                         <ClockIcon className="h-4 w-4 text-custom-text-200" />
                         <span>Snooze</span>
-                      </SecondaryButton>
+                      </Button>
                     </Popover.Button>
                     <Popover.Panel className="w-80 p-2 absolute right-0 z-10 mt-2 rounded-md border border-custom-border-200 bg-custom-background-80 shadow-lg">
                       {({ close }) => (
@@ -220,7 +214,8 @@ export const InboxActionHeader = () => {
                             minDate={tomorrow}
                             inline
                           />
-                          <PrimaryButton
+                          <Button
+                            variant="primary"
                             className="ml-auto"
                             onClick={() => {
                               close();
@@ -231,7 +226,7 @@ export const InboxActionHeader = () => {
                             }}
                           >
                             Snooze
-                          </PrimaryButton>
+                          </Button>
                         </div>
                       )}
                     </Popover.Panel>
@@ -240,50 +235,54 @@ export const InboxActionHeader = () => {
               )}
               {isAllowed && issueStatus === -2 && (
                 <div className="flex-shrink-0">
-                  <SecondaryButton
+                  <Button
+                    variant="secondary"
                     size="sm"
                     className="flex gap-2 items-center"
                     onClick={() => setSelectDuplicateIssue(true)}
                   >
                     <StackedLayersHorizontalIcon className="h-4 w-4 text-custom-text-200" />
                     <span>Mark as duplicate</span>
-                  </SecondaryButton>
+                  </Button>
                 </div>
               )}
               {isAllowed && (issueStatus === 0 || issueStatus === -2) && (
                 <div className="flex-shrink-0">
-                  <SecondaryButton
+                  <Button
+                    variant="secondary"
                     size="sm"
                     className="flex gap-2 items-center"
                     onClick={() => setAcceptIssueModal(true)}
                   >
                     <CheckCircleIcon className="h-4 w-4 text-green-500" />
                     <span>Accept</span>
-                  </SecondaryButton>
+                  </Button>
                 </div>
               )}
               {isAllowed && issueStatus === -2 && (
                 <div className="flex-shrink-0">
-                  <SecondaryButton
+                  <Button
+                    variant="secondary"
                     size="sm"
                     className="flex gap-2 items-center"
                     onClick={() => setDeclineIssueModal(true)}
                   >
                     <XCircleIcon className="h-4 w-4 text-red-500" />
                     <span>Decline</span>
-                  </SecondaryButton>
+                  </Button>
                 </div>
               )}
               {(isAllowed || user?.id === issue?.created_by) && (
                 <div className="flex-shrink-0">
-                  <SecondaryButton
+                  <Button
+                    variant="secondary"
                     size="sm"
                     className="flex gap-2 items-center"
                     onClick={() => setDeleteIssueModal(true)}
                   >
                     <TrashIcon className="h-4 w-4 text-red-500" />
                     <span>Delete</span>
-                  </SecondaryButton>
+                  </Button>
                 </div>
               )}
             </div>

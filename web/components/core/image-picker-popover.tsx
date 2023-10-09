@@ -13,8 +13,8 @@ import fileService from "services/file.service";
 import useWorkspaceDetails from "hooks/use-workspace-details";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
-import { PrimaryButton, SecondaryButton, Loader } from "components/ui";
-import { Input } from "@plane/ui";
+import { Loader } from "components/ui";
+import { Button, Input } from "@plane/ui";
 
 const tabOptions = [
   {
@@ -185,9 +185,9 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, control, onC
                           />
                         )}
                       />
-                      <PrimaryButton onClick={() => setSearchParams(formData.search)} size="sm">
+                      <Button variant="primary" onClick={() => setSearchParams(formData.search)} size="sm">
                         Search
-                      </PrimaryButton>
+                      </Button>
                     </div>
                     {unsplashImages ? (
                       unsplashImages.length > 0 ? (
@@ -316,7 +316,8 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, control, onC
                     </p>
 
                     <div className="flex items-center justify-end gap-2">
-                      <SecondaryButton
+                      <Button
+                        variant="secondary"
                         className="w-full"
                         onClick={() => {
                           setIsOpen(false);
@@ -324,15 +325,16 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, control, onC
                         }}
                       >
                         Cancel
-                      </SecondaryButton>
-                      <PrimaryButton
+                      </Button>
+                      <Button
+                        variant="primary"
                         className="w-full"
                         onClick={handleSubmit}
                         disabled={!image}
                         loading={isImageUploading}
                       >
                         {isImageUploading ? "Uploading..." : "Upload & Save"}
-                      </PrimaryButton>
+                      </Button>
                     </div>
                   </div>
                 </Tab.Panel>

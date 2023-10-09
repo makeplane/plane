@@ -20,7 +20,8 @@ import emptyView from "public/empty-state/view.svg";
 // fetching keys
 import { PROJECT_DETAILS, VIEWS_LIST } from "constants/fetch-keys";
 // components
-import { PrimaryButton, Loader, EmptyState } from "components/ui";
+import { Button } from "@plane/ui";
+import { Loader, EmptyState } from "components/ui";
 import { DeleteViewModal, CreateUpdateViewModal, SingleViewItem } from "components/views";
 // types
 import { IView } from "types";
@@ -68,7 +69,8 @@ const ProjectViews: NextPage = () => {
       }
       right={
         <div className="flex items-center gap-2">
-          <PrimaryButton
+          <Button
+            variant="primary"
             type="button"
             className="flex items-center gap-2"
             onClick={() => {
@@ -78,7 +80,7 @@ const ProjectViews: NextPage = () => {
           >
             <PlusIcon className="h-4 w-4" />
             Create View
-          </PrimaryButton>
+          </Button>
         </div>
       }
     >

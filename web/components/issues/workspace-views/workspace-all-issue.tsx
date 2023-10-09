@@ -19,7 +19,7 @@ import { WorkspaceViewsNavigation } from "components/workspace/views/workpace-vi
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { CreateUpdateWorkspaceViewModal } from "components/workspace/views/modal";
 // ui
-import { PrimaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // fetch-keys
@@ -43,9 +43,7 @@ export const WorkspaceAllIssue = () => {
 
   // update issue modal
   const [editIssueModal, setEditIssueModal] = useState(false);
-  const [issueToEdit, setIssueToEdit] = useState<
-    (IIssue & { actionType: "edit" | "delete" }) | undefined
-  >(undefined);
+  const [issueToEdit, setIssueToEdit] = useState<(IIssue & { actionType: "edit" | "delete" }) | undefined>(undefined);
 
   // delete issue modal
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
@@ -66,16 +64,12 @@ export const WorkspaceAllIssue = () => {
   const params: any = {
     assignees: filters?.filters?.assignees ? filters?.filters?.assignees.join(",") : undefined,
     subscriber: filters?.filters?.subscriber ? filters?.filters?.subscriber.join(",") : undefined,
-    state_group: filters?.filters?.state_group
-      ? filters?.filters?.state_group.join(",")
-      : undefined,
+    state_group: filters?.filters?.state_group ? filters?.filters?.state_group.join(",") : undefined,
     priority: filters?.filters?.priority ? filters?.filters?.priority.join(",") : undefined,
     labels: filters?.filters?.labels ? filters?.filters?.labels.join(",") : undefined,
     created_by: filters?.filters?.created_by ? filters?.filters?.created_by.join(",") : undefined,
     start_date: filters?.filters?.start_date ? filters?.filters?.start_date.join(",") : undefined,
-    target_date: filters?.filters?.target_date
-      ? filters?.filters?.target_date.join(",")
-      : undefined,
+    target_date: filters?.filters?.target_date ? filters?.filters?.target_date.join(",") : undefined,
     project: filters?.filters?.project ? filters?.filters?.project.join(",") : undefined,
     sub_issue: false,
     type: undefined,
@@ -203,7 +197,8 @@ export const WorkspaceAllIssue = () => {
                       })
                     }
                   />
-                  <PrimaryButton
+                  <Button
+                    variant="primary"
                     onClick={() => {
                       if (globalViewId) handleFilters("filters", filters.filters, true);
                       else
@@ -215,7 +210,7 @@ export const WorkspaceAllIssue = () => {
                   >
                     {!globalViewId && <PlusIcon className="h-4 w-4" />}
                     {globalViewId ? "Update" : "Save"} view
-                  </PrimaryButton>
+                  </Button>
                 </div>
                 {<div className="mt-3 border-t border-custom-border-200" />}
               </>

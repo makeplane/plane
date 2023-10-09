@@ -17,8 +17,7 @@ import { WorkspaceFiltersList } from "components/core";
 import { GlobalSelectFilters } from "components/workspace/views/global-select-filters";
 
 // ui
-import { PrimaryButton, SecondaryButton } from "components/ui";
-import { Input, TextArea } from "@plane/ui";
+import { Button, Input, TextArea } from "@plane/ui";
 // helpers
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 // types
@@ -202,8 +201,10 @@ export const WorkspaceViewForm: React.FC<Props> = ({ handleFormSubmit, handleClo
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-        <PrimaryButton type="submit" loading={isSubmitting}>
+        <Button variant="secondary" onClick={handleClose}>
+          Cancel
+        </Button>
+        <Button variant="primary" type="submit" loading={isSubmitting}>
           {status
             ? isSubmitting
               ? "Updating View..."
@@ -211,7 +212,7 @@ export const WorkspaceViewForm: React.FC<Props> = ({ handleFormSubmit, handleClo
             : isSubmitting
             ? "Creating View..."
             : "Create View"}
-        </PrimaryButton>
+        </Button>
       </div>
     </form>
   );

@@ -12,8 +12,8 @@ import useToast from "hooks/use-toast";
 import { useWorkspaceMyMembership } from "contexts/workspace-member.context";
 import useWorkspaceMembers from "hooks/use-workspace-members";
 // ui
-import { CustomSelect, PrimaryButton, SecondaryButton, Icon, Avatar, CustomSearchSelect } from "components/ui";
-import { Input, TextArea } from "@plane/ui";
+import { CustomSelect, Icon, Avatar, CustomSearchSelect } from "components/ui";
+import { Button, Input, TextArea } from "@plane/ui";
 // components
 import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
@@ -411,10 +411,12 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                   </div>
 
                   <div className="flex justify-end gap-2 pt-5">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <PrimaryButton type="submit" size="sm" loading={isSubmitting}>
+                    <Button variant="secondary" onClick={handleClose}>
+                      Cancel
+                    </Button>
+                    <Button variant="primary" type="submit" size="sm" loading={isSubmitting}>
                       {isSubmitting ? "Creating..." : "Create Project"}
-                    </PrimaryButton>
+                    </Button>
                   </div>
                 </form>
               </Dialog.Panel>

@@ -19,7 +19,8 @@ import useProjects from "hooks/use-projects";
 import { CompletedIssuesGraph, IssuesList, IssuesPieChart, IssuesStats } from "components/workspace";
 import { TourRoot } from "components/onboarding";
 // ui
-import { PrimaryButton, ProductUpdatesModal } from "components/ui";
+import { Button } from "@plane/ui";
+import { ProductUpdatesModal } from "components/ui";
 // icons
 import { BoltOutlined, GridViewOutlined } from "@mui/icons-material";
 // images
@@ -175,7 +176,8 @@ const WorkspacePage: NextPage = () => {
               <div className="p-5 md:p-8 pr-0">
                 <h5 className="text-xl font-semibold">Create a project</h5>
                 <p className="mt-2 mb-5">Manage your projects by creating issues, cycles, modules, views and pages.</p>
-                <PrimaryButton
+                <Button
+                  variant="primary"
                   onClick={() => {
                     const e = new KeyboardEvent("keydown", {
                       key: "p",
@@ -184,7 +186,7 @@ const WorkspacePage: NextPage = () => {
                   }}
                 >
                   Create Project
-                </PrimaryButton>
+                </Button>
               </div>
               <div className="hidden md:block self-end overflow-hidden pt-8">
                 <Image src={emptyDashboard} alt="Empty Dashboard" />

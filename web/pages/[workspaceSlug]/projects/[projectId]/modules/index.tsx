@@ -14,7 +14,8 @@ import modulesService from "services/modules.service";
 // components
 import { CreateUpdateModuleModal, ModulesListGanttChartView, SingleModuleCard } from "components/modules";
 // ui
-import { EmptyState, Icon, Loader, PrimaryButton, Tooltip } from "components/ui";
+import { Button } from "@plane/ui";
+import { EmptyState, Icon, Loader, Tooltip } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -101,7 +102,8 @@ const ProjectModules: NextPage = () => {
               </button>
             </Tooltip>
           ))}
-          <PrimaryButton
+          <Button
+            variant="primary"
             className="flex items-center gap-2"
             onClick={() => {
               const e = new KeyboardEvent("keydown", { key: "m" });
@@ -110,7 +112,7 @@ const ProjectModules: NextPage = () => {
           >
             <PlusIcon className="h-4 w-4" />
             Add Module
-          </PrimaryButton>
+          </Button>
         </div>
       }
     >

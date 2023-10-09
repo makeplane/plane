@@ -11,7 +11,8 @@ import IntegrationService from "services/integration.service";
 import useToast from "hooks/use-toast";
 import useIntegrationPopup from "hooks/use-integration-popup";
 // ui
-import { DangerButton, Loader, PrimaryButton } from "components/ui";
+import { Button } from "@plane/ui";
+import { Loader } from "components/ui";
 // icons
 import GithubLogo from "public/services/github.png";
 import SlackLogo from "public/services/slack.png";
@@ -113,13 +114,13 @@ export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
 
       {workspaceIntegrations ? (
         isInstalled ? (
-          <DangerButton onClick={handleRemoveIntegration} loading={deletingIntegration} outline>
+          <Button variant="danger" onClick={handleRemoveIntegration} loading={deletingIntegration} outline>
             {deletingIntegration ? "Uninstalling..." : "Uninstall"}
-          </DangerButton>
+          </Button>
         ) : (
-          <PrimaryButton onClick={startAuth} loading={isInstalling}>
+          <Button variant="primary" onClick={startAuth} loading={isInstalling}>
             {isInstalling ? "Installing..." : "Install"}
-          </PrimaryButton>
+          </Button>
         )
       ) : (
         <Loader>

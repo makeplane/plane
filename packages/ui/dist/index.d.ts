@@ -1,7 +1,15 @@
 import * as React from 'react';
 import { FC } from 'react';
 
-declare const Button: () => JSX.Element;
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+    variant?: "primary" | "secondary" | "danger";
+    children: React.ReactNode;
+    className?: string;
+    loading?: boolean;
+    size?: "sm" | "md" | "lg";
+    outline?: boolean;
+}
+declare const Button: React.ForwardRefExoticComponent<ButtonProps & React.RefAttributes<HTMLButtonElement>>;
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     mode?: "primary" | "transparent" | "true-transparent";
@@ -23,4 +31,4 @@ interface IRadialProgressBar {
 }
 declare const RadialProgressBar: FC<IRadialProgressBar>;
 
-export { Button, Input, InputProps, RadialProgressBar, TextArea, TextAreaProps };
+export { Button, ButtonProps, Input, InputProps, RadialProgressBar, TextArea, TextAreaProps };

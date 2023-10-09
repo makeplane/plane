@@ -12,7 +12,8 @@ import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
 import { IssuesFilterView, IssuesView } from "components/core";
 // ui
-import { CustomMenu, EmptyState, PrimaryButton } from "components/ui";
+import { Button } from "@plane/ui";
+import { CustomMenu, EmptyState } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -81,7 +82,8 @@ const SingleView: React.FC = () => {
         right={
           <div className="flex items-center gap-2">
             <IssuesFilterView />
-            <PrimaryButton
+            <Button
+              variant="primary"
               className="flex items-center gap-2"
               onClick={() => {
                 const e = new KeyboardEvent("keydown", { key: "c" });
@@ -90,7 +92,7 @@ const SingleView: React.FC = () => {
             >
               <PlusIcon className="h-4 w-4" />
               Add Issue
-            </PrimaryButton>
+            </Button>
           </div>
         }
       >

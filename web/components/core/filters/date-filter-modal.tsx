@@ -6,7 +6,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // components
 import { DateFilterSelect } from "./date-filter-select";
 // ui
-import { PrimaryButton, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // icons
 import { XMarkIcon } from "@heroicons/react/20/solid";
 // helpers
@@ -127,12 +127,12 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                     </h6>
                   )}
                   <div className="flex justify-end gap-4">
-                    <SecondaryButton className="flex items-center gap-2" onClick={handleClose}>
+                    <Button variant="secondary" className="flex items-center gap-2" onClick={handleClose}>
                       Cancel
-                    </SecondaryButton>
-                    <PrimaryButton type="submit" className="flex items-center gap-2" disabled={isInvalid}>
+                    </Button>
+                    <Button variant="primary" type="submit" className="flex items-center gap-2" disabled={isInvalid}>
                       Apply
-                    </PrimaryButton>
+                    </Button>
                   </div>
                 </form>
               </Dialog.Panel>

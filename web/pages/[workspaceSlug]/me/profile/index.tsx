@@ -16,8 +16,8 @@ import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 import { ImagePickerPopover, ImageUploadModal } from "components/core";
 import { SettingsSidebar } from "components/project";
 // ui
-import { CustomSearchSelect, CustomSelect, PrimaryButton, Spinner } from "components/ui";
-import { Input } from "@plane/ui";
+import { Button, Input } from "@plane/ui";
+import { CustomSearchSelect, CustomSelect, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { UserIcon } from "@heroicons/react/24/outline";
@@ -392,9 +392,9 @@ const Profile: NextPage = () => {
                 </div>
 
                 <div className="flex items-center justify-between py-2">
-                  <PrimaryButton type="submit" loading={isSubmitting}>
+                  <Button variant="primary" type="submit" loading={isSubmitting}>
                     {isSubmitting ? "Updating Profile..." : "Update Profile"}
-                  </PrimaryButton>
+                  </Button>
                 </div>
               </div>
             </div>

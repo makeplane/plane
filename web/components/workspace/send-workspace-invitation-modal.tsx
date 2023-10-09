@@ -11,8 +11,8 @@ import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, PrimaryButton, SecondaryButton } from "components/ui";
-import { Input } from "@plane/ui";
+import { CustomSelect } from "components/ui";
+import { Button, Input } from "@plane/ui";
 // icons
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
@@ -235,10 +235,12 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
                       Add more
                     </button>
                     <div className="flex items-center gap-2">
-                      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                      <PrimaryButton type="submit" loading={isSubmitting}>
+                      <Button variant="secondary" onClick={handleClose}>
+                        Cancel
+                      </Button>
+                      <Button variant="primary" type="submit" loading={isSubmitting}>
                         {isSubmitting ? "Sending Invitation..." : "Send Invitation"}
-                      </PrimaryButton>
+                      </Button>
                     </div>
                   </div>
                 </form>

@@ -11,8 +11,7 @@ import IntegrationService from "services/integration.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { DangerButton, SecondaryButton } from "components/ui";
-import { Input } from "@plane/ui";
+import { Button, Input } from "@plane/ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
@@ -124,10 +123,17 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, 
                     />
                   </div>
                   <div className="flex justify-end gap-2">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <DangerButton onClick={handleDeletion} disabled={!confirmDeleteImport} loading={deleteLoading}>
+                    <Button variant="secondary" onClick={handleClose}>
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="danger"
+                      onClick={handleDeletion}
+                      disabled={!confirmDeleteImport}
+                      loading={deleteLoading}
+                    >
                       {deleteLoading ? "Deleting..." : "Delete Project"}
-                    </DangerButton>
+                    </Button>
                   </div>
                 </div>
               </Dialog.Panel>

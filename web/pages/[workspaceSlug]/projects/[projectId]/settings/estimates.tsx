@@ -18,7 +18,8 @@ import { SettingsSidebar } from "components/project";
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // ui
-import { EmptyState, Loader, PrimaryButton, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
+import { EmptyState, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -130,16 +131,19 @@ const EstimatesSettings: NextPage = () => {
               <h3 className="text-xl font-medium">Estimates</h3>
               <div className="col-span-12 space-y-5 sm:col-span-7">
                 <div className="flex items-center gap-2">
-                  <PrimaryButton
+                  <Button
+                    variant="primary"
                     onClick={() => {
                       setEstimateToUpdate(undefined);
                       setEstimateFormOpen(true);
                     }}
                   >
                     Add Estimate
-                  </PrimaryButton>
+                  </Button>
                   {projectDetails?.estimate && (
-                    <SecondaryButton onClick={disableEstimates}>Disable Estimates</SecondaryButton>
+                    <Button variant="secondary" onClick={disableEstimates}>
+                      Disable Estimates
+                    </Button>
                   )}
                 </div>
               </div>

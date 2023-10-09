@@ -3,8 +3,7 @@ import { useEffect } from "react";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // ui
-import { PrimaryButton, SecondaryButton } from "components/ui";
-import { Input } from "@plane/ui";
+import { Button, Input } from "@plane/ui";
 // types
 import { IPage } from "types";
 
@@ -80,8 +79,10 @@ export const PageForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-        <PrimaryButton type="submit" loading={isSubmitting}>
+        <Button variant="secondary" onClick={handleClose}>
+          Cancel
+        </Button>
+        <Button variant="primary" type="submit" loading={isSubmitting}>
           {status
             ? isSubmitting
               ? "Updating Page..."
@@ -89,7 +90,7 @@ export const PageForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
             : isSubmitting
             ? "Creating Page..."
             : "Create Page"}
-        </PrimaryButton>
+        </Button>
       </div>
     </form>
   );

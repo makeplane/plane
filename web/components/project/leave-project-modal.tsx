@@ -5,8 +5,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { observer } from "mobx-react-lite";
 // ui
-import { DangerButton, SecondaryButton } from "components/ui";
-import { Input } from "@plane/ui";
+import { Button, Input } from "@plane/ui";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
 // mobx react lite
@@ -198,10 +197,12 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
                     />
                   </div>
                   <div className="flex justify-end gap-2">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <DangerButton type="submit" loading={isSubmitting}>
+                    <Button variant="secondary" onClick={handleClose}>
+                      Cancel
+                    </Button>
+                    <Button variant="danger" type="submit" loading={isSubmitting}>
                       {isSubmitting ? "Leaving..." : "Leave Project"}
-                    </DangerButton>
+                    </Button>
                   </div>
                 </form>
               </Dialog.Panel>

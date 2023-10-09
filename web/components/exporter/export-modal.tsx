@@ -7,7 +7,8 @@ import { CSVIntegrationService } from "services/csv.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { SecondaryButton, PrimaryButton, CustomSearchSelect } from "components/ui";
+import { Button } from "@plane/ui";
+import { CustomSearchSelect } from "components/ui";
 // types
 import { ICurrentUserResponse, IImporterService } from "types";
 // fetch-keys
@@ -143,10 +144,17 @@ export const Exporter: React.FC<Props> = ({ isOpen, handleClose, user, provider,
                     <div className="text-sm whitespace-nowrap">Export the data into separate files</div>
                   </div>
                   <div className="flex justify-end gap-2">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <PrimaryButton onClick={ExportCSVToMail} disabled={exportLoading} loading={exportLoading}>
+                    <Button variant="secondary" onClick={handleClose}>
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="primary"
+                      onClick={ExportCSVToMail}
+                      disabled={exportLoading}
+                      loading={exportLoading}
+                    >
                       {exportLoading ? "Exporting..." : "Export"}
-                    </PrimaryButton>
+                    </Button>
                   </div>
                 </div>
               </Dialog.Panel>

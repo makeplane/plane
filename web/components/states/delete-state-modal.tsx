@@ -13,7 +13,7 @@ import stateServices from "services/project_state.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { DangerButton, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // types
 import type { ICurrentUserResponse, IState, IStateResponse } from "types";
 // fetch-keys
@@ -129,10 +129,12 @@ export const DeleteStateModal: React.FC<Props> = ({ isOpen, onClose, data, user 
                   </div>
                 </div>
                 <div className="flex justify-end gap-2 p-4 sm:px-6">
-                  <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                  <DangerButton onClick={handleDeletion} loading={isDeleteLoading}>
+                  <Button variant="secondary" onClick={handleClose}>
+                    Cancel
+                  </Button>
+                  <Button variant="danger" onClick={handleDeletion} loading={isDeleteLoading}>
                     {isDeleteLoading ? "Deleting..." : "Delete"}
-                  </DangerButton>
+                  </Button>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

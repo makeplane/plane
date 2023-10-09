@@ -7,8 +7,7 @@ import useToast from "hooks/use-toast";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
-import { DangerButton, SecondaryButton } from "components/ui";
-import { Input } from "@plane/ui";
+import { Button, Input } from "@plane/ui";
 // types
 import type { IProject } from "types";
 // fetch-keys
@@ -161,10 +160,12 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
                     />
                   </div>
                   <div className="flex justify-end gap-2">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <DangerButton type="submit" disabled={!canDelete} loading={isSubmitting}>
+                    <Button variant="secondary" onClick={handleClose}>
+                      Cancel
+                    </Button>
+                    <Button variant="danger" type="submit" disabled={!canDelete} loading={isSubmitting}>
                       {isSubmitting ? "Deleting..." : "Delete Project"}
-                    </DangerButton>
+                    </Button>
                   </div>
                 </form>
               </Dialog.Panel>

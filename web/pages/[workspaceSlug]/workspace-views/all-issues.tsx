@@ -1,7 +1,7 @@
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
-import { PrimaryButton } from "components/ui";
 // component
+import { Button } from "@plane/ui";
 import { WorkspaceIssuesViewOptions } from "components/issues/workspace-views/workspace-issue-view-option";
 import { WorkspaceAllIssue } from "components/issues/workspace-views/workspace-all-issue";
 // icons
@@ -20,7 +20,8 @@ const WorkspaceViewAllIssue = () => (
       <div className="flex items-center gap-2">
         <WorkspaceIssuesViewOptions />
 
-        <PrimaryButton
+        <Button
+          variant="primary"
           className="flex items-center gap-2"
           onClick={() => {
             const e = new KeyboardEvent("keydown", { key: "c" });
@@ -29,7 +30,7 @@ const WorkspaceViewAllIssue = () => (
         >
           <PlusIcon className="h-4 w-4" />
           Add Issue
-        </PrimaryButton>
+        </Button>
       </div>
     }
   >

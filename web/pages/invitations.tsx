@@ -17,7 +17,7 @@ import useToast from "hooks/use-toast";
 import DefaultLayout from "layouts/default-layout";
 import { UserAuthorizationLayout } from "layouts/auth-layout-legacy/user-authorization-wrapper";
 // ui
-import { SecondaryButton, PrimaryButton, EmptyState } from "components/ui";
+import { Button } from "@plane/ui";
 // icons
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 // images
@@ -174,7 +174,8 @@ const OnBoard: NextPage = () => {
                     })}
                   </div>
                   <div className="flex items-center gap-3">
-                    <PrimaryButton
+                    <Button
+                      variant="primary"
                       type="submit"
                       size="md"
                       onClick={submitInvitations}
@@ -182,12 +183,12 @@ const OnBoard: NextPage = () => {
                       loading={isJoiningWorkspaces}
                     >
                       Accept & Join
-                    </PrimaryButton>
+                    </Button>
                     <Link href="/">
                       <a>
-                        <SecondaryButton size="md" outline>
+                        <Button variant="secondary" size="md" outline>
                           Go Home
-                        </SecondaryButton>
+                        </Button>
                       </a>
                     </Link>
                   </div>

@@ -5,8 +5,8 @@ import { useTheme } from "next-themes";
 import { useForm } from "react-hook-form";
 
 // ui
-import { PrimaryButton } from "components/ui";
 import { ColorPickerInput } from "components/core";
+import { Button } from "@plane/ui";
 // types
 import { ICustomTheme } from "types";
 // mobx react lite
@@ -143,9 +143,9 @@ export const CustomThemeSelector: React.FC<Props> = observer(({ preLoadedData })
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <PrimaryButton type="submit" loading={isSubmitting}>
+        <Button variant="primary" type="submit" loading={isSubmitting}>
           {isSubmitting ? "Creating Theme..." : "Set Theme"}
-        </PrimaryButton>
+        </Button>
       </div>
     </form>
   );

@@ -15,8 +15,9 @@ import { useWorkspaceView } from "hooks/use-workspace-view";
 import useWorkspaceMembers from "hooks/use-workspace-members";
 import useToast from "hooks/use-toast";
 // components
+import { Button } from "@plane/ui";
 import { WorkspaceViewsNavigation } from "components/workspace/views/workpace-view-navigation";
-import { EmptyState, PrimaryButton } from "components/ui";
+import { EmptyState } from "components/ui";
 import { SpreadsheetView, WorkspaceFiltersList } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { CreateUpdateWorkspaceViewModal } from "components/workspace/views/modal";
@@ -38,10 +39,7 @@ export const WorkspaceViewIssues = () => {
 
   const { memberRole } = useProjectMyMembership();
   const { user } = useUser();
-  const { isGuest, isViewer } = useWorkspaceMembers(
-    workspaceSlug?.toString(),
-    Boolean(workspaceSlug)
-  );
+  const { isGuest, isViewer } = useWorkspaceMembers(workspaceSlug?.toString(), Boolean(workspaceSlug));
   const { filters, viewIssues, mutateViewIssues, handleFilters } = useWorkspaceView();
 
   const [createViewModal, setCreateViewModal] = useState<any>(null);
@@ -54,9 +52,7 @@ export const WorkspaceViewIssues = () => {
 
   // update issue modal
   const [editIssueModal, setEditIssueModal] = useState(false);
-  const [issueToEdit, setIssueToEdit] = useState<
-    (IIssue & { actionType: "edit" | "delete" }) | undefined
-  >(undefined);
+  const [issueToEdit, setIssueToEdit] = useState<(IIssue & { actionType: "edit" | "delete" }) | undefined>(undefined);
 
   // delete issue modal
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
@@ -192,7 +188,8 @@ export const WorkspaceViewIssues = () => {
                         })
                       }
                     />
-                    <PrimaryButton
+                    <Button
+                      variant="primary"
                       onClick={() => {
                         if (globalViewId) {
                           handleFilters("filters", filters.filters, true);
@@ -210,7 +207,7 @@ export const WorkspaceViewIssues = () => {
                     >
                       {!globalViewId && <PlusIcon className="h-4 w-4" />}
                       {globalViewId ? "Update" : "Save"} view
-                    </PrimaryButton>
+                    </Button>
                   </div>
                   {<div className="mt-3 border-t border-custom-border-200" />}
                 </>

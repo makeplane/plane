@@ -27,7 +27,7 @@ import {
 } from "components/issues";
 import { CreateUpdateViewModal } from "components/views";
 // ui
-import { PrimaryButton, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // helpers
@@ -498,7 +498,8 @@ export const IssuesView: React.FC<Props> = ({ openIssuesListModal, disableUserAc
                 })
               }
             />
-            <PrimaryButton
+            <Button
+              variant="primary"
               onClick={() => {
                 if (viewId) {
                   setFilters({}, true);
@@ -516,7 +517,7 @@ export const IssuesView: React.FC<Props> = ({ openIssuesListModal, disableUserAc
             >
               {!viewId && <PlusIcon className="h-4 w-4" />}
               {viewId ? "Update" : "Save"} view
-            </PrimaryButton>
+            </Button>
           </div>
           {<div className="mt-3 border-t border-custom-border-200" />}
         </>
@@ -556,10 +557,14 @@ export const IssuesView: React.FC<Props> = ({ openIssuesListModal, disableUserAc
             : undefined,
           secondaryButton:
             cycleId || moduleId ? (
-              <SecondaryButton className="flex items-center gap-1.5" onClick={openIssuesListModal ?? (() => {})}>
+              <Button
+                variant="secondary"
+                className="flex items-center gap-1.5"
+                onClick={openIssuesListModal ?? (() => {})}
+              >
                 <PlusIcon className="h-4 w-4" />
                 Add an existing issue
-              </SecondaryButton>
+              </Button>
             ) : null,
         }}
         handleOnDragEnd={handleOnDragEnd}

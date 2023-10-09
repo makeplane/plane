@@ -15,8 +15,7 @@ import { Popover, Transition } from "@headlessui/react";
 // services
 import issuesService from "services/issue.service";
 // ui
-import { PrimaryButton, SecondaryButton } from "components/ui";
-import { Input } from "@plane/ui";
+import { Button, Input } from "@plane/ui";
 // types
 import { IIssueLabels } from "types";
 // fetch-keys
@@ -186,15 +185,17 @@ export const CreateUpdateLabelInline = forwardRef<HTMLDivElement, Props>(functio
           )}
         />
       </div>
-      <SecondaryButton onClick={() => handleClose()}>Cancel</SecondaryButton>
+      <Button variant="secondary" onClick={() => handleClose()}>
+        Cancel
+      </Button>
       {isUpdating ? (
-        <PrimaryButton onClick={handleSubmit(handleLabelUpdate)} loading={isSubmitting}>
+        <Button variant="primary" onClick={handleSubmit(handleLabelUpdate)} loading={isSubmitting}>
           {isSubmitting ? "Updating" : "Update"}
-        </PrimaryButton>
+        </Button>
       ) : (
-        <PrimaryButton onClick={handleSubmit(handleLabelCreate)} loading={isSubmitting}>
+        <Button variant="primary" onClick={handleSubmit(handleLabelCreate)} loading={isSubmitting}>
           {isSubmitting ? "Adding" : "Add"}
-        </PrimaryButton>
+        </Button>
       )}
     </div>
   );

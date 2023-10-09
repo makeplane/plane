@@ -11,7 +11,7 @@ import { InboxActionHeader, InboxMainContent, IssuesListSidebar } from "componen
 // helper
 import { truncateText } from "helpers/string.helper";
 // ui
-import { PrimaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -35,7 +35,8 @@ const ProjectInbox: NextPage = () => {
         }
         right={
           <div className="flex items-center gap-2">
-            <PrimaryButton
+            <Button
+              variant="primary"
               className="flex items-center gap-2"
               onClick={() => {
                 const e = new KeyboardEvent("keydown", { key: "c" });
@@ -44,7 +45,7 @@ const ProjectInbox: NextPage = () => {
             >
               <PlusIcon className="h-4 w-4" />
               Add Issue
-            </PrimaryButton>
+            </Button>
           </div>
         }
       >

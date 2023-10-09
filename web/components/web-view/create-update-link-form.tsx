@@ -20,8 +20,7 @@ import { ISSUE_DETAILS } from "constants/fetch-keys";
 import useToast from "hooks/use-toast";
 
 // ui
-import { PrimaryButton } from "components/ui";
-import { Input } from "@plane/ui";
+import { Button, Input } from "@plane/ui";
 
 // types
 import type { linkDetails, IIssueLink, IIssue } from "types";
@@ -178,13 +177,14 @@ export const CreateUpdateLinkForm: React.FC<Props> = (props) => {
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <PrimaryButton
+        <Button
+          variant="primary"
           type="submit"
           loading={isSubmitting}
           className="w-full !py-2 text-custom-text-300 !text-base flex items-center justify-center"
         >
           {data ? (isSubmitting ? "Updating Link..." : "Update Link") : isSubmitting ? "Adding Link..." : "Add Link"}
-        </PrimaryButton>
+        </Button>
       </div>
     </form>
   );

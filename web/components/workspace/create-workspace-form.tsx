@@ -9,8 +9,8 @@ import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, PrimaryButton } from "components/ui";
-import { Input } from "@plane/ui";
+import { CustomSelect } from "components/ui";
+import { Button, Input } from "@plane/ui";
 // types
 import { ICurrentUserResponse, IWorkspace } from "types";
 // fetch-keys
@@ -220,9 +220,9 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
 
       <div className="flex items-center gap-4">
         {secondaryButton}
-        <PrimaryButton type="submit" size="md" disabled={!isValid} loading={isSubmitting}>
+        <Button variant="primary" type="submit" size="md" disabled={!isValid} loading={isSubmitting}>
           {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
-        </PrimaryButton>
+        </Button>
       </div>
     </form>
   );

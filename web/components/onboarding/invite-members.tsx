@@ -9,8 +9,7 @@ import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { PrimaryButton, SecondaryButton } from "components/ui";
-import { Input } from "@plane/ui";
+import { Button, Input } from "@plane/ui";
 // hooks
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // icons
@@ -258,12 +257,12 @@ export const InviteMembers: React.FC<Props> = (props) => {
         </button>
       </div>
       <div className="flex items-center gap-4">
-        <PrimaryButton type="submit" disabled={!isValid} loading={isSubmitting} size="md">
+        <Button variant="primary" type="submit" disabled={!isValid} loading={isSubmitting} size="md">
           {isSubmitting ? "Sending..." : "Send Invite"}
-        </PrimaryButton>
-        <SecondaryButton className="border border-none bg-transparent" size="md" onClick={nextStep}>
+        </Button>
+        <Button variant="secondary" className="border border-none bg-transparent" size="md" onClick={nextStep}>
           Skip this step
-        </SecondaryButton>
+        </Button>
       </div>
     </form>
   );

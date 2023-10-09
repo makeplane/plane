@@ -15,8 +15,8 @@ import stateService from "services/project_state.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, PrimaryButton, SecondaryButton, Tooltip } from "components/ui";
-import { Input } from "@plane/ui";
+import { CustomSelect, Tooltip } from "components/ui";
+import { Button, Input } from "@plane/ui";
 // types
 import type { ICurrentUserResponse, IState, IStateResponse } from "types";
 // fetch-keys
@@ -273,10 +273,12 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
           />
         )}
       />
-      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-      <PrimaryButton type="submit" loading={isSubmitting}>
+      <Button variant="secondary" onClick={handleClose}>
+        Cancel
+      </Button>
+      <Button variant="primary" type="submit" loading={isSubmitting}>
         {isSubmitting ? (data ? "Updating..." : "Creating...") : data ? "Update" : "Create"}
-      </PrimaryButton>
+      </Button>
     </form>
   );
 };

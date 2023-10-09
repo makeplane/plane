@@ -11,8 +11,7 @@ import analyticsService from "services/analytics.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { PrimaryButton, SecondaryButton } from "components/ui";
-import { Input, TextArea } from "@plane/ui";
+import { Button, Input, TextArea } from "@plane/ui";
 // types
 import { IAnalyticsParams, ISaveAnalyticsFormData } from "types";
 
@@ -157,10 +156,12 @@ export const CreateUpdateAnalyticsModal: React.FC<Props> = ({ isOpen, handleClos
                     </div>
                   </div>
                   <div className="mt-5 flex justify-end gap-2">
-                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
-                    <PrimaryButton type="submit" loading={isSubmitting}>
+                    <Button variant="secondary" onClick={onClose}>
+                      Cancel
+                    </Button>
+                    <Button variant="primary" type="submit" loading={isSubmitting}>
                       {isSubmitting ? "Saving..." : "Save Analytics"}
-                    </PrimaryButton>
+                    </Button>
                   </div>
                 </form>
               </Dialog.Panel>

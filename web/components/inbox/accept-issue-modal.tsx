@@ -5,7 +5,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // icons
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 // ui
-import { SecondaryButton, PrimaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // types
 import type { IInboxIssue } from "types";
 
@@ -76,10 +76,12 @@ export const AcceptIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, o
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
-                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
-                    <PrimaryButton onClick={handleAccept} loading={isAccepting}>
+                    <Button variant="secondary" onClick={onClose}>
+                      Cancel
+                    </Button>
+                    <Button variant="primary" onClick={handleAccept} loading={isAccepting}>
                       {isAccepting ? "Accepting..." : "Accept Issue"}
-                    </PrimaryButton>
+                    </Button>
                   </div>
                 </div>
               </Dialog.Panel>

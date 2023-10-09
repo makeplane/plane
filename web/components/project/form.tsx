@@ -3,8 +3,8 @@ import { Controller, useForm } from "react-hook-form";
 // components
 import EmojiIconPicker from "components/emoji-icon-picker";
 import { ImagePickerPopover } from "components/core";
-import { CustomSelect, PrimaryButton } from "components/ui";
-import { Input, TextArea } from "@plane/ui";
+import { CustomSelect } from "components/ui";
+import { Button, Input, TextArea } from "@plane/ui";
 // types
 import { IProject, IWorkspace } from "types";
 // helpers
@@ -269,9 +269,9 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
 
         <div className="flex items-center justify-between py-2">
           <>
-            <PrimaryButton type="submit" loading={isSubmitting} disabled={!isAdmin}>
+            <Button variant="primary" type="submit" loading={isSubmitting} disabled={!isAdmin}>
               {isSubmitting ? "Updating Project..." : "Update Project"}
-            </PrimaryButton>
+            </Button>
             <span className="text-sm text-custom-sidebar-text-400 italic">
               Created on {renderShortDateWithYearFormat(project?.created_at)}
             </span>

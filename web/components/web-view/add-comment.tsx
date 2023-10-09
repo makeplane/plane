@@ -16,10 +16,11 @@ import { TipTapEditor } from "components/tiptap";
 import { Send } from "lucide-react";
 
 // ui
-import { Icon, SecondaryButton, Tooltip, PrimaryButton } from "components/ui";
+import { Icon, Tooltip } from "components/ui";
 
 // types
 import type { IIssueComment } from "types";
+import { Button } from "@plane/ui";
 
 const defaultValues: Partial<IIssueComment> = {
   access: "INTERNAL",
@@ -120,13 +121,14 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit }) => {
       </div>
 
       <div className="inline">
-        <PrimaryButton
+        <Button
+          variant="primary"
           type="submit"
           disabled={isSubmitting || disabled}
           className="mt-2 w-10 h-10 flex items-center justify-center"
         >
           <Send className="w-4 h-4" />
-        </PrimaryButton>
+        </Button>
       </div>
     </form>
   );

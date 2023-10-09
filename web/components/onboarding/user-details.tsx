@@ -9,8 +9,8 @@ import useToast from "hooks/use-toast";
 // services
 import userService from "services/user.service";
 // ui
-import { CustomSearchSelect, CustomSelect, PrimaryButton } from "components/ui";
-import { Input } from "@plane/ui";
+import { CustomSearchSelect, CustomSelect } from "components/ui";
+import { Button, Input } from "@plane/ui";
 // types
 import { ICurrentUserResponse, IUser } from "types";
 // fetch-keys
@@ -217,9 +217,9 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
         </div>
       </div>
 
-      <PrimaryButton type="submit" size="md" disabled={!isValid} loading={isSubmitting}>
+      <Button variant="primary" type="submit" size="md" disabled={!isValid} loading={isSubmitting}>
         {isSubmitting ? "Updating..." : "Continue"}
-      </PrimaryButton>
+      </Button>
     </form>
   );
 };

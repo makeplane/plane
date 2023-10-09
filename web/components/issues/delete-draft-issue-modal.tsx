@@ -16,7 +16,7 @@ import useToast from "hooks/use-toast";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
-import { SecondaryButton, DangerButton } from "components/ui";
+import { Button } from "@plane/ui";
 // types
 import type { IIssue } from "types";
 // fetch-keys
@@ -129,10 +129,12 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
-                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
-                    <DangerButton onClick={handleDeletion} loading={isDeleteLoading}>
+                    <Button variant="secondary" onClick={onClose}>
+                      Cancel
+                    </Button>
+                    <Button variant="danger" onClick={handleDeletion} loading={isDeleteLoading}>
                       {isDeleteLoading ? "Deleting..." : "Delete Issue"}
-                    </DangerButton>
+                    </Button>
                   </div>
                 </div>
               </Dialog.Panel>

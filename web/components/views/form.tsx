@@ -14,8 +14,7 @@ import useProjectMembers from "hooks/use-project-members";
 import { FiltersList } from "components/core";
 import { SelectFilters } from "components/views";
 // ui
-import { PrimaryButton, SecondaryButton } from "components/ui";
-import { Input, TextArea } from "@plane/ui";
+import { Button, Input, TextArea } from "@plane/ui";
 // helpers
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 import { getStatesList } from "helpers/state.helper";
@@ -203,8 +202,10 @@ export const ViewForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-        <PrimaryButton type="submit" loading={isSubmitting}>
+        <Button variant="secondary" onClick={handleClose}>
+          Cancel
+        </Button>
+        <Button variant="primary" type="submit" loading={isSubmitting}>
           {status
             ? isSubmitting
               ? "Updating View..."
@@ -212,7 +213,7 @@ export const ViewForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
             : isSubmitting
             ? "Creating View..."
             : "Create View"}
-        </PrimaryButton>
+        </Button>
       </div>
     </form>
   );

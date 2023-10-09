@@ -24,8 +24,8 @@ import {
 import { CreateStateModal } from "components/states";
 import { CreateLabelModal } from "components/labels";
 // ui
-import { CustomMenu, PrimaryButton, SecondaryButton, ToggleSwitch } from "components/ui";
-import { Input } from "@plane/ui";
+import { CustomMenu, ToggleSwitch } from "components/ui";
+import { Button, Input } from "@plane/ui";
 import { TipTapEditor } from "components/tiptap";
 // icons
 import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -593,23 +593,27 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
             <ToggleSwitch value={createMore} onChange={() => {}} size="md" />
           </div>
           <div className="flex items-center gap-2">
-            <SecondaryButton onClick={handleDiscard}>Discard</SecondaryButton>
-            <SecondaryButton
+            <Button variant="secondary" onClick={handleDiscard}>
+              Discard
+            </Button>
+            <Button
+              variant="secondary"
               loading={isSubmitting}
               onClick={handleSubmit((formData) =>
                 handleCreateUpdateIssue(formData, data?.id ? "updateDraft" : "createDraft")
               )}
             >
               {isSubmitting ? "Saving..." : "Save Draft"}
-            </SecondaryButton>
-            <PrimaryButton
+            </Button>
+            <Button
               loading={isSubmitting}
+              variant="primary"
               onClick={handleSubmit((formData) =>
                 handleCreateUpdateIssue(formData, data ? "convertToNewIssue" : "createNewIssue")
               )}
             >
               {isSubmitting ? "Saving..." : "Add Issue"}
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
       </form>

@@ -6,7 +6,8 @@ import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // ui components
-import { ToggleSwitch, PrimaryButton, SecondaryButton, Icon, DangerButton, Loader } from "components/ui";
+import { Button } from "@plane/ui";
+import { ToggleSwitch, Icon, Loader } from "components/ui";
 import { CustomPopover } from "./popover";
 // mobx react lite
 import { observer } from "mobx-react-lite";
@@ -306,13 +307,14 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
                   <div className="px-6 pt-4 flex items-center justify-between gap-2">
                     <h5 className="font-semibold text-xl inline-block">Publish</h5>
                     {projectPublish.projectPublishSettings !== "not-initialized" && (
-                      <DangerButton
+                      <Button
+                        variant="danger"
                         onClick={() => handleUnpublishProject(watch("id") ?? "")}
                         className="!px-2 !py-1.5"
                         loading={isUnpublishing}
                       >
                         {isUnpublishing ? "Unpublishing..." : "Unpublish"}
-                      </DangerButton>
+                      </Button>
                     )}
                   </div>
 
@@ -475,19 +477,21 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
                     </div>
                     {!projectPublish.fetchSettingsLoader && (
                       <div className="relative flex items-center gap-2">
-                        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                        <Button variant="secondary" onClick={handleClose}>
+                          Cancel
+                        </Button>
                         {watch("id") ? (
                           <>
                             {isUpdateRequired && (
-                              <PrimaryButton type="submit" loading={isSubmitting}>
+                              <Button variant="primary" type="submit" loading={isSubmitting}>
                                 {isSubmitting ? "Updating..." : "Update settings"}
-                              </PrimaryButton>
+                              </Button>
                             )}
                           </>
                         ) : (
-                          <PrimaryButton type="submit" loading={isSubmitting}>
+                          <Button variant="primary" type="submit" loading={isSubmitting}>
                             {isSubmitting ? "Publishing..." : "Publish"}
-                          </PrimaryButton>
+                          </Button>
                         )}
                       </div>
                     )}

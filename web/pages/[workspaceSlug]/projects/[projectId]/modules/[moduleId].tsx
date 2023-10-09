@@ -18,7 +18,7 @@ import { ExistingIssuesListModal, IssuesFilterView } from "components/core";
 import { ModuleDetailsSidebar } from "components/modules";
 import { AnalyticsProjectModal } from "components/analytics";
 // ui
-import { CustomMenu, EmptyState, SecondaryButton } from "components/ui";
+import { CustomMenu, EmptyState } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // images
 import emptyModule from "public/empty-state/module.svg";
@@ -140,9 +140,9 @@ const SingleModule: React.FC = () => {
           <>
             <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
             <div
-              className={`relative overflow-y-auto h-full flex flex-col ${
-                moduleSidebar ? "mr-[24rem]" : ""
-              } ${analyticsModal ? "mr-[50%]" : ""} duration-300`}
+              className={`relative overflow-y-auto h-full flex flex-col ${moduleSidebar ? "mr-[24rem]" : ""} ${
+                analyticsModal ? "mr-[50%]" : ""
+              } duration-300`}
             >
               <ModuleAllLayouts />
             </div>

@@ -11,7 +11,7 @@ import useMyIssuesFilters from "hooks/my-issues/use-my-issues-filter";
 // components
 import { MyIssuesView, MyIssuesViewOptions } from "components/issues";
 // ui
-import { PrimaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
 // types
 import type { NextPage } from "next";
@@ -85,7 +85,8 @@ const MyIssuesPage: NextPage = () => {
       right={
         <div className="flex items-center gap-2">
           <MyIssuesViewOptions />
-          <PrimaryButton
+          <Button
+            variant="primary"
             className="flex items-center gap-2"
             onClick={() => {
               const e = new KeyboardEvent("keydown", { key: "c" });
@@ -94,7 +95,7 @@ const MyIssuesPage: NextPage = () => {
           >
             <PlusIcon className="h-4 w-4" />
             Add Issue
-          </PrimaryButton>
+          </Button>
         </div>
       }
     >

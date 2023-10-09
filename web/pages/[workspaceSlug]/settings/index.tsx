@@ -20,8 +20,8 @@ import { DeleteWorkspaceModal } from "components/workspace";
 import { SettingsSidebar } from "components/project";
 // ui
 import { Disclosure, Transition } from "@headlessui/react";
-import { Spinner, CustomSelect, DangerButton, PrimaryButton, Icon } from "components/ui";
-import { Input } from "@plane/ui";
+import { Spinner, CustomSelect, Icon } from "components/ui";
+import { Button, Input } from "@plane/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { Pencil } from "lucide-react";
@@ -310,9 +310,9 @@ const WorkspaceSettings: NextPage = () => {
               </div>
 
               <div className="flex items-center justify-between py-2">
-                <PrimaryButton onClick={handleSubmit(onSubmit)} loading={isSubmitting} disabled={!isAdmin}>
+                <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting} disabled={!isAdmin}>
                   {isSubmitting ? "Updating..." : "Update Workspace"}
-                </PrimaryButton>
+                </Button>
               </div>
             </div>
             {isAdmin && (
@@ -345,9 +345,9 @@ const WorkspaceSettings: NextPage = () => {
                             that workspace will be permanently removed and cannot be recovered.
                           </span>
                           <div>
-                            <DangerButton onClick={() => setIsOpen(true)} className="!text-sm" outline>
+                            <Button variant="danger" onClick={() => setIsOpen(true)} className="!text-sm" outline>
                               Delete my workspace
-                            </DangerButton>
+                            </Button>
                           </div>
                         </div>
                       </Disclosure.Panel>

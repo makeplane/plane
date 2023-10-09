@@ -10,7 +10,8 @@ import useProjectDetails from "hooks/use-project-details";
 // components
 import { DeleteEstimateModal } from "components/estimates";
 // ui
-import { CustomMenu, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
+import { CustomMenu } from "components/ui";
 //icons
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 // helpers
@@ -25,12 +26,7 @@ type Props = {
   handleEstimateDelete: (estimateId: string) => void;
 };
 
-export const SingleEstimate: React.FC<Props> = ({
-  user,
-  estimate,
-  editEstimate,
-  handleEstimateDelete,
-}) => {
+export const SingleEstimate: React.FC<Props> = ({ user, estimate, editEstimate, handleEstimateDelete }) => {
   const [isDeleteEstimateModalOpen, setIsDeleteEstimateModalOpen] = useState(false);
 
   const router = useRouter();
@@ -53,15 +49,13 @@ export const SingleEstimate: React.FC<Props> = ({
       return { ...prevData, estimate: estimate.id };
     }, false);
 
-    await projectService
-      .updateProject(workspaceSlug as string, projectId as string, payload, user)
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Estimate points could not be used. Please try again.",
-        });
+    await projectService.updateProject(workspaceSlug as string, projectId as string, payload, user).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Estimate points could not be used. Please try again.",
       });
+    });
   };
 
   return (
@@ -72,9 +66,7 @@ export const SingleEstimate: React.FC<Props> = ({
             <h6 className="flex w-[40vw] items-center gap-2 truncate text-sm font-medium">
               {estimate.name}
               {projectDetails?.estimate && projectDetails?.estimate === estimate.id && (
-                <span className="rounded bg-green-500/20 px-2 py-0.5 text-xs text-green-500">
-                  In use
-                </span>
+                <span className="rounded bg-green-500/20 px-2 py-0.5 text-xs text-green-500">In use</span>
               )}
             </h6>
             <p className="font-sm w-[40vw] truncate text-[14px] font-normal text-custom-text-200">
@@ -83,12 +75,13 @@ export const SingleEstimate: React.FC<Props> = ({
           </div>
           <div className="flex items-center gap-2">
             {projectDetails?.estimate !== estimate.id && estimate.points.length > 0 && (
-              <SecondaryButton
+              <Button
+                variant="secondary"
                 onClick={handleUseEstimate}
                 className="!py-1 text-custom-text-200 hover:text-custom-text-100"
               >
                 Use
-              </SecondaryButton>
+              </Button>
             )}
             <CustomMenu ellipsis>
               <CustomMenu.MenuItem

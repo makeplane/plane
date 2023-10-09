@@ -4,7 +4,7 @@ import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 import { WorkspaceIssuesViewOptions } from "components/issues/workspace-views/workspace-issue-view-option";
 import { WorkspaceAssignedIssue } from "components/issues/workspace-views/workspace-assigned-issue";
 // ui
-import { PrimaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { CheckCircle } from "lucide-react";
@@ -20,7 +20,8 @@ const WorkspaceViewAssignedIssue: React.FC = () => (
     right={
       <div className="flex items-center gap-2">
         <WorkspaceIssuesViewOptions />
-        <PrimaryButton
+        <Button
+          variant="primary"
           className="flex items-center gap-2"
           onClick={() => {
             const e = new KeyboardEvent("keydown", { key: "c" });
@@ -29,7 +30,7 @@ const WorkspaceViewAssignedIssue: React.FC = () => (
         >
           <PlusIcon className="h-4 w-4" />
           Add Issue
-        </PrimaryButton>
+        </Button>
       </div>
     }
   >

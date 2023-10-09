@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // ui
-import { CheckCircleIcon } from "@heroicons/react/20/solid";
-import { PrimaryButton, SecondaryButton } from "components/ui";
-import { Input } from "@plane/ui";
+import { Button, Input } from "@plane/ui";
 // services
 import authenticationService from "services/authentication.service";
 import useToast from "hooks/use-toast";
@@ -199,7 +197,8 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
           </>
         )}
         {codeSent ? (
-          <PrimaryButton
+          <Button
+            variant="primary"
             type="submit"
             className="w-full text-center h-[46px]"
             size="md"
@@ -208,9 +207,10 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
             loading={isLoading}
           >
             {isLoading ? "Signing in..." : "Sign in"}
-          </PrimaryButton>
+          </Button>
         ) : (
-          <PrimaryButton
+          <Button
+            variant="primary"
             className="w-full text-center h-[46px]"
             size="md"
             onClick={() => {
@@ -222,7 +222,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
             loading={isSubmitting}
           >
             {isSubmitting ? "Sending code..." : "Send sign in code"}
-          </PrimaryButton>
+          </Button>
         )}
       </form>
     </>

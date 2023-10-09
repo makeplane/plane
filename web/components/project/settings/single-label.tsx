@@ -7,8 +7,8 @@ import { TwitterPicker } from "react-color";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
-import { CustomMenu, PrimaryButton, SecondaryButton } from "components/ui";
-import { Input } from "@plane/ui";
+import { CustomMenu } from "components/ui";
+import { Button, Input } from "@plane/ui";
 // icons
 import { PencilIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
 // types
@@ -123,8 +123,12 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
                 )}
               />
             </div>
-            <SecondaryButton onClick={() => setNewLabelForm(false)}>Cancel</SecondaryButton>
-            <PrimaryButton loading={isSubmitting}>{isSubmitting ? "Adding" : "Add"}</PrimaryButton>
+            <Button variant="secondary" onClick={() => setNewLabelForm(false)}>
+              Cancel
+            </Button>
+            <Button variant="primary" loading={isSubmitting}>
+              {isSubmitting ? "Adding" : "Add"}
+            </Button>
           </div>
         </div>
       ) : (

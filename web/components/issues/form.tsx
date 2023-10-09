@@ -23,8 +23,8 @@ import {
 import { CreateStateModal } from "components/states";
 import { CreateLabelModal } from "components/labels";
 // ui
-import { CustomMenu, PrimaryButton, SecondaryButton, ToggleSwitch } from "components/ui";
-import { Input } from "@plane/ui";
+import { CustomMenu, ToggleSwitch } from "components/ui";
+import { Button, Input } from "@plane/ui";
 import { TipTapEditor } from "components/tiptap";
 // icons
 import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -558,14 +558,15 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
             <ToggleSwitch value={createMore} onChange={() => {}} size="md" />
           </div>
           <div className="flex items-center gap-2">
-            <SecondaryButton
+            <Button
+              variant="secondary"
               onClick={() => {
                 handleDiscardClose();
               }}
             >
               Discard
-            </SecondaryButton>
-            <PrimaryButton type="submit" loading={isSubmitting}>
+            </Button>
+            <Button variant="primary" type="submit" loading={isSubmitting}>
               {status
                 ? isSubmitting
                   ? "Updating Issue..."
@@ -573,7 +574,7 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
                 : isSubmitting
                 ? "Adding Issue..."
                 : "Add Issue"}
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
       </form>

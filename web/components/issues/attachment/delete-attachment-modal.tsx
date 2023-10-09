@@ -11,7 +11,7 @@ import issuesService from "services/issue.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { SecondaryButton, DangerButton } from "components/ui";
+import { Button } from "@plane/ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // helper
@@ -106,15 +106,18 @@ export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data
                     </div>
                   </div>
                   <div className="flex justify-end gap-2 bg-custom-background-90 p-4 sm:px-6">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <DangerButton
+                    <Button variant="secondary" onClick={handleClose}>
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="danger"
                       onClick={() => {
                         handleDeletion(data.id);
                         handleClose();
                       }}
                     >
                       Delete
-                    </DangerButton>
+                    </Button>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
