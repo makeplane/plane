@@ -89,7 +89,7 @@ const Tiptap = (props: ITipTapRichTextEditor) => {
       onClick={() => {
         editor?.chain().focus().run();
       }}
-      className={`tiptap-editor-container cursor-text ${editorClassNames}`}
+      className={`tiptap-editor-container relative cursor-text ${editorClassNames}`}
     >
       {editor && <EditorBubbleMenu editor={editor} />}
       <div className={`${editorContentCustomClassNames}`}>

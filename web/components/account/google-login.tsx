@@ -1,22 +1,23 @@
-import { FC, CSSProperties, useEffect, useRef, useCallback, useState } from "react";
-
+import { FC, useEffect, useRef, useCallback, useState } from "react";
 import Script from "next/script";
 
 export interface IGoogleLoginButton {
-  text?: string;
   handleSignIn: React.Dispatch<any>;
-  styles?: CSSProperties;
+  clientId: string;
 }
 
-export const GoogleLoginButton: FC<IGoogleLoginButton> = ({ handleSignIn }) => {
+export const GoogleLoginButton: FC<IGoogleLoginButton> = (props) => {
+  const { handleSignIn, clientId } = props;
+  // refs
   const googleSignInButton = useRef<HTMLDivElement>(null);
+  // states
   const [gsiScriptLoaded, setGsiScriptLoaded] = useState(false);
 
   const loadScript = useCallback(() => {
     if (!googleSignInButton.current || gsiScriptLoaded) return;
 
     window?.google?.accounts.id.initialize({
-      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENTID || "",
+      client_id: clientId,
       callback: handleSignIn,
     });
 
@@ -39,7 +40,7 @@ export const GoogleLoginButton: FC<IGoogleLoginButton> = ({ handleSignIn }) => {
     window?.google?.accounts.id.prompt(); // also display the One Tap dialog
 
     setGsiScriptLoaded(true);
-  }, [handleSignIn, gsiScriptLoaded]);
+  }, [handleSignIn, gsiScriptLoaded, clientId]);
 
   useEffect(() => {
     if (window?.google?.accounts?.id) {

@@ -385,6 +385,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
               >
                 <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
                   <DraftIssueForm
+                    isOpen={isOpen}
                     handleFormSubmit={handleFormSubmit}
                     prePopulatedData={prePopulateData}
                     data={data}

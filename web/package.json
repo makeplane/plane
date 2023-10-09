@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.1.0",
+  "version": "0.13.2",
   "private": true,
   "scripts": {
     "dev": "next dev --port 3000",
