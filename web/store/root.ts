@@ -9,13 +9,18 @@ import DraftIssuesStore from "./issue_draft";
 import WorkspaceStore, { IWorkspaceStore } from "./workspace";
 import ProjectStore, { IProjectStore } from "./project";
 import ModuleStore, { IModuleStore } from "./modules";
+import ModuleIssueStore, { IModuleIssueStore } from "./module_issue";
+import ModuleFilterStore, { IModuleFilterStore } from "./module_filters";
+import ModuleIssueKanBanViewStore, { IModuleIssueKanBanViewStore } from "./module_issue_kanban_view";
 import CycleStore, { ICycleStore } from "./cycles";
+import CycleIssueStore, { ICycleIssueStore } from "./cycle_issue";
+import CycleIssueFilterStore, { ICycleIssueFilterStore } from "./cycle_issue_filters";
+import CycleIssueKanBanViewStore, { ICycleIssueKanBanViewStore } from "./cycle_issue_kanban_view";
 import ViewStore, { IViewStore } from "./views";
 import IssueFilterStore, { IIssueFilterStore } from "./issue_filters";
 import IssueViewDetailStore from "./issue_detail";
 import IssueKanBanViewStore from "./kanban_view";
 import CalendarStore, { ICalendarStore } from "./calendar";
-import ModuleFilterStore, { IModuleFilterStore } from "./module_filters";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -27,9 +32,17 @@ export class RootStore {
   workspace: IWorkspaceStore;
   project: IProjectStore;
   issue: IIssueStore;
+
   module: IModuleStore;
+  moduleIssue: IModuleIssueStore;
   moduleFilter: IModuleFilterStore;
+  moduleIssueKanBanView: IModuleIssueKanBanViewStore;
+
   cycle: ICycleStore;
+  cycleIssue: ICycleIssueStore;
+  cycleIssueFilter: ICycleIssueFilterStore;
+  cycleIssueKanBanView: ICycleIssueKanBanViewStore;
+
   view: IViewStore;
   issueFilter: IIssueFilterStore;
   issueDetail: IssueViewDetailStore;
@@ -42,9 +55,17 @@ export class RootStore {
     this.workspace = new WorkspaceStore(this);
     this.project = new ProjectStore(this);
     this.projectPublish = new ProjectPublishStore(this);
+
     this.module = new ModuleStore(this);
+    this.moduleIssue = new ModuleIssueStore(this);
     this.moduleFilter = new ModuleFilterStore(this);
+    this.moduleIssueKanBanView = new ModuleIssueKanBanViewStore(this);
+
     this.cycle = new CycleStore(this);
+    this.cycleIssue = new CycleIssueStore(this);
+    this.cycleIssueFilter = new CycleIssueFilterStore(this);
+    this.cycleIssueKanBanView = new CycleIssueKanBanViewStore(this);
+
     this.view = new ViewStore(this);
     this.issue = new IssueStore(this);
     this.issueFilter = new IssueFilterStore(this);

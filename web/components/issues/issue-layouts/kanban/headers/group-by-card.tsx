@@ -3,9 +3,6 @@ import React from "react";
 import { Plus, Minimize2, Maximize2, Circle } from "lucide-react";
 // mobx
 import { observer } from "mobx-react-lite";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
 
 interface IHeaderGroupByCard {
   sub_group_by: string | null;
@@ -14,13 +11,13 @@ interface IHeaderGroupByCard {
   icon?: React.ReactNode;
   title: string;
   count: number;
+  kanBanToggle: any;
+  handleKanBanToggle: any;
 }
 
 export const HeaderGroupByCard = observer(
-  ({ sub_group_by, group_by, column_id, icon, title, count }: IHeaderGroupByCard) => {
-    const { issueKanBanView: issueKanBanViewStore }: RootStore = useMobxStore();
-
-    const verticalAlignPosition = issueKanBanViewStore.kanBanToggle?.groupByHeaderMinMax.includes(column_id);
+  ({ sub_group_by, group_by, column_id, icon, title, count, kanBanToggle, handleKanBanToggle }: IHeaderGroupByCard) => {
+    const verticalAlignPosition = kanBanToggle?.groupByHeaderMinMax.includes(column_id);
 
     return (
       <div
@@ -46,7 +43,7 @@ export const HeaderGroupByCard = observer(
         {sub_group_by === null && (
           <div
             className="flex-shrink-0 w-[20px] h-[20px] rounded-sm overflow-hidden flex justify-center items-center hover:bg-custom-background-80 cursor-pointer transition-all"
-            onClick={() => issueKanBanViewStore?.handleKanBanToggle("groupByHeaderMinMax", column_id)}
+            onClick={() => handleKanBanToggle("groupByHeaderMinMax", column_id)}
           >
             {verticalAlignPosition ? (
               <Maximize2 width={14} strokeWidth={2} />

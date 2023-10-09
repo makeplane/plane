@@ -10,9 +10,9 @@ import { KanBan } from "./default";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 
-export interface IKanBanLayout {}
+export interface IModuleKanBanLayout {}
 
-export const KanBanLayout: React.FC = observer(() => {
+export const ModuleKanBanLayout: React.FC = observer(() => {
   const {
     issue: issueStore,
     issueFilter: issueFilterStore,
@@ -51,10 +51,6 @@ export const KanBanLayout: React.FC = observer(() => {
     issueStore.updateIssueStructure(group_by, sub_group_by, issue);
   };
 
-  const handleKanBanToggle = (toggle: "groupByHeaderMinMax" | "subgroupByIssuesVisibility", value: string) => {
-    issueKanBanViewStore.handleKanBanToggle(toggle, value);
-  };
-
   return (
     <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
       <DragDropContext onDragEnd={onDragEnd}>
@@ -65,8 +61,6 @@ export const KanBanLayout: React.FC = observer(() => {
             group_by={group_by}
             handleIssues={updateIssue}
             display_properties={display_properties}
-            kanBanToggle={issueKanBanViewStore?.kanBanToggle}
-            handleKanBanToggle={handleKanBanToggle}
           />
         ) : (
           <KanBanSwimLanes
@@ -75,8 +69,6 @@ export const KanBanLayout: React.FC = observer(() => {
             group_by={group_by}
             handleIssues={updateIssue}
             display_properties={display_properties}
-            kanBanToggle={issueKanBanViewStore?.kanBanToggle}
-            handleKanBanToggle={handleKanBanToggle}
           />
         )}
       </DragDropContext>
