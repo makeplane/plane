@@ -7,9 +7,9 @@ import { useRouter } from "next/router";
 import { ActivityIcon, ActivityMessage } from "components/core";
 import { CommentCard } from "components/issues/comment";
 // ui
-import { Icon, Loader } from "components/ui";
+import { Icon, Loader, Tooltip } from "components/ui";
 // helpers
-import { timeAgo } from "helpers/date-time.helper";
+import { render24HourFormatTime, renderLongDateFormat, timeAgo } from "helpers/date-time.helper";
 // types
 import { IIssueActivity, IIssueComment } from "types";
 
@@ -120,9 +120,15 @@ export const IssueActivitySection: React.FC<Props> = ({
                           </Link>
                         )}{" "}
                         {message}{" "}
-                        <span className="whitespace-nowrap">
-                          {timeAgo(activityItem.created_at)}
-                        </span>
+                        <Tooltip
+                          tooltipContent={`${renderLongDateFormat(
+                            activityItem.created_at
+                          )}, ${render24HourFormatTime(activityItem.created_at)}`}
+                        >
+                          <span className="whitespace-nowrap">
+                            {timeAgo(activityItem.created_at)}
+                          </span>
+                        </Tooltip>
                       </div>
                     </div>
                   </div>

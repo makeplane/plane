@@ -189,10 +189,12 @@ const SingleCycle: React.FC = () => {
               {cycleStatus === "completed" && (
                 <TransferIssues handleClick={() => setTransferIssuesModal(true)} />
               )}
-              <IssuesView
-                openIssuesListModal={openIssuesListModal}
-                disableUserActions={cycleStatus === "completed" ?? false}
-              />
+              <div className="relative overflow-y-auto w-full h-full">
+                <IssuesView
+                  openIssuesListModal={openIssuesListModal}
+                  disableUserActions={cycleStatus === "completed" ?? false}
+                />
+              </div>
             </div>
             <CycleDetailsSidebar
               cycleStatus={cycleStatus}

@@ -15,6 +15,7 @@ const nextConfig = {
       "vinci-web.s3.amazonaws.com",
       "planefs-staging.s3.ap-south-1.amazonaws.com",
       "planefs.s3.amazonaws.com",
+      "planefs-staging.s3.amazonaws.com",
       "images.unsplash.com",
       "avatars.githubusercontent.com",
       "localhost",

@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 
 // contexts
 import { useProjectMyMembership, ProjectMemberProvider } from "contexts/project-member.context";
+import { WorkspaceViewProvider } from "contexts/workspace-view-context";
 // layouts
 import AppHeader from "layouts/app-layout/app-header";
 import AppSidebar from "layouts/app-layout/app-sidebar";
@@ -29,7 +30,9 @@ type Props = {
 
 export const ProjectAuthorizationWrapper: React.FC<Props> = (props) => (
   <ProjectMemberProvider>
-    <ProjectAuthorizationWrapped {...props} />
+    <WorkspaceViewProvider>
+      <ProjectAuthorizationWrapped {...props} />
+    </WorkspaceViewProvider>
   </ProjectMemberProvider>
 );
 

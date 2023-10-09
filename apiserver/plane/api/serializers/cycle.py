@@ -34,7 +34,6 @@ class CycleSerializer(BaseSerializer):
     unstarted_issues = serializers.IntegerField(read_only=True)
     backlog_issues = serializers.IntegerField(read_only=True)
     assignees = serializers.SerializerMethodField(read_only=True)
-    labels = serializers.SerializerMethodField(read_only=True)
     total_estimates = serializers.IntegerField(read_only=True)
     completed_estimates = serializers.IntegerField(read_only=True)
     started_estimates = serializers.IntegerField(read_only=True)
@@ -50,33 +49,14 @@ class CycleSerializer(BaseSerializer):
         members = [
             {
                 "avatar": assignee.avatar,
-                "first_name": assignee.first_name,
                 "display_name": assignee.display_name,
                 "id": assignee.id,
             }
-            for issue_cycle in obj.issue_cycle.all()
+            for issue_cycle in obj.issue_cycle.prefetch_related("issue__assignees").all()
             for assignee in issue_cycle.issue.assignees.all()
         ]
         # Use a set comprehension to return only the unique objects
         unique_objects = {frozenset(item.items()) for item in members}
-
-        # Convert the set back to a list of dictionaries
-        unique_list = [dict(item) for item in unique_objects]
-
-        return unique_list
-    
-    def get_labels(self, obj):
-        labels = [
-            {
-                "name": label.name,
-                "color": label.color,
-                "id": label.id,
-            }
-            for issue_cycle in obj.issue_cycle.all()
-            for label in issue_cycle.issue.labels.all()
-        ]
-        # Use a set comprehension to return only the unique objects
-        unique_objects = {frozenset(item.items()) for item in labels}
 
         # Convert the set back to a list of dictionaries
         unique_list = [dict(item) for item in unique_objects]

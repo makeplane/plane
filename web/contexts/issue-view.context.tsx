@@ -48,7 +48,6 @@ type ReducerFunctionType = (state: StateType, action: ReducerActionType) => Stat
 
 export const initialState: StateType = {
   display_filters: {
-    calendar_date_range: "",
     group_by: null,
     layout: "list",
     order_by: "-created_at",

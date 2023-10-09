@@ -70,6 +70,7 @@ from plane.api.views import (
     ProjectIdentifierEndpoint,
     ProjectFavoritesViewSet,
     LeaveProjectEndpoint,
+    ProjectPublicCoverImagesEndpoint,
     ## End Projects
     # Issues
     IssueViewSet,
@@ -149,12 +150,11 @@ from plane.api.views import (
     GlobalSearchEndpoint,
     IssueSearchEndpoint,
     ## End Search
-    # Gpt
+    # External
     GPTIntegrationEndpoint,
-    ## End Gpt
-    # Release Notes
     ReleaseNotesEndpoint,
-    ## End Release Notes
+    UnsplashEndpoint,
+    ## End External
     # Inbox
     InboxViewSet,
     InboxIssueViewSet,
@@ -185,6 +185,9 @@ from plane.api.views import (
     ## Exporter
     ExportIssuesEndpoint,
     ## End Exporter
+    # Configuration
+    ConfigurationEndpoint,
+    ## End Configuration
 )
 
 
@@ -571,6 +574,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/members/leave/",
         LeaveProjectEndpoint.as_view(),
         name="project",
+    ),
+    path(
+        "project-covers/",
+        ProjectPublicCoverImagesEndpoint.as_view(),
+        name="project-covers",
     ),
     # End Projects
     #  States
@@ -1440,20 +1448,23 @@ urlpatterns = [
         name="project-issue-search",
     ),
     ## End Search
-    # Gpt
+    # External
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/ai-assistant/",
         GPTIntegrationEndpoint.as_view(),
         name="importer",
     ),
-    ## End Gpt
-    # Release Notes
     path(
         "release-notes/",
         ReleaseNotesEndpoint.as_view(),
         name="release-notes",
     ),
-    ## End Release Notes
+    path(
+        "unsplash/",
+        UnsplashEndpoint.as_view(),
+        name="release-notes",
+    ),
+    ## End External
     # Inbox
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/inboxes/",
@@ -1722,4 +1733,11 @@ urlpatterns = [
         name="workspace-project-boards",
     ),
     ## End Public Boards
+    # Configuration
+    path(
+        "configs/",
+        ConfigurationEndpoint.as_view(),
+        name="configuration",
+    ),
+    ## End Configuration
 ]

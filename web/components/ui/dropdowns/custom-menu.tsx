@@ -19,6 +19,7 @@ export type CustomMenuProps = DropdownProps & {
 
 const CustomMenu = ({
   buttonClassName = "",
+  customButtonClassName = "",
   children,
   className = "",
   customButton,
@@ -40,7 +41,13 @@ const CustomMenu = ({
     {({ open }) => (
       <>
         {customButton ? (
-          <Menu.Button as="button" type="button" onClick={menuButtonOnClick}>
+          <Menu.Button
+            as="button"
+            type="button"
+            onClick={menuButtonOnClick}
+            className={customButtonClassName}
+            disabled={disabled}
+          >
             {customButton}
           </Menu.Button>
         ) : (

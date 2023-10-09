@@ -46,9 +46,8 @@ export const DeleteViewModal: React.FC<Props> = ({ isOpen, data, setIsOpen, user
     await viewsService
       .deleteView(workspaceSlug as string, projectId as string, data.id, user)
       .then(() => {
-        mutate<IView[]>(
-          VIEWS_LIST(projectId as string),
-          (views) => views?.filter((view) => view.id !== data.id)
+        mutate<IView[]>(VIEWS_LIST(projectId as string), (views) =>
+          views?.filter((view) => view.id !== data.id)
         );
 
         handleClose();

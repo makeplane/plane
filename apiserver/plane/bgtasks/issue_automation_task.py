@@ -58,20 +58,23 @@ def archive_old_issues():
 
             # Check if Issues
             if issues:
+                # Set the archive time to current time
+                archive_at = timezone.now()
+
                 issues_to_update = []
                 for issue in issues:
-                    issue.archived_at = timezone.now()
+                    issue.archived_at = archive_at
                     issues_to_update.append(issue)
 
                 # Bulk Update the issues and log the activity
                 if issues_to_update: 
-                    updated_issues = Issue.objects.bulk_update(
+                    Issue.objects.bulk_update(
                         issues_to_update, ["archived_at"], batch_size=100
                     )
                     [
                         issue_activity.delay(
                             type="issue.activity.updated",
-                            requested_data=json.dumps({"archived_at": str(issue.archived_at)}),
+                            requested_data=json.dumps({"archived_at": str(archive_at)}),
                             actor_id=str(project.created_by_id),
                             issue_id=issue.id,
                             project_id=project_id,
@@ -79,7 +82,7 @@ def archive_old_issues():
                             subscriber=False,
                             epoch=int(timezone.now().timestamp())
                         )
-                        for issue in updated_issues
+                        for issue in issues_to_update
                     ]
         return
     except Exception as e:
@@ -139,7 +142,7 @@ def close_old_issues():
 
                 # Bulk Update the issues and log the activity
                 if issues_to_update:
-                    updated_issues = Issue.objects.bulk_update(issues_to_update, ["state"], batch_size=100)
+                    Issue.objects.bulk_update(issues_to_update, ["state"], batch_size=100)
                     [
                         issue_activity.delay(
                             type="issue.activity.updated",
@@ -151,7 +154,7 @@ def close_old_issues():
                             subscriber=False,
                             epoch=int(timezone.now().timestamp())
                         )
-                        for issue in updated_issues
+                        for issue in issues_to_update
                     ]
         return
     except Exception as e:

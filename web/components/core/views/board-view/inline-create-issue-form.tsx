@@ -48,7 +48,7 @@ const InlineInput = () => {
 export const BoardInlineCreateIssueForm: React.FC<Props> = (props) => (
   <>
     <InlineCreateIssueFormWrapper
-      className="flex flex-col justify-between gap-1.5 group/card relative select-none px-3.5 py-3 h-[118px] mb-3 rounded bg-custom-background-100 shadow"
+      className="flex flex-col border-[0.5px] border-custom-border-100 justify-between gap-1.5 group/card relative select-none px-3.5 py-3 h-[118px] mb-3 rounded bg-custom-background-100 shadow-custom-shadow-sm"
       {...props}
     >
       <InlineInput />

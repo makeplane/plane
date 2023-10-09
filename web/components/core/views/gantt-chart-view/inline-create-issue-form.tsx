@@ -39,7 +39,7 @@ const InlineInput = () => {
         {...register("name", {
           required: "Issue title is required.",
         })}
-        className="w-full px-2 py-1.5 rounded-md bg-transparent text-sm font-medium leading-5 text-custom-text-200 outline-none"
+        className="w-full px-2 rounded-md bg-transparent text-sm font-medium leading-5 text-custom-text-200 outline-none"
       />
     </>
   );
@@ -48,7 +48,7 @@ const InlineInput = () => {
 export const GanttInlineCreateIssueForm: React.FC<Props> = (props) => (
   <>
     <InlineCreateIssueFormWrapper
-      className="flex py-3 px-4 mr-2.5 items-center rounded gap-x-2 border bg-custom-background-100 shadow-custom-shadow-sm"
+      className="flex py-3 px-4 border-[0.5px] border-custom-border-100 mr-2.5 items-center rounded gap-x-2 bg-custom-background-100 shadow-custom-shadow-sm"
       {...props}
     >
       <InlineInput />

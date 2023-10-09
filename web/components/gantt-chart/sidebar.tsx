@@ -1,5 +1,3 @@
-import { useState } from "react";
-// next
 import { useRouter } from "next/router";
 // react-beautiful-dnd
 import { DragDropContext, Draggable, DropResult } from "react-beautiful-dnd";
@@ -10,9 +8,8 @@ import { useChart } from "./hooks";
 import { Loader } from "components/ui";
 // icons
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
-import { PlusIcon } from "lucide-react";
-// components
-import { GanttInlineCreateIssueForm } from "components/core/views/gantt-chart-view/inline-create-issue-form";
+// helpers
+import { findTotalDaysInRange } from "helpers/date-time.helper";
 // types
 import { IBlockUpdateData, IGanttBlock } from "./types";
 
@@ -28,11 +25,9 @@ export const GanttSidebar: React.FC<Props> = (props) => {
   const { title, blockUpdateHandler, blocks, SidebarBlockRender, enableReorder } = props;
 
   const router = useRouter();
-  const { cycleId, moduleId } = router.query;
+  const { cycleId } = router.query;
 
   const { activeBlock, dispatch } = useChart();
-
-  const [isCreateIssueFormOpen, setIsCreateIssueFormOpen] = useState(false);
 
   // update the active block on hover
   const updateActiveBlock = (block: IGanttBlock | null) => {
@@ -92,14 +87,21 @@ export const GanttSidebar: React.FC<Props> = (props) => {
       <StrictModeDroppable droppableId="gantt-sidebar">
         {(droppableProvided) => (
           <div
-            className="h-full overflow-y-auto pl-2.5"
+            id={`gantt-sidebar-${cycleId}`}
+            className="max-h-full overflow-y-auto pl-2.5 mt-3"
             ref={droppableProvided.innerRef}
             {...droppableProvided.droppableProps}
           >
             <>
               {blocks ? (
-                blocks.length > 0 ? (
-                  blocks.map((block, index) => (
+                blocks.map((block, index) => {
+                  const duration = findTotalDaysInRange(
+                    block.start_date ?? "",
+                    block.target_date ?? "",
+                    true
+                  );
+
+                  return (
                     <Draggable
                       key={`sidebar-block-${block.id}`}
                       draggableId={`sidebar-block-${block.id}`}
@@ -132,19 +134,20 @@ export const GanttSidebar: React.FC<Props> = (props) => {
                                 <EllipsisVerticalIcon className="h-4 -ml-5" />
                               </button>
                             )}
-                            <div className="flex-grow truncate w-full h-full">
-                              <SidebarBlockRender data={block.data} />
+                            <div className="flex-grow truncate h-full flex items-center justify-between gap-2">
+                              <div className="flex-grow truncate">
+                                <SidebarBlockRender data={block.data} />
+                              </div>
+                              <div className="flex-shrink-0 text-sm text-custom-text-200">
+                                {duration} day{duration > 1 ? "s" : ""}
+                              </div>
                             </div>
                           </div>
                         </div>
                       )}
                     </Draggable>
-                  ))
-                ) : (
-                  <div className="text-custom-text-200 text-sm text-center mt-8">
-                    No <span className="lowercase">{title}</span> found
-                  </div>
-                )
+                  );
+                })
               ) : (
                 <Loader className="pr-2 space-y-3">
                   <Loader.Item height="34px" />
@@ -155,28 +158,6 @@ export const GanttSidebar: React.FC<Props> = (props) => {
               )}
               {droppableProvided.placeholder}
             </>
-
-            <GanttInlineCreateIssueForm
-              isOpen={isCreateIssueFormOpen}
-              handleClose={() => setIsCreateIssueFormOpen(false)}
-              prePopulatedData={{
-                start_date: new Date(Date.now()).toISOString().split("T")[0],
-                target_date: new Date(Date.now() + 86400000).toISOString().split("T")[0],
-                ...(cycleId && { cycle: cycleId.toString() }),
-                ...(moduleId && { module: moduleId.toString() }),
-              }}
-            />
-
-            {!isCreateIssueFormOpen && (
-              <button
-                type="button"
-                onClick={() => setIsCreateIssueFormOpen(true)}
-                className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-1 rounded-md mt-3"
-              >
-                <PlusIcon className="h-4 w-4" />
-                <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
-              </button>
-            )}
           </div>
         )}
       </StrictModeDroppable>

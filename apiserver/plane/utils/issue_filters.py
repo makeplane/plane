@@ -179,7 +179,7 @@ def filter_start_date(params, filter, method):
             date_filter(filter=filter, date_term="start_date", queries=start_dates)
     else:
         if params.get("start_date", None) and len(params.get("start_date")):
-            date_filter(filter=filter, date_term="start_date", queries=params.get("start_date", None))
+            date_filter(filter=filter, date_term="start_date", queries=params.get("start_date", []))
     return filter
 
 
@@ -187,6 +187,7 @@ def filter_target_date(params, filter, method):
     if method == "GET":
         target_dates = params.get("target_date").split(",")
         if len(target_dates) and "" not in target_dates:
+
             date_filter(filter=filter, date_term="target_date", queries=target_dates)
     else:
         if params.get("target_date", None) and len(params.get("target_date")):
