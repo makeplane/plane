@@ -1,10 +1,10 @@
 import { BubbleMenu, BubbleMenuProps } from "@tiptap/react";
 import { FC, useState } from "react";
-import { BoldIcon, ItalicIcon, UnderlineIcon, StrikethroughIcon, CodeIcon } from "lucide-react";
+import { BoldIcon } from "lucide-react";
 
 import { NodeSelector } from "./node-selector";
 import { LinkSelector } from "./link-selector";
-import { cn } from "@plane/editor-core";
+import { BoldItem, cn, CodeItem, ItalicItem, StrikeThroughItem, UnderLineItem } from "@plane/editor-core";
 
 export interface BubbleMenuItem {
   name: string;
@@ -17,36 +17,11 @@ type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;
 
 export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
   const items: BubbleMenuItem[] = [
-    {
-      name: "bold",
-      isActive: () => props.editor?.isActive("bold"),
-      command: () => props.editor?.chain().focus().toggleBold().run(),
-      icon: BoldIcon,
-    },
-    {
-      name: "italic",
-      isActive: () => props.editor?.isActive("italic"),
-      command: () => props.editor?.chain().focus().toggleItalic().run(),
-      icon: ItalicIcon,
-    },
-    {
-      name: "underline",
-      isActive: () => props.editor?.isActive("underline"),
-      command: () => props.editor?.chain().focus().toggleUnderline().run(),
-      icon: UnderlineIcon,
-    },
-    {
-      name: "strike",
-      isActive: () => props.editor?.isActive("strike"),
-      command: () => props.editor?.chain().focus().toggleStrike().run(),
-      icon: StrikethroughIcon,
-    },
-    {
-      name: "code",
-      isActive: () => props.editor?.isActive("code"),
-      command: () => props.editor?.chain().focus().toggleCode().run(),
-      icon: CodeIcon,
-    },
+    BoldItem(props.editor),
+    ItalicItem(props.editor),
+    UnderLineItem(props.editor),
+    StrikeThroughItem(props.editor),
+    CodeItem(props.editor),
   ];
 
   const bubbleMenuProps: EditorBubbleMenuProps = {
