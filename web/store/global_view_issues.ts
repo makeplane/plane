@@ -4,8 +4,7 @@ import { ProjectService } from "services/project.service";
 import { WorkspaceService } from "services/workspace.service";
 // types
 import { RootStore } from "./root";
-import { IIssueGroupWithSubGroupsStructure, IIssueGroupedStructure, IIssueUnGroupedStructure } from "./issue";
-import { IIssueFilterOptions } from "types";
+import { IIssue, IIssueFilterOptions } from "types";
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 
 export interface IGlobalViewIssuesStore {
@@ -15,11 +14,7 @@ export interface IGlobalViewIssuesStore {
 
   // observables
   viewIssues: {
-    [viewId: string]: {
-      grouped: IIssueGroupedStructure;
-      groupWithSubGroups: IIssueGroupWithSubGroupsStructure;
-      ungrouped: IIssueUnGroupedStructure;
-    };
+    [viewId: string]: IIssue[];
   };
 
   // actions
@@ -33,11 +28,7 @@ class GlobalViewIssuesStore implements IGlobalViewIssuesStore {
 
   // observables
   viewIssues: {
-    [viewId: string]: {
-      grouped: IIssueGroupedStructure;
-      groupWithSubGroups: IIssueGroupWithSubGroupsStructure;
-      ungrouped: IIssueUnGroupedStructure;
-    };
+    [viewId: string]: IIssue[];
   } = {};
 
   // root store
@@ -83,6 +74,8 @@ class GlobalViewIssuesStore implements IGlobalViewIssuesStore {
         this.loader = true;
       });
 
+      const displayFilters = this.rootStore.workspaceFilter.workspaceDisplayFilters;
+
       let filteredRouteParams: any = {
         priority: filters?.priority || undefined,
         state_group: filters?.state_group || undefined,
@@ -92,16 +85,12 @@ class GlobalViewIssuesStore implements IGlobalViewIssuesStore {
         labels: filters?.labels || undefined,
         start_date: filters?.start_date || undefined,
         target_date: filters?.target_date || undefined,
-        // group_by: this.userDisplayFilters?.group_by || "state",
-        // order_by: this.userDisplayFilters?.order_by || "-created_at",
-        // sub_group_by: this.userDisplayFilters?.sub_group_by || undefined,
-        // type: this.userDisplayFilters?.type || undefined,
-        // sub_issue: this.userDisplayFilters?.sub_issue || true,
-        // show_empty_groups: this.userDisplayFilters?.show_empty_groups || true,
-        // start_target_date: this.userDisplayFilters?.start_target_date || true,
+        order_by: displayFilters?.order_by || "-created_at",
+        type: displayFilters?.type || undefined,
+        sub_issue: false,
       };
 
-      const filteredParams = handleIssueQueryParamsByLayout("list", "my_issues");
+      const filteredParams = handleIssueQueryParamsByLayout("spreadsheet", "my_issues");
       if (filteredParams) filteredRouteParams = this.computedFilter(filteredRouteParams, filteredParams);
 
       const response = await this.workspaceService.getViewIssues(workspaceSlug, filteredRouteParams);
@@ -110,10 +99,7 @@ class GlobalViewIssuesStore implements IGlobalViewIssuesStore {
         this.loader = false;
         this.viewIssues = {
           ...this.viewIssues,
-          [viewId]: {
-            ...this.viewIssues[viewId],
-            ungrouped: response as IIssueUnGroupedStructure,
-          },
+          [viewId]: response as IIssue[],
         };
       });
 

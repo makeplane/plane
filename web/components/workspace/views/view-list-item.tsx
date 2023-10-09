@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { useState } from "react";
 
 // components
-import { DeleteGlobalViewModal } from "components/workspace";
+import { CreateUpdateWorkspaceViewModal, DeleteGlobalViewModal } from "components/workspace";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
@@ -19,13 +19,28 @@ type Props = { view: IWorkspaceView };
 export const GlobalViewListItem: React.FC<Props> = observer((props) => {
   const { view } = props;
 
+  const [updateViewModal, setUpdateViewModal] = useState(false);
   const [deleteViewModal, setDeleteViewModal] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
+  const totalFilters =
+    view?.query_data?.filters && Object.keys(view.query_data.filters).length > 0
+      ? Object.keys(view.query_data.filters)
+          .map((key) =>
+            view.query_data.filters[key as keyof typeof view.query_data.filters] !== null
+              ? isNaN((view.query_data.filters[key as keyof typeof view.query_data.filters] as any).length)
+                ? 0
+                : (view.query_data.filters[key as keyof typeof view.query_data.filters] as any).length
+              : 0
+          )
+          .reduce((curr, prev) => curr + prev, 0)
+      : 0;
+
   return (
     <>
+      <CreateUpdateWorkspaceViewModal data={view} isOpen={updateViewModal} onClose={() => setUpdateViewModal(false)} />
       <DeleteGlobalViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
       <div className="group hover:bg-custom-background-90 border-b border-custom-border-200">
         <Link href={`/${workspaceSlug}/workspace-views/${view.id}`}>
@@ -42,26 +57,15 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
               </div>
               <div className="ml-2 flex flex-shrink-0">
                 <div className="flex items-center gap-4">
-                  <p className="rounded bg-custom-background-80 py-1 px-2 text-xs text-custom-text-200 opacity-0 group-hover:opacity-100">
-                    {view.query_data.filters && Object.keys(view.query_data.filters).length > 0
-                      ? `${Object.keys(view.query_data.filters)
-                          .map((key: string) =>
-                            view.query_data.filters[key as keyof typeof view.query_data.filters] !== null
-                              ? isNaN(
-                                  (view.query_data.filters[key as keyof typeof view.query_data.filters] as any).length
-                                )
-                                ? 0
-                                : (view.query_data.filters[key as keyof typeof view.query_data.filters] as any).length
-                              : 0
-                          )
-                          .reduce((curr, prev) => curr + prev, 0)} filters`
-                      : "0 filters"}
+                  <p className="rounded bg-custom-background-80 py-1 px-2 text-xs text-custom-text-200 hidden group-hover:block">
+                    {totalFilters} {totalFilters === 1 ? "filter" : "filters"}
                   </p>
                   <CustomMenu width="auto" ellipsis>
                     <CustomMenu.MenuItem
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
+                        setUpdateViewModal(true);
                       }}
                     >
                       <span className="flex items-center justify-start gap-2">

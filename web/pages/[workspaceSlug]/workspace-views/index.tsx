@@ -19,6 +19,7 @@ import type { NextPage } from "next";
 import { DEFAULT_GLOBAL_VIEWS_LIST } from "constants/workspace";
 // fetch-keys
 import { GLOBAL_VIEWS_LIST } from "constants/fetch-keys";
+import { GlobalIssuesHeader } from "components/headers";
 
 const WorkspaceViews: NextPage = () => {
   const [query, setQuery] = useState("");
@@ -40,16 +41,7 @@ const WorkspaceViews: NextPage = () => {
           <span className="text-sm font-medium">Workspace Views</span>
         </div>
       }
-      right={
-        <div className="flex items-center gap-2">
-          {/* <WorkspaceIssuesViewOptions /> */}
-
-          <PrimaryButton className="flex items-center gap-2" onClick={() => {}}>
-            <PlusIcon className="h-4 w-4" />
-            New View
-          </PrimaryButton>
-        </div>
-      }
+      right={<GlobalIssuesHeader activeLayout="list" />}
     >
       <div className="flex flex-col">
         <div className="h-full w-full flex flex-col overflow-hidden">

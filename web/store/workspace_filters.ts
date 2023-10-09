@@ -130,8 +130,6 @@ class WorkspaceFilterStore implements IWorkspaceFilterStore {
     try {
       const memberResponse = await this.workspaceService.workspaceMemberMe(workspaceSlug);
 
-      console.log("memberResponse", memberResponse);
-
       runInAction(() => {
         this.workspaceFilters = memberResponse?.view_props?.filters;
         this.workspaceDisplayFilters = memberResponse?.view_props?.display_filters ?? {};

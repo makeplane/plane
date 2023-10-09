@@ -23,7 +23,7 @@ export interface IGlobalViewsStore {
 
   fetchAllGlobalViews: (workspaceSlug: string) => Promise<IWorkspaceView[]>;
   fetchGlobalViewDetails: (workspaceSlug: string, viewId: string) => Promise<IWorkspaceView>;
-  createGlobalView: (workspaceSlug: string, data: IWorkspaceView) => Promise<IWorkspaceView>;
+  createGlobalView: (workspaceSlug: string, data: Partial<IWorkspaceView>) => Promise<IWorkspaceView>;
   updateGlobalView: (workspaceSlug: string, viewId: string, data: Partial<IWorkspaceView>) => Promise<IWorkspaceView>;
   deleteGlobalView: (workspaceSlug: string, viewId: string) => Promise<any>;
 }
@@ -127,12 +127,12 @@ class GlobalViewsStore implements IGlobalViewsStore {
     }
   };
 
-  createGlobalView = async (workspaceSlug: string, data: IWorkspaceView): Promise<IWorkspaceView> => {
+  createGlobalView = async (workspaceSlug: string, data: Partial<IWorkspaceView>): Promise<IWorkspaceView> => {
     try {
       const response = await this.workspaceService.createView(workspaceSlug, data);
 
       runInAction(() => {
-        this.globalViewsList = [...(this.globalViewsList ?? []), response];
+        this.globalViewsList = [response, ...(this.globalViewsList ?? [])];
         this.globalViewDetails = {
           ...this.globalViewDetails,
           [response.id]: response,

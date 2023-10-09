@@ -5,6 +5,9 @@ import useSWR from "swr";
 
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
+// components
+import { SpreadsheetView } from "components/core";
+import { AppliedFiltersList } from "components/issues";
 // fetch-keys
 import { GLOBAL_VIEW_ISSUES } from "constants/fetch-keys";
 
@@ -12,7 +15,12 @@ export const GlobalViewsAllLayouts: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, globalViewId } = router.query;
 
-  const { globalViews: globalViewsStore, globalViewIssues: globalViewIssuesStore } = useMobxStore();
+  const {
+    globalViews: globalViewsStore,
+    globalViewIssues: globalViewIssuesStore,
+    workspaceFilter: workspaceFilterStore,
+    workspace: workspaceStore,
+  } = useMobxStore();
 
   const viewDetails = globalViewId ? globalViewsStore.globalViewDetails[globalViewId.toString()] : undefined;
 
@@ -30,7 +38,29 @@ export const GlobalViewsAllLayouts: React.FC = observer(() => {
 
   return (
     <div className="relative w-full h-full flex flex-col overflow-auto">
-      <div className="h-full w-full">Global views all issues</div>
+      {viewDetails && (
+        <div className="p-4">
+          <AppliedFiltersList
+            appliedFilters={viewDetails.query_data.filters ?? {}}
+            handleClearAllFilters={() => {}}
+            handleRemoveFilter={() => {}}
+            labels={workspaceStore.workspaceLabels}
+            members={undefined}
+            states={undefined}
+          />
+        </div>
+      )}
+      <div className="h-full w-full">
+        <SpreadsheetView
+          displayProperties={workspaceFilterStore.workspaceDisplayProperties}
+          displayFilters={workspaceFilterStore.workspaceDisplayFilters}
+          handleDisplayFilterUpdate={() => {}}
+          issues={globalViewId ? globalViewIssuesStore.viewIssues?.[globalViewId.toString()] : undefined}
+          handleIssueAction={() => {}}
+          handleUpdateIssue={() => {}}
+          disableUserActions={false}
+        />
+      </div>
     </div>
   );
 });

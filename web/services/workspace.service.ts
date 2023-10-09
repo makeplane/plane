@@ -249,7 +249,7 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async createView(workspaceSlug: string, data: IWorkspaceView): Promise<IWorkspaceView> {
+  async createView(workspaceSlug: string, data: Partial<IWorkspaceView>): Promise<IWorkspaceView> {
     return this.post(`/api/workspaces/${workspaceSlug}/views/`, data)
       .then((response) => response?.data)
       .catch((error) => {

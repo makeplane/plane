@@ -8,15 +8,13 @@ import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // components
 import { GlobalViewsHeader } from "components/workspace";
 import { GlobalViewsAllLayouts } from "components/issues";
-// ui
-import { PrimaryButton } from "components/ui";
+import { GlobalIssuesHeader } from "components/headers";
 // icons
-import { CheckCircle, Plus } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 // types
 import { NextPage } from "next";
 // fetch-keys
 import { GLOBAL_VIEWS_LIST, GLOBAL_VIEW_DETAILS } from "constants/fetch-keys";
-import { GlobalIssuesHeader } from "components/headers";
 
 const GlobalViewIssues: NextPage = () => {
   const router = useRouter();
@@ -44,23 +42,12 @@ const GlobalViewIssues: NextPage = () => {
           <span className="text-sm font-medium">Workspace issues</span>
         </div>
       }
-      right={<GlobalIssuesHeader />}
+      right={<GlobalIssuesHeader activeLayout="spreadsheet" />}
     >
       <div className="h-full flex flex-col overflow-hidden bg-custom-background-100">
-        <div className="h-full w-full border-b border-custom-border-300">
+        <div className="h-full w-full flex flex-col border-b border-custom-border-300">
           <GlobalViewsHeader />
-          <div className="h-full w-full flex flex-col">
-            {/* TODO: applied filters list */}
-            <GlobalViewsAllLayouts />
-            {/* <SpreadsheetView
-            spreadsheetIssues={viewIssues}
-            mutateIssues={mutateViewIssues}
-            handleIssueAction={handleIssueAction}
-            disableUserActions={false}
-            user={user}
-            userAuth={memberRole}
-          /> */}
-          </div>
+          <GlobalViewsAllLayouts />
         </div>
       </div>
     </WorkspaceAuthorizationLayout>

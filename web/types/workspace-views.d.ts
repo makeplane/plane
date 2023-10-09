@@ -10,7 +10,7 @@ export interface IWorkspaceView {
   updated_by: string;
   name: string;
   description: string;
-  query: IWorkspaceViewProps;
+  query: any;
   query_data: IWorkspaceViewProps;
   project: string;
   workspace: string;

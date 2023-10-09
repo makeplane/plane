@@ -29,9 +29,11 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, labels, members, states } = props;
 
   return (
-    <div className="flex items-stretch gap-2 flex-wrap bg-custom-background-100 p-4">
+    <div className="flex items-stretch gap-2 flex-wrap bg-custom-background-100">
       {Object.entries(appliedFilters).map(([key, value]) => {
         const filterKey = key as keyof IIssueFilterOptions;
+
+        if (!value) return;
 
         return (
           <div

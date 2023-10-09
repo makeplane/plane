@@ -62,9 +62,9 @@ export interface IIssueFilterOptions {
   labels?: string[] | null;
   priority?: string[] | null;
   project?: string[] | null;
-  start_date?: TStateGroups[] | null;
+  start_date?: string[] | null;
   state?: string[] | null;
-  state_group?: TStateGroups[] | null;
+  state_group?: string[] | null;
   subscriber?: string[] | null;
   target_date?: string[] | null;
 }
