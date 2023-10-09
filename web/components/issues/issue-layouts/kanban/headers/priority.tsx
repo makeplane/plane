@@ -8,13 +8,14 @@ import { HeaderSubGroupByCard } from "./sub-group-by-card";
 // constants
 import { issuePriorityByKey } from "constants/issue";
 
-
 export interface IPriorityHeader {
   column_id: string;
   sub_group_by: string | null;
   group_by: string | null;
   header_type: "group_by" | "sub_group_by";
   issues_count: number;
+  kanBanToggle: any;
+  handleKanBanToggle: any;
 }
 
 const Icon = ({ priority }: any) => (
@@ -44,7 +45,7 @@ const Icon = ({ priority }: any) => (
 );
 
 export const PriorityHeader: React.FC<IPriorityHeader> = observer(
-  ({ column_id, sub_group_by, group_by, header_type, issues_count }) => {
+  ({ column_id, sub_group_by, group_by, header_type, issues_count, kanBanToggle, handleKanBanToggle }) => {
     const priority = column_id && issuePriorityByKey(column_id);
 
     return (
@@ -56,6 +57,8 @@ export const PriorityHeader: React.FC<IPriorityHeader> = observer(
               icon={<Icon priority={priority?.key} />}
               title={priority?.key || ""}
               count={issues_count}
+              kanBanToggle={kanBanToggle}
+              handleKanBanToggle={handleKanBanToggle}
             />
           ) : (
             <HeaderGroupByCard
@@ -65,6 +68,8 @@ export const PriorityHeader: React.FC<IPriorityHeader> = observer(
               icon={<Icon priority={priority?.key} />}
               title={priority?.key || ""}
               count={issues_count}
+              kanBanToggle={kanBanToggle}
+              handleKanBanToggle={handleKanBanToggle}
             />
           ))}
       </>

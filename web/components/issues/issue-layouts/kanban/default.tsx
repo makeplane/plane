@@ -22,6 +22,8 @@ export interface IGroupByKanBan {
   isDragDisabled: boolean;
   handleIssues?: (sub_group_by: string | null, group_by: string | null, issue: any) => void;
   display_properties: any;
+  kanBanToggle: any;
+  handleKanBanToggle: any;
 }
 
 const GroupByKanBan: React.FC<IGroupByKanBan> = observer(
@@ -35,11 +37,11 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer(
     isDragDisabled,
     handleIssues,
     display_properties,
+    kanBanToggle,
+    handleKanBanToggle,
   }) => {
-    const { issueKanBanView: issueKanBanViewStore }: RootStore = useMobxStore();
-
     const verticalAlignPosition = (_list: any) =>
-      issueKanBanViewStore.kanBanToggle?.groupByHeaderMinMax.includes(getValueFromObject(_list, listKey) as string);
+      kanBanToggle?.groupByHeaderMinMax.includes(getValueFromObject(_list, listKey) as string);
 
     return (
       <div className="relative w-full h-full flex">
@@ -54,43 +56,47 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer(
                     sub_group_by={sub_group_by}
                     group_by={group_by}
                     issues_count={issues?.[getValueFromObject(_list, listKey) as string]?.length || 0}
+                    kanBanToggle={kanBanToggle}
+                    handleKanBanToggle={handleKanBanToggle}
                   />
                 </div>
               )}
 
-              {!verticalAlignPosition(_list) && (
-                <div className="w-full min-h-[150px] h-full">
-                  <Droppable droppableId={`${getValueFromObject(_list, listKey) as string}__${sub_group_id}`}>
-                    {(provided: any, snapshot: any) => (
-                      <div
-                        className={`w-full h-full relative transition-all ${
-                          snapshot.isDraggingOver ? `bg-custom-background-80` : ``
-                        }`}
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}
-                      >
-                        {issues ? (
-                          <IssueBlock
-                            sub_group_id={sub_group_id}
-                            columnId={getValueFromObject(_list, listKey) as string}
-                            issues={issues[getValueFromObject(_list, listKey) as string]}
-                            isDragDisabled={isDragDisabled}
-                            handleIssues={handleIssues}
-                            display_properties={display_properties}
-                          />
-                        ) : (
-                          isDragDisabled && (
-                            <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
-                              {/* <div className="text-custom-text-300 text-sm">Drop here</div> */}
-                            </div>
-                          )
-                        )}
-                        {provided.placeholder}
-                      </div>
-                    )}
-                  </Droppable>
-                </div>
-              )}
+              <div
+                className={`min-h-[150px] h-full ${
+                  verticalAlignPosition(_list) ? `w-[0px] overflow-hidden` : `w-full transition-all`
+                }`}
+              >
+                <Droppable droppableId={`${getValueFromObject(_list, listKey) as string}__${sub_group_id}`}>
+                  {(provided: any, snapshot: any) => (
+                    <div
+                      className={`w-full h-full relative transition-all ${
+                        snapshot.isDraggingOver ? `bg-custom-background-80` : ``
+                      }`}
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                    >
+                      {issues ? (
+                        <IssueBlock
+                          sub_group_id={sub_group_id}
+                          columnId={getValueFromObject(_list, listKey) as string}
+                          issues={issues[getValueFromObject(_list, listKey) as string]}
+                          isDragDisabled={isDragDisabled}
+                          handleIssues={handleIssues}
+                          display_properties={display_properties}
+                        />
+                      ) : (
+                        isDragDisabled && (
+                          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+                            {/* <div className="text-custom-text-300 text-sm">Drop here</div> */}
+                          </div>
+                        )
+                      )}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </div>
             </div>
           ))}
       </div>
@@ -106,10 +112,21 @@ export interface IKanBan {
   handleDragDrop?: (result: any) => void | undefined;
   handleIssues?: (sub_group_by: string | null, group_by: string | null, issue: any) => void;
   display_properties: any;
+  kanBanToggle: any;
+  handleKanBanToggle: any;
 }
 
 export const KanBan: React.FC<IKanBan> = observer(
-  ({ issues, sub_group_by, group_by, sub_group_id = "null", handleIssues, display_properties }) => {
+  ({
+    issues,
+    sub_group_by,
+    group_by,
+    sub_group_id = "null",
+    handleIssues,
+    display_properties,
+    kanBanToggle,
+    handleKanBanToggle,
+  }) => {
     const { project: projectStore, issueKanBanView: issueKanBanViewStore }: RootStore = useMobxStore();
 
     return (
@@ -125,6 +142,8 @@ export const KanBan: React.FC<IKanBan> = observer(
             isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
             handleIssues={handleIssues}
             display_properties={display_properties}
+            kanBanToggle={kanBanToggle}
+            handleKanBanToggle={handleKanBanToggle}
           />
         )}
 
@@ -139,6 +158,8 @@ export const KanBan: React.FC<IKanBan> = observer(
             isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
             handleIssues={handleIssues}
             display_properties={display_properties}
+            kanBanToggle={kanBanToggle}
+            handleKanBanToggle={handleKanBanToggle}
           />
         )}
 
@@ -153,6 +174,8 @@ export const KanBan: React.FC<IKanBan> = observer(
             isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
             handleIssues={handleIssues}
             display_properties={display_properties}
+            kanBanToggle={kanBanToggle}
+            handleKanBanToggle={handleKanBanToggle}
           />
         )}
 
@@ -167,6 +190,8 @@ export const KanBan: React.FC<IKanBan> = observer(
             isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
             handleIssues={handleIssues}
             display_properties={display_properties}
+            kanBanToggle={kanBanToggle}
+            handleKanBanToggle={handleKanBanToggle}
           />
         )}
 
@@ -181,6 +206,8 @@ export const KanBan: React.FC<IKanBan> = observer(
             isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
             handleIssues={handleIssues}
             display_properties={display_properties}
+            kanBanToggle={kanBanToggle}
+            handleKanBanToggle={handleKanBanToggle}
           />
         )}
 
@@ -195,6 +222,8 @@ export const KanBan: React.FC<IKanBan> = observer(
             isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
             handleIssues={handleIssues}
             display_properties={display_properties}
+            kanBanToggle={kanBanToggle}
+            handleKanBanToggle={handleKanBanToggle}
           />
         )}
       </div>
