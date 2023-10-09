@@ -14,7 +14,7 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
 
   const { project: projectStore, moduleFilter: moduleFilterStore } = useMobxStore();
 
-  const userFilters = moduleFilterStore.userModuleFilters;
+  const userFilters = moduleFilterStore.moduleFilters;
 
   // filters whose value not null or empty array
   const appliedFilters: IIssueFilterOptions = {};
@@ -31,17 +31,17 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
 
     // remove all values of the key if value is null
     if (!value) {
-      moduleFilterStore.updateUserModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), {
+      moduleFilterStore.updateModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), {
         [key]: null,
       });
       return;
     }
 
     // remove the passed value from the key
-    let newValues = moduleFilterStore.userModuleFilters?.[key] ?? [];
+    let newValues = moduleFilterStore.moduleFilters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
 
-    moduleFilterStore.updateUserModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), {
+    moduleFilterStore.updateModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), {
       [key]: newValues,
     });
   };
@@ -54,7 +54,7 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
 
-    moduleFilterStore.updateUserModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId?.toString(), {
+    moduleFilterStore.updateModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId?.toString(), {
       ...newFilters,
     });
   };
