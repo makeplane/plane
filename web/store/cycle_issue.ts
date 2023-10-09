@@ -5,6 +5,8 @@ import { RootStore } from "./root";
 import { IIssue } from "types";
 // services
 import { CycleService } from "services/cycles.service";
+// constants
+import { sortArrayByDate, sortArrayByPriority } from "constants/kanban-helpers";
 
 export type IIssueType = "grouped" | "groupWithSubGroups" | "ungrouped";
 export type IIssueGroupedStructure = { [group_id: string]: IIssue[] };
@@ -92,17 +94,17 @@ class CycleIssueStore implements ICycleIssueStore {
   }
 
   get getIssues() {
-    const projectId: string | null = this.rootStore?.project?.projectId;
+    const cycleId: string | null = this.rootStore?.cycle?.cycleId;
     const issueType = this.getIssueType;
-    if (!projectId || !issueType) return null;
+    if (!cycleId || !issueType) return null;
 
-    return this.issues?.[projectId]?.[issueType] || null;
+    return this.issues?.[cycleId]?.[issueType] || null;
   }
 
   updateIssueStructure = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
-    const projectId: string | null = issue?.project;
+    const cycleId: string | null = this.rootStore?.cycle?.cycleId || null;
     const issueType = this.getIssueType;
-    if (!projectId || !issueType) return null;
+    if (!cycleId || !issueType) return null;
 
     let issues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null =
       this.getIssues;
@@ -130,10 +132,22 @@ class CycleIssueStore implements ICycleIssueStore {
       issues = issues.map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i));
     }
 
-    // reorder issues based on the issue update
+    const orderBy = this.rootStore?.issueFilter?.userDisplayFilters?.order_by || "";
+    if (orderBy === "-created_at") {
+      issues = sortArrayByDate(issues as any, "created_at");
+    }
+    if (orderBy === "-updated_at") {
+      issues = sortArrayByDate(issues as any, "updated_at");
+    }
+    if (orderBy === "start_date") {
+      issues = sortArrayByDate(issues as any, "updated_at");
+    }
+    if (orderBy === "priority") {
+      issues = sortArrayByPriority(issues as any, "priority");
+    }
 
     runInAction(() => {
-      this.issues = { ...this.issues, [projectId]: { ...this.issues[projectId], [issueType]: issues } };
+      this.issues = { ...this.issues, [cycleId]: { ...this.issues[cycleId], [issueType]: issues } };
     });
   };
 
@@ -147,19 +161,14 @@ class CycleIssueStore implements ICycleIssueStore {
       this.rootStore.cycle.setCycleId(cycleId);
 
       const params = this.rootStore?.cycleIssueFilter?.appliedFilters;
-      console.log("params", params);
-
-      console.log("coming here...");
       const issueResponse = await this.cycleService.getCycleIssuesWithParams(workspaceSlug, projectId, cycleId, params);
-      console.log("coming here also...");
-      console.log("issueResponse", issueResponse);
 
       const issueType = this.getIssueType;
       if (issueType != null) {
         const _issues = {
           ...this.issues,
-          [projectId]: {
-            ...this.issues[projectId],
+          [cycleId]: {
+            ...this.issues[cycleId],
             [issueType]: issueResponse,
           },
         };

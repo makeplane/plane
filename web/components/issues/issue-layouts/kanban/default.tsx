@@ -62,39 +62,41 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer(
                 </div>
               )}
 
-              {!verticalAlignPosition(_list) && (
-                <div className="w-full min-h-[150px] h-full">
-                  <Droppable droppableId={`${getValueFromObject(_list, listKey) as string}__${sub_group_id}`}>
-                    {(provided: any, snapshot: any) => (
-                      <div
-                        className={`w-full h-full relative transition-all ${
-                          snapshot.isDraggingOver ? `bg-custom-background-80` : ``
-                        }`}
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}
-                      >
-                        {issues ? (
-                          <IssueBlock
-                            sub_group_id={sub_group_id}
-                            columnId={getValueFromObject(_list, listKey) as string}
-                            issues={issues[getValueFromObject(_list, listKey) as string]}
-                            isDragDisabled={isDragDisabled}
-                            handleIssues={handleIssues}
-                            display_properties={display_properties}
-                          />
-                        ) : (
-                          isDragDisabled && (
-                            <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
-                              {/* <div className="text-custom-text-300 text-sm">Drop here</div> */}
-                            </div>
-                          )
-                        )}
-                        {provided.placeholder}
-                      </div>
-                    )}
-                  </Droppable>
-                </div>
-              )}
+              <div
+                className={`min-h-[150px] h-full ${
+                  verticalAlignPosition(_list) ? `w-[0px] overflow-hidden` : `w-full transition-all`
+                }`}
+              >
+                <Droppable droppableId={`${getValueFromObject(_list, listKey) as string}__${sub_group_id}`}>
+                  {(provided: any, snapshot: any) => (
+                    <div
+                      className={`w-full h-full relative transition-all ${
+                        snapshot.isDraggingOver ? `bg-custom-background-80` : ``
+                      }`}
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                    >
+                      {issues ? (
+                        <IssueBlock
+                          sub_group_id={sub_group_id}
+                          columnId={getValueFromObject(_list, listKey) as string}
+                          issues={issues[getValueFromObject(_list, listKey) as string]}
+                          isDragDisabled={isDragDisabled}
+                          handleIssues={handleIssues}
+                          display_properties={display_properties}
+                        />
+                      ) : (
+                        isDragDisabled && (
+                          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+                            {/* <div className="text-custom-text-300 text-sm">Drop here</div> */}
+                          </div>
+                        )
+                      )}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </div>
             </div>
           ))}
       </div>
