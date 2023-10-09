@@ -24,6 +24,9 @@ RUN apk --no-cache add \
 
 WORKDIR /code
 
+COPY requirements.txt ./requirements.txt
+ADD requirements ./requirements
+
 RUN pip install -r requirements.txt --compile --no-cache-dir
 
 RUN addgroup -S plane && \
@@ -37,7 +40,7 @@ USER captain
 
 USER root
 
-RUN chmod +x ./bin/takeoff ./bin/worker ./bin/beat
+# RUN chmod +x ./bin/takeoff ./bin/worker ./bin/beat
 RUN chmod -R 777 /code
 
 USER captain

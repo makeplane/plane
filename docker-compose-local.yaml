@@ -129,7 +129,7 @@ services:
       - dev_env
     volumes:
       - ./apiserver:/code
-    command: ./bin/worker
+    command: /bin/sh -c "celery -A plane worker -l info"
     env_file:
       - ./apiserver/.env
     depends_on:
@@ -149,7 +149,7 @@ services:
       - dev_env
     volumes:
       - ./apiserver:/code
-    command: ./bin/beat
+    command: /bin/sh -c "celery -A plane beat -l info"
     env_file:
       - ./apiserver/.env
     depends_on:
