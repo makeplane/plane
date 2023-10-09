@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-api
+  labels:
+    component: api
+    release: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      component: api
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        component: api
+        release: {{ .Release.Name }}
+    spec:
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.planeBackend.image.repository }}:{{ .Values.planeBackend.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.planeBackend.image.pullPolicy }}
+          command: [ "./bin/takeoff" ]
+          env: 
+            {{- toYaml .Values.planeBackend.env | nindent 12 }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            initialDelaySeconds: 60
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            initialDelaySeconds: 60
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{ toYaml .Values.planeApi.resources | indent 12 }}

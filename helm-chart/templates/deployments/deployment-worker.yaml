@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-worker
+  labels:
+    component: worker
+    release: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      component: worker
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        component: worker
+        release: {{ .Release.Name }}
+    spec:
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.planeBackend.image.repository }}:{{ .Values.planeBackend.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.planeBackend.image.pullPolicy }}
+          command: [ "./bin/worker" ]
+          env: 
+            {{- toYaml .Values.planeBackend.env | nindent 12 }}
+          resources:
+            {{ toYaml .Values.planeWorker.resources | indent 12 }}

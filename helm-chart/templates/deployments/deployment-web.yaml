@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-web
+  labels:
+    component: web
+    release: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      component: web
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        component: web
+        release: {{ .Release.Name }}
+    spec:
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.planeFrontend.image.repository }}:{{ .Values.planeFrontend.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.planeFrontend.image.pullPolicy }}
+          command: [ "/usr/local/bin/start.sh" ]
+          args: [ "web/server.js", "web" ]
+          env: 
+            {{- toYaml .Values.planeFrontend.env | nindent 12 }}
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          livenessProbe:
+            initialDelaySeconds: 30
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            initialDelaySeconds: 30
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{ toYaml .Values.planeFrontend.resources | indent 12 }}
+

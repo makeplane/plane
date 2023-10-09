@@ -15,7 +15,7 @@ planeFrontend:
   ##   https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#resourcerequirements-v1-core
   ##
   resources: {}
-  config:
+  env:
     # -- Extra image domains that need to be added for Next Image
     NEXT_PUBLIC_EXTRA_IMAGE_DOMAINS: 
     # -- Google Client ID for Google OAuth
@@ -45,7 +45,7 @@ planeBackend:
     tag: latest
     pullPolicy: IfNotPresent
     pullSecret: ""
-  config:
+  env:
     # -- Debug value for api server use it as 0 for production use
     DEBUG: 0
 
