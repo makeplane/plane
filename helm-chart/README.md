@@ -16,70 +16,78 @@
 
 * <https://github.com/makeplane/plane>
 
+## Requirements
+
+| Repository | Name | Version |
+|------------|------|---------|
+| https://charts.bitnami.com/bitnami | postgresql | 12.1.6 |
+| https://charts.bitnami.com/bitnami | redis | 17.9.4 |
+
 ## Values
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` |  |
-| api.dockerImage | string | `"makeplane/plane-backend:latest"` |  |
-| api.ingressRoute.enabled | bool | `false` |  |
-| api.ingressRoute.host | string | `""` |  |
-| api.ingressRoute.tls.secretName | string | `""` |  |
-| api.resources | string | `nil` |  |
-| beat.dockerImage | string | `"makeplane/plane-backend:latest"` |  |
-| beat.resources | string | `nil` |  |
-| env.AWS_ACCESS_KEY_ID | string | `"access-key"` |  |
-| env.AWS_REGION | string | `""` |  |
-| env.AWS_S3_BUCKET_NAME | string | `"uploads"` |  |
-| env.AWS_SECRET_ACCESS_KEY | string | `"secret-key"` |  |
-| env.DATABASE_URL | string | `"postgresql://${PGUSER}:${PGPASSWORD}@${PGHOST}/${PGDATABASE}"` |  |
-| env.DEBUG | int | `0` |  |
-| env.DEFAULT_EMAIL | string | `"captain@plane.so"` |  |
-| env.DEFAULT_PASSWORD | string | `"password123"` |  |
-| env.DOCKERIZED | int | `0` |  |
-| env.EMAIL_FROM | string | `"Team Plane <team@mailer.plane.so>"` |  |
-| env.EMAIL_HOST | string | `""` |  |
-| env.EMAIL_HOST_PASSWORD | string | `""` |  |
-| env.EMAIL_HOST_USER | string | `""` |  |
-| env.EMAIL_PORT | int | `587` |  |
-| env.EMAIL_USE_SSL | string | `"0"` |  |
-| env.EMAIL_USE_TLS | string | `"1"` |  |
-| env.ENABLE_SIGNUP | int | `1` |  |
-| env.ENVIRONMENT | string | `nil` |  |
-| env.GITHUB_CLIENT_SECRET | string | `nil` |  |
-| env.GPT_ENGINE | string | `nil` |  |
-| env.NEXT_PUBLIC_API_BASE_URL | string | `nil` |  |
-| env.NEXT_PUBLIC_ENABLE_OAUTH | int | `0` |  |
-| env.NEXT_PUBLIC_ENABLE_SENTRY | int | `0` |  |
-| env.NEXT_PUBLIC_ENABLE_SESSION_RECORDER | int | `0` |  |
-| env.NEXT_PUBLIC_EXTRA_IMAGE_DOMAINS | string | `nil` |  |
-| env.NEXT_PUBLIC_GITHUB_APP_NAME | string | `nil` |  |
-| env.NEXT_PUBLIC_GITHUB_ID | string | `nil` |  |
-| env.NEXT_PUBLIC_GOOGLE_CLIENTID | string | `nil` |  |
-| env.NEXT_PUBLIC_SENTRY_DSN | string | `nil` |  |
-| env.NEXT_PUBLIC_SLACK_CLIENT_ID | string | `nil` |  |
-| env.NEXT_PUBLIC_TRACK_EVENTS | int | `0` |  |
-| env.NGINX_PORT | string | `nil` |  |
-| env.OPENAI_API_KEY | string | `nil` |  |
-| env.REDIS_URL | string | `"redis://${REDIS_HOST}:6379/"` |  |
-| env.SECRET_KEY | string | `nil` |  |
-| env.SENTRY_DSN | string | `nil` |  |
-| env.USE_MINIO | int | `0` |  |
-| env.WEB_URL | string | `nil` |  |
-| global.environmentVariablesConfigMapRef | string | `"plane-environment-variables"` |  |
 | nodeSelector | object | `{}` |  |
+| planeApi.config.AWS_ACCESS_KEY_ID | string | `"access-key"` |  |
+| planeApi.config.AWS_REGION | string | `""` |  |
+| planeApi.config.AWS_S3_BUCKET_NAME | string | `"uploads"` |  |
+| planeApi.config.AWS_SECRET_ACCESS_KEY | string | `"secret-key"` |  |
+| planeApi.config.DATABASE_URL | string | `"postgresql://plane:plane@plane-db/plane"` |  |
+| planeApi.config.DEBUG | int | `0` |  |
+| planeApi.config.DEFAULT_EMAIL | string | `"captain@plane.so"` |  |
+| planeApi.config.DEFAULT_PASSWORD | string | `"password123"` |  |
+| planeApi.config.DOCKERIZED | int | `0` |  |
+| planeApi.config.EMAIL_FROM | string | `"Team Plane <team@mailer.plane.so>"` |  |
+| planeApi.config.EMAIL_HOST | string | `""` |  |
+| planeApi.config.EMAIL_HOST_PASSWORD | string | `""` |  |
+| planeApi.config.EMAIL_HOST_USER | string | `""` |  |
+| planeApi.config.EMAIL_PORT | int | `587` |  |
+| planeApi.config.EMAIL_USE_SSL | string | `"0"` |  |
+| planeApi.config.EMAIL_USE_TLS | string | `"1"` |  |
+| planeApi.config.ENABLE_SIGNUP | int | `1` |  |
+| planeApi.config.GITHUB_CLIENT_SECRET | string | `nil` |  |
+| planeApi.config.GPT_ENGINE | string | `nil` |  |
+| planeApi.config.NEXT_PUBLIC_API_BASE_URL | string | `nil` |  |
+| planeApi.config.NGINX_PORT | string | `nil` |  |
+| planeApi.config.OPENAI_API_KEY | string | `nil` |  |
+| planeApi.config.REDIS_URL | string | `"redis://plane-redis:6379/"` |  |
+| planeApi.config.SECRET_KEY | string | `nil` |  |
+| planeApi.config.SENTRY_DSN | string | `nil` |  |
+| planeApi.config.USE_MINIO | int | `0` |  |
+| planeApi.config.WEB_URL | string | `nil` |  |
+| planeApi.ingressRoute.enabled | bool | `false` |  |
+| planeApi.ingressRoute.host | string | `""` |  |
+| planeApi.ingressRoute.tls.secretName | string | `""` |  |
+| planeApi.resources | object | `{}` |  |
+| planeBackend.image.pullPolicy | string | `"IfNotPresent"` |  |
+| planeBackend.image.pullSecret | string | `""` |  |
+| planeBackend.image.repository | string | `"makeplane/plane-backend"` |  |
+| planeBackend.image.tag | string | `"latest"` |  |
+| planeBeat.resources | object | `{}` |  |
+| planeFrontend.config.NEXT_PUBLIC_ENABLE_OAUTH | int | `0` |  |
+| planeFrontend.config.NEXT_PUBLIC_ENABLE_SENTRY | int | `0` |  |
+| planeFrontend.config.NEXT_PUBLIC_ENABLE_SESSION_RECORDER | int | `0` |  |
+| planeFrontend.config.NEXT_PUBLIC_EXTRA_IMAGE_DOMAINS | string | `nil` |  |
+| planeFrontend.config.NEXT_PUBLIC_GITHUB_APP_NAME | string | `nil` |  |
+| planeFrontend.config.NEXT_PUBLIC_GITHUB_ID | string | `nil` |  |
+| planeFrontend.config.NEXT_PUBLIC_GOOGLE_CLIENTID | string | `nil` |  |
+| planeFrontend.config.NEXT_PUBLIC_SENTRY_DSN | string | `nil` |  |
+| planeFrontend.config.NEXT_PUBLIC_SLACK_CLIENT_ID | string | `nil` |  |
+| planeFrontend.config.NEXT_PUBLIC_TRACK_EVENTS | int | `0` |  |
+| planeFrontend.image.pullPolicy | string | `"IfNotPresent"` |  |
+| planeFrontend.image.pullSecret | string | `""` |  |
+| planeFrontend.image.repository | string | `"makeplane/plane-frontend"` |  |
+| planeFrontend.image.tag | string | `"latest"` |  |
+| planeFrontend.ingressRoute.enabled | bool | `false` |  |
+| planeFrontend.ingressRoute.host | string | `""` |  |
+| planeFrontend.ingressRoute.tls.secretName | string | `""` |  |
+| planeFrontend.resources | object | `{}` |  |
+| planeWorker.resources | object | `{}` |  |
 | postgresql | object | see `values.yaml` | Configuration values for the postgresql dependency. ref: https://github.com/bitnami/charts/tree/main/bitnami/postgresql |
 | redis | object | see `values.yaml` | Configuration values for the Redis dependency. ref: https://github.com/bitnami/charts/blob/master/bitnami/redis More documentation can be found here: https://artifacthub.io/packages/helm/bitnami/redis |
-| redis.resources | string | `nil` |  |
 | tolerations | list | `[]` |  |
 | topologySpreadConstraints | list | `[]` | TopologySpreadConstrains to be added to all deployments |
-| web.dockerImage | string | `"makeplane/plane-frontend:latest"` |  |
-| web.ingressRoute.enabled | bool | `false` |  |
-| web.ingressRoute.host | string | `""` |  |
-| web.ingressRoute.tls.secretName | string | `""` |  |
-| web.resources | string | `nil` |  |
-| worker.dockerImage | string | `"makeplane/plane-backend:latest"` |  |
-| worker.resources | string | `nil` |  |
 
 ----------------------------------------------
 Autogenerated from chart metadata using [helm-docs v1.11.2](https://github.com/norwoodj/helm-docs/releases/v1.11.2)
