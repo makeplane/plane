@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 // ui
 import { Input, PrimaryButton } from "components/ui";
@@ -6,25 +7,27 @@ import { Input, PrimaryButton } from "components/ui";
 type EmailPasswordFormValues = {
   email: string;
   password?: string;
+  confirm_password: string;
   medium?: string;
 };
 
 type Props = {
   onSubmit: (formData: EmailPasswordFormValues) => Promise<void>;
-  setIsResettingPassword: (value: boolean) => void;
 };
 
-export const EmailPasswordForm: React.FC<Props> = (props) => {
-  const { onSubmit, setIsResettingPassword } = props;
-  // form info
+export const EmailSignUpForm: React.FC<Props> = (props) => {
+  const { onSubmit } = props;
+
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting, isValid, isDirty },
   } = useForm<EmailPasswordFormValues>({
     defaultValues: {
       email: "",
       password: "",
+      confirm_password: "",
       medium: "email",
     },
     mode: "onChange",
@@ -69,14 +72,31 @@ export const EmailPasswordForm: React.FC<Props> = (props) => {
             className="border-custom-border-300 h-[46px]"
           />
         </div>
+        <div className="space-y-1">
+          <Input
+            id="confirm_password"
+            type="password"
+            name="confirm_password"
+            register={register}
+            validations={{
+              required: "Password is required",
+              validate: (val: string) => {
+                if (watch("password") != val) {
+                  return "Your passwords do no match";
+                }
+              },
+            }}
+            error={errors.confirm_password}
+            placeholder="Confirm your password..."
+            className="border-custom-border-300 h-[46px]"
+          />
+        </div>
         <div className="text-right text-xs">
-          <button
-            type="button"
-            onClick={() => setIsResettingPassword(true)}
-            className="text-custom-text-200 hover:text-custom-primary-100"
-          >
-            Forgot your password?
-          </button>
+          <Link href="/">
+            <a className="text-custom-text-200 hover:text-custom-primary-100">
+              Already have an account? Sign in.
+            </a>
+          </Link>
         </div>
         <div>
           <PrimaryButton
@@ -85,7 +105,7 @@ export const EmailPasswordForm: React.FC<Props> = (props) => {
             disabled={!isValid && isDirty}
             loading={isSubmitting}
           >
-            {isSubmitting ? "Signing in..." : "Sign in"}
+            {isSubmitting ? "Signing up..." : "Sign up"}
           </PrimaryButton>
         </div>
       </form>

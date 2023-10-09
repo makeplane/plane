@@ -1,24 +1,23 @@
 import React, { useRef, useState } from "react";
-
 import Link from "next/link";
-
-// headless ui
 import { Transition } from "@headlessui/react";
+
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
-import useTheme from "hooks/use-theme";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // icons
 import { Bolt, HelpOutlineOutlined, WestOutlined } from "@mui/icons-material";
-import { ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/outline";
-import { DocumentIcon, DiscordIcon, GithubIcon } from "components/icons";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { DiscordIcon } from "components/icons";
+import { FileText, Github, MessagesSquare } from "lucide-react";
+// assets
+import packageJson from "package.json";
 
 const helpOptions = [
   {
     name: "Documentation",
     href: "https://docs.plane.so/",
-    Icon: DocumentIcon,
+    Icon: FileText,
   },
   {
     name: "Join our Discord",
@@ -28,13 +27,13 @@ const helpOptions = [
   {
     name: "Report a bug",
     href: "https://github.com/makeplane/plane/issues/new/choose",
-    Icon: GithubIcon,
+    Icon: Github,
   },
   {
     name: "Chat with us",
     href: null,
     onClick: () => (window as any).$crisp.push(["do", "chat:show"]),
-    Icon: ChatBubbleOvalLeftEllipsisIcon,
+    Icon: MessagesSquare,
   },
 ];
 
@@ -123,37 +122,44 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = ({ setS
             leaveTo="transform opacity-0 scale-95"
           >
             <div
-              className={`absolute bottom-2 ${
-                store?.theme?.sidebarCollapsed ? "left-full" : "left-[-75px]"
-              } space-y-2 rounded-sm bg-custom-background-80 p-1 shadow-md`}
+              className={`absolute bottom-2 min-w-[10rem] ${
+                store?.theme?.sidebarCollapsed ? "left-full" : "-left-[75px]"
+              } rounded bg-custom-background-100 p-1 shadow-custom-shadow-xs whitespace-nowrap divide-y divide-custom-border-200`}
               ref={helpOptionsRef}
             >
-              {helpOptions.map(({ name, Icon, href, onClick }) => {
-                if (href)
-                  return (
-                    <Link href={href} key={name}>
-                      <a
-                        target="_blank"
-                        className="flex items-center gap-x-2 whitespace-nowrap rounded-md px-2 py-1 text-xs hover:bg-custom-background-90"
+              <div className="space-y-1 pb-2">
+                {helpOptions.map(({ name, Icon, href, onClick }) => {
+                  if (href)
+                    return (
+                      <Link href={href} key={name}>
+                        <a
+                          target="_blank"
+                          className="flex items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-custom-background-80"
+                        >
+                          <div className="grid place-items-center flex-shrink-0">
+                            <Icon className="text-custom-text-200 h-3.5 w-3.5" size={14} />
+                          </div>
+                          <span className="text-xs">{name}</span>
+                        </a>
+                      </Link>
+                    );
+                  else
+                    return (
+                      <button
+                        key={name}
+                        type="button"
+                        onClick={onClick ?? undefined}
+                        className="flex w-full items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-custom-background-80"
                       >
-                        <Icon className="h-4 w-4 text-custom-text-200" />
-                        <span className="text-sm">{name}</span>
-                      </a>
-                    </Link>
-                  );
-                else
-                  return (
-                    <button
-                      key={name}
-                      type="button"
-                      onClick={onClick ? onClick : undefined}
-                      className="flex w-full items-center gap-x-2 whitespace-nowrap rounded-md  px-2 py-1 text-xs hover:bg-custom-background-90"
-                    >
-                      <Icon className="h-4 w-4 text-custom-sidebar-text-200" />
-                      <span className="text-sm">{name}</span>
-                    </button>
-                  );
-              })}
+                        <div className="grid place-items-center flex-shrink-0">
+                          <Icon className="text-custom-text-200 h-3.5 w-3.5" size={14} />
+                        </div>
+                        <span className="text-xs">{name}</span>
+                      </button>
+                    );
+                })}
+              </div>
+              <div className="px-2 pt-2 pb-1 text-[10px]">Version: v{packageJson.version}</div>
             </div>
           </Transition>
         </div>
