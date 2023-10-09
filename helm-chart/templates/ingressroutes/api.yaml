@@ -1,0 +1,22 @@
+{{- if .Values.planeApi.ingressRoute.enabled -}}
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ .Release.Name }}-api
+  labels:
+    component: api
+    release: {{ .Release.Name }}
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - kind: Rule
+    match: Host(`{{ .Values.api.ingressRoute.host }}`)
+    priority: 10
+    services:
+    - name: {{ .Release.Name }}-api
+      port: http
+  tls:
+    secretName: {{ .Values.api.ingressRoute.tls.secretName }}
+{{ end }}
+
