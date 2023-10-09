@@ -1,5 +1,5 @@
 require("dotenv").config({ path: ".env" });
-
+const { i18n } = require("./next-i18next.config.js");
 const { withSentryConfig } = require("@sentry/nextjs");
 const path = require("path");
 
@@ -27,6 +27,7 @@ const nextConfig = {
     // this includes files from the monorepo base two directories up
     outputFileTracingRoot: path.join(__dirname, "../"),
   },
+  i18n,
 };
 
 if (parseInt(process.env.NEXT_PUBLIC_ENABLE_SENTRY || "0")) {

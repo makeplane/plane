@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
+import type { GetStaticProps, InferGetStaticPropsType } from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation, Trans } from "next-i18next";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import type { NextPage } from "next";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
@@ -40,6 +44,10 @@ type EmailPasswordFormValues = {
 
 const HomePage: NextPage = observer(() => {
   const store: any = useMobxStore();
+  // router
+  const router = useRouter();
+  // i18
+  const { t, i18n } = useTranslation("common");
   // theme
   const { setTheme } = useTheme();
   // user
@@ -176,7 +184,7 @@ const HomePage: NextPage = observer(() => {
           <div className="grid place-items-center h-full overflow-y-auto py-5 px-7">
             <div>
               <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
-                {isResettingPassword ? "Reset your password" : "Sign in to Plane"}
+                {isResettingPassword ? "Reset your password" : t("homepage.sign-in-to-plane")}
               </h1>
               {isResettingPassword ? (
                 <EmailResetPasswordForm setIsResettingPassword={setIsResettingPassword} />

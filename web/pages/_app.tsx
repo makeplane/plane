@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import Router from "next/router";
 import { ThemeProvider } from "next-themes";
 import NProgress from "nprogress";
+import { appWithTranslation } from "next-i18next";
 // styles
 import "styles/globals.css";
 import "styles/editor.css";
@@ -48,4 +49,4 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 }
 
-export default MyApp;
+export default appWithTranslation(MyApp);
