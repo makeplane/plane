@@ -36,7 +36,7 @@ import { RectangleGroupIcon } from "@heroicons/react/24/outline";
 import { BlockedIcon, BlockerIcon, RelatedIcon, ContrastIcon } from "components/icons";
 
 // ui
-import { SecondaryButton, CustomDatePicker } from "components/ui";
+import { SecondaryButton } from "components/ui";
 
 // components
 import {
@@ -52,6 +52,7 @@ import {
   DuplicateSelect,
   ModuleSelect,
   CycleSelect,
+  DateSelector,
 } from "components/web-view";
 
 // types
@@ -507,9 +508,9 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                     control={control}
                     name="target_date"
                     render={({ field: { value } }) => (
-                      <CustomDatePicker
-                        placeholder="Due date"
-                        value={value}
+                      <DateSelector
+                        placeholderText="Due date"
+                        value={value ?? undefined}
                         wrapperClassName="w-full"
                         disabled={isArchive || memberRole.isGuest || memberRole.isViewer}
                         onChange={(val) =>

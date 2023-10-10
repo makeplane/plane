@@ -47,7 +47,7 @@ export const AssigneeSelect: React.FC<Props> = (props) => {
     <>
       <WebViewModal
         isOpen={isOpen}
-        modalTitle="Select state"
+        modalTitle="Select assignees"
         onClose={() => {
           setIsOpen(false);
         }}
