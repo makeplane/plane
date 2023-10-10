@@ -34,15 +34,5 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
-          {{/* livenessProbe: */}}
-          {{/*   initialDelaySeconds: 60 */}}
-          {{/*   httpGet: */}}
-          {{/*     path: / */}}
-          {{/*     port: http */}}
-          {{/* readinessProbe: */}}
-          {{/*   initialDelaySeconds: 60 */}}
-          {{/*   httpGet: */}}
-          {{/*     path: / */}}
-          {{/*     port: http */}}
           resources:
             {{ toYaml .Values.planeApi.resources | indent 12 }}
