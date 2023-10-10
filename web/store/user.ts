@@ -3,19 +3,21 @@ import { action, observable, computed, runInAction, makeObservable } from "mobx"
 // services
 import { UserService } from "services/user.service";
 // interfaces
-import { ICurrentUser, ICurrentUserSettings } from "types/users";
+import { IUser, IUserSettings } from "types/users";
 
 interface IUserStore {
   loader: boolean;
-  currentUser: ICurrentUser | null;
-  currentUserSettings: ICurrentUserSettings | null;
-  fetchCurrentUser: () => Promise<ICurrentUser>;
+  currentUser: IUser | null;
+  currentUserSettings: IUserSettings | null;
+  fetchCurrentUser: () => Promise<IUser>;
+  fetchCurrentUserSettings: () => Promise<IUserSettings>;
+  updateTourCompleted: () => Promise<void>;
 }
 
 class UserStore implements IUserStore {
   loader: boolean = false;
-  currentUser: ICurrentUser | null = null;
-  currentUserSettings: ICurrentUserSettings | null = null;
+  currentUser: IUser | null = null;
+  currentUserSettings: IUserSettings | null = null;
   // root store
   rootStore;
   // services
@@ -29,6 +31,7 @@ class UserStore implements IUserStore {
       currentUserSettings: observable.ref,
       // action
       fetchCurrentUser: action,
+      fetchCurrentUserSettings: action,
       // computed
     });
     this.rootStore = _rootStore;
@@ -38,13 +41,43 @@ class UserStore implements IUserStore {
   fetchCurrentUser = async () => {
     try {
       const response = await this.userService.currentUser();
-      console.log("response", response);
       if (response) {
         runInAction(() => {
           this.currentUser = response;
         });
       }
       return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  fetchCurrentUserSettings = async () => {
+    try {
+      const response = await this.userService.currentUserSettings();
+      if (response) {
+        runInAction(() => {
+          this.currentUserSettings = response;
+        });
+      }
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  updateTourCompleted = async () => {
+    try {
+      if (this.currentUser) {
+        runInAction(() => {
+          this.currentUser = {
+            ...this.currentUser,
+            is_tour_completed: true,
+          } as IUser;
+        });
+        const response = await this.userService.updateUserTourCompleted(this.currentUser);
+        return response;
+      }
     } catch (error) {
       throw error;
     }

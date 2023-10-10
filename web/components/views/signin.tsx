@@ -1,6 +1,7 @@
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
+import { useRouter } from "next/router";
 // hooks
 import useToast from "hooks/use-toast";
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -13,25 +14,37 @@ import {
   GithubLoginButton,
   EmailCodeForm,
   EmailPasswordForm,
-  EmailResetPasswordForm,
   EmailPasswordFormValues,
 } from "components/account";
 // ui
 import { Spinner } from "@plane/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
+import { IUserSettings } from "types";
 
 const appConfigService = new AppConfigService();
 const authService = new AuthService();
 
 export const SignInView = observer(() => {
   const { user: userStore } = useMobxStore();
+  // router
+  const router = useRouter();
   // toast
   const { setToastAlert } = useToast();
   // fetch app config
   const { data } = useSWR("APP_CONFIG", () => appConfigService.envConfig());
   // fetch user info
   const { data: user, error } = useSWR("USER_INFO", () => userStore.fetchCurrentUser());
+  // computed
+  const enableEmailPassword =
+    data?.email_password_login || !(data?.email_password_login || data?.magic_login || data?.google || data?.github);
+
+  const handleLoginRedirection = () =>
+    userStore.fetchCurrentUserSettings().then((userSettings: IUserSettings) => {
+      const workspaceSlug =
+        userSettings?.workspace?.last_workspace_slug || userSettings?.workspace?.fallback_workspace_slug;
+      router.push(`/${workspaceSlug}`);
+    });
 
   const handleGoogleSignIn = async ({ clientId, credential }: any) => {
     try {
@@ -42,9 +55,8 @@ export const SignInView = observer(() => {
           clientId,
         };
         const response = await authService.socialAuth(socialAuthPayload);
-        if (response && response?.user) {
-          mutateUser();
-          handleTheme(response?.user);
+        if (response) {
+          handleLoginRedirection();
         }
       } else {
         throw Error("Cant find credentials");
@@ -67,9 +79,8 @@ export const SignInView = observer(() => {
           clientId: data.github,
         };
         const response = await authService.socialAuth(socialAuthPayload);
-        if (response && response?.user) {
-          mutateUser();
-          handleTheme(response?.user);
+        if (response) {
+          handleLoginRedirection();
         }
       } else {
         throw Error("Cant find credentials");
@@ -87,17 +98,8 @@ export const SignInView = observer(() => {
     await authService
       .emailLogin(formData)
       .then((response) => {
-        try {
-          if (response) {
-            mutateUser();
-            handleTheme(response?.user);
-          }
-        } catch (err: any) {
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: err?.error || "Something went wrong. Please try again later or contact the support team.",
-          });
+        if (response) {
+          handleLoginRedirection();
         }
       })
       .catch((err) =>
@@ -112,8 +114,7 @@ export const SignInView = observer(() => {
   const handleEmailCodeSignIn = async (response: any) => {
     try {
       if (response) {
-        mutateUser();
-        handleTheme(response?.user);
+        handleLoginRedirection();
       }
     } catch (err: any) {
       setToastAlert({
@@ -147,9 +148,8 @@ export const SignInView = observer(() => {
               <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
                 Sign in to Plane
               </h1>
-              <EmailResetPasswordForm />
               <>
-                {data?.email_password_login && <EmailPasswordForm onSubmit={handlePasswordSignIn} />}
+                {enableEmailPassword && <EmailPasswordForm onSubmit={handlePasswordSignIn} />}
                 {data?.magic_login && (
                   <div className="flex flex-col divide-y divide-custom-border-200">
                     <div className="pb-7">

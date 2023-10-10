@@ -6,15 +6,16 @@ import { CommandPalette } from "components/command-palette";
 import { AppSidebar } from "./sidebar";
 
 export interface IAppLayout {
-  bg: string;
+  bg?: string;
   children: ReactNode;
+  header: ReactNode;
 }
 
 export const AppLayout: FC<IAppLayout> = (props) => {
-  const { bg = "primary", children } = props;
+  const { bg = "primary", children, header } = props;
   return (
     <div>
-      <CommandPalette />
+      {/* <CommandPalette /> */}
       <UserAuthWrapper>
         <WorkspaceAuthWrapper>
           <div>

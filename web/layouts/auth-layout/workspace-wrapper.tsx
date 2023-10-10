@@ -8,6 +8,7 @@ import workspaceServices from "services/workspace.service";
 import { Spinner, PrimaryButton, SecondaryButton } from "components/ui";
 // fetch-keys
 import { WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 export interface IWorkspaceAuthWrapper {
   children: ReactNode;
@@ -20,14 +21,19 @@ export interface IWorkspaceAuthWrapper {
 
 export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = (props) => {
   const { children } = props;
+  // store
+  const {} = useMobxStore();
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // fetching user workspace information
   const { data: workspaceMemberMe, error } = useSWR(
-    workspaceSlug ? WORKSPACE_MEMBERS_ME(workspaceSlug as string) : null,
+    workspaceSlug ? `WORKSPACE_MEMBERS_ME_${workspaceSlug}` : null,
     workspaceSlug ? () => workspaceServices.workspaceMemberMe(workspaceSlug.toString()) : null
   );
+
+  console.log("Hello", workspaceMemberMe);
+
   // while data is being loaded
   if (!workspaceMemberMe && !error) {
     return (

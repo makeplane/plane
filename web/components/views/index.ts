@@ -5,3 +5,4 @@ export * from "./modal";
 export * from "./select-filters";
 export * from "./single-view-item";
 export * from "./signin";
+export * from "./workspace-dashboard";
