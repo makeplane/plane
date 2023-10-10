@@ -11,7 +11,6 @@ import { UploadImage } from "../../types/upload-image";
 const DEBOUNCE_DELAY = 1500;
 
 interface CustomEditorProps {
-  editable?: boolean;
   uploadFile: UploadImage;
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
   setShouldShowAlert?: (showAlert: boolean) => void;
@@ -24,9 +23,8 @@ interface CustomEditorProps {
   forwardedRef?: any;
 }
 
-export const useEditor = ({ uploadFile, editable, deleteFile, editorProps = {}, value, extensions = [], onChange, setIsSubmitting, debouncedUpdatesEnabled, forwardedRef, setShouldShowAlert, }: CustomEditorProps) => {
+export const useEditor = ({ uploadFile, deleteFile, editorProps = {}, value, extensions = [], onChange, setIsSubmitting, debouncedUpdatesEnabled, forwardedRef, setShouldShowAlert, }: CustomEditorProps) => {
   const editor = useCustomEditor({
-    editable: editable ?? true,
     editorProps: {
       ...CoreEditorProps(uploadFile, setIsSubmitting),
       ...editorProps,
