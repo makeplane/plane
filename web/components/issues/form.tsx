@@ -31,8 +31,8 @@ import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
 import type { ICurrentUserResponse, IIssue, ISearchIssueResponse } from "types";
+import fileService from "services/file.service";
 // services
-import fileService from "@/services/file.service";
 
 const defaultValues: Partial<IIssue> = {
   project: "",

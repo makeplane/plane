@@ -18,7 +18,7 @@ import { ICurrentUserResponse, IPageBlock } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
 // services
-import fileService from "@/services/file.service";
+import fileService from "services/file.service";
 
 type Props = {
   handleClose: () => void;

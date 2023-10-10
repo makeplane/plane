@@ -21,8 +21,8 @@ import { Label } from "components/web-view";
 
 // types
 import type { IIssue } from "types";
+import fileService from "services/file.service";
 // services
-import fileService from "@/services/file.service";
 
 type Props = {
   isAllowed: boolean;

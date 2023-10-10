@@ -18,7 +18,6 @@ interface ILiteTextEditor {
   onChange?: (json: any, html: string) => void;
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
   setShouldShowAlert?: (showAlert: boolean) => void;
-  editable?: boolean;
   forwardedRef?: any;
   debouncedUpdatesEnabled?: boolean;
   commentAccessSpecifier?: {
@@ -46,7 +45,6 @@ interface EditorHandle {
 const LiteTextEditor = ({
   onChange,
   debouncedUpdatesEnabled,
-  editable,
   setIsSubmitting,
   setShouldShowAlert,
   editorContentCustomClassNames,
@@ -63,7 +61,6 @@ const LiteTextEditor = ({
   const editor = useEditor({
     onChange,
     debouncedUpdatesEnabled,
-    editable,
     setIsSubmitting,
     setShouldShowAlert,
     value,
@@ -81,11 +78,9 @@ const LiteTextEditor = ({
     <EditorContainer editor={editor} editorClassNames={editorClassNames}>
       <div className="flex flex-col">
         <EditorContentWrapper editor={editor} editorContentCustomClassNames={editorContentCustomClassNames} />
-        {(editable !== false) &&
-          (<div className="w-full mt-4">
-            <FixedMenu editor={editor} uploadFile={uploadFile} setIsSubmitting={setIsSubmitting} commentAccessSpecifier={commentAccessSpecifier} />
-          </div>)
-        }
+        <div className="w-full mt-4">
+          <FixedMenu editor={editor} uploadFile={uploadFile} setIsSubmitting={setIsSubmitting} commentAccessSpecifier={commentAccessSpecifier} />
+        </div>
       </div>
     </EditorContainer >
   );

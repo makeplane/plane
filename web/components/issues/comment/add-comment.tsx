@@ -9,7 +9,7 @@ import { SecondaryButton } from "components/ui";
 // types
 import type { IIssueComment } from "types";
 // services
-import fileService from "@/services/file.service";
+import fileService from "services/file.service";
 
 const defaultValues: Partial<IIssueComment> = {
   access: "INTERNAL",

@@ -2,7 +2,7 @@
 
 ## Description
 
-The `@plane/rich-text-editor` package extends from the `editor-core` package, inheriting its base functionality while adding its own unique features of Slack Commands and many more.
+The `@plane/rich-text-editor` package extends from the `editor-core` package, inheriting its base functionality while adding its own unique features of Slash Commands and many more.
 
 ## Key Features
 

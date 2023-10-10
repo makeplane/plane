@@ -11,7 +11,7 @@ import DefaultLayout from "layouts/default-layout";
 import Image from "next/image";
 import userService from "services/user.service";
 import { useRouter } from "next/router";
-import fileService from "@/services/file.service";
+import fileService from "services/file.service";
 
 const Editor: NextPage = () => {
   const [user, setUser] = useState<ICurrentUserResponse | undefined>();

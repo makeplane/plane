@@ -18,8 +18,8 @@ import { ChatBubbleLeftEllipsisIcon, CheckIcon, XMarkIcon, EllipsisVerticalIcon 
 import { timeAgo } from "helpers/date-time.helper";
 // types
 import { Comment } from "types/issue";
+import fileService from "services/file.service";
 // services
-import fileService from "@/services/file.service";
 
 type Props = {
   workspaceSlug: string;

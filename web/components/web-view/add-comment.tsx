@@ -15,11 +15,11 @@ import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
 import { Send } from "lucide-react";
 
 // ui
-import { Icon, SecondaryButton, Tooltip, PrimaryButton } from "components/ui";
+import { PrimaryButton } from "components/ui";
 
 // types
 import type { IIssueComment } from "types";
-import fileService from "@/services/file.service";
+import fileService from "services/file.service";
 
 const defaultValues: Partial<IIssueComment> = {
   access: "INTERNAL",
@@ -78,30 +78,30 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit }) => {
 
   return (
     <form className="w-full flex gap-x-2" onSubmit={handleSubmit(handleAddComment)}>
-       <div className="relative flex-grow">
+      <div className="relative flex-grow">
+        <Controller
+          name="access"
+          control={control}
+          render={({ field: { onChange: onAccessChange, value: accessValue } }) => (
             <Controller
-              name="access"
+              name="comment_html"
               control={control}
-              render={({ field: { onChange: onAccessChange, value: accessValue } }) => (
-                <Controller
-                  name="comment_html"
-                  control={control}
-                  render={({ field: { onChange: onCommentChange, value: commentValue } }) => (
-                    <LiteTextEditorWithRef
-                      uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                      deleteFile={fileService.deleteImage}
-                      ref={editorRef}
-                      value={!commentValue || commentValue === "" ? "<p></p>" : commentValue}
-                      customClassName="p-3 min-h-[100px] shadow-sm"
-                      debouncedUpdatesEnabled={false}
-                      onChange={(comment_json: Object, comment_html: string) => onCommentChange(comment_html)}
-                      commentAccessSpecifier={{ accessValue, onAccessChange, showAccessSpecifier, commentAccess }}
-                    />
-                  )}
+              render={({ field: { onChange: onCommentChange, value: commentValue } }) => (
+                <LiteTextEditorWithRef
+                  uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                  deleteFile={fileService.deleteImage}
+                  ref={editorRef}
+                  value={!commentValue || commentValue === "" ? "<p></p>" : commentValue}
+                  customClassName="p-3 min-h-[100px] shadow-sm"
+                  debouncedUpdatesEnabled={false}
+                  onChange={(comment_json: Object, comment_html: string) => onCommentChange(comment_html)}
+                  commentAccessSpecifier={{ accessValue, onAccessChange, showAccessSpecifier, commentAccess }}
                 />
               )}
             />
-          </div>
+          )}
+        />
+      </div>
 
       <div className="inline">
         <PrimaryButton
