@@ -6,7 +6,7 @@ import { WorkspaceService } from "services/workspace.service";
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 // types
 import { RootStore } from "./root";
-import { IIssue, IIssueFilterOptions, TStaticIssueTypes } from "types";
+import { IIssue, IIssueFilterOptions, TStaticViewTypes } from "types";
 
 export interface IGlobalViewIssuesStore {
   // states
@@ -20,7 +20,7 @@ export interface IGlobalViewIssuesStore {
 
   // actions
   fetchViewIssues: (workspaceSlug: string, viewId: string, filters: IIssueFilterOptions) => Promise<any>;
-  fetchStaticIssues: (workspaceSlug: string, type: TStaticIssueTypes) => Promise<any>;
+  fetchStaticIssues: (workspaceSlug: string, type: TStaticViewTypes) => Promise<any>;
 }
 
 class GlobalViewIssuesStore implements IGlobalViewIssuesStore {
@@ -118,7 +118,7 @@ class GlobalViewIssuesStore implements IGlobalViewIssuesStore {
     }
   };
 
-  fetchStaticIssues = async (workspaceSlug: string, type: TStaticIssueTypes) => {
+  fetchStaticIssues = async (workspaceSlug: string, type: TStaticViewTypes) => {
     try {
       runInAction(() => {
         this.loader = true;

@@ -14,7 +14,7 @@ import { PrimaryButton, Tooltip } from "components/ui";
 // icons
 import { List, PlusIcon, Sheet } from "lucide-react";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TStaticViewTypes } from "types";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 
@@ -26,6 +26,8 @@ const GLOBAL_VIEW_LAYOUTS = [
 type Props = {
   activeLayout: "list" | "spreadsheet";
 };
+
+const STATIC_VIEW_TYPES: TStaticViewTypes[] = ["all-issues", "assigned", "created", "subscribed"];
 
 export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   const { activeLayout } = props;
@@ -39,6 +41,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
     globalViews: globalViewsStore,
     workspaceFilter: workspaceFilterStore,
     workspace: workspaceStore,
+    project: projectStore,
   } = useMobxStore();
 
   const queryData = globalViewId ? globalViewsStore.globalViewDetails[globalViewId.toString()]?.query_data : undefined;
@@ -119,14 +122,18 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
         </div>
         {activeLayout === "spreadsheet" && (
           <>
-            <FiltersDropdown title="Filters">
-              <FilterSelection
-                filters={queryData?.filters ?? {}}
-                handleFiltersUpdate={handleFiltersUpdate}
-                layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
-                labels={workspaceStore.workspaceLabels ?? undefined}
-              />
-            </FiltersDropdown>
+            {!STATIC_VIEW_TYPES.some((word) => router.pathname.includes(word)) && (
+              <FiltersDropdown title="Filters">
+                <FilterSelection
+                  filters={queryData?.filters ?? {}}
+                  handleFiltersUpdate={handleFiltersUpdate}
+                  layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
+                  labels={workspaceStore.workspaceLabels ?? undefined}
+                  projects={workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined}
+                />
+              </FiltersDropdown>
+            )}
+
             <FiltersDropdown title="View">
               <DisplayFiltersSelection
                 displayFilters={workspaceFilterStore.workspaceDisplayFilters}

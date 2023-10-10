@@ -21,4 +21,4 @@ export interface IWorkspaceView {
   };
 }
 
-export type TStaticIssueTypes = "all-issues" | "assigned" | "created" | "subscribed";
+export type TStaticViewTypes = "all-issues" | "assigned" | "created" | "subscribed";

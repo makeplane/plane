@@ -18,7 +18,7 @@ import { PriorityIcon, StateGroupIcon } from "components/icons";
 // helpers
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 // types
-import { IWorkspaceIssueFilterOptions, TStateGroups } from "types";
+import { IIssueFilterOptions, TStateGroups } from "types";
 // fetch-keys
 import { WORKSPACE_LABELS } from "constants/fetch-keys";
 // constants
@@ -26,7 +26,7 @@ import { GROUP_CHOICES, PRIORITIES } from "constants/project";
 import { DATE_FILTER_OPTIONS } from "constants/filters";
 
 type Props = {
-  filters: Partial<IWorkspaceIssueFilterOptions>;
+  filters: Partial<IIssueFilterOptions>;
   onSelect: (option: any) => void;
   direction?: "left" | "right";
   height?: "sm" | "md" | "rg" | "lg";
@@ -276,12 +276,10 @@ export const GlobalSelectFilters: React.FC<Props> = ({ filters, onSelect, direct
     <>
       {isDateFilterModalOpen && (
         <DateFilterModal
-          title={dateFilterType.title}
-          field={dateFilterType.type}
-          filters={filters as IWorkspaceIssueFilterOptions}
           handleClose={() => setIsDateFilterModalOpen(false)}
           isOpen={isDateFilterModalOpen}
-          onSelect={onSelect}
+          onSelect={(val) => onSelect(val)}
+          title="Start date"
         />
       )}
       <MultiLevelDropdown

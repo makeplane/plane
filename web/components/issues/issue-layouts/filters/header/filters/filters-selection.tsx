@@ -7,6 +7,7 @@ import {
   FilterCreatedBy,
   FilterLabels,
   FilterPriority,
+  FilterProjects,
   FilterStartDate,
   FilterState,
   FilterStateGroup,
@@ -17,7 +18,7 @@ import { Search, X } from "lucide-react";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // types
-import { IIssueFilterOptions, IIssueLabels, IStateResponse, IUserLite } from "types";
+import { IIssueFilterOptions, IIssueLabels, IProject, IStateResponse, IUserLite } from "types";
 // constants
 import { ILayoutDisplayFiltersOptions, ISSUE_PRIORITIES, ISSUE_STATE_GROUPS } from "constants/issue";
 import { DATE_FILTER_OPTIONS } from "constants/filters";
@@ -28,6 +29,7 @@ type Props = {
   layoutDisplayFiltersOptions: ILayoutDisplayFiltersOptions | undefined;
   labels?: IIssueLabels[] | undefined;
   members?: IUserLite[] | undefined;
+  projects?: IProject[] | undefined;
   states?: IStateResponse | undefined;
 };
 
@@ -55,7 +57,7 @@ const ViewButtons = ({ handleLess, handleMore, isViewLessVisible, isViewMoreVisi
 );
 
 export const FilterSelection: React.FC<Props> = observer((props) => {
-  const { filters, handleFiltersUpdate, layoutDisplayFiltersOptions, labels, members, states } = props;
+  const { filters, handleFiltersUpdate, layoutDisplayFiltersOptions, labels, members, projects, states } = props;
 
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
 
@@ -82,6 +84,10 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
     priority: {
       currentLength: 5,
       totalLength: ISSUE_PRIORITIES.length,
+    },
+    project: {
+      currentLength: 5,
+      totalLength: projects?.length ?? 0,
     },
     state_group: {
       currentLength: 5,
@@ -287,6 +293,27 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
                   isViewMoreVisible={isViewMoreVisible("labels")}
                   handleLess={() => handleViewLess("labels")}
                   handleMore={() => handleViewMore("labels")}
+                />
+              }
+            />
+          </div>
+        )}
+
+        {/* project */}
+        {isFilterEnabled("project") && (
+          <div className="py-2">
+            <FilterProjects
+              appliedFilters={filters.project ?? null}
+              projects={projects}
+              handleUpdate={(val) => handleFiltersUpdate("project", val)}
+              itemsToRender={filtersToRender.project?.currentLength ?? 0}
+              searchQuery={filtersSearchQuery}
+              viewButtons={
+                <ViewButtons
+                  isViewLessVisible={isViewLessVisible("project")}
+                  isViewMoreVisible={isViewMoreVisible("project")}
+                  handleLess={() => handleViewLess("project")}
+                  handleMore={() => handleViewMore("project")}
                 />
               }
             />

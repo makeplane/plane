@@ -9,13 +9,13 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { SpreadsheetView } from "components/core";
 import { AppliedFiltersList } from "components/issues";
 // types
-import { IIssueFilterOptions, TStaticIssueTypes } from "types";
+import { IIssueFilterOptions, TStaticViewTypes } from "types";
 // fetch-keys
 import { GLOBAL_VIEW_ISSUES } from "constants/fetch-keys";
 import { PrimaryButton } from "components/ui";
 
 type Props = {
-  type?: TStaticIssueTypes;
+  type?: TStaticViewTypes;
 };
 
 export const GlobalViewsAllLayouts: React.FC<Props> = observer((props) => {

@@ -8,7 +8,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useWorkspaceMembers from "hooks/use-workspace-members";
 // components
-import { GlobalSelectFilters } from "components/workspace/views-legacy/global-select-filters";
+import { GlobalSelectFilters } from "components/workspace";
 // ui
 import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // types
