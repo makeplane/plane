@@ -46,6 +46,14 @@ export const insertTableCommand = (editor: Editor, range?: Range) => {
   else editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
 };
 
+export const unsetLinkEditor = (editor: Editor) => {
+  editor.chain().focus().unsetLink().run();
+};
+
+export const setLinkEditor = (editor: Editor, url: string) => {
+  editor.chain().focus().setLink({ href: url }).run();
+};
+
 export const insertImageCommand = (editor: Editor, uploadFile: UploadImage, setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).run();
   const input = document.createElement("input");
@@ -60,3 +68,4 @@ export const insertImageCommand = (editor: Editor, uploadFile: UploadImage, setI
   };
   input.click();
 };
+

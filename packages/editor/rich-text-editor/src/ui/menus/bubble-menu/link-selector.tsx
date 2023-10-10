@@ -1,7 +1,7 @@
 import { Editor } from "@tiptap/core";
 import { Check, Trash } from "lucide-react";
 import { Dispatch, FC, SetStateAction, useCallback, useEffect, useRef } from "react";
-import { cn, isValidHttpUrl } from "@plane/editor-core";
+import { cn, isValidHttpUrl, setLinkEditor, unsetLinkEditor, } from "@plane/editor-core";
 
 interface LinkSelectorProps {
   editor: Editor;
@@ -16,7 +16,7 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen 
     const input = inputRef.current;
     const url = input?.value;
     if (url && isValidHttpUrl(url)) {
-      editor.chain().focus().setLink({ href: url }).run();
+      setLinkEditor(editor, url);
       setIsOpen(false);
     }
   }, [editor, inputRef, setIsOpen]);
@@ -68,7 +68,7 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen 
               type="button"
               className="flex items-center rounded-sm p-1 text-red-600 transition-all hover:bg-red-100 dark:hover:bg-red-800"
               onClick={() => {
-                editor.chain().focus().unsetLink().run();
+                unsetLinkEditor(editor);
                 setIsOpen(false);
               }}
             >
