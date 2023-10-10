@@ -8,13 +8,13 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useWorkspaceMembers from "hooks/use-workspace-members";
 // components
-import { GlobalSelectFilters } from "components/workspace";
+import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "components/issues";
 // ui
 import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // types
 import { IWorkspaceView } from "types";
 // constants
-import { AppliedFiltersList } from "components/issues";
+import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 
 type Props = {
   handleFormSubmit: (values: Partial<IWorkspaceView>) => Promise<void>;
@@ -34,7 +34,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { workspace: workspaceStore } = useMobxStore();
+  const { workspace: workspaceStore, project: projectStore } = useMobxStore();
 
   const {
     control,
@@ -75,8 +75,6 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
 
     setValue("query_data.filters", {});
   };
-
-  console.log("selectedFilters", selectedFilters);
 
   useEffect(() => {
     if (!data) return;
@@ -123,28 +121,31 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
               control={control}
               name="query_data.filters"
               render={({ field: { onChange, value: filters } }) => (
-                <GlobalSelectFilters
-                  filters={filters}
-                  onSelect={(option) => {
-                    const key = option.key as keyof typeof filters;
+                <FiltersDropdown title="Filters">
+                  <FilterSelection
+                    filters={filters ?? {}}
+                    handleFiltersUpdate={(key, value) => {
+                      const newValues = filters?.[key] ?? [];
 
-                    const newValues = filters?.[key] ?? [];
+                      if (Array.isArray(value)) {
+                        value.forEach((val) => {
+                          if (!newValues.includes(val)) newValues.push(val);
+                        });
+                      } else {
+                        if (filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+                        else newValues.push(value);
+                      }
 
-                    if (Array.isArray(option.value)) {
-                      option.value.forEach((val: any) => {
-                        if (!newValues.includes(val)) newValues.push(val);
+                      onChange({
+                        ...filters,
+                        [key]: newValues,
                       });
-                    } else {
-                      if (filters?.[key]?.includes(option.value)) newValues.splice(newValues.indexOf(option.value), 1);
-                      else newValues.push(option.value);
-                    }
-
-                    onChange({
-                      ...filters,
-                      [key]: newValues,
-                    });
-                  }}
-                />
+                    }}
+                    layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
+                    labels={workspaceStore.workspaceLabels ?? undefined}
+                    projects={workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined}
+                  />
+                </FiltersDropdown>
               )}
             />
           </div>
