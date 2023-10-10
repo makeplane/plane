@@ -3,7 +3,7 @@ description: 🔥🔥🔥 Open Source JIRA, Linear and Height Alternative. Plane
 name: plane
 type: application
 version: 0.0.1
-appVersion: 0.11
+appVersion: "v0.12.2-dev"
 home: https://plane.so/
 
 keywords:
