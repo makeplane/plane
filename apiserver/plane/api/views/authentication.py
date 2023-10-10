@@ -87,14 +87,11 @@ class SignUpEndpoint(BaseAPIView):
             user.token_updated_at = timezone.now()
             user.save()
 
-            serialized_user = UserSerializer(user).data
-
             access_token, refresh_token = get_tokens_for_user(user)
 
             data = {
                 "access_token": access_token,
                 "refresh_token": refresh_token,
-                "user": serialized_user,
             }
 
             # Send Analytics
@@ -180,8 +177,6 @@ class SignInEndpoint(BaseAPIView):
                     status=status.HTTP_403_FORBIDDEN,
                 )
 
-            serialized_user = UserSerializer(user).data
-
             # settings last active for the user
             user.last_active = timezone.now()
             user.last_login_time = timezone.now()
@@ -215,7 +210,6 @@ class SignInEndpoint(BaseAPIView):
             data = {
                 "access_token": access_token,
                 "refresh_token": refresh_token,
-                "user": serialized_user,
             }
 
             return Response(data, status=status.HTTP_200_OK)
@@ -427,13 +421,11 @@ class MagicSignInEndpoint(BaseAPIView):
                     user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
                     user.token_updated_at = timezone.now()
                     user.save()
-                    serialized_user = UserSerializer(user).data
 
                     access_token, refresh_token = get_tokens_for_user(user)
                     data = {
                         "access_token": access_token,
                         "refresh_token": refresh_token,
-                        "user": serialized_user,
                     }
 
                     return Response(data, status=status.HTTP_200_OK)

@@ -186,14 +186,11 @@ class OauthEndpoint(BaseAPIView):
             user.is_email_verified = email_verified
             user.save()
 
-            serialized_user = UserSerializer(user).data
-
             access_token, refresh_token = get_tokens_for_user(user)
 
             data = {
                 "access_token": access_token,
                 "refresh_token": refresh_token,
-                "user": serialized_user,
             }
 
             SocialLoginConnection.objects.update_or_create(
@@ -264,14 +261,11 @@ class OauthEndpoint(BaseAPIView):
             user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
             user.token_updated_at = timezone.now()
             user.save()
-            serialized_user = UserSerializer(user).data
 
             access_token, refresh_token = get_tokens_for_user(user)
             data = {
                 "access_token": access_token,
                 "refresh_token": refresh_token,
-                "user": serialized_user,
-                "permissions": [],
             }
             if settings.ANALYTICS_BASE_API:
                 _ = requests.post(
