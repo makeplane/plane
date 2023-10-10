@@ -4,6 +4,7 @@ import JiraLogo from "public/services/jira.png";
 import CSVLogo from "public/services/csv.svg";
 import ExcelLogo from "public/services/excel.svg";
 import JSONLogo from "public/services/json.svg";
+import { TStaticIssueTypes } from "types";
 
 export const ROLE = {
   5: "Guest",
@@ -68,7 +69,10 @@ export const EXPORTERS_LIST = [
   },
 ];
 
-export const DEFAULT_GLOBAL_VIEWS_LIST = [
+export const DEFAULT_GLOBAL_VIEWS_LIST: {
+  key: TStaticIssueTypes;
+  label: string;
+}[] = [
   {
     key: "all-issues",
     label: "All issues",

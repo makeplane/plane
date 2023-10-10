@@ -154,7 +154,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
                 appliedFilters={selectedFilters}
                 handleClearAllFilters={clearAllFilters}
                 handleRemoveFilter={() => {}}
-                labels={workspaceStore.workspaceLabels}
+                labels={workspaceStore.workspaceLabels ?? undefined}
                 members={memberOptions}
                 states={undefined}
               />

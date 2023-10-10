@@ -8,18 +8,17 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // components
 import { GlobalDefaultViewListItem, GlobalViewsList } from "components/workspace";
+import { GlobalIssuesHeader } from "components/headers";
 // ui
-import { Input, PrimaryButton } from "components/ui";
+import { Input } from "components/ui";
 // icons
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { PlusIcon } from "lucide-react";
 // types
 import type { NextPage } from "next";
 // constants
 import { DEFAULT_GLOBAL_VIEWS_LIST } from "constants/workspace";
 // fetch-keys
 import { GLOBAL_VIEWS_LIST } from "constants/fetch-keys";
-import { GlobalIssuesHeader } from "components/headers";
 
 const WorkspaceViews: NextPage = () => {
   const [query, setQuery] = useState("");

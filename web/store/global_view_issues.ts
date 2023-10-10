@@ -2,10 +2,11 @@ import { observable, action, makeObservable, runInAction } from "mobx";
 // services
 import { ProjectService } from "services/project.service";
 import { WorkspaceService } from "services/workspace.service";
+// helpers
+import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 // types
 import { RootStore } from "./root";
-import { IIssue, IIssueFilterOptions } from "types";
-import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
+import { IIssue, IIssueFilterOptions, TStaticIssueTypes } from "types";
 
 export interface IGlobalViewIssuesStore {
   // states
@@ -19,6 +20,7 @@ export interface IGlobalViewIssuesStore {
 
   // actions
   fetchViewIssues: (workspaceSlug: string, viewId: string, filters: IIssueFilterOptions) => Promise<any>;
+  fetchStaticIssues: (workspaceSlug: string, type: TStaticIssueTypes) => Promise<any>;
 }
 
 class GlobalViewIssuesStore implements IGlobalViewIssuesStore {
@@ -49,6 +51,7 @@ class GlobalViewIssuesStore implements IGlobalViewIssuesStore {
 
       // actions
       fetchViewIssues: action,
+      fetchStaticIssues: action,
     });
 
     this.rootStore = _rootStore;
@@ -78,6 +81,7 @@ class GlobalViewIssuesStore implements IGlobalViewIssuesStore {
 
       let filteredRouteParams: any = {
         priority: filters?.priority || undefined,
+        project: filters?.project || undefined,
         state_group: filters?.state_group || undefined,
         state: filters?.state || undefined,
         assignees: filters?.assignees || undefined,
@@ -100,6 +104,51 @@ class GlobalViewIssuesStore implements IGlobalViewIssuesStore {
         this.viewIssues = {
           ...this.viewIssues,
           [viewId]: response as IIssue[],
+        };
+      });
+
+      return response;
+    } catch (error) {
+      runInAction(() => {
+        this.loader = false;
+        this.error = error;
+      });
+
+      throw error;
+    }
+  };
+
+  fetchStaticIssues = async (workspaceSlug: string, type: TStaticIssueTypes) => {
+    try {
+      runInAction(() => {
+        this.loader = true;
+      });
+
+      let filters = {};
+      const currentUser = this.rootStore.user.currentUser;
+
+      if (type === "assigned" && currentUser)
+        filters = {
+          assignees: currentUser.id,
+        };
+
+      if (type === "created" && currentUser)
+        filters = {
+          created_by: currentUser.id,
+        };
+
+      if (type === "subscribed" && currentUser)
+        filters = {
+          subscriber: currentUser.id,
+        };
+
+      const response = await this.workspaceService.getViewIssues(workspaceSlug, filters);
+
+      runInAction(() => {
+        this.loader = false;
+        this.viewIssues = {
+          ...this.viewIssues,
+          [type]: response as IIssue[],
         };
       });
 

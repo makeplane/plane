@@ -20,3 +20,5 @@ export interface IWorkspaceView {
     slug: string;
   };
 }
+
+export type TStaticIssueTypes = "all-issues" | "assigned" | "created" | "subscribed";

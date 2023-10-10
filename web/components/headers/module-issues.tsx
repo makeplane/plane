@@ -7,7 +7,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 // types
-import { IIssueDisplayFilterOptions, IIssueFilterOptions, TIssueLayouts } from "types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 
@@ -67,6 +67,15 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
     [issueFilterStore, projectId, workspaceSlug]
   );
 
+  const handleDisplayPropertiesUpdate = useCallback(
+    (property: Partial<IIssueDisplayProperties>) => {
+      if (!workspaceSlug || !projectId) return;
+
+      issueFilterStore.updateDisplayProperties(workspaceSlug.toString(), projectId.toString(), property);
+    },
+    [issueFilterStore, projectId, workspaceSlug]
+  );
+
   return (
     <div className="flex items-center gap-2">
       <LayoutSelection
@@ -87,7 +96,9 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
       <FiltersDropdown title="View">
         <DisplayFiltersSelection
           displayFilters={issueFilterStore.userDisplayFilters}
+          displayProperties={issueFilterStore.userDisplayProperties}
           handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
+          handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
           layoutDisplayFiltersOptions={activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined}
         />
       </FiltersDropdown>

@@ -11,17 +11,25 @@ import {
   FilterSubGroupBy,
 } from "components/issues";
 // types
-import { IIssueDisplayFilterOptions } from "types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "types";
 import { ILayoutDisplayFiltersOptions } from "constants/issue";
 
 type Props = {
   displayFilters: IIssueDisplayFilterOptions;
+  displayProperties: IIssueDisplayProperties;
   handleDisplayFiltersUpdate: (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => void;
+  handleDisplayPropertiesUpdate: (updatedDisplayProperties: Partial<IIssueDisplayProperties>) => void;
   layoutDisplayFiltersOptions: ILayoutDisplayFiltersOptions | undefined;
 };
 
 export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
-  const { displayFilters, handleDisplayFiltersUpdate, layoutDisplayFiltersOptions } = props;
+  const {
+    displayFilters,
+    displayProperties,
+    handleDisplayFiltersUpdate,
+    handleDisplayPropertiesUpdate,
+    layoutDisplayFiltersOptions,
+  } = props;
 
   const isDisplayFilterEnabled = (displayFilter: keyof IIssueDisplayFilterOptions) =>
     Object.keys(layoutDisplayFiltersOptions?.display_filters ?? {}).includes(displayFilter);
@@ -31,7 +39,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
       {/* display properties */}
       {layoutDisplayFiltersOptions?.display_properties && (
         <div className="py-2">
-          <FilterDisplayProperties />
+          <FilterDisplayProperties displayProperties={displayProperties} handleUpdate={handleDisplayPropertiesUpdate} />
         </div>
       )}
 

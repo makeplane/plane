@@ -28,6 +28,7 @@ export class RootStore {
   projectPublish: IProjectPublishStore;
   draftIssuesStore: DraftIssuesStore;
   workspace: IWorkspaceStore;
+  workspaceFilter: IWorkspaceFilterStore;
   project: IProjectStore;
   issue: IIssueStore;
   module: IModuleStore;
@@ -40,12 +41,12 @@ export class RootStore {
   calendar: ICalendarStore;
   globalViews: IGlobalViewsStore;
   globalViewIssues: IGlobalViewIssuesStore;
-  workspaceFilter: IWorkspaceFilterStore;
 
   constructor() {
     this.user = new UserStore(this);
     this.theme = new ThemeStore(this);
     this.workspace = new WorkspaceStore(this);
+    this.workspaceFilter = new WorkspaceFilterStore(this);
     this.project = new ProjectStore(this);
     this.projectPublish = new ProjectPublishStore(this);
     this.module = new ModuleStore(this);
@@ -60,6 +61,5 @@ export class RootStore {
     this.calendar = new CalendarStore(this);
     this.globalViews = new GlobalViewsStore(this);
     this.globalViewIssues = new GlobalViewIssuesStore(this);
-    this.workspaceFilter = new WorkspaceFilterStore(this);
   }
 }

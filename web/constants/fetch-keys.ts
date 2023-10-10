@@ -148,10 +148,7 @@ export const PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS = (projectId: string, params?
 
 export const GLOBAL_VIEWS_LIST = (workspaceSlug: string) => `GLOBAL_VIEWS_LIST_${workspaceSlug.toUpperCase()}`;
 export const GLOBAL_VIEW_DETAILS = (globalViewId: string) => `GLOBAL_VIEW_DETAILS_${globalViewId.toUpperCase()}`;
-export const GLOBAL_VIEW_ISSUES = (globalViewId: string, params: any) => {
-  if (!params) return `GLOBAL_VIEW_ISSUES_${globalViewId.toUpperCase()}`;
-  return `GLOBAL_VIEW_ISSUES_${globalViewId.toUpperCase()}_${paramsToKey(params).toUpperCase()}`;
-};
+export const GLOBAL_VIEW_ISSUES = (globalViewId: string) => `GLOBAL_VIEW_ISSUES_${globalViewId.toUpperCase()}`;
 
 export const PROJECT_ISSUES_DETAILS = (issueId: string) => `PROJECT_ISSUES_DETAILS_${issueId.toUpperCase()}`;
 export const PROJECT_ISSUES_PROPERTIES = (projectId: string) => `PROJECT_ISSUES_PROPERTIES_${projectId.toUpperCase()}`;

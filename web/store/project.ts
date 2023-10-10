@@ -7,10 +7,6 @@ import { ProjectService } from "services/project.service";
 import { IssueService } from "services/issue.service";
 import { ProjectStateServices } from "services/project_state.service";
 import { ProjectEstimateServices } from "services/project_estimates.service";
-import { CycleService } from "services/cycles.service";
-import { ModuleService } from "services/modules.service";
-import { ViewService } from "services/views.service";
-import { PageService } from "services/page.service";
 
 export interface IProjectStore {
   loader: boolean;
@@ -18,7 +14,7 @@ export interface IProjectStore {
 
   searchQuery: string;
   projectId: string | null;
-  projects: { [key: string]: IProject[] };
+  projects: { [workspaceSlug: string]: IProject[] };
   project_details: {
     [projectId: string]: IProject; // projectId: project Info
   };

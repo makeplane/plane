@@ -3,27 +3,29 @@ import useSWR from "swr";
 
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// layouts
-import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // components
 import { GlobalViewsHeader } from "components/workspace";
-// ui
-import { PrimaryButton } from "components/ui";
+import { GlobalIssuesHeader } from "components/headers";
+import { GlobalViewsAllLayouts } from "components/issues";
+// layouts
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // icons
-import { CheckCircle, Plus } from "lucide-react";
+import { CheckCircle } from "lucide-react";
+// types
+import { NextPage } from "next";
 // fetch-keys
-import { GLOBAL_VIEW_ISSUES } from "constants/fetch-keys";
+import { GLOBAL_VIEWS_LIST } from "constants/fetch-keys";
 
-const GlobalViewAllIssues = () => {
+const GlobalViewAllIssues: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { globalViewIssues: globalViewIssuesStore } = useMobxStore();
+  const { globalViews: globalViewsStore } = useMobxStore();
 
-  // useSWR(
-  //   workspaceSlug ? GLOBAL_VIEW_ISSUES("all-issues", {}) : null,
-  //   workspaceSlug ? () => globalViewIssuesStore.fetchViewIssues(workspaceSlug.toString()) : null
-  // );
+  useSWR(
+    workspaceSlug ? GLOBAL_VIEWS_LIST(workspaceSlug.toString()) : null,
+    workspaceSlug ? () => globalViewsStore.fetchAllGlobalViews(workspaceSlug.toString()) : null
+  );
 
   return (
     <WorkspaceAuthorizationLayout
@@ -33,35 +35,12 @@ const GlobalViewAllIssues = () => {
           <span className="text-sm font-medium">Workspace issues</span>
         </div>
       }
-      right={
-        <div className="flex items-center gap-2">
-          <PrimaryButton
-            className="flex items-center gap-2"
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", { key: "c" });
-              document.dispatchEvent(e);
-            }}
-          >
-            <Plus size={14} strokeWidth={1.5} />
-            Add Issue
-          </PrimaryButton>
-        </div>
-      }
+      right={<GlobalIssuesHeader activeLayout="spreadsheet" />}
     >
-      <div className="h-full flex flex-col overflow-hidden bg-custom-background-100">
-        <div className="h-full w-full border-b border-custom-border-300">
+      <div className="h-full overflow-hidden bg-custom-background-100">
+        <div className="h-full w-full flex flex-col border-b border-custom-border-300">
           <GlobalViewsHeader />
-          <div className="h-full w-full flex flex-col">
-            {/* TODO: applied filters list */}
-            {/* <SpreadsheetView
-            spreadsheetIssues={viewIssues}
-            mutateIssues={mutateViewIssues}
-            handleIssueAction={handleIssueAction}
-            disableUserActions={false}
-            user={user}
-            userAuth={memberRole}
-          /> */}
-          </div>
+          <GlobalViewsAllLayouts type="all-issues" />
         </div>
       </div>
     </WorkspaceAuthorizationLayout>

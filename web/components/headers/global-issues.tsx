@@ -14,7 +14,7 @@ import { PrimaryButton, Tooltip } from "components/ui";
 // icons
 import { List, PlusIcon, Sheet } from "lucide-react";
 // types
-import { IIssueDisplayFilterOptions, IIssueFilterOptions } from "types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "types";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 
@@ -33,15 +33,36 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   const [createViewModal, setCreateViewModal] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, globalViewId } = router.query;
 
-  const { workspaceFilter: workspaceFilterStore, workspace: workspaceStore } = useMobxStore();
+  const {
+    globalViews: globalViewsStore,
+    workspaceFilter: workspaceFilterStore,
+    workspace: workspaceStore,
+  } = useMobxStore();
+
+  const queryData = globalViewId ? globalViewsStore.globalViewDetails[globalViewId.toString()]?.query_data : undefined;
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug) return;
+      if (!workspaceSlug || !globalViewId) return;
+
+      const newValues = queryData?.filters?.[key] ?? [];
+
+      if (Array.isArray(value)) {
+        value.forEach((val) => {
+          if (!newValues.includes(val)) newValues.push(val);
+        });
+      } else {
+        if (queryData?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+        else newValues.push(value);
+      }
+
+      globalViewsStore.updateGlobalViewFilters(workspaceSlug.toString(), globalViewId.toString(), {
+        [key]: newValues,
+      });
     },
-    [workspaceSlug]
+    [globalViewId, globalViewsStore, queryData, workspaceSlug]
   );
 
   const handleDisplayFiltersUpdate = useCallback(
@@ -55,8 +76,19 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
     [workspaceFilterStore, workspaceSlug]
   );
 
+  const handleDisplayPropertiesUpdate = useCallback(
+    (property: Partial<IIssueDisplayProperties>) => {
+      if (!workspaceSlug) return;
+
+      workspaceFilterStore.updateWorkspaceFilters(workspaceSlug.toString(), {
+        display_properties: property,
+      });
+    },
+    [workspaceFilterStore, workspaceSlug]
+  );
+
   useSWR(
-    workspaceSlug ? "USER_WORKSPACE_FILTERS" : null,
+    workspaceSlug ? "USER_WORKSPACE_DISPLAY_FILTERS" : null,
     workspaceSlug ? () => workspaceFilterStore.fetchUserWorkspaceFilters(workspaceSlug.toString()) : null
   );
 
@@ -85,20 +117,22 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
             </Link>
           ))}
         </div>
-        {activeLayout === "list" && (
+        {activeLayout === "spreadsheet" && (
           <>
             <FiltersDropdown title="Filters">
               <FilterSelection
-                filters={{}}
+                filters={queryData?.filters ?? {}}
                 handleFiltersUpdate={handleFiltersUpdate}
                 layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
-                labels={workspaceStore.workspaceLabels}
+                labels={workspaceStore.workspaceLabels ?? undefined}
               />
             </FiltersDropdown>
             <FiltersDropdown title="View">
               <DisplayFiltersSelection
                 displayFilters={workspaceFilterStore.workspaceDisplayFilters}
+                displayProperties={workspaceFilterStore.workspaceDisplayProperties}
                 handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
+                handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
                 layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
               />
             </FiltersDropdown>

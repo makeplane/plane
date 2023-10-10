@@ -44,7 +44,7 @@ const GlobalViewIssues: NextPage = () => {
       }
       right={<GlobalIssuesHeader activeLayout="spreadsheet" />}
     >
-      <div className="h-full flex flex-col overflow-hidden bg-custom-background-100">
+      <div className="h-full overflow-hidden bg-custom-background-100">
         <div className="h-full w-full flex flex-col border-b border-custom-border-300">
           <GlobalViewsHeader />
           <GlobalViewsAllLayouts />

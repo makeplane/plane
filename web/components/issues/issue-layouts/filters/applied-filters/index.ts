@@ -4,6 +4,7 @@ export * from "./label";
 export * from "./members";
 export * from "./module-root";
 export * from "./priority";
+export * from "./project";
 export * from "./root";
 export * from "./state";
 export * from "./state-group";
