@@ -27,7 +27,10 @@ spec:
           command: [ "/usr/local/bin/start.sh" ]
           args: [ "web/server.js", "web" ]
           env: 
-            {{- toYaml .Values.planeFrontend.env | nindent 12 }}
+            {{- range $key, $value := .Values.planeBackend.env }}
+            - name: {{ $key | quote}}
+              value: {{ $value | quote }}
+            {{- end }}
           ports:
             - name: http
               containerPort: 3000

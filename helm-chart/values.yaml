@@ -4,7 +4,7 @@ nodeSelector: {}
 planeFrontend:
   image:
     repository: makeplane/plane-frontend
-    tag: latest
+    tag: v0.12.2-dev
     pullPolicy: IfNotPresent
     pullSecret: ""
   ingressRoute:
@@ -38,13 +38,15 @@ planeFrontend:
     NEXT_PUBLIC_TRACK_EVENTS: 0
     # -- Slack for Slack Integration
     NEXT_PUBLIC_SLACK_CLIENT_ID: 
+    # -- API Base URL
+    NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
 
 
 # Plane Backend configuration
 planeBackend:
   image:
     repository: makeplane/plane-backend
-    tag: latest
+    tag: v0.12.2-dev
     pullPolicy: IfNotPresent
     pullSecret: ""
   env:
@@ -55,10 +57,10 @@ planeBackend:
     SENTRY_DSN: 
 
     # -- Database connection string
-    DATABASE_URL: postgresql://plane:plane@plane-db/plane
+    DATABASE_URL: postgresql://plane:plane@plane-postgresql/plane
 
     # -- Redis connection string
-    REDIS_URL: "redis://plane-redis:6379/"
+    REDIS_URL: "redis://plane-redis-master:6379/"
 
     # -- Email Settings
     EMAIL_HOST: ""
@@ -74,9 +76,8 @@ planeBackend:
     AWS_SECRET_ACCESS_KEY: "secret-key"
     AWS_S3_BUCKET_NAME: "uploads"
 
-
-    # -- Maximum file upload limit
-    FILE_SIZE_LIMIT: 5242880
+    # # -- Maximum file upload limit
+    # FILE_SIZE_LIMIT: ""
 
     #  -- Change if using a custom endpoint
     OPENAI_API_BASE: "https://api.openai.com/v1" 
@@ -89,7 +90,7 @@ planeBackend:
     GITHUB_CLIENT_SECRET:  # For fetching release notes
 
     # -- Settings related to Docker
-    DOCKERIZED: 0
+    DOCKERIZED: 1
     # -- Set to 1 If using the pre-configured minio setup 
     USE_MINIO: 0
 
@@ -103,12 +104,11 @@ planeBackend:
     # -- SignUps
     ENABLE_SIGNUP: 1
 
-    # -- Auto generated and Required that will be generated from setup.sh
-    NEXT_PUBLIC_API_BASE_URL:
-
     # -- Secret key (generate one with `openssl rand -base64 42`)
-    SECRET_KEY:
-    WEB_URL: 
+    SECRET_KEY: "secret"
+
+    # -- Email Redirection URL
+    WEB_URL: http://localhost:3000
 
 # Plane Api configuration
 planeApi:
@@ -160,6 +160,27 @@ postgresql:
     ## PostgreSQL name for a custom database to create
     database: plane
 
+  ## PostgreSQL Primary parameters
+  primary:
+    ##
+    ## Persistent Volume Storage configuration.
+    ## ref: https://kubernetes.io/docs/user-guide/persistent-volumes
+    persistence:
+      ##
+      ## Enable PostgreSQL persistence using Persistent Volume Claims.
+      enabled: true
+      ##
+      ## Persistent class
+      # storageClass: classname
+      ##
+      ## Access modes:
+      accessModes:
+        - ReadWriteOnce
+    ## PostgreSQL port
+    service:
+      ports:
+        postgresql: "5432"
+
 # -- Configuration values for the Redis dependency.
 # ref: https://github.com/bitnami/charts/blob/master/bitnami/redis
 # More documentation can be found here: https://artifacthub.io/packages/helm/bitnami/redis
@@ -172,4 +193,41 @@ redis:
   ##
   ## Set to false if bringing your own redis.
   enabled: true
-
+  ##
+  ## Set architecture to standalone/replication
+  architecture: standalone
+  ##
+  ## Auth configuration:
+  ##
+  auth:
+    ## Enable password authentication
+    enabled: false
+    ## The name of an existing secret that contains the redis password.
+    existingSecret: ""
+    ## Name of the key containing the secret.
+    existingSecretKey: ""
+    ## Redis password
+    password: superset
+  ##
+  ## Master configuration
+  ##
+  master:
+    ##
+    ## Image configuration
+    # image:
+    ##
+    ## docker registry secret names (list)
+    # pullSecrets: nil
+    ##
+    ## Configure persistance
+    persistence:
+      ##
+      ## Use a PVC to persist data.
+      enabled: false
+      ##
+      ## Persistent class
+      # storageClass: classname
+      ##
+      ## Access mode:
+      accessModes:
+        - ReadWriteOnce

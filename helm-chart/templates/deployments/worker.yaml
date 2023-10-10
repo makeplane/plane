@@ -26,6 +26,9 @@ spec:
           imagePullPolicy: {{ .Values.planeBackend.image.pullPolicy }}
           command: [ "./bin/worker" ]
           env: 
-            {{- toYaml .Values.planeBackend.env | nindent 12 }}
+            {{- range $key, $value := .Values.planeBackend.env }}
+            - name: {{ $key | quote}}
+              value: {{ $value | quote }}
+            {{- end }}
           resources:
             {{ toYaml .Values.planeWorker.resources | indent 12 }}
