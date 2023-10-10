@@ -1,6 +1,5 @@
 import React from "react";
-
-// react hook form
+import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 // services
 import userService from "services/user.service";
@@ -10,12 +9,16 @@ import useToast from "hooks/use-toast";
 import { Input, PrimaryButton, SecondaryButton } from "components/ui";
 // types
 type Props = {
-  setIsResettingPassword: React.Dispatch<React.SetStateAction<boolean>>;
+  onSubmit: (formValues: any) => void;
 };
 
-export const EmailResetPasswordForm: React.FC<Props> = ({ setIsResettingPassword }) => {
+export const EmailResetPasswordForm: React.FC<Props> = (props) => {
+  const { onSubmit } = props;
+  // toast
   const { setToastAlert } = useToast();
-
+  // router
+  const router = useRouter();
+  // form data
   const {
     register,
     handleSubmit,
@@ -59,10 +62,7 @@ export const EmailResetPasswordForm: React.FC<Props> = ({ setIsResettingPassword
   };
 
   return (
-    <form
-      className="space-y-4 mt-10 w-full sm:w-[360px] mx-auto"
-      onSubmit={handleSubmit(forgotPassword)}
-    >
+    <form className="space-y-4 mt-10 w-full sm:w-[360px] mx-auto" onSubmit={handleSubmit(forgotPassword)}>
       <div className="space-y-1">
         <Input
           id="email"
@@ -82,10 +82,7 @@ export const EmailResetPasswordForm: React.FC<Props> = ({ setIsResettingPassword
         />
       </div>
       <div className="mt-5 flex flex-col-reverse sm:flex-row items-center gap-2">
-        <SecondaryButton
-          className="w-full text-center h-[46px]"
-          onClick={() => setIsResettingPassword(false)}
-        >
+        <SecondaryButton className="w-full text-center h-[46px]" onClick={() => router.push("/")}>
           Go Back
         </SecondaryButton>
         <PrimaryButton type="submit" className="w-full text-center h-[46px]" loading={isSubmitting}>

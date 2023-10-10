@@ -13,6 +13,8 @@ export interface ILabelHeader {
   group_by: string | null;
   header_type: "group_by" | "sub_group_by";
   issues_count: number;
+  kanBanToggle: any;
+  handleKanBanToggle: any;
 }
 
 const Icon = ({ color }: any) => (
@@ -20,7 +22,7 @@ const Icon = ({ color }: any) => (
 );
 
 export const LabelHeader: React.FC<ILabelHeader> = observer(
-  ({ column_id, sub_group_by, group_by, header_type, issues_count }) => {
+  ({ column_id, sub_group_by, group_by, header_type, issues_count, kanBanToggle, handleKanBanToggle }) => {
     const { project: projectStore }: RootStore = useMobxStore();
 
     const label = (column_id && projectStore?.getProjectLabelById(column_id)) ?? null;
@@ -34,6 +36,8 @@ export const LabelHeader: React.FC<ILabelHeader> = observer(
               icon={<Icon color={label?.color} />}
               title={label?.name || ""}
               count={issues_count}
+              kanBanToggle={kanBanToggle}
+              handleKanBanToggle={handleKanBanToggle}
             />
           ) : (
             <HeaderGroupByCard
@@ -43,6 +47,8 @@ export const LabelHeader: React.FC<ILabelHeader> = observer(
               icon={<Icon />}
               title={label?.name || ""}
               count={issues_count}
+              kanBanToggle={kanBanToggle}
+              handleKanBanToggle={handleKanBanToggle}
             />
           ))}
       </>

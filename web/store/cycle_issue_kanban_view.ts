@@ -3,7 +3,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { RootStore } from "./root";
 import { IIssueType } from "./issue";
 
-export interface IIssueKanBanViewStore {
+export interface ICycleIssueKanBanViewStore {
   kanBanToggle: {
     groupByHeaderMinMax: string[];
     subgroupByIssuesVisibility: string[];
@@ -18,7 +18,7 @@ export interface IIssueKanBanViewStore {
   handleDragDrop: (source: any, destination: any) => void;
 }
 
-class IssueKanBanViewStore implements IIssueKanBanViewStore {
+class CycleIssueKanBanViewStore implements ICycleIssueKanBanViewStore {
   kanBanToggle: {
     groupByHeaderMinMax: string[];
     subgroupByIssuesVisibility: string[];
@@ -82,7 +82,7 @@ class IssueKanBanViewStore implements IIssueKanBanViewStore {
     const projectId = this.rootStore?.project?.projectId;
     const issueType: IIssueType | null = this.rootStore?.issue?.getIssueType;
     const issueLayout = this.rootStore?.issueFilter?.userDisplayFilters?.layout || null;
-    const currentIssues: any = this.rootStore.issue.getIssues;
+    const currentIssues: any = this.rootStore.cycleIssue.getIssues;
 
     const sortOrderDefaultValue = 65535;
 
@@ -274,18 +274,18 @@ class IssueKanBanViewStore implements IIssueKanBanViewStore {
       }
 
       const reorderedIssues = {
-        ...this.rootStore?.issue.issues,
+        ...this.rootStore?.cycleIssue.issues,
         [projectId]: {
-          ...this.rootStore?.issue.issues?.[projectId],
+          ...this.rootStore?.cycleIssue.issues?.[projectId],
           [issueType]: {
-            ...this.rootStore?.issue.issues?.[projectId]?.[issueType],
+            ...this.rootStore?.cycleIssue.issues?.[projectId]?.[issueType],
             [issueType]: currentIssues,
           },
         },
       };
 
       runInAction(() => {
-        this.rootStore.issue.issues = { ...reorderedIssues };
+        this.rootStore.cycleIssue.issues = { ...reorderedIssues };
       });
 
       this.rootStore.issueDetail?.updateIssue(
@@ -303,7 +303,7 @@ class IssueKanBanViewStore implements IIssueKanBanViewStore {
     const projectId = this.rootStore?.project?.projectId;
     const issueType: IIssueType | null = this.rootStore?.issue?.getIssueType;
     const issueLayout = this.rootStore?.issueFilter?.userDisplayFilters?.layout || null;
-    const currentIssues: any = this.rootStore.issue.getIssues;
+    const currentIssues: any = this.rootStore.cycleIssue.getIssues;
 
     const sortOrderDefaultValue = 65535;
 
@@ -423,18 +423,18 @@ class IssueKanBanViewStore implements IIssueKanBanViewStore {
       }
 
       const reorderedIssues = {
-        ...this.rootStore?.issue.issues,
+        ...this.rootStore?.cycleIssue.issues,
         [projectId]: {
-          ...this.rootStore?.issue.issues?.[projectId],
+          ...this.rootStore?.cycleIssue.issues?.[projectId],
           [issueType]: {
-            ...this.rootStore?.issue.issues?.[projectId]?.[issueType],
+            ...this.rootStore?.cycleIssue.issues?.[projectId]?.[issueType],
             [issueType]: currentIssues,
           },
         },
       };
 
       runInAction(() => {
-        this.rootStore.issue.issues = { ...reorderedIssues };
+        this.rootStore.cycleIssue.issues = { ...reorderedIssues };
       });
 
       this.rootStore.issueDetail?.updateIssue(
@@ -448,4 +448,4 @@ class IssueKanBanViewStore implements IIssueKanBanViewStore {
   };
 }
 
-export default IssueKanBanViewStore;
+export default CycleIssueKanBanViewStore;

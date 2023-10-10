@@ -7,29 +7,43 @@ import useSWR from "swr";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import {
-  KanBanLayout,
   ModuleAppliedFiltersRoot,
   ModuleCalendarLayout,
   ModuleGanttLayout,
   ModuleSpreadsheetLayout,
 } from "components/issues";
+import { ModuleListLayout } from "components/issues/issue-layouts/list/module-root";
+import { ModuleKanBanLayout } from "components/issues/issue-layouts/kanban/module-root";
 
 export const ModuleAllLayouts: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query;
+  const { workspaceSlug, projectId, moduleId } = router.query as {
+    workspaceSlug: string;
+    projectId: string;
+    moduleId: string;
+  };
 
-  const { module: moduleStore, project: projectStore, issueFilter: issueFilterStore } = useMobxStore();
+  const {
+    project: projectStore,
+    issueFilter: issueFilterStore,
+    moduleIssue: moduleIssueStore,
+    moduleFilter: moduleIssueFilterStore,
+  } = useMobxStore();
 
-  useSWR(workspaceSlug && projectId ? `MODULE_ISSUES` : null, async () => {
+  useSWR(workspaceSlug && projectId && moduleId ? `CYCLE_ISSUES` : null, async () => {
     if (workspaceSlug && projectId && moduleId) {
-      await issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
+      // fetching the project display filters and display properties
+      await issueFilterStore.fetchUserProjectFilters(workspaceSlug, projectId);
+      // fetching the cycle filters
+      await moduleIssueFilterStore.fetchModuleFilters(workspaceSlug, projectId, moduleId);
 
-      await projectStore.fetchProjectStates(workspaceSlug.toString(), projectId.toString());
-      await projectStore.fetchProjectLabels(workspaceSlug.toString(), projectId.toString());
-      await projectStore.fetchProjectMembers(workspaceSlug.toString(), projectId.toString());
+      // fetching the project state, labels and members
+      await projectStore.fetchProjectStates(workspaceSlug, projectId);
+      await projectStore.fetchProjectLabels(workspaceSlug, projectId);
+      await projectStore.fetchProjectMembers(workspaceSlug, projectId);
 
-      await moduleStore.fetchModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString());
-      await moduleStore.fetchModuleIssues(workspaceSlug.toString(), projectId.toString(), moduleId.toString());
+      // fetching the cycle issues
+      await moduleIssueStore.fetchIssues(workspaceSlug, projectId, moduleId);
     }
   });
 
@@ -39,8 +53,10 @@ export const ModuleAllLayouts: React.FC = observer(() => {
     <div className="relative w-full h-full flex flex-col overflow-auto">
       <ModuleAppliedFiltersRoot />
       <div className="h-full w-full">
-        {activeLayout === "kanban" ? (
-          <KanBanLayout />
+        {activeLayout === "list" ? (
+          <ModuleListLayout />
+        ) : activeLayout === "kanban" ? (
+          <ModuleKanBanLayout />
         ) : activeLayout === "calendar" ? (
           <ModuleCalendarLayout />
         ) : activeLayout === "gantt_chart" ? (
