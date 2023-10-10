@@ -13,8 +13,9 @@ const MobxStoreInit = () => {
     project: projectStore,
     module: moduleStore,
   } = useMobxStore();
+  // theme
   const { setTheme } = useTheme();
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
 
@@ -41,14 +42,6 @@ const MobxStoreInit = () => {
       }
     }
   }, [themeStore, userStore, setTheme]);
-
-  useEffect(() => {
-    // current user
-    if (userStore?.currentUser === null) userStore.setCurrentUser();
-
-    // current user settings
-    if (userStore?.currentUserSettings === null) userStore.setCurrentUserSettings();
-  }, [userStore]);
 
   useEffect(() => {
     if (workspaceSlug) workspaceStore.setWorkspaceSlug(workspaceSlug.toString());
