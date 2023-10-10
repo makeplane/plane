@@ -1,4 +1,4 @@
-# README for @plane/editor-core
+# @plane/editor-core
 
 ## Description
 
