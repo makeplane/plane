@@ -129,12 +129,7 @@ const GeneralSettings: NextPage = observer(() => {
                         <div>
                           {projectDetails ? (
                             <div>
-                              <Button
-                                variant="danger"
-                                onClick={() => setSelectedProject(projectDetails.id ?? null)}
-                                className="!text-sm"
-                                outline
-                              >
+                              <Button variant="danger" onClick={() => setSelectedProject(projectDetails.id ?? null)}>
                                 Delete my project
                               </Button>
                             </div>

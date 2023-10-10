@@ -114,7 +114,7 @@ export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
 
       {workspaceIntegrations ? (
         isInstalled ? (
-          <Button variant="danger" onClick={handleRemoveIntegration} loading={deletingIntegration} outline>
+          <Button variant="danger" onClick={handleRemoveIntegration} loading={deletingIntegration}>
             {deletingIntegration ? "Uninstalling..." : "Uninstall"}
           </Button>
         ) : (

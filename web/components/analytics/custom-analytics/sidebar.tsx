@@ -338,8 +338,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({ analytics, params, fullScree
         >
           Refresh
         </Button>
-        <Button variant="primary" onClick={exportAnalytics}>
-          <ArrowDownTrayIcon className="h-3.5 w-3.5" />
+        <Button variant="primary" prependIcon={<ArrowDownTrayIcon />} onClick={exportAnalytics}>
           Export as CSV
         </Button>
       </div>

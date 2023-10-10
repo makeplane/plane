@@ -101,13 +101,12 @@ const ProjectPages: NextPage = () => {
         right={
           <Button
             variant="primary"
-            className="flex items-center gap-2"
+            prependIcon={<PlusIcon />}
             onClick={() => {
               const e = new KeyboardEvent("keydown", { key: "d" });
               document.dispatchEvent(e);
             }}
           >
-            <PlusIcon className="h-4 w-4" />
             Create Page
           </Button>
         }

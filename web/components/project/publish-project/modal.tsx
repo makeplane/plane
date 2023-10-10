@@ -310,7 +310,6 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
                       <Button
                         variant="danger"
                         onClick={() => handleUnpublishProject(watch("id") ?? "")}
-                        className="!px-2 !py-1.5"
                         loading={isUnpublishing}
                       >
                         {isUnpublishing ? "Unpublishing..." : "Unpublish"}

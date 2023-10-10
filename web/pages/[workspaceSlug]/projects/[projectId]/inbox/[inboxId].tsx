@@ -37,13 +37,12 @@ const ProjectInbox: NextPage = () => {
           <div className="flex items-center gap-2">
             <Button
               variant="primary"
-              className="flex items-center gap-2"
+              prependIcon={<PlusIcon />}
               onClick={() => {
                 const e = new KeyboardEvent("keydown", { key: "c" });
                 document.dispatchEvent(e);
               }}
             >
-              <PlusIcon className="h-4 w-4" />
               Add Issue
             </Button>
           </div>

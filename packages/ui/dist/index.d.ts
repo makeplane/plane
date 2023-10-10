@@ -6,6 +6,7 @@ declare type TButtonVariant = "primary" | "accent-primary" | "outline-primary" |
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: TButtonVariant;
     size?: "sm" | "md" | "lg";
+    className?: string;
     loading?: boolean;
     disabled?: boolean;
     appendIcon?: any;

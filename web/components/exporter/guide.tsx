@@ -66,9 +66,7 @@ const IntegrationGuide = () => {
                   <div className="flex-shrink-0">
                     <Link href={`/${workspaceSlug}/settings/exports?provider=${service.provider}`}>
                       <a>
-                        <Button variant="primary">
-                          <span className="capitalize">{service.type}</span>
-                        </Button>
+                        <Button variant="primary">{service.type}</Button>
                       </a>
                     </Link>
                   </div>

@@ -157,7 +157,7 @@ const ResetPasswordPage: NextPage = () => {
                 )}
               />
             </div>
-            <Button variant="primary" type="submit" className="w-full text-center h-[46px]" loading={isSubmitting}>
+            <Button variant="primary" type="submit" className="w-full" loading={isSubmitting}>
               {isSubmitting ? "Resetting..." : "Reset"}
             </Button>
           </form>

@@ -199,6 +199,7 @@ export const WorkspaceAllIssue = () => {
                   />
                   <Button
                     variant="primary"
+                    prependIcon={!globalViewId && <PlusIcon className="h-4 w-4" />}
                     onClick={() => {
                       if (globalViewId) handleFilters("filters", filters.filters, true);
                       else
@@ -208,7 +209,6 @@ export const WorkspaceAllIssue = () => {
                     }}
                     className="flex items-center gap-2 text-sm"
                   >
-                    {!globalViewId && <PlusIcon className="h-4 w-4" />}
                     {globalViewId ? "Update" : "Save"} view
                   </Button>
                 </div>

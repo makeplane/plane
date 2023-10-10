@@ -104,13 +104,12 @@ const ProjectModules: NextPage = () => {
           ))}
           <Button
             variant="primary"
-            className="flex items-center gap-2"
+            prependIcon={<PlusIcon />}
             onClick={() => {
               const e = new KeyboardEvent("keydown", { key: "m" });
               document.dispatchEvent(e);
             }}
           >
-            <PlusIcon className="h-4 w-4" />
             Add Module
           </Button>
         </div>

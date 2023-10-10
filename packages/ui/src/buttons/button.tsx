@@ -6,6 +6,7 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: TButtonVariant;
   size?: "sm" | "md" | "lg";
+  className?: string;
   loading?: boolean;
   disabled?: boolean;
   appendIcon?: any;
@@ -18,6 +19,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const {
       variant = "primary",
       size = "md",
+      className = "",
       type = "button",
       loading = false,
       disabled = false,
@@ -34,7 +36,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         type={type}
-        className={`${buttonStyle}`}
+        className={`${buttonStyle} ${className}`}
         disabled={disabled || loading}
         {...rest}
       >

@@ -37,11 +37,10 @@ export const EmptyState: React.FC<Props> = ({
         {primaryButton && (
           <Button
             variant="primary"
-            className="flex items-center gap-1.5"
+            prependIcon={primaryButton.icon}
             onClick={primaryButton.onClick}
             disabled={disabled}
           >
-            {primaryButton.icon}
             {primaryButton.text}
           </Button>
         )}

@@ -130,6 +130,7 @@ var Button = React.forwardRef(
     const {
       variant = "primary",
       size = "md",
+      className = "",
       type = "button",
       loading = false,
       disabled = false,
@@ -143,7 +144,7 @@ var Button = React.forwardRef(
     return /* @__PURE__ */ React.createElement("button", {
       ref,
       type,
-      className: `${buttonStyle}`,
+      className: `${buttonStyle} ${className}`,
       disabled: disabled || loading,
       ...rest
     }, prependIcon && /* @__PURE__ */ React.createElement("div", {

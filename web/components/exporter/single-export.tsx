@@ -58,7 +58,7 @@ export const SingleExport: React.FC<Props> = ({ service, refreshing }) => {
           {service.status == "completed" && (
             <div>
               <a target="_blank" href={service?.url} rel="noopener noreferrer">
-                <Button variant="primary" className="w-full text-center">
+                <Button variant="primary" className="w-full">
                   {isLoading ? "Downloading..." : "Download"}
                 </Button>
               </a>

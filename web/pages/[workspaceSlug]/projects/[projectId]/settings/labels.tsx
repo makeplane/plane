@@ -118,7 +118,7 @@ const LabelsSettings: NextPage = () => {
             <div className="flex items-center justify-between pt-2 pb-3.5 border-b border-custom-border-200">
               <h3 className="text-xl font-medium">Labels</h3>
 
-              <Button variant="primary" onClick={newLabel} size="sm" className="flex items-center justify-center">
+              <Button variant="primary" onClick={newLabel} size="sm">
                 Add label
               </Button>
             </div>

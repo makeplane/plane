@@ -56,13 +56,12 @@ const ProjectsPage: NextPage = () => {
 
           <Button
             variant="primary"
-            className="flex items-center gap-2 flex-shrink-0"
+            prependIcon={<PlusIcon />}
             onClick={() => {
               const e = new KeyboardEvent("keydown", { key: "p" });
               document.dispatchEvent(e);
             }}
           >
-            <PlusIcon className="h-4 w-4" />
             Add Project
           </Button>
         </div>

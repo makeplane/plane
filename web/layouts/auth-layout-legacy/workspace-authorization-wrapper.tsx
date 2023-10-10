@@ -90,8 +90,8 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
               actionButton={
                 <Link href={`/${workspaceSlug}`}>
                   <a>
-                    <Button variant="primary" className="flex items-center gap-1">
-                      <LayerDiagonalIcon height={16} width={16} color="white" /> Go to workspace
+                    <Button variant="primary" prependIcon={<LayerDiagonalIcon color="white" />}>
+                      Go to workspace
                     </Button>
                   </a>
                 </Link>

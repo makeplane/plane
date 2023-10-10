@@ -204,7 +204,7 @@ export const GptAssistantModal: React.FC<Props> = ({
           <Button variant="neutral-primary" onClick={onClose}>
             Close
           </Button>
-          <Button variant="primary" type="button" onClick={handleSubmit(handleResponse)} loading={isSubmitting}>
+          <Button variant="primary" onClick={handleSubmit(handleResponse)} loading={isSubmitting}>
             {isSubmitting ? "Generating response..." : response === "" ? "Generate response" : "Generate again"}
           </Button>
         </div>

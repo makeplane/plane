@@ -219,7 +219,6 @@ export const InboxActionHeader = () => {
                           />
                           <Button
                             variant="primary"
-                            className="ml-auto"
                             onClick={() => {
                               close();
                               markInboxStatus({

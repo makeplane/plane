@@ -53,8 +53,12 @@ export const JoinProject: React.FC = () => {
         </p>
       </div>
       <div>
-        <Button variant="primary" className="flex items-center gap-1" loading={isJoiningProject} onClick={handleJoin}>
-          <AssignmentClipboardIcon height={16} width={16} color="white" />
+        <Button
+          variant="primary"
+          prependIcon={<AssignmentClipboardIcon color="white" />}
+          loading={isJoiningProject}
+          onClick={handleJoin}
+        >
           {isJoiningProject ? "Joining..." : "Click to join"}
         </Button>
       </div>

@@ -200,7 +200,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
           <Button
             variant="primary"
             type="submit"
-            className="w-full text-center h-[46px]"
+            className="w-full"
             size="md"
             onClick={handleSubmit(handleSignin)}
             disabled={!isValid && isDirty}
@@ -211,7 +211,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
         ) : (
           <Button
             variant="primary"
-            className="w-full text-center h-[46px]"
+            className="w-full"
             size="md"
             onClick={() => {
               handleSubmit(onSubmit)().then(() => {

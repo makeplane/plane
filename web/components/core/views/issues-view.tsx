@@ -500,6 +500,7 @@ export const IssuesView: React.FC<Props> = ({ openIssuesListModal, disableUserAc
             />
             <Button
               variant="primary"
+              prependIcon={!viewId && <PlusIcon />}
               onClick={() => {
                 if (viewId) {
                   setFilters({}, true);
@@ -513,9 +514,7 @@ export const IssuesView: React.FC<Props> = ({ openIssuesListModal, disableUserAc
                     query: filters,
                   });
               }}
-              className="flex items-center gap-2 text-sm"
             >
-              {!viewId && <PlusIcon className="h-4 w-4" />}
               {viewId ? "Update" : "Save"} view
             </Button>
           </div>

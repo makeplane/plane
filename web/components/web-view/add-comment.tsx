@@ -121,12 +121,7 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit }) => {
       </div>
 
       <div className="inline">
-        <Button
-          variant="primary"
-          type="submit"
-          disabled={isSubmitting || disabled}
-          className="mt-2 w-10 h-10 flex items-center justify-center"
-        >
+        <Button variant="primary" type="submit" disabled={isSubmitting || disabled}>
           <Send className="w-4 h-4" />
         </Button>
       </div>

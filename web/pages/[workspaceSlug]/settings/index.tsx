@@ -345,7 +345,7 @@ const WorkspaceSettings: NextPage = () => {
                             that workspace will be permanently removed and cannot be recovered.
                           </span>
                           <div>
-                            <Button variant="danger" onClick={() => setIsOpen(true)} className="!text-sm" outline>
+                            <Button variant="danger" onClick={() => setIsOpen(true)}>
                               Delete my workspace
                             </Button>
                           </div>

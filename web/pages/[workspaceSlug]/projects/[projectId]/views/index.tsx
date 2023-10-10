@@ -71,14 +71,12 @@ const ProjectViews: NextPage = () => {
         <div className="flex items-center gap-2">
           <Button
             variant="primary"
-            type="button"
-            className="flex items-center gap-2"
+            prependIcon={<PlusIcon />}
             onClick={() => {
               const e = new KeyboardEvent("keydown", { key: "v" });
               document.dispatchEvent(e);
             }}
           >
-            <PlusIcon className="h-4 w-4" />
             Create View
           </Button>
         </div>

@@ -103,8 +103,7 @@ const WorkspaceViews: NextPage = () => {
         <div className="flex items-center gap-2">
           <WorkspaceIssuesViewOptions />
 
-          <Button variant="primary" className="flex items-center gap-2" onClick={() => setCreateUpdateViewModal(true)}>
-            <PlusIcon className="h-4 w-4" />
+          <Button variant="primary" prependIcon={<PlusIcon />} onClick={() => setCreateUpdateViewModal(true)}>
             New View
           </Button>
         </div>

@@ -177,12 +177,7 @@ export const CreateUpdateLinkForm: React.FC<Props> = (props) => {
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <Button
-          variant="primary"
-          type="submit"
-          loading={isSubmitting}
-          className="w-full !py-2 text-custom-text-300 !text-base flex items-center justify-center"
-        >
+        <Button variant="primary" type="submit" loading={isSubmitting}>
           {data ? (isSubmitting ? "Updating Link..." : "Update Link") : isSubmitting ? "Adding Link..." : "Add Link"}
         </Button>
       </div>

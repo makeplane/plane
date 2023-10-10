@@ -91,8 +91,8 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
             actionButton={
               <Link href={`/${workspaceSlug}/projects/${projectId}/issues`}>
                 <a>
-                  <Button variant="primary" className="flex items-center gap-1">
-                    <LayerDiagonalIcon height={16} width={16} color="white" /> Go to issues
+                  <Button variant="primary" prependIcon={<LayerDiagonalIcon color="white" />}>
+                    Go to issues
                   </Button>
                 </a>
               </Link>

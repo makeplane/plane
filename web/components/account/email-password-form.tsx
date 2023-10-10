@@ -91,7 +91,7 @@ export const EmailPasswordForm: React.FC<IEmailPasswordForm> = (props) => {
           <Button
             variant="primary"
             type="submit"
-            className="w-full text-center h-[46px]"
+            className="w-full"
             disabled={!isValid && isDirty}
             loading={isSubmitting}
           >

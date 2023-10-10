@@ -84,13 +84,12 @@ const ProjectCyclesPage: NextPage = observer(() => {
       right={
         <Button
           variant="primary"
-          className="flex items-center gap-2"
+          prependIcon={<PlusIcon />}
           onClick={() => {
             const e = new KeyboardEvent("keydown", { key: "q" });
             document.dispatchEvent(e);
           }}
         >
-          <PlusIcon className="h-4 w-4" />
           Add Cycle
         </Button>
       }

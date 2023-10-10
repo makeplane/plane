@@ -180,7 +180,7 @@ export const ImageUploadModal: React.FC<Props> = ({
                 </p>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
-                    <Button variant="danger" onClick={handleDelete} outline disabled={!value}>
+                    <Button variant="danger" onClick={handleDelete} disabled={!value}>
                       {isRemoving ? "Removing..." : "Remove"}
                     </Button>
                   </div>
