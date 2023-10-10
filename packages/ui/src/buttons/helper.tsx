@@ -1,4 +1,14 @@
-export type TButtonVariant = "primary" | "secondary" | "danger";
+export type TButtonVariant =
+  | "primary"
+  | "accent-primary"
+  | "outline-primary"
+  | "neutral-primary"
+  | "link-primary"
+  | "danger"
+  | "accent-danger"
+  | "outline-danger"
+  | "link-danger"
+  | "tertiary-danger";
 
 export type TButtonSizes = "sm" | "md" | "lg";
 

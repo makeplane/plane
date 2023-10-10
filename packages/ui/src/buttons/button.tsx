@@ -1,10 +1,10 @@
 import * as React from "react";
 
-import { getIconStyling, getButtonStyling } from "./helper";
+import { getIconStyling, getButtonStyling, TButtonVariant } from "./helper";
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "danger";
+  variant?: TButtonVariant;
   size?: "sm" | "md" | "lg";
   loading?: boolean;
   disabled?: boolean;
@@ -17,7 +17,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref) => {
     const {
       variant = "primary",
-      size = "sm",
+      size = "md",
       type = "button",
       loading = false,
       disabled = false,

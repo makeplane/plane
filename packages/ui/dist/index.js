@@ -129,7 +129,7 @@ var Button = React.forwardRef(
   (props, ref) => {
     const {
       variant = "primary",
-      size = "sm",
+      size = "md",
       type = "button",
       loading = false,
       disabled = false,

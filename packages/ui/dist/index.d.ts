@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { FC } from 'react';
 
+declare type TButtonVariant = "primary" | "accent-primary" | "outline-primary" | "neutral-primary" | "link-primary" | "danger" | "accent-danger" | "outline-danger" | "link-danger" | "tertiary-danger";
+
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: "primary" | "secondary" | "danger";
+    variant?: TButtonVariant;
     size?: "sm" | "md" | "lg";
     loading?: boolean;
     disabled?: boolean;
