@@ -123,7 +123,7 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, 
                     />
                   </div>
                   <div className="flex justify-end gap-2">
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="neutral-primary" onClick={handleClose}>
                       Cancel
                     </Button>
                     <Button

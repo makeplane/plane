@@ -75,11 +75,7 @@ export const SingleEstimate: React.FC<Props> = ({ user, estimate, editEstimate, 
           </div>
           <div className="flex items-center gap-2">
             {projectDetails?.estimate !== estimate.id && estimate.points.length > 0 && (
-              <Button
-                variant="secondary"
-                onClick={handleUseEstimate}
-                className="!py-1 text-custom-text-200 hover:text-custom-text-100"
-              >
+              <Button variant="neutral-primary" onClick={handleUseEstimate}>
                 Use
               </Button>
             )}

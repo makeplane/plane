@@ -107,7 +107,7 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAc
             />
           </div>
 
-          <Button variant="secondary" type="submit" disabled={isSubmitting || disabled} className="mt-2">
+          <Button variant="neutral-primary" type="submit" disabled={isSubmitting || disabled}>
             {isSubmitting ? "Adding..." : "Comment"}
           </Button>
         </div>

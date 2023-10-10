@@ -201,7 +201,7 @@ export const GptAssistantModal: React.FC<Props> = ({
           </Button>
         )}
         <div className="flex items-center gap-2">
-          <Button variant="secondary" onClick={onClose}>
+          <Button variant="neutral-primary" onClick={onClose}>
             Close
           </Button>
           <Button variant="primary" type="button" onClick={handleSubmit(handleResponse)} loading={isSubmitting}>

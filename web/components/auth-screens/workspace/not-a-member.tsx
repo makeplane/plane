@@ -19,7 +19,7 @@ export const NotAWorkspaceMember = () => (
         <div className="flex items-center justify-center gap-2">
           <Link href="/invitations">
             <a>
-              <Button variant="secondary">Check pending invites</Button>
+              <Button variant="neutral-primary">Check pending invites</Button>
             </a>
           </Link>
           <Link href="/create-workspace">

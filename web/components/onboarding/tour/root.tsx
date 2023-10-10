@@ -138,7 +138,7 @@ export const TourRoot: React.FC<Props> = ({ onComplete }) => {
               <div className="h-full flex items-end justify-between gap-4 mt-3">
                 <div className="flex items-center gap-4">
                   {currentStep?.prevStep && (
-                    <Button variant="secondary" onClick={() => setStep(currentStep.prevStep ?? "welcome")}>
+                    <Button variant="neutral-primary" onClick={() => setStep(currentStep.prevStep ?? "welcome")}>
                       Back
                     </Button>
                   )}

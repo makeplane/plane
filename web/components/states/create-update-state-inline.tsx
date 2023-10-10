@@ -273,7 +273,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
           />
         )}
       />
-      <Button variant="secondary" onClick={handleClose}>
+      <Button variant="neutral-primary" onClick={handleClose}>
         Cancel
       </Button>
       <Button variant="primary" type="submit" loading={isSubmitting}>

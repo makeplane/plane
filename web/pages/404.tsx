@@ -28,7 +28,7 @@ const PageNotFound: NextPage = () => (
         </div>
         <Link href="/">
           <a className="block">
-            <Button variant="secondary" size="md">
+            <Button variant="neutral-primary" size="md">
               Go to Home
             </Button>
           </a>

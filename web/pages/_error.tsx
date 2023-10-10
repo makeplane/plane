@@ -57,7 +57,7 @@ const CustomErrorComponent = () => {
             <Button variant="primary" size="md" onClick={() => router.back()}>
               Go back
             </Button>
-            <Button variant="secondary" size="md" onClick={handleSignOut}>
+            <Button variant="neutral-primary" size="md" onClick={handleSignOut}>
               Sign out
             </Button>
           </div>

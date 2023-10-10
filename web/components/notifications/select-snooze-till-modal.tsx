@@ -255,7 +255,7 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
 
                   <div className="mt-5 flex items-center justify-between gap-2">
                     <div className="w-full flex items-center gap-2 justify-end">
-                      <Button variant="secondary" onClick={handleClose}>
+                      <Button variant="neutral-primary" onClick={handleClose}>
                         Cancel
                       </Button>
                       <Button variant="primary" type="submit" loading={isSubmitting}>

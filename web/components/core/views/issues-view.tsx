@@ -557,12 +557,7 @@ export const IssuesView: React.FC<Props> = ({ openIssuesListModal, disableUserAc
             : undefined,
           secondaryButton:
             cycleId || moduleId ? (
-              <Button
-                variant="secondary"
-                className="flex items-center gap-1.5"
-                onClick={openIssuesListModal ?? (() => {})}
-              >
-                <PlusIcon className="h-4 w-4" />
+              <Button variant="neutral-primary" prependIcon={<PlusIcon />} onClick={openIssuesListModal ?? (() => {})}>
                 Add an existing issue
               </Button>
             ) : null,

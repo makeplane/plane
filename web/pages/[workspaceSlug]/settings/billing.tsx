@@ -57,9 +57,7 @@ const BillingSettings: NextPage = () => {
               <h4 className="text-md mb-1 leading-6">Current plan</h4>
               <p className="mb-3 text-sm text-custom-text-200">You are currently using the free plan</p>
               <a href="https://plane.so/pricing" target="_blank" rel="noreferrer">
-                <Button variant="secondary" outline>
-                  View Plans
-                </Button>
+                <Button variant="neutral-primary">View Plans</Button>
               </a>
             </div>
           </div>

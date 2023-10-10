@@ -179,7 +179,7 @@ export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
               <div className="-mx-4 mt-4 flex justify-end gap-4 border-t border-custom-border-200 p-4 pb-0">
                 {currentStep?.state !== "import-configure" && (
                   <Button
-                    variant="secondary"
+                    variant="neutral-primary"
                     onClick={() => {
                       const currentElementIndex = integrationWorkflowData.findIndex(
                         (i) => i?.key === currentStep?.state

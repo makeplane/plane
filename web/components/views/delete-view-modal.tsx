@@ -115,7 +115,7 @@ export const DeleteViewModal: React.FC<Props> = ({ isOpen, data, setIsOpen, user
                   </div>
                 </div>
                 <div className="flex justify-end gap-2 p-4 sm:px-6">
-                  <Button variant="secondary" onClick={handleClose}>
+                  <Button variant="neutral-primary" onClick={handleClose}>
                     Cancel
                   </Button>
                   <Button variant="danger" onClick={handleDeletion} loading={isDeleteLoading}>

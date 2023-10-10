@@ -186,7 +186,7 @@ const OnBoard: NextPage = () => {
                     </Button>
                     <Link href="/">
                       <a>
-                        <Button variant="secondary" size="md" outline>
+                        <Button variant="neutral-primary" size="md">
                           Go Home
                         </Button>
                       </a>

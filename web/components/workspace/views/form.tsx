@@ -201,7 +201,7 @@ export const WorkspaceViewForm: React.FC<Props> = ({ handleFormSubmit, handleClo
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <Button variant="secondary" onClick={handleClose}>
+        <Button variant="neutral-primary" onClick={handleClose}>
           Cancel
         </Button>
         <Button variant="primary" type="submit" loading={isSubmitting}>

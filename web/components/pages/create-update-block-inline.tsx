@@ -354,7 +354,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
           </div>
         </div>
         <div className="flex items-center justify-end gap-2 p-4">
-          <Button variant="secondary" onClick={handleClose}>
+          <Button variant="neutral-primary" onClick={handleClose}>
             Cancel
           </Button>
           <Button variant="primary" type="submit" disabled={watch("name") === ""} loading={isSubmitting}>

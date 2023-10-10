@@ -141,7 +141,7 @@ const EstimatesSettings: NextPage = () => {
                     Add Estimate
                   </Button>
                   {projectDetails?.estimate && (
-                    <Button variant="secondary" onClick={disableEstimates}>
+                    <Button variant="neutral-primary" onClick={disableEstimates}>
                       Disable Estimates
                     </Button>
                   )}

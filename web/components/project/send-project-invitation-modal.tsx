@@ -285,7 +285,7 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
                       Add more
                     </button>
                     <div className="flex items-center gap-2">
-                      <Button variant="secondary" onClick={handleClose}>
+                      <Button variant="neutral-primary" onClick={handleClose}>
                         Cancel
                       </Button>
                       <Button variant="primary" type="submit" loading={isSubmitting}>

@@ -260,7 +260,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
         <Button variant="primary" type="submit" disabled={!isValid} loading={isSubmitting} size="md">
           {isSubmitting ? "Sending..." : "Send Invite"}
         </Button>
-        <Button variant="secondary" className="border border-none bg-transparent" size="md" onClick={nextStep}>
+        <Button variant="neutral-primary" size="md" onClick={nextStep}>
           Skip this step
         </Button>
       </div>

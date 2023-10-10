@@ -185,7 +185,7 @@ export const ImageUploadModal: React.FC<Props> = ({
                     </Button>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="neutral-primary" onClick={handleClose}>
                       Cancel
                     </Button>
                     <Button variant="primary" onClick={handleSubmit} disabled={!image} loading={isImageUploading}>

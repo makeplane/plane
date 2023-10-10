@@ -86,7 +86,7 @@ export const GithubRepoDetails: FC<Props> = ({ selectedRepo, handleStepChange, s
         </Loader>
       )}
       <div className="mt-6 flex items-center justify-end gap-2">
-        <Button variant="secondary" onClick={() => handleStepChange("import-data")}>
+        <Button variant="neutral-primary" onClick={() => handleStepChange("import-data")}>
           Back
         </Button>
         <Button

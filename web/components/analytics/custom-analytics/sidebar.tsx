@@ -329,23 +329,18 @@ export const AnalyticsSidebar: React.FC<Props> = ({ analytics, params, fullScree
       </div>
       <div className="flex items-center gap-2 flex-wrap justify-self-end">
         <Button
-          variant="secondary"
+          variant="neutral-primary"
+          prependIcon={<ArrowPathIcon className="h-3.5 w-3.5" />}
           onClick={() => {
             if (!workspaceSlug) return;
-
             mutate(ANALYTICS(workspaceSlug.toString(), params));
           }}
         >
-          <div className="flex items-center gap-2 -my-1">
-            <ArrowPathIcon className="h-3.5 w-3.5" />
-            Refresh
-          </div>
+          Refresh
         </Button>
         <Button variant="primary" onClick={exportAnalytics}>
-          <div className="flex items-center gap-2 -my-1">
-            <ArrowDownTrayIcon className="h-3.5 w-3.5" />
-            Export as CSV
-          </div>
+          <ArrowDownTrayIcon className="h-3.5 w-3.5" />
+          Export as CSV
         </Button>
       </div>
     </div>

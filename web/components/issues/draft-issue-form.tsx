@@ -593,11 +593,11 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
             <ToggleSwitch value={createMore} onChange={() => {}} size="md" />
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="secondary" onClick={handleDiscard}>
+            <Button variant="neutral-primary" onClick={handleDiscard}>
               Discard
             </Button>
             <Button
-              variant="secondary"
+              variant="neutral-primary"
               loading={isSubmitting}
               onClick={handleSubmit((formData) =>
                 handleCreateUpdateIssue(formData, data?.id ? "updateDraft" : "createDraft")

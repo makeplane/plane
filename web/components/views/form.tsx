@@ -202,7 +202,7 @@ export const ViewForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <Button variant="secondary" onClick={handleClose}>
+        <Button variant="neutral-primary" onClick={handleClose}>
           Cancel
         </Button>
         <Button variant="primary" type="submit" loading={isSubmitting}>

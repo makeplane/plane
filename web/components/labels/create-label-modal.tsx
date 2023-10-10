@@ -187,7 +187,7 @@ export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                     </div>
                   </div>
                   <div className="mt-5 flex justify-end gap-2">
-                    <Button variant="secondary" onClick={onClose}>
+                    <Button variant="neutral-primary" onClick={onClose}>
                       Cancel
                     </Button>
                     <Button variant="primary" type="submit" loading={isSubmitting}>

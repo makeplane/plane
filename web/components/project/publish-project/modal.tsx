@@ -477,7 +477,7 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
                     </div>
                     {!projectPublish.fetchSettingsLoader && (
                       <div className="relative flex items-center gap-2">
-                        <Button variant="secondary" onClick={handleClose}>
+                        <Button variant="neutral-primary" onClick={handleClose}>
                           Cancel
                         </Button>
                         {watch("id") ? (

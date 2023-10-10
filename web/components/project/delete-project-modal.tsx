@@ -160,7 +160,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
                     />
                   </div>
                   <div className="flex justify-end gap-2">
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="neutral-primary" onClick={handleClose}>
                       Cancel
                     </Button>
                     <Button variant="danger" type="submit" disabled={!canDelete} loading={isSubmitting}>

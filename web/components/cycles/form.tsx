@@ -114,7 +114,7 @@ export const CycleForm: React.FC<Props> = (props) => {
         </div>
       </div>
       <div className="-mx-5 mt-5 flex justify-end gap-2 border-t border-custom-border-200 px-5 pt-5">
-        <Button variant="secondary" onClick={handleClose}>
+        <Button variant="neutral-primary" onClick={handleClose}>
           Cancel
         </Button>
         <Button variant="primary" type="submit" loading={isSubmitting}>

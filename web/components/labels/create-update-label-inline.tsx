@@ -185,7 +185,7 @@ export const CreateUpdateLabelInline = forwardRef<HTMLDivElement, Props>(functio
           )}
         />
       </div>
-      <Button variant="secondary" onClick={() => handleClose()}>
+      <Button variant="neutral-primary" onClick={() => handleClose()}>
         Cancel
       </Button>
       {isUpdating ? (

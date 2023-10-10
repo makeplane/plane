@@ -19,7 +19,7 @@ export const GithubImportConfirm: FC<Props> = ({ handleStepChange, watch }) => (
       to complete the process.
     </h4>
     <div className="mt-6 flex items-center justify-between">
-      <Button variant="secondary" onClick={() => handleStepChange("import-users")}>
+      <Button variant="neutral-primary" onClick={() => handleStepChange("import-users")}>
         Back
       </Button>
       <Button variant="primary" type="submit">

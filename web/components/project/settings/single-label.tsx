@@ -123,7 +123,7 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
                 )}
               />
             </div>
-            <Button variant="secondary" onClick={() => setNewLabelForm(false)}>
+            <Button variant="neutral-primary" onClick={() => setNewLabelForm(false)}>
               Cancel
             </Button>
             <Button variant="primary" loading={isSubmitting}>

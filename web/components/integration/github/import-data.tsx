@@ -108,7 +108,7 @@ export const GithubImportData: FC<Props> = ({ handleStepChange, integration, con
         </div>
       </div>
       <div className="mt-6 flex items-center justify-end gap-2">
-        <Button variant="secondary" onClick={() => handleStepChange("import-configure")}>
+        <Button variant="neutral-primary" onClick={() => handleStepChange("import-configure")}>
           Back
         </Button>
         <Button

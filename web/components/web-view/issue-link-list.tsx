@@ -123,15 +123,8 @@ export const IssueLinks: React.FC<Props> = (props) => {
             )}
           </div>
         ))}
-        <Button
-          variant="secondary"
-          type="button"
-          disabled={!allowed}
-          onClick={() => setIsOpen(true)}
-          className="w-full !py-2 text-custom-text-300 !text-base flex items-center justify-center"
-        >
-          <Plus className="w-[18px] h-[18px] inline-block mr-1" />
-          <span>Add</span>
+        <Button variant="neutral-primary" prependIcon={<Plus />} disabled={!allowed} onClick={() => setIsOpen(true)}>
+          Add
         </Button>
       </div>
     </div>

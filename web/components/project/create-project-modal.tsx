@@ -411,7 +411,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                   </div>
 
                   <div className="flex justify-end gap-2 pt-5">
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="neutral-primary" onClick={handleClose}>
                       Cancel
                     </Button>
                     <Button variant="primary" type="submit" size="sm" loading={isSubmitting}>

@@ -55,7 +55,7 @@ export const Workspace: React.FC<Props> = ({ finishOnboarding, stepChange, updat
           }}
           secondaryButton={
             workspaces ? (
-              <Button variant="secondary" onClick={secondaryButtonAction}>
+              <Button variant="neutral-primary" onClick={secondaryButtonAction}>
                 {workspaces.length > 0 ? "Skip & continue" : "Back"}
               </Button>
             ) : undefined

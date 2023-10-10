@@ -317,8 +317,7 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, control, onC
 
                     <div className="flex items-center justify-end gap-2">
                       <Button
-                        variant="secondary"
-                        className="w-full"
+                        variant="neutral-primary"
                         onClick={() => {
                           setIsOpen(false);
                           setImage(null);

@@ -91,11 +91,7 @@ export const EmailResetPasswordForm: React.FC<Props> = (props) => {
         />
       </div>
       <div className="mt-5 flex flex-col-reverse sm:flex-row items-center gap-2">
-        <Button
-          variant="secondary"
-          className="w-full text-center h-[46px]"
-          onClick={() => setIsResettingPassword(false)}
-        >
+        <Button variant="neutral-primary" onClick={() => setIsResettingPassword(false)}>
           Go Back
         </Button>
         <Button variant="primary" type="submit" className="w-full text-center h-[46px]" loading={isSubmitting}>

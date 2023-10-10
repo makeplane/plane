@@ -73,7 +73,7 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
                   <div className="space-y-3" />
                 </div>
                 <div className="mt-5 flex justify-end gap-2">
-                  <Button variant="secondary" onClick={handleClose}>
+                  <Button variant="neutral-primary" onClick={handleClose}>
                     Cancel
                   </Button>
                   <Button variant="primary" type="submit" onClick={handleJoin} loading={isJoiningLoading}>

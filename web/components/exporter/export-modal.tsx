@@ -144,7 +144,7 @@ export const Exporter: React.FC<Props> = ({ isOpen, handleClose, user, provider,
                     <div className="text-sm whitespace-nowrap">Export the data into separate files</div>
                   </div>
                   <div className="flex justify-end gap-2">
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="neutral-primary" onClick={handleClose}>
                       Cancel
                     </Button>
                     <Button

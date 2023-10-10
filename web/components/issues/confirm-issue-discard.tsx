@@ -69,12 +69,12 @@ export const ConfirmIssueDiscard: React.FC<Props> = (props) => {
                 </div>
                 <div className="flex justify-between gap-2 p-4 sm:px-6">
                   <div>
-                    <Button variant="secondary" onClick={onDiscard}>
+                    <Button variant="neutral-primary" onClick={onDiscard}>
                       Discard
                     </Button>
                   </div>
                   <div className="space-x-2">
-                    <Button variant="secondary" onClick={onClose}>
+                    <Button variant="neutral-primary" onClick={onClose}>
                       Cancel
                     </Button>
                     <Button variant="primary" onClick={handleDeletion} loading={isLoading}>

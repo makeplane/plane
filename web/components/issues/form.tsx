@@ -559,7 +559,7 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
           </div>
           <div className="flex items-center gap-2">
             <Button
-              variant="secondary"
+              variant="neutral-primary"
               onClick={() => {
                 handleDiscardClose();
               }}

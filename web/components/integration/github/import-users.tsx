@@ -38,7 +38,7 @@ export const GithubImportUsers: FC<Props> = ({ handleStepChange, users, setUsers
         </div>
       </div>
       <div className="mt-6 flex items-center justify-end gap-2">
-        <Button variant="secondary" onClick={() => handleStepChange("repo-details")}>
+        <Button variant="neutral-primary" onClick={() => handleStepChange("repo-details")}>
           Back
         </Button>
         <Button variant="primary" onClick={() => handleStepChange("import-confirm")} disabled={isInvalid}>
