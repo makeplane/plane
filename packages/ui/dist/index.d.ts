@@ -3,11 +3,12 @@ import { FC } from 'react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: "primary" | "secondary" | "danger";
-    children: React.ReactNode;
-    className?: string;
-    loading?: boolean;
     size?: "sm" | "md" | "lg";
-    outline?: boolean;
+    loading?: boolean;
+    disabled?: boolean;
+    appendIcon?: any;
+    prependIcon?: any;
+    children: React.ReactNode;
 }
 declare const Button: React.ForwardRefExoticComponent<ButtonProps & React.RefAttributes<HTMLButtonElement>>;
 

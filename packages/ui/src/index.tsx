@@ -1,3 +1,3 @@
-export * from "./buttons";
+export * from "./buttons/button";
 export * from "./form-fields";
 export * from "./progress";

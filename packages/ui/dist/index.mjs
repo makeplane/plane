@@ -1,55 +1,120 @@
-// src/buttons/index.tsx
+// src/buttons/button.tsx
 import * as React from "react";
-import clsx from "clsx";
+
+// src/buttons/helper.tsx
+var buttonStyling = {
+  primary: {
+    default: `text-white bg-custom-primary-100`,
+    hover: `hover:bg-custom-primary-200`,
+    pressed: `focus:text-custom-brand-40 focus:bg-custom-primary-200`,
+    disabled: `cursor-not-allowed !bg-custom-primary-60 hover:bg-custom-primary-60`
+  },
+  "accent-primary": {
+    default: `bg-custom-primary-10 text-custom-primary-100`,
+    hover: `hover:bg-custom-primary-20 hover:text-custom-primary-200`,
+    pressed: `focus:bg-custom-primary-20`,
+    disabled: `cursor-not-allowed !text-custom-primary-60`
+  },
+  "outline-primary": {
+    default: `text-custom-primary-100 bg-custom-background-100 border border-custom-primary-100`,
+    hover: `hover:border-custom-primary-80 hover:bg-custom-primary-10`,
+    pressed: `focus:text-custom-primary-80 focus:bg-custom-primary-10 focus:border-custom-primary-80`,
+    disabled: `cursor-not-allowed !text-custom-primary-60 !border-custom-primary-60 `
+  },
+  "neutral-primary": {
+    default: `text-custom-text-200 bg-custom-background-100 border border-custom-border-200`,
+    hover: `hover:bg-custom-background-90`,
+    pressed: `focus:text-custom-text-300 focus:bg-custom-background-90`,
+    disabled: `cursor-not-allowed !text-custom-text-400`
+  },
+  "link-primary": {
+    default: `text-custom-primary-100 bg-custom-background-100`,
+    hover: `hover:text-custom-primary-200`,
+    pressed: `focus:text-custom-primary-80 `,
+    disabled: `cursor-not-allowed !text-custom-primary-60`
+  },
+  danger: {
+    default: `text-white bg-red-500`,
+    hover: ` hover:bg-red-600`,
+    pressed: `focus:text-red-200 focus:bg-red-600`,
+    disabled: `cursor-not-allowed !bg-red-300`
+  },
+  "accent-danger": {
+    default: `text-red-500 bg-red-50`,
+    hover: `hover:text-red-600 hover:bg-red-100`,
+    pressed: `focus:text-red-500 focus:bg-red-100`,
+    disabled: `cursor-not-allowed !text-red-300`
+  },
+  "outline-danger": {
+    default: `text-red-500 bg-custom-background-100 border border-red-500`,
+    hover: `hover:text-red-400 hover:border-red-400`,
+    pressed: `focus:text-red-400 focus:border-red-400`,
+    disabled: `cursor-not-allowed !text-red-300 !border-red-300`
+  },
+  "link-danger": {
+    default: `text-red-500 bg-custom-background-100`,
+    hover: `hover:text-red-400`,
+    pressed: `focus:text-red-400`,
+    disabled: `cursor-not-allowed !text-red-300`
+  },
+  "tertiary-danger": {
+    default: `text-red-500 bg-custom-background-100 border border-red-200`,
+    hover: `hover:bg-red-50 hover:border-red-300`,
+    pressed: `focus:text-red-400`,
+    disabled: `cursor-not-allowed !text-red-300`
+  }
+};
+var getButtonStyling = (variant, size, disabled = false) => {
+  let _variant = ``;
+  const currentVariant = buttonStyling[variant];
+  _variant = `${currentVariant.default} ${disabled ? currentVariant.disabled : currentVariant.hover} ${currentVariant.pressed}`;
+  let _size = ``;
+  if (size === "sm")
+    _size = "px-3 py-1.5 font-medium text-xs rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline" /* sm */;
+  if (size === "md")
+    _size = "px-4 py-1.5 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline" /* md */;
+  if (size === "lg")
+    _size = "px-5 py-2 font-medium text-base rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline" /* lg */;
+  return `${_variant} ${_size}`;
+};
+var getIconStyling = (size) => {
+  let icon = ``;
+  if (size === "sm")
+    icon = "h-3 w-3 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0" /* sm */;
+  if (size === "md")
+    icon = "h-3.5 w-3.5 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0" /* md */;
+  if (size === "lg")
+    icon = "h-4 w-4 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0" /* lg */;
+  return icon;
+};
+
+// src/buttons/button.tsx
 var Button = React.forwardRef(
   (props, ref) => {
     const {
-      children,
-      className = "",
-      type = "button",
-      disabled = false,
-      loading = false,
-      size = "sm",
-      outline = false,
       variant = "primary",
+      size = "sm",
+      type = "button",
+      loading = false,
+      disabled = false,
+      prependIcon = null,
+      appendIcon = null,
+      children,
       ...rest
     } = props;
-    const buttonStyleClasses = {
-      primary: {
-        variantStyle: "text-white bg-custom-primary hover:border-opacity-90 hover:bg-opacity-90",
-        variantOutlineStyle: "text-custom-primary hover:bg-custom-primary hover:text-white",
-        variantBorderStyles: "border-custom-primary"
-      },
-      secondary: {
-        variantStyle: "bg-custom-background-100 hover:border-opacity-70 hover:bg-opacity-70",
-        variantOutlineStyle: "hover:bg-custom-background-80",
-        variantBorderStyles: "border-custom-border-200"
-      },
-      danger: {
-        variantStyle: "text-white bg-red-500 hover:border-opacity-90 hover:bg-opacity-90",
-        variantOutlineStyle: " text-red-500 hover:bg-red-500 hover:text-white",
-        variantBorderStyles: "border-red-500"
-      }
-    };
+    const buttonStyle = getButtonStyling(variant, size, disabled || loading);
+    const buttonIconStyle = getIconStyling(size);
     return /* @__PURE__ */ React.createElement("button", {
-      type,
       ref,
-      className: `${className} border font-medium duration-300 ${size === "sm" ? "rounded px-3 py-2 text-xs" : size === "md" ? "rounded-md px-3.5 py-2 text-sm" : "rounded-lg px-4 py-2 text-base"} ${disabled ? "cursor-not-allowed opacity-70" : ""} ${outline ? clsx({
-        [buttonStyleClasses.primary.variantOutlineStyle]: variant === "primary",
-        [buttonStyleClasses.secondary.variantOutlineStyle]: variant === "secondary",
-        [buttonStyleClasses.danger.variantOutlineStyle]: variant === "danger"
-      }) : clsx({
-        [buttonStyleClasses.primary.variantStyle]: variant === "primary",
-        [buttonStyleClasses.secondary.variantStyle]: variant === "secondary",
-        [buttonStyleClasses.danger.variantStyle]: variant === "danger"
-      })}  ${loading ? "cursor-wait" : ""} ${clsx({
-        [buttonStyleClasses.primary.variantBorderStyles]: variant === "primary",
-        [buttonStyleClasses.secondary.variantBorderStyles]: variant === "secondary",
-        [buttonStyleClasses.danger.variantBorderStyles]: variant === "danger"
-      })}`,
+      type,
+      className: `${buttonStyle}`,
       disabled: disabled || loading,
       ...rest
-    }, children);
+    }, prependIcon && /* @__PURE__ */ React.createElement("div", {
+      className: buttonIconStyle
+    }, React.cloneElement(prependIcon, { "stroke-width": 2 })), children, appendIcon && /* @__PURE__ */ React.createElement("div", {
+      className: buttonIconStyle
+    }, React.cloneElement(appendIcon, { "stroke-width": 2 })));
   }
 );
 Button.displayName = "plane-ui-button";
