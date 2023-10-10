@@ -53,7 +53,7 @@ export const IssueActivity: React.FC<Props> = (props) => {
       : null
   );
 
-  const handleCommentUpdate = async (comment: any) => {
+  const handleCommentUpdate = async (comment: any, formData: any) => {
     if (!workspaceSlug || !projectId || !issueId || !allowed) return;
 
     await issuesService
@@ -61,8 +61,8 @@ export const IssueActivity: React.FC<Props> = (props) => {
         workspaceSlug as string,
         projectId as string,
         issueId as string,
-        comment.id,
         comment,
+        formData,
         user
       )
       .then(() => mutateIssueActivity())
