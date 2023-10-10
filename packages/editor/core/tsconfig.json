@@ -8,8 +8,5 @@
     "dist",
     "build",
     "node_modules"
-  ],
-  "compilerOptions": {
-    "baseUrl": "."
-  }
+  ]
 }

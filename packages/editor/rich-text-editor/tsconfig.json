@@ -3,13 +3,10 @@
   "include": [
     "src/**/*",
     "index.d.ts"
-, "../lite-text-editor/src/ui/extensions/enter-key-extension.tsx"  ],
+  ],
   "exclude": [
     "dist",
     "build",
     "node_modules"
-  ],
-  "compilerOptions": {
-    "baseUrl": "."
-  }
+  ]
 }
