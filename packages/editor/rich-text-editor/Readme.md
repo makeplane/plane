@@ -1,22 +1,25 @@
-# README for @plane/rich-text-editor
+# @plane/rich-text-editor
 
 ## Description
 
-The `@plane/rich-text-editor` package extends from the `editor-core` package, inheriting its base functionality while adding its own unique features.
+The `@plane/rich-text-editor` package extends from the `editor-core` package, inheriting its base functionality while adding its own unique features of Slack Commands and many more.
 
 ## Key Features
 
-- **Comment Editor**: A new Comment editor (lite-text-editor). This editor includes a fixed menu and has built-in support for toggling access modifiers, adding marks, images, tables and lists.
-- **Exported Components**: There are two components exported from each type of Editor (with and without Ref), you can choose to use the `withRef` instance whenever you want to control the Editor’s state via a side effect of some external action from within the application code.
-- **Read Only Editor Instances**: We have added a really light weight `Read Only` Editor instance for both the Rich and Lite editor types.
+- **Exported Components**: There are two components exported from the Rich text editor (with and without Ref), you can choose to use the `withRef` instance whenever you want to control the Editor’s state via a side effect of some external action from within the application code.
 
-## Props
+  `RichTextEditor` & `RichTextEditorWithRef`
+
+- **Read Only Editor Instances**: We have added a really light weight *Read Only* Editor instance for the Rich editor types (with and without Ref)
+  `RichReadOnlyEditor` &`RichReadOnlyEditorWithRef`
+
+## RichTextEditor
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `uploadFile` | `UploadImage` | A function that handles file upload. It takes a file as input and handles the process of uploading that file. |
-| `deleteFile` | `DeleteImage` | A function that handles deleting an image. It takes the workspaceImageIdSlug as input and handles the process of deleting that image. |
-| `value` | `string` | The initial content of the editor. |
+| `uploadFile` | `(file: File) => Promise<string>` | A function that handles file upload. It takes a file as input and handles the process of uploading that file. |
+| `deleteFile` | `(assetUrlWithWorkspaceId: string) => Promise<any>` | A function that handles deleting an image. It takes the asset url from your bucket and handles the process of deleting that image. |
+| `value` | `html string` | The initial content of the editor. |
 | `debouncedUpdatesEnabled` | `boolean` | If set to true, the `onChange` event handler is debounced, meaning it will only be invoked after the specified delay (default 1500ms) once the user has stopped typing. |
 | `onChange` | `(json: any, html: string) => void` | This function is invoked whenever the content of the editor changes. It is passed the new content in both JSON and HTML formats. |
 | `setIsSubmitting` | `(isSubmitting: "submitting" \| "submitted" \| "saved") => void` | This function is called to update the submission status. |
@@ -26,13 +29,13 @@ The `@plane/rich-text-editor` package extends from the `editor-core` package, in
 | `customClassName` | `string` | This is a custom CSS class that can be applied to the editor. |
 | `editorContentCustomClassNames` | `string` | This is a custom CSS class that can be applied to the editor content. |
 
-## Usage
+### Usage
 
-Here is an example of how to use the `RichTextEditor` component:
+1. Here is an example of how to use the `RichTextEditor` component
 
-```jsx
+```tsx
 <RichTextEditor
-  uploadFile={fileService.uploadFile}
+  uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
   deleteFile={fileService.deleteImage}
   value={value}
   debouncedUpdatesEnabled={true}
@@ -46,9 +49,51 @@ Here is an example of how to use the `RichTextEditor` component:
     setShowAlert(true);
     setIsSubmitting("submitting");
     onChange(description_html);
-    handleSubmit(handleDescriptionFormSubmit)().finally(() =>
-      setIsSubmitting("submitted")
-    );
+    // custom stuff you want to do
   }}
 />
+```
+
+2. Example of how to use the `RichTextEditorWithRef` component
+
+```tsx
+  const editorRef = useRef<any>(null);
+
+  // can use it to set the editor's value
+  editorRef.current?.setEditorValue(`${watch("description_html")}`);
+
+  // can use it to clear the editor
+  editorRef?.current?.clearEditor();
+
+  return (<RichTextEditorWithRef
+      uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+      deleteFile={fileService.deleteImage}
+      ref={editorRef}
+      debouncedUpdatesEnabled={false}
+      value={value}
+      customClassName="min-h-[150px]"
+      onChange={(description: Object, description_html: string) => {
+          onChange(description_html);
+          // custom stuff you want to do
+  } } />)
+```
+
+## RichReadOnlyEditor
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `value` | `html string` | The initial content of the editor. |
+| `noBorder` | `boolean` | If set to true, the editor will not have a border. |
+| `borderOnFocus` | `boolean` | If set to true, the editor will show a border when it is focused. |
+| `customClassName` | `string` | This is a custom CSS class that can be applied to the editor. |
+| `editorContentCustomClassNames` | `string` | This is a custom CSS class that can be applied to the editor content. |
+
+### Usage
+
+Here is an example of how to use the `RichReadOnlyEditor` component
+
+```tsx
+  <RichReadOnlyEditor
+    value={issueDetails.description_html}
+    customClassName="p-3 min-h-[50px] shadow-sm" />
 ```

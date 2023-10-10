@@ -18,7 +18,6 @@ interface IRichTextEditor {
   onChange?: (json: any, html: string) => void;
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
   setShouldShowAlert?: (showAlert: boolean) => void;
-  editable?: boolean;
   forwardedRef?: any;
   debouncedUpdatesEnabled?: boolean;
 }
@@ -35,7 +34,6 @@ interface EditorHandle {
 const RichTextEditor = ({
   onChange,
   debouncedUpdatesEnabled,
-  editable,
   setIsSubmitting,
   setShouldShowAlert,
   editorContentCustomClassNames,
@@ -50,7 +48,6 @@ const RichTextEditor = ({
   const editor = useEditor({
     onChange,
     debouncedUpdatesEnabled,
-    editable,
     setIsSubmitting,
     setShouldShowAlert,
     value,

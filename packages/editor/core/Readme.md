@@ -25,7 +25,7 @@ This allows for extensive customization and flexibility in the Editors created u
     | `editorProps` | `EditorProps` | Extend the editor props by passing in a custom props object |
     | `uploadFile` | `(file: File) => Promise<string>` | A function that handles file upload. It takes a file as input and handles the process of uploading that file. |
     | `deleteFile` | `(assetUrlWithWorkspaceId: string) => Promise<any>` | A function that handles deleting an image. It takes the asset url from your bucket and handles the process of deleting that image. |
-    | `value` | `string` | The initial content of the editor. |
+    | `value` | `html string` | The initial content of the editor. |
     | `debouncedUpdatesEnabled` | `boolean` | If set to true, the `onChange` event handler is debounced, meaning it will only be invoked after the specified delay (default 1500ms) once the user has stopped typing. |
     | `onChange` | `(json: any, html: string) => void` | This function is invoked whenever the content of the editor changes. It is passed the new content in both JSON and HTML formats. |
     | `setIsSubmitting` | `(isSubmitting: "submitting" \| "submitted" \| "saved") => void` | This function is called to update the submission status. |
