@@ -82,7 +82,7 @@ class ModuleIssueKanBanViewStore implements IModuleIssueKanBanViewStore {
     const projectId = this.rootStore?.project?.projectId;
     const issueType: IIssueType | null = this.rootStore?.issue?.getIssueType;
     const issueLayout = this.rootStore?.issueFilter?.userDisplayFilters?.layout || null;
-    const currentIssues: any = this.rootStore.moduleIssue?.getIssues;
+    const currentIssues: any = this.rootStore.moduleIssue.getIssues;
 
     const sortOrderDefaultValue = 65535;
 
@@ -166,19 +166,29 @@ class ModuleIssueKanBanViewStore implements IModuleIssueKanBanViewStore {
             };
           }
 
+          let issueStatePriority = {};
+          if (this.rootStore.issueFilter?.userDisplayFilters?.group_by === "state") {
+            updateIssue = { ...updateIssue, state: destination_group_id };
+            issueStatePriority = { ...issueStatePriority, state: destination_group_id };
+          }
+          if (this.rootStore.issueFilter?.userDisplayFilters?.group_by === "priority") {
+            updateIssue = { ...updateIssue, priority: destination_group_id };
+            issueStatePriority = { ...issueStatePriority, priority: destination_group_id };
+          }
+
           const [removed] = _sourceIssues.splice(source.index, 1);
           if (_destinationIssues && _destinationIssues.length > 0)
             _destinationIssues.splice(destination.index, 0, {
               ...removed,
               sort_order: updateIssue.sort_order,
+              ...issueStatePriority,
             });
-          else _destinationIssues = [..._destinationIssues, { ...removed, sort_order: updateIssue.sort_order }];
+          else
+            _destinationIssues = [
+              ..._destinationIssues,
+              { ...removed, sort_order: updateIssue.sort_order, ...issueStatePriority },
+            ];
           updateIssue = { ...updateIssue, issueId: removed?.id };
-
-          // if (this.rootStore.issueFilter?.userDisplayFilters?.group_by === "state")
-          //   updateIssue = { ...updateIssue, state: destination_group_id };
-          // if (this.rootStore.issueFilter?.userDisplayFilters?.group_by === "priority")
-          //   updateIssue = { ...updateIssue, priority: destination_group_id };
 
           currentIssues[source_sub_group_id][source_group_id] = _sourceIssues;
           currentIssues[destination_sub_group_id][destination_group_id] = _destinationIssues;
@@ -216,30 +226,59 @@ class ModuleIssueKanBanViewStore implements IModuleIssueKanBanViewStore {
           };
         }
 
+        let issueStatePriority = {};
+        if (source_group_id === destination_group_id) {
+          if (this.rootStore.issueFilter?.userDisplayFilters?.sub_group_by === "state") {
+            updateIssue = { ...updateIssue, state: destination_sub_group_id };
+            issueStatePriority = { ...issueStatePriority, state: destination_sub_group_id };
+          }
+          if (this.rootStore.issueFilter?.userDisplayFilters?.sub_group_by === "priority") {
+            updateIssue = { ...updateIssue, priority: destination_sub_group_id };
+            issueStatePriority = { ...issueStatePriority, priority: destination_sub_group_id };
+          }
+        } else {
+          if (this.rootStore.issueFilter?.userDisplayFilters?.sub_group_by === "state") {
+            updateIssue = { ...updateIssue, state: destination_sub_group_id, priority: destination_group_id };
+            issueStatePriority = {
+              ...issueStatePriority,
+              state: destination_sub_group_id,
+              priority: destination_group_id,
+            };
+          }
+          if (this.rootStore.issueFilter?.userDisplayFilters?.sub_group_by === "priority") {
+            updateIssue = { ...updateIssue, state: destination_group_id, priority: destination_sub_group_id };
+            issueStatePriority = {
+              ...issueStatePriority,
+              state: destination_group_id,
+              priority: destination_sub_group_id,
+            };
+          }
+        }
+
         const [removed] = _sourceIssues.splice(source.index, 1);
         if (_destinationIssues && _destinationIssues.length > 0)
           _destinationIssues.splice(destination.index, 0, {
             ...removed,
             sort_order: updateIssue.sort_order,
+            ...issueStatePriority,
           });
-        else _destinationIssues = [..._destinationIssues, { ...removed, sort_order: updateIssue.sort_order }];
+        else
+          _destinationIssues = [
+            ..._destinationIssues,
+            { ...removed, sort_order: updateIssue.sort_order, ...issueStatePriority },
+          ];
 
         updateIssue = { ...updateIssue, issueId: removed?.id };
         currentIssues[source_sub_group_id][source_group_id] = _sourceIssues;
         currentIssues[destination_sub_group_id][destination_group_id] = _destinationIssues;
-
-        // if (this.rootStore.issueFilter?.userDisplayFilters?.group_by === "state")
-        //   updateIssue = { ...updateIssue, state: destination_group_id };
-        // if (this.rootStore.issueFilter?.userDisplayFilters?.group_by === "priority")
-        //   updateIssue = { ...updateIssue, priority: destination_group_id };
       }
 
       const reorderedIssues = {
-        ...this.rootStore?.cycleIssue.issues,
+        ...this.rootStore?.moduleIssue.issues,
         [projectId]: {
-          ...this.rootStore?.cycleIssue.issues?.[projectId],
+          ...this.rootStore?.moduleIssue.issues?.[projectId],
           [issueType]: {
-            ...this.rootStore?.cycleIssue.issues?.[projectId]?.[issueType],
+            ...this.rootStore?.moduleIssue.issues?.[projectId]?.[issueType],
             [issueType]: currentIssues,
           },
         },
@@ -249,15 +288,13 @@ class ModuleIssueKanBanViewStore implements IModuleIssueKanBanViewStore {
         this.rootStore.moduleIssue.issues = { ...reorderedIssues };
       });
 
-      // console.log("updateIssue", updateIssue);
-
-      // this.rootStore.issueDetail?.updateIssue(
-      //   updateIssue.workspaceSlug,
-      //   updateIssue.projectId,
-      //   updateIssue.issueId,
-      //   updateIssue,
-      //   undefined
-      // );
+      this.rootStore.issueDetail?.updateIssue(
+        updateIssue.workspaceSlug,
+        updateIssue.projectId,
+        updateIssue.issueId,
+        updateIssue,
+        undefined
+      );
     }
   };
 
@@ -266,7 +303,7 @@ class ModuleIssueKanBanViewStore implements IModuleIssueKanBanViewStore {
     const projectId = this.rootStore?.project?.projectId;
     const issueType: IIssueType | null = this.rootStore?.issue?.getIssueType;
     const issueLayout = this.rootStore?.issueFilter?.userDisplayFilters?.layout || null;
-    const currentIssues: any = this.rootStore.moduleIssue?.getIssues;
+    const currentIssues: any = this.rootStore.moduleIssue.getIssues;
 
     const sortOrderDefaultValue = 65535;
 
@@ -348,23 +385,33 @@ class ModuleIssueKanBanViewStore implements IModuleIssueKanBanViewStore {
             };
           }
 
+          let issueStatePriority = {};
+          if (this.rootStore.issueFilter?.userDisplayFilters?.group_by === "state") {
+            updateIssue = { ...updateIssue, state: destination_group_id };
+            issueStatePriority = { ...issueStatePriority, state: destination_group_id };
+          }
+          if (this.rootStore.issueFilter?.userDisplayFilters?.group_by === "priority") {
+            updateIssue = { ...updateIssue, priority: destination_group_id };
+            issueStatePriority = { ...issueStatePriority, priority: destination_group_id };
+          }
+
           const [removed] = _sourceIssues.splice(source.index, 1);
           if (_destinationIssues && _destinationIssues.length > 0)
             _destinationIssues.splice(destination.index, 0, {
               ...removed,
               sort_order: updateIssue.sort_order,
+              ...issueStatePriority,
             });
-          else _destinationIssues = [..._destinationIssues, { ...removed, sort_order: updateIssue.sort_order }];
+          else
+            _destinationIssues = [
+              ..._destinationIssues,
+              { ...removed, sort_order: updateIssue.sort_order, ...issueStatePriority },
+            ];
           updateIssue = { ...updateIssue, issueId: removed?.id };
 
           currentIssues[source_group_id] = _sourceIssues;
           currentIssues[destination_group_id] = _destinationIssues;
         }
-
-        if (this.rootStore.issueFilter?.userDisplayFilters?.group_by === "state")
-          updateIssue = { ...updateIssue, state: destination_group_id };
-        if (this.rootStore.issueFilter?.userDisplayFilters?.group_by === "priority")
-          updateIssue = { ...updateIssue, priority: destination_group_id };
       }
 
       // user can drag the issues only vertically
@@ -376,11 +423,11 @@ class ModuleIssueKanBanViewStore implements IModuleIssueKanBanViewStore {
       }
 
       const reorderedIssues = {
-        ...this.rootStore?.cycleIssue.issues,
+        ...this.rootStore?.moduleIssue.issues,
         [projectId]: {
-          ...this.rootStore?.cycleIssue.issues?.[projectId],
+          ...this.rootStore?.moduleIssue.issues?.[projectId],
           [issueType]: {
-            ...this.rootStore?.cycleIssue.issues?.[projectId]?.[issueType],
+            ...this.rootStore?.moduleIssue.issues?.[projectId]?.[issueType],
             [issueType]: currentIssues,
           },
         },

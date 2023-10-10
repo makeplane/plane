@@ -3,19 +3,18 @@ import { Controller, useForm } from "react-hook-form";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-type EmailPasswordFormValues = {
+export interface EmailPasswordFormValues {
   email: string;
   password?: string;
   medium?: string;
-};
+}
 
-type Props = {
+export interface IEmailPasswordForm {
   onSubmit: (formData: EmailPasswordFormValues) => Promise<void>;
-  setIsResettingPassword: (value: boolean) => void;
-};
+}
 
-export const EmailPasswordForm: React.FC<Props> = (props) => {
-  const { onSubmit, setIsResettingPassword } = props;
+export const EmailPasswordForm: React.FC<IEmailPasswordForm> = (props) => {
+  const { onSubmit } = props;
   // form info
   const {
     register,
@@ -84,11 +83,7 @@ export const EmailPasswordForm: React.FC<Props> = (props) => {
           />
         </div>
         <div className="text-right text-xs">
-          <button
-            type="button"
-            onClick={() => setIsResettingPassword(true)}
-            className="text-custom-text-200 hover:text-custom-primary-100"
-          >
+          <button type="button" onClick={() => {}} className="text-custom-text-200 hover:text-custom-primary-100">
             Forgot your password?
           </button>
         </div>

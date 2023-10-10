@@ -1,6 +1,5 @@
 import React from "react";
-
-// react hook form
+import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 // services
 import userService from "services/user.service";
@@ -10,12 +9,16 @@ import useToast from "hooks/use-toast";
 import { Button, Input } from "@plane/ui";
 // types
 type Props = {
-  setIsResettingPassword: React.Dispatch<React.SetStateAction<boolean>>;
+  onSubmit: (formValues: any) => void;
 };
 
-export const EmailResetPasswordForm: React.FC<Props> = ({ setIsResettingPassword }) => {
+export const EmailResetPasswordForm: React.FC<Props> = (props) => {
+  const { onSubmit } = props;
+  // toast
   const { setToastAlert } = useToast();
-
+  // router
+  const router = useRouter();
+  // form data
   const {
     register,
     handleSubmit,

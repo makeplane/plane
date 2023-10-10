@@ -66,9 +66,6 @@ class CycleIssueFilterStore implements ICycleIssueFilterStore {
   get appliedFilters(): TIssueParams[] | null {
     const userDisplayFilters = this.rootStore?.issueFilter?.userDisplayFilters;
 
-    console.log("userDisplayFilters", userDisplayFilters);
-    console.log("this.cycleFilters", this.cycleFilters);
-
     if (!this.cycleFilters || !userDisplayFilters) return null;
 
     let filteredRouteParams: any = {
@@ -89,11 +86,7 @@ class CycleIssueFilterStore implements ICycleIssueFilterStore {
       start_target_date: userDisplayFilters?.start_target_date || true,
     };
 
-    console.log("----");
-    console.log("filteredRouteParams", filteredRouteParams);
     const filteredParams = handleIssueQueryParamsByLayout(userDisplayFilters.layout, "issues");
-    console.log("filteredParams", filteredParams);
-    console.log("----");
 
     if (filteredParams) filteredRouteParams = this.computedFilter(filteredRouteParams, filteredParams);
 
@@ -140,7 +133,7 @@ class CycleIssueFilterStore implements ICycleIssueFilterStore {
         },
       };
 
-      const response = await this.cycleService.updateCycle(workspaceSlug, projectId, cycleId, payload, undefined);
+      await this.cycleService.updateCycle(workspaceSlug, projectId, cycleId, payload, undefined);
     } catch (error) {
       this.fetchCycleFilters(workspaceSlug, projectId, cycleId);
 

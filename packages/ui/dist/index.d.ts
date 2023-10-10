@@ -32,4 +32,6 @@ interface IRadialProgressBar {
 }
 declare const RadialProgressBar: FC<IRadialProgressBar>;
 
-export { Button, ButtonProps, Input, InputProps, RadialProgressBar, TextArea, TextAreaProps };
+declare const Spinner: React.FC;
+
+export { Button, ButtonProps, Input, InputProps, RadialProgressBar, Spinner, TextArea, TextAreaProps };
