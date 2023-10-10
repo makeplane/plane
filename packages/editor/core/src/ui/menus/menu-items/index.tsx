@@ -1,7 +1,7 @@
-import { BoldIcon, QuoteIcon, ImageIcon, TableIcon, ListIcon, ListOrderedIcon, ItalicIcon, UnderlineIcon, StrikethroughIcon, CodeIcon } from "lucide-react";
+import { BoldIcon, Heading1, CheckSquare, Heading2, Heading3, QuoteIcon, ImageIcon, TableIcon, ListIcon, ListOrderedIcon, ItalicIcon, UnderlineIcon, StrikethroughIcon, CodeIcon } from "lucide-react";
 import { Editor } from "@tiptap/react";
 import { UploadImage } from "../../../types/upload-image";
-import { insertImageCommand, insertTableCommand, toggleBlockquote, toggleBold, toggleBulletList, toggleCode, toggleItalic, toggleOrderedList, toggleStrike, toggleUnderline, } from "../../../lib/editor-commands";
+import { insertImageCommand, insertTableCommand, toggleBlockquote, toggleBold, toggleBulletList, toggleCode, toggleHeadingOne, toggleHeadingThree, toggleHeadingTwo, toggleItalic, toggleOrderedList, toggleStrike, toggleTaskList, toggleUnderline, } from "../../../lib/editor-commands";
 
 export interface EditorMenuItem {
   name: string;
@@ -9,6 +9,27 @@ export interface EditorMenuItem {
   command: () => void;
   icon: typeof BoldIcon;
 }
+
+export const HeadingOneItem = (editor: Editor): EditorMenuItem => ({
+  name: "H1",
+  isActive: () => editor.isActive("heading", { level: 1 }),
+  command: () => toggleHeadingOne(editor),
+  icon: Heading1,
+})
+
+export const HeadingTwoItem = (editor: Editor): EditorMenuItem => ({
+  name: "H2",
+  isActive: () => editor.isActive("heading", { level: 2 }),
+  command: () => toggleHeadingTwo(editor),
+  icon: Heading2,
+})
+
+export const HeadingThreeItem = (editor: Editor): EditorMenuItem => ({
+  name: "H3",
+  isActive: () => editor.isActive("heading", { level: 3 }),
+  command: () => toggleHeadingThree(editor),
+  icon: Heading3,
+})
 
 export const BoldItem = (editor: Editor): EditorMenuItem => ({
   name: "bold",
@@ -50,6 +71,13 @@ export const BulletListItem = (editor: Editor): EditorMenuItem => ({
   isActive: () => editor?.isActive("bulletList"),
   command: () => toggleBulletList(editor),
   icon: ListIcon,
+})
+
+export const TodoListItem = (editor: Editor): EditorMenuItem => ({
+  name: "To-do List",
+  isActive: () => editor.isActive("taskItem"),
+  command: () => toggleTaskList(editor),
+  icon: CheckSquare,
 })
 
 export const NumberedListItem = (editor: Editor): EditorMenuItem => ({

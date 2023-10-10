@@ -17,8 +17,8 @@ import {
   ImageIcon,
   Table,
 } from "lucide-react";
-import { UploadImage } from "..";
-import { cn, insertTableCommand, startImageUpload, toggleBulletList } from "@plane/editor-core";
+import { UploadImage } from "../";
+import { cn, insertTableCommand, toggleBlockquote, toggleBulletList, toggleOrderedList, toggleTaskList, insertImageCommand, toggleHeadingOne, toggleHeadingTwo, toggleHeadingThree } from "@plane/editor-core";
 
 interface CommandItemProps {
   title: string;
@@ -78,7 +78,7 @@ const getSuggestionItems =
           searchTerms: ["title", "big", "large"],
           icon: <Heading1 size={18} />,
           command: ({ editor, range }: CommandProps) => {
-            editor.chain().focus().deleteRange(range).setNode("heading", { level: 1 }).run();
+            toggleHeadingOne(editor, range);
           },
         },
         {
@@ -87,7 +87,7 @@ const getSuggestionItems =
           searchTerms: ["subtitle", "medium"],
           icon: <Heading2 size={18} />,
           command: ({ editor, range }: CommandProps) => {
-            editor.chain().focus().deleteRange(range).setNode("heading", { level: 2 }).run();
+            toggleHeadingTwo(editor, range);
           },
         },
         {
@@ -96,7 +96,7 @@ const getSuggestionItems =
           searchTerms: ["subtitle", "small"],
           icon: <Heading3 size={18} />,
           command: ({ editor, range }: CommandProps) => {
-            editor.chain().focus().deleteRange(range).setNode("heading", { level: 3 }).run();
+            toggleHeadingThree(editor, range);
           },
         },
         {
@@ -105,7 +105,7 @@ const getSuggestionItems =
           searchTerms: ["todo", "task", "list", "check", "checkbox"],
           icon: <CheckSquare size={18} />,
           command: ({ editor, range }: CommandProps) => {
-            editor.chain().focus().deleteRange(range).toggleTaskList().run();
+            toggleTaskList(editor, range)
           },
         },
         {
@@ -114,7 +114,6 @@ const getSuggestionItems =
           searchTerms: ["unordered", "point"],
           icon: <List size={18} />,
           command: ({ editor, range }: CommandProps) => {
-            // editor.chain().focus().deleteRange(range).toggleBulletList().run();
             toggleBulletList(editor, range);
           },
         },
@@ -134,12 +133,6 @@ const getSuggestionItems =
           icon: <Table size={18} />,
           command: ({ editor, range }: CommandProps) => {
             insertTableCommand(editor, range);
-            // editor
-            //   .chain()
-            //   .focus()
-            //   .deleteRange(range)
-            //   .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
-            //   .run();
           },
         },
         {
@@ -148,8 +141,7 @@ const getSuggestionItems =
           searchTerms: ["ordered"],
           icon: <ListOrdered size={18} />,
           command: ({ editor, range }: CommandProps) => {
-            // @ts-ignore
-            editor.chain().focus().deleteRange(range).toggleOrderedList().run();
+            toggleOrderedList(editor, range)
           },
         },
         {
@@ -158,8 +150,7 @@ const getSuggestionItems =
           searchTerms: ["blockquote"],
           icon: <TextQuote size={18} />,
           command: ({ editor, range }: CommandProps) =>
-            // @ts-ignore
-            editor.chain().focus().deleteRange(range).toggleNode("paragraph", "paragraph").toggleBlockquote().run(),
+            toggleBlockquote(editor, range)
         },
         {
           title: "Code",
@@ -175,19 +166,7 @@ const getSuggestionItems =
           searchTerms: ["photo", "picture", "media"],
           icon: <ImageIcon size={18} />,
           command: ({ editor, range }: CommandProps) => {
-            editor.chain().focus().deleteRange(range).run();
-            // upload image
-            const input = document.createElement("input");
-            input.type = "file";
-            input.accept = "image/*";
-            input.onchange = async () => {
-              if (input.files?.length) {
-                const file = input.files[0];
-                const pos = editor.view.state.selection.from;
-                startImageUpload(file, editor.view, pos, uploadFile, setIsSubmitting);
-              }
-            };
-            input.click();
+            insertImageCommand(editor, uploadFile, setIsSubmitting, range);
           },
         },
       ].filter((item) => {

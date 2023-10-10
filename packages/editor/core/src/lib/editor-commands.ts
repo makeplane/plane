@@ -2,6 +2,21 @@ import { Editor, Range } from "@tiptap/core";
 import { UploadImage } from "../types/upload-image";
 import { startImageUpload } from "../ui/plugins/upload-image";
 
+export const toggleHeadingOne = (editor: Editor, range?: Range) => {
+  if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 1 }).run();
+  else editor.chain().focus().toggleHeading({ level: 1 }).run()
+};
+
+export const toggleHeadingTwo = (editor: Editor, range?: Range) => {
+  if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 2 }).run();
+  else editor.chain().focus().toggleHeading({ level: 2 }).run()
+};
+
+export const toggleHeadingThree = (editor: Editor, range?: Range) => {
+  if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 3 }).run();
+  else editor.chain().focus().toggleHeading({ level: 3 }).run()
+};
+
 export const toggleBold = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).toggleBold().run();
   else editor.chain().focus().toggleBold().run();
@@ -29,6 +44,11 @@ export const toggleOrderedList = (editor: Editor, range?: Range) => {
 export const toggleBulletList = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).toggleBulletList().run();
   else editor.chain().focus().toggleBulletList().run();
+};
+
+export const toggleTaskList = (editor: Editor, range?: Range) => {
+  if (range) editor.chain().focus().deleteRange(range).toggleTaskList().run();
+  else editor.chain().focus().toggleTaskList().run()
 };
 
 export const toggleStrike = (editor: Editor, range?: Range) => {

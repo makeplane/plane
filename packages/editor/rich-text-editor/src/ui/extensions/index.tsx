@@ -6,7 +6,6 @@ import { InputRule } from "@tiptap/core";
 
 import ts from "highlight.js/lib/languages/typescript";
 
-// import "highlight.js/styles/github-dark.css";
 import SlashCommand from "./slash-command";
 import { UploadImage } from "../";
 
