@@ -9,6 +9,7 @@ import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
+  IWorkspaceMember,
   IWorkspaceViewProps,
   TIssueParams,
 } from "types";
@@ -24,7 +25,7 @@ export interface IWorkspaceFilterStore {
   workspaceDisplayProperties: IIssueDisplayProperties;
 
   // actions
-  fetchUserWorkspaceFilters: (workspaceSlug: string) => Promise<void>;
+  fetchUserWorkspaceFilters: (workspaceSlug: string) => Promise<IWorkspaceMember>;
   updateWorkspaceFilters: (workspaceSlug: string, filterToUpdate: Partial<IWorkspaceViewProps>) => Promise<void>;
 
   // computed
@@ -135,12 +136,14 @@ class WorkspaceFilterStore implements IWorkspaceFilterStore {
         this.workspaceDisplayFilters = memberResponse?.view_props?.display_filters ?? {};
         this.workspaceDisplayProperties = memberResponse?.view_props?.display_properties;
       });
+
+      return memberResponse;
     } catch (error) {
       runInAction(() => {
         this.error = error;
       });
 
-      console.log("Failed to fetch user filters in issue filter store", error);
+      throw error;
     }
   };
 

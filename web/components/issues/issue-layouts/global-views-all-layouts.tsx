@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
@@ -8,11 +8,12 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { SpreadsheetView } from "components/core";
 import { AppliedFiltersList } from "components/issues";
+// ui
+import { PrimaryButton } from "components/ui";
 // types
-import { IIssueFilterOptions, TStaticViewTypes } from "types";
+import { IIssueDisplayFilterOptions, IIssueFilterOptions, TStaticViewTypes } from "types";
 // fetch-keys
 import { GLOBAL_VIEW_ISSUES } from "constants/fetch-keys";
-import { PrimaryButton } from "components/ui";
 
 type Props = {
   type?: TStaticViewTypes;
@@ -74,6 +75,17 @@ export const GlobalViewsAllLayouts: React.FC<Props> = observer((props) => {
   //   return false;
   // };
 
+  const handleDisplayFiltersUpdate = useCallback(
+    (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
+      if (!workspaceSlug) return;
+
+      workspaceFilterStore.updateWorkspaceFilters(workspaceSlug.toString(), {
+        display_filters: updatedDisplayFilter,
+      });
+    },
+    [workspaceFilterStore, workspaceSlug]
+  );
+
   const issues = type
     ? globalViewIssuesStore.viewIssues?.[type]
     : globalViewId
@@ -101,7 +113,7 @@ export const GlobalViewsAllLayouts: React.FC<Props> = observer((props) => {
         <SpreadsheetView
           displayProperties={workspaceFilterStore.workspaceDisplayProperties}
           displayFilters={workspaceFilterStore.workspaceDisplayFilters}
-          handleDisplayFilterUpdate={() => {}}
+          handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
           issues={issues}
           handleIssueAction={() => {}}
           handleUpdateIssue={() => {}}

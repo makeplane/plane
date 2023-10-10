@@ -124,25 +124,25 @@ class GlobalViewIssuesStore implements IGlobalViewIssuesStore {
         this.loader = true;
       });
 
-      let filters = {};
+      const workspaceMemberResponse = await this.rootStore.workspaceFilter.fetchUserWorkspaceFilters(workspaceSlug);
+      const displayFilters = workspaceMemberResponse.view_props.display_filters;
+
+      let filteredRouteParams: any = {
+        order_by: displayFilters?.order_by || "-created_at",
+        type: displayFilters?.type || undefined,
+        sub_issue: false,
+      };
+
+      const filteredParams = handleIssueQueryParamsByLayout("spreadsheet", "my_issues");
+      if (filteredParams) filteredRouteParams = this.computedFilter(filteredRouteParams, filteredParams);
+
       const currentUser = this.rootStore.user.currentUser;
 
-      if (type === "assigned" && currentUser)
-        filters = {
-          assignees: currentUser.id,
-        };
+      if (type === "assigned" && currentUser) filteredRouteParams.assignees = currentUser.id;
+      if (type === "created" && currentUser) filteredRouteParams.created_by = currentUser.id;
+      if (type === "subscribed" && currentUser) filteredRouteParams.subscriber = currentUser.id;
 
-      if (type === "created" && currentUser)
-        filters = {
-          created_by: currentUser.id,
-        };
-
-      if (type === "subscribed" && currentUser)
-        filters = {
-          subscriber: currentUser.id,
-        };
-
-      const response = await this.workspaceService.getViewIssues(workspaceSlug, filters);
+      const response = await this.workspaceService.getViewIssues(workspaceSlug, filteredRouteParams);
 
       runInAction(() => {
         this.loader = false;
