@@ -9,12 +9,9 @@ import { Popover, Transition } from "@headlessui/react";
 import useUserNotification from "hooks/use-user-notifications";
 
 // components
-import { Loader, EmptyState, Tooltip } from "components/ui";
-import {
-  SnoozeNotificationModal,
-  NotificationCard,
-  NotificationHeader,
-} from "components/notifications";
+import { EmptyState, Tooltip } from "components/ui";
+import { SnoozeNotificationModal, NotificationCard, NotificationHeader } from "components/notifications";
+import { Loader } from "@plane/ui";
 // icons
 import { NotificationsOutlined } from "@mui/icons-material";
 // images
@@ -63,11 +60,7 @@ export const NotificationPopover = () => {
         isOpen={selectedNotificationForSnooze !== null}
         onClose={() => setSelectedNotificationForSnooze(null)}
         onSubmit={markSnoozeNotification}
-        notification={
-          notifications?.find(
-            (notification) => notification.id === selectedNotificationForSnooze
-          ) || null
-        }
+        notification={notifications?.find((notification) => notification.id === selectedNotificationForSnooze) || null}
         onSuccess={() => {
           setSelectedNotificationForSnooze(null);
         }}

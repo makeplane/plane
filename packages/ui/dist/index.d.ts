@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FC } from 'react';
+import React__default, { FC } from 'react';
 
 declare type TButtonVariant = "primary" | "accent-primary" | "outline-primary" | "neutral-primary" | "link-primary" | "danger" | "accent-danger" | "outline-danger" | "link-danger" | "tertiary-danger";
 
@@ -37,4 +37,18 @@ declare const RadialProgressBar: FC<IRadialProgressBar>;
 
 declare const Spinner: React.FC;
 
-export { Button, ButtonProps, Input, InputProps, RadialProgressBar, Spinner, TextArea, TextAreaProps };
+declare type Props = {
+    children: React__default.ReactNode;
+    className?: string;
+};
+declare const Loader: {
+    ({ children, className }: Props): JSX.Element;
+    Item: React__default.FC<ItemProps>;
+    displayName: string;
+};
+declare type ItemProps = {
+    height?: string;
+    width?: string;
+};
+
+export { Button, ButtonProps, Input, InputProps, Loader, RadialProgressBar, Spinner, TextArea, TextAreaProps };

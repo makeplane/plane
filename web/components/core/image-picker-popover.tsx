@@ -13,8 +13,7 @@ import fileService from "services/file.service";
 import useWorkspaceDetails from "hooks/use-workspace-details";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
-import { Loader } from "components/ui";
-import { Button, Input } from "@plane/ui";
+import { Button, Input, Loader } from "@plane/ui";
 
 const tabOptions = [
   {

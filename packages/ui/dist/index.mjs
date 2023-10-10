@@ -239,9 +239,23 @@ var Spinner = () => /* @__PURE__ */ React5.createElement("div", {
 })), /* @__PURE__ */ React5.createElement("span", {
   className: "sr-only"
 }, "Loading..."));
+
+// src/loader.tsx
+import React6 from "react";
+var Loader = ({ children, className = "" }) => /* @__PURE__ */ React6.createElement("div", {
+  className: `${className} animate-pulse`,
+  role: "status"
+}, children);
+var Item = ({ height = "auto", width = "auto" }) => /* @__PURE__ */ React6.createElement("div", {
+  className: "rounded-md bg-custom-background-80",
+  style: { height, width }
+});
+Loader.Item = Item;
+Loader.displayName = "plane-ui-loader";
 export {
   Button,
   Input,
+  Loader,
   RadialProgressBar,
   Spinner,
   TextArea

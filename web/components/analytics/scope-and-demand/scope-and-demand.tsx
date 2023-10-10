@@ -5,10 +5,9 @@ import useSWR from "swr";
 // services
 import analyticsService from "services/analytics.service";
 // components
-import { Button } from "@plane/ui";
 import { AnalyticsDemand, AnalyticsLeaderboard, AnalyticsScope, AnalyticsYearWiseIssues } from "components/analytics";
 // ui
-import { Loader } from "components/ui";
+import { Button, Loader } from "@plane/ui";
 // fetch-keys
 import { DEFAULT_ANALYTICS } from "constants/fetch-keys";
 

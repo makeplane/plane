@@ -13,8 +13,8 @@ import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
 import useDebounce from "hooks/use-debounce";
 // ui
-import { Button } from "@plane/ui";
-import { Loader, ToggleSwitch, Tooltip } from "components/ui";
+import { Button, Loader } from "@plane/ui";
+import { ToggleSwitch, Tooltip } from "components/ui";
 // icons
 import { LaunchOutlined } from "@mui/icons-material";
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";

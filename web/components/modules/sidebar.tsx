@@ -29,7 +29,8 @@ import useToast from "hooks/use-toast";
 import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
 import { DeleteModuleModal, SidebarLeadSelect, SidebarMembersSelect } from "components/modules";
 import ProgressChart from "components/core/sidebar/progress-chart";
-import { CustomMenu, CustomSelect, Loader, ProgressBar } from "components/ui";
+import { CustomMenu, CustomSelect, ProgressBar } from "components/ui";
+import { Loader } from "@plane/ui";
 // icon
 import { ExclamationIcon } from "components/icons";
 import { LinkIcon } from "@heroicons/react/20/solid";
@@ -169,8 +170,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
   };
 
   const handleCopyText = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
     copyTextToClipboard(`${workspaceSlug}/projects/${projectId}/modules/${module?.id}`)
       .then(() => {
@@ -198,9 +198,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
   const isStartValid = new Date(`${module?.start_date}`) <= new Date();
   const isEndValid = new Date(`${module?.target_date}`) >= new Date(`${module?.start_date}`);
 
-  const progressPercentage = module
-    ? Math.round((module.completed_issues / module.total_issues) * 100)
-    : null;
+  const progressPercentage = module ? Math.round((module.completed_issues / module.total_issues) * 100) : null;
 
   const handleEditLink = (link: linkDetails) => {
     setSelectedLinkToUpdate(link);
@@ -220,12 +218,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
         createIssueLink={handleCreateLink}
         updateIssueLink={handleUpdateLink}
       />
-      <DeleteModuleModal
-        isOpen={moduleDeleteModal}
-        setIsOpen={setModuleDeleteModal}
-        data={module}
-        user={user}
-      />
+      <DeleteModuleModal isOpen={moduleDeleteModal} setIsOpen={setModuleDeleteModal} data={module} user={user} />
       <div
         className={`fixed top-[66px] ${
           isOpen ? "right-0" : "-right-[24rem]"
@@ -270,12 +263,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                           }`}
                         >
                           <CalendarDaysIcon className="h-3 w-3" />
-                          <span>
-                            {renderShortDateWithYearFormat(
-                              new Date(`${module.start_date}`),
-                              "Start date"
-                            )}
-                          </span>
+                          <span>{renderShortDateWithYearFormat(new Date(`${module.start_date}`), "Start date")}</span>
                         </Popover.Button>
 
                         <Transition
@@ -289,11 +277,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                         >
                           <Popover.Panel className="absolute top-10 -right-5 z-20  transform overflow-hidden">
                             <DatePicker
-                              selected={
-                                watch("start_date")
-                                  ? new Date(`${watch("start_date")}`)
-                                  : new Date()
-                              }
+                              selected={watch("start_date") ? new Date(`${watch("start_date")}`) : new Date()}
                               onChange={(date) => {
                                 submitChanges({
                                   start_date: renderDateFormat(date),
@@ -324,12 +308,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                         >
                           <CalendarDaysIcon className="h-3 w-3 " />
 
-                          <span>
-                            {renderShortDateWithYearFormat(
-                              new Date(`${module?.target_date}`),
-                              "End date"
-                            )}
-                          </span>
+                          <span>{renderShortDateWithYearFormat(new Date(`${module?.target_date}`), "End date")}</span>
                         </Popover.Button>
 
                         <Transition
@@ -343,11 +322,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                         >
                           <Popover.Panel className="absolute top-10 -right-5 z-20  transform overflow-hidden">
                             <DatePicker
-                              selected={
-                                watch("target_date")
-                                  ? new Date(`${watch("target_date")}`)
-                                  : new Date()
-                              }
+                              selected={watch("target_date") ? new Date(`${watch("target_date")}`) : new Date()}
                               onChange={(date) => {
                                 submitChanges({
                                   target_date: renderDateFormat(date),
@@ -372,9 +347,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                 <div className="flex w-full flex-col items-start justify-start gap-2">
                   <div className="flex w-full items-start justify-between gap-2  ">
                     <div className="max-w-[300px]">
-                      <h4 className="text-xl font-semibold break-words w-full text-custom-text-100">
-                        {module.name}
-                      </h4>
+                      <h4 className="text-xl font-semibold break-words w-full text-custom-text-100">{module.name}</h4>
                     </div>
                     <CustomMenu width="lg" ellipsis>
                       <CustomMenu.MenuItem onClick={() => setModuleDeleteModal(true)}>
@@ -431,10 +404,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
 
                     <div className="flex items-center gap-2.5 text-custom-text-200">
                       <span className="h-4 w-4">
-                        <ProgressBar
-                          value={module.completed_issues}
-                          maxValue={module.total_issues}
-                        />
+                        <ProgressBar value={module.completed_issues} maxValue={module.total_issues} />
                       </span>
                       {module.completed_issues}/{module.total_issues}
                     </div>
@@ -446,9 +416,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
             <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 p-6">
               <Disclosure defaultOpen>
                 {({ open }) => (
-                  <div
-                    className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}
-                  >
+                  <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
                     <div className="flex w-full items-center justify-between gap-2    ">
                       <div className="flex items-center justify-start gap-2 text-sm">
                         <span className="font-medium text-custom-text-200">Progress</span>
@@ -470,11 +438,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                         </Disclosure.Button>
                       ) : (
                         <div className="flex items-center gap-1">
-                          <ExclamationIcon
-                            height={14}
-                            width={14}
-                            className="fill-current text-custom-text-200"
-                          />
+                          <ExclamationIcon height={14} width={14} className="fill-current text-custom-text-200" />
                           <span className="text-xs italic text-custom-text-200">
                             Invalid date. Please enter valid date.
                           </span>
@@ -492,8 +456,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                                 </span>
                                 <span>
                                   Pending Issues -{" "}
-                                  {module.total_issues -
-                                    (module.completed_issues + module.cancelled_issues)}{" "}
+                                  {module.total_issues - (module.completed_issues + module.cancelled_issues)}{" "}
                                 </span>
                               </div>
 
@@ -530,9 +493,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
             <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 p-6">
               <Disclosure defaultOpen>
                 {({ open }) => (
-                  <div
-                    className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}
-                  >
+                  <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
                     <div className="flex w-full items-center justify-between gap-2    ">
                       <div className="flex items-center justify-start gap-2 text-sm">
                         <span className="font-medium text-custom-text-200">Other Information</span>
@@ -547,11 +508,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                         </Disclosure.Button>
                       ) : (
                         <div className="flex items-center gap-1">
-                          <ExclamationIcon
-                            height={14}
-                            width={14}
-                            className="fill-current text-custom-text-200"
-                          />
+                          <ExclamationIcon height={14} width={14} className="fill-current text-custom-text-200" />
                           <span className="text-xs italic text-custom-text-200">
                             No issues found. Please add issue.
                           </span>

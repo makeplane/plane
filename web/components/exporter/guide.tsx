@@ -13,8 +13,8 @@ import IntegrationService from "services/integration.service";
 // components
 import { Exporter, SingleExport } from "components/exporter";
 // ui
-import { Button } from "@plane/ui";
-import { Icon, Loader } from "components/ui";
+import { Button, Loader } from "@plane/ui";
+import { Icon } from "components/ui";
 // icons
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 // fetch-keys

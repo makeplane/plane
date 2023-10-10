@@ -11,8 +11,7 @@ import IntegrationService from "services/integration.service";
 import useToast from "hooks/use-toast";
 import useIntegrationPopup from "hooks/use-integration-popup";
 // ui
-import { Button } from "@plane/ui";
-import { Loader } from "components/ui";
+import { Button, Loader } from "@plane/ui";
 // icons
 import GithubLogo from "public/services/github.png";
 import SlackLogo from "public/services/slack.png";

@@ -3,7 +3,7 @@ import { Fragment, useState } from "react";
 // headless ui
 import { Menu, Transition } from "@headlessui/react";
 // ui
-import { Loader } from "components/ui";
+import { Loader } from "@plane/ui";
 // icons
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/20/solid";
@@ -108,9 +108,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                     {option.hasChildren && option.id === openChildFor && (
                       <div
                         className={`absolute top-0 min-w-36 whitespace-nowrap origin-top-right select-none overflow-y-scroll rounded-md bg-custom-background-90 border border-custom-border-300 shadow-lg focus:outline-none ${
-                          direction === "left"
-                            ? "right-full -translate-x-1"
-                            : "left-full translate-x-1"
+                          direction === "left" ? "right-full -translate-x-1" : "left-full translate-x-1"
                         } ${
                           height === "sm"
                             ? "max-h-28"
@@ -126,9 +124,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                         {option.children ? (
                           <div className="space-y-1 p-1">
                             {option.children.length === 0 ? (
-                              <p className="text-custom-text-200 text-center px-1 py-1.5">
-                                No {option.label} found
-                              </p> //if no children found, show this message.
+                              <p className="text-custom-text-200 text-center px-1 py-1.5">No {option.label} found</p> //if no children found, show this message.
                             ) : (
                               option.children.map((child) => {
                                 if (child.element) return child.element;
@@ -144,9 +140,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                                     >
                                       {child.label}{" "}
                                       <CheckIcon
-                                        className={`h-3.5 w-3.5 opacity-0 ${
-                                          child.selected ? "opacity-100" : ""
-                                        }`}
+                                        className={`h-3.5 w-3.5 opacity-0 ${child.selected ? "opacity-100" : ""}`}
                                       />
                                     </button>
                                   );

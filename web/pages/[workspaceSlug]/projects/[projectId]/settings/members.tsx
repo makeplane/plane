@@ -21,8 +21,8 @@ import ConfirmProjectMemberRemove from "components/project/confirm-project-membe
 import SendProjectInvitationModal from "components/project/send-project-invitation-modal";
 import { MemberSelect, SettingsSidebar } from "components/project";
 // ui
-import { Button } from "@plane/ui";
-import { CustomMenu, CustomSearchSelect, CustomSelect, Icon, Loader } from "components/ui";
+import { Button, Loader } from "@plane/ui";
+import { CustomMenu, CustomSearchSelect, CustomSelect, Icon } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";

@@ -16,8 +16,9 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import { IssueDetailsSidebar, IssueMainContent } from "components/issues";
 // ui
-import { Icon, Loader } from "components/ui";
+import { Icon } from "components/ui";
 import { Breadcrumbs } from "components/breadcrumbs";
+import { Loader } from "@plane/ui";
 // types
 import { IIssue } from "types";
 import type { NextPage } from "next";

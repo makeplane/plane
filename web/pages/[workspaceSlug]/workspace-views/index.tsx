@@ -16,8 +16,8 @@ import { WorkspaceIssuesViewOptions } from "components/issues/workspace-views/wo
 import { CreateUpdateWorkspaceViewModal } from "components/workspace/views/modal";
 import { DeleteWorkspaceViewModal } from "components/workspace/views/delete-workspace-view-modal";
 // ui
-import { EmptyState, Loader } from "components/ui";
-import { Button, Input } from "@plane/ui";
+import { EmptyState } from "components/ui";
+import { Button, Input, Loader } from "@plane/ui";
 // icons
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { PlusIcon } from "lucide-react";

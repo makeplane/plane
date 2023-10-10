@@ -18,8 +18,8 @@ import ConfirmWorkspaceMemberRemove from "components/workspace/confirm-workspace
 import SendWorkspaceInvitationModal from "components/workspace/send-workspace-invitation-modal";
 import { SettingsSidebar } from "components/project";
 // ui
-import { Button } from "@plane/ui";
-import { CustomMenu, CustomSelect, Icon, Loader } from "components/ui";
+import { Button, Loader } from "@plane/ui";
+import { CustomMenu, CustomSelect, Icon } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { XMarkIcon } from "components/icons";

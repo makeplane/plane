@@ -6,7 +6,7 @@ import useSWR, { mutate } from "swr";
 // services
 import appinstallationsService from "services/app_installation.service";
 // ui
-import { Loader } from "components/ui";
+import { Loader } from "@plane/ui";
 // hooks
 import useToast from "hooks/use-toast";
 import useIntegrationPopup from "hooks/use-integration-popup";

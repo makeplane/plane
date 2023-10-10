@@ -20,8 +20,8 @@ import emptyView from "public/empty-state/view.svg";
 // fetching keys
 import { PROJECT_DETAILS, VIEWS_LIST } from "constants/fetch-keys";
 // components
-import { Button } from "@plane/ui";
-import { Loader, EmptyState } from "components/ui";
+import { Button, Loader } from "@plane/ui";
+import { EmptyState } from "components/ui";
 import { DeleteViewModal, CreateUpdateViewModal, SingleViewItem } from "components/views";
 // types
 import { IView } from "types";

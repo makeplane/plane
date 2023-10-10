@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CyclesBoard, CyclesList } from "components/cycles";
-import { Loader } from "components/ui";
+import { Loader } from "@plane/ui";
 
 export interface ICyclesView {
   filter: "all" | "current" | "upcoming" | "draft" | "completed" | "incomplete";

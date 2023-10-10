@@ -9,8 +9,7 @@ import { UseFormSetValue } from "react-hook-form";
 // services
 import GithubIntegrationService from "services/github.service";
 // ui
-import { Loader } from "components/ui";
-import { Button } from "@plane/ui";
+import { Button, Loader } from "@plane/ui";
 // types
 import { IUserDetails, TFormValues, TIntegrationSteps } from "components/integration";
 // fetch-keys

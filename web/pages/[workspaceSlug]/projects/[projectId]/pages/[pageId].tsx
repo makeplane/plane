@@ -28,8 +28,8 @@ import { CreateLabelModal } from "components/labels";
 import { CreateBlock } from "components/pages/create-block";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-import { CustomSearchSelect, EmptyState, Loader, ToggleSwitch, Tooltip } from "components/ui";
-import { TextArea } from "@plane/ui";
+import { CustomSearchSelect, EmptyState, ToggleSwitch, Tooltip } from "components/ui";
+import { TextArea, Loader } from "@plane/ui";
 // images
 import emptyPage from "public/empty-state/page.svg";
 // icons

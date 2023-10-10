@@ -11,7 +11,8 @@ import useDebounce from "hooks/use-debounce";
 // components
 import { LayerDiagonalIcon } from "components/icons";
 // ui
-import { Loader, ToggleSwitch, Tooltip } from "components/ui";
+import { ToggleSwitch, Tooltip } from "components/ui";
+import { Loader } from "@plane/ui";
 // icons
 import { LaunchOutlined } from "@mui/icons-material";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
@@ -69,12 +70,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
 
   return (
     <>
-      <Transition.Root
-        show={isOpen}
-        as={React.Fragment}
-        afterLeave={() => setSearchTerm("")}
-        appear
-      >
+      <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setSearchTerm("")} appear>
         <Dialog as="div" className="relative z-20" onClose={handleClose}>
           <Transition.Child
             as={React.Fragment}
@@ -154,21 +150,15 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                       </h5>
                     )}
 
-                    {!isSearching &&
-                      issues.length === 0 &&
-                      searchTerm !== "" &&
-                      debouncedSearchTerm !== "" && (
-                        <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
-                          <LayerDiagonalIcon height="52" width="52" />
-                          <h3 className="text-custom-text-200">
-                            No issues found. Create a new issue with{" "}
-                            <pre className="inline rounded bg-custom-background-80 px-2 py-1 text-sm">
-                              C
-                            </pre>
-                            .
-                          </h3>
-                        </div>
-                      )}
+                    {!isSearching && issues.length === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && (
+                      <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
+                        <LayerDiagonalIcon height="52" width="52" />
+                        <h3 className="text-custom-text-200">
+                          No issues found. Create a new issue with{" "}
+                          <pre className="inline rounded bg-custom-background-80 px-2 py-1 text-sm">C</pre>.
+                        </h3>
+                      </div>
+                    )}
 
                     {isSearching ? (
                       <Loader className="space-y-3 p-3">

@@ -7,10 +7,9 @@ import { Control, UseFormSetValue } from "react-hook-form";
 // hooks
 import useProjects from "hooks/use-projects";
 // components
-import { Button } from "@plane/ui";
 import { AnalyticsGraph, AnalyticsSelectBar, AnalyticsSidebar, AnalyticsTable } from "components/analytics";
 // ui
-import { Loader } from "components/ui";
+import { Button, Loader } from "@plane/ui";
 // helpers
 import { convertResponseToBarGraphData } from "helpers/analytics.helper";
 // types

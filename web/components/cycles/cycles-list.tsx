@@ -1,6 +1,6 @@
 import { FC } from "react";
 // ui
-import { Loader } from "components/ui";
+import { Loader } from "@plane/ui";
 // types
 import { ICycle } from "types";
 import { CyclesListItem } from "./cycles-list-item";

@@ -17,7 +17,7 @@ import useUserAuth from "hooks/use-user-auth";
 import { IssueDescriptionForm, IssueDetailsSidebar, IssueReaction } from "components/issues";
 import { InboxIssueActivity } from "components/inbox";
 // ui
-import { Loader } from "components/ui";
+import { Loader } from "@plane/ui";
 // icons
 import {
   ArrowTopRightOnSquareIcon,
@@ -117,16 +117,7 @@ export const InboxMainContent: React.FC = () => {
           mutate(PROJECT_ISSUES_ACTIVITY(issueDetails.id));
         });
     },
-    [
-      workspaceSlug,
-      inboxIssueId,
-      projectId,
-      mutateIssueDetails,
-      inboxId,
-      user,
-      issueDetails,
-      params,
-    ]
+    [workspaceSlug, inboxIssueId, projectId, mutateIssueDetails, inboxId, user, issueDetails, params]
   );
 
   const onKeyDown = useCallback(
@@ -178,8 +169,7 @@ export const InboxMainContent: React.FC = () => {
 
     reset({
       ...issueDetails,
-      assignees_list:
-        issueDetails.assignees_list ?? (issueDetails.assignee_details ?? []).map((user) => user.id),
+      assignees_list: issueDetails.assignees_list ?? (issueDetails.assignee_details ?? []).map((user) => user.id),
       labels_list: issueDetails.labels_list ?? issueDetails.labels,
     });
   }, [issueDetails, reset, inboxIssueId]);
@@ -194,13 +184,11 @@ export const InboxMainContent: React.FC = () => {
             <InboxIcon height={60} width={60} />
             {inboxIssues && inboxIssues.length > 0 ? (
               <span className="text-custom-text-200">
-                {inboxIssues?.length} issues found. Select an issue from the sidebar to view its
-                details.
+                {inboxIssues?.length} issues found. Select an issue from the sidebar to view its details.
               </span>
             ) : (
               <span className="text-custom-text-200">
-                No issues found. Use{" "}
-                <pre className="inline rounded bg-custom-background-80 px-2 py-1">C</pre> shortcut
+                No issues found. Use <pre className="inline rounded bg-custom-background-80 px-2 py-1">C</pre> shortcut
                 to create a new issue
               </span>
             )}
@@ -247,18 +235,12 @@ export const InboxMainContent: React.FC = () => {
                   {new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date() ? (
                     <p>
                       This issue was snoozed till{" "}
-                      {renderShortDateWithYearFormat(
-                        issueDetails.issue_inbox[0].snoozed_till ?? ""
-                      )}
-                      .
+                      {renderShortDateWithYearFormat(issueDetails.issue_inbox[0].snoozed_till ?? "")}.
                     </p>
                   ) : (
                     <p>
                       This issue has been snoozed till{" "}
-                      {renderShortDateWithYearFormat(
-                        issueDetails.issue_inbox[0].snoozed_till ?? ""
-                      )}
-                      .
+                      {renderShortDateWithYearFormat(issueDetails.issue_inbox[0].snoozed_till ?? "")}.
                     </p>
                   )}
                 </>
@@ -293,17 +275,11 @@ export const InboxMainContent: React.FC = () => {
                   description_html: issueDetails.description_html,
                 }}
                 handleFormSubmit={submitChanges}
-                isAllowed={
-                  memberRole.isMember || memberRole.isOwner || user?.id === issueDetails.created_by
-                }
+                isAllowed={memberRole.isMember || memberRole.isOwner || user?.id === issueDetails.created_by}
               />
             </div>
 
-            <IssueReaction
-              projectId={projectId}
-              workspaceSlug={workspaceSlug}
-              issueId={issueDetails.id}
-            />
+            <IssueReaction projectId={projectId} workspaceSlug={workspaceSlug} issueId={issueDetails.id} />
 
             <InboxIssueActivity issueDetails={issueDetails} />
           </div>

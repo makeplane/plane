@@ -18,8 +18,8 @@ import { SettingsSidebar } from "components/project";
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // ui
-import { Button } from "@plane/ui";
-import { EmptyState, Loader } from "components/ui";
+import { Button, Loader } from "@plane/ui";
+import { EmptyState } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";

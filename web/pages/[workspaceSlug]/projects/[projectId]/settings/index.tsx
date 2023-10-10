@@ -11,8 +11,8 @@ import { DeleteProjectModal, ProjectDetailsForm, ProjectDetailsFormLoader, Setti
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // components
-import { Button } from "@plane/ui";
-import { Loader, Icon } from "components/ui";
+import { Button, Loader } from "@plane/ui";
+import { Icon } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // helpers
 import { truncateText } from "helpers/string.helper";

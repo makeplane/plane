@@ -14,8 +14,8 @@ import modulesService from "services/modules.service";
 // components
 import { CreateUpdateModuleModal, ModulesListGanttChartView, SingleModuleCard } from "components/modules";
 // ui
-import { Button } from "@plane/ui";
-import { EmptyState, Icon, Loader, Tooltip } from "components/ui";
+import { Button, Loader } from "@plane/ui";
+import { EmptyState, Icon, Tooltip } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";

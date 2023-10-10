@@ -13,8 +13,7 @@ import IntegrationService from "services/integration.service";
 // components
 import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "components/integration";
 // ui
-import { Button } from "@plane/ui";
-import { Loader } from "components/ui";
+import { Button, Loader } from "@plane/ui";
 // icons
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 // types
