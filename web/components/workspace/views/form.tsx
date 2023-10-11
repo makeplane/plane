@@ -5,8 +5,6 @@ import { Controller, useForm } from "react-hook-form";
 
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
-import useWorkspaceMembers from "hooks/use-workspace-members";
 // components
 import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "components/issues";
 // ui
@@ -48,10 +46,6 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
     defaultValues,
   });
 
-  const { workspaceMembers } = useWorkspaceMembers(workspaceSlug?.toString() ?? "");
-
-  const memberOptions = workspaceMembers?.map((m) => m.member);
-
   const handleCreateUpdateView = async (formData: Partial<IWorkspaceView>) => {
     await handleFormSubmit(formData);
 
@@ -75,12 +69,6 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
 
     setValue("query_data.filters", {});
   };
-
-  useEffect(() => {
-    if (!data) return;
-
-    reset({ ...data });
-  }, [data, reset]);
 
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateView)}>
@@ -156,7 +144,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
                 handleClearAllFilters={clearAllFilters}
                 handleRemoveFilter={() => {}}
                 labels={workspaceStore.workspaceLabels ?? undefined}
-                members={memberOptions}
+                members={workspaceStore.workspaceMembers?.map((m) => m.member) ?? undefined}
                 states={undefined}
               />
             </div>

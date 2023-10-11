@@ -1,110 +1,77 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// headless ui
+import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import viewsService from "services/views.service";
+
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
 // components
-import { ViewForm } from "components/views";
+import { ProjectViewForm } from "components/views";
 // types
-import { ICurrentUserResponse, IView } from "types";
-// fetch-keys
-import { VIEWS_LIST } from "constants/fetch-keys";
+import { IProjectView } from "types";
 
 type Props = {
+  data?: IProjectView | null;
   isOpen: boolean;
-  handleClose: () => void;
-  data?: IView | null;
-  preLoadedData?: Partial<IView> | null;
-  user: ICurrentUserResponse | undefined;
+  onClose: () => void;
+  preLoadedData?: Partial<IProjectView> | null;
 };
 
-export const CreateUpdateViewModal: React.FC<Props> = ({
-  isOpen,
-  handleClose,
-  data,
-  preLoadedData,
-  user,
-}) => {
+export const CreateUpdateProjectViewModal: React.FC<Props> = observer((props) => {
+  const { data, isOpen, onClose, preLoadedData } = props;
+
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  const { projectViews: projectViewsStore } = useMobxStore();
+
   const { setToastAlert } = useToast();
 
-  const onClose = () => {
-    handleClose();
+  const handleClose = () => {
+    onClose();
   };
 
-  const createView = async (payload: IView) => {
-    payload = {
-      ...payload,
-      query_data: payload.query,
-    };
-    await viewsService
-      .createView(workspaceSlug as string, projectId as string, payload, user)
-      .then(() => {
-        mutate(VIEWS_LIST(projectId as string));
-        handleClose();
-
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "View created successfully.",
-        });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "View could not be created. Please try again.",
-        });
-      });
-  };
-
-  const updateView = async (payload: IView) => {
-    const payloadData = {
-      ...payload,
-      query_data: payload.query,
-    };
-    await viewsService
-      .updateView(workspaceSlug as string, projectId as string, data?.id ?? "", payloadData, user)
-      .then((res) => {
-        mutate<IView[]>(
-          VIEWS_LIST(projectId as string),
-          (prevData) =>
-            prevData?.map((p) => {
-              if (p.id === res.id) return { ...p, ...payloadData };
-
-              return p;
-            }),
-          false
-        );
-        onClose();
-
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "View updated successfully.",
-        });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "View could not be updated. Please try again.",
-        });
-      });
-  };
-
-  const handleFormSubmit = async (formData: IView) => {
+  const createView = async (formData: IProjectView) => {
     if (!workspaceSlug || !projectId) return;
 
+    const payload = {
+      ...formData,
+    };
+
+    await projectViewsStore
+      .createView(workspaceSlug.toString(), projectId.toString(), payload)
+      .then(() => handleClose())
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Something went wrong. Please try again.",
+        })
+      );
+  };
+
+  const updateView = async (formData: IProjectView) => {
+    if (!workspaceSlug || !projectId) return;
+
+    const payload = {
+      ...formData,
+    };
+
+    await projectViewsStore
+      .updateView(workspaceSlug.toString(), projectId.toString(), data?.id as string, payload)
+      .then(() => handleClose())
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Something went wrong. Please try again.",
+        })
+      );
+  };
+
+  const handleFormSubmit = async (formData: IProjectView) => {
     if (!data) await createView(formData);
     else await updateView(formData);
   };
@@ -136,11 +103,10 @@ export const CreateUpdateViewModal: React.FC<Props> = ({
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
-                <ViewForm
-                  handleFormSubmit={handleFormSubmit}
-                  handleClose={handleClose}
-                  status={data ? true : false}
+                <ProjectViewForm
                   data={data}
+                  handleClose={handleClose}
+                  handleFormSubmit={handleFormSubmit}
                   preLoadedData={preLoadedData}
                 />
               </Dialog.Panel>
@@ -150,4 +116,4 @@ export const CreateUpdateViewModal: React.FC<Props> = ({
       </Dialog>
     </Transition.Root>
   );
-};
+});

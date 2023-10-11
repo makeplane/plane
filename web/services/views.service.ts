@@ -1,7 +1,7 @@
 import APIService from "services/api.service";
 import trackEventServices from "services/track_event.service";
 // types
-import { IView } from "types/views";
+import { IProjectView } from "types/views";
 import { ICurrentUserResponse } from "types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
@@ -11,32 +11,10 @@ export class ViewService extends APIService {
     super(API_BASE_URL);
   }
 
-  async createView(
-    workspaceSlug: string,
-    projectId: string,
-    data: IView,
-    user: ICurrentUserResponse | undefined
-  ): Promise<any> {
+  async createView(workspaceSlug: string, projectId: string, data: Partial<IProjectView>, user: any): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/`, data)
       .then((response) => {
         trackEventServices.trackViewEvent(response?.data, "VIEW_CREATE", user);
-        return response?.data;
-      })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async updateView(
-    workspaceSlug: string,
-    projectId: string,
-    viewId: string,
-    data: IView,
-    user: ICurrentUserResponse | undefined
-  ): Promise<any> {
-    return this.put(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`, data)
-      .then((response) => {
-        trackEventServices.trackViewEvent(response?.data, "VIEW_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -48,8 +26,8 @@ export class ViewService extends APIService {
     workspaceSlug: string,
     projectId: string,
     viewId: string,
-    data: Partial<IView>,
-    user: ICurrentUserResponse | undefined
+    data: Partial<IProjectView>,
+    user: any
   ): Promise<any> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`, data)
       .then((response) => {
@@ -61,12 +39,7 @@ export class ViewService extends APIService {
       });
   }
 
-  async deleteView(
-    workspaceSlug: string,
-    projectId: string,
-    viewId: string,
-    user: ICurrentUserResponse | undefined
-  ): Promise<any> {
+  async deleteView(workspaceSlug: string, projectId: string, viewId: string, user: any): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`)
       .then((response) => {
         trackEventServices.trackViewEvent(response?.data, "VIEW_DELETE", user);
@@ -77,7 +50,7 @@ export class ViewService extends APIService {
       });
   }
 
-  async getViews(workspaceSlug: string, projectId: string): Promise<IView[]> {
+  async getViews(workspaceSlug: string, projectId: string): Promise<IProjectView[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -85,7 +58,7 @@ export class ViewService extends APIService {
       });
   }
 
-  async getViewDetails(workspaceSlug: string, projectId: string, viewId: string): Promise<IView> {
+  async getViewDetails(workspaceSlug: string, projectId: string, viewId: string): Promise<IProjectView> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`)
       .then((response) => response?.data)
       .catch((error) => {

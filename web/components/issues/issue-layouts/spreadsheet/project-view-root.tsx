@@ -11,7 +11,7 @@ import useProjectDetails from "hooks/use-project-details";
 import { SpreadsheetColumns, SpreadsheetIssues } from "components/core";
 import { IssuePeekOverview } from "components/issues";
 // ui
-import { CustomMenu, Spinner } from "components/ui";
+import { Spinner } from "components/ui";
 // icon
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
@@ -20,7 +20,7 @@ import { IIssueUnGroupedStructure } from "store/issue";
 // constants
 import { SPREADSHEET_COLUMN } from "constants/spreadsheet";
 
-export const ModuleSpreadsheetLayout: React.FC = observer(() => {
+export const ProjectViewSpreadsheetLayout: React.FC = observer(() => {
   const [expandedIssues, setExpandedIssues] = useState<string[]>([]);
 
   const router = useRouter();
@@ -107,33 +107,16 @@ export const ModuleSpreadsheetLayout: React.FC = observer(() => {
               className="relative group grid auto-rows-[minmax(44px,1fr)] hover:rounded-sm hover:bg-custom-background-80 border-b border-custom-border-200 w-full min-w-max"
               style={{ gridTemplateColumns }}
             >
-              {isAllowed && (
-                <CustomMenu
-                  className="sticky left-0 z-[1]"
-                  customButton={
-                    <button
-                      className="flex gap-1.5 items-center  pl-7 py-2.5 text-sm sticky left-0 z-[1] text-custom-text-200 bg-custom-background-100 group-hover:text-custom-text-100 group-hover:bg-custom-background-80 border-custom-border-200 w-full"
-                      type="button"
-                    >
-                      <PlusIcon className="h-4 w-4" />
-                      Add Issue
-                    </button>
-                  }
-                  position="left"
-                  optionsClassName="left-5 !w-36"
-                  noBorder
-                >
-                  <CustomMenu.MenuItem
-                    onClick={() => {
-                      const e = new KeyboardEvent("keydown", { key: "c" });
-                      document.dispatchEvent(e);
-                    }}
-                  >
-                    Create new
-                  </CustomMenu.MenuItem>
-                  {true && <CustomMenu.MenuItem onClick={() => {}}>Add an existing issue</CustomMenu.MenuItem>}
-                </CustomMenu>
-              )}
+              <button
+                className="flex gap-1.5 items-center  pl-7 py-2.5 text-sm sticky left-0 z-[1] text-custom-text-200 bg-custom-background-100 group-hover:text-custom-text-100 group-hover:bg-custom-background-80 border-custom-border-200 w-full"
+                onClick={() => {
+                  const e = new KeyboardEvent("keydown", { key: "c" });
+                  document.dispatchEvent(e);
+                }}
+              >
+                <PlusIcon className="h-4 w-4" />
+                Add Issue
+              </button>
             </div>
           </div>
         ) : (

@@ -3,11 +3,12 @@ import { enableStaticRendering } from "mobx-react-lite";
 // store imports
 import UserStore from "./user";
 import ThemeStore from "./theme";
-import ProjectPublishStore, { IProjectPublishStore } from "./project_publish";
 import IssueStore, { IIssueStore } from "./issue";
 import DraftIssuesStore from "./issue_draft";
 import WorkspaceStore, { IWorkspaceStore } from "./workspace";
+import WorkspaceFilterStore, { IWorkspaceFilterStore } from "./workspace_filters";
 import ProjectStore, { IProjectStore } from "./project";
+import ProjectPublishStore, { IProjectPublishStore } from "./project_publish";
 import ModuleStore, { IModuleStore } from "./modules";
 import ModuleIssueStore, { IModuleIssueStore } from "./module_issue";
 import ModuleFilterStore, { IModuleFilterStore } from "./module_filters";
@@ -16,14 +17,15 @@ import CycleStore, { ICycleStore } from "./cycles";
 import CycleIssueStore, { ICycleIssueStore } from "./cycle_issue";
 import CycleIssueFilterStore, { ICycleIssueFilterStore } from "./cycle_issue_filters";
 import CycleIssueKanBanViewStore, { ICycleIssueKanBanViewStore } from "./cycle_issue_kanban_view";
-import ViewStore, { IViewStore } from "./views";
+import ProjectViewsStore, { IProjectViewsStore } from "./project_views";
+import ProjectViewIssuesStore, { IProjectViewIssuesStore } from "./project_view_issues";
+import ProjectViewFiltersStore, { IProjectViewFiltersStore } from "./project_view_filters";
 import IssueFilterStore, { IIssueFilterStore } from "./issue_filters";
 import IssueViewDetailStore from "./issue_detail";
 import IssueKanBanViewStore from "./kanban_view";
 import CalendarStore, { ICalendarStore } from "./calendar";
 import GlobalViewsStore, { IGlobalViewsStore } from "./global_views";
 import GlobalViewIssuesStore, { IGlobalViewIssuesStore } from "./global_view_issues";
-import WorkspaceFilterStore, { IWorkspaceFilterStore } from "./workspace_filters";
 import GlobalViewFiltersStore, { IGlobalViewFiltersStore } from "./global_view_filters";
 
 enableStaticRendering(typeof window === "undefined");
@@ -49,7 +51,10 @@ export class RootStore {
   cycleIssueFilter: ICycleIssueFilterStore;
   cycleIssueKanBanView: ICycleIssueKanBanViewStore;
 
-  view: IViewStore;
+  projectViews: IProjectViewsStore;
+  projectViewIssues: IProjectViewIssuesStore;
+  projectViewFilters: IProjectViewFiltersStore;
+
   issueFilter: IIssueFilterStore;
   issueDetail: IssueViewDetailStore;
   issueKanBanView: IssueKanBanViewStore;
@@ -81,7 +86,10 @@ export class RootStore {
     this.cycleIssueFilter = new CycleIssueFilterStore(this);
     this.cycleIssueKanBanView = new CycleIssueKanBanViewStore(this);
 
-    this.view = new ViewStore(this);
+    this.projectViews = new ProjectViewsStore(this);
+    this.projectViewIssues = new ProjectViewIssuesStore(this);
+    this.projectViewFilters = new ProjectViewFiltersStore(this);
+
     this.issue = new IssueStore(this);
     this.issueFilter = new IssueFilterStore(this);
     this.issueDetail = new IssueViewDetailStore(this);
