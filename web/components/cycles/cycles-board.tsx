@@ -7,10 +7,12 @@ import { CyclesBoardCard } from "components/cycles";
 export interface ICyclesBoard {
   cycles: ICycle[];
   filter: string;
+  workspaceSlug: string;
+  projectId: string;
 }
 
 export const CyclesBoard: FC<ICyclesBoard> = (props) => {
-  const { cycles, filter } = props;
+  const { cycles, filter, workspaceSlug, projectId } = props;
 
   return (
     <div className="grid grid-cols-1 gap-9 lg:grid-cols-2 xl:grid-cols-3">
