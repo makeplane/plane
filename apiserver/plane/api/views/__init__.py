@@ -140,9 +140,10 @@ from .importer import (
 
 from .page import (
     PageViewSet,
-    PageBlockViewSet,
     PageFavoriteViewSet,
-    CreateIssueFromPageBlockEndpoint,
+    PageTransactionEndpoint,
+    SubPagesEndpoint,
+    CreateIssueFromBlockEndpoint,
 )
 
 from .search import GlobalSearchEndpoint, IssueSearchEndpoint

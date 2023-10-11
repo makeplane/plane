@@ -57,7 +57,7 @@ class PageTransaction(ProjectBaseModel):
         ("forward_link", "Forward Link"),
         ("mention", "Mention"),
     )
-    transaction = models.CharField(max_length=255)
+    transaction = models.UUIDField(null=True)
     page = models.ForeignKey(
         Page, related_name="page_relation", on_delete=models.CASCADE
     )
@@ -70,6 +70,7 @@ class PageTransaction(ProjectBaseModel):
     )
 
     class Meta:
+        unique_together = ["page", "transaction"]
         verbose_name = "Page Transaction"
         verbose_name_plural = "Page Transactions"
         db_table = "page_transactions"

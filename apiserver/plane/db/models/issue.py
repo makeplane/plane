@@ -114,22 +114,22 @@ class Issue(ProjectBaseModel):
                     self.state = default_state
             except ImportError:
                 pass
-        else:
-            try:
-                from plane.db.models import State, PageBlock
+        # else:
+        #     try:
+        #         from plane.db.models import State, PageBlock
 
-                # Check if the current issue state and completed state id are same
-                if self.state.group == "completed":
-                    self.completed_at = timezone.now()
-                    # check if there are any page blocks
-                    PageBlock.objects.filter(issue_id=self.id).filter().update(
-                        completed_at=timezone.now()
-                    )
-                else:
-                    PageBlock.objects.filter(issue_id=self.id).filter().update(
-                        completed_at=None
-                    )
-                    self.completed_at = None
+        #         # Check if the current issue state and completed state id are same
+        #         if self.state.group == "completed":
+        #             self.completed_at = timezone.now()
+        #             # check if there are any page blocks
+        #             PageBlock.objects.filter(issue_id=self.id).filter().update(
+        #                 completed_at=timezone.now()
+        #             )
+        #         else:
+        #             PageBlock.objects.filter(issue_id=self.id).filter().update(
+        #                 completed_at=None
+        #             )
+        #             self.completed_at = None
 
             except ImportError:
                 pass
