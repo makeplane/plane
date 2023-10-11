@@ -21,7 +21,8 @@ import {
 } from "components/labels";
 import { SettingsSidebar } from "components/project";
 // ui
-import { EmptyState, Loader, PrimaryButton } from "components/ui";
+import { Button, Loader } from "@plane/ui";
+import { EmptyState } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -117,9 +118,9 @@ const LabelsSettings: NextPage = () => {
             <div className="flex items-center justify-between pt-2 pb-3.5 border-b border-custom-border-200">
               <h3 className="text-xl font-medium">Labels</h3>
 
-              <PrimaryButton onClick={newLabel} size="sm" className="flex items-center justify-center">
+              <Button variant="primary" onClick={newLabel} size="sm">
                 Add label
-              </PrimaryButton>
+              </Button>
             </div>
             <div className="space-y-3 py-6 h-full w-full">
               {labelForm && (

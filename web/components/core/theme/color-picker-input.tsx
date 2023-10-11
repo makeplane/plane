@@ -2,6 +2,8 @@ import React from "react";
 
 // react-form
 import {
+  Control,
+  Controller,
   FieldError,
   FieldErrorsImpl,
   Merge,
@@ -13,7 +15,7 @@ import {
 import { ColorResult, SketchPicker } from "react-color";
 // component
 import { Popover, Transition } from "@headlessui/react";
-import { Input } from "components/ui";
+import { Input } from "@plane/ui";
 // icons
 import { ColorPickerIcon } from "components/icons";
 // types
@@ -24,6 +26,7 @@ type Props = {
   position?: "left" | "right";
   watch: UseFormWatch<any>;
   setValue: UseFormSetValue<any>;
+  control: Control<ICustomTheme, any>;
   error: FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined;
   register: UseFormRegister<any>;
 };
@@ -34,6 +37,7 @@ export const ColorPickerInput: React.FC<Props> = ({
   watch,
   setValue,
   error,
+  control,
   register,
 }) => {
   const handleColorChange = (newColor: ColorResult) => {
@@ -60,22 +64,28 @@ export const ColorPickerInput: React.FC<Props> = ({
 
   return (
     <div className="relative">
-      <Input
-        id={name}
+      <Controller
+        control={control}
         name={name}
-        type="name"
-        placeholder="#FFFFFF"
-        autoComplete="off"
-        error={error}
-        value={watch(name)}
-        register={register}
-        validations={{
+        rules={{
           required: `${getColorText(name)} color is required`,
           pattern: {
             value: /^#(?:[0-9a-fA-F]{3}){1,2}$/g,
             message: `${getColorText(name)} color should be hex format`,
           },
         }}
+        render={({ field: { onChange, ref } }) => (
+          <Input
+            id={name}
+            name={name}
+            type="text"
+            value={watch("name")}
+            onChange={onChange}
+            ref={ref}
+            hasError={Boolean(error)}
+            placeholder="#FFFFFF"
+          />
+        )}
       />
       <div className="absolute right-4 top-2.5">
         <Popover className="relative grid place-items-center">
@@ -95,11 +105,7 @@ export const ColorPickerInput: React.FC<Props> = ({
                     }}
                   />
                 ) : (
-                  <ColorPickerIcon
-                    height={14}
-                    width={14}
-                    className="fill-current text-custom-text-100"
-                  />
+                  <ColorPickerIcon height={14} width={14} className="fill-current text-custom-text-100" />
                 )}
               </Popover.Button>
 

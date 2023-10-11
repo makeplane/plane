@@ -16,7 +16,8 @@ import { WORKSPACE_MEMBERS_WITH_EMAIL } from "constants/fetch-keys";
 import workspaceService from "services/workspace.service";
 
 // components
-import { ToggleSwitch, Input, CustomSelect, CustomSearchSelect, Avatar } from "components/ui";
+import { CustomSelect, CustomSearchSelect, Avatar } from "components/ui";
+import { Input, ToggleSwitch } from "@plane/ui";
 
 import { IJiraImporterForm } from "types";
 
@@ -38,9 +39,7 @@ export const JiraImportUsers: FC = () => {
 
   const { data: members } = useSWR(
     workspaceSlug ? WORKSPACE_MEMBERS_WITH_EMAIL(workspaceSlug?.toString() ?? "") : null,
-    workspaceSlug
-      ? () => workspaceService.workspaceMembersWithEmail(workspaceSlug?.toString() ?? "")
-      : null
+    workspaceSlug ? () => workspaceService.workspaceMembersWithEmail(workspaceSlug?.toString() ?? "") : null
   );
 
   const options = members?.map((member) => ({
@@ -59,17 +58,13 @@ export const JiraImportUsers: FC = () => {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Users</h3>
-          <p className="text-sm text-custom-text-200">
-            Update, invite or choose not to invite assignee
-          </p>
+          <p className="text-sm text-custom-text-200">Update, invite or choose not to invite assignee</p>
         </div>
         <div className="col-span-1">
           <Controller
             control={control}
             name="data.invite_users"
-            render={({ field: { value, onChange } }) => (
-              <ToggleSwitch onChange={onChange} value={value} />
-            )}
+            render={({ field: { value, onChange } }) => <ToggleSwitch onChange={onChange} value={value} />}
           />
         </div>
       </div>
@@ -97,11 +92,7 @@ export const JiraImportUsers: FC = () => {
                         value={value}
                         onChange={onChange}
                         width="w-full"
-                        label={
-                          <span className="capitalize">
-                            {Boolean(value) ? value : ("Ignore" as any)}
-                          </span>
-                        }
+                        label={<span className="capitalize">{Boolean(value) ? value : ("Ignore" as any)}</span>}
                       >
                         <CustomSelect.Option value="invite">Invite by email</CustomSelect.Option>
                         <CustomSelect.Option value="map">Map to existing</CustomSelect.Option>
@@ -112,15 +103,24 @@ export const JiraImportUsers: FC = () => {
                 </div>
                 <div className="col-span-1">
                   {watch(`data.users.${index}.import`) === "invite" && (
-                    <Input
-                      id={`data.users.${index}.email`}
+                    <Controller
+                      control={control}
                       name={`data.users.${index}.email`}
-                      type="text"
-                      register={register}
-                      validations={{
+                      rules={{
                         required: "This field is required",
                       }}
-                      error={errors?.data?.users?.[index]?.email}
+                      render={({ field: { value, onChange, ref } }) => (
+                        <Input
+                          id={`data.users.${index}.email`}
+                          name={`data.users.${index}.email`}
+                          type="text"
+                          value={value}
+                          onChange={onChange}
+                          ref={ref}
+                          hasError={Boolean(errors.data?.users?.[index]?.email)}
+                          className="w-full"
+                        />
+                      )}
                     />
                   )}
                   {watch(`data.users.${index}.import`) === "map" && (

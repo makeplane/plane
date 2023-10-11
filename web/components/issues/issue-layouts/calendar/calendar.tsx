@@ -5,7 +5,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CalendarHeader, CalendarWeekDays, CalendarWeekHeader } from "components/issues";
 // ui
-import { Spinner } from "components/ui";
+import { Spinner } from "@plane/ui";
 // types
 import { ICalendarWeek } from "./types";
 import { IIssueGroupedStructure } from "store/issue";

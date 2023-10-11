@@ -3,14 +3,7 @@ import React from "react";
 
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import {
-  CheckIcon,
-  CubeIcon,
-  ShareIcon,
-  StarIcon,
-  UserIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { CheckIcon, CubeIcon, ShareIcon, StarIcon, UserIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // swr
 // services
 import workspaceService from "services/workspace.service";
@@ -19,7 +12,7 @@ import useUser from "hooks/use-user";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // ui
-import { Spinner } from "components/ui";
+import { Spinner } from "@plane/ui";
 // icons
 import { EmptySpace, EmptySpaceItem } from "components/ui/empty-space";
 // types
@@ -77,11 +70,7 @@ const WorkspaceInvitation: NextPage = () => {
                       title={`You are already a member of ${invitationDetail.workspace.name}`}
                       description="Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
                     >
-                      <EmptySpaceItem
-                        Icon={CubeIcon}
-                        title="Continue to Dashboard"
-                        action={() => router.push("/")}
-                      />
+                      <EmptySpaceItem Icon={CubeIcon} title="Continue to Dashboard" action={() => router.push("/")} />
                     </EmptySpace>
                   </>
                 ) : (

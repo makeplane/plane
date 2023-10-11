@@ -5,7 +5,8 @@ import { useForm, Controller } from "react-hook-form";
 // components
 import { TipTapEditor } from "components/tiptap";
 // ui
-import { Icon, SecondaryButton, Tooltip } from "components/ui";
+import { Icon, Tooltip } from "components/ui";
+import { Button } from "@plane/ui";
 // types
 import type { IIssueComment } from "types";
 
@@ -33,11 +34,7 @@ const commentAccess = [
   },
 ];
 
-export const AddComment: React.FC<Props> = ({
-  disabled = false,
-  onSubmit,
-  showAccessSpecifier = false,
-}) => {
+export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAccessSpecifier = false }) => {
   const editorRef = React.useRef<any>(null);
 
   const router = useRouter();
@@ -83,9 +80,7 @@ export const AddComment: React.FC<Props> = ({
                             <Icon
                               iconName={access.icon}
                               className={`w-4 h-4 -mt-1 ${
-                                value === access.key
-                                  ? "!text-custom-text-100"
-                                  : "!text-custom-text-400"
+                                value === access.key ? "!text-custom-text-100" : "!text-custom-text-400"
                               }`}
                             />
                           </button>
@@ -112,9 +107,9 @@ export const AddComment: React.FC<Props> = ({
             />
           </div>
 
-          <SecondaryButton type="submit" disabled={isSubmitting || disabled} className="mt-2">
+          <Button variant="neutral-primary" type="submit" disabled={isSubmitting || disabled}>
             {isSubmitting ? "Adding..." : "Comment"}
-          </SecondaryButton>
+          </Button>
         </div>
       </form>
     </div>

@@ -10,7 +10,8 @@ import useEstimateOption from "hooks/use-estimate-option";
 // components
 import { MyIssuesSelectFilters } from "components/issues";
 // ui
-import { CustomMenu, ToggleSwitch, Tooltip } from "components/ui";
+import { CustomMenu, Tooltip } from "components/ui";
+import { ToggleSwitch } from "@plane/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { FormatListBulletedOutlined, GridViewOutlined } from "@mui/icons-material";

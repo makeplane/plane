@@ -12,7 +12,8 @@ import useUserAuth from "hooks/use-user-auth";
 // components
 import { CreateUpdatePageModal, DeletePageModal, SinglePageDetailedItem, SinglePageListItem } from "components/pages";
 // ui
-import { EmptyState, Loader } from "components/ui";
+import { EmptyState } from "components/ui";
+import { Loader } from "@plane/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // images

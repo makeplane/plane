@@ -11,7 +11,8 @@ import useProjectDetails from "hooks/use-project-details";
 import { SpreadsheetColumns, SpreadsheetIssues } from "components/core";
 import { IssuePeekOverview } from "components/issues";
 // ui
-import { CustomMenu, Spinner } from "components/ui";
+import { CustomMenu } from "components/ui";
+import { Spinner } from "@plane/ui";
 // icon
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types

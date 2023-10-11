@@ -11,7 +11,8 @@ import useUserAuth from "hooks/use-user-auth";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // ui
-import { Icon, PrimaryButton } from "components/ui";
+import { Button } from "@plane/ui";
+import { Icon } from "components/ui";
 import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -53,16 +54,16 @@ const ProjectsPage: NextPage = () => {
             />
           </div>
 
-          <PrimaryButton
-            className="flex items-center gap-2 flex-shrink-0"
+          <Button
+            variant="primary"
+            prependIcon={<PlusIcon />}
             onClick={() => {
               const e = new KeyboardEvent("keydown", { key: "p" });
               document.dispatchEvent(e);
             }}
           >
-            <PlusIcon className="h-4 w-4" />
             Add Project
-          </PrimaryButton>
+          </Button>
         </div>
       }
     >

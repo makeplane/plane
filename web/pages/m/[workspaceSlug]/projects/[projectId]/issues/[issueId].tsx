@@ -24,7 +24,7 @@ import useProjectMembers from "hooks/use-project-members";
 import WebViewLayout from "layouts/web-view-layout";
 
 // ui
-import { Spinner } from "components/ui";
+import { Spinner } from "@plane/ui";
 
 // components
 import {

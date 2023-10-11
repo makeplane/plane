@@ -11,7 +11,7 @@ import IntegrationService from "services/integration.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { DangerButton, Input, SecondaryButton } from "components/ui";
+import { Button, Input } from "@plane/ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
@@ -110,21 +110,30 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, 
                       To confirm, type <span className="font-medium text-custom-text-100">delete import</span> below:
                     </p>
                     <Input
+                      id="typeDelete"
                       type="text"
                       name="typeDelete"
-                      className="mt-2"
+                      value=""
                       onChange={(e) => {
                         if (e.target.value === "delete import") setConfirmDeleteImport(true);
                         else setConfirmDeleteImport(false);
                       }}
                       placeholder="Enter 'delete import'"
+                      className="mt-2 w-full"
                     />
                   </div>
                   <div className="flex justify-end gap-2">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <DangerButton onClick={handleDeletion} disabled={!confirmDeleteImport} loading={deleteLoading}>
+                    <Button variant="neutral-primary" onClick={handleClose}>
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="danger"
+                      onClick={handleDeletion}
+                      disabled={!confirmDeleteImport}
+                      loading={deleteLoading}
+                    >
                       {deleteLoading ? "Deleting..." : "Delete Project"}
-                    </DangerButton>
+                    </Button>
                   </div>
                 </div>
               </Dialog.Panel>

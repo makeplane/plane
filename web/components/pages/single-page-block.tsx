@@ -21,7 +21,8 @@ import { GptAssistantModal } from "components/core";
 import { CreateUpdateBlockInline } from "components/pages";
 import { TipTapEditor } from "components/tiptap";
 // ui
-import { CustomMenu, TextArea } from "components/ui";
+import { CustomMenu } from "components/ui";
+import { TextArea } from "@plane/ui";
 // icons
 import { LayerDiagonalIcon } from "components/icons";
 import { ArrowPathIcon, LinkIcon } from "@heroicons/react/20/solid";
@@ -63,7 +64,14 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
 
   const { setToastAlert } = useToast();
 
-  const { handleSubmit, watch, reset, setValue, register } = useForm<IPageBlock>({
+  const {
+    handleSubmit,
+    watch,
+    reset,
+    setValue,
+    register,
+    formState: { errors, isSubmitting },
+  } = useForm<IPageBlock>({
     defaultValues: {
       name: "",
       description: {},
@@ -414,10 +422,11 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
                       </div>
                     )}
                     <TextArea
+                      id="blockName"
                       name="blockName"
                       value={block.name}
-                      className="min-h-[20px] block w-full resize-none overflow-hidden border-none bg-transparent text-sm text-custom-text-100"
-                      noPadding
+                      placeholder="Title"
+                      className="min-h-[20px] block w-full resize-none overflow-hidden border-none bg-transparent text-sm text-custom-text-100 !p-0"
                     />
                   </div>
 

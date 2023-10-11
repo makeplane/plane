@@ -7,7 +7,8 @@ import useSWR, { mutate } from "swr";
 // services
 import modulesService from "services/modules.service";
 // ui
-import { Spinner, CustomSelect, Tooltip } from "components/ui";
+import { CustomSelect, Tooltip } from "components/ui";
+import { Spinner } from "@plane/ui";
 // helper
 import { truncateText } from "helpers/string.helper";
 // types
@@ -21,19 +22,13 @@ type Props = {
   disabled?: boolean;
 };
 
-export const SidebarModuleSelect: React.FC<Props> = ({
-  issueDetail,
-  handleModuleChange,
-  disabled = false,
-}) => {
+export const SidebarModuleSelect: React.FC<Props> = ({ issueDetail, handleModuleChange, disabled = false }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
   const { data: modules } = useSWR(
     workspaceSlug && projectId ? MODULE_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => modulesService.getModules(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => modulesService.getModules(workspaceSlug as string, projectId as string) : null
   );
 
   const removeIssueFromModule = (bridgeId: string, moduleId: string) => {
@@ -59,9 +54,7 @@ export const SidebarModuleSelect: React.FC<Props> = ({
         <div>
           <Tooltip
             position="left"
-            tooltipContent={`${
-              modules?.find((m) => m.id === issueModule?.module)?.name ?? "No module"
-            }`}
+            tooltipContent={`${modules?.find((m) => m.id === issueModule?.module)?.name ?? "No module"}`}
           >
             <button
               type="button"
@@ -69,11 +62,7 @@ export const SidebarModuleSelect: React.FC<Props> = ({
                 disabled ? "cursor-not-allowed" : ""
               }`}
             >
-              <span
-                className={`truncate ${
-                  issueModule ? "text-custom-text-100" : "text-custom-text-200"
-                }`}
-              >
+              <span className={`truncate ${issueModule ? "text-custom-text-100" : "text-custom-text-200"}`}>
                 {modules?.find((m) => m.id === issueModule?.module)?.name ?? "No module"}
               </span>
             </button>

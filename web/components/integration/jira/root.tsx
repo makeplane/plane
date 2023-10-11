@@ -22,7 +22,7 @@ import jiraImporterService from "services/jira.service";
 import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
 
 // components
-import { PrimaryButton, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 import {
   JiraGetImportDetail,
   JiraProjectDetail,
@@ -178,7 +178,8 @@ export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
 
               <div className="-mx-4 mt-4 flex justify-end gap-4 border-t border-custom-border-200 p-4 pb-0">
                 {currentStep?.state !== "import-configure" && (
-                  <SecondaryButton
+                  <Button
+                    variant="neutral-primary"
                     onClick={() => {
                       const currentElementIndex = integrationWorkflowData.findIndex(
                         (i) => i?.key === currentStep?.state
@@ -189,9 +190,10 @@ export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
                     }}
                   >
                     Back
-                  </SecondaryButton>
+                  </Button>
                 )}
-                <PrimaryButton
+                <Button
+                  variant="primary"
                   disabled={disableTopBarAfter === currentStep?.state || !isValid || methods.formState.isSubmitting}
                   onClick={() => {
                     const currentElementIndex = integrationWorkflowData.findIndex((i) => i?.key === currentStep?.state);
@@ -206,7 +208,7 @@ export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
                   }}
                 >
                   {currentStep?.state === "import-confirmation" ? "Confirm & Import" : "Next"}
-                </PrimaryButton>
+                </Button>
               </div>
             </form>
           </FormProvider>

@@ -16,7 +16,7 @@ import {
   SingleCycleList,
 } from "components/cycles";
 // ui
-import { Loader } from "components/ui";
+import { Loader } from "@plane/ui";
 // helpers
 import { getDateRangeStatus } from "helpers/date-time.helper";
 // types

@@ -19,7 +19,7 @@ import { Link as LinkIcon, Plus, Pencil, X } from "lucide-react";
 import { Label, WebViewModal, CreateUpdateLinkForm } from "components/web-view";
 
 // ui
-import { SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 
 // fetch keys
 import { ISSUE_DETAILS } from "constants/fetch-keys";
@@ -123,15 +123,9 @@ export const IssueLinks: React.FC<Props> = (props) => {
             )}
           </div>
         ))}
-        <SecondaryButton
-          type="button"
-          disabled={!allowed}
-          onClick={() => setIsOpen(true)}
-          className="w-full !py-2 text-custom-text-300 !text-base flex items-center justify-center"
-        >
-          <Plus className="w-[18px] h-[18px] inline-block mr-1" />
-          <span>Add</span>
-        </SecondaryButton>
+        <Button variant="neutral-primary" prependIcon={<Plus />} disabled={!allowed} onClick={() => setIsOpen(true)}>
+          Add
+        </Button>
       </div>
     </div>
   );

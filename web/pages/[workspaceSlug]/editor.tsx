@@ -5,7 +5,7 @@ import { Controller, useForm } from "react-hook-form";
 import issuesService from "services/issue.service";
 import { ICurrentUserResponse, IIssue } from "types";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
-import { Spinner } from "components/ui";
+import { Spinner } from "@plane/ui";
 import Image404 from "public/404.svg";
 import DefaultLayout from "layouts/default-layout";
 import Image from "next/image";

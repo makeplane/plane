@@ -6,7 +6,7 @@ import useProjects from "hooks/use-projects";
 // components
 import { AnalyticsGraph, AnalyticsSelectBar, AnalyticsSidebar, AnalyticsTable } from "components/analytics";
 // ui
-import { Loader, PrimaryButton } from "components/ui";
+import { Button, Loader } from "@plane/ui";
 // helpers
 import { convertResponseToBarGraphData } from "helpers/analytics.helper";
 // types
@@ -100,7 +100,8 @@ export const CustomAnalytics: React.FC<Props> = ({ fullScreen, user }) => {
             <div className="space-y-4 text-custom-text-200">
               <p className="text-sm">There was some error in fetching the data.</p>
               <div className="flex items-center justify-center gap-2">
-                <PrimaryButton
+                <Button
+                  variant="primary"
                   onClick={() => {
                     if (!workspaceSlug) return;
 
@@ -108,7 +109,7 @@ export const CustomAnalytics: React.FC<Props> = ({ fullScreen, user }) => {
                   }}
                 >
                   Refresh
-                </PrimaryButton>
+                </Button>
               </div>
             </div>
           </div>

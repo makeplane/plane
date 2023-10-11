@@ -20,7 +20,8 @@ import { DeleteWorkspaceModal } from "components/workspace";
 import { SettingsSidebar } from "components/project";
 // ui
 import { Disclosure, Transition } from "@headlessui/react";
-import { Spinner, Input, CustomSelect, DangerButton, PrimaryButton, Icon } from "components/ui";
+import { CustomSelect, Icon } from "components/ui";
+import { Button, Input, Spinner } from "@plane/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { Pencil } from "lucide-react";
@@ -232,21 +233,30 @@ const WorkspaceSettings: NextPage = () => {
               <div className="grid grid-col grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 items-center justify-between gap-10 w-full">
                 <div className="flex flex-col gap-1 ">
                   <h4 className="text-sm">Workspace Name</h4>
-                  <Input
-                    id="name"
+                  <Controller
+                    control={control}
                     name="name"
-                    placeholder="Name"
-                    autoComplete="off"
-                    register={register}
-                    error={errors.name}
-                    validations={{
+                    rules={{
                       required: "Name is required",
                       maxLength: {
                         value: 80,
                         message: "Workspace name should not exceed 80 characters",
                       },
                     }}
-                    disabled={!isAdmin}
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Input
+                        id="name"
+                        name="name"
+                        type="text"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        hasError={Boolean(errors.name)}
+                        placeholder="Name"
+                        className="rounded-md font-medium w-full"
+                        disabled={!isAdmin}
+                      />
+                    )}
                   />
                 </div>
 
@@ -276,26 +286,33 @@ const WorkspaceSettings: NextPage = () => {
 
                 <div className="flex flex-col gap-1 ">
                   <h4 className="text-sm">Workspace URL</h4>
-                  <Input
-                    id="url"
+                  <Controller
+                    control={control}
                     name="url"
-                    autoComplete="off"
-                    register={register}
-                    error={errors.url}
-                    className="w-full"
-                    value={`${
-                      typeof window !== "undefined" &&
-                      window.location.origin.replace("http://", "").replace("https://", "")
-                    }/${activeWorkspace.slug}`}
-                    disabled
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Input
+                        id="url"
+                        name="url"
+                        type="url"
+                        value={`${
+                          typeof window !== "undefined" &&
+                          window.location.origin.replace("http://", "").replace("https://", "")
+                        }/${activeWorkspace.slug}`}
+                        onChange={onChange}
+                        ref={ref}
+                        hasError={Boolean(errors.url)}
+                        className="w-full"
+                        disabled
+                      />
+                    )}
                   />
                 </div>
               </div>
 
               <div className="flex items-center justify-between py-2">
-                <PrimaryButton onClick={handleSubmit(onSubmit)} loading={isSubmitting} disabled={!isAdmin}>
+                <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting} disabled={!isAdmin}>
                   {isSubmitting ? "Updating..." : "Update Workspace"}
-                </PrimaryButton>
+                </Button>
               </div>
             </div>
             {isAdmin && (
@@ -328,9 +345,9 @@ const WorkspaceSettings: NextPage = () => {
                             that workspace will be permanently removed and cannot be recovered.
                           </span>
                           <div>
-                            <DangerButton onClick={() => setIsOpen(true)} className="!text-sm" outline>
+                            <Button variant="danger" onClick={() => setIsOpen(true)}>
                               Delete my workspace
-                            </DangerButton>
+                            </Button>
                           </div>
                         </div>
                       </Disclosure.Panel>

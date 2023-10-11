@@ -8,7 +8,9 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "components/issues";
 // ui
-import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { Button, Input, TextArea } from "@plane/ui";
+// helpers
+import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 // types
 import { IWorkspaceView } from "types";
 // constants
@@ -35,9 +37,9 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
   const { workspace: workspaceStore, project: projectStore } = useMobxStore();
 
   const {
-    control,
     formState: { errors, isSubmitting },
     handleSubmit,
+    control,
     register,
     reset,
     setValue,
@@ -76,32 +78,46 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
         <h3 className="text-lg font-medium leading-6 text-custom-text-100">{data ? "Update" : "Create"} View</h3>
         <div className="space-y-3">
           <div>
-            <Input
-              id="name"
+            <Controller
+              control={control}
               name="name"
-              type="name"
-              placeholder="Title"
-              autoComplete="off"
-              className="resize-none text-xl"
-              error={errors.name}
-              register={register}
-              validations={{
+              rules={{
                 required: "Title is required",
                 maxLength: {
                   value: 255,
                   message: "Title should be less than 255 characters",
                 },
               }}
+              render={({ field: { value, onChange, ref } }) => (
+                <Input
+                  id="name"
+                  name="name"
+                  type="name"
+                  value={value}
+                  onChange={onChange}
+                  ref={ref}
+                  hasError={Boolean(errors.name)}
+                  placeholder="Title"
+                  className="resize-none text-xl w-full"
+                />
+              )}
             />
           </div>
           <div>
-            <TextArea
-              id="description"
+            <Controller
               name="description"
-              placeholder="Description"
-              className="h-32 resize-none text-sm"
-              error={errors.description}
-              register={register}
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <TextArea
+                  id="description"
+                  name="description"
+                  value={value}
+                  placeholder="Description"
+                  onChange={onChange}
+                  className="h-32 resize-none text-sm"
+                  hasError={Boolean(errors?.description)}
+                />
+              )}
             />
           </div>
           <div>
@@ -152,8 +168,10 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-        <PrimaryButton type="submit" loading={isSubmitting}>
+        <Button variant="neutral-primary" onClick={handleClose}>
+          Cancel
+        </Button>
+        <Button variant="primary" type="submit" loading={isSubmitting}>
           {data
             ? isSubmitting
               ? "Updating View..."
@@ -161,7 +179,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
             : isSubmitting
             ? "Creating View..."
             : "Create View"}
-        </PrimaryButton>
+        </Button>
       </div>
     </form>
   );

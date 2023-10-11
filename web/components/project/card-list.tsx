@@ -4,7 +4,8 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { ProjectCard } from "components/project";
-import { Loader, EmptyState } from "components/ui";
+import { EmptyState } from "components/ui";
+import { Loader } from "@plane/ui";
 // images
 import emptyProject from "public/empty-state/project.svg";
 // icons

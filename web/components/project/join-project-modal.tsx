@@ -1,7 +1,7 @@
 import { useState, Fragment } from "react";
 import { Transition, Dialog } from "@headlessui/react";
 // ui
-import { PrimaryButton, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // types
 import type { IProject } from "types";
 // lib
@@ -73,10 +73,12 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
                   <div className="space-y-3" />
                 </div>
                 <div className="mt-5 flex justify-end gap-2">
-                  <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                  <PrimaryButton type="submit" onClick={handleJoin} loading={isJoiningLoading}>
+                  <Button variant="neutral-primary" onClick={handleClose}>
+                    Cancel
+                  </Button>
+                  <Button variant="primary" type="submit" onClick={handleJoin} loading={isJoiningLoading}>
                     {isJoiningLoading ? "Joining..." : "Join Project"}
-                  </PrimaryButton>
+                  </Button>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

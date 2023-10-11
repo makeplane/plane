@@ -11,7 +11,8 @@ import { DeleteProjectModal, ProjectDetailsForm, ProjectDetailsFormLoader, Setti
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // components
-import { Loader, DangerButton, Icon } from "components/ui";
+import { Button, Loader } from "@plane/ui";
+import { Icon } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // helpers
 import { truncateText } from "helpers/string.helper";
@@ -128,13 +129,9 @@ const GeneralSettings: NextPage = observer(() => {
                         <div>
                           {projectDetails ? (
                             <div>
-                              <DangerButton
-                                onClick={() => setSelectedProject(projectDetails.id ?? null)}
-                                className="!text-sm"
-                                outline
-                              >
+                              <Button variant="danger" onClick={() => setSelectedProject(projectDetails.id ?? null)}>
                                 Delete my project
-                              </DangerButton>
+                              </Button>
                             </div>
                           ) : (
                             <Loader className="mt-2 w-full">
