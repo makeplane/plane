@@ -1,9 +1,6 @@
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// react-hook-form
-import { Control, UseFormSetValue } from "react-hook-form";
+import useSWR, { mutate } from "swr";
+import { Control, UseFormSetValue, useForm } from "react-hook-form";
 // hooks
 import useProjects from "hooks/use-projects";
 // components
@@ -13,31 +10,41 @@ import { Button, Loader } from "@plane/ui";
 // helpers
 import { convertResponseToBarGraphData } from "helpers/analytics.helper";
 // types
-import { IAnalyticsParams, IAnalyticsResponse, ICurrentUserResponse } from "types";
+import { IAnalyticsParams, IAnalyticsResponse, IUser } from "types";
 // fetch-keys
 import { ANALYTICS } from "constants/fetch-keys";
+// services
+import analyticsService from "services/analytics.service";
 
 type Props = {
-  analytics: IAnalyticsResponse | undefined;
-  analyticsError: any;
-  params: IAnalyticsParams;
-  control: Control<IAnalyticsParams, any>;
-  setValue: UseFormSetValue<IAnalyticsParams>;
   fullScreen: boolean;
-  user: ICurrentUserResponse | undefined;
+  user?: IUser | undefined;
 };
 
-export const CustomAnalytics: React.FC<Props> = ({
-  analytics,
-  analyticsError,
-  params,
-  control,
-  setValue,
-  fullScreen,
-  user,
-}) => {
+const defaultValues: IAnalyticsParams = {
+  x_axis: "priority",
+  y_axis: "issue_count",
+  segment: null,
+  project: null,
+};
+
+export const CustomAnalytics: React.FC<Props> = ({ fullScreen, user }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { control, watch, setValue } = useForm<IAnalyticsParams>({ defaultValues });
+
+  const params: IAnalyticsParams = {
+    x_axis: watch("x_axis"),
+    y_axis: watch("y_axis"),
+    segment: watch("segment"),
+    project: watch("project"),
+  };
+
+  const { data: analytics, error: analyticsError } = useSWR(
+    workspaceSlug ? ANALYTICS(workspaceSlug.toString(), params) : null,
+    workspaceSlug ? () => analyticsService.getAnalytics(workspaceSlug.toString(), params) : null
+  );
 
   const isProjectLevel = projectId ? true : false;
 

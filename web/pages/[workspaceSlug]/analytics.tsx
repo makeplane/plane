@@ -5,10 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // react-hook-form
-import { useForm } from "react-hook-form";
-// hooks
-import useUserAuth from "hooks/use-user-auth";
-import useProjects from "hooks/use-projects";
+
 // headless ui
 import { Tab } from "@headlessui/react";
 // services
@@ -29,36 +26,25 @@ import emptyAnalytics from "public/empty-state/analytics.svg";
 import { IAnalyticsParams } from "types";
 // fetch-keys
 import { ANALYTICS } from "constants/fetch-keys";
-
-const defaultValues: IAnalyticsParams = {
-  x_axis: "priority",
-  y_axis: "issue_count",
-  segment: null,
-  project: null,
-};
+import { AppLayout } from "layouts/app-layout";
+import { useMobxStore } from "lib/mobx/store-provider";
+import { observer } from "mobx-react-lite";
+import { WorkspaceAnalyticsHeader } from "components/headers/workspace-analytics";
 
 const tabsList = ["Scope and Demand", "Custom Analytics"];
 
-const Analytics = () => {
+const AnalyticsPage = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // store
+  const { workspace: workspaceStore, project: projectStore, user: userStore } = useMobxStore();
 
-  const { user } = useUserAuth();
-  const { projects } = useProjects();
+  const user = userStore.currentUser;
+  const projects = workspaceSlug ? projectStore.projects[workspaceSlug?.toString()] : null;
 
-  const { control, watch, setValue } = useForm<IAnalyticsParams>({ defaultValues });
-
-  const params: IAnalyticsParams = {
-    x_axis: watch("x_axis"),
-    y_axis: watch("y_axis"),
-    segment: watch("segment"),
-    project: watch("project"),
-  };
-
-  const { data: analytics, error: analyticsError } = useSWR(
-    workspaceSlug ? ANALYTICS(workspaceSlug.toString(), params) : null,
-    workspaceSlug ? () => analyticsService.getAnalytics(workspaceSlug.toString(), params) : null
-  );
+  // const { user } = useUserAuth();
+  // const { projects } = useProjects();
 
   const trackAnalyticsEvent = (tab: string) => {
     const eventPayload = {
@@ -83,70 +69,123 @@ const Analytics = () => {
   }, [user, workspaceSlug]);
 
   return (
-    <WorkspaceAuthorizationLayout
-      breadcrumbs={
-        <Breadcrumbs>
-          <BreadcrumbItem title="Workspace Analytics" />
-        </Breadcrumbs>
-      }
-    >
-      {projects ? (
-        projects.length > 0 ? (
-          <div className="h-full flex flex-col overflow-hidden bg-custom-background-100">
-            <Tab.Group as={Fragment}>
-              <Tab.List as="div" className="space-x-2 border-b border-custom-border-200 px-5 py-3">
-                {tabsList.map((tab) => (
-                  <Tab
-                    key={tab}
-                    className={({ selected }) =>
-                      `rounded-3xl border border-custom-border-200 px-4 py-2 text-xs hover:bg-custom-background-80 ${
-                        selected ? "bg-custom-background-80" : ""
-                      }`
-                    }
-                    onClick={() => trackAnalyticsEvent(tab)}
-                  >
-                    {tab}
-                  </Tab>
-                ))}
-              </Tab.List>
-              <Tab.Panels as={Fragment}>
-                <Tab.Panel as={Fragment}>
-                  <ScopeAndDemand fullScreen />
-                </Tab.Panel>
-                <Tab.Panel as={Fragment}>
-                  <CustomAnalytics
-                    analytics={analytics}
-                    analyticsError={analyticsError}
-                    params={params}
-                    control={control}
-                    setValue={setValue}
-                    user={user}
-                    fullScreen
-                  />
-                </Tab.Panel>
-              </Tab.Panels>
-            </Tab.Group>
-          </div>
+    // <WorkspaceAuthorizationLayout
+    //   breadcrumbs={
+    //     <Breadcrumbs>
+    //       <BreadcrumbItem title="Workspace Analytics" />
+    //     </Breadcrumbs>
+    //   }
+    // >
+    //   {projects ? (
+    //     projects.length > 0 ? (
+    //       <div className="h-full flex flex-col overflow-hidden bg-custom-background-100">
+    //         <Tab.Group as={Fragment}>
+    //           <Tab.List as="div" className="space-x-2 border-b border-custom-border-200 px-5 py-3">
+    //             {tabsList.map((tab) => (
+    //               <Tab
+    //                 key={tab}
+    //                 className={({ selected }) =>
+    //                   `rounded-3xl border border-custom-border-200 px-4 py-2 text-xs hover:bg-custom-background-80 ${
+    //                     selected ? "bg-custom-background-80" : ""
+    //                   }`
+    //                 }
+    //                 onClick={() => trackAnalyticsEvent(tab)}
+    //               >
+    //                 {tab}
+    //               </Tab>
+    //             ))}
+    //           </Tab.List>
+    //           <Tab.Panels as={Fragment}>
+    //             <Tab.Panel as={Fragment}>
+    //               <ScopeAndDemand fullScreen />
+    //             </Tab.Panel>
+    //             <Tab.Panel as={Fragment}>
+    //               <CustomAnalytics
+    //                 analytics={analytics}
+    //                 analyticsError={analyticsError}
+    //                 params={params}
+    //                 control={control}
+    //                 setValue={setValue}
+    //                 user={user}
+    //                 fullScreen
+    //               />
+    //             </Tab.Panel>
+    //           </Tab.Panels>
+    //         </Tab.Group>
+    //       </div>
+    //     ) : (
+    //       <EmptyState
+    //         title="You can see your all projects' analytics here"
+    //         description="Let's create your first project and analyze the stats with various graphs."
+    //         image={emptyAnalytics}
+    //         primaryButton={{
+    //           icon: <PlusIcon className="h-4 w-4" />,
+    //           text: "New Project",
+    //           onClick: () => {
+    //             const e = new KeyboardEvent("keydown", {
+    //               key: "p",
+    //             });
+    //             document.dispatchEvent(e);
+    //           },
+    //         }}
+    //       />
+    //     )
+    //   ) : null}
+    // </WorkspaceAuthorizationLayout>
+    <AppLayout header={<WorkspaceAnalyticsHeader />}>
+      <>
+        {projects && projects.length > 0 ? (
+          <>
+            <div className="h-full flex flex-col overflow-hidden bg-custom-background-100">
+              <Tab.Group as={Fragment}>
+                <Tab.List as="div" className="space-x-2 border-b border-custom-border-200 px-5 py-3">
+                  {tabsList.map((tab) => (
+                    <Tab
+                      key={tab}
+                      className={({ selected }) =>
+                        `rounded-3xl border border-custom-border-200 px-4 py-2 text-xs hover:bg-custom-background-80 ${
+                          selected ? "bg-custom-background-80" : ""
+                        }`
+                      }
+                      onClick={() => trackAnalyticsEvent(tab)}
+                    >
+                      {tab}
+                    </Tab>
+                  ))}
+                </Tab.List>
+                <Tab.Panels as={Fragment}>
+                  <Tab.Panel as={Fragment}>
+                    <ScopeAndDemand fullScreen />
+                  </Tab.Panel>
+                  <Tab.Panel as={Fragment}>
+                    <CustomAnalytics fullScreen />
+                  </Tab.Panel>
+                </Tab.Panels>
+              </Tab.Group>
+            </div>
+          </>
         ) : (
-          <EmptyState
-            title="You can see your all projects' analytics here"
-            description="Let's create your first project and analyse the stats with various graphs."
-            image={emptyAnalytics}
-            primaryButton={{
-              icon: <PlusIcon className="h-4 w-4" />,
-              text: "New Project",
-              onClick: () => {
-                const e = new KeyboardEvent("keydown", {
-                  key: "p",
-                });
-                document.dispatchEvent(e);
-              },
-            }}
-          />
-        )
-      ) : null}
-    </WorkspaceAuthorizationLayout>
+          <>
+            <EmptyState
+              title="You can see your all projects' analytics here"
+              description="Let's create your first project and analyze the stats with various graphs."
+              image={emptyAnalytics}
+              primaryButton={{
+                icon: <PlusIcon className="h-4 w-4" />,
+                text: "New Project",
+                onClick: () => {
+                  const e = new KeyboardEvent("keydown", {
+                    key: "p",
+                  });
+                  document.dispatchEvent(e);
+                },
+              }}
+            />
+          </>
+        )}
+      </>
+    </AppLayout>
   );
-};
+});
 
-export default Analytics;
+export default AnalyticsPage;

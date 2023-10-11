@@ -1,7 +1,9 @@
 import React from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/router";
 // ui
-import { Button, Input } from "@plane/ui";
+import { Input, PrimaryButton } from "components/ui";
+import Link from "next/link";
 // types
 export interface EmailPasswordFormValues {
   email: string;
@@ -15,11 +17,12 @@ export interface IEmailPasswordForm {
 
 export const EmailPasswordForm: React.FC<IEmailPasswordForm> = (props) => {
   const { onSubmit } = props;
+  // router
+  const router = useRouter();
   // form info
   const {
     register,
     handleSubmit,
-    control,
     formState: { errors, isSubmitting, isValid, isDirty },
   } = useForm<EmailPasswordFormValues>({
     defaultValues: {
@@ -35,68 +38,64 @@ export const EmailPasswordForm: React.FC<IEmailPasswordForm> = (props) => {
     <>
       <form className="space-y-4 mt-10 w-full sm:w-[360px] mx-auto" onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-1">
-          <Controller
-            control={control}
+          <Input
+            id="email"
+            type="email"
             name="email"
-            rules={{
+            register={register}
+            validations={{
               required: "Email address is required",
               validate: (value) =>
                 /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
                   value
                 ) || "Email address is not valid",
             }}
-            render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={value}
-                onChange={onChange}
-                ref={ref}
-                hasError={Boolean(errors.email)}
-                placeholder="Enter your email address..."
-                className="border-custom-border-300 h-[46px] w-full "
-              />
-            )}
+            error={errors.email}
+            placeholder="Enter your email address..."
+            className="border-custom-border-300 h-[46px]"
           />
         </div>
         <div className="space-y-1">
-          <Controller
-            control={control}
+          <Input
+            id="password"
+            type="password"
             name="password"
-            rules={{
+            register={register}
+            validations={{
               required: "Password is required",
             }}
-            render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                value={value ?? ""}
-                onChange={onChange}
-                ref={ref}
-                hasError={Boolean(errors.password)}
-                placeholder="Enter your password..."
-                className="border-custom-border-300 h-[46px] w-full"
-              />
-            )}
+            error={errors.password}
+            placeholder="Enter your password..."
+            className="border-custom-border-300 h-[46px]"
           />
         </div>
         <div className="text-right text-xs">
-          <button type="button" onClick={() => {}} className="text-custom-text-200 hover:text-custom-primary-100">
+          <button
+            type="button"
+            onClick={() => router.push("/accounts/forgot-password")}
+            className="text-custom-text-200 hover:text-custom-primary-100"
+          >
             Forgot your password?
           </button>
         </div>
         <div>
-          <Button
-            variant="primary"
+          <PrimaryButton
             type="submit"
-            className="w-full"
+            className="w-full text-center h-[46px]"
             disabled={!isValid && isDirty}
             loading={isSubmitting}
           >
             {isSubmitting ? "Signing in..." : "Sign in"}
-          </Button>
+          </PrimaryButton>
+        </div>
+        <div className="text-xs">
+          <button
+            type="button"
+            onClick={() => router.push("/accounts/sign-up")}
+            className="text-custom-text-200 hover:text-custom-primary-100"
+          >
+            {"Don't have an account? Sign Up"}
+          </button>
         </div>
       </form>
     </>

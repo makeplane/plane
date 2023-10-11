@@ -39,14 +39,11 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   const { workspaceSlug, globalViewId } = router.query;
 
   const {
-    globalViews: globalViewsStore,
     globalViewFilters: globalViewFiltersStore,
     workspaceFilter: workspaceFilterStore,
     workspace: workspaceStore,
     project: projectStore,
   } = useMobxStore();
-
-  const queryData = globalViewId ? globalViewsStore.globalViewDetails[globalViewId.toString()]?.query_data : undefined;
 
   const storedFilters = globalViewId ? globalViewFiltersStore.storedFilters[globalViewId.toString()] : undefined;
 
@@ -54,14 +51,14 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
       if (!workspaceSlug || !globalViewId) return;
 
-      const newValues = queryData?.filters?.[key] ?? [];
+      const newValues = storedFilters?.[key] ?? [];
 
       if (Array.isArray(value)) {
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
         });
       } else {
-        if (queryData?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+        if (storedFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
 
@@ -69,7 +66,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
         [key]: newValues,
       });
     },
-    [globalViewId, globalViewFiltersStore, queryData, workspaceSlug]
+    [globalViewId, globalViewFiltersStore, storedFilters, workspaceSlug]
   );
 
   const handleDisplayFiltersUpdate = useCallback(

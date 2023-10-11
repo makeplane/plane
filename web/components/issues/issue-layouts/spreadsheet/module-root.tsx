@@ -25,7 +25,7 @@ export const ModuleSpreadsheetLayout: React.FC = observer(() => {
   const [expandedIssues, setExpandedIssues] = useState<string[]>([]);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
   const { user } = useUser();
   const { projectDetails } = useProjectDetails();
@@ -47,8 +47,6 @@ export const ModuleSpreadsheetLayout: React.FC = observer(() => {
     },
     [issueFilterStore, projectId, workspaceSlug]
   );
-
-  const type = cycleId ? "cycle" : moduleId ? "module" : "issue";
 
   const columnData = SPREADSHEET_COLUMN.map((column) => ({
     ...column,
@@ -110,45 +108,32 @@ export const ModuleSpreadsheetLayout: React.FC = observer(() => {
               className="relative group grid auto-rows-[minmax(44px,1fr)] hover:rounded-sm hover:bg-custom-background-80 border-b border-custom-border-200 w-full min-w-max"
               style={{ gridTemplateColumns }}
             >
-              {type === "issue" ? (
-                <button
-                  className="flex gap-1.5 items-center  pl-7 py-2.5 text-sm sticky left-0 z-[1] text-custom-text-200 bg-custom-background-100 group-hover:text-custom-text-100 group-hover:bg-custom-background-80 border-custom-border-200 w-full"
-                  onClick={() => {
-                    const e = new KeyboardEvent("keydown", { key: "c" });
-                    document.dispatchEvent(e);
-                  }}
-                >
-                  <PlusIcon className="h-4 w-4" />
-                  Add Issue
-                </button>
-              ) : (
-                isAllowed && (
-                  <CustomMenu
-                    className="sticky left-0 z-[1]"
-                    customButton={
-                      <button
-                        className="flex gap-1.5 items-center  pl-7 py-2.5 text-sm sticky left-0 z-[1] text-custom-text-200 bg-custom-background-100 group-hover:text-custom-text-100 group-hover:bg-custom-background-80 border-custom-border-200 w-full"
-                        type="button"
-                      >
-                        <PlusIcon className="h-4 w-4" />
-                        Add Issue
-                      </button>
-                    }
-                    position="left"
-                    optionsClassName="left-5 !w-36"
-                    noBorder
-                  >
-                    <CustomMenu.MenuItem
-                      onClick={() => {
-                        const e = new KeyboardEvent("keydown", { key: "c" });
-                        document.dispatchEvent(e);
-                      }}
+              {isAllowed && (
+                <CustomMenu
+                  className="sticky left-0 z-[1]"
+                  customButton={
+                    <button
+                      className="flex gap-1.5 items-center  pl-7 py-2.5 text-sm sticky left-0 z-[1] text-custom-text-200 bg-custom-background-100 group-hover:text-custom-text-100 group-hover:bg-custom-background-80 border-custom-border-200 w-full"
+                      type="button"
                     >
-                      Create new
-                    </CustomMenu.MenuItem>
-                    {true && <CustomMenu.MenuItem onClick={() => {}}>Add an existing issue</CustomMenu.MenuItem>}
-                  </CustomMenu>
-                )
+                      <PlusIcon className="h-4 w-4" />
+                      Add Issue
+                    </button>
+                  }
+                  position="left"
+                  optionsClassName="left-5 !w-36"
+                  noBorder
+                >
+                  <CustomMenu.MenuItem
+                    onClick={() => {
+                      const e = new KeyboardEvent("keydown", { key: "c" });
+                      document.dispatchEvent(e);
+                    }}
+                  >
+                    Create new
+                  </CustomMenu.MenuItem>
+                  {true && <CustomMenu.MenuItem onClick={() => {}}>Add an existing issue</CustomMenu.MenuItem>}
+                </CustomMenu>
               )}
             </div>
           </div>

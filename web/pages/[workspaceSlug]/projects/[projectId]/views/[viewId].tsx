@@ -7,16 +7,12 @@ import projectService from "services/project.service";
 import viewsService from "services/views.service";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
-// contexts
-import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
-import { IssuesFilterView, IssuesView } from "components/core";
+import { ProjectViewAllLayouts } from "components/issues";
 // ui
-import { Button } from "@plane/ui";
 import { CustomMenu, EmptyState } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
 import { StackedLayersIcon } from "components/icons";
 // images
 import emptyView from "public/empty-state/view.svg";
@@ -24,6 +20,7 @@ import emptyView from "public/empty-state/view.svg";
 import { truncateText } from "helpers/string.helper";
 // fetch-keys
 import { PROJECT_DETAILS, VIEWS_LIST, VIEW_DETAILS } from "constants/fetch-keys";
+import { ProjectViewIssuesHeader } from "components/headers";
 
 const SingleView: React.FC = () => {
   const router = useRouter();
@@ -47,71 +44,53 @@ const SingleView: React.FC = () => {
   );
 
   return (
-    <IssueViewContextProvider>
-      <ProjectAuthorizationWrapper
-        breadcrumbs={
-          <Breadcrumbs>
-            <BreadcrumbItem
-              title={`${activeProject?.name ?? "Project"} Views`}
-              link={`/${workspaceSlug}/projects/${activeProject?.id}/cycles`}
-            />
-          </Breadcrumbs>
-        }
-        left={
-          <CustomMenu
-            label={
-              <>
-                <StackedLayersIcon height={12} width={12} />
-                {viewDetails?.name && truncateText(viewDetails.name, 40)}
-              </>
-            }
-            className="ml-1.5"
-            width="auto"
-          >
-            {views?.map((view) => (
-              <CustomMenu.MenuItem
-                key={view.id}
-                renderAs="a"
-                href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}
-              >
-                {truncateText(view.name, 40)}
-              </CustomMenu.MenuItem>
-            ))}
-          </CustomMenu>
-        }
-        right={
-          <div className="flex items-center gap-2">
-            <IssuesFilterView />
-            <Button
-              variant="primary"
-              prependIcon={<PlusIcon />}
-              onClick={() => {
-                const e = new KeyboardEvent("keydown", { key: "c" });
-                document.dispatchEvent(e);
-              }}
-            >
-              Add Issue
-            </Button>
-          </div>
-        }
-      >
-        {error ? (
-          <EmptyState
-            image={emptyView}
-            title="View does not exist"
-            description="The view you are looking for does not exist or has been deleted."
-            primaryButton={{
-              text: "View other views",
-              onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/views`),
-            }}
+    <ProjectAuthorizationWrapper
+      breadcrumbs={
+        <Breadcrumbs>
+          <BreadcrumbItem
+            title={`${activeProject?.name ?? "Project"} Views`}
+            link={`/${workspaceSlug}/projects/${activeProject?.id}/cycles`}
           />
-        ) : (
-          <div className="h-full w-full flex flex-col">
-            <IssuesView />
-          </div>
-        )}
-      </ProjectAuthorizationWrapper>
-    </IssueViewContextProvider>
+        </Breadcrumbs>
+      }
+      left={
+        <CustomMenu
+          label={
+            <>
+              <StackedLayersIcon height={12} width={12} />
+              {viewDetails?.name && truncateText(viewDetails.name, 40)}
+            </>
+          }
+          className="ml-1.5"
+          width="auto"
+        >
+          {views?.map((view) => (
+            <CustomMenu.MenuItem
+              key={view.id}
+              renderAs="a"
+              href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}
+            >
+              {truncateText(view.name, 40)}
+            </CustomMenu.MenuItem>
+          ))}
+        </CustomMenu>
+      }
+      right={<ProjectViewIssuesHeader />}
+    >
+      {error ? (
+        <EmptyState
+          image={emptyView}
+          title="View does not exist"
+          description="The view you are looking for does not exist or has been deleted."
+          primaryButton={{
+            text: "View other views",
+            onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/views`),
+          }}
+        />
+      ) : (
+        <ProjectViewAllLayouts />
+      )}
+    </ProjectAuthorizationWrapper>
   );
 };
 

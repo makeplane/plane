@@ -11,6 +11,7 @@ import { CustomMenu } from "components/ui";
 import { PencilIcon, Sparkles, TrashIcon } from "lucide-react";
 // helpers
 import { truncateText } from "helpers/string.helper";
+import { calculateTotalFilters } from "helpers/filter.helper";
 // types
 import { IWorkspaceView } from "types/workspace-views";
 
@@ -25,18 +26,7 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const totalFilters =
-    view?.query_data?.filters && Object.keys(view.query_data.filters).length > 0
-      ? Object.keys(view.query_data.filters)
-          .map((key) =>
-            view.query_data.filters[key as keyof typeof view.query_data.filters] !== null
-              ? isNaN((view.query_data.filters[key as keyof typeof view.query_data.filters] as any).length)
-                ? 0
-                : (view.query_data.filters[key as keyof typeof view.query_data.filters] as any).length
-              : 0
-          )
-          .reduce((curr, prev) => curr + prev, 0)
-      : 0;
+  const totalFilters = calculateTotalFilters(view.query_data.filters ?? {});
 
   return (
     <>
