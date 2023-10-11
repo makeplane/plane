@@ -158,7 +158,7 @@ export const IssueMainContent: React.FC<Props> = ({
               </a>
             </Link>
 
-            <CustomMenu position="left" ellipsis optionsClassName="px-1.5">
+            <CustomMenu ellipsis optionsClassName="px-1.5">
               {siblingIssuesList ? (
                 siblingIssuesList.length > 0 ? (
                   <>

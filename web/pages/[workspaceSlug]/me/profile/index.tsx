@@ -298,8 +298,6 @@ const Profile: NextPage = () => {
                         buttonClassName={errors.role ? "border-red-500 bg-red-500/10" : ""}
                         width="w-full"
                         input
-                        verticalPosition="top"
-                        position="right"
                       >
                         {USER_ROLES.map((item) => (
                           <CustomSelect.Option key={item.value} value={item.value}>
@@ -362,7 +360,6 @@ const Profile: NextPage = () => {
                         }
                         options={timeZoneOptions}
                         onChange={onChange}
-                        verticalPosition="top"
                         optionsClassName="w-full"
                         input
                       />

@@ -93,7 +93,6 @@ export const PeekOverviewHeader: React.FC<Props> = ({
               <Icon iconName={peekModes.find((m) => m.key === mode)?.icon ?? ""} />
             </button>
           }
-          position="left"
         >
           {peekModes.map((mode) => (
             <CustomSelect.Option key={mode.key} value={mode.key}>

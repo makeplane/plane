@@ -74,8 +74,6 @@ export const ViewEstimateSelect: React.FC<Props> = ({
       maxHeight="md"
       noChevron
       disabled={isNotAllowed}
-      position={position}
-      selfPositioned={selfPositioned}
       width="w-full min-w-[8rem]"
     >
       <CustomSelect.Option value={null}>
