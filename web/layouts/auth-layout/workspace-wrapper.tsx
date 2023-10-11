@@ -35,9 +35,9 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     workspaceSlug ? () => projectStore.fetchProjects(workspaceSlug.toString()) : null
   );
 
-  console.log("workspaceSlug", workspaceSlug);
+  // console.log("workspaceSlug", workspaceSlug);
 
-  console.log("userStore.memberInfo", userStore.memberInfo);
+  // console.log("userStore.memberInfo", userStore.memberInfo);
 
   // while data is being loaded
   if (!userStore.memberInfo && userStore.hasPermissionToWorkspace === null) {
