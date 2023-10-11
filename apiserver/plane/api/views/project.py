@@ -100,7 +100,15 @@ class ProjectViewSet(BaseViewSet):
             .select_related(
                 "workspace", "workspace__owner", "default_assignee", "project_lead"
             )
-            # .annotate(is_favorite=Exists(subquery))
+            .annotate(
+                is_favorite=Exists(
+                    ProjectFavorite.objects.filter(
+                        user=self.request.user,
+                        project_id=self.kwargs.get("project_id"),
+                        workspace__slug=self.kwargs.get("slug"),
+                    )
+                )
+            )
             .annotate(
                 is_member=Exists(
                     ProjectMember.objects.filter(
@@ -149,7 +157,7 @@ class ProjectViewSet(BaseViewSet):
 
     def list(self, request, slug):
         try:
-            # is_favorite = request.GET.get("is_favorite", "all")
+            is_favorite = request.GET.get("is_favorite", "all")
 
             sort_order_query = ProjectMember.objects.filter(
                 member=request.user,
@@ -160,13 +168,12 @@ class ProjectViewSet(BaseViewSet):
                 self.get_queryset()
                 .annotate(sort_order=Subquery(sort_order_query))
                 .order_by("sort_order", "name")
-
             )
 
-            # if is_favorite == "true":
-            #     projects = projects.filter(is_favorite=True)
-            # if is_favorite == "false":
-            #     projects = projects.filter(is_favorite=False)
+            if is_favorite == "true":
+                projects = projects.filter(is_favorite=True)
+            if is_favorite == "false":
+                projects = projects.filter(is_favorite=False)
 
             return Response(ProjectDetailSerializer(projects, many=True).data)
         except Exception as e:
