@@ -10,6 +10,8 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 
+import { ListInlineCreateIssueForm } from "components/core";
+
 export interface IGroupByKanBan {
   issues: any;
   group_by: string | null;
@@ -17,10 +19,11 @@ export interface IGroupByKanBan {
   listKey: string;
   handleIssues?: (group_by: string | null, issue: any) => void;
   display_properties: any;
+  enableQuickIssueCreate?: boolean;
 }
 
 const GroupByKanBan: React.FC<IGroupByKanBan> = observer(
-  ({ issues, group_by, list, listKey, handleIssues, display_properties }) => (
+  ({ issues, group_by, list, listKey, handleIssues, display_properties, enableQuickIssueCreate }) => (
     <div className="relative w-full h-full">
       {list &&
         list.length > 0 &&
@@ -43,6 +46,13 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer(
                 />
               )}
             </div>
+            {enableQuickIssueCreate && (
+              <ListInlineCreateIssueForm
+                prePopulatedData={{
+                  [group_by!]: getValueFromObject(_list, listKey),
+                }}
+              />
+            )}
           </div>
         ))}
     </div>
@@ -55,78 +65,87 @@ export interface IKanBan {
   handleDragDrop?: (result: any) => void | undefined;
   handleIssues?: (group_by: string | null, issue: any) => void;
   display_properties: any;
+  enableQuickIssueCreate?: boolean;
 }
 
-export const List: React.FC<IKanBan> = observer(({ issues, group_by, handleIssues, display_properties }) => {
-  const { project: projectStore }: RootStore = useMobxStore();
+export const List: React.FC<IKanBan> = observer(
+  ({ issues, group_by, handleIssues, display_properties, enableQuickIssueCreate }) => {
+    const { project: projectStore }: RootStore = useMobxStore();
 
-  return (
-    <div className="relative w-full h-full">
-      {group_by && group_by === "state" && (
-        <GroupByKanBan
-          issues={issues}
-          group_by={group_by}
-          list={projectStore?.projectStates}
-          listKey={`id`}
-          handleIssues={handleIssues}
-          display_properties={display_properties}
-        />
-      )}
+    return (
+      <div className="relative w-full h-full">
+        {group_by && group_by === "state" && (
+          <GroupByKanBan
+            issues={issues}
+            group_by={group_by}
+            list={projectStore?.projectStates}
+            listKey={`id`}
+            handleIssues={handleIssues}
+            display_properties={display_properties}
+            enableQuickIssueCreate={enableQuickIssueCreate}
+          />
+        )}
 
-      {group_by && group_by === "state_detail.group" && (
-        <GroupByKanBan
-          issues={issues}
-          group_by={group_by}
-          list={ISSUE_STATE_GROUPS}
-          listKey={`key`}
-          handleIssues={handleIssues}
-          display_properties={display_properties}
-        />
-      )}
+        {group_by && group_by === "state_detail.group" && (
+          <GroupByKanBan
+            issues={issues}
+            group_by={group_by}
+            list={ISSUE_STATE_GROUPS}
+            listKey={`key`}
+            handleIssues={handleIssues}
+            display_properties={display_properties}
+            enableQuickIssueCreate={enableQuickIssueCreate}
+          />
+        )}
 
-      {group_by && group_by === "priority" && (
-        <GroupByKanBan
-          issues={issues}
-          group_by={group_by}
-          list={ISSUE_PRIORITIES}
-          listKey={`key`}
-          handleIssues={handleIssues}
-          display_properties={display_properties}
-        />
-      )}
+        {group_by && group_by === "priority" && (
+          <GroupByKanBan
+            issues={issues}
+            group_by={group_by}
+            list={ISSUE_PRIORITIES}
+            listKey={`key`}
+            handleIssues={handleIssues}
+            display_properties={display_properties}
+            enableQuickIssueCreate={enableQuickIssueCreate}
+          />
+        )}
 
-      {group_by && group_by === "labels" && (
-        <GroupByKanBan
-          issues={issues}
-          group_by={group_by}
-          list={projectStore?.projectLabels}
-          listKey={`id`}
-          handleIssues={handleIssues}
-          display_properties={display_properties}
-        />
-      )}
+        {group_by && group_by === "labels" && (
+          <GroupByKanBan
+            issues={issues}
+            group_by={group_by}
+            list={projectStore?.projectLabels}
+            listKey={`id`}
+            handleIssues={handleIssues}
+            display_properties={display_properties}
+            enableQuickIssueCreate={enableQuickIssueCreate}
+          />
+        )}
 
-      {group_by && group_by === "assignees" && (
-        <GroupByKanBan
-          issues={issues}
-          group_by={group_by}
-          list={projectStore?.projectMembers}
-          listKey={`member.id`}
-          handleIssues={handleIssues}
-          display_properties={display_properties}
-        />
-      )}
+        {group_by && group_by === "assignees" && (
+          <GroupByKanBan
+            issues={issues}
+            group_by={group_by}
+            list={projectStore?.projectMembers}
+            listKey={`member.id`}
+            handleIssues={handleIssues}
+            display_properties={display_properties}
+            enableQuickIssueCreate={enableQuickIssueCreate}
+          />
+        )}
 
-      {group_by && group_by === "created_by" && (
-        <GroupByKanBan
-          issues={issues}
-          group_by={group_by}
-          list={projectStore?.projectMembers}
-          listKey={`member.id`}
-          handleIssues={handleIssues}
-          display_properties={display_properties}
-        />
-      )}
-    </div>
-  );
-});
+        {group_by && group_by === "created_by" && (
+          <GroupByKanBan
+            issues={issues}
+            group_by={group_by}
+            list={projectStore?.projectMembers}
+            listKey={`member.id`}
+            handleIssues={handleIssues}
+            display_properties={display_properties}
+            enableQuickIssueCreate={enableQuickIssueCreate}
+          />
+        )}
+      </div>
+    );
+  }
+);

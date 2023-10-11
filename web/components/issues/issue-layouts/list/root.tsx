@@ -24,7 +24,13 @@ export const ListLayout: React.FC = observer(() => {
 
   return (
     <div className={`relative w-full h-full bg-custom-background-90`}>
-      <List issues={issues} group_by={group_by} handleIssues={updateIssue} display_properties={display_properties} />
+      <List
+        issues={issues}
+        group_by={group_by}
+        enableQuickIssueCreate
+        handleIssues={updateIssue}
+        display_properties={display_properties}
+      />
     </div>
   );
 });

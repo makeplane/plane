@@ -4,6 +4,7 @@ import { Droppable } from "@hello-pangea/dnd";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
+import { CalendarInlineCreateIssueForm } from "components/core";
 import { CalendarIssueBlocks, ICalendarDate } from "components/issues";
 // helpers
 import { renderDateFormat } from "helpers/date-time.helper";
@@ -24,35 +25,43 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
   const issuesList = issues ? (issues as IIssueGroupedStructure)[renderDateFormat(date.date)] : null;
 
   return (
-    <Droppable droppableId={renderDateFormat(date.date)}>
-      {(provided, snapshot) => (
-        <div
-          className={`flex-grow p-2 space-y-1 w-full flex flex-col overflow-hidden ${
-            snapshot.isDraggingOver || date.date.getDay() === 0 || date.date.getDay() === 6
-              ? "bg-custom-background-90"
-              : "bg-custom-background-100"
-          } ${calendarLayout === "month" ? "min-h-[9rem]" : ""}`}
-          {...provided.droppableProps}
-          ref={provided.innerRef}
-        >
-          <>
-            <div
-              className={`text-xs text-right ${
-                calendarLayout === "month" // if month layout, highlight current month days
-                  ? date.is_current_month
-                    ? "font-medium"
-                    : "text-custom-text-300"
-                  : "font-medium" // if week layout, highlight all days
-              }`}
-            >
-              {date.date.getDate() === 1 && MONTHS_LIST[date.date.getMonth() + 1].shortTitle + " "}
-              {date.date.getDate()}
-            </div>
-            <CalendarIssueBlocks issues={issuesList} />
-            {provided.placeholder}
-          </>
-        </div>
-      )}
-    </Droppable>
+    <>
+      <Droppable droppableId={renderDateFormat(date.date)}>
+        {(provided, snapshot) => (
+          <div
+            className={`flex-grow p-2 space-y-1 w-full flex flex-col overflow-hidden ${
+              snapshot.isDraggingOver || date.date.getDay() === 0 || date.date.getDay() === 6
+                ? "bg-custom-background-90"
+                : "bg-custom-background-100"
+            } ${calendarLayout === "month" ? "min-h-[9rem]" : ""}`}
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+          >
+            <CalendarInlineCreateIssueForm
+              prePopulatedData={{
+                target_date: new Date(date.date).toISOString().split("T")[0],
+              }}
+              dependencies={[]}
+            />
+            <>
+              <div
+                className={`text-xs text-right ${
+                  calendarLayout === "month" // if month layout, highlight current month days
+                    ? date.is_current_month
+                      ? "font-medium"
+                      : "text-custom-text-300"
+                    : "font-medium" // if week layout, highlight all days
+                }`}
+              >
+                {date.date.getDate() === 1 && MONTHS_LIST[date.date.getMonth() + 1].shortTitle + " "}
+                {date.date.getDate()}
+              </div>
+              <CalendarIssueBlocks issues={issuesList} />
+              {provided.placeholder}
+            </>
+          </div>
+        )}
+      </Droppable>
+    </>
   );
 });

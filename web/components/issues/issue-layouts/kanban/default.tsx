@@ -4,6 +4,7 @@ import { Droppable } from "@hello-pangea/dnd";
 // components
 import { KanBanGroupByHeaderRoot } from "./headers/group-by-root";
 import { IssueBlock } from "./block";
+import { BoardInlineCreateIssueForm } from "components/core";
 // constants
 import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES, getValueFromObject } from "constants/issue";
 // mobx
@@ -24,6 +25,7 @@ export interface IGroupByKanBan {
   display_properties: any;
   kanBanToggle: any;
   handleKanBanToggle: any;
+  enabledQuickIssueCreate?: boolean;
 }
 
 const GroupByKanBan: React.FC<IGroupByKanBan> = observer(
@@ -39,6 +41,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer(
     display_properties,
     kanBanToggle,
     handleKanBanToggle,
+    enabledQuickIssueCreate,
   }) => {
     const verticalAlignPosition = (_list: any) =>
       kanBanToggle?.groupByHeaderMinMax.includes(getValueFromObject(_list, listKey) as string);
@@ -97,6 +100,13 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer(
                   )}
                 </Droppable>
               </div>
+              {enabledQuickIssueCreate && (
+                <BoardInlineCreateIssueForm
+                  prePopulatedData={{
+                    [group_by as string]: getValueFromObject(_list, listKey) as string,
+                  }}
+                />
+              )}
             </div>
           ))}
       </div>
@@ -114,6 +124,7 @@ export interface IKanBan {
   display_properties: any;
   kanBanToggle: any;
   handleKanBanToggle: any;
+  enabledQuickIssueCreate?: boolean;
 }
 
 export const KanBan: React.FC<IKanBan> = observer(
@@ -126,6 +137,7 @@ export const KanBan: React.FC<IKanBan> = observer(
     display_properties,
     kanBanToggle,
     handleKanBanToggle,
+    enabledQuickIssueCreate,
   }) => {
     const { project: projectStore, issueKanBanView: issueKanBanViewStore }: RootStore = useMobxStore();
 
@@ -144,6 +156,7 @@ export const KanBan: React.FC<IKanBan> = observer(
             display_properties={display_properties}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            enabledQuickIssueCreate={enabledQuickIssueCreate}
           />
         )}
 
@@ -160,6 +173,7 @@ export const KanBan: React.FC<IKanBan> = observer(
             display_properties={display_properties}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            enabledQuickIssueCreate={enabledQuickIssueCreate}
           />
         )}
 
@@ -176,6 +190,7 @@ export const KanBan: React.FC<IKanBan> = observer(
             display_properties={display_properties}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            enabledQuickIssueCreate={enabledQuickIssueCreate}
           />
         )}
 
@@ -192,6 +207,7 @@ export const KanBan: React.FC<IKanBan> = observer(
             display_properties={display_properties}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            enabledQuickIssueCreate={enabledQuickIssueCreate}
           />
         )}
 
@@ -208,6 +224,7 @@ export const KanBan: React.FC<IKanBan> = observer(
             display_properties={display_properties}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            enabledQuickIssueCreate={enabledQuickIssueCreate}
           />
         )}
 
@@ -224,6 +241,7 @@ export const KanBan: React.FC<IKanBan> = observer(
             display_properties={display_properties}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            enabledQuickIssueCreate={enabledQuickIssueCreate}
           />
         )}
       </div>

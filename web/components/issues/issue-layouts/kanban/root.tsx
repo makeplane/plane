@@ -60,6 +60,7 @@ export const KanBanLayout: React.FC = observer(() => {
       <DragDropContext onDragEnd={onDragEnd}>
         {currentKanBanView === "default" ? (
           <KanBan
+            enabledQuickIssueCreate
             issues={issues}
             sub_group_by={sub_group_by}
             group_by={group_by}
