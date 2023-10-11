@@ -9,7 +9,7 @@ import { CalendarChart } from "components/issues";
 import { IIssueGroupedStructure } from "store/issue";
 
 export const CalendarLayout: React.FC = observer(() => {
-  const { issue: issueStore } = useMobxStore();
+  const { issue: issueStore, issueFilter: issueFilterStore } = useMobxStore();
 
   // TODO: add drag and drop functionality
   const onDragEnd = (result: DropResult) => {
@@ -29,7 +29,10 @@ export const CalendarLayout: React.FC = observer(() => {
   return (
     <div className="h-full w-full pt-4 bg-custom-background-100 overflow-hidden">
       <DragDropContext onDragEnd={onDragEnd}>
-        <CalendarChart issues={issues as IIssueGroupedStructure | null} />
+        <CalendarChart
+          issues={issues as IIssueGroupedStructure | null}
+          layout={issueFilterStore.userDisplayFilters.calendar?.layout}
+        />
       </DragDropContext>
     </div>
   );

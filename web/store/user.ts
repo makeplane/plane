@@ -2,24 +2,34 @@
 import { action, observable, computed, runInAction, makeObservable } from "mobx";
 // services
 import { UserService } from "services/user.service";
+import { WorkspaceService } from "services/workspace.service";
 // interfaces
-import { ICurrentUser, ICurrentUserSettings } from "types/users";
+import { IUser, IUserSettings } from "types/users";
 
 interface IUserStore {
   loader: boolean;
-  currentUser: ICurrentUser | null;
-  currentUserSettings: ICurrentUserSettings | null;
-  fetchCurrentUser: () => Promise<ICurrentUser>;
+  currentUser: IUser | null;
+  currentUserSettings: IUserSettings | null;
+  dashboardInfo: any;
+  memberInfo: any;
+  hasPermissionToWorkspace: boolean | null;
+  fetchCurrentUser: () => Promise<IUser>;
+  fetchCurrentUserSettings: () => Promise<IUserSettings>;
+  updateTourCompleted: () => Promise<void>;
 }
 
 class UserStore implements IUserStore {
   loader: boolean = false;
-  currentUser: ICurrentUser | null = null;
-  currentUserSettings: ICurrentUserSettings | null = null;
+  currentUser: IUser | null = null;
+  currentUserSettings: IUserSettings | null = null;
+  dashboardInfo: any = null;
+  memberInfo: any = null;
+  hasPermissionToWorkspace: boolean | null = null;
   // root store
   rootStore;
   // services
   userService;
+  workspaceService;
 
   constructor(_rootStore: any) {
     makeObservable(this, {
@@ -27,24 +37,87 @@ class UserStore implements IUserStore {
       loader: observable.ref,
       currentUser: observable.ref,
       currentUserSettings: observable.ref,
+      dashboardInfo: observable.ref,
+      memberInfo: observable.ref,
+      hasPermissionToWorkspace: observable.ref,
       // action
       fetchCurrentUser: action,
+      fetchCurrentUserSettings: action,
       // computed
     });
     this.rootStore = _rootStore;
     this.userService = new UserService();
+    this.workspaceService = new WorkspaceService();
   }
 
   fetchCurrentUser = async () => {
     try {
       const response = await this.userService.currentUser();
-      console.log("response", response);
       if (response) {
         runInAction(() => {
           this.currentUser = response;
         });
       }
       return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  fetchCurrentUserSettings = async () => {
+    try {
+      const response = await this.userService.currentUserSettings();
+      if (response) {
+        runInAction(() => {
+          this.currentUserSettings = response;
+        });
+      }
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  fetchUserDashboardInfo = async (workspaceSlug: string, month: number) => {
+    try {
+      const response = await this.userService.userWorkspaceDashboard(workspaceSlug, month);
+      runInAction(() => {
+        this.dashboardInfo = response;
+      });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  fetchUserWorkspaceInfo = async (workspaceSlug: string) => {
+    try {
+      const response = await this.workspaceService.workspaceMemberMe(workspaceSlug.toString());
+      runInAction(() => {
+        this.memberInfo = response;
+        this.hasPermissionToWorkspace = true;
+      });
+      return response;
+    } catch (error) {
+      runInAction(() => {
+        this.hasPermissionToWorkspace = false;
+      });
+      throw error;
+    }
+  };
+
+  updateTourCompleted = async () => {
+    try {
+      if (this.currentUser) {
+        runInAction(() => {
+          this.currentUser = {
+            ...this.currentUser,
+            is_tour_completed: true,
+          } as IUser;
+        });
+        const response = await this.userService.updateUserTourCompleted(this.currentUser);
+        return response;
+      }
     } catch (error) {
       throw error;
     }

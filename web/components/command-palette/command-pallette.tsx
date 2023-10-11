@@ -12,7 +12,7 @@ import { CreateUpdateCycleModal } from "components/cycles";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { CreateUpdateModuleModal } from "components/modules";
 import { CreateProjectModal } from "components/project";
-import { CreateUpdateViewModal } from "components/views";
+import { CreateUpdateProjectViewModal } from "components/views";
 import { CreateUpdatePageModal } from "components/pages";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
@@ -151,10 +151,9 @@ export const CommandPalette: React.FC = observer(() => {
             setIsOpen={setIsCreateModuleModalOpen}
             user={user}
           />
-          <CreateUpdateViewModal
-            handleClose={() => setIsCreateViewModalOpen(false)}
+          <CreateUpdateProjectViewModal
             isOpen={isCreateViewModalOpen}
-            user={user}
+            onClose={() => setIsCreateViewModalOpen(false)}
           />
           <CreateUpdatePageModal
             isOpen={isCreateUpdatePageModalOpen}

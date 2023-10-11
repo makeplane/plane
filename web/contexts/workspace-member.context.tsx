@@ -46,8 +46,7 @@ export const WorkspaceMemberProvider: React.FC<Props> = (props) => {
 export const useWorkspaceMyMembership = () => {
   const context = useContext(WorkspaceMemberContext);
 
-  if (context === undefined)
-    throw new Error(`useWorkspaceMember must be used within a WorkspaceMemberProvider.`);
+  if (context === undefined) throw new Error(`useWorkspaceMember must be used within a WorkspaceMemberProvider.`);
 
   return {
     ...context,

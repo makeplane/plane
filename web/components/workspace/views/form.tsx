@@ -1,38 +1,24 @@
 import { useEffect } from "react";
-
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
+import { Controller, useForm } from "react-hook-form";
 
-import useSWR from "swr";
-
-// react-hook-form
-import { useForm } from "react-hook-form";
-// services
-import issuesService from "services/issues.service";
-
-// hooks
-import useProjects from "hooks/use-projects";
-import useWorkspaceMembers from "hooks/use-workspace-members";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { WorkspaceFiltersList } from "components/core";
-import { GlobalSelectFilters } from "components/workspace/views/global-select-filters";
-
+import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "components/issues";
 // ui
 import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
-// helpers
-import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 // types
-import { IQuery } from "types";
-import { IWorkspaceView } from "types/workspace-views";
-// fetch-keys
-import { WORKSPACE_LABELS } from "constants/fetch-keys";
-import { STATE_GROUP } from "constants/project";
+import { IWorkspaceView } from "types";
+// constants
+import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 
 type Props = {
-  handleFormSubmit: (values: IWorkspaceView) => Promise<void>;
+  handleFormSubmit: (values: Partial<IWorkspaceView>) => Promise<void>;
   handleClose: () => void;
-  status: boolean;
-  data?: IWorkspaceView | null;
-  preLoadedData?: Partial<IWorkspaceView> | null;
+  data?: IWorkspaceView;
+  preLoadedData?: Partial<IWorkspaceView>;
 };
 
 const defaultValues: Partial<IWorkspaceView> = {
@@ -40,59 +26,31 @@ const defaultValues: Partial<IWorkspaceView> = {
   description: "",
 };
 
-export const WorkspaceViewForm: React.FC<Props> = ({
-  handleFormSubmit,
-  handleClose,
-  status,
-  data,
-  preLoadedData,
-}) => {
+export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
+  const { handleFormSubmit, handleClose, data, preLoadedData } = props;
+
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
+  const { workspace: workspaceStore, project: projectStore } = useMobxStore();
+
   const {
-    register,
+    control,
     formState: { errors, isSubmitting },
     handleSubmit,
+    register,
     reset,
-    watch,
     setValue,
-  } = useForm<any>({
+    watch,
+  } = useForm({
     defaultValues,
   });
-  const filters = watch("query");
 
-  const { data: labelOptions } = useSWR(
-    workspaceSlug ? WORKSPACE_LABELS(workspaceSlug.toString()) : null,
-    workspaceSlug ? () => issuesService.getWorkspaceLabels(workspaceSlug.toString()) : null
-  );
-
-  const { workspaceMembers } = useWorkspaceMembers(workspaceSlug?.toString() ?? "");
-
-  const memberOptions = workspaceMembers?.map((m) => m.member);
-
-  const { projects: allProjects } = useProjects();
-  const joinedProjects = allProjects?.filter((p) => p.is_member);
-
-  const handleCreateUpdateView = async (formData: IWorkspaceView) => {
+  const handleCreateUpdateView = async (formData: Partial<IWorkspaceView>) => {
     await handleFormSubmit(formData);
 
     reset({
       ...defaultValues,
-    });
-  };
-
-  const clearAllFilters = () => {
-    setValue("query", {
-      assignees: null,
-      created_by: null,
-      subscriber: null,
-      labels: null,
-      priority: null,
-      state_group: null,
-      start_date: null,
-      target_date: null,
-      project: null,
     });
   };
 
@@ -104,18 +62,18 @@ export const WorkspaceViewForm: React.FC<Props> = ({
     });
   }, [data, preLoadedData, reset]);
 
-  useEffect(() => {
-    if (status && data) {
-      setValue("query", data.query_data);
-    }
-  }, [data, status, setValue]);
+  const selectedFilters = watch("query_data")?.filters;
+
+  const clearAllFilters = () => {
+    if (!selectedFilters) return;
+
+    setValue("query_data.filters", {});
+  };
 
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateView)}>
       <div className="space-y-5">
-        <h3 className="text-lg font-medium leading-6 text-custom-text-100">
-          {status ? "Update" : "Create"} View
-        </h3>
+        <h3 className="text-lg font-medium leading-6 text-custom-text-100">{data ? "Update" : "Create"} View</h3>
         <div className="space-y-3">
           <div>
             <Input
@@ -147,59 +105,56 @@ export const WorkspaceViewForm: React.FC<Props> = ({
             />
           </div>
           <div>
-            <GlobalSelectFilters
-              filters={filters}
-              onSelect={(option) => {
-                const key = option.key as keyof typeof filters;
+            <Controller
+              control={control}
+              name="query_data.filters"
+              render={({ field: { onChange, value: filters } }) => (
+                <FiltersDropdown title="Filters">
+                  <FilterSelection
+                    filters={filters ?? {}}
+                    handleFiltersUpdate={(key, value) => {
+                      const newValues = filters?.[key] ?? [];
 
-                if (key === "start_date" || key === "target_date") {
-                  const valueExists = checkIfArraysHaveSameElements(
-                    filters?.[key] ?? [],
-                    option.value
-                  );
+                      if (Array.isArray(value)) {
+                        value.forEach((val) => {
+                          if (!newValues.includes(val)) newValues.push(val);
+                        });
+                      } else {
+                        if (filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+                        else newValues.push(value);
+                      }
 
-                  setValue("query", {
-                    ...filters,
-                    [key]: valueExists ? null : option.value,
-                  } as IQuery);
-                } else {
-                  if (!filters?.[key]?.includes(option.value))
-                    setValue("query", {
-                      ...filters,
-                      [key]: [...((filters?.[key] as any[]) ?? []), option.value],
-                    });
-                  else {
-                    setValue("query", {
-                      ...filters,
-                      [key]: (filters?.[key] as any[])?.filter((item) => item !== option.value),
-                    });
-                  }
-                }
-              }}
+                      onChange({
+                        ...filters,
+                        [key]: newValues,
+                      });
+                    }}
+                    layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
+                    labels={workspaceStore.workspaceLabels ?? undefined}
+                    projects={workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined}
+                  />
+                </FiltersDropdown>
+              )}
             />
           </div>
-          <div>
-            <WorkspaceFiltersList
-              filters={filters}
-              labels={labelOptions}
-              members={memberOptions}
-              project={joinedProjects}
-              stateGroup={STATE_GROUP}
-              clearAllFilters={clearAllFilters}
-              setFilters={(query: any) => {
-                setValue("query", {
-                  ...filters,
-                  ...query,
-                });
-              }}
-            />
-          </div>
+          {selectedFilters && Object.keys(selectedFilters).length > 0 && (
+            <div>
+              <AppliedFiltersList
+                appliedFilters={selectedFilters}
+                handleClearAllFilters={clearAllFilters}
+                handleRemoveFilter={() => {}}
+                labels={workspaceStore.workspaceLabels ?? undefined}
+                members={workspaceStore.workspaceMembers?.map((m) => m.member) ?? undefined}
+                states={undefined}
+              />
+            </div>
+          )}
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
         <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
         <PrimaryButton type="submit" loading={isSubmitting}>
-          {status
+          {data
             ? isSubmitting
               ? "Updating View..."
               : "Update View"
@@ -210,4 +165,4 @@ export const WorkspaceViewForm: React.FC<Props> = ({
       </div>
     </form>
   );
-};
+});

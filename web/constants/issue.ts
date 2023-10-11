@@ -220,25 +220,10 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
   [pageType: string]: { [layoutType: string]: ILayoutDisplayFiltersOptions };
 } = {
   my_issues: {
-    list: {
-      filters: ["priority", "state_group", "labels", "start_date", "target_date"],
+    spreadsheet: {
+      filters: ["priority", "state_group", "labels", "assignees", "created_by", "project", "start_date", "target_date"],
       display_properties: true,
       display_filters: {
-        group_by: ["state_detail.group", "project", "priority", "labels", null],
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
-        type: [null, "active", "backlog"],
-      },
-      extra_options: {
-        access: true,
-        values: ["show_empty_groups", "sub_issue"],
-      },
-    },
-    kanban: {
-      filters: ["priority", "state_group", "labels", "start_date", "target_date"],
-      display_properties: true,
-      display_filters: {
-        group_by: ["state_detail.group", "project", "priority", "labels"],
-        sub_group_by: ["state_detail.group", "project", "priority", "labels", null],
         order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
       },

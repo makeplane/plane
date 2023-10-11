@@ -18,7 +18,6 @@ import useInboxView from "hooks/use-inbox-view";
 import useProjects from "hooks/use-projects";
 import useMyIssues from "hooks/my-issues/use-my-issues";
 import useLocalStorage from "hooks/use-local-storage";
-import { useWorkspaceView } from "hooks/use-workspace-view";
 // components
 import { IssueForm, ConfirmIssueDiscard } from "components/issues";
 // types
@@ -36,7 +35,7 @@ import {
   VIEW_ISSUES,
   INBOX_ISSUES,
   PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS,
-  WORKSPACE_VIEW_ISSUES,
+  GLOBAL_VIEW_ISSUES,
 } from "constants/fetch-keys";
 // constants
 import { INBOX_ISSUE_SOURCE } from "constants/inbox";
@@ -92,7 +91,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
   const { groupedIssues, mutateMyIssues } = useMyIssues(workspaceSlug?.toString());
 
-  const { params: globalViewParams } = useWorkspaceView();
+  const globalViewParams = {};
 
   const { setValue: setValueInLocalStorage, clearValue: clearLocalStorageValue } = useLocalStorage<any>(
     "draftedIssue",
@@ -342,10 +341,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
           if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
 
-          if (globalViewId) mutate(WORKSPACE_VIEW_ISSUES(globalViewId.toString(), globalViewParams));
+          if (globalViewId) mutate(GLOBAL_VIEW_ISSUES(globalViewId.toString(), globalViewParams));
 
           if (currentWorkspaceIssuePath)
-            mutate(WORKSPACE_VIEW_ISSUES(workspaceSlug.toString(), currentWorkspaceIssuePath?.params));
+            mutate(GLOBAL_VIEW_ISSUES(workspaceSlug.toString(), currentWorkspaceIssuePath?.params));
         })
         .catch(() => {
           setToastAlert({

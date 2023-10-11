@@ -19,7 +19,6 @@ export * from "./spinner";
 export * from "./tooltip";
 export * from "./toggle-switch";
 export * from "./markdown-to-component";
-export * from "./product-updates-modal";
 export * from "./integration-and-import-export-banner";
 export * from "./range-datepicker";
 export * from "./circular-progress";
