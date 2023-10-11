@@ -133,12 +133,13 @@ export const DateSelector: React.FC<Props> = (props) => {
           <SecondaryButton
             type="button"
             onClick={() => {
-              setSelectedDate(null);
               setIsOpen(false);
+              onChange(null);
+              setSelectedDate(null);
             }}
             className="w-full"
           >
-            Cancel
+            Clear
           </SecondaryButton>
           <PrimaryButton
             onClick={() => {
@@ -149,7 +150,7 @@ export const DateSelector: React.FC<Props> = (props) => {
             type="button"
             className="w-full"
           >
-            Apply Changes
+            Apply
           </PrimaryButton>
         </WebViewModal.Footer>
       </WebViewModal>

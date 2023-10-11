@@ -108,7 +108,7 @@ export const IssuesSelectBottomSheet: React.FC<IssuesSelectBottomSheetProps> = (
       )}
 
       <div
-        className={`flex-shrink-0 flex items-center gap-1 text-xs cursor-pointer ${
+        className={`flex-shrink-0 flex items-center gap-1 text-xs pb-3 cursor-pointer ${
           isWorkspaceLevel ? "text-custom-text-100" : "text-custom-text-200"
         }`}
       >
