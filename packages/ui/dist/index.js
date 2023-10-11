@@ -31,7 +31,8 @@ __export(src_exports, {
   Loader: () => Loader,
   RadialProgressBar: () => RadialProgressBar,
   Spinner: () => Spinner,
-  TextArea: () => TextArea
+  TextArea: () => TextArea,
+  ToggleSwitch: () => ToggleSwitch
 });
 module.exports = __toCommonJS(src_exports);
 
@@ -157,9 +158,28 @@ var Button = React.forwardRef(
 );
 Button.displayName = "plane-ui-button";
 
-// src/form-fields/input.tsx
+// src/button/toggle-switch.tsx
 var React2 = __toESM(require("react"));
-var Input = React2.forwardRef((props, ref) => {
+var import_react = require("@headlessui/react");
+var ToggleSwitch = (props) => {
+  const { value, onChange, label, size = "sm", disabled, className } = props;
+  return /* @__PURE__ */ React2.createElement(import_react.Switch, {
+    checked: value,
+    disabled,
+    onChange,
+    className: `relative flex-shrink-0 inline-flex ${size === "sm" ? "h-4 w-6" : size === "md" ? "h-5 w-8" : "h-6 w-10"} flex-shrink-0 cursor-pointer rounded-full border border-custom-border-200 transition-colors duration-200 ease-in-out focus:outline-none ${value ? "bg-custom-primary-100" : "bg-gray-700"} ${className || ""} ${disabled ? "cursor-not-allowed" : ""}`
+  }, /* @__PURE__ */ React2.createElement("span", {
+    className: "sr-only"
+  }, label), /* @__PURE__ */ React2.createElement("span", {
+    "aria-hidden": "true",
+    className: `self-center inline-block ${size === "sm" ? "h-2 w-2" : size === "md" ? "h-3 w-3" : "h-4 w-4"} transform rounded-full shadow ring-0 transition duration-200 ease-in-out ${value ? (size === "sm" ? "translate-x-3" : size === "md" ? "translate-x-4" : "translate-x-5") + " bg-white" : "translate-x-0.5 bg-custom-background-90"} ${disabled ? "cursor-not-allowed" : ""}`
+  }));
+};
+ToggleSwitch.displayName = "plane-ui-toggle-switch";
+
+// src/form-fields/input.tsx
+var React3 = __toESM(require("react"));
+var Input = React3.forwardRef((props, ref) => {
   const {
     id,
     type,
@@ -170,7 +190,7 @@ var Input = React2.forwardRef((props, ref) => {
     className = "",
     ...rest
   } = props;
-  return /* @__PURE__ */ React2.createElement("input", {
+  return /* @__PURE__ */ React3.createElement("input", {
     id,
     ref,
     type,
@@ -182,9 +202,9 @@ var Input = React2.forwardRef((props, ref) => {
 Input.displayName = "form-input-field";
 
 // src/form-fields/textarea.tsx
-var React3 = __toESM(require("react"));
+var React4 = __toESM(require("react"));
 var useAutoSizeTextArea = (textAreaRef, value) => {
-  React3.useEffect(() => {
+  React4.useEffect(() => {
     if (textAreaRef) {
       textAreaRef.style.height = "0px";
       const scrollHeight = textAreaRef.scrollHeight;
@@ -192,7 +212,7 @@ var useAutoSizeTextArea = (textAreaRef, value) => {
     }
   }, [textAreaRef, value]);
 };
-var TextArea = React3.forwardRef(
+var TextArea = React4.forwardRef(
   (props, ref) => {
     const {
       id,
@@ -205,9 +225,9 @@ var TextArea = React3.forwardRef(
       className = "",
       ...rest
     } = props;
-    const textAreaRef = React3.useRef(ref);
+    const textAreaRef = React4.useRef(ref);
     ref && useAutoSizeTextArea(textAreaRef == null ? void 0 : textAreaRef.current, value);
-    return /* @__PURE__ */ React3.createElement("textarea", {
+    return /* @__PURE__ */ React4.createElement("textarea", {
       id,
       name,
       ref: textAreaRef,
@@ -221,22 +241,22 @@ var TextArea = React3.forwardRef(
 );
 
 // src/progress/radial-progress.tsx
-var import_react = __toESM(require("react"));
+var import_react2 = __toESM(require("react"));
 var RadialProgressBar = (props) => {
   const { progress } = props;
-  const [circumference, setCircumference] = (0, import_react.useState)(0);
-  (0, import_react.useEffect)(() => {
+  const [circumference, setCircumference] = (0, import_react2.useState)(0);
+  (0, import_react2.useEffect)(() => {
     const radius = 40;
     const circumference2 = 2 * Math.PI * radius;
     setCircumference(circumference2);
   }, []);
   const progressOffset = (100 - progress) / 100 * circumference;
-  return /* @__PURE__ */ import_react.default.createElement("div", {
+  return /* @__PURE__ */ import_react2.default.createElement("div", {
     className: "relative h-4 w-4"
-  }, /* @__PURE__ */ import_react.default.createElement("svg", {
+  }, /* @__PURE__ */ import_react2.default.createElement("svg", {
     className: "absolute top-0 left-0",
     viewBox: "0 0 100 100"
-  }, /* @__PURE__ */ import_react.default.createElement("circle", {
+  }, /* @__PURE__ */ import_react2.default.createElement("circle", {
     className: "stroke-current opacity-10",
     cx: "50",
     cy: "50",
@@ -244,7 +264,7 @@ var RadialProgressBar = (props) => {
     strokeWidth: "12",
     fill: "none",
     strokeDasharray: `${circumference} ${circumference}`
-  }), /* @__PURE__ */ import_react.default.createElement("circle", {
+  }), /* @__PURE__ */ import_react2.default.createElement("circle", {
     className: `stroke-current`,
     cx: "50",
     cy: "50",
@@ -258,32 +278,32 @@ var RadialProgressBar = (props) => {
 };
 
 // src/spinners/circular-spinner.tsx
-var React5 = __toESM(require("react"));
-var Spinner = () => /* @__PURE__ */ React5.createElement("div", {
+var React6 = __toESM(require("react"));
+var Spinner = () => /* @__PURE__ */ React6.createElement("div", {
   role: "status"
-}, /* @__PURE__ */ React5.createElement("svg", {
+}, /* @__PURE__ */ React6.createElement("svg", {
   "aria-hidden": "true",
   className: "mr-2 h-8 w-8 animate-spin fill-blue-600 text-custom-text-200",
   viewBox: "0 0 100 101",
   fill: "none",
   xmlns: "http://www.w3.org/2000/svg"
-}, /* @__PURE__ */ React5.createElement("path", {
+}, /* @__PURE__ */ React6.createElement("path", {
   d: "M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z",
   fill: "currentColor"
-}), /* @__PURE__ */ React5.createElement("path", {
+}), /* @__PURE__ */ React6.createElement("path", {
   d: "M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z",
   fill: "currentFill"
-})), /* @__PURE__ */ React5.createElement("span", {
+})), /* @__PURE__ */ React6.createElement("span", {
   className: "sr-only"
 }, "Loading..."));
 
 // src/loader.tsx
-var import_react2 = __toESM(require("react"));
-var Loader = ({ children, className = "" }) => /* @__PURE__ */ import_react2.default.createElement("div", {
+var import_react3 = __toESM(require("react"));
+var Loader = ({ children, className = "" }) => /* @__PURE__ */ import_react3.default.createElement("div", {
   className: `${className} animate-pulse`,
   role: "status"
 }, children);
-var Item = ({ height = "auto", width = "auto" }) => /* @__PURE__ */ import_react2.default.createElement("div", {
+var Item = ({ height = "auto", width = "auto" }) => /* @__PURE__ */ import_react3.default.createElement("div", {
   className: "rounded-md bg-custom-background-80",
   style: { height, width }
 });
@@ -296,5 +316,6 @@ Loader.displayName = "plane-ui-loader";
   Loader,
   RadialProgressBar,
   Spinner,
-  TextArea
+  TextArea,
+  ToggleSwitch
 });

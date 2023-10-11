@@ -15,6 +15,16 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 declare const Button: React.ForwardRefExoticComponent<ButtonProps & React.RefAttributes<HTMLButtonElement>>;
 
+interface IToggleSwitchProps {
+    value: boolean;
+    onChange: (value: boolean) => void;
+    label?: string;
+    size?: "sm" | "md" | "lg";
+    disabled?: boolean;
+    className?: string;
+}
+declare const ToggleSwitch: React.FC<IToggleSwitchProps>;
+
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     mode?: "primary" | "transparent" | "true-transparent";
     inputSize?: "sm" | "md";
@@ -51,4 +61,4 @@ declare type ItemProps = {
     width?: string;
 };
 
-export { Button, ButtonProps, Input, InputProps, Loader, RadialProgressBar, Spinner, TextArea, TextAreaProps };
+export { Button, ButtonProps, Input, InputProps, Loader, RadialProgressBar, Spinner, TextArea, TextAreaProps, ToggleSwitch };

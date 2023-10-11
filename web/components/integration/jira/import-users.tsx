@@ -16,8 +16,8 @@ import { WORKSPACE_MEMBERS_WITH_EMAIL } from "constants/fetch-keys";
 import workspaceService from "services/workspace.service";
 
 // components
-import { ToggleSwitch, CustomSelect, CustomSearchSelect, Avatar } from "components/ui";
-import { Input } from "@plane/ui";
+import { CustomSelect, CustomSearchSelect, Avatar } from "components/ui";
+import { Input, ToggleSwitch } from "@plane/ui";
 
 import { IJiraImporterForm } from "types";
 

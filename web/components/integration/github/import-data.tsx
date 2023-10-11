@@ -7,8 +7,8 @@ import useProjects from "hooks/use-projects";
 // components
 import { SelectRepository, TFormValues, TIntegrationSteps } from "components/integration";
 // ui
-import { Button } from "@plane/ui";
-import { CustomSearchSelect, ToggleSwitch } from "components/ui";
+import { Button, ToggleSwitch } from "@plane/ui";
+import { CustomSearchSelect } from "components/ui";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types

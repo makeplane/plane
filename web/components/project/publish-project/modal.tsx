@@ -6,8 +6,8 @@ import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // ui components
-import { Button, Loader } from "@plane/ui";
-import { ToggleSwitch, Icon } from "components/ui";
+import { Button, Loader, ToggleSwitch } from "@plane/ui";
+import { Icon } from "components/ui";
 import { CustomPopover } from "./popover";
 // mobx react lite
 import { observer } from "mobx-react-lite";

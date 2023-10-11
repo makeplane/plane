@@ -23,8 +23,8 @@ import {
 import { CreateStateModal } from "components/states";
 import { CreateLabelModal } from "components/labels";
 // ui
-import { CustomMenu, ToggleSwitch } from "components/ui";
-import { Button, Input } from "@plane/ui";
+import { CustomMenu } from "components/ui";
+import { Button, Input, ToggleSwitch } from "@plane/ui";
 import { TipTapEditor } from "components/tiptap";
 // icons
 import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";

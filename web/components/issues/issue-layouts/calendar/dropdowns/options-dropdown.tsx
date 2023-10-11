@@ -6,7 +6,7 @@ import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // ui
-import { ToggleSwitch } from "components/ui";
+import { ToggleSwitch } from "@plane/ui";
 // icons
 import { Check, ChevronUp } from "lucide-react";
 // types

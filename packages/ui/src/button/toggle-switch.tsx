@@ -1,15 +1,17 @@
+import * as React from "react";
+
 import { Switch } from "@headlessui/react";
 
-type Props = {
+interface IToggleSwitchProps {
   value: boolean;
   onChange: (value: boolean) => void;
   label?: string;
   size?: "sm" | "md" | "lg";
   disabled?: boolean;
   className?: string;
-};
+}
 
-export const ToggleSwitch: React.FC<Props> = (props) => {
+const ToggleSwitch: React.FC<IToggleSwitchProps> = (props) => {
   const { value, onChange, label, size = "sm", disabled, className } = props;
 
   return (
@@ -41,3 +43,7 @@ export const ToggleSwitch: React.FC<Props> = (props) => {
     </Switch>
   );
 };
+
+ToggleSwitch.displayName = "plane-ui-toggle-switch";
+
+export { ToggleSwitch };
