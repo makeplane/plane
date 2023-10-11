@@ -100,50 +100,50 @@ class ProjectViewSet(BaseViewSet):
             .select_related(
                 "workspace", "workspace__owner", "default_assignee", "project_lead"
             )
-            .annotate(is_favorite=Exists(subquery))
-            .annotate(
-                is_member=Exists(
-                    ProjectMember.objects.filter(
-                        member=self.request.user,
-                        project_id=OuterRef("pk"),
-                        workspace__slug=self.kwargs.get("slug"),
-                    )
-                )
-            )
-            .annotate(
-                total_members=ProjectMember.objects.filter(
-                    project_id=OuterRef("id"), member__is_bot=False
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                total_cycles=Cycle.objects.filter(project_id=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                total_modules=Module.objects.filter(project_id=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                member_role=ProjectMember.objects.filter(
-                    project_id=OuterRef("pk"),
-                    member_id=self.request.user.id,
-                ).values("role")
-            )
-            .annotate(
-                is_deployed=Exists(
-                    ProjectDeployBoard.objects.filter(
-                        project_id=OuterRef("pk"),
-                        workspace__slug=self.kwargs.get("slug"),
-                    )
-                )
-            )
+            # .annotate(is_favorite=Exists(subquery))
+            # .annotate(
+            #     is_member=Exists(
+            #         ProjectMember.objects.filter(
+            #             member=self.request.user,
+            #             project_id=OuterRef("pk"),
+            #             workspace__slug=self.kwargs.get("slug"),
+            #         )
+            #     )
+            # )
+            # .annotate(
+            #     total_members=ProjectMember.objects.filter(
+            #         project_id=OuterRef("id"), member__is_bot=False
+            #     )
+            #     .order_by()
+            #     .annotate(count=Func(F("id"), function="Count"))
+            #     .values("count")
+            # )
+            # .annotate(
+            #     total_cycles=Cycle.objects.filter(project_id=OuterRef("id"))
+            #     .order_by()
+            #     .annotate(count=Func(F("id"), function="Count"))
+            #     .values("count")
+            # )
+            # .annotate(
+            #     total_modules=Module.objects.filter(project_id=OuterRef("id"))
+            #     .order_by()
+            #     .annotate(count=Func(F("id"), function="Count"))
+            #     .values("count")
+            # )
+            # .annotate(
+            #     member_role=ProjectMember.objects.filter(
+            #         project_id=OuterRef("pk"),
+            #         member_id=self.request.user.id,
+            #     ).values("role")
+            # )
+            # .annotate(
+            #     is_deployed=Exists(
+            #         ProjectDeployBoard.objects.filter(
+            #             project_id=OuterRef("pk"),
+            #             workspace__slug=self.kwargs.get("slug"),
+            #         )
+            #     )
+            # )
             .distinct()
         )
 
@@ -162,29 +162,29 @@ class ProjectViewSet(BaseViewSet):
             ).values("sort_order")
             projects = (
                 self.get_queryset()
-                .annotate(is_favorite=Exists(subquery))
+                # .annotate(is_favorite=Exists(subquery))
                 .annotate(sort_order=Subquery(sort_order_query))
                 .order_by("sort_order", "name")
-                .annotate(
-                    total_members=ProjectMember.objects.filter(
-                        project_id=OuterRef("id")
-                    )
-                    .order_by()
-                    .annotate(count=Func(F("id"), function="Count"))
-                    .values("count")
-                )
-                .annotate(
-                    total_cycles=Cycle.objects.filter(project_id=OuterRef("id"))
-                    .order_by()
-                    .annotate(count=Func(F("id"), function="Count"))
-                    .values("count")
-                )
-                .annotate(
-                    total_modules=Module.objects.filter(project_id=OuterRef("id"))
-                    .order_by()
-                    .annotate(count=Func(F("id"), function="Count"))
-                    .values("count")
-                )
+                # .annotate(
+                #     total_members=ProjectMember.objects.filter(
+                #         project_id=OuterRef("id")
+                #     )
+                #     .order_by()
+                #     .annotate(count=Func(F("id"), function="Count"))
+                #     .values("count")
+                # )
+                # .annotate(
+                #     total_cycles=Cycle.objects.filter(project_id=OuterRef("id"))
+                #     .order_by()
+                #     .annotate(count=Func(F("id"), function="Count"))
+                #     .values("count")
+                # )
+                # .annotate(
+                #     total_modules=Module.objects.filter(project_id=OuterRef("id"))
+                #     .order_by()
+                #     .annotate(count=Func(F("id"), function="Count"))
+                #     .values("count")
+                # )
             )
 
             if is_favorite == "true":
