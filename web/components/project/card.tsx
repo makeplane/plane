@@ -5,6 +5,7 @@ import { mutate } from "swr";
 import { observer } from "mobx-react-lite";
 // icons
 import { CalendarDaysIcon, LinkIcon, PencilIcon, PlusIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { Star } from "lucide-react";
 // services
 import projectService from "services/project.service";
 // hooks
@@ -136,7 +137,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                 alt={project.name}
                 className="absolute top-0 left-0 h-full w-full object-cover rounded-t-[10px]"
               />
-              <div className="absolute bottom-4 left-4 flex items-center gap-3 text-white">
+              <div className="absolute bottom-4 right-4 flex items-center gap-3 text-white">
                 {!project.is_member ? (
                   <button
                     type="button"
@@ -153,11 +154,21 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                 ) : (
                   <span className="cursor-default rounded bg-green-600 px-2 py-1 text-xs">Joined</span>
                 )}
-                {project.is_favorite && (
-                  <span className="grid h-6 w-9 cursor-default place-items-center rounded bg-orange-400">
-                    <StarIcon className="h-3 w-3" />
+              </div>
+
+              <div className="absolute top-4 right-4 bg-slate-300 rounded">
+                <span className="grid h-6 w-9 place-items-center cursor-pointer  ">
+                  <Star className="h-3 w-3" />
+                </span>
+              </div>
+              <div className="absolute bottom-4 left-4 bg-slate-300 rounded-md">
+                {project.emoji ? (
+                  <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+                    {renderEmoji(project.emoji)}
                   </span>
-                )}
+                ) : project.icon_prop ? (
+                  renderEmoji(project.icon_prop)
+                ) : null}
               </div>
             </div>
           </a>
@@ -167,13 +178,6 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
             <a>
               <div className="flex items-center gap-1">
                 <h3 className="text-1.5xl font-medium text-custom-text-100">{project.name}</h3>
-                {project.emoji ? (
-                  <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                    {renderEmoji(project.emoji)}
-                  </span>
-                ) : project.icon_prop ? (
-                  renderEmoji(project.icon_prop)
-                ) : null}
               </div>
               <p className="mt-3.5 mb-7 break-words">{truncateText(project.description ?? "", 100)}</p>
             </a>
@@ -209,14 +213,14 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                   {project.is_favorite ? (
                     <CustomMenu.MenuItem onClick={handleRemoveFromFavorites}>
                       <span className="flex items-center justify-start gap-2">
-                        <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                        <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
                         <span>Remove from favorites</span>
                       </span>
                     </CustomMenu.MenuItem>
                   ) : (
                     <CustomMenu.MenuItem onClick={handleAddToFavorites}>
                       <span className="flex items-center justify-start gap-2">
-                        <StarIcon className="h-4 w-4" />
+                        <Star className="h-4 w-4" />
                         <span>Add to favorites</span>
                       </span>
                     </CustomMenu.MenuItem>

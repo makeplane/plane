@@ -232,10 +232,11 @@ class ProjectStore implements IProjectStore {
    * get Workspace projects using workspace slug
    * @param workspaceSlug
    * @returns
+   *
    */
   fetchProjects = async (workspaceSlug: string) => {
     try {
-      const projects = await this.projectService.getProjects(workspaceSlug, { is_favorite: "all" });
+      const projects = await this.projectService.getProjects(workspaceSlug);
       runInAction(() => {
         this.projects = {
           ...this.projects,
@@ -244,6 +245,7 @@ class ProjectStore implements IProjectStore {
       });
     } catch (error) {
       console.log("Failed to fetch project from workspace store");
+      throw error;
     }
   };
 
