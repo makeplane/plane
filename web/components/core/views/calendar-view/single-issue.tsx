@@ -13,10 +13,11 @@ import trackEventServices from "services/track_event.service";
 import useIssuesProperties from "hooks/use-issue-properties";
 import useToast from "hooks/use-toast";
 // components
-import { CustomMenu, Tooltip } from "components/ui";
+import { CustomMenu } from "components/ui";
 import { ViewDueDateSelect, ViewEstimateSelect, ViewStartDateSelect } from "components/issues";
 import { LabelSelect, MembersSelect, PrioritySelect } from "components/project";
 import { StateSelect } from "components/states";
+import { Tooltip } from "@plane/ui";
 // icons
 import { LinkIcon, PaperClipIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { LayerDiagonalIcon } from "components/icons";

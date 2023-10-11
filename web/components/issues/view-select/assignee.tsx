@@ -8,7 +8,8 @@ import useSWR from "swr";
 import projectService from "services/project.service";
 import trackEventServices from "services/track_event.service";
 // ui
-import { AssigneesList, Avatar, CustomSearchSelect, Icon, Tooltip } from "components/ui";
+import { AssigneesList, Avatar, CustomSearchSelect, Icon } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // icons
 import { UserGroupIcon } from "@heroicons/react/24/outline";
 // types

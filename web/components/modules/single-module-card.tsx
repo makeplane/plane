@@ -12,15 +12,10 @@ import useToast from "hooks/use-toast";
 // components
 import { DeleteModuleModal } from "components/modules";
 // ui
-import { AssigneesList, Avatar, CustomMenu, Tooltip } from "components/ui";
+import { AssigneesList, Avatar, CustomMenu } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // icons
-import {
-  CalendarDaysIcon,
-  LinkIcon,
-  PencilIcon,
-  StarIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { CalendarDaysIcon, LinkIcon, PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { CalendarMonthIcon, TargetIcon } from "components/icons";
 
 // helpers
@@ -45,8 +40,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
 
   const { setToastAlert } = useToast();
 
-  const completionPercentage =
-    ((module.completed_issues + module.cancelled_issues) / module.total_issues) * 100;
+  const completionPercentage = ((module.completed_issues + module.cancelled_issues) / module.total_issues) * 100;
 
   const handleDeleteModule = () => {
     if (!module) return;
@@ -93,24 +87,19 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
       false
     );
 
-    modulesService
-      .removeModuleFromFavorites(workspaceSlug as string, projectId as string, module.id)
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't remove the module from favorites. Please try again.",
-        });
+    modulesService.removeModuleFromFavorites(workspaceSlug as string, projectId as string, module.id).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Couldn't remove the module from favorites. Please try again.",
       });
+    });
   };
 
   const handleCopyText = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${projectId}/modules/${module.id}`
-    ).then(() => {
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/modules/${module.id}`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",
@@ -125,12 +114,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
 
   return (
     <>
-      <DeleteModuleModal
-        isOpen={moduleDeleteModal}
-        setIsOpen={setModuleDeleteModal}
-        data={module}
-        user={user}
-      />
+      <DeleteModuleModal isOpen={moduleDeleteModal} setIsOpen={setModuleDeleteModal} data={module} user={user} />
       <div className="flex flex-col divide-y divide-custom-border-200 overflow-hidden rounded-[10px] border border-custom-border-200 bg-custom-background-100 text-xs">
         <div className="p-4">
           <div className="flex w-full flex-col gap-5">

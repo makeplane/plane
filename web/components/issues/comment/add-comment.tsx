@@ -5,8 +5,8 @@ import { useForm, Controller } from "react-hook-form";
 // components
 import { TipTapEditor } from "components/tiptap";
 // ui
-import { Icon, Tooltip } from "components/ui";
-import { Button } from "@plane/ui";
+import { Icon } from "components/ui";
+import { Button, Tooltip } from "@plane/ui";
 // types
 import type { IIssueComment } from "types";
 

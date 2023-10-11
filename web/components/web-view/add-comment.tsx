@@ -16,11 +16,11 @@ import { TipTapEditor } from "components/tiptap";
 import { Send } from "lucide-react";
 
 // ui
-import { Icon, Tooltip } from "components/ui";
+import { Icon } from "components/ui";
+import { Button, Tooltip } from "@plane/ui";
 
 // types
 import type { IIssueComment } from "types";
-import { Button } from "@plane/ui";
 
 const defaultValues: Partial<IIssueComment> = {
   access: "INTERNAL",

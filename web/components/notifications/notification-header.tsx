@@ -1,7 +1,8 @@
 import React from "react";
 
 // components
-import { CustomMenu, Icon, Tooltip } from "components/ui";
+import { CustomMenu, Icon } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // helpers
 import { getNumberCount } from "helpers/string.helper";
 

@@ -15,8 +15,8 @@ import stateService from "services/project_state.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, Tooltip } from "components/ui";
-import { Button, Input } from "@plane/ui";
+import { CustomSelect } from "components/ui";
+import { Button, Input, Tooltip } from "@plane/ui";
 // types
 import type { ICurrentUserResponse, IState, IStateResponse } from "types";
 // fetch-keys

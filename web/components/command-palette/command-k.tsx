@@ -26,8 +26,8 @@ import {
   commandGroups,
 } from "components/command-palette";
 // ui
-import { Icon, Tooltip } from "components/ui";
-import { Loader, ToggleSwitch } from "@plane/ui";
+import { Icon } from "components/ui";
+import { Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
 import { DiscordIcon, GithubIcon, SettingIcon } from "components/icons";
 import { InboxIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";

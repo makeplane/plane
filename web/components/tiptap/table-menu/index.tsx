@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Rows, Columns, ToggleRight } from "lucide-react";
 import { cn } from "../utils";
-import { Tooltip } from "components/ui";
+import { Tooltip } from "@plane/ui";
 import InsertLeftTableIcon from "./InsertLeftTableIcon";
 import InsertRightTableIcon from "./InsertRightTableIcon";
 import InsertTopTableIcon from "./InsertTopTableIcon";

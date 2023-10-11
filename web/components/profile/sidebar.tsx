@@ -10,8 +10,8 @@ import userService from "services/user.service";
 // hooks
 import useUser from "hooks/use-user";
 // ui
-import { Icon, Tooltip } from "components/ui";
-import { Loader } from "@plane/ui";
+import { Icon } from "components/ui";
+import { Loader, Tooltip } from "@plane/ui";
 // icons
 import { EditOutlined } from "@mui/icons-material";
 // helpers

@@ -11,8 +11,7 @@ import useDebounce from "hooks/use-debounce";
 // components
 import { LayerDiagonalIcon } from "components/icons";
 // ui
-import { Tooltip } from "components/ui";
-import { Loader, ToggleSwitch } from "@plane/ui";
+import { Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
 import { LaunchOutlined } from "@mui/icons-material";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
