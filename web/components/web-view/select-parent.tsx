@@ -82,6 +82,7 @@ export const ParentSelect: React.FC<Props> = (props) => {
           <button
             type="button"
             disabled={disabled}
+            className="pr-2.5"
             onClick={() => {
               onChange(null);
               setSelectedParentIssue(null);
