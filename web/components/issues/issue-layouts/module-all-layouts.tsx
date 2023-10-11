@@ -10,10 +10,10 @@ import {
   ModuleAppliedFiltersRoot,
   ModuleCalendarLayout,
   ModuleGanttLayout,
+  ModuleKanBanLayout,
+  ModuleListLayout,
   ModuleSpreadsheetLayout,
 } from "components/issues";
-import { ModuleListLayout } from "components/issues/issue-layouts/list/module-root";
-import { ModuleKanBanLayout } from "components/issues/issue-layouts/kanban/module-root";
 
 export const ModuleAllLayouts: React.FC = observer(() => {
   const router = useRouter();

@@ -122,6 +122,9 @@ class ProjectViewIssuesStore implements IProjectViewIssuesStore {
       const filteredParams = handleIssueQueryParamsByLayout(displayFilters.layout ?? "list", "issues");
       if (filteredParams) filteredRouteParams = this.computedFilter(filteredRouteParams, filteredParams);
 
+      if (displayFilters.layout === "calendar") filteredRouteParams.group_by = "target_date";
+      if (displayFilters.layout === "gantt_chart") filteredRouteParams.start_target_date = true;
+
       const response = await this.issueService.getIssuesWithParams(workspaceSlug, projectId, filteredRouteParams);
 
       const issueType = this.rootStore.issue.getIssueType;

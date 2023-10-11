@@ -7,13 +7,13 @@ import useSWR from "swr";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import {
-  ModuleSpreadsheetLayout,
+  ModuleKanBanLayout,
+  ModuleListLayout,
   ProjectViewAppliedFiltersRoot,
   ProjectViewCalendarLayout,
   ProjectViewGanttLayout,
+  ProjectViewSpreadsheetLayout,
 } from "components/issues";
-import { ModuleListLayout } from "components/issues/issue-layouts/list/module-root";
-import { ModuleKanBanLayout } from "components/issues/issue-layouts/kanban/module-root";
 
 export const ProjectViewAllLayouts: React.FC = observer(() => {
   const router = useRouter();
@@ -24,6 +24,7 @@ export const ProjectViewAllLayouts: React.FC = observer(() => {
     issueFilter: issueFilterStore,
     projectViews: projectViewsStore,
     projectViewIssues: projectViewIssuesStore,
+    projectViewFilters: projectViewFiltersStore,
   } = useMobxStore();
 
   useSWR(workspaceSlug && projectId && viewId ? `PROJECT_VIEW_INFORMATION_${viewId.toString()}` : null, async () => {
@@ -37,17 +38,13 @@ export const ProjectViewAllLayouts: React.FC = observer(() => {
       await projectStore.fetchProjectMembers(workspaceSlug.toString(), projectId.toString());
 
       // fetching the view details
-      const viewDetails = await projectViewsStore.fetchViewDetails(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        viewId.toString()
-      );
+      await projectViewsStore.fetchViewDetails(workspaceSlug.toString(), projectId.toString(), viewId.toString());
       // fetching the view issues
       await projectViewIssuesStore.fetchViewIssues(
         workspaceSlug.toString(),
         projectId.toString(),
         viewId.toString(),
-        viewDetails.query ?? {}
+        projectViewFiltersStore.storedFilters[viewId.toString()] ?? {}
       );
     }
   });
@@ -67,7 +64,7 @@ export const ProjectViewAllLayouts: React.FC = observer(() => {
         ) : activeLayout === "gantt_chart" ? (
           <ProjectViewGanttLayout />
         ) : activeLayout === "spreadsheet" ? (
-          <ModuleSpreadsheetLayout />
+          <ProjectViewSpreadsheetLayout />
         ) : null}
       </div>
     </div>
