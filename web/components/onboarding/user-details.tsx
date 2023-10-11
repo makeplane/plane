@@ -167,7 +167,6 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
                   }
                   input
                   width="w-full"
-                  verticalPosition="top"
                 >
                   {USER_ROLES.map((item) => (
                     <CustomSelect.Option key={item.value} value={item.value}>
@@ -197,7 +196,6 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
                   }
                   options={timeZoneOptions}
                   onChange={onChange}
-                  verticalPosition="top"
                   optionsClassName="w-full"
                   input
                 />

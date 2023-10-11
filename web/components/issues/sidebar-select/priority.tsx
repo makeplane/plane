@@ -18,8 +18,7 @@ type Props = {
 export const SidebarPrioritySelect: React.FC<Props> = ({ value, onChange, disabled = false }) => (
   <CustomSelect
     customButton={
-      <button
-        type="button"
+      <div
         className={`flex items-center gap-1.5 text-left text-xs capitalize rounded px-2.5 py-0.5 ${
           value === "urgent"
             ? "border-red-500/20 bg-red-500/20 text-red-500"
@@ -36,7 +35,7 @@ export const SidebarPrioritySelect: React.FC<Props> = ({ value, onChange, disabl
           <PriorityIcon priority={value} className="!text-sm" />
         </span>
         <span>{value ?? "None"}</span>
-      </button>
+      </div>
     }
     value={value}
     onChange={onChange}

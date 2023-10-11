@@ -384,12 +384,12 @@ export const SinglePageBlock: React.FC<Props> = ({
                 </button>
                 <CustomMenu
                   customButton={
-                    <button
+                    <div
                       className="flex w-full cursor-pointer items-center justify-between gap-1 rounded px-2.5 py-1 text-left text-xs duration-300 hover:bg-custom-background-90"
                       onClick={() => setIsMenuActive(!isMenuActive)}
                     >
                       <BoltIcon className="h-4.5 w-3.5" />
-                    </button>
+                    </div>
                   }
                 >
                   {block.issue ? (
