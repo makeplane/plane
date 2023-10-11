@@ -10,7 +10,7 @@ import { Command } from "cmdk";
 import issuesService from "services/issue.service";
 import stateService from "services/project_state.service";
 // ui
-import { Spinner } from "components/ui";
+import { Spinner } from "@plane/ui";
 // icons
 import { CheckIcon, StateGroupIcon } from "components/icons";
 // helpers

@@ -3,7 +3,8 @@ import React, { useState } from "react";
 // components
 import { FilterHeader, FilterOption } from "components/issues";
 // ui
-import { Avatar, Loader } from "components/ui";
+import { Avatar } from "components/ui";
+import { Loader } from "@plane/ui";
 // types
 import { IUserLite } from "types";
 

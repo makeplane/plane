@@ -17,7 +17,7 @@ import DefaultLayout from "layouts/default-layout";
 // components
 import { InviteMembers, JoinWorkspaces, UserDetails, Workspace } from "components/onboarding";
 // ui
-import { Spinner } from "components/ui";
+import { Spinner } from "@plane/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
@@ -38,9 +38,7 @@ const Onboarding: NextPage = () => {
   const { workspaces } = useWorkspaces();
   const userWorkspaces = workspaces?.filter((w) => w.created_by === user?.id);
 
-  const { data: invitations } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
-    workspaceService.userWorkspaceInvitations()
-  );
+  const { data: invitations } = useSWR(USER_WORKSPACE_INVITATIONS, () => workspaceService.userWorkspaceInvitations());
 
   // update last active workspace details
   const updateLastWorkspace = async () => {
@@ -129,13 +127,8 @@ const Onboarding: NextPage = () => {
       if (!onboardingStep.profile_complete && step !== 1) setStep(1);
 
       if (onboardingStep.profile_complete) {
-        if (!onboardingStep.workspace_join && invitations.length > 0 && step !== 2 && step !== 4)
-          setStep(4);
-        else if (
-          !onboardingStep.workspace_create &&
-          (step !== 4 || onboardingStep.workspace_join) &&
-          step !== 2
-        )
+        if (!onboardingStep.workspace_join && invitations.length > 0 && step !== 2 && step !== 4) setStep(4);
+        else if (!onboardingStep.workspace_create && (step !== 4 || onboardingStep.workspace_join) && step !== 2)
           setStep(2);
       }
 

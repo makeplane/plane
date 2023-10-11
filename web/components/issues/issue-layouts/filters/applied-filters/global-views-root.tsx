@@ -7,7 +7,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { AppliedFiltersList } from "components/issues";
 // ui
-import { PrimaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // helpers
 import { areFiltersDifferent } from "helpers/filter.helper";
 // types
@@ -93,9 +93,9 @@ export const GlobalViewsAppliedFiltersRoot = observer(() => {
         projects={workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined}
       />
       {storedFilters && viewDetails && areFiltersDifferent(storedFilters, viewDetails.query_data.filters ?? {}) && (
-        <PrimaryButton className="whitespace-nowrap" onClick={handleUpdateView}>
+        <Button variant="primary" onClick={handleUpdateView}>
           Update view
-        </PrimaryButton>
+        </Button>
       )}
     </div>
   );

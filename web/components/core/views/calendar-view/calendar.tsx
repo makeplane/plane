@@ -8,7 +8,7 @@ import issuesService from "services/issue.service";
 import { SingleCalendarDate, CalendarHeader } from "components/core";
 import { IssuePeekOverview } from "components/issues";
 // ui
-import { Spinner } from "components/ui";
+import { Spinner } from "@plane/ui";
 // helpers
 import { renderDateFormat } from "helpers/date-time.helper";
 import { startOfWeek, lastDayOfWeek, eachDayOfInterval, weekDayInterval, formatDate } from "helpers/calendar.helper";

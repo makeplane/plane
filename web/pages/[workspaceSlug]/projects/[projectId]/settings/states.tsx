@@ -15,7 +15,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 import { CreateUpdateStateInline, DeleteStateModal, SingleState, StateGroup } from "components/states";
 import { SettingsSidebar } from "components/project";
 // ui
-import { Loader } from "components/ui";
+import { Loader } from "@plane/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";

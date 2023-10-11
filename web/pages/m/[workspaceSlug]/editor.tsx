@@ -15,7 +15,7 @@ import WebViewLayout from "layouts/web-view-layout";
 
 // components
 import { TipTapEditor } from "components/tiptap";
-import { PrimaryButton, Spinner } from "components/ui";
+import { Button, Spinner } from "@plane/ui";
 
 const Editor: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -55,9 +55,7 @@ const Editor: NextPage = () => {
               <TipTapEditor
                 borderOnFocus={false}
                 value={
-                  !value ||
-                  value === "" ||
-                  (typeof value === "object" && Object.keys(value).length === 0)
+                  !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
                     ? watch("data_html")
                     : value
                 }
@@ -76,7 +74,8 @@ const Editor: NextPage = () => {
             )}
           />
           {isEditable && (
-            <PrimaryButton
+            <Button
+              variant="primary"
               className="mt-4 w-[calc(100%-30px)] h-[45px] mx-[15px] text-[17px]"
               onClick={() => {
                 console.log(
@@ -88,7 +87,7 @@ const Editor: NextPage = () => {
               }}
             >
               Submit
-            </PrimaryButton>
+            </Button>
           )}
         </>
       )}

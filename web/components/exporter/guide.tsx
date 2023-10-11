@@ -13,7 +13,8 @@ import IntegrationService from "services/integration.service";
 // components
 import { Exporter, SingleExport } from "components/exporter";
 // ui
-import { Icon, Loader, PrimaryButton } from "components/ui";
+import { Button, Loader } from "@plane/ui";
+import { Icon } from "components/ui";
 // icons
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 // fetch-keys
@@ -65,9 +66,7 @@ const IntegrationGuide = () => {
                   <div className="flex-shrink-0">
                     <Link href={`/${workspaceSlug}/settings/exports?provider=${service.provider}`}>
                       <a>
-                        <PrimaryButton>
-                          <span className="capitalize">{service.type}</span>
-                        </PrimaryButton>
+                        <Button variant="primary">{service.type}</Button>
                       </a>
                     </Link>
                   </div>

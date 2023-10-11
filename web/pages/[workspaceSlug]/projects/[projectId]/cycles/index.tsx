@@ -10,7 +10,8 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import { CyclesView, ActiveCycleDetails, CreateUpdateCycleModal } from "components/cycles";
 // ui
-import { EmptyState, Icon, PrimaryButton } from "components/ui";
+import { Button } from "@plane/ui";
+import { EmptyState, Icon } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -81,16 +82,16 @@ const ProjectCyclesPage: NextPage = observer(() => {
         </Breadcrumbs>
       }
       right={
-        <PrimaryButton
-          className="flex items-center gap-2"
+        <Button
+          variant="primary"
+          prependIcon={<PlusIcon />}
           onClick={() => {
             const e = new KeyboardEvent("keydown", { key: "q" });
             document.dispatchEvent(e);
           }}
         >
-          <PlusIcon className="h-4 w-4" />
           Add Cycle
-        </PrimaryButton>
+        </Button>
       }
     >
       <CreateUpdateCycleModal

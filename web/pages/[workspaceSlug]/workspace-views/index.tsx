@@ -10,7 +10,7 @@ import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 import { GlobalDefaultViewListItem, GlobalViewsList } from "components/workspace";
 import { GlobalIssuesHeader } from "components/headers";
 // ui
-import { Input } from "components/ui";
+import { Input } from "@plane/ui";
 // icons
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // types
@@ -49,7 +49,6 @@ const WorkspaceViews: NextPage = () => {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search"
-              mode="trueTransparent"
             />
           </div>
         </div>

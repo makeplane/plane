@@ -23,7 +23,8 @@ import useUserAuth from "hooks/use-user-auth";
 // components
 import { AnalyticsProjectModal } from "components/analytics";
 // ui
-import { CustomMenu, EmptyState, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
+import { CustomMenu, EmptyState } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // images
 import emptyCycle from "public/empty-state/cycle.svg";
@@ -132,13 +133,9 @@ const SingleCycle: React.FC = () => {
         right={
           <div className={`flex flex-shrink-0 items-center gap-2 duration-300`}>
             <IssuesFilterView />
-            <SecondaryButton
-              onClick={() => setAnalyticsModal(true)}
-              className="!py-1.5 font-normal rounded-md text-custom-text-200 hover:text-custom-text-100"
-              outline
-            >
+            <Button variant="neutral-primary" onClick={() => setAnalyticsModal(true)}>
               Analytics
-            </SecondaryButton>
+            </Button>
             <button
               type="button"
               className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-90 ${

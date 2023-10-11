@@ -17,7 +17,8 @@ import { SidebarProgressStats } from "components/core";
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { DeleteCycleModal } from "components/cycles";
 // ui
-import { CustomMenu, CustomRangeDatePicker, Loader, ProgressBar } from "components/ui";
+import { CustomMenu, CustomRangeDatePicker } from "components/ui";
+import { Loader, ProgressBar } from "@plane/ui";
 // icons
 import {
   CalendarDaysIcon,

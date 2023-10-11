@@ -10,7 +10,8 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "components/issues";
 import { CreateUpdateWorkspaceViewModal } from "components/workspace";
 // ui
-import { PrimaryButton, Tooltip } from "components/ui";
+import { Tooltip } from "components/ui";
+import { Button } from "@plane/ui";
 // icons
 import { List, PlusIcon, Sheet } from "lucide-react";
 // types
@@ -145,10 +146,9 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
             </FiltersDropdown>
           </>
         )}
-        <PrimaryButton className="flex items-center gap-2" onClick={() => setCreateViewModal(true)}>
-          <PlusIcon className="h-4 w-4" />
+        <Button variant="primary" prependIcon={<PlusIcon />} onClick={() => setCreateViewModal(true)}>
           New View
-        </PrimaryButton>
+        </Button>
       </div>
     </>
   );

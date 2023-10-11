@@ -15,7 +15,8 @@ import stateService from "services/project_state.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, Input, PrimaryButton, SecondaryButton, Tooltip } from "components/ui";
+import { CustomSelect, Tooltip } from "components/ui";
+import { Button, Input } from "@plane/ui";
 // types
 import type { ICurrentUserResponse, IState, IStateResponse } from "types";
 // fetch-keys
@@ -206,17 +207,25 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
           )}
         </Popover>
       </div>
-      <Input
-        id="name"
+      <Controller
+        control={control}
         name="name"
-        register={register}
-        autoFocus
-        placeholder="Name"
-        validations={{
+        rules={{
           required: true,
         }}
-        error={errors.name}
-        autoComplete="off"
+        render={({ field: { value, onChange, ref } }) => (
+          <Input
+            id="name"
+            name="name"
+            type="text"
+            value={value}
+            onChange={onChange}
+            ref={ref}
+            hasError={Boolean(errors.name)}
+            placeholder="Name"
+            className="w-full"
+          />
+        )}
       />
       {data && (
         <Controller
@@ -247,18 +256,29 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
           )}
         />
       )}
-      <Input
-        id="description"
+      <Controller
+        control={control}
         name="description"
-        register={register}
-        placeholder="Description"
-        error={errors.description}
-        autoComplete="off"
+        render={({ field: { value, onChange, ref } }) => (
+          <Input
+            id="description"
+            name="description"
+            type="text"
+            value={value}
+            onChange={onChange}
+            ref={ref}
+            hasError={Boolean(errors.description)}
+            placeholder="Description"
+            className="w-full"
+          />
+        )}
       />
-      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-      <PrimaryButton type="submit" loading={isSubmitting}>
+      <Button variant="neutral-primary" onClick={handleClose}>
+        Cancel
+      </Button>
+      <Button variant="primary" type="submit" loading={isSubmitting}>
         {isSubmitting ? (data ? "Updating..." : "Creating...") : data ? "Update" : "Create"}
-      </PrimaryButton>
+      </Button>
     </form>
   );
 };

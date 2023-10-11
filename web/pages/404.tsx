@@ -6,7 +6,7 @@ import Image from "next/image";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // ui
-import { SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // images
 import Image404 from "public/404.svg";
 // types
@@ -22,13 +22,15 @@ const PageNotFound: NextPage = () => (
         <div className="space-y-2">
           <h3 className="text-lg font-semibold">Oops! Something went wrong.</h3>
           <p className="text-sm text-custom-text-200">
-            Sorry, the page you are looking for cannot be found. It may have been removed, had its
-            name changed, or is temporarily unavailable.
+            Sorry, the page you are looking for cannot be found. It may have been removed, had its name changed, or is
+            temporarily unavailable.
           </p>
         </div>
         <Link href="/">
           <a className="block">
-            <SecondaryButton size="md">Go to Home</SecondaryButton>
+            <Button variant="neutral-primary" size="md">
+              Go to Home
+            </Button>
           </a>
         </Link>
       </div>

@@ -13,7 +13,7 @@ import IntegrationService from "services/integration.service";
 // components
 import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "components/integration";
 // ui
-import { Loader, PrimaryButton } from "components/ui";
+import { Button, Loader } from "@plane/ui";
 // icons
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 // types
@@ -90,9 +90,7 @@ const IntegrationGuide = () => {
                 <div className="flex-shrink-0">
                   <Link href={`/${workspaceSlug}/settings/imports?provider=${service.provider}`}>
                     <a>
-                      <PrimaryButton>
-                        <span className="capitalize">{service.type}</span>
-                      </PrimaryButton>
+                      <Button variant="primary">{service.type}</Button>
                     </a>
                   </Link>
                 </div>

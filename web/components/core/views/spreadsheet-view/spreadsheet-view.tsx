@@ -18,8 +18,9 @@ import {
   SpreadsheetStateColumn,
   SpreadsheetUpdatedOnColumn,
 } from "components/core";
-import { CustomMenu, Icon, Spinner } from "components/ui";
+import { CustomMenu, Icon } from "components/ui";
 import { IssuePeekOverview } from "components/issues";
+import { Spinner } from "@plane/ui";
 // types
 import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueOrderByOptions } from "types";
 // icon
