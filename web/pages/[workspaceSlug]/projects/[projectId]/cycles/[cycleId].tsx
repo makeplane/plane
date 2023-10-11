@@ -11,7 +11,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
-import { ExistingIssuesListModal, IssuesFilterView, IssuesView } from "components/core";
+import { ExistingIssuesListModal } from "components/core";
 import { CycleDetailsSidebar, TransferIssues, TransferIssuesModal } from "components/cycles";
 import { CycleLayoutRoot } from "components/issues/issue-layouts";
 // services
@@ -35,6 +35,7 @@ import { getDateRangeStatus } from "helpers/date-time.helper";
 import { ISearchIssueResponse } from "types";
 // fetch-keys
 import { CYCLES_LIST, CYCLE_DETAILS } from "constants/fetch-keys";
+import { CycleIssuesHeader } from "components/headers";
 
 const SingleCycle: React.FC = () => {
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
@@ -67,10 +68,6 @@ const SingleCycle: React.FC = () => {
     cycleDetails?.start_date && cycleDetails?.end_date
       ? getDateRangeStatus(cycleDetails?.start_date, cycleDetails?.end_date)
       : "draft";
-
-  const openIssuesListModal = () => {
-    setCycleIssuesListModal(true);
-  };
 
   const handleAddIssuesToCycle = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId) return;
@@ -132,7 +129,7 @@ const SingleCycle: React.FC = () => {
         }
         right={
           <div className={`flex flex-shrink-0 items-center gap-2 duration-300`}>
-            <IssuesFilterView />
+            <CycleIssuesHeader />
             <Button variant="neutral-primary" onClick={() => setAnalyticsModal(true)}>
               Analytics
             </Button>

@@ -11,17 +11,17 @@ import { IssueGanttBlock, IssueGanttSidebarBlock, IssuePeekOverview } from "comp
 // types
 import { IIssueUnGroupedStructure } from "store/issue";
 
-export const ModuleGanttLayout: React.FC = observer(() => {
+export const CycleGanttLayout: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   const { projectDetails } = useProjectDetails();
 
-  const { moduleIssue: moduleIssueStore, issueFilter: issueFilterStore } = useMobxStore();
+  const { cycleIssue: cycleIssueStore, issueFilter: issueFilterStore } = useMobxStore();
 
   const appliedDisplayFilters = issueFilterStore.userDisplayFilters;
 
-  const issues = moduleIssueStore.getIssues;
+  const issues = cycleIssueStore.getIssues;
 
   const isAllowed = projectDetails?.member_role === 20 || projectDetails?.member_role === 15;
 

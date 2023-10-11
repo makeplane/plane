@@ -6,7 +6,13 @@ import useSWR from "swr";
 // mobx react lite
 import { observer } from "mobx-react-lite";
 // components
-import { CycleKanBanLayout, CycleListLayout } from "components/issues";
+import {
+  CycleCalendarLayout,
+  CycleGanttLayout,
+  CycleKanBanLayout,
+  CycleListLayout,
+  CycleSpreadsheetLayout,
+} from "components/issues";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 
@@ -46,7 +52,17 @@ export const CycleLayoutRoot: React.FC = observer(() => {
 
   return (
     <div className="w-full h-full">
-      {activeLayout === "list" ? <CycleListLayout /> : activeLayout === "kanban" ? <CycleKanBanLayout /> : null}
+      {activeLayout === "list" ? (
+        <CycleListLayout />
+      ) : activeLayout === "kanban" ? (
+        <CycleKanBanLayout />
+      ) : activeLayout === "calendar" ? (
+        <CycleCalendarLayout />
+      ) : activeLayout === "gantt_chart" ? (
+        <CycleGanttLayout />
+      ) : activeLayout === "spreadsheet" ? (
+        <CycleSpreadsheetLayout />
+      ) : null}
     </div>
   );
 });
