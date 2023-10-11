@@ -7,9 +7,9 @@ import useToast from "hooks/use-toast";
 // components
 import { SingleProgressStats } from "components/core";
 // ui
-import { CustomMenu, LinearProgressIndicator } from "components/ui";
+import { CustomMenu } from "components/ui";
 import { AssigneesList } from "components/ui/avatar";
-import { RadialProgressBar, Tooltip } from "@plane/ui";
+import { RadialProgressBar, Tooltip, LinearProgressIndicator } from "@plane/ui";
 // icons
 import { CalendarDaysIcon } from "@heroicons/react/20/solid";
 import {

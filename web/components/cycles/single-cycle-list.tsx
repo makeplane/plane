@@ -6,8 +6,8 @@ import { useRouter } from "next/router";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomMenu, LinearProgressIndicator } from "components/ui";
-import { Tooltip } from "@plane/ui";
+import { CustomMenu } from "components/ui";
+import { Tooltip, LinearProgressIndicator } from "@plane/ui";
 // icons
 import { CalendarDaysIcon } from "@heroicons/react/20/solid";
 import {
