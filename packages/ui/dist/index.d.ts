@@ -45,6 +45,16 @@ interface IRadialProgressBar {
 }
 declare const RadialProgressBar: FC<IRadialProgressBar>;
 
+declare type Props$1 = {
+    maxValue?: number;
+    value?: number;
+    radius?: number;
+    strokeWidth?: number;
+    activeStrokeColor?: string;
+    inactiveStrokeColor?: string;
+};
+declare const ProgressBar: React__default.FC<Props$1>;
+
 declare const Spinner: React.FC;
 
 declare type Props = {
@@ -61,4 +71,4 @@ declare type ItemProps = {
     width?: string;
 };
 
-export { Button, ButtonProps, Input, InputProps, Loader, RadialProgressBar, Spinner, TextArea, TextAreaProps, ToggleSwitch };
+export { Button, ButtonProps, Input, InputProps, Loader, ProgressBar, RadialProgressBar, Spinner, TextArea, TextAreaProps, ToggleSwitch };

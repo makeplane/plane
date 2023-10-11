@@ -29,8 +29,8 @@ import useToast from "hooks/use-toast";
 import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
 import { DeleteModuleModal, SidebarLeadSelect, SidebarMembersSelect } from "components/modules";
 import ProgressChart from "components/core/sidebar/progress-chart";
-import { CustomMenu, CustomSelect, ProgressBar } from "components/ui";
-import { Loader } from "@plane/ui";
+import { CustomMenu, CustomSelect } from "components/ui";
+import { Loader, ProgressBar } from "@plane/ui";
 // icon
 import { ExclamationIcon } from "components/icons";
 import { LinkIcon } from "@heroicons/react/20/solid";
