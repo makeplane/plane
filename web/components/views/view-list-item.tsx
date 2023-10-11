@@ -1,43 +1,61 @@
-import { useRouter } from "next/router";
+import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { useState } from "react";
 
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { CreateUpdateWorkspaceViewModal, DeleteGlobalViewModal } from "components/workspace";
+import { DeleteProjectViewModal } from "components/views";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
-import { PencilIcon, Sparkles, TrashIcon } from "lucide-react";
+import { PencilIcon, Sparkles, StarIcon, TrashIcon } from "lucide-react";
+// types
+import { IProjectView } from "types";
 // helpers
 import { truncateText } from "helpers/string.helper";
 import { calculateTotalFilters } from "helpers/filter.helper";
-// types
-import { IWorkspaceView } from "types/workspace-views";
 
-type Props = { view: IWorkspaceView };
+type Props = {
+  view: IProjectView;
+};
 
-export const GlobalViewListItem: React.FC<Props> = observer((props) => {
+export const ProjectViewListItem: React.FC<Props> = observer((props) => {
   const { view } = props;
 
-  const [updateViewModal, setUpdateViewModal] = useState(false);
   const [deleteViewModal, setDeleteViewModal] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
-  const totalFilters = calculateTotalFilters(view.query_data.filters ?? {});
+  const { projectViews: projectViewsStore } = useMobxStore();
+
+  const handleAddToFavorites = () => {
+    if (!workspaceSlug || !projectId) return;
+
+    projectViewsStore.addViewToFavorites(workspaceSlug.toString(), projectId.toString(), view.id);
+  };
+
+  const handleRemoveFromFavorites = () => {
+    if (!workspaceSlug || !projectId) return;
+
+    projectViewsStore.removeViewFromFavorites(workspaceSlug.toString(), projectId.toString(), view.id);
+  };
+
+  const totalFilters = calculateTotalFilters(view.query_data ?? {});
 
   return (
     <>
-      <CreateUpdateWorkspaceViewModal data={view} isOpen={updateViewModal} onClose={() => setUpdateViewModal(false)} />
-      <DeleteGlobalViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
+      <DeleteProjectViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
       <div className="group hover:bg-custom-background-90 border-b border-custom-border-200">
-        <Link href={`/${workspaceSlug}/workspace-views/${view.id}`}>
+        <Link href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}>
           <a className="flex items-center justify-between relative rounded px-5 py-4 w-full">
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-4">
-                <div className="grid place-items-center h-10 w-10 rounded bg-custom-background-90 group-hover:bg-custom-background-100">
+                <div
+                  className={`flex items-center justify-center h-10 w-10 rounded bg-custom-background-90 group-hover:bg-custom-background-100`}
+                >
                   <Sparkles size={14} strokeWidth={2} />
                 </div>
                 <div className="flex flex-col">
@@ -50,12 +68,35 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
                   <p className="rounded bg-custom-background-80 py-1 px-2 text-xs text-custom-text-200 hidden group-hover:block">
                     {totalFilters} {totalFilters === 1 ? "filter" : "filters"}
                   </p>
-                  <CustomMenu width="auto" ellipsis>
-                    <CustomMenu.MenuItem
+
+                  {view.is_favorite ? (
+                    <button
+                      type="button"
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        setUpdateViewModal(true);
+                        handleRemoveFromFavorites();
+                      }}
+                    >
+                      <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleAddToFavorites();
+                      }}
+                    >
+                      <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
+                    </button>
+                  )}
+                  <CustomMenu width="auto" ellipsis>
+                    <CustomMenu.MenuItem
+                      onClick={(e: any) => {
+                        e.preventDefault();
+                        e.stopPropagation();
                       }}
                     >
                       <span className="flex items-center justify-start gap-2">
@@ -64,9 +105,10 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
                       </span>
                     </CustomMenu.MenuItem>
                     <CustomMenu.MenuItem
-                      onClick={(e) => {
+                      onClick={(e: any) => {
                         e.preventDefault();
                         e.stopPropagation();
+
                         setDeleteViewModal(true);
                       }}
                     >

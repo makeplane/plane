@@ -17,8 +17,6 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import type { NextPage } from "next";
 // constants
 import { DEFAULT_GLOBAL_VIEWS_LIST } from "constants/workspace";
-// fetch-keys
-import { GLOBAL_VIEWS_LIST } from "constants/fetch-keys";
 
 const WorkspaceViews: NextPage = () => {
   const [query, setQuery] = useState("");
@@ -29,7 +27,7 @@ const WorkspaceViews: NextPage = () => {
   const { globalViews: globalViewsStore } = useMobxStore();
 
   useSWR(
-    workspaceSlug ? GLOBAL_VIEWS_LIST(workspaceSlug.toString()) : null,
+    workspaceSlug ? `GLOBAL_VIEWS_LIST_${workspaceSlug.toString()}` : null,
     workspaceSlug ? () => globalViewsStore.fetchAllGlobalViews(workspaceSlug.toString()) : null
   );
 
