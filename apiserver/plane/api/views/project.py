@@ -29,6 +29,7 @@ from sentry_sdk import capture_exception
 from .base import BaseViewSet, BaseAPIView
 from plane.api.serializers import (
     ProjectSerializer,
+    ProjectListSerializer,
     ProjectMemberSerializer,
     ProjectDetailSerializer,
     ProjectMemberInviteSerializer,
@@ -86,12 +87,6 @@ class ProjectViewSet(BaseViewSet):
         return ProjectDetailSerializer
 
     def get_queryset(self):
-        subquery = ProjectFavorite.objects.filter(
-            user=self.request.user,
-            project_id=OuterRef("pk"),
-            workspace__slug=self.kwargs.get("slug"),
-        )
-
         return self.filter_queryset(
             super()
             .get_queryset()
@@ -104,7 +99,7 @@ class ProjectViewSet(BaseViewSet):
                 is_favorite=Exists(
                     ProjectFavorite.objects.filter(
                         user=self.request.user,
-                        project_id=self.kwargs.get("project_id"),
+                        project_id=OuterRef("pk"),
                         workspace__slug=self.kwargs.get("slug"),
                     )
                 )
@@ -118,26 +113,26 @@ class ProjectViewSet(BaseViewSet):
                     )
                 )
             )
-            # .annotate(
-            #     total_members=ProjectMember.objects.filter(
-            #         project_id=OuterRef("id"), member__is_bot=False
-            #     )
-            #     .order_by()
-            #     .annotate(count=Func(F("id"), function="Count"))
-            #     .values("count")
-            # )
-            # .annotate(
-            #     total_cycles=Cycle.objects.filter(project_id=OuterRef("id"))
-            #     .order_by()
-            #     .annotate(count=Func(F("id"), function="Count"))
-            #     .values("count")
-            # )
-            # .annotate(
-            #     total_modules=Module.objects.filter(project_id=OuterRef("id"))
-            #     .order_by()
-            #     .annotate(count=Func(F("id"), function="Count"))
-            #     .values("count")
-            # )
+            .annotate(
+                total_members=ProjectMember.objects.filter(
+                    project_id=OuterRef("id"), member__is_bot=False
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                total_cycles=Cycle.objects.filter(project_id=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                total_modules=Module.objects.filter(project_id=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
             .annotate(
                 member_role=ProjectMember.objects.filter(
                     project_id=OuterRef("pk"),
@@ -157,8 +152,6 @@ class ProjectViewSet(BaseViewSet):
 
     def list(self, request, slug):
         try:
-            is_favorite = request.GET.get("is_favorite", "all")
-
             sort_order_query = ProjectMember.objects.filter(
                 member=request.user,
                 project_id=OuterRef("pk"),
@@ -169,13 +162,16 @@ class ProjectViewSet(BaseViewSet):
                 .annotate(sort_order=Subquery(sort_order_query))
                 .order_by("sort_order", "name")
             )
+            if request.GET.get("per_page", False) and request.GET.get("cursor", False):
+                return self.paginate(
+                    request=request,
+                    queryset=(projects),
+                    on_results=lambda projects: ProjectListSerializer(
+                        projects, many=True
+                    ).data,
+                )
 
-            if is_favorite == "true":
-                projects = projects.filter(is_favorite=True)
-            if is_favorite == "false":
-                projects = projects.filter(is_favorite=False)
-
-            return Response(ProjectDetailSerializer(projects, many=True).data)
+            return Response(ProjectListSerializer(projects, many=True).data)
         except Exception as e:
             capture_exception(e)
             return Response(
