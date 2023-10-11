@@ -1,7 +1,5 @@
 export * from "./dropdowns";
 export * from "./graphs";
-export * from "./input";
-export * from "./text-area";
 export * from "./avatar";
 export * from "./date";
 export * from "./datepicker";
@@ -21,5 +19,4 @@ export * from "./markdown-to-component";
 export * from "./product-updates-modal";
 export * from "./integration-and-import-export-banner";
 export * from "./range-datepicker";
-export * from "./circular-progress";
 export * from "./profile-empty-state";
