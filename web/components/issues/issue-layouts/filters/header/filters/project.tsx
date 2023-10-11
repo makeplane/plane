@@ -3,7 +3,7 @@ import React, { useState } from "react";
 // components
 import { FilterHeader, FilterOption } from "components/issues";
 // ui
-import { Loader } from "components/ui";
+import { Loader } from "@plane/ui";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
 // types
