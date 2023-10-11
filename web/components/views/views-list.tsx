@@ -25,10 +25,11 @@ export const ProjectViewsList = observer(() => {
 
   if (!viewsList)
     return (
-      <Loader className="space-y-3 p-8">
-        <Loader.Item height="30px" />
-        <Loader.Item height="30px" />
-        <Loader.Item height="30px" />
+      <Loader className="space-y-4 p-4">
+        <Loader.Item height="72px" />
+        <Loader.Item height="72px" />
+        <Loader.Item height="72px" />
+        <Loader.Item height="72px" />
       </Loader>
     );
 

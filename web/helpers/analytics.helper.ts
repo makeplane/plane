@@ -72,8 +72,7 @@ export const generateBarColor = (
   if (params[type] === "state__name" || params[type] === "labels__name")
     color = analytics?.extras?.colors.find((c) => c.name === value)?.color;
 
-  if (params[type] === "state__group")
-    color = STATE_GROUP_COLORS[value.toLowerCase() as TStateGroups];
+  if (params[type] === "state__group") color = STATE_GROUP_COLORS[value.toLowerCase() as TStateGroups];
 
   if (params[type] === "priority") {
     const priority = value.toLowerCase();
@@ -96,8 +95,8 @@ export const generateBarColor = (
 export const renderMonthAndYear = (date: string | number | null): string => {
   if (!date || date === "") return "";
 
-  return (
-    (MONTHS_LIST.find((m) => `${m.value}` === `${date}`.split("-")[1])?.label.substring(0, 3) ??
-      "None") + ` ${date}`.split("-")[0] ?? ""
-  );
+  const monthNumber = parseInt(`${date}`.split("-")[1], 10);
+  const year = `${date}`.split("-")[0];
+
+  return (MONTHS_LIST[monthNumber]?.shortTitle ?? "None") + ` ${year}` ?? "";
 };
