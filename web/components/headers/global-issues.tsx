@@ -10,8 +10,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "components/issues";
 import { CreateUpdateWorkspaceViewModal } from "components/workspace";
 // ui
-import { Tooltip } from "components/ui";
-import { Button } from "@plane/ui";
+import { Button, Tooltip } from "@plane/ui";
 // icons
 import { List, PlusIcon, Sheet } from "lucide-react";
 // types

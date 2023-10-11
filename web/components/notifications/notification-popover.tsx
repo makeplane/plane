@@ -9,9 +9,9 @@ import { Popover, Transition } from "@headlessui/react";
 import useUserNotification from "hooks/use-user-notifications";
 
 // components
-import { EmptyState, Tooltip } from "components/ui";
+import { EmptyState } from "components/ui";
 import { SnoozeNotificationModal, NotificationCard, NotificationHeader } from "components/notifications";
-import { Loader } from "@plane/ui";
+import { Loader, Tooltip } from "@plane/ui";
 // icons
 import { NotificationsOutlined } from "@mui/icons-material";
 // images

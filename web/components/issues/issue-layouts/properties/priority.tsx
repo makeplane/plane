@@ -6,7 +6,7 @@ import { ChevronDown, Search, X, Check, AlertCircle, SignalHigh, SignalMedium, S
 // mobx
 import { observer } from "mobx-react-lite";
 // components
-import { Tooltip } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // hooks
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // constants

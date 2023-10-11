@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // services
 import stateService from "services/project_state.service";
 // ui
-import { Tooltip } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // icons
 import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/24/outline";
 import { StateGroupIcon } from "components/icons";

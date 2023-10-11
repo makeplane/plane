@@ -9,7 +9,7 @@ import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { CheckIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { PriorityIcon } from "components/icons";
 // components
-import { Tooltip } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // types
 import { TIssuePriorities } from "types";
 // constants
@@ -52,9 +52,7 @@ export const PrioritySelect: React.FC<Props> = ({
   }));
 
   const filteredOptions =
-    query === ""
-      ? options
-      : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
+    query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const selectedOption = value ?? "None";
 
@@ -62,9 +60,7 @@ export const PrioritySelect: React.FC<Props> = ({
     <Tooltip tooltipHeading="Priority" tooltipContent={selectedOption} position="top">
       <div
         className={`grid place-items-center rounded "h-6 w-6 border shadow-sm ${
-          value === "urgent"
-            ? "border-red-500/20 bg-red-500"
-            : "border-custom-border-300 bg-custom-background-100"
+          value === "urgent" ? "border-red-500/20 bg-red-500" : "border-custom-border-300 bg-custom-background-100"
         } items-center`}
       >
         <span className="flex gap-1 items-center text-custom-text-200 text-xs">
@@ -108,15 +104,11 @@ export const PrioritySelect: React.FC<Props> = ({
               ref={dropdownBtn}
               type="button"
               className={`flex items-center justify-between gap-1 w-full text-xs ${
-                disabled
-                  ? "cursor-not-allowed text-custom-text-200"
-                  : "cursor-pointer hover:bg-custom-background-80"
+                disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
               } ${buttonClassName}`}
             >
               {label}
-              {!hideDropdownArrow && !disabled && (
-                <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
-              )}
+              {!hideDropdownArrow && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
             </Combobox.Button>
             <div className={`${open ? "fixed z-20 top-0 left-0 h-full w-full cursor-auto" : ""}`}>
               <Combobox.Options

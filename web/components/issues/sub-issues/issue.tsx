@@ -10,7 +10,8 @@ import { IssuePeekOverview } from "components/issues/peek-overview";
 import { SubIssuesRootList } from "./issues-list";
 import { IssueProperty } from "./properties";
 // ui
-import { Tooltip, CustomMenu } from "components/ui";
+import { CustomMenu } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // types
 import { ICurrentUserResponse, IIssue } from "types";
 import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";

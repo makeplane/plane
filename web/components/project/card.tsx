@@ -10,7 +10,8 @@ import projectService from "services/project.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomMenu, Tooltip } from "components/ui";
+import { CustomMenu } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";

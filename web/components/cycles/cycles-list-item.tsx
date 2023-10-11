@@ -4,8 +4,8 @@ import { useRouter } from "next/router";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { RadialProgressBar } from "@plane/ui";
-import { CustomMenu, LinearProgressIndicator, Tooltip } from "components/ui";
+import { RadialProgressBar, Tooltip } from "@plane/ui";
+import { CustomMenu, LinearProgressIndicator } from "components/ui";
 // icons
 import { CalendarDaysIcon } from "@heroicons/react/20/solid";
 import {

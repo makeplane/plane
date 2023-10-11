@@ -1,7 +1,8 @@
 import { useRouter } from "next/router";
 
 // ui
-import { CustomDatePicker, Tooltip } from "components/ui";
+import { CustomDatePicker } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // helpers
 import { findHowManyDaysLeft, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // services

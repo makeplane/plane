@@ -9,7 +9,7 @@ import { IssuePropertyLabels } from "../properties/labels";
 import { IssuePropertyAssignee } from "../properties/assignee";
 import { IssuePropertyEstimates } from "../properties/estimates";
 import { IssuePropertyStartDate } from "../properties/date";
-import { Tooltip } from "components/ui";
+import { Tooltip } from "@plane/ui";
 
 export interface IKanBanProperties {
   sub_group_id: string;

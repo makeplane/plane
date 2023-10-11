@@ -7,7 +7,7 @@ import useMyIssuesFilters from "hooks/my-issues/use-my-issues-filter";
 // components
 import { MyIssuesSelectFilters } from "components/issues";
 // ui
-import { Tooltip } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // icons
 import { FormatListBulletedOutlined } from "@mui/icons-material";
 import { CreditCard } from "lucide-react";

@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // ui
-import { Tooltip } from "components/ui";
+import { Tooltip } from "@plane/ui";
 import { DeleteAttachmentModal } from "./delete-attachment-modal";
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";

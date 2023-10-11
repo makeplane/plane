@@ -1,7 +1,7 @@
 import React from "react";
 
 // ui
-import { Tooltip } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // types
 import { TIssueLayouts } from "types";
 // constants

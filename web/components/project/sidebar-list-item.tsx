@@ -27,9 +27,10 @@ import { IProject } from "types";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 // components
-import { CustomMenu, Icon, Tooltip } from "components/ui";
+import { CustomMenu, Icon } from "components/ui";
 import { LeaveProjectModal, DeleteProjectModal } from "components/project";
 import { PublishProjectModal } from "components/project/publish-project";
+import { Tooltip } from "@plane/ui";
 
 type Props = {
   project: IProject;
