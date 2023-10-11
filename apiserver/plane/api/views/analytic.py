@@ -29,9 +29,9 @@ class AnalyticsEndpoint(BaseAPIView):
             segment = request.GET.get("segment", False)
 
             valid_xaxis_segment = [
-                "state__id",
+                "state_id",
                 "state__group",
-                "labels__name",
+                "labels__id",
                 "assignees__id",
                 "estimate_point",
                 "issue_cycle__cycle__name",
@@ -62,7 +62,7 @@ class AnalyticsEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            # If segment is present it cannot be same as x-axis 
+            # If segment is present it cannot be same as x-axis
             if segment and (segment not in valid_xaxis_segment or x_axis == segment):
                 return Response(
                     {"error": "Both segment and x axis cannot be same"},
@@ -83,36 +83,29 @@ class AnalyticsEndpoint(BaseAPIView):
                 queryset=queryset, x_axis=x_axis, y_axis=y_axis, segment=segment
             )
 
-            colors = dict()
-            if x_axis in ["state__name", "state__group"] or segment in [
-                "state__name",
-                "state__group",
-            ]:
-                if x_axis in ["state__name", "state__group"]:
-                    key = "name" if x_axis == "state__name" else "group"
-                else:
-                    key = "name" if segment == "state__name" else "group"
-
-                colors = (
+            state_details = {}
+            if x_axis in ["state_id"] or segment in ["state_id"]:
+                state_details = (
                     State.objects.filter(
                         ~Q(name="Triage"),
                         workspace__slug=slug,
                         project_id__in=filters.get("project__in"),
-                    ).values(key, "color")
+                    ).values("id", "name", "color")
                     if filters.get("project__in", False)
                     else State.objects.filter(
                         ~Q(name="Triage"), workspace__slug=slug
-                    ).values(key, "color")
+                    ).values("id", "name", "color")
                 )
 
-            if x_axis in ["labels__name"] or segment in ["labels__name"]:
-                colors = (
+            label_details = {}
+            if x_axis in ["labels__id"] or segment in ["labels__id"]:
+                label_details = (
                     Label.objects.filter(
                         workspace__slug=slug, project_id__in=filters.get("project__in")
-                    ).values("name", "color")
+                    ).values("id", "name", "color")
                     if filters.get("project__in", False)
                     else Label.objects.filter(workspace__slug=slug).values(
-                        "name", "color"
+                        "id", "name", "color"
                     )
                 )
 
@@ -137,7 +130,11 @@ class AnalyticsEndpoint(BaseAPIView):
                 {
                     "total": total_issues,
                     "distribution": distribution,
-                    "extras": {"colors": colors, "assignee_details": assignee_details},
+                    "extras": {
+                        "state_details": state_details,
+                        "assignee_details": assignee_details,
+                        "label_details": label_details,
+                    },
                 },
                 status=status.HTTP_200_OK,
             )
