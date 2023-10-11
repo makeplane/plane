@@ -55,10 +55,10 @@ const WorkspaceViews: NextPage = () => {
             />
           </div>
         </div>
-        {DEFAULT_GLOBAL_VIEWS_LIST.map((option) => (
+        {DEFAULT_GLOBAL_VIEWS_LIST.filter((v) => v.label.toLowerCase().includes(query.toLowerCase())).map((option) => (
           <GlobalDefaultViewListItem key={option.key} view={option} />
         ))}
-        <GlobalViewsList />
+        <GlobalViewsList searchQuery={query} />
       </div>
     </WorkspaceAuthorizationLayout>
   );

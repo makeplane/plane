@@ -7,7 +7,13 @@ import { GlobalViewListItem } from "components/workspace";
 // ui
 import { Loader } from "components/ui";
 
-export const GlobalViewsList: React.FC = observer(() => {
+type Props = {
+  searchQuery: string;
+};
+
+export const GlobalViewsList: React.FC<Props> = observer((props) => {
+  const { searchQuery } = props;
+
   const { globalViews: globalViewsStore } = useMobxStore();
 
   const viewsList = globalViewsStore.globalViewsList;
@@ -23,9 +29,11 @@ export const GlobalViewsList: React.FC = observer(() => {
       </Loader>
     );
 
+  const filteredViewsList = viewsList.filter((v) => v.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
   return (
     <>
-      {viewsList.map((view) => (
+      {filteredViewsList.map((view) => (
         <GlobalViewListItem key={view.id} view={view} />
       ))}
     </>

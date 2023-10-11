@@ -45,13 +45,15 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
 
     await globalViewsStore
       .createGlobalView(workspaceSlug.toString(), payloadData)
-      .then(() =>
+      .then((res) => {
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "View created successfully.",
-        })
-      )
+        });
+
+        router.push(`/${workspaceSlug}/workspace-views/${res.id}`);
+      })
       .catch(() =>
         setToastAlert({
           type: "error",
