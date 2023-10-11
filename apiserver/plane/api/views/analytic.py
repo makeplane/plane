@@ -1,10 +1,5 @@
 # Django imports
-from django.db.models import (
-    Count,
-    Sum,
-    F,
-    Q
-)
+from django.db.models import Count, Sum, F, Q
 from django.db.models.functions import ExtractMonth
 
 # Third party imports
@@ -31,19 +26,59 @@ class AnalyticsEndpoint(BaseAPIView):
         try:
             x_axis = request.GET.get("x_axis", False)
             y_axis = request.GET.get("y_axis", False)
+            segment = request.GET.get("segment", False)
 
-            if not x_axis or not y_axis:
+            valid_xaxis_segment = [
+                "state__id",
+                "state__group",
+                "labels__name",
+                "assignees__id",
+                "estimate_point",
+                "issue_cycle__cycle__name",
+                "issue_module__module__name",
+                "priority",
+                "start_date",
+                "target_date",
+                "created_at",
+                "completed_at",
+            ]
+
+            valid_yaxis = [
+                "issue_count",
+                "estimate",
+            ]
+
+            # Check for x-axis and y-axis as thery are required parameters
+            if (
+                not x_axis
+                or not y_axis
+                or not x_axis in valid_xaxis_segment
+                or not y_axis in valid_yaxis
+            ):
                 return Response(
-                    {"error": "x-axis and y-axis dimensions are required"},
+                    {
+                        "error": "x-axis and y-axis dimensions are required and the values should be valid"
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            segment = request.GET.get("segment", False)
+            # If segment is present it cannot be same as x-axis 
+            if segment and (segment not in valid_xaxis_segment or x_axis == segment):
+                return Response(
+                    {"error": "Both segment and x axis cannot be same"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Additional filters that need to be applied
             filters = issue_filters(request.GET, "GET")
 
+            # Get the issues for the workspace with the additional filters applied
             queryset = Issue.issue_objects.filter(workspace__slug=slug, **filters)
 
+            # Get the total issue count
             total_issues = queryset.count()
+
+            # Build the graph payload
             distribution = build_graph_plot(
                 queryset=queryset, x_axis=x_axis, y_axis=y_axis, segment=segment
             )
@@ -61,10 +96,13 @@ class AnalyticsEndpoint(BaseAPIView):
                 colors = (
                     State.objects.filter(
                         ~Q(name="Triage"),
-                        workspace__slug=slug, project_id__in=filters.get("project__in")
+                        workspace__slug=slug,
+                        project_id__in=filters.get("project__in"),
                     ).values(key, "color")
                     if filters.get("project__in", False)
-                    else State.objects.filter(~Q(name="Triage"), workspace__slug=slug).values(key, "color")
+                    else State.objects.filter(
+                        ~Q(name="Triage"), workspace__slug=slug
+                    ).values(key, "color")
                 )
 
             if x_axis in ["labels__name"] or segment in ["labels__name"]:
@@ -81,12 +119,19 @@ class AnalyticsEndpoint(BaseAPIView):
             assignee_details = {}
             if x_axis in ["assignees__id"] or segment in ["assignees__id"]:
                 assignee_details = (
-                    Issue.issue_objects.filter(workspace__slug=slug, **filters, assignees__avatar__isnull=False)
+                    Issue.issue_objects.filter(
+                        workspace__slug=slug, **filters, assignees__avatar__isnull=False
+                    )
                     .order_by("assignees__id")
                     .distinct("assignees__id")
-                    .values("assignees__avatar", "assignees__display_name", "assignees__first_name", "assignees__last_name", "assignees__id")
+                    .values(
+                        "assignees__avatar",
+                        "assignees__display_name",
+                        "assignees__first_name",
+                        "assignees__last_name",
+                        "assignees__id",
+                    )
                 )
-
 
             return Response(
                 {
@@ -243,21 +288,39 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
             )
             most_issue_created_user = (
                 queryset.exclude(created_by=None)
-                .values("created_by__first_name", "created_by__last_name", "created_by__avatar", "created_by__display_name", "created_by__id")
+                .values(
+                    "created_by__first_name",
+                    "created_by__last_name",
+                    "created_by__avatar",
+                    "created_by__display_name",
+                    "created_by__id",
+                )
                 .annotate(count=Count("id"))
                 .order_by("-count")
             )[:5]
 
             most_issue_closed_user = (
                 queryset.filter(completed_at__isnull=False, assignees__isnull=False)
-                .values("assignees__first_name", "assignees__last_name", "assignees__avatar", "assignees__display_name", "assignees__id")
+                .values(
+                    "assignees__first_name",
+                    "assignees__last_name",
+                    "assignees__avatar",
+                    "assignees__display_name",
+                    "assignees__id",
+                )
                 .annotate(count=Count("id"))
                 .order_by("-count")
             )[:5]
 
             pending_issue_user = (
                 queryset.filter(completed_at__isnull=True)
-                .values("assignees__first_name", "assignees__last_name", "assignees__avatar", "assignees__display_name", "assignees__id")
+                .values(
+                    "assignees__first_name",
+                    "assignees__last_name",
+                    "assignees__avatar",
+                    "assignees__display_name",
+                    "assignees__id",
+                )
                 .annotate(count=Count("id"))
                 .order_by("-count")
             )
@@ -268,7 +331,7 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
                 ).aggregate(open_estimate_sum=Sum("estimate_point"))
             )["open_estimate_sum"]
             print(open_estimate_sum)
-            
+
             total_estimate_sum = queryset.aggregate(
                 total_estimate_sum=Sum("estimate_point")
             )["total_estimate_sum"]
