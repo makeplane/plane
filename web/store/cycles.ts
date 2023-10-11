@@ -184,15 +184,16 @@ class CycleStore implements ICycleStore {
       );
 
       runInAction(() => {
-        this.cycles = {
-          ...this.cycles,
-          [projectId]: [...this.cycles[projectId], response],
-        };
         this.cycle_details = {
           ...this.cycle_details,
           [response?.id]: response,
         };
       });
+
+      if (this.cycleView === "all") this.fetchCycles(workspaceSlug, projectId, "all");
+      if (this.cycleView === "active") this.fetchCycles(workspaceSlug, projectId, "current");
+      if (this.cycleView === "upcoming") this.fetchCycles(workspaceSlug, projectId, "upcoming");
+      if (this.cycleView === "draft") this.fetchCycles(workspaceSlug, projectId, "draft");
 
       return response;
     } catch (error) {
@@ -205,22 +206,19 @@ class CycleStore implements ICycleStore {
     try {
       const response = await this.cycleService.updateCycle(workspaceSlug, projectId, cycleId, data, undefined);
 
-      const _cycles = {
-        ...this.cycles,
-        [projectId]: this.cycles[projectId].map((cycle) => {
-          if (cycle.id === cycleId) return { ...cycle, ...response };
-          return cycle;
-        }),
-      };
       const _cycleDetails = {
         ...this.cycle_details,
         [cycleId]: { ...this.cycle_details[cycleId], ...response },
       };
 
       runInAction(() => {
-        this.cycles = _cycles;
         this.cycle_details = _cycleDetails;
       });
+
+      if (this.cycleView === "all") this.fetchCycles(workspaceSlug, projectId, "all");
+      if (this.cycleView === "active") this.fetchCycles(workspaceSlug, projectId, "current");
+      if (this.cycleView === "upcoming") this.fetchCycles(workspaceSlug, projectId, "upcoming");
+      if (this.cycleView === "draft") this.fetchCycles(workspaceSlug, projectId, "draft");
 
       return response;
     } catch (error) {
@@ -233,14 +231,10 @@ class CycleStore implements ICycleStore {
     try {
       const _response = await this.cycleService.deleteCycle(workspaceSlug, projectId, cycleId, undefined);
 
-      const _cycles = {
-        ...this.cycles,
-        [projectId]: this.cycles[projectId].filter((cycle) => cycle.id !== cycleId),
-      };
-
-      runInAction(() => {
-        this.cycles = _cycles;
-      });
+      if (this.cycleView === "all") this.fetchCycles(workspaceSlug, projectId, "all");
+      if (this.cycleView === "active") this.fetchCycles(workspaceSlug, projectId, "current");
+      if (this.cycleView === "upcoming") this.fetchCycles(workspaceSlug, projectId, "upcoming");
+      if (this.cycleView === "draft") this.fetchCycles(workspaceSlug, projectId, "draft");
 
       return _response;
     } catch (error) {

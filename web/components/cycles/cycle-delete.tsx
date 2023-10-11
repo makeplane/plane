@@ -1,6 +1,4 @@
 import React from "react";
-// next imports
-import { useRouter } from "next/router";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // react mobx lite
@@ -9,6 +7,8 @@ import { observer } from "mobx-react-lite";
 import { AlertTriangle } from "lucide-react";
 // components
 import { DangerButton, SecondaryButton } from "components/ui";
+// hooks
+import useToast from "hooks/use-toast";
 // types
 import { ICycle } from "types";
 // mobx store
@@ -28,14 +28,35 @@ export const CycleDelete: React.FC<ICycleDelete> = observer((props) => {
 
   const { cycle: cycleStore } = useMobxStore();
 
+  const { setToastAlert } = useToast();
+
   const [loader, setLoader] = React.useState(false);
-  const formSubmit = () => {
+  const formSubmit = async () => {
     setLoader(true);
 
-    cycleStore;
-
-    // if (modalClose) modalClose();
-    // if (onSubmit) onSubmit();
+    if (cycle?.id)
+      try {
+        await cycleStore.removeCycle(workspaceSlug, projectId, cycle?.id);
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Cycle deleted successfully.",
+        });
+        if (modalClose) modalClose();
+        if (onSubmit) onSubmit();
+      } catch (error) {
+        setToastAlert({
+          type: "error",
+          title: "Warning!",
+          message: "Something went wrong please try again later.",
+        });
+      }
+    else
+      setToastAlert({
+        type: "error",
+        title: "Warning!",
+        message: "Something went wrong please try again later.",
+      });
 
     setLoader(false);
   };
