@@ -13,6 +13,7 @@ from .workspace import (
 
 from .project import (
     Project,
+    ProjectSetting,
     ProjectMember,
     ProjectBaseModel,
     ProjectMemberInvite,

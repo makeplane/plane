@@ -59,6 +59,7 @@ from plane.api.views import (
     ## End File Assets
     # Projects
     ProjectViewSet,
+    ProjectSettingViewSet,
     InviteProjectEndpoint,
     ProjectMemberViewSet,
     ProjectMemberEndpoint,
@@ -477,6 +478,26 @@ urlpatterns = [
                 "put": "update",
                 "patch": "partial_update",
                 "delete": "destroy",
+            }
+        ),
+        name="project",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/settings/",
+        ProjectSettingViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="project",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/settings/",
+        ProjectSettingViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
             }
         ),
         name="project",

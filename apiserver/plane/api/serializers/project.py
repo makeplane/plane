@@ -10,6 +10,7 @@ from plane.api.serializers.workspace import WorkSpaceSerializer, WorkspaceLiteSe
 from plane.api.serializers.user import UserLiteSerializer, UserAdminLiteSerializer
 from plane.db.models import (
     Project,
+    ProjectSetting,
     ProjectMember,
     ProjectMemberInvite,
     ProjectIdentifier,
@@ -191,4 +192,15 @@ class ProjectPublicMemberSerializer(BaseSerializer):
             "workspace",
             "project",
             "member",
+        ]
+
+
+class ProjectSettingSerializer(BaseSerializer):
+
+    class Meta:
+        model = ProjectSetting
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
         ]

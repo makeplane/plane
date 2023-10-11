@@ -29,11 +29,11 @@ from sentry_sdk import capture_exception
 from .base import BaseViewSet, BaseAPIView
 from plane.api.serializers import (
     ProjectSerializer,
+    ProjectSettingSerializer,
     ProjectMemberSerializer,
     ProjectDetailSerializer,
     ProjectMemberInviteSerializer,
     ProjectFavoriteSerializer,
-    IssueLiteSerializer,
     ProjectDeployBoardSerializer,
     ProjectMemberAdminSerializer,
 )
@@ -67,6 +67,7 @@ from plane.db.models import (
     ModuleMember,
     Inbox,
     ProjectDeployBoard,
+    ProjectSetting,
 )
 
 from plane.bgtasks.project_invitation_task import project_invitation
@@ -1246,3 +1247,20 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
         except Exception as e:
             capture_exception(e)
             return Response([], status=status.HTTP_200_OK)
+
+
+class ProjectSettingViewSet(BaseViewSet):
+    model = ProjectSetting
+    permission_classes = [
+        ProjectBasePermission,
+    ]
+    serializer_class = ProjectSettingSerializer
+
+    def get_queryset(self):
+        super().get_queryset().filter(
+            workspace__slug=self.kwargs.get("slug"),
+            project_id=self.kwargs.get("project_id"),
+        )
+
+    def perform_create(self, serializer):
+        serializer.save(project_id=self.kwargs.get("project_id"))

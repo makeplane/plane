@@ -38,7 +38,7 @@ def get_default_props():
         },
         "display_filters": {
             "group_by": None,
-            "order_by": '-created_at',
+            "order_by": "-created_at",
             "type": None,
             "sub_issue": True,
             "show_empty_groups": True,
@@ -56,12 +56,6 @@ class Project(BaseModel):
     NETWORK_CHOICES = ((0, "Secret"), (2, "Public"))
     name = models.CharField(max_length=255, verbose_name="Project Name")
     description = models.TextField(verbose_name="Project Description", blank=True)
-    description_text = models.JSONField(
-        verbose_name="Project Description RT", blank=True, null=True
-    )
-    description_html = models.JSONField(
-        verbose_name="Project Description HTML", blank=True, null=True
-    )
     network = models.PositiveSmallIntegerField(default=2, choices=NETWORK_CHOICES)
     workspace = models.ForeignKey(
         "db.WorkSpace", on_delete=models.CASCADE, related_name="workspace_project"
@@ -70,40 +64,40 @@ class Project(BaseModel):
         max_length=12,
         verbose_name="Project Identifier",
     )
-    default_assignee = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="default_assignee",
-        null=True,
-        blank=True,
-    )
-    project_lead = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="project_lead",
-        null=True,
-        blank=True,
-    )
+    # default_assignee = models.ForeignKey(
+    #     settings.AUTH_USER_MODEL,
+    #     on_delete=models.CASCADE,
+    #     related_name="default_assignee",
+    #     null=True,
+    #     blank=True,
+    # )
+    # project_lead = models.ForeignKey(
+    #     settings.AUTH_USER_MODEL,
+    #     on_delete=models.CASCADE,
+    #     related_name="project_lead",
+    #     null=True,
+    #     blank=True,
+    # )
     emoji = models.CharField(max_length=255, null=True, blank=True)
     icon_prop = models.JSONField(null=True)
-    module_view = models.BooleanField(default=True)
-    cycle_view = models.BooleanField(default=True)
-    issue_views_view = models.BooleanField(default=True)
-    page_view = models.BooleanField(default=True)
-    inbox_view = models.BooleanField(default=False)
+    # module_view = models.BooleanField(default=True)
+    # cycle_view = models.BooleanField(default=True)
+    # issue_views_view = models.BooleanField(default=True)
+    # page_view = models.BooleanField(default=True)
+    # inbox_view = models.BooleanField(default=False)
     cover_image = models.URLField(blank=True, null=True, max_length=800)
-    estimate = models.ForeignKey(
-        "db.Estimate", on_delete=models.SET_NULL, related_name="projects", null=True
-    )
-    archive_in = models.IntegerField(
-        default=0, validators=[MinValueValidator(0), MaxValueValidator(12)]
-    )
-    close_in = models.IntegerField(
-        default=0, validators=[MinValueValidator(0), MaxValueValidator(12)]
-    )
-    default_state = models.ForeignKey(
-        "db.State", on_delete=models.SET_NULL, null=True, related_name="default_state"
-    )
+    # estimate = models.ForeignKey(
+    #     "db.Estimate", on_delete=models.SET_NULL, related_name="projects", null=True
+    # )
+    # archive_in = models.IntegerField(
+    #     default=0, validators=[MinValueValidator(0), MaxValueValidator(12)]
+    # )
+    # close_in = models.IntegerField(
+    #     default=0, validators=[MinValueValidator(0), MaxValueValidator(12)]
+    # )
+    # default_state = models.ForeignKey(
+    #     "db.State", on_delete=models.SET_NULL, null=True, related_name="default_state"
+    # )
 
     def __str__(self):
         """Return name of the project"""
@@ -119,6 +113,60 @@ class Project(BaseModel):
     def save(self, *args, **kwargs):
         self.identifier = self.identifier.strip().upper()
         return super().save(*args, **kwargs)
+
+
+class ProjectSetting(BaseModel):
+    workspace = models.ForeignKey(
+        "db.Workspace", on_delete=models.CASCADE, related_name="project_settings"
+    )
+    project = models.OneToOneField(
+        "db.Project", on_delete=models.CASCADE, related_name="project_settings"
+    )
+    default_assignee = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="default_assignee",
+        null=True,
+        blank=True,
+    )
+    project_lead = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="project_lead",
+        null=True,
+        blank=True,
+    )
+    module_view = models.BooleanField(default=True)
+    cycle_view = models.BooleanField(default=True)
+    issue_views_view = models.BooleanField(default=True)
+    page_view = models.BooleanField(default=True)
+    inbox_view = models.BooleanField(default=False)
+    estimate = models.ForeignKey(
+        "db.Estimate", on_delete=models.SET_NULL, related_name="projects", null=True
+    )
+    archive_in = models.IntegerField(
+        default=0, validators=[MinValueValidator(0), MaxValueValidator(12)]
+    )
+    close_in = models.IntegerField(
+        default=0, validators=[MinValueValidator(0), MaxValueValidator(12)]
+    )
+    default_state = models.ForeignKey(
+        "db.State", on_delete=models.SET_NULL, null=True, related_name="default_state"
+    )
+
+    def save(self, *args, **kwargs):
+        self.workspace = self.project.workspace
+        super(ProjectSetting, self).save(*args, **kwargs)
+
+    def __str__(self):
+        """Return name of the project"""
+        return f"{self.project.name} <{self.workspace.name}>"
+
+    class Meta:
+        verbose_name = "Project Settings"
+        verbose_name_plural = "Project Settings"
+        db_table = "project_settings"
+        ordering = ("-created_at",)
 
 
 class ProjectBaseModel(BaseModel):

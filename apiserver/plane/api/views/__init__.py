@@ -1,5 +1,6 @@
 from .project import (
     ProjectViewSet,
+    ProjectSettingViewSet,
     ProjectMemberViewSet,
     UserProjectInvitationsViewset,
     InviteProjectEndpoint,

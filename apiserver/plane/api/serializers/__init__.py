@@ -11,6 +11,7 @@ from .workspace import (
 )
 from .project import (
     ProjectSerializer,
+    ProjectSettingSerializer,
     ProjectDetailSerializer,
     ProjectMemberSerializer,
     ProjectMemberInviteSerializer,
