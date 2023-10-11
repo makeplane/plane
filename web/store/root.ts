@@ -24,6 +24,7 @@ import CalendarStore, { ICalendarStore } from "./calendar";
 import GlobalViewsStore, { IGlobalViewsStore } from "./global_views";
 import GlobalViewIssuesStore, { IGlobalViewIssuesStore } from "./global_view_issues";
 import WorkspaceFilterStore, { IWorkspaceFilterStore } from "./workspace_filters";
+import GlobalViewFiltersStore, { IGlobalViewFiltersStore } from "./global_view_filters";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -58,6 +59,7 @@ export class RootStore {
 
   globalViews: IGlobalViewsStore;
   globalViewIssues: IGlobalViewIssuesStore;
+  globalViewFilters: IGlobalViewFiltersStore;
 
   constructor() {
     this.user = new UserStore(this);
@@ -90,5 +92,6 @@ export class RootStore {
 
     this.globalViews = new GlobalViewsStore(this);
     this.globalViewIssues = new GlobalViewIssuesStore(this);
+    this.globalViewFilters = new GlobalViewFiltersStore(this);
   }
 }

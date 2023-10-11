@@ -39,12 +39,15 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
 
   const {
     globalViews: globalViewsStore,
+    globalViewFilters: globalViewFiltersStore,
     workspaceFilter: workspaceFilterStore,
     workspace: workspaceStore,
     project: projectStore,
   } = useMobxStore();
 
   const queryData = globalViewId ? globalViewsStore.globalViewDetails[globalViewId.toString()]?.query_data : undefined;
+
+  const storedFilters = globalViewId ? globalViewFiltersStore.storedFilters[globalViewId.toString()] : undefined;
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
@@ -61,11 +64,11 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
         else newValues.push(value);
       }
 
-      globalViewsStore.updateGlobalViewFilters(workspaceSlug.toString(), globalViewId.toString(), {
+      globalViewFiltersStore.updateStoredFilters(globalViewId.toString(), {
         [key]: newValues,
       });
     },
-    [globalViewId, globalViewsStore, queryData, workspaceSlug]
+    [globalViewId, globalViewFiltersStore, queryData, workspaceSlug]
   );
 
   const handleDisplayFiltersUpdate = useCallback(
@@ -125,7 +128,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
             {!STATIC_VIEW_TYPES.some((word) => router.pathname.includes(word)) && (
               <FiltersDropdown title="Filters">
                 <FilterSelection
-                  filters={queryData?.filters ?? {}}
+                  filters={storedFilters ?? {}}
                   handleFiltersUpdate={handleFiltersUpdate}
                   layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
                   labels={workspaceStore.workspaceLabels ?? undefined}

@@ -33,6 +33,10 @@ const dateFilters = ["start_date", "target_date"];
 export const AppliedFiltersList: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, labels, members, projects, states } = props;
 
+  if (!appliedFilters) return null;
+
+  if (Object.keys(appliedFilters).length === 0) return null;
+
   return (
     <div className="flex items-stretch gap-2 flex-wrap bg-custom-background-100">
       {Object.entries(appliedFilters).map(([key, value]) => {

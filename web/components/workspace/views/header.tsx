@@ -25,7 +25,7 @@ export const GlobalViewsHeader: React.FC = observer(() => {
   return (
     <>
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
-      <div className="group flex items-center px-4 overflow-x-scroll relative">
+      <div className="group flex items-center px-4 overflow-x-scroll relative border-b border-custom-border-200">
         {DEFAULT_GLOBAL_VIEWS_LIST.map((tab) => (
           <Link key={tab.key} href={`/${workspaceSlug}/workspace-views/${tab.key}`}>
             <a

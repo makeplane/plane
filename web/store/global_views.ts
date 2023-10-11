@@ -5,7 +5,6 @@ import { WorkspaceService } from "services/workspace.service";
 // types
 import { RootStore } from "./root";
 import { IWorkspaceView } from "types/workspace-views";
-import { IIssueFilterOptions } from "types";
 
 export interface IGlobalViewsStore {
   // states
@@ -26,7 +25,6 @@ export interface IGlobalViewsStore {
   fetchGlobalViewDetails: (workspaceSlug: string, viewId: string) => Promise<IWorkspaceView>;
   createGlobalView: (workspaceSlug: string, data: Partial<IWorkspaceView>) => Promise<IWorkspaceView>;
   updateGlobalView: (workspaceSlug: string, viewId: string, data: Partial<IWorkspaceView>) => Promise<IWorkspaceView>;
-  updateGlobalViewFilters: (workspaceSlug: string, viewId: string, data: Partial<IIssueFilterOptions>) => void;
   deleteGlobalView: (workspaceSlug: string, viewId: string) => Promise<any>;
 }
 
@@ -65,7 +63,6 @@ class GlobalViewsStore implements IGlobalViewsStore {
       fetchGlobalViewDetails: action,
       createGlobalView: action,
       updateGlobalView: action,
-      updateGlobalViewFilters: action,
       deleteGlobalView: action,
     });
 
@@ -175,34 +172,6 @@ class GlobalViewsStore implements IGlobalViewsStore {
       const response = await this.workspaceService.updateView(workspaceSlug, viewId, data);
 
       return response;
-    } catch (error) {
-      this.fetchGlobalViewDetails(workspaceSlug, viewId);
-
-      runInAction(() => {
-        this.error = error;
-      });
-
-      throw error;
-    }
-  };
-
-  updateGlobalViewFilters = async (workspaceSlug: string, viewId: string, data: Partial<IIssueFilterOptions>) => {
-    try {
-      runInAction(() => {
-        this.globalViewDetails = {
-          ...this.globalViewDetails,
-          [viewId]: {
-            ...this.globalViewDetails[viewId],
-            query_data: {
-              ...this.globalViewDetails[viewId].query_data,
-              filters: {
-                ...this.globalViewDetails[viewId].query_data.filters,
-                ...data,
-              },
-            },
-          },
-        };
-      });
     } catch (error) {
       this.fetchGlobalViewDetails(workspaceSlug, viewId);
 

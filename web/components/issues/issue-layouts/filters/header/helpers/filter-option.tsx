@@ -27,7 +27,7 @@ export const FilterOption: React.FC<Props> = (props) => {
         {isChecked && <Check size={10} strokeWidth={3} />}
       </div>
       <div className="flex items-center gap-2 truncate">
-        <div className="flex-shrink-0 grid place-items-center">{icon}</div>
+        {icon && <div className="flex-shrink-0 grid place-items-center w-5">{icon}</div>}
         <div className="flex-grow truncate text-custom-text-200 text-xs">{title}</div>
       </div>
     </button>

@@ -46,7 +46,9 @@ export const FilterProjects: React.FC<Props> = (props) => {
                     onClick={() => handleUpdate(project.id)}
                     icon={
                       project.emoji ? (
-                        <span className="grid flex-shrink-0 place-items-center">{renderEmoji(project.emoji)}</span>
+                        <span className="grid flex-shrink-0 place-items-center text-sm">
+                          {renderEmoji(project.emoji)}
+                        </span>
                       ) : project.icon_prop ? (
                         <div className="grid place-items-center flex-shrink-0 -my-1">
                           {renderEmoji(project.icon_prop)}

@@ -1,5 +1,6 @@
 export * from "./date";
 export * from "./filters-list";
+export * from "./global-views-root";
 export * from "./label";
 export * from "./members";
 export * from "./module-root";

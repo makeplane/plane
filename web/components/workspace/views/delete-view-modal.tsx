@@ -54,6 +54,9 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
         setIsDeleteLoading(false);
         handleClose();
       });
+
+    // remove filters from local storage
+    localStorage.removeItem(`global_view_filters/${data.id}`);
   };
 
   return (
