@@ -15,8 +15,7 @@ import issuesService from "services/issue.service";
 // hooks
 import useUser from "hooks/use-user";
 // ui
-import { Spinner } from "components/ui";
-import { Input } from "@plane/ui";
+import { Input, Spinner } from "@plane/ui";
 // icons
 import { PlusIcon, RectangleGroupIcon, TagIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types

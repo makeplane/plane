@@ -6,7 +6,7 @@ import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // components
 import { CustomThemeSelector, ThemeSwitch } from "components/core";
 // ui
-import { Spinner } from "components/ui";
+import { Spinner } from "@plane/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
 import { ICustomTheme } from "types";

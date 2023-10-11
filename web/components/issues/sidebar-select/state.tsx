@@ -7,7 +7,8 @@ import useSWR from "swr";
 // services
 import stateService from "services/project_state.service";
 // ui
-import { Spinner, CustomSelect } from "components/ui";
+import { CustomSelect } from "components/ui";
+import { Spinner } from "@plane/ui";
 // icons
 import { StateGroupIcon } from "components/icons";
 // helpers

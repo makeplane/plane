@@ -14,11 +14,10 @@ import AppSidebar from "layouts/app-layout-legacy/app-sidebar";
 import AppHeader from "layouts/app-layout-legacy/app-header";
 import { UserAuthorizationLayout } from "./user-authorization-wrapper";
 // components
-import { Button } from "@plane/ui";
+import { Button, Spinner } from "@plane/ui";
 import { NotAuthorizedView, NotAWorkspaceMember } from "components/auth-screens";
 import { CommandPalette } from "components/command-palette";
 // icons
-import { Spinner } from "components/ui";
 import { LayerDiagonalIcon } from "components/icons";
 // fetch-keys
 import { WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";

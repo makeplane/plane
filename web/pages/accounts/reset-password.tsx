@@ -14,8 +14,7 @@ import userService from "services/user.service";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // ui
-import { Button, Input } from "@plane/ui";
-import { Spinner } from "components/ui";
+import { Button, Input, Spinner } from "@plane/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // types

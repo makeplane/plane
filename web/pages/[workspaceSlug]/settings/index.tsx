@@ -20,8 +20,8 @@ import { DeleteWorkspaceModal } from "components/workspace";
 import { SettingsSidebar } from "components/project";
 // ui
 import { Disclosure, Transition } from "@headlessui/react";
-import { Spinner, CustomSelect, Icon } from "components/ui";
-import { Button, Input } from "@plane/ui";
+import { CustomSelect, Icon } from "components/ui";
+import { Button, Input, Spinner } from "@plane/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { Pencil } from "lucide-react";

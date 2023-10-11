@@ -12,7 +12,6 @@ export * from "./loader";
 export * from "./multi-level-dropdown";
 export * from "./multi-level-select";
 export * from "./progress-bar";
-export * from "./spinner";
 export * from "./tooltip";
 export * from "./markdown-to-component";
 export * from "./product-updates-modal";

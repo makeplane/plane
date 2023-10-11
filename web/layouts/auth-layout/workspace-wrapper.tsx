@@ -5,8 +5,7 @@ import useSWR from "swr";
 // services
 import workspaceServices from "services/workspace.service";
 // ui
-import { Spinner } from "components/ui";
-import { Button } from "@plane/ui";
+import { Button, Spinner } from "@plane/ui";
 // fetch-keys
 import { WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 

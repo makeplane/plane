@@ -15,8 +15,7 @@ import WebViewLayout from "layouts/web-view-layout";
 
 // components
 import { TipTapEditor } from "components/tiptap";
-import { Spinner } from "components/ui";
-import { Button } from "@plane/ui";
+import { Button, Spinner } from "@plane/ui";
 
 const Editor: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);

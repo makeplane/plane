@@ -13,8 +13,8 @@ import AppSidebar from "layouts/app-layout-legacy/app-sidebar";
 import { NotAuthorizedView, JoinProject } from "components/auth-screens";
 import { CommandPalette } from "components/command-palette";
 // ui
-import { Button } from "@plane/ui";
-import { EmptyState, Spinner } from "components/ui";
+import { Button, Spinner } from "@plane/ui";
+import { EmptyState } from "components/ui";
 // icons
 import { LayerDiagonalIcon } from "components/icons";
 // images
