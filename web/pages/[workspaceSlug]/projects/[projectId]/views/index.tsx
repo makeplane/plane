@@ -16,8 +16,6 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { ProjectViewsList } from "components/views";
 // types
 import type { NextPage } from "next";
-import { Search } from "lucide-react";
-import { Input } from "components/ui";
 
 const ProjectViews: NextPage = () => {
   const router = useRouter();
