@@ -53,9 +53,7 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
           <a className="flex items-center justify-between relative rounded px-5 py-4 w-full">
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-4">
-                <div
-                  className={`flex items-center justify-center h-10 w-10 rounded bg-custom-background-90 group-hover:bg-custom-background-100`}
-                >
+                <div className="grid place-items-center h-10 w-10 rounded bg-custom-background-90 group-hover:bg-custom-background-100">
                   <Sparkles size={14} strokeWidth={2} />
                 </div>
                 <div className="flex flex-col">
@@ -77,8 +75,9 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
                         e.stopPropagation();
                         handleRemoveFromFavorites();
                       }}
+                      className="grid place-items-center"
                     >
-                      <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                      <StarIcon className="text-orange-400" fill="#f6ad55" size={14} strokeWidth={2} />
                     </button>
                   ) : (
                     <button
@@ -88,13 +87,14 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
                         e.stopPropagation();
                         handleAddToFavorites();
                       }}
+                      className="grid place-items-center"
                     >
-                      <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
+                      <StarIcon size={14} strokeWidth={2} />
                     </button>
                   )}
                   <CustomMenu width="auto" ellipsis>
                     <CustomMenu.MenuItem
-                      onClick={(e: any) => {
+                      onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                       }}
@@ -105,10 +105,9 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
                       </span>
                     </CustomMenu.MenuItem>
                     <CustomMenu.MenuItem
-                      onClick={(e: any) => {
+                      onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-
                         setDeleteViewModal(true);
                       }}
                     >
