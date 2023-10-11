@@ -155,10 +155,6 @@ const HomePage: NextPage = observer(() => {
     }
   };
 
-  useEffect(() => {
-    setTheme("system");
-  }, [setTheme]);
-
   return (
     <DefaultLayout>
       {isLoading ? (
