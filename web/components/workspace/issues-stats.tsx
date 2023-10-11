@@ -1,8 +1,7 @@
 // components
 import { ActivityGraph } from "components/workspace";
 // ui
-import { Tooltip } from "components/ui";
-import { Loader } from "@plane/ui";
+import { Loader, Tooltip } from "@plane/ui";
 // icons
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 // types

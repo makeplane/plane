@@ -7,7 +7,8 @@ import trackEventServices from "services/track_event.service";
 // hooks
 import useEstimateOption from "hooks/use-estimate-option";
 // ui
-import { CustomSelect, Tooltip } from "components/ui";
+import { CustomSelect } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // icons
 import { PlayIcon } from "@heroicons/react/24/outline";
 // types

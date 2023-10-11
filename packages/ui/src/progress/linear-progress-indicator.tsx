@@ -1,12 +1,15 @@
 import React from "react";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "../tooltip";
 
 type Props = {
   data: any;
   noTooltip?: boolean;
 };
 
-export const LinearProgressIndicator: React.FC<Props> = ({ data, noTooltip = false }) => {
+export const LinearProgressIndicator: React.FC<Props> = ({
+  data,
+  noTooltip = false,
+}) => {
   const total = data.reduce((acc: any, cur: any) => acc + cur.value, 0);
   let progress = 0;
 
@@ -20,7 +23,10 @@ export const LinearProgressIndicator: React.FC<Props> = ({ data, noTooltip = fal
     if (noTooltip) return <div style={style} />;
     else
       return (
-        <Tooltip key={item.id} tooltipContent={`${item.name} ${Math.round(item.value)}%`}>
+        <Tooltip
+          key={item.id}
+          tooltipContent={`${item.name} ${Math.round(item.value)}%`}
+        >
           <div style={style} />
         </Tooltip>
       );

@@ -1,11 +1,16 @@
 import * as React from "react";
 
-import { getIconStyling, getButtonStyling, TButtonVariant } from "./helper";
+import {
+  getIconStyling,
+  getButtonStyling,
+  TButtonVariant,
+  TButtonSizes,
+} from "./helper";
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: TButtonVariant;
-  size?: "sm" | "md" | "lg";
+  size?: TButtonSizes;
   className?: string;
   loading?: boolean;
   disabled?: boolean;

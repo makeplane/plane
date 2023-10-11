@@ -17,7 +17,7 @@ import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { CheckIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { PlusIcon } from "lucide-react";
 // types
-import { Tooltip } from "components/ui";
+import { Tooltip } from "@plane/ui";
 import { ICurrentUserResponse, IIssueLabels } from "types";
 // constants
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";

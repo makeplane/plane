@@ -14,7 +14,8 @@ import { ViewDueDateSelect, ViewEstimateSelect, ViewStartDateSelect } from "comp
 import { LabelSelect, MembersSelect, PrioritySelect } from "components/project";
 import { StateSelect } from "components/states";
 // ui
-import { Tooltip, CustomMenu, ContextMenu } from "components/ui";
+import { CustomMenu, ContextMenu } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // icons
 import {
   ClipboardDocumentCheckIcon,

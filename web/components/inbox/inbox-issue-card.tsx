@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 // ui
-import { Tooltip } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // icons
 import { PriorityIcon } from "components/icons";
 import {
@@ -34,9 +34,7 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
   const issueStatus = issue.issue_inbox[0].status;
 
   return (
-    <Link
-      href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${issue.bridge_id}`}
-    >
+    <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${issue.bridge_id}`}>
       <a>
         <div
           id={issue.id}
@@ -99,9 +97,7 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
               <>
                 <ClockIcon className="h-3.5 w-3.5" />
                 <span>
-                  {new Date(issue.issue_inbox[0].snoozed_till ?? "") < new Date()
-                    ? "Snoozed date passed"
-                    : "Snoozed"}
+                  {new Date(issue.issue_inbox[0].snoozed_till ?? "") < new Date() ? "Snoozed date passed" : "Snoozed"}
                 </span>
               </>
             ) : issueStatus === 1 ? (

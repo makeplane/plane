@@ -212,7 +212,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
           <Button
             variant="primary"
             className="w-full"
-            size="md"
+            size="xl"
             onClick={() => {
               handleSubmit(onSubmit)().then(() => {
                 setResendCodeTimer(30);

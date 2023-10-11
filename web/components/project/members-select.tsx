@@ -9,7 +9,8 @@ import useWorkspaceMembers from "hooks/use-workspace-members";
 // headless ui
 import { Combobox } from "@headlessui/react";
 // components
-import { AssigneesList, Avatar, Icon, Tooltip } from "components/ui";
+import { AssigneesList, Avatar, Icon } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { CheckIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
