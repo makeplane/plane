@@ -6,3 +6,4 @@ export * from "./select-filters";
 export * from "./view-list-item";
 export * from "./signin";
 export * from "./views-list";
+export * from "./workspace-dashboard";

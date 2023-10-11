@@ -1,7 +1,9 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/router";
 // ui
 import { Input, PrimaryButton } from "components/ui";
+import Link from "next/link";
 // types
 export interface EmailPasswordFormValues {
   email: string;
@@ -15,6 +17,8 @@ export interface IEmailPasswordForm {
 
 export const EmailPasswordForm: React.FC<IEmailPasswordForm> = (props) => {
   const { onSubmit } = props;
+  // router
+  const router = useRouter();
   // form info
   const {
     register,
@@ -66,7 +70,11 @@ export const EmailPasswordForm: React.FC<IEmailPasswordForm> = (props) => {
           />
         </div>
         <div className="text-right text-xs">
-          <button type="button" onClick={() => {}} className="text-custom-text-200 hover:text-custom-primary-100">
+          <button
+            type="button"
+            onClick={() => router.push("/accounts/forgot-password")}
+            className="text-custom-text-200 hover:text-custom-primary-100"
+          >
             Forgot your password?
           </button>
         </div>
@@ -79,6 +87,15 @@ export const EmailPasswordForm: React.FC<IEmailPasswordForm> = (props) => {
           >
             {isSubmitting ? "Signing in..." : "Sign in"}
           </PrimaryButton>
+        </div>
+        <div className="text-xs">
+          <button
+            type="button"
+            onClick={() => router.push("/accounts/sign-up")}
+            className="text-custom-text-200 hover:text-custom-primary-100"
+          >
+            {"Don't have an account? Sign Up"}
+          </button>
         </div>
       </form>
     </>

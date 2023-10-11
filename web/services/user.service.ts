@@ -3,12 +3,12 @@ import APIService from "services/api.service";
 import trackEventServices from "services/track_event.service";
 
 import type {
-  ICurrentUserResponse,
   IIssue,
   IUser,
   IUserActivityResponse,
   IUserProfileData,
   IUserProfileProjectSegregation,
+  IUserSettings,
   IUserWorkspaceDashboard,
 } from "types";
 
@@ -44,8 +44,16 @@ export class UserService extends APIService {
       });
   }
 
-  async currentUser(): Promise<ICurrentUserResponse> {
+  async currentUser(): Promise<IUser> {
     return this.get("/api/users/me/")
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async currentUserSettings(): Promise<IUserSettings> {
+    return this.get("/api/users/me/settings/")
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -60,7 +68,7 @@ export class UserService extends APIService {
       });
   }
 
-  async updateUserOnBoard({ userRole }: any, user: ICurrentUserResponse | undefined): Promise<any> {
+  async updateUserOnBoard({ userRole }: any, user: IUser | undefined): Promise<any> {
     return this.patch("/api/users/me/onboard/", {
       is_onboarded: true,
     })
@@ -78,7 +86,7 @@ export class UserService extends APIService {
       });
   }
 
-  async updateUserTourCompleted(user: ICurrentUserResponse): Promise<any> {
+  async updateUserTourCompleted(user: IUser): Promise<any> {
     return this.patch("/api/users/me/tour-completed/", {
       is_tour_completed: true,
     })
