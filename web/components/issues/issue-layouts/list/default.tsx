@@ -48,6 +48,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer(
             </div>
             {enableQuickIssueCreate && (
               <ListInlineCreateIssueForm
+                groupId={getValueFromObject(_list, listKey) as string}
                 prePopulatedData={{
                   [group_by!]: getValueFromObject(_list, listKey),
                 }}

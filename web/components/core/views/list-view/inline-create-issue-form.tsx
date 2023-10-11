@@ -18,8 +18,9 @@ import { IIssue } from "types";
 import { PlusIcon } from "lucide-react";
 
 type Props = {
-  onSuccess?: (data: IIssue) => Promise<void> | void;
+  groupId?: string;
   prePopulatedData?: Partial<IIssue>;
+  onSuccess?: (data: IIssue) => Promise<void> | void;
 };
 
 const defaultValues: Partial<IIssue> = {
@@ -27,14 +28,14 @@ const defaultValues: Partial<IIssue> = {
 };
 
 export const ListInlineCreateIssueForm: React.FC<Props> = observer((props) => {
-  const { prePopulatedData } = props;
+  const { prePopulatedData, groupId } = props;
 
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   // store
-  const { issueDetail: issueDetailStore, user: userDetailStore } = useMobxStore();
+  const { issueDetail: issueDetailStore, issue: issueStore } = useMobxStore();
 
   const { projectDetails } = useProjectDetails();
 
@@ -95,12 +96,8 @@ export const ListInlineCreateIssueForm: React.FC<Props> = observer((props) => {
     reset({ ...defaultValues });
 
     try {
-      await issueDetailStore.createIssue(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        formData,
-        userDetailStore.currentUser! as any
-      );
+      const response = await issueDetailStore.createIssue(workspaceSlug.toString(), projectId.toString(), formData);
+      issueStore.updateIssueStructure(groupId ?? null, null, response);
 
       setToastAlert({
         type: "success",

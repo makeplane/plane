@@ -19,7 +19,7 @@ import { IIssue } from "types";
 type Props = {
   onSuccess?: (data: IIssue) => Promise<void> | void;
   prePopulatedData?: Partial<IIssue>;
-  dependencies: any[];
+  dependencies?: any[];
 };
 
 const useCheckIfThereIsSpaceOnRight = (ref: React.RefObject<HTMLDivElement>, deps: any[]) => {
@@ -51,14 +51,16 @@ const defaultValues: Partial<IIssue> = {
 };
 
 export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) => {
-  const { prePopulatedData, dependencies } = props;
+  const { prePopulatedData, dependencies = [] } = props;
+
+  console.log(prePopulatedData);
 
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   // store
-  const { issueDetail: issueDetailStore, user: userDetailStore } = useMobxStore();
+  const { issueDetail: issueDetailStore, issue: issueStore } = useMobxStore();
 
   // ref
   const ref = useRef<HTMLDivElement>(null);
@@ -115,15 +117,11 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
     if (isSubmitting || !workspaceSlug || !projectId) return;
 
     // resetting the form so that user can add another issue quickly
-    reset({ ...defaultValues });
+    reset({ ...defaultValues, ...(prePopulatedData ?? {}) });
 
     try {
-      await issueDetailStore.createIssue(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        formData,
-        userDetailStore.currentUser! as any
-      );
+      const response = await issueDetailStore.createIssue(workspaceSlug.toString(), projectId.toString(), formData);
+      issueStore.updateIssueStructure(null, null, response);
 
       setToastAlert({
         type: "success",

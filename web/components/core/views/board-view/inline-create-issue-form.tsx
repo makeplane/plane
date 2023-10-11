@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { Transition } from "@headlessui/react";
+import { PlusIcon } from "lucide-react";
 // store
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -18,6 +19,7 @@ import { IIssue } from "types";
 type Props = {
   onSuccess?: (data: IIssue) => Promise<void> | void;
   prePopulatedData?: Partial<IIssue>;
+  groupId?: string;
 };
 
 const defaultValues: Partial<IIssue> = {
@@ -25,14 +27,14 @@ const defaultValues: Partial<IIssue> = {
 };
 
 export const BoardInlineCreateIssueForm: React.FC<Props> = observer((props) => {
-  const { prePopulatedData } = props;
+  const { prePopulatedData, groupId } = props;
 
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   // store
-  const { issueDetail: issueDetailStore, user: userDetailStore } = useMobxStore();
+  const { issueDetail: issueDetailStore, issue: issueStore } = useMobxStore();
 
   // ref
   const ref = useRef<HTMLFormElement>(null);
@@ -87,15 +89,11 @@ export const BoardInlineCreateIssueForm: React.FC<Props> = observer((props) => {
     if (isSubmitting || !workspaceSlug || !projectId) return;
 
     // resetting the form so that user can add another issue quickly
-    reset({ ...defaultValues });
+    reset({ ...defaultValues, ...(prePopulatedData ?? {}) });
 
     try {
-      await issueDetailStore.createIssue(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        formData,
-        userDetailStore.currentUser! as any
-      );
+      const response = await issueDetailStore.createIssue(workspaceSlug.toString(), projectId.toString(), formData);
+      issueStore.updateIssueStructure(groupId ?? null, null, response);
 
       setToastAlert({
         type: "success",
@@ -155,8 +153,13 @@ export const BoardInlineCreateIssueForm: React.FC<Props> = observer((props) => {
       )}
 
       {!isOpen && (
-        <button type="button" onClick={() => setIsOpen(true)}>
-          Add Issue
+        <button
+          type="button"
+          className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-1 rounded-md"
+          onClick={() => setIsOpen(true)}
+        >
+          <PlusIcon className="h-4 w-4" />
+          <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
         </button>
       )}
     </div>

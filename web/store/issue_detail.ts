@@ -24,7 +24,12 @@ export interface IIssueDetailStore {
   // fetch issue details
   fetchIssueDetails: (workspaceId: string, projectId: string, issueId: string) => void;
   // creating issue
-  createIssue: (workspaceId: string, projectId: string, data: Partial<IIssue>, user: ICurrentUserResponse) => void;
+  createIssue: (
+    workspaceId: string,
+    projectId: string,
+    data: Partial<IIssue>,
+    user: ICurrentUserResponse
+  ) => Promise<IIssue>;
   // updating issue
   updateIssue: (
     workspaceId: string,
@@ -106,14 +111,19 @@ class IssueDetailStore implements IIssueDetailStore {
     }
   };
 
-  createIssue = async (workspaceId: string, projectId: string, data: Partial<IIssue>, user: ICurrentUserResponse) => {
+  createIssue = async (workspaceId: string, projectId: string, data: Partial<IIssue>) => {
     try {
       runInAction(() => {
         this.loader = true;
         this.error = null;
       });
 
-      const response = await this.issueService.createIssues(workspaceId, projectId, data, user);
+      const response = await this.issueService.createIssues(
+        workspaceId,
+        projectId,
+        data,
+        this.rootStore.user.currentUser
+      );
 
       runInAction(() => {
         this.loader = false;
@@ -123,6 +133,8 @@ class IssueDetailStore implements IIssueDetailStore {
           [response.id]: response,
         };
       });
+
+      return response;
     } catch (error) {
       this.loader = false;
       this.error = error;

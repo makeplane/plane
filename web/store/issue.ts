@@ -110,24 +110,33 @@ class IssueStore implements IIssueStore {
 
     if (issueType === "grouped" && group_id) {
       issues = issues as IIssueGroupedStructure;
+      const _currentIssueId = issues?.[group_id]?.find((_i) => _i?.id === issue.id);
       issues = {
         ...issues,
-        [group_id]: issues[group_id].map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i)),
+        [group_id]: _currentIssueId
+          ? issues[group_id]?.map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i))
+          : [...(issues?.[group_id] ?? []), issue],
       };
     }
     if (issueType === "groupWithSubGroups" && group_id && sub_group_id) {
       issues = issues as IIssueGroupWithSubGroupsStructure;
+      const _currentIssueId = issues?.[sub_group_id]?.[group_id]?.find((_i) => _i?.id === issue.id);
       issues = {
         ...issues,
         [sub_group_id]: {
           ...issues[sub_group_id],
-          [group_id]: issues[sub_group_id][group_id].map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i)),
+          [group_id]: _currentIssueId
+            ? issues?.[sub_group_id]?.[group_id]?.map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i))
+            : [...(issues?.[sub_group_id][group_id] ?? []), issue],
         },
       };
     }
     if (issueType === "ungrouped") {
       issues = issues as IIssueUnGroupedStructure;
-      issues = issues.map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i));
+      const _currentIssueId = issues?.find((_i) => _i?.id === issue.id);
+      issues = _currentIssueId
+        ? issues?.map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i))
+        : [...(issues ?? []), issue];
     }
 
     const orderBy = this.rootStore?.issueFilter?.userDisplayFilters?.order_by || "";

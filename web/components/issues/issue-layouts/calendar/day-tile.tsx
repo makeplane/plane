@@ -41,7 +41,6 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
               prePopulatedData={{
                 target_date: new Date(date.date).toISOString().split("T")[0],
               }}
-              dependencies={[]}
             />
             <>
               <div
