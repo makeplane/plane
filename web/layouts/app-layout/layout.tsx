@@ -13,7 +13,7 @@ export interface IAppLayout {
 export const AppLayout: FC<IAppLayout> = (props) => {
   const { children, header } = props;
   return (
-    <div>
+    <div className="h-screen w-full">
       {/* <CommandPalette /> */}
       <UserAuthWrapper>
         <WorkspaceAuthWrapper>

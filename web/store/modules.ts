@@ -1,4 +1,4 @@
-import { action, computed, observable, makeObservable, runInAction } from "mobx";
+import { action, observable, makeObservable, runInAction } from "mobx";
 // services
 import { ProjectService } from "services/project.service";
 import { ModuleService } from "services/modules.service";
@@ -37,13 +37,6 @@ export interface IModuleStore {
   deleteModule: (workspaceSlug: string, projectId: string, moduleId: string) => void;
   addModuleToFavorites: (workspaceSlug: string, projectId: string, moduleId: string) => void;
   removeModuleFromFavorites: (workspaceSlug: string, projectId: string, moduleId: string) => void;
-
-  // issue related operations
-  fetchModuleIssues: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<any>;
-  updateIssueStructure: (group_id: string | null, sub_group_id: string | null, moduleId: string, issue: IIssue) => void;
-
-  // computed
-  getIssues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null;
 }
 
 class ModuleStore implements IModuleStore {
@@ -90,9 +83,6 @@ class ModuleStore implements IModuleStore {
       moduleDetails: observable.ref,
       issues: observable.ref,
 
-      // computed
-      getIssues: computed,
-
       // actions
       setModuleId: action,
 
@@ -104,9 +94,6 @@ class ModuleStore implements IModuleStore {
       deleteModule: action,
       addModuleToFavorites: action,
       removeModuleFromFavorites: action,
-
-      fetchModuleIssues: action,
-      updateIssueStructure: action,
     });
 
     this.rootStore = _rootStore;
@@ -118,16 +105,6 @@ class ModuleStore implements IModuleStore {
   get projectModules() {
     if (!this.rootStore.project.projectId) return null;
     return this.modules[this.rootStore.project.projectId] || null;
-  }
-
-  get getIssues() {
-    const moduleId = this.moduleId;
-
-    const issueType = this.rootStore.issue.getIssueType;
-
-    if (!moduleId || !issueType) return null;
-
-    return this.issues?.[moduleId]?.[issueType] || null;
   }
 
   // actions
@@ -331,88 +308,6 @@ class ModuleStore implements IModuleStore {
         };
       });
     }
-  };
-
-  fetchModuleIssues = async (workspaceSlug: string, projectId: string, moduleId: string) => {
-    try {
-      this.loader = true;
-      this.error = null;
-
-      this.rootStore.workspace.setWorkspaceSlug(workspaceSlug);
-      this.rootStore.project.setProjectId(projectId);
-
-      const params = this.rootStore?.issueFilter?.appliedFilters;
-      const issueResponse = await this.moduleService.getModuleIssuesWithParams(
-        workspaceSlug,
-        projectId,
-        moduleId,
-        params
-      );
-
-      const issueType = this.rootStore.issue.getIssueType;
-      if (issueType != null) {
-        const _issues = {
-          ...this.issues,
-          [moduleId]: {
-            ...this.issues[moduleId],
-            [issueType]: issueResponse,
-          },
-        };
-        runInAction(() => {
-          this.issues = _issues;
-          this.loader = false;
-          this.error = null;
-        });
-      }
-
-      return issueResponse;
-    } catch (error) {
-      console.error("Error: Fetching error module issues in module store", error);
-      this.loader = false;
-      this.error = error;
-      return error;
-    }
-  };
-
-  updateIssueStructure = async (
-    group_id: string | null,
-    sub_group_id: string | null,
-    moduleId: string,
-    issue: IIssue
-  ) => {
-    const issueType = this.rootStore.issue.getIssueType;
-
-    if (!issueType) return null;
-
-    let issues = this.getIssues;
-
-    if (!issues) return null;
-
-    if (issueType === "grouped" && group_id) {
-      issues = issues as IIssueGroupedStructure;
-      issues = {
-        ...issues,
-        [group_id]: issues[group_id].map((i: IIssue) => (i?.id === issue?.id ? issue : i)),
-      };
-    }
-    if (issueType === "groupWithSubGroups" && group_id && sub_group_id) {
-      issues = issues as IIssueGroupWithSubGroupsStructure;
-      issues = {
-        ...issues,
-        [sub_group_id]: {
-          ...issues[sub_group_id],
-          [group_id]: issues[sub_group_id][group_id].map((i: IIssue) => (i?.id === issue?.id ? issue : i)),
-        },
-      };
-    }
-    if (issueType === "ungrouped") {
-      issues = issues as IIssueUnGroupedStructure;
-      issues = issues.map((i: IIssue) => (i?.id === issue?.id ? issue : i));
-    }
-
-    runInAction(() => {
-      this.issues = { ...this.issues, [moduleId]: { ...this.issues[moduleId], [issueType]: issues } };
-    });
   };
 }
 

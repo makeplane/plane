@@ -21,7 +21,7 @@ import { IIssueUnGroupedStructure } from "store/issue";
 // constants
 import { SPREADSHEET_COLUMN } from "constants/spreadsheet";
 
-export const ModuleSpreadsheetLayout: React.FC = observer(() => {
+export const CycleSpreadsheetLayout: React.FC = observer(() => {
   const [expandedIssues, setExpandedIssues] = useState<string[]>([]);
 
   const router = useRouter();
@@ -30,9 +30,9 @@ export const ModuleSpreadsheetLayout: React.FC = observer(() => {
   const { user } = useUser();
   const { projectDetails } = useProjectDetails();
 
-  const { moduleIssue: moduleIssueStore, issueFilter: issueFilterStore } = useMobxStore();
+  const { cycleIssue: cycleIssueStore, issueFilter: issueFilterStore } = useMobxStore();
 
-  const issues = moduleIssueStore.getIssues;
+  const issues = cycleIssueStore.getIssues;
   const issueDisplayProperties = issueFilterStore.userDisplayProperties;
 
   const handleDisplayFiltersUpdate = useCallback(
