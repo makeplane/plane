@@ -1,4 +1,4 @@
-export * from "./buttons/button";
+export * from "./button";
 export * from "./form-fields";
 export * from "./progress";
 export * from "./spinners";

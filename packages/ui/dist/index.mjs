@@ -1,7 +1,7 @@
-// src/buttons/button.tsx
+// src/button/button.tsx
 import * as React from "react";
 
-// src/buttons/helper.tsx
+// src/button/helper.tsx
 var buttonStyling = {
   primary: {
     default: `text-white bg-custom-primary-100`,
@@ -88,7 +88,7 @@ var getIconStyling = (size) => {
   return icon;
 };
 
-// src/buttons/button.tsx
+// src/button/button.tsx
 var Button = React.forwardRef(
   (props, ref) => {
     const {

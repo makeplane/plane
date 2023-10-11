@@ -35,10 +35,10 @@ __export(src_exports, {
 });
 module.exports = __toCommonJS(src_exports);
 
-// src/buttons/button.tsx
+// src/button/button.tsx
 var React = __toESM(require("react"));
 
-// src/buttons/helper.tsx
+// src/button/helper.tsx
 var buttonStyling = {
   primary: {
     default: `text-white bg-custom-primary-100`,
@@ -125,7 +125,7 @@ var getIconStyling = (size) => {
   return icon;
 };
 
-// src/buttons/button.tsx
+// src/button/button.tsx
 var Button = React.forwardRef(
   (props, ref) => {
     const {
