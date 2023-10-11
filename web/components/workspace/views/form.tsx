@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { Controller, Controller, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -39,7 +39,6 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
   const { workspace: workspaceStore, project: projectStore } = useMobxStore();
 
   const {
-    control,
     formState: { errors, isSubmitting },
     handleSubmit,
     control,
