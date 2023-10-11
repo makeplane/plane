@@ -30,11 +30,11 @@ export const ModuleAllLayouts: React.FC = observer(() => {
     moduleFilter: moduleIssueFilterStore,
   } = useMobxStore();
 
-  useSWR(workspaceSlug && projectId && moduleId ? `CYCLE_ISSUES` : null, async () => {
+  useSWR(workspaceSlug && projectId && moduleId ? `MODULE_INFORMATION_${moduleId.toString()}` : null, async () => {
     if (workspaceSlug && projectId && moduleId) {
       // fetching the project display filters and display properties
       await issueFilterStore.fetchUserProjectFilters(workspaceSlug, projectId);
-      // fetching the cycle filters
+      // fetching the module filters
       await moduleIssueFilterStore.fetchModuleFilters(workspaceSlug, projectId, moduleId);
 
       // fetching the project state, labels and members
@@ -42,7 +42,7 @@ export const ModuleAllLayouts: React.FC = observer(() => {
       await projectStore.fetchProjectLabels(workspaceSlug, projectId);
       await projectStore.fetchProjectMembers(workspaceSlug, projectId);
 
-      // fetching the cycle issues
+      // fetching the module issues
       await moduleIssueStore.fetchIssues(workspaceSlug, projectId, moduleId);
     }
   });
@@ -51,7 +51,9 @@ export const ModuleAllLayouts: React.FC = observer(() => {
 
   return (
     <div className="relative w-full h-full flex flex-col overflow-auto">
-      <ModuleAppliedFiltersRoot />
+      <div className="p-4">
+        <ModuleAppliedFiltersRoot />
+      </div>
       <div className="h-full w-full">
         {activeLayout === "list" ? (
           <ModuleListLayout />

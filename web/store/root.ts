@@ -19,6 +19,7 @@ import CycleIssueFilterStore, { ICycleIssueFilterStore } from "./cycle_issue_fil
 import CycleIssueKanBanViewStore, { ICycleIssueKanBanViewStore } from "./cycle_issue_kanban_view";
 import ProjectViewsStore, { IProjectViewsStore } from "./project_views";
 import ProjectViewIssuesStore, { IProjectViewIssuesStore } from "./project_view_issues";
+import ProjectViewFiltersStore, { IProjectViewFiltersStore } from "./project_view_filters";
 import IssueFilterStore, { IIssueFilterStore } from "./issue_filters";
 import IssueViewDetailStore from "./issue_detail";
 import IssueKanBanViewStore from "./kanban_view";
@@ -52,6 +53,7 @@ export class RootStore {
 
   projectViews: IProjectViewsStore;
   projectViewIssues: IProjectViewIssuesStore;
+  projectViewFilters: IProjectViewFiltersStore;
 
   issueFilter: IIssueFilterStore;
   issueDetail: IssueViewDetailStore;
@@ -86,6 +88,7 @@ export class RootStore {
 
     this.projectViews = new ProjectViewsStore(this);
     this.projectViewIssues = new ProjectViewIssuesStore(this);
+    this.projectViewFilters = new ProjectViewFiltersStore(this);
 
     this.issue = new IssueStore(this);
     this.issueFilter = new IssueFilterStore(this);
