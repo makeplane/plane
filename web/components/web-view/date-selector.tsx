@@ -167,15 +167,21 @@ export const DateSelector: React.FC<Props> = (props) => {
         disabled={disabled}
         onClick={() => setIsOpen(true)}
         className={
-          "relative w-full px-2.5 py-0.5 text-base flex justify-between items-center gap-0.5 text-custom-text-100"
+          "relative w-full px-2.5 py-0.5 text-base flex justify-between items-center gap-0.5 text-custom-text-200"
         }
       >
         {value ? (
-          <div className="-my-0.5 flex items-center gap-2">{renderDateFormat(value)}</div>
+          <div className="-my-0.5 flex items-center gap-2">
+            {new Date(value).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            })}
+          </div>
         ) : (
           "Due date"
         )}
-        <ChevronDown className="w-5 h-5" />
+        <ChevronDown className="w-4 h-4" />
       </button>
     </>
   );

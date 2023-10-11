@@ -16,6 +16,9 @@ import { ISSUE_DETAILS } from "constants/fetch-keys";
 // components
 import { IssuesSelectBottomSheet } from "components/web-view";
 
+// icons
+import { ChevronDown, X } from "lucide-react";
+
 // types
 import { ISearchIssueResponse } from "types";
 
@@ -42,6 +45,12 @@ export const ParentSelect: React.FC<Props> = (props) => {
       : null
   );
 
+  const parentIssueResult = selectedParentIssue
+    ? `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`
+    : issueDetails?.parent
+    ? `${issueDetails.parent_detail?.project_detail.identifier}-${issueDetails.parent_detail?.sequence_id}`
+    : null; // defaults to null
+
   return (
     <>
       <IssuesSelectBottomSheet
@@ -60,22 +69,42 @@ export const ParentSelect: React.FC<Props> = (props) => {
         }}
       />
 
-      <button
-        type="button"
-        disabled={disabled}
-        onClick={() => setIsParentModalOpen(true)}
-        className={
-          "relative w-full px-2.5 py-0.5 text-base flex justify-between items-center gap-0.5 text-custom-text-100"
-        }
-      >
-        {selectedParentIssue && issueDetails?.parent ? (
-          `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`
-        ) : !selectedParentIssue && issueDetails?.parent ? (
-          `${issueDetails.parent_detail?.project_detail.identifier}-${issueDetails.parent_detail?.sequence_id}`
-        ) : (
+      {parentIssueResult ? (
+        <div className="flex justify-between items-center gap-0.5">
+          <button
+            type="button"
+            onClick={() => {
+              setIsParentModalOpen(true);
+            }}
+          >
+            <span>{parentIssueResult}</span>
+          </button>
+          <button
+            type="button"
+            disabled={disabled}
+            onClick={() => {
+              onChange(null);
+              setSelectedParentIssue(null);
+            }}
+          >
+            <X className="w-4 h-4 text-custom-text-200" />
+          </button>
+        </div>
+      ) : (
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={() => {
+            setIsParentModalOpen(true);
+          }}
+          className={
+            "relative w-full px-2.5 py-0.5 text-base flex justify-between items-center gap-0.5"
+          }
+        >
           <span className="text-custom-text-200">Select issue</span>
-        )}
-      </button>
+          <ChevronDown className="w-4 h-4 text-custom-text-200" />
+        </button>
+      )}
     </>
   );
 };

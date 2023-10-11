@@ -105,7 +105,7 @@ export const DuplicateSelect: React.FC<Props> = (props) => {
         disabled={disabled}
         onClick={() => setIsBottomSheetOpen(true)}
         className={
-          "relative w-full px-2.5 py-0.5 text-base flex justify-between items-center gap-0.5 text-custom-text-100"
+          "relative w-full px-2.5 py-0.5 text-base flex justify-between items-center gap-0.5"
         }
       >
         <span className="text-custom-text-200">Select issue</span>
