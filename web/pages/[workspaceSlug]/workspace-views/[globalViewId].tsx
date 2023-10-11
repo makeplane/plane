@@ -3,28 +3,35 @@ import useSWR from "swr";
 
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// components
-import { GlobalViewsHeader } from "components/workspace";
-import { GlobalIssuesHeader } from "components/headers";
-import { GlobalViewsAllLayouts } from "components/issues";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
+// components
+import { GlobalViewsHeader } from "components/workspace";
+import { GlobalViewsAllLayouts } from "components/issues";
+import { GlobalIssuesHeader } from "components/headers";
 // icons
 import { CheckCircle } from "lucide-react";
 // types
 import { NextPage } from "next";
 // fetch-keys
-import { GLOBAL_VIEWS_LIST } from "constants/fetch-keys";
+import { GLOBAL_VIEWS_LIST, GLOBAL_VIEW_DETAILS } from "constants/fetch-keys";
 
-const GlobalViewAssignedIssues: NextPage = () => {
+const GlobalViewIssues: NextPage = () => {
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, globalViewId } = router.query;
 
   const { globalViews: globalViewsStore } = useMobxStore();
 
   useSWR(
     workspaceSlug ? GLOBAL_VIEWS_LIST(workspaceSlug.toString()) : null,
     workspaceSlug ? () => globalViewsStore.fetchAllGlobalViews(workspaceSlug.toString()) : null
+  );
+
+  useSWR(
+    workspaceSlug && globalViewId ? GLOBAL_VIEW_DETAILS(globalViewId.toString()) : null,
+    workspaceSlug && globalViewId
+      ? () => globalViewsStore.fetchGlobalViewDetails(workspaceSlug.toString(), globalViewId.toString())
+      : null
   );
 
   return (
@@ -40,11 +47,11 @@ const GlobalViewAssignedIssues: NextPage = () => {
       <div className="h-full overflow-hidden bg-custom-background-100">
         <div className="h-full w-full flex flex-col border-b border-custom-border-300">
           <GlobalViewsHeader />
-          <GlobalViewsAllLayouts type="assigned" />
+          <GlobalViewsAllLayouts />
         </div>
       </div>
     </WorkspaceAuthorizationLayout>
   );
 };
 
-export default GlobalViewAssignedIssues;
+export default GlobalViewIssues;

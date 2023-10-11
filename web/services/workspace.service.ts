@@ -14,9 +14,9 @@ import {
   ICurrentUserResponse,
   IWorkspaceBulkInviteFormData,
   IWorkspaceViewProps,
-  IWorkspaceViewIssuesParams,
 } from "types";
 import { IWorkspaceView } from "types/workspace-views";
+import { IIssueGroupWithSubGroupsStructure, IIssueGroupedStructure, IIssueUnGroupedStructure } from "store/issue";
 
 export class WorkspaceService extends APIService {
   constructor() {
@@ -249,7 +249,7 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async createView(workspaceSlug: string, data: IWorkspaceView): Promise<any> {
+  async createView(workspaceSlug: string, data: Partial<IWorkspaceView>): Promise<IWorkspaceView> {
     return this.post(`/api/workspaces/${workspaceSlug}/views/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -257,11 +257,7 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async updateView(
-    workspaceSlug: string,
-    viewId: string,
-    data: Partial<IWorkspaceView>
-  ): Promise<any> {
+  async updateView(workspaceSlug: string, viewId: string, data: Partial<IWorkspaceView>): Promise<IWorkspaceView> {
     return this.patch(`/api/workspaces/${workspaceSlug}/views/${viewId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -293,7 +289,10 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async getViewIssues(workspaceSlug: string, params: IWorkspaceViewIssuesParams): Promise<any> {
+  async getViewIssues(
+    workspaceSlug: string,
+    params: any
+  ): Promise<IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure> {
     return this.get(`/api/workspaces/${workspaceSlug}/issues/`, {
       params,
     })

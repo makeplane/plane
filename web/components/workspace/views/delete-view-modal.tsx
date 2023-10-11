@@ -1,13 +1,10 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import workspaceService from "services/workspace.service";
+import { observer } from "mobx-react-lite";
+
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -16,58 +13,50 @@ import { DangerButton, SecondaryButton } from "components/ui";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
 import { IWorkspaceView } from "types/workspace-views";
-// fetch-keys
-import { WORKSPACE_VIEWS_LIST } from "constants/fetch-keys";
 
 type Props = {
+  data: IWorkspaceView;
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  data: IWorkspaceView | null;
+  onClose: () => void;
 };
 
-export const DeleteWorkspaceViewModal: React.FC<Props> = ({ isOpen, data, setIsOpen }) => {
+export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
+  const { data, isOpen, onClose } = props;
+
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
+  const { globalViews: globalViewsStore } = useMobxStore();
+
   const { setToastAlert } = useToast();
 
   const handleClose = () => {
-    setIsOpen(false);
-    setIsDeleteLoading(false);
+    onClose();
   };
 
   const handleDeletion = async () => {
+    if (!workspaceSlug) return;
+
     setIsDeleteLoading(true);
 
-    if (!workspaceSlug || !data) return;
-
-    await workspaceService
-      .deleteView(workspaceSlug as string, data.id)
-      .then(() => {
-        mutate<IWorkspaceView[]>(WORKSPACE_VIEWS_LIST(workspaceSlug as string), (views) =>
-          views?.filter((view) => view.id !== data.id)
-        );
-
-        handleClose();
-
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "View deleted successfully.",
-        });
-      })
-      .catch(() => {
+    await globalViewsStore
+      .deleteGlobalView(workspaceSlug.toString(), data.id)
+      .catch(() =>
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "View could not be deleted. Please try again.",
-        });
-      })
+          message: "Something went wrong while deleting the view. Please try again.",
+        })
+      )
       .finally(() => {
         setIsDeleteLoading(false);
+        handleClose();
       });
+
+    // remove filters from local storage
+    localStorage.removeItem(`global_view_filters/${data.id}`);
   };
 
   return (
@@ -100,26 +89,17 @@ export const DeleteWorkspaceViewModal: React.FC<Props> = ({ isOpen, data, setIsO
                 <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
                     <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-500/20 sm:mx-0 sm:h-10 sm:w-10">
-                      <ExclamationTriangleIcon
-                        className="h-6 w-6 text-red-600"
-                        aria-hidden="true"
-                      />
+                      <ExclamationTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </div>
                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                      <Dialog.Title
-                        as="h3"
-                        className="text-lg font-medium leading-6 text-custom-text-100"
-                      >
+                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                         Delete View
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
                           Are you sure you want to delete view-{" "}
-                          <span className="break-words font-medium text-custom-text-100">
-                            {data?.name}
-                          </span>
-                          ? All of the data related to the view will be permanently removed. This
-                          action cannot be undone.
+                          <span className="break-words font-medium text-custom-text-100">{data?.name}</span>? All of the
+                          data related to the view will be permanently removed. This action cannot be undone.
                         </p>
                       </div>
                     </div>
@@ -138,4 +118,4 @@ export const DeleteWorkspaceViewModal: React.FC<Props> = ({ isOpen, data, setIsO
       </Dialog>
     </Transition.Root>
   );
-};
+});

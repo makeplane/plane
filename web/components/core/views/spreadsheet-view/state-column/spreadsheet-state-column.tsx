@@ -10,7 +10,7 @@ import { ICurrentUserResponse, IIssue, Properties } from "types";
 type Props = {
   issue: IIssue;
   projectId: string;
-  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
+  handleUpdateIssue: (issueId: string, data: Partial<IIssue>) => void;
   expandedIssues: string[];
   properties: Properties;
   user: ICurrentUserResponse | undefined;
@@ -20,7 +20,7 @@ type Props = {
 export const SpreadsheetStateColumn: React.FC<Props> = ({
   issue,
   projectId,
-  partialUpdateIssue,
+  handleUpdateIssue,
   expandedIssues,
   properties,
   user,
@@ -36,7 +36,7 @@ export const SpreadsheetStateColumn: React.FC<Props> = ({
         issue={issue}
         projectId={projectId}
         properties={properties}
-        partialUpdateIssue={partialUpdateIssue}
+        onChange={(data) => handleUpdateIssue(issue.id, data)}
         user={user}
         isNotAllowed={isNotAllowed}
       />
@@ -45,12 +45,12 @@ export const SpreadsheetStateColumn: React.FC<Props> = ({
         !isLoading &&
         subIssues &&
         subIssues.length > 0 &&
-        subIssues.map((subIssue: IIssue) => (
+        subIssues.map((subIssue) => (
           <SpreadsheetStateColumn
             key={subIssue.id}
             issue={subIssue}
             projectId={subIssue.project_detail.id}
-            partialUpdateIssue={partialUpdateIssue}
+            handleUpdateIssue={handleUpdateIssue}
             expandedIssues={expandedIssues}
             properties={properties}
             user={user}

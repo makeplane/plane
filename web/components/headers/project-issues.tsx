@@ -7,7 +7,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 // types
-import { IIssueDisplayFilterOptions, IIssueFilterOptions, TIssueLayouts } from "types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 
@@ -15,7 +15,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { issueFilter: issueFilterStore } = useMobxStore();
+  const { issueFilter: issueFilterStore, project: projectStore } = useMobxStore();
 
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
 
@@ -69,6 +69,15 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
     [issueFilterStore, projectId, workspaceSlug]
   );
 
+  const handleDisplayPropertiesUpdate = useCallback(
+    (property: Partial<IIssueDisplayProperties>) => {
+      if (!workspaceSlug || !projectId) return;
+
+      issueFilterStore.updateDisplayProperties(workspaceSlug.toString(), projectId.toString(), property);
+    },
+    [issueFilterStore, projectId, workspaceSlug]
+  );
+
   return (
     <div className="flex items-center gap-2">
       <LayoutSelection
@@ -81,13 +90,17 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
           filters={issueFilterStore.userFilters}
           handleFiltersUpdate={handleFiltersUpdate}
           layoutDisplayFiltersOptions={activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined}
-          projectId={projectId?.toString() ?? ""}
+          labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? undefined}
+          members={projectStore.members?.[projectId?.toString() ?? ""]?.map((m) => m.member)}
+          states={projectStore.states?.[projectId?.toString() ?? ""] ?? undefined}
         />
       </FiltersDropdown>
       <FiltersDropdown title="View">
         <DisplayFiltersSelection
           displayFilters={issueFilterStore.userDisplayFilters}
+          displayProperties={issueFilterStore.userDisplayProperties}
           handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
+          handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
           layoutDisplayFiltersOptions={activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined}
         />
       </FiltersDropdown>

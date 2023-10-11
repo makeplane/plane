@@ -5,7 +5,7 @@ import { IssueColumn } from "components/core";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
-import { IIssue, Properties, UserAuth } from "types";
+import { IIssue, Properties } from "types";
 
 type Props = {
   issue: IIssue;
@@ -16,7 +16,6 @@ type Props = {
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
   setCurrentProjectId: React.Dispatch<React.SetStateAction<string | null>>;
   disableUserActions: boolean;
-  userAuth: UserAuth;
   nestingLevel?: number;
 };
 
@@ -29,7 +28,6 @@ export const SpreadsheetIssuesColumn: React.FC<Props> = ({
   handleIssueAction,
   setCurrentProjectId,
   disableUserActions,
-  userAuth,
   nestingLevel = 0,
 }) => {
   const handleToggleExpand = (issueId: string) => {
@@ -61,7 +59,6 @@ export const SpreadsheetIssuesColumn: React.FC<Props> = ({
         handleDeleteIssue={() => handleIssueAction(issue, "delete")}
         setCurrentProjectId={setCurrentProjectId}
         disableUserActions={disableUserActions}
-        userAuth={userAuth}
         nestingLevel={nestingLevel}
       />
 
@@ -80,7 +77,6 @@ export const SpreadsheetIssuesColumn: React.FC<Props> = ({
             handleIssueAction={handleIssueAction}
             setCurrentProjectId={setCurrentProjectId}
             disableUserActions={disableUserActions}
-            userAuth={userAuth}
             nestingLevel={nestingLevel + 1}
           />
         ))}

@@ -6,16 +6,11 @@ import { useRouter } from "next/router";
 import { Popover2 } from "@blueprintjs/popover2";
 // icons
 import { Icon } from "components/ui";
-import {
-  EllipsisHorizontalIcon,
-  LinkIcon,
-  PencilIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { EllipsisHorizontalIcon, LinkIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 // hooks
 import useToast from "hooks/use-toast";
 // types
-import { IIssue, Properties, UserAuth } from "types";
+import { IIssue, Properties } from "types";
 // helper
 import { copyTextToClipboard } from "helpers/string.helper";
 
@@ -29,7 +24,6 @@ type Props = {
   handleDeleteIssue: (issue: IIssue) => void;
   setCurrentProjectId: React.Dispatch<React.SetStateAction<string | null>>;
   disableUserActions: boolean;
-  userAuth: UserAuth;
   nestingLevel: number;
 };
 
@@ -43,7 +37,6 @@ export const IssueColumn: React.FC<Props> = ({
   handleDeleteIssue,
   setCurrentProjectId,
   disableUserActions,
-  userAuth,
   nestingLevel,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -64,11 +57,8 @@ export const IssueColumn: React.FC<Props> = ({
   };
 
   const handleCopyText = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`
-    ).then(() => {
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",
@@ -78,8 +68,6 @@ export const IssueColumn: React.FC<Props> = ({
   };
 
   const paddingLeft = `${nestingLevel * 54}px`;
-
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
     <div className="group flex items-center w-[28rem] text-sm h-11 sticky top-0 bg-custom-background-100 truncate border-b border-r border-custom-border-100">
@@ -93,7 +81,7 @@ export const IssueColumn: React.FC<Props> = ({
               {issue.project_detail?.identifier}-{issue.sequence_id}
             </span>
 
-            {!isNotAllowed && !disableUserActions && (
+            {!disableUserActions && (
               <div className="absolute top-0 left-2.5 opacity-0 group-hover:opacity-100">
                 <Popover2
                   isOpen={isOpen}
