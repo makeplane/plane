@@ -1,16 +1,34 @@
 import { useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import useSWR from "swr";
+import { observer } from "mobx-react-lite";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { TourRoot } from "components/onboarding";
 import { UserGreetingsView } from "components/user";
+import { CompletedIssuesGraph, IssuesList, IssuesPieChart, IssuesStats } from "components/workspace";
+import { PrimaryButton } from "components/ui";
+// images
+import emptyDashboard from "public/empty-state/dashboard.svg";
 
-export const WorkspaceDashboardView = () => {
+export const WorkspaceDashboardView = observer(() => {
+  // router
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
   // store
-  const { user: userStore } = useMobxStore();
+  const { user: userStore, project: projectStore } = useMobxStore();
   const user = userStore.currentUser;
+  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
+  const workspaceDashboardInfo = userStore.dashboardInfo;
   // states
   const [month, setMonth] = useState(new Date().getMonth() + 1);
+  // fetch user dashboard info
+  useSWR(
+    workspaceSlug ? `USER_WORKSPACE_DASHBOARD_${workspaceSlug}_${month}` : null,
+    workspaceSlug ? () => userStore.fetchUserDashboardInfo(workspaceSlug.toString(), month) : null
+  );
 
   const handleTourCompleted = () => {
     userStore.updateTourCompleted();
@@ -32,13 +50,13 @@ export const WorkspaceDashboardView = () => {
         {projects ? (
           projects.length > 0 ? (
             <div className="flex flex-col gap-8">
-              <IssuesStats data={workspaceDashboardData} />
+              <IssuesStats data={workspaceDashboardInfo} />
               <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-                <IssuesList issues={workspaceDashboardData?.overdue_issues} type="overdue" />
-                <IssuesList issues={workspaceDashboardData?.upcoming_issues} type="upcoming" />
-                <IssuesPieChart groupedIssues={workspaceDashboardData?.state_distribution} />
+                <IssuesList issues={workspaceDashboardInfo?.overdue_issues} type="overdue" />
+                <IssuesList issues={workspaceDashboardInfo?.upcoming_issues} type="upcoming" />
+                <IssuesPieChart groupedIssues={workspaceDashboardInfo?.state_distribution} />
                 <CompletedIssuesGraph
-                  issues={workspaceDashboardData?.completed_issues}
+                  issues={workspaceDashboardInfo?.completed_issues}
                   month={month}
                   setMonth={setMonth}
                 />
@@ -69,4 +87,4 @@ export const WorkspaceDashboardView = () => {
       </div>
     </>
   );
-};
+});
