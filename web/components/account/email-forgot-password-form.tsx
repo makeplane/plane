@@ -1,21 +1,19 @@
-import React from "react";
+import { FC } from "react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-// services
-import userService from "services/user.service";
-// hooks
-import useToast from "hooks/use-toast";
 // ui
 import { Input, PrimaryButton, SecondaryButton } from "components/ui";
-// types
-type Props = {
-  onSubmit: (formValues: any) => void;
-};
 
-export const EmailResetPasswordForm: React.FC<Props> = (props) => {
+export interface EmailForgotPasswordFormValues {
+  email: string;
+}
+
+export interface IEmailForgotPasswordForm {
+  onSubmit: (formValues: any) => Promise<void>;
+}
+
+export const EmailForgotPasswordForm: FC<IEmailForgotPasswordForm> = (props) => {
   const { onSubmit } = props;
-  // toast
-  const { setToastAlert } = useToast();
   // router
   const router = useRouter();
   // form data
@@ -23,7 +21,7 @@ export const EmailResetPasswordForm: React.FC<Props> = (props) => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm({
+  } = useForm<EmailForgotPasswordFormValues>({
     defaultValues: {
       email: "",
     },
@@ -31,38 +29,8 @@ export const EmailResetPasswordForm: React.FC<Props> = (props) => {
     reValidateMode: "onChange",
   });
 
-  const forgotPassword = async (formData: any) => {
-    const payload = {
-      email: formData.email,
-    };
-
-    await userService
-      .forgotPassword(payload)
-      .then(() =>
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Password reset link has been sent to your email address.",
-        })
-      )
-      .catch((err) => {
-        if (err.status === 400)
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "Please check the Email ID entered.",
-          });
-        else
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "Something went wrong. Please try again.",
-          });
-      });
-  };
-
   return (
-    <form className="space-y-4 mt-10 w-full sm:w-[360px] mx-auto" onSubmit={handleSubmit(forgotPassword)}>
+    <form className="space-y-4 mt-10 w-full sm:w-[360px] mx-auto" onSubmit={handleSubmit(onSubmit)}>
       <div className="space-y-1">
         <Input
           id="email"
