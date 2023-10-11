@@ -1,48 +1,50 @@
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// react-hook-form
-import { Control, UseFormSetValue } from "react-hook-form";
+import useSWR, { mutate } from "swr";
+import { Control, UseFormSetValue, useForm } from "react-hook-form";
 // hooks
 import useProjects from "hooks/use-projects";
 // components
-import {
-  AnalyticsGraph,
-  AnalyticsSelectBar,
-  AnalyticsSidebar,
-  AnalyticsTable,
-} from "components/analytics";
+import { AnalyticsGraph, AnalyticsSelectBar, AnalyticsSidebar, AnalyticsTable } from "components/analytics";
 // ui
-import { Loader, PrimaryButton } from "components/ui";
+import { Button, Loader } from "@plane/ui";
 // helpers
 import { convertResponseToBarGraphData } from "helpers/analytics.helper";
 // types
-import { IAnalyticsParams, IAnalyticsResponse, ICurrentUserResponse } from "types";
+import { IAnalyticsParams, IAnalyticsResponse, IUser } from "types";
 // fetch-keys
 import { ANALYTICS } from "constants/fetch-keys";
+// services
+import analyticsService from "services/analytics.service";
 
 type Props = {
-  analytics: IAnalyticsResponse | undefined;
-  analyticsError: any;
-  params: IAnalyticsParams;
-  control: Control<IAnalyticsParams, any>;
-  setValue: UseFormSetValue<IAnalyticsParams>;
   fullScreen: boolean;
-  user: ICurrentUserResponse | undefined;
+  user?: IUser | undefined;
 };
 
-export const CustomAnalytics: React.FC<Props> = ({
-  analytics,
-  analyticsError,
-  params,
-  control,
-  setValue,
-  fullScreen,
-  user,
-}) => {
+const defaultValues: IAnalyticsParams = {
+  x_axis: "priority",
+  y_axis: "issue_count",
+  segment: null,
+  project: null,
+};
+
+export const CustomAnalytics: React.FC<Props> = ({ fullScreen, user }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { control, watch, setValue } = useForm<IAnalyticsParams>({ defaultValues });
+
+  const params: IAnalyticsParams = {
+    x_axis: watch("x_axis"),
+    y_axis: watch("y_axis"),
+    segment: watch("segment"),
+    project: watch("project"),
+  };
+
+  const { data: analytics, error: analyticsError } = useSWR(
+    workspaceSlug ? ANALYTICS(workspaceSlug.toString(), params) : null,
+    workspaceSlug ? () => analyticsService.getAnalytics(workspaceSlug.toString(), params) : null
+  );
 
   const isProjectLevel = projectId ? true : false;
 
@@ -52,11 +54,7 @@ export const CustomAnalytics: React.FC<Props> = ({
   const { projects } = useProjects();
 
   return (
-    <div
-      className={`overflow-hidden flex flex-col-reverse ${
-        fullScreen ? "md:grid md:grid-cols-4 md:h-full" : ""
-      }`}
-    >
+    <div className={`overflow-hidden flex flex-col-reverse ${fullScreen ? "md:grid md:grid-cols-4 md:h-full" : ""}`}>
       <div className="col-span-3 flex flex-col h-full overflow-hidden">
         <AnalyticsSelectBar
           control={control}
@@ -77,12 +75,7 @@ export const CustomAnalytics: React.FC<Props> = ({
                   yAxisKey={yAxisKey}
                   fullScreen={fullScreen}
                 />
-                <AnalyticsTable
-                  analytics={analytics}
-                  barGraphData={barGraphData}
-                  params={params}
-                  yAxisKey={yAxisKey}
-                />
+                <AnalyticsTable analytics={analytics} barGraphData={barGraphData} params={params} yAxisKey={yAxisKey} />
               </div>
             ) : (
               <div className="grid h-full place-items-center p-5">
@@ -107,7 +100,8 @@ export const CustomAnalytics: React.FC<Props> = ({
             <div className="space-y-4 text-custom-text-200">
               <p className="text-sm">There was some error in fetching the data.</p>
               <div className="flex items-center justify-center gap-2">
-                <PrimaryButton
+                <Button
+                  variant="primary"
                   onClick={() => {
                     if (!workspaceSlug) return;
 
@@ -115,7 +109,7 @@ export const CustomAnalytics: React.FC<Props> = ({
                   }}
                 >
                   Refresh
-                </PrimaryButton>
+                </Button>
               </div>
             </div>
           </div>

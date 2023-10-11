@@ -6,8 +6,7 @@ import useSWR from "swr";
 // mobx react lite
 import { observer } from "mobx-react-lite";
 // components
-import { CycleListLayout } from "./list/cycle-root";
-import { CycleKanBanLayout } from "./kanban/cycle-root";
+import { CycleKanBanLayout, CycleListLayout } from "components/issues";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 

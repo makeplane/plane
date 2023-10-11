@@ -14,7 +14,7 @@ import issuesServices from "services/issue.service";
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
 // ui
-import { DangerButton, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // icons
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { LayerDiagonalIcon } from "components/icons";
@@ -240,10 +240,12 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
 
                 {filteredIssues.length > 0 && (
                   <div className="flex items-center justify-end gap-2 p-3">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <DangerButton onClick={handleSubmit(handleDelete)} loading={isSubmitting}>
+                    <Button variant="neutral-primary" onClick={handleClose}>
+                      Cancel
+                    </Button>
+                    <Button variant="danger" onClick={handleSubmit(handleDelete)} loading={isSubmitting}>
                       {isSubmitting ? "Deleting..." : "Delete selected issues"}
-                    </DangerButton>
+                    </Button>
                   </div>
                 )}
               </form>

@@ -2,7 +2,7 @@ import { FC } from "react";
 // components
 import { CyclesListItem } from "./cycles-list-item";
 // ui
-import { Loader } from "components/ui";
+import { Loader } from "@plane/ui";
 // types
 import { ICycle } from "types";
 

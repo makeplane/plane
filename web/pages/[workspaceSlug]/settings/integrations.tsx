@@ -13,8 +13,9 @@ import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 import { SingleIntegrationCard } from "components/integration";
 import { SettingsSidebar } from "components/project";
 // ui
-import { IntegrationAndImportExportBanner, Loader } from "components/ui";
+import { IntegrationAndImportExportBanner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { Loader } from "@plane/ui";
 // types
 import type { NextPage } from "next";
 // fetch-keys

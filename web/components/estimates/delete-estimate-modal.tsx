@@ -8,7 +8,7 @@ import { IEstimate } from "types";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
-import { SecondaryButton, DangerButton } from "components/ui";
+import { Button } from "@plane/ui";
 
 type Props = {
   isOpen: boolean;
@@ -17,12 +17,7 @@ type Props = {
   handleDelete: () => void;
 };
 
-export const DeleteEstimateModal: React.FC<Props> = ({
-  isOpen,
-  handleClose,
-  data,
-  handleDelete,
-}) => {
+export const DeleteEstimateModal: React.FC<Props> = ({ isOpen, handleClose, data, handleDelete }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   useEffect(() => {
@@ -64,10 +59,7 @@ export const DeleteEstimateModal: React.FC<Props> = ({
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-500/20 p-4">
-                      <ExclamationTriangleIcon
-                        className="h-6 w-6 text-red-600"
-                        aria-hidden="true"
-                      />
+                      <ExclamationTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">
                       <h3 className="text-xl font-medium 2xl:text-2xl">Delete Estimate</h3>
@@ -76,16 +68,17 @@ export const DeleteEstimateModal: React.FC<Props> = ({
                   <span>
                     <p className="break-words text-sm leading-7 text-custom-text-200">
                       Are you sure you want to delete estimate-{" "}
-                      <span className="break-words font-medium text-custom-text-100">
-                        {data.name}
-                      </span>
-                      {""}? All of the data related to the estiamte will be permanently removed.
-                      This action cannot be undone.
+                      <span className="break-words font-medium text-custom-text-100">{data.name}</span>
+                      {""}? All of the data related to the estiamte will be permanently removed. This action cannot be
+                      undone.
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
-                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
-                    <DangerButton
+                    <Button variant="neutral-primary" onClick={onClose}>
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="danger"
                       onClick={() => {
                         setIsDeleteLoading(true);
                         handleDelete();
@@ -93,7 +86,7 @@ export const DeleteEstimateModal: React.FC<Props> = ({
                       loading={isDeleteLoading}
                     >
                       {isDeleteLoading ? "Deleting..." : "Delete Estimate"}
-                    </DangerButton>
+                    </Button>
                   </div>
                 </div>
               </Dialog.Panel>

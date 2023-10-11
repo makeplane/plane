@@ -7,7 +7,7 @@ import useUser from "hooks/use-user";
 // components
 import { TourSidebar } from "components/onboarding";
 // ui
-import { PrimaryButton, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
 // images
@@ -52,8 +52,7 @@ const TOUR_STEPS: {
   {
     key: "modules",
     title: "Break into modules",
-    description:
-      "Modules break your big thing into Projects or Features, to help you organize better.",
+    description: "Modules break your big thing into Projects or Features, to help you organize better.",
     image: ModulesTour,
     prevStep: "cycles",
     nextStep: "views",
@@ -97,11 +96,13 @@ export const TourRoot: React.FC<Props> = ({ onComplete }) => {
                 Welcome to Plane, {user?.first_name} {user?.last_name}
               </h3>
               <p className="text-custom-text-200 text-sm mt-3">
-                We{"'"}re glad that you decided to try out Plane. You can now manage your projects
-                with ease. Get started by creating a project.
+                We{"'"}re glad that you decided to try out Plane. You can now manage your projects with ease. Get
+                started by creating a project.
               </p>
               <div className="flex items-center gap-6 mt-8">
-                <PrimaryButton onClick={() => setStep("issues")}>Take a Product Tour</PrimaryButton>
+                <Button variant="primary" onClick={() => setStep("issues")}>
+                  Take a Product Tour
+                </Button>
                 <button
                   type="button"
                   className="outline-custom-text-100 bg-transparent text-custom-primary-100 text-xs font-medium"
@@ -137,19 +138,20 @@ export const TourRoot: React.FC<Props> = ({ onComplete }) => {
               <div className="h-full flex items-end justify-between gap-4 mt-3">
                 <div className="flex items-center gap-4">
                   {currentStep?.prevStep && (
-                    <SecondaryButton onClick={() => setStep(currentStep.prevStep ?? "welcome")}>
+                    <Button variant="neutral-primary" onClick={() => setStep(currentStep.prevStep ?? "welcome")}>
                       Back
-                    </SecondaryButton>
+                    </Button>
                   )}
                   {currentStep?.nextStep && (
-                    <PrimaryButton onClick={() => setStep(currentStep.nextStep ?? "issues")}>
+                    <Button variant="primary" onClick={() => setStep(currentStep.nextStep ?? "issues")}>
                       Next
-                    </PrimaryButton>
+                    </Button>
                   )}
                 </div>
-                {TOUR_STEPS.findIndex((tourStep) => tourStep.key === step) ===
-                  TOUR_STEPS.length - 1 && (
-                  <PrimaryButton onClick={onComplete}>Create my first project</PrimaryButton>
+                {TOUR_STEPS.findIndex((tourStep) => tourStep.key === step) === TOUR_STEPS.length - 1 && (
+                  <Button variant="primary" onClick={onComplete}>
+                    Create my first project
+                  </Button>
                 )}
               </div>
             </div>

@@ -7,10 +7,6 @@ import { ProjectService } from "services/project.service";
 import { IssueService } from "services/issue.service";
 import { ProjectStateServices } from "services/project_state.service";
 import { ProjectEstimateServices } from "services/project_estimates.service";
-import { CycleService } from "services/cycles.service";
-import { ModuleService } from "services/modules.service";
-import { ViewService } from "services/views.service";
-import { PageService } from "services/page.service";
 
 export interface IProjectStore {
   loader: boolean;
@@ -18,7 +14,7 @@ export interface IProjectStore {
 
   searchQuery: string;
   projectId: string | null;
-  projects: { [key: string]: IProject[] };
+  projects: { [workspaceSlug: string]: IProject[] };
   project_details: {
     [projectId: string]: IProject; // projectId: project Info
   };
@@ -224,8 +220,8 @@ class ProjectStore implements IProjectStore {
   }
 
   // actions
-  setProjectId = (projectSlug: string) => {
-    this.projectId = projectSlug ?? null;
+  setProjectId = (projectId: string) => {
+    this.projectId = projectId ?? null;
   };
 
   setSearchQuery = (query: string) => {
@@ -315,15 +311,15 @@ class ProjectStore implements IProjectStore {
     return estimateInfo;
   };
 
-  fetchProjectStates = async (workspaceSlug: string, projectSlug: string) => {
+  fetchProjectStates = async (workspaceSlug: string, projectId: string) => {
     try {
       this.loader = true;
       this.error = null;
 
-      const stateResponse = await this.stateService.getStates(workspaceSlug, projectSlug);
+      const stateResponse = await this.stateService.getStates(workspaceSlug, projectId);
       const _states = {
         ...this.states,
-        [projectSlug]: stateResponse,
+        [projectId]: stateResponse,
       };
 
       runInAction(() => {
@@ -361,15 +357,15 @@ class ProjectStore implements IProjectStore {
     }
   };
 
-  fetchProjectMembers = async (workspaceSlug: string, projectSlug: string) => {
+  fetchProjectMembers = async (workspaceSlug: string, projectId: string) => {
     try {
       this.loader = true;
       this.error = null;
 
-      const membersResponse = await this.projectService.projectMembers(workspaceSlug, projectSlug);
+      const membersResponse = await this.projectService.projectMembers(workspaceSlug, projectId);
       const _members = {
         ...this.members,
-        [projectSlug]: membersResponse,
+        [projectId]: membersResponse,
       };
 
       runInAction(() => {
@@ -384,15 +380,15 @@ class ProjectStore implements IProjectStore {
     }
   };
 
-  fetchProjectEstimates = async (workspaceSlug: string, projectSlug: string) => {
+  fetchProjectEstimates = async (workspaceSlug: string, projectId: string) => {
     try {
       this.loader = true;
       this.error = null;
 
-      const estimatesResponse = await this.estimateService.getEstimatesList(workspaceSlug, projectSlug);
+      const estimatesResponse = await this.estimateService.getEstimatesList(workspaceSlug, projectId);
       const _estimates = {
         ...this.estimates,
-        [projectSlug]: estimatesResponse,
+        [projectId]: estimatesResponse,
       };
 
       runInAction(() => {
@@ -501,12 +497,12 @@ class ProjectStore implements IProjectStore {
     }
   };
 
-  leaveProject = async (workspaceSlug: string, projectSlug: string) => {
+  leaveProject = async (workspaceSlug: string, projectId: string) => {
     try {
       this.loader = true;
       this.error = null;
 
-      const response = await this.projectService.leaveProject(workspaceSlug, projectSlug, this.rootStore.user);
+      const response = await this.projectService.leaveProject(workspaceSlug, projectId, this.rootStore.user);
       await this.fetchProjects(workspaceSlug);
 
       runInAction(() => {

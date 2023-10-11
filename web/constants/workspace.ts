@@ -4,6 +4,7 @@ import JiraLogo from "public/services/jira.png";
 import CSVLogo from "public/services/csv.svg";
 import ExcelLogo from "public/services/excel.svg";
 import JSONLogo from "public/services/json.svg";
+import { TStaticViewTypes } from "types";
 
 export const ROLE = {
   5: "Guest",
@@ -65,5 +66,27 @@ export const EXPORTERS_LIST = [
     title: "JSON",
     description: "Export issues to a JSON file.",
     logo: JSONLogo,
+  },
+];
+
+export const DEFAULT_GLOBAL_VIEWS_LIST: {
+  key: TStaticViewTypes;
+  label: string;
+}[] = [
+  {
+    key: "all-issues",
+    label: "All issues",
+  },
+  {
+    key: "assigned",
+    label: "Assigned",
+  },
+  {
+    key: "created",
+    label: "Created",
+  },
+  {
+    key: "subscribed",
+    label: "Subscribed",
   },
 ];

@@ -25,7 +25,7 @@ import {
   SelectDuplicateInboxIssueModal,
 } from "components/inbox";
 // ui
-import { PrimaryButton, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // icons
 import { InboxIcon, StackedLayersHorizontalIcon } from "components/icons";
 import {
@@ -74,9 +74,7 @@ export const InboxActionHeader = () => {
     mutateInboxIssues(
       (prevData: any) =>
         (prevData ?? []).map((i: any) =>
-          i.bridge_id === inboxIssueId
-            ? { ...i, issue_inbox: [{ ...i.issue_inbox[0], ...data }] }
-            : i
+          i.bridge_id === inboxIssueId ? { ...i, issue_inbox: [{ ...i.issue_inbox[0], ...data }] } : i
         ),
       false
     );
@@ -104,8 +102,7 @@ export const InboxActionHeader = () => {
   };
 
   const issue = inboxIssues?.find((issue) => issue.bridge_id === inboxIssueId);
-  const currentIssueIndex =
-    inboxIssues?.findIndex((issue) => issue.bridge_id === inboxIssueId) ?? 0;
+  const currentIssueIndex = inboxIssues?.findIndex((issue) => issue.bridge_id === inboxIssueId) ?? 0;
 
   useEffect(() => {
     if (!issue?.issue_inbox[0].snoozed_till) return;
@@ -126,10 +123,7 @@ export const InboxActionHeader = () => {
       <SelectDuplicateInboxIssueModal
         isOpen={selectDuplicateIssue}
         onClose={() => setSelectDuplicateIssue(false)}
-        value={
-          inboxIssues?.find((inboxIssue) => inboxIssue.bridge_id === inboxIssueId)?.issue_inbox[0]
-            .duplicate_to
-        }
+        value={inboxIssues?.find((inboxIssue) => inboxIssue.bridge_id === inboxIssueId)?.issue_inbox[0].duplicate_to}
         onSubmit={(dupIssueId: string) => {
           markInboxStatus({
             status: 2,
@@ -202,10 +196,13 @@ export const InboxActionHeader = () => {
                 <div className="flex-shrink-0">
                   <Popover className="relative">
                     <Popover.Button as="button" type="button">
-                      <SecondaryButton className="flex gap-x-1 items-center" size="sm">
-                        <ClockIcon className="h-4 w-4 text-custom-text-200" />
-                        <span>Snooze</span>
-                      </SecondaryButton>
+                      <Button
+                        variant="neutral-primary"
+                        prependIcon={<ClockIcon className="text-custom-text-200" />}
+                        size="sm"
+                      >
+                        Snooze
+                      </Button>
                     </Popover.Button>
                     <Popover.Panel className="w-80 p-2 absolute right-0 z-10 mt-2 rounded-md border border-custom-border-200 bg-custom-background-80 shadow-lg">
                       {({ close }) => (
@@ -220,8 +217,8 @@ export const InboxActionHeader = () => {
                             minDate={tomorrow}
                             inline
                           />
-                          <PrimaryButton
-                            className="ml-auto"
+                          <Button
+                            variant="primary"
                             onClick={() => {
                               close();
                               markInboxStatus({
@@ -231,7 +228,7 @@ export const InboxActionHeader = () => {
                             }}
                           >
                             Snooze
-                          </PrimaryButton>
+                          </Button>
                         </div>
                       )}
                     </Popover.Panel>
@@ -240,50 +237,50 @@ export const InboxActionHeader = () => {
               )}
               {isAllowed && issueStatus === -2 && (
                 <div className="flex-shrink-0">
-                  <SecondaryButton
+                  <Button
+                    variant="neutral-primary"
                     size="sm"
-                    className="flex gap-2 items-center"
+                    prependIcon={<StackedLayersHorizontalIcon className="text-custom-text-200" />}
                     onClick={() => setSelectDuplicateIssue(true)}
                   >
-                    <StackedLayersHorizontalIcon className="h-4 w-4 text-custom-text-200" />
-                    <span>Mark as duplicate</span>
-                  </SecondaryButton>
+                    Mark as duplicate
+                  </Button>
                 </div>
               )}
               {isAllowed && (issueStatus === 0 || issueStatus === -2) && (
                 <div className="flex-shrink-0">
-                  <SecondaryButton
+                  <Button
+                    variant="neutral-primary"
                     size="sm"
-                    className="flex gap-2 items-center"
+                    prependIcon={<CheckCircleIcon className="text-green-500" />}
                     onClick={() => setAcceptIssueModal(true)}
                   >
-                    <CheckCircleIcon className="h-4 w-4 text-green-500" />
-                    <span>Accept</span>
-                  </SecondaryButton>
+                    Accept
+                  </Button>
                 </div>
               )}
               {isAllowed && issueStatus === -2 && (
                 <div className="flex-shrink-0">
-                  <SecondaryButton
+                  <Button
+                    variant="neutral-primary"
                     size="sm"
-                    className="flex gap-2 items-center"
+                    prependIcon={<XCircleIcon className="text-red-500" />}
                     onClick={() => setDeclineIssueModal(true)}
                   >
-                    <XCircleIcon className="h-4 w-4 text-red-500" />
-                    <span>Decline</span>
-                  </SecondaryButton>
+                    Decline
+                  </Button>
                 </div>
               )}
               {(isAllowed || user?.id === issue?.created_by) && (
                 <div className="flex-shrink-0">
-                  <SecondaryButton
+                  <Button
+                    variant="neutral-primary"
                     size="sm"
-                    className="flex gap-2 items-center"
+                    prependIcon={<TrashIcon className="text-red-500" />}
                     onClick={() => setDeleteIssueModal(true)}
                   >
-                    <TrashIcon className="h-4 w-4 text-red-500" />
-                    <span>Delete</span>
-                  </SecondaryButton>
+                    Delete
+                  </Button>
                 </div>
               )}
             </div>

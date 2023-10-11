@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 // services
 import appInstallationsService from "services/app_installation.service";
 // ui
-import { Spinner } from "components/ui";
+import { Spinner } from "@plane/ui";
 
 const AppPostInstallation = () => {
   const router = useRouter();

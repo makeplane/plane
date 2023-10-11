@@ -3,6 +3,7 @@ export * from "./created-by";
 export * from "./filters-selection";
 export * from "./labels";
 export * from "./priority";
+export * from "./project";
 export * from "./start-date";
 export * from "./state-group";
 export * from "./state";

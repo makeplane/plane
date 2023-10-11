@@ -15,7 +15,7 @@ import issuesService from "services/issue.service";
 // hooks
 import useUser from "hooks/use-user";
 // ui
-import { Input, Spinner } from "components/ui";
+import { Input, Spinner } from "@plane/ui";
 // icons
 import { PlusIcon, RectangleGroupIcon, TagIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
@@ -53,10 +53,10 @@ export const SidebarLabelSelect: React.FC<Props> = ({
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { errors, isSubmitting },
     reset,
     watch,
-    control: labelControl,
+    control,
     setFocus,
   } = useForm<Partial<IIssueLabels>>({
     defaultValues,
@@ -281,7 +281,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
                     <Popover.Panel className="absolute z-10 mt-1.5 max-w-xs px-2 sm:px-0">
                       <Controller
                         name="color"
-                        control={labelControl}
+                        control={control}
                         render={({ field: { value, onChange } }) => (
                           <TwitterPicker color={value} onChange={(value) => onChange(value.hex)} />
                         )}
@@ -292,15 +292,25 @@ export const SidebarLabelSelect: React.FC<Props> = ({
               )}
             </Popover>
           </div>
-          <Input
-            id="name"
+          <Controller
+            control={control}
             name="name"
-            placeholder="Title"
-            register={register}
-            validations={{
+            rules={{
               required: "This is required",
             }}
-            autoComplete="off"
+            render={({ field: { value, onChange, ref } }) => (
+              <Input
+                id="name"
+                name="name"
+                type="text"
+                value={value ?? ""}
+                onChange={onChange}
+                ref={ref}
+                hasError={Boolean(errors.name)}
+                placeholder="Title"
+                className="w-full"
+              />
+            )}
           />
           <button
             type="button"

@@ -13,7 +13,7 @@ import { Dialog, Popover, Transition } from "@headlessui/react";
 // services
 import issuesService from "services/issue.service";
 // ui
-import { Input, PrimaryButton, SecondaryButton } from "components/ui";
+import { Button, Input } from "@plane/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 // types
@@ -163,27 +163,36 @@ export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                         )}
                       </Popover>
                       <div className="flex w-full flex-col gap-0.5 justify-center">
-                        <Input
-                          type="text"
-                          id="name"
+                        <Controller
+                          control={control}
                           name="name"
-                          placeholder="Label title"
-                          autoComplete="off"
-                          error={errors.name}
-                          register={register}
-                          width="full"
-                          validations={{
+                          rules={{
                             required: "Label title is required",
                           }}
+                          render={({ field: { value, onChange, ref } }) => (
+                            <Input
+                              id="name"
+                              name="name"
+                              type="text"
+                              value={value}
+                              onChange={onChange}
+                              ref={ref}
+                              hasError={Boolean(errors.name)}
+                              placeholder="Label title"
+                              className="resize-none text-xl w-full"
+                            />
+                          )}
                         />
                       </div>
                     </div>
                   </div>
                   <div className="mt-5 flex justify-end gap-2">
-                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
-                    <PrimaryButton type="submit" loading={isSubmitting}>
+                    <Button variant="neutral-primary" onClick={onClose}>
+                      Cancel
+                    </Button>
+                    <Button variant="primary" type="submit" loading={isSubmitting}>
                       {isSubmitting ? "Creating Label..." : "Create Label"}
-                    </PrimaryButton>
+                    </Button>
                   </div>
                 </form>
               </Dialog.Panel>

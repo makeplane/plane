@@ -11,7 +11,7 @@ import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // component
 import { SettingsSidebar } from "components/project";
 // ui
-import { SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
 import type { NextPage } from "next";
@@ -57,7 +57,7 @@ const BillingSettings: NextPage = () => {
               <h4 className="text-md mb-1 leading-6">Current plan</h4>
               <p className="mb-3 text-sm text-custom-text-200">You are currently using the free plan</p>
               <a href="https://plane.so/pricing" target="_blank" rel="noreferrer">
-                <SecondaryButton outline>View Plans</SecondaryButton>
+                <Button variant="neutral-primary">View Plans</Button>
               </a>
             </div>
           </div>

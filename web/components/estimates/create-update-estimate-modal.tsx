@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 
 // react-hook-form
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
@@ -13,7 +13,7 @@ import estimatesService from "services/project_estimates.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { Button, Input, TextArea } from "@plane/ui";
 // helpers
 import { checkDuplicates } from "helpers/array.helper";
 // types
@@ -52,9 +52,9 @@ const defaultValues: Partial<FormValues> = {
 
 export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, isOpen, user }) => {
   const {
-    register,
-    formState: { isSubmitting },
+    formState: { errors, isSubmitting },
     handleSubmit,
+    control,
     reset,
   } = useForm<FormValues>({
     defaultValues,
@@ -253,23 +253,39 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                     <div className="space-y-3">
                       <div className="text-lg font-medium leading-6">{data ? "Update" : "Create"} Estimate</div>
                       <div>
-                        <Input
-                          id="name"
+                        <Controller
+                          control={control}
                           name="name"
-                          type="name"
-                          placeholder="Title"
-                          autoComplete="off"
-                          className="resize-none text-xl"
-                          register={register}
+                          render={({ field: { value, onChange, ref } }) => (
+                            <Input
+                              id="name"
+                              name="name"
+                              type="name"
+                              value={value}
+                              onChange={onChange}
+                              ref={ref}
+                              hasError={Boolean(errors.name)}
+                              placeholder="Title"
+                              className="resize-none text-xl w-full"
+                            />
+                          )}
                         />
                       </div>
                       <div>
-                        <TextArea
-                          id="description"
+                        <Controller
                           name="description"
-                          placeholder="Description"
-                          className="h-32 resize-none text-sm"
-                          register={register}
+                          control={control}
+                          render={({ field: { value, onChange } }) => (
+                            <TextArea
+                              id="description"
+                              name="description"
+                              value={value}
+                              placeholder="Description"
+                              onChange={onChange}
+                              className="mt-3 h-32 resize-none text-sm"
+                              hasError={Boolean(errors?.description)}
+                            />
+                          )}
                         />
                       </div>
                       <div className="grid grid-cols-3 gap-3">
@@ -277,14 +293,22 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                           <span className="flex h-full items-center rounded-lg bg-custom-background-80">
                             <span className="rounded-lg px-2 text-sm text-custom-text-200">1</span>
                             <span className="rounded-r-lg bg-custom-background-100">
-                              <Input
-                                id="name"
+                              <Controller
+                                control={control}
                                 name="value1"
-                                type="name"
-                                className="rounded-l-none"
-                                placeholder="Point 1"
-                                autoComplete="off"
-                                register={register}
+                                render={({ field: { value, onChange, ref } }) => (
+                                  <Input
+                                    id="value1"
+                                    name="value1"
+                                    type="text"
+                                    value={value}
+                                    onChange={onChange}
+                                    ref={ref}
+                                    hasError={Boolean(errors.value1)}
+                                    placeholder="Point 1"
+                                    className="rounded-l-none w-full"
+                                  />
+                                )}
                               />
                             </span>
                           </span>
@@ -293,14 +317,22 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                           <span className="flex h-full items-center rounded-lg bg-custom-background-80">
                             <span className="rounded-lg px-2 text-sm text-custom-text-200">2</span>
                             <span className="rounded-r-lg bg-custom-background-100">
-                              <Input
-                                id="name"
+                              <Controller
+                                control={control}
                                 name="value2"
-                                type="name"
-                                className="rounded-l-none"
-                                placeholder="Point 2"
-                                autoComplete="off"
-                                register={register}
+                                render={({ field: { value, onChange, ref } }) => (
+                                  <Input
+                                    id="value2"
+                                    name="value2"
+                                    type="text"
+                                    value={value}
+                                    onChange={onChange}
+                                    ref={ref}
+                                    hasError={Boolean(errors.value2)}
+                                    placeholder="Point 2"
+                                    className="rounded-l-none w-full"
+                                  />
+                                )}
                               />
                             </span>
                           </span>
@@ -309,14 +341,22 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                           <span className="flex h-full items-center rounded-lg bg-custom-background-80">
                             <span className="rounded-lg px-2 text-sm text-custom-text-200">3</span>
                             <span className="rounded-r-lg bg-custom-background-100">
-                              <Input
-                                id="name"
+                              <Controller
+                                control={control}
                                 name="value3"
-                                type="name"
-                                className="rounded-l-none"
-                                placeholder="Point 3"
-                                autoComplete="off"
-                                register={register}
+                                render={({ field: { value, onChange, ref } }) => (
+                                  <Input
+                                    id="value3"
+                                    name="value3"
+                                    type="text"
+                                    value={value}
+                                    onChange={onChange}
+                                    ref={ref}
+                                    hasError={Boolean(errors.value3)}
+                                    placeholder="Point 3"
+                                    className="rounded-l-none w-full"
+                                  />
+                                )}
                               />
                             </span>
                           </span>
@@ -325,14 +365,22 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                           <span className="flex h-full items-center rounded-lg bg-custom-background-80">
                             <span className="rounded-lg px-2 text-sm text-custom-text-200">4</span>
                             <span className="rounded-r-lg bg-custom-background-100">
-                              <Input
-                                id="name"
+                              <Controller
+                                control={control}
                                 name="value4"
-                                type="name"
-                                className="rounded-l-none"
-                                placeholder="Point 4"
-                                autoComplete="off"
-                                register={register}
+                                render={({ field: { value, onChange, ref } }) => (
+                                  <Input
+                                    id="value4"
+                                    name="value4"
+                                    type="text"
+                                    value={value}
+                                    onChange={onChange}
+                                    ref={ref}
+                                    hasError={Boolean(errors.value4)}
+                                    placeholder="Point 4"
+                                    className="rounded-l-none w-full"
+                                  />
+                                )}
                               />
                             </span>
                           </span>
@@ -341,14 +389,22 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                           <span className="flex h-full items-center rounded-lg bg-custom-background-80">
                             <span className="rounded-lg px-2 text-sm text-custom-text-200">5</span>
                             <span className="rounded-r-lg bg-custom-background-100">
-                              <Input
-                                id="name"
+                              <Controller
+                                control={control}
                                 name="value5"
-                                type="name"
-                                className="rounded-l-none"
-                                placeholder="Point 5"
-                                autoComplete="off"
-                                register={register}
+                                render={({ field: { value, onChange, ref } }) => (
+                                  <Input
+                                    id="value5"
+                                    name="value5"
+                                    type="text"
+                                    value={value}
+                                    onChange={onChange}
+                                    ref={ref}
+                                    hasError={Boolean(errors.value5)}
+                                    placeholder="Point 5"
+                                    className="rounded-l-none w-full"
+                                  />
+                                )}
                               />
                             </span>
                           </span>
@@ -357,14 +413,22 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                           <span className="flex h-full items-center rounded-lg bg-custom-background-80">
                             <span className="rounded-lg px-2 text-sm text-custom-text-200">6</span>
                             <span className="rounded-r-lg bg-custom-background-100">
-                              <Input
-                                id="name"
+                              <Controller
+                                control={control}
                                 name="value6"
-                                type="name"
-                                className="rounded-l-none"
-                                placeholder="Point 6"
-                                autoComplete="off"
-                                register={register}
+                                render={({ field: { value, onChange, ref } }) => (
+                                  <Input
+                                    id="value6"
+                                    name="value6"
+                                    type="text"
+                                    value={value}
+                                    onChange={onChange}
+                                    ref={ref}
+                                    hasError={Boolean(errors.value6)}
+                                    placeholder="Point 6"
+                                    className="rounded-l-none w-full"
+                                  />
+                                )}
                               />
                             </span>
                           </span>
@@ -372,8 +436,10 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                       </div>
                     </div>
                     <div className="mt-5 flex justify-end gap-2">
-                      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                      <PrimaryButton type="submit" loading={isSubmitting}>
+                      <Button variant="neutral-primary" onClick={handleClose}>
+                        Cancel
+                      </Button>
+                      <Button variant="primary" type="submit" loading={isSubmitting}>
                         {data
                           ? isSubmitting
                             ? "Updating Estimate..."
@@ -381,7 +447,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                           : isSubmitting
                           ? "Creating Estimate..."
                           : "Create Estimate"}
-                      </PrimaryButton>
+                      </Button>
                     </div>
                   </form>
                 </Dialog.Panel>

@@ -27,7 +27,8 @@ import { ChevronDown, PlayIcon, User, X, CalendarDays, LayoutGrid, Users } from 
 import useEstimateOption from "hooks/use-estimate-option";
 
 // ui
-import { SecondaryButton, CustomDatePicker } from "components/ui";
+import { Button } from "@plane/ui";
+import { CustomDatePicker } from "components/ui";
 
 // components
 import {
@@ -391,14 +392,13 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
         </>
       )}
       <div className="mb-[6px]">
-        <SecondaryButton
-          type="button"
+        <Button
+          variant="neutral-primary"
+          appendIcon={<ChevronDown className={`text-custom-primary-100 ${isViewAllOpen ? "-rotate-180" : ""}`} />}
           onClick={() => setIsViewAllOpen((prev) => !prev)}
-          className="w-full flex justify-center items-center gap-1 !py-2"
         >
-          <span className="text-base text-custom-primary-100">{isViewAllOpen ? "View less" : "View all"}</span>
-          <ChevronDown size={16} className={`ml-1 text-custom-primary-100 ${isViewAllOpen ? "-rotate-180" : ""}`} />
-        </SecondaryButton>
+          {isViewAllOpen ? "View less" : "View all"}
+        </Button>
       </div>
     </div>
   );

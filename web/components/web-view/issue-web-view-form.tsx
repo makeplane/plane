@@ -13,7 +13,7 @@ import { useDebouncedCallback } from "use-debounce";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 
 // ui
-import { TextArea } from "components/ui";
+import { TextArea } from "@plane/ui";
 
 // components
 import { TipTapEditor } from "components/tiptap";
@@ -78,32 +78,34 @@ export const IssueWebViewForm: React.FC<Props> = (props) => {
         <Label>Title</Label>
         <div className="relative">
           {isAllowed ? (
-            <TextArea
-              id="name"
+            <Controller
               name="name"
-              placeholder="Enter issue name"
-              register={register}
-              onFocus={() => setCharacterLimit(true)}
-              onChange={(e) => {
-                setCharacterLimit(false);
-                setIsSubmitting("submitting");
-                debouncedTitleSave();
-              }}
-              required={true}
-              className="min-h-10 block w-full resize-none overflow-hidden rounded border bg-transparent px-3 py-2 text-xl outline-none ring-0 focus:ring-1 focus:ring-custom-primary"
-              role="textbox"
-              disabled={!isAllowed}
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <TextArea
+                  id="name"
+                  name="name"
+                  value={value}
+                  placeholder="Enter issue name"
+                  onFocus={() => setCharacterLimit(true)}
+                  onChange={() => {
+                    setCharacterLimit(false);
+                    setIsSubmitting("submitting");
+                    debouncedTitleSave();
+                  }}
+                  required={true}
+                  className="min-h-10 block w-full resize-none overflow-hidden rounded border bg-transparent px-3 py-2 text-xl outline-none ring-0 focus:ring-1 focus:ring-custom-primary"
+                  role="textbox"
+                  disabled={!isAllowed}
+                />
+              )}
             />
           ) : (
             <h4 className="break-words text-2xl font-semibold">{issueDetails?.name}</h4>
           )}
           {characterLimit && isAllowed && (
             <div className="pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-custom-background-100 text-custom-text-200 p-0.5 text-xs">
-              <span
-                className={`${
-                  watch("name").length === 0 || watch("name").length > 255 ? "text-red-500" : ""
-                }`}
-              >
+              <span className={`${watch("name").length === 0 || watch("name").length > 255 ? "text-red-500" : ""}`}>
                 {watch("name").length}
               </span>
               /255
@@ -123,9 +125,7 @@ export const IssueWebViewForm: React.FC<Props> = (props) => {
               return (
                 <TipTapEditor
                   value={
-                    !value ||
-                    value === "" ||
-                    (typeof value === "object" && Object.keys(value).length === 0)
+                    !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
                       ? "<p></p>"
                       : value
                   }
@@ -133,17 +133,13 @@ export const IssueWebViewForm: React.FC<Props> = (props) => {
                   debouncedUpdatesEnabled={true}
                   setShouldShowAlert={setShowAlert}
                   setIsSubmitting={setIsSubmitting}
-                  customClassName={
-                    isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200"
-                  }
+                  customClassName={isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200"}
                   noBorder={!isAllowed}
                   onChange={(description: Object, description_html: string) => {
                     setShowAlert(true);
                     setIsSubmitting("submitting");
                     onChange(description_html);
-                    handleSubmit(handleDescriptionFormSubmit)().finally(() =>
-                      setIsSubmitting("submitted")
-                    );
+                    handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
                   }}
                   editable={isAllowed}
                 />

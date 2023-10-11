@@ -5,14 +5,9 @@ import useSWR from "swr";
 // services
 import analyticsService from "services/analytics.service";
 // components
-import {
-  AnalyticsDemand,
-  AnalyticsLeaderboard,
-  AnalyticsScope,
-  AnalyticsYearWiseIssues,
-} from "components/analytics";
+import { AnalyticsDemand, AnalyticsLeaderboard, AnalyticsScope, AnalyticsYearWiseIssues } from "components/analytics";
 // ui
-import { Loader, PrimaryButton } from "components/ui";
+import { Button, Loader } from "@plane/ui";
 // fetch-keys
 import { DEFAULT_ANALYTICS } from "constants/fetch-keys";
 
@@ -40,9 +35,7 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
     mutate: mutateDefaultAnalytics,
   } = useSWR(
     workspaceSlug ? DEFAULT_ANALYTICS(workspaceSlug.toString(), params) : null,
-    workspaceSlug
-      ? () => analyticsService.getDefaultAnalytics(workspaceSlug.toString(), params)
-      : null
+    workspaceSlug ? () => analyticsService.getDefaultAnalytics(workspaceSlug.toString(), params) : null
   );
 
   return (
@@ -97,7 +90,9 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
           <div className="space-y-4 text-custom-text-200">
             <p className="text-sm">There was some error in fetching the data.</p>
             <div className="flex items-center justify-center gap-2">
-              <PrimaryButton onClick={() => mutateDefaultAnalytics()}>Refresh</PrimaryButton>
+              <Button variant="primary" onClick={() => mutateDefaultAnalytics()}>
+                Refresh
+              </Button>
             </div>
           </div>
         </div>

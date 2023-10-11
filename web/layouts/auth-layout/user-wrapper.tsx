@@ -4,7 +4,7 @@ import useSWR from "swr";
 // services
 import userService from "services/user.service";
 // ui
-import { Spinner } from "components/ui";
+import { Spinner } from "@plane/ui";
 // fetch-keys
 import { CURRENT_USER } from "constants/fetch-keys";
 

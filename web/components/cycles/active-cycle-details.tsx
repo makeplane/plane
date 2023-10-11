@@ -9,9 +9,10 @@ import cyclesService from "services/cycles.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { LinearProgressIndicator, Loader, Tooltip } from "components/ui";
+import { LinearProgressIndicator, Tooltip } from "components/ui";
 import { AssigneesList } from "components/ui/avatar";
 import { SingleProgressStats } from "components/core";
+import { Loader } from "@plane/ui";
 // components
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { ActiveCycleProgressStats } from "components/cycles";

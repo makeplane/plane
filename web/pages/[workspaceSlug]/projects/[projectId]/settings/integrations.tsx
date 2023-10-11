@@ -12,8 +12,9 @@ import projectService from "services/project.service";
 // components
 import { SettingsSidebar, SingleIntegration } from "components/project";
 // ui
-import { EmptyState, IntegrationAndImportExportBanner, Loader } from "components/ui";
+import { EmptyState, IntegrationAndImportExportBanner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { Loader } from "@plane/ui";
 // icons
 import { PlusIcon, PuzzlePieceIcon } from "@heroicons/react/24/outline";
 // images

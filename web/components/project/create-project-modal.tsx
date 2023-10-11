@@ -12,16 +12,8 @@ import useToast from "hooks/use-toast";
 import { useWorkspaceMyMembership } from "contexts/workspace-member.context";
 import useWorkspaceMembers from "hooks/use-workspace-members";
 // ui
-import {
-  Input,
-  TextArea,
-  CustomSelect,
-  PrimaryButton,
-  SecondaryButton,
-  Icon,
-  Avatar,
-  CustomSearchSelect,
-} from "components/ui";
+import { CustomSelect, Icon, Avatar, CustomSearchSelect } from "components/ui";
+import { Button, Input, TextArea } from "@plane/ui";
 // components
 import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
@@ -234,6 +226,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                       onChange={(image) => {
                         setValue("cover_image", image);
                       }}
+                      control={control}
                       value={watch("cover_image")}
                     />
                   </div>
@@ -259,36 +252,36 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                   <div className="mt-9 space-y-6 pb-5">
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-y-3 gap-x-2">
                       <div className="md:col-span-3">
-                        <Input
-                          id="name"
+                        <Controller
+                          control={control}
                           name="name"
-                          type="name"
-                          placeholder="Project Title"
-                          onChange={changeIdentifierOnNameChange}
-                          error={errors.name}
-                          register={register}
-                          validations={{
+                          rules={{
                             required: "Title is required",
                             maxLength: {
                               value: 255,
                               message: "Title should be less than 255 characters",
                             },
                           }}
-                          autoComplete="off"
-                          tabIndex={1}
+                          render={({ field: { value, ref } }) => (
+                            <Input
+                              id="name"
+                              name="name"
+                              type="text"
+                              value={value}
+                              onChange={changeIdentifierOnNameChange}
+                              ref={ref}
+                              hasError={Boolean(errors.name)}
+                              placeholder="Project Title"
+                              className="w-full"
+                            />
+                          )}
                         />
                       </div>
                       <div>
-                        <Input
-                          id="identifier"
+                        <Controller
+                          control={control}
                           name="identifier"
-                          type="text"
-                          className="text-sm"
-                          placeholder="Identifier"
-                          error={errors.identifier}
-                          register={register}
-                          onChange={handleIdentifierChange}
-                          validations={{
+                          rules={{
                             required: "Identifier is required",
                             validate: (value) =>
                               /^[A-Z0-9]+$/.test(value.toUpperCase()) || "Identifier must be in uppercase.",
@@ -301,16 +294,36 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                               message: "Identifier must at most be of 12 characters",
                             },
                           }}
+                          render={({ field: { value, ref } }) => (
+                            <Input
+                              id="identifier"
+                              name="identifier"
+                              type="text"
+                              value={value}
+                              onChange={handleIdentifierChange}
+                              ref={ref}
+                              hasError={Boolean(errors.name)}
+                              placeholder="Identifier"
+                              className="text-sm w-full"
+                            />
+                          )}
                         />
                       </div>
                       <div className="md:col-span-4">
-                        <TextArea
-                          id="description"
+                        <Controller
                           name="description"
-                          className="text-sm !h-24"
-                          placeholder="Description..."
-                          error={errors.description}
-                          register={register}
+                          control={control}
+                          render={({ field: { value, onChange } }) => (
+                            <TextArea
+                              id="description"
+                              name="description"
+                              value={value}
+                              placeholder="Description..."
+                              onChange={onChange}
+                              className="text-sm !h-24"
+                              hasError={Boolean(errors?.name)}
+                            />
+                          )}
                         />
                       </div>
                     </div>
@@ -398,10 +411,12 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                   </div>
 
                   <div className="flex justify-end gap-2 pt-5">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <PrimaryButton type="submit" size="sm" loading={isSubmitting}>
+                    <Button variant="neutral-primary" onClick={handleClose}>
+                      Cancel
+                    </Button>
+                    <Button variant="primary" type="submit" size="sm" loading={isSubmitting}>
                       {isSubmitting ? "Creating..." : "Create Project"}
-                    </PrimaryButton>
+                    </Button>
                   </div>
                 </form>
               </Dialog.Panel>

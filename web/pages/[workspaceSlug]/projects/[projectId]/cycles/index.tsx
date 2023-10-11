@@ -15,7 +15,8 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 import { CyclesView, ActiveCycleDetails } from "components/cycles";
 import { CycleCreateEdit } from "components/cycles/cycle-create-edit";
 // ui
-import { EmptyState, Icon, PrimaryButton } from "components/ui";
+import { Button } from "@plane/ui";
+import { EmptyState, Icon } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
 import { TCycleView, TCycleLayout } from "types";
@@ -96,15 +97,15 @@ const ProjectCyclesPage: NextPage = observer(() => {
         </Breadcrumbs>
       }
       right={
-        <PrimaryButton
-          className="flex items-center gap-2"
+        <Button
+          variant="primary"
+          prependIcon={<Plus />}
           onClick={() => {
             setCreateModal(true);
           }}
         >
-          <Plus className="h-4 w-4" />
           Add Cycle
-        </PrimaryButton>
+        </Button>
       }
     >
       <CycleCreateEdit
