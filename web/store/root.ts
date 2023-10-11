@@ -21,15 +21,21 @@ import IssueFilterStore, { IIssueFilterStore } from "./issue_filters";
 import IssueViewDetailStore from "./issue_detail";
 import IssueKanBanViewStore from "./kanban_view";
 import CalendarStore, { ICalendarStore } from "./calendar";
+import GlobalViewsStore, { IGlobalViewsStore } from "./global_views";
+import GlobalViewIssuesStore, { IGlobalViewIssuesStore } from "./global_view_issues";
+import WorkspaceFilterStore, { IWorkspaceFilterStore } from "./workspace_filters";
+import GlobalViewFiltersStore, { IGlobalViewFiltersStore } from "./global_view_filters";
 
 enableStaticRendering(typeof window === "undefined");
 
 export class RootStore {
   user;
   theme;
-  projectPublish: IProjectPublishStore;
-  draftIssuesStore: DraftIssuesStore;
+
   workspace: IWorkspaceStore;
+  workspaceFilter: IWorkspaceFilterStore;
+
+  projectPublish: IProjectPublishStore;
   project: IProjectStore;
   issue: IIssueStore;
 
@@ -47,12 +53,21 @@ export class RootStore {
   issueFilter: IIssueFilterStore;
   issueDetail: IssueViewDetailStore;
   issueKanBanView: IssueKanBanViewStore;
+  draftIssuesStore: DraftIssuesStore;
+
   calendar: ICalendarStore;
+
+  globalViews: IGlobalViewsStore;
+  globalViewIssues: IGlobalViewIssuesStore;
+  globalViewFilters: IGlobalViewFiltersStore;
 
   constructor() {
     this.user = new UserStore(this);
     this.theme = new ThemeStore(this);
+
     this.workspace = new WorkspaceStore(this);
+    this.workspaceFilter = new WorkspaceFilterStore(this);
+
     this.project = new ProjectStore(this);
     this.projectPublish = new ProjectPublishStore(this);
 
@@ -72,6 +87,11 @@ export class RootStore {
     this.issueDetail = new IssueViewDetailStore(this);
     this.issueKanBanView = new IssueKanBanViewStore(this);
     this.draftIssuesStore = new DraftIssuesStore(this);
+
     this.calendar = new CalendarStore(this);
+
+    this.globalViews = new GlobalViewsStore(this);
+    this.globalViewIssues = new GlobalViewIssuesStore(this);
+    this.globalViewFilters = new GlobalViewFiltersStore(this);
   }
 }

@@ -30,7 +30,7 @@ export const renderEmoji = (
 
   if (typeof emoji === "object")
     return (
-      <span style={{ color: emoji.color }} className="material-symbols-rounded text-lg">
+      <span style={{ color: emoji.color }} className="material-symbols-rounded !text-sm">
         {emoji.name}
       </span>
     );
@@ -41,16 +41,13 @@ export const groupReactions: (reactions: any[], key: string) => { [key: string]:
   reactions: any,
   key: string
 ) => {
-  const groupedReactions = reactions.reduce(
-    (acc: any, reaction: any) => {
-      if (!acc[reaction[key]]) {
-        acc[reaction[key]] = [];
-      }
-      acc[reaction[key]].push(reaction);
-      return acc;
-    },
-    {} as { [key: string]: any[] }
-  );
+  const groupedReactions = reactions.reduce((acc: any, reaction: any) => {
+    if (!acc[reaction[key]]) {
+      acc[reaction[key]] = [];
+    }
+    acc[reaction[key]].push(reaction);
+    return acc;
+  }, {} as { [key: string]: any[] });
 
   return groupedReactions;
 };

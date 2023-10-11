@@ -7,6 +7,7 @@ export * from "./calendar";
 export * from "./gantt";
 export * from "./kanban";
 export * from "./spreadsheet";
+export * from "./global-views-all-layouts";
 
 // cycle root layout
 export * from "./cycle-layout-root";

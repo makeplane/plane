@@ -11,17 +11,25 @@ import {
   FilterSubGroupBy,
 } from "components/issues";
 // types
-import { IIssueDisplayFilterOptions } from "types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "types";
 import { ILayoutDisplayFiltersOptions } from "constants/issue";
 
 type Props = {
   displayFilters: IIssueDisplayFilterOptions;
+  displayProperties: IIssueDisplayProperties;
   handleDisplayFiltersUpdate: (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => void;
+  handleDisplayPropertiesUpdate: (updatedDisplayProperties: Partial<IIssueDisplayProperties>) => void;
   layoutDisplayFiltersOptions: ILayoutDisplayFiltersOptions | undefined;
 };
 
 export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
-  const { displayFilters, handleDisplayFiltersUpdate, layoutDisplayFiltersOptions } = props;
+  const {
+    displayFilters,
+    displayProperties,
+    handleDisplayFiltersUpdate,
+    handleDisplayPropertiesUpdate,
+    layoutDisplayFiltersOptions,
+  } = props;
 
   const isDisplayFilterEnabled = (displayFilter: keyof IIssueDisplayFilterOptions) =>
     Object.keys(layoutDisplayFiltersOptions?.display_filters ?? {}).includes(displayFilter);
@@ -31,7 +39,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
       {/* display properties */}
       {layoutDisplayFiltersOptions?.display_properties && (
         <div className="py-2">
-          <FilterDisplayProperties />
+          <FilterDisplayProperties displayProperties={displayProperties} handleUpdate={handleDisplayPropertiesUpdate} />
         </div>
       )}
 
@@ -52,20 +60,22 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
       )}
 
       {/* sub-group by */}
-      {isDisplayFilterEnabled("sub_group_by") && displayFilters.group_by !== null && (
-        <div className="py-2">
-          <FilterSubGroupBy
-            selectedGroupBy={displayFilters.group_by}
-            selectedSubGroupBy={displayFilters.sub_group_by}
-            handleUpdate={(val) =>
-              handleDisplayFiltersUpdate({
-                sub_group_by: val,
-              })
-            }
-            subGroupByOptions={layoutDisplayFiltersOptions?.display_filters.sub_group_by ?? []}
-          />
-        </div>
-      )}
+      {isDisplayFilterEnabled("sub_group_by") &&
+        displayFilters.group_by !== null &&
+        displayFilters.layout === "kanban" && (
+          <div className="py-2">
+            <FilterSubGroupBy
+              selectedGroupBy={displayFilters.group_by}
+              selectedSubGroupBy={displayFilters.sub_group_by}
+              handleUpdate={(val) =>
+                handleDisplayFiltersUpdate({
+                  sub_group_by: val,
+                })
+              }
+              subGroupByOptions={layoutDisplayFiltersOptions?.display_filters.sub_group_by ?? []}
+            />
+          </div>
+        )}
 
       {/* order by */}
       {isDisplayFilterEnabled("order_by") && (

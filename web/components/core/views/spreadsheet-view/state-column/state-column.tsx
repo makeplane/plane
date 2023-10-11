@@ -12,20 +12,13 @@ import { ICurrentUserResponse, IIssue, IState, Properties } from "types";
 type Props = {
   issue: IIssue;
   projectId: string;
-  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
+  onChange: (formData: Partial<IIssue>) => void;
   properties: Properties;
   user: ICurrentUserResponse | undefined;
   isNotAllowed: boolean;
 };
 
-export const StateColumn: React.FC<Props> = ({
-  issue,
-  projectId,
-  partialUpdateIssue,
-  properties,
-  user,
-  isNotAllowed,
-}) => {
+export const StateColumn: React.FC<Props> = ({ issue, projectId, onChange, properties, user, isNotAllowed }) => {
   const router = useRouter();
 
   const { workspaceSlug } = router.query;
@@ -34,13 +27,10 @@ export const StateColumn: React.FC<Props> = ({
     const oldState = states?.find((s) => s.id === issue.state);
     const newState = states?.find((s) => s.id === data);
 
-    partialUpdateIssue(
-      {
-        state: data,
-        state_detail: newState,
-      },
-      issue
-    );
+    onChange({
+      state: data,
+      state_detail: newState,
+    });
     trackEventServices.trackIssuePartialPropertyUpdateEvent(
       {
         workspaceSlug,

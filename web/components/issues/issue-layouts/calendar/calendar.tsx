@@ -12,14 +12,14 @@ import { IIssueGroupedStructure } from "store/issue";
 
 type Props = {
   issues: IIssueGroupedStructure | null;
+  layout: "month" | "week" | undefined;
 };
 
 export const CalendarChart: React.FC<Props> = observer((props) => {
-  const { issues } = props;
+  const { issues, layout } = props;
 
-  const { calendar: calendarStore, issueFilter: issueFilterStore } = useMobxStore();
+  const { calendar: calendarStore } = useMobxStore();
 
-  const calendarLayout = issueFilterStore.userDisplayFilters.calendar?.layout ?? "month";
   const calendarPayload = calendarStore.calendarPayload;
 
   const allWeeksOfActiveMonth = calendarStore.allWeeksOfActiveMonth;
@@ -37,7 +37,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
         <CalendarHeader />
         <CalendarWeekHeader />
         <div className="h-full w-full overflow-y-auto">
-          {calendarLayout === "month" ? (
+          {layout === "month" ? (
             <div className="h-full w-full grid grid-cols-1 divide-y-[0.5px] divide-custom-border-200">
               {allWeeksOfActiveMonth &&
                 Object.values(allWeeksOfActiveMonth).map((week: ICalendarWeek, weekIndex) => (

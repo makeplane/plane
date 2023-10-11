@@ -1,13 +1,10 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import workspaceService from "services/workspace.service";
+import { observer } from "mobx-react-lite";
+
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -16,58 +13,50 @@ import { Button } from "@plane/ui";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
 import { IWorkspaceView } from "types/workspace-views";
-// fetch-keys
-import { WORKSPACE_VIEWS_LIST } from "constants/fetch-keys";
 
 type Props = {
+  data: IWorkspaceView;
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  data: IWorkspaceView | null;
+  onClose: () => void;
 };
 
-export const DeleteWorkspaceViewModal: React.FC<Props> = ({ isOpen, data, setIsOpen }) => {
+export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
+  const { data, isOpen, onClose } = props;
+
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
+  const { globalViews: globalViewsStore } = useMobxStore();
+
   const { setToastAlert } = useToast();
 
   const handleClose = () => {
-    setIsOpen(false);
-    setIsDeleteLoading(false);
+    onClose();
   };
 
   const handleDeletion = async () => {
+    if (!workspaceSlug) return;
+
     setIsDeleteLoading(true);
 
-    if (!workspaceSlug || !data) return;
-
-    await workspaceService
-      .deleteView(workspaceSlug as string, data.id)
-      .then(() => {
-        mutate<IWorkspaceView[]>(WORKSPACE_VIEWS_LIST(workspaceSlug as string), (views) =>
-          views?.filter((view) => view.id !== data.id)
-        );
-
-        handleClose();
-
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "View deleted successfully.",
-        });
-      })
-      .catch(() => {
+    await globalViewsStore
+      .deleteGlobalView(workspaceSlug.toString(), data.id)
+      .catch(() =>
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "View could not be deleted. Please try again.",
-        });
-      })
+          message: "Something went wrong while deleting the view. Please try again.",
+        })
+      )
       .finally(() => {
         setIsDeleteLoading(false);
+        handleClose();
       });
+
+    // remove filters from local storage
+    localStorage.removeItem(`global_view_filters/${data.id}`);
   };
 
   return (
@@ -131,4 +120,4 @@ export const DeleteWorkspaceViewModal: React.FC<Props> = ({ isOpen, data, setIsO
       </Dialog>
     </Transition.Root>
   );
-};
+});

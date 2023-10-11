@@ -1,62 +1,81 @@
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 import { RootStore } from "./root";
 // types
-import { IIssueLabels, IProject, IWorkspace } from "types";
+import { IIssueLabels, IProject, IWorkspace, IWorkspaceMember } from "types";
 // services
 import { WorkspaceService } from "services/workspace.service";
 import { ProjectService } from "services/project.service";
 import { IssueService } from "services/issue.service";
 
 export interface IWorkspaceStore {
+  // states
   loader: boolean;
   error: any | null;
+
   // observables
-  workspaces: IWorkspace[];
-  labels: { [key: string]: IIssueLabels[] } | {}; // workspace_id: labels[]
   workspaceSlug: string | null;
-  // computed
-  currentWorkspace: IWorkspace | null;
-  workspaceLabels: IIssueLabels[];
+  workspaces: IWorkspace[];
+  labels: { [workspaceSlug: string]: IIssueLabels[] } | {}; // workspaceSlug: labels[]
+  members: { [workspaceSlug: string]: IWorkspaceMember[] } | {}; // workspaceSlug: members[]
+
   // actions
   setWorkspaceSlug: (workspaceSlug: string) => void;
   getWorkspaceBySlug: (workspaceSlug: string) => IWorkspace | null;
   getWorkspaceLabelById: (workspaceSlug: string, labelId: string) => IIssueLabels | null;
   fetchWorkspaces: () => Promise<void>;
   fetchWorkspaceLabels: (workspaceSlug: string) => Promise<void>;
+  fetchWorkspaceMembers: (workspaceSlug: string) => Promise<void>;
+
+  // computed
+  currentWorkspace: IWorkspace | null;
+  workspaceLabels: IIssueLabels[] | null;
+  workspaceMembers: IWorkspaceMember[] | null;
 }
 
 class WorkspaceStore implements IWorkspaceStore {
+  // states
   loader: boolean = false;
   error: any | null = null;
+
   // observables
   workspaceSlug: string | null = null;
   workspaces: IWorkspace[] = [];
   projects: { [workspaceSlug: string]: IProject[] } = {}; // workspace_id: project[]
   labels: { [workspaceSlug: string]: IIssueLabels[] } = {};
-  // root store
-  rootStore;
+  members: { [workspaceSlug: string]: IWorkspaceMember[] } = {};
+
   // services
   workspaceService;
   projectService;
   issueService;
 
+  // root store
+  rootStore;
+
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
+      // states
       loader: observable.ref,
       error: observable.ref,
-      // objects
+
+      // observables
+      workspaceSlug: observable.ref,
       workspaces: observable.ref,
       labels: observable.ref,
-      workspaceSlug: observable.ref,
-      // computed
-      currentWorkspace: computed,
-      workspaceLabels: computed,
+      members: observable.ref,
+
       // actions
       setWorkspaceSlug: action,
       getWorkspaceBySlug: action,
       getWorkspaceLabelById: action,
       fetchWorkspaces: action,
       fetchWorkspaceLabels: action,
+      fetchWorkspaceMembers: action,
+
+      // computed
+      currentWorkspace: computed,
+      workspaceLabels: computed,
+      workspaceMembers: computed,
     });
 
     this.rootStore = _rootStore;
@@ -70,16 +89,26 @@ class WorkspaceStore implements IWorkspaceStore {
    */
   get currentWorkspace() {
     if (!this.workspaceSlug) return null;
+
     return this.workspaces?.find((workspace) => workspace.slug === this.workspaceSlug) || null;
   }
 
   /**
-   * computed value of workspace labels using the workspace id from the store
+   * computed value of workspace labels using the workspace slug from the store
    */
   get workspaceLabels() {
     if (!this.workspaceSlug) return [];
     const _labels = this.labels?.[this.workspaceSlug];
     return _labels && Object.keys(_labels).length > 0 ? _labels : [];
+  }
+
+  /**
+   * computed value of workspace members using the workspace slug from the store
+   */
+  get workspaceMembers() {
+    if (!this.workspaceSlug) return [];
+    const _members = this.members?.[this.workspaceSlug];
+    return _members && Object.keys(_members).length > 0 ? _members : [];
   }
 
   /**
@@ -132,8 +161,10 @@ class WorkspaceStore implements IWorkspaceStore {
    */
   fetchWorkspaceLabels = async (workspaceSlug: string) => {
     try {
-      this.loader = true;
-      this.error = null;
+      runInAction(() => {
+        this.loader = true;
+        this.error = null;
+      });
 
       const labelsResponse = await this.issueService.getWorkspaceLabels(workspaceSlug);
 
@@ -146,9 +177,40 @@ class WorkspaceStore implements IWorkspaceStore {
         this.error = null;
       });
     } catch (error) {
-      console.log(error);
-      this.loader = false;
-      this.error = error;
+      runInAction(() => {
+        this.loader = false;
+        this.error = error;
+      });
+    }
+  };
+
+  /**
+   * fetch workspace members using workspace slug
+   * @param workspaceSlug
+   */
+
+  fetchWorkspaceMembers = async (workspaceSlug: string) => {
+    try {
+      runInAction(() => {
+        this.loader = true;
+        this.error = null;
+      });
+
+      const membersResponse = await this.workspaceService.workspaceMembers(workspaceSlug);
+
+      runInAction(() => {
+        this.members = {
+          ...this.members,
+          [workspaceSlug]: membersResponse,
+        };
+        this.loader = false;
+        this.error = null;
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.loader = false;
+        this.error = error;
+      });
     }
   };
 }

@@ -12,7 +12,7 @@ export const AppliedFiltersRoot: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { issueFilter: issueFilterStore, project: projectStore, moduleFilter: moduleFilterStore } = useMobxStore();
+  const { issueFilter: issueFilterStore, project: projectStore } = useMobxStore();
 
   const userFilters = issueFilterStore.userFilters;
 
