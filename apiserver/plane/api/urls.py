@@ -567,6 +567,7 @@ urlpatterns = [
         "workspaces/<str:slug>/user-favorite-projects/",
         ProjectFavoritesViewSet.as_view(
             {
+                "get": "list",
                 "post": "create",
             }
         ),
