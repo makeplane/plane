@@ -41,6 +41,13 @@ export const DateSelector: React.FC<Props> = (props) => {
     if (value) setSelectedDate(new Date(value));
   }, [value]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (value) setSelectedDate(new Date(value));
+    else setSelectedDate(new Date());
+  }, [isOpen, value]);
+
   return (
     <>
       <WebViewModal
