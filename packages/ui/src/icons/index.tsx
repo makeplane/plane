@@ -7,3 +7,6 @@ export * from "./archive-icon";
 export * from "./admin-profile-icon";
 export * from "./create-icon";
 export * from "./subscribe-icon";
+export * from "./double-circle-icon";
+export * from "./external-link-icon";
+export * from "./copy-icon";
