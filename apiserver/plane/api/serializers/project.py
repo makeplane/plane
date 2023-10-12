@@ -93,6 +93,7 @@ class ProjectLiteSerializer(BaseSerializer):
         ]
         read_only_fields = fields
 
+
 class ProjectListSerializer(BaseSerializer):
     is_favorite = serializers.BooleanField(read_only=True)
     total_members = serializers.IntegerField(read_only=True)
@@ -102,6 +103,16 @@ class ProjectListSerializer(BaseSerializer):
     sort_order = serializers.FloatField(read_only=True)
     member_role = serializers.IntegerField(read_only=True)
     is_deployed = serializers.BooleanField(read_only=True)
+    members = serializers.SerializerMethodField()
+
+    def get_members(self, obj):
+        project_members = ProjectMember.objects.filter(project_id=obj.id).values(
+            "id",
+            "member_id",
+            "member__display_name",
+            "member__avatar",
+        )
+        return project_members
 
     class Meta:
         model = Project
@@ -162,7 +173,6 @@ class ProjectIdentifierSerializer(BaseSerializer):
 
 
 class ProjectFavoriteSerializer(BaseSerializer):
-
     class Meta:
         model = ProjectFavorite
         fields = "__all__"
@@ -191,12 +201,12 @@ class ProjectDeployBoardSerializer(BaseSerializer):
         fields = "__all__"
         read_only_fields = [
             "workspace",
-            "project", "anchor",
+            "project",
+            "anchor",
         ]
 
 
 class ProjectPublicMemberSerializer(BaseSerializer):
-
     class Meta:
         model = ProjectPublicMember
         fields = "__all__"

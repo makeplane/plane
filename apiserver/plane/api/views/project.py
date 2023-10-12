@@ -7,6 +7,7 @@ from datetime import datetime
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db.models import (
+    Prefetch,
     Q,
     Exists,
     OuterRef,
@@ -160,6 +161,14 @@ class ProjectViewSet(BaseViewSet):
             projects = (
                 self.get_queryset()
                 .annotate(sort_order=Subquery(sort_order_query))
+                .prefetch_related(
+                    Prefetch(
+                        "project_projectmember",
+                        queryset=ProjectMember.objects.filter(
+                            workspace__slug=slug,
+                        ).select_related("member"),
+                    )
+                )
                 .order_by("sort_order", "name")
             )
             if request.GET.get("per_page", False) and request.GET.get("cursor", False):
