@@ -15,8 +15,9 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import { IssueDetailsSidebar, IssueMainContent } from "components/issues";
 // ui
-import { EmptyState, Loader } from "components/ui";
+import { EmptyState } from "components/ui";
 import { Breadcrumbs } from "components/breadcrumbs";
+import { Loader } from "@plane/ui";
 // images
 import emptyIssue from "public/empty-state/issue.svg";
 // types

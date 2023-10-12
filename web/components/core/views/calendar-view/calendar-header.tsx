@@ -3,17 +3,12 @@ import React from "react";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
-import { CustomMenu, ToggleSwitch } from "components/ui";
+import { CustomMenu } from "components/ui";
+import { ToggleSwitch } from "@plane/ui";
 // icons
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 // helpers
-import {
-  formatDate,
-  isSameMonth,
-  isSameYear,
-  updateDateWithMonth,
-  updateDateWithYear,
-} from "helpers/calendar.helper";
+import { formatDate, isSameMonth, isSameYear, updateDateWithMonth, updateDateWithYear } from "helpers/calendar.helper";
 // constants
 import { MONTHS_LIST, YEARS_LIST } from "constants/calendar";
 
@@ -24,12 +19,7 @@ type Props = {
   setShowWeekEnds: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const CalendarHeader: React.FC<Props> = ({
-  currentDate,
-  setCurrentDate,
-  showWeekEnds,
-  setShowWeekEnds,
-}) => (
+export const CalendarHeader: React.FC<Props> = ({ currentDate, setCurrentDate, showWeekEnds, setShowWeekEnds }) => (
   <div className="mb-4 flex items-center justify-between">
     <div className="relative flex h-full w-full items-center justify-start gap-2 text-sm ">
       <Popover className="flex h-full items-center justify-start rounded-lg">
@@ -37,8 +27,7 @@ export const CalendarHeader: React.FC<Props> = ({
           <>
             <Popover.Button>
               <div className="flex items-center justify-center gap-2 text-2xl font-semibold text-custom-text-100">
-                <span>{formatDate(currentDate, "Month")}</span>{" "}
-                <span>{formatDate(currentDate, "yyyy")}</span>
+                <span>{formatDate(currentDate, "Month")}</span> <span>{formatDate(currentDate, "yyyy")}</span>
               </div>
             </Popover.Button>
 
@@ -69,13 +58,9 @@ export const CalendarHeader: React.FC<Props> = ({
                 <div className="grid grid-cols-4  border-t border-custom-border-200 px-2">
                   {MONTHS_LIST.map((month) => (
                     <button
-                      onClick={() =>
-                        setCurrentDate(updateDateWithMonth(`${month.value}`, currentDate))
-                      }
+                      onClick={() => setCurrentDate(updateDateWithMonth(`${month.value}`, currentDate))}
                       className={`px-2 py-2 text-xs text-custom-text-200 hover:font-medium hover:text-custom-text-100 ${
-                        isSameMonth(`${month.value}`, currentDate)
-                          ? "font-medium text-custom-text-100"
-                          : ""
+                        isSameMonth(`${month.value}`, currentDate) ? "font-medium text-custom-text-100" : ""
                       }`}
                     >
                       {month.label}
@@ -93,11 +78,8 @@ export const CalendarHeader: React.FC<Props> = ({
           className="cursor-pointer"
           onClick={() => {
             const previousMonthYear =
-              currentDate.getMonth() === 0
-                ? currentDate.getFullYear() - 1
-                : currentDate.getFullYear();
-            const previousMonthMonth =
-              currentDate.getMonth() === 0 ? 11 : currentDate.getMonth() - 1;
+              currentDate.getMonth() === 0 ? currentDate.getFullYear() - 1 : currentDate.getFullYear();
+            const previousMonthMonth = currentDate.getMonth() === 0 ? 11 : currentDate.getMonth() - 1;
 
             const previousMonthFirstDate = new Date(previousMonthYear, previousMonthMonth, 1);
 
@@ -110,9 +92,7 @@ export const CalendarHeader: React.FC<Props> = ({
           className="cursor-pointer"
           onClick={() => {
             const nextMonthYear =
-              currentDate.getMonth() === 11
-                ? currentDate.getFullYear() + 1
-                : currentDate.getFullYear();
+              currentDate.getMonth() === 11 ? currentDate.getFullYear() + 1 : currentDate.getFullYear();
             const nextMonthMonth = (currentDate.getMonth() + 1) % 12;
 
             const nextMonthFirstDate = new Date(nextMonthYear, nextMonthMonth, 1);

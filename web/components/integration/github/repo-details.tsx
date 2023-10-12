@@ -9,7 +9,7 @@ import { UseFormSetValue } from "react-hook-form";
 // services
 import GithubIntegrationService from "services/github.service";
 // ui
-import { Loader, PrimaryButton, SecondaryButton } from "components/ui";
+import { Button, Loader } from "@plane/ui";
 // types
 import { IUserDetails, TFormValues, TIntegrationSteps } from "components/integration";
 // fetch-keys
@@ -85,13 +85,16 @@ export const GithubRepoDetails: FC<Props> = ({ selectedRepo, handleStepChange, s
         </Loader>
       )}
       <div className="mt-6 flex items-center justify-end gap-2">
-        <SecondaryButton onClick={() => handleStepChange("import-data")}>Back</SecondaryButton>
-        <PrimaryButton
+        <Button variant="neutral-primary" onClick={() => handleStepChange("import-data")}>
+          Back
+        </Button>
+        <Button
+          variant="primary"
           onClick={() => handleStepChange("import-users")}
           disabled={!repoInfo || repoInfo.issue_count === 0}
         >
           Next
-        </PrimaryButton>
+        </Button>
       </div>
     </div>
   );

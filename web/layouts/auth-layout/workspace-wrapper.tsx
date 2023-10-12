@@ -20,7 +20,7 @@ export interface IWorkspaceAuthWrapper {
 export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
   const { children } = props;
   // store
-  const { user: userStore, project: projectStore } = useMobxStore();
+  const { user: userStore, project: projectStore, workspace: workspaceStore } = useMobxStore();
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -34,10 +34,20 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     workspaceSlug ? `WORKSPACE_PROJECTS_${workspaceSlug}` : null,
     workspaceSlug ? () => projectStore.fetchProjects(workspaceSlug.toString()) : null
   );
+  // fetch workspace members
+  useSWR(
+    workspaceSlug ? `WORKSPACE_MEMBERS_${workspaceSlug}` : null,
+    workspaceSlug ? () => workspaceStore.fetchWorkspaceMembers(workspaceSlug.toString()) : null
+  );
+  // fetch workspace labels
+  useSWR(
+    workspaceSlug ? `WORKSPACE_LABELS_${workspaceSlug}` : null,
+    workspaceSlug ? () => workspaceStore.fetchWorkspaceLabels(workspaceSlug.toString()) : null
+  );
 
-  console.log("workspaceSlug", workspaceSlug);
+  // console.log("workspaceSlug", workspaceSlug);
 
-  console.log("userStore.memberInfo", userStore.memberInfo);
+  // console.log("userStore.memberInfo", userStore.memberInfo);
 
   // while data is being loaded
   if (!userStore.memberInfo && userStore.hasPermissionToWorkspace === null) {

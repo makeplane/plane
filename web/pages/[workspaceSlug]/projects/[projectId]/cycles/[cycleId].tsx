@@ -11,7 +11,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
-import { ExistingIssuesListModal, IssuesFilterView, IssuesView } from "components/core";
+import { ExistingIssuesListModal } from "components/core";
 import { CycleDetailsSidebar, TransferIssues, TransferIssuesModal } from "components/cycles";
 import { CycleLayoutRoot } from "components/issues/issue-layouts";
 // services
@@ -23,7 +23,8 @@ import useUserAuth from "hooks/use-user-auth";
 // components
 import { AnalyticsProjectModal } from "components/analytics";
 // ui
-import { CustomMenu, EmptyState, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
+import { CustomMenu, EmptyState } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // images
 import emptyCycle from "public/empty-state/cycle.svg";
@@ -34,6 +35,7 @@ import { getDateRangeStatus } from "helpers/date-time.helper";
 import { ISearchIssueResponse } from "types";
 // fetch-keys
 import { CYCLES_LIST, CYCLE_DETAILS } from "constants/fetch-keys";
+import { CycleIssuesHeader } from "components/headers";
 
 const SingleCycle: React.FC = () => {
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
@@ -66,10 +68,6 @@ const SingleCycle: React.FC = () => {
     cycleDetails?.start_date && cycleDetails?.end_date
       ? getDateRangeStatus(cycleDetails?.start_date, cycleDetails?.end_date)
       : "draft";
-
-  const openIssuesListModal = () => {
-    setCycleIssuesListModal(true);
-  };
 
   const handleAddIssuesToCycle = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId) return;
@@ -131,14 +129,10 @@ const SingleCycle: React.FC = () => {
         }
         right={
           <div className={`flex flex-shrink-0 items-center gap-2 duration-300`}>
-            <IssuesFilterView />
-            <SecondaryButton
-              onClick={() => setAnalyticsModal(true)}
-              className="!py-1.5 font-normal rounded-md text-custom-text-200 hover:text-custom-text-100"
-              outline
-            >
+            <CycleIssuesHeader />
+            <Button variant="neutral-primary" onClick={() => setAnalyticsModal(true)}>
               Analytics
-            </SecondaryButton>
+            </Button>
             <button
               type="button"
               className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-90 ${

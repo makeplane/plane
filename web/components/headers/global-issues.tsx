@@ -10,9 +10,9 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "components/issues";
 import { CreateUpdateWorkspaceViewModal } from "components/workspace";
 // ui
-import { PrimaryButton, Tooltip } from "components/ui";
+import { Button, Tooltip } from "@plane/ui";
 // icons
-import { List, PlusIcon, Sheet } from "lucide-react";
+import { CheckCircle, List, PlusIcon, Sheet } from "lucide-react";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TStaticViewTypes } from "types";
 // constants
@@ -98,57 +98,62 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   return (
     <>
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
-      <div className="flex items-center gap-2">
-        <div className="flex items-center gap-1 p-1 rounded bg-custom-background-80">
-          {GLOBAL_VIEW_LAYOUTS.map((layout) => (
-            <Link key={layout.key} href={`/${workspaceSlug}/${layout.link}`}>
-              <a>
-                <Tooltip tooltipContent={layout.title}>
-                  <div
-                    className={`w-7 h-[22px] rounded grid place-items-center transition-all hover:bg-custom-background-100 overflow-hidden group ${
-                      activeLayout === layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
-                    }`}
-                  >
-                    <layout.icon
-                      size={14}
-                      strokeWidth={2}
-                      className={`${activeLayout === layout.key ? "text-custom-text-100" : "text-custom-text-200"}`}
-                    />
-                  </div>
-                </Tooltip>
-              </a>
-            </Link>
-          ))}
+      <div className="w-full flex items-center flex-shrink-0 justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+        <div className="flex gap-2 items-center">
+          {activeLayout === "spreadsheet" && <CheckCircle size={16} strokeWidth={2} />}
+          <span className="text-sm font-medium">Workspace {activeLayout === "spreadsheet" ? "Issues" : "Views"}</span>
         </div>
-        {activeLayout === "spreadsheet" && (
-          <>
-            {!STATIC_VIEW_TYPES.some((word) => router.pathname.includes(word)) && (
-              <FiltersDropdown title="Filters">
-                <FilterSelection
-                  filters={storedFilters ?? {}}
-                  handleFiltersUpdate={handleFiltersUpdate}
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 p-1 rounded bg-custom-background-80">
+            {GLOBAL_VIEW_LAYOUTS.map((layout) => (
+              <Link key={layout.key} href={`/${workspaceSlug}/${layout.link}`}>
+                <a>
+                  <Tooltip tooltipContent={layout.title}>
+                    <div
+                      className={`w-7 h-[22px] rounded grid place-items-center transition-all hover:bg-custom-background-100 overflow-hidden group ${
+                        activeLayout === layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
+                      }`}
+                    >
+                      <layout.icon
+                        size={14}
+                        strokeWidth={2}
+                        className={`${activeLayout === layout.key ? "text-custom-text-100" : "text-custom-text-200"}`}
+                      />
+                    </div>
+                  </Tooltip>
+                </a>
+              </Link>
+            ))}
+          </div>
+          {activeLayout === "spreadsheet" && (
+            <>
+              {!STATIC_VIEW_TYPES.some((word) => router.pathname.includes(word)) && (
+                <FiltersDropdown title="Filters">
+                  <FilterSelection
+                    filters={storedFilters ?? {}}
+                    handleFiltersUpdate={handleFiltersUpdate}
+                    layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
+                    labels={workspaceStore.workspaceLabels ?? undefined}
+                    projects={workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined}
+                  />
+                </FiltersDropdown>
+              )}
+
+              <FiltersDropdown title="View">
+                <DisplayFiltersSelection
+                  displayFilters={workspaceFilterStore.workspaceDisplayFilters}
+                  displayProperties={workspaceFilterStore.workspaceDisplayProperties}
+                  handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
+                  handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
                   layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
-                  labels={workspaceStore.workspaceLabels ?? undefined}
-                  projects={workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined}
                 />
               </FiltersDropdown>
-            )}
-
-            <FiltersDropdown title="View">
-              <DisplayFiltersSelection
-                displayFilters={workspaceFilterStore.workspaceDisplayFilters}
-                displayProperties={workspaceFilterStore.workspaceDisplayProperties}
-                handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
-                handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
-                layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
-              />
-            </FiltersDropdown>
-          </>
-        )}
-        <PrimaryButton className="flex items-center gap-2" onClick={() => setCreateViewModal(true)}>
-          <PlusIcon className="h-4 w-4" />
-          New View
-        </PrimaryButton>
+            </>
+          )}
+          <Button variant="primary" prependIcon={<PlusIcon />} onClick={() => setCreateViewModal(true)}>
+            New View
+          </Button>
+        </div>
       </div>
     </>
   );

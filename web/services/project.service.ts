@@ -5,7 +5,7 @@ import trackEventServices from "services/track_event.service";
 // types
 import type {
   GithubRepositoriesResponse,
-  ICurrentUserResponse,
+  IUser,
   IProject,
   IProjectBulkInviteFormData,
   IProjectMember,
@@ -44,15 +44,8 @@ export class ProjectService extends APIService {
       });
   }
 
-  async getProjects(
-    workspaceSlug: string,
-    params: {
-      is_favorite: "all" | boolean;
-    }
-  ): Promise<IProject[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/`, {
-      params,
-    })
+  async getProjects(workspaceSlug: string): Promise<IProject[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -93,7 +86,7 @@ export class ProjectService extends APIService {
     workspaceSlug: string,
     projectId: string,
     data: IProjectBulkInviteFormData,
-    user: ICurrentUserResponse | undefined
+    user: IUser | undefined
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/add/`, data)
       .then((response) => {
@@ -285,6 +278,14 @@ export class ProjectService extends APIService {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/workspace-integrations/${integrationId}/github-repository-sync/`
     )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getUserProjectFavorites(workspaceSlug: string): Promise<any[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/user-favorite-projects/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

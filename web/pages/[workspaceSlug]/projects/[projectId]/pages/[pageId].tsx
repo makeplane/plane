@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // react-hook-form
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // react-color
@@ -28,7 +28,8 @@ import { CreateLabelModal } from "components/labels";
 import { CreateBlock } from "components/pages/create-block";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-import { CustomSearchSelect, EmptyState, Loader, TextArea, ToggleSwitch, Tooltip } from "components/ui";
+import { CustomSearchSelect, EmptyState } from "components/ui";
+import { TextArea, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // images
 import emptyPage from "public/empty-state/page.svg";
 // icons
@@ -73,7 +74,7 @@ const SinglePage: NextPage = () => {
 
   const { user } = useUser();
 
-  const { handleSubmit, reset, watch, setValue } = useForm<IPage>({
+  const { handleSubmit, reset, watch, setValue, control } = useForm<IPage>({
     defaultValues: { name: "" },
   });
 
@@ -337,17 +338,22 @@ const SinglePage: NextPage = () => {
                     <ArrowLeftIcon className="h-4 w-4" />
                   </button>
 
-                  <TextArea
-                    id="name"
+                  <Controller
                     name="name"
-                    placeholder="Page Title"
-                    value={watch("name")}
-                    onBlur={handleSubmit(updatePage)}
-                    onChange={(e) => setValue("name", e.target.value)}
-                    required={true}
-                    className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-xl font-semibold outline-none ring-0"
-                    role="textbox"
-                    noPadding
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <TextArea
+                        id="name"
+                        name="name"
+                        value={watch("name")}
+                        placeholder="Page Title"
+                        onBlur={handleSubmit(updatePage)}
+                        onChange={(e) => setValue("name", e.target.value)}
+                        required={true}
+                        className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent !px-3 !py-2 text-xl font-semibold outline-none ring-0"
+                        role="textbox"
+                      />
+                    )}
                   />
                 </div>
 

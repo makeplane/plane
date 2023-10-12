@@ -10,7 +10,8 @@ import userService from "services/user.service";
 // hooks
 import useUser from "hooks/use-user";
 // ui
-import { Icon, Loader, Tooltip } from "components/ui";
+import { Icon } from "components/ui";
+import { Loader, Tooltip } from "@plane/ui";
 // icons
 import { EditOutlined } from "@mui/icons-material";
 // helpers
@@ -26,12 +27,9 @@ export const ProfileSidebar = () => {
   const { user } = useUser();
 
   const { data: userProjectsData } = useSWR(
+    workspaceSlug && userId ? USER_PROFILE_PROJECT_SEGREGATION(workspaceSlug.toString(), userId.toString()) : null,
     workspaceSlug && userId
-      ? USER_PROFILE_PROJECT_SEGREGATION(workspaceSlug.toString(), userId.toString())
-      : null,
-    workspaceSlug && userId
-      ? () =>
-          userService.getUserProfileProjectsSegregation(workspaceSlug.toString(), userId.toString())
+      ? () => userService.getUserProfileProjectsSegregation(workspaceSlug.toString(), userId.toString())
       : null
   );
 
@@ -54,8 +52,7 @@ export const ProfileSidebar = () => {
       label: "Timezone",
       value: (
         <span>
-          {timeString}{" "}
-          <span className="text-custom-text-200">{userProjectsData?.user_data.user_timezone}</span>
+          {timeString} <span className="text-custom-text-200">{userProjectsData?.user_data.user_timezone}</span>
         </span>
       ),
     },
@@ -81,8 +78,7 @@ export const ProfileSidebar = () => {
             )}
             <img
               src={
-                userProjectsData.user_data.cover_image ??
-                "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"
+                userProjectsData.user_data.cover_image ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"
               }
               alt={userProjectsData.user_data.display_name}
               className="h-32 w-full object-cover"
@@ -106,9 +102,7 @@ export const ProfileSidebar = () => {
               <h4 className="text-lg font-semibold">
                 {userProjectsData.user_data.first_name} {userProjectsData.user_data.last_name}
               </h4>
-              <h6 className="text-custom-text-200 text-sm">
-                ({userProjectsData.user_data.display_name})
-              </h6>
+              <h6 className="text-custom-text-200 text-sm">({userProjectsData.user_data.display_name})</h6>
             </div>
             <div className="mt-6 space-y-5">
               {userDetails.map((detail) => (
@@ -121,10 +115,7 @@ export const ProfileSidebar = () => {
             <div className="mt-9 divide-y divide-custom-border-100">
               {userProjectsData.project_data.map((project, index) => {
                 const totalIssues =
-                  project.created_issues +
-                  project.assigned_issues +
-                  project.pending_issues +
-                  project.completed_issues;
+                  project.created_issues + project.assigned_issues + project.pending_issues + project.completed_issues;
 
                 const completedIssuePercentage =
                   project.assigned_issues === 0
@@ -132,11 +123,7 @@ export const ProfileSidebar = () => {
                     : Math.round((project.completed_issues / project.assigned_issues) * 100);
 
                 return (
-                  <Disclosure
-                    key={project.id}
-                    as="div"
-                    className={`${index === 0 ? "pb-3" : "py-3"}`}
-                  >
+                  <Disclosure key={project.id} as="div" className={`${index === 0 ? "pb-3" : "py-3"}`}>
                     {({ open }) => (
                       <div className="w-full">
                         <Disclosure.Button className="flex items-center justify-between gap-2 w-full">
@@ -154,9 +141,7 @@ export const ProfileSidebar = () => {
                                 {project?.name.charAt(0)}
                               </div>
                             )}
-                            <div className="text-sm font-medium truncate break-words">
-                              {project.name}
-                            </div>
+                            <div className="text-sm font-medium truncate break-words">{project.name}</div>
                           </div>
                           <div className="flex-shrink-0 flex items-center gap-2">
                             {project.assigned_issues > 0 && (

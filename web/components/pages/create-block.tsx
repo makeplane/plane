@@ -7,14 +7,14 @@ import { mutate } from "swr";
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
 
 // react-hook-form
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // services
 import pagesService from "services/page.service";
 
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { TextArea } from "components/ui";
+import { TextArea } from "@plane/ui";
 // types
 import { ICurrentUserResponse, IPageBlock } from "types";
 // fetch-keys
@@ -44,7 +44,7 @@ export const CreateBlock: React.FC<Props> = ({ user }) => {
     setValue,
     setFocus,
     reset,
-    formState: { isSubmitting },
+    formState: { errors, isSubmitting },
   } = useForm<IPageBlock>({
     defaultValues,
   });
@@ -99,16 +99,23 @@ export const CreateBlock: React.FC<Props> = ({ user }) => {
         onSubmit={handleSubmit(createPageBlock)}
       >
         <div className="flex min-h-full w-full">
-          <TextArea
-            id="name"
+          <Controller
             name="name"
-            placeholder="Title"
-            register={register}
-            className="min-h-full block w-full resize-none overflow-hidden border-none bg-transparent px-1 py-1 text-sm font-medium"
-            role="textbox"
-            onKeyDown={handleKeyDown}
-            maxLength={255}
-            noPadding
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <TextArea
+                id="name"
+                name="name"
+                value={value}
+                placeholder="Title"
+                role="textbox"
+                onKeyDown={handleKeyDown}
+                maxLength={255}
+                onChange={onChange}
+                className="min-h-full block w-full resize-none overflow-hidden border-none bg-transparent !px-1 !py-1 text-sm font-medium"
+                hasError={Boolean(errors?.name)}
+              />
+            )}
           />
         </div>
 

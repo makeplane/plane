@@ -18,7 +18,8 @@ import ConfirmWorkspaceMemberRemove from "components/workspace/confirm-workspace
 import SendWorkspaceInvitationModal from "components/workspace/send-workspace-invitation-modal";
 import { SettingsSidebar } from "components/project";
 // ui
-import { CustomMenu, CustomSelect, Icon, Loader, PrimaryButton } from "components/ui";
+import { Button, Loader } from "@plane/ui";
+import { CustomMenu, CustomSelect, Icon } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { XMarkIcon } from "components/icons";
@@ -181,7 +182,9 @@ const MembersSettings: NextPage = () => {
         <section className="pr-9 py-8 w-full overflow-y-auto">
           <div className="flex items-center justify-between gap-4 pt-2 pb-3.5 border-b border-custom-border-200">
             <h4 className="text-xl font-medium">Members</h4>
-            <PrimaryButton onClick={() => setInviteModal(true)}>Add Member</PrimaryButton>
+            <Button variant="primary" onClick={() => setInviteModal(true)}>
+              Add Member
+            </Button>
           </div>
           {!workspaceMembers || !workspaceInvitations ? (
             <Loader className="space-y-5">

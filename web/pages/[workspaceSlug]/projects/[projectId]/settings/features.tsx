@@ -15,7 +15,7 @@ import useUserAuth from "hooks/use-user-auth";
 // components
 import { SettingsSidebar } from "components/project";
 // ui
-import { ToggleSwitch } from "components/ui";
+import { ToggleSwitch } from "@plane/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { ModuleIcon } from "components/icons";

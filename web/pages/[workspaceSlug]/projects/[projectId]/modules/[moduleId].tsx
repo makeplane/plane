@@ -18,7 +18,7 @@ import { ExistingIssuesListModal, IssuesFilterView } from "components/core";
 import { ModuleDetailsSidebar } from "components/modules";
 import { AnalyticsProjectModal } from "components/analytics";
 // ui
-import { CustomMenu, EmptyState, SecondaryButton } from "components/ui";
+import { CustomMenu, EmptyState } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // images
 import emptyModule from "public/empty-state/module.svg";

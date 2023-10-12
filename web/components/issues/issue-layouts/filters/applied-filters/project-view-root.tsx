@@ -24,11 +24,11 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   } = useMobxStore();
 
   const viewDetails = viewId ? projectViewsStore.viewDetails[viewId.toString()] : undefined;
-  const storedFilters = viewId ? projectViewFiltersStore.storedFilters[viewId.toString()] ?? {} : {};
+  const storedFilters = viewId ? projectViewFiltersStore.storedFilters[viewId.toString()] : undefined;
 
   // filters whose value not null or empty array
   const appliedFilters: IIssueFilterOptions = {};
-  Object.entries(storedFilters).forEach(([key, value]) => {
+  Object.entries(storedFilters ?? {}).forEach(([key, value]) => {
     if (!value) return;
 
     if (Array.isArray(value) && value.length === 0) return;
@@ -60,7 +60,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
     if (!workspaceSlug || !projectId || !viewId) return;
 
     const newFilters: IIssueFilterOptions = {};
-    Object.keys(storedFilters).forEach((key) => {
+    Object.keys(storedFilters ?? {}).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
 

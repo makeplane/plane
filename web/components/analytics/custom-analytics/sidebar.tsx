@@ -12,7 +12,7 @@ import trackEventServices from "services/track_event.service";
 import useProjects from "hooks/use-projects";
 import useToast from "hooks/use-toast";
 // ui
-import { PrimaryButton, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // icons
 import { ArrowDownTrayIcon, ArrowPathIcon, CalendarDaysIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 import { ContrastIcon, LayerDiagonalIcon } from "components/icons";
@@ -328,24 +328,19 @@ export const AnalyticsSidebar: React.FC<Props> = ({ analytics, params, fullScree
         ) : null}
       </div>
       <div className="flex items-center gap-2 flex-wrap justify-self-end">
-        <SecondaryButton
+        <Button
+          variant="neutral-primary"
+          prependIcon={<ArrowPathIcon className="h-3.5 w-3.5" />}
           onClick={() => {
             if (!workspaceSlug) return;
-
             mutate(ANALYTICS(workspaceSlug.toString(), params));
           }}
         >
-          <div className="flex items-center gap-2 -my-1">
-            <ArrowPathIcon className="h-3.5 w-3.5" />
-            Refresh
-          </div>
-        </SecondaryButton>
-        <PrimaryButton onClick={exportAnalytics}>
-          <div className="flex items-center gap-2 -my-1">
-            <ArrowDownTrayIcon className="h-3.5 w-3.5" />
-            Export as CSV
-          </div>
-        </PrimaryButton>
+          Refresh
+        </Button>
+        <Button variant="primary" prependIcon={<ArrowDownTrayIcon />} onClick={exportAnalytics}>
+          Export as CSV
+        </Button>
       </div>
     </div>
   );

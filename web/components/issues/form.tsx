@@ -23,7 +23,8 @@ import {
 import { CreateStateModal } from "components/states";
 import { CreateLabelModal } from "components/labels";
 // ui
-import { CustomMenu, Input, PrimaryButton, SecondaryButton, ToggleSwitch } from "components/ui";
+import { CustomMenu } from "components/ui";
+import { Button, Input, ToggleSwitch } from "@plane/ui";
 import { TipTapEditor } from "components/tiptap";
 // icons
 import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -321,21 +322,29 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
             <div className="mt-2 space-y-3">
               {(fieldsToShow.includes("all") || fieldsToShow.includes("name")) && (
                 <div>
-                  <Input
-                    id="name"
+                  <Controller
+                    control={control}
                     name="name"
-                    className="resize-none text-xl"
-                    placeholder="Title"
-                    autoComplete="off"
-                    error={errors.name}
-                    register={register}
-                    validations={{
+                    rules={{
                       required: "Title is required",
                       maxLength: {
                         value: 255,
                         message: "Title should be less than 255 characters",
                       },
                     }}
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Input
+                        id="name"
+                        name="name"
+                        type="text"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        hasError={Boolean(errors.name)}
+                        placeholder="Title"
+                        className="resize-none text-xl w-full"
+                      />
+                    )}
                   />
                 </div>
               )}
@@ -549,14 +558,15 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
             <ToggleSwitch value={createMore} onChange={() => {}} size="md" />
           </div>
           <div className="flex items-center gap-2">
-            <SecondaryButton
+            <Button
+              variant="neutral-primary"
               onClick={() => {
                 handleDiscardClose();
               }}
             >
               Discard
-            </SecondaryButton>
-            <PrimaryButton type="submit" loading={isSubmitting}>
+            </Button>
+            <Button variant="primary" type="submit" loading={isSubmitting}>
               {status
                 ? isSubmitting
                   ? "Updating Issue..."
@@ -564,7 +574,7 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
                 : isSubmitting
                 ? "Adding Issue..."
                 : "Add Issue"}
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
       </form>

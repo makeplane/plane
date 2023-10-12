@@ -17,11 +17,11 @@ export const ModuleGanttLayout: React.FC = observer(() => {
 
   const { projectDetails } = useProjectDetails();
 
-  const { module: moduleStore, issueFilter: issueFilterStore } = useMobxStore();
+  const { moduleIssue: moduleIssueStore, issueFilter: issueFilterStore } = useMobxStore();
 
   const appliedDisplayFilters = issueFilterStore.userDisplayFilters;
 
-  const issues = moduleStore.getIssues;
+  const issues = moduleIssueStore.getIssues;
 
   const isAllowed = projectDetails?.member_role === 20 || projectDetails?.member_role === 15;
 

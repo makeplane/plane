@@ -11,7 +11,8 @@ import useProjectDetails from "hooks/use-project-details";
 import { SpreadsheetColumns, SpreadsheetIssues } from "components/core";
 import { IssuePeekOverview } from "components/issues";
 // ui
-import { CustomMenu, Spinner } from "components/ui";
+import { CustomMenu } from "components/ui";
+import { Spinner } from "@plane/ui";
 // icon
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
@@ -29,9 +30,9 @@ export const ModuleSpreadsheetLayout: React.FC = observer(() => {
   const { user } = useUser();
   const { projectDetails } = useProjectDetails();
 
-  const { module: moduleStore, issueFilter: issueFilterStore } = useMobxStore();
+  const { moduleIssue: moduleIssueStore, issueFilter: issueFilterStore } = useMobxStore();
 
-  const issues = moduleStore.getIssues;
+  const issues = moduleIssueStore.getIssues;
   const issueDisplayProperties = issueFilterStore.userDisplayProperties;
 
   const handleDisplayFiltersUpdate = useCallback(

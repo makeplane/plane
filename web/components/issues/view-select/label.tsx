@@ -9,7 +9,8 @@ import issuesService from "services/issue.service";
 // component
 import { CreateLabelModal } from "components/labels";
 // ui
-import { CustomSearchSelect, Tooltip } from "components/ui";
+import { CustomSearchSelect } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // icons
 import { PlusIcon, TagIcon } from "@heroicons/react/24/outline";
 // types

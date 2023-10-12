@@ -11,7 +11,7 @@ import pagesService from "services/page.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { DangerButton, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
@@ -128,10 +128,12 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({ isOpen, s
                   </div>
                 </div>
                 <div className="flex justify-end gap-2 p-4 sm:px-6">
-                  <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                  <DangerButton onClick={handleDeletion} loading={isDeleteLoading}>
+                  <Button variant="neutral-primary" onClick={handleClose}>
+                    Cancel
+                  </Button>
+                  <Button variant="danger" onClick={handleDeletion} loading={isDeleteLoading}>
                     {isDeleteLoading ? "Deleting..." : "Delete"}
-                  </DangerButton>
+                  </Button>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

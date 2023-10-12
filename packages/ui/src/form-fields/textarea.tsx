@@ -1,14 +1,7 @@
 import * as React from "react";
 
-export interface TextAreaProps {
-  id: string;
-  name: string;
-  placeholder?: string;
-  value?: string;
-  rows?: number;
-  cols?: number;
-  disabled?: boolean;
-  onChange: () => void;
+export interface TextAreaProps
+  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   mode?: "primary" | "transparent";
   hasError?: boolean;
   className?: string;
@@ -37,15 +30,13 @@ const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
     const {
       id,
       name,
-      placeholder = "",
       value = "",
       rows = 1,
       cols = 1,
-      disabled,
-      onChange,
       mode = "primary",
       hasError = false,
       className = "",
+      ...rest
     } = props;
 
     const textAreaRef = React.useRef<any>(ref);
@@ -57,12 +48,9 @@ const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
         id={id}
         name={name}
         ref={textAreaRef}
-        placeholder={placeholder}
         value={value}
         rows={rows}
         cols={cols}
-        disabled={disabled}
-        onChange={onChange}
         className={`no-scrollbar w-full bg-transparent placeholder-custom-text-400 px-3 py-2 outline-none ${
           mode === "primary"
             ? "rounded-md border border-custom-border-200"
@@ -72,6 +60,7 @@ const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
         } ${hasError ? "border-red-500" : ""} ${
           hasError && mode === "primary" ? "bg-red-100" : ""
         } ${className}`}
+        {...rest}
       />
     );
   }

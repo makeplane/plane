@@ -14,7 +14,8 @@ import useToast from "hooks/use-toast";
 import userService from "services/user.service";
 import authenticationService from "services/authentication.service";
 // components
-import { Avatar, Icon, Loader } from "components/ui";
+import { Avatar, Icon } from "components/ui";
+import { Loader } from "@plane/ui";
 // icons
 import { CheckIcon, PlusIcon } from "@heroicons/react/24/outline";
 // helpers
@@ -171,9 +172,7 @@ export const WorkspaceSidebarDropdown = () => {
                               </span>
 
                               <h5
-                                className={`text-sm ${
-                                  workspaceSlug === workspace.slug ? "" : "text-custom-text-200"
-                                }`}
+                                className={`text-sm ${workspaceSlug === workspace.slug ? "" : "text-custom-text-200"}`}
                               >
                                 {truncateText(workspace.name, 18)}
                               </h5>
@@ -261,18 +260,16 @@ export const WorkspaceSidebarDropdown = () => {
             >
               <div className="flex flex-col gap-2.5 pb-2">
                 <span className="px-2 text-custom-sidebar-text-200">{user?.email}</span>
-                {profileLinks(workspaceSlug?.toString() ?? "", user?.id ?? "").map(
-                  (link, index) => (
-                    <Menu.Item key={index} as="button" type="button">
-                      <Link href={link.link}>
-                        <a className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
-                          <Icon iconName={link.icon} className="!text-lg !leading-5" />
-                          {link.name}
-                        </a>
-                      </Link>
-                    </Menu.Item>
-                  )
-                )}
+                {profileLinks(workspaceSlug?.toString() ?? "", user?.id ?? "").map((link, index) => (
+                  <Menu.Item key={index} as="button" type="button">
+                    <Link href={link.link}>
+                      <a className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
+                        <Icon iconName={link.icon} className="!text-lg !leading-5" />
+                        {link.name}
+                      </a>
+                    </Link>
+                  </Menu.Item>
+                ))}
               </div>
               <div className="pt-2">
                 <Menu.Item

@@ -15,7 +15,8 @@ import {
   PaperClipIcon,
 } from "@heroicons/react/24/outline";
 // components
-import { Tooltip, CustomMenu, ContextMenu } from "components/ui";
+import { CustomMenu, ContextMenu } from "components/ui";
+import { Tooltip } from "@plane/ui";
 import { LayerDiagonalIcon } from "components/icons";
 import {
   ViewAssigneeSelect,

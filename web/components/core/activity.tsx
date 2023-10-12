@@ -7,7 +7,8 @@ import useEstimateOption from "hooks/use-estimate-option";
 // services
 import issuesService from "services/issue.service";
 // icons
-import { Icon, Tooltip } from "components/ui";
+import { Tooltip } from "@plane/ui";
+import { Icon } from "components/ui";
 import {
   TagIcon,
   CopyPlus,

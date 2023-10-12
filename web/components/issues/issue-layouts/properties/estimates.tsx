@@ -6,7 +6,7 @@ import { ChevronDown, Search, X, Check, Triangle } from "lucide-react";
 // mobx
 import { observer } from "mobx-react-lite";
 // components
-import { Tooltip } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // hooks
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // mobx

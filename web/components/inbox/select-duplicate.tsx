@@ -13,7 +13,7 @@ import useToast from "hooks/use-toast";
 // services
 import issuesServices from "services/issue.service";
 // ui
-import { PrimaryButton, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // icons
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { LayerDiagonalIcon } from "components/icons";
@@ -170,8 +170,12 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
 
                   {filteredIssues.length > 0 && (
                     <div className="flex items-center justify-end gap-2 p-3">
-                      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                      <PrimaryButton onClick={handleSubmit}>Mark as original</PrimaryButton>
+                      <Button variant="neutral-primary" onClick={handleClose}>
+                        Cancel
+                      </Button>
+                      <Button variant="primary" onClick={handleSubmit}>
+                        Mark as original
+                      </Button>
                     </div>
                   )}
                 </Dialog.Panel>

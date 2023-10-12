@@ -20,7 +20,7 @@ import { SUB_ISSUES } from "constants/fetch-keys";
 import useUser from "hooks/use-user";
 
 // ui
-import { Spinner } from "components/ui";
+import { Spinner } from "@plane/ui";
 import { IIssue } from "types";
 
 // components

@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 // ui
-import { SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // types
 import { ICurrentUserResponse, IWorkspace, TOnboardingSteps } from "types";
 // constants
@@ -15,13 +15,7 @@ type Props = {
   workspaces: IWorkspace[] | undefined;
 };
 
-export const Workspace: React.FC<Props> = ({
-  finishOnboarding,
-  stepChange,
-  updateLastWorkspace,
-  user,
-  workspaces,
-}) => {
+export const Workspace: React.FC<Props> = ({ finishOnboarding, stepChange, updateLastWorkspace, user, workspaces }) => {
   const [defaultValues, setDefaultValues] = useState({
     name: "",
     slug: "",
@@ -61,9 +55,9 @@ export const Workspace: React.FC<Props> = ({
           }}
           secondaryButton={
             workspaces ? (
-              <SecondaryButton onClick={secondaryButtonAction}>
+              <Button variant="neutral-primary" onClick={secondaryButtonAction}>
                 {workspaces.length > 0 ? "Skip & continue" : "Back"}
-              </SecondaryButton>
+              </Button>
             ) : undefined
           }
         />

@@ -7,7 +7,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { AppliedFiltersList } from "components/issues";
 // ui
-import { PrimaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // helpers
 import { areFiltersDifferent } from "helpers/filter.helper";
 // types
@@ -25,6 +25,17 @@ export const GlobalViewsAppliedFiltersRoot = observer(() => {
   } = useMobxStore();
 
   const viewDetails = globalViewId ? globalViewsStore.globalViewDetails[globalViewId.toString()] : undefined;
+  const storedFilters = globalViewId ? globalViewFiltersStore.storedFilters[globalViewId.toString()] : undefined;
+
+  // filters whose value not null or empty array
+  const appliedFilters: IIssueFilterOptions = {};
+  Object.entries(storedFilters ?? {}).forEach(([key, value]) => {
+    if (!value) return;
+
+    if (Array.isArray(value) && value.length === 0) return;
+
+    appliedFilters[key as keyof IIssueFilterOptions] = value;
+  });
 
   const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
     if (!globalViewId) return;
@@ -72,15 +83,16 @@ export const GlobalViewsAppliedFiltersRoot = observer(() => {
     });
   };
 
-  const storedFilters = globalViewId ? globalViewFiltersStore.storedFilters[globalViewId.toString()] : undefined;
-
   // update stored filters when view details are fetched
   useEffect(() => {
     if (!globalViewId || !viewDetails) return;
 
     if (!globalViewFiltersStore.storedFilters[globalViewId.toString()])
       globalViewFiltersStore.updateStoredFilters(globalViewId.toString(), viewDetails?.query_data?.filters ?? {});
-  }, [globalViewId, globalViewFiltersStore, storedFilters, viewDetails]);
+  }, [globalViewId, globalViewFiltersStore, viewDetails]);
+
+  // return if no filters are applied
+  if (Object.keys(appliedFilters).length === 0) return null;
 
   return (
     <div className="flex items-start justify-between gap-4 p-4">
@@ -93,9 +105,9 @@ export const GlobalViewsAppliedFiltersRoot = observer(() => {
         projects={workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined}
       />
       {storedFilters && viewDetails && areFiltersDifferent(storedFilters, viewDetails.query_data.filters ?? {}) && (
-        <PrimaryButton className="whitespace-nowrap" onClick={handleUpdateView}>
+        <Button variant="primary" onClick={handleUpdateView}>
           Update view
-        </PrimaryButton>
+        </Button>
       )}
     </div>
   );

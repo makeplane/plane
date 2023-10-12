@@ -5,7 +5,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
-import { SecondaryButton, DangerButton } from "components/ui";
+import { Button } from "@plane/ui";
 // types
 import type { IInboxIssue } from "types";
 
@@ -60,10 +60,7 @@ export const DeclineIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, 
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-500/20 p-4">
-                      <ExclamationTriangleIcon
-                        className="h-6 w-6 text-red-600"
-                        aria-hidden="true"
-                      />
+                      <ExclamationTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">
                       <h3 className="text-xl font-medium 2xl:text-2xl">Decline Issue</h3>
@@ -79,10 +76,12 @@ export const DeclineIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, 
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
-                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
-                    <DangerButton onClick={handleDecline} loading={isDeclining}>
+                    <Button variant="neutral-primary" onClick={onClose}>
+                      Cancel
+                    </Button>
+                    <Button variant="danger" onClick={handleDecline} loading={isDeclining}>
                       {isDeclining ? "Declining..." : "Decline Issue"}
-                    </DangerButton>
+                    </Button>
                   </div>
                 </div>
               </Dialog.Panel>

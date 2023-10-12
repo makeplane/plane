@@ -7,7 +7,8 @@ import userService from "services/user.service";
 // components
 import { ActivityMessage } from "components/core";
 // ui
-import { ProfileEmptyState, Icon, Loader } from "components/ui";
+import { ProfileEmptyState, Icon } from "components/ui";
+import { Loader } from "@plane/ui";
 // image
 import recentActivityEmptyState from "public/empty-state/recent_activity.svg";
 // helpers
@@ -20,9 +21,7 @@ export const ProfileActivity = () => {
   const { workspaceSlug, userId } = router.query;
 
   const { data: userProfileActivity } = useSWR(
-    workspaceSlug && userId
-      ? USER_PROFILE_ACTIVITY(workspaceSlug.toString(), userId.toString())
-      : null,
+    workspaceSlug && userId ? USER_PROFILE_ACTIVITY(workspaceSlug.toString(), userId.toString()) : null,
     workspaceSlug && userId
       ? () => userService.getUserProfileActivity(workspaceSlug.toString(), userId.toString())
       : null
@@ -54,9 +53,7 @@ export const ProfileActivity = () => {
                   </div>
                   <div className="-mt-1 w-4/5 break-words">
                     <p className="text-sm text-custom-text-200">
-                      <span className="font-medium text-custom-text-100">
-                        {activity.actor_detail.display_name}{" "}
-                      </span>
+                      <span className="font-medium text-custom-text-100">{activity.actor_detail.display_name} </span>
                       {activity.field ? (
                         <ActivityMessage activity={activity} showIssue />
                       ) : (

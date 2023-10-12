@@ -19,7 +19,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import { RecentPagesList, CreateUpdatePageModal, TPagesListProps } from "components/pages";
 // ui
-import { PrimaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { ListBulletIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
@@ -99,16 +99,16 @@ const ProjectPages: NextPage = () => {
           </Breadcrumbs>
         }
         right={
-          <PrimaryButton
-            className="flex items-center gap-2"
+          <Button
+            variant="primary"
+            prependIcon={<PlusIcon />}
             onClick={() => {
               const e = new KeyboardEvent("keydown", { key: "d" });
               document.dispatchEvent(e);
             }}
           >
-            <PlusIcon className="h-4 w-4" />
             Create Page
-          </PrimaryButton>
+          </Button>
         }
       >
         <div className="space-y-5 p-8 h-full overflow-hidden flex flex-col">

@@ -1,6 +1,6 @@
 import React from "react";
 // ui
-import { PrimaryButton } from "components/ui"; // icons
+import { Button } from "@plane/ui";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
@@ -29,13 +29,7 @@ export const SingleExport: React.FC<Props> = ({ service, refreshing }) => {
           <span>
             Export to{" "}
             <span className="font-medium">
-              {provider === "csv"
-                ? "CSV"
-                : provider === "xlsx"
-                ? "Excel"
-                : provider === "json"
-                ? "JSON"
-                : ""}
+              {provider === "csv" ? "CSV" : provider === "xlsx" ? "Excel" : provider === "json" ? "JSON" : ""}
             </span>{" "}
           </span>
           <span
@@ -64,9 +58,9 @@ export const SingleExport: React.FC<Props> = ({ service, refreshing }) => {
           {service.status == "completed" && (
             <div>
               <a target="_blank" href={service?.url} rel="noopener noreferrer">
-                <PrimaryButton className="w-full text-center">
+                <Button variant="primary" className="w-full">
                   {isLoading ? "Downloading..." : "Download"}
-                </PrimaryButton>
+                </Button>
               </a>
             </div>
           )}
