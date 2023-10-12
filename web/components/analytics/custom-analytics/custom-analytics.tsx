@@ -8,7 +8,7 @@ import analyticsService from "services/analytics.service";
 // hooks
 import useProjects from "hooks/use-projects";
 // components
-import { AnalyticsGraph, AnalyticsSelectBar, AnalyticsSidebar, AnalyticsTable } from "components/analytics";
+import { AnalyticsGraph, AnalyticsSelectBar, AnalyticsTable, CustomAnalyticsSidebar } from "components/analytics";
 // ui
 import { Button, Loader } from "@plane/ui";
 // helpers
@@ -117,7 +117,7 @@ export const CustomAnalytics: React.FC<Props> = observer(({ fullScreen, user }) 
           </div>
         )}
       </div>
-      <AnalyticsSidebar
+      <CustomAnalyticsSidebar
         analytics={analytics}
         params={params}
         fullScreen={fullScreen}

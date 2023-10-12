@@ -5,7 +5,7 @@ import useSWR from "swr";
 // services
 import analyticsService from "services/analytics.service";
 // components
-import { AnalyticsDemand, AnalyticsLeaderboard, AnalyticsScope, AnalyticsYearWiseIssues } from "components/analytics";
+import { AnalyticsDemand, AnalyticsLeaderBoard, AnalyticsScope, AnalyticsYearWiseIssues } from "components/analytics";
 // ui
 import { Button, Loader } from "@plane/ui";
 // fetch-keys
@@ -46,7 +46,7 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
             <div className={`grid grid-cols-1 gap-5 ${fullScreen ? "md:grid-cols-2" : ""}`}>
               <AnalyticsDemand defaultAnalytics={defaultAnalytics} />
               <AnalyticsScope defaultAnalytics={defaultAnalytics} />
-              <AnalyticsLeaderboard
+              <AnalyticsLeaderBoard
                 users={defaultAnalytics.most_issue_created_user?.map((user) => ({
                   avatar: user?.created_by__avatar,
                   firstName: user?.created_by__first_name,
@@ -56,10 +56,10 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
                   id: user?.created_by__id,
                 }))}
                 title="Most issues created"
-                emptyStateMessage="Co-workers and the number issues created by them appears here."
+                emptyStateMessage="Co-workers and the number of issues created by them appears here."
                 workspaceSlug={workspaceSlug?.toString() ?? ""}
               />
-              <AnalyticsLeaderboard
+              <AnalyticsLeaderBoard
                 users={defaultAnalytics.most_issue_closed_user?.map((user) => ({
                   avatar: user?.assignees__avatar,
                   firstName: user?.assignees__first_name,
@@ -69,7 +69,7 @@ export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
                   id: user?.assignees__id,
                 }))}
                 title="Most issues closed"
-                emptyStateMessage="Co-workers and the number issues closed by them appears here."
+                emptyStateMessage="Co-workers and the number of issues closed by them appears here."
                 workspaceSlug={workspaceSlug?.toString() ?? ""}
               />
               <div className={fullScreen ? "md:col-span-2" : ""}>

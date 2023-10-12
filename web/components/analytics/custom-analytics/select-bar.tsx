@@ -23,9 +23,9 @@ export const AnalyticsSelectBar: React.FC<Props> = ({
   isProjectLevel,
 }) => (
   <div
-    className={`grid items-center gap-4 px-5 py-2.5 ${
-      isProjectLevel ? "grid-cols-3" : "grid-cols-2"
-    } ${fullScreen ? "lg:grid-cols-4 md:py-5" : ""}`}
+    className={`grid items-center gap-4 px-5 py-2.5 ${isProjectLevel ? "grid-cols-3" : "grid-cols-2"} ${
+      fullScreen ? "lg:grid-cols-4 md:py-5" : ""
+    }`}
   >
     {!isProjectLevel && (
       <div>
@@ -34,7 +34,7 @@ export const AnalyticsSelectBar: React.FC<Props> = ({
           name="project"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <SelectProject value={value} onChange={onChange} projects={projects} />
+            <SelectProject value={value ?? undefined} onChange={onChange} projects={projects} />
           )}
         />
       </div>
@@ -44,9 +44,7 @@ export const AnalyticsSelectBar: React.FC<Props> = ({
       <Controller
         name="y_axis"
         control={control}
-        render={({ field: { value, onChange } }) => (
-          <SelectYAxis value={value} onChange={onChange} />
-        )}
+        render={({ field: { value, onChange } }) => <SelectYAxis value={value} onChange={onChange} />}
       />
     </div>
     <div>
@@ -71,9 +69,7 @@ export const AnalyticsSelectBar: React.FC<Props> = ({
       <Controller
         name="segment"
         control={control}
-        render={({ field: { value, onChange } }) => (
-          <SelectSegment value={value} onChange={onChange} params={params} />
-        )}
+        render={({ field: { value, onChange } }) => <SelectSegment value={value} onChange={onChange} params={params} />}
       />
     </div>
   </div>

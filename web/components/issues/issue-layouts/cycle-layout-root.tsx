@@ -7,6 +7,7 @@ import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // components
 import {
+  CycleAppliedFiltersRoot,
   CycleCalendarLayout,
   CycleGanttLayout,
   CycleKanBanLayout,
@@ -51,18 +52,21 @@ export const CycleLayoutRoot: React.FC = observer(() => {
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
 
   return (
-    <div className="w-full h-full">
-      {activeLayout === "list" ? (
-        <CycleListLayout />
-      ) : activeLayout === "kanban" ? (
-        <CycleKanBanLayout />
-      ) : activeLayout === "calendar" ? (
-        <CycleCalendarLayout />
-      ) : activeLayout === "gantt_chart" ? (
-        <CycleGanttLayout />
-      ) : activeLayout === "spreadsheet" ? (
-        <CycleSpreadsheetLayout />
-      ) : null}
+    <div className="relative w-full h-full flex flex-col overflow-auto">
+      <CycleAppliedFiltersRoot />
+      <div className="w-full h-full">
+        {activeLayout === "list" ? (
+          <CycleListLayout />
+        ) : activeLayout === "kanban" ? (
+          <CycleKanBanLayout />
+        ) : activeLayout === "calendar" ? (
+          <CycleCalendarLayout />
+        ) : activeLayout === "gantt_chart" ? (
+          <CycleGanttLayout />
+        ) : activeLayout === "spreadsheet" ? (
+          <CycleSpreadsheetLayout />
+        ) : null}
+      </div>
     </div>
   );
 });

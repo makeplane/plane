@@ -4,7 +4,7 @@ import { CustomSearchSelect } from "components/ui";
 import { IProject } from "types";
 
 type Props = {
-  value: string[] | null | undefined;
+  value: string[] | undefined;
   onChange: (val: string[] | null) => void;
   projects: IProject[];
 };

@@ -51,9 +51,7 @@ export const ModuleAllLayouts: React.FC = observer(() => {
 
   return (
     <div className="relative w-full h-full flex flex-col overflow-auto">
-      <div className="p-4">
-        <ModuleAppliedFiltersRoot />
-      </div>
+      <ModuleAppliedFiltersRoot />
       <div className="h-full w-full">
         {activeLayout === "list" ? (
           <ModuleListLayout />

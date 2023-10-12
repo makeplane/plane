@@ -2,6 +2,8 @@ import React, { Fragment, useState } from "react";
 import { usePopper } from "react-popper";
 import { Popover, Transition } from "@headlessui/react";
 
+// ui
+import { Button } from "@plane/ui";
 // icons
 import { ChevronUp } from "lucide-react";
 
@@ -28,20 +30,18 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
         return (
           <>
             <Popover.Button as={React.Fragment}>
-              <button
-                type="button"
-                className={`outline-none border border-custom-border-200 text-xs rounded flex items-center gap-2 px-2 py-1.5 hover:bg-custom-background-80 ${
-                  open ? "text-custom-text-100" : "text-custom-text-200"
-                }`}
+              <Button
                 ref={setReferenceElement}
+                variant="neutral-primary"
+                size="sm"
+                appendIcon={
+                  <ChevronUp className={`transition-all ${open ? "" : "rotate-180"}`} size={14} strokeWidth={2} />
+                }
               >
-                <div className="font-medium">{title}</div>
-                <div
-                  className={`w-3.5 h-3.5 flex items-center justify-center transition-all ${open ? "" : "rotate-180"}`}
-                >
-                  <ChevronUp width={14} strokeWidth={2} />
+                <div className={`${open ? "text-custom-text-100" : "text-custom-text-200"}`}>
+                  <span>{title}</span>
                 </div>
-              </button>
+              </Button>
             </Popover.Button>
             <Transition
               as={Fragment}

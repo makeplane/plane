@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { Tab } from "@headlessui/react";
+import { Dialog, Tab, Transition } from "@headlessui/react";
 
 // services
 import projectService from "services/project.service";
@@ -24,7 +24,10 @@ type Props = {
   onClose: () => void;
 };
 
-const tabsList = ["Scope and Demand", "Custom Analytics"];
+const ANALYTICS_TABS = [
+  { key: "scope_and_demand", title: "Scope and Demand" },
+  { key: "custom", title: "Custom Analytics" },
+];
 
 export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const [fullScreen, setFullScreen] = useState(false);
@@ -90,7 +93,7 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
       eventPayload.moduleName = moduleDetails.name;
     }
 
-    const eventType = tab === "Scope and Demand" ? "SCOPE_AND_DEMAND_ANALYTICS" : "CUSTOM_ANALYTICS";
+    const eventType = tab === "scope_and_demand" ? "SCOPE_AND_DEMAND_ANALYTICS" : "CUSTOM_ANALYTICS";
 
     trackEventServices.trackAnalyticsEvent(
       eventPayload,
@@ -104,67 +107,84 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div
-      className={`absolute top-0 z-30 h-full bg-custom-background-90 ${fullScreen ? "p-2 w-full" : "w-1/2"} ${
-        isOpen ? "right-0" : "-right-full"
-      } duration-300 transition-all`}
-    >
-      <div
-        className={`flex h-full flex-col overflow-hidden border-custom-border-200 bg-custom-background-100 text-left ${
-          fullScreen ? "rounded-lg border" : "border-l"
-        }`}
-      >
-        <div className="flex items-center justify-between gap-4 bg-custom-background-100 px-5 py-4 text-sm">
-          <h3 className="break-words">
-            Analytics for {cycleId ? cycleDetails?.name : moduleId ? moduleDetails?.name : projectDetails?.name}
-          </h3>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              className="grid place-items-center p-1 text-custom-text-200 hover:text-custom-text-100"
-              onClick={() => setFullScreen((prevData) => !prevData)}
+    <Transition.Root appear show={isOpen} as={React.Fragment}>
+      <Dialog as="div" className="relative z-20" onClose={handleClose}>
+        <div className="fixed inset-0 z-20 h-full w-full overflow-y-auto">
+          <Transition.Child
+            as={React.Fragment}
+            enter="transition-transform duration-300"
+            enterFrom="translate-x-full"
+            enterTo="translate-x-0"
+            leave="transition-transform duration-200"
+            leaveFrom="translate-x-0"
+            leaveTo="translate-x-full"
+          >
+            {/* TODO: fix full screen mode */}
+            <Dialog.Panel
+              className={`fixed z-20 bg-custom-background-100 top-0 right-0 h-full shadow-custom-shadow-md ${
+                fullScreen ? "w-full p-2" : "w-1/2"
+              }`}
             >
-              {fullScreen ? (
-                <ArrowsPointingInIcon className="h-4 w-4" />
-              ) : (
-                <ArrowsPointingOutIcon className="h-3 w-3" />
-              )}
-            </button>
-            <button
-              type="button"
-              className="grid place-items-center p-1 text-custom-text-200 hover:text-custom-text-100"
-              onClick={handleClose}
-            >
-              <XMarkIcon className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-        <Tab.Group as={Fragment}>
-          <Tab.List as="div" className="space-x-2 border-b border-custom-border-200 p-5 pt-0">
-            {tabsList.map((tab) => (
-              <Tab
-                key={tab}
-                className={({ selected }) =>
-                  `rounded-3xl border border-custom-border-200 px-4 py-2 text-xs hover:bg-custom-background-80 ${
-                    selected ? "bg-custom-background-80" : ""
-                  }`
-                }
-                onClick={() => trackAnalyticsEvent(tab)}
+              <div
+                className={`flex h-full flex-col overflow-hidden border-custom-border-200 bg-custom-background-100 text-left ${
+                  fullScreen ? "rounded-lg border" : "border-l"
+                }`}
               >
-                {tab}
-              </Tab>
-            ))}
-          </Tab.List>
-          <Tab.Panels as={Fragment}>
-            <Tab.Panel as={Fragment}>
-              <ScopeAndDemand fullScreen={fullScreen} />
-            </Tab.Panel>
-            <Tab.Panel as={Fragment}>
-              <CustomAnalytics fullScreen={fullScreen} user={user} />
-            </Tab.Panel>
-          </Tab.Panels>
-        </Tab.Group>
-      </div>
-    </div>
+                <div className="flex items-center justify-between gap-4 bg-custom-background-100 px-5 py-4 text-sm">
+                  <h3 className="break-words">
+                    Analytics for {cycleId ? cycleDetails?.name : moduleId ? moduleDetails?.name : projectDetails?.name}
+                  </h3>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      className="grid place-items-center p-1 text-custom-text-200 hover:text-custom-text-100"
+                      onClick={() => setFullScreen((prevData) => !prevData)}
+                    >
+                      {fullScreen ? (
+                        <ArrowsPointingInIcon className="h-4 w-4" />
+                      ) : (
+                        <ArrowsPointingOutIcon className="h-3 w-3" />
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      className="grid place-items-center p-1 text-custom-text-200 hover:text-custom-text-100"
+                      onClick={handleClose}
+                    >
+                      <XMarkIcon className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+                <Tab.Group as={Fragment}>
+                  <Tab.List as="div" className="space-x-2 border-b border-custom-border-200 p-5 pt-0">
+                    {ANALYTICS_TABS.map((tab) => (
+                      <Tab
+                        key={tab.key}
+                        className={({ selected }) =>
+                          `rounded-3xl border border-custom-border-200 px-4 py-2 text-xs hover:bg-custom-background-80 ${
+                            selected ? "bg-custom-background-80" : ""
+                          }`
+                        }
+                        onClick={() => trackAnalyticsEvent(tab.key)}
+                      >
+                        {tab.title}
+                      </Tab>
+                    ))}
+                  </Tab.List>
+                  <Tab.Panels as={Fragment}>
+                    <Tab.Panel as={Fragment}>
+                      <ScopeAndDemand fullScreen={fullScreen} />
+                    </Tab.Panel>
+                    <Tab.Panel as={Fragment}>
+                      <CustomAnalytics fullScreen={fullScreen} user={user} />
+                    </Tab.Panel>
+                  </Tab.Panels>
+                </Tab.Group>
+              </div>
+            </Dialog.Panel>
+          </Transition.Child>
+        </div>
+      </Dialog>
+    </Transition.Root>
   );
 };
