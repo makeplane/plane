@@ -19,7 +19,7 @@ export const CyclesBoard: FC<ICyclesBoard> = (props) => {
       {cycles.length > 0 ? (
         <>
           {cycles.map((cycle) => (
-            <CyclesBoardCard key={cycle.id} cycle={cycle} filter={filter} />
+            <CyclesBoardCard key={cycle.id} workspaceSlug={workspaceSlug} projectId={projectId} cycle={cycle} />
           ))}
         </>
       ) : (

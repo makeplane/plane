@@ -1,10 +1,10 @@
-import { FC } from "react";
+import React, { FC } from "react";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { CyclesBoard, CyclesList } from "components/cycles";
+import { CyclesBoard, CyclesList, CyclesListGanttChartView } from "components/cycles";
 // ui components
 import { Loader } from "components/ui";
 // types
@@ -25,8 +25,8 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
 
   // api call to fetch cycles list
   const { isLoading } = useSWR(
-    workspaceSlug && projectId ? `CYCLES_LIST_${projectId}_${filter}` : null,
-    workspaceSlug && projectId ? () => cycleStore.fetchCycles(workspaceSlug, projectId, filter) : null
+    workspaceSlug && projectId && filter ? `CYCLES_LIST_${projectId}_${filter}` : null,
+    workspaceSlug && projectId && filter ? () => cycleStore.fetchCycles(workspaceSlug, projectId, filter) : null
   );
 
   const cyclesList = cycleStore.cycles?.[projectId];
@@ -62,7 +62,17 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
       )}
 
       {layout === "gantt" && (
-        <CyclesList cycles={cyclesList} filter={filter} workspaceSlug={workspaceSlug} projectId={projectId} />
+        <>
+          {!isLoading ? (
+            <CyclesListGanttChartView cycles={cyclesList} workspaceSlug={workspaceSlug} />
+          ) : (
+            <Loader className="space-y-4">
+              <Loader.Item height="50px" />
+              <Loader.Item height="50px" />
+              <Loader.Item height="50px" />
+            </Loader>
+          )}
+        </>
       )}
     </>
   );

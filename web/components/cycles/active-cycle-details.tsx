@@ -39,6 +39,7 @@ import { truncateText } from "helpers/string.helper";
 import { ICycle, IIssue } from "types";
 // fetch-keys
 import { CURRENT_CYCLE_LIST, CYCLES_LIST, CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const stateGroups = [
   {
@@ -78,7 +79,16 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
 
   const { workspaceSlug, projectId } = props;
 
+  const { cycle: cycleStore } = useMobxStore();
+
   const { setToastAlert } = useToast();
+
+  const { isLoading } = useSWR(
+    workspaceSlug && projectId ? `ACTIVE_CYCLE_ISSUE_${projectId}_CURRENT` : null,
+    workspaceSlug && projectId ? () => cycleStore.fetchCycles(workspaceSlug, projectId, "current") : null
+  );
+
+  console.log("isLoading", isLoading);
 
   const { data: currentCycle } = useSWR(
     workspaceSlug && projectId ? CURRENT_CYCLE_LIST(projectId as string) : null,

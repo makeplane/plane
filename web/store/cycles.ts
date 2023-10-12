@@ -1,10 +1,11 @@
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 // types
 import { RootStore } from "./root";
+// types
+import { ICycle, TCycleView, TCycleLayout, CycleDateCheckData, IIssue } from "types";
 // services
 import { ProjectService } from "services/project.service";
 import { IssueService } from "services/issue.service";
-import { ICycle, TCycleView, TCycleLayout, CycleDateCheckData } from "types";
 import { CycleService } from "services/cycles.service";
 
 export interface ICycleStore {
@@ -20,6 +21,9 @@ export interface ICycleStore {
   };
   cycle_details: {
     [cycle_id: string]: ICycle;
+  };
+  active_cycle_issues: {
+    [cycle_id: string]: IIssue[];
   };
 
   // computed
@@ -38,6 +42,7 @@ export interface ICycleStore {
     params: "all" | "current" | "upcoming" | "draft" | "completed" | "incomplete"
   ) => Promise<void>;
   fetchCycleWithId: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<ICycle>;
+  fetchActiveCycleIssues: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<any>;
 
   createCycle: (workspaceSlug: string, projectId: string, data: any) => Promise<ICycle>;
   updateCycle: (workspaceSlug: string, projectId: string, cycleId: string, data: any) => Promise<ICycle>;
@@ -63,6 +68,10 @@ class CycleStore implements ICycleStore {
     [cycle_id: string]: ICycle;
   } = {};
 
+  active_cycle_issues: {
+    [cycle_id: string]: IIssue[];
+  } = {};
+
   // root store
   rootStore;
   // services
@@ -81,6 +90,7 @@ class CycleStore implements ICycleStore {
       cycleId: observable,
       cycles: observable.ref,
       cycle_details: observable.ref,
+      active_cycle_issues: observable.ref,
 
       // computed
       projectCycles: computed,
@@ -93,6 +103,8 @@ class CycleStore implements ICycleStore {
 
       fetchCycles: action,
       fetchCycleWithId: action,
+
+      fetchActiveCycleIssues: action,
 
       createCycle: action,
       updateCycle: action,
@@ -142,6 +154,8 @@ class CycleStore implements ICycleStore {
 
       const cyclesResponse = await this.cycleService.getCyclesWithParams(workspaceSlug, projectId, params);
 
+      if (this.cycleView === "active") this.fetchActiveCycleIssues(workspaceSlug, projectId, cyclesResponse[0].id);
+
       runInAction(() => {
         this.cycles = {
           ...this.cycles,
@@ -174,6 +188,27 @@ class CycleStore implements ICycleStore {
     }
   };
 
+  fetchActiveCycleIssues = async (workspaceSlug: string, projectId: string, cycleId: string) => {
+    try {
+      const _cycleIssues = await this.cycleService.getCycleIssuesWithParams(workspaceSlug, projectId, cycleId, {
+        priority: `urgent,high`,
+      });
+
+      const _activeCycleIssues = {
+        ...this.active_cycle_issues,
+        [cycleId]: _cycleIssues as IIssue[],
+      };
+
+      runInAction(() => {
+        this.active_cycle_issues = _activeCycleIssues;
+      });
+
+      return _activeCycleIssues;
+    } catch (error) {
+      console.log("error");
+    }
+  };
+
   createCycle = async (workspaceSlug: string, projectId: string, data: any) => {
     try {
       const response = await this.cycleService.createCycle(
@@ -190,10 +225,8 @@ class CycleStore implements ICycleStore {
         };
       });
 
-      if (this.cycleView === "all") this.fetchCycles(workspaceSlug, projectId, "all");
-      if (this.cycleView === "active") this.fetchCycles(workspaceSlug, projectId, "current");
-      if (this.cycleView === "upcoming") this.fetchCycles(workspaceSlug, projectId, "upcoming");
-      if (this.cycleView === "draft") this.fetchCycles(workspaceSlug, projectId, "draft");
+      const _currentView = this.cycleView === "active" ? "current" : this.cycleView;
+      this.fetchCycles(workspaceSlug, projectId, _currentView);
 
       return response;
     } catch (error) {
@@ -215,10 +248,8 @@ class CycleStore implements ICycleStore {
         this.cycle_details = _cycleDetails;
       });
 
-      if (this.cycleView === "all") this.fetchCycles(workspaceSlug, projectId, "all");
-      if (this.cycleView === "active") this.fetchCycles(workspaceSlug, projectId, "current");
-      if (this.cycleView === "upcoming") this.fetchCycles(workspaceSlug, projectId, "upcoming");
-      if (this.cycleView === "draft") this.fetchCycles(workspaceSlug, projectId, "draft");
+      const _currentView = this.cycleView === "active" ? "current" : this.cycleView;
+      this.fetchCycles(workspaceSlug, projectId, _currentView);
 
       return response;
     } catch (error) {
@@ -227,14 +258,35 @@ class CycleStore implements ICycleStore {
     }
   };
 
+  patchCycle = async (workspaceSlug: string, projectId: string, cycleId: string, data: any) => {
+    try {
+      const _response = await this.cycleService.patchCycle(workspaceSlug, projectId, cycleId, data, undefined);
+
+      const _cycleDetails = {
+        ...this.cycle_details,
+        [cycleId]: { ...this.cycle_details[cycleId], ..._response },
+      };
+
+      runInAction(() => {
+        this.cycle_details = _cycleDetails;
+      });
+
+      const _currentView = this.cycleView === "active" ? "current" : this.cycleView;
+      this.fetchCycles(workspaceSlug, projectId, _currentView);
+
+      return _response;
+    } catch (error) {
+      console.log("Failed to patch cycle from cycle store");
+      throw error;
+    } 
+  };
+
   removeCycle = async (workspaceSlug: string, projectId: string, cycleId: string) => {
     try {
       const _response = await this.cycleService.deleteCycle(workspaceSlug, projectId, cycleId, undefined);
 
-      if (this.cycleView === "all") this.fetchCycles(workspaceSlug, projectId, "all");
-      if (this.cycleView === "active") this.fetchCycles(workspaceSlug, projectId, "current");
-      if (this.cycleView === "upcoming") this.fetchCycles(workspaceSlug, projectId, "upcoming");
-      if (this.cycleView === "draft") this.fetchCycles(workspaceSlug, projectId, "draft");
+      const _currentView = this.cycleView === "active" ? "current" : this.cycleView;
+      this.fetchCycles(workspaceSlug, projectId, _currentView);
 
       return _response;
     } catch (error) {

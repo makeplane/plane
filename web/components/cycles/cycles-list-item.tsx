@@ -124,14 +124,10 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
   };
 
   const [updateModal, setUpdateModal] = React.useState(false);
-  const updateModalCallback = () => {
-    // callback function to be called
-  };
+  const updateModalCallback = () => {};
 
   const [deleteModal, setDeleteModal] = React.useState(false);
-  const deleteModalCallback = () => {
-    // callback function to be called
-  };
+  const deleteModalCallback = () => {};
 
   return (
     <>
