@@ -34,8 +34,8 @@ class AnalyticsEndpoint(BaseAPIView):
                 "labels__id",
                 "assignees__id",
                 "estimate_point",
-                "issue_cycle__cycle__name",
-                "issue_module__module__name",
+                "issue_cycle__cycle_id",
+                "issue_module__module_id",
                 "priority",
                 "start_date",
                 "target_date",
@@ -86,27 +86,22 @@ class AnalyticsEndpoint(BaseAPIView):
             state_details = {}
             if x_axis in ["state_id"] or segment in ["state_id"]:
                 state_details = (
-                    State.objects.filter(
-                        ~Q(name="Triage"),
+                    Issue.issue_objects.filter(
                         workspace__slug=slug,
-                        project_id__in=filters.get("project__in"),
-                    ).values("id", "name", "color")
-                    if filters.get("project__in", False)
-                    else State.objects.filter(
-                        ~Q(name="Triage"), workspace__slug=slug
-                    ).values("id", "name", "color")
+                        **filters,
+                    )
+                    .distinct("state_id")
+                    .order_by("state_id")
+                    .values("state_id", "state__name", "state__color")
                 )
 
             label_details = {}
             if x_axis in ["labels__id"] or segment in ["labels__id"]:
                 label_details = (
-                    Label.objects.filter(
-                        workspace__slug=slug, project_id__in=filters.get("project__in")
-                    ).values("id", "name", "color")
-                    if filters.get("project__in", False)
-                    else Label.objects.filter(workspace__slug=slug).values(
-                        "id", "name", "color"
-                    )
+                    Issue.objects.filter(workspace__slug=slug, **filters)
+                    .distinct("labels__id")
+                    .order_by("labels__id")
+                    .values("labels__id", "labels__color", "labels__name")
                 )
 
             assignee_details = {}
@@ -126,6 +121,34 @@ class AnalyticsEndpoint(BaseAPIView):
                     )
                 )
 
+            module_details = {}
+            if x_axis in ["issue_module__module_id"] or segment in [
+                "issue_module__module_id"
+            ]:
+                module_details = (
+                    Issue.issue_objects.filter(workspace__slug=slug, **filters)
+                    .distinct("issue_module__module_id")
+                    .order_by("issue_module__module_id")
+                    .values(
+                        "issue_module__module_id",
+                        "issue_module__module_name",
+                    )
+                )
+
+            cycle_details = {}
+            if x_axis in ["issue_cycle__cycle_id"] or segment in [
+                "issue_cycle__cycle_id"
+            ]:
+                cycle_details = (
+                    Issue.issue_objects.filter(workspace__slug=slug, **filters)
+                    .distinct("issue_cycle__cycle_id")
+                    .order_by("issue_cycle__cycle_id")
+                    .values(
+                        "issue_cycle__cycle_id",
+                        "issue_cycle__cycle__name",
+                    )
+                )
+
             return Response(
                 {
                     "total": total_issues,
@@ -134,6 +157,8 @@ class AnalyticsEndpoint(BaseAPIView):
                         "state_details": state_details,
                         "assignee_details": assignee_details,
                         "label_details": label_details,
+                        "cycle_details": cycle_details,
+                        "module_details": module_details,
                     },
                 },
                 status=status.HTTP_200_OK,
