@@ -146,9 +146,7 @@ export const ViewLabelSelect: React.FC<Props> = ({
         {...(customButton ? { customButton: labelsLabel } : { label: labelsLabel })}
         multiple
         noChevron
-        position={position}
         disabled={isNotAllowed}
-        selfPositioned={selfPositioned}
         footerOption={footerOption}
         width="w-full min-w-[12rem]"
       />

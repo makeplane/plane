@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // react hook forms
-import { useForm } from "react-hook-form";
+import { useFormContext, useForm, FormProvider } from "react-hook-form";
 
 // services
 import issuesService from "services/issues.service";
@@ -23,9 +23,6 @@ import useProjectMembers from "hooks/use-project-members";
 // layouts
 import WebViewLayout from "layouts/web-view-layout";
 
-// ui
-import { Spinner } from "components/ui";
-
 // components
 import {
   IssueWebViewForm,
@@ -34,14 +31,17 @@ import {
   IssuePropertiesDetail,
   IssueLinks,
   IssueActivity,
+  Spinner,
 } from "components/web-view";
 
 // types
 import type { IIssue } from "types";
 
-const MobileWebViewIssueDetail = () => {
+const MobileWebViewIssueDetail_ = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
+
+  const isArchive = Boolean(router.query.archive);
 
   const memberRole = useProjectMembers(
     workspaceSlug as string,
@@ -49,30 +49,39 @@ const MobileWebViewIssueDetail = () => {
     !!workspaceSlug && !!projectId
   );
 
-  const isAllowed = Boolean(memberRole.isMember || memberRole.isOwner);
+  const isAllowed = Boolean((memberRole.isMember || memberRole.isOwner) && !isArchive);
 
   const { user } = useUser();
 
-  const { register, control, reset, handleSubmit, watch } = useForm<IIssue>({
-    defaultValues: {
-      name: "",
-      description: "",
-      description_html: "",
-      state: "",
-    },
-  });
+  const formContext = useFormContext<IIssue>();
+  const { register, handleSubmit, control, watch, reset } = formContext;
 
   const {
-    data: issueDetails,
-    mutate: mutateIssueDetails,
+    data: issue,
+    mutate: mutateIssue,
     error,
   } = useSWR(
-    workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId.toString()) : null,
-    workspaceSlug && projectId && issueId
+    workspaceSlug && projectId && issueId && !isArchive ? ISSUE_DETAILS(issueId.toString()) : null,
+    workspaceSlug && projectId && issueId && !isArchive
       ? () =>
           issuesService.retrieve(workspaceSlug.toString(), projectId.toString(), issueId.toString())
       : null
   );
+
+  const { data: archiveIssueDetails, mutate: mutateaArchiveIssue } = useSWR<IIssue | undefined>(
+    workspaceSlug && projectId && issueId && isArchive ? ISSUE_DETAILS(issueId as string) : null,
+    workspaceSlug && projectId && issueId && isArchive
+      ? () =>
+          issuesService.retrieveArchivedIssue(
+            workspaceSlug.toString(),
+            projectId.toString(),
+            issueId.toString()
+          )
+      : null
+  );
+
+  const issueDetails = isArchive ? archiveIssueDetails : issue;
+  const mutateIssueDetails = isArchive ? mutateaArchiveIssue : mutateIssue;
 
   useEffect(() => {
     if (!issueDetails) return;
@@ -132,7 +141,6 @@ const MobileWebViewIssueDetail = () => {
         <div className="px-4 py-2 h-full">
           <div className="h-full flex justify-center items-center">
             <Spinner />
-            Loading...
           </div>
         </div>
       </WebViewLayout>
@@ -147,6 +155,10 @@ const MobileWebViewIssueDetail = () => {
 
   return (
     <WebViewLayout>
+      {isArchive && (
+        <div className="w-full h-screen top-0 left-0 fixed z-50 bg-white/20 pointer-events-none" />
+      )}
+
       <div className="px-6 py-2 h-full overflow-auto space-y-3">
         <IssueWebViewForm
           isAllowed={isAllowed}
@@ -160,7 +172,7 @@ const MobileWebViewIssueDetail = () => {
 
         <SubIssueList issueDetails={issueDetails!} />
 
-        <IssuePropertiesDetail control={control} submitChanges={submitChanges} />
+        <IssuePropertiesDetail submitChanges={submitChanges} />
 
         <IssueAttachments allowed={isAllowed} />
 
@@ -169,6 +181,16 @@ const MobileWebViewIssueDetail = () => {
         <IssueActivity allowed={isAllowed} issueDetails={issueDetails!} />
       </div>
     </WebViewLayout>
+  );
+};
+
+const MobileWebViewIssueDetail = () => {
+  const methods = useForm();
+
+  return (
+    <FormProvider {...methods}>
+      <MobileWebViewIssueDetail_ />
+    </FormProvider>
   );
 };
 

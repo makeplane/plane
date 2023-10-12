@@ -24,7 +24,6 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 from django.db import IntegrityError
-from django.db import IntegrityError
 
 # Third Party imports
 from rest_framework.response import Response
@@ -84,7 +83,6 @@ from plane.db.models import (
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
-from plane.bgtasks.export_task import issue_export_task
 
 
 class IssueViewSet(BaseViewSet):

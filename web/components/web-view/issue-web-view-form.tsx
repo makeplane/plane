@@ -138,6 +138,7 @@ export const IssueWebViewForm: React.FC<Props> = (props) => {
                   }
                   noBorder={!isAllowed}
                   onChange={(description: Object, description_html: string) => {
+                    if (!isAllowed) return;
                     setShowAlert(true);
                     setIsSubmitting("submitting");
                     onChange(description_html);

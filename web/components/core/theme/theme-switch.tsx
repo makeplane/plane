@@ -100,7 +100,6 @@ export const ThemeSwitch: React.FC<Props> = observer(
         }}
         input
         width="w-full"
-        position="right"
       >
         {THEMES_OBJ.map(({ value, label, type, icon }) => (
           <CustomSelect.Option key={value} value={{ value, type }}>
