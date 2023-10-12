@@ -65,7 +65,9 @@ class AnalyticsEndpoint(BaseAPIView):
             # If segment is present it cannot be same as x-axis
             if segment and (segment not in valid_xaxis_segment or x_axis == segment):
                 return Response(
-                    {"error": "Both segment and x axis cannot be same"},
+                    {
+                        "error": "Both segment and x axis cannot be same and segment should be valid"
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -98,7 +100,9 @@ class AnalyticsEndpoint(BaseAPIView):
             label_details = {}
             if x_axis in ["labels__id"] or segment in ["labels__id"]:
                 label_details = (
-                    Issue.objects.filter(workspace__slug=slug, **filters)
+                    Issue.objects.filter(
+                        workspace__slug=slug, **filters, labels__id__isnull=False
+                    )
                     .distinct("labels__id")
                     .order_by("labels__id")
                     .values("labels__id", "labels__color", "labels__name")
@@ -126,12 +130,16 @@ class AnalyticsEndpoint(BaseAPIView):
                 "issue_module__module_id"
             ]:
                 module_details = (
-                    Issue.issue_objects.filter(workspace__slug=slug, **filters)
+                    Issue.issue_objects.filter(
+                        workspace__slug=slug,
+                        **filters,
+                        issue_module__module_id__isnull=False,
+                    )
                     .distinct("issue_module__module_id")
                     .order_by("issue_module__module_id")
                     .values(
                         "issue_module__module_id",
-                        "issue_module__module_name",
+                        "issue_module__module__name",
                     )
                 )
 
@@ -140,7 +148,11 @@ class AnalyticsEndpoint(BaseAPIView):
                 "issue_cycle__cycle_id"
             ]:
                 cycle_details = (
-                    Issue.issue_objects.filter(workspace__slug=slug, **filters)
+                    Issue.issue_objects.filter(
+                        workspace__slug=slug,
+                        **filters,
+                        issue_cycle__cycle_id__isnull=False,
+                    )
                     .distinct("issue_cycle__cycle_id")
                     .order_by("issue_cycle__cycle_id")
                     .values(
