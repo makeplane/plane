@@ -13,10 +13,11 @@ import { renderEmoji } from "helpers/emoji.helper";
 type Props = {
   projectId?: string | string[];
   commentId: string;
+  readonly?: boolean;
 };
 
 export const CommentReaction: React.FC<Props> = (props) => {
-  const { projectId, commentId } = props;
+  const { projectId, commentId, readonly = false } = props;
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -47,16 +48,18 @@ export const CommentReaction: React.FC<Props> = (props) => {
 
   return (
     <div className="flex gap-1.5 items-center mt-2">
-      <ReactionSelector
-        size="md"
-        position="top"
-        value={
-          commentReactions
-            ?.filter((reaction) => reaction.actor === user?.id)
-            .map((r) => r.reaction) || []
-        }
-        onSelect={handleReactionClick}
-      />
+      {!readonly && (
+        <ReactionSelector
+          size="md"
+          position="top"
+          value={
+            commentReactions
+              ?.filter((reaction) => reaction.actor === user?.id)
+              .map((r) => r.reaction) || []
+          }
+          onSelect={handleReactionClick}
+        />
+      )}
 
       {Object.keys(groupedReactions || {}).map(
         (reaction) =>
@@ -64,6 +67,7 @@ export const CommentReaction: React.FC<Props> = (props) => {
           groupedReactions[reaction].length > 0 && (
             <button
               type="button"
+              disabled={readonly}
               onClick={() => {
                 handleReactionClick(reaction);
               }}
