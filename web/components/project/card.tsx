@@ -1,17 +1,14 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { mutate } from "swr";
 import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 // icons
-import { CalendarDaysIcon, LinkIcon, PencilIcon, PlusIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { Star } from "lucide-react";
-// services
-import projectService from "services/project.service";
+import { CalendarDays, Link2Icon, Pencil, Plus, Star, Trash2 } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomMenu } from "components/ui";
 import { Tooltip } from "@plane/ui";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
@@ -19,8 +16,6 @@ import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // types
 import type { IProject } from "types";
-// fetch-keys
-import { PROJECTS_LIST } from "constants/fetch-keys";
 // components
 import { DeleteProjectModal, JoinProjectModal } from "components/project";
 
@@ -39,61 +34,33 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
   const [deleteProjectModalOpen, setDeleteProjectModal] = useState(false);
   const [joinProjectModalOpen, setJoinProjectModal] = useState(false);
 
+  const { project: projectStore }: RootStore = useMobxStore();
+
   const isOwner = project.member_role === 20;
   const isMember = project.member_role === 15;
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug) return;
 
-    mutate<IProject[]>(
-      PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
-      (prevData) => (prevData ?? []).map((p) => (p.id === project.id ? { ...p, is_favorite: true } : p)),
-      false
-    );
-
-    projectService
-      .addProjectToFavorites(workspaceSlug as string, project.id)
-      .then(() => {
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Successfully added the project to favorites.",
-        });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't remove the project from favorites. Please try again.",
-        });
+    projectStore.addProjectToFavorites(workspaceSlug.toString(), project.id).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Couldn't remove the project from favorites. Please try again.",
       });
+    });
   };
 
   const handleRemoveFromFavorites = () => {
     if (!workspaceSlug || !project) return;
 
-    mutate<IProject[]>(
-      PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
-      (prevData) => (prevData ?? []).map((p) => (p.id === project.id ? { ...p, is_favorite: false } : p)),
-      false
-    );
-
-    projectService
-      .removeProjectFromFavorites(workspaceSlug as string, project.id)
-      .then(() => {
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Successfully removed the project from favorites.",
-        });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't remove the project from favorites. Please try again.",
-        });
+    projectStore.removeProjectFromFavorites(workspaceSlug.toString(), project.id).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Couldn't remove the project from favorites. Please try again.",
       });
+    });
   };
 
   const handleCopyText = () => {
@@ -149,7 +116,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                     }}
                     className="flex cursor-pointer items-center gap-1 rounded bg-green-600 px-2 py-1 text-xs"
                   >
-                    <PlusIcon className="h-3 w-3" />
+                    <Plus height={12} width={12} />
                     <span>Select to Join</span>
                   </button>
                 ) : (
@@ -157,10 +124,23 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                 )}
               </div>
 
-              <div className="absolute top-4 right-4 bg-slate-300 rounded">
-                <span className="grid h-6 w-9 place-items-center cursor-pointer  ">
-                  <Star className="h-3 w-3" />
-                </span>
+              <div className="absolute top-4 right-4 bg-slate-300 rounded z-10">
+                <button
+                  className="grid h-6 w-9 place-items-center cursor-pointer"
+                  onClick={(e) => {
+                    if (project.is_favorite) {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleRemoveFromFavorites();
+                    } else {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleAddToFavorites();
+                    }
+                  }}
+                >
+                  <Star className={`h-3.5 w-3.5 ${project.is_favorite ? "text-orange-400" : ""} `} />
+                </button>
               </div>
               <div className="absolute bottom-4 left-4 bg-slate-300 rounded-md">
                 {project.emoji ? (
@@ -189,50 +169,43 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
               position="bottom"
             >
               <div className="flex cursor-default items-center gap-1.5 text-xs">
-                <CalendarDaysIcon className="h-4 w-4" />
+                <CalendarDays height={14} width={14} />
                 {renderShortDateWithYearFormat(project.created_at)}
               </div>
             </Tooltip>
             {project.is_member ? (
-              <div className="flex items-center">
+              <div className="flex items-center gap-1">
+                <div className="flex items-center justify-center p-1 hover:bg-custom-background-80 rounded">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      handleCopyText();
+                    }}
+                  >
+                    <Link2Icon height={16} width={16} className="-rotate-45" />
+                  </button>
+                </div>
                 {(isOwner || isMember) && (
                   <Link href={`/${workspaceSlug}/projects/${project.id}/settings`}>
-                    <a className="grid cursor-pointer place-items-center rounded p-1 duration-300 hover:bg-custom-background-90">
-                      <PencilIcon className="h-4 w-4" />
+                    <a className="flex items-center justify-center p-1 hover:bg-custom-background-80 rounded">
+                      <Pencil height={16} width={16} />
                     </a>
                   </Link>
                 )}
-                <CustomMenu width="auto" verticalEllipsis>
-                  {isOwner && (
-                    <CustomMenu.MenuItem onClick={() => setDeleteProjectModal(true)}>
-                      <span className="flex items-center justify-start gap-2">
-                        <TrashIcon className="h-4 w-4" />
-                        <span>Delete project</span>
-                      </span>
-                    </CustomMenu.MenuItem>
-                  )}
-                  {project.is_favorite ? (
-                    <CustomMenu.MenuItem onClick={handleRemoveFromFavorites}>
-                      <span className="flex items-center justify-start gap-2">
-                        <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
-                        <span>Remove from favorites</span>
-                      </span>
-                    </CustomMenu.MenuItem>
-                  ) : (
-                    <CustomMenu.MenuItem onClick={handleAddToFavorites}>
-                      <span className="flex items-center justify-start gap-2">
-                        <Star className="h-4 w-4" />
-                        <span>Add to favorites</span>
-                      </span>
-                    </CustomMenu.MenuItem>
-                  )}
-                  <CustomMenu.MenuItem onClick={handleCopyText}>
-                    <span className="flex items-center justify-start gap-2">
-                      <LinkIcon className="h-4 w-4" />
-                      <span>Copy project link</span>
-                    </span>
-                  </CustomMenu.MenuItem>
-                </CustomMenu>
+                {isOwner && (
+                  <div className="flex items-center justify-center p-1 hover:bg-custom-background-80 rounded">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        setDeleteProjectModal(true);
+                      }}
+                    >
+                      <Trash2 height={16} width={16} />
+                    </button>
+                  </div>
+                )}
               </div>
             ) : null}
           </div>
