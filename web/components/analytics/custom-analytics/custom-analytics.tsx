@@ -1,6 +1,10 @@
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
-import { Control, UseFormSetValue, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { observer } from "mobx-react-lite";
+
+// services
+import analyticsService from "services/analytics.service";
 // hooks
 import useProjects from "hooks/use-projects";
 // components
@@ -10,11 +14,9 @@ import { Button, Loader } from "@plane/ui";
 // helpers
 import { convertResponseToBarGraphData } from "helpers/analytics.helper";
 // types
-import { IAnalyticsParams, IAnalyticsResponse, IUser } from "types";
+import { IAnalyticsParams, IUser } from "types";
 // fetch-keys
 import { ANALYTICS } from "constants/fetch-keys";
-// services
-import analyticsService from "services/analytics.service";
 
 type Props = {
   fullScreen: boolean;
@@ -28,11 +30,11 @@ const defaultValues: IAnalyticsParams = {
   project: null,
 };
 
-export const CustomAnalytics: React.FC<Props> = ({ fullScreen, user }) => {
+export const CustomAnalytics: React.FC<Props> = observer(({ fullScreen, user }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { control, watch, setValue } = useForm<IAnalyticsParams>({ defaultValues });
+  const { control, watch, setValue } = useForm({ defaultValues });
 
   const params: IAnalyticsParams = {
     x_axis: watch("x_axis"),
@@ -124,4 +126,4 @@ export const CustomAnalytics: React.FC<Props> = ({ fullScreen, user }) => {
       />
     </div>
   );
-};
+});

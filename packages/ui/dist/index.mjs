@@ -1,23 +1,21 @@
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __esm = (fn, res) => function __init() {
-  return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
-};
-
-// ../../node_modules/tsup/assets/esm_shims.js
-var init_esm_shims = __esm({
-  "../../node_modules/tsup/assets/esm_shims.js"() {
-  }
-});
-
-// src/index.tsx
-init_esm_shims();
-
 // src/button/button.tsx
-init_esm_shims();
 import * as React from "react";
 
 // src/button/helper.tsx
-init_esm_shims();
+var buttonSizeStyling = /* @__PURE__ */ ((buttonSizeStyling2) => {
+  buttonSizeStyling2["sm"] = `px-3 py-1.5 font-medium text-xs rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`;
+  buttonSizeStyling2["md"] = `px-4 py-1.5 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`;
+  buttonSizeStyling2["lg"] = `px-5 py-2 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`;
+  buttonSizeStyling2["xl"] = `px-5 py-3.5 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`;
+  return buttonSizeStyling2;
+})(buttonSizeStyling || {});
+var buttonIconStyling = /* @__PURE__ */ ((buttonIconStyling2) => {
+  buttonIconStyling2["sm"] = "h-3 w-3 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0";
+  buttonIconStyling2["md"] = "h-3.5 w-3.5 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0";
+  buttonIconStyling2["lg"] = "h-4 w-4 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0";
+  buttonIconStyling2["xl"] = "h-4 w-4 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0";
+  return buttonIconStyling2;
+})(buttonIconStyling || {});
 var buttonStyling = {
   primary: {
     default: `text-white bg-custom-primary-100`,
@@ -85,22 +83,14 @@ var getButtonStyling = (variant, size, disabled = false) => {
   const currentVariant = buttonStyling[variant];
   _variant = `${currentVariant.default} ${disabled ? currentVariant.disabled : currentVariant.hover} ${currentVariant.pressed}`;
   let _size = ``;
-  if (size === "sm")
-    _size = "px-3 py-1.5 font-medium text-xs rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline" /* sm */;
-  if (size === "md")
-    _size = "px-4 py-1.5 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline" /* md */;
-  if (size === "lg")
-    _size = "px-5 py-2 font-medium text-base rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline" /* lg */;
+  if (size)
+    _size = buttonSizeStyling[size];
   return `${_variant} ${_size}`;
 };
 var getIconStyling = (size) => {
   let icon = ``;
-  if (size === "sm")
-    icon = "h-3 w-3 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0" /* sm */;
-  if (size === "md")
-    icon = "h-3.5 w-3.5 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0" /* md */;
-  if (size === "lg")
-    icon = "h-4 w-4 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0" /* lg */;
+  if (size)
+    icon = buttonIconStyling[size];
   return icon;
 };
 
@@ -137,471 +127,11 @@ var Button = React.forwardRef(
 Button.displayName = "plane-ui-button";
 
 // src/button/toggle-switch.tsx
-init_esm_shims();
 import * as React2 from "react";
-
-// ../../node_modules/@headlessui/react/dist/hooks/use-iso-morphic-effect.js
-init_esm_shims();
-import { useLayoutEffect as t, useEffect as c } from "react";
-
-// ../../node_modules/@headlessui/react/dist/utils/env.js
-init_esm_shims();
-var i = Object.defineProperty;
-var d = (t7, e, n) => e in t7 ? i(t7, e, { enumerable: true, configurable: true, writable: true, value: n }) : t7[e] = n;
-var r = (t7, e, n) => (d(t7, typeof e != "symbol" ? e + "" : e, n), n);
-var o = class {
-  constructor() {
-    r(this, "current", this.detect());
-    r(this, "handoffState", "pending");
-    r(this, "currentId", 0);
-  }
-  set(e) {
-    this.current !== e && (this.handoffState = "pending", this.currentId = 0, this.current = e);
-  }
-  reset() {
-    this.set(this.detect());
-  }
-  nextId() {
-    return ++this.currentId;
-  }
-  get isServer() {
-    return this.current === "server";
-  }
-  get isClient() {
-    return this.current === "client";
-  }
-  detect() {
-    return typeof window == "undefined" || typeof document == "undefined" ? "server" : "client";
-  }
-  handoff() {
-    this.handoffState === "pending" && (this.handoffState = "complete");
-  }
-  get isHandoffComplete() {
-    return this.handoffState === "complete";
-  }
-};
-var s = new o();
-
-// ../../node_modules/@headlessui/react/dist/hooks/use-iso-morphic-effect.js
-var l = (e, f4) => {
-  s.isServer ? c(e, f4) : t(e, f4);
-};
-
-// ../../node_modules/@headlessui/react/dist/hooks/use-latest-value.js
-init_esm_shims();
-import { useRef as t2 } from "react";
-function s2(e) {
-  let r3 = t2(e);
-  return l(() => {
-    r3.current = e;
-  }, [e]), r3;
-}
-
-// ../../node_modules/@headlessui/react/dist/hooks/use-disposables.js
-init_esm_shims();
-import { useState as s3, useEffect as o3 } from "react";
-
-// ../../node_modules/@headlessui/react/dist/utils/disposables.js
-init_esm_shims();
-
-// ../../node_modules/@headlessui/react/dist/utils/micro-task.js
-init_esm_shims();
-function t3(e) {
-  typeof queueMicrotask == "function" ? queueMicrotask(e) : Promise.resolve().then(e).catch((o9) => setTimeout(() => {
-    throw o9;
-  }));
-}
-
-// ../../node_modules/@headlessui/react/dist/utils/disposables.js
-function o2() {
-  let n = [], r3 = { addEventListener(e, t7, s7, a3) {
-    return e.addEventListener(t7, s7, a3), r3.add(() => e.removeEventListener(t7, s7, a3));
-  }, requestAnimationFrame(...e) {
-    let t7 = requestAnimationFrame(...e);
-    return r3.add(() => cancelAnimationFrame(t7));
-  }, nextFrame(...e) {
-    return r3.requestAnimationFrame(() => r3.requestAnimationFrame(...e));
-  }, setTimeout(...e) {
-    let t7 = setTimeout(...e);
-    return r3.add(() => clearTimeout(t7));
-  }, microTask(...e) {
-    let t7 = { current: true };
-    return t3(() => {
-      t7.current && e[0]();
-    }), r3.add(() => {
-      t7.current = false;
-    });
-  }, style(e, t7, s7) {
-    let a3 = e.style.getPropertyValue(t7);
-    return Object.assign(e.style, { [t7]: s7 }), this.add(() => {
-      Object.assign(e.style, { [t7]: a3 });
-    });
-  }, group(e) {
-    let t7 = o2();
-    return e(t7), this.add(() => t7.dispose());
-  }, add(e) {
-    return n.push(e), () => {
-      let t7 = n.indexOf(e);
-      if (t7 >= 0)
-        for (let s7 of n.splice(t7, 1))
-          s7();
-    };
-  }, dispose() {
-    for (let e of n.splice(0))
-      e();
-  } };
-  return r3;
-}
-
-// ../../node_modules/@headlessui/react/dist/hooks/use-disposables.js
-function p() {
-  let [e] = s3(o2);
-  return o3(() => () => e.dispose(), [e]), e;
-}
-
-// ../../node_modules/@headlessui/react/dist/hooks/use-event.js
-init_esm_shims();
-import a from "react";
-var o4 = function(t7) {
-  let e = s2(t7);
-  return a.useCallback((...r3) => e.current(...r3), [e]);
-};
-
-// ../../node_modules/@headlessui/react/dist/hooks/use-id.js
-init_esm_shims();
-import t5 from "react";
-
-// ../../node_modules/@headlessui/react/dist/hooks/use-server-handoff-complete.js
-init_esm_shims();
-import * as t4 from "react";
-function s4() {
-  let r3 = typeof document == "undefined";
-  return "useSyncExternalStore" in t4 ? ((o9) => o9.useSyncExternalStore)(t4)(() => () => {
-  }, () => false, () => !r3) : false;
-}
-function l2() {
-  let r3 = s4(), [e, n] = t4.useState(s.isHandoffComplete);
-  return e && s.isHandoffComplete === false && n(false), t4.useEffect(() => {
-    e !== true && n(true);
-  }, [e]), t4.useEffect(() => s.handoff(), []), r3 ? false : e;
-}
-
-// ../../node_modules/@headlessui/react/dist/hooks/use-id.js
-var o5;
-var I = (o5 = t5.useId) != null ? o5 : function() {
-  let n = l2(), [e, u5] = t5.useState(n ? () => s.nextId() : null);
-  return l(() => {
-    e === null && u5(s.nextId());
-  }, [e]), e != null ? "" + e : void 0;
-};
-
-// ../../node_modules/@headlessui/react/dist/utils/match.js
-init_esm_shims();
-function u(r3, n, ...a3) {
-  if (r3 in n) {
-    let e = n[r3];
-    return typeof e == "function" ? e(...a3) : e;
-  }
-  let t7 = new Error(`Tried to handle "${r3}" but there is no handler defined. Only defined handlers are: ${Object.keys(n).map((e) => `"${e}"`).join(", ")}.`);
-  throw Error.captureStackTrace && Error.captureStackTrace(t7, u), t7;
-}
-
-// ../../node_modules/@headlessui/react/dist/hooks/use-resolve-button-type.js
-init_esm_shims();
-import { useState as o6 } from "react";
-function i2(t7) {
-  var n;
-  if (t7.type)
-    return t7.type;
-  let e = (n = t7.as) != null ? n : "button";
-  if (typeof e == "string" && e.toLowerCase() === "button")
-    return "button";
-}
-function s5(t7, e) {
-  let [n, u5] = o6(() => i2(t7));
-  return l(() => {
-    u5(i2(t7));
-  }, [t7.type, t7.as]), l(() => {
-    n || e.current && e.current instanceof HTMLButtonElement && !e.current.hasAttribute("type") && u5("button");
-  }, [n, e]), n;
-}
-
-// ../../node_modules/@headlessui/react/dist/hooks/use-sync-refs.js
-init_esm_shims();
-import { useRef as l3, useEffect as i3 } from "react";
-var u2 = Symbol();
-function y(...t7) {
-  let n = l3(t7);
-  i3(() => {
-    n.current = t7;
-  }, [t7]);
-  let c5 = o4((e) => {
-    for (let o9 of n.current)
-      o9 != null && (typeof o9 == "function" ? o9(e) : o9.current = e);
-  });
-  return t7.every((e) => e == null || (e == null ? void 0 : e[u2])) ? void 0 : c5;
-}
-
-// ../../node_modules/@headlessui/react/dist/utils/render.js
-init_esm_shims();
-import { Fragment as T, cloneElement as x, createElement as E, forwardRef as b, isValidElement as h } from "react";
-
-// ../../node_modules/@headlessui/react/dist/utils/class-names.js
-init_esm_shims();
-function t6(...r3) {
-  return Array.from(new Set(r3.flatMap((n) => typeof n == "string" ? n.split(" ") : []))).filter(Boolean).join(" ");
-}
-
-// ../../node_modules/@headlessui/react/dist/utils/render.js
-var S = ((a3) => (a3[a3.None = 0] = "None", a3[a3.RenderStrategy = 1] = "RenderStrategy", a3[a3.Static = 2] = "Static", a3))(S || {});
-var j = ((e) => (e[e.Unmount = 0] = "Unmount", e[e.Hidden = 1] = "Hidden", e))(j || {});
-function X({ ourProps: r3, theirProps: t7, slot: e, defaultTag: a3, features: s7, visible: n = true, name: f4 }) {
-  let o9 = N(t7, r3);
-  if (n)
-    return c2(o9, e, a3, f4);
-  let u5 = s7 != null ? s7 : 0;
-  if (u5 & 2) {
-    let { static: l5 = false, ...p4 } = o9;
-    if (l5)
-      return c2(p4, e, a3, f4);
-  }
-  if (u5 & 1) {
-    let { unmount: l5 = true, ...p4 } = o9;
-    return u(l5 ? 0 : 1, { [0]() {
-      return null;
-    }, [1]() {
-      return c2({ ...p4, hidden: true, style: { display: "none" } }, e, a3, f4);
-    } });
-  }
-  return c2(o9, e, a3, f4);
-}
-function c2(r3, t7 = {}, e, a3) {
-  let { as: s7 = e, children: n, refName: f4 = "ref", ...o9 } = g(r3, ["unmount", "static"]), u5 = r3.ref !== void 0 ? { [f4]: r3.ref } : {}, l5 = typeof n == "function" ? n(t7) : n;
-  "className" in o9 && o9.className && typeof o9.className == "function" && (o9.className = o9.className(t7));
-  let p4 = {};
-  if (t7) {
-    let i6 = false, m3 = [];
-    for (let [y4, d4] of Object.entries(t7))
-      typeof d4 == "boolean" && (i6 = true), d4 === true && m3.push(y4);
-    i6 && (p4["data-headlessui-state"] = m3.join(" "));
-  }
-  if (s7 === T && Object.keys(R(o9)).length > 0) {
-    if (!h(l5) || Array.isArray(l5) && l5.length > 1)
-      throw new Error(['Passing props on "Fragment"!', "", `The current component <${a3} /> is rendering a "Fragment".`, "However we need to passthrough the following props:", Object.keys(o9).map((d4) => `  - ${d4}`).join(`
-`), "", "You can apply a few solutions:", ['Add an `as="..."` prop, to ensure that we render an actual element instead of a "Fragment".', "Render a single element as the child so that we can forward the props onto that element."].map((d4) => `  - ${d4}`).join(`
-`)].join(`
-`));
-    let i6 = l5.props, m3 = typeof (i6 == null ? void 0 : i6.className) == "function" ? (...d4) => t6(i6 == null ? void 0 : i6.className(...d4), o9.className) : t6(i6 == null ? void 0 : i6.className, o9.className), y4 = m3 ? { className: m3 } : {};
-    return x(l5, Object.assign({}, N(l5.props, R(g(o9, ["ref"]))), p4, u5, w(l5.ref, u5.ref), y4));
-  }
-  return E(s7, Object.assign({}, g(o9, ["ref"]), s7 !== T && u5, s7 !== T && p4), l5);
-}
-function w(...r3) {
-  return { ref: r3.every((t7) => t7 == null) ? void 0 : (t7) => {
-    for (let e of r3)
-      e != null && (typeof e == "function" ? e(t7) : e.current = t7);
-  } };
-}
-function N(...r3) {
-  var a3;
-  if (r3.length === 0)
-    return {};
-  if (r3.length === 1)
-    return r3[0];
-  let t7 = {}, e = {};
-  for (let s7 of r3)
-    for (let n in s7)
-      n.startsWith("on") && typeof s7[n] == "function" ? ((a3 = e[n]) != null || (e[n] = []), e[n].push(s7[n])) : t7[n] = s7[n];
-  if (t7.disabled || t7["aria-disabled"])
-    return Object.assign(t7, Object.fromEntries(Object.keys(e).map((s7) => [s7, void 0])));
-  for (let s7 in e)
-    Object.assign(t7, { [s7](n, ...f4) {
-      let o9 = e[s7];
-      for (let u5 of o9) {
-        if ((n instanceof Event || (n == null ? void 0 : n.nativeEvent) instanceof Event) && n.defaultPrevented)
-          return;
-        u5(n, ...f4);
-      }
-    } });
-  return t7;
-}
-function D(r3) {
-  var t7;
-  return Object.assign(b(r3), { displayName: (t7 = r3.displayName) != null ? t7 : r3.name });
-}
-function R(r3) {
-  let t7 = Object.assign({}, r3);
-  for (let e in t7)
-    t7[e] === void 0 && delete t7[e];
-  return t7;
-}
-function g(r3, t7 = []) {
-  let e = Object.assign({}, r3);
-  for (let a3 of t7)
-    a3 in e && delete e[a3];
-  return e;
-}
-
-// ../../node_modules/@headlessui/react/dist/utils/bugs.js
-init_esm_shims();
-function r2(n) {
-  let e = n.parentElement, l5 = null;
-  for (; e && !(e instanceof HTMLFieldSetElement); )
-    e instanceof HTMLLegendElement && (l5 = e), e = e.parentElement;
-  let t7 = (e == null ? void 0 : e.getAttribute("disabled")) === "";
-  return t7 && i4(l5) ? false : t7;
-}
-function i4(n) {
-  if (!n)
-    return false;
-  let e = n.previousElementSibling;
-  for (; e !== null; ) {
-    if (e instanceof HTMLLegendElement)
-      return false;
-    e = e.previousElementSibling;
-  }
-  return true;
-}
-
-// ../../node_modules/@headlessui/react/dist/utils/form.js
-init_esm_shims();
-function p2(i6) {
-  var t7, r3;
-  let s7 = (t7 = i6 == null ? void 0 : i6.form) != null ? t7 : i6.closest("form");
-  if (s7) {
-    for (let n of s7.elements)
-      if (n !== i6 && (n.tagName === "INPUT" && n.type === "submit" || n.tagName === "BUTTON" && n.type === "submit" || n.nodeName === "INPUT" && n.type === "image")) {
-        n.click();
-        return;
-      }
-    (r3 = s7.requestSubmit) == null || r3.call(s7);
-  }
-}
-
-// ../../node_modules/@headlessui/react/dist/internal/hidden.js
-init_esm_shims();
-var a2 = "div";
-var p3 = ((e) => (e[e.None = 1] = "None", e[e.Focusable = 2] = "Focusable", e[e.Hidden = 4] = "Hidden", e))(p3 || {});
-function s6(t7, o9) {
-  let { features: n = 1, ...e } = t7, d4 = { ref: o9, "aria-hidden": (n & 2) === 2 ? true : void 0, style: { position: "fixed", top: 1, left: 1, width: 1, height: 0, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: "0", ...(n & 4) === 4 && (n & 2) !== 2 && { display: "none" } } };
-  return X({ ourProps: d4, theirProps: e, slot: {}, defaultTag: a2, name: "Hidden" });
-}
-var c3 = D(s6);
-
-// ../../node_modules/@headlessui/react/dist/components/keyboard.js
-init_esm_shims();
-var o7 = ((r3) => (r3.Space = " ", r3.Enter = "Enter", r3.Escape = "Escape", r3.Backspace = "Backspace", r3.Delete = "Delete", r3.ArrowLeft = "ArrowLeft", r3.ArrowUp = "ArrowUp", r3.ArrowRight = "ArrowRight", r3.ArrowDown = "ArrowDown", r3.Home = "Home", r3.End = "End", r3.PageUp = "PageUp", r3.PageDown = "PageDown", r3.Tab = "Tab", r3))(o7 || {});
-
-// ../../node_modules/@headlessui/react/dist/hooks/use-controllable.js
-init_esm_shims();
-import { useRef as o8, useState as f } from "react";
-function T2(l5, r3, c5) {
-  let [i6, s7] = f(c5), e = l5 !== void 0, t7 = o8(e), u5 = o8(false), d4 = o8(false);
-  return e && !t7.current && !u5.current ? (u5.current = true, t7.current = e, console.error("A component is changing from uncontrolled to controlled. This may be caused by the value changing from undefined to a defined value, which should not happen.")) : !e && t7.current && !d4.current && (d4.current = true, t7.current = e, console.error("A component is changing from controlled to uncontrolled. This may be caused by the value changing from a defined value to undefined, which should not happen.")), [e ? l5 : i6, o4((n) => (e || s7(n), r3 == null ? void 0 : r3(n)))];
-}
-
-// ../../node_modules/@headlessui/react/dist/components/description/description.js
-init_esm_shims();
-import u3, { createContext as m, useContext as D2, useMemo as l4, useState as T3 } from "react";
-var d2 = m(null);
-function f2() {
-  let r3 = D2(d2);
-  if (r3 === null) {
-    let t7 = new Error("You used a <Description /> component, but it is not inside a relevant parent.");
-    throw Error.captureStackTrace && Error.captureStackTrace(t7, f2), t7;
-  }
-  return r3;
-}
-function M() {
-  let [r3, t7] = T3([]);
-  return [r3.length > 0 ? r3.join(" ") : void 0, l4(() => function(e) {
-    let i6 = o4((s7) => (t7((o9) => [...o9, s7]), () => t7((o9) => {
-      let p4 = o9.slice(), c5 = p4.indexOf(s7);
-      return c5 !== -1 && p4.splice(c5, 1), p4;
-    }))), n = l4(() => ({ register: i6, slot: e.slot, name: e.name, props: e.props }), [i6, e.slot, e.name, e.props]);
-    return u3.createElement(d2.Provider, { value: n }, e.children);
-  }, [t7])];
-}
-var S2 = "p";
-function h2(r3, t7) {
-  let a3 = I(), { id: e = `headlessui-description-${a3}`, ...i6 } = r3, n = f2(), s7 = y(t7);
-  l(() => n.register(e), [e, n.register]);
-  let o9 = { ref: s7, ...n.props, id: e };
-  return X({ ourProps: o9, theirProps: i6, slot: n.slot || {}, defaultTag: S2, name: n.name || "Description" });
-}
-var y2 = D(h2);
-var b2 = Object.assign(y2, {});
-
-// ../../node_modules/@headlessui/react/dist/components/label/label.js
-init_esm_shims();
-import c4, { createContext as m2, useContext as L, useMemo as f3, useState as b3 } from "react";
-var d3 = m2(null);
-function u4() {
-  let o9 = L(d3);
-  if (o9 === null) {
-    let t7 = new Error("You used a <Label /> component, but it is not inside a relevant parent.");
-    throw Error.captureStackTrace && Error.captureStackTrace(t7, u4), t7;
-  }
-  return o9;
-}
-function H() {
-  let [o9, t7] = b3([]);
-  return [o9.length > 0 ? o9.join(" ") : void 0, f3(() => function(e) {
-    let s7 = o4((r3) => (t7((l5) => [...l5, r3]), () => t7((l5) => {
-      let n = l5.slice(), p4 = n.indexOf(r3);
-      return p4 !== -1 && n.splice(p4, 1), n;
-    }))), a3 = f3(() => ({ register: s7, slot: e.slot, name: e.name, props: e.props }), [s7, e.slot, e.name, e.props]);
-    return c4.createElement(d3.Provider, { value: a3 }, e.children);
-  }, [t7])];
-}
-var A = "label";
-function h3(o9, t7) {
-  let i6 = I(), { id: e = `headlessui-label-${i6}`, passive: s7 = false, ...a3 } = o9, r3 = u4(), l5 = y(t7);
-  l(() => r3.register(e), [e, r3.register]);
-  let n = { ref: l5, ...r3.props, id: e };
-  return s7 && ("onClick" in n && (delete n.htmlFor, delete n.onClick), "onClick" in a3 && delete a3.onClick), X({ ourProps: n, theirProps: a3, slot: r3.slot || {}, defaultTag: A, name: r3.name || "Label" });
-}
-var v = D(h3);
-var M2 = Object.assign(v, {});
-
-// ../../node_modules/@headlessui/react/dist/components/switch/switch.js
-init_esm_shims();
-import i5, { Fragment as x2, createContext as A2, useContext as H2, useMemo as E2, useRef as F, useState as M3, useEffect as _ } from "react";
-var y3 = A2(null);
-y3.displayName = "GroupContext";
-var Y = x2;
-function Z(s7) {
-  var d4;
-  let [n, p4] = M3(null), [c5, f4] = H(), [r3, h4] = M(), l5 = E2(() => ({ switch: n, setSwitch: p4, labelledby: c5, describedby: r3 }), [n, p4, c5, r3]), T4 = {}, b4 = s7;
-  return i5.createElement(h4, { name: "Switch.Description" }, i5.createElement(f4, { name: "Switch.Label", props: { htmlFor: (d4 = l5.switch) == null ? void 0 : d4.id, onClick(t7) {
-    n && (t7.currentTarget.tagName === "LABEL" && t7.preventDefault(), n.click(), n.focus({ preventScroll: true }));
-  } } }, i5.createElement(y3.Provider, { value: l5 }, X({ ourProps: T4, theirProps: b4, defaultTag: Y, name: "Switch.Group" }))));
-}
-var ee = "button";
-function te(s7, n) {
-  let p4 = I(), { id: c5 = `headlessui-switch-${p4}`, checked: f4, defaultChecked: r3 = false, onChange: h4, name: l5, value: T4, form: b4, ...d4 } = s7, t7 = H2(y3), u5 = F(null), D3 = y(u5, n, t7 === null ? null : t7.setSwitch), [o9, a3] = T2(f4, h4, r3), S3 = o4(() => a3 == null ? void 0 : a3(!o9)), C = o4((e) => {
-    if (r2(e.currentTarget))
-      return e.preventDefault();
-    e.preventDefault(), S3();
-  }), L2 = o4((e) => {
-    e.key === o7.Space ? (e.preventDefault(), S3()) : e.key === o7.Enter && p2(e.currentTarget);
-  }), v2 = o4((e) => e.preventDefault()), G = E2(() => ({ checked: o9 }), [o9]), R2 = { id: c5, ref: D3, role: "switch", type: s5(s7, u5), tabIndex: 0, "aria-checked": o9, "aria-labelledby": t7 == null ? void 0 : t7.labelledby, "aria-describedby": t7 == null ? void 0 : t7.describedby, onClick: C, onKeyUp: L2, onKeyPress: v2 }, k = p();
-  return _(() => {
-    var w2;
-    let e = (w2 = u5.current) == null ? void 0 : w2.closest("form");
-    e && r3 !== void 0 && k.addEventListener(e, "reset", () => {
-      a3(r3);
-    });
-  }, [u5, a3]), i5.createElement(i5.Fragment, null, l5 != null && o9 && i5.createElement(c3, { features: p3.Hidden, ...R({ as: "input", type: "checkbox", hidden: true, readOnly: true, form: b4, checked: o9, name: l5, value: T4 }) }), X({ ourProps: R2, theirProps: d4, slot: G, defaultTag: ee, name: "Switch" }));
-}
-var ne = D(te);
-var re = Z;
-var Ge = Object.assign(ne, { Group: re, Label: M2, Description: b2 });
-
-// src/button/toggle-switch.tsx
+import { Switch } from "@headlessui/react";
 var ToggleSwitch = (props) => {
   const { value, onChange, label, size = "sm", disabled, className } = props;
-  return /* @__PURE__ */ React2.createElement(Ge, {
+  return /* @__PURE__ */ React2.createElement(Switch, {
     checked: value,
     disabled,
     onChange,
@@ -616,7 +146,6 @@ var ToggleSwitch = (props) => {
 ToggleSwitch.displayName = "plane-ui-toggle-switch";
 
 // src/form-fields/input.tsx
-init_esm_shims();
 import * as React3 from "react";
 var Input = React3.forwardRef((props, ref) => {
   const {
@@ -641,7 +170,6 @@ var Input = React3.forwardRef((props, ref) => {
 Input.displayName = "form-input-field";
 
 // src/form-fields/textarea.tsx
-init_esm_shims();
 import * as React4 from "react";
 var useAutoSizeTextArea = (textAreaRef, value) => {
   React4.useEffect(() => {
@@ -681,12 +209,11 @@ var TextArea = React4.forwardRef(
 );
 
 // src/progress/radial-progress.tsx
-init_esm_shims();
-import React5, { useState as useState2, useEffect as useEffect3 } from "react";
+import React5, { useState, useEffect as useEffect2 } from "react";
 var RadialProgressBar = (props) => {
   const { progress } = props;
-  const [circumference, setCircumference] = useState2(0);
-  useEffect3(() => {
+  const [circumference, setCircumference] = useState(0);
+  useEffect2(() => {
     const radius = 40;
     const circumference2 = 2 * Math.PI * radius;
     setCircumference(circumference2);
@@ -719,7 +246,6 @@ var RadialProgressBar = (props) => {
 };
 
 // src/progress/progress-bar.tsx
-init_esm_shims();
 import React6 from "react";
 var ProgressBar = ({
   maxValue = 0,
@@ -730,34 +256,34 @@ var ProgressBar = ({
   inactiveStrokeColor = "#ddd"
 }) => {
   const generatePie = (value2) => {
-    const x3 = radius - Math.cos(2 * Math.PI / (100 / value2)) * radius;
-    const y4 = radius + Math.sin(2 * Math.PI / (100 / value2)) * radius;
+    const x = radius - Math.cos(2 * Math.PI / (100 / value2)) * radius;
+    const y = radius + Math.sin(2 * Math.PI / (100 / value2)) * radius;
     const long = value2 <= 50 ? 0 : 1;
-    const d4 = `M${radius} ${radius} L${radius} ${0} A${radius} ${radius} 0 ${long} 1 ${y4} ${x3} Z`;
-    return d4;
+    const d = `M${radius} ${radius} L${radius} ${0} A${radius} ${radius} 0 ${long} 1 ${y} ${x} Z`;
+    return d;
   };
   const calculatePieValue = (numberOfBars) => {
     const angle = 360 / numberOfBars;
     const pieValue = Math.floor(angle / 4);
     return pieValue < 1 ? 1 : Math.floor(angle / 4);
   };
-  const renderPie = (i6) => {
+  const renderPie = (i) => {
     const DIRECTION = -1;
     const primaryRotationAngle = (maxValue - 1) * (360 / maxValue);
-    const rotationAngle = -1 * DIRECTION * primaryRotationAngle + i6 * DIRECTION * primaryRotationAngle;
+    const rotationAngle = -1 * DIRECTION * primaryRotationAngle + i * DIRECTION * primaryRotationAngle;
     const rotationTransformation = `rotate(${rotationAngle}, ${radius}, ${radius})`;
     const pieValue = calculatePieValue(maxValue);
     const dValue = generatePie(pieValue);
-    const fillColor = value > 0 && i6 <= value ? activeStrokeColor : inactiveStrokeColor;
+    const fillColor = value > 0 && i <= value ? activeStrokeColor : inactiveStrokeColor;
     return /* @__PURE__ */ React6.createElement("path", {
-      style: { opacity: i6 === 0 ? 0 : 1 },
-      key: i6,
+      style: { opacity: i === 0 ? 0 : 1 },
+      key: i,
       d: dValue,
       fill: fillColor,
       transform: rotationTransformation
     });
   };
-  const renderOuterCircle = () => [...Array(maxValue + 1)].map((e, i6) => renderPie(i6));
+  const renderOuterCircle = () => [...Array(maxValue + 1)].map((e, i) => renderPie(i));
   return /* @__PURE__ */ React6.createElement("svg", {
     width: radius * 2,
     height: radius * 2
@@ -769,35 +295,108 @@ var ProgressBar = ({
   }));
 };
 
+// src/progress/linear-progress-indicator.tsx
+import React8 from "react";
+
+// src/tooltip/tooltip.tsx
+import React7 from "react";
+import { useTheme } from "next-themes";
+import { Tooltip2 } from "@blueprintjs/popover2";
+var Tooltip = ({
+  tooltipHeading,
+  tooltipContent,
+  position = "top",
+  children,
+  disabled = false,
+  className = "",
+  openDelay = 200,
+  closeDelay
+}) => {
+  const { theme } = useTheme();
+  return /* @__PURE__ */ React7.createElement(Tooltip2, {
+    disabled,
+    hoverOpenDelay: openDelay,
+    hoverCloseDelay: closeDelay,
+    content: /* @__PURE__ */ React7.createElement("div", {
+      className: `relative z-50 max-w-xs gap-1 rounded-md p-2 text-xs shadow-md ${theme === "custom" ? "bg-custom-background-100 text-custom-text-200" : "bg-black text-gray-400"} break-words overflow-hidden ${className}`
+    }, tooltipHeading && /* @__PURE__ */ React7.createElement("h5", {
+      className: `font-medium ${theme === "custom" ? "text-custom-text-100" : "text-white"}`
+    }, tooltipHeading), tooltipContent),
+    position,
+    renderTarget: ({
+      isOpen: isTooltipOpen,
+      ref: eleReference,
+      ...tooltipProps
+    }) => React7.cloneElement(children, {
+      ref: eleReference,
+      ...tooltipProps,
+      ...children.props
+    })
+  });
+};
+
+// src/progress/linear-progress-indicator.tsx
+var LinearProgressIndicator = ({
+  data,
+  noTooltip = false
+}) => {
+  const total = data.reduce((acc, cur) => acc + cur.value, 0);
+  let progress = 0;
+  const bars = data.map((item) => {
+    const width = `${item.value / total * 100}%`;
+    const style = {
+      width,
+      backgroundColor: item.color
+    };
+    progress += item.value;
+    if (noTooltip)
+      return /* @__PURE__ */ React8.createElement("div", {
+        style
+      });
+    else
+      return /* @__PURE__ */ React8.createElement(Tooltip, {
+        key: item.id,
+        tooltipContent: `${item.name} ${Math.round(item.value)}%`
+      }, /* @__PURE__ */ React8.createElement("div", {
+        style
+      }));
+  });
+  return /* @__PURE__ */ React8.createElement("div", {
+    className: "flex h-1 w-full items-center justify-between gap-1"
+  }, total === 0 ? /* @__PURE__ */ React8.createElement("div", {
+    className: "flex h-full w-full gap-1 bg-neutral-500"
+  }, bars) : /* @__PURE__ */ React8.createElement("div", {
+    className: "flex h-full w-full gap-1"
+  }, bars));
+};
+
 // src/spinners/circular-spinner.tsx
-init_esm_shims();
-import * as React7 from "react";
-var Spinner = () => /* @__PURE__ */ React7.createElement("div", {
+import * as React9 from "react";
+var Spinner = () => /* @__PURE__ */ React9.createElement("div", {
   role: "status"
-}, /* @__PURE__ */ React7.createElement("svg", {
+}, /* @__PURE__ */ React9.createElement("svg", {
   "aria-hidden": "true",
   className: "mr-2 h-8 w-8 animate-spin fill-blue-600 text-custom-text-200",
   viewBox: "0 0 100 101",
   fill: "none",
   xmlns: "http://www.w3.org/2000/svg"
-}, /* @__PURE__ */ React7.createElement("path", {
+}, /* @__PURE__ */ React9.createElement("path", {
   d: "M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z",
   fill: "currentColor"
-}), /* @__PURE__ */ React7.createElement("path", {
+}), /* @__PURE__ */ React9.createElement("path", {
   d: "M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z",
   fill: "currentFill"
-})), /* @__PURE__ */ React7.createElement("span", {
+})), /* @__PURE__ */ React9.createElement("span", {
   className: "sr-only"
 }, "Loading..."));
 
 // src/loader.tsx
-init_esm_shims();
-import React8 from "react";
-var Loader = ({ children, className = "" }) => /* @__PURE__ */ React8.createElement("div", {
+import React10 from "react";
+var Loader = ({ children, className = "" }) => /* @__PURE__ */ React10.createElement("div", {
   className: `${className} animate-pulse`,
   role: "status"
 }, children);
-var Item = ({ height = "auto", width = "auto" }) => /* @__PURE__ */ React8.createElement("div", {
+var Item = ({ height = "auto", width = "auto" }) => /* @__PURE__ */ React10.createElement("div", {
   className: "rounded-md bg-custom-background-80",
   style: { height, width }
 });
@@ -806,10 +405,12 @@ Loader.displayName = "plane-ui-loader";
 export {
   Button,
   Input,
+  LinearProgressIndicator,
   Loader,
   ProgressBar,
   RadialProgressBar,
   Spinner,
   TextArea,
-  ToggleSwitch
+  ToggleSwitch,
+  Tooltip
 };

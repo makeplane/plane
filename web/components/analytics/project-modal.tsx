@@ -1,39 +1,27 @@
 import React, { Fragment, useState } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
-// react-hook-form
-import { useForm } from "react-hook-form";
-// headless ui
 import { Tab } from "@headlessui/react";
+
 // services
-import analyticsService from "services/analytics.service";
 import projectService from "services/project.service";
 import cyclesService from "services/cycles.service";
 import modulesService from "services/modules.service";
 import trackEventServices from "services/track_event.service";
+// hooks
+import useUserAuth from "hooks/use-user-auth";
 // components
 import { CustomAnalytics, ScopeAndDemand } from "components/analytics";
 // icons
 import { ArrowsPointingInIcon, ArrowsPointingOutIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
-import { IAnalyticsParams, IWorkspace } from "types";
+import { IWorkspace } from "types";
 // fetch-keys
-import { ANALYTICS, CYCLE_DETAILS, MODULE_DETAILS, PROJECT_DETAILS } from "constants/fetch-keys";
-import useUserAuth from "hooks/use-user-auth";
+import { CYCLE_DETAILS, MODULE_DETAILS, PROJECT_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-};
-
-const defaultValues: IAnalyticsParams = {
-  x_axis: "priority",
-  y_axis: "issue_count",
-  segment: null,
-  project: null,
 };
 
 const tabsList = ["Scope and Demand", "Custom Analytics"];
@@ -45,22 +33,6 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
   const { user } = useUserAuth();
-
-  const { control, watch, setValue } = useForm<IAnalyticsParams>({ defaultValues });
-
-  const params: IAnalyticsParams = {
-    x_axis: watch("x_axis"),
-    y_axis: watch("y_axis"),
-    segment: watch("segment"),
-    project: projectId ? [projectId.toString()] : watch("project"),
-    cycle: cycleId ? cycleId.toString() : null,
-    module: moduleId ? moduleId.toString() : null,
-  };
-
-  const { data: analytics, error: analyticsError } = useSWR(
-    workspaceSlug ? ANALYTICS(workspaceSlug.toString(), params) : null,
-    workspaceSlug ? () => analyticsService.getAnalytics(workspaceSlug.toString(), params) : null
-  );
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId && !(cycleId || moduleId) ? PROJECT_DETAILS(projectId.toString()) : null,
@@ -183,21 +155,12 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
               </Tab>
             ))}
           </Tab.List>
-          {/* <h4 className="p-5 pb-0">Analytics for</h4> */}
           <Tab.Panels as={Fragment}>
             <Tab.Panel as={Fragment}>
               <ScopeAndDemand fullScreen={fullScreen} />
             </Tab.Panel>
             <Tab.Panel as={Fragment}>
-              <CustomAnalytics
-                analytics={analytics}
-                analyticsError={analyticsError}
-                params={params}
-                control={control}
-                setValue={setValue}
-                fullScreen={fullScreen}
-                user={user}
-              />
+              <CustomAnalytics fullScreen={fullScreen} user={user} />
             </Tab.Panel>
           </Tab.Panels>
         </Tab.Group>

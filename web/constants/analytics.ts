@@ -3,7 +3,7 @@ import { TXAxisValues, TYAxisValues } from "types";
 
 export const ANALYTICS_X_AXIS_VALUES: { value: TXAxisValues; label: string }[] = [
   {
-    value: "state__name",
+    value: "state_id",
     label: "State name",
   },
   {
@@ -15,7 +15,7 @@ export const ANALYTICS_X_AXIS_VALUES: { value: TXAxisValues; label: string }[] =
     label: "Priority",
   },
   {
-    value: "labels__name",
+    value: "labels__id",
     label: "Label",
   },
   {
@@ -27,11 +27,11 @@ export const ANALYTICS_X_AXIS_VALUES: { value: TXAxisValues; label: string }[] =
     label: "Estimate point",
   },
   {
-    value: "issue_cycle__cycle__name",
+    value: "issue_cycle__cycle_id",
     label: "Cycle",
   },
   {
-    value: "issue_module__module__name",
+    value: "issue_module__module_id",
     label: "Module",
   },
   {

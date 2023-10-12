@@ -2,10 +2,11 @@ import * as React from 'react';
 import React__default, { FC } from 'react';
 
 declare type TButtonVariant = "primary" | "accent-primary" | "outline-primary" | "neutral-primary" | "link-primary" | "danger" | "accent-danger" | "outline-danger" | "link-danger" | "tertiary-danger";
+declare type TButtonSizes = "sm" | "md" | "lg" | "xl";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: TButtonVariant;
-    size?: "sm" | "md" | "lg";
+    size?: TButtonSizes;
     className?: string;
     loading?: boolean;
     disabled?: boolean;
@@ -45,7 +46,7 @@ interface IRadialProgressBar {
 }
 declare const RadialProgressBar: FC<IRadialProgressBar>;
 
-declare type Props$1 = {
+declare type Props$2 = {
     maxValue?: number;
     value?: number;
     radius?: number;
@@ -53,7 +54,13 @@ declare type Props$1 = {
     activeStrokeColor?: string;
     inactiveStrokeColor?: string;
 };
-declare const ProgressBar: React__default.FC<Props$1>;
+declare const ProgressBar: React__default.FC<Props$2>;
+
+declare type Props$1 = {
+    data: any;
+    noTooltip?: boolean;
+};
+declare const LinearProgressIndicator: React__default.FC<Props$1>;
 
 declare const Spinner: React.FC;
 
@@ -71,4 +78,17 @@ declare type ItemProps = {
     width?: string;
 };
 
-export { Button, ButtonProps, Input, InputProps, Loader, ProgressBar, RadialProgressBar, Spinner, TextArea, TextAreaProps, ToggleSwitch };
+declare type TPosition = "top" | "right" | "bottom" | "left" | "auto" | "auto-end" | "auto-start" | "bottom-left" | "bottom-right" | "left-bottom" | "left-top" | "right-bottom" | "right-top" | "top-left" | "top-right";
+interface ITooltipProps {
+    tooltipHeading?: string;
+    tooltipContent: string | React__default.ReactNode;
+    position?: TPosition;
+    children: JSX.Element;
+    disabled?: boolean;
+    className?: string;
+    openDelay?: number;
+    closeDelay?: number;
+}
+declare const Tooltip: React__default.FC<ITooltipProps>;
+
+export { Button, ButtonProps, Input, InputProps, LinearProgressIndicator, Loader, ProgressBar, RadialProgressBar, Spinner, TPosition, TextArea, TextAreaProps, ToggleSwitch, Tooltip };
