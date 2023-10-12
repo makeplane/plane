@@ -427,13 +427,10 @@ const SinglePage: NextPage = () => {
                   )}
                   <CustomSearchSelect
                     customButton={
-                      <button
-                        type="button"
-                        className="flex items-center gap-1 rounded-sm bg-custom-background-80 p-1.5 text-xs"
-                      >
+                      <div className="flex items-center gap-1 rounded-sm bg-custom-background-80 p-1.5 text-xs">
                         <PlusIcon className="h-3.5 w-3.5" />
                         {pageDetails.labels.length <= 0 && <span>Add Label</span>}
-                      </button>
+                      </div>
                     }
                     value={pageDetails.labels}
                     footerOption={

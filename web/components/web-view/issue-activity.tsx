@@ -17,8 +17,7 @@ import issuesService from "services/issues.service";
 import useUser from "hooks/use-user";
 
 // components
-import { CommentCard } from "components/issues/comment";
-import { Label, AddComment, ActivityMessage, ActivityIcon } from "components/web-view";
+import { Label, AddComment, ActivityMessage, ActivityIcon, CommentCard } from "components/web-view";
 
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
@@ -54,23 +53,32 @@ export const IssueActivity: React.FC<Props> = (props) => {
       : null
   );
 
-  const handleCommentUpdate = async (comment: any) => {
-    if (!workspaceSlug || !projectId || !issueId) return;
+  const handleCommentUpdate = async (comment: any, formData: any) => {
+    if (!workspaceSlug || !projectId || !issueId || !allowed) return;
 
     await issuesService
       .patchIssueComment(
         workspaceSlug as string,
         projectId as string,
         issueId as string,
-        comment.id,
         comment,
+        formData,
         user
       )
-      .then(() => mutateIssueActivity());
+      .then(() => mutateIssueActivity())
+      .catch(() =>
+        console.log(
+          "toast",
+          JSON.stringify({
+            type: "error",
+            message: "Comment could not be updated. Please try again.",
+          })
+        )
+      );
   };
 
   const handleCommentDelete = async (commentId: string) => {
-    if (!workspaceSlug || !projectId || !issueId) return;
+    if (!workspaceSlug || !projectId || !issueId || !allowed) return;
 
     mutateIssueActivity((prevData: any) => prevData?.filter((p: any) => p.id !== commentId), false);
 
@@ -82,11 +90,20 @@ export const IssueActivity: React.FC<Props> = (props) => {
         commentId,
         user
       )
-      .then(() => mutateIssueActivity());
+      .then(() => mutateIssueActivity())
+      .catch(() =>
+        console.log(
+          "toast",
+          JSON.stringify({
+            type: "error",
+            message: "Comment could not be deleted. Please try again.",
+          })
+        )
+      );
   };
 
   const handleAddComment = async (formData: IIssueComment) => {
-    if (!workspaceSlug || !issueDetails) return;
+    if (!workspaceSlug || !issueDetails || !allowed) return;
 
     await issuesService
       .createIssueComment(
@@ -104,7 +121,6 @@ export const IssueActivity: React.FC<Props> = (props) => {
           "toast",
           JSON.stringify({
             type: "error",
-            title: "Error!",
             message: "Comment could not be posted. Please try again.",
           })
         )
@@ -114,7 +130,7 @@ export const IssueActivity: React.FC<Props> = (props) => {
   return (
     <div>
       <Label>Activity</Label>
-      <div className="mt-1 space-y-[6px] p-2 border rounded-[4px]">
+      <div className="mt-1 space-y-[6px] p-2 border border-custom-border-200 rounded-[4px]">
         <ul role="list" className="-mb-4">
           {issueActivities?.map((activityItem, index) => {
             // determines what type of action is performed
@@ -208,23 +224,31 @@ export const IssueActivity: React.FC<Props> = (props) => {
                     comment={activityItem as any}
                     onSubmit={handleCommentUpdate}
                     handleCommentDeletion={handleCommentDelete}
+                    disabled={
+                      !allowed ||
+                      !issueDetails ||
+                      issueDetails.state === "closed" ||
+                      issueDetails.state === "archived"
+                    }
                   />
                 </div>
               );
           })}
-          <li>
-            <div className="my-4">
-              <AddComment
-                onSubmit={handleAddComment}
-                disabled={
-                  !allowed ||
-                  !issueDetails ||
-                  issueDetails.state === "closed" ||
-                  issueDetails.state === "archived"
-                }
-              />
-            </div>
-          </li>
+          {allowed && (
+            <li>
+              <div className="my-4">
+                <AddComment
+                  onSubmit={handleAddComment}
+                  disabled={
+                    !allowed ||
+                    !issueDetails ||
+                    issueDetails.state === "closed" ||
+                    issueDetails.state === "archived"
+                  }
+                />
+              </div>
+            </li>
+          )}
         </ul>
       </div>
     </div>

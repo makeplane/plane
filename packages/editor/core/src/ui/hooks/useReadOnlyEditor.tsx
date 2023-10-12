@@ -11,7 +11,7 @@ interface CustomReadOnlyEditorProps {
   editorProps?: EditorProps;
 }
 
-export const useReadOnlyEditor = ({ value, forwardedRef, extensions, editorProps }: CustomReadOnlyEditorProps) => {
+export const useReadOnlyEditor = ({ value, forwardedRef, extensions = [], editorProps = {} }: CustomReadOnlyEditorProps) => {
   const editor = useCustomEditor({
     editable: false,
     content: (typeof value === "string" && value.trim() !== "") ? value : "<p></p>",

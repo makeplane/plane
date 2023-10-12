@@ -12,8 +12,8 @@ import { SecondaryButton } from "components/ui";
 import { Comment } from "types/issue";
 // components
 import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
-import fileService from "services/file.service";
 // service
+import fileService from "services/file.service";
 
 const defaultValues: Partial<Comment> = {
   comment_html: "",

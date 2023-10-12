@@ -120,27 +120,32 @@ export const IssueWebViewForm: React.FC<Props> = (props) => {
             name="description_html"
             control={control}
             render={({ field: { value, onChange } }) => (
-                <RichTextEditor
-                    uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                    deleteFile={fileService.deleteImage}
-                    value={!value ||
-                        value === "" ||
-                        (typeof value === "object" && Object.keys(value).length === 0)
-                        ? "<p></p>"
-                        : value}
-                    debouncedUpdatesEnabled={true}
-                    setShouldShowAlert={setShowAlert}
-                    setIsSubmitting={setIsSubmitting}
-                    customClassName={isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200"}
-                    noBorder={!isAllowed}
-                    onChange={(description: Object, description_html: string) => {
-                        setShowAlert(true);
-                        setIsSubmitting("submitting");
-                        onChange(description_html);
-                        handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted")
-                        );
-                    } }
-                    editable={isAllowed} />
+              <RichTextEditor
+                uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                deleteFile={fileService.deleteImage}
+                value={
+                  !value ||
+                  value === "" ||
+                  (typeof value === "object" && Object.keys(value).length === 0)
+                    ? "<p></p>"
+                    : value
+                }
+                debouncedUpdatesEnabled={true}
+                setShouldShowAlert={setShowAlert}
+                setIsSubmitting={setIsSubmitting}
+                customClassName={
+                  isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200"
+                }
+                noBorder={!isAllowed}
+                onChange={(description: Object, description_html: string) => {
+                  setShowAlert(true);
+                  setIsSubmitting("submitting");
+                  onChange(description_html);
+                  handleSubmit(handleDescriptionFormSubmit)().finally(() =>
+                    setIsSubmitting("submitted")
+                  );
+                }}
+              />
             )}
           />
           <div

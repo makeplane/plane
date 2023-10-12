@@ -59,8 +59,7 @@ export const ViewPrioritySelect: React.FC<Props> = ({
       }}
       maxHeight="md"
       customButton={
-        <button
-          type="button"
+        <div
           className={`grid place-items-center rounded ${
             isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
           } ${noBorder ? "" : "h-6 w-6 border shadow-sm"} ${
@@ -94,12 +93,10 @@ export const ViewPrioritySelect: React.FC<Props> = ({
               {noBorder ? capitalizeFirstLetter(issue.priority ?? "None") : ""}
             </span>
           </Tooltip>
-        </button>
+        </div>
       }
       noChevron
       disabled={isNotAllowed}
-      position={position}
-      selfPositioned={selfPositioned}
     >
       {PRIORITIES?.map((priority) => (
         <CustomSelect.Option key={priority} value={priority} className="capitalize">

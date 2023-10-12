@@ -272,7 +272,6 @@ export const SingleList: React.FC<Props> = (props) => {
                       <PlusIcon className="h-4 w-4" />
                     </div>
                   }
-                  position="right"
                   noBorder
                 >
                   <CustomMenu.MenuItem onClick={() => setIsCreateIssueFormOpen(true)}>

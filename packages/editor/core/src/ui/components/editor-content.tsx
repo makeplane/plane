@@ -13,8 +13,8 @@ export const EditorContentWrapper = ({ editor, editorContentCustomClassNames = '
   <div className={`${editorContentCustomClassNames}`}>
     {/* @ts-ignore */}
     <EditorContent editor={editor} />
-    <TableMenu editor={editor} />
-    {editor?.isActive("image") && <ImageResizer editor={editor} />}
+    {editor?.isEditable && <TableMenu editor={editor} />}
+    {(editor?.isActive("image") && editor?.isEditable) && <ImageResizer editor={editor} />}
     {children}
   </div>
 );

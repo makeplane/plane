@@ -43,13 +43,13 @@ const Editor: NextPage = () => {
   }, [isEditable, setValue, router]);
 
   return (
-    <WebViewLayout fullScreen={isLoading}>
+    <WebViewLayout fullScreen>
       {isLoading ? (
         <div className="w-full h-full flex items-center justify-center">
           <Spinner />
         </div>
       ) : (
-        <>
+        <div className="w-full h-full flex flex-col justify-between">
           <Controller
             name="data_html"
             control={control}
@@ -65,10 +65,8 @@ const Editor: NextPage = () => {
                     ? watch("data_html")
                     : value
                 }
-                editable={isEditable}
                 noBorder={true}
-                debouncedUpdatesEnabled={true}
-                customClassName="min-h-[150px] shadow-sm"
+                customClassName="h-full shadow-sm overflow-auto"
                 editorContentCustomClassNames="pb-9"
                 onChange={(description: Object, description_html: string) => {
                   onChange(description_html);
@@ -80,7 +78,7 @@ const Editor: NextPage = () => {
           />
           {isEditable && (
             <PrimaryButton
-              className="mt-4 w-[calc(100%-30px)] h-[45px] mx-[15px] text-[17px]"
+              className="mt-4 w-[calc(100%-30px)] h-[45px] mx-[15px] text-[17px] my-[15px]"
               onClick={() => {
                 console.log(
                   "submitted",
@@ -93,7 +91,7 @@ const Editor: NextPage = () => {
               Submit
             </PrimaryButton>
           )}
-        </>
+        </div>
       )}
     </WebViewLayout>
   );

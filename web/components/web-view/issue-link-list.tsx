@@ -16,7 +16,7 @@ import issuesService from "services/issues.service";
 import { Link as LinkIcon, Plus, Pencil, X } from "lucide-react";
 
 // components
-import { Label, WebViewModal, CreateUpdateLinkForm } from "components/web-view";
+import { Label, WebViewModal, CreateUpdateLinkForm, DeleteConfirmation } from "components/web-view";
 
 // ui
 import { SecondaryButton } from "components/ui";
@@ -39,12 +39,13 @@ export const IssueLinks: React.FC<Props> = (props) => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [selectedLink, setSelectedLink] = useState<string | null>(null);
+  const [deleteSelected, setDeleteSelected] = useState<string | null>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   const handleDeleteLink = async (linkId: string) => {
-    if (!workspaceSlug || !projectId || !issueDetails) return;
+    if (!workspaceSlug || !projectId || !issueDetails || !allowed) return;
 
     const updatedLinks = issueDetails.issue_link.filter((l) => l.id !== linkId);
 
@@ -56,7 +57,7 @@ export const IssueLinks: React.FC<Props> = (props) => {
 
     await issuesService
       .deleteIssueLink(workspaceSlug as string, projectId as string, issueDetails.id, linkId)
-      .then((res) => {
+      .then(() => {
         mutate(ISSUE_DETAILS(issueDetails.id));
       })
       .catch((err) => {
@@ -85,6 +86,18 @@ export const IssueLinks: React.FC<Props> = (props) => {
         />
       </WebViewModal>
 
+      <DeleteConfirmation
+        title="Delete Link"
+        content="Are you sure you want to delete this link?"
+        isOpen={!!deleteSelected}
+        onCancel={() => setDeleteSelected(null)}
+        onConfirm={() => {
+          if (!deleteSelected || !allowed) return;
+          handleDeleteLink(deleteSelected);
+          setDeleteSelected(null);
+        }}
+      />
+
       <Label>Links</Label>
       <div className="mt-1 space-y-[6px]">
         {links?.map((link) => (
@@ -92,14 +105,18 @@ export const IssueLinks: React.FC<Props> = (props) => {
             key={link.id}
             className="px-3 border border-custom-border-200 rounded-[4px] py-2 flex justify-between items-center bg-custom-background-100"
           >
-            <Link href={link.url}>
-              <a target="_blank" className="text-custom-text-200 truncate">
-                <span>
-                  <LinkIcon className="w-4 h-4 inline-block mr-1" />
-                </span>
-                <span>{link.title}</span>
-              </a>
-            </Link>
+            <button
+              type="button"
+              onClick={() => {
+                console.log("link", link.url);
+              }}
+              className="text-custom-text-200 truncate"
+            >
+              <span>
+                <LinkIcon className="w-4 h-4 inline-block mr-1" />
+              </span>
+              <span>{link.title || link.metadata?.title || link.url}</span>
+            </button>
             {allowed && (
               <div className="flex gap-2 items-center">
                 <button
@@ -114,7 +131,7 @@ export const IssueLinks: React.FC<Props> = (props) => {
                 <button
                   type="button"
                   onClick={() => {
-                    handleDeleteLink(link.id);
+                    setDeleteSelected(link.id);
                   }}
                 >
                   <X className="w-[18px] h-[18px] text-custom-text-400" />

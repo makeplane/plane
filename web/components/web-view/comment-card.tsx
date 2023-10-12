@@ -10,12 +10,13 @@ import useUser from "hooks/use-user";
 import { CustomMenu, Icon } from "components/ui";
 import { CommentReaction } from "components/issues";
 import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-text-editor";
+
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
 import type { IIssueComment } from "types";
+// service
 import fileService from "services/file.service";
-// services
 
 type Props = {
   comment: IIssueComment;
@@ -23,15 +24,19 @@ type Props = {
   onSubmit: (commentId: string, data: Partial<IIssueComment>) => void;
   showAccessSpecifier?: boolean;
   workspaceSlug: string;
+  disabled?: boolean;
 };
 
-export const CommentCard: React.FC<Props> = ({
-  comment,
-  handleCommentDeletion,
-  onSubmit,
-  showAccessSpecifier = false,
-  workspaceSlug,
-}) => {
+export const CommentCard: React.FC<Props> = (props) => {
+  const {
+    comment,
+    handleCommentDeletion,
+    onSubmit,
+    showAccessSpecifier = false,
+    workspaceSlug,
+    disabled,
+  } = props;
+
   const { user } = useUser();
 
   const editorRef = React.useRef<any>(null);
@@ -107,14 +112,12 @@ export const CommentCard: React.FC<Props> = ({
           </p>
         </div>
         <div className="issue-comments-section p-0">
-          <form
-            className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}
-          >
+          <form className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}>
             <div>
               <LiteTextEditorWithRef
-                onEnterKeyPress={handleSubmit(onEnter)}
-                uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
                 deleteFile={fileService.deleteImage}
+                onEnterKeyPress={handleSubmit(onEnter)}
                 ref={editorRef}
                 value={watch("comment_html")}
                 debouncedUpdatesEnabled={false}
@@ -128,7 +131,7 @@ export const CommentCard: React.FC<Props> = ({
             <div className="flex gap-1 self-end">
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || disabled}
                 className="group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300 hover:bg-green-500"
               >
                 <CheckIcon className="h-3 w-3 text-green-500 duration-300 group-hover:text-white" />
@@ -156,11 +159,15 @@ export const CommentCard: React.FC<Props> = ({
               value={comment.comment_html}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
             />
-            <CommentReaction projectId={comment.project} commentId={comment.id} />
+            <CommentReaction
+              readonly={disabled}
+              projectId={comment.project}
+              commentId={comment.id}
+            />
           </div>
         </div>
       </div>
-      {user?.id === comment.actor && (
+      {user?.id === comment.actor && !disabled && (
         <CustomMenu ellipsis>
           <CustomMenu.MenuItem
             onClick={() => setIsEditing(true)}

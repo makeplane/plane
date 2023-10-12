@@ -369,12 +369,12 @@ export const SingleBoardIssue: React.FC<Props> = ({
               {type && !isNotAllowed && (
                 <CustomMenu
                   customButton={
-                    <button
+                    <div
                       className="flex w-full cursor-pointer items-center justify-between gap-1 rounded p-1 text-left text-xs duration-300 hover:bg-custom-background-80"
                       onClick={() => setIsMenuActive(!isMenuActive)}
                     >
                       <EllipsisHorizontalIcon className="h-4 w-4" />
-                    </button>
+                    </div>
                   }
                 >
                   <CustomMenu.MenuItem

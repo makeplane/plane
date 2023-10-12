@@ -146,7 +146,6 @@ const Editor: NextPage = () => {
                 ? watch("description_html")
                 : value
             }
-            editable={editable === "true"}
             noBorder={true}
             debouncedUpdatesEnabled={true}
             setShouldShowAlert={setShowAlert}
