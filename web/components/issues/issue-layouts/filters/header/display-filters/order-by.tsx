@@ -11,10 +11,11 @@ import { ISSUE_ORDER_BY_OPTIONS } from "constants/issue";
 type Props = {
   selectedOrderBy: TIssueOrderByOptions | undefined;
   handleUpdate: (val: TIssueOrderByOptions) => void;
+  orderByOptions: TIssueOrderByOptions[];
 };
 
 export const FilterOrderBy: React.FC<Props> = observer((props) => {
-  const { selectedOrderBy, handleUpdate } = props;
+  const { selectedOrderBy, handleUpdate, orderByOptions } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
@@ -27,7 +28,7 @@ export const FilterOrderBy: React.FC<Props> = observer((props) => {
       />
       {previewEnabled && (
         <div>
-          {ISSUE_ORDER_BY_OPTIONS.map((orderBy) => (
+          {ISSUE_ORDER_BY_OPTIONS.filter((option) => orderByOptions.includes(option.key)).map((orderBy) => (
             <FilterOption
               key={orderBy?.key}
               isChecked={selectedOrderBy === orderBy?.key ? true : false}
