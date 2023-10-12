@@ -153,6 +153,8 @@ class ProjectViewSet(BaseViewSet):
 
     def list(self, request, slug):
         try:
+            fields = [field for field in request.GET.get("fields", "").split(",") if field]
+
             sort_order_query = ProjectMember.objects.filter(
                 member=request.user,
                 project_id=OuterRef("pk"),
@@ -180,7 +182,11 @@ class ProjectViewSet(BaseViewSet):
                     ).data,
                 )
 
-            return Response(ProjectListSerializer(projects, many=True).data)
+            return Response(
+                ProjectListSerializer(
+                    projects, many=True, fields=fields if fields else None
+                ).data
+            )
         except Exception as e:
             capture_exception(e)
             return Response(

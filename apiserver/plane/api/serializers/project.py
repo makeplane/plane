@@ -5,7 +5,7 @@ from django.db import IntegrityError
 from rest_framework import serializers
 
 # Module imports
-from .base import BaseSerializer
+from .base import BaseSerializer, DynamicBaseSerializer
 from plane.api.serializers.workspace import WorkSpaceSerializer, WorkspaceLiteSerializer
 from plane.api.serializers.user import UserLiteSerializer, UserAdminLiteSerializer
 from plane.db.models import (
@@ -94,7 +94,7 @@ class ProjectLiteSerializer(BaseSerializer):
         read_only_fields = fields
 
 
-class ProjectListSerializer(BaseSerializer):
+class ProjectListSerializer(DynamicBaseSerializer):
     is_favorite = serializers.BooleanField(read_only=True)
     total_members = serializers.IntegerField(read_only=True)
     total_cycles = serializers.IntegerField(read_only=True)
