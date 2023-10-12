@@ -74,6 +74,7 @@ class Migration(migrations.Migration):
             name='archive_in',
         ),
         migrations.RemoveField(
+            model_name='project',
             name='close_in',
         ),
         migrations.RemoveField(

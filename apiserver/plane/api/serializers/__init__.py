@@ -13,6 +13,7 @@ from .project import (
     ProjectSerializer,
     ProjectSettingSerializer,
     ProjectDetailSerializer,
+    ProjectSettingDetailSerializer,
     ProjectMemberSerializer,
     ProjectMemberInviteSerializer,
     ProjectIdentifierSerializer,
@@ -21,7 +22,7 @@ from .project import (
     ProjectMemberLiteSerializer,
     ProjectDeployBoardSerializer,
     ProjectMemberAdminSerializer,
-    ProjectPublicMemberSerializer
+    ProjectPublicMemberSerializer,
 )
 from .state import StateSerializer, StateLiteSerializer
 from .view import GlobalViewSerializer, IssueViewSerializer, IssueViewFavoriteSerializer

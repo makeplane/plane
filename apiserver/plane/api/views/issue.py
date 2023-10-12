@@ -63,6 +63,7 @@ from plane.api.permissions import (
 )
 from plane.db.models import (
     Project,
+    ProjectSetting,
     Issue,
     IssueActivity,
     IssueComment,
@@ -293,13 +294,14 @@ class IssueViewSet(BaseViewSet):
     def create(self, request, slug, project_id):
         try:
             project = Project.objects.get(pk=project_id)
+            project_setting = ProjectSetting.objects.get(workspace__slug=slug, project_id=project_id)
 
             serializer = IssueCreateSerializer(
                 data=request.data,
                 context={
                     "project_id": project_id,
                     "workspace_id": project.workspace_id,
-                    "default_assignee_id": project.default_assignee_id,
+                    "default_assignee_id": project_setting.default_assignee_id,
                 },
             )
 
@@ -2565,13 +2567,13 @@ class IssueDraftViewSet(BaseViewSet):
     def create(self, request, slug, project_id):
         try:
             project = Project.objects.get(pk=project_id)
-
+            project_setting = ProjectSetting.objects.get(workspace__slug=slug, project_id=project_id)
             serializer = IssueCreateSerializer(
                 data=request.data,
                 context={
                     "project_id": project_id,
                     "workspace_id": project.workspace_id,
-                    "default_assignee_id": project.default_assignee_id,
+                    "default_assignee_id": project_setting.default_assignee_id,
                 },
             )
 

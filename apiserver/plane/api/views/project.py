@@ -29,6 +29,7 @@ from sentry_sdk import capture_exception
 from .base import BaseViewSet, BaseAPIView
 from plane.api.serializers import (
     ProjectSerializer,
+    ProjectSettingDetailSerializer,
     ProjectSettingSerializer,
     ProjectMemberSerializer,
     ProjectDetailSerializer,
@@ -99,7 +100,7 @@ class ProjectViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(Q(project_projectmember__member=self.request.user) | Q(network=2))
             .select_related(
-                "workspace", "workspace__owner", "default_assignee", "project_lead"
+                "workspace", "workspace__owner",
             )
             .annotate(is_favorite=Exists(subquery))
             .annotate(
@@ -211,19 +212,28 @@ class ProjectViewSet(BaseViewSet):
             if serializer.is_valid():
                 serializer.save()
 
+                project_lead = request.data.get("project_lead", None)
+
+                # Create Project Setting
+                _ = ProjectSetting.objects.create(
+                    project_id=serializer.data["id"],
+                    project_lead_id=request.data.get("project_lead", None)
+                )
+
                 # Add the user as Administrator to the project
                 project_member = ProjectMember.objects.create(
                     project_id=serializer.data["id"], member=request.user, role=20
                 )
 
-                if serializer.data["project_lead"] is not None and str(
-                    serializer.data["project_lead"]
+                if project_lead is not None and str(
+                    project_lead
                 ) != str(request.user.id):
                     ProjectMember.objects.create(
                         project_id=serializer.data["id"],
-                        member_id=serializer.data["project_lead"],
+                        member_id=project_lead,
                         role=20,
                     )
+
 
                 # Default states
                 states = [
@@ -308,7 +318,7 @@ class ProjectViewSet(BaseViewSet):
                 status=status.HTTP_410_GONE,
             )
         except Exception as e:
-            capture_exception(e)
+            print(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -974,7 +984,7 @@ class ProjectFavoritesViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(user=self.request.user)
             .select_related(
-                "project", "project__project_lead", "project__default_assignee"
+                "project",
             )
             .select_related("workspace", "workspace__owner")
         )
@@ -1254,13 +1264,62 @@ class ProjectSettingViewSet(BaseViewSet):
     permission_classes = [
         ProjectBasePermission,
     ]
-    serializer_class = ProjectSettingSerializer
+    
+    def get_serializer_class(self, *args, **kwargs):
+        if self.action in ["create", "partial_update"]:
+            return ProjectSettingSerializer
+        return ProjectSettingDetailSerializer
 
     def get_queryset(self):
-        super().get_queryset().filter(
-            workspace__slug=self.kwargs.get("slug"),
-            project_id=self.kwargs.get("project_id"),
+        return (
+            super()
+            .get_queryset()
+            .filter(
+                workspace__slug=self.kwargs.get("slug"),
+                project_id=self.kwargs.get("project_id"),
+            )
         )
 
     def perform_create(self, serializer):
         serializer.save(project_id=self.kwargs.get("project_id"))
+
+    def list(self, request, slug, project_id):
+        try:
+            project_setting = self.get_queryset().first()
+
+            if project_setting is not None:
+                serializer = ProjectSettingDetailSerializer(project_setting)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(
+                {"error": "Project setting does not exists"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def partial_update(self, request, slug, project_id):
+        try:
+            project_setting = self.get_queryset().first()
+
+            # Check if it is None
+            if project_setting is not None:
+                serializer = ProjectSettingSerializer(
+                    project_setting, data=request.data, partial=True
+                )
+                if serializer.is_valid():
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Project setting does not exists"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )

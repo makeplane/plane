@@ -97,8 +97,6 @@ class ProjectLiteSerializer(BaseSerializer):
 
 class ProjectDetailSerializer(BaseSerializer):
     workspace = WorkSpaceSerializer(read_only=True)
-    default_assignee = UserLiteSerializer(read_only=True)
-    project_lead = UserLiteSerializer(read_only=True)
     is_favorite = serializers.BooleanField(read_only=True)
     total_members = serializers.IntegerField(read_only=True)
     total_cycles = serializers.IntegerField(read_only=True)
@@ -179,12 +177,12 @@ class ProjectDeployBoardSerializer(BaseSerializer):
         fields = "__all__"
         read_only_fields = [
             "workspace",
-            "project", "anchor",
+            "project",
+            "anchor",
         ]
 
 
 class ProjectPublicMemberSerializer(BaseSerializer):
-
     class Meta:
         model = ProjectPublicMember
         fields = "__all__"
@@ -196,6 +194,18 @@ class ProjectPublicMemberSerializer(BaseSerializer):
 
 
 class ProjectSettingSerializer(BaseSerializer):
+    class Meta:
+        model = ProjectSetting
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+        ]
+
+
+class ProjectSettingDetailSerializer(BaseSerializer):
+    default_assignee = UserLiteSerializer(read_only=True)
+    project_lead = UserLiteSerializer(read_only=True)
 
     class Meta:
         model = ProjectSetting

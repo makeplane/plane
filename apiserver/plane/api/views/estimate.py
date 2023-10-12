@@ -9,7 +9,7 @@ from sentry_sdk import capture_exception
 # Module imports
 from .base import BaseViewSet, BaseAPIView
 from plane.api.permissions import ProjectEntityPermission
-from plane.db.models import Project, Estimate, EstimatePoint
+from plane.db.models import ProjectSetting, Estimate, EstimatePoint
 from plane.api.serializers import (
     EstimateSerializer,
     EstimatePointSerializer,
@@ -24,10 +24,10 @@ class ProjectEstimatePointEndpoint(BaseAPIView):
 
     def get(self, request, slug, project_id):
         try:
-            project = Project.objects.get(workspace__slug=slug, pk=project_id)
-            if project.estimate_id is not None:
+            project_setting = ProjectSetting.objects.get(workspace__slug=slug, pk=project_id)
+            if project_setting.estimate_id is not None:
                 estimate_points = EstimatePoint.objects.filter(
-                    estimate_id=project.estimate_id,
+                    estimate_id=project_setting.estimate_id,
                     project_id=project_id,
                     workspace__slug=slug,
                 )

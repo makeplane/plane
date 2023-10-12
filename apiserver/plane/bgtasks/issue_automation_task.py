@@ -12,7 +12,7 @@ from celery import shared_task
 from sentry_sdk import capture_exception
 
 # Module imports
-from plane.db.models import Issue, Project, State
+from plane.db.models import Issue, ProjectSetting, State
 from plane.bgtasks.issue_activites_task import issue_activity
 
 
@@ -25,11 +25,11 @@ def archive_and_close_old_issues():
 def archive_old_issues():
     try:
         # Get all the projects whose archive_in is greater than 0
-        projects = Project.objects.filter(archive_in__gt=0)
+        project_settings = ProjectSetting.objects.filter(archive_in__gt=0)
 
-        for project in projects:
-            project_id = project.id
-            archive_in = project.archive_in
+        for project_setting in project_settings:
+            project_id = project_setting.project_id
+            archive_in = project_setting.archive_in
 
             # Get all the issues whose updated_at in less that the archive_in month
             issues = Issue.issue_objects.filter(
@@ -75,7 +75,7 @@ def archive_old_issues():
                         issue_activity.delay(
                             type="issue.activity.updated",
                             requested_data=json.dumps({"archived_at": str(archive_at)}),
-                            actor_id=str(project.created_by_id),
+                            actor_id=str(project_setting.created_by_id),
                             issue_id=issue.id,
                             project_id=project_id,
                             current_instance=None,
@@ -95,13 +95,13 @@ def archive_old_issues():
 def close_old_issues():
     try:
         # Get all the projects whose close_in is greater than 0
-        projects = Project.objects.filter(close_in__gt=0).select_related(
-            "default_state"
+        project_settings = ProjectSetting.objects.filter(close_in__gt=0).select_related(
+            "close_state"
         )
 
-        for project in projects:
-            project_id = project.id
-            close_in = project.close_in
+        for project_setting in project_settings:
+            project_id = project_setting.project_id
+            close_in = project_setting.close_in
 
             # Get all the issues whose updated_at in less that the close_in month
             issues = Issue.issue_objects.filter(
@@ -130,10 +130,10 @@ def close_old_issues():
 
             # Check if Issues
             if issues:
-                if project.default_state is None:
+                if project_setting.close_state is None:
                     close_state = State.objects.filter(group="cancelled").first()
                 else:
-                    close_state = project.default_state
+                    close_state = project_setting.close_state
 
                 issues_to_update = []
                 for issue in issues:
@@ -147,7 +147,7 @@ def close_old_issues():
                         issue_activity.delay(
                             type="issue.activity.updated",
                             requested_data=json.dumps({"closed_to": str(issue.state_id)}),
-                            actor_id=str(project.created_by_id),
+                            actor_id=str(project_setting.created_by_id),
                             issue_id=issue.id,
                             project_id=project_id,
                             current_instance=None,

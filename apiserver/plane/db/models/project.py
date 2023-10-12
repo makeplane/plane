@@ -150,8 +150,8 @@ class ProjectSetting(BaseModel):
     close_in = models.IntegerField(
         default=0, validators=[MinValueValidator(0), MaxValueValidator(12)]
     )
-    default_state = models.ForeignKey(
-        "db.State", on_delete=models.SET_NULL, null=True, related_name="default_state"
+    close_state = models.ForeignKey(
+        "db.State", on_delete=models.SET_NULL, null=True, related_name="close_state"
     )
 
     def save(self, *args, **kwargs):
