@@ -1,6 +1,11 @@
 // types
 import { TXAxisValues, TYAxisValues } from "types";
 
+export const ANALYTICS_TABS = [
+  { key: "scope_and_demand", title: "Scope and Demand" },
+  { key: "custom", title: "Custom Analytics" },
+];
+
 export const ANALYTICS_X_AXIS_VALUES: { value: TXAxisValues; label: string }[] = [
   {
     value: "state_id",

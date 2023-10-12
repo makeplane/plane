@@ -6,7 +6,7 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
-import { AnalyticsProjectModal } from "components/analytics";
+import { ProjectAnalyticsModal } from "components/analytics";
 // ui
 import { Button } from "@plane/ui";
 // icons
@@ -24,6 +24,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
 
   const {
     issueFilter: issueFilterStore,
+    cycle: cycleStore,
     cycleIssueFilter: cycleIssueFilterStore,
     project: projectStore,
   } = useMobxStore();
@@ -87,9 +88,15 @@ export const CycleIssuesHeader: React.FC = observer(() => {
     [issueFilterStore, projectId, workspaceSlug]
   );
 
+  const cycleDetails = cycleId ? cycleStore.getCycleById(cycleId.toString()) : undefined;
+
   return (
     <>
-      <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
+      <ProjectAnalyticsModal
+        isOpen={analyticsModal}
+        onClose={() => setAnalyticsModal(false)}
+        cycleDetails={cycleDetails ?? undefined}
+      />
       <div className="flex items-center gap-2">
         <LayoutSelection
           layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}

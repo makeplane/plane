@@ -7,7 +7,7 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
-import { AnalyticsProjectModal } from "components/analytics";
+import { ProjectAnalyticsModal } from "components/analytics";
 // ui
 import { Button } from "@plane/ui";
 // icons
@@ -93,7 +93,11 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
 
   return (
     <>
-      <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
+      <ProjectAnalyticsModal
+        isOpen={analyticsModal}
+        onClose={() => setAnalyticsModal(false)}
+        projectDetails={projectDetails ?? undefined}
+      />
       <div className="flex items-center gap-2">
         <LayoutSelection
           layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}

@@ -15,7 +15,9 @@ type Props = {
   fullScreen?: boolean;
 };
 
-export const ScopeAndDemand: React.FC<Props> = ({ fullScreen = true }) => {
+export const ScopeAndDemand: React.FC<Props> = (props) => {
+  const { fullScreen = true } = props;
+
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 

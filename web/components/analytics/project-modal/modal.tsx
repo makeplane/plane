@@ -1,66 +1,44 @@
 import React, { Fragment, useState } from "react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
+import { observer } from "mobx-react-lite";
 import { Dialog, Tab, Transition } from "@headlessui/react";
 
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
-import projectService from "services/project.service";
-import cyclesService from "services/cycles.service";
-import modulesService from "services/modules.service";
 import trackEventServices from "services/track_event.service";
-// hooks
-import useUserAuth from "hooks/use-user-auth";
 // components
-import { CustomAnalytics, ScopeAndDemand } from "components/analytics";
-// icons
-import { ArrowsPointingInIcon, ArrowsPointingOutIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { CustomAnalytics, ProjectAnalyticsModalHeader, ScopeAndDemand } from "components/analytics";
 // types
-import { IWorkspace } from "types";
-// fetch-keys
-import { CYCLE_DETAILS, MODULE_DETAILS, PROJECT_DETAILS } from "constants/fetch-keys";
+import { ICycle, IModule, IProject, IWorkspace } from "types";
+// constants
+import { ANALYTICS_TABS } from "constants/analytics";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+  cycleDetails?: ICycle | undefined;
+  moduleDetails?: IModule | undefined;
+  projectDetails?: IProject | undefined;
 };
 
-const ANALYTICS_TABS = [
-  { key: "scope_and_demand", title: "Scope and Demand" },
-  { key: "custom", title: "Custom Analytics" },
-];
+export const ProjectAnalyticsModal: React.FC<Props> = observer((props) => {
+  const { isOpen, onClose, cycleDetails, moduleDetails, projectDetails } = props;
 
-export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const [fullScreen, setFullScreen] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug } = router.query;
 
-  const { user } = useUserAuth();
+  const { user: userStore } = useMobxStore();
 
-  const { data: projectDetails } = useSWR(
-    workspaceSlug && projectId && !(cycleId || moduleId) ? PROJECT_DETAILS(projectId.toString()) : null,
-    workspaceSlug && projectId && !(cycleId || moduleId)
-      ? () => projectService.getProject(workspaceSlug.toString(), projectId.toString())
-      : null
-  );
-
-  const { data: cycleDetails } = useSWR(
-    workspaceSlug && projectId && cycleId ? CYCLE_DETAILS(cycleId.toString()) : null,
-    workspaceSlug && projectId && cycleId
-      ? () => cyclesService.getCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString())
-      : null
-  );
-
-  const { data: moduleDetails } = useSWR(
-    workspaceSlug && projectId && moduleId ? MODULE_DETAILS(moduleId.toString()) : null,
-    workspaceSlug && projectId && moduleId
-      ? () => modulesService.getModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString())
-      : null
-  );
+  const user = userStore.currentUser;
 
   const trackAnalyticsEvent = (tab: string) => {
+    if (!workspaceSlug || !user) return;
+
     const eventPayload: any = {
-      workspaceSlug: workspaceSlug?.toString(),
+      workspaceSlug: workspaceSlug.toString(),
     };
 
     if (projectDetails) {
@@ -97,7 +75,7 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
     trackEventServices.trackAnalyticsEvent(
       eventPayload,
-      cycleId ? `CYCLE_${eventType}` : moduleId ? `MODULE_${eventType}` : `PROJECT_${eventType}`,
+      cycleDetails ? `CYCLE_${eventType}` : moduleDetails ? `MODULE_${eventType}` : `PROJECT_${eventType}`,
       user
     );
   };
@@ -130,31 +108,12 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
                   fullScreen ? "rounded-lg border" : "border-l"
                 }`}
               >
-                <div className="flex items-center justify-between gap-4 bg-custom-background-100 px-5 py-4 text-sm">
-                  <h3 className="break-words">
-                    Analytics for {cycleId ? cycleDetails?.name : moduleId ? moduleDetails?.name : projectDetails?.name}
-                  </h3>
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      className="grid place-items-center p-1 text-custom-text-200 hover:text-custom-text-100"
-                      onClick={() => setFullScreen((prevData) => !prevData)}
-                    >
-                      {fullScreen ? (
-                        <ArrowsPointingInIcon className="h-4 w-4" />
-                      ) : (
-                        <ArrowsPointingOutIcon className="h-3 w-3" />
-                      )}
-                    </button>
-                    <button
-                      type="button"
-                      className="grid place-items-center p-1 text-custom-text-200 hover:text-custom-text-100"
-                      onClick={handleClose}
-                    >
-                      <XMarkIcon className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
+                <ProjectAnalyticsModalHeader
+                  fullScreen={fullScreen}
+                  handleClose={handleClose}
+                  setFullScreen={setFullScreen}
+                  title={cycleDetails?.name ?? moduleDetails?.name ?? projectDetails?.name ?? ""}
+                />
                 <Tab.Group as={Fragment}>
                   <Tab.List as="div" className="space-x-2 border-b border-custom-border-200 p-5 pt-0">
                     {ANALYTICS_TABS.map((tab) => (
@@ -176,7 +135,13 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
                       <ScopeAndDemand fullScreen={fullScreen} />
                     </Tab.Panel>
                     <Tab.Panel as={Fragment}>
-                      <CustomAnalytics fullScreen={fullScreen} user={user} />
+                      <CustomAnalytics
+                        additionalParams={{
+                          cycle: cycleDetails?.id,
+                          module: moduleDetails?.id,
+                        }}
+                        fullScreen={fullScreen}
+                      />
                     </Tab.Panel>
                   </Tab.Panels>
                 </Tab.Group>
@@ -187,4 +152,4 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
       </Dialog>
     </Transition.Root>
   );
-};
+});

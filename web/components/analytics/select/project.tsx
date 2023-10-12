@@ -6,7 +6,7 @@ import { IProject } from "types";
 type Props = {
   value: string[] | undefined;
   onChange: (val: string[] | null) => void;
-  projects: IProject[];
+  projects: IProject[] | undefined;
 };
 
 export const SelectProject: React.FC<Props> = ({ value, onChange, projects }) => {
@@ -29,7 +29,7 @@ export const SelectProject: React.FC<Props> = ({ value, onChange, projects }) =>
       label={
         value && value.length > 0
           ? projects
-              .filter((p) => value.includes(p.id))
+              ?.filter((p) => value.includes(p.id))
               .map((p) => p.identifier)
               .join(", ")
           : "All projects"

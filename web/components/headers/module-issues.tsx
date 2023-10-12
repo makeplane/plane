@@ -6,7 +6,7 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
-import { AnalyticsProjectModal } from "components/analytics";
+import { ProjectAnalyticsModal } from "components/analytics";
 // ui
 import { Button } from "@plane/ui";
 // icons
@@ -22,7 +22,12 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
 
-  const { issueFilter: issueFilterStore, moduleFilter: moduleFilterStore, project: projectStore } = useMobxStore();
+  const {
+    issueFilter: issueFilterStore,
+    module: moduleStore,
+    moduleFilter: moduleFilterStore,
+    project: projectStore,
+  } = useMobxStore();
 
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
 
@@ -83,9 +88,15 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
     [issueFilterStore, projectId, workspaceSlug]
   );
 
+  const moduleDetails = moduleId ? moduleStore.getModuleById(moduleId.toString()) : undefined;
+
   return (
     <>
-      <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
+      <ProjectAnalyticsModal
+        isOpen={analyticsModal}
+        onClose={() => setAnalyticsModal(false)}
+        moduleDetails={moduleDetails ?? undefined}
+      />
       <div className="flex items-center gap-2">
         <LayoutSelection
           layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
