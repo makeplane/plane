@@ -2,6 +2,8 @@
 // import "./styles/tailwind.css";
 // import "./styles/editor.css";
 
+export * from "./ui/extensions/table-new/Table";
+
 // utils
 export * from "./lib/utils";
 export { startImageUpload } from "./ui/plugins/upload-image";

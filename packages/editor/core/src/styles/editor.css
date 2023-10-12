@@ -212,9 +212,9 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   }
 }
 
-.tableWrapper {
-  overflow-x: auto;
-}
+/* .tableWrapper { */
+/*   overflow-x: auto; */
+/* } */
 
 .resize-cursor {
   cursor: ew-resize;

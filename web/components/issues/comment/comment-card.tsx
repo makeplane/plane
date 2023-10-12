@@ -14,8 +14,8 @@ import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-te
 import { timeAgo } from "helpers/date-time.helper";
 // types
 import type { IIssueComment } from "types";
-import fileService from "services/file.service";
 // services
+import fileService from "services/file.service";
 
 type Props = {
   comment: IIssueComment;

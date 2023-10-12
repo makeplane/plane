@@ -13,7 +13,7 @@ export const EditorContainer = ({ editor, editorClassNames, children }: EditorCo
     onClick={() => {
       editor?.chain().focus().run();
     }}
-    className={`cursor-text ${editorClassNames}`}
+    className={`cursor-text editorContainer ${editorClassNames}`}
   >
     {children}
   </div>
