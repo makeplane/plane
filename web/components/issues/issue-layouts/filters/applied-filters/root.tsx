@@ -67,13 +67,15 @@ export const AppliedFiltersRoot: React.FC = observer(() => {
   if (Object.keys(appliedFilters).length === 0) return null;
 
   return (
-    <AppliedFiltersList
-      appliedFilters={appliedFilters}
-      handleClearAllFilters={handleClearAllFilters}
-      handleRemoveFilter={handleRemoveFilter}
-      labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? []}
-      members={projectStore.members?.[projectId?.toString() ?? ""]?.map((m) => m.member)}
-      states={projectStore.states?.[projectId?.toString() ?? ""]}
-    />
+    <div className="p-4">
+      <AppliedFiltersList
+        appliedFilters={appliedFilters}
+        handleClearAllFilters={handleClearAllFilters}
+        handleRemoveFilter={handleRemoveFilter}
+        labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? []}
+        members={projectStore.members?.[projectId?.toString() ?? ""]?.map((m) => m.member)}
+        states={projectStore.states?.[projectId?.toString() ?? ""]}
+      />
+    </div>
   );
 });

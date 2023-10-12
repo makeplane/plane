@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // icons
-import { ArrowLeftIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
+import { RectangleGroupIcon } from "@heroicons/react/24/outline";
 // services
 import modulesService from "services/modules.service";
 // hooks
@@ -14,9 +14,8 @@ import useUserAuth from "hooks/use-user-auth";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
-import { ExistingIssuesListModal, IssuesFilterView } from "components/core";
+import { ExistingIssuesListModal } from "components/core";
 import { ModuleDetailsSidebar } from "components/modules";
-import { AnalyticsProjectModal } from "components/analytics";
 // ui
 import { CustomMenu, EmptyState } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -34,7 +33,6 @@ import { ModuleIssuesHeader } from "components/headers";
 const SingleModule: React.FC = () => {
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
   const [moduleSidebar, setModuleSidebar] = useState(false);
-  const [analyticsModal, setAnalyticsModal] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
@@ -138,10 +136,9 @@ const SingleModule: React.FC = () => {
           />
         ) : (
           <>
-            <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
             <div
-              className={`relative overflow-y-auto h-full flex flex-col ${moduleSidebar ? "mr-[24rem]" : ""} ${
-                analyticsModal ? "mr-[50%]" : ""
+              className={`relative overflow-y-auto h-full flex flex-col ${
+                moduleSidebar ? "mr-[24rem]" : ""
               } duration-300`}
             >
               <ModuleAllLayouts />

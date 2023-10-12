@@ -8,13 +8,13 @@ import { AppliedFiltersList } from "components/issues";
 // types
 import { IIssueFilterOptions } from "types";
 
-export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
+export const CycleAppliedFiltersRoot: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query;
+  const { workspaceSlug, projectId, cycleId } = router.query;
 
-  const { project: projectStore, moduleFilter: moduleFilterStore } = useMobxStore();
+  const { project: projectStore, cycleIssueFilter: cycleIssueFilterStore } = useMobxStore();
 
-  const userFilters = moduleFilterStore.moduleFilters;
+  const userFilters = cycleIssueFilterStore.cycleFilters;
 
   // filters whose value not null or empty array
   const appliedFilters: IIssueFilterOptions = {};
@@ -27,34 +27,34 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
   });
 
   const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
-    if (!workspaceSlug || !projectId || !moduleId) return;
+    if (!workspaceSlug || !projectId || !cycleId) return;
 
     // remove all values of the key if value is null
     if (!value) {
-      moduleFilterStore.updateModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), {
+      cycleIssueFilterStore.updateCycleFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), {
         [key]: null,
       });
       return;
     }
 
     // remove the passed value from the key
-    let newValues = moduleFilterStore.moduleFilters?.[key] ?? [];
+    let newValues = cycleIssueFilterStore.cycleFilters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
 
-    moduleFilterStore.updateModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), {
+    cycleIssueFilterStore.updateCycleFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), {
       [key]: newValues,
     });
   };
 
   const handleClearAllFilters = () => {
-    if (!workspaceSlug || !projectId || !moduleId) return;
+    if (!workspaceSlug || !projectId || !cycleId) return;
 
     const newFilters: IIssueFilterOptions = {};
     Object.keys(userFilters).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
 
-    moduleFilterStore.updateModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId?.toString(), {
+    cycleIssueFilterStore.updateCycleFilters(workspaceSlug.toString(), projectId.toString(), cycleId?.toString(), {
       ...newFilters,
     });
   };
