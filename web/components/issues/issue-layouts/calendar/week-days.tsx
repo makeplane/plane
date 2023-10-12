@@ -11,12 +11,13 @@ import { ICalendarDate, ICalendarWeek } from "./types";
 import { IIssueGroupedStructure } from "store/issue";
 
 type Props = {
+  enableQuickIssueCreate?: boolean;
   issues: IIssueGroupedStructure | null;
   week: ICalendarWeek | undefined;
 };
 
 export const CalendarWeekDays: React.FC<Props> = observer((props) => {
-  const { issues, week } = props;
+  const { issues, week, enableQuickIssueCreate } = props;
 
   const { issueFilter: issueFilterStore } = useMobxStore();
 
@@ -34,7 +35,14 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
       {Object.values(week).map((date: ICalendarDate) => {
         if (!showWeekends && (date.date.getDay() === 0 || date.date.getDay() === 6)) return null;
 
-        return <CalendarDayTile key={renderDateFormat(date.date)} date={date} issues={issues} />;
+        return (
+          <CalendarDayTile
+            key={renderDateFormat(date.date)}
+            date={date}
+            issues={issues}
+            enableQuickIssueCreate={enableQuickIssueCreate}
+          />
+        );
       })}
     </div>
   );

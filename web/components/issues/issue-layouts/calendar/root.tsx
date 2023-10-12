@@ -30,6 +30,7 @@ export const CalendarLayout: React.FC = observer(() => {
     <div className="h-full w-full pt-4 bg-custom-background-100 overflow-hidden">
       <DragDropContext onDragEnd={onDragEnd}>
         <CalendarChart
+          enableQuickIssueCreate
           issues={issues as IIssueGroupedStructure | null}
           layout={issueFilterStore.userDisplayFilters.calendar?.layout}
         />

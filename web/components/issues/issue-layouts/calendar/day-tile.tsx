@@ -13,10 +13,10 @@ import { IIssueGroupedStructure } from "store/issue";
 // constants
 import { MONTHS_LIST } from "constants/calendar";
 
-type Props = { date: ICalendarDate; issues: IIssueGroupedStructure | null };
+type Props = { date: ICalendarDate; issues: IIssueGroupedStructure | null; enableQuickIssueCreate?: boolean };
 
 export const CalendarDayTile: React.FC<Props> = observer((props) => {
-  const { date, issues } = props;
+  const { date, issues, enableQuickIssueCreate } = props;
 
   const { issueFilter: issueFilterStore } = useMobxStore();
 
@@ -29,7 +29,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
       <Droppable droppableId={renderDateFormat(date.date)}>
         {(provided, snapshot) => (
           <div
-            className={`flex-grow p-2 space-y-1 w-full flex flex-col overflow-hidden ${
+            className={`flex-grow p-2 space-y-1 w-full flex flex-col overflow-hidden group ${
               snapshot.isDraggingOver || date.date.getDay() === 0 || date.date.getDay() === 6
                 ? "bg-custom-background-90"
                 : "bg-custom-background-100"
@@ -37,11 +37,6 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
             {...provided.droppableProps}
             ref={provided.innerRef}
           >
-            <CalendarInlineCreateIssueForm
-              prePopulatedData={{
-                target_date: new Date(date.date).toISOString().split("T")[0],
-              }}
-            />
             <>
               <div
                 className={`text-xs text-right ${
@@ -55,6 +50,14 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                 {date.date.getDate() === 1 && MONTHS_LIST[date.date.getMonth() + 1].shortTitle + " "}
                 {date.date.getDate()}
               </div>
+              {enableQuickIssueCreate && (
+                <CalendarInlineCreateIssueForm
+                  groupId={renderDateFormat(date.date)}
+                  prePopulatedData={{
+                    target_date: renderDateFormat(date.date),
+                  }}
+                />
+              )}
               <CalendarIssueBlocks issues={issuesList} />
               {provided.placeholder}
             </>

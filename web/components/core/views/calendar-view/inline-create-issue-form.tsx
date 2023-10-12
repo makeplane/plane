@@ -13,6 +13,9 @@ import useKeypress from "hooks/use-keypress";
 import useProjectDetails from "hooks/use-project-details";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 
+// icons
+import { PlusIcon } from "lucide-react";
+
 // types
 import { IIssue } from "types";
 
@@ -20,6 +23,7 @@ type Props = {
   onSuccess?: (data: IIssue) => Promise<void> | void;
   prePopulatedData?: Partial<IIssue>;
   dependencies?: any[];
+  groupId?: string;
 };
 
 const useCheckIfThereIsSpaceOnRight = (ref: React.RefObject<HTMLDivElement>, deps: any[]) => {
@@ -51,9 +55,7 @@ const defaultValues: Partial<IIssue> = {
 };
 
 export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) => {
-  const { prePopulatedData, dependencies = [] } = props;
-
-  console.log(prePopulatedData);
+  const { prePopulatedData, dependencies = [], groupId } = props;
 
   // router
   const router = useRouter();
@@ -121,7 +123,7 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
 
     try {
       const response = await issueDetailStore.createIssue(workspaceSlug.toString(), projectId.toString(), formData);
-      issueStore.updateIssueStructure(null, null, response);
+      issueStore.updateIssueStructure(groupId ?? null, null, response);
 
       setToastAlert({
         type: "success",
@@ -155,9 +157,9 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
       >
         <div
           ref={ref}
-          className={`absolute top-10 transition-all z-20 w-full max-w-[calc(100%-1.25rem)] ${
+          className={`transition-all z-20 w-full ${
             isOpen ? "opacity-100 scale-100" : "opacity-0 pointer-events-none scale-95"
-          } right-2.5`}
+          }`}
         >
           <form
             onSubmit={handleSubmit(onSubmitHandler)}
@@ -178,13 +180,16 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
           </form>
         </div>
       </Transition>
-      {/* Added to make any other element as outside click. This will make input also to be outside. */}
-      {/* {isOpen && <div className="w-screen h-screen bg-gray-50 fixed inset-0 z-10" />} */}
 
       {!isOpen && (
-        <div>
-          <button type="button" onClick={() => setIsOpen(true)}>
-            Add Issue
+        <div className="scale-y-0 origin-top group-hover:scale-y-100 transition-all duration-200">
+          <button
+            type="button"
+            className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-1 rounded-md"
+            onClick={() => setIsOpen(true)}
+          >
+            <PlusIcon className="h-4 w-4" />
+            <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
           </button>
         </div>
       )}
