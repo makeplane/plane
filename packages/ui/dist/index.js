@@ -5,9 +5,6 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __esm = (fn, res) => function __init() {
-  return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
-};
 var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
@@ -26,33 +23,49 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// ../../node_modules/tsup/assets/cjs_shims.js
-var init_cjs_shims = __esm({
-  "../../node_modules/tsup/assets/cjs_shims.js"() {
-  }
-});
-
 // src/index.tsx
 var src_exports = {};
 __export(src_exports, {
+  AdminProfileIcon: () => AdminProfileIcon,
+  ArchiveIcon: () => ArchiveIcon,
   Button: () => Button,
+  ContrastIcon: () => ContrastIcon,
+  CreateIcon: () => CreateIcon,
+  DiceIcon: () => DiceIcon,
   Input: () => Input,
+  LayersIcon: () => LayersIcon,
+  LinearProgressIndicator: () => LinearProgressIndicator,
   Loader: () => Loader,
+  PhotoFilterIcon: () => PhotoFilterIcon,
   ProgressBar: () => ProgressBar,
   RadialProgressBar: () => RadialProgressBar,
   Spinner: () => Spinner,
+  SubscribeIcon: () => SubscribeIcon,
   TextArea: () => TextArea,
-  ToggleSwitch: () => ToggleSwitch
+  ToggleSwitch: () => ToggleSwitch,
+  Tooltip: () => Tooltip,
+  UserGroupIcon: () => UserGroupIcon
 });
 module.exports = __toCommonJS(src_exports);
-init_cjs_shims();
 
 // src/button/button.tsx
-init_cjs_shims();
 var React = __toESM(require("react"));
 
 // src/button/helper.tsx
-init_cjs_shims();
+var buttonSizeStyling = /* @__PURE__ */ ((buttonSizeStyling2) => {
+  buttonSizeStyling2["sm"] = `px-3 py-1.5 font-medium text-xs rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`;
+  buttonSizeStyling2["md"] = `px-4 py-1.5 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`;
+  buttonSizeStyling2["lg"] = `px-5 py-2 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`;
+  buttonSizeStyling2["xl"] = `px-5 py-3.5 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`;
+  return buttonSizeStyling2;
+})(buttonSizeStyling || {});
+var buttonIconStyling = /* @__PURE__ */ ((buttonIconStyling2) => {
+  buttonIconStyling2["sm"] = "h-3 w-3 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0";
+  buttonIconStyling2["md"] = "h-3.5 w-3.5 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0";
+  buttonIconStyling2["lg"] = "h-4 w-4 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0";
+  buttonIconStyling2["xl"] = "h-4 w-4 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0";
+  return buttonIconStyling2;
+})(buttonIconStyling || {});
 var buttonStyling = {
   primary: {
     default: `text-white bg-custom-primary-100`,
@@ -120,22 +133,14 @@ var getButtonStyling = (variant, size, disabled = false) => {
   const currentVariant = buttonStyling[variant];
   _variant = `${currentVariant.default} ${disabled ? currentVariant.disabled : currentVariant.hover} ${currentVariant.pressed}`;
   let _size = ``;
-  if (size === "sm")
-    _size = "px-3 py-1.5 font-medium text-xs rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline" /* sm */;
-  if (size === "md")
-    _size = "px-4 py-1.5 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline" /* md */;
-  if (size === "lg")
-    _size = "px-5 py-2 font-medium text-base rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline" /* lg */;
+  if (size)
+    _size = buttonSizeStyling[size];
   return `${_variant} ${_size}`;
 };
 var getIconStyling = (size) => {
   let icon = ``;
-  if (size === "sm")
-    icon = "h-3 w-3 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0" /* sm */;
-  if (size === "md")
-    icon = "h-3.5 w-3.5 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0" /* md */;
-  if (size === "lg")
-    icon = "h-4 w-4 flex justify-center items-center overflow-hidden my-0.5 flex-shrink-0" /* lg */;
+  if (size)
+    icon = buttonIconStyling[size];
   return icon;
 };
 
@@ -172,471 +177,11 @@ var Button = React.forwardRef(
 Button.displayName = "plane-ui-button";
 
 // src/button/toggle-switch.tsx
-init_cjs_shims();
 var React2 = __toESM(require("react"));
-
-// ../../node_modules/@headlessui/react/dist/hooks/use-iso-morphic-effect.js
-init_cjs_shims();
-var import_react = require("react");
-
-// ../../node_modules/@headlessui/react/dist/utils/env.js
-init_cjs_shims();
-var i = Object.defineProperty;
-var d = (t7, e, n) => e in t7 ? i(t7, e, { enumerable: true, configurable: true, writable: true, value: n }) : t7[e] = n;
-var r = (t7, e, n) => (d(t7, typeof e != "symbol" ? e + "" : e, n), n);
-var o = class {
-  constructor() {
-    r(this, "current", this.detect());
-    r(this, "handoffState", "pending");
-    r(this, "currentId", 0);
-  }
-  set(e) {
-    this.current !== e && (this.handoffState = "pending", this.currentId = 0, this.current = e);
-  }
-  reset() {
-    this.set(this.detect());
-  }
-  nextId() {
-    return ++this.currentId;
-  }
-  get isServer() {
-    return this.current === "server";
-  }
-  get isClient() {
-    return this.current === "client";
-  }
-  detect() {
-    return typeof window == "undefined" || typeof document == "undefined" ? "server" : "client";
-  }
-  handoff() {
-    this.handoffState === "pending" && (this.handoffState = "complete");
-  }
-  get isHandoffComplete() {
-    return this.handoffState === "complete";
-  }
-};
-var s = new o();
-
-// ../../node_modules/@headlessui/react/dist/hooks/use-iso-morphic-effect.js
-var l = (e, f4) => {
-  s.isServer ? (0, import_react.useEffect)(e, f4) : (0, import_react.useLayoutEffect)(e, f4);
-};
-
-// ../../node_modules/@headlessui/react/dist/hooks/use-latest-value.js
-init_cjs_shims();
-var import_react2 = require("react");
-function s2(e) {
-  let r3 = (0, import_react2.useRef)(e);
-  return l(() => {
-    r3.current = e;
-  }, [e]), r3;
-}
-
-// ../../node_modules/@headlessui/react/dist/hooks/use-disposables.js
-init_cjs_shims();
-var import_react3 = require("react");
-
-// ../../node_modules/@headlessui/react/dist/utils/disposables.js
-init_cjs_shims();
-
-// ../../node_modules/@headlessui/react/dist/utils/micro-task.js
-init_cjs_shims();
-function t3(e) {
-  typeof queueMicrotask == "function" ? queueMicrotask(e) : Promise.resolve().then(e).catch((o9) => setTimeout(() => {
-    throw o9;
-  }));
-}
-
-// ../../node_modules/@headlessui/react/dist/utils/disposables.js
-function o2() {
-  let n = [], r3 = { addEventListener(e, t7, s7, a3) {
-    return e.addEventListener(t7, s7, a3), r3.add(() => e.removeEventListener(t7, s7, a3));
-  }, requestAnimationFrame(...e) {
-    let t7 = requestAnimationFrame(...e);
-    return r3.add(() => cancelAnimationFrame(t7));
-  }, nextFrame(...e) {
-    return r3.requestAnimationFrame(() => r3.requestAnimationFrame(...e));
-  }, setTimeout(...e) {
-    let t7 = setTimeout(...e);
-    return r3.add(() => clearTimeout(t7));
-  }, microTask(...e) {
-    let t7 = { current: true };
-    return t3(() => {
-      t7.current && e[0]();
-    }), r3.add(() => {
-      t7.current = false;
-    });
-  }, style(e, t7, s7) {
-    let a3 = e.style.getPropertyValue(t7);
-    return Object.assign(e.style, { [t7]: s7 }), this.add(() => {
-      Object.assign(e.style, { [t7]: a3 });
-    });
-  }, group(e) {
-    let t7 = o2();
-    return e(t7), this.add(() => t7.dispose());
-  }, add(e) {
-    return n.push(e), () => {
-      let t7 = n.indexOf(e);
-      if (t7 >= 0)
-        for (let s7 of n.splice(t7, 1))
-          s7();
-    };
-  }, dispose() {
-    for (let e of n.splice(0))
-      e();
-  } };
-  return r3;
-}
-
-// ../../node_modules/@headlessui/react/dist/hooks/use-disposables.js
-function p() {
-  let [e] = (0, import_react3.useState)(o2);
-  return (0, import_react3.useEffect)(() => () => e.dispose(), [e]), e;
-}
-
-// ../../node_modules/@headlessui/react/dist/hooks/use-event.js
-init_cjs_shims();
-var import_react4 = __toESM(require("react"), 1);
-var o4 = function(t7) {
-  let e = s2(t7);
-  return import_react4.default.useCallback((...r3) => e.current(...r3), [e]);
-};
-
-// ../../node_modules/@headlessui/react/dist/hooks/use-id.js
-init_cjs_shims();
-var import_react5 = __toESM(require("react"), 1);
-
-// ../../node_modules/@headlessui/react/dist/hooks/use-server-handoff-complete.js
-init_cjs_shims();
-var t4 = __toESM(require("react"), 1);
-function s4() {
-  let r3 = typeof document == "undefined";
-  return "useSyncExternalStore" in t4 ? ((o9) => o9.useSyncExternalStore)(t4)(() => () => {
-  }, () => false, () => !r3) : false;
-}
-function l2() {
-  let r3 = s4(), [e, n] = t4.useState(s.isHandoffComplete);
-  return e && s.isHandoffComplete === false && n(false), t4.useEffect(() => {
-    e !== true && n(true);
-  }, [e]), t4.useEffect(() => s.handoff(), []), r3 ? false : e;
-}
-
-// ../../node_modules/@headlessui/react/dist/hooks/use-id.js
-var o5;
-var I = (o5 = import_react5.default.useId) != null ? o5 : function() {
-  let n = l2(), [e, u5] = import_react5.default.useState(n ? () => s.nextId() : null);
-  return l(() => {
-    e === null && u5(s.nextId());
-  }, [e]), e != null ? "" + e : void 0;
-};
-
-// ../../node_modules/@headlessui/react/dist/utils/match.js
-init_cjs_shims();
-function u(r3, n, ...a3) {
-  if (r3 in n) {
-    let e = n[r3];
-    return typeof e == "function" ? e(...a3) : e;
-  }
-  let t7 = new Error(`Tried to handle "${r3}" but there is no handler defined. Only defined handlers are: ${Object.keys(n).map((e) => `"${e}"`).join(", ")}.`);
-  throw Error.captureStackTrace && Error.captureStackTrace(t7, u), t7;
-}
-
-// ../../node_modules/@headlessui/react/dist/hooks/use-resolve-button-type.js
-init_cjs_shims();
-var import_react6 = require("react");
-function i2(t7) {
-  var n;
-  if (t7.type)
-    return t7.type;
-  let e = (n = t7.as) != null ? n : "button";
-  if (typeof e == "string" && e.toLowerCase() === "button")
-    return "button";
-}
-function s5(t7, e) {
-  let [n, u5] = (0, import_react6.useState)(() => i2(t7));
-  return l(() => {
-    u5(i2(t7));
-  }, [t7.type, t7.as]), l(() => {
-    n || e.current && e.current instanceof HTMLButtonElement && !e.current.hasAttribute("type") && u5("button");
-  }, [n, e]), n;
-}
-
-// ../../node_modules/@headlessui/react/dist/hooks/use-sync-refs.js
-init_cjs_shims();
-var import_react7 = require("react");
-var u2 = Symbol();
-function y(...t7) {
-  let n = (0, import_react7.useRef)(t7);
-  (0, import_react7.useEffect)(() => {
-    n.current = t7;
-  }, [t7]);
-  let c5 = o4((e) => {
-    for (let o9 of n.current)
-      o9 != null && (typeof o9 == "function" ? o9(e) : o9.current = e);
-  });
-  return t7.every((e) => e == null || (e == null ? void 0 : e[u2])) ? void 0 : c5;
-}
-
-// ../../node_modules/@headlessui/react/dist/utils/render.js
-init_cjs_shims();
-var import_react8 = require("react");
-
-// ../../node_modules/@headlessui/react/dist/utils/class-names.js
-init_cjs_shims();
-function t6(...r3) {
-  return Array.from(new Set(r3.flatMap((n) => typeof n == "string" ? n.split(" ") : []))).filter(Boolean).join(" ");
-}
-
-// ../../node_modules/@headlessui/react/dist/utils/render.js
-var S = ((a3) => (a3[a3.None = 0] = "None", a3[a3.RenderStrategy = 1] = "RenderStrategy", a3[a3.Static = 2] = "Static", a3))(S || {});
-var j = ((e) => (e[e.Unmount = 0] = "Unmount", e[e.Hidden = 1] = "Hidden", e))(j || {});
-function X({ ourProps: r3, theirProps: t7, slot: e, defaultTag: a3, features: s7, visible: n = true, name: f4 }) {
-  let o9 = N(t7, r3);
-  if (n)
-    return c2(o9, e, a3, f4);
-  let u5 = s7 != null ? s7 : 0;
-  if (u5 & 2) {
-    let { static: l5 = false, ...p4 } = o9;
-    if (l5)
-      return c2(p4, e, a3, f4);
-  }
-  if (u5 & 1) {
-    let { unmount: l5 = true, ...p4 } = o9;
-    return u(l5 ? 0 : 1, { [0]() {
-      return null;
-    }, [1]() {
-      return c2({ ...p4, hidden: true, style: { display: "none" } }, e, a3, f4);
-    } });
-  }
-  return c2(o9, e, a3, f4);
-}
-function c2(r3, t7 = {}, e, a3) {
-  let { as: s7 = e, children: n, refName: f4 = "ref", ...o9 } = g(r3, ["unmount", "static"]), u5 = r3.ref !== void 0 ? { [f4]: r3.ref } : {}, l5 = typeof n == "function" ? n(t7) : n;
-  "className" in o9 && o9.className && typeof o9.className == "function" && (o9.className = o9.className(t7));
-  let p4 = {};
-  if (t7) {
-    let i6 = false, m3 = [];
-    for (let [y4, d4] of Object.entries(t7))
-      typeof d4 == "boolean" && (i6 = true), d4 === true && m3.push(y4);
-    i6 && (p4["data-headlessui-state"] = m3.join(" "));
-  }
-  if (s7 === import_react8.Fragment && Object.keys(R(o9)).length > 0) {
-    if (!(0, import_react8.isValidElement)(l5) || Array.isArray(l5) && l5.length > 1)
-      throw new Error(['Passing props on "Fragment"!', "", `The current component <${a3} /> is rendering a "Fragment".`, "However we need to passthrough the following props:", Object.keys(o9).map((d4) => `  - ${d4}`).join(`
-`), "", "You can apply a few solutions:", ['Add an `as="..."` prop, to ensure that we render an actual element instead of a "Fragment".', "Render a single element as the child so that we can forward the props onto that element."].map((d4) => `  - ${d4}`).join(`
-`)].join(`
-`));
-    let i6 = l5.props, m3 = typeof (i6 == null ? void 0 : i6.className) == "function" ? (...d4) => t6(i6 == null ? void 0 : i6.className(...d4), o9.className) : t6(i6 == null ? void 0 : i6.className, o9.className), y4 = m3 ? { className: m3 } : {};
-    return (0, import_react8.cloneElement)(l5, Object.assign({}, N(l5.props, R(g(o9, ["ref"]))), p4, u5, w(l5.ref, u5.ref), y4));
-  }
-  return (0, import_react8.createElement)(s7, Object.assign({}, g(o9, ["ref"]), s7 !== import_react8.Fragment && u5, s7 !== import_react8.Fragment && p4), l5);
-}
-function w(...r3) {
-  return { ref: r3.every((t7) => t7 == null) ? void 0 : (t7) => {
-    for (let e of r3)
-      e != null && (typeof e == "function" ? e(t7) : e.current = t7);
-  } };
-}
-function N(...r3) {
-  var a3;
-  if (r3.length === 0)
-    return {};
-  if (r3.length === 1)
-    return r3[0];
-  let t7 = {}, e = {};
-  for (let s7 of r3)
-    for (let n in s7)
-      n.startsWith("on") && typeof s7[n] == "function" ? ((a3 = e[n]) != null || (e[n] = []), e[n].push(s7[n])) : t7[n] = s7[n];
-  if (t7.disabled || t7["aria-disabled"])
-    return Object.assign(t7, Object.fromEntries(Object.keys(e).map((s7) => [s7, void 0])));
-  for (let s7 in e)
-    Object.assign(t7, { [s7](n, ...f4) {
-      let o9 = e[s7];
-      for (let u5 of o9) {
-        if ((n instanceof Event || (n == null ? void 0 : n.nativeEvent) instanceof Event) && n.defaultPrevented)
-          return;
-        u5(n, ...f4);
-      }
-    } });
-  return t7;
-}
-function D(r3) {
-  var t7;
-  return Object.assign((0, import_react8.forwardRef)(r3), { displayName: (t7 = r3.displayName) != null ? t7 : r3.name });
-}
-function R(r3) {
-  let t7 = Object.assign({}, r3);
-  for (let e in t7)
-    t7[e] === void 0 && delete t7[e];
-  return t7;
-}
-function g(r3, t7 = []) {
-  let e = Object.assign({}, r3);
-  for (let a3 of t7)
-    a3 in e && delete e[a3];
-  return e;
-}
-
-// ../../node_modules/@headlessui/react/dist/utils/bugs.js
-init_cjs_shims();
-function r2(n) {
-  let e = n.parentElement, l5 = null;
-  for (; e && !(e instanceof HTMLFieldSetElement); )
-    e instanceof HTMLLegendElement && (l5 = e), e = e.parentElement;
-  let t7 = (e == null ? void 0 : e.getAttribute("disabled")) === "";
-  return t7 && i4(l5) ? false : t7;
-}
-function i4(n) {
-  if (!n)
-    return false;
-  let e = n.previousElementSibling;
-  for (; e !== null; ) {
-    if (e instanceof HTMLLegendElement)
-      return false;
-    e = e.previousElementSibling;
-  }
-  return true;
-}
-
-// ../../node_modules/@headlessui/react/dist/utils/form.js
-init_cjs_shims();
-function p2(i6) {
-  var t7, r3;
-  let s7 = (t7 = i6 == null ? void 0 : i6.form) != null ? t7 : i6.closest("form");
-  if (s7) {
-    for (let n of s7.elements)
-      if (n !== i6 && (n.tagName === "INPUT" && n.type === "submit" || n.tagName === "BUTTON" && n.type === "submit" || n.nodeName === "INPUT" && n.type === "image")) {
-        n.click();
-        return;
-      }
-    (r3 = s7.requestSubmit) == null || r3.call(s7);
-  }
-}
-
-// ../../node_modules/@headlessui/react/dist/internal/hidden.js
-init_cjs_shims();
-var a2 = "div";
-var p3 = ((e) => (e[e.None = 1] = "None", e[e.Focusable = 2] = "Focusable", e[e.Hidden = 4] = "Hidden", e))(p3 || {});
-function s6(t7, o9) {
-  let { features: n = 1, ...e } = t7, d4 = { ref: o9, "aria-hidden": (n & 2) === 2 ? true : void 0, style: { position: "fixed", top: 1, left: 1, width: 1, height: 0, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: "0", ...(n & 4) === 4 && (n & 2) !== 2 && { display: "none" } } };
-  return X({ ourProps: d4, theirProps: e, slot: {}, defaultTag: a2, name: "Hidden" });
-}
-var c3 = D(s6);
-
-// ../../node_modules/@headlessui/react/dist/components/keyboard.js
-init_cjs_shims();
-var o7 = ((r3) => (r3.Space = " ", r3.Enter = "Enter", r3.Escape = "Escape", r3.Backspace = "Backspace", r3.Delete = "Delete", r3.ArrowLeft = "ArrowLeft", r3.ArrowUp = "ArrowUp", r3.ArrowRight = "ArrowRight", r3.ArrowDown = "ArrowDown", r3.Home = "Home", r3.End = "End", r3.PageUp = "PageUp", r3.PageDown = "PageDown", r3.Tab = "Tab", r3))(o7 || {});
-
-// ../../node_modules/@headlessui/react/dist/hooks/use-controllable.js
-init_cjs_shims();
-var import_react9 = require("react");
-function T2(l5, r3, c5) {
-  let [i6, s7] = (0, import_react9.useState)(c5), e = l5 !== void 0, t7 = (0, import_react9.useRef)(e), u5 = (0, import_react9.useRef)(false), d4 = (0, import_react9.useRef)(false);
-  return e && !t7.current && !u5.current ? (u5.current = true, t7.current = e, console.error("A component is changing from uncontrolled to controlled. This may be caused by the value changing from undefined to a defined value, which should not happen.")) : !e && t7.current && !d4.current && (d4.current = true, t7.current = e, console.error("A component is changing from controlled to uncontrolled. This may be caused by the value changing from a defined value to undefined, which should not happen.")), [e ? l5 : i6, o4((n) => (e || s7(n), r3 == null ? void 0 : r3(n)))];
-}
-
-// ../../node_modules/@headlessui/react/dist/components/description/description.js
-init_cjs_shims();
-var import_react10 = __toESM(require("react"), 1);
-var d2 = (0, import_react10.createContext)(null);
-function f2() {
-  let r3 = (0, import_react10.useContext)(d2);
-  if (r3 === null) {
-    let t7 = new Error("You used a <Description /> component, but it is not inside a relevant parent.");
-    throw Error.captureStackTrace && Error.captureStackTrace(t7, f2), t7;
-  }
-  return r3;
-}
-function M() {
-  let [r3, t7] = (0, import_react10.useState)([]);
-  return [r3.length > 0 ? r3.join(" ") : void 0, (0, import_react10.useMemo)(() => function(e) {
-    let i6 = o4((s7) => (t7((o9) => [...o9, s7]), () => t7((o9) => {
-      let p4 = o9.slice(), c5 = p4.indexOf(s7);
-      return c5 !== -1 && p4.splice(c5, 1), p4;
-    }))), n = (0, import_react10.useMemo)(() => ({ register: i6, slot: e.slot, name: e.name, props: e.props }), [i6, e.slot, e.name, e.props]);
-    return import_react10.default.createElement(d2.Provider, { value: n }, e.children);
-  }, [t7])];
-}
-var S2 = "p";
-function h2(r3, t7) {
-  let a3 = I(), { id: e = `headlessui-description-${a3}`, ...i6 } = r3, n = f2(), s7 = y(t7);
-  l(() => n.register(e), [e, n.register]);
-  let o9 = { ref: s7, ...n.props, id: e };
-  return X({ ourProps: o9, theirProps: i6, slot: n.slot || {}, defaultTag: S2, name: n.name || "Description" });
-}
-var y2 = D(h2);
-var b2 = Object.assign(y2, {});
-
-// ../../node_modules/@headlessui/react/dist/components/label/label.js
-init_cjs_shims();
-var import_react11 = __toESM(require("react"), 1);
-var d3 = (0, import_react11.createContext)(null);
-function u4() {
-  let o9 = (0, import_react11.useContext)(d3);
-  if (o9 === null) {
-    let t7 = new Error("You used a <Label /> component, but it is not inside a relevant parent.");
-    throw Error.captureStackTrace && Error.captureStackTrace(t7, u4), t7;
-  }
-  return o9;
-}
-function H() {
-  let [o9, t7] = (0, import_react11.useState)([]);
-  return [o9.length > 0 ? o9.join(" ") : void 0, (0, import_react11.useMemo)(() => function(e) {
-    let s7 = o4((r3) => (t7((l5) => [...l5, r3]), () => t7((l5) => {
-      let n = l5.slice(), p4 = n.indexOf(r3);
-      return p4 !== -1 && n.splice(p4, 1), n;
-    }))), a3 = (0, import_react11.useMemo)(() => ({ register: s7, slot: e.slot, name: e.name, props: e.props }), [s7, e.slot, e.name, e.props]);
-    return import_react11.default.createElement(d3.Provider, { value: a3 }, e.children);
-  }, [t7])];
-}
-var A = "label";
-function h3(o9, t7) {
-  let i6 = I(), { id: e = `headlessui-label-${i6}`, passive: s7 = false, ...a3 } = o9, r3 = u4(), l5 = y(t7);
-  l(() => r3.register(e), [e, r3.register]);
-  let n = { ref: l5, ...r3.props, id: e };
-  return s7 && ("onClick" in n && (delete n.htmlFor, delete n.onClick), "onClick" in a3 && delete a3.onClick), X({ ourProps: n, theirProps: a3, slot: r3.slot || {}, defaultTag: A, name: r3.name || "Label" });
-}
-var v = D(h3);
-var M2 = Object.assign(v, {});
-
-// ../../node_modules/@headlessui/react/dist/components/switch/switch.js
-init_cjs_shims();
-var import_react12 = __toESM(require("react"), 1);
-var y3 = (0, import_react12.createContext)(null);
-y3.displayName = "GroupContext";
-var Y = import_react12.Fragment;
-function Z(s7) {
-  var d4;
-  let [n, p4] = (0, import_react12.useState)(null), [c5, f4] = H(), [r3, h4] = M(), l5 = (0, import_react12.useMemo)(() => ({ switch: n, setSwitch: p4, labelledby: c5, describedby: r3 }), [n, p4, c5, r3]), T4 = {}, b4 = s7;
-  return import_react12.default.createElement(h4, { name: "Switch.Description" }, import_react12.default.createElement(f4, { name: "Switch.Label", props: { htmlFor: (d4 = l5.switch) == null ? void 0 : d4.id, onClick(t7) {
-    n && (t7.currentTarget.tagName === "LABEL" && t7.preventDefault(), n.click(), n.focus({ preventScroll: true }));
-  } } }, import_react12.default.createElement(y3.Provider, { value: l5 }, X({ ourProps: T4, theirProps: b4, defaultTag: Y, name: "Switch.Group" }))));
-}
-var ee = "button";
-function te(s7, n) {
-  let p4 = I(), { id: c5 = `headlessui-switch-${p4}`, checked: f4, defaultChecked: r3 = false, onChange: h4, name: l5, value: T4, form: b4, ...d4 } = s7, t7 = (0, import_react12.useContext)(y3), u5 = (0, import_react12.useRef)(null), D3 = y(u5, n, t7 === null ? null : t7.setSwitch), [o9, a3] = T2(f4, h4, r3), S3 = o4(() => a3 == null ? void 0 : a3(!o9)), C = o4((e) => {
-    if (r2(e.currentTarget))
-      return e.preventDefault();
-    e.preventDefault(), S3();
-  }), L2 = o4((e) => {
-    e.key === o7.Space ? (e.preventDefault(), S3()) : e.key === o7.Enter && p2(e.currentTarget);
-  }), v2 = o4((e) => e.preventDefault()), G = (0, import_react12.useMemo)(() => ({ checked: o9 }), [o9]), R2 = { id: c5, ref: D3, role: "switch", type: s5(s7, u5), tabIndex: 0, "aria-checked": o9, "aria-labelledby": t7 == null ? void 0 : t7.labelledby, "aria-describedby": t7 == null ? void 0 : t7.describedby, onClick: C, onKeyUp: L2, onKeyPress: v2 }, k = p();
-  return (0, import_react12.useEffect)(() => {
-    var w2;
-    let e = (w2 = u5.current) == null ? void 0 : w2.closest("form");
-    e && r3 !== void 0 && k.addEventListener(e, "reset", () => {
-      a3(r3);
-    });
-  }, [u5, a3]), import_react12.default.createElement(import_react12.default.Fragment, null, l5 != null && o9 && import_react12.default.createElement(c3, { features: p3.Hidden, ...R({ as: "input", type: "checkbox", hidden: true, readOnly: true, form: b4, checked: o9, name: l5, value: T4 }) }), X({ ourProps: R2, theirProps: d4, slot: G, defaultTag: ee, name: "Switch" }));
-}
-var ne = D(te);
-var re = Z;
-var Ge = Object.assign(ne, { Group: re, Label: M2, Description: b2 });
-
-// src/button/toggle-switch.tsx
+var import_react = require("@headlessui/react");
 var ToggleSwitch = (props) => {
   const { value, onChange, label, size = "sm", disabled, className } = props;
-  return /* @__PURE__ */ React2.createElement(Ge, {
+  return /* @__PURE__ */ React2.createElement(import_react.Switch, {
     checked: value,
     disabled,
     onChange,
@@ -651,7 +196,6 @@ var ToggleSwitch = (props) => {
 ToggleSwitch.displayName = "plane-ui-toggle-switch";
 
 // src/form-fields/input.tsx
-init_cjs_shims();
 var React3 = __toESM(require("react"));
 var Input = React3.forwardRef((props, ref) => {
   const {
@@ -676,7 +220,6 @@ var Input = React3.forwardRef((props, ref) => {
 Input.displayName = "form-input-field";
 
 // src/form-fields/textarea.tsx
-init_cjs_shims();
 var React4 = __toESM(require("react"));
 var useAutoSizeTextArea = (textAreaRef, value) => {
   React4.useEffect(() => {
@@ -716,23 +259,22 @@ var TextArea = React4.forwardRef(
 );
 
 // src/progress/radial-progress.tsx
-init_cjs_shims();
-var import_react14 = __toESM(require("react"));
+var import_react2 = __toESM(require("react"));
 var RadialProgressBar = (props) => {
   const { progress } = props;
-  const [circumference, setCircumference] = (0, import_react14.useState)(0);
-  (0, import_react14.useEffect)(() => {
+  const [circumference, setCircumference] = (0, import_react2.useState)(0);
+  (0, import_react2.useEffect)(() => {
     const radius = 40;
     const circumference2 = 2 * Math.PI * radius;
     setCircumference(circumference2);
   }, []);
   const progressOffset = (100 - progress) / 100 * circumference;
-  return /* @__PURE__ */ import_react14.default.createElement("div", {
+  return /* @__PURE__ */ import_react2.default.createElement("div", {
     className: "relative h-4 w-4"
-  }, /* @__PURE__ */ import_react14.default.createElement("svg", {
+  }, /* @__PURE__ */ import_react2.default.createElement("svg", {
     className: "absolute top-0 left-0",
     viewBox: "0 0 100 100"
-  }, /* @__PURE__ */ import_react14.default.createElement("circle", {
+  }, /* @__PURE__ */ import_react2.default.createElement("circle", {
     className: "stroke-current opacity-10",
     cx: "50",
     cy: "50",
@@ -740,7 +282,7 @@ var RadialProgressBar = (props) => {
     strokeWidth: "12",
     fill: "none",
     strokeDasharray: `${circumference} ${circumference}`
-  }), /* @__PURE__ */ import_react14.default.createElement("circle", {
+  }), /* @__PURE__ */ import_react2.default.createElement("circle", {
     className: `stroke-current`,
     cx: "50",
     cy: "50",
@@ -754,8 +296,7 @@ var RadialProgressBar = (props) => {
 };
 
 // src/progress/progress-bar.tsx
-init_cjs_shims();
-var import_react15 = __toESM(require("react"));
+var import_react3 = __toESM(require("react"));
 var ProgressBar = ({
   maxValue = 0,
   value = 0,
@@ -765,38 +306,38 @@ var ProgressBar = ({
   inactiveStrokeColor = "#ddd"
 }) => {
   const generatePie = (value2) => {
-    const x3 = radius - Math.cos(2 * Math.PI / (100 / value2)) * radius;
-    const y4 = radius + Math.sin(2 * Math.PI / (100 / value2)) * radius;
+    const x = radius - Math.cos(2 * Math.PI / (100 / value2)) * radius;
+    const y = radius + Math.sin(2 * Math.PI / (100 / value2)) * radius;
     const long = value2 <= 50 ? 0 : 1;
-    const d4 = `M${radius} ${radius} L${radius} ${0} A${radius} ${radius} 0 ${long} 1 ${y4} ${x3} Z`;
-    return d4;
+    const d = `M${radius} ${radius} L${radius} ${0} A${radius} ${radius} 0 ${long} 1 ${y} ${x} Z`;
+    return d;
   };
   const calculatePieValue = (numberOfBars) => {
     const angle = 360 / numberOfBars;
     const pieValue = Math.floor(angle / 4);
     return pieValue < 1 ? 1 : Math.floor(angle / 4);
   };
-  const renderPie = (i6) => {
+  const renderPie = (i) => {
     const DIRECTION = -1;
     const primaryRotationAngle = (maxValue - 1) * (360 / maxValue);
-    const rotationAngle = -1 * DIRECTION * primaryRotationAngle + i6 * DIRECTION * primaryRotationAngle;
+    const rotationAngle = -1 * DIRECTION * primaryRotationAngle + i * DIRECTION * primaryRotationAngle;
     const rotationTransformation = `rotate(${rotationAngle}, ${radius}, ${radius})`;
     const pieValue = calculatePieValue(maxValue);
     const dValue = generatePie(pieValue);
-    const fillColor = value > 0 && i6 <= value ? activeStrokeColor : inactiveStrokeColor;
-    return /* @__PURE__ */ import_react15.default.createElement("path", {
-      style: { opacity: i6 === 0 ? 0 : 1 },
-      key: i6,
+    const fillColor = value > 0 && i <= value ? activeStrokeColor : inactiveStrokeColor;
+    return /* @__PURE__ */ import_react3.default.createElement("path", {
+      style: { opacity: i === 0 ? 0 : 1 },
+      key: i,
       d: dValue,
       fill: fillColor,
       transform: rotationTransformation
     });
   };
-  const renderOuterCircle = () => [...Array(maxValue + 1)].map((e, i6) => renderPie(i6));
-  return /* @__PURE__ */ import_react15.default.createElement("svg", {
+  const renderOuterCircle = () => [...Array(maxValue + 1)].map((e, i) => renderPie(i));
+  return /* @__PURE__ */ import_react3.default.createElement("svg", {
     width: radius * 2,
     height: radius * 2
-  }, renderOuterCircle(), /* @__PURE__ */ import_react15.default.createElement("circle", {
+  }, renderOuterCircle(), /* @__PURE__ */ import_react3.default.createElement("circle", {
     r: radius - strokeWidth,
     cx: radius,
     cy: radius,
@@ -804,48 +345,398 @@ var ProgressBar = ({
   }));
 };
 
+// src/progress/linear-progress-indicator.tsx
+var import_react5 = __toESM(require("react"));
+
+// src/tooltip/tooltip.tsx
+var import_react4 = __toESM(require("react"));
+var import_next_themes = require("next-themes");
+var import_popover2 = require("@blueprintjs/popover2");
+var Tooltip = ({
+  tooltipHeading,
+  tooltipContent,
+  position = "top",
+  children,
+  disabled = false,
+  className = "",
+  openDelay = 200,
+  closeDelay
+}) => {
+  const { theme } = (0, import_next_themes.useTheme)();
+  return /* @__PURE__ */ import_react4.default.createElement(import_popover2.Tooltip2, {
+    disabled,
+    hoverOpenDelay: openDelay,
+    hoverCloseDelay: closeDelay,
+    content: /* @__PURE__ */ import_react4.default.createElement("div", {
+      className: `relative z-50 max-w-xs gap-1 rounded-md p-2 text-xs shadow-md ${theme === "custom" ? "bg-custom-background-100 text-custom-text-200" : "bg-black text-gray-400"} break-words overflow-hidden ${className}`
+    }, tooltipHeading && /* @__PURE__ */ import_react4.default.createElement("h5", {
+      className: `font-medium ${theme === "custom" ? "text-custom-text-100" : "text-white"}`
+    }, tooltipHeading), tooltipContent),
+    position,
+    renderTarget: ({
+      isOpen: isTooltipOpen,
+      ref: eleReference,
+      ...tooltipProps
+    }) => import_react4.default.cloneElement(children, {
+      ref: eleReference,
+      ...tooltipProps,
+      ...children.props
+    })
+  });
+};
+
+// src/progress/linear-progress-indicator.tsx
+var LinearProgressIndicator = ({
+  data,
+  noTooltip = false
+}) => {
+  const total = data.reduce((acc, cur) => acc + cur.value, 0);
+  let progress = 0;
+  const bars = data.map((item) => {
+    const width = `${item.value / total * 100}%`;
+    const style = {
+      width,
+      backgroundColor: item.color
+    };
+    progress += item.value;
+    if (noTooltip)
+      return /* @__PURE__ */ import_react5.default.createElement("div", {
+        style
+      });
+    else
+      return /* @__PURE__ */ import_react5.default.createElement(Tooltip, {
+        key: item.id,
+        tooltipContent: `${item.name} ${Math.round(item.value)}%`
+      }, /* @__PURE__ */ import_react5.default.createElement("div", {
+        style
+      }));
+  });
+  return /* @__PURE__ */ import_react5.default.createElement("div", {
+    className: "flex h-1 w-full items-center justify-between gap-1"
+  }, total === 0 ? /* @__PURE__ */ import_react5.default.createElement("div", {
+    className: "flex h-full w-full gap-1 bg-neutral-500"
+  }, bars) : /* @__PURE__ */ import_react5.default.createElement("div", {
+    className: "flex h-full w-full gap-1"
+  }, bars));
+};
+
 // src/spinners/circular-spinner.tsx
-init_cjs_shims();
-var React7 = __toESM(require("react"));
-var Spinner = () => /* @__PURE__ */ React7.createElement("div", {
+var React9 = __toESM(require("react"));
+var Spinner = () => /* @__PURE__ */ React9.createElement("div", {
   role: "status"
-}, /* @__PURE__ */ React7.createElement("svg", {
+}, /* @__PURE__ */ React9.createElement("svg", {
   "aria-hidden": "true",
   className: "mr-2 h-8 w-8 animate-spin fill-blue-600 text-custom-text-200",
   viewBox: "0 0 100 101",
   fill: "none",
   xmlns: "http://www.w3.org/2000/svg"
-}, /* @__PURE__ */ React7.createElement("path", {
+}, /* @__PURE__ */ React9.createElement("path", {
   d: "M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z",
   fill: "currentColor"
-}), /* @__PURE__ */ React7.createElement("path", {
+}), /* @__PURE__ */ React9.createElement("path", {
   d: "M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z",
   fill: "currentFill"
-})), /* @__PURE__ */ React7.createElement("span", {
+})), /* @__PURE__ */ React9.createElement("span", {
   className: "sr-only"
 }, "Loading..."));
 
 // src/loader.tsx
-init_cjs_shims();
-var import_react16 = __toESM(require("react"));
-var Loader = ({ children, className = "" }) => /* @__PURE__ */ import_react16.default.createElement("div", {
+var import_react6 = __toESM(require("react"));
+var Loader = ({ children, className = "" }) => /* @__PURE__ */ import_react6.default.createElement("div", {
   className: `${className} animate-pulse`,
   role: "status"
 }, children);
-var Item = ({ height = "auto", width = "auto" }) => /* @__PURE__ */ import_react16.default.createElement("div", {
+var Item = ({ height = "auto", width = "auto" }) => /* @__PURE__ */ import_react6.default.createElement("div", {
   className: "rounded-md bg-custom-background-80",
   style: { height, width }
 });
 Loader.Item = Item;
 Loader.displayName = "plane-ui-loader";
+
+// src/icons/user-group-icon.tsx
+var import_react7 = __toESM(require("react"));
+var UserGroupIcon = ({
+  className = "text-current",
+  ...rest
+}) => /* @__PURE__ */ import_react7.default.createElement("svg", {
+  viewBox: "0 0 24 24",
+  className: `${className} stroke-2`,
+  stroke: "currentColor",
+  fill: "none",
+  xmlns: "http://www.w3.org/2000/svg",
+  ...rest
+}, /* @__PURE__ */ import_react7.default.createElement("path", {
+  d: "M18 19C18 17.4087 17.3679 15.8826 16.2426 14.7574C15.1174 13.6321 13.5913 13 12 13C10.4087 13 8.88258 13.6321 7.75736 14.7574C6.63214 15.8826 6 17.4087 6 19",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}), /* @__PURE__ */ import_react7.default.createElement("path", {
+  d: "M12 13C14.2091 13 16 11.2091 16 9C16 6.79086 14.2091 5 12 5C9.79086 5 8 6.79086 8 9C8 11.2091 9.79086 13 12 13Z",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}), /* @__PURE__ */ import_react7.default.createElement("path", {
+  d: "M23 18C23 16.636 22.4732 15.3279 21.5355 14.3635C20.5979 13.399 19.3261 12.8571 18 12.8571C18.8841 12.8571 19.7319 12.4959 20.357 11.8529C20.9821 11.21 21.3333 10.3379 21.3333 9.42857C21.3333 8.51926 20.9821 7.64719 20.357 7.00421C19.7319 6.36122 18.8841 6 18 6",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}), /* @__PURE__ */ import_react7.default.createElement("path", {
+  d: "M1 18C1 16.636 1.52678 15.3279 2.46447 14.3635C3.40215 13.399 4.67392 12.8571 6 12.8571C5.11595 12.8571 4.2681 12.4959 3.64298 11.8529C3.01786 11.21 2.66667 10.3379 2.66667 9.42857C2.66667 8.51926 3.01786 7.64719 3.64298 7.00421C4.2681 6.36122 5.11595 6 6 6",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}));
+
+// src/icons/contrast-icon.tsx
+var import_react8 = __toESM(require("react"));
+var ContrastIcon = ({
+  className = "text-current",
+  ...rest
+}) => /* @__PURE__ */ import_react8.default.createElement("svg", {
+  viewBox: "0 0 24 24",
+  className: `${className} stroke-2`,
+  stroke: "currentColor",
+  fill: "none",
+  xmlns: "http://www.w3.org/2000/svg",
+  ...rest
+}, /* @__PURE__ */ import_react8.default.createElement("path", {
+  d: "M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}), /* @__PURE__ */ import_react8.default.createElement("path", {
+  d: "M12 18C13.5913 18 15.1174 17.3679 16.2426 16.2426C17.3679 15.1174 18 13.5913 18 12C18 10.4087 17.3679 8.88258 16.2426 7.75736C15.1174 6.63214 13.5913 6 12 6V18Z",
+  fill: "currentColor",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}));
+
+// src/icons/dice-icon.tsx
+var import_react9 = __toESM(require("react"));
+var DiceIcon = ({
+  className = "text-current",
+  ...rest
+}) => /* @__PURE__ */ import_react9.default.createElement("svg", {
+  viewBox: "0 0 24 24",
+  className: `${className} stroke-2`,
+  stroke: "currentColor",
+  fill: "none",
+  xmlns: "http://www.w3.org/2000/svg",
+  ...rest
+}, /* @__PURE__ */ import_react9.default.createElement("path", {
+  d: "M19 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V5C21 3.89543 20.1046 3 19 3Z",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}), /* @__PURE__ */ import_react9.default.createElement("path", {
+  d: "M8.77778 7H7.22222C7.09949 7 7 7.09949 7 7.22222V8.77778C7 8.90051 7.09949 9 7.22222 9H8.77778C8.90051 9 9 8.90051 9 8.77778V7.22222C9 7.09949 8.90051 7 8.77778 7Z",
+  fill: "currentColor",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}), /* @__PURE__ */ import_react9.default.createElement("path", {
+  d: "M8.77778 15H7.22222C7.09949 15 7 15.0995 7 15.2222V16.7778C7 16.9005 7.09949 17 7.22222 17H8.77778C8.90051 17 9 16.9005 9 16.7778V15.2222C9 15.0995 8.90051 15 8.77778 15Z",
+  fill: "currentColor",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}), /* @__PURE__ */ import_react9.default.createElement("path", {
+  d: "M16.7778 7H15.2222C15.0995 7 15 7.09949 15 7.22222V8.77778C15 8.90051 15.0995 9 15.2222 9H16.7778C16.9005 9 17 8.90051 17 8.77778V7.22222C17 7.09949 16.9005 7 16.7778 7Z",
+  fill: "currentColor",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}), /* @__PURE__ */ import_react9.default.createElement("path", {
+  d: "M16.7778 15H15.2222C15.0995 15 15 15.0995 15 15.2222V16.7778C15 16.9005 15.0995 17 15.2222 17H16.7778C16.9005 17 17 16.9005 17 16.7778V15.2222C17 15.0995 16.9005 15 16.7778 15Z",
+  fill: "currentColor",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}));
+
+// src/icons/layers-icon.tsx
+var import_react10 = __toESM(require("react"));
+var LayersIcon = ({
+  className = "text-current",
+  ...rest
+}) => /* @__PURE__ */ import_react10.default.createElement("svg", {
+  viewBox: "0 0 24 24",
+  className: `${className} stroke-2`,
+  stroke: "currentColor",
+  fill: "none",
+  xmlns: "http://www.w3.org/2000/svg",
+  ...rest
+}, /* @__PURE__ */ import_react10.default.createElement("g", {
+  "clip-path": "url(#clip0_7258_81938)"
+}, /* @__PURE__ */ import_react10.default.createElement("path", {
+  d: "M16.5953 6.69606L16.6072 5.17376L6.85812 8.92381L6.85812 19.4238L9.00319 18.6961",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}), /* @__PURE__ */ import_react10.default.createElement("path", {
+  d: "M12.0953 3.69606L12.1072 2.17376L2.35812 5.92381L2.35812 16.4238L4.50319 15.6961",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}), /* @__PURE__ */ import_react10.default.createElement("path", {
+  d: "M21.7438 17.9461L21.7511 7.44434L12.0021 11.1944L12.0021 21.6944L21.7438 17.9461Z",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+})), /* @__PURE__ */ import_react10.default.createElement("defs", null, /* @__PURE__ */ import_react10.default.createElement("clipPath", {
+  id: "clip0_7258_81938"
+}, /* @__PURE__ */ import_react10.default.createElement("rect", {
+  width: "24",
+  height: "24",
+  fill: "white",
+  transform: "translate(24) rotate(90)"
+}))));
+
+// src/icons/photo-filter-icon.tsx
+var import_react11 = __toESM(require("react"));
+var PhotoFilterIcon = ({
+  className = "text-current",
+  ...rest
+}) => /* @__PURE__ */ import_react11.default.createElement("svg", {
+  viewBox: "0 0 24 24",
+  className: `${className} stroke-2`,
+  stroke: "currentColor",
+  fill: "none",
+  xmlns: "http://www.w3.org/2000/svg",
+  ...rest
+}, /* @__PURE__ */ import_react11.default.createElement("path", {
+  d: "M21 12V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H12",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}), /* @__PURE__ */ import_react11.default.createElement("path", {
+  d: "M19 3L18.5778 4.28889C18.5562 4.35583 18.519 4.41668 18.4692 4.46643C18.4195 4.51619 18.3587 4.55344 18.2918 4.57511L17 5L18.2889 5.42222C18.3558 5.44384 18.4167 5.48104 18.4664 5.53076C18.5162 5.58048 18.5534 5.6413 18.5751 5.70822L19 7L19.4222 5.71111C19.4438 5.64417 19.481 5.58332 19.5308 5.53357C19.5805 5.48381 19.6413 5.44656 19.7082 5.42489L21 5L19.7111 4.57778C19.6442 4.55616 19.5833 4.51896 19.5336 4.46924C19.4838 4.41952 19.4466 4.3587 19.4249 4.29178L19 3Z",
+  fill: "currentColor",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}), /* @__PURE__ */ import_react11.default.createElement("path", {
+  d: "M12 9L11.3667 10.9333C11.3342 11.0337 11.2784 11.125 11.2039 11.1997C11.1293 11.2743 11.038 11.3302 10.9377 11.3627L9 12L10.9333 12.6333C11.0337 12.6658 11.125 12.7216 11.1997 12.7961C11.2743 12.8707 11.3302 12.962 11.3627 13.0623L12 15L12.6333 13.0667C12.6658 12.9663 12.7216 12.875 12.7961 12.8003C12.8707 12.7257 12.962 12.6698 13.0623 12.6373L15 12L13.0667 11.3667C12.9663 11.3342 12.875 11.2784 12.8003 11.2039C12.7257 11.1293 12.6698 11.038 12.6373 10.9377L12 9Z",
+  fill: "currentColor",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}));
+
+// src/icons/archive-icon.tsx
+var import_react12 = __toESM(require("react"));
+var ArchiveIcon = ({
+  className = "text-current",
+  ...rest
+}) => /* @__PURE__ */ import_react12.default.createElement("svg", {
+  viewBox: "0 0 24 24",
+  className: `${className} stroke-2`,
+  stroke: "currentColor",
+  fill: "none",
+  xmlns: "http://www.w3.org/2000/svg",
+  ...rest
+}, /* @__PURE__ */ import_react12.default.createElement("path", {
+  d: "M21 3H3C2.44772 3 2 3.44772 2 4V7C2 7.55228 2.44772 8 3 8H21C21.5523 8 22 7.55228 22 7V4C22 3.44772 21.5523 3 21 3Z",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}), /* @__PURE__ */ import_react12.default.createElement("path", {
+  d: "M4 8V19C4 19.5304 4.21071 20.0391 4.58579 20.4142C4.96086 20.7893 5.46957 21 6 21H8",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}), /* @__PURE__ */ import_react12.default.createElement("path", {
+  d: "M20 8V19C20 19.5304 19.7893 20.0391 19.4142 20.4142C19.0391 20.7893 18.5304 21 18 21H16",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}), /* @__PURE__ */ import_react12.default.createElement("path", {
+  d: "M15 18L12 21L9 18",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}), /* @__PURE__ */ import_react12.default.createElement("path", {
+  d: "M12 21L12 12",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}));
+
+// src/icons/admin-profile-icon.tsx
+var import_react13 = __toESM(require("react"));
+var AdminProfileIcon = ({
+  className = "text-current",
+  ...rest
+}) => /* @__PURE__ */ import_react13.default.createElement("svg", {
+  viewBox: "0 0 24 24",
+  className: `${className} stroke-2`,
+  stroke: "currentColor",
+  fill: "none",
+  xmlns: "http://www.w3.org/2000/svg",
+  ...rest
+}, /* @__PURE__ */ import_react13.default.createElement("path", {
+  d: "M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}), /* @__PURE__ */ import_react13.default.createElement("path", {
+  d: "M8 19V18C8 16.9391 8.42143 15.9217 9.17157 15.1716C9.92172 14.4214 10.9391 14 12 14C13.0609 14 14.0783 14.4214 14.8284 15.1716C15.5786 15.9217 16 16.9391 16 18V19",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}), /* @__PURE__ */ import_react13.default.createElement("path", {
+  d: "M12 14C13.6569 14 15 12.6569 15 11C15 9.34315 13.6569 8 12 8C10.3431 8 9 9.34315 9 11C9 12.6569 10.3431 14 12 14Z",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}));
+
+// src/icons/create-icon.tsx
+var import_react14 = __toESM(require("react"));
+var CreateIcon = ({
+  className = "text-current",
+  ...rest
+}) => /* @__PURE__ */ import_react14.default.createElement("svg", {
+  viewBox: "0 0 24 24",
+  className: `${className} stroke-2`,
+  stroke: "currentColor",
+  fill: "none",
+  xmlns: "http://www.w3.org/2000/svg",
+  ...rest
+}, /* @__PURE__ */ import_react14.default.createElement("path", {
+  d: "M21 12V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H12",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}), /* @__PURE__ */ import_react14.default.createElement("path", {
+  d: "M16 5H22",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}), /* @__PURE__ */ import_react14.default.createElement("path", {
+  d: "M19 2V8",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}));
+
+// src/icons/subscribe-icon.tsx
+var import_react15 = __toESM(require("react"));
+var SubscribeIcon = ({
+  className = "text-current",
+  ...rest
+}) => /* @__PURE__ */ import_react15.default.createElement("svg", {
+  viewBox: "0 0 24 24",
+  className: `${className} stroke-2`,
+  stroke: "currentColor",
+  fill: "none",
+  xmlns: "http://www.w3.org/2000/svg",
+  ...rest
+}, /* @__PURE__ */ import_react15.default.createElement("path", {
+  d: "M21 12V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H12",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}), /* @__PURE__ */ import_react15.default.createElement("path", {
+  d: "M15 5.1C15 4.54305 15.2107 4.0089 15.5858 3.61508C15.9609 3.22125 16.4696 3 17 3C17.5304 3 18.0391 3.22125 18.4142 3.61508C18.7893 4.0089 19 4.54305 19 5.1C19 7.55 20 8.25 20 8.25H14C14 8.25 15 7.55 15 5.1Z",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}), /* @__PURE__ */ import_react15.default.createElement("path", {
+  d: "M16.25 11C16.3238 11 16.4324 11 16.5643 11C16.6963 11 16.8467 11 17 11C17.1533 11 17.3037 11 17.4357 11C17.5676 11 17.6762 11 17.75 11",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}));
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
+  AdminProfileIcon,
+  ArchiveIcon,
   Button,
+  ContrastIcon,
+  CreateIcon,
+  DiceIcon,
   Input,
+  LayersIcon,
+  LinearProgressIndicator,
   Loader,
+  PhotoFilterIcon,
   ProgressBar,
   RadialProgressBar,
   Spinner,
+  SubscribeIcon,
   TextArea,
-  ToggleSwitch
+  ToggleSwitch,
+  Tooltip,
+  UserGroupIcon
 });

@@ -1,19 +1,20 @@
-import * as React from 'react';
+import * as React$1 from 'react';
 import React__default, { FC } from 'react';
 
 declare type TButtonVariant = "primary" | "accent-primary" | "outline-primary" | "neutral-primary" | "link-primary" | "danger" | "accent-danger" | "outline-danger" | "link-danger" | "tertiary-danger";
+declare type TButtonSizes = "sm" | "md" | "lg" | "xl";
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends React$1.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: TButtonVariant;
-    size?: "sm" | "md" | "lg";
+    size?: TButtonSizes;
     className?: string;
     loading?: boolean;
     disabled?: boolean;
     appendIcon?: any;
     prependIcon?: any;
-    children: React.ReactNode;
+    children: React$1.ReactNode;
 }
-declare const Button: React.ForwardRefExoticComponent<ButtonProps & React.RefAttributes<HTMLButtonElement>>;
+declare const Button: React$1.ForwardRefExoticComponent<ButtonProps & React$1.RefAttributes<HTMLButtonElement>>;
 
 interface IToggleSwitchProps {
     value: boolean;
@@ -23,29 +24,29 @@ interface IToggleSwitchProps {
     disabled?: boolean;
     className?: string;
 }
-declare const ToggleSwitch: React.FC<IToggleSwitchProps>;
+declare const ToggleSwitch: React$1.FC<IToggleSwitchProps>;
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface InputProps extends React$1.InputHTMLAttributes<HTMLInputElement> {
     mode?: "primary" | "transparent" | "true-transparent";
     inputSize?: "sm" | "md";
     hasError?: boolean;
     className?: string;
 }
-declare const Input: React.ForwardRefExoticComponent<InputProps & React.RefAttributes<HTMLInputElement>>;
+declare const Input: React$1.ForwardRefExoticComponent<InputProps & React$1.RefAttributes<HTMLInputElement>>;
 
-interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface TextAreaProps extends React$1.TextareaHTMLAttributes<HTMLTextAreaElement> {
     mode?: "primary" | "transparent";
     hasError?: boolean;
     className?: string;
 }
-declare const TextArea: React.ForwardRefExoticComponent<TextAreaProps & React.RefAttributes<HTMLTextAreaElement>>;
+declare const TextArea: React$1.ForwardRefExoticComponent<TextAreaProps & React$1.RefAttributes<HTMLTextAreaElement>>;
 
 interface IRadialProgressBar {
     progress: number;
 }
 declare const RadialProgressBar: FC<IRadialProgressBar>;
 
-declare type Props$1 = {
+declare type Props$2 = {
     maxValue?: number;
     value?: number;
     radius?: number;
@@ -53,9 +54,15 @@ declare type Props$1 = {
     activeStrokeColor?: string;
     inactiveStrokeColor?: string;
 };
-declare const ProgressBar: React__default.FC<Props$1>;
+declare const ProgressBar: React__default.FC<Props$2>;
 
-declare const Spinner: React.FC;
+declare type Props$1 = {
+    data: any;
+    noTooltip?: boolean;
+};
+declare const LinearProgressIndicator: React__default.FC<Props$1>;
+
+declare const Spinner: React$1.FC;
 
 declare type Props = {
     children: React__default.ReactNode;
@@ -71,4 +78,39 @@ declare type ItemProps = {
     width?: string;
 };
 
-export { Button, ButtonProps, Input, InputProps, Loader, ProgressBar, RadialProgressBar, Spinner, TextArea, TextAreaProps, ToggleSwitch };
+declare type TPosition = "top" | "right" | "bottom" | "left" | "auto" | "auto-end" | "auto-start" | "bottom-left" | "bottom-right" | "left-bottom" | "left-top" | "right-bottom" | "right-top" | "top-left" | "top-right";
+interface ITooltipProps {
+    tooltipHeading?: string;
+    tooltipContent: string | React__default.ReactNode;
+    position?: TPosition;
+    children: JSX.Element;
+    disabled?: boolean;
+    className?: string;
+    openDelay?: number;
+    closeDelay?: number;
+}
+declare const Tooltip: React__default.FC<ITooltipProps>;
+
+interface ISvgIcons extends React.SVGAttributes<SVGElement> {
+  className?: string | undefined;
+}
+
+declare const UserGroupIcon: React__default.FC<ISvgIcons>;
+
+declare const ContrastIcon: React__default.FC<ISvgIcons>;
+
+declare const DiceIcon: React__default.FC<ISvgIcons>;
+
+declare const LayersIcon: React__default.FC<ISvgIcons>;
+
+declare const PhotoFilterIcon: React__default.FC<ISvgIcons>;
+
+declare const ArchiveIcon: React__default.FC<ISvgIcons>;
+
+declare const AdminProfileIcon: React__default.FC<ISvgIcons>;
+
+declare const CreateIcon: React__default.FC<ISvgIcons>;
+
+declare const SubscribeIcon: React__default.FC<ISvgIcons>;
+
+export { AdminProfileIcon, ArchiveIcon, Button, ButtonProps, ContrastIcon, CreateIcon, DiceIcon, Input, InputProps, LayersIcon, LinearProgressIndicator, Loader, PhotoFilterIcon, ProgressBar, RadialProgressBar, Spinner, SubscribeIcon, TPosition, TextArea, TextAreaProps, ToggleSwitch, Tooltip, UserGroupIcon };
