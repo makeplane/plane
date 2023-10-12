@@ -1,5 +1,7 @@
 from django.urls import path
 
+from rest_framework_simplejwt.views import TokenRefreshView
+
 
 from plane.api.views import (
     # Authentication
@@ -35,6 +37,7 @@ urlpatterns = [
         "magic-generate/", MagicSignInGenerateEndpoint.as_view(), name="magic-generate"
     ),
     path("magic-sign-in/", MagicSignInEndpoint.as_view(), name="magic-sign-in"),
+    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     # Email verification
     path("email-verify/", VerifyEmailEndpoint.as_view(), name="email-verify"),
     path(
@@ -43,6 +46,11 @@ urlpatterns = [
         name="request-reset-email",
     ),
     # Password Manipulation
+    path(
+        "users/me/change-password/",
+        ChangePasswordEndpoint.as_view(),
+        name="change-password",
+    ),
     path(
         "reset-password/<uidb64>/<token>/",
         ResetPasswordEndpoint.as_view(),
