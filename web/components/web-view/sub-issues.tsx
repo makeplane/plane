@@ -1,5 +1,5 @@
 // react
-import React from "react";
+import React, { useState } from "react";
 
 // next
 import { useRouter } from "next/router";
@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // icons
-import { X } from "lucide-react";
+import { X, PlusIcon } from "lucide-react";
 
 // services
 import issuesService from "services/issues.service";
@@ -21,10 +21,12 @@ import useUser from "hooks/use-user";
 
 // ui
 import { Spinner } from "components/ui";
-import { IIssue } from "types";
 
 // components
-import { Label } from "components/web-view";
+import { Label, IssuesSelectBottomSheet, DeleteConfirmation } from "components/web-view";
+
+// types
+import { IIssue, ISearchIssueResponse } from "types";
 
 type Props = {
   issueDetails?: IIssue;
@@ -34,7 +36,12 @@ export const SubIssueList: React.FC<Props> = (props) => {
   const { issueDetails } = props;
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId, issueId } = router.query;
+
+  const isArchive = Boolean(router.query.archive);
+
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const [issueSelectedForDelete, setIssueSelectedForDelete] = useState<IIssue | null>(null);
 
   const { user } = useUser();
 
@@ -46,8 +53,8 @@ export const SubIssueList: React.FC<Props> = (props) => {
       : null
   );
 
-  const handleSubIssueRemove = (issue: any) => {
-    if (!workspaceSlug || !issueDetails || !user) return;
+  const handleSubIssueRemove = (issue: IIssue | null) => {
+    if (!workspaceSlug || !issueDetails || !user || !issue) return;
 
     mutate(
       SUB_ISSUES(issueDetails.id),
@@ -72,8 +79,40 @@ export const SubIssueList: React.FC<Props> = (props) => {
       .finally(() => mutate(SUB_ISSUES(issueDetails.id)));
   };
 
+  const addAsSubIssueFromExistingIssues = async (data: ISearchIssueResponse[]) => {
+    if (!workspaceSlug || !projectId || !issueId || isArchive) return;
+
+    const payload = {
+      sub_issue_ids: data.map((i) => i.id),
+    };
+    await issuesService
+      .addSubIssues(workspaceSlug.toString(), projectId.toString(), issueId.toString(), payload)
+      .finally(() => {
+        mutate(SUB_ISSUES(issueId.toString()));
+      });
+  };
+
   return (
     <div>
+      <IssuesSelectBottomSheet
+        isOpen={isBottomSheetOpen}
+        onClose={() => setIsBottomSheetOpen(false)}
+        onSubmit={addAsSubIssueFromExistingIssues}
+        searchParams={{ sub_issue: true, issue_id: issueId as string }}
+      />
+
+      <DeleteConfirmation
+        title="Remove sub issue"
+        content="Are you sure you want to remove this sub issue?"
+        isOpen={!!issueSelectedForDelete}
+        onCancel={() => setIssueSelectedForDelete(null)}
+        onConfirm={() => {
+          if (isArchive) return;
+          setIssueSelectedForDelete(null);
+          handleSubIssueRemove(issueSelectedForDelete);
+        }}
+      />
+
       <Label>Sub Issues</Label>
       <div className="p-3 border border-custom-border-200 rounded-[4px]">
         {!subIssuesResponse && (
@@ -97,12 +136,28 @@ export const SubIssueList: React.FC<Props> = (props) => {
               </p>
               <p className="text-sm font-normal">{subIssue.name}</p>
             </div>
-            <button type="button" onClick={() => handleSubIssueRemove(subIssue)}>
+            <button
+              type="button"
+              disabled={isArchive}
+              onClick={() => {
+                if (isArchive) return;
+                setIssueSelectedForDelete(subIssue);
+              }}
+            >
               <X className="w-[18px] h-[18px] text-custom-text-400" />
             </button>
           </div>
         ))}
       </div>
+      <button
+        type="button"
+        disabled={isArchive}
+        onClick={() => setIsBottomSheetOpen(true)}
+        className="flex items-center gap-x-1 mt-3"
+      >
+        <PlusIcon className="w-[18px] h-[18px] text-custom-text-400" />
+        <p className="text-sm text-custom-text-400">Add sub issue</p>
+      </button>
     </div>
   );
 };
