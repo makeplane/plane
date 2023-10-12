@@ -1,59 +1,41 @@
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/router";
+import { useForm } from "react-hook-form";
+import { Transition } from "@headlessui/react";
+import { PlusIcon } from "lucide-react";
 
-// react hook form
-import { useFormContext } from "react-hook-form";
+// store
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 // hooks
+import useToast from "hooks/use-toast";
+import useKeypress from "hooks/use-keypress";
 import useProjectDetails from "hooks/use-project-details";
-
-// components
-import { InlineCreateIssueFormWrapper } from "components/core";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 
 // types
 import { IIssue } from "types";
 
 type Props = {
-  isOpen: boolean;
-  handleClose: () => void;
+  groupId?: string;
   onSuccess?: (data: IIssue) => Promise<void> | void;
   prePopulatedData?: Partial<IIssue>;
 };
 
-const InlineInput = () => {
-  const { projectDetails } = useProjectDetails();
-
-  const { register, setFocus } = useFormContext();
-
-  useEffect(() => {
-    setFocus("name");
-  }, [setFocus]);
-
-  return (
-    <>
-      <div className="w-[14px] h-[14px] rounded-full border border-custom-border-1000 flex-shrink-0" />
-      <h4 className="text-sm text-custom-text-400">{projectDetails?.identifier ?? "..."}</h4>
-      <input
-        type="text"
-        autoComplete="off"
-        placeholder="Issue Title"
-        {...register("name", {
-          required: "Issue title is required.",
-        })}
-        className="w-full px-2 rounded-md bg-transparent text-sm font-medium leading-5 text-custom-text-200 outline-none"
-      />
-    </>
-  );
+const defaultValues: Partial<IIssue> = {
+  name: "",
 };
 
-export const GanttInlineCreateIssueForm: React.FC<Props> = (props) => {
-  const { prePopulatedData } = props;
+export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
+  const { prePopulatedData, groupId } = props;
 
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   // store
-  const { issueDetail: issueDetailStore, user: userDetailStore } = useMobxStore();
+  const { issueDetail: issueDetailStore, issue: issueStore } = useMobxStore();
 
   const { projectDetails } = useProjectDetails();
 
@@ -111,15 +93,11 @@ export const GanttInlineCreateIssueForm: React.FC<Props> = (props) => {
     if (isSubmitting || !workspaceSlug || !projectId) return;
 
     // resetting the form so that user can add another issue quickly
-    reset({ ...defaultValues });
+    reset({ ...defaultValues, ...(prePopulatedData ?? {}) });
 
     try {
-      await issueDetailStore.createIssue(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        formData,
-        userDetailStore.currentUser! as any
-      );
+      const response = await issueDetailStore.createIssue(workspaceSlug.toString(), projectId.toString(), formData);
+      issueStore.updateIssueStructure(groupId ?? null, null, response);
 
       setToastAlert({
         type: "success",
@@ -142,28 +120,50 @@ export const GanttInlineCreateIssueForm: React.FC<Props> = (props) => {
 
   return (
     <>
-      <form
-        ref={ref}
-        className="flex py-3 px-4 border-[0.5px] border-custom-border-100 mr-2.5 items-center rounded gap-x-2 bg-custom-background-100 shadow-custom-shadow-sm"
-        onSubmit={handleSubmit(onSubmitHandler)}
+      <Transition
+        show={isOpen}
+        enter="transition ease-in-out duration-200 transform"
+        enterFrom="opacity-0 scale-95"
+        enterTo="opacity-100 scale-100"
+        leave="transition ease-in-out duration-200 transform"
+        leaveFrom="opacity-100 scale-100"
+        leaveTo="opacity-0 scale-95"
       >
-        <div className="w-[14px] h-[14px] rounded-full border border-custom-border-1000 flex-shrink-0" />
-        <h4 className="text-sm text-custom-text-400">{projectDetails?.identifier ?? "..."}</h4>
-        <input
-          type="text"
-          autoComplete="off"
-          placeholder="Issue Title"
-          {...register("name", {
-            required: "Issue title is required.",
-          })}
-          className="w-full px-2 rounded-md bg-transparent text-sm font-medium leading-5 text-custom-text-200 outline-none"
-        />
-      </form>
-      {props.isOpen && (
+        <form
+          ref={ref}
+          className="flex py-3 px-4 border-[0.5px] border-custom-border-100 mr-2.5 items-center rounded gap-x-2 bg-custom-background-100 shadow-custom-shadow-sm"
+          onSubmit={handleSubmit(onSubmitHandler)}
+        >
+          <div className="w-[14px] h-[14px] rounded-full border border-custom-border-1000 flex-shrink-0" />
+          <h4 className="text-sm text-custom-text-400">{projectDetails?.identifier ?? "..."}</h4>
+          <input
+            type="text"
+            autoComplete="off"
+            placeholder="Issue Title"
+            {...register("name", {
+              required: "Issue title is required.",
+            })}
+            className="w-full px-2 rounded-md bg-transparent text-sm font-medium leading-5 text-custom-text-200 outline-none"
+          />
+        </form>
+      </Transition>
+
+      {isOpen && (
         <p className="text-xs ml-3 mt-3 italic text-custom-text-200">
           Press {"'"}Enter{"'"} to add another issue
         </p>
       )}
+
+      {!isOpen && (
+        <button
+          type="button"
+          className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-1 rounded-md"
+          onClick={() => setIsOpen(true)}
+        >
+          <PlusIcon className="h-4 w-4" />
+          <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
+        </button>
+      )}
     </>
   );
-};
+});
