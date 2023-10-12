@@ -8,7 +8,7 @@ import { AppliedFiltersList } from "components/issues";
 // types
 import { IIssueFilterOptions } from "types";
 
-export const AppliedFiltersRoot: React.FC = observer(() => {
+export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 

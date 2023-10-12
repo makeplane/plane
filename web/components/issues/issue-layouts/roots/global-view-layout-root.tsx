@@ -17,7 +17,7 @@ type Props = {
   type?: TStaticViewTypes;
 };
 
-export const GlobalViewsAllLayouts: React.FC<Props> = observer((props) => {
+export const GlobalViewLayoutRoot: React.FC<Props> = observer((props) => {
   const { type } = props;
 
   const router = useRouter();
@@ -70,9 +70,9 @@ export const GlobalViewsAllLayouts: React.FC<Props> = observer((props) => {
     : undefined;
 
   return (
-    <div className="relative w-full h-full flex flex-col overflow-auto">
+    <div className="relative w-full h-full flex flex-col overflow-hidden">
       <GlobalViewsAppliedFiltersRoot />
-      <div className="h-full w-full">
+      <div className="h-full w-full overflow-auto">
         <SpreadsheetView
           displayProperties={workspaceFilterStore.workspaceDisplayProperties}
           displayFilters={workspaceFilterStore.workspaceDisplayFilters}

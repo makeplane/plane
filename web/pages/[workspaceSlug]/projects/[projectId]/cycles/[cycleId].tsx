@@ -20,8 +20,6 @@ import cycleServices from "services/cycles.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
-// components
-import { AnalyticsProjectModal } from "components/analytics";
 // ui
 import { Button } from "@plane/ui";
 import { CustomMenu, EmptyState } from "components/ui";

@@ -7,15 +7,15 @@ import useSWR from "swr";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import {
-  AppliedFiltersRoot,
   ListLayout,
   CalendarLayout,
   GanttLayout,
   KanBanLayout,
+  ProjectAppliedFiltersRoot,
   SpreadsheetLayout,
 } from "components/issues";
 
-export const AllViews: React.FC = observer(() => {
+export const ProjectLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as {
     workspaceSlug: string;
@@ -46,9 +46,9 @@ export const AllViews: React.FC = observer(() => {
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
 
   return (
-    <div className="relative w-full h-full flex flex-col overflow-auto">
-      <AppliedFiltersRoot />
-      <div className="w-full h-full">
+    <div className="relative w-full h-full flex flex-col overflow-hidden">
+      <ProjectAppliedFiltersRoot />
+      <div className="w-full h-full overflow-auto">
         {activeLayout === "list" ? (
           <ListLayout />
         ) : activeLayout === "kanban" ? (

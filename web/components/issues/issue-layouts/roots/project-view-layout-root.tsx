@@ -15,7 +15,7 @@ import {
   ProjectViewSpreadsheetLayout,
 } from "components/issues";
 
-export const ProjectViewAllLayouts: React.FC = observer(() => {
+export const ProjectViewLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, viewId } = router.query;
 
@@ -52,9 +52,9 @@ export const ProjectViewAllLayouts: React.FC = observer(() => {
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
 
   return (
-    <div className="relative h-full w-full flex flex-col overflow-auto">
+    <div className="relative h-full w-full flex flex-col overflow-hidden">
       <ProjectViewAppliedFiltersRoot />
-      <div className="h-full w-full">
+      <div className="h-full w-full overflow-y-auto">
         {activeLayout === "list" ? (
           <ModuleListLayout />
         ) : activeLayout === "kanban" ? (

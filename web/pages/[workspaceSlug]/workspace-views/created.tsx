@@ -1,7 +1,7 @@
 // components
 import { GlobalViewsHeader } from "components/workspace";
 import { GlobalIssuesHeader } from "components/headers";
-import { GlobalViewsAllLayouts } from "components/issues";
+import { GlobalViewLayoutRoot } from "components/issues";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // types
@@ -12,7 +12,7 @@ const GlobalViewCreatedIssues: NextPage = () => (
     <div className="h-full overflow-hidden bg-custom-background-100">
       <div className="h-full w-full flex flex-col border-b border-custom-border-300">
         <GlobalViewsHeader />
-        <GlobalViewsAllLayouts type="created" />
+        <GlobalViewLayoutRoot type="created" />
       </div>
     </div>
   </AppLayout>

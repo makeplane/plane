@@ -52,9 +52,9 @@ export const CycleLayoutRoot: React.FC = observer(() => {
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
 
   return (
-    <div className="relative w-full h-full flex flex-col overflow-auto">
+    <div className="relative w-full h-full flex flex-col overflow-hidden">
       <CycleAppliedFiltersRoot />
-      <div className="w-full h-full">
+      <div className="w-full h-full overflow-auto">
         {activeLayout === "list" ? (
           <CycleListLayout />
         ) : activeLayout === "kanban" ? (

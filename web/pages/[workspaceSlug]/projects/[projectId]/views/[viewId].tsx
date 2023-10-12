@@ -8,7 +8,7 @@ import viewsService from "services/views.service";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
-import { ProjectViewAllLayouts } from "components/issues";
+import { ProjectViewLayoutRoot } from "components/issues";
 // ui
 import { CustomMenu, EmptyState } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -88,7 +88,7 @@ const SingleView: React.FC = () => {
           }}
         />
       ) : (
-        <ProjectViewAllLayouts />
+        <ProjectViewLayoutRoot />
       )}
     </ProjectAuthorizationWrapper>
   );

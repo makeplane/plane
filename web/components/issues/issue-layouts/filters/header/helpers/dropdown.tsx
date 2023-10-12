@@ -23,7 +23,7 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
   });
 
   return (
-    <Popover>
+    <Popover as="div">
       {({ open }) => {
         if (open) {
         }

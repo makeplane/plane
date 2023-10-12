@@ -16,6 +16,8 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import { ExistingIssuesListModal } from "components/core";
 import { ModuleDetailsSidebar } from "components/modules";
+import { ModuleLayoutRoot } from "components/issues";
+import { ModuleIssuesHeader } from "components/headers";
 // ui
 import { CustomMenu, EmptyState } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -27,8 +29,6 @@ import { truncateText } from "helpers/string.helper";
 import { ISearchIssueResponse } from "types";
 // fetch-keys
 import { MODULE_DETAILS, MODULE_ISSUES, MODULE_LIST } from "constants/fetch-keys";
-import { ModuleAllLayouts } from "components/issues";
-import { ModuleIssuesHeader } from "components/headers";
 
 const SingleModule: React.FC = () => {
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
@@ -141,7 +141,7 @@ const SingleModule: React.FC = () => {
                 moduleSidebar ? "mr-[24rem]" : ""
               } duration-300`}
             >
-              <ModuleAllLayouts />
+              <ModuleLayoutRoot />
             </div>
             <ModuleDetailsSidebar
               module={moduleDetails}
