@@ -1,4 +1,5 @@
 export * from "./graph";
+export * from "./select";
 export * from "./custom-analytics";
 export * from "./main-content";
 export * from "./select-bar";
