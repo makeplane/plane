@@ -192,6 +192,9 @@ from plane.api.views import (
 )
 
 
+#TODO: Delete this file
+# This url file has been deprecated use apiserver/plane/urls folder to create new urls
+
 urlpatterns = [
     #  Social Auth
     path("social-auth/", OauthEndpoint.as_view(), name="oauth"),
