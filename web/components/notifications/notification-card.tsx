@@ -214,12 +214,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                 e.stopPropagation();
               }}
               customButton={
-                <button
-                  type="button"
-                  className="text-sm flex w-full items-center gap-x-2 bg-custom-background-80 hover:bg-custom-background-100 p-0.5 rounded"
-                >
+                <div className="text-sm flex w-full items-center gap-x-2 bg-custom-background-80 hover:bg-custom-background-100 p-0.5 rounded">
                   <Icon iconName="schedule" className="h-5 w-5 text-custom-text-300" />
-                </button>
+                </div>
               }
               optionsClassName="!z-20"
             >

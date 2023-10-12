@@ -74,7 +74,6 @@ export const AutoArchiveAutomation: React.FC<Props> = ({
                     handleChange({ archive_in: val });
                   }}
                   input
-                  verticalPosition="bottom"
                   width="w-full"
                   disabled={disabled}
                 >

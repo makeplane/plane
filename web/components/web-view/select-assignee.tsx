@@ -47,7 +47,7 @@ export const AssigneeSelect: React.FC<Props> = (props) => {
     <>
       <WebViewModal
         isOpen={isOpen}
-        modalTitle="Select state"
+        modalTitle="Select assignees"
         onClose={() => {
           setIsOpen(false);
         }}
@@ -74,20 +74,20 @@ export const AssigneeSelect: React.FC<Props> = (props) => {
         disabled={disabled}
         onClick={() => setIsOpen(true)}
         className={
-          "relative w-full px-2.5 py-0.5 text-base flex justify-between items-center gap-0.5 text-custom-text-100"
+          "relative w-full px-2.5 py-0.5 text-base flex justify-between items-center gap-0.5"
         }
       >
         {value && value.length > 0 && Array.isArray(value) ? (
           <div className="-my-0.5 flex items-center gap-2">
             <Avatar user={selectedAssignees?.[0].member} />
-            <span className="text-custom-text-100 text-xs">
+            <span className="text-custom-text-200 text-xs">
               {selectedAssignees?.length} Assignees
             </span>
           </div>
         ) : (
-          "No assignees"
+          <span className="text-custom-text-200">No assignees</span>
         )}
-        <ChevronDown className="w-5 h-5" />
+        <ChevronDown className="w-4 h-4 text-custom-text-200" />
       </button>
     </>
   );

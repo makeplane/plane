@@ -255,7 +255,6 @@ export const SpreadsheetView: React.FC<Props> = ({
           <CustomMenu
             customButtonClassName="!w-full"
             className="!w-full"
-            position="left"
             customButton={
               <div
                 className={`relative group flex items-center justify-between gap-1.5 cursor-pointer text-sm text-custom-text-200 hover:text-custom-text-100 w-full py-3 px-2 ${
@@ -641,16 +640,11 @@ export const SpreadsheetView: React.FC<Props> = ({
                   <CustomMenu
                     className="sticky left-0 z-10"
                     customButton={
-                      <button
-                        className="flex gap-1.5 items-center text-custom-primary-100 pl-4 py-2.5 text-sm sticky left-0 z-[1] border-custom-border-200 w-full"
-                        type="button"
-                      >
+                      <div className="flex gap-1.5 items-center text-custom-primary-100 pl-4 py-2.5 text-sm sticky left-0 z-[1] border-custom-border-200 w-full">
                         <PlusIcon className="h-4 w-4" />
                         New Issue
-                      </button>
+                      </div>
                     }
-                    position="left"
-                    verticalPosition="top"
                     optionsClassName="left-5 !w-36"
                     noBorder
                   >
