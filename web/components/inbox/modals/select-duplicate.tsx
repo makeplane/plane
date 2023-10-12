@@ -1,13 +1,8 @@
 import React, { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
-// react-hook-form
-import { SubmitHandler, useForm, UseFormWatch } from "react-hook-form";
-// headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
+
 // hooks
 import useToast from "hooks/use-toast";
 // services
