@@ -2,7 +2,7 @@ import { observable, action, makeObservable, runInAction } from "mobx";
 // services
 import IssueService from "services/issue/issue.service";
 // types
-import { RootStore } from "./root";
+import { RootStore } from "../root";
 import { IUser, IIssue } from "types";
 
 export type IPeekMode = "side" | "modal" | "full";
@@ -30,7 +30,7 @@ export interface IIssueDetailStore {
   deleteIssue: (workspaceId: string, projectId: string, issueId: string, user: IUser) => void;
 }
 
-class IssueDetailStore implements IIssueDetailStore {
+export class IssueDetailStore implements IIssueDetailStore {
   loader: boolean = false;
   error: any | null = null;
 
@@ -197,5 +197,3 @@ class IssueDetailStore implements IIssueDetailStore {
     }
   };
 }
-
-export default IssueDetailStore;

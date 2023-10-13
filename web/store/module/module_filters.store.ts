@@ -5,7 +5,7 @@ import ModuleService from "services/module.service";
 // helpers
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 // types
-import { RootStore } from "./root";
+import { RootStore } from "../root";
 import { IIssueFilterOptions, IModule, TIssueParams } from "types";
 
 export interface IModuleFilterStore {
@@ -27,7 +27,7 @@ export interface IModuleFilterStore {
   appliedFilters: TIssueParams[] | null;
 }
 
-class ModuleFilterStore implements IModuleFilterStore {
+export class ModuleFilterStore implements IModuleFilterStore {
   loader: boolean = false;
   error: any | null = null;
 
@@ -174,5 +174,3 @@ class ModuleFilterStore implements IModuleFilterStore {
     }
   };
 }
-
-export default ModuleFilterStore;

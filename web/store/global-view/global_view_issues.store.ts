@@ -5,7 +5,7 @@ import WorkspaceService from "services/workspace.service";
 // helpers
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 // types
-import { RootStore } from "./root";
+import { RootStore } from "../root";
 import { IIssue, IIssueFilterOptions, TStaticViewTypes } from "types";
 
 export interface IGlobalViewIssuesStore {
@@ -23,7 +23,7 @@ export interface IGlobalViewIssuesStore {
   fetchStaticIssues: (workspaceSlug: string, type: TStaticViewTypes) => Promise<any>;
 }
 
-class GlobalViewIssuesStore implements IGlobalViewIssuesStore {
+export class GlobalViewIssuesStore implements IGlobalViewIssuesStore {
   // states
   loader: boolean = false;
   error: any | null = null;
@@ -163,5 +163,3 @@ class GlobalViewIssuesStore implements IGlobalViewIssuesStore {
     }
   };
 }
-
-export default GlobalViewIssuesStore;

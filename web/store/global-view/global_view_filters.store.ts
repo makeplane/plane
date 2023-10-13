@@ -1,9 +1,9 @@
 import { observable, action, makeObservable, runInAction } from "mobx";
 // types
-import { RootStore } from "./root";
+import { RootStore } from "../root";
 import { IIssueFilterOptions } from "types";
 
-export interface IProjectViewFiltersStore {
+export interface IGlobalViewFiltersStore {
   // states
   loader: boolean;
   error: any | null;
@@ -18,7 +18,7 @@ export interface IProjectViewFiltersStore {
   deleteStoredFilters: (viewId: string) => void;
 }
 
-class ProjectViewFiltersStore implements IProjectViewFiltersStore {
+export class GlobalViewFiltersStore implements IGlobalViewFiltersStore {
   // states
   loader: boolean = false;
   error: any | null = null;
@@ -66,5 +66,3 @@ class ProjectViewFiltersStore implements IProjectViewFiltersStore {
     });
   };
 }
-
-export default ProjectViewFiltersStore;

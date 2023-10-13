@@ -5,7 +5,7 @@ import { IssueService } from "services/issue";
 // helpers
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 // types
-import { RootStore } from "./root";
+import { RootStore } from "../root";
 import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -40,7 +40,7 @@ export interface IIssueFilterStore {
   appliedFilters: TIssueParams[] | null;
 }
 
-class IssueFilterStore implements IIssueFilterStore {
+export class IssueFilterStore implements IIssueFilterStore {
   loader: boolean = false;
   error: any | null = null;
 
@@ -229,5 +229,3 @@ class IssueFilterStore implements IIssueFilterStore {
     }
   };
 }
-
-export default IssueFilterStore;

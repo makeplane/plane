@@ -1,5 +1,5 @@
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
-import { RootStore } from "./root";
+import { RootStore } from "../root";
 // types
 import { IIssueLabels, IProject, IWorkspace, IWorkspaceMember } from "types";
 // services
@@ -32,7 +32,7 @@ export interface IWorkspaceStore {
   workspaceMembers: IWorkspaceMember[] | null;
 }
 
-class WorkspaceStore implements IWorkspaceStore {
+export class WorkspaceStore implements IWorkspaceStore {
   // states
   loader: boolean = false;
   error: any | null = null;
@@ -215,5 +215,3 @@ class WorkspaceStore implements IWorkspaceStore {
     }
   };
 }
-
-export default WorkspaceStore;

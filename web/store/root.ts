@@ -1,32 +1,58 @@
 // mobx lite
 import { enableStaticRendering } from "mobx-react-lite";
 // store imports
-import UserStore from "./user";
-import ThemeStore from "./theme";
-import IssueStore, { IIssueStore } from "./issue";
-import DraftIssuesStore from "./issue_draft";
-import WorkspaceStore, { IWorkspaceStore } from "./workspace";
-import WorkspaceFilterStore, { IWorkspaceFilterStore } from "./workspace_filters";
-import ProjectStore, { IProjectStore } from "./project";
-import ProjectPublishStore, { IProjectPublishStore } from "./project_publish";
-import ModuleStore, { IModuleStore } from "./modules";
-import ModuleIssueStore, { IModuleIssueStore } from "./module_issue";
-import ModuleFilterStore, { IModuleFilterStore } from "./module_filters";
-import ModuleIssueKanBanViewStore, { IModuleIssueKanBanViewStore } from "./module_issue_kanban_view";
-import CycleStore, { ICycleStore } from "./cycles";
-import CycleIssueStore, { ICycleIssueStore } from "./cycle_issue";
-import CycleIssueFilterStore, { ICycleIssueFilterStore } from "./cycle_issue_filters";
-import CycleIssueKanBanViewStore, { ICycleIssueKanBanViewStore } from "./cycle_issue_kanban_view";
-import ProjectViewsStore, { IProjectViewsStore } from "./project_views";
-import ProjectViewIssuesStore, { IProjectViewIssuesStore } from "./project_view_issues";
-import ProjectViewFiltersStore, { IProjectViewFiltersStore } from "./project_view_filters";
-import IssueFilterStore, { IIssueFilterStore } from "./issue_filters";
-import IssueViewDetailStore from "./issue_detail";
-import IssueKanBanViewStore from "./kanban_view";
-import CalendarStore, { ICalendarStore } from "./calendar";
-import GlobalViewsStore, { IGlobalViewsStore } from "./global_views";
-import GlobalViewIssuesStore, { IGlobalViewIssuesStore } from "./global_view_issues";
-import GlobalViewFiltersStore, { IGlobalViewFiltersStore } from "./global_view_filters";
+import UserStore from "store/user.store";
+import ThemeStore from "store/theme.store";
+import {
+  DraftIssuesStore,
+  IIssueDetailStore,
+  IIssueFilterStore,
+  IIssueKanBanViewStore,
+  IIssueStore,
+  IssueDetailStore,
+  IssueFilterStore,
+  IssueKanBanViewStore,
+  IssueStore,
+} from "store/issue";
+import { IWorkspaceFilterStore, IWorkspaceStore, WorkspaceFilterStore, WorkspaceStore } from "store/workspace";
+import { IProjectPublishStore, IProjectStore, ProjectPublishStore, ProjectStore } from "store/project";
+import {
+  IModuleFilterStore,
+  IModuleIssueKanBanViewStore,
+  IModuleIssueStore,
+  IModuleStore,
+  ModuleFilterStore,
+  ModuleIssueKanBanViewStore,
+  ModuleIssueStore,
+  ModuleStore,
+} from "store/module";
+import {
+  CycleIssueFilterStore,
+  CycleIssueKanBanViewStore,
+  CycleIssueStore,
+  CycleStore,
+  ICycleIssueFilterStore,
+  ICycleIssueKanBanViewStore,
+  ICycleIssueStore,
+  ICycleStore,
+} from "store/cycle";
+import {
+  IProjectViewFiltersStore,
+  IProjectViewIssuesStore,
+  IProjectViewsStore,
+  ProjectViewFiltersStore,
+  ProjectViewIssuesStore,
+  ProjectViewsStore,
+} from "store/project-view";
+import CalendarStore, { ICalendarStore } from "store/calendar.store";
+import {
+  GlobalViewFiltersStore,
+  GlobalViewIssuesStore,
+  GlobalViewsStore,
+  IGlobalViewFiltersStore,
+  IGlobalViewIssuesStore,
+  IGlobalViewsStore,
+} from "store/global-view";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -56,8 +82,8 @@ export class RootStore {
   projectViewFilters: IProjectViewFiltersStore;
 
   issueFilter: IIssueFilterStore;
-  issueDetail: IssueViewDetailStore;
-  issueKanBanView: IssueKanBanViewStore;
+  issueDetail: IIssueDetailStore;
+  issueKanBanView: IIssueKanBanViewStore;
   draftIssuesStore: DraftIssuesStore;
 
   calendar: ICalendarStore;
@@ -92,7 +118,7 @@ export class RootStore {
 
     this.issue = new IssueStore(this);
     this.issueFilter = new IssueFilterStore(this);
-    this.issueDetail = new IssueViewDetailStore(this);
+    this.issueDetail = new IssueDetailStore(this);
     this.issueKanBanView = new IssueKanBanViewStore(this);
     this.draftIssuesStore = new DraftIssuesStore(this);
 

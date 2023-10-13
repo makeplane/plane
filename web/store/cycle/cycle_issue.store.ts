@@ -1,6 +1,6 @@
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // store
-import { RootStore } from "./root";
+import { RootStore } from "../root";
 // types
 import { IIssue } from "types";
 // services
@@ -36,7 +36,7 @@ export interface ICycleIssueStore {
   updateIssueStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
 }
 
-class CycleIssueStore implements ICycleIssueStore {
+export class CycleIssueStore implements ICycleIssueStore {
   loader: boolean = false;
   error: any | null = null;
   issues: {
@@ -188,5 +188,3 @@ class CycleIssueStore implements ICycleIssueStore {
     }
   };
 }
-
-export default CycleIssueStore;

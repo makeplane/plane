@@ -3,7 +3,7 @@ import { observable, action, makeObservable, runInAction } from "mobx";
 import { ProjectService } from "services/project";
 import WorkspaceService from "services/workspace.service";
 // types
-import { RootStore } from "./root";
+import { RootStore } from "../root";
 import { IWorkspaceView } from "types/workspace-views";
 
 export interface IGlobalViewsStore {
@@ -28,7 +28,7 @@ export interface IGlobalViewsStore {
   deleteGlobalView: (workspaceSlug: string, viewId: string) => Promise<any>;
 }
 
-class GlobalViewsStore implements IGlobalViewsStore {
+export class GlobalViewsStore implements IGlobalViewsStore {
   // states
   loader: boolean = false;
   error: any | null = null;
@@ -203,5 +203,3 @@ class GlobalViewsStore implements IGlobalViewsStore {
     }
   };
 }
-
-export default GlobalViewsStore;

@@ -4,9 +4,13 @@ import { IssueService } from "services/issue";
 // helpers
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 // types
-import { RootStore } from "./root";
+import { RootStore } from "../root";
 import { IIssueFilterOptions } from "types";
-import { IIssueGroupWithSubGroupsStructure, IIssueGroupedStructure, IIssueUnGroupedStructure } from "./module_issue";
+import {
+  IIssueGroupWithSubGroupsStructure,
+  IIssueGroupedStructure,
+  IIssueUnGroupedStructure,
+} from "../module/module_issue.store";
 
 export interface IProjectViewIssuesStore {
   // states
@@ -34,7 +38,7 @@ export interface IProjectViewIssuesStore {
   getIssues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null;
 }
 
-class ProjectViewIssuesStore implements IProjectViewIssuesStore {
+export class ProjectViewIssuesStore implements IProjectViewIssuesStore {
   // states
   loader: boolean = false;
   error: any | null = null;
@@ -155,5 +159,3 @@ class ProjectViewIssuesStore implements IProjectViewIssuesStore {
     }
   };
 }
-
-export default ProjectViewIssuesStore;

@@ -1,7 +1,7 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // types
-import { RootStore } from "./root";
-import { IIssueType } from "./issue";
+import { RootStore } from "../root";
+import { IIssueType } from "store/issue";
 
 export interface ICycleIssueKanBanViewStore {
   kanBanToggle: {
@@ -18,7 +18,7 @@ export interface ICycleIssueKanBanViewStore {
   handleDragDrop: (source: any, destination: any) => void;
 }
 
-class CycleIssueKanBanViewStore implements ICycleIssueKanBanViewStore {
+export class CycleIssueKanBanViewStore implements ICycleIssueKanBanViewStore {
   kanBanToggle: {
     groupByHeaderMinMax: string[];
     subgroupByIssuesVisibility: string[];
@@ -447,5 +447,3 @@ class CycleIssueKanBanViewStore implements ICycleIssueKanBanViewStore {
     }
   };
 }
-
-export default CycleIssueKanBanViewStore;
