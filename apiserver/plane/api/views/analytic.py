@@ -256,12 +256,52 @@ class ExportAnalyticsEndpoint(BaseAPIView):
         try:
             x_axis = request.data.get("x_axis", False)
             y_axis = request.data.get("y_axis", False)
+            segment = request.data.get("segment", False)
 
-            if not x_axis or not y_axis:
+            
+            valid_xaxis_segment = [
+                "state_id",
+                "state__group",
+                "labels__id",
+                "assignees__id",
+                "estimate_point",
+                "issue_cycle__cycle_id",
+                "issue_module__module_id",
+                "priority",
+                "start_date",
+                "target_date",
+                "created_at",
+                "completed_at",
+            ]
+
+            valid_yaxis = [
+                "issue_count",
+                "estimate",
+            ]
+
+            # Check for x-axis and y-axis as thery are required parameters
+            if (
+                not x_axis
+                or not y_axis
+                or not x_axis in valid_xaxis_segment
+                or not y_axis in valid_yaxis
+            ):
                 return Response(
-                    {"error": "x-axis and y-axis dimensions are required"},
+                    {
+                        "error": "x-axis and y-axis dimensions are required and the values should be valid"
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+
+            # If segment is present it cannot be same as x-axis
+            if segment and (segment not in valid_xaxis_segment or x_axis == segment):
+                return Response(
+                    {
+                        "error": "Both segment and x axis cannot be same and segment should be valid"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
 
             analytic_export_task.delay(
                 email=request.user.email, data=request.data, slug=slug
