@@ -1,12 +1,13 @@
-import APIService from "services/api.service";
-import TrackEventService from "services/track_event.service";
+import { APIService } from "services/api.service";
+import { TrackEventService } from "services/track_event.service";
+// helpers
 import { API_BASE_URL } from "helpers/common.helper";
 // types
 import type { IInboxIssue, IInbox, TInboxStatus, IInboxIssueDetail, IUser, IInboxQueryParams } from "types";
 
 const trackEventService = new TrackEventService();
 
-class InboxServices extends APIService {
+export class InboxServices extends APIService {
   constructor() {
     super(API_BASE_URL);
   }

@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import cyclesService from "services/cycles.service";
+import cyclesService from "services/cycle.service";
 // components
 import { CyclesView } from "components/cycles";
 // fetch-keys

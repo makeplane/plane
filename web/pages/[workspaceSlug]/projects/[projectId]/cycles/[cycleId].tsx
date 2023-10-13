@@ -16,7 +16,7 @@ import { CycleDetailsSidebar, TransferIssues, TransferIssuesModal } from "compon
 import { CycleLayoutRoot } from "components/issues/issue-layouts";
 // services
 import issuesService from "services/issue/issue.service";
-import cycleServices from "services/cycles.service";
+import cycleServices from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";

@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // services
-import cyclesService from "services/cycles.service";
+import cyclesService from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui

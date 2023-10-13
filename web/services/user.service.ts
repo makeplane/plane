@@ -1,6 +1,6 @@
 // services
-import APIService from "services/api.service";
-import TrackEventService from "services/track_event.service";
+import { APIService } from "services/api.service";
+import { TrackEventService } from "services/track_event.service";
 // types
 import type {
   IIssue,

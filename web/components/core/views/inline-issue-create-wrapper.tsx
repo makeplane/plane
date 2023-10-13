@@ -4,7 +4,7 @@ import { mutate } from "swr";
 import { useForm, FormProvider } from "react-hook-form";
 import { Transition } from "@headlessui/react";
 // services
-import modulesService from "services/modules.service";
+import modulesService from "services/module.service";
 import { IssueService } from "services/issue";
 // hooks
 import useToast from "hooks/use-toast";

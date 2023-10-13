@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import cycleService from "services/cycles.service";
+import cycleService from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components

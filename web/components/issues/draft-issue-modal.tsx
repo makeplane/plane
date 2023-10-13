@@ -32,7 +32,7 @@ import {
   CYCLE_DETAILS,
   MODULE_DETAILS,
 } from "constants/fetch-keys";
-import modulesService from "services/modules.service";
+import modulesService from "services/module.service";
 
 interface IssuesModalProps {
   data?: IIssue | null;

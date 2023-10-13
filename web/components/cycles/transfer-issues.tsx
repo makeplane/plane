@@ -9,7 +9,7 @@ import { Button } from "@plane/ui";
 // icon
 import { ExclamationIcon, TransferIcon } from "components/icons";
 // services
-import cycleServices from "services/cycles.service";
+import cycleServices from "services/cycle.service";
 // fetch-key
 import { CYCLE_DETAILS } from "constants/fetch-keys";
 

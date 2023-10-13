@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 // headless ui
 import { Disclosure, Popover, Transition } from "@headlessui/react";
 // services
-import cyclesService from "services/cycles.service";
+import cyclesService from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components

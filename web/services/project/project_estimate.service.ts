@@ -1,6 +1,6 @@
 // services
-import APIService from "services/api.service";
-import TrackEventService from "services/track_event.service";
+import { APIService } from "services/api.service";
+import { TrackEventService } from "services/track_event.service";
 // types
 import type { IUser, IEstimate, IEstimateFormData } from "types";
 // helpers
@@ -8,7 +8,7 @@ import { API_BASE_URL } from "helpers/common.helper";
 
 const trackEventService = new TrackEventService();
 
-class ProjectEstimateServices extends APIService {
+export class ProjectEstimateServices extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -78,5 +78,3 @@ class ProjectEstimateServices extends APIService {
       });
   }
 }
-
-export default ProjectEstimateServices;

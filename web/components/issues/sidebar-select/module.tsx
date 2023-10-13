@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // services
-import modulesService from "services/modules.service";
+import modulesService from "services/module.service";
 // ui
 import { CustomSelect } from "components/ui";
 import { Spinner, Tooltip } from "@plane/ui";

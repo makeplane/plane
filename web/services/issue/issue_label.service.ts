@@ -1,13 +1,13 @@
 import { API_BASE_URL } from "helpers/common.helper";
 // services
-import APIService from "services/api.service";
-import TrackEventService from "services/track_event.service";
+import { APIService } from "services/api.service";
+import { TrackEventService } from "services/track_event.service";
 // types
 import { IIssueLabels, IUser } from "types";
 
 const trackEventServices = new TrackEventService();
 
-class IssueLabelService extends APIService {
+export class IssueLabelService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -110,5 +110,3 @@ class IssueLabelService extends APIService {
       });
   }
 }
-
-export default IssueLabelService;

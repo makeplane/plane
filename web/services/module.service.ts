@@ -1,13 +1,13 @@
 // services
-import APIService from "services/api.service";
-import TrackEventService from "services/track_event.service";
+import { APIService } from "services/api.service";
+import { TrackEventService } from "services/track_event.service";
 // types
 import type { IModule, IIssue, IUser } from "types";
 import { API_BASE_URL } from "helpers/common.helper";
 
 const trackEventService = new TrackEventService();
 
-class ModuleService extends APIService {
+export class ModuleService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -226,5 +226,3 @@ class ModuleService extends APIService {
       });
   }
 }
-
-export default ModuleService;

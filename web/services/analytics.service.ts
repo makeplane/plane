@@ -1,5 +1,5 @@
 // services
-import APIService from "services/api.service";
+import { APIService } from "services/api.service";
 // types
 import {
   IAnalyticsParams,
@@ -11,7 +11,7 @@ import {
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 
-class AnalyticsService extends APIService {
+export class AnalyticsService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -61,5 +61,3 @@ class AnalyticsService extends APIService {
       });
   }
 }
-
-export default AnalyticsService;

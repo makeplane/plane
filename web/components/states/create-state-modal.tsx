@@ -1,17 +1,11 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// react-color
 import { TwitterPicker } from "react-color";
-// headless ui
 import { Dialog, Popover, Transition } from "@headlessui/react";
 // services
-import stateService from "services/project.service/project_state.service";
+import { ProjectStateService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -20,18 +14,17 @@ import { Button, Input, TextArea } from "@plane/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 // types
-import type { ICurrentUserResponse, IState, IStateResponse } from "types";
+import type { IUser, IState, IStateResponse } from "types";
 // fetch keys
 import { STATES_LIST } from "constants/fetch-keys";
 // constants
 import { GROUP_CHOICES } from "constants/project";
-
 // types
 type Props = {
   isOpen: boolean;
   projectId: string;
   handleClose: () => void;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
 const defaultValues: Partial<IState> = {
@@ -41,6 +34,8 @@ const defaultValues: Partial<IState> = {
   group: "backlog",
 };
 
+const projectStateService = new ProjectStateService();
+
 export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClose, user }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -48,7 +43,6 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
   const { setToastAlert } = useToast();
 
   const {
-    register,
     formState: { errors, isSubmitting },
     handleSubmit,
     watch,
@@ -70,7 +64,7 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
       ...formData,
     };
 
-    await stateService
+    await projectStateService
       .createState(workspaceSlug as string, projectId, payload, user)
       .then((res) => {
         mutate<IStateResponse>(

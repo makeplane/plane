@@ -1,7 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-abstract class APIService {
+export abstract class APIService {
   protected baseURL: string;
   protected headers: any = {};
 
@@ -92,5 +92,3 @@ abstract class APIService {
     return axios(config);
   }
 }
-
-export default APIService;

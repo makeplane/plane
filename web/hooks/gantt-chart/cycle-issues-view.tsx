@@ -1,7 +1,7 @@
 import useSWR from "swr";
 
 // services
-import cyclesService from "services/cycles.service";
+import cyclesService from "services/cycle.service";
 // hooks
 import useIssuesView from "hooks/use-issues-view";
 // fetch-keys
@@ -30,9 +30,7 @@ const useGanttChartCycleIssues = (
 
   // all issues under the workspace and project
   const { data: ganttIssues, mutate: mutateGanttIssues } = useSWR(
-    workspaceSlug && projectId && cycleId
-      ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), params)
-      : null,
+    workspaceSlug && projectId && cycleId ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), params) : null,
     workspaceSlug && projectId && cycleId
       ? () =>
           cyclesService.getCycleIssuesWithParams(

@@ -13,7 +13,7 @@ import useUserIssueNotificationSubscription from "hooks/use-issue-notification-s
 import useEstimateOption from "hooks/use-estimate-option";
 // services
 import issuesService from "services/issue/issue.service";
-import modulesService from "services/modules.service";
+import modulesService from "services/module.service";
 // contexts
 import { useProjectMyMembership } from "contexts/project-member.context";
 // components

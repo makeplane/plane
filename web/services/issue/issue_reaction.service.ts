@@ -1,13 +1,13 @@
 import { API_BASE_URL } from "helpers/common.helper";
 // services
-import APIService from "services/api.service";
-import TrackEventService from "services/track_event.service";
+import { APIService } from "services/api.service";
+import { TrackEventService } from "services/track_event.service";
 // types
 import type { IUser, IssueReaction, IssueCommentReaction, IssueReactionForm, IssueCommentReactionForm } from "types";
 
 const trackEventService = new TrackEventService();
 
-class IssueReactionService extends APIService {
+export class IssueReactionService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -104,5 +104,3 @@ class IssueReactionService extends APIService {
       });
   }
 }
-
-export default IssueReactionService;

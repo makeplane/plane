@@ -11,7 +11,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // components
 import { ModuleForm } from "components/modules";
 // services
-import modulesService from "services/modules.service";
+import modulesService from "services/module.service";
 // hooks
 import useToast from "hooks/use-toast";
 // types

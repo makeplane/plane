@@ -9,18 +9,13 @@ import useSWR, { mutate } from "swr";
 
 // services
 import issuesService from "services/issues.service";
-import cyclesService from "services/cycles.service";
+import cyclesService from "services/cycle.service";
 
 // hooks
 import useUser from "hooks/use-user";
 
 // fetch keys
-import {
-  ISSUE_DETAILS,
-  INCOMPLETE_CYCLES_LIST,
-  CYCLE_ISSUES,
-  PROJECT_ISSUES_ACTIVITY,
-} from "constants/fetch-keys";
+import { ISSUE_DETAILS, INCOMPLETE_CYCLES_LIST, CYCLE_ISSUES, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 // icons
 import { ChevronDown } from "lucide-react";
@@ -47,12 +42,7 @@ export const CycleSelect: React.FC<Props> = (props) => {
   const { data: incompleteCycles } = useSWR(
     workspaceSlug && projectId ? INCOMPLETE_CYCLES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () =>
-          cyclesService.getCyclesWithParams(
-            workspaceSlug as string,
-            projectId as string,
-            "incomplete"
-          )
+      ? () => cyclesService.getCyclesWithParams(workspaceSlug as string, projectId as string, "incomplete")
       : null
   );
 
@@ -107,11 +97,7 @@ export const CycleSelect: React.FC<Props> = (props) => {
 
   return (
     <>
-      <WebViewModal
-        isOpen={isBottomSheetOpen}
-        onClose={() => setIsBottomSheetOpen(false)}
-        modalTitle="Select Module"
-      >
+      <WebViewModal isOpen={isBottomSheetOpen} onClose={() => setIsBottomSheetOpen(false)} modalTitle="Select Module">
         <WebViewModal.Options
           options={[
             ...(incompleteCycles ?? []).map((cycle) => ({

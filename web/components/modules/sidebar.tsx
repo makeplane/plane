@@ -20,7 +20,7 @@ import {
 import { Disclosure, Popover, Transition } from "@headlessui/react";
 import DatePicker from "react-datepicker";
 // services
-import modulesService from "services/modules.service";
+import modulesService from "services/module.service";
 // contexts
 import { useProjectMyMembership } from "contexts/project-member.context";
 // hooks

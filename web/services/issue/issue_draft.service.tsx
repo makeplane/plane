@@ -1,8 +1,8 @@
-import APIService from "services/api.service";
+import { APIService } from "services/api.service";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 
-class IssueDraftService extends APIService {
+export class IssueDraftService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -49,5 +49,3 @@ class IssueDraftService extends APIService {
       });
   }
 }
-
-export default IssueDraftService;

@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { KeyedMutator } from "swr";
 
 // services
-import cyclesService from "services/cycles.service";
+import cyclesService from "services/cycle.service";
 // hooks
 import useUser from "hooks/use-user";
 import useProjectDetails from "hooks/use-project-details";

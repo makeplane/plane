@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { KeyedMutator, mutate } from "swr";
 // services
-import cyclesService from "services/cycles.service";
+import cyclesService from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";

@@ -8,9 +8,9 @@ import useSWR, { mutate } from "swr";
 import ToastAlert from "components/toast-alert";
 // services
 import projectService from "services/project.service/project.service";
-import cyclesService from "services/cycles.service";
-import modulesService from "services/modules.service";
-import viewsService from "services/views.service";
+import cyclesService from "services/cycle.service";
+import modulesService from "services/module.service";
+import viewsService from "services/view.service";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // types

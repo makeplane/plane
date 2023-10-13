@@ -6,7 +6,7 @@ import useSWR, { mutate } from "swr";
 
 // services
 import issuesService from "services/issue/issue.service";
-import cyclesService from "services/cycles.service";
+import cyclesService from "services/cycle.service";
 // ui
 import { CustomSelect } from "components/ui";
 import { Spinner, Tooltip } from "@plane/ui";

@@ -30,7 +30,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
   const { project: projectStore } = useMobxStore();
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
   // toast
   const { setToastAlert } = useToast();
   // form info

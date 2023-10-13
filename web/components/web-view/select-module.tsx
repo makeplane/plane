@@ -8,18 +8,13 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // services
-import modulesService from "services/modules.service";
+import modulesService from "services/module.service";
 
 // hooks
 import useUser from "hooks/use-user";
 
 // fetch keys
-import {
-  ISSUE_DETAILS,
-  MODULE_LIST,
-  MODULE_ISSUES,
-  PROJECT_ISSUES_ACTIVITY,
-} from "constants/fetch-keys";
+import { ISSUE_DETAILS, MODULE_LIST, MODULE_ISSUES, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 // icons
 import { ChevronDown } from "lucide-react";
@@ -45,9 +40,7 @@ export const ModuleSelect: React.FC<Props> = (props) => {
 
   const { data: modules } = useSWR(
     workspaceSlug && projectId ? MODULE_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => modulesService.getModules(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => modulesService.getModules(workspaceSlug as string, projectId as string) : null
   );
 
   const { user } = useUser();
@@ -100,11 +93,7 @@ export const ModuleSelect: React.FC<Props> = (props) => {
 
   return (
     <>
-      <WebViewModal
-        isOpen={isBottomSheetOpen}
-        onClose={() => setIsBottomSheetOpen(false)}
-        modalTitle="Select Module"
-      >
+      <WebViewModal isOpen={isBottomSheetOpen} onClose={() => setIsBottomSheetOpen(false)} modalTitle="Select Module">
         <WebViewModal.Options
           options={[
             ...(modules ?? []).map((mod) => ({
@@ -137,9 +126,7 @@ export const ModuleSelect: React.FC<Props> = (props) => {
           "relative w-full px-2.5 py-0.5 text-base flex justify-between items-center gap-0.5 text-custom-text-100"
         }
       >
-        <span className="text-custom-text-200">
-          {value?.module_detail?.name ?? "Select module"}
-        </span>
+        <span className="text-custom-text-200">{value?.module_detail?.name ?? "Select module"}</span>
         <ChevronDown className="w-4 h-4 text-custom-text-200" />
       </button>
     </>

@@ -7,7 +7,7 @@ import useSWR, { mutate } from "swr";
 // component
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import cyclesService from "services/cycles.service";
+import cyclesService from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
@@ -59,21 +59,14 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
   const { data: incompleteCycles } = useSWR(
     workspaceSlug && projectId ? INCOMPLETE_CYCLES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () =>
-          cyclesService.getCyclesWithParams(
-            workspaceSlug as string,
-            projectId as string,
-            "incomplete"
-          )
+      ? () => cyclesService.getCyclesWithParams(workspaceSlug as string, projectId as string, "incomplete")
       : null
   );
 
   const filteredOptions =
     query === ""
       ? incompleteCycles
-      : incompleteCycles?.filter((option) =>
-          option.name.toLowerCase().includes(query.toLowerCase())
-        );
+      : incompleteCycles?.filter((option) => option.name.toLowerCase().includes(query.toLowerCase()));
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -153,14 +146,9 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
                         ))
                       ) : (
                         <div className="flex w-full items-center justify-center gap-4 p-5 text-sm">
-                          <ExclamationIcon
-                            height={14}
-                            width={14}
-                            className="fill-current text-custom-text-200"
-                          />
+                          <ExclamationIcon height={14} width={14} className="fill-current text-custom-text-200" />
                           <span className="text-center text-custom-text-200">
-                            You don’t have any current cycle. Please create one to transfer the
-                            issues.
+                            You don’t have any current cycle. Please create one to transfer the issues.
                           </span>
                         </div>
                       )
