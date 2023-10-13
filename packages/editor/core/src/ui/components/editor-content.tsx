@@ -1,7 +1,6 @@
 import { Editor, EditorContent } from "@tiptap/react";
 import { ReactNode } from "react";
 import { ImageResizer } from "../extensions/image/image-resize";
-import { TableMenu } from "../menus/table-menu";
 
 interface EditorContentProps {
   editor: Editor | null;
@@ -11,9 +10,7 @@ interface EditorContentProps {
 
 export const EditorContentWrapper = ({ editor, editorContentCustomClassNames = '', children }: EditorContentProps) => (
   <div className={`contentEditor ${editorContentCustomClassNames}`}>
-    {/* @ts-ignore */}
     <EditorContent editor={editor} />
-    {/* <TableMenu editor={editor} /> */}
     {editor?.isActive("image") && <ImageResizer editor={editor} />}
     {children}
   </div>

@@ -21,15 +21,10 @@ import {
     toggleHeaderCell
 } from "@tiptap/prosemirror-tables"
 
-import { tableControls } from "./tableControls"
-import { TableView } from "./TableView"
-import { createTable } from "./utilities/createTable"
-import { deleteTableWhenAllCellsSelected } from "./utilities/deleteTableWhenAllCellsSelected"
-
-/**
- * Extension based on:
- * - Tiptap TableExtension (https://github.com/ueberdosis/tiptap/blob/main/packages/extension-table/src/table.ts)
- */
+import { tableControls } from "./table-controls"
+import { TableView } from "./table-view"
+import { createTable } from "./utilities/create-table"
+import { deleteTableWhenAllCellsSelected } from "./utilities/delete-table-when-all-cells-selected"
 
 export interface TableOptions {
     HTMLAttributes: Record<string, any>
@@ -73,9 +68,6 @@ declare module "@tiptap/core" {
     }
 
     interface NodeConfig<Options, Storage> {
-        /**
-         * Table Role
-         */
         tableRole?:
             | string
             | ((this: {
@@ -149,64 +141,40 @@ export default Node.create({
                 },
             addColumnBefore:
                 () =>
-                ({ state, dispatch }) => {
-                    return addColumnBefore(state, dispatch)
-                },
+                ({ state, dispatch }) => addColumnBefore(state, dispatch),
             addColumnAfter:
                 () =>
-                ({ state, dispatch }) => {
-                    return addColumnAfter(state, dispatch)
-                },
+                ({ state, dispatch }) => addColumnAfter(state, dispatch),
             deleteColumn:
                 () =>
-                ({ state, dispatch }) => {
-                    return deleteColumn(state, dispatch)
-                },
+                ({ state, dispatch }) => deleteColumn(state, dispatch),
             addRowBefore:
                 () =>
-                ({ state, dispatch }) => {
-                    return addRowBefore(state, dispatch)
-                },
+                ({ state, dispatch }) => addRowBefore(state, dispatch),
             addRowAfter:
                 () =>
-                ({ state, dispatch }) => {
-                    return addRowAfter(state, dispatch)
-                },
+                ({ state, dispatch }) => addRowAfter(state, dispatch),
             deleteRow:
                 () =>
-                ({ state, dispatch }) => {
-                    return deleteRow(state, dispatch)
-                },
+                ({ state, dispatch }) => deleteRow(state, dispatch),
             deleteTable:
                 () =>
-                ({ state, dispatch }) => {
-                    return deleteTable(state, dispatch)
-                },
+                ({ state, dispatch }) => deleteTable(state, dispatch),
             mergeCells:
                 () =>
-                ({ state, dispatch }) => {
-                    return mergeCells(state, dispatch)
-                },
+                ({ state, dispatch }) => mergeCells(state, dispatch),
             splitCell:
                 () =>
-                ({ state, dispatch }) => {
-                    return splitCell(state, dispatch)
-                },
+                ({ state, dispatch }) => splitCell(state, dispatch),
             toggleHeaderColumn:
                 () =>
-                ({ state, dispatch }) => {
-                    return toggleHeader("column")(state, dispatch)
-                },
+                ({ state, dispatch }) => toggleHeader("column")(state, dispatch),
             toggleHeaderRow:
                 () =>
-                ({ state, dispatch }) => {
-                    return toggleHeader("row")(state, dispatch)
-                },
+                ({ state, dispatch }) => toggleHeader("row")(state, dispatch),
             toggleHeaderCell:
                 () =>
-                ({ state, dispatch }) => {
-                    return toggleHeaderCell(state, dispatch)
-                },
+                ({ state, dispatch }) => toggleHeaderCell(state, dispatch),
             mergeOrSplit:
                 () =>
                 ({ state, dispatch }) => {
@@ -218,19 +186,13 @@ export default Node.create({
                 },
             setCellAttribute:
                 (name, value) =>
-                ({ state, dispatch }) => {
-                    return setCellAttr(name, value)(state, dispatch)
-                },
+                ({ state, dispatch }) => setCellAttr(name, value)(state, dispatch),
             goToNextCell:
                 () =>
-                ({ state, dispatch }) => {
-                    return goToNextCell(1)(state, dispatch)
-                },
+                ({ state, dispatch }) => goToNextCell(1)(state, dispatch),
             goToPreviousCell:
                 () =>
-                ({ state, dispatch }) => {
-                    return goToNextCell(-1)(state, dispatch)
-                },
+                ({ state, dispatch }) => goToNextCell(-1)(state, dispatch),
             fixTables:
                 () =>
                 ({ state, dispatch }) => {

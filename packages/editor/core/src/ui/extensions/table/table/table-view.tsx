@@ -1,7 +1,7 @@
 import { h } from "jsx-dom-cjs"
 import { Node as ProseMirrorNode } from "@tiptap/pm/model"
 import { Decoration, NodeView } from "@tiptap/pm/view"
-import tippy, { Instance, Props, Tippy } from "tippy.js"
+import tippy, { Instance, Props } from "tippy.js"
 
 import { Editor } from "@tiptap/core"
 import {
@@ -109,7 +109,7 @@ const columnsToolboxItems = [
   {
     label: "Pick Column Color",
     icon: icons.colorPicker,
-    action: ({ editor, triggerButton, controlsContainer }) => {
+    action: ({ editor, triggerButton, controlsContainer }: { editor: Editor, triggerButton: HTMLElement, controlsContainer }) => {
       createColorPickerToolbox({
         triggerButton,
         tippyOptions: {
@@ -140,7 +140,7 @@ const rowsToolboxItems = [
   {
     label: "Pick a Color",
     icon: icons.colorPicker,
-    action: ({ editor, triggerButton, controlsContainer }: { editor: Editor, triggerButton: HTMLElement, controlsContainer: any }) => {
+    action: ({ editor, triggerButton, controlsContainer }: { editor: Editor, triggerButton: HTMLButtonElement, controlsContainer: Element | "parent" | ((ref: Element) => Element) | undefined }) => {
       createColorPickerToolbox({
         triggerButton,
         tippyOptions: {
@@ -202,12 +202,12 @@ function createColorPickerToolbox({
   onSelectColor?: (color: string) => void
 }) {
   const items = {
-    "Fond par défault": "#ffffff",
-    "Fond gris clair": "#e7f3f8",
-    "Fond gris foncé": "#c7d2d7",
-    "Fond bleu": "#e7f3f8",
-    "Fond rouge": "#ffc4c7",
-    "Fond jaune": "#fbf3db"
+    "Default": "rgb(var(--color-primary-100))",
+    "Light gray": "#e7f3f8",
+    "Dark gray": "#c7d2d7",
+    "Light blue": "#e7f3f8",
+    "Light red": "#ffc4c7",
+    "Light yellow": "#fbf3db"
   }
 
   const colorPicker = tippy(triggerButton, {
@@ -265,11 +265,11 @@ export class TableView implements NodeView {
   table: HTMLElement
   colgroup: HTMLElement
   tbody: HTMLElement
-  rowsControl: HTMLElement
-  columnsControl: HTMLElement
-  columnsToolbox: Instance<Props>
-  rowsToolbox: Instance<Props>
-  controls: HTMLElement
+  rowsControl?: HTMLElement
+  columnsControl?: HTMLElement
+  columnsToolbox?: Instance<Props>
+  rowsToolbox?: Instance<Props>
+  controls?: HTMLElement
 
   get dom() {
     return this.root
@@ -333,10 +333,10 @@ export class TableView implements NodeView {
         onClickItem: (item) => {
           item.action({
             editor: this.editor,
-            triggerButton: this.columnsControl.firstElementChild,
+            triggerButton: this.columnsControl?.firstElementChild,
             controlsContainer: this.controls
           })
-          this.columnsToolbox.hide()
+          this.columnsToolbox?.hide()
         }
       })
 
@@ -350,10 +350,10 @@ export class TableView implements NodeView {
         onClickItem: (item) => {
           item.action({
             editor: this.editor,
-            triggerButton: this.rowsControl.firstElementChild,
+            triggerButton: this.rowsControl?.firstElementChild,
             controlsContainer: this.controls
           })
-          this.rowsToolbox.hide()
+          this.rowsToolbox?.hide()
         }
       })
     }

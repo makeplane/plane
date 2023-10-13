@@ -2,7 +2,7 @@
 // import "./styles/tailwind.css";
 // import "./styles/editor.css";
 
-export * from "./ui/extensions/table-new/Table";
+export * from "./ui/extensions/table/table";
 
 // utils
 export * from "./lib/utils";

@@ -1,9 +1,7 @@
 import { Fragment, Node as ProsemirrorNode, Schema } from "@tiptap/pm/model"
 
-import { ReactNodeViewRenderer } from "@tiptap/react"
-
-import { createCell } from "./createCell"
-import { getTableNodeTypes } from "./getTableNodeTypes"
+import { createCell } from "./create-cell"
+import { getTableNodeTypes } from "./get-table-node-types"
 
 export function createTable(
     schema: Schema,

@@ -45,9 +45,9 @@
 	background-color: rgb(var(--color-primary-100));
 }
 
-.tableWrapper table td:hover{
-	background-color: rgba(var(--color-primary-300), 0.1);
-}
+/* .tableWrapper table td:hover{ */
+/* 	background-color: rgba(var(--color-primary-300), 0.1); */
+/* } */
 
 .tableWrapper table th * {
 	font-weight: 600;

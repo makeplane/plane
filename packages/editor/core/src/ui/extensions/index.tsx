@@ -8,20 +8,14 @@ import TaskList from "@tiptap/extension-task-list";
 import { Markdown } from "tiptap-markdown";
 import Gapcursor from "@tiptap/extension-gapcursor";
 
-// import { CustomTableCell } from "./table/table-cell";
-// import { Table } from "./table";
-// import { TableHeader } from "./table/table-header";
-// import { TableRow } from "@tiptap/extension-table-row";
-
 import ImageExtension from "./image";
 
 import { DeleteImage } from "../../types/delete-image";
 import { isValidHttpUrl } from "../../lib/utils";
-import Table from "./table-new/Table";
-import TableHeader from "./table-new/TableHeader";
-import TableCell from "./table-new/TableCell";
-import TableRow from "./table-new/TableRow";
-
+import TableHeader from "./table/table-header/table-header";
+import Table from "./table/table";
+import TableCell from "./table/table-cell/table-cell";
+import TableRow from "./table/table-row/table-row";
 
 export const CoreEditorExtensions = (
   deleteFile: DeleteImage,
@@ -98,8 +92,4 @@ export const CoreEditorExtensions = (
     TableHeader,
     TableCell,
     TableRow,
-    // Table,
-    // TableHeader,
-    // CustomTableCell,
-    // TableRow,
   ];
