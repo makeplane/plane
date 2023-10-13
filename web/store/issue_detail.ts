@@ -1,10 +1,9 @@
 import { observable, action, makeObservable, runInAction } from "mobx";
-
 // services
-import { IssueService } from "services/issue/issue.service";
+import IssueService from "services/issue/issue.service";
 // types
 import { RootStore } from "./root";
-import { ICurrentUserResponse, IIssue } from "types";
+import { IUser, IIssue } from "types";
 
 export type IPeekMode = "side" | "modal" | "full";
 
@@ -24,17 +23,11 @@ export interface IIssueDetailStore {
   // fetch issue details
   fetchIssueDetails: (workspaceId: string, projectId: string, issueId: string) => void;
   // creating issue
-  createIssue: (workspaceId: string, projectId: string, data: Partial<IIssue>, user: ICurrentUserResponse) => void;
+  createIssue: (workspaceId: string, projectId: string, data: Partial<IIssue>, user: IUser) => void;
   // updating issue
-  updateIssue: (
-    workspaceId: string,
-    projectId: string,
-    issueId: string,
-    data: Partial<IIssue>,
-    user: ICurrentUserResponse
-  ) => void;
+  updateIssue: (workspaceId: string, projectId: string, issueId: string, data: Partial<IIssue>, user: IUser) => void;
   // deleting issue
-  deleteIssue: (workspaceId: string, projectId: string, issueId: string, user: ICurrentUserResponse) => void;
+  deleteIssue: (workspaceId: string, projectId: string, issueId: string, user: IUser) => void;
 }
 
 class IssueDetailStore implements IIssueDetailStore {
@@ -106,7 +99,7 @@ class IssueDetailStore implements IIssueDetailStore {
     }
   };
 
-  createIssue = async (workspaceId: string, projectId: string, data: Partial<IIssue>, user: ICurrentUserResponse) => {
+  createIssue = async (workspaceId: string, projectId: string, data: Partial<IIssue>, user: IUser) => {
     try {
       runInAction(() => {
         this.loader = true;
@@ -135,7 +128,7 @@ class IssueDetailStore implements IIssueDetailStore {
     projectId: string,
     issueId: string,
     data: Partial<IIssue>,
-    user: ICurrentUserResponse | undefined
+    user: IUser | undefined
   ) => {
     const newIssues = { ...this.issues };
     newIssues[issueId] = {
@@ -175,7 +168,7 @@ class IssueDetailStore implements IIssueDetailStore {
     }
   };
 
-  deleteIssue = async (workspaceId: string, projectId: string, issueId: string, user: ICurrentUserResponse) => {
+  deleteIssue = async (workspaceId: string, projectId: string, issueId: string, user: IUser) => {
     const newIssues = { ...this.issues };
     delete newIssues[issueId];
 

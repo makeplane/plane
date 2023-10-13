@@ -4,7 +4,7 @@ import { RootStore } from "./root";
 // types
 import { IIssue } from "types";
 // services
-import { IssueService } from "services/issue/issue.service";
+import { IssueService } from "services/issue";
 import { sortArrayByDate, sortArrayByPriority } from "constants/kanban-helpers";
 
 export type IIssueType = "grouped" | "groupWithSubGroups" | "ungrouped";

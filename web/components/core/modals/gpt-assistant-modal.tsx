@@ -4,12 +4,11 @@ import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 // services
 import AIService from "services/ai.service";
-import trackEventServices from "services/track_event.service";
+import TrackEventService from "services/track_event.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // ui
-import { TipTapEditor } from "components/tiptap";
 import { Button, Input } from "@plane/ui";
 // types
 import { IIssue, IPageBlock } from "types";
@@ -32,6 +31,7 @@ type FormData = {
 };
 
 const aiService = new AIService();
+const trackEventService = new TrackEventService();
 
 export const GptAssistantModal: React.FC<Props> = ({
   isOpen,
@@ -140,7 +140,7 @@ export const GptAssistantModal: React.FC<Props> = ({
       {((content && content !== "") || (htmlContent && htmlContent !== "<p></p>")) && (
         <div className="text-sm">
           Content:
-          <TipTapEditor
+          {/* <TipTapEditor
             workspaceSlug={workspaceSlug as string}
             value={htmlContent ?? `<p>${content}</p>`}
             customClassName="-m-3"
@@ -148,20 +148,20 @@ export const GptAssistantModal: React.FC<Props> = ({
             borderOnFocus={false}
             editable={false}
             ref={editorRef}
-          />
+          /> */}
         </div>
       )}
       {response !== "" && (
         <div className="page-block-section text-sm">
           Response:
-          <TipTapEditor
+          {/* <TipTapEditor
             workspaceSlug={workspaceSlug as string}
             value={`<p>${response}</p>`}
             customClassName="-mx-3 -my-3"
             noBorder
             borderOnFocus={false}
             editable={false}
-          />
+          /> */}
         </div>
       )}
       {invalidResponse && (
@@ -194,8 +194,8 @@ export const GptAssistantModal: React.FC<Props> = ({
             onClick={() => {
               onResponse(response);
               onClose();
-              if (block) trackEventServices.trackUseGPTResponseEvent(block, "USE_GPT_RESPONSE_IN_PAGE_BLOCK", user);
-              else if (issue) trackEventServices.trackUseGPTResponseEvent(issue, "USE_GPT_RESPONSE_IN_ISSUE", user);
+              if (block) trackEventService.trackUseGPTResponseEvent(block, "USE_GPT_RESPONSE_IN_PAGE_BLOCK", user);
+              else if (issue) trackEventService.trackUseGPTResponseEvent(issue, "USE_GPT_RESPONSE_IN_ISSUE", user);
             }}
           >
             Use this response

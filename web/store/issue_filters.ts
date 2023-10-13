@@ -1,7 +1,7 @@
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // services
-import { ProjectService } from "services/project.service/project.service";
-import { IssueService } from "services/issue/issue.service";
+import { ProjectService } from "services/project";
+import { IssueService } from "services/issue";
 // helpers
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 // types

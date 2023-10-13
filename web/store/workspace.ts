@@ -3,9 +3,9 @@ import { RootStore } from "./root";
 // types
 import { IIssueLabels, IProject, IWorkspace, IWorkspaceMember } from "types";
 // services
-import { WorkspaceService } from "services/workspace.service";
-import { ProjectService } from "services/project.service/project.service";
-import { IssueService } from "services/issue/issue.service";
+import WorkspaceService from "services/workspace.service";
+import { ProjectService } from "services/project";
+import { IssueService, IssueLabelService } from "services/issue";
 
 export interface IWorkspaceStore {
   // states
@@ -48,7 +48,7 @@ class WorkspaceStore implements IWorkspaceStore {
   workspaceService;
   projectService;
   issueService;
-
+  issueLabelService;
   // root store
   rootStore;
 
@@ -82,6 +82,7 @@ class WorkspaceStore implements IWorkspaceStore {
     this.workspaceService = new WorkspaceService();
     this.projectService = new ProjectService();
     this.issueService = new IssueService();
+    this.issueLabelService = new IssueLabelService();
   }
 
   /**
@@ -166,7 +167,7 @@ class WorkspaceStore implements IWorkspaceStore {
         this.error = null;
       });
 
-      const labelsResponse = await this.issueService.getWorkspaceLabels(workspaceSlug);
+      const labelsResponse = await this.issueLabelService.getWorkspaceIssueLabels(workspaceSlug);
 
       runInAction(() => {
         this.labels = {
