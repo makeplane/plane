@@ -11,9 +11,8 @@ import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 import { ActivityIcon, ActivityMessage } from "components/core";
 import { TipTapEditor } from "components/tiptap";
 // icons
-import { MessageCircle } from "lucide-react";
+import { History, MessageCircle } from "lucide-react";
 // ui
-import { Icon } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { ExternalLinkIcon, Loader } from "@plane/ui";
 // fetch-keys
@@ -59,7 +58,7 @@ const ProfileActivity = () => {
                           <div className="relative px-1">
                             {activityItem.field ? (
                               activityItem.new_value === "restore" && (
-                                <Icon iconName="history" className="text-sm text-custom-text-200" />
+                                <History className="h-3 w-3 text-custom-text-200" />
                               )
                             ) : activityItem.actor_detail.avatar && activityItem.actor_detail.avatar !== "" ? (
                               <img
@@ -141,7 +140,7 @@ const ProfileActivity = () => {
                                     <div className="flex h-6 w-6 items-center justify-center">
                                       {activityItem.field ? (
                                         activityItem.new_value === "restore" ? (
-                                          <Icon iconName="history" className="!text-2xl text-custom-text-200" />
+                                          <History className="h-5 w-5 text-custom-text-200" />
                                         ) : (
                                           <ActivityIcon activity={activityItem} />
                                         )

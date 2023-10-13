@@ -16,9 +16,9 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import { IssueDetailsSidebar, IssueMainContent } from "components/issues";
 // ui
-import { Icon } from "components/ui";
 import { Breadcrumbs } from "components/breadcrumbs";
-import { Loader } from "@plane/ui";
+import { ArchiveIcon, Loader } from "@plane/ui";
+import { History } from "lucide-react";
 // types
 import { IIssue } from "types";
 import type { NextPage } from "next";
@@ -157,7 +157,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
             {issueDetails.archived_at && (
               <div className="flex items-center justify-between gap-2 px-2.5 py-2 text-sm border rounded-md text-custom-text-200 border-custom-border-200 bg-custom-background-90">
                 <div className="flex gap-2 items-center">
-                  <Icon iconName="archive" className="" />
+                  <ArchiveIcon className="h-3 w-3" />
                   <p>This issue has been archived by Plane.</p>
                 </div>
                 <button
@@ -165,7 +165,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
                   onClick={handleUnArchive}
                   disabled={isRestoring}
                 >
-                  <Icon iconName="history" />
+                  <History className="h-3 w-3" />
                   <span>{isRestoring ? "Restoring..." : "Restore Issue"}</span>
                 </button>
               </div>

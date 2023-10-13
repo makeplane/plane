@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { useRouter } from "next/router";
 
 // component
-import { CustomSearchSelect, CustomSelect, Icon } from "components/ui";
+import { CustomSearchSelect, CustomSelect } from "components/ui";
 import { SelectMonthModal } from "components/automation";
 import { ToggleSwitch, DoubleCircleIcon } from "@plane/ui";
 // icons

@@ -1,13 +1,14 @@
 import React from "react";
 
 // components
-import { CustomMenu, Icon } from "components/ui";
-import { Tooltip } from "@plane/ui";
+import { CustomMenu } from "components/ui";
+import { ArchiveIcon, Tooltip } from "@plane/ui";
 // helpers
 import { getNumberCount } from "helpers/string.helper";
 
 // type
 import type { NotificationType, NotificationCount } from "types";
+import { ArrowLeft, CheckCheck, Clock, ListFilter, MoreVertical, RefreshCw, X } from "lucide-react";
 
 type NotificationHeaderProps = {
   notificationCount?: NotificationCount | null;
@@ -76,7 +77,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
                 notificationMutate();
               }}
             >
-              <Icon iconName="refresh" className={`${isRefreshing ? "animate-spin" : ""}`} />
+              <RefreshCw className={`h-3 w-3 ${isRefreshing ? "animate-spin" : ""}`} />
             </button>
           </Tooltip>
           <Tooltip tooltipContent="Unread notifications">
@@ -88,19 +89,19 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
                 setReadNotification((prev) => !prev);
               }}
             >
-              <Icon iconName="filter_list" />
+              <ListFilter className="h-3 w-3" />
             </button>
           </Tooltip>
           <CustomMenu
             customButton={
               <div className="grid place-items-center ">
-                <Icon iconName="more_vert" />
+                <MoreVertical className="h-3 w-3" />
               </div>
             }
           >
             <CustomMenu.MenuItem renderAs="button" onClick={markAllNotificationsAsRead}>
               <div className="flex items-center gap-2">
-                <Icon iconName="done_all" />
+                <CheckCheck className="h-3 w-3" />
                 Mark all as read
               </div>
             </CustomMenu.MenuItem>
@@ -113,7 +114,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
               }}
             >
               <div className="flex items-center gap-2">
-                <Icon iconName="schedule" />
+                <Clock className="h-3 w-3" />
                 Show snoozed
               </div>
             </CustomMenu.MenuItem>
@@ -126,14 +127,14 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
               }}
             >
               <div className="flex items-center gap-2">
-                <Icon iconName="archive" />
+                <ArchiveIcon className="h-3 w-3" />
                 Show archived
               </div>
             </CustomMenu.MenuItem>
           </CustomMenu>
           <Tooltip tooltipContent="Close">
             <button type="button" onClick={() => closePopover()}>
-              <Icon iconName="close" />
+              <X className="h-3 w-3" />
             </button>
           </Tooltip>
         </div>
@@ -149,7 +150,7 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
             }}
           >
             <h4 className="flex items-center gap-2 pb-4">
-              <Icon iconName="arrow_back" />
+              <ArrowLeft className="h-3 w-3" />
               <span className="ml-2 font-medium">
                 {snoozed
                   ? "Snoozed Notifications"

@@ -10,10 +10,9 @@ import userService from "services/user.service";
 // hooks
 import useUser from "hooks/use-user";
 // ui
-import { Icon } from "components/ui";
 import { Loader, Tooltip } from "@plane/ui";
 // icons
-import { Pencil } from "lucide-react";
+import { ChevronDown, Pencil } from "lucide-react";
 // helpers
 import { renderLongDetailDateFormat } from "helpers/date-time.helper";
 import { renderEmoji } from "helpers/emoji.helper";
@@ -155,7 +154,7 @@ export const ProfileSidebar = () => {
                                 </div>
                               </Tooltip>
                             )}
-                            <Icon iconName="arrow_drop_down" className="!text-lg" />
+                            <ChevronDown className="h-4 w-4" />
                           </div>
                         </Disclosure.Button>
                         <Transition

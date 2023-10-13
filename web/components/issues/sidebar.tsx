@@ -34,9 +34,9 @@ import {
   SidebarRelatesSelect,
 } from "components/issues";
 // ui
-import { CustomDatePicker, Icon } from "components/ui";
+import { CustomDatePicker } from "components/ui";
 // icons
-import { BarChart, CalendarDays, Component, LinkIcon, Plus, Trash, Triangle, User2 } from "lucide-react";
+import { BarChart, Bell, CalendarDays, Component, LinkIcon, Plus, Trash, Triangle, User2 } from "lucide-react";
 import { DiceIcon, UserGroupIcon } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
@@ -303,7 +303,8 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                     else handleSubscribe();
                   }}
                 >
-                  <Icon iconName="notifications" />
+                  <Bell className="h-3.5 w-3.5" />
+
                   {loading ? "Loading..." : subscribed ? "Unsubscribe" : "Subscribe"}
                 </button>
               )}

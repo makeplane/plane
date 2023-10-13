@@ -15,10 +15,10 @@ import modulesService from "services/modules.service";
 import { CreateUpdateModuleModal, ModulesListGanttChartView, SingleModuleCard } from "components/modules";
 // ui
 import { Button, Loader, Tooltip } from "@plane/ui";
-import { EmptyState, Icon } from "components/ui";
+import { EmptyState } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { Plus } from "lucide-react";
+import { GanttChart, Grid2x2, Plus } from "lucide-react";
 // images
 import emptyModule from "public/empty-state/module.svg";
 // types
@@ -32,11 +32,11 @@ import { replaceUnderscoreIfSnakeCase, truncateText } from "helpers/string.helpe
 const moduleViewOptions: { type: "grid" | "gantt_chart"; icon: any }[] = [
   {
     type: "gantt_chart",
-    icon: "view_timeline",
+    icon: GanttChart,
   },
   {
     type: "grid",
-    icon: "table_rows",
+    icon: Grid2x2,
   },
 ];
 
@@ -98,7 +98,7 @@ const ProjectModules: NextPage = () => {
                 }`}
                 onClick={() => setModulesView(option.type)}
               >
-                <Icon iconName={option.icon} className={`!text-base ${option.type === "grid" ? "rotate-90" : ""}`} />
+                <option.icon className="h-4 w-4" />
               </button>
             </Tooltip>
           ))}

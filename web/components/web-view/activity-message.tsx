@@ -1,9 +1,19 @@
 import { useRouter } from "next/router";
 
 // icons
-import { CopyPlus } from "lucide-react";
-import { Icon } from "components/ui";
-import { Tooltip } from "@plane/ui";
+import {
+  BarChart,
+  Calendar,
+  CopyPlus,
+  Link2,
+  MessageSquare,
+  Paperclip,
+  Rocket,
+  Tag,
+  Triangle,
+  Users2,
+} from "lucide-react";
+import { ArchiveIcon, DiceIcon, DoubleCircleIcon, LayersIcon, Tooltip, UserGroupIcon } from "@plane/ui";
 import { BlockedIcon, BlockerIcon, RelatedIcon } from "components/icons";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
@@ -27,7 +37,7 @@ const IssueLink = ({ activity }: { activity: IIssueActivity }) => (
       className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
     >
       {activity.issue_detail ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}` : "Issue"}
-      <Icon iconName="launch" className="!text-xs" />
+      <Rocket className="h-3 w-3" />
     </button>
   </Tooltip>
 );
@@ -64,7 +74,7 @@ const activityDetails: {
         .
       </>
     ),
-    icon: <Icon iconName="group" className="!text-2xl" aria-hidden="true" />,
+    icon: <UserGroupIcon className="h-5 w-5" />,
   },
 
   archived_at: {
@@ -72,7 +82,7 @@ const activityDetails: {
       if (activity.new_value === "restore") return "restored the issue.";
       else return "archived the issue.";
     },
-    icon: <Icon iconName="archive" className="!text-2xl" aria-hidden="true" />,
+    icon: <ArchiveIcon className="h-5 w-5" />,
   },
 
   attachment: {
@@ -90,7 +100,7 @@ const activityDetails: {
         {showIssue && <IssueLink activity={activity} />}
       </>
     ),
-    icon: <Icon iconName="attach_file" className="!text-2xl" aria-hidden="true" />,
+    icon: <Paperclip className="h-5 w-5" />,
   },
 
   blocking: {
@@ -167,11 +177,11 @@ const activityDetails: {
           className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
         >
           {activity.new_value}
-          <Icon iconName="launch" className="!text-xs" />
+          <Rocket className="h-3 w-3" />
         </button>
       </>
     ),
-    icon: <Icon iconName="contrast" className="!text-2xl" aria-hidden="true" />,
+    icon: <Rocket className="h-5 w-5" />,
   },
 
   description: {
@@ -187,7 +197,7 @@ const activityDetails: {
         .
       </>
     ),
-    icon: <Icon iconName="chat" className="!text-2xl" aria-hidden="true" />,
+    icon: <MessageSquare className="h-5 w-5" />,
   },
 
   estimate_point: {
@@ -203,7 +213,7 @@ const activityDetails: {
         )}
       </>
     ),
-    icon: <Icon iconName="change_history" className="!text-2xl" aria-hidden="true" />,
+    icon: <Triangle className="h-5 w-5" />,
   },
 
   issue: {
@@ -211,7 +221,7 @@ const activityDetails: {
       if (activity.verb === "created") return "created the issue.";
       else return "deleted an issue.";
     },
-    icon: <Icon iconName="stack" className="!text-2xl" aria-hidden="true" />,
+    icon: <LayersIcon className="h-5 w-5" />,
   },
 
   labels: {
@@ -238,7 +248,7 @@ const activityDetails: {
         )}
       </>
     ),
-    icon: <Icon iconName="sell" className="!text-2xl" aria-hidden="true" />,
+    icon: <Tag className="h-5 w-5" />,
   },
 
   link: {
@@ -252,7 +262,7 @@ const activityDetails: {
           className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
         >
           link
-          <Icon iconName="launch" className="!text-xs" />
+          <Rocket className="h-3 w-3" />
         </button>
         {showIssue && (
           <>
@@ -263,7 +273,7 @@ const activityDetails: {
         .
       </>
     ),
-    icon: <Icon iconName="link" className="!text-2xl" aria-hidden="true" />,
+    icon: <Link2 className="h-5 w-5" />,
   },
 
   modules: {
@@ -277,12 +287,12 @@ const activityDetails: {
           className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
         >
           module
-          <Icon iconName="launch" className="!text-xs" />
+          <Rocket className="h-3 w-3" />
         </button>
         .
       </>
     ),
-    icon: <Icon iconName="dataset" className="!text-2xl" aria-hidden="true" />,
+    icon: <DiceIcon className="h-5 w-5" />,
   },
 
   name: {
@@ -298,7 +308,7 @@ const activityDetails: {
         .
       </>
     ),
-    icon: <Icon iconName="chat" className="!text-2xl" aria-hidden="true" />,
+    icon: <MessageSquare className="h-5 w-5" />,
   },
 
   parent: {
@@ -317,7 +327,7 @@ const activityDetails: {
         .
       </>
     ),
-    icon: <Icon iconName="supervised_user_circle" className="!text-2xl" aria-hidden="true" />,
+    icon: <Users2 className="h-5 w-5" />,
   },
 
   priority: {
@@ -336,7 +346,7 @@ const activityDetails: {
         .
       </>
     ),
-    icon: <Icon iconName="signal_cellular_alt" className="!text-2xl" aria-hidden="true" />,
+    icon: <BarChart className="h-5 w-5" />,
   },
 
   start_date: {
@@ -354,7 +364,7 @@ const activityDetails: {
         )}
       </>
     ),
-    icon: <Icon iconName="calendar_today" className="!text-2xl" aria-hidden="true" />,
+    icon: <Calendar className="h-5 w-5" />,
   },
 
   state: {
@@ -370,7 +380,7 @@ const activityDetails: {
         .
       </>
     ),
-    icon: <Squares2X2Icon className="h-3 w-3" aria-hidden="true" />,
+    icon: <DoubleCircleIcon className="h-3 w-3" />,
   },
 
   target_date: {
@@ -389,7 +399,7 @@ const activityDetails: {
         )}
       </>
     ),
-    icon: <Icon iconName="calendar_today" className="!text-2xl" aria-hidden="true" />,
+    icon: <Calendar className="h-5 w-5" />,
   },
 };
 

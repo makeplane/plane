@@ -13,7 +13,6 @@ import { truncateText } from "helpers/string.helper";
 // components
 import { IssuesFilterView, IssuesView } from "components/core";
 // ui
-import { Icon } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { X } from "lucide-react";
@@ -21,6 +20,7 @@ import { X } from "lucide-react";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS } from "constants/fetch-keys";
+import { ArchiveIcon } from "@plane/ui";
 
 const ProjectArchivedIssues: NextPage = () => {
   const router = useRouter();
@@ -53,7 +53,7 @@ const ProjectArchivedIssues: NextPage = () => {
               onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/issues/`)}
               className="flex items-center gap-1.5 rounded-full border border-custom-border-200 px-3 py-1.5 text-xs"
             >
-              <Icon iconName="archive" className="text-base" />
+              <ArchiveIcon className="h-4 w-4" />
               <span>Archived Issues</span>
 
               <X className="h-3 w-3" />

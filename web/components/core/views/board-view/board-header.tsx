@@ -10,9 +10,9 @@ import projectService from "services/project.service";
 // hooks
 import useProjects from "hooks/use-projects";
 // component
-import { Avatar, Icon } from "components/ui";
+import { Avatar } from "components/ui";
 // icons
-import { Plus } from "lucide-react";
+import { Maximize2, Minimize2, Plus } from "lucide-react";
 import { PriorityIcon, StateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
@@ -194,9 +194,9 @@ export const BoardHeader: React.FC<Props> = ({
           }}
         >
           {isCollapsed ? (
-            <Icon iconName="close_fullscreen" className="text-base font-medium text-custom-text-900" />
+            <Minimize2 className="h-4 w-4 text-custom-text-900" />
           ) : (
-            <Icon iconName="open_in_full" className="text-base font-medium text-custom-text-900" />
+            <Maximize2 className="h-4 w-4 text-custom-text-900" />
           )}
         </button>
         {!disableAddIssue && !disableUserActions && displayFilters?.group_by !== "created_by" && (

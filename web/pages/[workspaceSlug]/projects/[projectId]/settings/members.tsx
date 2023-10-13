@@ -22,10 +22,10 @@ import SendProjectInvitationModal from "components/project/send-project-invitati
 import { MemberSelect, SettingsSidebar } from "components/project";
 // ui
 import { Button, Loader } from "@plane/ui";
-import { CustomMenu, CustomSearchSelect, CustomSelect, Icon } from "components/ui";
+import { CustomMenu, CustomSearchSelect, CustomSelect } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { X } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 // types
 import type { NextPage } from "next";
 import { IProject, IUserLite, IWorkspace } from "types";
@@ -390,9 +390,7 @@ const MembersSettings: NextPage = () => {
                               >
                                 {ROLE[member.role as keyof typeof ROLE]}
                               </span>
-                              {member.memberId !== user?.id && (
-                                <Icon iconName="expand_more" className="text-lg font-medium" />
-                              )}
+                              {member.memberId !== user?.id && <ChevronDown className="h-4 w-4" />}
                             </button>
                           }
                           value={member.role}

@@ -15,6 +15,9 @@ import {
   ContrastIcon,
   Settings,
   ChevronDown,
+  Share,
+  Settings2,
+  LogOut,
 } from "lucide-react";
 import { ArchiveIcon, DiceIcon, LayersIcon, PhotoFilterIcon, Tooltip } from "@plane/ui";
 // hooks
@@ -27,7 +30,7 @@ import { IProject } from "types";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 // components
-import { CustomMenu, Icon } from "components/ui";
+import { CustomMenu } from "components/ui";
 import { LeaveProjectModal, DeleteProjectModal } from "components/project";
 import { PublishProjectModal } from "components/project/publish-project";
 
@@ -242,7 +245,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                     <CustomMenu.MenuItem onClick={() => projectPublish.handleProjectModal(project?.id)}>
                       <div className="flex-shrink-0 relative flex items-center justify-start gap-2">
                         <div className="rounded transition-all w-4 h-4 flex justify-center items-center text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 duration-300 cursor-pointer">
-                          <Icon iconName="ios_share" className="!text-base" />
+                          <Share className="h-4 w-4" />
                         </div>
                         <div>{project.is_deployed ? "Publish settings" : "Publish"}</div>
                       </div>
@@ -271,7 +274,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                     onClick={() => router.push(`/${workspaceSlug}/projects/${project?.id}/settings`)}
                   >
                     <div className="flex items-center justify-start gap-2">
-                      <Icon iconName="settings" className="!text-base !leading-4" />
+                      <Settings2 className="h-4 w-4" />
                       <span>Settings</span>
                     </div>
                   </CustomMenu.MenuItem>
@@ -280,7 +283,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   {isViewerOrGuest && (
                     <CustomMenu.MenuItem onClick={handleLeaveProject}>
                       <div className="flex items-center justify-start gap-2">
-                        <Icon iconName="logout" className="!text-base !leading-4" />
+                        <LogOut className="h-4 w-4" />
                         <span>Leave Project</span>
                       </div>
                     </CustomMenu.MenuItem>

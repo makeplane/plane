@@ -5,14 +5,13 @@ import { useRouter } from "next/router";
 // components
 import { Popover2 } from "@blueprintjs/popover2";
 // icons
-import { Icon } from "components/ui";
+import { ChevronRight, Link, MoreHorizontal, Pencil, Trash } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
 // types
 import { IIssue, Properties } from "types";
 // helper
 import { copyTextToClipboard } from "helpers/string.helper";
-import { Link, MoreHorizontal, Pencil, Trash } from "lucide-react";
 
 type Props = {
   issue: IIssue;
@@ -148,7 +147,7 @@ export const IssueColumn: React.FC<Props> = ({
                 className="h-5 w-5 hover:bg-custom-background-90 hover:text-custom-text-100 rounded-sm cursor-pointer"
                 onClick={() => handleToggleExpand(issue.id)}
               >
-                <Icon iconName="chevron_right" className={`${expanded ? "rotate-90" : ""}`} />
+                <ChevronRight className={`h-3.5 w-3.5 ${expanded ? "rotate-90" : ""}`} />
               </button>
             </div>
           )}

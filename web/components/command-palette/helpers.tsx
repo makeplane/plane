@@ -1,4 +1,6 @@
 // types
+import { ContrastIcon, DiceIcon, LayersIcon, PhotoFilterIcon } from "@plane/ui";
+import { Briefcase, Grid2x2, Newspaper } from "lucide-react";
 import {
   IWorkspaceDefaultSearchResult,
   IWorkspaceIssueSearchResult,
@@ -8,14 +10,14 @@ import {
 
 export const commandGroups: {
   [key: string]: {
-    icon: string;
+    icon: any;
     itemName: (item: any) => React.ReactNode;
     path: (item: any) => string;
     title: string;
   };
 } = {
   cycle: {
-    icon: "contrast",
+    icon: ContrastIcon,
     itemName: (cycle: IWorkspaceDefaultSearchResult) => (
       <h6>
         <span className="text-custom-text-200 text-xs">{cycle.project__identifier}</span>
@@ -28,7 +30,7 @@ export const commandGroups: {
     title: "Cycles",
   },
   issue: {
-    icon: "stack",
+    icon: LayersIcon,
     itemName: (issue: IWorkspaceIssueSearchResult) => (
       <h6>
         <span className="text-custom-text-200 text-xs">{issue.project__identifier}</span>
@@ -41,7 +43,7 @@ export const commandGroups: {
     title: "Issues",
   },
   issue_view: {
-    icon: "photo_filter",
+    icon: PhotoFilterIcon,
     itemName: (view: IWorkspaceDefaultSearchResult) => (
       <h6>
         <span className="text-custom-text-200 text-xs">{view.project__identifier}</span>
@@ -54,7 +56,7 @@ export const commandGroups: {
     title: "Views",
   },
   module: {
-    icon: "dataset",
+    icon: DiceIcon,
     itemName: (module: IWorkspaceDefaultSearchResult) => (
       <h6>
         <span className="text-custom-text-200 text-xs">{module.project__identifier}</span>
@@ -67,7 +69,7 @@ export const commandGroups: {
     title: "Modules",
   },
   page: {
-    icon: "article",
+    icon: Newspaper,
     itemName: (page: IWorkspaceDefaultSearchResult) => (
       <h6>
         <span className="text-custom-text-200 text-xs">{page.project__identifier}</span>
@@ -80,14 +82,13 @@ export const commandGroups: {
     title: "Pages",
   },
   project: {
-    icon: "work",
+    icon: Briefcase,
     itemName: (project: IWorkspaceProjectSearchResult) => project?.name,
-    path: (project: IWorkspaceProjectSearchResult) =>
-      `/${project?.workspace__slug}/projects/${project?.id}/issues/`,
+    path: (project: IWorkspaceProjectSearchResult) => `/${project?.workspace__slug}/projects/${project?.id}/issues/`,
     title: "Projects",
   },
   workspace: {
-    icon: "grid_view",
+    icon: Grid2x2,
     itemName: (workspace: IWorkspaceSearchResult) => workspace?.name,
     path: (workspace: IWorkspaceSearchResult) => `/${workspace?.slug}/`,
     title: "Workspaces",

@@ -3,14 +3,15 @@ import Link from "next/link";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, Icon } from "components/ui";
+import { CustomSelect } from "components/ui";
 // icons
-import { MoveDiagonal, MoveRight } from "lucide-react";
+import { LinkIcon, MoveDiagonal, MoveRight, Trash } from "lucide-react";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { IIssue } from "types";
 import { TPeekOverviewModes } from "./layout";
+import { FullScreenPeekIcon, ModalPeekIcon, SidePeekIcon } from "@plane/ui";
 
 type Props = {
   handleClose: () => void;
@@ -23,18 +24,18 @@ type Props = {
 
 const peekModes: {
   key: TPeekOverviewModes;
-  icon: string;
+  icon: any;
   label: string;
 }[] = [
-  { key: "side", icon: "side_navigation", label: "Side Peek" },
+  { key: "side", icon: SidePeekIcon, label: "Side Peek" },
   {
     key: "modal",
-    icon: "dialogs",
+    icon: ModalPeekIcon,
     label: "Modal Peek",
   },
   {
     key: "full",
-    icon: "nearby",
+    icon: FullScreenPeekIcon,
     label: "Full Screen Peek",
   },
 ];
@@ -61,6 +62,8 @@ export const PeekOverviewHeader: React.FC<Props> = ({
     });
   };
 
+  const currentMode = peekModes.find((m) => m.key === mode);
+
   return (
     <div className="flex justify-between items-center">
       <div className="flex items-center gap-4">
@@ -79,7 +82,7 @@ export const PeekOverviewHeader: React.FC<Props> = ({
           onChange={(val: TPeekOverviewModes) => setMode(val)}
           customButton={
             <button type="button" className={`grid place-items-center ${mode === "full" ? "rotate-45" : ""}`}>
-              <Icon iconName={peekModes.find((m) => m.key === mode)?.icon ?? ""} />
+              {currentMode && <currentMode.icon className="h-4 w-4" />}
             </button>
           }
           position="left"
@@ -87,10 +90,7 @@ export const PeekOverviewHeader: React.FC<Props> = ({
           {peekModes.map((mode) => (
             <CustomSelect.Option key={mode.key} value={mode.key}>
               <div className="flex items-center gap-1.5">
-                <Icon
-                  iconName={mode.icon}
-                  className={`!text-base flex-shrink-0 -my-1 ${mode.key === "full" ? "rotate-45" : ""}`}
-                />
+                <mode.icon className={`h-4 w-4 flex-shrink-0 -my-1`} />
                 {mode.label}
               </div>
             </CustomSelect.Option>
@@ -100,10 +100,10 @@ export const PeekOverviewHeader: React.FC<Props> = ({
       {(mode === "side" || mode === "modal") && (
         <div className="flex items-center gap-2 flex-shrink-0">
           <button type="button" onClick={handleCopyLink} className="-rotate-45">
-            <Icon iconName="link" />
+            <LinkIcon className="h-3 w-3" />
           </button>
           <button type="button" onClick={handleDeleteIssue}>
-            <Icon iconName="delete" />
+            <Trash className="h-3 w-3" />
           </button>
         </div>
       )}

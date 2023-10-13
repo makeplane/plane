@@ -4,8 +4,7 @@ import { mutate } from "swr";
 import { Popover2 } from "@blueprintjs/popover2";
 
 // icons
-import { Icon } from "components/ui";
-import { Link, MoreHorizontal, Pencil, Trash } from "lucide-react";
+import { ChevronRight, Link, MoreHorizontal, Pencil, Trash } from "lucide-react";
 // services
 import issuesService from "services/issue.service";
 import trackEventServices from "services/track_event.service";
@@ -325,7 +324,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
                   className="h-5 w-5 hover:bg-custom-background-90 hover:text-custom-text-100 rounded-sm cursor-pointer"
                   onClick={() => handleToggleExpand(issue.id)}
                 >
-                  <Icon iconName="chevron_right" className={`${expanded ? "rotate-90" : ""}`} />
+                  <ChevronRight className={`h-3.5 w-3.5${expanded ? "rotate-90" : ""}`} />
                 </button>
               </div>
             )}

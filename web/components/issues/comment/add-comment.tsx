@@ -5,10 +5,10 @@ import { useForm, Controller } from "react-hook-form";
 // components
 import { TipTapEditor } from "components/tiptap";
 // ui
-import { Icon } from "components/ui";
 import { Button, Tooltip } from "@plane/ui";
 // types
 import type { IIssueComment } from "types";
+import { Globe2, Lock } from "lucide-react";
 
 const defaultValues: Partial<IIssueComment> = {
   access: "INTERNAL",
@@ -23,12 +23,12 @@ type Props = {
 
 const commentAccess = [
   {
-    icon: "lock",
+    icon: Lock,
     key: "INTERNAL",
     label: "Private",
   },
   {
-    icon: "public",
+    icon: Globe2,
     key: "EXTERNAL",
     label: "Public",
   },
@@ -77,8 +77,7 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAc
                               value === access.key ? "bg-custom-background-80" : ""
                             }`}
                           >
-                            <Icon
-                              iconName={access.icon}
+                            <access.icon
                               className={`w-4 h-4 -mt-1 ${
                                 value === access.key ? "!text-custom-text-100" : "!text-custom-text-400"
                               }`}

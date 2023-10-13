@@ -3,11 +3,11 @@ import React, { useEffect, useState } from "react";
 // react-hook-form
 import { useForm } from "react-hook-form";
 // icons
-import { Check, MessageCircle, X } from "lucide-react";
+import { Check, Globe2, Lock, MessageCircle, Pencil, Trash, X } from "lucide-react";
 // hooks
 import useUser from "hooks/use-user";
 // ui
-import { CustomMenu, Icon } from "components/ui";
+import { CustomMenu } from "components/ui";
 import { CommentReaction } from "components/issues";
 import { TipTapEditor } from "components/tiptap";
 // helpers
@@ -128,7 +128,7 @@ export const CommentCard: React.FC<Props> = ({
           <div className={`relative ${isEditing ? "hidden" : ""}`}>
             {showAccessSpecifier && (
               <div className="absolute top-1 right-1.5 z-[1] text-custom-text-300">
-                <Icon iconName={comment.access === "INTERNAL" ? "lock" : "public"} className="!text-xs" />
+                {comment.access === "INTERNAL" ? <Lock className="h-3 w-3" /> : <Globe2 className="h-3 w-3" />}
               </div>
             )}
             <TipTapEditor
@@ -145,7 +145,7 @@ export const CommentCard: React.FC<Props> = ({
       {user?.id === comment.actor && (
         <CustomMenu ellipsis>
           <CustomMenu.MenuItem onClick={() => setIsEditing(true)} className="flex items-center gap-1">
-            <Icon iconName="edit" />
+            <Pencil className="h-3 w-3" />
             Edit comment
           </CustomMenu.MenuItem>
           {showAccessSpecifier && (
@@ -156,7 +156,7 @@ export const CommentCard: React.FC<Props> = ({
                   onClick={() => onSubmit(comment.id, { access: "EXTERNAL" })}
                   className="flex items-center gap-1"
                 >
-                  <Icon iconName="public" />
+                  <Globe2 className="h-3 w-3" />
                   Switch to public comment
                 </CustomMenu.MenuItem>
               ) : (
@@ -165,7 +165,7 @@ export const CommentCard: React.FC<Props> = ({
                   onClick={() => onSubmit(comment.id, { access: "INTERNAL" })}
                   className="flex items-center gap-1"
                 >
-                  <Icon iconName="lock" />
+                  <Lock className="h-3 w-3" />
                   Switch to private comment
                 </CustomMenu.MenuItem>
               )}
@@ -177,7 +177,7 @@ export const CommentCard: React.FC<Props> = ({
             }}
             className="flex items-center gap-1"
           >
-            <Icon iconName="delete" />
+            <Trash className="h-3 w-3" />
             Delete comment
           </CustomMenu.MenuItem>
         </CustomMenu>

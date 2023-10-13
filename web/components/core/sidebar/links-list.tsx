@@ -1,9 +1,8 @@
 // icons
 import { ExternalLinkIcon } from "@plane/ui";
-import { Icon } from "components/ui";
+import { Link, Pencil, Trash } from "lucide-react";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
-import { Link, Trash } from "lucide-react";
 // types
 import { linkDetails, UserAuth } from "types";
 
@@ -28,7 +27,7 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, handleEdit
                 className="grid h-7 w-7 place-items-center rounded bg-custom-background-90 p-1 outline-none hover:bg-custom-background-80"
                 onClick={() => handleEditLink(link)}
               >
-                <Icon iconName="edit" className="text-custom-text-200" />
+                <Pencil className="h-4 w-4 text-custom-text-200" />
               </button>
               <a
                 href={link.url}

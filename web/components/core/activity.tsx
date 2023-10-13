@@ -7,8 +7,7 @@ import useEstimateOption from "hooks/use-estimate-option";
 // services
 import issuesService from "services/issue.service";
 // icons
-import { Tooltip } from "@plane/ui";
-import { Icon } from "components/ui";
+import { DiceIcon, Tooltip } from "@plane/ui";
 import {
   TagIcon,
   CopyPlus,
@@ -23,6 +22,7 @@ import {
   LayoutGridIcon,
   SignalMediumIcon,
   MessageSquareIcon,
+  Users2,
 } from "lucide-react";
 import { BlockedIcon, BlockerIcon, RelatedIcon, StackedLayersHorizontalIcon } from "components/icons";
 // helpers
@@ -514,7 +514,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Icon iconName="dataset" className="!text-xs !text-[#6b7280]" aria-hidden="true" />,
+    icon: <DiceIcon className="h-3 w-3 text-green-500" />,
   },
   name: {
     message: (activity, showIssue) => (
@@ -560,7 +560,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Icon iconName="supervised_user_circle" className="!text-xs !text-[#6b7280]" aria-hidden="true" />,
+    icon: <Users2 className="h-3 w-3 text-green-500" />,
   },
   priority: {
     message: (activity, showIssue) => (

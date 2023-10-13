@@ -11,7 +11,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 import { CyclesView, ActiveCycleDetails, CreateUpdateCycleModal } from "components/cycles";
 // ui
 import { Button } from "@plane/ui";
-import { EmptyState, Icon } from "components/ui";
+import { EmptyState } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { Plus } from "lucide-react";
@@ -161,7 +161,7 @@ const ProjectCyclesPage: NextPage = observer(() => {
                     }`}
                     onClick={() => setCyclesView(view.key)}
                   >
-                    <Icon iconName={view.icon} className="!text-base" />
+                    {view.icon}
                   </button>
                 );
               })}

@@ -16,7 +16,10 @@ import useToast from "hooks/use-toast";
 
 // components
 import { Button } from "@plane/ui";
-import { Icon, CustomDatePicker, CustomSelect } from "components/ui";
+import { CustomDatePicker, CustomSelect } from "components/ui";
+
+// icons
+import { X } from "lucide-react";
 
 // types
 import type { IUserNotification } from "types";
@@ -159,7 +162,7 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
 
                     <div>
                       <button type="button" onClick={handleClose}>
-                        <Icon iconName="close" className="w-5 h-5 text-custom-text-100" />
+                        <X className="w-5 h-5 text-custom-text-100" />
                       </button>
                     </div>
                   </div>
