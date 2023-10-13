@@ -125,24 +125,6 @@ class AnalyticsEndpoint(BaseAPIView):
                     )
                 )
 
-            module_details = {}
-            if x_axis in ["issue_module__module_id"] or segment in [
-                "issue_module__module_id"
-            ]:
-                module_details = (
-                    Issue.issue_objects.filter(
-                        workspace__slug=slug,
-                        **filters,
-                        issue_module__module_id__isnull=False,
-                    )
-                    .distinct("issue_module__module_id")
-                    .order_by("issue_module__module_id")
-                    .values(
-                        "issue_module__module_id",
-                        "issue_module__module__name",
-                    )
-                )
-
             cycle_details = {}
             if x_axis in ["issue_cycle__cycle_id"] or segment in [
                 "issue_cycle__cycle_id"
@@ -158,6 +140,24 @@ class AnalyticsEndpoint(BaseAPIView):
                     .values(
                         "issue_cycle__cycle_id",
                         "issue_cycle__cycle__name",
+                    )
+                )
+
+            module_details = {}
+            if x_axis in ["issue_module__module_id"] or segment in [
+                "issue_module__module_id"
+            ]:
+                module_details = (
+                    Issue.issue_objects.filter(
+                        workspace__slug=slug,
+                        **filters,
+                        issue_module__module_id__isnull=False,
+                    )
+                    .distinct("issue_module__module_id")
+                    .order_by("issue_module__module_id")
+                    .values(
+                        "issue_module__module_id",
+                        "issue_module__module__name",
                     )
                 )
 
@@ -289,86 +289,80 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
     def get(self, request, slug):
         try:
             filters = issue_filters(request.GET, "GET")
+            base_issues = Issue.issue_objects.filter(workspace__slug=slug, **filters)
 
-            queryset = Issue.issue_objects.filter(workspace__slug=slug, **filters)
+            total_issues = base_issues.count()
 
-            total_issues = queryset.count()
+            state_groups = base_issues.annotate(state_group=F("state__group"))
 
             total_issues_classified = (
-                queryset.annotate(state_group=F("state__group"))
-                .values("state_group")
+                state_groups.values("state_group")
                 .annotate(state_count=Count("state_group"))
                 .order_by("state_group")
             )
 
-            open_issues = queryset.filter(
-                state__group__in=["backlog", "unstarted", "started"]
-            ).count()
+            open_issues_groups = ["backlog", "unstarted", "started"]
+            open_issues_queryset = state_groups.filter(
+                state__group__in=open_issues_groups
+            )
 
+            open_issues = open_issues_queryset.count()
             open_issues_classified = (
-                queryset.filter(state__group__in=["backlog", "unstarted", "started"])
-                .annotate(state_group=F("state__group"))
-                .values("state_group")
+                open_issues_queryset.values("state_group")
                 .annotate(state_count=Count("state_group"))
                 .order_by("state_group")
             )
 
             issue_completed_month_wise = (
-                queryset.filter(completed_at__isnull=False)
+                base_issues.filter(completed_at__isnull=False)
                 .annotate(month=ExtractMonth("completed_at"))
                 .values("month")
                 .annotate(count=Count("*"))
                 .order_by("month")
             )
+
+            user_details = [
+                "created_by__first_name",
+                "created_by__last_name",
+                "created_by__avatar",
+                "created_by__display_name",
+                "created_by__id",
+            ]
+
             most_issue_created_user = (
-                queryset.exclude(created_by=None)
-                .values(
-                    "created_by__first_name",
-                    "created_by__last_name",
-                    "created_by__avatar",
-                    "created_by__display_name",
-                    "created_by__id",
-                )
+                base_issues.exclude(created_by=None)
+                .values(*user_details)
                 .annotate(count=Count("id"))
-                .order_by("-count")
-            )[:5]
+                .order_by("-count")[:5]
+            )
+
+            user_assignee_details = [
+                "assignees__first_name",
+                "assignees__last_name",
+                "assignees__avatar",
+                "assignees__display_name",
+                "assignees__id",
+            ]
 
             most_issue_closed_user = (
-                queryset.filter(completed_at__isnull=False, assignees__isnull=False)
-                .values(
-                    "assignees__first_name",
-                    "assignees__last_name",
-                    "assignees__avatar",
-                    "assignees__display_name",
-                    "assignees__id",
-                )
+                base_issues.filter(completed_at__isnull=False)
+                .exclude(assignees=None)
+                .values(*user_assignee_details)
                 .annotate(count=Count("id"))
-                .order_by("-count")
-            )[:5]
+                .order_by("-count")[:5]
+            )
 
             pending_issue_user = (
-                queryset.filter(completed_at__isnull=True)
-                .values(
-                    "assignees__first_name",
-                    "assignees__last_name",
-                    "assignees__avatar",
-                    "assignees__display_name",
-                    "assignees__id",
-                )
+                base_issues.filter(completed_at__isnull=True)
+                .values(*user_assignee_details)
                 .annotate(count=Count("id"))
                 .order_by("-count")
             )
 
-            open_estimate_sum = (
-                queryset.filter(
-                    state__group__in=["backlog", "unstarted", "started"]
-                ).aggregate(open_estimate_sum=Sum("estimate_point"))
-            )["open_estimate_sum"]
-            print(open_estimate_sum)
-
-            total_estimate_sum = queryset.aggregate(
-                total_estimate_sum=Sum("estimate_point")
-            )["total_estimate_sum"]
+            open_estimate_sum = open_issues_queryset.aggregate(
+                sum=Sum("estimate_point")
+            )["sum"]
+            total_estimate_sum = base_issues.aggregate(sum=Sum("estimate_point"))["sum"]
 
             return Response(
                 {
@@ -389,6 +383,6 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
         except Exception as e:
             capture_exception(e)
             return Response(
-                {"error": "Something went wrong please try again later"},
+                {"error": "Something went wrong. Please try again later."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
