@@ -18,6 +18,7 @@ import useInboxView from "hooks/use-inbox-view";
 import useProjects from "hooks/use-projects";
 import useMyIssues from "hooks/my-issues/use-my-issues";
 import useLocalStorage from "hooks/use-local-storage";
+import { useWorkspaceView } from "hooks/use-workspace-view";
 // components
 import { IssueForm, ConfirmIssueDiscard } from "components/issues";
 // types

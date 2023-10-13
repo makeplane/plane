@@ -1,21 +1,11 @@
 import { useEffect, useRef } from "react";
-
-// next
 import { useRouter } from "next/router";
-
-// swr
 import { mutate } from "swr";
-
-// react hook form
 import { useForm, FormProvider } from "react-hook-form";
-
-// headless ui
 import { Transition } from "@headlessui/react";
-
 // services
 import modulesService from "services/modules.service";
-import issuesService from "services/issue/issue.service";
-
+import { IssueService } from "services/issue";
 // hooks
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
@@ -23,8 +13,9 @@ import useKeypress from "hooks/use-keypress";
 import useIssuesView from "hooks/use-issues-view";
 import useMyIssues from "hooks/my-issues/use-my-issues";
 import useGanttChartIssues from "hooks/gantt-chart/issue-view";
+import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-
+import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 // helpers
 import { getFetchKeysForIssueMutation } from "helpers/string.helper";
 
@@ -125,7 +116,9 @@ export const InlineCreateIssueFormWrapper: React.FC<Props> = (props) => {
   const { setToastAlert } = useToast();
 
   const { displayFilters, params } = useIssuesView();
+  const { params: calendarParams } = useCalendarIssuesView();
   const { ...viewGanttParams } = params;
+  const { params: spreadsheetParams } = useSpreadsheetIssuesView();
   const { groupedIssues, mutateMyIssues } = useMyIssues(workspaceSlug?.toString());
   const { params: ganttParams } = useGanttChartIssues(workspaceSlug?.toString(), projectId?.toString());
 

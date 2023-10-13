@@ -139,7 +139,11 @@ const SingleModule: React.FC = () => {
             <div
               className={`relative overflow-y-auto h-full flex flex-col ${
                 moduleSidebar ? "mr-[24rem]" : ""
+<<<<<<< HEAD
               } duration-300`}
+=======
+              } ${analyticsModal ? "mr-[50%]" : ""} duration-300`}
+>>>>>>> c6e021d41fcf8186d9a728dff3347228d1cdb477
             >
               <ModuleLayoutRoot />
             </div>

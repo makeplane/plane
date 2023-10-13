@@ -11,7 +11,11 @@ import { CURRENT_USER } from "constants/fetch-keys";
 import { AlertCircle } from "lucide-react";
 
 // ui
+<<<<<<< HEAD
 import { Spinner } from "@plane/ui";
+=======
+import { Spinner } from "components/web-view";
+>>>>>>> c6e021d41fcf8186d9a728dff3347228d1cdb477
 
 type Props = {
   children: React.ReactNode;
@@ -40,7 +44,6 @@ const WebViewLayout: React.FC<Props> = ({ children, fullScreen = true }) => {
     return (
       <div className="h-screen grid place-items-center p-4">
         <div className="flex flex-col items-center gap-3 text-center">
-          <h3 className="text-xl">Loading your profile...</h3>
           <Spinner />
         </div>
       </div>

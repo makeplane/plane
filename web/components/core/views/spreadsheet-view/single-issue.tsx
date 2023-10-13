@@ -1,25 +1,19 @@
 import React, { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
+
+// components
+import { ViewDueDateSelect, ViewEstimateSelect, ViewStartDateSelect } from "components/issues";
+import { LabelSelect, MembersSelect, PrioritySelect } from "components/project";
+import { StateSelect } from "components/states";
 import { Popover2 } from "@blueprintjs/popover2";
 
 // icons
 import { Icon } from "components/ui";
 import { EllipsisHorizontalIcon, LinkIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 // services
-import issuesService from "services/issue/issue.service";
-import trackEventServices from "services/track_event.service";
-// hooks
-import useToast from "hooks/use-toast";
-// components
-import { ViewDueDateSelect, ViewEstimateSelect, ViewStartDateSelect } from "components/issues";
-import { LabelSelect, MembersSelect, PrioritySelect } from "components/project";
-import { StateSelect } from "components/states";
-// helpers
-import { copyTextToClipboard } from "helpers/string.helper";
-import { renderLongDetailDateFormat } from "helpers/date-time.helper";
-// types
-import { ICurrentUserResponse, IIssue, IState, ISubIssueResponse, Properties, TIssuePriorities, UserAuth } from "types";
+import issuesService from "services/issues.service";
+import trackEventServices from "services/track-event.service";
 // constant
 import {
   CYCLE_DETAILS,
@@ -30,6 +24,11 @@ import {
   SUB_ISSUES,
   VIEW_ISSUES,
 } from "constants/fetch-keys";
+// types
+import { IUser, IIssue, IState, ISubIssueResponse, Properties, TIssuePriorities, UserAuth } from "types";
+// helper
+import { copyTextToClipboard } from "helpers/string.helper";
+import { renderLongDetailDateFormat } from "helpers/date-time.helper";
 
 type Props = {
   issue: IIssue;

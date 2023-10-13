@@ -114,10 +114,8 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
       {...(customButton ? { customButton: assigneeLabel } : { label: assigneeLabel })}
       multiple
       noChevron
-      position={position}
       disabled={isNotAllowed}
       onOpen={() => setFetchAssignees(true)}
-      selfPositioned={selfPositioned}
       width="w-full min-w-[12rem]"
     />
   );

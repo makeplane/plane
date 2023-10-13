@@ -10,6 +10,8 @@ import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // ui
 import { Button, Input } from "@plane/ui";
+// components
+import { RichReadOnlyEditor, RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
 // types
 import { IIssue, IPageBlock } from "types";
 
@@ -140,28 +142,24 @@ export const GptAssistantModal: React.FC<Props> = ({
       {((content && content !== "") || (htmlContent && htmlContent !== "<p></p>")) && (
         <div className="text-sm">
           Content:
-          {/* <TipTapEditor
-            workspaceSlug={workspaceSlug as string}
+          <RichReadOnlyEditorWithRef
             value={htmlContent ?? `<p>${content}</p>`}
             customClassName="-m-3"
             noBorder
             borderOnFocus={false}
-            editable={false}
             ref={editorRef}
-          /> */}
+          />
         </div>
       )}
       {response !== "" && (
         <div className="page-block-section text-sm">
           Response:
-          {/* <TipTapEditor
-            workspaceSlug={workspaceSlug as string}
+          <RichReadOnlyEditor
             value={`<p>${response}</p>`}
             customClassName="-mx-3 -my-3"
             noBorder
             borderOnFocus={false}
-            editable={false}
-          /> */}
+          />
         </div>
       )}
       {invalidResponse && (

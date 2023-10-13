@@ -100,6 +100,13 @@ const FeaturesSettings: NextPage = () => {
       : null
   );
 
+  const { data: memberDetails } = useSWR(
+    workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
+      : null
+  );
+
   const handleSubmit = async (formData: Partial<IProject>) => {
     if (!workspaceSlug || !projectId || !projectDetails) return;
 

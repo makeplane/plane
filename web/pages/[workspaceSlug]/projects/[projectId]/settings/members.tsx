@@ -106,6 +106,13 @@ const MembersSettings: NextPage = () => {
       : null
   );
 
+  const { data: memberDetails } = useSWR(
+    workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
+      : null
+  );
+
   const members = [
     ...(projectMembers?.map((item) => ({
       id: item.id,
@@ -382,7 +389,7 @@ const MembersSettings: NextPage = () => {
                         )}
                         <CustomSelect
                           customButton={
-                            <button className="flex item-center gap-1">
+                            <div className="flex item-center gap-1">
                               <span
                                 className={`flex items-center text-sm font-medium ${
                                   member.memberId !== user?.id ? "" : "text-custom-sidebar-text-400"
@@ -393,7 +400,7 @@ const MembersSettings: NextPage = () => {
                               {member.memberId !== user?.id && (
                                 <Icon iconName="expand_more" className="text-lg font-medium" />
                               )}
-                            </button>
+                            </div>
                           }
                           value={member.role}
                           onChange={(value: 5 | 10 | 15 | 20 | undefined) => {
@@ -417,7 +424,6 @@ const MembersSettings: NextPage = () => {
                                 });
                               });
                           }}
-                          position="right"
                           disabled={
                             member.memberId === user?.id ||
                             !member.member ||

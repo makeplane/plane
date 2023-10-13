@@ -180,7 +180,6 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
                   label={value ? value.toString() : <span className="text-custom-text-400">Select your role...</span>}
                   input
                   width="w-full"
-                  verticalPosition="top"
                 >
                   {USER_ROLES.map((item) => (
                     <CustomSelect.Option key={item.value} value={item.value}>
@@ -206,7 +205,6 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
                   label={value ? TIME_ZONES.find((t) => t.value === value)?.label ?? value : "Select a timezone"}
                   options={timeZoneOptions}
                   onChange={onChange}
-                  verticalPosition="top"
                   optionsClassName="w-full"
                   input
                 />

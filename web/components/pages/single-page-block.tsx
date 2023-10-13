@@ -14,7 +14,7 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { GptAssistantModal } from "components/core";
 import { CreateUpdateBlockInline } from "components/pages";
-import { TipTapEditor } from "components/tiptap";
+import { RichTextEditor } from "@plane/rich-text-editor";
 // ui
 import { CustomMenu } from "components/ui";
 import { TextArea } from "@plane/ui";
@@ -35,6 +35,7 @@ import { copyTextToClipboard } from "helpers/string.helper";
 import { IUser, IIssue, IPageBlock, IProject } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
+import fileService from "services/file.service";
 
 type Props = {
   block: IPageBlock;
@@ -358,12 +359,12 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
                 </button>
                 <CustomMenu
                   customButton={
-                    <button
+                    <div
                       className="flex w-full cursor-pointer items-center justify-between gap-1 rounded px-2.5 py-1 text-left text-xs duration-300 hover:bg-custom-background-90"
                       onClick={() => setIsMenuActive(!isMenuActive)}
                     >
                       <BoltIcon className="h-4.5 w-3.5" />
-                    </button>
+                    </div>
                   }
                 >
                   {block.issue ? (
@@ -424,8 +425,9 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
 
                   {showBlockDetails
                     ? block.description_html.length > 7 && (
-                        <TipTapEditor
-                          workspaceSlug={workspaceSlug as string}
+                        <RichTextEditor
+                          uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                          deleteFile={fileService.deleteImage}
                           value={block.description_html}
                           customClassName="text-sm min-h-[150px]"
                           noBorder

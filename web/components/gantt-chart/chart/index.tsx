@@ -82,6 +82,12 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   const isCyclePage = router.pathname.split("/")[4] === "cycles" && !cycleId;
   const isModulePage = router.pathname.split("/")[4] === "modules" && !moduleId;
 
+  const router = useRouter();
+  const { cycleId, moduleId } = router.query;
+
+  const isCyclePage = router.pathname.split("/")[4] === "cycles" && !cycleId;
+  const isModulePage = router.pathname.split("/")[4] === "modules" && !moduleId;
+
   const renderBlockStructure = (view: any, blocks: IGanttBlock[] | null) =>
     blocks && blocks.length > 0
       ? blocks.map((block: any) => ({

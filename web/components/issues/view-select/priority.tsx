@@ -95,8 +95,6 @@ export const ViewPrioritySelect: React.FC<Props> = ({
       }
       noChevron
       disabled={isNotAllowed}
-      position={position}
-      selfPositioned={selfPositioned}
     >
       {PRIORITIES?.map((priority) => (
         <CustomSelect.Option key={priority} value={priority} className="capitalize">

@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 
+// react-popper
+import { usePopper } from "react-popper";
 // headless ui
-import { Listbox, Transition } from "@headlessui/react";
+import { Listbox } from "@headlessui/react";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { CheckIcon } from "@heroicons/react/24/outline";
@@ -15,7 +17,9 @@ export type CustomSelectProps = DropdownProps & {
 };
 
 const CustomSelect = ({
+  customButtonClassName = "",
   buttonClassName = "",
+  placement,
   children,
   className = "",
   customButton,
@@ -26,68 +30,83 @@ const CustomSelect = ({
   noChevron = false,
   onChange,
   optionsClassName = "",
-  position = "left",
-  selfPositioned = false,
   value,
-  verticalPosition = "bottom",
   width = "auto",
-}: CustomSelectProps) => (
-  <Listbox
-    as="div"
-    value={value}
-    onChange={onChange}
-    className={`${selfPositioned ? "" : "relative"} flex-shrink-0 text-left ${className}`}
-    disabled={disabled}
-  >
-    <>
-      {customButton ? (
-        <Listbox.Button as={React.Fragment}>{customButton}</Listbox.Button>
-      ) : (
-        <Listbox.Button
-          type="button"
-          className={`flex items-center justify-between gap-1 w-full rounded-md border border-custom-border-300 shadow-sm duration-300 focus:outline-none ${
-            input ? "px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
-          } ${
-            disabled
-              ? "cursor-not-allowed text-custom-text-200"
-              : "cursor-pointer hover:bg-custom-background-80"
-          } ${buttonClassName}`}
-        >
-          {label}
-          {!noChevron && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
-        </Listbox.Button>
-      )}
-    </>
+}: CustomSelectProps) => {
+  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
-    <Transition
-      as={React.Fragment}
-      enter="transition ease-out duration-100"
-      enterFrom="transform opacity-0 scale-95"
-      enterTo="transform opacity-100 scale-100"
-      leave="transition ease-in duration-75"
-      leaveFrom="transform opacity-100 scale-100"
-      leaveTo="transform opacity-0 scale-95"
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: placement ?? "bottom-start",
+  });
+
+  return (
+    <Listbox
+      as="div"
+      value={value}
+      onChange={onChange}
+      className={`relative flex-shrink-0 text-left ${className}`}
+      disabled={disabled}
     >
-      <Listbox.Options
-        className={`absolute z-10 border border-custom-border-300 mt-1 origin-top-right overflow-y-auto rounded-md bg-custom-background-90 text-xs shadow-lg focus:outline-none ${
-          position === "left" ? "left-0 origin-top-left" : "right-0 origin-top-right"
-        } ${verticalPosition === "top" ? "bottom-full mb-1" : "mt-1"} ${
-          maxHeight === "lg"
-            ? "max-h-60"
-            : maxHeight === "md"
-            ? "max-h-48"
-            : maxHeight === "rg"
-            ? "max-h-36"
-            : maxHeight === "sm"
-            ? "max-h-28"
-            : ""
-        } ${width === "auto" ? "min-w-[8rem] whitespace-nowrap" : width} ${optionsClassName}`}
-      >
-        <div className="space-y-1 p-2">{children}</div>
+      <>
+        {customButton ? (
+          <Listbox.Button as={React.Fragment}>
+            <button
+              ref={setReferenceElement}
+              type="button"
+              className={`flex items-center justify-between gap-1 w-full text-xs ${
+                disabled
+                  ? "cursor-not-allowed text-custom-text-200"
+                  : "cursor-pointer hover:bg-custom-background-80"
+              }  ${customButtonClassName}`}
+            >
+              {customButton}
+            </button>
+          </Listbox.Button>
+        ) : (
+          <Listbox.Button as={React.Fragment}>
+            <button
+              ref={setReferenceElement}
+              type="button"
+              className={`flex items-center justify-between gap-1 w-full rounded-md border border-custom-border-300 shadow-sm duration-300 focus:outline-none ${
+                input ? "px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
+              } ${
+                disabled
+                  ? "cursor-not-allowed text-custom-text-200"
+                  : "cursor-pointer hover:bg-custom-background-80"
+              } ${buttonClassName}`}
+            >
+              {label}
+              {!noChevron && !disabled && (
+                <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+              )}
+            </button>
+          </Listbox.Button>
+        )}
+      </>
+      <Listbox.Options>
+        <div
+          className={`z-10 border border-custom-border-300 overflow-y-auto rounded-md bg-custom-background-90 text-xs shadow-custom-shadow-rg focus:outline-none my-1 ${
+            maxHeight === "lg"
+              ? "max-h-60"
+              : maxHeight === "md"
+              ? "max-h-48"
+              : maxHeight === "rg"
+              ? "max-h-36"
+              : maxHeight === "sm"
+              ? "max-h-28"
+              : ""
+          } ${width === "auto" ? "min-w-[8rem] whitespace-nowrap" : width} ${optionsClassName}`}
+          ref={setPopperElement}
+          style={styles.popper}
+          {...attributes.popper}
+        >
+          <div className="space-y-1 p-2">{children}</div>
+        </div>
       </Listbox.Options>
-    </Transition>
-  </Listbox>
-);
+    </Listbox>
+  );
+};
 
 type OptionProps = {
   children: React.ReactNode;

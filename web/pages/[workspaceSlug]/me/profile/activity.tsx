@@ -9,7 +9,7 @@ import userService from "services/user.service";
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // components
 import { ActivityIcon, ActivityMessage } from "components/core";
-import { TipTapEditor } from "components/tiptap";
+import { RichReadOnlyEditor } from "@plane/rich-text-editor";
 // icons
 import { ArrowTopRightOnSquareIcon, ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
 // ui
@@ -96,13 +96,11 @@ const ProfileActivity = () => {
                               </p>
                             </div>
                             <div className="issue-comments-section p-0">
-                              <TipTapEditor
-                                workspaceSlug={workspaceSlug as string}
+                              <RichReadOnlyEditor
                                 value={activityItem?.new_value !== "" ? activityItem.new_value : activityItem.old_value}
                                 customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
                                 noBorder
                                 borderOnFocus={false}
-                                editable={false}
                               />
                             </div>
                           </div>

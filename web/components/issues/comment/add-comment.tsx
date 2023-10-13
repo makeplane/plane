@@ -3,12 +3,14 @@ import { useRouter } from "next/router";
 // react-hook-form
 import { useForm, Controller } from "react-hook-form";
 // components
-import { TipTapEditor } from "components/tiptap";
+import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
 // ui
 import { Icon } from "components/ui";
 import { Button, Tooltip } from "@plane/ui";
 // types
 import type { IIssueComment } from "types";
+// services
+import fileService from "services/file.service";
 
 const defaultValues: Partial<IIssueComment> = {
   access: "INTERNAL",
@@ -21,7 +23,12 @@ type Props = {
   showAccessSpecifier?: boolean;
 };
 
-const commentAccess = [
+type commentAccessType = {
+  icon: string;
+  key: string;
+  label: "Private" | "Public";
+};
+const commentAccess: commentAccessType[] = [
   {
     icon: "lock",
     key: "INTERNAL",
@@ -92,16 +99,25 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAc
               </div>
             )}
             <Controller
-              name="comment_html"
+              name="access"
               control={control}
-              render={({ field: { value, onChange } }) => (
-                <TipTapEditor
-                  workspaceSlug={workspaceSlug as string}
-                  ref={editorRef}
-                  value={!value || value === "" ? "<p></p>" : value}
-                  customClassName="p-3 min-h-[100px] shadow-sm"
-                  debouncedUpdatesEnabled={false}
-                  onChange={(comment_json: Object, comment_html: string) => onChange(comment_html)}
+              render={({ field: { onChange: onAccessChange, value: accessValue } }) => (
+                <Controller
+                  name="comment_html"
+                  control={control}
+                  render={({ field: { onChange: onCommentChange, value: commentValue } }) => (
+                    <LiteTextEditorWithRef
+                      onEnterKeyPress={handleSubmit(handleAddComment)}
+                      uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                      deleteFile={fileService.deleteImage}
+                      ref={editorRef}
+                      value={!commentValue || commentValue === "" ? "<p></p>" : commentValue}
+                      customClassName="p-3 min-h-[100px] shadow-sm"
+                      debouncedUpdatesEnabled={false}
+                      onChange={(comment_json: Object, comment_html: string) => onCommentChange(comment_html)}
+                      commentAccessSpecifier={{ accessValue, onAccessChange, showAccessSpecifier, commentAccess }}
+                    />
+                  )}
                 />
               )}
             />

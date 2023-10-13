@@ -74,11 +74,13 @@ export const PrioritySelect: React.FC<Props> = (props) => {
         disabled={disabled}
         onClick={() => setIsOpen(true)}
         className={
-          "relative w-full px-2.5 py-0.5 text-base flex justify-between items-center gap-0.5 text-custom-text-100"
+          "relative w-full px-2.5 py-0.5 text-base flex justify-between items-center gap-0.5"
         }
       >
-        {value ? capitalizeFirstLetter(value) : "None"}
-        <ChevronDown className="w-5 h-5" />
+        <span className="text-custom-text-200">
+          {value ? capitalizeFirstLetter(value) : "None"}
+        </span>
+        <ChevronDown className="w-4 h-4 text-custom-text-200" />
       </button>
     </>
   );
