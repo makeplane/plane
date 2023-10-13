@@ -8,7 +8,7 @@ import { CalendarHeader, CalendarWeekDays, CalendarWeekHeader } from "components
 import { Spinner } from "@plane/ui";
 // types
 import { ICalendarWeek } from "./types";
-import { IIssueGroupedStructure } from "store/issue";
+import { IIssueGroupedStructure } from "store/issue/issue.store";
 
 type Props = {
   issues: IIssueGroupedStructure | null;

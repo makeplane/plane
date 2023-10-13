@@ -3,9 +3,13 @@ import { action, computed, observable, makeObservable, runInAction } from "mobx"
 import { ProjectService } from "services/project";
 import ModuleService from "services/modules.service";
 // types
-import { RootStore } from "./root";
+import { RootStore } from "../root";
 import { IIssue, IModule } from "types";
-import { IIssueGroupWithSubGroupsStructure, IIssueGroupedStructure, IIssueUnGroupedStructure } from "./issue";
+import {
+  IIssueGroupWithSubGroupsStructure,
+  IIssueGroupedStructure,
+  IIssueUnGroupedStructure,
+} from "../issue/issue.store";
 
 export interface IModuleStore {
   // states
@@ -46,7 +50,7 @@ export interface IModuleStore {
   projectModules: IModule[] | null;
 }
 
-class ModuleStore implements IModuleStore {
+export class ModuleStore implements IModuleStore {
   // states
   loader: boolean = false;
   error: any | null = null;
@@ -329,5 +333,3 @@ class ModuleStore implements IModuleStore {
     }
   };
 }
-
-export default ModuleStore;

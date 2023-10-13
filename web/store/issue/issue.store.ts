@@ -1,11 +1,10 @@
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // store
-import { RootStore } from "./root";
+import { RootStore } from "../root";
 // types
 import { IIssue } from "types";
 // services
-import ModuleService from "services/modules.service";
-// helpers
+import { IssueService } from "services/issue";
 import { sortArrayByDate, sortArrayByPriority } from "constants/kanban-helpers";
 
 export type IIssueType = "grouped" | "groupWithSubGroups" | "ungrouped";
@@ -17,12 +16,12 @@ export type IIssueGroupWithSubGroupsStructure = {
 };
 export type IIssueUnGroupedStructure = IIssue[];
 
-export interface IModuleIssueStore {
+export interface IIssueStore {
   loader: boolean;
   error: any | null;
   // issues
   issues: {
-    [module_id: string]: {
+    [project_id: string]: {
       grouped: IIssueGroupedStructure;
       groupWithSubGroups: IIssueGroupWithSubGroupsStructure;
       ungrouped: IIssueUnGroupedStructure;
@@ -32,15 +31,15 @@ export interface IModuleIssueStore {
   getIssueType: IIssueType | null;
   getIssues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null;
   // action
-  fetchIssues: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<any>;
+  fetchIssues: (workspaceSlug: string, projectId: string) => Promise<any>;
   updateIssueStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
 }
 
-class ModuleIssueStore implements IModuleIssueStore {
+export class IssueStore implements IIssueStore {
   loader: boolean = false;
   error: any | null = null;
   issues: {
-    [module_id: string]: {
+    [project_id: string]: {
       grouped: {
         [group_id: string]: IIssue[];
       };
@@ -53,7 +52,7 @@ class ModuleIssueStore implements IModuleIssueStore {
     };
   } = {};
   // service
-  moduleService;
+  issueService;
   rootStore;
 
   constructor(_rootStore: RootStore) {
@@ -70,7 +69,7 @@ class ModuleIssueStore implements IModuleIssueStore {
       updateIssueStructure: action,
     });
     this.rootStore = _rootStore;
-    this.moduleService = new ModuleService();
+    this.issueService = new IssueService();
   }
 
   get getIssueType() {
@@ -79,7 +78,6 @@ class ModuleIssueStore implements IModuleIssueStore {
 
     const issueLayout = this.rootStore?.issueFilter?.userDisplayFilters?.layout || null;
     const issueSubGroup = this.rootStore?.issueFilter?.userDisplayFilters?.sub_group_by || null;
-
     if (!issueLayout) return null;
 
     const _issueState = groupedLayouts.includes(issueLayout)
@@ -94,17 +92,17 @@ class ModuleIssueStore implements IModuleIssueStore {
   }
 
   get getIssues() {
-    const moduleId: string | null = this.rootStore?.module?.moduleId;
+    const projectId: string | null = this.rootStore?.project?.projectId;
     const issueType = this.getIssueType;
-    if (!moduleId || !issueType) return null;
+    if (!projectId || !issueType) return null;
 
-    return this.issues?.[moduleId]?.[issueType] || null;
+    return this.issues?.[projectId]?.[issueType] || null;
   }
 
   updateIssueStructure = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
-    const moduleId: string | null = this.rootStore?.module?.moduleId;
+    const projectId: string | null = issue?.project;
     const issueType = this.getIssueType;
-    if (!moduleId || !issueType) return null;
+    if (!projectId || !issueType) return null;
 
     let issues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null =
       this.getIssues;
@@ -147,33 +145,27 @@ class ModuleIssueStore implements IModuleIssueStore {
     }
 
     runInAction(() => {
-      this.issues = { ...this.issues, [moduleId]: { ...this.issues[moduleId], [issueType]: issues } };
+      this.issues = { ...this.issues, [projectId]: { ...this.issues[projectId], [issueType]: issues } };
     });
   };
 
-  fetchIssues = async (workspaceSlug: string, projectId: string, moduleId: string) => {
+  fetchIssues = async (workspaceSlug: string, projectId: string) => {
     try {
       this.loader = true;
       this.error = null;
 
       this.rootStore.workspace.setWorkspaceSlug(workspaceSlug);
       this.rootStore.project.setProjectId(projectId);
-      this.rootStore.module.setModuleId(moduleId);
 
-      const params = this.rootStore?.cycleIssueFilter?.appliedFilters;
-      const issueResponse = await this.moduleService.getModuleIssuesWithParams(
-        workspaceSlug,
-        projectId,
-        moduleId,
-        params
-      );
+      const params = this.rootStore?.issueFilter?.appliedFilters;
+      const issueResponse = await this.issueService.getIssuesWithParams(workspaceSlug, projectId, params);
 
       const issueType = this.getIssueType;
       if (issueType != null) {
         const _issues = {
           ...this.issues,
-          [moduleId]: {
-            ...this.issues[moduleId],
+          [projectId]: {
+            ...this.issues[projectId],
             [issueType]: issueResponse,
           },
         };
@@ -193,5 +185,3 @@ class ModuleIssueStore implements IModuleIssueStore {
     }
   };
 }
-
-export default ModuleIssueStore;

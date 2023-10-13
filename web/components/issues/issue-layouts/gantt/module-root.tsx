@@ -9,7 +9,7 @@ import useProjectDetails from "hooks/use-project-details";
 import { GanttChartRoot, renderIssueBlocksStructure } from "components/gantt-chart";
 import { IssueGanttBlock, IssueGanttSidebarBlock, IssuePeekOverview } from "components/issues";
 // types
-import { IIssueUnGroupedStructure } from "store/issue";
+import { IIssueUnGroupedStructure } from "store/issue/issue.store";
 
 export const ModuleGanttLayout: React.FC = observer(() => {
   const router = useRouter();

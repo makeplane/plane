@@ -1,11 +1,11 @@
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // store
-import { RootStore } from "./root";
+import { RootStore } from "../root";
 // types
 import { IIssue } from "types";
 // services
-import CycleService from "services/cycles.service";
-// constants
+import ModuleService from "services/modules.service";
+// helpers
 import { sortArrayByDate, sortArrayByPriority } from "constants/kanban-helpers";
 
 export type IIssueType = "grouped" | "groupWithSubGroups" | "ungrouped";
@@ -17,12 +17,12 @@ export type IIssueGroupWithSubGroupsStructure = {
 };
 export type IIssueUnGroupedStructure = IIssue[];
 
-export interface ICycleIssueStore {
+export interface IModuleIssueStore {
   loader: boolean;
   error: any | null;
   // issues
   issues: {
-    [cycleId: string]: {
+    [module_id: string]: {
       grouped: IIssueGroupedStructure;
       groupWithSubGroups: IIssueGroupWithSubGroupsStructure;
       ungrouped: IIssueUnGroupedStructure;
@@ -32,15 +32,15 @@ export interface ICycleIssueStore {
   getIssueType: IIssueType | null;
   getIssues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null;
   // action
-  fetchIssues: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<any>;
+  fetchIssues: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<any>;
   updateIssueStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
 }
 
-class CycleIssueStore implements ICycleIssueStore {
+export class ModuleIssueStore implements IModuleIssueStore {
   loader: boolean = false;
   error: any | null = null;
   issues: {
-    [cycle_id: string]: {
+    [module_id: string]: {
       grouped: {
         [group_id: string]: IIssue[];
       };
@@ -53,7 +53,7 @@ class CycleIssueStore implements ICycleIssueStore {
     };
   } = {};
   // service
-  cycleService;
+  moduleService;
   rootStore;
 
   constructor(_rootStore: RootStore) {
@@ -70,7 +70,7 @@ class CycleIssueStore implements ICycleIssueStore {
       updateIssueStructure: action,
     });
     this.rootStore = _rootStore;
-    this.cycleService = new CycleService();
+    this.moduleService = new ModuleService();
   }
 
   get getIssueType() {
@@ -94,17 +94,17 @@ class CycleIssueStore implements ICycleIssueStore {
   }
 
   get getIssues() {
-    const cycleId: string | null = this.rootStore?.cycle?.cycleId;
+    const moduleId: string | null = this.rootStore?.module?.moduleId;
     const issueType = this.getIssueType;
-    if (!cycleId || !issueType) return null;
+    if (!moduleId || !issueType) return null;
 
-    return this.issues?.[cycleId]?.[issueType] || null;
+    return this.issues?.[moduleId]?.[issueType] || null;
   }
 
   updateIssueStructure = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
-    const cycleId: string | null = this.rootStore?.cycle?.cycleId || null;
+    const moduleId: string | null = this.rootStore?.module?.moduleId;
     const issueType = this.getIssueType;
-    if (!cycleId || !issueType) return null;
+    if (!moduleId || !issueType) return null;
 
     let issues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null =
       this.getIssues;
@@ -147,28 +147,33 @@ class CycleIssueStore implements ICycleIssueStore {
     }
 
     runInAction(() => {
-      this.issues = { ...this.issues, [cycleId]: { ...this.issues[cycleId], [issueType]: issues } };
+      this.issues = { ...this.issues, [moduleId]: { ...this.issues[moduleId], [issueType]: issues } };
     });
   };
 
-  fetchIssues = async (workspaceSlug: string, projectId: string, cycleId: string) => {
+  fetchIssues = async (workspaceSlug: string, projectId: string, moduleId: string) => {
     try {
       this.loader = true;
       this.error = null;
 
       this.rootStore.workspace.setWorkspaceSlug(workspaceSlug);
       this.rootStore.project.setProjectId(projectId);
-      this.rootStore.cycle.setCycleId(cycleId);
+      this.rootStore.module.setModuleId(moduleId);
 
       const params = this.rootStore?.cycleIssueFilter?.appliedFilters;
-      const issueResponse = await this.cycleService.getCycleIssuesWithParams(workspaceSlug, projectId, cycleId, params);
+      const issueResponse = await this.moduleService.getModuleIssuesWithParams(
+        workspaceSlug,
+        projectId,
+        moduleId,
+        params
+      );
 
       const issueType = this.getIssueType;
       if (issueType != null) {
         const _issues = {
           ...this.issues,
-          [cycleId]: {
-            ...this.issues[cycleId],
+          [moduleId]: {
+            ...this.issues[moduleId],
             [issueType]: issueResponse,
           },
         };
@@ -188,5 +193,3 @@ class CycleIssueStore implements ICycleIssueStore {
     }
   };
 }
-
-export default CycleIssueStore;

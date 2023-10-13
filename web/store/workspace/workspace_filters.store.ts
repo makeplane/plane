@@ -4,7 +4,7 @@ import WorkspaceService from "services/workspace.service";
 // helpers
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 // types
-import { RootStore } from "./root";
+import { RootStore } from "../root";
 import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -32,7 +32,7 @@ export interface IWorkspaceFilterStore {
   appliedFilters: TIssueParams[] | null;
 }
 
-class WorkspaceFilterStore implements IWorkspaceFilterStore {
+export class WorkspaceFilterStore implements IWorkspaceFilterStore {
   // states
   loader: boolean = false;
   error: any | null = null;
@@ -191,5 +191,3 @@ class WorkspaceFilterStore implements IWorkspaceFilterStore {
     }
   };
 }
-
-export default WorkspaceFilterStore;

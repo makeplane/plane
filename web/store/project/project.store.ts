@@ -1,6 +1,6 @@
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // types
-import { RootStore } from "./root";
+import { RootStore } from "../root";
 import { IProject, IIssueLabels, IProjectMember, IStateResponse, IState, IEstimate } from "types";
 // services
 import { ProjectService, ProjectStateService, ProjectEstimateService } from "services/project";
@@ -71,7 +71,7 @@ export interface IProjectStore {
   deleteProject: (workspaceSlug: string, projectId: string) => Promise<void>;
 }
 
-class ProjectStore implements IProjectStore {
+export class ProjectStore implements IProjectStore {
   loader: boolean = false;
   error: any | null = null;
 
@@ -566,5 +566,3 @@ class ProjectStore implements IProjectStore {
     }
   };
 }
-
-export default ProjectStore;

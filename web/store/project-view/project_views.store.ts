@@ -2,7 +2,7 @@ import { observable, action, makeObservable, runInAction } from "mobx";
 // services
 import ViewService from "services/views.service";
 // types
-import { RootStore } from "./root";
+import { RootStore } from "../root";
 import { IProjectView } from "types";
 
 export interface IProjectViewsStore {
@@ -36,7 +36,7 @@ export interface IProjectViewsStore {
   removeViewFromFavorites: (workspaceSlug: string, projectId: string, viewId: string) => Promise<any>;
 }
 
-class ProjectViewsStore implements IProjectViewsStore {
+export class ProjectViewsStore implements IProjectViewsStore {
   // states
   loader: boolean = false;
   error: any | null = null;
@@ -291,5 +291,3 @@ class ProjectViewsStore implements IProjectViewsStore {
     }
   };
 }
-
-export default ProjectViewsStore;

@@ -1,6 +1,6 @@
 import { observable, action, makeObservable, runInAction } from "mobx";
 // types
-import { RootStore } from "./root";
+import { RootStore } from "../root";
 // services
 import { ProjectPublishService } from "services/project";
 
@@ -53,7 +53,7 @@ export interface IProjectPublishStore {
   ) => Promise<void>;
 }
 
-class ProjectPublishStore implements IProjectPublishStore {
+export class ProjectPublishStore implements IProjectPublishStore {
   generalLoader: boolean = false;
   fetchSettingsLoader: boolean = false;
   error: any | null = null;
@@ -244,5 +244,3 @@ class ProjectPublishStore implements IProjectPublishStore {
     }
   };
 }
-
-export default ProjectPublishStore;

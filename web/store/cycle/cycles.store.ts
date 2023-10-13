@@ -1,6 +1,6 @@
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 // types
-import { RootStore } from "./root";
+import { RootStore } from "../root";
 import { ICycle } from "types";
 // services
 import { ProjectService } from "services/project";
@@ -38,7 +38,7 @@ export interface ICycleStore {
   removeCycleFromFavorites: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<void>;
 }
 
-class CycleStore implements ICycleStore {
+export class CycleStore implements ICycleStore {
   loader: boolean = false;
   error: any | null = null;
 
@@ -256,5 +256,3 @@ class CycleStore implements ICycleStore {
     }
   };
 }
-
-export default CycleStore;

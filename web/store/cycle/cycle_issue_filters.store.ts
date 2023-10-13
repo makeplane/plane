@@ -4,7 +4,7 @@ import CycleService from "services/cycles.service";
 // helpers
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 // types
-import { RootStore } from "./root";
+import { RootStore } from "../root";
 import { IIssueFilterOptions, TIssueParams } from "types";
 
 export interface ICycleIssueFilterStore {
@@ -25,7 +25,7 @@ export interface ICycleIssueFilterStore {
   appliedFilters: TIssueParams[] | null;
 }
 
-class CycleIssueFilterStore implements ICycleIssueFilterStore {
+export class CycleIssueFilterStore implements ICycleIssueFilterStore {
   // observables
   loader: boolean = false;
   error: any | null = null;
@@ -145,5 +145,3 @@ class CycleIssueFilterStore implements ICycleIssueFilterStore {
     }
   };
 }
-
-export default CycleIssueFilterStore;

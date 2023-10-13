@@ -14,7 +14,7 @@ import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
-import { IProjectPublishSettings, TProjectPublishViews } from "store/project_publish";
+import { IProjectPublishSettings, TProjectPublishViews } from "store/project/project_publish.store";
 // hooks
 import useToast from "hooks/use-toast";
 import useProjectDetails from "hooks/use-project-details";

@@ -8,7 +8,7 @@ import { CalendarDayTile } from "components/issues";
 import { renderDateFormat } from "helpers/date-time.helper";
 // types
 import { ICalendarDate, ICalendarWeek } from "./types";
-import { IIssueGroupedStructure } from "store/issue";
+import { IIssueGroupedStructure } from "store/issue/issue.store";
 
 type Props = {
   issues: IIssueGroupedStructure | null;

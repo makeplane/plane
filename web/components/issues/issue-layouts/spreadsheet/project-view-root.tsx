@@ -16,7 +16,7 @@ import { Spinner } from "components/ui";
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "types";
-import { IIssueUnGroupedStructure } from "store/issue";
+import { IIssueUnGroupedStructure } from "store/issue/issue.store";
 // constants
 import { SPREADSHEET_COLUMN } from "constants/spreadsheet";
 

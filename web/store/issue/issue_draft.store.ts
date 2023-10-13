@@ -3,9 +3,9 @@ import { action, observable, runInAction, makeAutoObservable } from "mobx";
 // services
 import issueService from "services/issue/issue.service";
 // types
-import type { ICurrentUserResponse, IIssue } from "types";
+import type { IIssue } from "types";
 
-class DraftIssuesStore {
+export class DraftIssuesStore {
   issues: { [key: string]: IIssue } = {};
   isIssuesLoading: boolean = false;
   rootStore: any | null = null;
@@ -167,5 +167,3 @@ class DraftIssuesStore {
     }
   };
 }
-
-export default DraftIssuesStore;
