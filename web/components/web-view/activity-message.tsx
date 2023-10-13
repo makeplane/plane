@@ -239,7 +239,7 @@ const activityDetails: {
               JSON.stringify({
                 cycle_id: activity.new_identifier ?? activity.old_identifier,
                 project_id: activity.project,
-                cycle_name: activity.verb === "created" ? activity.new_value : activity.old_value,
+                cycle_name: !activity.new_value || activity.new_value === "" ? activity.old_value : activity.new_value,
               })
             )
           }
@@ -368,7 +368,7 @@ const activityDetails: {
               JSON.stringify({
                 module_id: activity.new_identifier ?? activity.old_identifier,
                 project_id: activity.project,
-                module_name: activity.verb === "created" ? activity.new_value : activity.old_value,
+                module_name: !activity.new_value || activity.new_value === "" ? activity.old_value : activity.new_value,
               })
             )
           }
