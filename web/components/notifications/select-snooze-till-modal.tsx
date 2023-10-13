@@ -1,23 +1,14 @@
-import React, { Fragment } from "react";
-
-// next
+import { Fragment, FC } from "react";
 import { useRouter } from "next/router";
-
-// react hook form
 import { useForm, Controller } from "react-hook-form";
-
-import { Transition, Dialog, Listbox } from "@headlessui/react";
-
+import { Transition, Dialog } from "@headlessui/react";
 // date helper
 import { getAllTimeIn30MinutesInterval } from "helpers/date-time.helper";
-
 // hooks
 import useToast from "hooks/use-toast";
-
 // components
 import { Button } from "@plane/ui";
 import { Icon, CustomDatePicker, CustomSelect } from "components/ui";
-
 // types
 import type { IUserNotification } from "types";
 
@@ -43,7 +34,7 @@ const defaultValues: FormValues = {
 
 const timeStamps = getAllTimeIn30MinutesInterval();
 
-export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
+export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
   const { isOpen, onClose, notification, onSuccess, onSubmit: handleSubmitSnooze } = props;
 
   const router = useRouter();
@@ -125,10 +116,10 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
   };
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
+    <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
-          as={React.Fragment}
+          as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -142,7 +133,7 @@ export const SnoozeNotificationModal: React.FC<SnoozeModalProps> = (props) => {
         <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="flex items-center justify-center min-h-full p-4 text-center">
             <Transition.Child
-              as={React.Fragment}
+              as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               enterTo="opacity-100 translate-y-0 sm:scale-100"

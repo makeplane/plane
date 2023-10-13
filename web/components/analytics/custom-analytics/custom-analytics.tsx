@@ -3,7 +3,7 @@ import useSWR from "swr";
 import { useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 // services
-import AnalyticsService from "services/analytics.service";
+import { AnalyticsService } from "services/analytics.service";
 // components
 import { CustomAnalyticsSelectBar, CustomAnalyticsMainContent, CustomAnalyticsSidebar } from "components/analytics";
 // types

@@ -1,6 +1,4 @@
 import { useEffect } from "react";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // components
 import { ModuleLeadSelect, ModuleMembersSelect, ModuleStatusSelect } from "components/modules";
@@ -27,7 +25,6 @@ const defaultValues: Partial<IModule> = {
 
 export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, status, data }) => {
   const {
-    register,
     formState: { errors, isSubmitting },
     handleSubmit,
     watch,

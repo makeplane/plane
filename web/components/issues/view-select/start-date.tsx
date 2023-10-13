@@ -1,14 +1,14 @@
+import { FC } from "react";
 import { useRouter } from "next/router";
-
 // ui
 import { CustomDatePicker } from "components/ui";
 import { Tooltip } from "@plane/ui";
 // helpers
-import { findHowManyDaysLeft, renderShortDateWithYearFormat } from "helpers/date-time.helper";
+import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // services
-import trackEventServices from "services/track_event.service";
+import { TrackEventService } from "services/track_event.service";
 // types
-import { ICurrentUserResponse, IIssue } from "types";
+import { IUser, IIssue } from "types";
 import useIssuesView from "hooks/use-issues-view";
 
 type Props = {
@@ -18,11 +18,13 @@ type Props = {
   handleOnClose?: () => void;
   tooltipPosition?: "top" | "bottom";
   noBorder?: boolean;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   isNotAllowed: boolean;
 };
 
-export const ViewStartDateSelect: React.FC<Props> = ({
+const trackEventService = new TrackEventService();
+
+export const ViewStartDateSelect: FC<Props> = ({
   issue,
   partialUpdateIssue,
   handleOnOpen,
@@ -57,7 +59,7 @@ export const ViewStartDateSelect: React.FC<Props> = ({
               },
               issue
             );
-            trackEventServices.trackIssuePartialPropertyUpdateEvent(
+            trackEventService.trackIssuePartialPropertyUpdateEvent(
               {
                 workspaceSlug,
                 workspaceId: issue.workspace,
@@ -67,7 +69,7 @@ export const ViewStartDateSelect: React.FC<Props> = ({
                 issueId: issue.id,
               },
               "ISSUE_PROPERTY_UPDATE_DUE_DATE",
-              user
+              user as IUser
             );
           }}
           className={`${issue?.start_date ? "w-[6.5rem]" : "w-[5rem] text-center"} ${

@@ -16,7 +16,7 @@ import { API_BASE_URL } from "helpers/common.helper";
 
 const trackEventService = new TrackEventService();
 
-class UserService extends APIService {
+export class UserService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -190,5 +190,3 @@ class UserService extends APIService {
       });
   }
 }
-
-export default UserService;

@@ -1,6 +1,4 @@
 import { useEffect } from "react";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // ui
 import { Button, Input } from "@plane/ui";
@@ -21,7 +19,6 @@ const defaultValues = {
 
 export const PageForm: React.FC<Props> = ({ handleFormSubmit, handleClose, status, data }) => {
   const {
-    register,
     formState: { errors, isSubmitting },
     handleSubmit,
     control,

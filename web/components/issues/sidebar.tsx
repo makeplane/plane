@@ -1,10 +1,6 @@
 import React, { useCallback, useState } from "react";
-
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
-// react-hook-form
 import { Controller, UseFormWatch } from "react-hook-form";
 // hooks
 import useToast from "hooks/use-toast";
@@ -12,8 +8,8 @@ import useUserAuth from "hooks/use-user-auth";
 import useUserIssueNotificationSubscription from "hooks/use-issue-notification-subscription";
 import useEstimateOption from "hooks/use-estimate-option";
 // services
-import issuesService from "services/issue/issue.service";
-import modulesService from "services/module.service";
+import { IssueService } from "services/issue";
+import { ModuleService } from "services/module.service";
 // contexts
 import { useProjectMyMembership } from "contexts/project-member.context";
 // components
@@ -84,6 +80,9 @@ type Props = {
   uneditable?: boolean;
 };
 
+const issueService = new IssueService();
+const moduleService = new ModuleService();
+
 export const IssueDetailsSidebar: React.FC<Props> = ({
   control,
   submitChanges,
@@ -117,7 +116,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
     (cycleDetails: ICycle) => {
       if (!workspaceSlug || !projectId || !issueDetail) return;
 
-      issuesService
+      issueService
         .addIssueToCycle(
           workspaceSlug as string,
           projectId as string,
@@ -127,7 +126,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
           },
           user
         )
-        .then((res) => {
+        .then(() => {
           mutate(ISSUE_DETAILS(issueId as string));
         });
     },
@@ -138,7 +137,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
     (moduleDetail: IModule) => {
       if (!workspaceSlug || !projectId || !issueDetail) return;
 
-      modulesService
+      moduleService
         .addIssuesToModule(
           workspaceSlug as string,
           projectId as string,
@@ -148,7 +147,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
           },
           user
         )
-        .then((res) => {
+        .then(() => {
           mutate(ISSUE_DETAILS(issueId as string));
         });
     },
@@ -160,7 +159,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
 
     const payload = { metadata: {}, ...formData };
 
-    await issuesService
+    await issueService
       .createIssueLink(workspaceSlug as string, projectId as string, issueDetail.id, payload)
       .then(() => mutate(ISSUE_DETAILS(issueDetail.id)))
       .catch((err) => {
@@ -200,9 +199,9 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
       false
     );
 
-    await issuesService
+    await issueService
       .updateIssueLink(workspaceSlug as string, projectId as string, issueDetail.id, linkId, payload)
-      .then((res) => {
+      .then(() => {
         mutate(ISSUE_DETAILS(issueDetail.id));
       })
       .catch((err) => {
@@ -221,9 +220,9 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
       false
     );
 
-    await issuesService
+    await issueService
       .deleteIssueLink(workspaceSlug as string, projectId as string, issueDetail.id, linkId)
-      .then((res) => {
+      .then(() => {
         mutate(ISSUE_DETAILS(issueDetail.id));
       })
       .catch((err) => {
