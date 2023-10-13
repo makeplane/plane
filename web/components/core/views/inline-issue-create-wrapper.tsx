@@ -4,8 +4,8 @@ import { mutate } from "swr";
 import { useForm, FormProvider } from "react-hook-form";
 import { Transition } from "@headlessui/react";
 // services
-import modulesService from "services/module.service";
-import { IssueService } from "services/issue";
+import { ModuleService } from "services/module.service";
+import { IssueService, IssueDraftService } from "services/issue";
 // hooks
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
@@ -13,9 +13,9 @@ import useKeypress from "hooks/use-keypress";
 import useIssuesView from "hooks/use-issues-view";
 import useMyIssues from "hooks/my-issues/use-my-issues";
 import useGanttChartIssues from "hooks/gantt-chart/issue-view";
-import useCalendarIssuesView from "hooks/use-calendar-issues-view";
+// import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
+// import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 // helpers
 import { getFetchKeysForIssueMutation } from "helpers/string.helper";
 
@@ -47,6 +47,10 @@ type Props = {
   children?: React.ReactNode;
 };
 
+const issueService = new IssueService();
+const issueDraftService = new IssueDraftService();
+const moduleService = new ModuleService();
+
 export const addIssueToCycle = async (
   workspaceSlug: string,
   projectId: string,
@@ -57,7 +61,7 @@ export const addIssueToCycle = async (
 ) => {
   if (!workspaceSlug || !projectId) return;
 
-  await issuesService
+  await issueService
     .addIssueToCycle(
       workspaceSlug as string,
       projectId.toString(),
@@ -83,7 +87,7 @@ export const addIssueToModule = async (
   user: any,
   params: any
 ) => {
-  await modulesService
+  await moduleService
     .addIssuesToModule(
       workspaceSlug as string,
       projectId.toString(),
@@ -116,9 +120,9 @@ export const InlineCreateIssueFormWrapper: React.FC<Props> = (props) => {
   const { setToastAlert } = useToast();
 
   const { displayFilters, params } = useIssuesView();
-  const { params: calendarParams } = useCalendarIssuesView();
+  // const { params: calendarParams } = useCalendarIssuesView();
   const { ...viewGanttParams } = params;
-  const { params: spreadsheetParams } = useSpreadsheetIssuesView();
+  // const { params: spreadsheetParams } = useSpreadsheetIssuesView();
   const { groupedIssues, mutateMyIssues } = useMyIssues(workspaceSlug?.toString());
   const { params: ganttParams } = useGanttChartIssues(workspaceSlug?.toString(), projectId?.toString());
 
@@ -172,8 +176,8 @@ export const InlineCreateIssueFormWrapper: React.FC<Props> = (props) => {
     reset({ ...defaultValues });
 
     await (!isDraftIssues
-      ? issuesService.createIssues(workspaceSlug.toString(), projectId.toString(), formData, user)
-      : issuesService.createDraftIssue(workspaceSlug.toString(), projectId.toString(), formData, user)
+      ? issueService.createIssues(workspaceSlug.toString(), projectId.toString(), formData, user)
+      : issueDraftService.createDraftIssue(workspaceSlug.toString(), projectId.toString(), formData)
     )
       .then(async (res) => {
         await mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params));

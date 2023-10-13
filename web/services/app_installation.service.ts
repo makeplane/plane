@@ -73,5 +73,3 @@ export class AppInstallationService extends APIService {
     return response.data;
   }
 }
-
-export default AppInstallationService;

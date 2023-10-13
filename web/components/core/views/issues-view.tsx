@@ -1,16 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
-
+import { useCallback, useEffect, useState, FC } from "react";
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
-// react-beautiful-dnd
 import { DropResult } from "react-beautiful-dnd";
 // services
-import { IssueService } from "services/issue";
+import { IssueService, IssueLabelService } from "services/issue";
 import { ProjectStateService } from "services/project";
-import modulesService from "services/module.service";
-import trackEventServices from "services/track_event.service";
+import { ModuleService } from "services/module.service";
+import { TrackEventService } from "services/track_event.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
@@ -51,7 +47,14 @@ type Props = {
   disableUserActions?: boolean;
 };
 
-export const IssuesView: React.FC<Props> = ({ openIssuesListModal, disableUserActions = false }) => {
+const issueService = new IssueService();
+const issueLabelService = new IssueLabelService();
+const projectStateService = new ProjectStateService();
+const moduleService = new ModuleService();
+const trackEventService = new TrackEventService();
+
+export const IssuesView: FC<Props> = (props) => {
+  const { openIssuesListModal, disableUserActions = false } = props;
   // create issue modal
   const [createIssueModal, setCreateIssueModal] = useState(false);
   const [createViewModal, setCreateViewModal] = useState<any>(null);
@@ -90,14 +93,14 @@ export const IssuesView: React.FC<Props> = ({ openIssuesListModal, disableUserAc
 
   const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
-    workspaceSlug ? () => stateService.getStates(workspaceSlug as string, projectId as string) : null
+    workspaceSlug ? () => projectStateService.getStates(workspaceSlug as string, projectId as string) : null
   );
   const states = getStatesList(stateGroups);
 
   const { data: labels } = useSWR(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId.toString()) : null,
     workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug.toString(), projectId.toString())
+      ? () => issueLabelService.getProjectIssueLabels(workspaceSlug.toString(), projectId.toString())
       : null
   );
 
@@ -225,7 +228,7 @@ export const IssuesView: React.FC<Props> = ({ openIssuesListModal, disableUserAc
         );
 
         // patch request
-        issuesService
+        issueService
           .patchIssue(
             workspaceSlug as string,
             projectId as string,
@@ -241,7 +244,7 @@ export const IssuesView: React.FC<Props> = ({ openIssuesListModal, disableUserAc
             const sourceStateBeforeDrag = states?.find((state) => state.name === source.droppableId);
 
             if (sourceStateBeforeDrag?.group !== "completed" && response?.state_detail?.group === "completed")
-              trackEventServices.trackIssueMarkedAsDoneEvent(
+              trackEventService.trackIssueMarkedAsDoneEvent(
                 {
                   workspaceSlug,
                   workspaceId: draggedItem.workspace,
@@ -373,7 +376,7 @@ export const IssuesView: React.FC<Props> = ({ openIssuesListModal, disableUserAc
         false
       );
 
-      issuesService
+      issueService
         .removeIssueFromCycle(workspaceSlug as string, projectId as string, cycleId as string, bridgeId)
         .then(() => {
           setToastAlert({
@@ -411,7 +414,7 @@ export const IssuesView: React.FC<Props> = ({ openIssuesListModal, disableUserAc
         false
       );
 
-      modulesService
+      moduleService
         .removeIssueFromModule(workspaceSlug as string, projectId as string, moduleId as string, bridgeId)
         .then(() => {
           setToastAlert({
@@ -483,7 +486,7 @@ export const IssuesView: React.FC<Props> = ({ openIssuesListModal, disableUserAc
               filters={filters}
               setFilters={(updatedFilter) => setFilters(updatedFilter, !Boolean(viewId))}
               labels={labels}
-              members={members?.map((m) => m.member)}
+              members={members?.map((m: any) => m.member)}
               states={states}
               clearAllFilters={() =>
                 setFilters({

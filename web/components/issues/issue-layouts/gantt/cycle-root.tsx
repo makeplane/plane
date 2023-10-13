@@ -1,9 +1,7 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useMobxStore } from "lib/mobx/store-provider";
 import useProjectDetails from "hooks/use-project-details";
 // components
 import { GanttChartRoot, renderIssueBlocksStructure } from "components/gantt-chart";
@@ -38,6 +36,7 @@ export const CycleGanttLayout: React.FC = observer(() => {
           title="Issues"
           loaderTitle="Issues"
           blocks={issues ? renderIssueBlocksStructure(issues as IIssueUnGroupedStructure) : null}
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           blockUpdateHandler={(block, payload) => {
             // TODO: update mutation logic
             // updateGanttIssue(block, payload, mutateGanttIssues, user, workspaceSlug?.toString())

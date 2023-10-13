@@ -42,7 +42,7 @@ const ProfilePreferences = observer(() => {
           palette: currentTheme.palette !== ",,,," ? currentTheme.palette : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
           theme: "custom",
         });
-      setCustomThemeSelectorOptions((prevData) => true);
+      setCustomThemeSelectorOptions(() => true);
     }
   }, [store, store?.theme?.theme]);
 

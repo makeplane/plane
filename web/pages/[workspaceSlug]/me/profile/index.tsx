@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
-import fileService from "services/file.service";
-import userService from "services/user.service";
+import { FileService } from "services/file.service";
+import { UserService } from "services/user.service";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
@@ -39,15 +37,17 @@ const defaultValues: Partial<IUser> = {
   user_timezone: "Asia/Kolkata",
 };
 
+const fileService = new FileService();
+const userService = new UserService();
+
 const Profile: NextPage = () => {
   const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
+  // form info
   const {
-    register,
     handleSubmit,
     reset,
     watch,

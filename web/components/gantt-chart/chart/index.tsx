@@ -66,27 +66,18 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   enableReorder,
   bottomSpacing,
 }) => {
+  // router
+  const router = useRouter();
+  const { cycleId, moduleId } = router.query;
+  const isCyclePage = router.pathname.split("/")[4] === "cycles" && !cycleId;
+  const isModulePage = router.pathname.split("/")[4] === "modules" && !moduleId;
+  // states
   const [itemsContainerWidth, setItemsContainerWidth] = useState<number>(0);
   const [fullScreenMode, setFullScreenMode] = useState<boolean>(false);
-
   const [isCreateIssueFormOpen, setIsCreateIssueFormOpen] = useState(false);
-
-  // blocks state management starts
-  const [chartBlocks, setChartBlocks] = useState<IGanttBlock[] | null>(null);
-
+  const [chartBlocks, setChartBlocks] = useState<IGanttBlock[] | null>(null); // blocks state management starts
+  // hooks
   const { currentView, currentViewData, renderView, dispatch, allViews, updateScrollLeft } = useChart();
-
-  const router = useRouter();
-  const { cycleId, moduleId } = router.query;
-
-  const isCyclePage = router.pathname.split("/")[4] === "cycles" && !cycleId;
-  const isModulePage = router.pathname.split("/")[4] === "modules" && !moduleId;
-
-  const router = useRouter();
-  const { cycleId, moduleId } = router.query;
-
-  const isCyclePage = router.pathname.split("/")[4] === "cycles" && !cycleId;
-  const isModulePage = router.pathname.split("/")[4] === "modules" && !moduleId;
 
   const renderBlockStructure = (view: any, blocks: IGanttBlock[] | null) =>
     blocks && blocks.length > 0
@@ -169,6 +160,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   // handling the scroll positioning from left and right
   useEffect(() => {
     handleToday();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const updatingCurrentLeftScrollPosition = (width: number) => {
@@ -256,6 +248,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
         <div className="flex flex-wrap items-center gap-2">
           {allViews &&
             allViews.length > 0 &&
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             allViews.map((_chatView: any, _idx: any) => (
               <div
                 key={_chatView?.key}

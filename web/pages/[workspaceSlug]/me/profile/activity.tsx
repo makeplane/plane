@@ -1,10 +1,8 @@
 import useSWR from "swr";
-
 import { useRouter } from "next/router";
 import Link from "next/link";
-
 // services
-import userService from "services/user.service";
+import { UserService } from "services/user.service";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // components
@@ -21,6 +19,8 @@ import { USER_ACTIVITY } from "constants/fetch-keys";
 // helper
 import { timeAgo } from "helpers/date-time.helper";
 import { SettingsSidebar } from "components/project";
+
+const userService = new UserService();
 
 const ProfileActivity = () => {
   const router = useRouter();
@@ -51,7 +51,7 @@ const ProfileActivity = () => {
             </div>
             <div className={`flex flex-col gap-2 py-4 w-full`}>
               <ul role="list" className="-mb-4">
-                {userActivity.results.map((activityItem: any, activityIdx: number) => {
+                {userActivity.results.map((activityItem: any) => {
                   if (activityItem.field === "comment") {
                     return (
                       <div key={activityItem.id} className="mt-2">

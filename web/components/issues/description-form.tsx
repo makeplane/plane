@@ -1,14 +1,15 @@
-import { FC, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, FC, useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 import { useDebouncedCallback } from "use-debounce";
 // components
 import { TextArea } from "@plane/ui";
+import { RichTextEditor } from "@plane/rich-text-editor";
 // types
 import { IIssue } from "types";
-import { RichTextEditor } from "@plane/rich-text-editor";
-import fileService from "services/file.service";
+// services
+import { FileService } from "services/file.service";
 
 export interface IssueDescriptionFormValues {
   name: string;
@@ -25,7 +26,11 @@ export interface IssueDetailsProps {
   isAllowed: boolean;
 }
 
-export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleFormSubmit, workspaceSlug, isAllowed }) => {
+const fileService = new FileService();
+
+export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
+  const { issue, handleFormSubmit, workspaceSlug, isAllowed } = props;
+  // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   const [characterLimit, setCharacterLimit] = useState(false);
 
@@ -35,7 +40,6 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleFormS
     handleSubmit,
     watch,
     reset,
-    register,
     control,
     formState: { errors },
   } = useForm<IIssue>({
@@ -95,7 +99,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleFormS
                 value={value}
                 placeholder="Enter issue name"
                 onFocus={() => setCharacterLimit(true)}
-                onChange={(e) => {
+                onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
                   setCharacterLimit(false);
                   setIsSubmitting("submitting");
                   debouncedTitleSave();

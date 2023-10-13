@@ -106,6 +106,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
   const onSubmit = async (formData: IProject) => {
     if (!workspaceSlug) return;
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { emoji_and_icon, ...payload } = formData;
 
     if (typeof formData.emoji_and_icon === "object") payload.icon_prop = formData.emoji_and_icon;

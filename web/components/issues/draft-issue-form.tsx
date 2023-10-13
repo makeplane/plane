@@ -2,7 +2,8 @@ import React, { FC, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 // services
-import AIService from "services/ai.service";
+import { AIService } from "services/ai.service";
+import { FileService } from "services/file.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
@@ -29,10 +30,9 @@ import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import type { IUser, IIssue, ISearchIssueResponse } from "types";
 // components
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
-// types
-// import type { ICurrentUserResponse, IIssue, ISearchIssueResponse } from "types";
-import fileService from "services/file.service";
-// services
+
+const aiService = new AIService();
+const fileService = new FileService();
 
 const defaultValues: Partial<IIssue> = {
   project: "",
@@ -89,8 +89,6 @@ interface IssueFormProps {
     | "all"
   )[];
 }
-
-const aiService = new AIService();
 
 export const DraftIssueForm: FC<IssueFormProps> = (props) => {
   const {
@@ -168,9 +166,9 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(payload), isOpen, data]);
 
-  const onClose = () => {
-    handleClose();
-  };
+  // const onClose = () => {
+  //   handleClose();
+  // };
 
   useEffect(() => {
     if (!isOpen || data) return;

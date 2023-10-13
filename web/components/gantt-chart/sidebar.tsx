@@ -22,6 +22,7 @@ type Props = {
 };
 
 export const GanttSidebar: React.FC<Props> = (props) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { title, blockUpdateHandler, blocks, SidebarBlockRender, enableReorder } = props;
 
   const router = useRouter();

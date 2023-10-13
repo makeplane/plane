@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
-// react-hook-form
 import { useForm } from "react-hook-form";
 // headless ui
 import { Disclosure, Popover, Transition } from "@headlessui/react";
 // services
-import cyclesService from "services/cycle.service";
+import { CycleService } from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -35,7 +31,7 @@ import { ExclamationIcon } from "components/icons";
 import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
 import { isDateGreaterThanToday, renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
-import { ICurrentUserResponse, ICycle } from "types";
+import { IUser, ICycle } from "types";
 // fetch-keys
 import { CYCLE_DETAILS } from "constants/fetch-keys";
 
@@ -44,8 +40,10 @@ type Props = {
   isOpen: boolean;
   cycleStatus: string;
   isCompleted: boolean;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
+
+const cycleService = new CycleService();
 
 export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatus, isCompleted, user }) => {
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
@@ -69,7 +67,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
 
     mutate<ICycle>(CYCLE_DETAILS(cycleId as string), (prevData) => ({ ...(prevData as ICycle), ...data }), false);
 
-    cyclesService
+    cycleService
       .patchCycle(workspaceSlug as string, projectId as string, cycleId as string, data, user)
       .then(() => mutate(CYCLE_DETAILS(cycleId as string)))
       .catch((e) => console.log(e));
@@ -102,7 +100,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
 
   const dateChecker = async (payload: any) => {
     try {
-      const res = await cyclesService.cycleDateCheck(workspaceSlug as string, projectId as string, payload);
+      const res = await cycleService.cycleDateCheck(workspaceSlug as string, projectId as string, payload);
       return res.status;
     } catch (err) {
       return false;
@@ -280,7 +278,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
                 </div>
                 <div className="relative flex h-full w-52 items-center gap-2">
                   <Popover className="flex h-full items-center justify-center rounded-lg">
-                    {({ open }) => (
+                    {({}) => (
                       <>
                         <Popover.Button
                           disabled={isCompleted ?? false}
@@ -328,7 +326,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
                     <ArrowLongRightIcon className="h-3 w-3 text-custom-text-200" />
                   </span>
                   <Popover className="flex h-full items-center justify-center rounded-lg">
-                    {({ open }) => (
+                    {({}) => (
                       <>
                         <Popover.Button
                           disabled={isCompleted ?? false}

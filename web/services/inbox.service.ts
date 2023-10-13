@@ -7,7 +7,7 @@ import type { IInboxIssue, IInbox, TInboxStatus, IInboxIssueDetail, IUser, IInbo
 
 const trackEventService = new TrackEventService();
 
-export class InboxServices extends APIService {
+export class InboxService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -152,5 +152,3 @@ export class InboxServices extends APIService {
       });
   }
 }
-
-export default InboxServices;

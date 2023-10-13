@@ -1,13 +1,9 @@
-import React, { useState, useEffect } from "react";
-
+import React, { useState } from "react";
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
-// component
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import cyclesService from "services/cycle.service";
+import { CycleService } from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
@@ -26,6 +22,8 @@ type Props = {
   handleClose: () => void;
 };
 
+const cycleService = new CycleService();
+
 export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) => {
   const [query, setQuery] = useState("");
 
@@ -37,9 +35,9 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
   const { setToastAlert } = useToast();
 
   const transferIssue = async (payload: any) => {
-    await cyclesService
+    await cycleService
       .transferIssues(workspaceSlug as string, projectId as string, cycleId as string, payload)
-      .then((res) => {
+      .then(() => {
         mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
         setToastAlert({
           type: "success",
@@ -47,7 +45,7 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
           message: "Issues have been transferred successfully",
         });
       })
-      .catch((err) => {
+      .catch(() => {
         setToastAlert({
           type: "error",
           title: "Error!",
@@ -59,7 +57,7 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
   const { data: incompleteCycles } = useSWR(
     workspaceSlug && projectId ? INCOMPLETE_CYCLES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => cyclesService.getCyclesWithParams(workspaceSlug as string, projectId as string, "incomplete")
+      ? () => cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string, "incomplete")
       : null
   );
 
@@ -68,13 +66,14 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
       ? incompleteCycles
       : incompleteCycles?.filter((option) => option.name.toLowerCase().includes(query.toLowerCase()));
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        handleClose();
-      }
-    };
-  }, [handleClose]);
+  // useEffect(() => {
+  //   const handleKeyDown = (e: KeyboardEvent) => {
+  //     if (e.key === "Escape") {
+  //       handleClose();
+  //     }
+  //   };
+  // }, [handleClose]);
+
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>

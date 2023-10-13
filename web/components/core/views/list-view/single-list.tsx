@@ -1,15 +1,10 @@
-import { useState } from "react";
-
-// next
+import { useState, FC } from "react";
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
-// headless ui
 import { Disclosure, Transition } from "@headlessui/react";
 // services
-import issuesService from "services/issues.service";
-import projectService from "services/project.service";
+import { IssueLabelService } from "services/issue";
+import { ProjectService } from "services/project";
 // hooks
 import useProjects from "hooks/use-projects";
 // components
@@ -24,16 +19,7 @@ import { PriorityIcon, StateGroupIcon } from "components/icons";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // types
-import {
-  ICurrentUserResponse,
-  IIssue,
-  IIssueLabels,
-  IIssueViewProps,
-  IState,
-  TIssuePriorities,
-  TStateGroups,
-  UserAuth,
-} from "types";
+import { IUser, IIssue, IIssueViewProps, IState, TIssuePriorities, TStateGroups, UserAuth } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, WORKSPACE_LABELS } from "constants/fetch-keys";
 // constants
@@ -50,12 +36,15 @@ type Props = {
   removeIssue: ((bridgeId: string, issueId: string) => void) | null;
   disableUserActions: boolean;
   disableAddIssueOption?: boolean;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   userAuth: UserAuth;
   viewProps: IIssueViewProps;
 };
 
-export const SingleList: React.FC<Props> = (props) => {
+const issueLabelService = new IssueLabelService();
+const projectService = new ProjectService();
+
+export const SingleList: FC<Props> = (props) => {
   const {
     currentState,
     groupTitle,
@@ -93,16 +82,14 @@ export const SingleList: React.FC<Props> = (props) => {
       ? PROJECT_ISSUE_LABELS(projectId.toString())
       : null,
     workspaceSlug && projectId && displayFilters?.group_by === "labels"
-      ? () => issuesService.getIssueLabels(workspaceSlug.toString(), projectId.toString())
+      ? () => issueLabelService.getProjectIssueLabels(workspaceSlug.toString(), projectId.toString())
       : null
   );
 
   const { data: workspaceLabels } = useSWR(
+    workspaceSlug && displayFilters?.group_by === "labels" ? WORKSPACE_LABELS(workspaceSlug.toString()) : null,
     workspaceSlug && displayFilters?.group_by === "labels"
-      ? WORKSPACE_LABELS(workspaceSlug.toString())
-      : null,
-    workspaceSlug && displayFilters?.group_by === "labels"
-      ? () => issuesService.getWorkspaceLabels(workspaceSlug.toString())
+      ? () => issueLabelService.getWorkspaceIssueLabels(workspaceSlug.toString())
       : null
   );
 
@@ -130,9 +117,8 @@ export const SingleList: React.FC<Props> = (props) => {
         break;
       case "labels":
         title =
-          [...(issueLabels ?? []), ...(workspaceLabels ?? [])]?.find(
-            (label) => label.id === groupTitle
-          )?.name ?? "None";
+          [...(issueLabels ?? []), ...(workspaceLabels ?? [])]?.find((label) => label.id === groupTitle)?.name ??
+          "None";
         break;
       case "project":
         title = projects?.find((p) => p.id === groupTitle)?.name ?? "None";
@@ -153,12 +139,7 @@ export const SingleList: React.FC<Props> = (props) => {
     switch (displayFilters?.group_by) {
       case "state":
         icon = currentState && (
-          <StateGroupIcon
-            stateGroup={currentState.group}
-            color={currentState.color}
-            height="16px"
-            width="16px"
-          />
+          <StateGroupIcon stateGroup={currentState.group} color={currentState.color} height="16px" width="16px" />
         );
         break;
       case "state_detail.group":
@@ -186,15 +167,9 @@ export const SingleList: React.FC<Props> = (props) => {
         break;
       case "labels":
         const labelColor =
-          [...(issueLabels ?? []), ...(workspaceLabels ?? [])]?.find(
-            (label) => label.id === groupTitle
-          )?.color ?? "#000000";
-        icon = (
-          <span
-            className="h-3 w-3 flex-shrink-0 rounded-full"
-            style={{ backgroundColor: labelColor }}
-          />
-        );
+          [...(issueLabels ?? []), ...(workspaceLabels ?? [])]?.find((label) => label.id === groupTitle)?.color ??
+          "#000000";
+        icon = <span className="h-3 w-3 flex-shrink-0 rounded-full" style={{ backgroundColor: labelColor }} />;
         break;
       case "assignees":
       case "created_by":
@@ -228,9 +203,7 @@ export const SingleList: React.FC<Props> = (props) => {
             <div className="flex items-center justify-between px-4 py-2.5 bg-custom-background-90">
               <Disclosure.Button>
                 <div className="flex items-center gap-x-3">
-                  {displayFilters?.group_by !== null && (
-                    <div className="flex items-center">{getGroupIcon()}</div>
-                  )}
+                  {displayFilters?.group_by !== null && <div className="flex items-center">{getGroupIcon()}</div>}
                   {displayFilters?.group_by !== null ? (
                     <h2
                       className={`text-sm font-semibold leading-6 text-custom-text-100 ${
@@ -274,13 +247,9 @@ export const SingleList: React.FC<Props> = (props) => {
                   }
                   noBorder
                 >
-                  <CustomMenu.MenuItem onClick={() => setIsCreateIssueFormOpen(true)}>
-                    Create new
-                  </CustomMenu.MenuItem>
+                  <CustomMenu.MenuItem onClick={() => setIsCreateIssueFormOpen(true)}>Create new</CustomMenu.MenuItem>
                   {openIssuesListModal && (
-                    <CustomMenu.MenuItem onClick={openIssuesListModal}>
-                      Add an existing issue
-                    </CustomMenu.MenuItem>
+                    <CustomMenu.MenuItem onClick={openIssuesListModal}>Add an existing issue</CustomMenu.MenuItem>
                   )}
                 </CustomMenu>
               )}
@@ -309,19 +278,14 @@ export const SingleList: React.FC<Props> = (props) => {
                         makeIssueCopy={() => handleIssueAction(issue, "copy")}
                         handleDeleteIssue={() => handleIssueAction(issue, "delete")}
                         handleDraftIssueSelect={
-                          handleDraftIssueAction
-                            ? () => handleDraftIssueAction(issue, "edit")
-                            : undefined
+                          handleDraftIssueAction ? () => handleDraftIssueAction(issue, "edit") : undefined
                         }
                         handleDraftIssueDelete={
-                          handleDraftIssueAction
-                            ? () => handleDraftIssueAction(issue, "delete")
-                            : undefined
+                          handleDraftIssueAction ? () => handleDraftIssueAction(issue, "delete") : undefined
                         }
                         handleMyIssueOpen={handleMyIssueOpen}
                         removeIssue={() => {
-                          if (removeIssue !== null && issue.bridge_id)
-                            removeIssue(issue.bridge_id, issue.id);
+                          if (removeIssue !== null && issue.bridge_id) removeIssue(issue.bridge_id, issue.id);
                         }}
                         disableUserActions={disableUserActions}
                         user={user}
@@ -330,9 +294,7 @@ export const SingleList: React.FC<Props> = (props) => {
                       />
                     ))
                   ) : (
-                    <p className="bg-custom-background-100 px-4 py-2.5 text-sm text-custom-text-200">
-                      No issues.
-                    </p>
+                    <p className="bg-custom-background-100 px-4 py-2.5 text-sm text-custom-text-200">No issues.</p>
                   )
                 ) : (
                   <div className="flex h-full w-full items-center justify-center">Loading...</div>
@@ -344,9 +306,7 @@ export const SingleList: React.FC<Props> = (props) => {
                   prePopulatedData={{
                     ...(cycleId && { cycle: cycleId.toString() }),
                     ...(moduleId && { module: moduleId.toString() }),
-                    [displayFilters?.group_by! === "labels"
-                      ? "labels_list"
-                      : displayFilters?.group_by!]:
+                    [displayFilters?.group_by! === "labels" ? "labels_list" : displayFilters?.group_by!]:
                       displayFilters?.group_by === "labels" ? [groupTitle] : groupTitle,
                   }}
                 />

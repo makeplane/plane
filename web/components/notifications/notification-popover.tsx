@@ -1,5 +1,4 @@
 import React, { Fragment } from "react";
-import useTheme from "hooks/use-theme";
 import { Popover, Transition } from "@headlessui/react";
 // hooks
 import useUserNotification from "hooks/use-user-notifications";
@@ -45,9 +44,6 @@ export const NotificationPopover = () => {
     setFetchNotifications,
     markAllNotificationsAsRead,
   } = useUserNotification();
-
-  // theme context
-  const { collapsed: sidebarCollapse } = useTheme();
 
   return (
     <>
