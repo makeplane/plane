@@ -1,4 +1,4 @@
-import { action, observable, makeObservable, runInAction } from "mobx";
+import { action, computed, observable, makeObservable, runInAction } from "mobx";
 // services
 import { ProjectService } from "services/project.service";
 import { ModuleService } from "services/modules.service";
@@ -8,9 +8,11 @@ import { IIssue, IModule } from "types";
 import { IIssueGroupWithSubGroupsStructure, IIssueGroupedStructure, IIssueUnGroupedStructure } from "./issue";
 
 export interface IModuleStore {
+  // states
   loader: boolean;
   error: any | null;
 
+  // observables
   moduleId: string | null;
   modules: {
     [project_id: string]: IModule[];
@@ -26,33 +28,37 @@ export interface IModuleStore {
     };
   };
 
+  // actions
   setModuleId: (moduleSlug: string) => void;
+
+  getModuleById: (moduleId: string) => IModule | null;
 
   fetchModules: (workspaceSlug: string, projectId: string) => void;
   fetchModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => void;
 
-  // crud operations
   createModule: (workspaceSlug: string, projectId: string, data: Partial<IModule>) => Promise<IModule>;
   updateModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string, data: Partial<IModule>) => void;
   deleteModule: (workspaceSlug: string, projectId: string, moduleId: string) => void;
   addModuleToFavorites: (workspaceSlug: string, projectId: string, moduleId: string) => void;
   removeModuleFromFavorites: (workspaceSlug: string, projectId: string, moduleId: string) => void;
+
+  // computed
+  projectModules: IModule[] | null;
 }
 
 class ModuleStore implements IModuleStore {
+  // states
   loader: boolean = false;
   error: any | null = null;
 
+  // observables
   moduleId: string | null = null;
-
   modules: {
     [project_id: string]: IModule[];
   } = {};
-
   moduleDetails: {
     [module_id: string]: IModule;
   } = {};
-
   issues: {
     [module_id: string]: {
       grouped: {
@@ -69,15 +75,18 @@ class ModuleStore implements IModuleStore {
 
   // root store
   rootStore;
+
   // services
   projectService;
   moduleService;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
+      // states
       loader: observable,
       error: observable.ref,
 
+      // observables
       moduleId: observable.ref,
       modules: observable.ref,
       moduleDetails: observable.ref,
@@ -85,6 +94,8 @@ class ModuleStore implements IModuleStore {
 
       // actions
       setModuleId: action,
+
+      getModuleById: action,
 
       fetchModules: action,
       fetchModuleDetails: action,
@@ -94,9 +105,14 @@ class ModuleStore implements IModuleStore {
       deleteModule: action,
       addModuleToFavorites: action,
       removeModuleFromFavorites: action,
+
+      // computed
+      projectModules: computed,
     });
 
     this.rootStore = _rootStore;
+
+    // services
     this.projectService = new ProjectService();
     this.moduleService = new ModuleService();
   }
@@ -104,8 +120,11 @@ class ModuleStore implements IModuleStore {
   // computed
   get projectModules() {
     if (!this.rootStore.project.projectId) return null;
+
     return this.modules[this.rootStore.project.projectId] || null;
   }
+
+  getModuleById = (moduleId: string) => this.moduleDetails[moduleId] || null;
 
   // actions
   setModuleId = (moduleSlug: string) => {

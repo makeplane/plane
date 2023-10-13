@@ -20,8 +20,6 @@ import cycleServices from "services/cycles.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
-// components
-import { AnalyticsProjectModal } from "components/analytics";
 // ui
 import { Button } from "@plane/ui";
 import { CustomMenu, EmptyState } from "components/ui";
@@ -130,9 +128,6 @@ const SingleCycle: React.FC = () => {
         right={
           <div className={`flex flex-shrink-0 items-center gap-2 duration-300`}>
             <CycleIssuesHeader />
-            <Button variant="neutral-primary" onClick={() => setAnalyticsModal(true)}>
-              Analytics
-            </Button>
             <button
               type="button"
               className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-90 ${
@@ -158,8 +153,6 @@ const SingleCycle: React.FC = () => {
         ) : (
           <>
             <TransferIssuesModal handleClose={() => setTransferIssuesModal(false)} isOpen={transferIssuesModal} />
-
-            <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
 
             <div
               className={`relative w-full h-full flex flex-col overflow-auto ${cycleSidebar ? "mr-[24rem]" : ""} ${
