@@ -5,6 +5,7 @@ import useSWR from "swr";
 import { SubIssues } from "./issue";
 // types
 import { ICurrentUserResponse, IIssue } from "types";
+
 import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
 // services
 import issuesService from "services/issues.service";

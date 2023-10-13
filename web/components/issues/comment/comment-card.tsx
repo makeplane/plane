@@ -9,11 +9,13 @@ import useUser from "hooks/use-user";
 // ui
 import { CustomMenu, Icon } from "components/ui";
 import { CommentReaction } from "components/issues";
-import { TipTapEditor } from "components/tiptap";
+import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-text-editor";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
 import type { IIssueComment } from "types";
+import fileService from "services/file.service";
+// services
 
 type Props = {
   comment: IIssueComment;
@@ -107,11 +109,12 @@ export const CommentCard: React.FC<Props> = ({
         <div className="issue-comments-section p-0">
           <form
             className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}
-            onSubmit={handleSubmit(onEnter)}
           >
             <div>
-              <TipTapEditor
-                workspaceSlug={workspaceSlug as string}
+              <LiteTextEditorWithRef
+                onEnterKeyPress={handleSubmit(onEnter)}
+                uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                deleteFile={fileService.deleteImage}
                 ref={editorRef}
                 value={watch("comment_html")}
                 debouncedUpdatesEnabled={false}
@@ -148,11 +151,9 @@ export const CommentCard: React.FC<Props> = ({
                 />
               </div>
             )}
-            <TipTapEditor
-              workspaceSlug={workspaceSlug as string}
+            <LiteReadOnlyEditorWithRef
               ref={showEditorRef}
               value={comment.comment_html}
-              editable={false}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
             />
             <CommentReaction projectId={comment.project} commentId={comment.id} />

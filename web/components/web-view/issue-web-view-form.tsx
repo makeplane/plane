@@ -16,11 +16,13 @@ import useReloadConfirmations from "hooks/use-reload-confirmation";
 import { TextArea } from "components/ui";
 
 // components
-import { TipTapEditor } from "components/tiptap";
+import { RichTextEditor } from "@plane/rich-text-editor";
 import { Label } from "components/web-view";
 
 // types
 import type { IIssue } from "types";
+import fileService from "services/file.service";
+// services
 
 type Props = {
   isAllowed: boolean;
@@ -117,39 +119,34 @@ export const IssueWebViewForm: React.FC<Props> = (props) => {
           <Controller
             name="description_html"
             control={control}
-            render={({ field: { value, onChange } }) => {
-              if (!value) return <></>;
-
-              return (
-                <TipTapEditor
-                  value={
-                    !value ||
-                    value === "" ||
-                    (typeof value === "object" && Object.keys(value).length === 0)
-                      ? "<p></p>"
-                      : value
-                  }
-                  workspaceSlug={workspaceSlug!.toString()}
-                  debouncedUpdatesEnabled={true}
-                  setShouldShowAlert={setShowAlert}
-                  setIsSubmitting={setIsSubmitting}
-                  customClassName={
-                    isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200"
-                  }
-                  noBorder={!isAllowed}
-                  onChange={(description: Object, description_html: string) => {
-                    if (!isAllowed) return;
-                    setShowAlert(true);
-                    setIsSubmitting("submitting");
-                    onChange(description_html);
-                    handleSubmit(handleDescriptionFormSubmit)().finally(() =>
-                      setIsSubmitting("submitted")
-                    );
-                  }}
-                  editable={isAllowed}
-                />
-              );
-            }}
+            render={({ field: { value, onChange } }) => (
+              <RichTextEditor
+                uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                deleteFile={fileService.deleteImage}
+                value={
+                  !value ||
+                  value === "" ||
+                  (typeof value === "object" && Object.keys(value).length === 0)
+                    ? "<p></p>"
+                    : value
+                }
+                debouncedUpdatesEnabled={true}
+                setShouldShowAlert={setShowAlert}
+                setIsSubmitting={setIsSubmitting}
+                customClassName={
+                  isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200"
+                }
+                noBorder={!isAllowed}
+                onChange={(description: Object, description_html: string) => {
+                  setShowAlert(true);
+                  setIsSubmitting("submitting");
+                  onChange(description_html);
+                  handleSubmit(handleDescriptionFormSubmit)().finally(() =>
+                    setIsSubmitting("submitted")
+                  );
+                }}
+              />
+            )}
           />
           <div
             className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${

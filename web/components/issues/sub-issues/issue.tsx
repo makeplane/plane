@@ -19,6 +19,7 @@ import { SubIssuesRootList } from "./issues-list";
 import { IssueProperty } from "./properties";
 // ui
 import { Tooltip, CustomMenu } from "components/ui";
+
 // types
 import { ICurrentUserResponse, IIssue } from "types";
 import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
