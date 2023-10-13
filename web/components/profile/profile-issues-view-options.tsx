@@ -13,7 +13,7 @@ import { MyIssuesSelectFilters } from "components/issues";
 import { CustomMenu } from "components/ui";
 import { ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
-import { FormatListBulletedOutlined, GridViewOutlined } from "@mui/icons-material";
+import { ChevronDown, Kanban, List } from "lucide-react";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
@@ -21,16 +21,15 @@ import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 import { Properties, TIssueLayouts } from "types";
 // constants
 import { GROUP_BY_OPTIONS, ORDER_BY_OPTIONS, FILTER_ISSUE_OPTIONS } from "constants/issue";
-import { ChevronDown } from "lucide-react";
 
 const issueViewOptions: { type: TIssueLayouts; Icon: any }[] = [
   {
     type: "list",
-    Icon: FormatListBulletedOutlined,
+    Icon: List,
   },
   {
     type: "kanban",
-    Icon: GridViewOutlined,
+    Icon: Kanban,
   },
 ];
 
@@ -70,12 +69,7 @@ export const ProfileIssuesViewOptions: React.FC = () => {
               }`}
               onClick={() => setDisplayFilters({ layout: option.type })}
             >
-              <option.Icon
-                sx={{
-                  fontSize: 16,
-                }}
-                className={option.type === "gantt_chart" ? "rotate-90" : ""}
-              />
+              <option.Icon className={`h-4 w-4 ${option.type === "gantt_chart" ? "rotate-90" : ""}`} />
             </button>
           </Tooltip>
         ))}

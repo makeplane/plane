@@ -7,7 +7,7 @@ import { Menu, Transition } from "@headlessui/react";
 // ui
 import { DropdownProps } from "components/ui";
 // icons
-import { ExpandMoreOutlined, MoreHorizOutlined } from "@mui/icons-material";
+import { ChevronDown, MoreHorizontal } from "lucide-react";
 
 export type CustomMenuProps = DropdownProps & {
   children: React.ReactNode;
@@ -61,33 +61,19 @@ const CustomMenu = ({
                   disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
                 } ${buttonClassName}`}
               >
-                <MoreHorizOutlined
-                  fontSize="small"
-                  className={verticalEllipsis ? "rotate-90" : ""}
-                />
+                <MoreHorizontal className={`h-3.5 w-3.5 ${verticalEllipsis ? "rotate-90" : ""}`} />
               </Menu.Button>
             ) : (
               <Menu.Button
                 type="button"
                 className={`flex items-center justify-between gap-1 rounded-md px-2.5 py-1 text-xs whitespace-nowrap duration-300 ${
                   open ? "bg-custom-background-90 text-custom-text-100" : "text-custom-text-200"
-                } ${
-                  noBorder ? "" : "border border-custom-border-300 shadow-sm focus:outline-none"
-                } ${
-                  disabled
-                    ? "cursor-not-allowed text-custom-text-200"
-                    : "cursor-pointer hover:bg-custom-background-80"
+                } ${noBorder ? "" : "border border-custom-border-300 shadow-sm focus:outline-none"} ${
+                  disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
                 } ${buttonClassName}`}
               >
                 {label}
-                {!noChevron && (
-                  <ExpandMoreOutlined
-                    sx={{
-                      fontSize: 14,
-                    }}
-                    aria-hidden="true"
-                  />
-                )}
+                {!noChevron && <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />}
               </Menu.Button>
             )}
           </>
@@ -133,13 +119,7 @@ type MenuItemProps = {
   className?: string;
 };
 
-const MenuItem: React.FC<MenuItemProps> = ({
-  children,
-  renderAs,
-  href,
-  onClick,
-  className = "",
-}) => (
+const MenuItem: React.FC<MenuItemProps> = ({ children, renderAs, href, onClick, className = "" }) => (
   <Menu.Item as="div">
     {({ active, close }) =>
       renderAs === "a" ? (

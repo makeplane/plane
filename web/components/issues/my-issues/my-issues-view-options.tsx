@@ -9,8 +9,7 @@ import { MyIssuesSelectFilters } from "components/issues";
 // ui
 import { Tooltip } from "@plane/ui";
 // icons
-import { FormatListBulletedOutlined } from "@mui/icons-material";
-import { CreditCard } from "lucide-react";
+import { List, Sheet } from "lucide-react";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
@@ -20,11 +19,11 @@ import { TIssueLayouts } from "types";
 const issueViewOptions: { type: TIssueLayouts; Icon: any }[] = [
   {
     type: "list",
-    Icon: FormatListBulletedOutlined,
+    Icon: List,
   },
   {
     type: "spreadsheet",
-    Icon: CreditCard,
+    Icon: Sheet,
   },
 ];
 

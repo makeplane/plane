@@ -13,9 +13,8 @@ import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
 import useDebounce from "hooks/use-debounce";
 // ui
-import { Button, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
+import { Button, ExternalLinkIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
-import { LaunchOutlined } from "@mui/icons-material";
 import { Search, X } from "lucide-react";
 import { LayerDiagonalIcon } from "components/icons";
 // types
@@ -274,11 +273,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                                 rel="noopener noreferrer"
                                 onClick={(e) => e.stopPropagation()}
                               >
-                                <LaunchOutlined
-                                  sx={{
-                                    fontSize: 16,
-                                  }}
-                                />
+                                <ExternalLinkIcon className="h-4 w-4" />
                               </a>
                             </Combobox.Option>
                           );

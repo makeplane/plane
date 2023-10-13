@@ -5,7 +5,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { CustomSelect, Icon } from "components/ui";
 // icons
-import { East, OpenInFull } from "@mui/icons-material";
+import { MoveDiagonal, MoveRight } from "lucide-react";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
@@ -66,30 +66,19 @@ export const PeekOverviewHeader: React.FC<Props> = ({
       <div className="flex items-center gap-4">
         {mode === "side" && (
           <button type="button" onClick={handleClose}>
-            <East
-              sx={{
-                fontSize: "14px",
-              }}
-            />
+            <MoveRight className="h-3.5 w-3.5" />
           </button>
         )}
         <Link href={`/${workspaceSlug}/projects/${issue?.project}/issues/${issue?.id}`}>
           <a>
-            <OpenInFull
-              sx={{
-                fontSize: "14px",
-              }}
-            />
+            <MoveDiagonal className="h-3.5 w-3.5" />
           </a>
         </Link>
         <CustomSelect
           value={mode}
           onChange={(val: TPeekOverviewModes) => setMode(val)}
           customButton={
-            <button
-              type="button"
-              className={`grid place-items-center ${mode === "full" ? "rotate-45" : ""}`}
-            >
+            <button type="button" className={`grid place-items-center ${mode === "full" ? "rotate-45" : ""}`}>
               <Icon iconName={peekModes.find((m) => m.key === mode)?.icon ?? ""} />
             </button>
           }
@@ -100,9 +89,7 @@ export const PeekOverviewHeader: React.FC<Props> = ({
               <div className="flex items-center gap-1.5">
                 <Icon
                   iconName={mode.icon}
-                  className={`!text-base flex-shrink-0 -my-1 ${
-                    mode.key === "full" ? "rotate-45" : ""
-                  }`}
+                  className={`!text-base flex-shrink-0 -my-1 ${mode.key === "full" ? "rotate-45" : ""}`}
                 />
                 {mode.label}
               </div>

@@ -13,7 +13,7 @@ import { EmptyState } from "components/ui";
 import { SnoozeNotificationModal, NotificationCard, NotificationHeader } from "components/notifications";
 import { Loader, Tooltip } from "@plane/ui";
 // icons
-import { NotificationsOutlined } from "@mui/icons-material";
+import { Bell } from "lucide-react";
 // images
 import emptyNotification from "public/empty-state/notification.svg";
 // helpers
@@ -84,7 +84,7 @@ export const NotificationPopover = () => {
                       : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
                   } ${store?.theme?.sidebarCollapsed ? "justify-center" : ""}`}
                 >
-                  <NotificationsOutlined fontSize="small" />
+                  <Bell className="h-3.5 w-3.5" />
                   {store?.theme?.sidebarCollapsed ? null : <span>Notifications</span>}
                   {totalNotificationCount && totalNotificationCount > 0 ? (
                     store?.theme?.sidebarCollapsed ? (

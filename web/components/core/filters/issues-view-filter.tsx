@@ -14,13 +14,7 @@ import { SelectFilters } from "components/views";
 import { CustomMenu } from "components/ui";
 import { ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
-import {
-  CalendarMonthOutlined,
-  FormatListBulletedOutlined,
-  GridViewOutlined,
-  TableChartOutlined,
-  WaterfallChartOutlined,
-} from "@mui/icons-material";
+import { Calendar, Kanban, List, Sheet } from "lucide-react";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
@@ -32,34 +26,34 @@ import { ISSUE_GROUP_BY_OPTIONS, ISSUE_ORDER_BY_OPTIONS, ISSUE_FILTER_OPTIONS } 
 const issueViewOptions: { type: TIssueLayouts; Icon: any }[] = [
   {
     type: "list",
-    Icon: FormatListBulletedOutlined,
+    Icon: List,
   },
   {
     type: "kanban",
-    Icon: GridViewOutlined,
+    Icon: Kanban,
   },
   {
     type: "calendar",
-    Icon: CalendarMonthOutlined,
+    Icon: Calendar,
   },
   {
     type: "spreadsheet",
-    Icon: TableChartOutlined,
+    Icon: Sheet,
   },
   {
     type: "gantt_chart",
-    Icon: WaterfallChartOutlined,
+    Icon: GanttChart,
   },
 ];
 
 const issueViewForDraftIssues: { type: TIssueLayouts; Icon: any }[] = [
   {
     type: "list",
-    Icon: FormatListBulletedOutlined,
+    Icon: List,
   },
   {
     type: "kanban",
-    Icon: GridViewOutlined,
+    Icon: Kanban,
   },
 ];
 

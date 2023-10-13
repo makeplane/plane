@@ -5,18 +5,18 @@ import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
 import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // icons
-import { MoreVertical, LinkIcon, Star, Trash } from "lucide-react";
 import {
-  ArchiveOutlined,
-  ArticleOutlined,
-  ContrastOutlined,
-  DatasetOutlined,
-  ExpandMoreOutlined,
-  FilterNoneOutlined,
-  PhotoFilterOutlined,
-  SettingsOutlined,
-} from "@mui/icons-material";
-import { PenSquare } from "lucide-react";
+  PenSquare,
+  MoreVertical,
+  LinkIcon,
+  Star,
+  Trash,
+  Newspaper,
+  ContrastIcon,
+  Settings,
+  ChevronDown,
+} from "lucide-react";
+import { ArchiveIcon, DiceIcon, LayersIcon, PhotoFilterIcon, Tooltip } from "@plane/ui";
 // hooks
 import useToast from "hooks/use-toast";
 // helpers
@@ -30,7 +30,6 @@ import { RootStore } from "store/root";
 import { CustomMenu, Icon } from "components/ui";
 import { LeaveProjectModal, DeleteProjectModal } from "components/project";
 import { PublishProjectModal } from "components/project/publish-project";
-import { Tooltip } from "@plane/ui";
 
 type Props = {
   project: IProject;
@@ -45,32 +44,32 @@ const navigation = (workspaceSlug: string, projectId: string) => [
   {
     name: "Issues",
     href: `/${workspaceSlug}/projects/${projectId}/issues`,
-    Icon: FilterNoneOutlined,
+    Icon: LayersIcon,
   },
   {
     name: "Cycles",
     href: `/${workspaceSlug}/projects/${projectId}/cycles`,
-    Icon: ContrastOutlined,
+    Icon: ContrastIcon,
   },
   {
     name: "Modules",
     href: `/${workspaceSlug}/projects/${projectId}/modules`,
-    Icon: DatasetOutlined,
+    Icon: DiceIcon,
   },
   {
     name: "Views",
     href: `/${workspaceSlug}/projects/${projectId}/views`,
-    Icon: PhotoFilterOutlined,
+    Icon: PhotoFilterIcon,
   },
   {
     name: "Pages",
     href: `/${workspaceSlug}/projects/${projectId}/pages`,
-    Icon: ArticleOutlined,
+    Icon: Newspaper,
   },
   {
     name: "Settings",
     href: `/${workspaceSlug}/projects/${projectId}/settings`,
-    Icon: SettingsOutlined,
+    Icon: Settings,
   },
 ];
 
@@ -192,9 +191,8 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                     )}
                   </div>
                   {!sidebarCollapse && (
-                    <ExpandMoreOutlined
-                      fontSize="small"
-                      className={`flex-shrink-0 ${
+                    <ChevronDown
+                      className={`flex-shrink-0 h-4 w-4 transition-all ${
                         open ? "rotate-180" : ""
                       } !hidden group-hover:!block text-custom-sidebar-text-400 duration-300`}
                     />
@@ -256,7 +254,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                       onClick={() => router.push(`/${workspaceSlug}/projects/${project?.id}/archived-issues/`)}
                     >
                       <div className="flex items-center justify-start gap-2">
-                        <ArchiveOutlined fontSize="small" />
+                        <ArchiveIcon className="h-3 w-3" />
                         <span>Archived Issues</span>
                       </div>
                     </CustomMenu.MenuItem>
@@ -325,11 +323,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                                 : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
                             } ${sidebarCollapse ? "justify-center" : ""}`}
                           >
-                            <item.Icon
-                              sx={{
-                                fontSize: 18,
-                              }}
-                            />
+                            <item.Icon className="h-4 w-4 stroke-[1.5]" />
                             {!sidebarCollapse && item.name}
                           </div>
                         </Tooltip>

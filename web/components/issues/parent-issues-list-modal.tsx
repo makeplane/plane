@@ -11,10 +11,9 @@ import useDebounce from "hooks/use-debounce";
 // components
 import { LayerDiagonalIcon } from "components/icons";
 // ui
-import { Loader, ToggleSwitch, Tooltip } from "@plane/ui";
+import { ExternalLinkIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
 import { Search } from "lucide-react";
-import { LaunchOutlined } from "@mui/icons-material";
 // types
 import { ISearchIssueResponse } from "types";
 
@@ -197,11 +196,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                               rel="noopener noreferrer"
                               onClick={(e) => e.stopPropagation()}
                             >
-                              <LaunchOutlined
-                                sx={{
-                                  fontSize: 16,
-                                }}
-                              />
+                              <ExternalLinkIcon className="h-4 w-4" />
                             </a>
                           </Combobox.Option>
                         ))}
