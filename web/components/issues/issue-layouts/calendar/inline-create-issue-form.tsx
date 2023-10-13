@@ -79,6 +79,7 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
     handleSubmit,
     getValues,
     register,
+    setFocus,
     formState: { errors, isSubmitting },
   } = useForm<IIssue>({ defaultValues });
 
@@ -153,6 +154,27 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
     }
   };
 
+  const Inputs = () => {
+    useEffect(() => {
+      setFocus("name");
+    }, []);
+
+    return (
+      <>
+        <h4 className="text-sm font-medium leading-5 text-custom-text-400">{projectDetails?.identifier ?? "..."}</h4>
+        <input
+          type="text"
+          autoComplete="off"
+          placeholder="Issue Title"
+          {...register("name", {
+            required: "Issue title is required.",
+          })}
+          className="w-full pr-2 py-2.5 rounded-md bg-transparent text-sm font-medium leading-5 text-custom-text-200 outline-none"
+        />
+      </>
+    );
+  };
+
   return (
     <>
       <Transition
@@ -174,18 +196,7 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
             onSubmit={handleSubmit(onSubmitHandler)}
             className="flex w-full px-1.5 border-[0.5px] border-custom-border-100 rounded z-50 items-center gap-x-2 bg-custom-background-100 shadow-custom-shadow-sm transition-opacity"
           >
-            <h4 className="text-sm font-medium leading-5 text-custom-text-400">
-              {projectDetails?.identifier ?? "..."}
-            </h4>
-            <input
-              type="text"
-              autoComplete="off"
-              placeholder="Issue Title"
-              {...register("name", {
-                required: "Issue title is required.",
-              })}
-              className="w-full pr-2 py-2.5 rounded-md bg-transparent text-sm font-medium leading-5 text-custom-text-200 outline-none"
-            />
+            <Inputs />
           </form>
         </div>
       </Transition>
@@ -194,7 +205,7 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
         <div className="hidden group-hover:block border-[0.5px] border-custom-border-200 rounded">
           <button
             type="button"
-            className="flex items-center gap-x-[6px] text-custom-primary-100 px-1 py-1 rounded-md"
+            className="w-full flex items-center gap-x-[6px] text-custom-primary-100 px-1 py-1 rounded-md"
             onClick={() => setIsOpen(true)}
           >
             <PlusIcon className="h-4 w-4" />

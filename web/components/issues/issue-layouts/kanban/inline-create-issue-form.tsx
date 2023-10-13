@@ -52,6 +52,7 @@ export const BoardInlineCreateIssueForm: React.FC<Props> = observer((props) => {
     handleSubmit,
     getValues,
     register,
+    setFocus,
     formState: { errors, isSubmitting },
   } = useForm<IIssue>({ defaultValues });
 
@@ -128,6 +129,26 @@ export const BoardInlineCreateIssueForm: React.FC<Props> = observer((props) => {
     }
   };
 
+  const Inputs = () => {
+    useEffect(() => {
+      setFocus("name");
+    }, []);
+
+    return (
+      <div>
+        <h4 className="text-sm font-medium leading-5 text-custom-text-300">{projectDetails?.identifier ?? "..."}</h4>
+        <input
+          autoComplete="off"
+          placeholder="Issue Title"
+          {...register("name", {
+            required: "Issue title is required.",
+          })}
+          className="w-full px-2 pl-0 py-1.5 rounded-md bg-transparent text-sm font-medium leading-5 text-custom-text-200 outline-none"
+        />
+      </div>
+    );
+  };
+
   return (
     <div>
       <Transition
@@ -144,19 +165,7 @@ export const BoardInlineCreateIssueForm: React.FC<Props> = observer((props) => {
           onSubmit={handleSubmit(onSubmitHandler)}
           className="flex flex-col border-[0.5px] border-custom-border-100 justify-between gap-1.5 group/card relative select-none px-3.5 py-3 h-[118px] mb-3 rounded bg-custom-background-100 shadow-custom-shadow-sm"
         >
-          <div>
-            <h4 className="text-sm font-medium leading-5 text-custom-text-300">
-              {projectDetails?.identifier ?? "..."}
-            </h4>
-            <input
-              autoComplete="off"
-              placeholder="Issue Title"
-              {...register("name", {
-                required: "Issue title is required.",
-              })}
-              className="w-full px-2 pl-0 py-1.5 rounded-md bg-transparent text-sm font-medium leading-5 text-custom-text-200 outline-none"
-            />
-          </div>
+          <Inputs />
         </form>
       </Transition>
 
