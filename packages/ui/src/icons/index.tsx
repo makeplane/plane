@@ -10,3 +10,7 @@ export * from "./subscribe-icon";
 export * from "./double-circle-icon";
 export * from "./external-link-icon";
 export * from "./copy-icon";
+export * from "./layer-stack-icon";
+export * from "./side-peek-icon";
+export * from "./modal-peek-icon";
+export * from "./full-screen-peek-icon";

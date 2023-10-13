@@ -119,4 +119,12 @@ declare const ExternalLinkIcon: React__default.FC<ISvgIcons>;
 
 declare const CopyIcon: React__default.FC<ISvgIcons>;
 
-export { AdminProfileIcon, ArchiveIcon, Button, ButtonProps, ContrastIcon, CopyIcon, CreateIcon, DiceIcon, DoubleCircleIcon, ExternalLinkIcon, Input, InputProps, LayersIcon, LinearProgressIndicator, Loader, PhotoFilterIcon, ProgressBar, RadialProgressBar, Spinner, SubscribeIcon, TPosition, TextArea, TextAreaProps, ToggleSwitch, Tooltip, UserGroupIcon };
+declare const LayerStackIcon: React__default.FC<ISvgIcons>;
+
+declare const SidePeekIcon: React__default.FC<ISvgIcons>;
+
+declare const ModalPeekIcon: React__default.FC<ISvgIcons>;
+
+declare const FullScreenPeekIcon: React__default.FC<ISvgIcons>;
+
+export { AdminProfileIcon, ArchiveIcon, Button, ButtonProps, ContrastIcon, CopyIcon, CreateIcon, DiceIcon, DoubleCircleIcon, ExternalLinkIcon, FullScreenPeekIcon, Input, InputProps, LayerStackIcon, LayersIcon, LinearProgressIndicator, Loader, ModalPeekIcon, PhotoFilterIcon, ProgressBar, RadialProgressBar, SidePeekIcon, Spinner, SubscribeIcon, TPosition, TextArea, TextAreaProps, ToggleSwitch, Tooltip, UserGroupIcon };
