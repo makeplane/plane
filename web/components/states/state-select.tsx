@@ -11,8 +11,7 @@ import projectStateService from "services/project_state.service";
 // headless ui
 import { Combobox } from "@headlessui/react";
 // icons
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { CheckIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { ChevronDown, Check, Search } from "lucide-react";
 import { StateGroupIcon } from "components/icons";
 // types
 import { Tooltip } from "@plane/ui";
@@ -114,7 +113,7 @@ export const StateSelect: React.FC<Props> = ({
               } ${buttonClassName}`}
             >
               {label}
-              {!hideDropdownArrow && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
+              {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
             </Combobox.Button>
             <div className={`${open ? "fixed z-20 top-0 left-0 h-full w-full cursor-auto" : ""}`}>
               <Combobox.Options
@@ -122,7 +121,7 @@ export const StateSelect: React.FC<Props> = ({
                 className={`absolute z-10 border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-lg focus:outline-none w-48 whitespace-nowrap mt-1 ${optionsClassName}`}
               >
                 <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
-                  <MagnifyingGlassIcon className="h-3.5 w-3.5 text-custom-text-300" />
+                  <Search className="h-3.5 w-3.5 text-custom-text-300" />
                   <Combobox.Input
                     className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                     value={query}
@@ -147,7 +146,7 @@ export const StateSelect: React.FC<Props> = ({
                           {({ selected }) => (
                             <>
                               {option.content}
-                              {selected && <CheckIcon className={`h-3.5 w-3.5`} />}
+                              {selected && <Check className={`h-3.5 w-3.5`} />}
                             </>
                           )}
                         </Combobox.Option>

@@ -23,7 +23,7 @@ import {
 } from "components/integration";
 // icons
 import { CogIcon, CloudUploadIcon, UsersIcon, CheckIcon } from "components/icons";
-import { ArrowLeftIcon, ListBulletIcon } from "@heroicons/react/24/outline";
+import { ArrowLeft, List } from "lucide-react";
 // images
 import GithubLogo from "public/services/github.png";
 // types
@@ -67,7 +67,7 @@ const integrationWorkflowData = [
     key: "import-data",
     icon: CloudUploadIcon,
   },
-  { title: "Issues", key: "repo-details", icon: ListBulletIcon },
+  { title: "Issues", key: "repo-details", icon: List },
   {
     title: "Users",
     key: "import-users",
@@ -162,7 +162,7 @@ export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
       <div className="space-y-2">
         <Link href={`/${workspaceSlug}/settings/imports`}>
           <div className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-custom-text-200 hover:text-custom-text-100">
-            <ArrowLeftIcon className="h-3 w-3" />
+            <ArrowLeft className="h-3 w-3" />
             <div>Cancel import & go back</div>
           </div>
         </Link>

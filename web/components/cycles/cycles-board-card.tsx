@@ -11,7 +11,6 @@ import { CustomMenu } from "components/ui";
 import { AssigneesList } from "components/ui/avatar";
 import { RadialProgressBar, Tooltip, LinearProgressIndicator } from "@plane/ui";
 // icons
-import { CalendarDaysIcon } from "@heroicons/react/20/solid";
 import {
   TargetIcon,
   ContrastIcon,
@@ -20,7 +19,7 @@ import {
   TriangleExclamationIcon,
   AlarmClockIcon,
 } from "components/icons";
-import { ChevronDownIcon, LinkIcon, PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { CalendarDays, ChevronDown, LinkIcon, Pencil, Star, Trash } from "lucide-react";
 // helpers
 import { getDateRangeStatus, renderShortDateWithYearFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
@@ -180,11 +179,11 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
                   </span>
                   {cycle.is_favorite ? (
                     <button onClick={handleRemoveFromFavorites}>
-                      <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                      <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
                     </button>
                   ) : (
                     <button onClick={handleAddToFavorites}>
-                      <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
+                      <Star className="h-4 w-4 " color="rgb(var(--color-text-200))" />
                     </button>
                   )}
                 </span>
@@ -193,7 +192,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
                 {cycleStatus !== "draft" && (
                   <>
                     <div className="flex items-start gap-1">
-                      <CalendarDaysIcon className="h-4 w-4" />
+                      <CalendarDays className="h-4 w-4" />
                       <span>{renderShortDateWithYearFormat(startDate)}</span>
                     </div>
                     <ArrowRightIcon className="h-4 w-4" />
@@ -244,7 +243,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
                       onClick={handleEditCycle}
                       className="cursor-pointer rounded p-1 text-custom-text-200 duration-300 hover:bg-custom-background-80"
                     >
-                      <PencilIcon className="h-4 w-4" />
+                      <Pencil className="h-4 w-4" />
                     </button>
                   )}
 
@@ -252,7 +251,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
                     {!isCompleted && (
                       <CustomMenu.MenuItem onClick={handleDeleteCycle}>
                         <span className="flex items-center justify-start gap-2">
-                          <TrashIcon className="h-4 w-4" />
+                          <Trash className="h-4 w-4" />
                           <span>Delete cycle</span>
                         </span>
                       </CustomMenu.MenuItem>
@@ -316,7 +315,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
                   </Tooltip>
                   <Disclosure.Button>
                     <span className="p-1">
-                      <ChevronDownIcon className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`} aria-hidden="true" />
+                      <ChevronDown className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`} aria-hidden="true" />
                     </span>
                   </Disclosure.Button>
                 </div>

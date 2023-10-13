@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // icons
-import { XMarkIcon } from "@heroicons/react/20/solid";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { Search, X } from "lucide-react";
 import { CommandIcon } from "components/icons";
 // ui
 import { Input } from "@plane/ui";
@@ -92,16 +91,13 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                         <span>Keyboard Shortcuts</span>
                         <span>
                           <button type="button" onClick={() => setIsOpen(false)}>
-                            <XMarkIcon
-                              className="h-6 w-6 text-custom-text-200 hover:text-custom-text-100"
-                              aria-hidden="true"
-                            />
+                            <X className="h-6 w-6 text-custom-text-200 hover:text-custom-text-100" />
                           </button>
                         </span>
                       </Dialog.Title>
                       <div>
                         <div className="flex w-full items-center justify-start gap-1 rounded border-[0.6px] border-custom-border-200 bg-custom-background-90 px-3 py-2">
-                          <MagnifyingGlassIcon className="h-3.5 w-3.5 text-custom-text-200" />
+                          <Search className="h-3.5 w-3.5 text-custom-text-200" />
                           <Input
                             id="search"
                             name="search"

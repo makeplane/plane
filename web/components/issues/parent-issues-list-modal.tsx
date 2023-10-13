@@ -13,8 +13,8 @@ import { LayerDiagonalIcon } from "components/icons";
 // ui
 import { Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
+import { Search } from "lucide-react";
 import { LaunchOutlined } from "@mui/icons-material";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // types
 import { ISearchIssueResponse } from "types";
 
@@ -102,7 +102,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                   }}
                 >
                   <div className="relative m-1">
-                    <MagnifyingGlassIcon
+                    <Search
                       className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-100 text-opacity-40"
                       aria-hidden="true"
                     />

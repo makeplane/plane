@@ -14,7 +14,6 @@ import { SelectFilters } from "components/views";
 import { CustomMenu } from "components/ui";
 import { ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import {
   CalendarMonthOutlined,
   FormatListBulletedOutlined,

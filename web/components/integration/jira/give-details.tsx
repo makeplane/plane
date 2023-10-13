@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useFormContext, Controller } from "react-hook-form";
 
 // icons
-import { PlusIcon } from "@heroicons/react/20/solid";
+import { Plus } from "lucide-react";
 
 // hooks
 import useProjects from "hooks/use-projects";
@@ -200,7 +200,7 @@ export const JiraGetImportDetail: React.FC = () => {
                     }}
                     className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-custom-text-200"
                   >
-                    <PlusIcon className="h-4 w-4 text-custom-text-200" />
+                    <Plus className="h-4 w-4 text-custom-text-200" />
                     <span>Create new project</span>
                   </button>
                 </div>

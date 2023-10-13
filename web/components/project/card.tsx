@@ -4,8 +4,7 @@ import Link from "next/link";
 import { mutate } from "swr";
 import { observer } from "mobx-react-lite";
 // icons
-import { CalendarDaysIcon, LinkIcon, PencilIcon, PlusIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { Star } from "lucide-react";
+import { CalendarDays, LinkIcon, Pencil, Plus, Trash, Star } from "lucide-react";
 // services
 import projectService from "services/project.service";
 // hooks
@@ -149,7 +148,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                     }}
                     className="flex cursor-pointer items-center gap-1 rounded bg-green-600 px-2 py-1 text-xs"
                   >
-                    <PlusIcon className="h-3 w-3" />
+                    <Plus className="h-3 w-3" />
                     <span>Select to Join</span>
                   </button>
                 ) : (
@@ -189,7 +188,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
               position="bottom"
             >
               <div className="flex cursor-default items-center gap-1.5 text-xs">
-                <CalendarDaysIcon className="h-4 w-4" />
+                <CalendarDays className="h-4 w-4" />
                 {renderShortDateWithYearFormat(project.created_at)}
               </div>
             </Tooltip>
@@ -198,7 +197,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                 {(isOwner || isMember) && (
                   <Link href={`/${workspaceSlug}/projects/${project.id}/settings`}>
                     <a className="grid cursor-pointer place-items-center rounded p-1 duration-300 hover:bg-custom-background-90">
-                      <PencilIcon className="h-4 w-4" />
+                      <Pencil className="h-4 w-4" />
                     </a>
                   </Link>
                 )}
@@ -206,7 +205,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                   {isOwner && (
                     <CustomMenu.MenuItem onClick={() => setDeleteProjectModal(true)}>
                       <span className="flex items-center justify-start gap-2">
-                        <TrashIcon className="h-4 w-4" />
+                        <Trash className="h-4 w-4" />
                         <span>Delete project</span>
                       </span>
                     </CustomMenu.MenuItem>

@@ -113,4 +113,10 @@ declare const CreateIcon: React__default.FC<ISvgIcons>;
 
 declare const SubscribeIcon: React__default.FC<ISvgIcons>;
 
-export { AdminProfileIcon, ArchiveIcon, Button, ButtonProps, ContrastIcon, CreateIcon, DiceIcon, Input, InputProps, LayersIcon, LinearProgressIndicator, Loader, PhotoFilterIcon, ProgressBar, RadialProgressBar, Spinner, SubscribeIcon, TPosition, TextArea, TextAreaProps, ToggleSwitch, Tooltip, UserGroupIcon };
+declare const DoubleCircleIcon: React__default.FC<ISvgIcons>;
+
+declare const ExternalLinkIcon: React__default.FC<ISvgIcons>;
+
+declare const CopyIcon: React__default.FC<ISvgIcons>;
+
+export { AdminProfileIcon, ArchiveIcon, Button, ButtonProps, ContrastIcon, CopyIcon, CreateIcon, DiceIcon, DoubleCircleIcon, ExternalLinkIcon, Input, InputProps, LayersIcon, LinearProgressIndicator, Loader, PhotoFilterIcon, ProgressBar, RadialProgressBar, Spinner, SubscribeIcon, TPosition, TextArea, TextAreaProps, ToggleSwitch, Tooltip, UserGroupIcon };

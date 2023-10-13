@@ -17,23 +17,15 @@ import useUserAuth from "hooks/use-user-auth";
 import { IssueDescriptionForm, IssueDetailsSidebar, IssueReaction } from "components/issues";
 import { InboxIssueActivity } from "components/inbox";
 // ui
-import { Loader } from "@plane/ui";
+import { ExternalLinkIcon, Loader } from "@plane/ui";
 // icons
-import {
-  ArrowTopRightOnSquareIcon,
-  CheckCircleIcon,
-  ClockIcon,
-  DocumentDuplicateIcon,
-  ExclamationTriangleIcon,
-  InboxIcon,
-  XCircleIcon,
-} from "@heroicons/react/24/outline";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
 import type { IInboxIssue, IIssue } from "types";
 // fetch-keys
 import { INBOX_ISSUES, INBOX_ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
+import { AlertTriangle, CheckCircle, Clock, Files, Inbox, XCircle } from "lucide-react";
 
 const defaultValues: Partial<IInboxIssue> = {
   name: "",
@@ -181,7 +173,7 @@ export const InboxMainContent: React.FC = () => {
       <div className="h-full p-4 grid place-items-center text-custom-text-200">
         <div className="grid h-full place-items-center">
           <div className="my-5 flex flex-col items-center gap-4">
-            <InboxIcon height={60} width={60} />
+            <Inbox height={60} width={60} />
             {inboxIssues && inboxIssues.length > 0 ? (
               <span className="text-custom-text-200">
                 {inboxIssues?.length} issues found. Select an issue from the sidebar to view its details.
@@ -221,17 +213,17 @@ export const InboxMainContent: React.FC = () => {
             >
               {issueStatus === -2 ? (
                 <>
-                  <ExclamationTriangleIcon className="h-5 w-5" />
+                  <AlertTriangle className="h-5 w-5" />
                   <p>This issue is still pending.</p>
                 </>
               ) : issueStatus === -1 ? (
                 <>
-                  <XCircleIcon className="h-5 w-5" />
+                  <XCircle className="h-5 w-5" />
                   <p>This issue has been declined.</p>
                 </>
               ) : issueStatus === 0 ? (
                 <>
-                  <ClockIcon className="h-5 w-5" />
+                  <Clock className="h-5 w-5" />
                   {new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date() ? (
                     <p>
                       This issue was snoozed till{" "}
@@ -246,12 +238,12 @@ export const InboxMainContent: React.FC = () => {
                 </>
               ) : issueStatus === 1 ? (
                 <>
-                  <CheckCircleIcon className="h-5 w-5" />
+                  <CheckCircle className="h-5 w-5" />
                   <p>This issue has been accepted.</p>
                 </>
               ) : issueStatus === 2 ? (
                 <>
-                  <DocumentDuplicateIcon className="h-5 w-5" />
+                  <Files className="h-5 w-5" />
                   <p className="flex items-center gap-1">
                     This issue has been marked as a duplicate of
                     <a
@@ -260,7 +252,7 @@ export const InboxMainContent: React.FC = () => {
                       rel="noreferrer"
                       className="underline flex items-center gap-2"
                     >
-                      this issue <ArrowTopRightOnSquareIcon className="h-3 w-3" />
+                      this issue <ExternalLinkIcon className="h-3 w-3" />
                     </a>
                     .
                   </p>

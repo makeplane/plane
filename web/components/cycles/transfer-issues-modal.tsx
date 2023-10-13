@@ -12,8 +12,8 @@ import cyclesService from "services/cycles.service";
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
 //icons
-import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { ContrastIcon, ExclamationIcon, TransferIcon } from "components/icons";
+import { Search, X } from "lucide-react";
 // fetch-key
 import { CYCLE_ISSUES_WITH_PARAMS, INCOMPLETE_CYCLES_LIST } from "constants/fetch-keys";
 // types
@@ -59,21 +59,14 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
   const { data: incompleteCycles } = useSWR(
     workspaceSlug && projectId ? INCOMPLETE_CYCLES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () =>
-          cyclesService.getCyclesWithParams(
-            workspaceSlug as string,
-            projectId as string,
-            "incomplete"
-          )
+      ? () => cyclesService.getCyclesWithParams(workspaceSlug as string, projectId as string, "incomplete")
       : null
   );
 
   const filteredOptions =
     query === ""
       ? incompleteCycles
-      : incompleteCycles?.filter((option) =>
-          option.name.toLowerCase().includes(query.toLowerCase())
-        );
+      : incompleteCycles?.filter((option) => option.name.toLowerCase().includes(query.toLowerCase()));
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -116,11 +109,11 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
                       <h4 className="text-xl font-medium text-custom-text-100">Transfer Issues</h4>
                     </div>
                     <button onClick={handleClose}>
-                      <XMarkIcon className="h-4 w-4" />
+                      <X className="h-4 w-4" />
                     </button>
                   </div>
                   <div className="flex items-center gap-2 border-b border-custom-border-200 px-5 pb-3">
-                    <MagnifyingGlassIcon className="h-4 w-4 text-custom-text-200" />
+                    <Search className="h-4 w-4 text-custom-text-200" />
                     <input
                       className="bg-custom-background-90 outline-none"
                       placeholder="Search for a cycle..."
@@ -153,14 +146,9 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
                         ))
                       ) : (
                         <div className="flex w-full items-center justify-center gap-4 p-5 text-sm">
-                          <ExclamationIcon
-                            height={14}
-                            width={14}
-                            className="fill-current text-custom-text-200"
-                          />
+                          <ExclamationIcon height={14} width={14} className="fill-current text-custom-text-200" />
                           <span className="text-center text-custom-text-200">
-                            You don’t have any current cycle. Please create one to transfer the
-                            issues.
+                            You don’t have any current cycle. Please create one to transfer the issues.
                           </span>
                         </div>
                       )

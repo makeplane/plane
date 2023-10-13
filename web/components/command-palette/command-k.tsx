@@ -30,7 +30,7 @@ import { Icon } from "components/ui";
 import { Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
 import { DiscordIcon, GithubIcon, SettingIcon } from "components/icons";
-import { InboxIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { Inbox, Search } from "lucide-react";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
@@ -292,8 +292,8 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                   )}
                 </div>
                 <div className="relative">
-                  <MagnifyingGlassIcon
-                    className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-200"
+                  <Search
+                    className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-200 stroke-[1.5]"
                     aria-hidden="true"
                   />
                   <Command.Input
@@ -574,7 +574,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                                 className="focus:outline-none"
                               >
                                 <div className="flex items-center gap-2 text-custom-text-200">
-                                  <InboxIcon className="h-4 w-4" color="#6b7280" />
+                                  <Inbox className="h-4 w-4 text-custom-text-200 stroke-1" />
                                   Open inbox
                                 </div>
                               </Command.Item>

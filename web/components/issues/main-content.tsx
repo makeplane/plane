@@ -24,8 +24,8 @@ import { SubIssuesRoot } from "./sub-issues";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
+import { MinusCircle } from "lucide-react";
 import { LayerDiagonalIcon } from "components/icons";
-import { MinusCircleIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue, IIssueComment } from "types";
 // fetch-keys
@@ -154,7 +154,7 @@ export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges,
                 onClick={() => submitChanges({ parent: null })}
                 className="flex items-center gap-2 text-red-500 py-2"
               >
-                <MinusCircleIcon className="h-4 w-4" />
+                <MinusCircle className="h-4 w-4" />
                 <span> Remove Parent Issue</span>
               </CustomMenu.MenuItem>
             </CustomMenu>

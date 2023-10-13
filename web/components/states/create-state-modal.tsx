@@ -18,7 +18,7 @@ import useToast from "hooks/use-toast";
 import { CustomSelect } from "components/ui";
 import { Button, Input, TextArea } from "@plane/ui";
 // icons
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { ChevronDown } from "lucide-react";
 // types
 import type { ICurrentUserResponse, IState, IStateResponse } from "types";
 // fetch keys
@@ -203,7 +203,7 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                                     }}
                                   />
                                 )}
-                                <ChevronDownIcon
+                                <ChevronDown
                                   className={`ml-2 h-5 w-5 group-hover:text-custom-text-200 ${
                                     open ? "text-gray-600" : "text-gray-400"
                                   }`}

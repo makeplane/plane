@@ -15,10 +15,10 @@ import issuesServices from "services/issue.service";
 // ui
 import { Button } from "@plane/ui";
 // icons
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { LayerDiagonalIcon } from "components/icons";
 // fetch-keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { Search } from "lucide-react";
 
 type Props = {
   isOpen: boolean;
@@ -106,7 +106,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                     }}
                   >
                     <div className="relative m-1">
-                      <MagnifyingGlassIcon
+                      <Search
                         className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-100 text-opacity-40"
                         aria-hidden="true"
                       />

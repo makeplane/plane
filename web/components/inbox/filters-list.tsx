@@ -1,7 +1,7 @@
 // hooks
 import useInboxView from "hooks/use-inbox-view";
 // icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { X } from "lucide-react";
 import { PriorityIcon } from "components/icons";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
@@ -26,9 +26,7 @@ export const InboxFiltersList = () => {
               key={key}
               className="flex items-center gap-x-2 rounded-full border border-custom-border-200 bg-custom-background-80 px-2 py-1"
             >
-              <span className="capitalize text-custom-text-200">
-                {replaceUnderscoreIfSnakeCase(key)}:
-              </span>
+              <span className="capitalize text-custom-text-200">{replaceUnderscoreIfSnakeCase(key)}:</span>
               {filters[filterKey] === null || (filters[filterKey]?.length ?? 0) <= 0 ? (
                 <span className="inline-flex items-center px-2 py-0.5 font-medium">None</span>
               ) : (
@@ -62,7 +60,7 @@ export const InboxFiltersList = () => {
                               })
                             }
                           >
-                            <XMarkIcon className="h-3 w-3" />
+                            <X className="h-3 w-3" />
                           </button>
                         </div>
                       ))}
@@ -74,7 +72,7 @@ export const InboxFiltersList = () => {
                           })
                         }
                       >
-                        <XMarkIcon className="h-3 w-3" />
+                        <X className="h-3 w-3" />
                       </button>
                     </div>
                   ) : filterKey === "inbox_status" ? (
@@ -94,7 +92,7 @@ export const InboxFiltersList = () => {
                               })
                             }
                           >
-                            <XMarkIcon className="h-3 w-3" />
+                            <X className="h-3 w-3" />
                           </button>
                         </div>
                       ))}
@@ -106,7 +104,7 @@ export const InboxFiltersList = () => {
                           })
                         }
                       >
-                        <XMarkIcon className="h-3 w-3" />
+                        <X className="h-3 w-3" />
                       </button>
                     </div>
                   ) : (
@@ -123,7 +121,7 @@ export const InboxFiltersList = () => {
         className="flex items-center gap-x-1 rounded-full border border-custom-border-200 bg-custom-background-80 px-3 py-1.5 text-custom-text-200 hover:text-custom-text-100"
       >
         <span>Clear all</span>
-        <XMarkIcon className="h-3 w-3" />
+        <X className="h-3 w-3" />
       </button>
     </div>
   );

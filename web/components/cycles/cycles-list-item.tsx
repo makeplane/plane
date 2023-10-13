@@ -7,7 +7,7 @@ import useToast from "hooks/use-toast";
 import { RadialProgressBar, Tooltip, LinearProgressIndicator } from "@plane/ui";
 import { CustomMenu } from "components/ui";
 // icons
-import { CalendarDaysIcon } from "@heroicons/react/20/solid";
+import { CalendarDays, LinkIcon, Pencil, Star, Trash } from "lucide-react";
 import {
   TargetIcon,
   ContrastIcon,
@@ -16,7 +16,6 @@ import {
   TriangleExclamationIcon,
   AlarmClockIcon,
 } from "components/icons";
-import { LinkIcon, PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
 // helpers
 import { getDateRangeStatus, renderShortDateWithYearFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
@@ -205,7 +204,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                   {cycleStatus !== "draft" && (
                     <div className="flex items-center justify-start gap-2 text-custom-text-200">
                       <div className="flex items-start gap-1 whitespace-nowrap">
-                        <CalendarDaysIcon className="h-4 w-4" />
+                        <CalendarDays className="h-4 w-4" />
                         <span>{renderShortDateWithYearFormat(startDate)}</span>
                       </div>
                       <ArrowRightIcon className="h-4 w-4" />
@@ -284,11 +283,11 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                   </Tooltip>
                   {cycle.is_favorite ? (
                     <button type="button" onClick={handleRemoveFromFavorites}>
-                      <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                      <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
                     </button>
                   ) : (
                     <button type="button" onClick={handleAddToFavorites}>
-                      <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
+                      <Star className="h-4 w-4 " color="rgb(var(--color-text-200))" />
                     </button>
                   )}
                   <div className="flex items-center">
@@ -296,7 +295,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                       {!isCompleted && (
                         <CustomMenu.MenuItem onClick={handleEditCycle}>
                           <span className="flex items-center justify-start gap-2">
-                            <PencilIcon className="h-4 w-4" />
+                            <Pencil className="h-4 w-4" />
                             <span>Edit Cycle</span>
                           </span>
                         </CustomMenu.MenuItem>
@@ -304,7 +303,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                       {!isCompleted && (
                         <CustomMenu.MenuItem onClick={handleDeleteCycle}>
                           <span className="flex items-center justify-start gap-2">
-                            <TrashIcon className="h-4 w-4" />
+                            <Trash className="h-4 w-4" />
                             <span>Delete cycle</span>
                           </span>
                         </CustomMenu.MenuItem>

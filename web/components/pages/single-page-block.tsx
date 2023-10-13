@@ -24,16 +24,8 @@ import { TipTapEditor } from "components/tiptap";
 import { CustomMenu } from "components/ui";
 import { TextArea } from "@plane/ui";
 // icons
+import { RefreshCw, LinkIcon, Zap, Check, MoreVertical, Pencil, Sparkles, Trash } from "lucide-react";
 import { LayerDiagonalIcon } from "components/icons";
-import { ArrowPathIcon, LinkIcon } from "@heroicons/react/20/solid";
-import {
-  BoltIcon,
-  CheckIcon,
-  EllipsisVerticalIcon,
-  PencilIcon,
-  SparklesIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
@@ -318,8 +310,8 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
                 className="absolute top-4 -left-0 hidden rounded p-0.5 group-hover:!flex"
                 {...provided.dragHandleProps}
               >
-                <EllipsisVerticalIcon className="h-[18px]" />
-                <EllipsisVerticalIcon className="-ml-2.5 h-[18px]" />
+                <MoreVertical className="h-[18px]" />
+                <MoreVertical className="-ml-2.5 h-[18px]" />
               </button>
               <div
                 ref={actionSectionRef}
@@ -329,7 +321,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
               >
                 {block.issue && block.sync && (
                   <div className="flex flex-shrink-0 cursor-default items-center gap-1 rounded py-1 px-1.5 text-xs">
-                    {isSyncing ? <ArrowPathIcon className="h-3 w-3 animate-spin" /> : <CheckIcon className="h-3 w-3" />}
+                    {isSyncing ? <RefreshCw className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
                     {isSyncing ? "Syncing..." : "Synced"}
                   </div>
                 )}
@@ -345,7 +337,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
                     "Generating response..."
                   ) : (
                     <>
-                      <SparklesIcon className="h-4 w-4" />I{"'"}m feeling lucky
+                      <Sparkles className="h-4 w-4" />I{"'"}m feeling lucky
                     </>
                   )}
                 </button>
@@ -354,7 +346,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
                   className="-mr-2 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
                   onClick={() => setGptAssistantModal((prevData) => !prevData)}
                 >
-                  <SparklesIcon className="h-4 w-4" />
+                  <Sparkles className="h-4 w-4" />
                   AI
                 </button>
                 <button
@@ -362,7 +354,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
                   className="-mr-2 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
                   onClick={() => setCreateBlockForm(true)}
                 >
-                  <PencilIcon className="h-3.5 w-3.5" />
+                  <Pencil className="h-3.5 w-3.5" />
                 </button>
                 <CustomMenu
                   customButton={
@@ -370,7 +362,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
                       className="flex w-full cursor-pointer items-center justify-between gap-1 rounded px-2.5 py-1 text-left text-xs duration-300 hover:bg-custom-background-90"
                       onClick={() => setIsMenuActive(!isMenuActive)}
                     >
-                      <BoltIcon className="h-4.5 w-3.5" />
+                      <Zap className="h-4.5 w-3.5" />
                     </button>
                   }
                 >
@@ -378,7 +370,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
                     <>
                       <CustomMenu.MenuItem onClick={handleBlockSync}>
                         <span className="flex items-center gap-1">
-                          <ArrowPathIcon className="h-4 w-4" />
+                          <RefreshCw className="h-4 w-4" />
                           <span>Turn sync {block.sync ? "off" : "on"}</span>
                         </span>
                       </CustomMenu.MenuItem>
@@ -399,7 +391,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
                   )}
                   <CustomMenu.MenuItem onClick={deletePageBlock}>
                     <span className="flex items-center gap-1">
-                      <TrashIcon className="h-4 w-4" />
+                      <Trash className="h-4 w-4" />
                       Delete block
                     </span>
                   </CustomMenu.MenuItem>

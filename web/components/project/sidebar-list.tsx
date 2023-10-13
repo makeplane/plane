@@ -12,7 +12,7 @@ import { CreateProjectModal, ProjectSidebarListItem } from "components/project";
 
 // icons
 import { Icon } from "components/ui";
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Plus } from "lucide-react";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 import { orderArrayBy } from "helpers/array.helper";
@@ -264,7 +264,7 @@ export const ProjectSidebarList: FC = observer(() => {
               document.dispatchEvent(e);
             }}
           >
-            <PlusIcon className="h-5 w-5" />
+            <Plus className="h-5 w-5" />
             {!themeStore?.sidebarCollapsed && "Add Project"}
           </button>
         )}

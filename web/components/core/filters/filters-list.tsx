@@ -1,7 +1,7 @@
 import React from "react";
 
 // icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { X } from "lucide-react";
 import { PriorityIcon, StateGroupIcon } from "components/icons";
 // ui
 import { Avatar } from "components/ui";
@@ -23,19 +23,10 @@ type Props = {
   states: IState[] | undefined;
 };
 
-export const FiltersList: React.FC<Props> = ({
-  filters,
-  setFilters,
-  clearAllFilters,
-  labels,
-  members,
-  states,
-}) => {
+export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilters, labels, members, states }) => {
   if (!filters) return <></>;
 
-  const nullFilters = Object.keys(filters).filter(
-    (key) => filters[key as keyof IIssueFilterOptions] === null
-  );
+  const nullFilters = Object.keys(filters).filter((key) => filters[key as keyof IIssueFilterOptions] === null);
 
   return (
     <div className="flex flex-1 flex-wrap items-center gap-2 text-xs">
@@ -71,10 +62,7 @@ export const FiltersList: React.FC<Props> = ({
                             }}
                           >
                             <span>
-                              <StateGroupIcon
-                                stateGroup={state?.group ?? "backlog"}
-                                color={state?.color}
-                              />
+                              <StateGroupIcon stateGroup={state?.group ?? "backlog"} color={state?.color} />
                             </span>
                             <span>{state?.name ?? ""}</span>
                             <span
@@ -85,7 +73,7 @@ export const FiltersList: React.FC<Props> = ({
                                 })
                               }
                             >
-                              <XMarkIcon className="h-3 w-3" />
+                              <X className="h-3 w-3" />
                             </span>
                           </p>
                         );
@@ -167,9 +155,7 @@ export const FiltersList: React.FC<Props> = ({
                               className="cursor-pointer"
                               onClick={() =>
                                 setFilters({
-                                  subscriber: filters.subscriber?.filter(
-                                    (p: any) => p !== memberId
-                                  ),
+                                  subscriber: filters.subscriber?.filter((p: any) => p !== memberId),
                                 })
                               }
                             >
@@ -193,9 +179,7 @@ export const FiltersList: React.FC<Props> = ({
                               className="cursor-pointer"
                               onClick={() =>
                                 setFilters({
-                                  created_by: filters.created_by?.filter(
-                                    (p: any) => p !== memberId
-                                  ),
+                                  created_by: filters.created_by?.filter((p: any) => p !== memberId),
                                 })
                               }
                             >

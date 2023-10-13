@@ -29,7 +29,7 @@ import { CreateUpdateViewModal } from "components/views";
 // ui
 import { Button } from "@plane/ui";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Plus } from "lucide-react";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 import { orderArrayBy } from "helpers/array.helper";
@@ -500,7 +500,7 @@ export const IssuesView: React.FC<Props> = ({ openIssuesListModal, disableUserAc
             />
             <Button
               variant="primary"
-              prependIcon={!viewId && <PlusIcon />}
+              prependIcon={!viewId && <Plus />}
               onClick={() => {
                 if (viewId) {
                   setFilters({}, true);
@@ -544,7 +544,7 @@ export const IssuesView: React.FC<Props> = ({ openIssuesListModal, disableUserAc
             : "Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done.",
           primaryButton: !isDraftIssues
             ? {
-                icon: <PlusIcon className="h-4 w-4" />,
+                icon: <Plus className="h-4 w-4" />,
                 text: "New Issue",
                 onClick: () => {
                   const e = new KeyboardEvent("keydown", {
@@ -556,7 +556,7 @@ export const IssuesView: React.FC<Props> = ({ openIssuesListModal, disableUserAc
             : undefined,
           secondaryButton:
             cycleId || moduleId ? (
-              <Button variant="neutral-primary" prependIcon={<PlusIcon />} onClick={openIssuesListModal ?? (() => {})}>
+              <Button variant="neutral-primary" prependIcon={<Plus />} onClick={openIssuesListModal ?? (() => {})}>
                 Add an existing issue
               </Button>
             ) : null,

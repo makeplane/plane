@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { CopyPlus } from "lucide-react";
 import { Icon } from "components/ui";
 import { Tooltip } from "@plane/ui";
-import { Squares2X2Icon } from "@heroicons/react/24/outline";
 import { BlockedIcon, BlockerIcon, RelatedIcon } from "components/icons";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";

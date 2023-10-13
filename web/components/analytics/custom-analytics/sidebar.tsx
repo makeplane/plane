@@ -12,9 +12,9 @@ import trackEventServices from "services/track_event.service";
 import useProjects from "hooks/use-projects";
 import useToast from "hooks/use-toast";
 // ui
-import { Button } from "@plane/ui";
+import { Button, UserGroupIcon } from "@plane/ui";
 // icons
-import { ArrowDownTrayIcon, ArrowPathIcon, CalendarDaysIcon, UserGroupIcon } from "@heroicons/react/24/outline";
+import { CalendarDays, Download, RefreshCw } from "lucide-react";
 import { ContrastIcon, LayerDiagonalIcon } from "components/icons";
 // helpers
 import { renderShortDate } from "helpers/date-time.helper";
@@ -172,7 +172,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({ analytics, params, fullScree
         </div>
         {isProjectLevel && (
           <div className="flex items-center gap-1 bg-custom-background-80 rounded-md px-3 py-1 text-custom-text-200 text-xs">
-            <CalendarDaysIcon className="h-3.5 w-3.5" />
+            <CalendarDays className="h-3.5 w-3.5" />
             {renderShortDate(
               (cycleId
                 ? cycleDetails?.created_at
@@ -330,7 +330,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({ analytics, params, fullScree
       <div className="flex items-center gap-2 flex-wrap justify-self-end">
         <Button
           variant="neutral-primary"
-          prependIcon={<ArrowPathIcon className="h-3.5 w-3.5" />}
+          prependIcon={<RefreshCw />}
           onClick={() => {
             if (!workspaceSlug) return;
             mutate(ANALYTICS(workspaceSlug.toString(), params));
@@ -338,7 +338,7 @@ export const AnalyticsSidebar: React.FC<Props> = ({ analytics, params, fullScree
         >
           Refresh
         </Button>
-        <Button variant="primary" prependIcon={<ArrowDownTrayIcon />} onClick={exportAnalytics}>
+        <Button variant="primary" size="sm" prependIcon={<Download />} onClick={exportAnalytics}>
           Export as CSV
         </Button>
       </div>

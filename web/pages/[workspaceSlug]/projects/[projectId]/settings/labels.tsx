@@ -24,8 +24,6 @@ import { SettingsSidebar } from "components/project";
 import { Button, Loader } from "@plane/ui";
 import { EmptyState } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-// icons
-import { PlusIcon } from "@heroicons/react/24/outline";
 // images
 import emptyLabel from "public/empty-state/label.svg";
 // types

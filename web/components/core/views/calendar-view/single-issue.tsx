@@ -19,8 +19,8 @@ import { LabelSelect, MembersSelect, PrioritySelect } from "components/project";
 import { StateSelect } from "components/states";
 import { Tooltip } from "@plane/ui";
 // icons
-import { LinkIcon, PaperClipIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { LayerDiagonalIcon } from "components/icons";
+import { Link, Paperclip, Pencil, Trash } from "lucide-react";
 // helper
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // type
@@ -248,19 +248,19 @@ export const SingleCalendarIssue: React.FC<Props> = ({
             <CustomMenu width="auto" ellipsis>
               <CustomMenu.MenuItem onClick={() => handleEditIssue(issue)}>
                 <div className="flex items-center justify-start gap-2">
-                  <PencilIcon className="h-4 w-4" />
+                  <Pencil className="h-4 w-4" />
                   <span>Edit issue</span>
                 </div>
               </CustomMenu.MenuItem>
               <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
                 <div className="flex items-center justify-start gap-2">
-                  <TrashIcon className="h-4 w-4" />
+                  <Trash className="h-4 w-4" />
                   <span>Delete issue</span>
                 </div>
               </CustomMenu.MenuItem>
               <CustomMenu.MenuItem onClick={handleCopyText}>
                 <div className="flex items-center justify-start gap-2">
-                  <LinkIcon className="h-4 w-4" />
+                  <Link className="h-4 w-4" />
                   <span>Copy issue Link</span>
                 </div>
               </CustomMenu.MenuItem>
@@ -365,7 +365,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
               <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2.5 py-1 text-xs shadow-sm">
                 <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
                   <div className="flex items-center gap-1 text-custom-text-200">
-                    <LinkIcon className="h-3.5 w-3.5" />
+                    <Link className="h-3.5 w-3.5" />
                     {issue.link_count}
                   </div>
                 </Tooltip>
@@ -375,7 +375,7 @@ export const SingleCalendarIssue: React.FC<Props> = ({
               <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2.5 py-1 text-xs shadow-sm">
                 <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
                   <div className="flex items-center gap-1 text-custom-text-200">
-                    <PaperClipIcon className="h-3.5 w-3.5 -rotate-45" />
+                    <Paperclip className="h-3.5 w-3.5" />
                     {issue.attachment_count}
                   </div>
                 </Tooltip>

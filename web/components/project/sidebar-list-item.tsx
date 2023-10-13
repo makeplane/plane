@@ -5,7 +5,7 @@ import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
 import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // icons
-import { EllipsisVerticalIcon, LinkIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { MoreVertical, LinkIcon, Star, Trash } from "lucide-react";
 import {
   ArchiveOutlined,
   ArticleOutlined,
@@ -156,8 +156,8 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                     } ${project.sort_order === null ? "opacity-60 cursor-not-allowed" : ""}`}
                     {...provided?.dragHandleProps}
                   >
-                    <EllipsisVerticalIcon className="h-4" />
-                    <EllipsisVerticalIcon className="-ml-5 h-4" />
+                    <MoreVertical className="h-4" />
+                    <MoreVertical className="-ml-5 h-4" />
                   </button>
                 </Tooltip>
               )}
@@ -211,7 +211,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   {!shortContextMenu && isAdmin && (
                     <CustomMenu.MenuItem onClick={handleDeleteProjectClick}>
                       <span className="flex items-center justify-start gap-2 ">
-                        <TrashIcon className="h-4 w-4" />
+                        <Trash className="h-4 w-4" />
                         <span>Delete project</span>
                       </span>
                     </CustomMenu.MenuItem>
@@ -219,7 +219,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   {!project.is_favorite && (
                     <CustomMenu.MenuItem onClick={handleAddToFavorites}>
                       <span className="flex items-center justify-start gap-2">
-                        <StarIcon className="h-4 w-4" />
+                        <Star className="h-4 w-4" />
                         <span>Add to favorites</span>
                       </span>
                     </CustomMenu.MenuItem>
@@ -227,7 +227,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   {project.is_favorite && (
                     <CustomMenu.MenuItem onClick={handleRemoveFromFavorites}>
                       <span className="flex items-center justify-start gap-2">
-                        <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                        <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
                         <span>Remove from favorites</span>
                       </span>
                     </CustomMenu.MenuItem>

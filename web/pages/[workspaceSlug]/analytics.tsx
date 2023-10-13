@@ -19,7 +19,7 @@ import { CustomAnalytics, ScopeAndDemand } from "components/analytics";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { EmptyState } from "components/ui";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Plus } from "lucide-react";
 // images
 import emptyAnalytics from "public/empty-state/analytics.svg";
 // types
@@ -119,7 +119,7 @@ const AnalyticsPage = observer(() => {
     //         description="Let's create your first project and analyze the stats with various graphs."
     //         image={emptyAnalytics}
     //         primaryButton={{
-    //           icon: <PlusIcon className="h-4 w-4" />,
+    //           icon: <Plus className="h-4 w-4" />,
     //           text: "New Project",
     //           onClick: () => {
     //             const e = new KeyboardEvent("keydown", {
@@ -171,7 +171,7 @@ const AnalyticsPage = observer(() => {
               description="Let's create your first project and analyze the stats with various graphs."
               image={emptyAnalytics}
               primaryButton={{
-                icon: <PlusIcon className="h-4 w-4" />,
+                icon: <Plus className="h-4 w-4" />,
                 text: "New Project",
                 onClick: () => {
                   const e = new KeyboardEvent("keydown", {

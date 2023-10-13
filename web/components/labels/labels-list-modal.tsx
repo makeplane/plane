@@ -7,7 +7,7 @@ import useSWR, { mutate } from "swr";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // icons
-import { RectangleStackIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { Search } from "lucide-react";
 // services
 import issuesService from "services/issue.service";
 // types
@@ -97,7 +97,7 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent, 
             <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-xl border border-custom-border-200 bg-custom-background-100 shadow-2xl transition-all">
               <Combobox>
                 <div className="relative m-1">
-                  <MagnifyingGlassIcon
+                  <Search
                     className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-100 text-opacity-40"
                     aria-hidden="true"
                   />
@@ -156,10 +156,6 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent, 
 
                 {query !== "" && filteredLabels.length === 0 && (
                   <div className="py-14 px-6 text-center sm:px-14">
-                    <RectangleStackIcon
-                      className="mx-auto h-6 w-6 text-custom-text-100 text-opacity-40"
-                      aria-hidden="true"
-                    />
                     <p className="mt-4 text-sm text-custom-text-100">
                       We couldn{"'"}t find any label with that term. Please try again.
                     </p>

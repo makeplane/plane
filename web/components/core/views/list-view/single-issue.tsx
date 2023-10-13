@@ -15,17 +15,9 @@ import { LabelSelect, MembersSelect, PrioritySelect } from "components/project";
 import { StateSelect } from "components/states";
 // ui
 import { CustomMenu, ContextMenu } from "components/ui";
-import { Tooltip } from "@plane/ui";
+import { ExternalLinkIcon, Tooltip } from "@plane/ui";
 // icons
-import {
-  ClipboardDocumentCheckIcon,
-  LinkIcon,
-  PencilIcon,
-  TrashIcon,
-  XMarkIcon,
-  ArrowTopRightOnSquareIcon,
-  PaperClipIcon,
-} from "@heroicons/react/24/outline";
+import { ClipboardCheck, Link, Paperclip, Pencil, Trash, X } from "lucide-react";
 import { LayerDiagonalIcon } from "components/icons";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
@@ -269,7 +261,7 @@ export const SingleListIssue: React.FC<Props> = ({
         {!isNotAllowed && (
           <>
             <ContextMenu.Item
-              Icon={PencilIcon}
+              Icon={Pencil}
               onClick={() => {
                 if (isDraftIssues && handleDraftIssueSelect) handleDraftIssueSelect(issue);
                 else editIssue();
@@ -278,12 +270,12 @@ export const SingleListIssue: React.FC<Props> = ({
               Edit issue
             </ContextMenu.Item>
             {!isDraftIssues && (
-              <ContextMenu.Item Icon={ClipboardDocumentCheckIcon} onClick={makeIssueCopy}>
+              <ContextMenu.Item Icon={ClipboardCheck} onClick={makeIssueCopy}>
                 Make a copy...
               </ContextMenu.Item>
             )}
             <ContextMenu.Item
-              Icon={TrashIcon}
+              Icon={Trash}
               onClick={() => {
                 if (isDraftIssues && handleDraftIssueDelete) handleDraftIssueDelete(issue);
                 else handleDeleteIssue(issue);
@@ -295,11 +287,11 @@ export const SingleListIssue: React.FC<Props> = ({
         )}
         {!isDraftIssues && (
           <>
-            <ContextMenu.Item Icon={LinkIcon} onClick={handleCopyText}>
+            <ContextMenu.Item Icon={Link} onClick={handleCopyText}>
               Copy issue link
             </ContextMenu.Item>
             <a href={issuePath} target="_blank" rel="noreferrer noopener">
-              <ContextMenu.Item Icon={ArrowTopRightOnSquareIcon}>Open issue in new tab</ContextMenu.Item>
+              <ContextMenu.Item Icon={ExternalLinkIcon}>Open issue in new tab</ContextMenu.Item>
             </a>
           </>
         )}
@@ -417,7 +409,7 @@ export const SingleListIssue: React.FC<Props> = ({
             <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2.5 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
                 <div className="flex items-center gap-1 text-custom-text-200">
-                  <LinkIcon className="h-3.5 w-3.5" />
+                  <Link className="h-3.5 w-3.5" />
                   {issue.link_count}
                 </div>
               </Tooltip>
@@ -427,7 +419,7 @@ export const SingleListIssue: React.FC<Props> = ({
             <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2.5 py-1 text-xs shadow-sm">
               <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
                 <div className="flex items-center gap-1 text-custom-text-200">
-                  <PaperClipIcon className="h-3.5 w-3.5 -rotate-45" />
+                  <Paperclip className="h-3.5 w-3.5 -rotate-45" />
                   {issue.attachment_count}
                 </div>
               </Tooltip>
@@ -442,14 +434,14 @@ export const SingleListIssue: React.FC<Props> = ({
                 }}
               >
                 <div className="flex items-center justify-start gap-2">
-                  <PencilIcon className="h-4 w-4" />
+                  <Pencil className="h-4 w-4" />
                   <span>Edit issue</span>
                 </div>
               </CustomMenu.MenuItem>
               {type !== "issue" && removeIssue && (
                 <CustomMenu.MenuItem onClick={removeIssue}>
                   <div className="flex items-center justify-start gap-2">
-                    <XMarkIcon className="h-4 w-4" />
+                    <X className="h-4 w-4" />
                     <span>Remove from {type}</span>
                   </div>
                 </CustomMenu.MenuItem>
@@ -461,14 +453,14 @@ export const SingleListIssue: React.FC<Props> = ({
                 }}
               >
                 <div className="flex items-center justify-start gap-2">
-                  <TrashIcon className="h-4 w-4" />
+                  <Trash className="h-4 w-4" />
                   <span>Delete issue</span>
                 </div>
               </CustomMenu.MenuItem>
               {!isDraftIssues && (
                 <CustomMenu.MenuItem onClick={handleCopyText}>
                   <div className="flex items-center justify-start gap-2">
-                    <LinkIcon className="h-4 w-4" />
+                    <Link className="h-4 w-4" />
                     <span>Copy issue link</span>
                   </div>
                 </CustomMenu.MenuItem>

@@ -5,15 +5,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { IIssue } from "types";
 import useUserAuth from "hooks/use-user-auth";
 // icons
-import {
-  ClipboardDocumentCheckIcon,
-  LinkIcon,
-  PencilIcon,
-  TrashIcon,
-  XMarkIcon,
-  ArrowTopRightOnSquareIcon,
-  PaperClipIcon,
-} from "@heroicons/react/24/outline";
+import { LinkIcon, Paperclip } from "lucide-react";
 // components
 import { CustomMenu, ContextMenu } from "components/ui";
 import { Tooltip } from "@plane/ui";
@@ -202,7 +194,7 @@ export const IssueListItem: FC<IIssueListItem> = observer((props) => {
               <div className="flex cursor-default items-center rounded-md border border-custom-border-200 px-2.5 py-1 text-xs shadow-sm">
                 <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
                   <div className="flex items-center gap-1 text-custom-text-200">
-                    <PaperClipIcon className="h-3.5 w-3.5 -rotate-45" />
+                    <Paperclip className="h-3.5 w-3.5" />
                     {issue.attachment_count}
                   </div>
                 </Tooltip>

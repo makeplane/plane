@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 // icons
-import { ExclamationTriangleIcon } from "@heroicons/react/20/solid";
+import { AlertTriangle } from "lucide-react";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
@@ -63,7 +63,7 @@ export const IssuesList: React.FC<Props> = ({ issues, type }) => {
                             type === "overdue" ? (dateDifference > 6 ? "text-red-500" : "text-yellow-400") : ""
                           }`}
                         >
-                          {type === "overdue" && <ExclamationTriangleIcon className="h-3.5 w-3.5" />}
+                          {type === "overdue" && <AlertTriangle className="h-3.5 w-3.5" />}
                           {dateDifference} {dateDifference > 1 ? "days" : "day"}
                         </h5>
                         <h5 className="col-span-2">{truncateText(issue.name, 30)}</h5>

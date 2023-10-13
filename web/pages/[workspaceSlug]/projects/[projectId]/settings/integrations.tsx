@@ -15,8 +15,6 @@ import { SettingsSidebar, SingleIntegration } from "components/project";
 import { EmptyState, IntegrationAndImportExportBanner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { Loader } from "@plane/ui";
-// icons
-import { PlusIcon, PuzzlePieceIcon } from "@heroicons/react/24/outline";
 // images
 import emptyIntegration from "public/empty-state/integration.svg";
 // types

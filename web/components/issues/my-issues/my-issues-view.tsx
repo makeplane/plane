@@ -21,7 +21,7 @@ import { orderArrayBy } from "helpers/array.helper";
 import { IIssue, IIssueFilterOptions, TIssuePriorities } from "types";
 // fetch-keys
 import { USER_ISSUES, WORKSPACE_LABELS } from "constants/fetch-keys";
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Plus } from "lucide-react";
 
 type Props = {
   openIssuesListModal?: () => void;
@@ -273,7 +273,7 @@ export const MyIssuesView: React.FC<Props> = ({ openIssuesListModal, disableUser
           primaryButton: filters.subscriber
             ? undefined
             : {
-                icon: <PlusIcon className="h-4 w-4" />,
+                icon: <Plus className="h-4 w-4" />,
                 text: "New Issue",
                 onClick: () => {
                   const e = new KeyboardEvent("keydown", {

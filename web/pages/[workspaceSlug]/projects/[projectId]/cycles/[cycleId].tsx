@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 // icons
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { ArrowLeft } from "lucide-react";
 import { CyclesIcon } from "components/icons";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
@@ -140,7 +140,7 @@ const SingleCycle: React.FC = () => {
               }`}
               onClick={() => setCycleSidebar((prevData) => !prevData)}
             >
-              <ArrowLeftIcon className="h-4 w-4" />
+              <ArrowLeft className="h-4 w-4" />
             </button>
           </div>
         }

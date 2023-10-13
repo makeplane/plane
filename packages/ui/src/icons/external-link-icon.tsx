@@ -8,7 +8,7 @@ export const ExternalLinkIcon: React.FC<ISvgIcons> = ({
 }) => (
   <svg
     viewBox="0 0 24 24"
-    className={`${className} stroke-2`}
+    className={`${className} stroke-[1.5]`}
     stroke="currentColor"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"

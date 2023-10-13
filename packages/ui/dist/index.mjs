@@ -668,13 +668,86 @@ var SubscribeIcon = ({
   "stroke-linecap": "round",
   "stroke-linejoin": "round"
 }));
+
+// src/icons/double-circle-icon.tsx
+import React20 from "react";
+var DoubleCircleIcon = ({
+  className = "text-current",
+  ...rest
+}) => /* @__PURE__ */ React20.createElement("svg", {
+  viewBox: "0 0 24 24",
+  className: `${className} stroke-2`,
+  stroke: "currentColor",
+  fill: "none",
+  xmlns: "http://www.w3.org/2000/svg",
+  ...rest
+}, /* @__PURE__ */ React20.createElement("circle", {
+  cx: "12",
+  cy: "12",
+  r: "9"
+}), /* @__PURE__ */ React20.createElement("circle", {
+  cx: "12",
+  cy: "12",
+  r: "5.625"
+}));
+
+// src/icons/external-link-icon.tsx
+import React21 from "react";
+var ExternalLinkIcon = ({
+  className = "text-current",
+  ...rest
+}) => /* @__PURE__ */ React21.createElement("svg", {
+  viewBox: "0 0 24 24",
+  className: `${className} stroke-[1.5]`,
+  stroke: "currentColor",
+  fill: "none",
+  xmlns: "http://www.w3.org/2000/svg",
+  ...rest
+}, /* @__PURE__ */ React21.createElement("path", {
+  d: "M18 13V19C18 19.5304 17.7893 20.0391 17.4142 20.4142C17.0391 20.7893 16.5304 21 16 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V8C3 7.46957 3.21071 6.96086 3.58579 6.58579C3.96086 6.21071 4.46957 6 5 6H11",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}), /* @__PURE__ */ React21.createElement("path", {
+  d: "M15 3H21V9",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}), /* @__PURE__ */ React21.createElement("path", {
+  d: "M10 14L21 3",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}));
+
+// src/icons/copy-icon.tsx
+import React22 from "react";
+var CopyIcon = ({
+  className = "text-current",
+  ...rest
+}) => /* @__PURE__ */ React22.createElement("svg", {
+  viewBox: "0 0 24 24",
+  className: `${className} stroke-2`,
+  stroke: "currentColor",
+  fill: "none",
+  xmlns: "http://www.w3.org/2000/svg",
+  ...rest
+}, /* @__PURE__ */ React22.createElement("path", {
+  d: "M20 8H10C8.89543 8 8 8.89543 8 10V20C8 21.1046 8.89543 22 10 22H20C21.1046 22 22 21.1046 22 20V10C22 8.89543 21.1046 8 20 8Z",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}), /* @__PURE__ */ React22.createElement("path", {
+  d: "M4 16C2.9 16 2 15.1 2 14V4C2 2.9 2.9 2 4 2H14C15.1 2 16 2.9 16 4",
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round"
+}));
 export {
   AdminProfileIcon,
   ArchiveIcon,
   Button,
   ContrastIcon,
+  CopyIcon,
   CreateIcon,
   DiceIcon,
+  DoubleCircleIcon,
+  ExternalLinkIcon,
   Input,
   LayersIcon,
   LinearProgressIndicator,

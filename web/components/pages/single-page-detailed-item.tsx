@@ -10,7 +10,7 @@ import useToast from "hooks/use-toast";
 import { CustomMenu } from "components/ui";
 import { Tooltip } from "@plane/ui";
 // icons
-import { LinkIcon, LockClosedIcon, LockOpenIcon, PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { Lock, Pencil, Star, Trash, Unlock, LinkIcon } from "lucide-react";
 import { ExclamationIcon } from "components/icons";
 // helpers
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
@@ -101,7 +101,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                   }}
                   className="z-10 grid place-items-center"
                 >
-                  <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                  <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
                 </button>
               ) : (
                 <button
@@ -113,7 +113,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                   }}
                   className="z-10 grid place-items-center"
                 >
-                  <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
+                  <Star className="h-4 w-4 " color="rgb(var(--color-text-200))" />
                 </button>
               )}
               {page.created_by === user?.id && (
@@ -133,9 +133,9 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                     }}
                   >
                     {page.access ? (
-                      <LockClosedIcon className="h-4 w-4" color="rgb(var(--color-text-200))" />
+                      <Lock className="h-4 w-4" color="rgb(var(--color-text-200))" />
                     ) : (
-                      <LockOpenIcon className="h-4 w-4" color="rgb(var(--color-text-200))" />
+                      <Unlock className="h-4 w-4" color="rgb(var(--color-text-200))" />
                     )}
                   </button>
                 </Tooltip>
@@ -159,7 +159,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                   }}
                 >
                   <span className="flex items-center justify-start gap-2">
-                    <PencilIcon className="h-3.5 w-3.5" />
+                    <Pencil className="h-3.5 w-3.5" />
                     <span>Edit Page</span>
                   </span>
                 </CustomMenu.MenuItem>
@@ -171,7 +171,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                   }}
                 >
                   <span className="flex items-center justify-start gap-2">
-                    <TrashIcon className="h-3.5 w-3.5" />
+                    <Trash className="h-3.5 w-3.5" />
                     <span>Delete Page</span>
                   </span>
                 </CustomMenu.MenuItem>

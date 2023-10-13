@@ -18,7 +18,7 @@ import ProgressChart from "components/core/sidebar/progress-chart";
 import { ActiveCycleProgressStats } from "components/cycles";
 
 // icons
-import { CalendarDaysIcon } from "@heroicons/react/20/solid";
+import { CalendarDays, Star } from "lucide-react";
 import { PriorityIcon } from "components/icons/priority-icon";
 import {
   TargetIcon,
@@ -30,7 +30,6 @@ import {
   LayerDiagonalIcon,
   StateGroupIcon,
 } from "components/icons";
-import { StarIcon } from "@heroicons/react/24/outline";
 // components
 import { ViewIssueLabel } from "components/issues";
 // helpers
@@ -297,7 +296,7 @@ export const ActiveCycleDetails: React.FC = () => {
                         handleRemoveFromFavorites();
                       }}
                     >
-                      <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                      <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
                     </button>
                   ) : (
                     <button
@@ -306,7 +305,7 @@ export const ActiveCycleDetails: React.FC = () => {
                         handleAddToFavorites();
                       }}
                     >
-                      <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
+                      <Star className="h-4 w-4 " color="rgb(var(--color-text-200))" />
                     </button>
                   )}
                 </span>
@@ -314,7 +313,7 @@ export const ActiveCycleDetails: React.FC = () => {
 
               <div className="flex items-center justify-start gap-5 text-custom-text-200">
                 <div className="flex items-start gap-1">
-                  <CalendarDaysIcon className="h-4 w-4" />
+                  <CalendarDays className="h-4 w-4" />
                   <span>{renderShortDateWithYearFormat(startDate)}</span>
                 </div>
                 <ArrowRightIcon className="h-4 w-4 text-custom-text-200" />

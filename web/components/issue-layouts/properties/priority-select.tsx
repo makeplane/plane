@@ -1,9 +1,9 @@
 import { FC, Fragment, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
-import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { IIssue } from "types";
 import { observer } from "mobx-react-lite";
+import { Check } from "lucide-react";
 
 export interface IIssuePrioritySelect {
   issue: IIssue;
@@ -47,7 +47,7 @@ export const IssuePrioritySelect: FC<IIssuePrioritySelect> = observer((props) =>
                     </span>
                     {selected ? (
                       <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
-                        <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                        <Check className="h-5 w-5" aria-hidden="true" />
                       </span>
                     ) : null}
                   </>

@@ -17,7 +17,7 @@ import trackEventServices from "services/track_event.service";
 // components
 import { CustomAnalytics, ScopeAndDemand } from "components/analytics";
 // icons
-import { ArrowsPointingInIcon, ArrowsPointingOutIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Expand, Shrink, X } from "lucide-react";
 // types
 import { IAnalyticsParams, IWorkspace } from "types";
 // fetch-keys
@@ -152,18 +152,14 @@ export const AnalyticsProjectModal: React.FC<Props> = ({ isOpen, onClose }) => {
               className="grid place-items-center p-1 text-custom-text-200 hover:text-custom-text-100"
               onClick={() => setFullScreen((prevData) => !prevData)}
             >
-              {fullScreen ? (
-                <ArrowsPointingInIcon className="h-4 w-4" />
-              ) : (
-                <ArrowsPointingOutIcon className="h-3 w-3" />
-              )}
+              {fullScreen ? <Shrink className="h-3.5 w-3.5" /> : <Expand className="h-3 w-3" />}
             </button>
             <button
               type="button"
               className="grid place-items-center p-1 text-custom-text-200 hover:text-custom-text-100"
               onClick={handleClose}
             >
-              <XMarkIcon className="h-4 w-4" />
+              <X className="h-4 w-4" />
             </button>
           </div>
         </div>

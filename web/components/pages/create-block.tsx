@@ -3,9 +3,8 @@ import React, { KeyboardEventHandler, useCallback, useEffect, useState } from "r
 import { useRouter } from "next/router";
 
 import { mutate } from "swr";
-
-import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
-
+// icons
+import { SendHorizonal } from "lucide-react";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
@@ -121,7 +120,7 @@ export const CreateBlock: React.FC<Props> = ({ user }) => {
 
         <div className="absolute right-2 bottom-2 flex items-center p-1">
           <button type="submit">
-            <PaperAirplaneIcon className="h-5 w-5 text-custom-text-100" />
+            <SendHorizonal className="h-5 w-5 text-custom-text-100" />
           </button>
         </div>
       </form>

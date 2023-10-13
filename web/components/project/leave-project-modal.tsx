@@ -2,10 +2,11 @@ import { FC, Fragment } from "react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { observer } from "mobx-react-lite";
 // ui
 import { Button, Input } from "@plane/ui";
+// icons
+import { AlertTriangle } from "lucide-react";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
 // mobx react lite
@@ -132,7 +133,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-500/20 p-4">
-                      <ExclamationTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
+                      <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">
                       <h3 className="text-xl font-medium 2xl:text-2xl">Leave Project</h3>

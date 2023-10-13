@@ -13,7 +13,6 @@ import { MyIssuesSelectFilters } from "components/issues";
 import { CustomMenu } from "components/ui";
 import { ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { FormatListBulletedOutlined, GridViewOutlined } from "@mui/icons-material";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
@@ -22,6 +21,7 @@ import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 import { Properties, TIssueLayouts } from "types";
 // constants
 import { GROUP_BY_OPTIONS, ORDER_BY_OPTIONS, FILTER_ISSUE_OPTIONS } from "constants/issue";
+import { ChevronDown } from "lucide-react";
 
 const issueViewOptions: { type: TIssueLayouts; Icon: any }[] = [
   {
@@ -116,7 +116,7 @@ export const ProfileIssuesViewOptions: React.FC = () => {
               }`}
             >
               Display
-              <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+              <ChevronDown className="h-3 w-3" aria-hidden="true" />
             </Popover.Button>
 
             <Transition

@@ -3,8 +3,7 @@ import React from "react";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // icons
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { CheckIcon } from "@heroicons/react/24/outline";
+import { Check, ChevronDown } from "lucide-react";
 // types
 import { DropdownProps } from "./types";
 
@@ -48,13 +47,11 @@ const CustomSelect = ({
           className={`flex items-center justify-between gap-1 w-full rounded-md border border-custom-border-300 shadow-sm duration-300 focus:outline-none ${
             input ? "px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
           } ${
-            disabled
-              ? "cursor-not-allowed text-custom-text-200"
-              : "cursor-pointer hover:bg-custom-background-80"
+            disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
           } ${buttonClassName}`}
         >
           {label}
-          {!noChevron && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
+          {!noChevron && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
         </Listbox.Button>
       )}
     </>
@@ -99,15 +96,15 @@ const Option: React.FC<OptionProps> = ({ children, value, className }) => (
   <Listbox.Option
     value={value}
     className={({ active, selected }) =>
-      `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-        active || selected ? "bg-custom-background-80" : ""
-      } ${selected ? "text-custom-text-100" : "text-custom-text-200"} ${className}`
+      `cursor-pointer select-none truncate rounded px-1 py-1.5 ${active || selected ? "bg-custom-background-80" : ""} ${
+        selected ? "text-custom-text-100" : "text-custom-text-200"
+      } ${className}`
     }
   >
     {({ selected }) => (
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">{children}</div>
-        {selected && <CheckIcon className="h-4 w-4 flex-shrink-0" />}
+        {selected && <Check className="h-4 w-4 flex-shrink-0" />}
       </div>
     )}
   </Listbox.Option>

@@ -18,7 +18,7 @@ import { SingleListIssue, ListInlineCreateIssueForm } from "components/core";
 // ui
 import { Avatar, CustomMenu } from "components/ui";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Plus } from "lucide-react";
 import { PriorityIcon, StateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
@@ -244,7 +244,7 @@ export const SingleList: React.FC<Props> = (props) => {
                       else setIsCreateIssueFormOpen(true);
                     }}
                   >
-                    <PlusIcon className="h-4 w-4" />
+                    <Plus className="h-4 w-4" />
                   </button>
                 )
               ) : disableUserActions ? (
@@ -253,7 +253,7 @@ export const SingleList: React.FC<Props> = (props) => {
                 <CustomMenu
                   customButton={
                     <div className="flex cursor-pointer items-center">
-                      <PlusIcon className="h-4 w-4" />
+                      <Plus className="h-4 w-4" />
                     </div>
                   }
                   position="right"
@@ -334,7 +334,7 @@ export const SingleList: React.FC<Props> = (props) => {
                       }}
                       className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-1 rounded-md"
                     >
-                      <PlusIcon className="h-4 w-4" />
+                      <Plus className="h-4 w-4" />
                       <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
                     </button>
                   </div>

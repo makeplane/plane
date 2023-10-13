@@ -28,14 +28,7 @@ import {
 import { Button } from "@plane/ui";
 // icons
 import { InboxIcon, StackedLayersHorizontalIcon } from "components/icons";
-import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  CheckCircleIcon,
-  ClockIcon,
-  XCircleIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { CheckCircle, ChevronDown, ChevronUp, Clock, Trash, XCircle } from "lucide-react";
 // types
 import type { IInboxIssueDetail, TInboxStatus } from "types";
 // fetch-keys
@@ -175,7 +168,7 @@ export const InboxActionHeader = () => {
                   document.dispatchEvent(e);
                 }}
               >
-                <ChevronUpIcon className="h-3.5 w-3.5" />
+                <ChevronUp className="h-3.5 w-3.5" />
               </button>
               <button
                 type="button"
@@ -185,7 +178,7 @@ export const InboxActionHeader = () => {
                   document.dispatchEvent(e);
                 }}
               >
-                <ChevronDownIcon className="h-3.5 w-3.5" />
+                <ChevronDown className="h-3.5 w-3.5" />
               </button>
               <div className="text-sm">
                 {currentIssueIndex + 1}/{inboxIssues?.length ?? 0}
@@ -198,7 +191,7 @@ export const InboxActionHeader = () => {
                     <Popover.Button as="button" type="button">
                       <Button
                         variant="neutral-primary"
-                        prependIcon={<ClockIcon className="text-custom-text-200" />}
+                        prependIcon={<Clock className="text-custom-text-200" />}
                         size="sm"
                       >
                         Snooze
@@ -252,7 +245,7 @@ export const InboxActionHeader = () => {
                   <Button
                     variant="neutral-primary"
                     size="sm"
-                    prependIcon={<CheckCircleIcon className="text-green-500" />}
+                    prependIcon={<CheckCircle className="text-green-500" />}
                     onClick={() => setAcceptIssueModal(true)}
                   >
                     Accept
@@ -264,7 +257,7 @@ export const InboxActionHeader = () => {
                   <Button
                     variant="neutral-primary"
                     size="sm"
-                    prependIcon={<XCircleIcon className="text-red-500" />}
+                    prependIcon={<XCircle className="text-red-500" />}
                     onClick={() => setDeclineIssueModal(true)}
                   >
                     Decline
@@ -276,7 +269,7 @@ export const InboxActionHeader = () => {
                   <Button
                     variant="neutral-primary"
                     size="sm"
-                    prependIcon={<TrashIcon className="text-red-500" />}
+                    prependIcon={<Trash className="text-red-500" />}
                     onClick={() => setDeleteIssueModal(true)}
                   >
                     Delete

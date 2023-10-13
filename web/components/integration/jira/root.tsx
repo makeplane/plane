@@ -12,7 +12,7 @@ import { mutate } from "swr";
 import { FormProvider, useForm } from "react-hook-form";
 
 // icons
-import { ArrowLeftIcon, ListBulletIcon } from "@heroicons/react/24/outline";
+import { ArrowLeft, List } from "lucide-react";
 import { CogIcon, UsersIcon, CheckIcon } from "components/icons";
 
 // services
@@ -50,7 +50,7 @@ const integrationWorkflowData: Array<{
   {
     title: "Import Data",
     key: "display-import-data",
-    icon: ListBulletIcon,
+    icon: List,
   },
   {
     title: "Users",
@@ -110,7 +110,7 @@ export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
       <Link href={`/${workspaceSlug}/settings/imports`}>
         <div className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-custom-text-200 hover:text-custom-text-100">
           <div>
-            <ArrowLeftIcon className="h-3 w-3" />
+            <ArrowLeft className="h-3 w-3" />
           </div>
           <div>Cancel import & go back</div>
         </div>

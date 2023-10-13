@@ -3,8 +3,7 @@ import React, { useState } from "react";
 // headless ui
 import { Combobox, Transition } from "@headlessui/react";
 // icons
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { CheckIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { ChevronDown, Check, Search } from "lucide-react";
 // types
 import { DropdownProps } from "./types";
 
@@ -50,9 +49,7 @@ export const CustomSearchSelect = ({
   const [query, setQuery] = useState("");
 
   const filteredOptions =
-    query === ""
-      ? options
-      : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
+    query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const props: any = {
     value,
@@ -81,15 +78,11 @@ export const CustomSearchSelect = ({
                 className={`flex items-center justify-between gap-1 w-full rounded-md shadow-sm border border-custom-border-300 duration-300 focus:outline-none ${
                   input ? "px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
                 } ${
-                  disabled
-                    ? "cursor-not-allowed text-custom-text-200"
-                    : "cursor-pointer hover:bg-custom-background-80"
+                  disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
                 } ${buttonClassName}`}
               >
                 {label}
-                {!noChevron && !disabled && (
-                  <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
-                )}
+                {!noChevron && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
               </Combobox.Button>
             )}
             <Transition
@@ -110,7 +103,7 @@ export const CustomSearchSelect = ({
                 } ${optionsClassName}`}
               >
                 <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] border-custom-border-200 bg-custom-background-90 px-2">
-                  <MagnifyingGlassIcon className="h-3 w-3 text-custom-text-200" />
+                  <Search className="h-3 w-3 text-custom-text-200" />
                   <Combobox.Input
                     className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                     value={query}
@@ -153,14 +146,10 @@ export const CustomSearchSelect = ({
                                     active || selected ? "opacity-100" : "opacity-0"
                                   }`}
                                 >
-                                  <CheckIcon
-                                    className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`}
-                                  />
+                                  <Check className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
                                 </div>
                               ) : (
-                                <CheckIcon
-                                  className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`}
-                                />
+                                <Check className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
                               )}
                             </>
                           )}

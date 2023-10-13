@@ -16,7 +16,7 @@ import { Exporter, SingleExport } from "components/exporter";
 import { Button, Loader } from "@plane/ui";
 import { Icon } from "components/ui";
 // icons
-import { ArrowPathIcon } from "@heroicons/react/24/outline";
+import { RefreshCw } from "lucide-react";
 // fetch-keys
 import { EXPORT_SERVICES_LIST } from "constants/fetch-keys";
 // constants
@@ -89,7 +89,7 @@ const IntegrationGuide = () => {
                     );
                   }}
                 >
-                  <ArrowPathIcon className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />{" "}
+                  <RefreshCw className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />{" "}
                   {refreshing ? "Refreshing..." : "Refresh status"}
                 </button>
               </div>

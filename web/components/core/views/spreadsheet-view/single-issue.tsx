@@ -5,7 +5,7 @@ import { Popover2 } from "@blueprintjs/popover2";
 
 // icons
 import { Icon } from "components/ui";
-import { EllipsisHorizontalIcon, LinkIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { Link, MoreHorizontal, Pencil, Trash } from "lucide-react";
 // services
 import issuesService from "services/issue.service";
 import trackEventServices from "services/track_event.service";
@@ -277,7 +277,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
                           }}
                         >
                           <div className="flex items-center justify-start gap-2">
-                            <PencilIcon className="h-4 w-4" />
+                            <Pencil className="h-4 w-4" />
                             <span>Edit issue</span>
                           </div>
                         </button>
@@ -291,7 +291,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
                           }}
                         >
                           <div className="flex items-center justify-start gap-2">
-                            <TrashIcon className="h-4 w-4" />
+                            <Trash className="h-4 w-4" />
                             <span>Delete issue</span>
                           </div>
                         </button>
@@ -305,7 +305,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
                           }}
                         >
                           <div className="flex items-center justify-start gap-2">
-                            <LinkIcon className="h-4 w-4" />
+                            <Link className="h-4 w-4" />
                             <span>Copy issue link</span>
                           </div>
                         </button>
@@ -313,7 +313,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
                     }
                     placement="bottom-start"
                   >
-                    <EllipsisHorizontalIcon className="h-5 w-5 text-custom-text-200" />
+                    <MoreHorizontal className="h-5 w-5 text-custom-text-200" />
                   </Popover2>
                 </div>
               )}

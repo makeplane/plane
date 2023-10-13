@@ -36,18 +36,8 @@ import {
 // ui
 import { CustomDatePicker, Icon } from "components/ui";
 // icons
-import {
-  LinkIcon,
-  CalendarDaysIcon,
-  TrashIcon,
-  PlusIcon,
-  Squares2X2Icon,
-  ChartBarIcon,
-  UserGroupIcon,
-  PlayIcon,
-  UserIcon,
-  RectangleGroupIcon,
-} from "@heroicons/react/24/outline";
+import { BarChart, CalendarDays, Component, LinkIcon, Plus, Trash, Triangle, User2 } from "lucide-react";
+import { DiceIcon, UserGroupIcon } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
@@ -332,7 +322,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 className="rounded-md border border-red-500 p-2 text-red-500 shadow-sm duration-300 hover:bg-red-500/20 focus:outline-none"
                 onClick={() => setDeleteIssueModal(true)}
               >
-                <TrashIcon className="h-3.5 w-3.5" />
+                <Trash className="h-3.5 w-3.5" />
               </button>
             )}
           </div>
@@ -345,7 +335,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("state")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-                      <Squares2X2Icon className="h-4 w-4 flex-shrink-0" />
+                      <Component className="h-[18px] w-[18px] rotate-45 stroke-1" />
                       <p>State</p>
                     </div>
                     <div className="sm:basis-1/2">
@@ -387,7 +377,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("priority")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-                      <ChartBarIcon className="h-4 w-4 flex-shrink-0" />
+                      <BarChart className="h-4 w-4 flex-shrink-0" />
                       <p>Priority</p>
                     </div>
                     <div className="sm:basis-1/2">
@@ -408,7 +398,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) && isEstimateActive && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-                      <PlayIcon className="h-4 w-4 flex-shrink-0 -rotate-90" />
+                      <Triangle className="h-4 w-4 flex-shrink-0 -rotate-90" />
                       <p>Estimate</p>
                     </div>
                     <div className="sm:basis-1/2">
@@ -433,7 +423,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-                      <UserIcon className="h-4 w-4 flex-shrink-0" />
+                      <User2 className="h-4 w-4 flex-shrink-0" />
                       <p>Parent</p>
                     </div>
                     <div className="sm:basis-1/2">
@@ -535,7 +525,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("startDate")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-                      <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
+                      <CalendarDays className="h-4 w-4 flex-shrink-0" />
                       <p>Start date</p>
                     </div>
                     <div className="sm:basis-1/2">
@@ -563,7 +553,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("dueDate")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-                      <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
+                      <CalendarDays className="h-4 w-4 flex-shrink-0" />
                       <p>Due date</p>
                     </div>
                     <div className="sm:basis-1/2">
@@ -610,7 +600,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("module")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
-                      <RectangleGroupIcon className="h-4 w-4 flex-shrink-0" />
+                      <DiceIcon className="h-4 w-4 flex-shrink-0" />
                       <p>Module</p>
                     </div>
                     <div className="space-y-1 sm:w-1/2">
@@ -648,7 +638,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                     onClick={() => setLinkModal(true)}
                     disabled={uneditable}
                   >
-                    <PlusIcon className="h-4 w-4" />
+                    <Plus className="h-4 w-4" />
                   </button>
                 )}
               </div>

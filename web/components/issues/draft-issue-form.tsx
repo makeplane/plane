@@ -28,7 +28,7 @@ import { CustomMenu } from "components/ui";
 import { Button, Input, ToggleSwitch } from "@plane/ui";
 import { TipTapEditor } from "components/tiptap";
 // icons
-import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Sparkles, X } from "lucide-react";
 // types
 import type { ICurrentUserResponse, IIssue, ISearchIssueResponse } from "types";
 
@@ -343,7 +343,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                     {selectedParentIssue.project__identifier}-{selectedParentIssue.sequence_id}
                   </span>
                   <span className="truncate font-medium">{selectedParentIssue.name.substring(0, 50)}</span>
-                  <XMarkIcon
+                  <X
                     className="h-3 w-3 cursor-pointer"
                     onClick={() => {
                       setValue("parent", null);
@@ -399,7 +399,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                           "Generating response..."
                         ) : (
                           <>
-                            <SparklesIcon className="h-4 w-4" />I{"'"}m feeling lucky
+                            <Sparkles className="h-4 w-4" />I{"'"}m feeling lucky
                           </>
                         )}
                       </button>
@@ -409,7 +409,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                       className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
                       onClick={() => setGptAssistantModal((prevData) => !prevData)}
                     >
-                      <SparklesIcon className="h-4 w-4" />
+                      <Sparkles className="h-4 w-4" />
                       AI
                     </button>
                   </div>

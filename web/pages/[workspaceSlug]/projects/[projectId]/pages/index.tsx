@@ -22,7 +22,7 @@ import { RecentPagesList, CreateUpdatePageModal, TPagesListProps } from "compone
 import { Button } from "@plane/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { ListBulletIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
+import { Grid2x2, List } from "lucide-react";
 // types
 import { TPageViewProps } from "types";
 import type { NextPage } from "next";
@@ -122,7 +122,7 @@ const ProjectPages: NextPage = () => {
                 }`}
                 onClick={() => setViewType("list")}
               >
-                <ListBulletIcon className="h-4 w-4" />
+                <List className="h-4 w-4" />
               </button>
               <button
                 type="button"
@@ -131,7 +131,7 @@ const ProjectPages: NextPage = () => {
                 }`}
                 onClick={() => setViewType("detailed")}
               >
-                <Squares2X2Icon className="h-4 w-4" />
+                <Grid2x2 className="h-4 w-4" />
               </button>
             </div>
           </div>

@@ -14,7 +14,7 @@ import { truncateText } from "helpers/string.helper";
 import { Button } from "@plane/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Plus } from "lucide-react";
 // types
 import type { NextPage } from "next";
 
@@ -37,7 +37,7 @@ const ProjectInbox: NextPage = () => {
           <div className="flex items-center gap-2">
             <Button
               variant="primary"
-              prependIcon={<PlusIcon />}
+              prependIcon={<Plus />}
               onClick={() => {
                 const e = new KeyboardEvent("keydown", { key: "c" });
                 document.dispatchEvent(e);

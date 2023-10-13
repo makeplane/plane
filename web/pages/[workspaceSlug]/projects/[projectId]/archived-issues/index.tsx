@@ -16,7 +16,7 @@ import { IssuesFilterView, IssuesView } from "components/core";
 import { Icon } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { X } from "lucide-react";
 // types
 import type { NextPage } from "next";
 // fetch-keys
@@ -56,7 +56,7 @@ const ProjectArchivedIssues: NextPage = () => {
               <Icon iconName="archive" className="text-base" />
               <span>Archived Issues</span>
 
-              <XMarkIcon className="h-3 w-3" />
+              <X className="h-3 w-3" />
             </button>
           </div>
           <IssuesView />

@@ -10,8 +10,6 @@ import trackEventServices from "services/track_event.service";
 // ui
 import { AssigneesList, Avatar, CustomSearchSelect, Icon } from "components/ui";
 import { Tooltip } from "@plane/ui";
-// icons
-import { UserGroupIcon } from "@heroicons/react/24/outline";
 // types
 import { ICurrentUserResponse, IIssue } from "types";
 // fetch-keys

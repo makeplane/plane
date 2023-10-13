@@ -8,7 +8,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // icons
-import { ChevronDownIcon, CheckIcon } from "@heroicons/react/20/solid";
+import { Check, ChevronDown } from "lucide-react";
 // constants
 import { USER_ROLES } from "constants/workspace";
 // hooks
@@ -132,7 +132,7 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
                     className={`flex items-center justify-between gap-1 w-full rounded-md border border-custom-border-300 shadow-sm duration-300 focus:outline-none px-3 py-2 text-sm`}
                   >
                     <span className={value ? "" : "text-custom-text-400"}>{value || "Select your role..."}</span>
-                    <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+                    <ChevronDown className="h-3 w-3" />
                   </Listbox.Button>
 
                   <Transition
@@ -163,7 +163,7 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
                                 <div className="flex items-center gap-2">
                                   <span>{role.label}</span>
                                 </div>
-                                {selected && <CheckIcon className="h-4 w-4 flex-shrink-0" />}
+                                {selected && <Check className="h-4 w-4" />}
                               </div>
                             )}
                           </Listbox.Option>

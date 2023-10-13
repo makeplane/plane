@@ -25,7 +25,7 @@ import { Button, Loader } from "@plane/ui";
 import { CustomMenu, CustomSearchSelect, CustomSelect, Icon } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { X } from "lucide-react";
 // types
 import type { NextPage } from "next";
 import { IProject, IUserLite, IWorkspace } from "types";
@@ -442,7 +442,7 @@ const MembersSettings: NextPage = () => {
                             }}
                           >
                             <span className="flex items-center justify-start gap-2">
-                              <XMarkIcon className="h-4 w-4" />
+                              <X className="h-4 w-4" />
 
                               <span> {member.memberId !== user?.id ? "Remove member" : "Leave project"}</span>
                             </span>

@@ -1,10 +1,5 @@
-import {
-  CalendarDaysIcon,
-  PlayIcon,
-  Squares2X2Icon,
-  TagIcon,
-  UserGroupIcon,
-} from "@heroicons/react/24/outline";
+import { UserGroupIcon } from "components/icons";
+import { CalendarDays, Kanban, Tag, Triangle } from "lucide-react";
 
 export const SPREADSHEET_COLUMN = [
   {
@@ -16,7 +11,7 @@ export const SPREADSHEET_COLUMN = [
     propertyName: "state",
     colName: "State",
     colSize: "128px",
-    icon: Squares2X2Icon,
+    icon: Kanban,
     ascendingOrder: "state__name",
     descendingOrder: "-state__name",
   },
@@ -39,7 +34,7 @@ export const SPREADSHEET_COLUMN = [
     propertyName: "labels",
     colName: "Labels",
     colSize: "128px",
-    icon: TagIcon,
+    icon: Tag,
     ascendingOrder: "labels__name",
     descendingOrder: "-labels__name",
   },
@@ -47,7 +42,7 @@ export const SPREADSHEET_COLUMN = [
     propertyName: "start_date",
     colName: "Start Date",
     colSize: "128px",
-    icon: CalendarDaysIcon,
+    icon: CalendarDays,
     ascendingOrder: "-start_date",
     descendingOrder: "start_date",
   },
@@ -55,7 +50,7 @@ export const SPREADSHEET_COLUMN = [
     propertyName: "due_date",
     colName: "Due Date",
     colSize: "128px",
-    icon: CalendarDaysIcon,
+    icon: CalendarDays,
     ascendingOrder: "-target_date",
     descendingOrder: "target_date",
   },
@@ -63,7 +58,7 @@ export const SPREADSHEET_COLUMN = [
     propertyName: "estimate",
     colName: "Estimate",
     colSize: "128px",
-    icon: PlayIcon,
+    icon: Triangle,
     ascendingOrder: "estimate_point",
     descendingOrder: "-estimate_point",
   },
@@ -71,7 +66,7 @@ export const SPREADSHEET_COLUMN = [
     propertyName: "created_on",
     colName: "Created On",
     colSize: "144px",
-    icon: CalendarDaysIcon,
+    icon: CalendarDays,
     ascendingOrder: "-created_at",
     descendingOrder: "created_at",
   },
@@ -79,7 +74,7 @@ export const SPREADSHEET_COLUMN = [
     propertyName: "updated_on",
     colName: "Updated On",
     colSize: "144px",
-    icon: CalendarDaysIcon,
+    icon: CalendarDays,
     ascendingOrder: "-updated_at",
     descendingOrder: "updated_at",
   },

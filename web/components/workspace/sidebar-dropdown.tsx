@@ -17,7 +17,7 @@ import authenticationService from "services/authentication.service";
 import { Avatar, Icon } from "components/ui";
 import { Loader } from "@plane/ui";
 // icons
-import { CheckIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { Check, Plus } from "lucide-react";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
@@ -178,7 +178,7 @@ export const WorkspaceSidebarDropdown = () => {
                               </h5>
                             </div>
                             <span className="p-1">
-                              <CheckIcon
+                              <Check
                                 className={`h-3 w-3.5 text-custom-sidebar-text-100 ${
                                   workspace.id === activeWorkspace?.id ? "opacity-100" : "opacity-0"
                                 }`}
@@ -199,7 +199,7 @@ export const WorkspaceSidebarDropdown = () => {
                     }}
                     className="flex w-full items-center gap-2 px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
                   >
-                    <PlusIcon className="h-4 w-4" />
+                    <Plus className="h-4 w-4" />
                     Create Workspace
                   </Menu.Item>
                 </div>

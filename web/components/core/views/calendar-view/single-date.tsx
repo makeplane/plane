@@ -10,7 +10,7 @@ import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { SingleCalendarIssue } from "./single-issue";
 import { CalendarInlineCreateIssueForm } from "./inline-create-issue-form";
 // icons
-import { PlusSmallIcon } from "@heroicons/react/24/outline";
+import { Plus } from "lucide-react";
 // helper
 import { formatDate } from "helpers/calendar.helper";
 // types
@@ -50,13 +50,7 @@ export const SingleCalendarDate: React.FC<Props> = (props) => {
           ref={provided.innerRef}
           {...provided.droppableProps}
           className={`group relative flex min-h-[150px] flex-col gap-1.5 border-t border-custom-border-200 p-2.5 text-left text-sm font-medium hover:bg-custom-background-90 ${
-            showWeekEnds
-              ? (index + 1) % 7 === 0
-                ? ""
-                : "border-r"
-              : (index + 1) % 5 === 0
-              ? ""
-              : "border-r"
+            showWeekEnds ? ((index + 1) % 7 === 0 ? "" : "border-r") : (index + 1) % 5 === 0 ? "" : "border-r"
           }`}
         >
           <>
@@ -112,7 +106,7 @@ export const SingleCalendarDate: React.FC<Props> = (props) => {
                 }}
                 className="flex items-center justify-center gap-1 text-center"
               >
-                <PlusSmallIcon className="h-4 w-4 text-custom-text-200" />
+                <Plus className="h-4 w-4 text-custom-text-200" />
                 Add issue
               </button>
             </div>

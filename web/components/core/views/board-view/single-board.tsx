@@ -11,7 +11,7 @@ import { BoardHeader, SingleBoardIssue, BoardInlineCreateIssueForm } from "compo
 // ui
 import { CustomMenu } from "components/ui";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Plus } from "lucide-react";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
@@ -164,9 +164,7 @@ export const SingleBoard: React.FC<Props> = (props) => {
               )}
               <div
                 id={`board-list-${groupTitle}`}
-                className={`pt-3 ${
-                  hasMinimumNumberOfCards ? "overflow-hidden overflow-y-scroll" : ""
-                } `}
+                className={`pt-3 ${hasMinimumNumberOfCards ? "overflow-hidden overflow-y-scroll" : ""} `}
               >
                 {groupedIssues?.[groupTitle].map((issue, index) => (
                   <Draggable
@@ -189,20 +187,15 @@ export const SingleBoard: React.FC<Props> = (props) => {
                         makeIssueCopy={() => handleIssueAction(issue, "copy")}
                         handleDeleteIssue={() => handleIssueAction(issue, "delete")}
                         handleDraftIssueEdit={
-                          handleDraftIssueAction
-                            ? () => handleDraftIssueAction(issue, "edit")
-                            : undefined
+                          handleDraftIssueAction ? () => handleDraftIssueAction(issue, "edit") : undefined
                         }
                         handleDraftIssueDelete={() =>
-                          handleDraftIssueAction
-                            ? handleDraftIssueAction(issue, "delete")
-                            : undefined
+                          handleDraftIssueAction ? handleDraftIssueAction(issue, "delete") : undefined
                         }
                         handleTrashBox={handleTrashBox}
                         handleMyIssueOpen={handleMyIssueOpen}
                         removeIssue={() => {
-                          if (removeIssue && issue.bridge_id)
-                            removeIssue(issue.bridge_id, issue.id);
+                          if (removeIssue && issue.bridge_id) removeIssue(issue.bridge_id, issue.id);
                         }}
                         disableUserActions={disableUserActions}
                         user={user}
@@ -227,9 +220,7 @@ export const SingleBoard: React.FC<Props> = (props) => {
                   prePopulatedData={{
                     ...(cycleId && { cycle: cycleId.toString() }),
                     ...(moduleId && { module: moduleId.toString() }),
-                    [displayFilters?.group_by! === "labels"
-                      ? "labels_list"
-                      : displayFilters?.group_by!]:
+                    [displayFilters?.group_by! === "labels" ? "labels_list" : displayFilters?.group_by!]:
                       displayFilters?.group_by === "labels" ? [groupTitle] : groupTitle,
                   }}
                 />
@@ -247,7 +238,7 @@ export const SingleBoard: React.FC<Props> = (props) => {
                             else onCreateClick();
                           }}
                         >
-                          <PlusIcon className="h-4 w-4" />
+                          <Plus className="h-4 w-4" />
                           Add Issue
                         </button>
                       )
@@ -259,7 +250,7 @@ export const SingleBoard: React.FC<Props> = (props) => {
                               type="button"
                               className="flex items-center gap-2 font-medium text-custom-primary outline-none whitespace-nowrap"
                             >
-                              <PlusIcon className="h-4 w-4" />
+                              <Plus className="h-4 w-4" />
                               Add Issue
                             </button>
                           }

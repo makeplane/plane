@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // icons
-import { ArrowLeftIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
+import { DiceIcon } from "@plane/ui";
 // services
 import modulesService from "services/modules.service";
 // hooks
@@ -106,7 +106,7 @@ const SingleModule: React.FC = () => {
           <CustomMenu
             label={
               <>
-                <RectangleGroupIcon className="h-3 w-3" />
+                <DiceIcon className="h-3 w-3" />
                 {moduleDetails?.name && truncateText(moduleDetails.name, 40)}
               </>
             }

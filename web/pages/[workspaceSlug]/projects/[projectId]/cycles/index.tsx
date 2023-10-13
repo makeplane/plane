@@ -14,7 +14,7 @@ import { Button } from "@plane/ui";
 import { EmptyState, Icon } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Plus } from "lucide-react";
 // images
 import emptyCycle from "public/empty-state/cycle.svg";
 // types
@@ -84,7 +84,7 @@ const ProjectCyclesPage: NextPage = observer(() => {
       right={
         <Button
           variant="primary"
-          prependIcon={<PlusIcon />}
+          prependIcon={<Plus />}
           onClick={() => {
             const e = new KeyboardEvent("keydown", { key: "q" });
             document.dispatchEvent(e);
@@ -107,7 +107,7 @@ const ProjectCyclesPage: NextPage = observer(() => {
             description="Cycle is a custom time period in which a team works to complete items on their backlog."
             image={emptyCycle}
             primaryButton={{
-              icon: <PlusIcon className="h-4 w-4" />,
+              icon: <Plus className="h-4 w-4" />,
               text: "New Cycle",
               onClick: () => {
                 const e = new KeyboardEvent("keydown", {

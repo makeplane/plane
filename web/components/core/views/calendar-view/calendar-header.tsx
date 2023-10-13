@@ -6,7 +6,7 @@ import { Popover, Transition } from "@headlessui/react";
 import { CustomMenu } from "components/ui";
 import { ToggleSwitch } from "@plane/ui";
 // icons
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 // helpers
 import { formatDate, isSameMonth, isSameYear, updateDateWithMonth, updateDateWithYear } from "helpers/calendar.helper";
 // constants
@@ -86,7 +86,7 @@ export const CalendarHeader: React.FC<Props> = ({ currentDate, setCurrentDate, s
             setCurrentDate(previousMonthFirstDate);
           }}
         >
-          <ChevronLeftIcon className="h-4 w-4" />
+          <ChevronLeft className="h-4 w-4" />
         </button>
         <button
           className="cursor-pointer"
@@ -100,7 +100,7 @@ export const CalendarHeader: React.FC<Props> = ({ currentDate, setCurrentDate, s
             setCurrentDate(nextMonthFirstDate);
           }}
         >
-          <ChevronRightIcon className="h-4 w-4" />
+          <ChevronRight className="h-4 w-4" />
         </button>
       </div>
     </div>
@@ -117,7 +117,7 @@ export const CalendarHeader: React.FC<Props> = ({ currentDate, setCurrentDate, s
         customButton={
           <div className="group flex cursor-pointer items-center gap-2 rounded-md border border-custom-border-200 px-3 py-1 text-sm hover:bg-custom-background-80 hover:text-custom-text-100 focus:outline-none">
             Options
-            <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+            <ChevronDown className="h-3 w-3" aria-hidden="true" />
           </div>
         }
       >

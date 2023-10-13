@@ -2,7 +2,6 @@ import { FC, useEffect, useState } from "react";
 // next
 import { useRouter } from "next/router";
 // icons
-import { ArrowsPointingInIcon, ArrowsPointingOutIcon } from "@heroicons/react/20/solid";
 // components
 import { GanttChartBlocks } from "components/gantt-chart";
 import { GanttSidebar } from "../sidebar";
@@ -14,7 +13,7 @@ import { MonthChartView } from "./month";
 // import { QuarterChartView } from "./quarter";
 // import { YearChartView } from "./year";
 // icons
-import { PlusIcon } from "lucide-react";
+import { Expand, PlusIcon, Shrink } from "lucide-react";
 // views
 import {
   // generateHourChart,
@@ -74,8 +73,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   // blocks state management starts
   const [chartBlocks, setChartBlocks] = useState<IGanttBlock[] | null>(null);
 
-  const { currentView, currentViewData, renderView, dispatch, allViews, updateScrollLeft } =
-    useChart();
+  const { currentView, currentViewData, renderView, dispatch, allViews, updateScrollLeft } = useChart();
 
   const router = useRouter();
   const { cycleId, moduleId } = router.query;
@@ -92,8 +90,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
       : [];
 
   useEffect(() => {
-    if (currentViewData && blocks)
-      setChartBlocks(() => renderBlockStructure(currentViewData, blocks));
+    if (currentViewData && blocks) setChartBlocks(() => renderBlockStructure(currentViewData, blocks));
   }, [currentViewData, blocks]);
 
   // blocks state management ends
@@ -115,8 +112,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
     // if (view === "day") currentRender = generateDayChart(selectedCurrentViewData, side);
     // if (view === "week") currentRender = generateWeekChart(selectedCurrentViewData, side);
     // if (view === "bi_week") currentRender = generateBiWeekChart(selectedCurrentViewData, side);
-    if (selectedCurrentView === "month")
-      currentRender = generateMonthChart(selectedCurrentViewData, side);
+    if (selectedCurrentView === "month") currentRender = generateMonthChart(selectedCurrentViewData, side);
     // if (view === "quarter") currentRender = generateQuarterChart(selectedCurrentViewData, side);
     // if (selectedCurrentView === "year")
     //   currentRender = generateYearChart(selectedCurrentViewData, side);
@@ -155,10 +151,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
         });
         setItemsContainerWidth(currentRender.scrollWidth);
         setTimeout(() => {
-          handleScrollToCurrentSelectedDate(
-            currentRender.state,
-            currentRender.state.data.currentDate
-          );
+          handleScrollToCurrentSelectedDate(currentRender.state, currentRender.state.data.currentDate);
         }, 50);
       }
     }
@@ -202,8 +195,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
     // if (currentView === "year")
     //   daysDifference = getNumberOfDaysBetweenTwoDatesInYear(currentState.data.startDate, date);
 
-    scrollWidth =
-      daysDifference * currentState.data.width - (clientVisibleWidth / 2 - currentState.data.width);
+    scrollWidth = daysDifference * currentState.data.width - (clientVisibleWidth / 2 - currentState.data.width);
 
     scrollContainer.scrollLeft = scrollWidth;
   };
@@ -218,22 +210,17 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
 
     updateScrollLeft(currentScrollPosition);
 
-    const approxRangeLeft: number =
-      scrollWidth >= clientVisibleWidth + 1000 ? 1000 : scrollWidth - clientVisibleWidth;
+    const approxRangeLeft: number = scrollWidth >= clientVisibleWidth + 1000 ? 1000 : scrollWidth - clientVisibleWidth;
     const approxRangeRight: number = scrollWidth - (approxRangeLeft + clientVisibleWidth);
 
-    if (currentScrollPosition >= approxRangeRight)
-      updateCurrentViewRenderPayload("right", currentView);
-    if (currentScrollPosition <= approxRangeLeft)
-      updateCurrentViewRenderPayload("left", currentView);
+    if (currentScrollPosition >= approxRangeRight) updateCurrentViewRenderPayload("right", currentView);
+    if (currentScrollPosition <= approxRangeLeft) updateCurrentViewRenderPayload("left", currentView);
   };
 
   return (
     <div
       className={`${
-        fullScreenMode
-          ? `fixed top-0 bottom-0 left-0 right-0 z-[999999] bg-custom-background-100`
-          : `relative`
+        fullScreenMode ? `fixed top-0 bottom-0 left-0 right-0 z-[999999] bg-custom-background-100` : `relative`
       } ${
         border ? `border border-custom-border-200` : ``
       } flex h-full flex-col rounded-sm select-none bg-custom-background-100 shadow`}
@@ -266,9 +253,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
               <div
                 key={_chatView?.key}
                 className={`cursor-pointer rounded-sm p-1 px-2 text-xs ${
-                  currentView === _chatView?.key
-                    ? `bg-custom-background-80`
-                    : `hover:bg-custom-background-90`
+                  currentView === _chatView?.key ? `bg-custom-background-80` : `hover:bg-custom-background-90`
                 }`}
                 onClick={() => handleChartView(_chatView?.key)}
               >
@@ -290,11 +275,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
           className="transition-all border border-custom-border-200 p-1 flex justify-center items-center cursor-pointer rounded-sm hover:bg-custom-background-80"
           onClick={() => setFullScreenMode((prevData) => !prevData)}
         >
-          {fullScreenMode ? (
-            <ArrowsPointingInIcon className="h-4 w-4" />
-          ) : (
-            <ArrowsPointingOutIcon className="h-4 w-4" />
-          )}
+          {fullScreenMode ? <Shrink className="h-4 w-4" /> : <Expand className="h-4 w-4" />}
         </div>
       </div>
 
@@ -305,10 +286,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
           bottomSpacing ? "mb-8" : ""
         }`}
       >
-        <div
-          id="gantt-sidebar"
-          className="h-full w-1/4 flex flex-col border-r border-custom-border-200"
-        >
+        <div id="gantt-sidebar" className="h-full w-1/4 flex flex-col border-r border-custom-border-200">
           <div className="h-[60px] border-b border-custom-border-200 box-border flex-shrink-0 flex items-end justify-between gap-2 text-sm text-custom-text-300 font-medium pb-2 pl-10 pr-4">
             <h6>{title}</h6>
             <h6>Duration</h6>

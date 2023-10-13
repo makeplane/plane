@@ -8,7 +8,7 @@ import useUserAuth from "hooks/use-user-auth";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Plus } from "lucide-react";
 import { CyclesIcon } from "components/icons";
 // services
 import cycleServices from "services/cycles.service";
@@ -24,12 +24,7 @@ export type IssueCycleSelectProps = {
   multiple?: boolean;
 };
 
-export const CycleSelect: React.FC<IssueCycleSelectProps> = ({
-  projectId,
-  value,
-  onChange,
-  multiple = false,
-}) => {
+export const CycleSelect: React.FC<IssueCycleSelectProps> = ({ projectId, value, onChange, multiple = false }) => {
   // states
   const [isCycleModalActive, setCycleModalActive] = useState(false);
 
@@ -57,11 +52,7 @@ export const CycleSelect: React.FC<IssueCycleSelectProps> = ({
 
   return (
     <>
-      <CreateUpdateCycleModal
-        isOpen={isCycleModalActive}
-        handleClose={closeCycleModal}
-        user={user}
-      />
+      <CreateUpdateCycleModal isOpen={isCycleModalActive} handleClose={closeCycleModal} user={user} />
       <Listbox as="div" className="relative" value={value} onChange={onChange} multiple={multiple}>
         {({ open }) => (
           <>
@@ -92,10 +83,7 @@ export const CycleSelect: React.FC<IssueCycleSelectProps> = ({
                           key={option.value}
                           className={({ selected, active }) =>
                             `${
-                              selected ||
-                              (Array.isArray(value)
-                                ? value.includes(option.value)
-                                : value === option.value)
+                              selected || (Array.isArray(value) ? value.includes(option.value) : value === option.value)
                                 ? "bg-indigo-50 font-medium"
                                 : ""
                             } ${
@@ -104,9 +92,7 @@ export const CycleSelect: React.FC<IssueCycleSelectProps> = ({
                           }
                           value={option.value}
                         >
-                          <span className={` flex items-center gap-2 truncate`}>
-                            {option.display}
-                          </span>
+                          <span className={` flex items-center gap-2 truncate`}>{option.display}</span>
                         </Listbox.Option>
                       ))
                     ) : (
@@ -120,7 +106,7 @@ export const CycleSelect: React.FC<IssueCycleSelectProps> = ({
                     className="relative w-full flex select-none items-center gap-x-2 p-2 text-gray-400 hover:bg-indigo-50 hover:text-custom-text-100"
                     onClick={openCycleModal}
                   >
-                    <PlusIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />
+                    <Plus className="h-4 w-4 text-gray-400" aria-hidden="true" />
                     <span>Create cycle</span>
                   </button>
                 </div>

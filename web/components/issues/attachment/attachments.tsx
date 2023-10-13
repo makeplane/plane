@@ -9,7 +9,7 @@ import useSWR from "swr";
 import { Tooltip } from "@plane/ui";
 import { DeleteAttachmentModal } from "./delete-attachment-modal";
 // icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { X } from "lucide-react";
 import { ExclamationIcon, getFileIcon } from "components/icons";
 // services
 import issuesService from "services/issue.service";
@@ -93,7 +93,7 @@ export const IssueAttachments = () => {
                 setAttachmentDeleteModal(true);
               }}
             >
-              <XMarkIcon className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" />
+              <X className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" />
             </button>
           </div>
         ))}

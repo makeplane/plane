@@ -16,7 +16,7 @@ import useDebounce from "hooks/use-debounce";
 import { Button, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
 import { LaunchOutlined } from "@mui/icons-material";
-import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Search, X } from "lucide-react";
 import { LayerDiagonalIcon } from "components/icons";
 // types
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "types";
@@ -151,10 +151,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                   }}
                 >
                   <div className="relative m-1">
-                    <MagnifyingGlassIcon
-                      className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-100 text-opacity-40"
-                      aria-hidden="true"
-                    />
+                    <Search className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-100 text-opacity-40" />
                     <Combobox.Input
                       className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none focus:ring-0 text-sm placeholder:text-custom-text-400"
                       placeholder="Type to search..."
@@ -177,7 +174,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                               className="group p-1"
                               onClick={() => setSelectedIssues((prevData) => prevData.filter((i) => i.id !== issue.id))}
                             >
-                              <XMarkIcon className="h-3 w-3 text-custom-text-200 group-hover:text-custom-text-100" />
+                              <X className="h-3 w-3 text-custom-text-200 group-hover:text-custom-text-100" />
                             </button>
                           </div>
                         ))}

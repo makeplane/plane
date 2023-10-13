@@ -9,8 +9,9 @@ import stateService from "services/project_state.service";
 // ui
 import { CustomSearchSelect } from "components/ui";
 // icons
-import { PlusIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
+import { DoubleCircleIcon } from "@plane/ui";
 import { StateGroupIcon } from "components/icons";
+import { Plus } from "lucide-react";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // fetch keys
@@ -60,7 +61,7 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
           ) : currentDefaultState ? (
             <StateGroupIcon stateGroup={currentDefaultState.group} color={currentDefaultState.color} />
           ) : (
-            <Squares2X2Icon className="h-3.5 w-3.5 text-custom-text-200" />
+            <DoubleCircleIcon className="h-3.5 w-3.5 text-custom-text-200" />
           )}
           {selectedOption?.name
             ? selectedOption.name
@@ -73,7 +74,7 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
           className="flex w-full select-none items-center gap-2 rounded px-1 py-1.5 text-xs text-custom-text-200 hover:bg-custom-background-80"
           onClick={() => setIsOpen(true)}
         >
-          <PlusIcon className="h-4 w-4" aria-hidden="true" />
+          <Plus className="h-4 w-4" aria-hidden="true" />
           Create New State
         </button>
       }

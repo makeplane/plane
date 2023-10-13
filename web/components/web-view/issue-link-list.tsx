@@ -12,7 +12,6 @@ import { mutate } from "swr";
 import issuesService from "services/issue.service";
 
 // icons
-// import { LinkIcon, PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Link as LinkIcon, Plus, Pencil, X } from "lucide-react";
 
 // components

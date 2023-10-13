@@ -18,7 +18,7 @@ import { Button, Loader, Tooltip } from "@plane/ui";
 import { EmptyState, Icon } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Plus } from "lucide-react";
 // images
 import emptyModule from "public/empty-state/module.svg";
 // types
@@ -104,7 +104,7 @@ const ProjectModules: NextPage = () => {
           ))}
           <Button
             variant="primary"
-            prependIcon={<PlusIcon />}
+            prependIcon={<Plus />}
             onClick={() => {
               const e = new KeyboardEvent("keydown", { key: "m" });
               document.dispatchEvent(e);
@@ -148,7 +148,7 @@ const ProjectModules: NextPage = () => {
             description="Modules are smaller, focused projects that help you group and organize issues."
             image={emptyModule}
             primaryButton={{
-              icon: <PlusIcon className="h-4 w-4" />,
+              icon: <Plus className="h-4 w-4" />,
               text: "New Module",
               onClick: () => {
                 const e = new KeyboardEvent("keydown", {

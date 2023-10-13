@@ -12,7 +12,7 @@ import useProjects from "hooks/use-projects";
 // component
 import { Avatar, Icon } from "components/ui";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Plus } from "lucide-react";
 import { PriorityIcon, StateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
@@ -205,7 +205,7 @@ export const BoardHeader: React.FC<Props> = ({
             className="grid h-7 w-7 place-items-center rounded p-1 text-custom-text-200 outline-none duration-300 hover:bg-custom-background-80"
             onClick={addIssueToGroup}
           >
-            <PlusIcon className="h-4 w-4" />
+            <Plus className="h-4 w-4" />
           </button>
         )}
       </div>

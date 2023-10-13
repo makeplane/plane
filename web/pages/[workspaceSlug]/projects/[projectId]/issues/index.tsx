@@ -20,7 +20,7 @@ import { ProjectIssuesHeader } from "components/headers";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Plus } from "lucide-react";
 // types
 import type { NextPage } from "next";
 // fetch-keys
@@ -115,7 +115,7 @@ const ProjectIssues: NextPage = () => {
         //       document.dispatchEvent(e);
         //     }}
         //   >
-        //     <PlusIcon className="h-4 w-4" />
+        //     <Plus className="h-4 w-4" />
         //     Add Issue
         //   </PrimaryButton>
         // </div>
