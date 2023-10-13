@@ -9,7 +9,7 @@ import userService from "services/user.service";
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
 import { ActivityIcon, ActivityMessage } from "components/core";
-import { TipTapEditor } from "components/tiptap";
+import { RichReadOnlyEditor } from "@plane/rich-text-editor";
 // icons
 import { ArrowTopRightOnSquareIcon, ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
 // ui
@@ -96,8 +96,7 @@ const ProfileActivity = () => {
                               </p>
                             </div>
                             <div className="issue-comments-section p-0">
-                              <TipTapEditor
-                                workspaceSlug={workspaceSlug as string}
+                              <RichReadOnlyEditor
                                 value={
                                   activityItem?.new_value !== ""
                                     ? activityItem.new_value
@@ -106,7 +105,6 @@ const ProfileActivity = () => {
                                 customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
                                 noBorder
                                 borderOnFocus={false}
-                                editable={false}
                               />
                             </div>
                           </div>
@@ -117,11 +115,11 @@ const ProfileActivity = () => {
 
                   const message =
                     activityItem.verb === "created" &&
-                    activityItem.field !== "cycles" &&
-                    activityItem.field !== "modules" &&
-                    activityItem.field !== "attachment" &&
-                    activityItem.field !== "link" &&
-                    activityItem.field !== "estimate" ? (
+                      activityItem.field !== "cycles" &&
+                      activityItem.field !== "modules" &&
+                      activityItem.field !== "attachment" &&
+                      activityItem.field !== "link" &&
+                      activityItem.field !== "estimate" ? (
                       <span className="text-custom-text-200">
                         created{" "}
                         <Link
@@ -180,7 +178,7 @@ const ProfileActivity = () => {
                               <div className="min-w-0 flex-1 py-4 border-b border-custom-border-200">
                                 <div className="text-sm text-custom-text-200 break-words">
                                   {activityItem.field === "archived_at" &&
-                                  activityItem.new_value !== "restore" ? (
+                                    activityItem.new_value !== "restore" ? (
                                     <span className="text-gray font-medium">Plane</span>
                                   ) : activityItem.actor_detail.is_bot ? (
                                     <span className="text-gray font-medium">

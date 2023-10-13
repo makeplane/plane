@@ -1,4 +1,4 @@
-import React, { useEffect, useState, forwardRef, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 // react-hook-form
 import { useForm } from "react-hook-form";
@@ -10,7 +10,8 @@ import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // ui
 import { Input, PrimaryButton, SecondaryButton } from "components/ui";
-import { TipTapEditor } from "components/tiptap";
+// components
+import { RichReadOnlyEditor, RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
 // types
 import { IIssue, IPageBlock } from "types";
 
@@ -133,20 +134,17 @@ export const GptAssistantModal: React.FC<Props> = ({
 
   return (
     <div
-      className={`absolute ${inset} z-20 w-full space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow ${
-        isOpen ? "block" : "hidden"
-      }`}
+      className={`absolute ${inset} z-20 w-full space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow ${isOpen ? "block" : "hidden"
+        }`}
     >
       {((content && content !== "") || (htmlContent && htmlContent !== "<p></p>")) && (
         <div className="text-sm">
           Content:
-          <TipTapEditor
-            workspaceSlug={workspaceSlug as string}
+          <RichReadOnlyEditorWithRef
             value={htmlContent ?? `<p>${content}</p>`}
             customClassName="-m-3"
             noBorder
             borderOnFocus={false}
-            editable={false}
             ref={editorRef}
           />
         </div>
@@ -154,13 +152,11 @@ export const GptAssistantModal: React.FC<Props> = ({
       {response !== "" && (
         <div className="page-block-section text-sm">
           Response:
-          <TipTapEditor
-            workspaceSlug={workspaceSlug as string}
+          <RichReadOnlyEditor
             value={`<p>${response}</p>`}
             customClassName="-mx-3 -my-3"
             noBorder
             borderOnFocus={false}
-            editable={false}
           />
         </div>
       )}
@@ -174,11 +170,10 @@ export const GptAssistantModal: React.FC<Props> = ({
         type="text"
         name="task"
         register={register}
-        placeholder={`${
-          content && content !== ""
-            ? "Tell AI what action to perform on this content..."
-            : "Ask AI anything..."
-        }`}
+        placeholder={`${content && content !== ""
+          ? "Tell AI what action to perform on this content..."
+          : "Ask AI anything..."
+          }`}
         autoComplete="off"
       />
       <div className={`flex gap-2 ${response === "" ? "justify-end" : "justify-between"}`}>
@@ -214,8 +209,8 @@ export const GptAssistantModal: React.FC<Props> = ({
             {isSubmitting
               ? "Generating response..."
               : response === ""
-              ? "Generate response"
-              : "Generate again"}
+                ? "Generate response"
+                : "Generate again"}
           </PrimaryButton>
         </div>
       </div>

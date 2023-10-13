@@ -11,12 +11,14 @@ import aiService from "services/ai.service";
 import useToast from "hooks/use-toast";
 // components
 import { GptAssistantModal } from "components/core";
-import { TipTapEditor } from "components/tiptap";
+import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 import { PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // types
 import { ICurrentUserResponse, IPageBlock } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
+// services
+import fileService from "services/file.service";
 
 type Props = {
   handleClose: () => void;
@@ -279,8 +281,9 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
               render={({ field: { value, onChange } }) => {
                 if (!data)
                   return (
-                    <TipTapEditor
-                      workspaceSlug={workspaceSlug as string}
+                    <RichTextEditorWithRef
+                      uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                      deleteFile={fileService.deleteImage}
                       ref={editorRef}
                       value={"<p></p>"}
                       debouncedUpdatesEnabled={false}
@@ -299,8 +302,9 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
                   );
 
                 return (
-                  <TipTapEditor
-                    workspaceSlug={workspaceSlug as string}
+                  <RichTextEditorWithRef
+                    uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                    deleteFile={fileService.deleteImage}
                     ref={editorRef}
                     value={
                       value && value !== "" && Object.keys(value).length > 0

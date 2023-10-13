@@ -7,9 +7,10 @@ import useReloadConfirmations from "hooks/use-reload-confirmation";
 import { useDebouncedCallback } from "use-debounce";
 // components
 import { TextArea } from "components/ui";
-import { TipTapEditor } from "components/tiptap";
 // types
 import { IIssue } from "types";
+import { RichTextEditor } from "@plane/rich-text-editor";
+import fileService from "services/file.service";
 
 export interface IssueDescriptionFormValues {
   name: string;
@@ -84,10 +85,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
   }, [issue, reset]);
 
   const debouncedTitleSave = useDebouncedCallback(async () => {
-    setTimeout(async () => {
-      handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
-    }, 500);
-  }, 1000);
+    handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
+  }, 1500);
 
   return (
     <div className="relative">
@@ -99,7 +98,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
             placeholder="Enter issue name"
             register={register}
             onFocus={() => setCharacterLimit(true)}
-            onChange={(e) => {
+            onChange={() => {
               setCharacterLimit(false);
               setIsSubmitting("submitting");
               debouncedTitleSave();
@@ -115,9 +114,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
         {characterLimit && isAllowed && (
           <div className="pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-custom-background-100 text-custom-text-200 p-0.5 text-xs">
             <span
-              className={`${
-                watch("name").length === 0 || watch("name").length > 255 ? "text-red-500" : ""
-              }`}
+              className={`${watch("name").length === 0 || watch("name").length > 255 ? "text-red-500" : ""
+                }`}
             >
               {watch("name").length}
             </span>
@@ -130,43 +128,28 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
         <Controller
           name="description_html"
           control={control}
-          render={({ field: { value, onChange } }) => {
-            if (!value) return <></>;
-
-            return (
-              <TipTapEditor
-                value={
-                  !value ||
-                  value === "" ||
-                  (typeof value === "object" && Object.keys(value).length === 0)
-                    ? "<p></p>"
-                    : value
-                }
-                workspaceSlug={workspaceSlug}
-                debouncedUpdatesEnabled={true}
-                setShouldShowAlert={setShowAlert}
-                setIsSubmitting={setIsSubmitting}
-                customClassName={
-                  isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200"
-                }
-                noBorder={!isAllowed}
-                onChange={(description: Object, description_html: string) => {
-                  setShowAlert(true);
-                  setIsSubmitting("submitting");
-                  onChange(description_html);
-                  handleSubmit(handleDescriptionFormSubmit)().finally(() =>
-                    setIsSubmitting("submitted")
-                  );
-                }}
-                editable={isAllowed}
-              />
-            );
-          }}
+          render={({ field: { value, onChange } }) => (
+              <RichTextEditor
+                  uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
+                  deleteFile={fileService.deleteImage}
+                  value={value}
+                  debouncedUpdatesEnabled={true}
+                  setShouldShowAlert={setShowAlert}
+                  setIsSubmitting={setIsSubmitting}
+                  customClassName={isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200"}
+                  noBorder={!isAllowed}
+                  onChange={(description: Object, description_html: string) => {
+                      setShowAlert(true);
+                      setIsSubmitting("submitting");
+                      onChange(description_html);
+                      handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted")
+                      );
+                  } } />
+          )}
         />
         <div
-          className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${
-            isSubmitting === "saved" ? "fadeOut" : "fadeIn"
-          }`}
+          className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${isSubmitting === "saved" ? "fadeOut" : "fadeIn"
+            }`}
         >
           {isSubmitting === "submitting" ? "Saving..." : "Saved"}
         </div>

@@ -14,7 +14,9 @@ import { ProgressBar } from "./progressbar";
 import { CustomMenu } from "components/ui";
 // hooks
 import { useProjectMyMembership } from "contexts/project-member.context";
+
 import useToast from "hooks/use-toast";
+
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
@@ -48,6 +50,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
   };
 
   const { memberRole } = useProjectMyMembership();
+
   const { setToastAlert } = useToast();
 
   const { data: issues, isLoading } = useSWR(
@@ -119,6 +122,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
     const payload = {
       sub_issue_ids: data.map((i) => i.id),
     };
+
     await issuesService.addSubIssues(workspaceSlug, projectId, issueId, payload).finally(() => {
       if (issueId) mutate(SUB_ISSUES(issueId));
     });
