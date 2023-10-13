@@ -1,5 +1,5 @@
 // services
-import APIService from "services/api.service";
+import { APIService } from "services/api.service";
 
 const trackEvent = process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
 
@@ -111,7 +111,7 @@ type ReactionEventType =
   | "ISSUE_REACTION_DELETE"
   | "ISSUE_COMMENT_REACTION_DELETE";
 
-class TrackEventService extends APIService {
+export class TrackEventService extends APIService {
   constructor() {
     super("/");
   }
@@ -848,5 +848,3 @@ class TrackEventService extends APIService {
     });
   }
 }
-
-export default TrackEventService;

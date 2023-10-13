@@ -9,7 +9,7 @@ import { PhotoFilterOutlined } from "@mui/icons-material";
 //components
 import { CustomMenu } from "components/ui";
 // services
-import viewsService from "services/views.service";
+import viewsService from "services/view.service";
 // types
 import { IView } from "types";
 // fetch keys
@@ -70,15 +70,13 @@ export const SingleViewItem: React.FC<Props> = ({ view, handleEditView, handleDe
       false
     );
 
-    viewsService
-      .removeViewFromFavorites(workspaceSlug as string, projectId as string, view.id)
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't remove the view from favorites. Please try again.",
-        });
+    viewsService.removeViewFromFavorites(workspaceSlug as string, projectId as string, view.id).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Couldn't remove the view from favorites. Please try again.",
       });
+    });
   };
 
   const viewRedirectionUrl = `/${workspaceSlug}/projects/${projectId}/views/${view.id}`;
@@ -95,12 +93,8 @@ export const SingleViewItem: React.FC<Props> = ({ view, handleEditView, handleDe
                 <PhotoFilterOutlined className="!text-base !leading-6" />
               </div>
               <div className="flex flex-col">
-                <p className="truncate text-sm leading-4 font-medium">
-                  {truncateText(view.name, 75)}
-                </p>
-                {view?.description && (
-                  <p className="text-xs text-custom-text-200">{view.description}</p>
-                )}
+                <p className="truncate text-sm leading-4 font-medium">{truncateText(view.name, 75)}</p>
+                {view?.description && <p className="text-xs text-custom-text-200">{view.description}</p>}
               </div>
             </div>
             <div className="ml-2 flex flex-shrink-0">

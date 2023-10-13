@@ -1,5 +1,5 @@
-export { default as ProjectService } from "./project.service";
-export { default as ProjectEstimateService } from "./project_estimates.service";
-export { default as ProjectPublishService } from "./project_publish.service";
-export { default as ProjectStateService } from "./project_state.service";
-export { default as ProjectExportService } from "./project_export.service";
+export * from "./project.service";
+export * from "./project_estimate.service";
+export * from "./project_publish.service";
+export * from "./project_state.service";
+export * from "./project_export.service";

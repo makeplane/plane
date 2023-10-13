@@ -4,7 +4,7 @@ import useSWR from "swr";
 
 // services
 import projectService from "services/project.service/project.service";
-import viewsService from "services/views.service";
+import viewsService from "services/view.service";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components

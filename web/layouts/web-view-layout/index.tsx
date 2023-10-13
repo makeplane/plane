@@ -11,11 +11,7 @@ import { CURRENT_USER } from "constants/fetch-keys";
 import { AlertCircle } from "lucide-react";
 
 // ui
-<<<<<<< HEAD
 import { Spinner } from "@plane/ui";
-=======
-import { Spinner } from "components/web-view";
->>>>>>> c6e021d41fcf8186d9a728dff3347228d1cdb477
 
 type Props = {
   children: React.ReactNode;

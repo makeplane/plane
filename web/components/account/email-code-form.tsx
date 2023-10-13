@@ -3,7 +3,7 @@ import { Controller, useForm } from "react-hook-form";
 // ui
 import { Button, Input } from "@plane/ui";
 // services
-import AuthService from "services/auth.service";
+import { AuthService } from "services/auth.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useTimer from "hooks/use-timer";

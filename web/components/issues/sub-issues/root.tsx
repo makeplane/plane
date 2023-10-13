@@ -18,15 +18,15 @@ import useToast from "hooks/use-toast";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import { ICurrentUserResponse, IIssue, ISearchIssueResponse } from "types";
+import { IUser, IIssue, ISearchIssueResponse } from "types";
 // services
-import issuesService from "services/issue/issue.service";
+import { IssueService } from "services/issue";
 // fetch keys
 import { SUB_ISSUES } from "constants/fetch-keys";
 
 export interface ISubIssuesRoot {
   parentIssue: IIssue;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 }
 
 export interface ISubIssuesRootLoaders {
@@ -39,9 +39,11 @@ export interface ISubIssuesRootLoadersHandler {
   issueId: string;
 }
 
+const issueService = new IssueService();
+
 export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId, peekIssue } = router.query as {
+  const { workspaceSlug, projectId } = router.query as {
     workspaceSlug: string;
     projectId: string;
     peekIssue: string;
@@ -53,7 +55,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
   const { data: issues, isLoading } = useSWR(
     workspaceSlug && projectId && parentIssue && parentIssue?.id ? SUB_ISSUES(parentIssue?.id) : null,
     workspaceSlug && projectId && parentIssue && parentIssue?.id
-      ? () => issuesService.subIssues(workspaceSlug, projectId, parentIssue.id)
+      ? () => issueService.subIssues(workspaceSlug, projectId, parentIssue.id)
       : null
   );
 
@@ -117,14 +119,14 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
     const payload = {
       sub_issue_ids: data.map((i) => i.id),
     };
-    await issuesService.addSubIssues(workspaceSlug, projectId, issueId, payload).finally(() => {
+    await issueService.addSubIssues(workspaceSlug, projectId, issueId, payload).finally(() => {
       if (issueId) mutate(SUB_ISSUES(issueId));
     });
   };
 
   const removeIssueFromSubIssues = async (parentIssueId: string, issue: IIssue) => {
     if (!workspaceSlug || !parentIssue || !issue?.id) return;
-    issuesService
+    issueService
       .patchIssue(workspaceSlug, projectId, issue.id, { parent: null }, user)
       .then(async () => {
         if (parentIssueId) await mutate(SUB_ISSUES(parentIssueId));
@@ -239,7 +241,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
                     </>
                   }
                   buttonClassName="whitespace-nowrap"
-                  position="left"
+                  // position="left"
                   noBorder
                   noChevron
                 >
@@ -275,7 +277,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
                       </>
                     }
                     buttonClassName="whitespace-nowrap"
-                    position="left"
+                    // position="left"
                     noBorder
                     noChevron
                   >

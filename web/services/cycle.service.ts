@@ -1,6 +1,6 @@
 // services
-import APIService from "services/api.service";
-import TrackEventService from "services/track_event.service";
+import { APIService } from "services/api.service";
+import { TrackEventService } from "services/track_event.service";
 // types
 import type { CycleDateCheckData, IUser, ICycle, IIssue } from "types";
 // helpers
@@ -8,7 +8,7 @@ import { API_BASE_URL } from "helpers/common.helper";
 
 const trackEventService = new TrackEventService();
 
-class CycleService extends APIService {
+export class CycleService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -161,5 +161,3 @@ class CycleService extends APIService {
       });
   }
 }
-
-export default CycleService;

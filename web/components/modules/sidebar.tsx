@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// icons
 import {
   ArrowLongRightIcon,
   CalendarDaysIcon,
@@ -16,11 +11,10 @@ import {
   PlusIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-
 import { Disclosure, Popover, Transition } from "@headlessui/react";
 import DatePicker from "react-datepicker";
 // services
-import modulesService from "services/modules.service";
+import { ModuleService } from "services/module.service";
 // contexts
 import { useProjectMyMembership } from "contexts/project-member.context";
 // hooks
@@ -38,7 +32,7 @@ import { LinkIcon } from "@heroicons/react/20/solid";
 import { renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
 // types
-import { ICurrentUserResponse, IIssue, linkDetails, IModule, ModuleLink } from "types";
+import { IUser, IIssue, linkDetails, IModule, ModuleLink } from "types";
 // fetch-keys
 import { MODULE_DETAILS } from "constants/fetch-keys";
 // constant
@@ -56,8 +50,10 @@ type Props = {
   module?: IModule;
   isOpen: boolean;
   moduleIssues?: IIssue[];
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
+
+const moduleService = new ModuleService();
 
 export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIssues, user }) => {
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
@@ -87,7 +83,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
       false
     );
 
-    modulesService
+    moduleService
       .patchModule(workspaceSlug as string, projectId as string, moduleId as string, data, user)
       .then(() => mutate(MODULE_DETAILS(moduleId as string)))
       .catch((e) => console.log(e));
@@ -98,7 +94,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
 
     const payload = { metadata: {}, ...formData };
 
-    await modulesService
+    await moduleService
       .createModuleLink(workspaceSlug as string, projectId as string, moduleId as string, payload)
       .then(() => mutate(MODULE_DETAILS(moduleId as string)))
       .catch((err) => {
@@ -138,9 +134,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
       false
     );
 
-    await modulesService
+    await moduleService
       .updateModuleLink(workspaceSlug as string, projectId as string, module.id, linkId, payload)
-      .then((res) => {
+      .then(() => {
         mutate(MODULE_DETAILS(module.id));
       })
       .catch((err) => {
@@ -159,9 +155,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
       false
     );
 
-    await modulesService
+    await moduleService
       .deleteModuleLink(workspaceSlug as string, projectId as string, module.id, linkId)
-      .then((res) => {
+      .then(() => {
         mutate(MODULE_DETAILS(module.id));
       })
       .catch((err) => {
@@ -170,7 +166,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
   };
 
   const handleCopyText = () => {
-    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    // const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
     copyTextToClipboard(`${workspaceSlug}/projects/${projectId}/modules/${module?.id}`)
       .then(() => {
@@ -255,7 +251,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                 </div>
                 <div className="relative flex h-full w-52 items-center gap-2 text-sm">
                   <Popover className="flex h-full items-center justify-center rounded-lg">
-                    {({ open }) => (
+                    {({}) => (
                       <>
                         <Popover.Button
                           className={`group flex h-full items-center gap-2 whitespace-nowrap rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 px-2 py-1 text-xs ${
@@ -299,7 +295,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                     <ArrowLongRightIcon className="h-3 w-3 text-custom-text-200" />
                   </span>
                   <Popover className="flex h-full items-center justify-center rounded-lg">
-                    {({ open }) => (
+                    {({}) => (
                       <>
                         <Popover.Button
                           className={`group flex items-center gap-2 whitespace-nowrap rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 px-2 py-1 text-xs ${

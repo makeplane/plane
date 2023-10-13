@@ -1,14 +1,12 @@
 import React, { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
 // services
-import IssueService from "services/issue/issue.service";
+import { IssueService } from "services/issue";
 // icons
 import { Link as LinkIcon, Plus, Pencil, X } from "lucide-react";
 // components
 import { Label, WebViewModal, CreateUpdateLinkForm, DeleteConfirmation } from "components/web-view";
-
 // ui
 import { Button } from "@plane/ui";
 // fetch keys

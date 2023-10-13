@@ -1,25 +1,17 @@
 import React from "react";
-
-// next
 import { useRouter } from "next/router";
-
-// react-hook-form
 import { useForm, Controller } from "react-hook-form";
-
 // hooks
 import useProjectDetails from "hooks/use-project-details";
-
 // components
 import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
+import { Button } from "@plane/ui";
 // icons
 import { Send } from "lucide-react";
-
-// ui
-import { PrimaryButton } from "components/ui";
-
 // types
 import type { IIssueComment } from "types";
-import fileService from "services/file.service";
+// services
+import { FileService } from "services/file.service";
 
 const defaultValues: Partial<IIssueComment> = {
   access: "INTERNAL",
@@ -49,6 +41,8 @@ const commentAccess: commentAccessType[] = [
     label: "Public",
   },
 ];
+
+const fileService = new FileService();
 
 export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit }) => {
   const editorRef = React.useRef<any>(null);

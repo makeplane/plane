@@ -1,5 +1,5 @@
 // services
-import APIService from "services/api.service";
+import { APIService } from "services/api.service";
 // types
 import type {
   IUserNotification,
@@ -11,7 +11,7 @@ import type {
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 
-class UserNotificationsServices extends APIService {
+export class NotificationService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -142,7 +142,3 @@ class UserNotificationsServices extends APIService {
       });
   }
 }
-
-const userNotificationServices = new UserNotificationsServices();
-
-export default userNotificationServices;

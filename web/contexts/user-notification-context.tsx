@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import userNotificationServices from "services/notifications.service";
+import userNotificationServices from "services/notification.service";
 
 // fetch-keys
 import { UNREAD_NOTIFICATIONS_COUNT, USER_WORKSPACE_NOTIFICATIONS } from "constants/fetch-keys";
@@ -104,17 +104,12 @@ const UserNotificationContextProvider: React.FC<{
 
   const { data: notifications, mutate: notificationsMutate } = useSWR(
     workspaceSlug ? USER_WORKSPACE_NOTIFICATIONS(workspaceSlug.toString(), params) : null,
-    workspaceSlug
-      ? () => userNotificationServices.getUserNotifications(workspaceSlug.toString(), params)
-      : null
+    workspaceSlug ? () => userNotificationServices.getUserNotifications(workspaceSlug.toString(), params) : null
   );
 
   const { data: notificationCount, mutate: mutateNotificationCount } = useSWR(
     workspaceSlug ? UNREAD_NOTIFICATIONS_COUNT(workspaceSlug.toString()) : null,
-    () =>
-      workspaceSlug
-        ? userNotificationServices.getUnreadNotificationsCount(workspaceSlug.toString())
-        : null
+    () => (workspaceSlug ? userNotificationServices.getUnreadNotificationsCount(workspaceSlug.toString()) : null)
   );
 
   const handleReadMutation = (action: "read" | "unread") => {
@@ -124,11 +119,7 @@ const UserNotificationContextProvider: React.FC<{
       if (!prev) return prev;
 
       const notificationType: keyof NotificationCount =
-        selectedTab === "assigned"
-          ? "my_issues"
-          : selectedTab === "created"
-          ? "created_issues"
-          : "watching_issues";
+        selectedTab === "assigned" ? "my_issues" : selectedTab === "created" ? "created_issues" : "watching_issues";
 
       return {
         ...prev,
@@ -139,15 +130,12 @@ const UserNotificationContextProvider: React.FC<{
 
   const markNotificationReadStatus = async (notificationId: string) => {
     if (!workspaceSlug) return;
-    const isRead =
-      notifications?.find((notification) => notification.id === notificationId)?.read_at !== null;
+    const isRead = notifications?.find((notification) => notification.id === notificationId)?.read_at !== null;
 
     notificationsMutate(
       (previousNotifications: any) =>
         previousNotifications?.map((notification: any) =>
-          notification.id === notificationId
-            ? { ...notification, read_at: isRead ? null : new Date() }
-            : notification
+          notification.id === notificationId ? { ...notification, read_at: isRead ? null : new Date() } : notification
         ),
       false
     );
@@ -179,9 +167,7 @@ const UserNotificationContextProvider: React.FC<{
 
   const markNotificationArchivedStatus = async (notificationId: string) => {
     if (!workspaceSlug) return;
-    const isArchived =
-      notifications?.find((notification) => notification.id === notificationId)?.archived_at !==
-      null;
+    const isArchived = notifications?.find((notification) => notification.id === notificationId)?.archived_at !== null;
 
     if (!isArchived) {
       handleReadMutation("read");
@@ -199,8 +185,7 @@ const UserNotificationContextProvider: React.FC<{
         });
     } else {
       notificationsMutate(
-        (prev: any) =>
-          prev?.filter((prevNotification: any) => prevNotification.id !== notificationId),
+        (prev: any) => prev?.filter((prevNotification: any) => prevNotification.id !== notificationId),
         false
       );
       await userNotificationServices
@@ -218,9 +203,7 @@ const UserNotificationContextProvider: React.FC<{
   const markSnoozeNotification = async (notificationId: string, dateTime?: Date) => {
     if (!workspaceSlug) return;
 
-    const isSnoozed =
-      notifications?.find((notification) => notification.id === notificationId)?.snoozed_till !==
-      null;
+    const isSnoozed = notifications?.find((notification) => notification.id === notificationId)?.snoozed_till !== null;
 
     notificationsMutate(
       (previousNotifications: any) =>

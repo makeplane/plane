@@ -9,7 +9,7 @@ import { DropResult } from "react-beautiful-dnd";
 // services
 import { IssueService } from "services/issue";
 import { ProjectStateService } from "services/project";
-import modulesService from "services/modules.service";
+import modulesService from "services/module.service";
 import trackEventServices from "services/track_event.service";
 // hooks
 import useToast from "hooks/use-toast";

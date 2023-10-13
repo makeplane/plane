@@ -1,5 +1,5 @@
 // services
-import APIService from "services/api.service";
+import { APIService } from "services/api.service";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 
@@ -8,7 +8,7 @@ export interface ILoginTokenResponse {
   refresh_toke: string;
 }
 
-class AuthService extends APIService {
+export class AuthService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -81,5 +81,3 @@ class AuthService extends APIService {
       });
   }
 }
-
-export default AuthService;

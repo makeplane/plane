@@ -1,3 +1,3 @@
-export { default as GithubIntegrationService } from "./github.service";
-export { default as IntegrationService } from "./integration.service";
-export { default as JiraIntegrationService } from "./jira.service";
+export * from "./github.service";
+export * from "./integration.service";
+export * from "./jira.service";

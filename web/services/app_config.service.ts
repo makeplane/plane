@@ -1,5 +1,5 @@
 // services
-import APIService from "services/api.service";
+import { APIService } from "services/api.service";
 // helper
 import { API_BASE_URL } from "helpers/common.helper";
 
@@ -11,7 +11,7 @@ export interface IEnvConfig {
   magic_login: boolean;
 }
 
-class AppConfigService extends APIService {
+export class AppConfigService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -28,4 +28,3 @@ class AppConfigService extends APIService {
       });
   }
 }
-export default AppConfigService;

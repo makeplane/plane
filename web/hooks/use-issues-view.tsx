@@ -8,8 +8,8 @@ import useSWR from "swr";
 import { issueViewContext } from "contexts/issue-view.context";
 // services
 import issuesService from "services/issue/issue.service";
-import cyclesService from "services/cycles.service";
-import modulesService from "services/modules.service";
+import cyclesService from "services/cycle.service";
+import modulesService from "services/module.service";
 import stateService from "services/project.service/project_state.service";
 // helpers
 import { getStatesList } from "helpers/state.helper";

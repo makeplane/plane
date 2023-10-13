@@ -1,5 +1,5 @@
-import APIService from "services/api.service";
-import TrackEventService from "services/track_event.service";
+import { APIService } from "services/api.service";
+import { TrackEventService } from "services/track_event.service";
 // types
 import { IProjectView } from "types/views";
 // helpers
@@ -7,7 +7,7 @@ import { API_BASE_URL } from "helpers/common.helper";
 
 const trackEventService = new TrackEventService();
 
-class ViewService extends APIService {
+export class ViewService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -97,5 +97,3 @@ class ViewService extends APIService {
       });
   }
 }
-
-export default ViewService;

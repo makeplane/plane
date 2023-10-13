@@ -13,7 +13,7 @@ import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // constants
 import { NETWORK_CHOICES } from "constants/project";
 // services
-import projectService from "services/project.service/project.service";
+import { ProjectService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -24,6 +24,8 @@ export interface IProjectDetailsForm {
   isAdmin: boolean;
 }
 
+const projectService = new ProjectService();
+
 export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   const { project, workspaceSlug, isAdmin } = props;
   // store
@@ -32,7 +34,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   const { setToastAlert } = useToast();
   // form data
   const {
-    register,
     handleSubmit,
     watch,
     control,

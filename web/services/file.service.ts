@@ -1,5 +1,5 @@
 // services
-import APIService from "services/api.service";
+import { APIService } from "services/api.service";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 
@@ -27,7 +27,7 @@ export interface UnSplashImageUrls {
   small_s3: string;
 }
 
-class FileService extends APIService {
+export class FileService extends APIService {
   constructor() {
     super(API_BASE_URL);
     this.uploadFile = this.uploadFile.bind(this);
@@ -121,5 +121,3 @@ class FileService extends APIService {
       });
   }
 }
-
-export default FileService;

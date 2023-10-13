@@ -1,13 +1,15 @@
-import APIService from "services/api.service";
-import TrackEventService from "services/track_event.service";
+import { APIService } from "services/api.service";
+import { TrackEventService } from "services/track_event.service";
+// helpers
 import { API_BASE_URL } from "helpers/common.helper";
+// types
 import { IUser, IGithubRepoInfo, IGithubServiceImportFormData } from "types";
 
 const integrationServiceType: string = "github";
 
 const trackEventService = new TrackEventService();
 
-class GithubIntegrationService extends APIService {
+export class GithubIntegrationService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -45,5 +47,3 @@ class GithubIntegrationService extends APIService {
       });
   }
 }
-
-export default GithubIntegrationService;

@@ -1,11 +1,8 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
 // services
-import modulesService from "services/modules.service";
+import { ModuleService } from "services/module.service";
 // ui
 import { CustomSelect } from "components/ui";
 import { Spinner, Tooltip } from "@plane/ui";
@@ -22,21 +19,23 @@ type Props = {
   disabled?: boolean;
 };
 
+const moduleService = new ModuleService();
+
 export const SidebarModuleSelect: React.FC<Props> = ({ issueDetail, handleModuleChange, disabled = false }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
   const { data: modules } = useSWR(
     workspaceSlug && projectId ? MODULE_LIST(projectId as string) : null,
-    workspaceSlug && projectId ? () => modulesService.getModules(workspaceSlug as string, projectId as string) : null
+    workspaceSlug && projectId ? () => moduleService.getModules(workspaceSlug as string, projectId as string) : null
   );
 
   const removeIssueFromModule = (bridgeId: string, moduleId: string) => {
     if (!workspaceSlug || !projectId) return;
 
-    modulesService
+    moduleService
       .removeIssueFromModule(workspaceSlug as string, projectId as string, moduleId, bridgeId)
-      .then((res) => {
+      .then(() => {
         mutate(ISSUE_DETAILS(issueId as string));
 
         mutate(MODULE_ISSUES(moduleId));

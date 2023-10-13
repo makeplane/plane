@@ -6,7 +6,7 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import cycleService from "services/cycles.service";
+import cycleService from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui

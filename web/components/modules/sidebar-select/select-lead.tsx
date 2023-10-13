@@ -1,17 +1,12 @@
-import React from "react";
-
-import Image from "next/image";
+import { FC } from "react";
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // services
-import projectService from "services/project.service/project.service";
+import { ProjectService } from "services/project";
 // ui
 import { Avatar, CustomSearchSelect } from "components/ui";
 // icons
 import { UserCircleIcon } from "@heroicons/react/24/outline";
-import User from "public/user.png";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -20,10 +15,14 @@ type Props = {
   onChange: (val: string) => void;
 };
 
-export const SidebarLeadSelect: React.FC<Props> = ({ value, onChange }) => {
+const projectService = new ProjectService();
+
+export const SidebarLeadSelect: FC<Props> = (props) => {
+  const { value, onChange } = props;
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
+  // fetch project members
   const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
