@@ -2,7 +2,7 @@ import React from "react";
 
 import { useRouter } from "next/router";
 
-import { mutate } from "swr";
+import useSWR, { mutate } from "swr";
 
 // services
 import projectService from "services/project.service";
@@ -21,7 +21,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import type { NextPage } from "next";
 import { IProject } from "types";
 // constant
-import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+import { PROJECTS_LIST, PROJECT_DETAILS, USER_PROJECT_VIEW } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
 
@@ -33,6 +33,13 @@ const AutomationsSettings: NextPage = () => {
   const { setToastAlert } = useToast();
 
   const { projectDetails } = useProjectDetails();
+
+  const { data: memberDetails } = useSWR(
+    workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
+      : null
+  );
 
   const handleChange = async (formData: Partial<IProject>) => {
     if (!workspaceSlug || !projectId || !projectDetails) return;
@@ -62,6 +69,8 @@ const AutomationsSettings: NextPage = () => {
       });
   };
 
+  const isAdmin = memberDetails?.role === 20;
+
   return (
     <ProjectAuthorizationWrapper
       breadcrumbs={
@@ -79,12 +88,20 @@ const AutomationsSettings: NextPage = () => {
         <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
           <SettingsSidebar />
         </div>
-        <section className="pr-9 py-8 w-full overflow-y-auto">
+        <section className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
           <div className="flex items-center py-3.5 border-b border-custom-border-200">
             <h3 className="text-xl font-medium">Automations</h3>
           </div>
-          <AutoArchiveAutomation projectDetails={projectDetails} handleChange={handleChange} />
-          <AutoCloseAutomation projectDetails={projectDetails} handleChange={handleChange} />
+          <AutoArchiveAutomation
+            projectDetails={projectDetails}
+            handleChange={handleChange}
+            disabled={!isAdmin}
+          />
+          <AutoCloseAutomation
+            projectDetails={projectDetails}
+            handleChange={handleChange}
+            disabled={!isAdmin}
+          />
         </section>
       </div>
     </ProjectAuthorizationWrapper>

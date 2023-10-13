@@ -27,7 +27,6 @@ export interface ISubIssuesRootList {
     issueId: string,
     issue?: IIssue | null
   ) => void;
-  setPeekParentId: (id: string) => void;
 }
 
 export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
@@ -42,7 +41,6 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
   handleIssuesLoader,
   copyText,
   handleIssueCrudOperation,
-  setPeekParentId,
 }) => {
   const { data: issues, isLoading } = useSWR(
     workspaceSlug && projectId && parentIssue && parentIssue?.id
@@ -83,7 +81,6 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
             handleIssuesLoader={handleIssuesLoader}
             copyText={copyText}
             handleIssueCrudOperation={handleIssueCrudOperation}
-            setPeekParentId={setPeekParentId}
           />
         ))}
 

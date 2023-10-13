@@ -13,9 +13,14 @@ import { IProject } from "types";
 type Props = {
   projectDetails: IProject | undefined;
   handleChange: (formData: Partial<IProject>) => Promise<void>;
+  disabled?: boolean;
 };
 
-export const AutoArchiveAutomation: React.FC<Props> = ({ projectDetails, handleChange }) => {
+export const AutoArchiveAutomation: React.FC<Props> = ({
+  projectDetails,
+  handleChange,
+  disabled = false,
+}) => {
   const [monthModal, setmonthModal] = useState(false);
 
   const initialValues: Partial<IProject> = { archive_in: 1 };
@@ -49,6 +54,7 @@ export const AutoArchiveAutomation: React.FC<Props> = ({ projectDetails, handleC
                 : handleChange({ archive_in: 0 })
             }
             size="sm"
+            disabled={disabled}
           />
         </div>
 
@@ -70,6 +76,7 @@ export const AutoArchiveAutomation: React.FC<Props> = ({ projectDetails, handleC
                   input
                   verticalPosition="bottom"
                   width="w-full"
+                  disabled={disabled}
                 >
                   <>
                     {PROJECT_AUTOMATION_MONTHS.map((month) => (
