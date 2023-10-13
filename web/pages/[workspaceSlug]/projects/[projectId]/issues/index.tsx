@@ -11,7 +11,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // helper
 import { truncateText } from "helpers/string.helper";
 // components
-import { AllViews } from "components/core";
+import { ProjectLayoutRoot } from "components/issues";
 import { ProjectIssuesHeader } from "components/headers";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -72,7 +72,7 @@ const ProjectIssues: NextPage = () => {
       bg="secondary"
     >
       <div className="h-full w-full flex flex-col">
-        <AllViews />
+        <ProjectLayoutRoot />
       </div>
     </ProjectAuthorizationWrapper>
   );
