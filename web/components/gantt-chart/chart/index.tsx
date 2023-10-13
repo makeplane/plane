@@ -18,17 +18,17 @@ import { Expand, PlusIcon, Shrink } from "lucide-react";
 import {
   // generateHourChart,
   // generateDayChart,
-  generateWeekChart,
-  generateBiWeekChart,
+  // generateWeekChart,
+  // generateBiWeekChart,
   generateMonthChart,
-  generateQuarterChart,
-  generateYearChart,
+  // generateQuarterChart,
+  // generateYearChart,
   getNumberOfDaysBetweenTwoDatesInMonth,
-  getNumberOfDaysBetweenTwoDatesInQuarter,
-  getNumberOfDaysBetweenTwoDatesInYear,
+  // getNumberOfDaysBetweenTwoDatesInQuarter,
+  // getNumberOfDaysBetweenTwoDatesInYear,
   getMonthChartItemPositionWidthInMonth,
 } from "../views";
-import { GanttInlineCreateIssueForm } from "components/core/views/gantt-chart-view/inline-create-issue-form";
+// import { GanttInlineCreateIssueForm } from "components/core/views/gantt-chart-view/inline-create-issue-form";
 // types
 import { ChartDataType, IBlockUpdateData, IGanttBlock, TGanttViews } from "../types";
 // data
@@ -300,7 +300,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
           />
           {chartBlocks && !(isCyclePage || isModulePage) && (
             <div className="pl-2.5 py-3">
-              <GanttInlineCreateIssueForm
+              {/* <GanttInlineCreateIssueForm
                 isOpen={isCreateIssueFormOpen}
                 handleClose={() => setIsCreateIssueFormOpen(false)}
                 onSuccess={() => {
@@ -322,7 +322,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
                   ...(cycleId && { cycle: cycleId.toString() }),
                   ...(moduleId && { module: moduleId.toString() }),
                 }}
-              />
+              /> */}
 
               {!isCreateIssueFormOpen && (
                 <button

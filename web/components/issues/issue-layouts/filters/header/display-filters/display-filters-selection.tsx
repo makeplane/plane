@@ -87,6 +87,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
                 order_by: val,
               })
             }
+            orderByOptions={layoutDisplayFiltersOptions?.display_filters.order_by ?? []}
           />
         </div>
       )}

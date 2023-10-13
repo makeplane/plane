@@ -77,6 +77,7 @@ export const ISSUE_ORDER_BY_OPTIONS: {
   { key: "-created_at", title: "Last Created" },
   { key: "-updated_at", title: "Last Updated" },
   { key: "start_date", title: "Start Date" },
+  { key: "target_date", title: "Due Date" },
   { key: "priority", title: "Priority" },
 ];
 
@@ -253,7 +254,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       display_filters: {
         group_by: ["state", "priority", "labels", "assignees", "created_by"],
         sub_group_by: ["state", "priority", "labels", "assignees", "created_by", null],
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority", "target_date"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
