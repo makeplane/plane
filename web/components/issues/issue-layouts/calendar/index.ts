@@ -10,3 +10,4 @@ export * from "./project-view-root";
 export * from "./root";
 export * from "./week-days";
 export * from "./week-header";
+export * from "./inline-create-issue-form";

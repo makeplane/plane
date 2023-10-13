@@ -11,4 +11,3 @@ export * from "./updated-on-column";
 export * from "./spreadsheet-view";
 export * from "./issue-column/issue-column";
 export * from "./issue-column/spreadsheet-issue-column";
-export * from "./inline-create-issue-form";

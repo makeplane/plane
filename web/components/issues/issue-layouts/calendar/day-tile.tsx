@@ -4,8 +4,7 @@ import { Droppable } from "@hello-pangea/dnd";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { CalendarInlineCreateIssueForm } from "components/core";
-import { CalendarIssueBlocks, ICalendarDate } from "components/issues";
+import { CalendarIssueBlocks, ICalendarDate, CalendarInlineCreateIssueForm } from "components/issues";
 // helpers
 import { renderDateFormat } from "helpers/date-time.helper";
 // types

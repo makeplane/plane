@@ -4,7 +4,7 @@ import { Droppable } from "@hello-pangea/dnd";
 // components
 import { KanBanGroupByHeaderRoot } from "./headers/group-by-root";
 import { IssueBlock } from "./block";
-import { BoardInlineCreateIssueForm } from "components/core";
+import { BoardInlineCreateIssueForm } from "components/issues";
 // constants
 import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES, getValueFromObject } from "constants/issue";
 // mobx

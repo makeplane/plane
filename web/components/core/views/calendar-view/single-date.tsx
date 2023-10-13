@@ -8,7 +8,6 @@ import { Draggable } from "react-beautiful-dnd";
 // component
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { SingleCalendarIssue } from "./single-issue";
-import { CalendarInlineCreateIssueForm } from "./inline-create-issue-form";
 // icons
 import { PlusSmallIcon } from "@heroicons/react/24/outline";
 // helper
@@ -50,13 +49,7 @@ export const SingleCalendarDate: React.FC<Props> = (props) => {
           ref={provided.innerRef}
           {...provided.droppableProps}
           className={`group relative flex min-h-[150px] flex-col gap-1.5 border-t border-custom-border-200 p-2.5 text-left text-sm font-medium hover:bg-custom-background-90 ${
-            showWeekEnds
-              ? (index + 1) % 7 === 0
-                ? ""
-                : "border-r"
-              : (index + 1) % 5 === 0
-              ? ""
-              : "border-r"
+            showWeekEnds ? ((index + 1) % 7 === 0 ? "" : "border-r") : (index + 1) % 5 === 0 ? "" : "border-r"
           }`}
         >
           <>
@@ -80,17 +73,6 @@ export const SingleCalendarDate: React.FC<Props> = (props) => {
                   )}
                 </Draggable>
               ))}
-
-            <CalendarInlineCreateIssueForm
-              isOpen={isCreateIssueFormOpen}
-              dependencies={[showWeekEnds]}
-              handleClose={() => setIsCreateIssueFormOpen(false)}
-              prePopulatedData={{
-                target_date: date.date,
-                ...(cycleId && { cycle: cycleId.toString() }),
-                ...(moduleId && { module: moduleId.toString() }),
-              }}
-            />
 
             {totalIssues > 4 && (
               <button

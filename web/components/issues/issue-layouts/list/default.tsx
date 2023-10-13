@@ -10,7 +10,7 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 
-import { ListInlineCreateIssueForm } from "components/core";
+import { ListInlineCreateIssueForm } from "components/issues";
 
 export interface IGroupByKanBan {
   issues: any;
