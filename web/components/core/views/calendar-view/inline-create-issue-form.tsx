@@ -20,10 +20,10 @@ import { PlusIcon } from "lucide-react";
 import { IIssue } from "types";
 
 type Props = {
-  onSuccess?: (data: IIssue) => Promise<void> | void;
-  prePopulatedData?: Partial<IIssue>;
-  dependencies?: any[];
   groupId?: string;
+  dependencies?: any[];
+  prePopulatedData?: Partial<IIssue>;
+  onSuccess?: (data: IIssue) => Promise<void> | void;
 };
 
 const useCheckIfThereIsSpaceOnRight = (ref: React.RefObject<HTMLDivElement>, deps: any[]) => {
@@ -92,7 +92,16 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
   useEffect(() => {
     const values = getValues();
 
-    if (prePopulatedData) reset({ ...defaultValues, ...values, ...prePopulatedData });
+    if (prePopulatedData)
+      reset({
+        ...defaultValues,
+        ...values,
+        ...prePopulatedData,
+        labels_list:
+          prePopulatedData.labels && prePopulatedData.labels.toString() !== "none"
+            ? [prePopulatedData.labels as any]
+            : [],
+      });
   }, [reset, prePopulatedData, getValues]);
 
   useEffect(() => {
@@ -182,10 +191,10 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
       </Transition>
 
       {!isOpen && (
-        <div className="scale-y-0 origin-top group-hover:scale-y-100 transition-all duration-200">
+        <div className="hidden group-hover:block border-[0.5px] border-custom-border-200 rounded">
           <button
             type="button"
-            className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-1 rounded-md"
+            className="flex items-center gap-x-[6px] text-custom-primary-100 px-1 py-1 rounded-md"
             onClick={() => setIsOpen(true)}
           >
             <PlusIcon className="h-4 w-4" />

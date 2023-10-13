@@ -62,13 +62,18 @@ export const ListInlineCreateIssueForm: React.FC<Props> = observer((props) => {
   const { setToastAlert } = useToast();
 
   useEffect(() => {
-    setFocus("name");
-  }, [setFocus, isOpen]);
-
-  useEffect(() => {
     const values = getValues();
 
-    if (prePopulatedData) reset({ ...defaultValues, ...values, ...prePopulatedData });
+    if (prePopulatedData)
+      reset({
+        ...defaultValues,
+        ...values,
+        ...prePopulatedData,
+        labels_list:
+          prePopulatedData.labels && prePopulatedData.labels.toString() !== "none"
+            ? [prePopulatedData.labels as any]
+            : [],
+      });
   }, [reset, prePopulatedData, getValues]);
 
   useEffect(() => {
@@ -118,6 +123,27 @@ export const ListInlineCreateIssueForm: React.FC<Props> = observer((props) => {
     }
   };
 
+  const Input = () => {
+    useEffect(() => {
+      setFocus("name");
+    }, []);
+
+    return (
+      <>
+        <h4 className="text-sm font-medium leading-5 text-custom-text-400">{projectDetails?.identifier ?? "..."}</h4>
+        <input
+          type="text"
+          autoComplete="off"
+          placeholder="Issue Title"
+          {...register("name", {
+            required: "Issue title is required.",
+          })}
+          className="w-full px-2 py-3 rounded-md bg-transparent text-sm font-medium leading-5 text-custom-text-200 outline-none"
+        />
+      </>
+    );
+  };
+
   return (
     <div>
       <Transition
@@ -129,26 +155,13 @@ export const ListInlineCreateIssueForm: React.FC<Props> = observer((props) => {
         leaveFrom="opacity-100 scale-100"
         leaveTo="opacity-0 scale-95"
       >
-        <div>
-          <form
-            ref={ref}
-            onSubmit={handleSubmit(onSubmitHandler)}
-            className="flex border-[0.5px] border-t-0 border-custom-border-100 px-4 items-center gap-x-5 bg-custom-background-100 shadow-custom-shadow-sm z-10"
-          >
-            <h4 className="text-sm font-medium leading-5 text-custom-text-400">
-              {projectDetails?.identifier ?? "..."}
-            </h4>
-            <input
-              type="text"
-              autoComplete="off"
-              placeholder="Issue Title"
-              {...register("name", {
-                required: "Issue title is required.",
-              })}
-              className="w-full px-2 py-3 rounded-md bg-transparent text-sm font-medium leading-5 text-custom-text-200 outline-none"
-            />
-          </form>
-        </div>
+        <form
+          ref={ref}
+          onSubmit={handleSubmit(onSubmitHandler)}
+          className="flex border-[0.5px] border-t-0 border-custom-border-100 px-4 items-center gap-x-5 bg-custom-background-100 shadow-custom-shadow-sm z-10"
+        >
+          <Input />
+        </form>
       </Transition>
 
       {isOpen && (

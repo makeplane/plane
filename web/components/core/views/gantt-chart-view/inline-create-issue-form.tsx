@@ -19,8 +19,8 @@ import { IIssue } from "types";
 
 type Props = {
   groupId?: string;
-  onSuccess?: (data: IIssue) => Promise<void> | void;
   prePopulatedData?: Partial<IIssue>;
+  onSuccess?: (data: IIssue) => Promise<void> | void;
 };
 
 const defaultValues: Partial<IIssue> = {
@@ -68,7 +68,16 @@ export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
   useEffect(() => {
     const values = getValues();
 
-    if (prePopulatedData) reset({ ...defaultValues, ...values, ...prePopulatedData });
+    if (prePopulatedData)
+      reset({
+        ...defaultValues,
+        ...values,
+        ...prePopulatedData,
+        labels_list:
+          prePopulatedData.labels && prePopulatedData.labels.toString() !== "none"
+            ? [prePopulatedData.labels as any]
+            : [],
+      });
   }, [reset, prePopulatedData, getValues]);
 
   useEffect(() => {

@@ -17,9 +17,10 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import { IIssue } from "types";
 
 type Props = {
-  onSuccess?: (data: IIssue) => Promise<void> | void;
-  prePopulatedData?: Partial<IIssue>;
   groupId?: string;
+  subGroupId?: string;
+  prePopulatedData?: Partial<IIssue>;
+  onSuccess?: (data: IIssue) => Promise<void> | void;
 };
 
 const defaultValues: Partial<IIssue> = {
@@ -27,7 +28,7 @@ const defaultValues: Partial<IIssue> = {
 };
 
 export const BoardInlineCreateIssueForm: React.FC<Props> = observer((props) => {
-  const { prePopulatedData, groupId } = props;
+  const { prePopulatedData, groupId, subGroupId } = props;
 
   // router
   const router = useRouter();
@@ -64,7 +65,20 @@ export const BoardInlineCreateIssueForm: React.FC<Props> = observer((props) => {
   useEffect(() => {
     const values = getValues();
 
-    if (prePopulatedData) reset({ ...defaultValues, ...values, ...prePopulatedData });
+    if (prePopulatedData)
+      reset({
+        ...defaultValues,
+        ...values,
+        ...prePopulatedData,
+        labels_list:
+          prePopulatedData.labels && prePopulatedData.labels.toString() !== "none"
+            ? [prePopulatedData.labels as any]
+            : [],
+        assignees_list:
+          prePopulatedData.assignees && prePopulatedData.assignees.toString() !== "none"
+            ? [prePopulatedData.assignees as any]
+            : [],
+      });
   }, [reset, prePopulatedData, getValues]);
 
   useEffect(() => {
@@ -93,7 +107,7 @@ export const BoardInlineCreateIssueForm: React.FC<Props> = observer((props) => {
 
     try {
       const response = await issueDetailStore.createIssue(workspaceSlug.toString(), projectId.toString(), formData);
-      issueStore.updateIssueStructure(groupId ?? null, null, response);
+      issueStore.updateIssueStructure(groupId ?? null, subGroupId ?? null, response);
 
       setToastAlert({
         type: "success",

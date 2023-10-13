@@ -68,7 +68,16 @@ export const SpreadsheetInlineCreateIssueForm: React.FC<Props> = observer((props
   useEffect(() => {
     const values = getValues();
 
-    if (prePopulatedData) reset({ ...defaultValues, ...values, ...prePopulatedData });
+    if (prePopulatedData)
+      reset({
+        ...defaultValues,
+        ...values,
+        ...prePopulatedData,
+        labels_list:
+          prePopulatedData.labels && prePopulatedData.labels.toString() !== "none"
+            ? [prePopulatedData.labels as any]
+            : [],
+      });
   }, [reset, prePopulatedData, getValues]);
 
   useEffect(() => {
