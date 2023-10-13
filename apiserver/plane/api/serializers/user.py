@@ -57,6 +57,7 @@ class UserMeSerializer(BaseSerializer):
             "user_timezone",
             "username",
             "theme",
+            "last_workspace_id",
         ]
         read_only_fields = fields
 
