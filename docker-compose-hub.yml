@@ -3,6 +3,7 @@ version: "3.8"
 services:
         web:
                 container_name: web
+                platform: linux/amd64
                 image: makeplane/plane-frontend:latest
                 restart: always
                 command: /usr/local/bin/start.sh web/server.js web
@@ -15,6 +16,7 @@ services:
 
         space:
                 container_name: space
+                platform: linux/amd64
                 image: makeplane/plane-space:latest
                 restart: always
                 command: /usr/local/bin/start.sh space/server.js space
@@ -27,6 +29,7 @@ services:
 
         api:
                 container_name: api
+                platform: linux/amd64
                 image: makeplane/plane-backend:latest
                 restart: always
                 command: ./bin/takeoff
@@ -72,6 +75,7 @@ services:
 
         worker:
                 container_name: bgworker
+                platform: linux/amd64
                 image: makeplane/plane-backend:latest
                 restart: always
                 command: ./bin/worker
@@ -118,6 +122,7 @@ services:
 
         beat-worker:
                 container_name: beatworker
+                platform: linux/amd64
                 image: makeplane/plane-backend:latest
                 restart: always
                 command: ./bin/beat
@@ -208,6 +213,7 @@ services:
         # Comment this if you already have a reverse proxy running
         proxy:
                 container_name: proxy
+                platform: linux/amd64
                 image: makeplane/plane-proxy:latest
                 ports:
                         - ${NGINX_PORT}:80
