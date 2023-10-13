@@ -1,31 +1,43 @@
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
+import useSWR from "swr";
 
-// hooks
-import useInboxView from "hooks/use-inbox-view";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { InboxIssueCard, InboxFiltersList } from "components/inbox";
 // ui
 import { Loader } from "@plane/ui";
 
-export const IssuesListSidebar = () => {
+export const IssuesListSidebar = observer(() => {
   const router = useRouter();
-  const { inboxIssueId } = router.query;
+  const { workspaceSlug, projectId, inboxId, inboxIssueId } = router.query;
 
-  const { issues: inboxIssues, filtersLength } = useInboxView();
+  const { inboxIssues: inboxIssuesStore } = useMobxStore();
+
+  useSWR(
+    workspaceSlug && projectId && inboxId ? `INBOX_ISSUES_${inboxId.toString()}` : null,
+    workspaceSlug && projectId && inboxId
+      ? () => inboxIssuesStore.fetchInboxIssues(workspaceSlug.toString(), projectId.toString(), inboxId.toString())
+      : null
+  );
+
+  const issuesList = inboxId ? inboxIssuesStore.inboxIssues[inboxId.toString()] : undefined;
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
       <InboxFiltersList />
-      {inboxIssues ? (
-        inboxIssues.length > 0 ? (
+      {issuesList ? (
+        issuesList.length > 0 ? (
           <div className="divide-y divide-custom-border-200 overflow-auto h-full">
-            {inboxIssues.map((issue) => (
+            {issuesList.map((issue) => (
               <InboxIssueCard key={issue.id} active={issue.bridge_id === inboxIssueId} issue={issue} />
             ))}
           </div>
         ) : (
           <div className="h-full p-4 grid place-items-center text-center text-sm text-custom-text-200">
-            {filtersLength > 0 && "No issues found for the selected filters. Try changing the filters."}
+            {/* TODO: add filtersLength logic here */}
+            {/* {filtersLength > 0 && "No issues found for the selected filters. Try changing the filters."} */}
           </div>
         )
       ) : (
@@ -38,4 +50,4 @@ export const IssuesListSidebar = () => {
       )}
     </div>
   );
-};
+});

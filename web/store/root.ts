@@ -27,6 +27,10 @@ import CalendarStore, { ICalendarStore } from "./calendar";
 import GlobalViewsStore, { IGlobalViewsStore } from "./global_views";
 import GlobalViewIssuesStore, { IGlobalViewIssuesStore } from "./global_view_issues";
 import GlobalViewFiltersStore, { IGlobalViewFiltersStore } from "./global_view_filters";
+import InboxStore, { IInboxStore } from "./inbox";
+import InboxIssuesStore, { IInboxIssuesStore } from "./inbox_issues";
+import InboxIssueDetailsStore, { IInboxIssueDetailsStore } from "./inbox_issue_detail";
+import InboxFiltersStore, { IInboxFiltersStore } from "./inbox_filters";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -66,6 +70,11 @@ export class RootStore {
   globalViewIssues: IGlobalViewIssuesStore;
   globalViewFilters: IGlobalViewFiltersStore;
 
+  inbox: IInboxStore;
+  inboxIssues: IInboxIssuesStore;
+  inboxIssueDetails: IInboxIssueDetailsStore;
+  inboxFilters: IInboxFiltersStore;
+
   constructor() {
     this.user = new UserStore(this);
     this.theme = new ThemeStore(this);
@@ -101,5 +110,10 @@ export class RootStore {
     this.globalViews = new GlobalViewsStore(this);
     this.globalViewIssues = new GlobalViewIssuesStore(this);
     this.globalViewFilters = new GlobalViewFiltersStore(this);
+
+    this.inbox = new InboxStore(this);
+    this.inboxIssues = new InboxIssuesStore(this);
+    this.inboxIssueDetails = new InboxIssueDetailsStore(this);
+    this.inboxFilters = new InboxFiltersStore(this);
   }
 }

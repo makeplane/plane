@@ -33,7 +33,7 @@ import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
 import type { IInboxIssue, IIssue } from "types";
 // fetch-keys
-import { INBOX_ISSUES, INBOX_ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
+import { INBOX_ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 const defaultValues: Partial<IInboxIssue> = {
   name: "",
@@ -84,21 +84,6 @@ export const InboxMainContent: React.FC = () => {
           ...formData,
         };
       }, false);
-      mutate<IInboxIssue[]>(
-        INBOX_ISSUES(inboxId.toString(), params),
-        (prevData) =>
-          (prevData ?? []).map((i) => {
-            if (i.bridge_id === inboxIssueId) {
-              return {
-                ...i,
-                ...formData,
-              };
-            }
-
-            return i;
-          }),
-        false
-      );
 
       const payload = { issue: { ...formData } };
 
@@ -113,11 +98,10 @@ export const InboxMainContent: React.FC = () => {
         )
         .then(() => {
           mutateIssueDetails();
-          mutate(INBOX_ISSUES(inboxId.toString(), params));
           mutate(PROJECT_ISSUES_ACTIVITY(issueDetails.id));
         });
     },
-    [workspaceSlug, inboxIssueId, projectId, mutateIssueDetails, inboxId, user, issueDetails, params]
+    [workspaceSlug, inboxIssueId, projectId, mutateIssueDetails, inboxId, user, issueDetails]
   );
 
   const onKeyDown = useCallback(

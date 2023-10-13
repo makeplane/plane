@@ -2,16 +2,9 @@ import APIService from "services/api.service";
 import trackEventServices from "services/track_event.service";
 import { API_BASE_URL } from "helpers/common.helper";
 // types
-import type {
-  IInboxIssue,
-  IInbox,
-  TInboxStatus,
-  IInboxIssueDetail,
-  ICurrentUserResponse,
-  IInboxQueryParams,
-} from "types";
+import type { IInboxIssue, IInbox, TInboxStatus, IInboxIssueDetail, IInboxQueryParams } from "types";
 
-export class InboxServices extends APIService {
+export class InboxService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -75,7 +68,7 @@ export class InboxServices extends APIService {
     projectId: string,
     inboxId: string,
     inboxIssueId: string,
-    user: ICurrentUserResponse | undefined
+    user: any
   ): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}/`
@@ -95,8 +88,8 @@ export class InboxServices extends APIService {
     inboxId: string,
     inboxIssueId: string,
     data: TInboxStatus,
-    user: ICurrentUserResponse | undefined
-  ): Promise<IInboxIssue> {
+    user: any
+  ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}/`,
       data
@@ -123,9 +116,9 @@ export class InboxServices extends APIService {
     projectId: string,
     inboxId: string,
     inboxIssueId: string,
-    data: { issue: Partial<IInboxIssue> },
-    user: ICurrentUserResponse | undefined
-  ): Promise<IInboxIssue> {
+    data: { issue: Partial<IInboxIssueDetail> },
+    user: any
+  ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}/`,
       data
@@ -144,7 +137,7 @@ export class InboxServices extends APIService {
     projectId: string,
     inboxId: string,
     data: any,
-    user: ICurrentUserResponse | undefined
+    user: any
   ): Promise<IInboxIssueDetail> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/`, data)
       .then((response) => {
@@ -157,6 +150,6 @@ export class InboxServices extends APIService {
   }
 }
 
-const inboxServices = new InboxServices();
+const inboxService = new InboxService();
 
-export default inboxServices;
+export default inboxService;
