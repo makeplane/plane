@@ -1,11 +1,8 @@
 import React, { useState } from "react";
-
 import useSWR from "swr";
-
 import { useRouter } from "next/router";
-
 // component
-import { CustomSearchSelect, CustomSelect, Icon } from "components/ui";
+import { CustomSearchSelect, CustomSelect } from "components/ui";
 import { SelectMonthModal } from "components/automation";
 import { ToggleSwitch } from "@plane/ui";
 // icons
@@ -13,7 +10,7 @@ import { Squares2X2Icon } from "@heroicons/react/24/outline";
 import { StateGroupIcon } from "components/icons";
 import { ArchiveX } from "lucide-react";
 // services
-import stateService from "services/project.service/project_state.service";
+import { ProjectStateService } from "services/project";
 // constants
 import { PROJECT_AUTOMATION_MONTHS } from "constants/project";
 import { STATES_LIST } from "constants/fetch-keys";
@@ -28,6 +25,8 @@ type Props = {
   disabled?: boolean;
 };
 
+const projectStateService = new ProjectStateService();
+
 export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleChange, disabled = false }) => {
   const [monthModal, setmonthModal] = useState(false);
 
@@ -36,7 +35,9 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
 
   const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
-    workspaceSlug && projectId ? () => stateService.getStates(workspaceSlug as string, projectId as string) : null
+    workspaceSlug && projectId
+      ? () => projectStateService.getStates(workspaceSlug as string, projectId as string)
+      : null
   );
   const states = getStatesList(stateGroups);
 

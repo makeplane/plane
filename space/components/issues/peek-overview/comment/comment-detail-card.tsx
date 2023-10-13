@@ -9,7 +9,8 @@ import { Menu, Transition } from "@headlessui/react";
 // lib
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { TipTapEditor } from "components/tiptap";
+import { LiteReadOnlyEditorWithRef, LiteTextEditorWithRef } from "@plane/lite-text-editor";
+
 import { CommentReactions } from "components/issues/peek-overview";
 // icons
 import { ChatBubbleLeftEllipsisIcon, CheckIcon, XMarkIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
@@ -17,6 +18,8 @@ import { ChatBubbleLeftEllipsisIcon, CheckIcon, XMarkIcon, EllipsisVerticalIcon 
 import { timeAgo } from "helpers/date-time.helper";
 // types
 import { Comment } from "types/issue";
+import fileService from "services/file.service";
+// services
 
 type Props = {
   workspaceSlug: string;
@@ -100,8 +103,10 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                 control={control}
                 name="comment_html"
                 render={({ field: { onChange, value } }) => (
-                  <TipTapEditor
-                    workspaceSlug={workspaceSlug as string}
+                  <LiteTextEditorWithRef
+                    onEnterKeyPress={handleSubmit(handleCommentUpdate)}
+                    uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
+                    deleteFile={fileService.deleteImage}
                     ref={editorRef}
                     value={value}
                     debouncedUpdatesEnabled={false}
@@ -131,11 +136,9 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             </div>
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
-            <TipTapEditor
-              workspaceSlug={workspaceSlug as string}
+            <LiteReadOnlyEditorWithRef
               ref={showEditorRef}
               value={comment.comment_html}
-              editable={false}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
             />
             <CommentReactions commentId={comment.id} projectId={comment.project} />
@@ -147,7 +150,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
         <Menu as="div" className="relative w-min text-left">
           <Menu.Button
             type="button"
-            onClick={() => {}}
+            onClick={() => { }}
             className="relative grid place-items-center rounded p-1 text-custom-text-200 hover:text-custom-text-100 outline-none cursor-pointer hover:bg-custom-background-80"
           >
             <EllipsisVerticalIcon className="h-5 w-5 text-custom-text-200 duration-300" />
@@ -171,9 +174,8 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                       onClick={() => {
                         setIsEditing(true);
                       }}
-                      className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80 ${
-                        active ? "bg-custom-background-80" : ""
-                      }`}
+                      className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80 ${active ? "bg-custom-background-80" : ""
+                        }`}
                     >
                       Edit
                     </button>
@@ -186,9 +188,8 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                     <button
                       type="button"
                       onClick={handleDelete}
-                      className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80 ${
-                        active ? "bg-custom-background-80" : ""
-                      }`}
+                      className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80 ${active ? "bg-custom-background-80" : ""
+                        }`}
                     >
                       Delete
                     </button>

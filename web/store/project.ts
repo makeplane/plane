@@ -3,10 +3,8 @@ import { observable, action, computed, makeObservable, runInAction } from "mobx"
 import { RootStore } from "./root";
 import { IProject, IIssueLabels, IProjectMember, IStateResponse, IState, IEstimate } from "types";
 // services
-import { ProjectService } from "services/project.service/project.service";
-import { IssueService } from "services/issue/issue.service";
-import { ProjectStateServices } from "services/project.service/project_state.service";
-import { ProjectEstimateServices } from "services/project.service/project_estimates.service";
+import { ProjectService, ProjectStateService, ProjectEstimateService } from "services/project";
+import { IssueService, IssueLabelService } from "services/issue";
 
 export interface IProjectStore {
   loader: boolean;
@@ -100,6 +98,7 @@ class ProjectStore implements IProjectStore {
   rootStore;
   // service
   projectService;
+  issueLabelService;
   issueService;
   stateService;
   estimateService;
@@ -158,8 +157,9 @@ class ProjectStore implements IProjectStore {
     this.rootStore = _rootStore;
     this.projectService = new ProjectService();
     this.issueService = new IssueService();
-    this.stateService = new ProjectStateServices();
-    this.estimateService = new ProjectEstimateServices();
+    this.issueLabelService = new IssueLabelService();
+    this.stateService = new ProjectStateService();
+    this.estimateService = new ProjectEstimateService();
   }
 
   get searchedProjects() {
@@ -341,7 +341,7 @@ class ProjectStore implements IProjectStore {
       this.loader = true;
       this.error = null;
 
-      const labelResponse = await this.issueService.getIssueLabels(workspaceSlug, projectId);
+      const labelResponse = await this.issueLabelService.getProjectIssueLabels(workspaceSlug, projectId);
       const _labels = {
         ...this.labels,
         [projectId]: labelResponse,

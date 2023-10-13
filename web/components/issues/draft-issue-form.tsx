@@ -23,11 +23,16 @@ import { CreateLabelModal } from "components/labels";
 // ui
 import { CustomMenu } from "components/ui";
 import { Button, Input, ToggleSwitch } from "@plane/ui";
-import { TipTapEditor } from "components/tiptap";
 // icons
 import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
 import type { IUser, IIssue, ISearchIssueResponse } from "types";
+// components
+import { RichTextEditorWithRef } from "@plane/rich-text-editor";
+// types
+// import type { ICurrentUserResponse, IIssue, ISearchIssueResponse } from "types";
+import fileService from "services/file.service";
+// services
 
 const defaultValues: Partial<IIssue> = {
   project: "",
@@ -150,6 +155,21 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
     parent: watch("parent"),
     cycle: watch("cycle"),
     module: watch("module"),
+  };
+
+  useEffect(() => {
+    if (!isOpen || data) return;
+
+    setLocalStorageValue(
+      JSON.stringify({
+        ...payload,
+      })
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(payload), isOpen, data]);
+
+  const onClose = () => {
+    handleClose();
   };
 
   useEffect(() => {
@@ -413,27 +433,24 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                   <Controller
                     name="description_html"
                     control={control}
-                    render={({ field: { value, onChange } }) => {
-                      if (!value && !watch("description_html")) return <></>;
-
-                      return (
-                        <TipTapEditor
-                          workspaceSlug={workspaceSlug as string}
-                          ref={editorRef}
-                          debouncedUpdatesEnabled={false}
-                          value={
-                            !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
-                              ? watch("description_html")
-                              : value
-                          }
-                          customClassName="min-h-[150px]"
-                          onChange={(description: Object, description_html: string) => {
-                            onChange(description_html);
-                            setValue("description", description);
-                          }}
-                        />
-                      );
-                    }}
+                    render={({ field: { value, onChange } }) => (
+                      <RichTextEditorWithRef
+                        uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                        deleteFile={fileService.deleteImage}
+                        ref={editorRef}
+                        debouncedUpdatesEnabled={false}
+                        value={
+                          !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
+                            ? watch("description_html")
+                            : value
+                        }
+                        customClassName="min-h-[150px]"
+                        onChange={(description: Object, description_html: string) => {
+                          onChange(description_html);
+                          setValue("description", description);
+                        }}
+                      />
+                    )}
                   />
                   <GptAssistantModal
                     isOpen={gptAssistantModal}

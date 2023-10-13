@@ -1,15 +1,14 @@
 import { FC, useCallback, useEffect, useState } from "react";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // hooks
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 import { useDebouncedCallback } from "use-debounce";
 // components
 import { TextArea } from "@plane/ui";
-import { TipTapEditor } from "components/tiptap";
 // types
 import { IIssue } from "types";
+import { RichTextEditor } from "@plane/rich-text-editor";
+import fileService from "services/file.service";
 
 export interface IssueDescriptionFormValues {
   name: string;
@@ -79,10 +78,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleFormS
   }, [issue, reset]);
 
   const debouncedTitleSave = useDebouncedCallback(async () => {
-    setTimeout(async () => {
-      handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
-    }, 500);
-  }, 1000);
+    handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
+  }, 1500);
 
   return (
     <div className="relative">
@@ -129,32 +126,24 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleFormS
         <Controller
           name="description_html"
           control={control}
-          render={({ field: { value, onChange } }) => {
-            if (!value) return <></>;
-
-            return (
-              <TipTapEditor
-                value={
-                  !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
-                    ? "<p></p>"
-                    : value
-                }
-                workspaceSlug={workspaceSlug}
-                debouncedUpdatesEnabled={true}
-                setShouldShowAlert={setShowAlert}
-                setIsSubmitting={setIsSubmitting}
-                customClassName={isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200"}
-                noBorder={!isAllowed}
-                onChange={(description: Object, description_html: string) => {
-                  setShowAlert(true);
-                  setIsSubmitting("submitting");
-                  onChange(description_html);
-                  handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
-                }}
-                editable={isAllowed}
-              />
-            );
-          }}
+          render={({ field: { value, onChange } }) => (
+            <RichTextEditor
+              uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
+              deleteFile={fileService.deleteImage}
+              value={value}
+              debouncedUpdatesEnabled={true}
+              setShouldShowAlert={setShowAlert}
+              setIsSubmitting={setIsSubmitting}
+              customClassName={isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200"}
+              noBorder={!isAllowed}
+              onChange={(description: Object, description_html: string) => {
+                setShowAlert(true);
+                setIsSubmitting("submitting");
+                onChange(description_html);
+                handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
+              }}
+            />
+          )}
         />
         <div
           className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${

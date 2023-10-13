@@ -12,7 +12,7 @@ class ProjectExportService extends APIService {
     super(API_BASE_URL);
   }
 
-  async exportCSVService(
+  async csvExport(
     workspaceSlug: string,
     data: {
       provider: string;

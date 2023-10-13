@@ -77,7 +77,6 @@ export const MemberSelect: React.FC<Props> = ({ value, onChange, isDisabled = fa
         ]
       }
       maxHeight="md"
-      position="right"
       width="w-full"
       onChange={onChange}
       disabled={isDisabled}

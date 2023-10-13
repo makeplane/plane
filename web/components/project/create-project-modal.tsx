@@ -400,7 +400,6 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                                     )}
                                   </div>
                                 }
-                                verticalPosition="top"
                                 noChevron
                               />
                             );

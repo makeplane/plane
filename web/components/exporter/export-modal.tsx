@@ -3,14 +3,14 @@ import { useRouter } from "next/router";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import { CSVIntegrationService } from "services/csv.service";
+import { ProjectExportService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
 import { CustomSearchSelect } from "components/ui";
 // types
-import { ICurrentUserResponse, IImporterService } from "types";
+import { IUser, IImporterService } from "types";
 // fetch-keys
 import useProjects from "hooks/use-projects";
 
@@ -18,12 +18,12 @@ type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data: IImporterService | null;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   provider: string | string[];
   mutateServices: () => void;
 };
 
-const cvsService = new CSVIntegrationService();
+const projectExportService = new ProjectExportService();
 
 export const Exporter: React.FC<Props> = ({ isOpen, handleClose, user, provider, mutateServices }) => {
   const [exportLoading, setExportLoading] = useState(false);
@@ -56,8 +56,8 @@ export const Exporter: React.FC<Props> = ({ isOpen, handleClose, user, provider,
         project: value,
         multiple: multiple,
       };
-      await cvsService
-        .exportCSVService(workspaceSlug as string, payload, user)
+      await projectExportService
+        .csvExport(workspaceSlug as string, payload, user)
         .then(() => {
           mutateServices();
           router.push(`/${workspaceSlug}/settings/exports`);

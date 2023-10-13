@@ -1,6 +1,6 @@
 import { observable, action, makeObservable, runInAction } from "mobx";
 // services
-import { ViewService } from "services/views.service";
+import ViewService from "services/views.service";
 // types
 import { RootStore } from "./root";
 import { IProjectView } from "types";

@@ -4,9 +4,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import { useDropzone } from "react-dropzone";
 import { Tab, Transition, Popover } from "@headlessui/react";
-
 import { Control, Controller } from "react-hook-form";
-
 // services
 import fileService from "services/file.service";
 // hooks
@@ -61,6 +59,11 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, control, onC
       revalidateOnReconnect: false,
     }
   );
+
+  const { data: projectCoverImages } = useSWR(`PROJECT_COVER_IMAGES`, () => fileService.getProjectCoverImages(), {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  });
 
   const { data: projectCoverImages } = useSWR(`PROJECT_COVER_IMAGES`, () => fileService.getProjectCoverImages(), {
     revalidateOnFocus: false,

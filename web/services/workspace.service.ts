@@ -14,6 +14,7 @@ import {
   IUser,
   IWorkspaceBulkInviteFormData,
   IWorkspaceViewProps,
+  IWorkspaceViewIssuesParams,
 } from "types";
 import { IWorkspaceView } from "types/workspace-views";
 // store

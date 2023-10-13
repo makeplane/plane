@@ -99,6 +99,41 @@ export interface IIssueDisplayProperties {
   updated_on: boolean;
 }
 
+export interface IWorkspaceIssueFilterOptions {
+  assignees?: string[] | null;
+  created_by?: string[] | null;
+  labels?: string[] | null;
+  priority?: string[] | null;
+  state_group?: string[] | null;
+  subscriber?: string[] | null;
+  start_date?: string[] | null;
+  target_date?: string[] | null;
+  project?: string[] | null;
+}
+
+export interface IWorkspaceGlobalViewDisplayFilterOptions {
+  order_by?: string | undefined;
+  type?: "active" | "backlog" | null;
+  sub_issue?: boolean;
+  layout?: TIssueViewOptions;
+}
+
+export interface IWorkspaceViewIssuesParams {
+  assignees?: string | undefined;
+  created_by?: string | undefined;
+  labels?: string | undefined;
+  priority?: string | undefined;
+  start_date?: string | undefined;
+  state?: string | undefined;
+  state_group?: string | undefined;
+  subscriber?: string | undefined;
+  target_date?: string | undefined;
+  project?: string | undefined;
+  order_by?: string | undefined;
+  type?: "active" | "backlog" | undefined;
+  sub_issue?: boolean;
+}
+
 export interface IProjectViewProps {
   display_filters: IIssueDisplayFilterOptions | undefined;
   filters: IIssueFilterOptions;
@@ -107,5 +142,10 @@ export interface IProjectViewProps {
 export interface IWorkspaceViewProps {
   filters: IIssueFilterOptions;
   display_filters: IIssueDisplayFilterOptions | undefined;
+  display_properties: Properties;
+}
+export interface IWorkspaceGlobalViewProps {
+  filters: IWorkspaceIssueFilterOptions;
+  display_filters: IWorkspaceIssueDisplayFilterOptions | undefined;
   display_properties: Properties;
 }

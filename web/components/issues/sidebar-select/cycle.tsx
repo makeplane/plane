@@ -39,7 +39,7 @@ export const SidebarCycleSelect: React.FC<Props> = ({ issueDetail, handleCycleCh
 
     issuesService
       .removeIssueFromCycle(workspaceSlug as string, projectId as string, cycleId, bridgeId)
-      .then((res) => {
+      .then(() => {
         mutate(ISSUE_DETAILS(issueId as string));
 
         mutate(CYCLE_ISSUES(cycleId));
@@ -76,7 +76,6 @@ export const SidebarCycleSelect: React.FC<Props> = ({ issueDetail, handleCycleCh
           : handleCycleChange(incompleteCycles?.find((c) => c.id === value) as ICycle);
       }}
       width="w-full"
-      position="right"
       maxHeight="rg"
       disabled={disabled}
     >

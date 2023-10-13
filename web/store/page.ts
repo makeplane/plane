@@ -1,15 +1,10 @@
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // types
 import { RootStore } from "./root";
-import { IProject, IIssueLabels, IProjectMember, IStateResponse, IState, IPage } from "types";
+import { IPage } from "types";
 // services
-import { ProjectService } from "services/project.service/project.service";
-import { IssueService } from "services/issue/issue.service";
-import { ProjectStateServices } from "services/project.service/project_state.service";
-import { CycleService } from "services/cycles.service";
-import { ModuleService } from "services/modules.service";
-import { ViewService } from "services/views.service";
-import { PageService } from "services/page.service";
+import { ProjectService } from "services/project";
+import PageService from "services/page.service";
 
 export interface IPageStore {
   loader: boolean;

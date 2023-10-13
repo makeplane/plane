@@ -1,8 +1,8 @@
 // mobx
-import { action, observable, computed, runInAction, makeObservable } from "mobx";
+import { action, observable, runInAction, makeObservable } from "mobx";
 // services
-import { UserService } from "services/user.service";
-import { WorkspaceService } from "services/workspace.service";
+import UserService from "services/user.service";
+import WorkspaceService from "services/workspace.service";
 // interfaces
 import { IUser, IUserSettings } from "types/users";
 

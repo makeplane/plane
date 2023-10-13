@@ -27,9 +27,11 @@ export interface UnSplashImageUrls {
   small_s3: string;
 }
 
-class FileServices extends APIService {
+class FileService extends APIService {
   constructor() {
     super(API_BASE_URL);
+    this.uploadFile = this.uploadFile.bind(this);
+    this.deleteImage = this.deleteImage.bind(this);
   }
 
   async uploadFile(workspaceSlug: string, file: FormData): Promise<any> {
@@ -43,6 +45,17 @@ class FileServices extends APIService {
       .catch((error) => {
         throw error?.response?.data;
       });
+  }
+
+  getUploadFileFunction(workspaceSlug: string): (file: File) => Promise<string> {
+    return async (file: File) => {
+      const formData = new FormData();
+      formData.append("asset", file);
+      formData.append("attributes", JSON.stringify({}));
+
+      const data = await this.uploadFile(workspaceSlug, formData);
+      return data.asset;
+    };
   }
 
   async deleteImage(assetUrlWithWorkspaceId: string): Promise<any> {
@@ -109,4 +122,4 @@ class FileServices extends APIService {
   }
 }
 
-export default FileServices;
+export default FileService;

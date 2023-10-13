@@ -6,7 +6,7 @@ import { observer } from "mobx-react-lite";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import {
-  ListInlineCreateIssueForm,
+  // ListInlineCreateIssueForm,
   SpreadsheetAssigneeColumn,
   SpreadsheetCreatedOnColumn,
   SpreadsheetDueDateColumn,
@@ -362,14 +362,14 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
 
           <div className="border-t border-custom-border-100">
             <div className="mb-3 z-50 sticky bottom-0 left-0">
-              <ListInlineCreateIssueForm
+              {/* <ListInlineCreateIssueForm
                 isOpen={isInlineCreateIssueFormOpen}
                 handleClose={() => setIsInlineCreateIssueFormOpen(false)}
                 prePopulatedData={{
                   ...(cycleId && { cycle: cycleId.toString() }),
                   ...(moduleId && { module: moduleId.toString() }),
                 }}
-              />
+              /> */}
             </div>
 
             {type === "issue"
