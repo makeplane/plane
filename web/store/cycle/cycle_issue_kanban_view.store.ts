@@ -1,7 +1,7 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // types
 import { RootStore } from "../root";
-import { IIssueType } from "../issue/issue.store";
+import { IIssueType } from "store/issue";
 
 export interface ICycleIssueKanBanViewStore {
   kanBanToggle: {

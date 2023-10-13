@@ -6,7 +6,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CalendarChart } from "components/issues";
 // types
-import { IIssueGroupedStructure } from "store/issue/issue.store";
+import { IIssueGroupedStructure } from "store/issue";
 
 export const CalendarLayout: React.FC = observer(() => {
   const { issue: issueStore, issueFilter: issueFilterStore } = useMobxStore();

@@ -17,11 +17,7 @@ import {
 } from "types";
 import { IWorkspaceView } from "types/workspace-views";
 // store
-import {
-  IIssueGroupWithSubGroupsStructure,
-  IIssueGroupedStructure,
-  IIssueUnGroupedStructure,
-} from "store/issue/issue.store";
+import { IIssueGroupWithSubGroupsStructure, IIssueGroupedStructure, IIssueUnGroupedStructure } from "store/issue";
 
 const trackEventService = new TrackEventService();
 

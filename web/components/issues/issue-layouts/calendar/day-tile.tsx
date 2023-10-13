@@ -8,7 +8,7 @@ import { CalendarIssueBlocks, ICalendarDate } from "components/issues";
 // helpers
 import { renderDateFormat } from "helpers/date-time.helper";
 // types
-import { IIssueGroupedStructure } from "store/issue/issue.store";
+import { IIssueGroupedStructure } from "store/issue";
 // constants
 import { MONTHS_LIST } from "constants/calendar";
 
