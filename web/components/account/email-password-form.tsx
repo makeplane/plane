@@ -3,8 +3,7 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 // ui
 import { Input, PrimaryButton } from "components/ui";
-import Link from "next/link";
-// types
+
 export interface EmailPasswordFormValues {
   email: string;
   password?: string;

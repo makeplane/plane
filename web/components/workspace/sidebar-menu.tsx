@@ -1,8 +1,6 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-// hooks
-import useTheme from "hooks/use-theme";
 // components
 import { NotificationPopover } from "components/notifications";
 import { Tooltip } from "@plane/ui";

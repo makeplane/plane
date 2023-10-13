@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 
 // services
-import projectService from "services/project.service";
+import projectService from "services/project.service/project.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useProjectDetails from "hooks/use-project-details";

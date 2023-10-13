@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import projectService from "services/project.service";
+import projectService from "services/project.service/project.service";
 // ui
 import { Avatar, CustomSearchSelect } from "components/ui";
 // icons
@@ -56,11 +56,7 @@ export const SidebarLeadSelect: React.FC<Props> = ({ value, onChange }) => {
           label={
             <div className="flex items-center gap-2">
               {selectedOption && <Avatar user={selectedOption} />}
-              {selectedOption ? (
-                selectedOption?.display_name
-              ) : (
-                <span className="text-custom-text-200">No lead</span>
-              )}
+              {selectedOption ? selectedOption?.display_name : <span className="text-custom-text-200">No lead</span>}
             </div>
           }
           options={options}

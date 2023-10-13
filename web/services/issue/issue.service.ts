@@ -1,31 +1,22 @@
 // services
 import APIService from "services/api.service";
-import trackEventServices from "services/track_event.service";
+import TrackEventService from "services/track_event.service";
 // type
-import type {
-  ICurrentUserResponse,
-  IIssue,
-  IIssueActivity,
-  IIssueComment,
-  IIssueLabels,
-  ISubIssueResponse,
-} from "types";
+import type { IUser, IIssue, IIssueActivity, IIssueComment, ISubIssueResponse } from "types";
+// helper
 import { API_BASE_URL } from "helpers/common.helper";
 
-export class IssueService extends APIService {
+const trackEventService = new TrackEventService();
+
+class IssueService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async createIssues(
-    workspaceSlug: string,
-    projectId: string,
-    data: any,
-    user: ICurrentUserResponse | undefined
-  ): Promise<any> {
+  async createIssues(workspaceSlug: string, projectId: string, data: any, user: IUser | undefined): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`, data)
       .then((response) => {
-        trackEventServices.trackIssueEvent(response.data, "ISSUE_CREATE", user);
+        trackEventService.trackIssueEvent(response.data, "ISSUE_CREATE", user as IUser);
         return response?.data;
       })
       .catch((error) => {
@@ -94,11 +85,11 @@ export class IssueService extends APIService {
     data: {
       issues: string[];
     },
-    user: ICurrentUserResponse | undefined
+    user: IUser | undefined
   ) {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`, data)
       .then((response) => {
-        trackEventServices.trackIssueMovedToCycleOrModuleEvent(
+        trackEventService.trackIssueMovedToCycleOrModuleEvent(
           {
             workspaceSlug,
             workspaceName: response?.data?.[0]?.issue_detail?.workspace_detail?.name,
@@ -109,7 +100,7 @@ export class IssueService extends APIService {
             cycleId,
           },
           response.data.length > 1 ? "ISSUE_MOVED_TO_CYCLE_IN_BULK" : "ISSUE_MOVED_TO_CYCLE",
-          user
+          user as IUser
         );
         return response?.data;
       })
@@ -132,7 +123,7 @@ export class IssueService extends APIService {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    user: ICurrentUserResponse,
+    user: IUser,
     data: {
       related_list: Array<{
         relation_type: "duplicate" | "relates_to" | "blocked_by";
@@ -143,7 +134,7 @@ export class IssueService extends APIService {
   ) {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-relation/`, data)
       .then((response) => {
-        trackEventServices.trackIssueRelationEvent(response.data, "ISSUE_RELATION_CREATE", user);
+        trackEventService.trackIssueRelationEvent(response.data, "ISSUE_RELATION_CREATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -156,13 +147,13 @@ export class IssueService extends APIService {
     projectId: string,
     issueId: string,
     relationId: string,
-    user: ICurrentUserResponse
+    user: IUser
   ) {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-relation/${relationId}/`
     )
       .then((response) => {
-        trackEventServices.trackIssueRelationEvent(response.data, "ISSUE_RELATION_DELETE", user);
+        trackEventService.trackIssueRelationEvent(response.data, "ISSUE_RELATION_DELETE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -199,11 +190,11 @@ export class IssueService extends APIService {
     projectId: string,
     issueId: string,
     data: Partial<IIssueComment>,
-    user: ICurrentUserResponse | undefined
+    user: IUser | undefined
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/comments/`, data)
       .then((response) => {
-        trackEventServices.trackIssueCommentEvent(response.data, "ISSUE_COMMENT_CREATE", user);
+        trackEventService.trackIssueCommentEvent(response.data, "ISSUE_COMMENT_CREATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -217,14 +208,14 @@ export class IssueService extends APIService {
     issueId: string,
     commentId: string,
     data: Partial<IIssueComment>,
-    user: ICurrentUserResponse | undefined
+    user: IUser | undefined
   ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/comments/${commentId}/`,
       data
     )
       .then((response) => {
-        trackEventServices.trackIssueCommentEvent(response.data, "ISSUE_COMMENT_UPDATE", user);
+        trackEventService.trackIssueCommentEvent(response.data, "ISSUE_COMMENT_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -237,13 +228,13 @@ export class IssueService extends APIService {
     projectId: string,
     issueId: string,
     commentId: string,
-    user: ICurrentUserResponse | undefined
+    user: IUser | undefined
   ): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/comments/${commentId}/`
     )
       .then((response) => {
-        trackEventServices.trackIssueCommentEvent(
+        trackEventService.trackIssueCommentEvent(
           {
             issueId,
             commentId,
@@ -258,114 +249,16 @@ export class IssueService extends APIService {
       });
   }
 
-  async getWorkspaceLabels(workspaceSlug: string): Promise<IIssueLabels[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/labels/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getIssueLabels(workspaceSlug: string, projectId: string): Promise<IIssueLabels[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async createIssueLabel(
-    workspaceSlug: string,
-    projectId: string,
-    data: any,
-    user: ICurrentUserResponse | undefined
-  ): Promise<IIssueLabels> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/`, data)
-      .then((response: { data: IIssueLabels; [key: string]: any }) => {
-        trackEventServices.trackIssueLabelEvent(
-          {
-            workSpaceId: response?.data?.workspace_detail?.id,
-            workSpaceName: response?.data?.workspace_detail?.name,
-            workspaceSlug,
-            projectId,
-            projectIdentifier: response?.data?.project_detail?.identifier,
-            projectName: response?.data?.project_detail?.name,
-            labelId: response?.data?.id,
-            color: response?.data?.color,
-          },
-          "ISSUE_LABEL_CREATE",
-          user
-        );
-        return response?.data;
-      })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async patchIssueLabel(
-    workspaceSlug: string,
-    projectId: string,
-    labelId: string,
-    data: any,
-    user: ICurrentUserResponse | undefined
-  ): Promise<any> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/${labelId}/`, data)
-      .then((response) => {
-        trackEventServices.trackIssueLabelEvent(
-          {
-            workSpaceId: response?.data?.workspace_detail?.id,
-            workSpaceName: response?.data?.workspace_detail?.name,
-            workspaceSlug,
-            projectId,
-            projectIdentifier: response?.data?.project_detail?.identifier,
-            projectName: response?.data?.project_detail?.name,
-            labelId: response?.data?.id,
-            color: response?.data?.color,
-          },
-          "ISSUE_LABEL_UPDATE",
-          user
-        );
-        return response?.data;
-      })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async deleteIssueLabel(
-    workspaceSlug: string,
-    projectId: string,
-    labelId: string,
-    user: ICurrentUserResponse | undefined
-  ): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/${labelId}/`)
-      .then((response) => {
-        trackEventServices.trackIssueLabelEvent(
-          {
-            workspaceSlug,
-            projectId,
-          },
-          "ISSUE_LABEL_DELETE",
-          user
-        );
-        return response?.data;
-      })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
   async patchIssue(
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     data: Partial<IIssue>,
-    user: ICurrentUserResponse | undefined
+    user: IUser | undefined
   ): Promise<any> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`, data)
       .then((response) => {
-        trackEventServices.trackIssueEvent(response.data, "ISSUE_UPDATE", user);
+        trackEventService.trackIssueEvent(response.data, "ISSUE_UPDATE", user as IUser);
         return response?.data;
       })
       .catch((error) => {
@@ -373,15 +266,10 @@ export class IssueService extends APIService {
       });
   }
 
-  async deleteIssue(
-    workspaceSlug: string,
-    projectId: string,
-    issuesId: string,
-    user: ICurrentUserResponse | undefined
-  ): Promise<any> {
+  async deleteIssue(workspaceSlug: string, projectId: string, issuesId: string, user: IUser | undefined): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issuesId}/`)
       .then((response) => {
-        trackEventServices.trackIssueEvent({ issuesId }, "ISSUE_DELETE", user);
+        trackEventService.trackIssueEvent({ issuesId }, "ISSUE_DELETE", user as IUser);
         return response?.data;
       })
       .catch((error) => {
@@ -389,15 +277,10 @@ export class IssueService extends APIService {
       });
   }
 
-  async bulkDeleteIssues(
-    workspaceSlug: string,
-    projectId: string,
-    data: any,
-    user: ICurrentUserResponse | undefined
-  ): Promise<any> {
+  async bulkDeleteIssues(workspaceSlug: string, projectId: string, data: any, user: IUser | undefined): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-delete-issues/`, data)
       .then((response) => {
-        trackEventServices.trackIssueBulkDeleteEvent(data, user);
+        trackEventService.trackIssueBulkDeleteEvent(data, user as IUser);
         return response?.data;
       })
       .catch((error) => {
@@ -513,100 +396,6 @@ export class IssueService extends APIService {
         throw error?.response?.data;
       });
   }
-
-  async getArchivedIssues(workspaceSlug: string, projectId: string, queries?: any): Promise<any> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-issues/`, {
-      params: queries,
-    })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async unarchiveIssue(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/unarchive/${issueId}/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async retrieveArchivedIssue(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-issues/${issueId}/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async deleteArchivedIssue(workspaceSlug: string, projectId: string, issuesId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-issues/${issuesId}/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getDraftIssues(workspaceSlug: string, projectId: string, params?: any): Promise<any> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/`, {
-      params,
-    })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response;
-      });
-  }
-
-  async createDraftIssue(
-    workspaceSlug: string,
-    projectId: string,
-    data: any,
-    user: ICurrentUserResponse
-  ): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/`, data)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response;
-      });
-  }
-
-  async updateDraftIssue(
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    data: any,
-    user: ICurrentUserResponse
-  ): Promise<any> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/${issueId}/`, data)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response;
-      });
-  }
-
-  async deleteDraftIssue(
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    user: ICurrentUserResponse
-  ): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/${issueId}/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response;
-      });
-  }
-
-  async getDraftIssueById(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/${issueId}/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response;
-      });
-  }
 }
 
-const issueService = new IssueService();
-
-export default issueService;
+export default IssueService;

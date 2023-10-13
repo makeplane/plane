@@ -1,10 +1,12 @@
 import APIService from "services/api.service";
-import trackEventServices from "services/track_event.service";
+import TrackEventService from "services/track_event.service";
 import { API_BASE_URL } from "helpers/common.helper";
 // types
-import type { IInboxIssue, IInbox, TInboxStatus, IInboxIssueDetail, IInboxQueryParams } from "types";
+import type { IInboxIssue, IInbox, TInboxStatus, IInboxIssueDetail, IUser, IInboxQueryParams } from "types";
 
-export class InboxService extends APIService {
+const trackEventService = new TrackEventService();
+
+class InboxService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -74,7 +76,7 @@ export class InboxService extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}/`
     )
       .then((response) => {
-        trackEventServices.trackInboxEvent(response?.data, "INBOX_ISSUE_DELETE", user);
+        trackEventService.trackInboxEvent(response?.data, "INBOX_ISSUE_DELETE", user as IUser);
         return response?.data;
       })
       .catch((error) => {
@@ -103,7 +105,7 @@ export class InboxService extends APIService {
             : data.status === 1
             ? "INBOX_ISSUE_ACCEPTED"
             : "INBOX_ISSUE_DUPLICATED";
-        trackEventServices.trackInboxEvent(response?.data, action, user);
+        trackEventService.trackInboxEvent(response?.data, action, user as IUser);
         return response?.data;
       })
       .catch((error) => {
@@ -124,7 +126,7 @@ export class InboxService extends APIService {
       data
     )
       .then((response) => {
-        trackEventServices.trackInboxEvent(response?.data, "INBOX_ISSUE_UPDATE", user);
+        trackEventService.trackInboxEvent(response?.data, "INBOX_ISSUE_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -141,7 +143,7 @@ export class InboxService extends APIService {
   ): Promise<IInboxIssueDetail> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/`, data)
       .then((response) => {
-        trackEventServices.trackInboxEvent(response?.data, "INBOX_ISSUE_CREATE", user);
+        trackEventService.trackInboxEvent(response?.data, "INBOX_ISSUE_CREATE", user as IUser);
         return response?.data;
       })
       .catch((error) => {
@@ -150,6 +152,4 @@ export class InboxService extends APIService {
   }
 }
 
-const inboxService = new InboxService();
-
-export default inboxService;
+export default InboxService;

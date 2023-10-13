@@ -7,7 +7,7 @@ import ToastAlert from "components/toast-alert";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // services
-import projectService from "services/project.service";
+import projectService from "services/project.service/project.service";
 // fetch-keys
 import { USER_PROJECT_VIEW } from "constants/fetch-keys";
 // helper
@@ -97,9 +97,7 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
       if (theme === "custom") {
         if (user && user.theme.palette) {
           applyTheme(
-            user.theme.palette !== ",,,,"
-              ? user.theme.palette
-              : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
+            user.theme.palette !== ",,,," ? user.theme.palette : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
             user.theme.darkPalette
           );
         }

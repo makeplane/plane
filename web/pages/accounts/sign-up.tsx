@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 // next-themes
 import { useTheme } from "next-themes";
 // services
-import authenticationService from "services/authentication.service";
+import authenticationService from "services/auth.service";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
@@ -53,9 +53,7 @@ const SignUp: NextPage = () => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message:
-            err?.error ||
-            "Something went wrong. Please try again later or contact the support team.",
+          message: err?.error || "Something went wrong. Please try again later or contact the support team.",
         })
       );
   };

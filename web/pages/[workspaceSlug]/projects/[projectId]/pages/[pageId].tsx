@@ -14,9 +14,9 @@ import { TwitterPicker } from "react-color";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 // services
-import projectService from "services/project.service";
+import projectService from "services/project.service/project.service";
 import pagesService from "services/page.service";
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";

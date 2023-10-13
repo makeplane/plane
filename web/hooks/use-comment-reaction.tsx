@@ -4,7 +4,7 @@ import useSWR from "swr";
 import { COMMENT_REACTION_LIST } from "constants/fetch-keys";
 
 // services
-import reactionService from "services/issue_reaction.service";
+import reactionService from "services/issue/issue_reaction.service";
 
 // helpers
 import { groupReactions } from "helpers/emoji.helper";

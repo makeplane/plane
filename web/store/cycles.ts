@@ -2,8 +2,8 @@ import { action, computed, observable, makeObservable, runInAction } from "mobx"
 // types
 import { RootStore } from "./root";
 // services
-import { ProjectService } from "services/project.service";
-import { IssueService } from "services/issue.service";
+import { ProjectService } from "services/project.service/project.service";
+import { IssueService } from "services/issue/issue.service";
 import { ICycle } from "types";
 import { CycleService } from "services/cycles.service";
 

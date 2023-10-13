@@ -11,7 +11,7 @@ import type {
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 
-export class UserNotificationsServices extends APIService {
+class UserNotificationsServices extends APIService {
   constructor() {
     super(API_BASE_URL);
   }

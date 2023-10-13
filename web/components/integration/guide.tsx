@@ -9,7 +9,7 @@ import useSWR, { mutate } from "swr";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // services
-import IntegrationService from "services/integration.service";
+import IntegrationService from "services/integrations/integration.service";
 // components
 import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "components/integration";
 // ui

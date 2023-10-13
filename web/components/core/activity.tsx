@@ -5,7 +5,7 @@ import useSWR from "swr";
 // hook
 import useEstimateOption from "hooks/use-estimate-option";
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 // icons
 import { Tooltip } from "@plane/ui";
 import { Icon } from "components/ui";

@@ -111,7 +111,7 @@ type ReactionEventType =
   | "ISSUE_REACTION_DELETE"
   | "ISSUE_COMMENT_REACTION_DELETE";
 
-class TrackEventServices extends APIService {
+class TrackEventService extends APIService {
   constructor() {
     super("/");
   }
@@ -276,7 +276,7 @@ class TrackEventServices extends APIService {
   async trackIssueCommentEvent(
     data: Partial<IIssueComment> | any,
     eventName: IssueCommentEventType,
-    user: IUser
+    user: IUser | undefined
   ): Promise<any> {
     if (!trackEvent) return;
 
@@ -466,7 +466,7 @@ class TrackEventServices extends APIService {
     });
   }
 
-  async trackPageEvent(data: Partial<IPage> | any, eventName: PagesEventType, user: IUser): Promise<any> {
+  async trackPageEvent(data: Partial<IPage> | any, eventName: PagesEventType, user: IUser | undefined): Promise<any> {
     if (!trackEvent) return;
 
     let payload: any;
@@ -713,7 +713,7 @@ class TrackEventServices extends APIService {
     });
   }
 
-  async trackImporterEvent(data: any, eventName: ImporterEventType, user: IUser): Promise<any> {
+  async trackImporterEvent(data: any, eventName: ImporterEventType, user: IUser | undefined): Promise<any> {
     if (!trackEvent) return;
 
     let payload: any;
@@ -849,6 +849,4 @@ class TrackEventServices extends APIService {
   }
 }
 
-const trackEventServices = new TrackEventServices();
-
-export default trackEventServices;
+export default TrackEventService;

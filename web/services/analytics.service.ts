@@ -8,9 +8,10 @@ import {
   IExportAnalyticsFormData,
   ISaveAnalyticsFormData,
 } from "types";
+// helpers
 import { API_BASE_URL } from "helpers/common.helper";
 
-export class AnalyticsService extends APIService {
+class AnalyticsService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -61,4 +62,4 @@ export class AnalyticsService extends APIService {
   }
 }
 
-export default new AnalyticsService();
+export default AnalyticsService;

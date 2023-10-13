@@ -11,7 +11,7 @@ export interface IEnvConfig {
   magic_login: boolean;
 }
 
-export class AppConfigService extends APIService {
+class AppConfigService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -28,3 +28,4 @@ export class AppConfigService extends APIService {
       });
   }
 }
+export default AppConfigService;

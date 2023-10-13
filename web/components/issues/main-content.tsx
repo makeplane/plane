@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";

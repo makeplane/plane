@@ -3,9 +3,9 @@ import { observable, action, computed, makeObservable, runInAction } from "mobx"
 import { RootStore } from "./root";
 import { IProject, IIssueLabels, IProjectMember, IStateResponse, IState, IPage } from "types";
 // services
-import { ProjectService } from "services/project.service";
-import { IssueService } from "services/issue.service";
-import { ProjectStateServices } from "services/project_state.service";
+import { ProjectService } from "services/project.service/project.service";
+import { IssueService } from "services/issue/issue.service";
+import { ProjectStateServices } from "services/project.service/project_state.service";
 import { CycleService } from "services/cycles.service";
 import { ModuleService } from "services/modules.service";
 import { ViewService } from "services/views.service";

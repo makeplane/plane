@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // react-dropzone
 import { useDropzone } from "react-dropzone";
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 // hooks
 import useToast from "hooks/use-toast";
 // types

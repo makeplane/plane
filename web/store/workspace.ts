@@ -4,8 +4,8 @@ import { RootStore } from "./root";
 import { IIssueLabels, IProject, IWorkspace, IWorkspaceMember } from "types";
 // services
 import { WorkspaceService } from "services/workspace.service";
-import { ProjectService } from "services/project.service";
-import { IssueService } from "services/issue.service";
+import { ProjectService } from "services/project.service/project.service";
+import { IssueService } from "services/issue/issue.service";
 
 export interface IWorkspaceStore {
   // states

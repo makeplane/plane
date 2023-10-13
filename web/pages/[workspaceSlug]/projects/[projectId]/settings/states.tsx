@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import stateService from "services/project_state.service";
+import stateService from "services/project.service/project_state.service";
 // hooks
 import useProjectDetails from "hooks/use-project-details";
 import useUserAuth from "hooks/use-user-auth";

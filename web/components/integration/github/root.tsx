@@ -9,8 +9,8 @@ import useSWR, { mutate } from "swr";
 // react-hook-form
 import { useForm } from "react-hook-form";
 // services
-import IntegrationService from "services/integration.service";
-import GithubIntegrationService from "services/github.service";
+import IntegrationService from "services/integrations/integration.service";
+import GithubIntegrationService from "services/integrations/github.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components

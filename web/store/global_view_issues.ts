@@ -1,6 +1,6 @@
 import { observable, action, makeObservable, runInAction } from "mobx";
 // services
-import { ProjectService } from "services/project.service";
+import { ProjectService } from "services/project.service/project.service";
 import { WorkspaceService } from "services/workspace.service";
 // helpers
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";

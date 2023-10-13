@@ -7,8 +7,8 @@ import useSWR, { mutate } from "swr";
 // cmdk
 import { Command } from "cmdk";
 // services
-import issuesService from "services/issue.service";
-import stateService from "services/project_state.service";
+import issuesService from "services/issue/issue.service";
+import stateService from "services/project.service/project_state.service";
 // ui
 import { Spinner } from "@plane/ui";
 // icons

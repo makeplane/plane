@@ -7,7 +7,7 @@ import { SubIssues } from "./issue";
 import { ICurrentUserResponse, IIssue } from "types";
 import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 // fetch keys
 import { SUB_ISSUES } from "constants/fetch-keys";
 

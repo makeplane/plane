@@ -11,7 +11,7 @@ import useSWR, { mutate } from "swr";
 import { X } from "lucide-react";
 
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 
 // fetch key
 import { SUB_ISSUES } from "constants/fetch-keys";

@@ -1,14 +1,19 @@
 // services
 import APIService from "services/api.service";
-import { ICurrentUserResponse } from "types";
+// helpers
 import { API_BASE_URL } from "helpers/common.helper";
 
-export class AuthService extends APIService {
+export interface ILoginTokenResponse {
+  access_token: string;
+  refresh_toke: string;
+}
+
+class AuthService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async emailLogin(data: any) {
+  async emailLogin(data: any): Promise<ILoginTokenResponse> {
     return this.post("/api/sign-in/", data, { headers: {} })
       .then((response) => {
         this.setAccessToken(response?.data?.access_token);
@@ -20,7 +25,7 @@ export class AuthService extends APIService {
       });
   }
 
-  async emailSignUp(data: { email: string; password: string }) {
+  async emailSignUp(data: { email: string; password: string }): Promise<ILoginTokenResponse> {
     return this.post("/api/sign-up/", data, { headers: {} })
       .then((response) => {
         this.setAccessToken(response?.data?.access_token);
@@ -32,11 +37,7 @@ export class AuthService extends APIService {
       });
   }
 
-  async socialAuth(data: any): Promise<{
-    access_token: string;
-    refresh_toke: string;
-    user: ICurrentUserResponse;
-  }> {
+  async socialAuth(data: any): Promise<ILoginTokenResponse> {
     return this.post("/api/social-auth/", data, { headers: {} })
       .then((response) => {
         this.setAccessToken(response?.data?.access_token);
@@ -48,7 +49,7 @@ export class AuthService extends APIService {
       });
   }
 
-  async emailCode(data: any) {
+  async emailCode(data: any): Promise<any> {
     return this.post("/api/magic-generate/", data, { headers: {} })
       .then((response) => response?.data)
       .catch((error) => {
@@ -56,7 +57,7 @@ export class AuthService extends APIService {
       });
   }
 
-  async magicSignIn(data: any) {
+  async magicSignIn(data: any): Promise<any> {
     const response = await this.post("/api/magic-sign-in/", data, { headers: {} });
     if (response?.status === 200) {
       this.setAccessToken(response?.data?.access_token);
@@ -66,7 +67,7 @@ export class AuthService extends APIService {
     throw response.response.data;
   }
 
-  async signOut() {
+  async signOut(): Promise<any> {
     return this.post("/api/sign-out/", { refresh_token: this.getRefreshToken() })
       .then((response) => {
         this.purgeAccessToken();
@@ -81,4 +82,4 @@ export class AuthService extends APIService {
   }
 }
 
-export default new AuthService();
+export default AuthService;

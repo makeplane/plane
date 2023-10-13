@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 
 // services
 import pagesService from "services/page.service";
-import projectService from "services/project.service";
+import projectService from "services/project.service/project.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";

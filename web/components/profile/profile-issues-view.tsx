@@ -7,7 +7,7 @@ import useSWR from "swr";
 // react-beautiful-dnd
 import { DropResult } from "react-beautiful-dnd";
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 import userService from "services/user.service";
 // hooks
 import useProfileIssues from "hooks/use-profile-issues";
@@ -207,8 +207,7 @@ export const ProfileIssuesView = () => {
   const isMySubscribedIssues =
     (filters.subscriber && filters.subscriber.length > 0 && router.pathname.includes("my-issues")) ?? false;
 
-  const disableAddIssueOption =
-    isSubscribedIssuesRoute || isMySubscribedIssues || user?.id !== userId;
+  const disableAddIssueOption = isSubscribedIssuesRoute || isMySubscribedIssues || user?.id !== userId;
 
   return (
     <>

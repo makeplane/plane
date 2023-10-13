@@ -7,12 +7,11 @@ import { Menu, Transition } from "@headlessui/react";
 import { useTheme } from "next-themes";
 // hooks
 import useUser from "hooks/use-user";
-import useThemeHook from "hooks/use-theme";
 import useWorkspaces from "hooks/use-workspaces";
 import useToast from "hooks/use-toast";
 // services
-import userService from "services/user.service";
-import authenticationService from "services/authentication.service";
+import UserService from "services/user.service";
+import AuthService from "services/auth.service";
 // components
 import { Avatar, Icon } from "components/ui";
 import { Loader } from "@plane/ui";
@@ -54,6 +53,9 @@ const profileLinks = (workspaceSlug: string, userId: string) => [
   },
 ];
 
+const userService = new UserService();
+const authService = new AuthService();
+
 export const WorkspaceSidebarDropdown = () => {
   const store: any = useMobxStore();
 
@@ -87,7 +89,7 @@ export const WorkspaceSidebarDropdown = () => {
   };
 
   const handleSignOut = async () => {
-    await authenticationService
+    await authService
       .signOut()
       .then(() => {
         mutateUser(undefined);
@@ -150,7 +152,7 @@ export const WorkspaceSidebarDropdown = () => {
               {workspaces ? (
                 <div className="flex h-full w-full flex-col items-start justify-start gap-1.5">
                   {workspaces.length > 0 ? (
-                    workspaces.map((workspace) => (
+                    workspaces.map((workspace: IWorkspace) => (
                       <Menu.Item key={workspace.id}>
                         {() => (
                           <button

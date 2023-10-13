@@ -6,7 +6,7 @@ import useSWR from "swr";
 
 // services
 import workspaceService from "services/workspace.service";
-import IntegrationService from "services/integration.service";
+import IntegrationService from "services/integrations/integration.service";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // components

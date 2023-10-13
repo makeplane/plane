@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 // components
 import { DateFilterModal } from "components/core";
 // ui

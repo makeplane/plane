@@ -5,8 +5,8 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // services
-import estimatesService from "services/project_estimates.service";
-import projectService from "services/project.service";
+import estimatesService from "services/project.service/project_estimates.service";
+import projectService from "services/project.service/project.service";
 // hooks
 import useProjectDetails from "hooks/use-project-details";
 // layouts

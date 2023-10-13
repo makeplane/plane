@@ -6,8 +6,8 @@ import { useRouter } from "next/router";
 import useToast from "hooks/use-toast";
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
-import { AuthService } from "services/authentication.service";
-import { AppConfigService } from "services/app-config.service";
+import { AuthService } from "services/auth.service";
+import { AppConfigService } from "services/app_config.service";
 // components
 import {
   GoogleLoginButton,

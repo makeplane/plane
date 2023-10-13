@@ -1,29 +1,17 @@
-// react
 import React, { useState } from "react";
-
-// next
 import Link from "next/link";
 import { useRouter } from "next/router";
-
-// swr
 import { mutate } from "swr";
-
 // services
-import issuesService from "services/issue.service";
-
+import IssueService from "services/issue/issue.service";
 // icons
-// import { LinkIcon, PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Link as LinkIcon, Plus, Pencil, X } from "lucide-react";
-
 // components
 import { Label, WebViewModal, CreateUpdateLinkForm } from "components/web-view";
-
 // ui
 import { Button } from "@plane/ui";
-
 // fetch keys
 import { ISSUE_DETAILS } from "constants/fetch-keys";
-
 // types
 import type { IIssue } from "types";
 
@@ -31,6 +19,8 @@ type Props = {
   allowed: boolean;
   issueDetails: IIssue;
 };
+
+const issueService = new IssueService();
 
 export const IssueLinks: React.FC<Props> = (props) => {
   const { issueDetails, allowed } = props;
@@ -54,9 +44,9 @@ export const IssueLinks: React.FC<Props> = (props) => {
       false
     );
 
-    await issuesService
+    await issueService
       .deleteIssueLink(workspaceSlug as string, projectId as string, issueDetails.id, linkId)
-      .then((res) => {
+      .then(() => {
         mutate(ISSUE_DETAILS(issueDetails.id));
       })
       .catch((err) => {

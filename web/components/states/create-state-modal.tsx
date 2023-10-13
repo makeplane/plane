@@ -11,7 +11,7 @@ import { TwitterPicker } from "react-color";
 // headless ui
 import { Dialog, Popover, Transition } from "@headlessui/react";
 // services
-import stateService from "services/project_state.service";
+import stateService from "services/project.service/project_state.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui

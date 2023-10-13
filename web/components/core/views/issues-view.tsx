@@ -7,8 +7,8 @@ import useSWR, { mutate } from "swr";
 // react-beautiful-dnd
 import { DropResult } from "react-beautiful-dnd";
 // services
-import issuesService from "services/issue.service";
-import stateService from "services/project_state.service";
+import issuesService from "services/issue/issue.service";
+import stateService from "services/project.service/project_state.service";
 import modulesService from "services/modules.service";
 import trackEventServices from "services/track_event.service";
 // hooks

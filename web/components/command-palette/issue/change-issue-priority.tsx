@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // cmdk
 import { Command } from "cmdk";
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 // types
 import { ICurrentUserResponse, IIssue, TIssuePriorities } from "types";
 // constants

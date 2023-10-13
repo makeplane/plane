@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // services
-import projectService from "services/project.service";
+import projectService from "services/project.service/project.service";
 import trackEventServices, { MiscellaneousEventType } from "services/track_event.service";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";

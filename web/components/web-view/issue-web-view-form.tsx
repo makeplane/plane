@@ -33,7 +33,7 @@ type Props = {
 };
 
 export const IssueWebViewForm: React.FC<Props> = (props) => {
-  const { isAllowed, issueDetails, submitChanges, register, control, watch, handleSubmit } = props;
+  const { isAllowed, issueDetails, submitChanges, control, watch, handleSubmit } = props;
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -81,7 +81,7 @@ export const IssueWebViewForm: React.FC<Props> = (props) => {
             <Controller
               name="name"
               control={control}
-              render={({ field: { value, onChange } }) => (
+              render={({ field: { value } }) => (
                 <TextArea
                   id="name"
                   name="name"

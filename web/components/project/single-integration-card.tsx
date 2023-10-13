@@ -5,7 +5,7 @@ import Image from "next/image";
 import useSWR, { mutate } from "swr";
 
 // services
-import projectService from "services/project.service";
+import projectService from "services/project.service/project.service";
 // hooks
 import { useRouter } from "next/router";
 import useToast from "hooks/use-toast";
@@ -44,11 +44,7 @@ export const SingleIntegration: React.FC<Props> = ({ integration }) => {
     projectId ? PROJECT_GITHUB_REPOSITORY(projectId as string) : null,
     () =>
       workspaceSlug && projectId && integration
-        ? projectService.getProjectGithubRepository(
-            workspaceSlug as string,
-            projectId as string,
-            integration.id
-          )
+        ? projectService.getProjectGithubRepository(workspaceSlug as string, projectId as string, integration.id)
         : null
   );
 
@@ -101,9 +97,7 @@ export const SingleIntegration: React.FC<Props> = ({ integration }) => {
               />
             </div>
             <div>
-              <h3 className="flex items-center gap-4 text-sm font-medium">
-                {integration.integration_detail.title}
-              </h3>
+              <h3 className="flex items-center gap-4 text-sm font-medium">{integration.integration_detail.title}</h3>
               <p className="text-sm text-custom-text-200 tracking-tight">
                 {integrationDetails[integration.integration_detail.provider].description}
               </p>
@@ -125,9 +119,7 @@ export const SingleIntegration: React.FC<Props> = ({ integration }) => {
               onChange={handleChange}
             />
           )}
-          {integration.integration_detail.provider === "slack" && (
-            <SelectChannel integration={integration} />
-          )}
+          {integration.integration_detail.provider === "slack" && <SelectChannel integration={integration} />}
         </div>
       )}
     </>

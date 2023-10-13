@@ -13,7 +13,7 @@ import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // constants
 import { NETWORK_CHOICES } from "constants/project";
 // services
-import projectService from "services/project.service";
+import projectService from "services/project.service/project.service";
 // hooks
 import useToast from "hooks/use-toast";
 import { useMobxStore } from "lib/mobx/store-provider";

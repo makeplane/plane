@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
-import projectService from "services/project.service";
+import projectService from "services/project.service/project.service";
 // hooks
 import useDebounce from "hooks/use-debounce";
 // components

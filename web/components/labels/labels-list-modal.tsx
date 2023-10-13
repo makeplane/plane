@@ -9,7 +9,7 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 // icons
 import { RectangleStackIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 // types
 import { ICurrentUserResponse, IIssueLabels } from "types";
 // constants

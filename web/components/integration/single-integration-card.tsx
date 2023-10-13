@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // services
-import IntegrationService from "services/integration.service";
+import IntegrationService from "services/integrations/integration.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useIntegrationPopup from "hooks/use-integration-popup";

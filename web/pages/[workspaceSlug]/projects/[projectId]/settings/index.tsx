@@ -5,7 +5,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // services
-import projectService from "services/project.service";
+import projectService from "services/project.service/project.service";
 // components
 import { DeleteProjectModal, ProjectDetailsForm, ProjectDetailsFormLoader, SettingsSidebar } from "components/project";
 // hooks

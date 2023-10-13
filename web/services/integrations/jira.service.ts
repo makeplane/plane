@@ -1,10 +1,12 @@
 import APIService from "services/api.service";
-import trackEventServices from "services/track_event.service";
+import TrackEventService from "services/track_event.service";
 import { API_BASE_URL } from "helpers/common.helper";
 // types
-import { IJiraMetadata, IJiraResponse, IJiraImporterForm, ICurrentUserResponse } from "types";
+import { IJiraMetadata, IJiraResponse, IJiraImporterForm, IUser } from "types";
 
-export class JiraImporterService extends APIService {
+const trackEventService = new TrackEventService();
+
+class JiraImporterService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -22,11 +24,11 @@ export class JiraImporterService extends APIService {
   async createJiraImporter(
     workspaceSlug: string,
     data: IJiraImporterForm,
-    user: ICurrentUserResponse | undefined
+    user: IUser | undefined
   ): Promise<IJiraResponse> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/importers/jira/`, data)
       .then((response) => {
-        trackEventServices.trackImporterEvent(response?.data, "JIRA_IMPORTER_CREATE", user);
+        trackEventService.trackImporterEvent(response?.data, "JIRA_IMPORTER_CREATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -34,5 +36,5 @@ export class JiraImporterService extends APIService {
       });
   }
 }
-const jiraService = new JiraImporterService();
-export default jiraService;
+
+export default JiraImporterService;

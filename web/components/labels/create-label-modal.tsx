@@ -11,7 +11,7 @@ import { TwitterPicker } from "react-color";
 // headless ui
 import { Dialog, Popover, Transition } from "@headlessui/react";
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 // ui
 import { Button, Input } from "@plane/ui";
 // icons

@@ -3,7 +3,7 @@ import * as Sentry from "@sentry/nextjs";
 import { useRouter } from "next/router";
 
 // services
-import authenticationService from "services/authentication.service";
+import authenticationService from "services/auth.service";
 // hooks
 import useToast from "hooks/use-toast";
 // layouts

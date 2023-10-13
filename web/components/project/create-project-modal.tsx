@@ -6,7 +6,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
 // services
-import projectServices from "services/project.service";
+import projectServices from "services/project.service/project.service";
 // hooks
 import useToast from "hooks/use-toast";
 import { useWorkspaceMyMembership } from "contexts/workspace-member.context";

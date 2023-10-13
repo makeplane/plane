@@ -99,7 +99,7 @@ export class ProjectService extends APIService {
             memberEmail: response?.data?.member?.email,
           },
           "PROJECT_MEMBER_INVITE",
-          user
+          user as IUser
         );
         return response?.data;
       })
@@ -246,7 +246,7 @@ export class ProjectService extends APIService {
   }
 
   async getGithubRepositories(url: string): Promise<GithubRepositoriesResponse> {
-    return this.getWithoutBase(url)
+    return this.request(url)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -323,4 +323,4 @@ export class ProjectService extends APIService {
   }
 }
 
-export default new ProjectService();
+export default ProjectService;

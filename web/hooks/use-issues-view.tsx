@@ -7,10 +7,10 @@ import useSWR from "swr";
 // contexts
 import { issueViewContext } from "contexts/issue-view.context";
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 import cyclesService from "services/cycles.service";
 import modulesService from "services/modules.service";
-import stateService from "services/project_state.service";
+import stateService from "services/project.service/project_state.service";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // types

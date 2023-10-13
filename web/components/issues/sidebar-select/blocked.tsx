@@ -7,7 +7,7 @@ import { UseFormWatch } from "react-hook-form";
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 // components
 import { ExistingIssuesListModal } from "components/core";
 // icons

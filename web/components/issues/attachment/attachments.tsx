@@ -12,8 +12,8 @@ import { DeleteAttachmentModal } from "./delete-attachment-modal";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { ExclamationIcon, getFileIcon } from "components/icons";
 // services
-import issuesService from "services/issue.service";
-import projectService from "services/project.service";
+import issuesService from "services/issue/issue.service";
+import projectService from "services/project.service/project.service";
 // fetch-key
 import { ISSUE_ATTACHMENTS, PROJECT_MEMBERS } from "constants/fetch-keys";
 // helper

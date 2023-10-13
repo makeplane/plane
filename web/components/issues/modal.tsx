@@ -8,7 +8,7 @@ import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import modulesService from "services/modules.service";
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 import inboxServices from "services/inbox.service";
 // hooks
 import useUser from "hooks/use-user";

@@ -1,12 +1,13 @@
 import APIService from "services/api.service";
-import trackEventServices from "services/track_event.service";
+import TrackEventService from "services/track_event.service";
 // types
 import { IProjectView } from "types/views";
-import { ICurrentUserResponse } from "types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 
-export class ViewService extends APIService {
+const trackEventService = new TrackEventService();
+
+class ViewService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -14,7 +15,7 @@ export class ViewService extends APIService {
   async createView(workspaceSlug: string, projectId: string, data: Partial<IProjectView>, user: any): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/`, data)
       .then((response) => {
-        trackEventServices.trackViewEvent(response?.data, "VIEW_CREATE", user);
+        trackEventService.trackViewEvent(response?.data, "VIEW_CREATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -31,7 +32,7 @@ export class ViewService extends APIService {
   ): Promise<any> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`, data)
       .then((response) => {
-        trackEventServices.trackViewEvent(response?.data, "VIEW_UPDATE", user);
+        trackEventService.trackViewEvent(response?.data, "VIEW_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -42,7 +43,7 @@ export class ViewService extends APIService {
   async deleteView(workspaceSlug: string, projectId: string, viewId: string, user: any): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`)
       .then((response) => {
-        trackEventServices.trackViewEvent(response?.data, "VIEW_DELETE", user);
+        trackEventService.trackViewEvent(response?.data, "VIEW_DELETE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -97,4 +98,4 @@ export class ViewService extends APIService {
   }
 }
 
-export default new ViewService();
+export default ViewService;

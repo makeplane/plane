@@ -1,9 +1,9 @@
-import React, { useEffect, useState, forwardRef, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
-import aiService from "services/ai.service";
+import AIService from "services/ai.service";
 import trackEventServices from "services/track_event.service";
 // hooks
 import useToast from "hooks/use-toast";
@@ -31,6 +31,8 @@ type FormData = {
   task: string;
 };
 
+const aiService = new AIService();
+
 export const GptAssistantModal: React.FC<Props> = ({
   isOpen,
   handleClose,
@@ -57,7 +59,6 @@ export const GptAssistantModal: React.FC<Props> = ({
   const {
     handleSubmit,
     control,
-    register,
     reset,
     setFocus,
     formState: { isSubmitting },

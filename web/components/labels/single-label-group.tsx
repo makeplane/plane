@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 // ui
 import { CustomMenu } from "components/ui";
 // icons

@@ -5,7 +5,7 @@ import useSWR, { mutate } from "swr";
 // components
 import { AddComment, IssueActivitySection } from "components/issues";
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 // hooks
 import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";

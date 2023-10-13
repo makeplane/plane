@@ -7,7 +7,7 @@ import useSWR, { mutate } from "swr";
 // components
 import ToastAlert from "components/toast-alert";
 // services
-import projectService from "services/project.service";
+import projectService from "services/project.service/project.service";
 import cyclesService from "services/cycles.service";
 import modulesService from "services/modules.service";
 import viewsService from "services/views.service";

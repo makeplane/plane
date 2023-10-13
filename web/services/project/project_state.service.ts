@@ -1,25 +1,22 @@
 // services
 import APIService from "services/api.service";
-import trackEventServices from "services/track_event.service";
+import TrackEventService from "services/track_event.service";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 // types
-import type { ICurrentUserResponse, IState, IStateResponse } from "types";
+import type { IUser, IState, IStateResponse } from "types";
 
-export class ProjectStateServices extends APIService {
+const trackEventService = new TrackEventService();
+
+class ProjectStateServices extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async createState(
-    workspaceSlug: string,
-    projectId: string,
-    data: any,
-    user: ICurrentUserResponse | undefined
-  ): Promise<any> {
+  async createState(workspaceSlug: string, projectId: string, data: any, user: IUser | undefined): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/`, data)
       .then((response) => {
-        trackEventServices.trackStateEvent(response?.data, "STATE_CREATE", user);
+        trackEventService.trackStateEvent(response?.data, "STATE_CREATE", user as IUser);
         return response?.data;
       })
       .catch((error) => {
@@ -57,11 +54,11 @@ export class ProjectStateServices extends APIService {
     projectId: string,
     stateId: string,
     data: IState,
-    user: ICurrentUserResponse | undefined
+    user: IUser | undefined
   ): Promise<any> {
     return this.put(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/${stateId}/`, data)
       .then((response) => {
-        trackEventServices.trackStateEvent(response?.data, "STATE_UPDATE", user);
+        trackEventService.trackStateEvent(response?.data, "STATE_UPDATE", user as IUser);
         return response?.data;
       })
       .catch((error) => {
@@ -74,11 +71,11 @@ export class ProjectStateServices extends APIService {
     projectId: string,
     stateId: string,
     data: Partial<IState>,
-    user: ICurrentUserResponse | undefined
+    user: IUser | undefined
   ): Promise<any> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/${stateId}/`, data)
       .then((response) => {
-        trackEventServices.trackStateEvent(response?.data, "STATE_UPDATE", user);
+        trackEventService.trackStateEvent(response?.data, "STATE_UPDATE", user as IUser);
         return response?.data;
       })
       .catch((error) => {
@@ -86,15 +83,10 @@ export class ProjectStateServices extends APIService {
       });
   }
 
-  async deleteState(
-    workspaceSlug: string,
-    projectId: string,
-    stateId: string,
-    user: ICurrentUserResponse | undefined
-  ): Promise<any> {
+  async deleteState(workspaceSlug: string, projectId: string, stateId: string, user: IUser | undefined): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/${stateId}/`)
       .then((response) => {
-        trackEventServices.trackStateEvent(response?.data, "STATE_DELETE", user);
+        trackEventService.trackStateEvent(response?.data, "STATE_DELETE", user as IUser);
         return response?.data;
       })
       .catch((error) => {
@@ -103,4 +95,4 @@ export class ProjectStateServices extends APIService {
   }
 }
 
-export default new ProjectStateServices();
+export default ProjectStateServices;

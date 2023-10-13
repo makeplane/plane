@@ -2,7 +2,7 @@ import React from "react";
 // swr
 import { mutate } from "swr";
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 import trackEventServices from "services/track_event.service";
 // components
 import { ViewDueDateSelect, ViewStartDateSelect } from "components/issues";

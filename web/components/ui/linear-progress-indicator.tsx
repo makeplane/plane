@@ -8,6 +8,7 @@ type Props = {
 
 export const LinearProgressIndicator: React.FC<Props> = ({ data, noTooltip = false }) => {
   const total = data.reduce((acc: any, cur: any) => acc + cur.value, 0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let progress = 0;
 
   const bars = data.map((item: any) => {

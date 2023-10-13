@@ -11,7 +11,7 @@ import useSWR, { mutate } from "swr";
 import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 
 // hooks
 import useUser from "hooks/use-user";

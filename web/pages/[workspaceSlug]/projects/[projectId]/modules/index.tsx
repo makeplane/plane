@@ -9,7 +9,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // services
-import projectService from "services/project.service";
+import projectService from "services/project.service/project.service";
 import modulesService from "services/modules.service";
 // components
 import { CreateUpdateModuleModal, ModulesListGanttChartView, SingleModuleCard } from "components/modules";
