@@ -68,6 +68,8 @@ services:
                         - DEFAULT_EMAIL=${DEFAULT_EMAIL:-captain@plane.so}
                         - DEFAULT_PASSWORD=${DEFAULT_PASSWORD:-password123}
                         - ENABLE_SIGNUP=${ENABLE_SIGNUP:-1}
+                        - ENABLE_EMAIL_PASSWORD=${ENABLE_EMAIL_PASSWORD:-1}
+                        - ENABLE_MAGIC_LINK_LOGIN=${ENABLE_MAGIC_LINK_LOGIN:-0}
                         - SECRET_KEY=${SECRET_KEY:-60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5}
                 depends_on:
                         - plane-db
