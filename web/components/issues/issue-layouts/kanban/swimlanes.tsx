@@ -64,6 +64,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   display_properties: any;
   kanBanToggle: any;
   handleKanBanToggle: any;
+  enabledQuickIssueCreate?: boolean;
 }
 const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer(
   ({
@@ -76,6 +77,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer(
     display_properties,
     kanBanToggle,
     handleKanBanToggle,
+    enabledQuickIssueCreate,
   }) => {
     const calculateIssueCount = (column_id: string) => {
       let issueCount = 0;
@@ -116,6 +118,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer(
                     display_properties={display_properties}
                     kanBanToggle={kanBanToggle}
                     handleKanBanToggle={handleKanBanToggle}
+                    enabledQuickIssueCreate={enabledQuickIssueCreate}
                   />
                 </div>
               )}
@@ -134,10 +137,20 @@ export interface IKanBanSwimLanes {
   display_properties: any;
   kanBanToggle: any;
   handleKanBanToggle: any;
+  enabledQuickIssueCreate?: boolean;
 }
 
 export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer(
-  ({ issues, sub_group_by, group_by, handleIssues, display_properties, kanBanToggle, handleKanBanToggle }) => {
+  ({
+    issues,
+    sub_group_by,
+    group_by,
+    handleIssues,
+    display_properties,
+    kanBanToggle,
+    handleKanBanToggle,
+    enabledQuickIssueCreate,
+  }) => {
     const { project: projectStore }: RootStore = useMobxStore();
 
     return (
@@ -227,6 +240,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer(
             display_properties={display_properties}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            enabledQuickIssueCreate={enabledQuickIssueCreate}
           />
         )}
 
@@ -241,6 +255,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer(
             display_properties={display_properties}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            enabledQuickIssueCreate={enabledQuickIssueCreate}
           />
         )}
 
@@ -255,6 +270,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer(
             display_properties={display_properties}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            enabledQuickIssueCreate={enabledQuickIssueCreate}
           />
         )}
 
@@ -269,6 +285,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer(
             display_properties={display_properties}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            enabledQuickIssueCreate={enabledQuickIssueCreate}
           />
         )}
 
@@ -283,6 +300,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer(
             display_properties={display_properties}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            enabledQuickIssueCreate={enabledQuickIssueCreate}
           />
         )}
 
@@ -297,6 +315,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer(
             display_properties={display_properties}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            enabledQuickIssueCreate={enabledQuickIssueCreate}
           />
         )}
       </div>

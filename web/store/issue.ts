@@ -127,7 +127,7 @@ class IssueStore implements IIssueStore {
           ...issues[sub_group_id],
           [group_id]: _currentIssueId
             ? issues?.[sub_group_id]?.[group_id]?.map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i))
-            : [...(issues?.[sub_group_id][group_id] ?? []), issue],
+            : [...(issues?.[sub_group_id]?.[group_id] ?? []), issue],
         },
       };
     }

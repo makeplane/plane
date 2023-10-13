@@ -71,6 +71,7 @@ export const KanBanLayout: React.FC = observer(() => {
           />
         ) : (
           <KanBanSwimLanes
+            enabledQuickIssueCreate
             issues={issues}
             sub_group_by={sub_group_by}
             group_by={group_by}
