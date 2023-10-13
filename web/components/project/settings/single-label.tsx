@@ -1,10 +1,6 @@
 import React, { useState } from "react";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// react-color
 import { TwitterPicker } from "react-color";
-// headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
 import { CustomMenu } from "components/ui";
@@ -30,7 +26,6 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
   const [newLabelForm, setNewLabelForm] = useState(false);
 
   const {
-    register,
     formState: { errors, isSubmitting },
     watch,
     control,

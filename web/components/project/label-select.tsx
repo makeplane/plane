@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { useRouter } from "next/router";
 
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 // hooks
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // headless ui

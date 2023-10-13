@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import projectService from "services/project.service";
+import projectService from "services/project.service/project.service";
 import trackEventServices from "services/track_event.service";
 // ui
 import { AssigneesList, Avatar, CustomSearchSelect, Icon } from "components/ui";

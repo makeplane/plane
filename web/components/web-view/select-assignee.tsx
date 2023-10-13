@@ -11,7 +11,7 @@ import useSWR from "swr";
 import { ChevronDown } from "lucide-react";
 
 // services
-import projectService from "services/project.service";
+import projectService from "services/project.service/project.service";
 
 // fetch key
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
@@ -80,9 +80,7 @@ export const AssigneeSelect: React.FC<Props> = (props) => {
         {value && value.length > 0 && Array.isArray(value) ? (
           <div className="-my-0.5 flex items-center gap-2">
             <Avatar user={selectedAssignees?.[0].member} />
-            <span className="text-custom-text-100 text-xs">
-              {selectedAssignees?.length} Assignees
-            </span>
+            <span className="text-custom-text-100 text-xs">{selectedAssignees?.length} Assignees</span>
           </div>
         ) : (
           "No assignees"

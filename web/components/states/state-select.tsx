@@ -7,7 +7,7 @@ import useSWR from "swr";
 // hooks
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // services
-import projectStateService from "services/project_state.service";
+import projectStateService from "services/project.service/project_state.service";
 // headless ui
 import { Combobox } from "@headlessui/react";
 // icons

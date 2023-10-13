@@ -7,7 +7,7 @@ import useSWR from "swr";
 // headless ui
 import { Combobox, Transition } from "@headlessui/react";
 // services
-import issuesServices from "services/issue.service";
+import issuesServices from "services/issue/issue.service";
 // ui
 import { IssueLabelsList } from "components/ui";
 // icons

@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import estimatesService from "services/project_estimates.service";
+import estimatesService from "services/project.service/project_estimates.service";
 // hooks
 import useProjectDetails from "hooks/use-project-details";
 // helpers
@@ -32,9 +32,7 @@ const useEstimateOption = (estimateKey?: number | null) => {
   );
 
   const estimateValue: any =
-    estimateKey || estimateKey === 0
-      ? estimateDetails?.points?.find((e) => e.key === estimateKey)?.value
-      : "None";
+    estimateKey || estimateKey === 0 ? estimateDetails?.points?.find((e) => e.key === estimateKey)?.value : "None";
 
   return {
     isEstimateActive: projectDetails?.estimate ? true : false,

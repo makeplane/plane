@@ -10,7 +10,7 @@ import useUser from "hooks/use-user";
 // components
 import { ExistingIssuesListModal } from "components/core";
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { BlockerIcon } from "components/icons";

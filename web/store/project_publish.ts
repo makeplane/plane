@@ -1,8 +1,8 @@
-import { observable, action, computed, makeObservable, runInAction } from "mobx";
+import { observable, action, makeObservable, runInAction } from "mobx";
 // types
 import { RootStore } from "./root";
 // services
-import { ProjectPublishServices } from "services/project_publish.service";
+import { ProjectPublishService } from "services/project";
 
 export type TProjectPublishViews = "list" | "gantt" | "kanban" | "calendar" | "spreadsheet";
 
@@ -87,7 +87,7 @@ class ProjectPublishStore implements IProjectPublishStore {
     });
 
     this.rootStore = _rootStore;
-    this.projectPublishService = new ProjectPublishServices();
+    this.projectPublishService = new ProjectPublishService();
   }
 
   handleProjectModal = (project_id: string | null = null) => {
@@ -101,12 +101,12 @@ class ProjectPublishStore implements IProjectPublishStore {
     }
   };
 
-  getProjectSettingsAsync = async (workspace_slug: string, project_slug: string, user: any) => {
+  getProjectSettingsAsync = async (workspace_slug: string, project_slug: string) => {
     try {
       this.fetchSettingsLoader = true;
       this.error = null;
 
-      const response = await this.projectPublishService.getProjectSettingsAsync(workspace_slug, project_slug, user);
+      const response = await this.projectPublishService.getProjectSettingsAsync(workspace_slug, project_slug);
 
       if (response && response.length > 0) {
         const _projectPublishSettings: IProjectPublishSettings = {
@@ -143,17 +143,12 @@ class ProjectPublishStore implements IProjectPublishStore {
     }
   };
 
-  publishProject = async (workspace_slug: string, project_slug: string, data: IProjectPublishSettings, user: any) => {
+  publishProject = async (workspace_slug: string, project_slug: string, data: IProjectPublishSettings) => {
     try {
       this.generalLoader = true;
       this.error = null;
 
-      const response = await this.projectPublishService.createProjectSettingsAsync(
-        workspace_slug,
-        project_slug,
-        data,
-        user
-      );
+      const response = await this.projectPublishService.createProjectSettingsAsync(workspace_slug, project_slug, data);
 
       if (response) {
         const _projectPublishSettings: IProjectPublishSettings = {
@@ -185,8 +180,7 @@ class ProjectPublishStore implements IProjectPublishStore {
     workspace_slug: string,
     project_slug: string,
     project_publish_id: string,
-    data: IProjectPublishSettings,
-    user: any
+    data: IProjectPublishSettings
   ) => {
     try {
       this.generalLoader = true;
@@ -196,8 +190,7 @@ class ProjectPublishStore implements IProjectPublishStore {
         workspace_slug,
         project_slug,
         project_publish_id,
-        data,
-        user
+        data
       );
 
       if (response) {
@@ -226,7 +219,7 @@ class ProjectPublishStore implements IProjectPublishStore {
     }
   };
 
-  unPublishProject = async (workspace_slug: string, project_slug: string, project_publish_id: string, user: any) => {
+  unPublishProject = async (workspace_slug: string, project_slug: string, project_publish_id: string) => {
     try {
       this.generalLoader = true;
       this.error = null;
@@ -234,8 +227,7 @@ class ProjectPublishStore implements IProjectPublishStore {
       const response = await this.projectPublishService.deleteProjectSettingsAsync(
         workspace_slug,
         project_slug,
-        project_publish_id,
-        user
+        project_publish_id
       );
 
       runInAction(() => {

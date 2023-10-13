@@ -5,9 +5,9 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import stateService from "services/project_state.service";
-import projectService from "services/project.service";
-import issuesService from "services/issue.service";
+import stateService from "services/project.service/project_state.service";
+import projectService from "services/project.service/project.service";
+import issuesService from "services/issue/issue.service";
 // components
 import { DateFilterModal } from "components/core";
 // ui

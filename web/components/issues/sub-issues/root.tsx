@@ -20,7 +20,7 @@ import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { ICurrentUserResponse, IIssue, ISearchIssueResponse } from "types";
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 // fetch keys
 import { SUB_ISSUES } from "constants/fetch-keys";
 

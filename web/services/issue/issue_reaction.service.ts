@@ -1,17 +1,13 @@
 import { API_BASE_URL } from "helpers/common.helper";
 // services
 import APIService from "services/api.service";
-import trackEventServices from "services/track_event.service";
+import TrackEventService from "services/track_event.service";
 // types
-import type {
-  ICurrentUserResponse,
-  IssueReaction,
-  IssueCommentReaction,
-  IssueReactionForm,
-  IssueCommentReactionForm,
-} from "types";
+import type { IUser, IssueReaction, IssueCommentReaction, IssueReactionForm, IssueCommentReactionForm } from "types";
 
-export class IssueReactionService extends APIService {
+const trackEventService = new TrackEventService();
+
+class IssueReactionService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -21,11 +17,11 @@ export class IssueReactionService extends APIService {
     projectId: string,
     issueId: string,
     data: IssueReactionForm,
-    user?: ICurrentUserResponse
+    user?: IUser
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/reactions/`, data)
       .then((response) => {
-        trackEventServices.trackReactionEvent(response?.data, "ISSUE_REACTION_CREATE", user);
+        trackEventService.trackReactionEvent(response?.data, "ISSUE_REACTION_CREATE", user as IUser);
         return response?.data;
       })
       .catch((error) => {
@@ -46,13 +42,13 @@ export class IssueReactionService extends APIService {
     projectId: string,
     issueId: string,
     reaction: string,
-    user?: ICurrentUserResponse
+    user?: IUser
   ): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/reactions/${reaction}/`
     )
       .then((response) => {
-        trackEventServices.trackReactionEvent(response?.data, "ISSUE_REACTION_DELETE", user);
+        trackEventService.trackReactionEvent(response?.data, "ISSUE_REACTION_DELETE", user as IUser);
         return response?.data;
       })
       .catch((error) => {
@@ -65,11 +61,11 @@ export class IssueReactionService extends APIService {
     projectId: string,
     commentId: string,
     data: IssueCommentReactionForm,
-    user?: ICurrentUserResponse
+    user?: IUser
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/comments/${commentId}/reactions/`, data)
       .then((response) => {
-        trackEventServices.trackReactionEvent(response?.data, "ISSUE_COMMENT_REACTION_CREATE", user);
+        trackEventService.trackReactionEvent(response?.data, "ISSUE_COMMENT_REACTION_CREATE", user as IUser);
         return response?.data;
       })
       .catch((error) => {
@@ -94,13 +90,13 @@ export class IssueReactionService extends APIService {
     projectId: string,
     commentId: string,
     reaction: string,
-    user?: ICurrentUserResponse
+    user?: IUser
   ): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/comments/${commentId}/reactions/${reaction}/`
     )
       .then((response) => {
-        trackEventServices.trackReactionEvent(response?.data, "ISSUE_COMMENT_REACTION_DELETE", user);
+        trackEventService.trackReactionEvent(response?.data, "ISSUE_COMMENT_REACTION_DELETE", user as IUser);
         return response?.data;
       })
       .catch((error) => {
@@ -109,6 +105,4 @@ export class IssueReactionService extends APIService {
   }
 }
 
-const issueReactionService = new IssueReactionService();
-
-export default issueReactionService;
+export default IssueReactionService;

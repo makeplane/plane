@@ -11,7 +11,7 @@ import { mutate } from "swr";
 import { Control, Controller, useWatch } from "react-hook-form";
 
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 
 // hooks
 import useUser from "hooks/use-user";

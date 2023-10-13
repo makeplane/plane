@@ -13,7 +13,7 @@ import { Squares2X2Icon } from "@heroicons/react/24/outline";
 import { StateGroupIcon } from "components/icons";
 import { ArchiveX } from "lucide-react";
 // services
-import stateService from "services/project_state.service";
+import stateService from "services/project.service/project_state.service";
 // constants
 import { PROJECT_AUTOMATION_MONTHS } from "constants/project";
 import { STATES_LIST } from "constants/fetch-keys";

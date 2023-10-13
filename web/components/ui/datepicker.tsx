@@ -29,7 +29,6 @@ export const CustomDatePicker: React.FC<Props> = ({
   handleOnOpen,
   handleOnClose,
   placeholder = "Select date",
-  displayShortForm = false,
   error = false,
   noBorder = false,
   wrapperClassName = "",
@@ -53,13 +52,9 @@ export const CustomDatePicker: React.FC<Props> = ({
       renderAs === "input"
         ? "block px-2 py-2 text-sm focus:outline-none"
         : renderAs === "button"
-        ? `px-2 py-1 text-xs shadow-sm ${
-            disabled ? "" : "hover:bg-custom-background-80"
-          } duration-300`
+        ? `px-2 py-1 text-xs shadow-sm ${disabled ? "" : "hover:bg-custom-background-80"} duration-300`
         : ""
-    } ${error ? "border-red-500 bg-red-100" : ""} ${
-      disabled ? "cursor-not-allowed" : "cursor-pointer"
-    } ${
+    } ${error ? "border-red-500 bg-red-100" : ""} ${disabled ? "cursor-not-allowed" : "cursor-pointer"} ${
       noBorder ? "" : "border border-custom-border-200"
     } w-full rounded-md caret-transparent outline-none ${className}`}
     dateFormat="MMM dd, yyyy"

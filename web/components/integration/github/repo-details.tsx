@@ -7,7 +7,7 @@ import useSWR from "swr";
 // react-hook-form
 import { UseFormSetValue } from "react-hook-form";
 // services
-import GithubIntegrationService from "services/github.service";
+import GithubIntegrationService from "services/integrations/github.service";
 // ui
 import { Button, Loader } from "@plane/ui";
 // types

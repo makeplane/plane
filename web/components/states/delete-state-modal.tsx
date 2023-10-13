@@ -9,7 +9,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // services
-import stateServices from "services/project_state.service";
+import stateServices from "services/project.service/project_state.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui

@@ -11,7 +11,7 @@ import useSWR from "swr";
 import { ChevronDown } from "lucide-react";
 
 // services
-import stateService from "services/project_state.service";
+import stateService from "services/project.service/project_state.service";
 
 // fetch key
 import { STATES_LIST } from "constants/fetch-keys";

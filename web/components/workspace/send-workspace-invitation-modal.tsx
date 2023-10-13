@@ -1,13 +1,9 @@
 import React, { useEffect } from "react";
-
-// swr
 import { mutate } from "swr";
-// react-hook-form
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-// headless
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import workspaceService from "services/workspace.service";
+import WorkspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -16,7 +12,7 @@ import { Button, Input } from "@plane/ui";
 // icons
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
-import { ICurrentUserResponse } from "types";
+import { IUser } from "types";
 // constants
 import { ROLE } from "constants/workspace";
 import { WORKSPACE_INVITATIONS } from "constants/fetch-keys";
@@ -25,7 +21,7 @@ type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   workspace_slug: string;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   onSuccess: () => void;
 };
 
@@ -46,6 +42,8 @@ const defaultValues: FormValues = {
     },
   ],
 };
+
+const workspaceService = new WorkspaceService();
 
 const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
   const { isOpen, setIsOpen, workspace_slug, user, onSuccess } = props;
@@ -78,7 +76,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
 
     await workspaceService
       .inviteWorkspace(workspace_slug, payload, user)
-      .then(async (res) => {
+      .then(async () => {
         setIsOpen(false);
         handleClose();
         setToastAlert({

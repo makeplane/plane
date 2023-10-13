@@ -9,7 +9,7 @@ import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import estimatesService from "services/project_estimates.service";
+import estimatesService from "services/project.service/project_estimates.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui

@@ -7,7 +7,7 @@ import { ISSUE_REACTION_LIST } from "constants/fetch-keys";
 import { groupReactions } from "helpers/emoji.helper";
 
 // services
-import reactionService from "services/issue_reaction.service";
+import reactionService from "services/issue/issue_reaction.service";
 
 // hooks
 import useUser from "./use-user";

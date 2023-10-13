@@ -1,11 +1,13 @@
 import APIService from "services/api.service";
-import trackEventServices from "services/track_event.service";
+import TrackEventService from "services/track_event.service";
 import { API_BASE_URL } from "helpers/common.helper";
-import { ICurrentUserResponse, IGithubRepoInfo, IGithubServiceImportFormData } from "types";
+import { IUser, IGithubRepoInfo, IGithubServiceImportFormData } from "types";
 
 const integrationServiceType: string = "github";
 
-export class GithubIntegrationService extends APIService {
+const trackEventService = new TrackEventService();
+
+class GithubIntegrationService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -31,11 +33,11 @@ export class GithubIntegrationService extends APIService {
   async createGithubServiceImport(
     workspaceSlug: string,
     data: IGithubServiceImportFormData,
-    user: ICurrentUserResponse | undefined
+    user: IUser | undefined
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/importers/${integrationServiceType}/`, data)
       .then((response) => {
-        trackEventServices.trackImporterEvent(response?.data, "GITHUB_IMPORTER_CREATE", user);
+        trackEventService.trackImporterEvent(response?.data, "GITHUB_IMPORTER_CREATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -44,4 +46,4 @@ export class GithubIntegrationService extends APIService {
   }
 }
 
-export default new GithubIntegrationService();
+export default GithubIntegrationService;

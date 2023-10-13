@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import stateService from "services/project_state.service";
+import stateService from "services/project.service/project_state.service";
 // ui
 import { CustomSearchSelect } from "components/ui";
 // icons

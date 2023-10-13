@@ -7,7 +7,7 @@ import { useTheme } from "next-themes";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // services
-import authenticationService from "services/authentication.service";
+import authenticationService from "services/auth.service";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
@@ -95,9 +95,7 @@ const MagicSignIn: NextPage = () => {
         ) : (
           <div className="flex h-full w-full flex-col items-center justify-center gap-y-2">
             <h2 className="text-4xl font-medium">Success</h2>
-            <p className="text-sm font-medium text-custom-text-200">
-              Redirecting you to the app...
-            </p>
+            <p className="text-sm font-medium text-custom-text-200">Redirecting you to the app...</p>
           </div>
         )}
       </div>

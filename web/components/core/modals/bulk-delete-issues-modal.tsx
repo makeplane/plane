@@ -9,7 +9,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
-import issuesServices from "services/issue.service";
+import issuesServices from "services/issue/issue.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";

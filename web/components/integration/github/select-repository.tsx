@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWRInfinite from "swr/infinite";
 
 // services
-import projectService from "services/project.service";
+import projectService from "services/project.service/project.service";
 // ui
 import { CustomSearchSelect } from "components/ui";
 // helpers
@@ -21,22 +21,14 @@ type Props = {
   characterLimit?: number;
 };
 
-export const SelectRepository: React.FC<Props> = ({
-  integration,
-  value,
-  label,
-  onChange,
-  characterLimit = 25,
-}) => {
+export const SelectRepository: React.FC<Props> = ({ integration, value, label, onChange, characterLimit = 25 }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
   const getKey = (pageIndex: number) => {
     if (!workspaceSlug || !integration) return;
 
-    return `${
-      process.env.NEXT_PUBLIC_API_BASE_URL
-    }/api/workspaces/${workspaceSlug}/workspace-integrations/${
+    return `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/workspaces/${workspaceSlug}/workspace-integrations/${
       integration.id
     }/github-repositories/?page=${++pageIndex}`;
   };
@@ -47,12 +39,7 @@ export const SelectRepository: React.FC<Props> = ({
     return data;
   };
 
-  const {
-    data: paginatedData,
-    size,
-    setSize,
-    isValidating,
-  } = useSWRInfinite(getKey, fetchGithubRepos);
+  const { data: paginatedData, size, setSize, isValidating } = useSWRInfinite(getKey, fetchGithubRepos);
 
   let userRepositories = (paginatedData ?? []).map((data) => data.repositories).flat();
   userRepositories = userRepositories.filter((data) => data?.id);

@@ -1,11 +1,13 @@
 // services
 import APIService from "services/api.service";
-import trackEventServices from "./track_event.service";
+import TrackEventService from "services/track_event.service";
 // types
-import type { IModule, IIssue, ICurrentUserResponse } from "types";
+import type { IModule, IIssue, IUser } from "types";
 import { API_BASE_URL } from "helpers/common.helper";
 
-export class ModuleService extends APIService {
+const trackEventService = new TrackEventService();
+
+class ModuleService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -21,7 +23,7 @@ export class ModuleService extends APIService {
   async createModule(workspaceSlug: string, projectId: string, data: any, user: any): Promise<IModule> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/`, data)
       .then((response) => {
-        trackEventServices.trackModuleEvent(response?.data, "MODULE_CREATE", user);
+        trackEventService.trackModuleEvent(response?.data, "MODULE_CREATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -34,11 +36,11 @@ export class ModuleService extends APIService {
     projectId: string,
     moduleId: string,
     data: any,
-    user: ICurrentUserResponse | undefined
+    user: IUser | undefined
   ): Promise<any> {
     return this.put(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`, data)
       .then((response) => {
-        trackEventServices.trackModuleEvent(response?.data, "MODULE_UPDATE", user);
+        trackEventService.trackModuleEvent(response?.data, "MODULE_UPDATE", user as IUser);
         return response?.data;
       })
       .catch((error) => {
@@ -63,7 +65,7 @@ export class ModuleService extends APIService {
   ): Promise<any> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`, data)
       .then((response) => {
-        trackEventServices.trackModuleEvent(response?.data, "MODULE_UPDATE", user);
+        trackEventService.trackModuleEvent(response?.data, "MODULE_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -74,7 +76,7 @@ export class ModuleService extends APIService {
   async deleteModule(workspaceSlug: string, projectId: string, moduleId: string, user: any): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`)
       .then((response) => {
-        trackEventServices.trackModuleEvent(response?.data, "MODULE_DELETE", user);
+        trackEventService.trackModuleEvent(response?.data, "MODULE_DELETE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -115,11 +117,11 @@ export class ModuleService extends APIService {
     projectId: string,
     moduleId: string,
     data: { issues: string[] },
-    user: ICurrentUserResponse | undefined
+    user: IUser | undefined
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`, data)
       .then((response) => {
-        trackEventServices.trackIssueMovedToCycleOrModuleEvent(
+        trackEventService.trackIssueMovedToCycleOrModuleEvent(
           {
             workspaceSlug,
             workspaceName: response?.data?.[0]?.issue_detail?.workspace_detail?.name,
@@ -130,7 +132,7 @@ export class ModuleService extends APIService {
             moduleId,
           },
           response?.data?.length > 1 ? "ISSUE_MOVED_TO_MODULE_IN_BULK" : "ISSUE_MOVED_TO_MODULE",
-          user
+          user as IUser
         );
         return response?.data;
       })
@@ -225,4 +227,4 @@ export class ModuleService extends APIService {
   }
 }
 
-export default new ModuleService();
+export default ModuleService;

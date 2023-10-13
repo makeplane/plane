@@ -1,12 +1,9 @@
 import { useState } from "react";
-
 import Image from "next/image";
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
 // services
-import projectService from "services/project.service";
+import { ProjectService } from "services/project.service/project.service";
 // ui
 import { Button } from "@plane/ui";
 // icons
@@ -15,6 +12,8 @@ import { AssignmentClipboardIcon } from "components/icons";
 import JoinProjectImg from "public/auth/project-not-authorized.svg";
 // fetch-keys
 import { USER_PROJECT_VIEW } from "constants/fetch-keys";
+
+const projectService = new ProjectService();
 
 export const JoinProject: React.FC = () => {
   const [isJoiningProject, setIsJoiningProject] = useState(false);
@@ -27,9 +26,7 @@ export const JoinProject: React.FC = () => {
 
     setIsJoiningProject(true);
     projectService
-      .joinProject(workspaceSlug as string, {
-        project_ids: [projectId as string],
-      })
+      .joinProject(workspaceSlug as string, [projectId as string])
       .then(async () => {
         await mutate(USER_PROJECT_VIEW(projectId.toString()));
         setIsJoiningProject(false);

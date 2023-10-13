@@ -1,7 +1,7 @@
 import useSWR from "swr";
 
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 // hooks
 import useIssuesView from "hooks/use-issues-view";
 // fetch-keys

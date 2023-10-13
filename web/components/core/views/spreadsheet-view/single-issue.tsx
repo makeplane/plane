@@ -7,7 +7,7 @@ import { Popover2 } from "@blueprintjs/popover2";
 import { Icon } from "components/ui";
 import { EllipsisHorizontalIcon, LinkIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 import trackEventServices from "services/track_event.service";
 // hooks
 import useToast from "hooks/use-toast";

@@ -6,7 +6,7 @@ import Image from "next/image";
 import useSWR from "swr";
 
 // services
-import projectServices from "services/project.service";
+import projectServices from "services/project.service/project.service";
 // ui
 import { Avatar, CustomSearchSelect } from "components/ui";
 // icons
@@ -54,11 +54,7 @@ export const ModuleLeadSelect: React.FC<Props> = ({ value, onChange }) => {
           ) : (
             <UserCircleIcon className="h-4 w-4 text-custom-text-200" />
           )}
-          {selectedOption ? (
-            selectedOption?.display_name
-          ) : (
-            <span className="text-custom-text-200">Lead</span>
-          )}
+          {selectedOption ? selectedOption?.display_name : <span className="text-custom-text-200">Lead</span>}
         </div>
       }
       onChange={onChange}

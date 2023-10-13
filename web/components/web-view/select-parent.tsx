@@ -1,21 +1,12 @@
-// react
 import React, { useState } from "react";
-
-// next
 import { useRouter } from "next/router";
-
-// swr
 import useSWR from "swr";
-
 // services
-import issuesService from "services/issue.service";
-
-// fetch key
+import IssueService from "services/issue/issue.service";
+// constants
 import { ISSUE_DETAILS } from "constants/fetch-keys";
-
 // components
 import { ParentIssuesListModal } from "components/issues";
-
 // types
 import { ISearchIssueResponse } from "types";
 
@@ -25,8 +16,10 @@ type Props = {
   disabled?: boolean;
 };
 
+const issueService = new IssueService();
+
 export const ParentSelect: React.FC<Props> = (props) => {
-  const { value, onChange, disabled = false } = props;
+  const { onChange, disabled = false } = props;
 
   const [isParentModalOpen, setIsParentModalOpen] = useState(false);
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
@@ -37,7 +30,7 @@ export const ParentSelect: React.FC<Props> = (props) => {
   const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId.toString()) : null,
     workspaceSlug && projectId && issueId
-      ? () => issuesService.retrieve(workspaceSlug.toString(), projectId.toString(), issueId.toString())
+      ? () => issueService.retrieve(workspaceSlug.toString(), projectId.toString(), issueId.toString())
       : null
   );
 

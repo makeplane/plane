@@ -12,7 +12,7 @@ import useUserAuth from "hooks/use-user-auth";
 import useUserIssueNotificationSubscription from "hooks/use-issue-notification-subscription";
 import useEstimateOption from "hooks/use-estimate-option";
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 import modulesService from "services/modules.service";
 // contexts
 import { useProjectMyMembership } from "contexts/project-member.context";

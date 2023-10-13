@@ -11,7 +11,7 @@ import useSWR, { mutate } from "swr";
 import { useForm } from "react-hook-form";
 
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 
 // fetch key
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";

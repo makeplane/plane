@@ -14,7 +14,7 @@ import { Transition } from "@headlessui/react";
 
 // services
 import modulesService from "services/modules.service";
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 
 // hooks
 import useToast from "hooks/use-toast";

@@ -12,8 +12,7 @@ import { AppLayout } from "layouts/app-layout";
 // components
 import { CustomAnalytics, ScopeAndDemand } from "components/analytics";
 import { WorkspaceAnalyticsHeader } from "components/headers";
-// ui
-import { EmptyState } from "components/ui";
+import { EmptyState } from "components/common";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // assets

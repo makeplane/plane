@@ -16,7 +16,7 @@ import { ArrowLeftIcon, ListBulletIcon } from "@heroicons/react/24/outline";
 import { CogIcon, UsersIcon, CheckIcon } from "components/icons";
 
 // services
-import jiraImporterService from "services/jira.service";
+import jiraImporterService from "services/integrations/jira.service";
 
 // fetch keys
 import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";

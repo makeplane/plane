@@ -7,8 +7,8 @@ import useSWR from "swr";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // services
-import IntegrationService from "services/integration.service";
-import projectService from "services/project.service";
+import IntegrationService from "services/integrations/integration.service";
+import projectService from "services/project.service/project.service";
 // components
 import { SettingsSidebar, SingleIntegration } from "components/project";
 // ui

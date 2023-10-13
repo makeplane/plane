@@ -6,7 +6,7 @@ import Link from "next/link";
 import useSWR, { mutate } from "swr";
 
 // services
-import projectService from "services/project.service";
+import projectService from "services/project.service/project.service";
 import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";

@@ -3,10 +3,10 @@ import { Controller, useForm } from "react-hook-form";
 // ui
 import { Button, Input } from "@plane/ui";
 // services
-import authenticationService from "services/authentication.service";
+import AuthService from "services/auth.service";
+// hooks
 import useToast from "hooks/use-toast";
 import useTimer from "hooks/use-timer";
-// icons
 
 // types
 type EmailCodeFormValues = {
@@ -14,6 +14,8 @@ type EmailCodeFormValues = {
   key?: string;
   token?: string;
 };
+
+const authService = new AuthService();
 
 export const EmailCodeForm = ({ handleSignIn }: any) => {
   const [codeSent, setCodeSent] = useState(false);
@@ -26,7 +28,6 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
   const { timer: resendCodeTimer, setTimer: setResendCodeTimer } = useTimer();
 
   const {
-    register,
     handleSubmit,
     control,
     setError,
@@ -48,7 +49,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
 
   const onSubmit = async ({ email }: EmailCodeFormValues) => {
     setErrorResendingCode(false);
-    await authenticationService
+    await authService
       .emailCode({ email })
       .then((res) => {
         setValue("key", res.key);
@@ -66,7 +67,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
 
   const handleSignin = async (formData: EmailCodeFormValues) => {
     setIsLoading(true);
-    await authenticationService
+    await authService
       .magicSignIn(formData)
       .then((response) => {
         handleSignIn(response);
@@ -108,6 +109,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
     return () => {
       window.removeEventListener("keydown", submitForm);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleSubmit, codeSent]);
 
   return (

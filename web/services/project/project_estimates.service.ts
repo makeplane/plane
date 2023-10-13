@@ -1,12 +1,14 @@
 // services
 import APIService from "services/api.service";
-import trackEventServices from "services/track_event.service";
+import TrackEventService from "services/track_event.service";
 // types
-import type { ICurrentUserResponse, IEstimate, IEstimateFormData } from "types";
+import type { IUser, IEstimate, IEstimateFormData } from "types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 
-export class ProjectEstimateServices extends APIService {
+const trackEventService = new TrackEventService();
+
+class ProjectEstimateServices extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -15,11 +17,11 @@ export class ProjectEstimateServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     data: IEstimateFormData,
-    user: ICurrentUserResponse | undefined
+    user: IUser | undefined
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/`, data)
       .then((response) => {
-        trackEventServices.trackIssueEstimateEvent(response?.data, "ESTIMATE_CREATE", user);
+        trackEventService.trackIssueEstimateEvent(response?.data, "ESTIMATE_CREATE", user as IUser);
         return response?.data;
       })
       .catch((error) => {
@@ -32,11 +34,11 @@ export class ProjectEstimateServices extends APIService {
     projectId: string,
     estimateId: string,
     data: IEstimateFormData,
-    user: ICurrentUserResponse | undefined
+    user: IUser | undefined
   ): Promise<any> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/`, data)
       .then((response) => {
-        trackEventServices.trackIssueEstimateEvent(response?.data, "ESTIMATE_UPDATE", user);
+        trackEventService.trackIssueEstimateEvent(response?.data, "ESTIMATE_UPDATE", user as IUser);
         return response?.data;
       })
       .catch((error) => {
@@ -64,11 +66,11 @@ export class ProjectEstimateServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     estimateId: string,
-    user: ICurrentUserResponse | undefined
+    user: IUser | undefined
   ): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/estimates/${estimateId}/`)
       .then((response) => {
-        trackEventServices.trackIssueEstimateEvent(response?.data, "ESTIMATE_DELETE", user);
+        trackEventService.trackIssueEstimateEvent(response?.data, "ESTIMATE_DELETE", user as IUser);
         return response?.data;
       })
       .catch((error) => {
@@ -77,4 +79,4 @@ export class ProjectEstimateServices extends APIService {
   }
 }
 
-export default new ProjectEstimateServices();
+export default ProjectEstimateServices;

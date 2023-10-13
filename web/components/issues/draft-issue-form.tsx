@@ -1,11 +1,8 @@
 import React, { FC, useState, useEffect, useRef } from "react";
-
 import { useRouter } from "next/router";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
-import aiService from "services/ai.service";
+import AIService from "services/ai.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
@@ -30,7 +27,7 @@ import { TipTapEditor } from "components/tiptap";
 // icons
 import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
-import type { ICurrentUserResponse, IIssue, ISearchIssueResponse } from "types";
+import type { IUser, IIssue, ISearchIssueResponse } from "types";
 
 const defaultValues: Partial<IIssue> = {
   project: "",
@@ -71,7 +68,7 @@ interface IssueFormProps {
   handleClose: () => void;
   handleDiscard: () => void;
   status: boolean;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   fieldsToShow: (
     | "project"
     | "name"
@@ -88,6 +85,8 @@ interface IssueFormProps {
   )[];
 }
 
+const aiService = new AIService();
+
 export const DraftIssueForm: FC<IssueFormProps> = (props) => {
   const {
     handleFormSubmit,
@@ -98,7 +97,6 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
     setActiveProject,
     createMore,
     setCreateMore,
-    handleClose,
     status,
     user,
     fieldsToShow,
@@ -123,7 +121,6 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
   const { setToastAlert } = useToast();
 
   const {
-    register,
     formState: { errors, isSubmitting },
     handleSubmit,
     reset,
@@ -166,9 +163,9 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(payload), isOpen, data]);
 
-  const onClose = () => {
-    handleClose();
-  };
+  // const onClose = () => {
+  //   handleClose();
+  // };
 
   const handleCreateUpdateIssue = async (
     formData: Partial<IIssue>,

@@ -7,8 +7,8 @@ import useSWR from "swr";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // services
-import projectService from "services/project.service";
-import issuesService from "services/issue.service";
+import projectService from "services/project.service/project.service";
+import issuesService from "services/issue/issue.service";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components

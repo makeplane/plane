@@ -6,16 +6,10 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { observer } from "mobx-react-lite";
 // ui
 import { Button, Input } from "@plane/ui";
-// fetch-keys
-import { PROJECTS_LIST } from "constants/fetch-keys";
-// mobx react lite
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
 // hooks
 import useToast from "hooks/use-toast";
-import useUser from "hooks/use-user";
-import useProjects from "hooks/use-projects";
 // types
 import { IProject } from "types";
 
@@ -36,16 +30,12 @@ export interface ILeaveProjectModal {
 }
 
 export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
-  const { project, isOpen, onClose } = props;
+  const { project, isOpen } = props;
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store
   const { project: projectStore } = useMobxStore();
-  // user
-  const { user } = useUser();
-  // project
-  const { mutateProjects } = useProjects();
   // toast
   const { setToastAlert } = useToast();
 
@@ -68,11 +58,11 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
         if (data.confirmLeave === "Leave Project") {
           return projectStore
             .leaveProject(workspaceSlug.toString(), project.id)
-            .then((res) => {
+            .then(() => {
               handleClose();
               router.push(`/${workspaceSlug}/projects`);
             })
-            .catch((err) => {
+            .catch(() => {
               setToastAlert({
                 type: "error",
                 title: "Error!",

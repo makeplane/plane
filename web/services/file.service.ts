@@ -1,8 +1,9 @@
 // services
 import APIService from "services/api.service";
+// helpers
 import { API_BASE_URL } from "helpers/common.helper";
 
-interface UnSplashImage {
+export interface UnSplashImage {
   id: string;
   created_at: Date;
   updated_at: Date;
@@ -17,7 +18,7 @@ interface UnSplashImage {
   [key: string]: any;
 }
 
-interface UnSplashImageUrls {
+export interface UnSplashImageUrls {
   raw: string;
   full: string;
   regular: string;
@@ -26,7 +27,7 @@ interface UnSplashImageUrls {
   small_s3: string;
 }
 
-export class FileServices extends APIService {
+class FileServices extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -108,4 +109,4 @@ export class FileServices extends APIService {
   }
 }
 
-export default new FileServices();
+export default FileServices;

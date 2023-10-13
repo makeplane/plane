@@ -17,7 +17,7 @@ import { CreateUpdatePageModal } from "components/pages";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 // fetch keys
 import { ISSUE_DETAILS } from "constants/fetch-keys";
 // mobx store

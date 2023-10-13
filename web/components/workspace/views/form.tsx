@@ -2,15 +2,12 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
-
-// mobx store
+// hooks
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "components/issues";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
-// helpers
-import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 // types
 import { IWorkspaceView } from "types";
 // constants
@@ -40,7 +37,6 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
     formState: { errors, isSubmitting },
     handleSubmit,
     control,
-    register,
     reset,
     setValue,
     watch,

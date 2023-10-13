@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import projectService from "services/project.service";
+import projectService from "services/project.service/project.service";
 import viewsService from "services/views.service";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";

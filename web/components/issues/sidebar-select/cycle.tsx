@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 import cyclesService from "services/cycles.service";
 // ui
 import { CustomSelect } from "components/ui";

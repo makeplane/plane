@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import projectService from "services/project.service";
+import projectService from "services/project.service/project.service";
 
 // keys
 import { USER_PROJECT_VIEW } from "constants/fetch-keys";
@@ -43,17 +43,14 @@ export const ProjectMemberProvider: React.FC<Props> = (props) => {
   const loading = !memberDetails && !error;
 
   return (
-    <ProjectMemberContext.Provider value={{ loading, memberDetails, error }}>
-      {children}
-    </ProjectMemberContext.Provider>
+    <ProjectMemberContext.Provider value={{ loading, memberDetails, error }}>{children}</ProjectMemberContext.Provider>
   );
 };
 
 export const useProjectMyMembership = () => {
   const context = useContext(ProjectMemberContext);
 
-  if (context === undefined)
-    throw new Error(`useProjectMember must be used within a ProjectMemberProvider.`);
+  if (context === undefined) throw new Error(`useProjectMember must be used within a ProjectMemberProvider.`);
 
   return {
     ...context,

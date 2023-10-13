@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // services
-import projectService from "services/project.service";
+import projectService from "services/project.service/project.service";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // hooks
@@ -91,16 +91,8 @@ const AutomationsSettings: NextPage = () => {
           <div className="flex items-center py-3.5 border-b border-custom-border-200">
             <h3 className="text-xl font-medium">Automations</h3>
           </div>
-          <AutoArchiveAutomation
-            projectDetails={projectDetails}
-            handleChange={handleChange}
-            disabled={!isAdmin}
-          />
-          <AutoCloseAutomation
-            projectDetails={projectDetails}
-            handleChange={handleChange}
-            disabled={!isAdmin}
-          />
+          <AutoArchiveAutomation projectDetails={projectDetails} handleChange={handleChange} disabled={!isAdmin} />
+          <AutoCloseAutomation projectDetails={projectDetails} handleChange={handleChange} disabled={!isAdmin} />
         </section>
       </div>
     </ProjectAuthorizationWrapper>

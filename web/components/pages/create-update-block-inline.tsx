@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, FC, Dispatch, SetStateAction, useRef } from "react";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
 import { SparklesIcon } from "@heroicons/react/24/outline";
 import { Controller, useForm } from "react-hook-form";
 // services
-import pagesService from "services/page.service";
-import issuesService from "services/issue.service";
-import aiService from "services/ai.service";
+import PageService from "services/page.service";
+import IssueService from "services/issue/issue.service";
+import AIService from "services/ai.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -14,7 +14,7 @@ import { GptAssistantModal } from "components/core";
 import { TipTapEditor } from "components/tiptap";
 import { Button, TextArea } from "@plane/ui";
 // types
-import { ICurrentUserResponse, IPageBlock } from "types";
+import { IUser, IPageBlock } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
 
@@ -22,9 +22,9 @@ type Props = {
   handleClose: () => void;
   data?: IPageBlock;
   handleAiAssistance?: (response: string) => void;
-  setIsSyncing?: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsSyncing?: Dispatch<SetStateAction<boolean>>;
   focus?: keyof IPageBlock;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
 const defaultValues = {
@@ -33,7 +33,11 @@ const defaultValues = {
   description_html: null,
 };
 
-export const CreateUpdateBlockInline: React.FC<Props> = ({
+const aiService = new AIService();
+const pagesService = new PageService();
+const issueService = new IssueService();
+
+export const CreateUpdateBlockInline: FC<Props> = ({
   handleClose,
   data,
   handleAiAssistance,
@@ -44,7 +48,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
 
-  const editorRef = React.useRef<any>(null);
+  const editorRef = useRef<any>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
@@ -53,7 +57,6 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
 
   const {
     handleSubmit,
-    register,
     control,
     watch,
     setValue,
@@ -140,7 +143,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
           mutate(PAGE_BLOCKS_LIST(pageId as string));
           editorRef.current?.setEditorValue(res.description_html);
           if (data.issue && data.sync)
-            issuesService
+            issueService
               .patchIssue(
                 workspaceSlug as string,
                 projectId as string,

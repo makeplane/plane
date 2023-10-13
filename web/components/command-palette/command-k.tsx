@@ -10,7 +10,7 @@ import { Command } from "cmdk";
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import workspaceService from "services/workspace.service";
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 import inboxService from "services/inbox.service";
 // hooks
 import useProjectDetails from "hooks/use-project-details";

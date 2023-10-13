@@ -10,7 +10,7 @@ import useSWR from "swr";
 import { useFormContext, Controller } from "react-hook-form";
 
 // services
-import jiraImporterService from "services/jira.service";
+import jiraImporterService from "services/integrations/jira.service";
 
 // fetch keys
 import { JIRA_IMPORTER_DETAIL } from "constants/fetch-keys";

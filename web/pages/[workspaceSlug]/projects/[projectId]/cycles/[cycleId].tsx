@@ -15,7 +15,7 @@ import { ExistingIssuesListModal } from "components/core";
 import { CycleDetailsSidebar, TransferIssues, TransferIssuesModal } from "components/cycles";
 import { CycleLayoutRoot } from "components/issues/issue-layouts";
 // services
-import issuesService from "services/issue.service";
+import issuesService from "services/issue/issue.service";
 import cycleServices from "services/cycles.service";
 // hooks
 import useToast from "hooks/use-toast";

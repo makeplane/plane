@@ -5,7 +5,7 @@ import useSWR from "swr";
 // mobx
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
-import projectService from "services/project.service";
+import projectService from "services/project.service/project.service";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // helper

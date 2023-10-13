@@ -1,11 +1,8 @@
 import React, { FC, useState, useEffect, useRef } from "react";
-
 import { useRouter } from "next/router";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
-import aiService from "services/ai.service";
+import AIService from "services/ai.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -29,7 +26,7 @@ import { TipTapEditor } from "components/tiptap";
 // icons
 import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
-import type { ICurrentUserResponse, IIssue, ISearchIssueResponse } from "types";
+import type { IUser, IIssue, ISearchIssueResponse } from "types";
 
 const defaultValues: Partial<IIssue> = {
   project: "",
@@ -64,7 +61,7 @@ export interface IssueFormProps {
   setCreateMore: React.Dispatch<React.SetStateAction<boolean>>;
   handleDiscardClose: () => void;
   status: boolean;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   handleFormDirty: (payload: Partial<IIssue> | null) => void;
   fieldsToShow: (
     | "project"
@@ -81,6 +78,8 @@ export interface IssueFormProps {
     | "all"
   )[];
 }
+
+const aiService = new AIService();
 
 export const IssueForm: FC<IssueFormProps> = (props) => {
   const {
@@ -113,7 +112,6 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
   const { setToastAlert } = useToast();
 
   const {
-    register,
     formState: { errors, isSubmitting, isDirty },
     handleSubmit,
     reset,

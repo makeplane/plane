@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import useSWR from "swr";
 
 // services
-import issueServices from "services/issue.service";
+import issueServices from "services/issue/issue.service";
 // hooks
 import useUser from "hooks/use-user";
 // types

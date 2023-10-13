@@ -1,9 +1,13 @@
 import APIService from "services/api.service";
-import trackEventServices from "services/track_event.service";
-import { ICurrentUserResponse } from "types";
+import TrackEventService from "services/track_event.service";
+// types
+import { IUser } from "types";
+// helpers
 import { API_BASE_URL } from "helpers/common.helper";
 
-export class CSVIntegrationService extends APIService {
+const trackEventService = new TrackEventService();
+
+class ProjectExportService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -14,11 +18,11 @@ export class CSVIntegrationService extends APIService {
       provider: string;
       project: string[];
     },
-    user: ICurrentUserResponse
+    user: IUser
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/export-issues/`, data)
       .then((response) => {
-        trackEventServices.trackExporterEvent(
+        trackEventService.trackExporterEvent(
           {
             workspaceSlug,
           },
@@ -33,4 +37,4 @@ export class CSVIntegrationService extends APIService {
   }
 }
 
-export default new CSVIntegrationService();
+export default ProjectExportService;
