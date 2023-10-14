@@ -1,28 +1,19 @@
 import React, { useCallback, useState } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
-// react-beautiful-dnd
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 // services
-import stateService from "services/state.service";
+import { ProjectStateService } from "services/project";
 // hooks
 import useUser from "hooks/use-user";
 import { useProjectMyMembership } from "contexts/project-member.context";
 import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 // components
-import {
-  AllLists,
-  AllBoards,
-  CalendarView,
-  SpreadsheetView,
-  GanttChartView,
-} from "components/core";
+import StrictModeDroppable from "components/dnd/StrictModeDroppable";
+import { AllLists, AllBoards, CalendarView, SpreadsheetView, GanttChartView } from "components/core";
+import { EmptyState } from "components/common";
 // ui
-import { EmptyState, Spinner } from "components/ui";
+import { Spinner } from "components/ui";
 // icons
 import { TrashIcon } from "@heroicons/react/24/outline";
 // images
@@ -91,9 +82,7 @@ export const AllViews: React.FC<Props> = ({
 
   const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
-    workspaceSlug
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug ? () => stateService.getStates(workspaceSlug as string, projectId as string) : null
   );
   const states = getStatesList(stateGroups);
 
@@ -185,9 +174,7 @@ export const AllViews: React.FC<Props> = ({
                 userAuth={memberRole}
               />
             ) : (
-              displayFilters?.layout === "gantt_chart" && (
-                <GanttChartView disableUserActions={disableUserActions} />
-              )
+              displayFilters?.layout === "gantt_chart" && <GanttChartView disableUserActions={disableUserActions} />
             )}
           </>
         ) : router.pathname.includes("archived-issues") ? (

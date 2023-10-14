@@ -1,7 +1,5 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // headless ui
@@ -25,7 +23,6 @@ export const SelectMonthModal: React.FC<Props> = ({ type, initialValues, isOpen,
   const { workspaceSlug, projectId } = router.query;
 
   const {
-    register,
     formState: { errors, isSubmitting },
     handleSubmit,
     control,
