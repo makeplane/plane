@@ -1,10 +1,12 @@
 import useSWR from "swr";
 // services
-import projectService from "services/project.service/project.service";
+import { ProjectService } from "services/project";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 // hooks
 import useUser from "./use-user";
+
+const projectService = new ProjectService();
 
 const useProjectMembers = (
   workspaceSlug: string | undefined,

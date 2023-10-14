@@ -9,7 +9,7 @@ import useSWR, { mutate } from "swr";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // services
-import IntegrationService from "services/integrations/integration.service";
+import { IntegrationService } from "services/integrations";
 // components
 import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "components/integration";
 // ui
@@ -23,6 +23,9 @@ import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
 // constants
 import { IMPORTERS_EXPORTERS_LIST } from "constants/workspace";
 
+// services
+const integrationService = new IntegrationService();
+
 const IntegrationGuide = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [deleteImportModal, setDeleteImportModal] = useState(false);
@@ -35,7 +38,7 @@ const IntegrationGuide = () => {
 
   const { data: importerServices } = useSWR(
     workspaceSlug ? IMPORTER_SERVICES_LIST(workspaceSlug as string) : null,
-    workspaceSlug ? () => IntegrationService.getImporterServicesList(workspaceSlug as string) : null
+    workspaceSlug ? () => integrationService.getImporterServicesList(workspaceSlug as string) : null
   );
 
   const handleDeleteImport = (importService: IImporterService) => {

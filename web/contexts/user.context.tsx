@@ -3,7 +3,7 @@ import React, { createContext, ReactElement } from "react";
 import useSWR, { KeyedMutator } from "swr";
 
 // services
-import userService from "services/user.service";
+import { UserService } from "services/user.service";
 // constants
 import { CURRENT_USER } from "constants/fetch-keys";
 // types
@@ -16,6 +16,9 @@ interface IUserContextProps {
   assignedIssuesLength?: number;
   workspaceInvitesLength?: number;
 }
+
+// services
+const userService = new UserService();
 
 export const UserContext = createContext<IUserContextProps>({} as IUserContextProps);
 

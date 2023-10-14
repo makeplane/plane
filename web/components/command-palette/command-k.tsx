@@ -9,9 +9,9 @@ import { Command } from "cmdk";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import workspaceService from "services/workspace.service";
-import issuesService from "services/issue/issue.service";
-import inboxService from "services/inbox.service";
+import { WorkspaceService } from "services/workspace.service";
+import { IssueService } from "services/issue";
+import { InboxService } from "services/inbox.service";
 // hooks
 import useProjectDetails from "hooks/use-project-details";
 import useDebounce from "hooks/use-debounce";
@@ -43,6 +43,11 @@ type Props = {
   isPaletteOpen: boolean;
   setIsPaletteOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
+
+// services
+const workspaceService = new WorkspaceService();
+const issueService = new IssueService();
+const inboxService = new InboxService();
 
 export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPaletteOpen }) => {
   const [placeholder, setPlaceholder] = useState("Type a command or search...");
@@ -80,7 +85,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
   const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
     workspaceSlug && projectId && issueId
-      ? () => issuesService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
+      ? () => issueService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
       : null
   );
 
@@ -108,7 +113,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
       );
 
       const payload = { ...formData };
-      await issuesService
+      await issueService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)
         .then(() => {
           mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));

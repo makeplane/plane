@@ -15,14 +15,14 @@ import { ExistingIssuesListModal } from "components/core";
 import { CycleDetailsSidebar, TransferIssues, TransferIssuesModal } from "components/cycles";
 import { CycleLayoutRoot } from "components/issues/issue-layouts";
 // services
-import issuesService from "services/issue/issue.service";
-import cycleServices from "services/cycle.service";
+import { IssueService } from "services/issue";
+import { CycleService } from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // ui
-import { Button } from "@plane/ui";
-import { CustomMenu, EmptyState } from "components/ui";
+import { CustomMenu } from "components/ui";
+import { EmptyState } from "components/common";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // images
 import emptyCycle from "public/empty-state/cycle.svg";
@@ -34,6 +34,10 @@ import { ISearchIssueResponse } from "types";
 // fetch-keys
 import { CYCLES_LIST, CYCLE_DETAILS } from "constants/fetch-keys";
 import { CycleIssuesHeader } from "components/headers";
+
+// services
+const issueService = new IssueService();
+const cycleService = new CycleService();
 
 const SingleCycle: React.FC = () => {
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
@@ -51,14 +55,14 @@ const SingleCycle: React.FC = () => {
   const { data: cycles } = useSWR(
     workspaceSlug && projectId ? CYCLES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => cycleServices.getCyclesWithParams(workspaceSlug as string, projectId as string, "all")
+      ? () => cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string, "all")
       : null
   );
 
   const { data: cycleDetails, error } = useSWR(
     workspaceSlug && projectId && cycleId ? CYCLE_DETAILS(cycleId.toString()) : null,
     workspaceSlug && projectId && cycleId
-      ? () => cycleServices.getCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString())
+      ? () => cycleService.getCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString())
       : null
   );
 
@@ -74,7 +78,7 @@ const SingleCycle: React.FC = () => {
       issues: data.map((i) => i.id),
     };
 
-    await issuesService
+    await issueService
       .addIssueToCycle(workspaceSlug as string, projectId as string, cycleId as string, payload, user)
       .catch(() => {
         setToastAlert({

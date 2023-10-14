@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import pagesService from "services/page.service";
+import { PageService } from "services/page.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -26,6 +26,9 @@ type TConfirmPageDeletionProps = {
   user: ICurrentUserResponse | undefined;
 };
 
+// services
+const pageService = new PageService();
+
 export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({ isOpen, setIsOpen, data, user }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
@@ -43,7 +46,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({ isOpen, s
     setIsDeleteLoading(true);
     if (!data || !workspaceSlug || !projectId) return;
 
-    await pagesService
+    await pageService
       .deletePage(workspaceSlug as string, data.project, data.id, user)
       .then(() => {
         mutate(RECENT_PAGES_LIST(projectId as string));

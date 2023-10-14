@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 
 // services
-import projectService from "services/project.service/project.service";
+import { ProjectService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
 import useProjectDetails from "hooks/use-project-details";
@@ -25,6 +25,9 @@ type Props = {
   editEstimate: (estimate: IEstimate) => void;
   handleEstimateDelete: (estimateId: string) => void;
 };
+
+// services
+const projectService = new ProjectService();
 
 export const SingleEstimate: React.FC<Props> = ({ user, estimate, editEstimate, handleEstimateDelete }) => {
   const [isDeleteEstimateModalOpen, setIsDeleteEstimateModalOpen] = useState(false);

@@ -3,7 +3,7 @@ import { RootStore } from "../root";
 // types
 import { IIssueLabels, IProject, IWorkspace, IWorkspaceMember } from "types";
 // services
-import WorkspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 import { ProjectService } from "services/project";
 import { IssueService, IssueLabelService } from "services/issue";
 

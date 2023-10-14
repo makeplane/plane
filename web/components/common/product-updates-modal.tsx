@@ -5,7 +5,7 @@ import useSWR from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // components
 import { MarkdownRenderer } from "components/ui";
 import { Loader } from "@plane/ui";
@@ -19,8 +19,12 @@ type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+// services
+const workspaceService = new WorkspaceService();
+
 export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
   const { data: updates } = useSWR("PRODUCT_UPDATES", () => workspaceService.getProductUpdates());
+
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
       <Dialog as="div" className="relative z-20" onClose={setIsOpen}>

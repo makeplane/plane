@@ -6,20 +6,13 @@ import Link from "next/link";
 import { mutate } from "swr";
 
 // services
-import projectService from "services/project.service";
+import { ProjectService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
 import { CustomMenu, Tooltip } from "components/ui";
 // icons
-import {
-  CalendarDaysIcon,
-  LinkIcon,
-  PencilIcon,
-  PlusIcon,
-  StarIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { CalendarDaysIcon, LinkIcon, PencilIcon, PlusIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
@@ -35,11 +28,10 @@ export type ProjectCardProps = {
   setDeleteProject: (id: string | null) => void;
 };
 
-export const SingleProjectCard: React.FC<ProjectCardProps> = ({
-  project,
-  setToJoinProject,
-  setDeleteProject,
-}) => {
+// services
+const projectService = new ProjectService();
+
+export const SingleProjectCard: React.FC<ProjectCardProps> = ({ project, setToJoinProject, setDeleteProject }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -53,8 +45,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
 
     mutate<IProject[]>(
       PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
-      (prevData) =>
-        (prevData ?? []).map((p) => (p.id === project.id ? { ...p, is_favorite: true } : p)),
+      (prevData) => (prevData ?? []).map((p) => (p.id === project.id ? { ...p, is_favorite: true } : p)),
       false
     );
 
@@ -83,8 +74,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
 
     mutate<IProject[]>(
       PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
-      (prevData) =>
-        (prevData ?? []).map((p) => (p.id === project.id ? { ...p, is_favorite: false } : p)),
+      (prevData) => (prevData ?? []).map((p) => (p.id === project.id ? { ...p, is_favorite: false } : p)),
       false
     );
 
@@ -107,8 +97,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
   };
 
   const handleCopyText = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
     copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${project.id}/issues`).then(() => {
       setToastAlert({
@@ -148,9 +137,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                     <span>Select to Join</span>
                   </button>
                 ) : (
-                  <span className="cursor-default rounded bg-green-600 px-2 py-1 text-xs">
-                    Joined
-                  </span>
+                  <span className="cursor-default rounded bg-green-600 px-2 py-1 text-xs">Joined</span>
                 )}
                 {project.is_favorite && (
                   <span className="grid h-6 w-9 cursor-default place-items-center rounded bg-orange-400">
@@ -174,9 +161,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                   renderEmoji(project.icon_prop)
                 ) : null}
               </div>
-              <p className="mt-3.5 mb-7 break-words">
-                {truncateText(project.description ?? "", 100)}
-              </p>
+              <p className="mt-3.5 mb-7 break-words">{truncateText(project.description ?? "", 100)}</p>
             </a>
           </Link>
           <div className="flex h-full items-end justify-between">

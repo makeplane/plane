@@ -16,7 +16,7 @@ import { ArrowLeftIcon, ListBulletIcon } from "@heroicons/react/24/outline";
 import { CogIcon, UsersIcon, CheckIcon } from "components/icons";
 
 // services
-import jiraImporterService from "services/integrations/jira.service";
+import { JiraImporterService } from "services/integrations";
 
 // fetch keys
 import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
@@ -67,6 +67,9 @@ const integrationWorkflowData: Array<{
 type Props = {
   user: ICurrentUserResponse | undefined;
 };
+
+// services
+const jiraImporterService = new JiraImporterService();
 
 export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
   const [currentStep, setCurrentStep] = useState<IJiraIntegrationData>({

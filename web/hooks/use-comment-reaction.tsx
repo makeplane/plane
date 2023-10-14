@@ -2,15 +2,15 @@ import useSWR from "swr";
 
 // fetch keys
 import { COMMENT_REACTION_LIST } from "constants/fetch-keys";
-
 // services
-import reactionService from "services/issue/issue_reaction.service";
-
+import { IssueReactionService } from "services/issue";
 // helpers
 import { groupReactions } from "helpers/emoji.helper";
-
 // hooks
 import useUser from "./use-user";
+
+// services
+const issueReactionService = new IssueReactionService();
 
 const useCommentReaction = (
   workspaceSlug?: string | string[] | null,
@@ -27,7 +27,7 @@ const useCommentReaction = (
       : null,
     workspaceSlug && projectId && commendId
       ? () =>
-          reactionService.listIssueCommentReactions(
+          issueReactionService.listIssueCommentReactions(
             workspaceSlug.toString(),
             projectId.toString(),
             commendId.toString()
@@ -48,7 +48,7 @@ const useCommentReaction = (
   const handleReactionCreate = async (reaction: string) => {
     if (!workspaceSlug || !projectId || !commendId) return;
 
-    const data = await reactionService.createIssueCommentReaction(
+    const data = await issueReactionService.createIssueCommentReaction(
       workspaceSlug.toString(),
       projectId.toString(),
       commendId.toString(),
@@ -73,7 +73,7 @@ const useCommentReaction = (
       false
     );
 
-    await reactionService.deleteIssueCommentReaction(
+    await issueReactionService.deleteIssueCommentReaction(
       workspaceSlug.toString(),
       projectId.toString(),
       commendId.toString(),

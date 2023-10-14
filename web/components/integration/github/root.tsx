@@ -9,8 +9,7 @@ import useSWR, { mutate } from "swr";
 // react-hook-form
 import { useForm } from "react-hook-form";
 // services
-import IntegrationService from "services/integrations/integration.service";
-import GithubIntegrationService from "services/integrations/github.service";
+import { IntegrationService, GithubIntegrationService } from "services/integrations";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -84,6 +83,10 @@ type Props = {
   user: ICurrentUserResponse | undefined;
 };
 
+// services
+const integrationService = new IntegrationService();
+const githubIntegrationService = new GithubIntegrationService();
+
 export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
   const [currentStep, setCurrentStep] = useState<IIntegrationData>({
     state: "import-configure",
@@ -99,11 +102,11 @@ export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
     defaultValues: defaultFormValues,
   });
 
-  const { data: appIntegrations } = useSWR(APP_INTEGRATIONS, () => IntegrationService.getAppIntegrationsList());
+  const { data: appIntegrations } = useSWR(APP_INTEGRATIONS, () => integrationService.getAppIntegrationsList());
 
   const { data: workspaceIntegrations } = useSWR(
     workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug as string) : null,
-    workspaceSlug ? () => IntegrationService.getWorkspaceIntegrationsList(workspaceSlug as string) : null
+    workspaceSlug ? () => integrationService.getWorkspaceIntegrationsList(workspaceSlug as string) : null
   );
 
   const activeIntegrationState = () => {
@@ -143,7 +146,8 @@ export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
       project_id: formData.project,
     };
 
-    await GithubIntegrationService.createGithubServiceImport(workspaceSlug as string, payload, user)
+    await githubIntegrationService
+      .createGithubServiceImport(workspaceSlug as string, payload, user)
       .then(() => {
         router.push(`/${workspaceSlug}/settings/imports`);
         mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string));

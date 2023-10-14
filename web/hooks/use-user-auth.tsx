@@ -6,10 +6,13 @@ import useSWR from "swr";
 // keys
 import { CURRENT_USER } from "constants/fetch-keys";
 // services
-import userService from "services/user.service";
-import workspaceService from "services/workspace.service";
+import { UserService } from "services/user.service";
+import { WorkspaceService } from "services/workspace.service";
 // types
 import type { IWorkspace, ICurrentUserResponse } from "types";
+
+const userService = new UserService();
+const workspaceService = new WorkspaceService();
 
 const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "admin") => {
   const router = useRouter();

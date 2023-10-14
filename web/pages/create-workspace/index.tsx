@@ -8,7 +8,7 @@ import { mutate } from "swr";
 // next-themes
 import { useTheme } from "next-themes";
 // services
-import userService from "services/user.service";
+import { UserService } from "services/user.service";
 // hooks
 import useUser from "hooks/use-user";
 // layouts
@@ -24,6 +24,9 @@ import { ICurrentUserResponse, IWorkspace } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { CURRENT_USER } from "constants/fetch-keys";
+
+// services
+const userService = new UserService();
 
 const CreateWorkspace: NextPage = () => {
   const [defaultValues, setDefaultValues] = useState({

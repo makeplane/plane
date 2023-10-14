@@ -8,7 +8,7 @@ import useSWR from "swr";
 // headless ui
 import { Tab } from "@headlessui/react";
 // services
-import projectService from "services/project.service/project.service";
+import { ProjectService } from "services/project";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
 import useUserAuth from "hooks/use-user-auth";
@@ -48,6 +48,9 @@ const OtherPagesList = dynamic<TPagesListProps>(() => import("components/pages")
 });
 
 const tabsList = ["Recent", "All", "Favorites", "Created by me", "Created by others"];
+
+// services
+const projectService = new ProjectService();
 
 const ProjectPages: NextPage = () => {
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);

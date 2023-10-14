@@ -9,7 +9,7 @@ import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // icons
@@ -32,6 +32,9 @@ const defaultValues = {
   workspaceName: "",
   confirmDelete: "",
 };
+
+// services
+const workspaceService = new WorkspaceService();
 
 export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, user }) => {
   const router = useRouter();

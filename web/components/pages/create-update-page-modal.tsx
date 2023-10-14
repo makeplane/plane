@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import pagesService from "services/page.service";
+import { PageService } from "services/page.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -24,6 +24,9 @@ type Props = {
   user: ICurrentUserResponse | undefined;
 };
 
+// services
+const pageService = new PageService();
+
 export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, data, user }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -35,7 +38,7 @@ export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, da
   };
 
   const createPage = async (payload: IPage) => {
-    await pagesService
+    await pageService
       .createPage(workspaceSlug as string, projectId as string, payload, user)
       .then((res) => {
         mutate(RECENT_PAGES_LIST(projectId as string));
@@ -77,7 +80,7 @@ export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, da
   };
 
   const updatePage = async (payload: IPage) => {
-    await pagesService
+    await pageService
       .patchPage(workspaceSlug as string, projectId as string, data?.id ?? "", payload, user)
       .then((res) => {
         mutate(RECENT_PAGES_LIST(projectId as string));

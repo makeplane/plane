@@ -1,7 +1,7 @@
 // mobx
 import { action, observable, runInAction, makeAutoObservable } from "mobx";
 // services
-import issueService from "services/issue/issue.service";
+import { issueService } from "services/issue/issue.service";
 // types
 import type { IIssue } from "types";
 

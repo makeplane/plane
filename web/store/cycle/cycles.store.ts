@@ -5,7 +5,7 @@ import { ICycle } from "types";
 // services
 import { ProjectService } from "services/project";
 import { IssueService } from "services/issue";
-import CycleService from "services/cycle.service";
+import { CycleService } from "services/cycle.service";
 
 export interface ICycleStore {
   loader: boolean;

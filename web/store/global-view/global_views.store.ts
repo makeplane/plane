@@ -1,7 +1,7 @@
 import { observable, action, makeObservable, runInAction } from "mobx";
 // services
 import { ProjectService } from "services/project";
-import WorkspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // types
 import { RootStore } from "../root";
 import { IWorkspaceView } from "types/workspace-views";

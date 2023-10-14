@@ -5,9 +5,10 @@ import { mutate } from "swr";
 import { useForm } from "react-hook-form";
 import { Draggable } from "react-beautiful-dnd";
 // services
-import PageService from "services/page.service";
-import IssueService from "services/issue/issue.service";
-import AIService from "services/ai.service";
+import { PageService } from "services/page.service";
+import { IssueService } from "services/issue/issue.service";
+import { AIService } from "services/ai.service";
+import { FileService } from "services/file.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
@@ -35,7 +36,6 @@ import { copyTextToClipboard } from "helpers/string.helper";
 import { IUser, IIssue, IPageBlock, IProject } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
-import fileService from "services/file.service";
 
 type Props = {
   block: IPageBlock;
@@ -48,6 +48,7 @@ type Props = {
 const aiService = new AIService();
 const pageService = new PageService();
 const issueService = new IssueService();
+const fileService = new FileService();
 
 export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBlockDetails, index, user }) => {
   const [isSyncing, setIsSyncing] = useState(false);

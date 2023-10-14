@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 // react-popper
 import { usePopper } from "react-popper";
 // services
-import issuesService from "services/issues.service";
+import { IssueLabelService } from "services/issue";
 // headless ui
 import { Combobox } from "@headlessui/react";
 // component
@@ -37,6 +37,9 @@ type Props = {
   disabled?: boolean;
   user: ICurrentUserResponse | undefined;
 };
+
+// services
+const issueLabelService = new IssueLabelService();
 
 export const LabelSelect: React.FC<Props> = ({
   value,
@@ -70,7 +73,7 @@ export const LabelSelect: React.FC<Props> = ({
   const { data: issueLabels } = useSWR<IIssueLabels[]>(
     projectId && fetchStates ? PROJECT_ISSUE_LABELS(projectId) : null,
     workspaceSlug && projectId && fetchStates
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId)
+      ? () => issueLabelService.getProjectIssueLabels(workspaceSlug.toString(), projectId)
       : null
   );
 

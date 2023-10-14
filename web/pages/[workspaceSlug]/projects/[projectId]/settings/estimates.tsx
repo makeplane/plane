@@ -5,8 +5,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // services
-import estimatesService from "services/project.service/project_estimates.service";
-import projectService from "services/project.service/project.service";
+import { ProjectService, ProjectEstimateServices } from "services/project";
 // hooks
 import useProjectDetails from "hooks/use-project-details";
 // layouts
@@ -19,7 +18,7 @@ import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // ui
 import { Button, Loader } from "@plane/ui";
-import { EmptyState } from "components/ui";
+import { EmptyState } from "components/common";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -32,6 +31,10 @@ import type { NextPage } from "next";
 import { ESTIMATES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
+
+// services
+const projectService = new ProjectService();
+const projectEstimateService = new ProjectEstimateServices();
 
 const EstimatesSettings: NextPage = () => {
   const [estimateFormOpen, setEstimateFormOpen] = useState(false);
@@ -50,7 +53,7 @@ const EstimatesSettings: NextPage = () => {
   const { data: estimatesList } = useSWR<IEstimate[]>(
     workspaceSlug && projectId ? ESTIMATES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => estimatesService.getEstimatesList(workspaceSlug as string, projectId as string)
+      ? () => projectEstimateService.getEstimatesList(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -68,7 +71,7 @@ const EstimatesSettings: NextPage = () => {
       false
     );
 
-    estimatesService.deleteEstimate(workspaceSlug as string, projectId as string, estimateId, user).catch(() => {
+    projectEstimateService.deleteEstimate(workspaceSlug as string, projectId as string, estimateId, user).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",

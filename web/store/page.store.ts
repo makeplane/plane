@@ -4,7 +4,7 @@ import { RootStore } from "./root";
 import { IPage } from "types";
 // services
 import { ProjectService } from "services/project";
-import PageService from "services/page.service";
+import { PageService } from "services/page.service";
 
 export interface IPageStore {
   loader: boolean;

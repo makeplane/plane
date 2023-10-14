@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 
 // contexts
 import { useProjectMyMembership, ProjectMemberProvider } from "contexts/project-member.context";
-import { WorkspaceViewProvider } from "contexts/workspace-view-context";
 // layouts
 import AppHeader from "layouts/app-layout-legacy/app-header";
 import AppSidebar from "layouts/app-layout-legacy/app-sidebar";
@@ -14,7 +13,7 @@ import { NotAuthorizedView, JoinProject } from "components/auth-screens";
 import { CommandPalette } from "components/command-palette";
 // ui
 import { Button, Spinner } from "@plane/ui";
-import { EmptyState } from "components/ui";
+import { EmptyState } from "components/common";
 // icons
 import { LayerDiagonalIcon } from "components/icons";
 // images
@@ -31,9 +30,7 @@ type Props = {
 
 export const ProjectAuthorizationWrapper: React.FC<Props> = (props) => (
   <ProjectMemberProvider>
-    <WorkspaceViewProvider>
-      <ProjectAuthorizationWrapped {...props} />
-    </WorkspaceViewProvider>
+    <ProjectAuthorizationWrapped {...props} />
   </ProjectMemberProvider>
 );
 

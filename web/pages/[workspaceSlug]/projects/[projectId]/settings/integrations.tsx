@@ -7,16 +7,14 @@ import useSWR from "swr";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // services
-import IntegrationService from "services/integrations/integration.service";
-import projectService from "services/project.service/project.service";
+import { IntegrationService } from "services/integrations";
+import { ProjectService } from "services/project";
 // components
 import { SettingsSidebar, SingleIntegration } from "components/project";
 // ui
-import { EmptyState, IntegrationAndImportExportBanner } from "components/ui";
+import { EmptyState } from "components/common";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { Loader } from "@plane/ui";
-// icons
-import { PlusIcon, PuzzlePieceIcon } from "@heroicons/react/24/outline";
 // images
 import emptyIntegration from "public/empty-state/integration.svg";
 // types
@@ -26,6 +24,10 @@ import type { NextPage } from "next";
 import { PROJECT_DETAILS, USER_PROJECT_VIEW, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
+
+// services
+const integrationService = new IntegrationService();
+const projectService = new ProjectService();
 
 const ProjectIntegrations: NextPage = () => {
   const router = useRouter();
@@ -38,7 +40,7 @@ const ProjectIntegrations: NextPage = () => {
 
   const { data: workspaceIntegrations } = useSWR(
     workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug as string) : null,
-    () => (workspaceSlug ? IntegrationService.getWorkspaceIntegrationsList(workspaceSlug as string) : null)
+    () => (workspaceSlug ? integrationService.getWorkspaceIntegrationsList(workspaceSlug as string) : null)
   );
 
   const { data: memberDetails } = useSWR(

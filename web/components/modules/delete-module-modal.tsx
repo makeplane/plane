@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import modulesService from "services/module.service";
+import { ModuleService } from "services/module.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -25,6 +25,9 @@ type Props = {
   data?: IModule;
   user: ICurrentUserResponse | undefined;
 };
+
+// services
+const moduleService = new ModuleService();
 
 export const DeleteModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, user }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
@@ -46,7 +49,7 @@ export const DeleteModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, us
 
     mutate<IModule[]>(MODULE_LIST(projectId as string), (prevData) => prevData?.filter((m) => m.id !== data.id), false);
 
-    await modulesService
+    await moduleService
       .deleteModule(workspaceSlug as string, projectId as string, data.id, user)
       .then(() => {
         if (moduleId) router.push(`/${workspaceSlug}/projects/${data.project}/modules`);

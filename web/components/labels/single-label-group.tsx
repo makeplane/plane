@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
 // services
-import issuesService from "services/issue/issue.service";
+import { IssueLabelService } from "services/issue";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
@@ -26,6 +26,9 @@ type Props = {
   handleLabelDelete: () => void;
   user: ICurrentUserResponse | undefined;
 };
+
+// services
+const issueLabelService = new IssueLabelService();
 
 export const SingleLabelGroup: React.FC<Props> = ({
   label,
@@ -52,7 +55,7 @@ export const SingleLabelGroup: React.FC<Props> = ({
       false
     );
 
-    issuesService
+    issueLabelService
       .patchIssueLabel(
         workspaceSlug as string,
         projectId as string,

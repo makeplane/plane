@@ -1,36 +1,28 @@
 // react
 import React, { useState } from "react";
-
-// next
 import { useRouter } from "next/router";
-
-// swr
 import { mutate } from "swr";
-
-// react hook form
 import { useFormContext } from "react-hook-form";
 
 // services
-import issuesService from "services/issues.service";
-
+import { IssueService } from "services/issue";
 // hooks
 import useUser from "hooks/use-user";
-
 // fetch keys
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
-
 // icons
 import { ChevronDown } from "lucide-react";
-
 // components
 import { IssuesSelectBottomSheet } from "components/web-view";
-
 // types
 import { BlockeIssueDetail, ISearchIssueResponse, IIssue } from "types";
 
 type Props = {
   disabled?: boolean;
 };
+
+// services
+const issueService = new IssueService();
 
 export const BlockerSelect: React.FC<Props> = (props) => {
   const { disabled = false } = props;
@@ -71,10 +63,9 @@ export const BlockerSelect: React.FC<Props> = (props) => {
 
     if (!workspaceSlug || !projectId || !issueId || !user) return;
 
-    const blockerIssue =
-      watch("issue_relations")?.filter((i) => i.relation_type === "blocked_by") || [];
+    const blockerIssue = watch("issue_relations")?.filter((i) => i.relation_type === "blocked_by") || [];
 
-    issuesService
+    issueService
       .createIssueRelation(workspaceSlug as string, projectId as string, issueId as string, user, {
         related_list: [
           ...selectedIssues.map((issue) => ({
@@ -121,9 +112,7 @@ export const BlockerSelect: React.FC<Props> = (props) => {
         type="button"
         disabled={disabled}
         onClick={() => setIsBlockerModalOpen(true)}
-        className={
-          "relative w-full px-2.5 py-0.5 text-base flex justify-between items-center gap-0.5"
-        }
+        className={"relative w-full px-2.5 py-0.5 text-base flex justify-between items-center gap-0.5"}
       >
         <span className="text-custom-text-200">Select issue</span>
         <ChevronDown className="w-4 h-4 text-custom-text-200" />

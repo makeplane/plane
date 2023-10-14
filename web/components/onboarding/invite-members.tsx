@@ -5,7 +5,7 @@ import { Listbox, Transition } from "@headlessui/react";
 // react-hook-form
 import { Control, Controller, FieldArrayWithId, UseFieldArrayRemove, useFieldArray, useForm } from "react-hook-form";
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -44,6 +44,9 @@ type InviteMemberFormProps = {
   fields: FieldArrayWithId<FormValues, "emails", "id">[];
   errors: any;
 };
+
+// services
+const workspaceService = new WorkspaceService();
 
 const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
   const { control, index, fields, remove, errors } = props;

@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // components
@@ -17,6 +17,9 @@ import type { NextPage } from "next";
 import { WORKSPACE_DETAILS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
+
+// services
+const workspaceService = new WorkspaceService();
 
 const ImportExport: NextPage = () => {
   const router = useRouter();
