@@ -6,8 +6,8 @@ import Link from "next/link";
 import useSWR, { mutate } from "swr";
 
 // services
-import projectService from "services/project.service/project.service";
-import workspaceService from "services/workspace.service";
+import { ProjectService } from "services/project";
+import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
@@ -48,6 +48,10 @@ const defaultValues: Partial<IProject> = {
   project_lead: null,
   default_assignee: null,
 };
+
+// services
+const projectService = new ProjectService();
+const workspaceService = new WorkspaceService();
 
 const MembersSettings: NextPage = () => {
   const [inviteModal, setInviteModal] = useState(false);

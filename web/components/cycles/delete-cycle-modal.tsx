@@ -6,7 +6,7 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import cycleService from "services/cycle.service";
+import { CycleService } from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -31,6 +31,9 @@ import {
   UPCOMING_CYCLES_LIST,
 } from "constants/fetch-keys";
 import { getDateRangeStatus } from "helpers/date-time.helper";
+
+// services
+const cycleService = new CycleService();
 
 export const DeleteCycleModal: React.FC<TConfirmCycleDeletionProps> = ({ isOpen, setIsOpen, data, user }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);

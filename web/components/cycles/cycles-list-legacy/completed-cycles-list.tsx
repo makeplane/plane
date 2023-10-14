@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import cyclesService from "services/cycle.service";
+import { CycleService } from "services/cycle.service";
 // components
 import { CyclesView } from "components/cycles";
 // fetch-keys
@@ -13,6 +13,9 @@ type Props = {
   viewType: string | null;
 };
 
+// services
+const cycleService = new CycleService();
+
 export const CompletedCyclesList: React.FC<Props> = ({ viewType }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -20,7 +23,7 @@ export const CompletedCyclesList: React.FC<Props> = ({ viewType }) => {
   const { data: completedCyclesList, mutate } = useSWR(
     workspaceSlug && projectId ? COMPLETED_CYCLES_LIST(projectId.toString()) : null,
     workspaceSlug && projectId
-      ? () => cyclesService.getCyclesWithParams(workspaceSlug.toString(), projectId.toString(), "completed")
+      ? () => cycleService.getCyclesWithParams(workspaceSlug.toString(), projectId.toString(), "completed")
       : null
   );
 

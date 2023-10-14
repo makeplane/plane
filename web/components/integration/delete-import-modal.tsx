@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import IntegrationService from "services/integrations/integration.service";
+import { IntegrationService } from "services/integrations/integration.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -25,6 +25,9 @@ type Props = {
   data: IImporterService | null;
   user: ICurrentUserResponse | undefined;
 };
+
+// services
+const integrationService = new IntegrationService();
 
 export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, user }) => {
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -46,7 +49,8 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, 
       false
     );
 
-    IntegrationService.deleteImporterService(workspaceSlug as string, data.service, data.id, user)
+    integrationService
+      .deleteImporterService(workspaceSlug as string, data.service, data.id, user)
       .catch(() =>
         setToastAlert({
           type: "error",

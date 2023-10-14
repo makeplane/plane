@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 import { Command } from "cmdk";
 // services
-import IssueService from "services/issue/issue.service";
+import { IssueService } from "services/issue";
 // hooks
 import useProjectMembers from "hooks/use-project-members";
 // constants
@@ -21,6 +21,7 @@ type Props = {
   user: IUser | undefined;
 };
 
+// services
 const issueService = new IssueService();
 
 export const ChangeIssueAssignee: FC<Props> = ({ setIsPaletteOpen, issue, user }) => {

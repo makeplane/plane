@@ -3,8 +3,8 @@ import { useRouter } from "next/router";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
-import AIService from "services/ai.service";
-import TrackEventService from "services/track_event.service";
+import { AIService } from "services/ai.service";
+import { TrackEventService } from "services/track_event.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
@@ -32,6 +32,7 @@ type FormData = {
   task: string;
 };
 
+// services
 const aiService = new AIService();
 const trackEventService = new TrackEventService();
 

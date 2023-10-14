@@ -5,7 +5,7 @@ import useSWR from "swr";
 // hook
 import useEstimateOption from "hooks/use-estimate-option";
 // services
-import issuesService from "services/issue/issue.service";
+import { IssueLabelService } from "services/issue";
 // icons
 import { Tooltip } from "@plane/ui";
 import { Icon } from "components/ui";
@@ -32,6 +32,9 @@ import { capitalizeFirstLetter } from "helpers/string.helper";
 import { IIssueActivity } from "types";
 // fetch-keys
 import { WORKSPACE_LABELS } from "constants/fetch-keys";
+
+// services
+const issueLabelService = new IssueLabelService();
 
 const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
   const router = useRouter();
@@ -74,7 +77,7 @@ const LabelPill = ({ labelId }: { labelId: string }) => {
 
   const { data: labels } = useSWR(
     workspaceSlug ? WORKSPACE_LABELS(workspaceSlug.toString()) : null,
-    workspaceSlug ? () => issuesService.getWorkspaceLabels(workspaceSlug.toString()) : null
+    workspaceSlug ? () => issueLabelService.getWorkspaceIssueLabels(workspaceSlug.toString()) : null
   );
 
   return (

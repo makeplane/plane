@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import cycleService from "services/cycle.service";
+import { CycleService } from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -29,6 +29,9 @@ type CycleModalProps = {
   data?: ICycle | null;
   user: ICurrentUserResponse | undefined;
 };
+
+// services
+const cycleService = new CycleService();
 
 export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({ isOpen, handleClose, data, user }) => {
   const router = useRouter();

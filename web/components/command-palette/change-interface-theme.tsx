@@ -5,7 +5,6 @@ import { Command } from "cmdk";
 import { THEMES_OBJ } from "constants/themes";
 import { useTheme } from "next-themes";
 import { SettingIcon } from "components/icons";
-import userService from "services/user.service";
 import useUser from "hooks/use-user";
 // helper
 import { unsetCustomCssVariables } from "helpers/theme.helper";
@@ -25,7 +24,7 @@ export const ChangeInterfaceTheme: React.FC<Props> = observer(({ setIsPaletteOpe
 
   const { setTheme } = useTheme();
 
-  const { user, mutateUser } = useUser();
+  const { user } = useUser();
 
   const updateUserTheme = (newTheme: string) => {
     if (!user) return;

@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // services
-import cyclesService from "services/cycle.service";
+import { CycleService } from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -69,6 +69,9 @@ const stateGroups = [
   },
 ];
 
+// services
+const cycleService = new CycleService();
+
 export const ActiveCycleDetails: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -78,7 +81,7 @@ export const ActiveCycleDetails: React.FC = () => {
   const { data: currentCycle } = useSWR(
     workspaceSlug && projectId ? CURRENT_CYCLE_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => cyclesService.getCyclesWithParams(workspaceSlug as string, projectId as string, "current")
+      ? () => cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string, "current")
       : null
   );
   const cycle = currentCycle ? currentCycle[0] : null;
@@ -87,7 +90,7 @@ export const ActiveCycleDetails: React.FC = () => {
     workspaceSlug && projectId && cycle?.id ? CYCLE_ISSUES_WITH_PARAMS(cycle?.id, { priority: "urgent,high" }) : null,
     workspaceSlug && projectId && cycle?.id
       ? () =>
-          cyclesService.getCycleIssuesWithParams(workspaceSlug as string, projectId as string, cycle.id, {
+          cycleService.getCycleIssuesWithParams(workspaceSlug as string, projectId as string, cycle.id, {
             priority: "urgent,high",
           })
       : null
@@ -166,7 +169,7 @@ export const ActiveCycleDetails: React.FC = () => {
       false
     );
 
-    cyclesService
+    cycleService
       .addCycleToFavorites(workspaceSlug as string, projectId as string, {
         cycle: cycle.id,
       })
@@ -202,7 +205,7 @@ export const ActiveCycleDetails: React.FC = () => {
       false
     );
 
-    cyclesService.removeCycleFromFavorites(workspaceSlug as string, projectId as string, cycle.id).catch(() => {
+    cycleService.removeCycleFromFavorites(workspaceSlug as string, projectId as string, cycle.id).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
