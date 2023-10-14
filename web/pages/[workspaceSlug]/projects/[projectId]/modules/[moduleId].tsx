@@ -1,13 +1,10 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // icons
 import { RectangleGroupIcon } from "@heroicons/react/24/outline";
 // services
-import modulesService from "services/modules.service";
+import { ModuleService } from "services/module.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
@@ -19,7 +16,8 @@ import { ModuleDetailsSidebar } from "components/modules";
 import { ModuleLayoutRoot } from "components/issues";
 import { ModuleIssuesHeader } from "components/headers";
 // ui
-import { CustomMenu, EmptyState } from "components/ui";
+import { CustomMenu } from "components/ui";
+import { EmptyState } from "components/common";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // images
 import emptyModule from "public/empty-state/module.svg";
@@ -29,6 +27,9 @@ import { truncateText } from "helpers/string.helper";
 import { ISearchIssueResponse } from "types";
 // fetch-keys
 import { MODULE_DETAILS, MODULE_ISSUES, MODULE_LIST } from "constants/fetch-keys";
+
+// services
+const moduleService = new ModuleService();
 
 const SingleModule: React.FC = () => {
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
@@ -43,20 +44,20 @@ const SingleModule: React.FC = () => {
 
   const { data: modules } = useSWR(
     workspaceSlug && projectId ? MODULE_LIST(projectId as string) : null,
-    workspaceSlug && projectId ? () => modulesService.getModules(workspaceSlug as string, projectId as string) : null
+    workspaceSlug && projectId ? () => moduleService.getModules(workspaceSlug as string, projectId as string) : null
   );
 
   const { data: moduleIssues } = useSWR(
     workspaceSlug && projectId && moduleId ? MODULE_ISSUES(moduleId as string) : null,
     workspaceSlug && projectId && moduleId
-      ? () => modulesService.getModuleIssues(workspaceSlug as string, projectId as string, moduleId as string)
+      ? () => moduleService.getModuleIssues(workspaceSlug as string, projectId as string, moduleId as string)
       : null
   );
 
   const { data: moduleDetails, error } = useSWR(
     moduleId ? MODULE_DETAILS(moduleId as string) : null,
     workspaceSlug && projectId
-      ? () => modulesService.getModuleDetails(workspaceSlug as string, projectId as string, moduleId as string)
+      ? () => moduleService.getModuleDetails(workspaceSlug as string, projectId as string, moduleId as string)
       : null
   );
 
@@ -67,7 +68,7 @@ const SingleModule: React.FC = () => {
       issues: data.map((i) => i.id),
     };
 
-    await modulesService
+    await moduleService
       .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId as string, payload, user)
       .catch(() =>
         setToastAlert({
@@ -139,11 +140,7 @@ const SingleModule: React.FC = () => {
             <div
               className={`relative overflow-y-auto h-full flex flex-col ${
                 moduleSidebar ? "mr-[24rem]" : ""
-<<<<<<< HEAD
               } duration-300`}
-=======
-              } ${analyticsModal ? "mr-[50%]" : ""} duration-300`}
->>>>>>> c6e021d41fcf8186d9a728dff3347228d1cdb477
             >
               <ModuleLayoutRoot />
             </div>

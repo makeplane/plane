@@ -4,17 +4,15 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 import { useDropzone } from "react-dropzone";
 // services
-import IssueService from "services/issue/issue.service";
+import { IssueAttachmentService } from "services/issue";
 // fetch key
 import { ISSUE_ATTACHMENTS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 // icons
 import { FileText, ChevronRight, X, Image as ImageIcon } from "lucide-react";
 // components
 import { Label, WebViewModal, DeleteConfirmation } from "components/web-view";
-
 // helpers
 import { getFileName } from "helpers/attachment.helper";
-
 // types
 import type { IIssueAttachment } from "types";
 
@@ -24,7 +22,7 @@ type Props = {
 
 const isImage = (fileName: string) => /\.(gif|jpe?g|tiff?|png|webp|bmp)$/i.test(fileName);
 
-const issueService = new IssueService();
+const issueAttachmentService = new IssueAttachmentService();
 
 export const IssueAttachments: React.FC<Props> = (props) => {
   const { allowed } = props;
@@ -53,7 +51,7 @@ export const IssueAttachments: React.FC<Props> = (props) => {
       );
       setIsLoading(true);
 
-      issueService
+      issueAttachmentService
         .uploadIssueAttachment(workspaceSlug as string, projectId as string, issueId as string, formData)
         .then((res) => {
           mutate<IIssueAttachment[]>(
@@ -97,7 +95,7 @@ export const IssueAttachments: React.FC<Props> = (props) => {
       false
     );
 
-    await issuesService
+    await issueAttachmentService
       .deleteIssueAttachment(workspaceSlug as string, projectId as string, issueId as string, assetId as string)
       .then(() => mutate(PROJECT_ISSUES_ACTIVITY(issueId as string)))
       .catch(() => {
@@ -120,7 +118,8 @@ export const IssueAttachments: React.FC<Props> = (props) => {
   const { data: attachments } = useSWR<IIssueAttachment[]>(
     workspaceSlug && projectId && issueId ? ISSUE_ATTACHMENTS(issueId as string) : null,
     workspaceSlug && projectId && issueId
-      ? () => issueService.getIssueAttachment(workspaceSlug.toString(), projectId.toString(), issueId.toString())
+      ? () =>
+          issueAttachmentService.getIssueAttachment(workspaceSlug.toString(), projectId.toString(), issueId.toString())
       : null
   );
 

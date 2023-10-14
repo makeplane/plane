@@ -60,8 +60,6 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = ({
         )
       : [];
 
-  const label = () => <div>Hello</div>;
-
   return (
     <Combobox
       as="div"

@@ -1,13 +1,13 @@
 import { API_BASE_URL } from "helpers/common.helper";
 // services
-import APIService from "services/api.service";
-import TrackEventService from "services/track_event.service";
+import { APIService } from "services/api.service";
+import { TrackEventService } from "services/track_event.service";
 // types
 import { IPage, IPageBlock, RecentPagesResponse, IIssue, IUser } from "types";
 
 const trackEventService = new TrackEventService();
 
-class PageService extends APIService {
+export class PageService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -213,5 +213,3 @@ class PageService extends APIService {
       });
   }
 }
-
-export default PageService;

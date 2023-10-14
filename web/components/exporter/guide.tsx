@@ -9,7 +9,7 @@ import useSWR, { mutate } from "swr";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // services
-import IntegrationService from "services/integrations/integration.service";
+import { IntegrationService } from "services/integrations";
 // components
 import { Exporter, SingleExport } from "components/exporter";
 // ui
@@ -21,6 +21,9 @@ import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { EXPORT_SERVICES_LIST } from "constants/fetch-keys";
 // constants
 import { EXPORTERS_LIST } from "constants/workspace";
+
+// services
+const integrationService = new IntegrationService();
 
 const IntegrationGuide = () => {
   const [refreshing, setRefreshing] = useState(false);
@@ -35,7 +38,7 @@ const IntegrationGuide = () => {
   const { data: exporterServices } = useSWR(
     workspaceSlug && cursor ? EXPORT_SERVICES_LIST(workspaceSlug as string, cursor, `${per_page}`) : null,
     workspaceSlug && cursor
-      ? () => IntegrationService.getExportsServicesList(workspaceSlug as string, cursor, per_page)
+      ? () => integrationService.getExportsServicesList(workspaceSlug as string, cursor, per_page)
       : null
   );
 

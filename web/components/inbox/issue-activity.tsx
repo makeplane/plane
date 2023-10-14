@@ -5,7 +5,7 @@ import useSWR, { mutate } from "swr";
 // components
 import { AddComment, IssueActivitySection } from "components/issues";
 // services
-import issuesService from "services/issue/issue.service";
+import { IssueService, IssueCommentService } from "services/issue";
 // hooks
 import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
@@ -15,6 +15,10 @@ import { IIssue, IIssueComment } from "types";
 import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 type Props = { issueDetails: IIssue };
+
+// services
+const issueService = new IssueService();
+const issueCommentService = new IssueCommentService();
 
 export const InboxIssueActivity: React.FC<Props> = ({ issueDetails }) => {
   const router = useRouter();
@@ -27,14 +31,14 @@ export const InboxIssueActivity: React.FC<Props> = ({ issueDetails }) => {
   const { data: issueActivity, mutate: mutateIssueActivity } = useSWR(
     workspaceSlug && projectId && inboxIssueId ? PROJECT_ISSUES_ACTIVITY(inboxIssueId.toString()) : null,
     workspaceSlug && projectId && inboxIssueId
-      ? () => issuesService.getIssueActivities(workspaceSlug.toString(), projectId.toString(), inboxIssueId.toString())
+      ? () => issueService.getIssueActivities(workspaceSlug.toString(), projectId.toString(), inboxIssueId.toString())
       : null
   );
 
   const handleCommentUpdate = async (commentId: string, data: Partial<IIssueComment>) => {
     if (!workspaceSlug || !projectId || !inboxIssueId) return;
 
-    await issuesService
+    await issueCommentService
       .patchIssueComment(workspaceSlug as string, projectId as string, inboxIssueId as string, commentId, data, user)
       .then(() => mutateIssueActivity());
   };
@@ -44,7 +48,7 @@ export const InboxIssueActivity: React.FC<Props> = ({ issueDetails }) => {
 
     mutateIssueActivity((prevData: any) => prevData?.filter((p: any) => p.id !== commentId), false);
 
-    await issuesService
+    await issueCommentService
       .deleteIssueComment(workspaceSlug as string, projectId as string, inboxIssueId as string, commentId, user)
       .then(() => mutateIssueActivity());
   };
@@ -52,7 +56,7 @@ export const InboxIssueActivity: React.FC<Props> = ({ issueDetails }) => {
   const handleAddComment = async (formData: IIssueComment) => {
     if (!workspaceSlug || !issueDetails) return;
 
-    await issuesService
+    await issueCommentService
       .createIssueComment(workspaceSlug.toString(), issueDetails.project, issueDetails.id, formData, user)
       .then(() => {
         mutate(PROJECT_ISSUES_ACTIVITY(issueDetails.id));

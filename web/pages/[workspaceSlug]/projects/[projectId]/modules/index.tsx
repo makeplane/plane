@@ -9,13 +9,14 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // services
-import projectService from "services/project.service/project.service";
-import modulesService from "services/modules.service";
+import { ProjectService } from "services/project";
+import { ModuleService } from "services/module.service";
 // components
 import { CreateUpdateModuleModal, ModulesListGanttChartView, SingleModuleCard } from "components/modules";
 // ui
 import { Button, Loader, Tooltip } from "@plane/ui";
-import { EmptyState, Icon } from "components/ui";
+import { Icon } from "components/ui";
+import { EmptyState } from "components/common";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -40,6 +41,10 @@ const moduleViewOptions: { type: "grid" | "gantt_chart"; icon: any }[] = [
   },
 ];
 
+// services
+const projectService = new ProjectService();
+const moduleService = new ModuleService();
+
 const ProjectModules: NextPage = () => {
   const [selectedModule, setSelectedModule] = useState<SelectModuleType>();
   const [createUpdateModule, setCreateUpdateModule] = useState(false);
@@ -58,7 +63,7 @@ const ProjectModules: NextPage = () => {
 
   const { data: modules, mutate: mutateModules } = useSWR(
     workspaceSlug && projectId ? MODULE_LIST(projectId as string) : null,
-    workspaceSlug && projectId ? () => modulesService.getModules(workspaceSlug as string, projectId as string) : null
+    workspaceSlug && projectId ? () => moduleService.getModules(workspaceSlug as string, projectId as string) : null
   );
 
   const handleEditModule = (module: IModule) => {

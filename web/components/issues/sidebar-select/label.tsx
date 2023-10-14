@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
-// react-hook-form
 import { Controller, UseFormWatch, useForm } from "react-hook-form";
-// react-color
 import { TwitterPicker } from "react-color";
 // headless ui
 import { Listbox, Popover, Transition } from "@headlessui/react";
 // services
-import issuesService from "services/issue/issue.service";
+import { IssueLabelService } from "services/issue";
 // hooks
 import useUser from "hooks/use-user";
 // ui
@@ -37,6 +32,8 @@ const defaultValues: Partial<IIssueLabels> = {
   color: "#ff0000",
 };
 
+const issueLabelService = new IssueLabelService();
+
 export const SidebarLabelSelect: React.FC<Props> = ({
   issueDetails,
   issueControl,
@@ -51,7 +48,6 @@ export const SidebarLabelSelect: React.FC<Props> = ({
   const { workspaceSlug, projectId } = router.query;
 
   const {
-    register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
@@ -66,21 +62,25 @@ export const SidebarLabelSelect: React.FC<Props> = ({
 
   const { data: issueLabels, mutate: issueLabelMutate } = useSWR<IIssueLabels[]>(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
-    workspaceSlug && projectId ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string) : null
+    workspaceSlug && projectId
+      ? () => issueLabelService.getProjectIssueLabels(workspaceSlug as string, projectId as string)
+      : null
   );
 
   const handleNewLabel = async (formData: Partial<IIssueLabels>) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;
 
-    await issuesService.createIssueLabel(workspaceSlug as string, projectId as string, formData, user).then((res) => {
-      reset(defaultValues);
+    await issueLabelService
+      .createIssueLabel(workspaceSlug as string, projectId as string, formData, user)
+      .then((res) => {
+        reset(defaultValues);
 
-      issueLabelMutate((prevData: any) => [...(prevData ?? []), res], false);
+        issueLabelMutate((prevData: any) => [...(prevData ?? []), res], false);
 
-      submitChanges({ labels_list: [...(issueDetails?.labels ?? []), res.id] });
+        submitChanges({ labels_list: [...(issueDetails?.labels ?? []), res.id] });
 
-      setCreateLabelForm(false);
-    });
+        setCreateLabelForm(false);
+      });
   };
 
   useEffect(() => {
@@ -256,7 +256,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
         <form className="flex items-center gap-x-2" onSubmit={handleSubmit(handleNewLabel)}>
           <div>
             <Popover className="relative">
-              {({ open }) => (
+              {({}) => (
                 <>
                   <Popover.Button className="grid place-items-center outline-none">
                     {watch("color") && watch("color") !== "" && (

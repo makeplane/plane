@@ -1,16 +1,15 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
+
 // services
-import IssueService from "services/issue/issue.service";
+import { IssueService } from "services/issue";
 // constants
 import { ISSUE_DETAILS } from "constants/fetch-keys";
 // components
 import { IssuesSelectBottomSheet } from "components/web-view";
-
 // icons
 import { ChevronDown, X } from "lucide-react";
-
 // types
 import { ISearchIssueResponse } from "types";
 

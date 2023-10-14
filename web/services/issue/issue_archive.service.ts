@@ -1,8 +1,8 @@
-import APIService from "services/api.service";
+import { APIService } from "services/api.service";
 // type
 import { API_BASE_URL } from "helpers/common.helper";
 
-class IssueArchiveService extends APIService {
+export class IssueArchiveService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -41,5 +41,3 @@ class IssueArchiveService extends APIService {
       });
   }
 }
-
-export default IssueArchiveService;

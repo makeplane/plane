@@ -14,14 +14,14 @@ import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
-import { IProjectPublishSettings, TProjectPublishViews } from "store/project_publish";
+import { IProjectPublishSettings, TProjectPublishViews } from "store/project";
 // hooks
 import useToast from "hooks/use-toast";
 import useProjectDetails from "hooks/use-project-details";
 import useUser from "hooks/use-user";
 
 type Props = {
-  // user: ICurrentUserResponse | undefined;
+  // user: IUser | undefined;
 };
 
 type FormData = {

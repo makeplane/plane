@@ -8,7 +8,7 @@ import { mutate } from "swr";
 // next-themes
 import { useTheme } from "next-themes";
 // services
-import userService from "services/user.service";
+import { UserService } from "services/user.service";
 // hooks
 import useUser from "hooks/use-user";
 // layouts
@@ -20,10 +20,13 @@ import { CreateWorkspaceForm } from "components/workspace";
 import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
 // types
-import { ICurrentUserResponse, IWorkspace } from "types";
+import { IUser, IWorkspace } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { CURRENT_USER } from "constants/fetch-keys";
+
+// services
+const userService = new UserService();
 
 const CreateWorkspace: NextPage = () => {
   const [defaultValues, setDefaultValues] = useState({
@@ -39,7 +42,7 @@ const CreateWorkspace: NextPage = () => {
   const { user } = useUser();
 
   const onSubmit = async (workspace: IWorkspace) => {
-    mutate<ICurrentUserResponse>(
+    mutate<IUser>(
       CURRENT_USER,
       (prevData) => {
         if (!prevData) return prevData;

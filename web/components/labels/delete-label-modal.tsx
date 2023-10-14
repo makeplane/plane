@@ -9,13 +9,13 @@ import { Dialog, Transition } from "@headlessui/react";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // services
-import issuesService from "services/issue/issue.service";
+import { IssueLabelService } from "services/issue";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { ICurrentUserResponse, IIssueLabels } from "types";
+import type { IUser, IIssueLabels } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 
@@ -23,8 +23,11 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   data: IIssueLabels | null;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
+
+// services
+const issueLabelService = new IssueLabelService();
 
 export const DeleteLabelModal: React.FC<Props> = ({ isOpen, onClose, data, user }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
@@ -50,7 +53,7 @@ export const DeleteLabelModal: React.FC<Props> = ({ isOpen, onClose, data, user 
       false
     );
 
-    await issuesService
+    await issueLabelService
       .deleteIssueLabel(workspaceSlug.toString(), projectId.toString(), data.id, user)
       .then(() => handleClose())
       .catch(() => {

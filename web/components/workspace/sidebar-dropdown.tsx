@@ -10,8 +10,8 @@ import useUser from "hooks/use-user";
 import useWorkspaces from "hooks/use-workspaces";
 import useToast from "hooks/use-toast";
 // services
-import UserService from "services/user.service";
-import AuthService from "services/auth.service";
+import { UserService } from "services/user.service";
+import { AuthService } from "services/auth.service";
 // components
 import { Avatar, Icon } from "components/ui";
 import { Loader } from "@plane/ui";

@@ -5,8 +5,8 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 import { useTheme } from "next-themes";
 // services
-import WorkspaceService from "services/workspace.service";
-import UserService from "services/user.service";
+import { WorkspaceService } from "services/workspace.service";
+import { UserService } from "services/user.service";
 // hooks
 import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
@@ -31,6 +31,7 @@ import { ROLE } from "constants/workspace";
 // components
 import { EmptyState } from "components/common";
 
+// services
 const workspaceService = new WorkspaceService();
 const userService = new UserService();
 

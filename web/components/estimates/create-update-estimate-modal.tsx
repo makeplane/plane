@@ -9,7 +9,7 @@ import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import estimatesService from "services/project.service/project_estimates.service";
+import { ProjectEstimateServices } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -17,7 +17,7 @@ import { Button, Input, TextArea } from "@plane/ui";
 // helpers
 import { checkDuplicates } from "helpers/array.helper";
 // types
-import { ICurrentUserResponse, IEstimate, IEstimateFormData } from "types";
+import { IUser, IEstimate, IEstimateFormData } from "types";
 // fetch-keys
 import { ESTIMATES_LIST, ESTIMATE_DETAILS } from "constants/fetch-keys";
 
@@ -25,7 +25,7 @@ type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data?: IEstimate;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
 type FormValues = {
@@ -50,6 +50,9 @@ const defaultValues: Partial<FormValues> = {
   value6: "",
 };
 
+// services
+const projectEstimateService = new ProjectEstimateServices();
+
 export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, isOpen, user }) => {
   const {
     formState: { errors, isSubmitting },
@@ -73,7 +76,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
   const createEstimate = async (payload: IEstimateFormData) => {
     if (!workspaceSlug || !projectId) return;
 
-    await estimatesService
+    await projectEstimateService
       .createEstimate(workspaceSlug as string, projectId as string, payload, user)
       .then(() => {
         mutate(ESTIMATES_LIST(projectId as string));
@@ -118,7 +121,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
       false
     );
 
-    await estimatesService
+    await projectEstimateService
       .patchEstimate(workspaceSlug as string, projectId as string, data?.id as string, payload, user)
       .then(() => {
         mutate(ESTIMATES_LIST(projectId.toString()));

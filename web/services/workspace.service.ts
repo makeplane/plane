@@ -1,6 +1,6 @@
 // services
-import APIService from "services/api.service";
-import TrackEventService from "services/track_event.service";
+import { APIService } from "services/api.service";
+import { TrackEventService } from "services/track_event.service";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 // types
@@ -14,7 +14,6 @@ import {
   IUser,
   IWorkspaceBulkInviteFormData,
   IWorkspaceViewProps,
-  IWorkspaceViewIssuesParams,
 } from "types";
 import { IWorkspaceView } from "types/workspace-views";
 // store
@@ -22,7 +21,7 @@ import { IIssueGroupWithSubGroupsStructure, IIssueGroupedStructure, IIssueUnGrou
 
 const trackEventService = new TrackEventService();
 
-class WorkspaceService extends APIService {
+export class WorkspaceService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -301,5 +300,3 @@ class WorkspaceService extends APIService {
       });
   }
 }
-
-export default WorkspaceService;

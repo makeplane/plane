@@ -16,8 +16,9 @@ import WebViewLayout from "layouts/web-view-layout";
 // components
 import { Button, Spinner } from "@plane/ui";
 import { RichTextEditor } from "@plane/rich-text-editor";
-import fileService from "services/file.service";
 // services
+import { FileService } from "services/file.service";
+const fileService = new FileService();
 
 const Editor: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);

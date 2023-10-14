@@ -7,9 +7,6 @@ import { LabelHeader } from "./label";
 import { CreatedByHeader } from "./created_by";
 // mobx
 import { observer } from "mobx-react-lite";
-// mobx
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
 
 export interface IKanBanGroupByHeaderRoot {
   column_id: string;

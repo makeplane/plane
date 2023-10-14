@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 // services
-import IssueService from "services/issue/issue.service";
+import { IssueService } from "services/issue";
 // fetch keys
 import { ISSUE_DETAILS } from "constants/fetch-keys";
 // hooks

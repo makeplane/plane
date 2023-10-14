@@ -1,9 +1,7 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 // services
-import trackEventServices from "services/track_event.service";
+import { TrackEventService } from "services/track_event.service";
 // ui
 import { CustomSelect } from "components/ui";
 import { Tooltip } from "@plane/ui";
@@ -12,7 +10,7 @@ import { PriorityIcon } from "components/icons/priority-icon";
 // helpers
 import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
-import { ICurrentUserResponse, IIssue, TIssuePriorities } from "types";
+import { IUser, IIssue, TIssuePriorities } from "types";
 // constants
 import { PRIORITIES } from "constants/project";
 
@@ -23,16 +21,18 @@ type Props = {
   tooltipPosition?: "top" | "bottom";
   selfPositioned?: boolean;
   noBorder?: boolean;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   isNotAllowed: boolean;
 };
+
+const trackEventService = new TrackEventService();
 
 export const ViewPrioritySelect: React.FC<Props> = ({
   issue,
   partialUpdateIssue,
-  position = "left",
+  // position = "left",
   tooltipPosition = "top",
-  selfPositioned = false,
+  // selfPositioned = false,
   noBorder = false,
   user,
   isNotAllowed,
@@ -45,7 +45,7 @@ export const ViewPrioritySelect: React.FC<Props> = ({
       value={issue.priority}
       onChange={(data: TIssuePriorities) => {
         partialUpdateIssue({ priority: data }, issue);
-        trackEventServices.trackIssuePartialPropertyUpdateEvent(
+        trackEventService.trackIssuePartialPropertyUpdateEvent(
           {
             workspaceSlug,
             workspaceId: issue.workspace,
@@ -55,7 +55,7 @@ export const ViewPrioritySelect: React.FC<Props> = ({
             issueId: issue.id,
           },
           "ISSUE_PROPERTY_UPDATE_PRIORITY",
-          user
+          user as IUser
         );
       }}
       maxHeight="md"

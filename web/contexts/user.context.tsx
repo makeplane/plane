@@ -3,19 +3,22 @@ import React, { createContext, ReactElement } from "react";
 import useSWR, { KeyedMutator } from "swr";
 
 // services
-import userService from "services/user.service";
+import { UserService } from "services/user.service";
 // constants
 import { CURRENT_USER } from "constants/fetch-keys";
 // types
-import type { ICurrentUserResponse, IUser } from "types";
+import type { IUser, IUser } from "types";
 
 interface IUserContextProps {
   user?: IUser;
   isUserLoading: boolean;
-  mutateUser: KeyedMutator<ICurrentUserResponse>;
+  mutateUser: KeyedMutator<IUser>;
   assignedIssuesLength?: number;
   workspaceInvitesLength?: number;
 }
+
+// services
+const userService = new UserService();
 
 export const UserContext = createContext<IUserContextProps>({} as IUserContextProps);
 

@@ -1,8 +1,8 @@
 import React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useRouter } from "next/router";
 // ui
-import { Input, PrimaryButton } from "components/ui";
+import { Input, Button } from "@plane/ui";
 
 export interface EmailPasswordFormValues {
   email: string;
@@ -20,7 +20,6 @@ export const EmailPasswordForm: React.FC<IEmailPasswordForm> = (props) => {
   const router = useRouter();
   // form info
   const {
-    register,
     handleSubmit,
     formState: { errors, isSubmitting, isValid, isDirty },
   } = useForm<EmailPasswordFormValues>({
@@ -37,35 +36,47 @@ export const EmailPasswordForm: React.FC<IEmailPasswordForm> = (props) => {
     <>
       <form className="space-y-4 mt-10 w-full sm:w-[360px] mx-auto" onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-1">
-          <Input
-            id="email"
-            type="email"
+          <Controller
             name="email"
-            register={register}
-            validations={{
+            rules={{
               required: "Email address is required",
               validate: (value) =>
                 /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
                   value
                 ) || "Email address is not valid",
             }}
-            error={errors.email}
-            placeholder="Enter your email address..."
-            className="border-custom-border-300 h-[46px]"
+            render={({ field: { value, onChange } }) => (
+              <Input
+                id="email"
+                type="email"
+                name="email"
+                value={value}
+                onChange={onChange}
+                hasError={Boolean(errors.email)}
+                placeholder="Enter your email address..."
+                className="border-custom-border-300 h-[46px]"
+              />
+            )}
           />
         </div>
         <div className="space-y-1">
-          <Input
-            id="password"
-            type="password"
+          <Controller
             name="password"
-            register={register}
-            validations={{
+            rules={{
               required: "Password is required",
             }}
-            error={errors.password}
-            placeholder="Enter your password..."
-            className="border-custom-border-300 h-[46px]"
+            render={({ field: { value, onChange } }) => (
+              <Input
+                id="password"
+                type="password"
+                name="password"
+                value={value}
+                onChange={onChange}
+                hasError={Boolean(errors.password)}
+                placeholder="Enter your password..."
+                className="border-custom-border-300 h-[46px]"
+              />
+            )}
           />
         </div>
         <div className="text-right text-xs">
@@ -78,14 +89,14 @@ export const EmailPasswordForm: React.FC<IEmailPasswordForm> = (props) => {
           </button>
         </div>
         <div>
-          <PrimaryButton
+          <Button
             type="submit"
             className="w-full text-center h-[46px]"
             disabled={!isValid && isDirty}
             loading={isSubmitting}
           >
             {isSubmitting ? "Signing in..." : "Sign in"}
-          </PrimaryButton>
+          </Button>
         </div>
         <div className="text-xs">
           <button

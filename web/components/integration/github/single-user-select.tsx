@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // ui
 import { Avatar, CustomSearchSelect, CustomSelect } from "components/ui";
 import { Input } from "@plane/ui";
@@ -34,6 +34,9 @@ const importOptions = [
     label: "Do not import",
   },
 ];
+
+// services
+const workspaceService = new WorkspaceService();
 
 export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, setUsers }) => {
   const router = useRouter();

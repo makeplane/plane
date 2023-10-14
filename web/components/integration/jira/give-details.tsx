@@ -1,27 +1,18 @@
 import React from "react";
-
-// next
 import Link from "next/link";
-
-// react hook form
 import { useFormContext, Controller } from "react-hook-form";
-
 // icons
 import { PlusIcon } from "@heroicons/react/20/solid";
-
 // hooks
 import useProjects from "hooks/use-projects";
-
 // components
 import { CustomSelect } from "components/ui";
 import { Input } from "@plane/ui";
-
 // types
 import { IJiraImporterForm } from "types";
 
 export const JiraGetImportDetail: React.FC = () => {
   const {
-    register,
     control,
     formState: { errors },
   } = useFormContext<IJiraImporterForm>();

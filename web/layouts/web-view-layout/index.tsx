@@ -1,26 +1,21 @@
-// swr
 import useSWR from "swr";
 
 // services
-import userService from "services/user.service";
-
+import { UserService } from "services/user.service";
 // fetch keys
 import { CURRENT_USER } from "constants/fetch-keys";
-
 // icons
 import { AlertCircle } from "lucide-react";
-
 // ui
-<<<<<<< HEAD
 import { Spinner } from "@plane/ui";
-=======
-import { Spinner } from "components/web-view";
->>>>>>> c6e021d41fcf8186d9a728dff3347228d1cdb477
 
 type Props = {
   children: React.ReactNode;
   fullScreen?: boolean;
 };
+
+// services
+const userService = new UserService();
 
 const getIfInWebview = (userAgent: NavigatorID["userAgent"]) => {
   const safari = /safari/.test(userAgent);

@@ -1,22 +1,22 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 // components
 import { MembersSelect } from "components/project";
 // services
-import trackEventServices from "services/track_event.service";
+import { TrackEventService } from "services/track_event.service";
 // types
-import { ICurrentUserResponse, IIssue, Properties } from "types";
+import { IUser, IIssue, Properties } from "types";
 
 type Props = {
   issue: IIssue;
   projectId: string;
   onChange: (formData: Partial<IIssue>) => void;
   properties: Properties;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   isNotAllowed: boolean;
 };
+
+const trackEventService = new TrackEventService();
 
 export const AssigneeColumn: React.FC<Props> = ({ issue, projectId, onChange, properties, user, isNotAllowed }) => {
   const router = useRouter();
@@ -31,7 +31,7 @@ export const AssigneeColumn: React.FC<Props> = ({ issue, projectId, onChange, pr
 
     onChange({ assignees_list: data });
 
-    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+    trackEventService.trackIssuePartialPropertyUpdateEvent(
       {
         workspaceSlug,
         workspaceId: issue.workspace,
@@ -41,7 +41,7 @@ export const AssigneeColumn: React.FC<Props> = ({ issue, projectId, onChange, pr
         issueId: issue.id,
       },
       "ISSUE_PROPERTY_UPDATE_ASSIGNEE",
-      user
+      user as IUser
     );
   };
 

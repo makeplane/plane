@@ -1,12 +1,13 @@
-import APIService from "services/api.service";
-import TrackEventService from "services/track_event.service";
+import { APIService } from "services/api.service";
+import { TrackEventService } from "services/track_event.service";
 // types
 import { IAppIntegration, IUser, IImporterService, IWorkspaceIntegration, IExportServiceResponse } from "types";
+// helper
 import { API_BASE_URL } from "helpers/common.helper";
 
 const trackEventService = new TrackEventService();
 
-class IntegrationService extends APIService {
+export class IntegrationService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -76,5 +77,3 @@ class IntegrationService extends APIService {
       });
   }
 }
-
-export default IntegrationService;

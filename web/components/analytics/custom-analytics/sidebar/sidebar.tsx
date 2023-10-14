@@ -2,14 +2,12 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // services
-import analyticsService from "services/analytics.service";
-import trackEventServices from "services/track_event.service";
+import { AnalyticsService } from "services/analytics.service";
+import { TrackEventService } from "services/track_event.service";
 // hooks
 import useToast from "hooks/use-toast";
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CustomAnalyticsSidebarHeader, CustomAnalyticsSidebarProjectsList } from "components/analytics";
 // ui
@@ -30,6 +28,9 @@ type Props = {
   fullScreen: boolean;
   isProjectLevel: boolean;
 };
+
+const analyticsService = new AnalyticsService();
+const trackEventService = new TrackEventService();
 
 export const CustomAnalyticsSidebar: React.FC<Props> = observer(
   ({ analytics, params, fullScreen, isProjectLevel = false }) => {
@@ -91,7 +92,7 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer(
         eventPayload.moduleName = moduleDetails.name;
       }
 
-      trackEventServices.trackAnalyticsEvent(
+      trackEventService.trackAnalyticsEvent(
         eventPayload,
         cycleId
           ? "CYCLE_ANALYTICS_EXPORT"

@@ -1,12 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { useRouter } from "next/router";
-import { mutate } from "swr";
 import { useForm, Controller } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
-// services
-import projectServices from "services/project.service/project.service";
 // hooks
 import useToast from "hooks/use-toast";
 import { useWorkspaceMyMembership } from "contexts/workspace-member.context";
@@ -20,9 +17,7 @@ import EmojiIconPicker from "components/emoji-icon-picker";
 // helpers
 import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
 // types
-import { ICurrentUserResponse, IProject } from "types";
-// fetch-keys
-import { PROJECTS_LIST } from "constants/fetch-keys";
+import { IUser, IProject } from "types";
 // constants
 import { NETWORK_CHOICES } from "constants/project";
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -31,7 +26,7 @@ type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setToFavorite?: boolean;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
 const defaultValues: Partial<IProject> = {
@@ -64,7 +59,7 @@ const IsGuestCondition: React.FC<{
 };
 
 export const CreateProjectModal: React.FC<Props> = (props) => {
-  const { isOpen, setIsOpen, setToFavorite = false, user } = props;
+  const { isOpen, setIsOpen, setToFavorite = false } = props;
   // store
   const { project: projectStore } = useMobxStore();
   // states
@@ -79,7 +74,6 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
   const { workspaceMembers } = useWorkspaceMembers(workspaceSlug?.toString() ?? "");
 
   const {
-    register,
     formState: { errors, isSubmitting },
     handleSubmit,
     reset,
@@ -112,6 +106,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
   const onSubmit = async (formData: IProject) => {
     if (!workspaceSlug) return;
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { emoji_and_icon, ...payload } = formData;
 
     if (typeof formData.emoji_and_icon === "object") payload.icon_prop = formData.emoji_and_icon;
@@ -164,7 +159,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
     setIsChangeInIdentifierRequired(false);
   };
 
-  const options = workspaceMembers?.map((member) => ({
+  const options = workspaceMembers?.map((member: any) => ({
     value: member.member.id,
     query: member.member.display_name,
     content: (
@@ -180,10 +175,10 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
   if (memberDetails && isOpen) if (memberDetails.role <= 10) return <IsGuestCondition setIsOpen={setIsOpen} />;
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
+    <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
-          as={React.Fragment}
+          as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -197,7 +192,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
         <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
             <Transition.Child
-              as={React.Fragment}
+              as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               enterTo="opacity-100 translate-y-0 sm:scale-100"
@@ -371,7 +366,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                           name="project_lead"
                           control={control}
                           render={({ field: { value, onChange } }) => {
-                            const selectedMember = workspaceMembers?.find((m) => m.member.id === value);
+                            const selectedMember = workspaceMembers?.find((m: any) => m.member.id === value);
 
                             return (
                               <CustomSearchSelect

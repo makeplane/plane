@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 
 // services
-import stateService from "services/project.service/project_state.service";
+import { ProjectStateService } from "services/project";
 // ui
 import { Tooltip } from "@plane/ui";
 // icons
@@ -18,7 +18,7 @@ import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { groupBy, orderArrayBy } from "helpers/array.helper";
 import { orderStateGroups } from "helpers/state.helper";
 // types
-import { ICurrentUserResponse, IState } from "types";
+import { IUser, IState } from "types";
 // fetch-keys
 import { STATES_LIST } from "constants/fetch-keys";
 
@@ -28,8 +28,11 @@ type Props = {
   statesList: IState[];
   handleEditState: () => void;
   handleDeleteState: () => void;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
+
+// services
+const projectStateService = new ProjectStateService();
 
 export const SingleState: React.FC<Props> = ({
   index,
@@ -61,7 +64,7 @@ export const SingleState: React.FC<Props> = ({
     mutate(STATES_LIST(projectId as string), orderStateGroups(groupBy(newStatesList, "group")), false);
 
     if (currentDefaultState)
-      stateService
+      projectStateService
         .patchState(
           workspaceSlug as string,
           projectId as string,
@@ -72,7 +75,7 @@ export const SingleState: React.FC<Props> = ({
           user
         )
         .then(() => {
-          stateService
+          projectStateService
             .patchState(
               workspaceSlug as string,
               projectId as string,
@@ -91,7 +94,7 @@ export const SingleState: React.FC<Props> = ({
             });
         });
     else
-      stateService
+      projectStateService
         .patchState(
           workspaceSlug as string,
           projectId as string,
@@ -129,7 +132,7 @@ export const SingleState: React.FC<Props> = ({
 
     mutate(STATES_LIST(projectId as string), orderStateGroups(groupBy(newStatesList, "group")), false);
 
-    stateService
+    projectStateService
       .patchState(
         workspaceSlug as string,
         projectId as string,

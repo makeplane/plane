@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // services
-import IntegrationService from "services/integrations/integration.service";
+import { IntegrationService } from "services/integrations";
 // hooks
 import useToast from "hooks/use-toast";
 import useIntegrationPopup from "hooks/use-integration-popup";
@@ -38,6 +38,9 @@ const integrationDetails: { [key: string]: any } = {
   },
 };
 
+// services
+const integrationService = new IntegrationService();
+
 export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
   const [deletingIntegration, setDeletingIntegration] = useState(false);
 
@@ -50,7 +53,7 @@ export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
 
   const { data: workspaceIntegrations } = useSWR(
     workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug as string) : null,
-    () => (workspaceSlug ? IntegrationService.getWorkspaceIntegrationsList(workspaceSlug as string) : null)
+    () => (workspaceSlug ? integrationService.getWorkspaceIntegrationsList(workspaceSlug as string) : null)
   );
 
   const handleRemoveIntegration = async () => {
@@ -60,7 +63,8 @@ export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
 
     setDeletingIntegration(true);
 
-    await IntegrationService.deleteWorkspaceIntegration(workspaceSlug as string, workspaceIntegrationId ?? "")
+    await integrationService
+      .deleteWorkspaceIntegration(workspaceSlug as string, workspaceIntegrationId ?? "")
       .then(() => {
         mutate<IWorkspaceIntegration[]>(
           WORKSPACE_INTEGRATIONS(workspaceSlug as string),

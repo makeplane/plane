@@ -1,12 +1,9 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
 // services
-import projectService from "services/project.service/project.service";
-import trackEventServices, { MiscellaneousEventType } from "services/track_event.service";
+import { ProjectService } from "services/project";
+import { TrackEventService, MiscellaneousEventType } from "services/track_event.service";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // hooks
@@ -22,7 +19,7 @@ import { ModuleIcon } from "components/icons";
 import { FileText, Inbox, Layers } from "lucide-react";
 import { ContrastOutlined } from "@mui/icons-material";
 // types
-import { IProject } from "types";
+import { IProject, IUser } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS, USER_PROJECT_VIEW } from "constants/fetch-keys";
@@ -80,6 +77,10 @@ const getEventType = (feature: string, toggle: boolean): MiscellaneousEventType 
   }
 };
 
+// services
+const projectService = new ProjectService();
+const trackEventService = new TrackEventService();
+
 const FeaturesSettings: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -91,13 +92,6 @@ const FeaturesSettings: NextPage = () => {
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId ? () => projectService.getProject(workspaceSlug as string, projectId as string) : null
-  );
-
-  const { data: memberDetails } = useSWR(
-    workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
-    workspaceSlug && projectId
-      ? () => projectService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
-      : null
   );
 
   const { data: memberDetails } = useSWR(
@@ -184,7 +178,7 @@ const FeaturesSettings: NextPage = () => {
                 <ToggleSwitch
                   value={projectDetails?.[feature.property as keyof IProject]}
                   onChange={() => {
-                    trackEventServices.trackMiscellaneousEvent(
+                    trackEventService.trackMiscellaneousEvent(
                       {
                         workspaceId: (projectDetails?.workspace as any)?.id,
                         workspaceSlug,
@@ -193,7 +187,7 @@ const FeaturesSettings: NextPage = () => {
                         projectName: projectDetails?.name,
                       },
                       getEventType(feature.title, !projectDetails?.[feature.property as keyof IProject]),
-                      user
+                      user as IUser
                     );
                     handleSubmit({
                       [feature.property]: !projectDetails?.[feature.property as keyof IProject],

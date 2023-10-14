@@ -6,7 +6,7 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import cycleService from "services/cycles.service";
+import { CycleService } from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -14,12 +14,12 @@ import { Button } from "@plane/ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
-import type { ICurrentUserResponse, ICycle, IProject } from "types";
+import type { IUser, ICycle, IProject } from "types";
 type TConfirmCycleDeletionProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   data?: ICycle | null;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 // fetch-keys
 import {
@@ -31,6 +31,9 @@ import {
   UPCOMING_CYCLES_LIST,
 } from "constants/fetch-keys";
 import { getDateRangeStatus } from "helpers/date-time.helper";
+
+// services
+const cycleService = new CycleService();
 
 export const DeleteCycleModal: React.FC<TConfirmCycleDeletionProps> = ({ isOpen, setIsOpen, data, user }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);

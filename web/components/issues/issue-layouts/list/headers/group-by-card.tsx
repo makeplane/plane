@@ -1,11 +1,8 @@
 import React from "react";
 // lucide icons
-import { Plus, Minimize2, Maximize2, Circle } from "lucide-react";
+import { Circle } from "lucide-react";
 // mobx
 import { observer } from "mobx-react-lite";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
 
 interface IHeaderGroupByCard {
   icon?: React.ReactNode;

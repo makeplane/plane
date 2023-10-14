@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useEffect, useState, FC } from "react";
 import { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 // services
-import WorkspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui

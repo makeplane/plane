@@ -1,31 +1,19 @@
-// react
 import React, { useCallback, useEffect } from "react";
-
-// next
 import { useRouter } from "next/router";
-
-// swr
 import useSWR, { mutate } from "swr";
-
-// react hook forms
 import { useFormContext, useForm, FormProvider } from "react-hook-form";
 
 // services
-import issuesService from "services/issue/issue.service";
-
+import { IssueService, IssueArchiveService } from "services/issue";
 // fetch key
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
-
 // hooks
 import useUser from "hooks/use-user";
 import useProjectMembers from "hooks/use-project-members";
-
 // layouts
 import WebViewLayout from "layouts/web-view-layout";
-
 // ui
 import { Spinner } from "@plane/ui";
-
 // components
 import {
   IssueWebViewForm,
@@ -34,11 +22,13 @@ import {
   IssuePropertiesDetail,
   IssueLinks,
   IssueActivity,
-  Spinner,
 } from "components/web-view";
-
 // types
 import type { IIssue } from "types";
+
+// services
+const issueService = new IssueService();
+const issueArchiveService = new IssueArchiveService();
 
 const MobileWebViewIssueDetail_ = () => {
   const router = useRouter();
@@ -62,19 +52,20 @@ const MobileWebViewIssueDetail_ = () => {
   } = useSWR(
     workspaceSlug && projectId && issueId && !isArchive ? ISSUE_DETAILS(issueId.toString()) : null,
     workspaceSlug && projectId && issueId && !isArchive
-      ? () => issuesService.retrieve(workspaceSlug.toString(), projectId.toString(), issueId.toString())
+      ? () => issueService.retrieve(workspaceSlug.toString(), projectId.toString(), issueId.toString())
       : null
   );
 
-  const { data: archiveIssueDetails, mutate: mutateaArchiveIssue } = useSWR<IIssue | undefined>(
+  const { data: archiveIssueDetails, mutate: mutateArchiveIssue } = useSWR<IIssue | undefined>(
     workspaceSlug && projectId && issueId && isArchive ? ISSUE_DETAILS(issueId as string) : null,
     workspaceSlug && projectId && issueId && isArchive
-      ? () => issuesService.retrieveArchivedIssue(workspaceSlug.toString(), projectId.toString(), issueId.toString())
+      ? () =>
+          issueArchiveService.retrieveArchivedIssue(workspaceSlug.toString(), projectId.toString(), issueId.toString())
       : null
   );
 
   const issueDetails = isArchive ? archiveIssueDetails : issue;
-  const mutateIssueDetails = isArchive ? mutateaArchiveIssue : mutateIssue;
+  const mutateIssueDetails = isArchive ? mutateArchiveIssue : mutateIssue;
 
   useEffect(() => {
     if (!issueDetails) return;
@@ -114,7 +105,7 @@ const MobileWebViewIssueDetail_ = () => {
       delete payload.issue_relations;
       delete payload.related_issues;
 
-      await issuesService
+      await issueService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)
         .then(() => {
           mutateIssueDetails();

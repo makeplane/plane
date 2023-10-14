@@ -15,7 +15,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { ICurrentUserResponse, IState, IStateResponse } from "types";
+import type { IUser, IState, IStateResponse } from "types";
 // fetch-keys
 import { STATES_LIST } from "constants/fetch-keys";
 
@@ -23,7 +23,7 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   data: IState | null;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
 export const DeleteStateModal: React.FC<Props> = ({ isOpen, onClose, data, user }) => {

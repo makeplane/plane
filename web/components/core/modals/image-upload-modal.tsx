@@ -7,7 +7,7 @@ import { useDropzone } from "react-dropzone";
 // headless ui
 import { Transition, Dialog } from "@headlessui/react";
 // services
-import fileService from "services/file.service";
+import { FileService } from "services/file.service";
 // hooks
 import useWorkspaceDetails from "hooks/use-workspace-details";
 // ui
@@ -24,6 +24,9 @@ type Props = {
   handleDelete: () => void;
   userImage?: boolean;
 };
+
+// services
+const fileService = new FileService();
 
 export const ImageUploadModal: React.FC<Props> = ({
   value,

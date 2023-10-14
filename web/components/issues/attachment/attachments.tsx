@@ -12,8 +12,8 @@ import { DeleteAttachmentModal } from "./delete-attachment-modal";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { ExclamationIcon, getFileIcon } from "components/icons";
 // services
-import issuesService from "services/issue/issue.service";
-import projectService from "services/project.service/project.service";
+import { IssueAttachmentService } from "services/issue";
+import { ProjectService } from "services/project";
 // fetch-key
 import { ISSUE_ATTACHMENTS, PROJECT_MEMBERS } from "constants/fetch-keys";
 // helper
@@ -22,6 +22,10 @@ import { renderLongDateFormat } from "helpers/date-time.helper";
 import { convertBytesToSize, getFileExtension, getFileName } from "helpers/attachment.helper";
 // type
 import { IIssueAttachment } from "types";
+
+// services
+const issueAttachmentService = new IssueAttachmentService();
+const projectService = new ProjectService();
 
 export const IssueAttachments = () => {
   const [deleteAttachment, setDeleteAttachment] = useState<IIssueAttachment | null>(null);
@@ -33,7 +37,7 @@ export const IssueAttachments = () => {
   const { data: attachments } = useSWR<IIssueAttachment[]>(
     workspaceSlug && projectId && issueId ? ISSUE_ATTACHMENTS(issueId as string) : null,
     workspaceSlug && projectId && issueId
-      ? () => issuesService.getIssueAttachment(workspaceSlug as string, projectId as string, issueId as string)
+      ? () => issueAttachmentService.getIssueAttachment(workspaceSlug as string, projectId as string, issueId as string)
       : null
   );
 

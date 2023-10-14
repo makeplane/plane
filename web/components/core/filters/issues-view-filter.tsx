@@ -200,13 +200,13 @@ export const IssuesFilterView: React.FC = () => {
                           <div className="w-28">
                             <CustomMenu
                               label={
-                                GROUP_BY_OPTIONS.find((option) => option.key === displayFilters.group_by)?.name ??
-                                "Select"
+                                ISSUE_GROUP_BY_OPTIONS.find((option) => option.key === displayFilters.group_by)
+                                  ?.title ?? "Select"
                               }
                               className="!w-full"
                               buttonClassName="w-full"
                             >
-                              {GROUP_BY_OPTIONS.map((option) => {
+                              {ISSUE_GROUP_BY_OPTIONS.map((option) => {
                                 if (displayFilters.layout === "kanban" && option.key === null) return null;
                                 if (option.key === "project") return null;
 
@@ -217,7 +217,7 @@ export const IssuesFilterView: React.FC = () => {
                                     key={option.key}
                                     onClick={() => setDisplayFilters({ group_by: option.key })}
                                   >
-                                    {option.name}
+                                    {option.title}
                                   </CustomMenu.MenuItem>
                                 );
                               })}
@@ -231,13 +231,13 @@ export const IssuesFilterView: React.FC = () => {
                         <div className="w-28">
                           <CustomMenu
                             label={
-                              ORDER_BY_OPTIONS.find((option) => option.key === displayFilters.order_by)?.name ??
+                              ISSUE_ORDER_BY_OPTIONS.find((option) => option.key === displayFilters.order_by)?.title ??
                               "Select"
                             }
                             className="!w-full"
                             buttonClassName="w-full"
                           >
-                            {ORDER_BY_OPTIONS.map((option) =>
+                            {ISSUE_ORDER_BY_OPTIONS.map((option) =>
                               displayFilters.group_by === "priority" && option.key === "priority" ? null : (
                                 <CustomMenu.MenuItem
                                   key={option.key}
@@ -245,7 +245,7 @@ export const IssuesFilterView: React.FC = () => {
                                     setDisplayFilters({ order_by: option.key });
                                   }}
                                 >
-                                  {option.name}
+                                  {option.title}
                                 </CustomMenu.MenuItem>
                               )
                             )}
@@ -259,13 +259,13 @@ export const IssuesFilterView: React.FC = () => {
                         <div className="w-28">
                           <CustomMenu
                             label={
-                              FILTER_ISSUE_OPTIONS.find((option) => option.key === displayFilters.type)?.name ??
+                              ISSUE_FILTER_OPTIONS.find((option) => option.key === displayFilters.type)?.title ??
                               "Select"
                             }
                             className="!w-full"
                             buttonClassName="w-full"
                           >
-                            {FILTER_ISSUE_OPTIONS.map((option) => (
+                            {ISSUE_FILTER_OPTIONS.map((option) => (
                               <CustomMenu.MenuItem
                                 key={option.key}
                                 onClick={() =>
@@ -274,7 +274,7 @@ export const IssuesFilterView: React.FC = () => {
                                   })
                                 }
                               >
-                                {option.name}
+                                {option.title}
                               </CustomMenu.MenuItem>
                             ))}
                           </CustomMenu>

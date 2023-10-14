@@ -4,14 +4,14 @@ import { useRouter } from "next/router";
 // next-themes
 import { useTheme } from "next-themes";
 // services
-import authenticationService from "services/auth.service";
+import { AuthService } from "services/auth.service";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // components
-import { EmailPasswordForm, EmailSignUpForm } from "components/account";
+import { EmailSignUpForm } from "components/account";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // types
@@ -21,6 +21,9 @@ type EmailPasswordFormValues = {
   password?: string;
   medium?: string;
 };
+
+// services
+const authService = new AuthService();
 
 const SignUp: NextPage = () => {
   const router = useRouter();
@@ -37,7 +40,7 @@ const SignUp: NextPage = () => {
       password: formData.password ?? "",
     };
 
-    await authenticationService
+    await authService
       .emailSignUp(payload)
       .then(async (response) => {
         setToastAlert({

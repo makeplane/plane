@@ -1,28 +1,19 @@
-// react
 import React, { useCallback, useEffect, useState } from "react";
-
-// next
 import { useRouter } from "next/router";
-
-// react hook forms
 import { Controller } from "react-hook-form";
 
+// services
+import { FileService } from "services/file.service";
 // hooks
-
 import { useDebouncedCallback } from "use-debounce";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
-
 // ui
 import { TextArea } from "@plane/ui";
-
 // components
 import { RichTextEditor } from "@plane/rich-text-editor";
 import { Label } from "components/web-view";
-
 // types
 import type { IIssue } from "types";
-import fileService from "services/file.service";
-// services
 
 type Props = {
   isAllowed: boolean;
@@ -33,6 +24,9 @@ type Props = {
   watch: any;
   handleSubmit: any;
 };
+
+// services
+const fileService = new FileService();
 
 export const IssueWebViewForm: React.FC<Props> = (props) => {
   const { isAllowed, issueDetails, submitChanges, control, watch, handleSubmit } = props;

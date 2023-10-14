@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import modulesService from "services/modules.service";
-import issuesService from "services/issue/issue.service";
-import inboxServices from "services/inbox.service";
+import { ModuleService } from "services/module.service";
+import { IssueService, IssueDraftService } from "services/issue";
+import { InboxService } from "services/inbox.service";
 // hooks
 import useUser from "hooks/use-user";
 import useIssuesView from "hooks/use-issues-view";
@@ -18,7 +14,6 @@ import useInboxView from "hooks/use-inbox-view";
 import useProjects from "hooks/use-projects";
 import useMyIssues from "hooks/my-issues/use-my-issues";
 import useLocalStorage from "hooks/use-local-storage";
-import { useWorkspaceView } from "hooks/use-workspace-view";
 // components
 import { IssueForm, ConfirmIssueDiscard } from "components/issues";
 // types
@@ -63,6 +58,11 @@ export interface IssuesModalProps {
   )[];
   onSubmit?: (data: Partial<IIssue>) => Promise<void>;
 }
+
+const moduleService = new ModuleService();
+const inboxService = new InboxService();
+const issueService = new IssueService();
+const issueDraftService = new IssueDraftService();
 
 export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   data,
@@ -196,7 +196,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const addIssueToCycle = async (issueId: string, cycleId: string) => {
     if (!workspaceSlug || !activeProject) return;
 
-    await issuesService
+    await issueService
       .addIssueToCycle(
         workspaceSlug as string,
         activeProject ?? "",
@@ -217,7 +217,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const addIssueToModule = async (issueId: string, moduleId: string) => {
     if (!workspaceSlug || !activeProject) return;
 
-    await modulesService
+    await moduleService
       .addIssuesToModule(
         workspaceSlug as string,
         activeProject ?? "",
@@ -248,7 +248,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       source: INBOX_ISSUE_SOURCE,
     };
 
-    await inboxServices
+    await inboxService
       .createInboxIssue(workspaceSlug.toString(), activeProject.toString(), inboxId.toString(), payload, user)
       .then((res) => {
         setToastAlert({
@@ -317,7 +317,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
     if (inboxId) await addIssueToInbox(payload);
     else
-      await issuesService
+      await issueService
         .createIssues(workspaceSlug as string, activeProject ?? "", payload, user)
         .then(async (res) => {
           mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
@@ -365,8 +365,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       ...formDirtyState,
     };
 
-    await issuesService
-      .createDraftIssue(workspaceSlug as string, activeProject ?? "", payload, user)
+    await issueDraftService
+      .createDraftIssue(workspaceSlug as string, activeProject ?? "", payload)
       .then(() => {
         mutate(PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
         if (groupedIssues) mutateMyIssues();
@@ -399,7 +399,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const updateIssue = async (payload: Partial<IIssue>) => {
     if (!user) return;
 
-    await issuesService
+    await issueService
       .patchIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload, user)
       .then((res) => {
         if (isUpdatingSingleIssue) {

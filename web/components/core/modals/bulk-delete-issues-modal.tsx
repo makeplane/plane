@@ -1,15 +1,12 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
 // react hook form
 import { SubmitHandler, useForm } from "react-hook-form";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
-import issuesServices from "services/issue/issue.service";
+import { IssueService } from "services/issue";
 // hooks
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
@@ -19,7 +16,7 @@ import { Button } from "@plane/ui";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { LayerDiagonalIcon } from "components/icons";
 // types
-import { ICurrentUserResponse, IIssue } from "types";
+import { IUser, IIssue } from "types";
 // fetch keys
 import {
   CYCLE_DETAILS,
@@ -38,8 +35,10 @@ type FormInput = {
 type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
+
+const issueService = new IssueService();
 
 export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user }) => {
   const [query, setQuery] = useState("");
@@ -49,11 +48,12 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
 
   const { data: issues } = useSWR(
     workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string) : null,
-    workspaceSlug && projectId ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string) : null
+    workspaceSlug && projectId ? () => issueService.getIssues(workspaceSlug as string, projectId as string) : null
   );
 
   const { setToastAlert } = useToast();
   const { displayFilters, params } = useIssuesView();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { order_by, group_by, ...viewGanttParams } = params;
 
   const {
@@ -96,7 +96,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
       ? VIEW_ISSUES(viewId.toString(), viewGanttParams)
       : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "");
 
-    await issuesServices
+    await issueService
       .bulkDeleteIssues(
         workspaceSlug as string,
         projectId as string,
@@ -199,7 +199,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
                               key={issue.id}
                               as="div"
                               value={issue.id}
-                              className={({ active, selected }) =>
+                              className={({ active }) =>
                                 `flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2 ${
                                   active ? "bg-custom-background-80 text-custom-text-100" : ""
                                 }`

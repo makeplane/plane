@@ -1,17 +1,14 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 import useSWRInfinite from "swr/infinite";
-
 // services
-import projectService from "services/project.service/project.service";
+import { ProjectService } from "services/project";
 // ui
 import { CustomSearchSelect } from "components/ui";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
-import { IWorkspaceIntegration, IGithubRepository } from "types";
+import { IWorkspaceIntegration } from "types";
 
 type Props = {
   integration: IWorkspaceIntegration;
@@ -21,7 +18,11 @@ type Props = {
   characterLimit?: number;
 };
 
-export const SelectRepository: React.FC<Props> = ({ integration, value, label, onChange, characterLimit = 25 }) => {
+const projectService = new ProjectService();
+
+export const SelectRepository: React.FC<Props> = (props) => {
+  const { integration, value, label, onChange, characterLimit = 25 } = props;
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
 

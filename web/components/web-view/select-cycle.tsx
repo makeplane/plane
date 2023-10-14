@@ -8,33 +8,28 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // services
-import issuesService from "services/issues.service";
-import cyclesService from "services/cycles.service";
+import { IssueService } from "services/issue";
+import { CycleService } from "services/cycle.service";
 
 // hooks
 import useUser from "hooks/use-user";
-
 // fetch keys
-import {
-  ISSUE_DETAILS,
-  INCOMPLETE_CYCLES_LIST,
-  CYCLE_ISSUES,
-  PROJECT_ISSUES_ACTIVITY,
-} from "constants/fetch-keys";
-
+import { ISSUE_DETAILS, INCOMPLETE_CYCLES_LIST, CYCLE_ISSUES, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 // icons
 import { ChevronDown } from "lucide-react";
-
 // components
 import { WebViewModal } from "components/web-view";
-
 // types
-import { ICycle, IIssueCycle } from "types";
+import { ICycle, IIssue, IIssueCycle } from "types";
 
 type Props = {
   disabled?: boolean;
   value?: IIssueCycle | null;
 };
+
+// services
+const issueService = new IssueService();
+const cycleService = new CycleService();
 
 export const CycleSelect: React.FC<Props> = (props) => {
   const { disabled = false, value } = props;
@@ -47,12 +42,7 @@ export const CycleSelect: React.FC<Props> = (props) => {
   const { data: incompleteCycles } = useSWR(
     workspaceSlug && projectId ? INCOMPLETE_CYCLES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () =>
-          cyclesService.getCyclesWithParams(
-            workspaceSlug as string,
-            projectId as string,
-            "incomplete"
-          )
+      ? () => cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string, "incomplete")
       : null
   );
 
@@ -61,7 +51,7 @@ export const CycleSelect: React.FC<Props> = (props) => {
   const handleCycleChange = (cycleDetails: ICycle) => {
     if (!workspaceSlug || !projectId || !issueId || disabled) return;
 
-    issuesService
+    issueService
       .addIssueToCycle(
         workspaceSlug as string,
         projectId as string,
@@ -80,7 +70,7 @@ export const CycleSelect: React.FC<Props> = (props) => {
   const removeIssueFromCycle = (bridgeId?: string, cycleId?: string) => {
     if (!workspaceSlug || !projectId || !bridgeId || !cycleId || disabled) return;
 
-    mutate(
+    mutate<IIssue>(
       ISSUE_DETAILS(issueId as string),
       (prev) => {
         if (!prev) return prev;
@@ -93,7 +83,7 @@ export const CycleSelect: React.FC<Props> = (props) => {
       false
     );
 
-    issuesService
+    issueService
       .removeIssueFromCycle(workspaceSlug.toString(), projectId.toString(), cycleId, bridgeId)
       .then(() => {
         mutate(CYCLE_ISSUES(cycleId));
@@ -107,11 +97,7 @@ export const CycleSelect: React.FC<Props> = (props) => {
 
   return (
     <>
-      <WebViewModal
-        isOpen={isBottomSheetOpen}
-        onClose={() => setIsBottomSheetOpen(false)}
-        modalTitle="Select Module"
-      >
+      <WebViewModal isOpen={isBottomSheetOpen} onClose={() => setIsBottomSheetOpen(false)} modalTitle="Select Module">
         <WebViewModal.Options
           options={[
             ...(incompleteCycles ?? []).map((cycle) => ({

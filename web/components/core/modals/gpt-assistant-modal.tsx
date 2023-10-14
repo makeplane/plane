@@ -3,8 +3,8 @@ import { useRouter } from "next/router";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
-import AIService from "services/ai.service";
-import TrackEventService from "services/track_event.service";
+import { AIService } from "services/ai.service";
+import { TrackEventService } from "services/track_event.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
@@ -32,6 +32,7 @@ type FormData = {
   task: string;
 };
 
+// services
 const aiService = new AIService();
 const trackEventService = new TrackEventService();
 
@@ -192,8 +193,10 @@ export const GptAssistantModal: React.FC<Props> = ({
             onClick={() => {
               onResponse(response);
               onClose();
-              if (block) trackEventService.trackUseGPTResponseEvent(block, "USE_GPT_RESPONSE_IN_PAGE_BLOCK", user);
-              else if (issue) trackEventService.trackUseGPTResponseEvent(issue, "USE_GPT_RESPONSE_IN_ISSUE", user);
+              if (block && user)
+                trackEventService.trackUseGPTResponseEvent(block, "USE_GPT_RESPONSE_IN_PAGE_BLOCK", user);
+              else if (issue && user)
+                trackEventService.trackUseGPTResponseEvent(issue, "USE_GPT_RESPONSE_IN_ISSUE", user);
             }}
           >
             Use this response

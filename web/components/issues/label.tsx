@@ -1,9 +1,6 @@
 import React from "react";
-
 // components
 import { Tooltip } from "@plane/ui";
-// types
-import { IIssue } from "types";
 
 type Props = {
   labelDetails: any[];

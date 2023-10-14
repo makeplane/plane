@@ -7,7 +7,7 @@ import useSWR from "swr";
 // react-popper
 import { usePopper } from "react-popper";
 // services
-import stateService from "services/state.service";
+import { ProjectStateService } from "services/project";
 // headless ui
 import { Combobox } from "@headlessui/react";
 // icons
@@ -34,6 +34,9 @@ type Props = {
   hideDropdownArrow?: boolean;
   disabled?: boolean;
 };
+
+// services
+const projectStateService = new ProjectStateService();
 
 export const StateSelect: React.FC<Props> = ({
   value,
@@ -62,7 +65,9 @@ export const StateSelect: React.FC<Props> = ({
 
   const { data: stateGroups } = useSWR(
     workspaceSlug && projectId && fetchStates ? STATES_LIST(projectId) : null,
-    workspaceSlug && projectId && fetchStates ? () => stateService.getStates(workspaceSlug as string, projectId) : null
+    workspaceSlug && projectId && fetchStates
+      ? () => projectStateService.getStates(workspaceSlug.toString(), projectId)
+      : null
   );
 
   const states = getStatesList(stateGroups);

@@ -1,14 +1,14 @@
 // services
-import APIService from "services/api.service";
-import TrackEventService from "services/track_event.service";
+import { APIService } from "services/api.service";
+import { TrackEventService } from "services/track_event.service";
 // type
-import type { IUser, IIssue, IIssueActivity, IIssueComment, ISubIssueResponse } from "types";
+import type { IUser, IIssue, IIssueActivity, ISubIssueResponse } from "types";
 // helper
 import { API_BASE_URL } from "helpers/common.helper";
 
 const trackEventService = new TrackEventService();
 
-class IssueService extends APIService {
+export class IssueService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -56,14 +56,6 @@ class IssueService extends APIService {
 
   async getIssueActivities(workspaceSlug: string, projectId: string, issueId: string): Promise<IIssueActivity[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/history/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getIssueComments(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/comments/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -185,70 +177,6 @@ class IssueService extends APIService {
       });
   }
 
-  async createIssueComment(
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    data: Partial<IIssueComment>,
-    user: IUser | undefined
-  ): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/comments/`, data)
-      .then((response) => {
-        trackEventService.trackIssueCommentEvent(response.data, "ISSUE_COMMENT_CREATE", user);
-        return response?.data;
-      })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async patchIssueComment(
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    commentId: string,
-    data: Partial<IIssueComment>,
-    user: IUser | undefined
-  ): Promise<any> {
-    return this.patch(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/comments/${commentId}/`,
-      data
-    )
-      .then((response) => {
-        trackEventService.trackIssueCommentEvent(response.data, "ISSUE_COMMENT_UPDATE", user);
-        return response?.data;
-      })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async deleteIssueComment(
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    commentId: string,
-    user: IUser | undefined
-  ): Promise<any> {
-    return this.delete(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/comments/${commentId}/`
-    )
-      .then((response) => {
-        trackEventService.trackIssueCommentEvent(
-          {
-            issueId,
-            commentId,
-          },
-          "ISSUE_COMMENT_DELETE",
-          user
-        );
-        return response?.data;
-      })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
   async patchIssue(
     workspaceSlug: string,
     projectId: string,
@@ -356,46 +284,4 @@ class IssueService extends APIService {
         throw error?.response?.data;
       });
   }
-
-  async uploadIssueAttachment(workspaceSlug: string, projectId: string, issueId: string, file: FormData): Promise<any> {
-    return this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-attachments/`,
-      file,
-      {
-        headers: {
-          ...this.getHeaders(),
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    )
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getIssueAttachment(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-attachments/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async deleteIssueAttachment(
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    assetId: string
-  ): Promise<any> {
-    return this.delete(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-attachments/${assetId}/`
-    )
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
 }
-
-export default IssueService;

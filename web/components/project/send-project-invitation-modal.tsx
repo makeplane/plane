@@ -14,14 +14,14 @@ import { Avatar, CustomSearchSelect, CustomSelect } from "components/ui";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 // services
-import projectService from "services/project.service/project.service";
-import workspaceService from "services/workspace.service";
+import { ProjectService } from "services/project";
+import { WorkspaceService } from "services/workspace.service";
 // contexts
 import { useProjectMyMembership } from "contexts/project-member.context";
 // hooks
 import useToast from "hooks/use-toast";
 // types
-import { ICurrentUserResponse } from "types";
+import { IUser } from "types";
 // fetch-keys
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // constants
@@ -31,7 +31,7 @@ type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   members: any[];
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   onSuccess: () => void;
 };
 
@@ -52,6 +52,10 @@ const defaultValues: FormValues = {
     },
   ],
 };
+
+// services
+const projectService = new ProjectService();
+const workspaceService = new WorkspaceService();
 
 const SendProjectInvitationModal: React.FC<Props> = (props) => {
   const { isOpen, setIsOpen, members, user, onSuccess } = props;

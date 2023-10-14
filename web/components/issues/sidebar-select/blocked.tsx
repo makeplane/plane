@@ -7,7 +7,7 @@ import { UseFormWatch } from "react-hook-form";
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
 // services
-import issuesService from "services/issue/issue.service";
+import { IssueService } from "services/issue";
 // components
 import { ExistingIssuesListModal } from "components/core";
 // icons
@@ -22,6 +22,9 @@ type Props = {
   watch: UseFormWatch<IIssue>;
   disabled?: boolean;
 };
+
+// services
+const issueService = new IssueService();
 
 export const SidebarBlockedSelect: React.FC<Props> = ({ issueId, submitChanges, watch, disabled = false }) => {
   const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
@@ -64,7 +67,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({ issueId, submitChanges, 
 
     if (!user) return;
 
-    issuesService
+    issueService
       .createIssueRelation(workspaceSlug as string, projectId as string, issueId as string, user, {
         related_list: [
           ...selectedIssues.map((issue) => ({
@@ -127,7 +130,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({ issueId, submitChanges, 
 
                         if (!user) return;
 
-                        issuesService.deleteIssueRelation(
+                        issueService.deleteIssueRelation(
                           workspaceSlug as string,
                           projectId as string,
                           issueId as string,

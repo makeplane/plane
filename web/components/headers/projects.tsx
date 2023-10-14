@@ -11,7 +11,6 @@ import { observer } from "mobx-react-lite";
 
 export const ProjectsHeader = observer(() => {
   const router = useRouter();
-  const { workspaceSlug } = router.query;
   // store
   const { project: projectStore, workspace: workspaceStore } = useMobxStore();
   const currentWorkspace = workspaceStore.currentWorkspace;

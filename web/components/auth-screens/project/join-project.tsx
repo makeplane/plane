@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
 // services
-import { ProjectService } from "services/project.service/project.service";
+import { ProjectService } from "services/project";
 // ui
 import { Button } from "@plane/ui";
 // icons

@@ -5,7 +5,7 @@ import useSWR from "swr";
 // mobx
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
-import projectService from "services/project.service/project.service";
+import { ProjectService } from "services/project";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // helper
@@ -19,6 +19,9 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS } from "constants/fetch-keys";
+
+// services
+const projectService = new ProjectService();
 
 const ProjectIssues: NextPage = () => {
   const router = useRouter();

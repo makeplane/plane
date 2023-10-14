@@ -11,7 +11,8 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 import { CyclesView, ActiveCycleDetails, CreateUpdateCycleModal } from "components/cycles";
 // ui
 import { Button } from "@plane/ui";
-import { EmptyState, Icon } from "components/ui";
+import { EmptyState } from "components/common";
+import { Icon } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";

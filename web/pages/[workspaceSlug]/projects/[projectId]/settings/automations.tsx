@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // services
-import projectService from "services/project.service/project.service";
+import { ProjectService } from "services/project";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // hooks
@@ -24,6 +24,9 @@ import { IProject } from "types";
 import { PROJECTS_LIST, PROJECT_DETAILS, USER_PROJECT_VIEW } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
+
+// services
+const projectService = new ProjectService();
 
 const AutomationsSettings: NextPage = () => {
   const router = useRouter();

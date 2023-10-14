@@ -1,36 +1,35 @@
 import React, { useState } from "react";
-
 import Link from "next/link";
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
 // services
-import modulesService from "services/modules.service";
+import { ModuleService } from "services/module.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
 import { DeleteModuleModal } from "components/modules";
 // ui
-import { AssigneesList, Avatar, CustomMenu } from "components/ui";
+import { AssigneesList, CustomMenu } from "components/ui";
 import { Tooltip } from "@plane/ui";
 // icons
 import { CalendarDaysIcon, LinkIcon, PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { CalendarMonthIcon, TargetIcon } from "components/icons";
+import { TargetIcon } from "components/icons";
 
 // helpers
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
-import { ICurrentUserResponse, IModule } from "types";
+import { IUser, IModule } from "types";
 // fetch-key
 import { MODULE_LIST } from "constants/fetch-keys";
 
 type Props = {
   module: IModule;
   handleEditModule: () => void;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
+
+const moduleService = new ModuleService();
 
 export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, user }) => {
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
@@ -61,7 +60,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
       false
     );
 
-    modulesService
+    moduleService
       .addModuleToFavorites(workspaceSlug as string, projectId as string, {
         module: module.id,
       })
@@ -87,7 +86,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
       false
     );
 
-    modulesService.removeModuleFromFavorites(workspaceSlug as string, projectId as string, module.id).catch(() => {
+    moduleService.removeModuleFromFavorites(workspaceSlug as string, projectId as string, module.id).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",

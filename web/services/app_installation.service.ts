@@ -1,9 +1,9 @@
 // services
-import axios from "axios";
-import APIService from "services/api.service";
+import { APIService } from "services/api.service";
+// helpers
 import { API_BASE_URL } from "helpers/common.helper";
 
-class AppInstallationService extends APIService {
+export class AppInstallationService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -62,7 +62,7 @@ class AppInstallationService extends APIService {
   }
 
   async getSlackAuthDetails(code: string): Promise<any> {
-    const response = await axios({
+    const response = await this.request({
       method: "post",
       url: "/api/slack-redirect",
       data: {
@@ -73,5 +73,3 @@ class AppInstallationService extends APIService {
     return response.data;
   }
 }
-
-export default AppInstallationService;
