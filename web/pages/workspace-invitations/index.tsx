@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { CheckIcon, CubeIcon, ShareIcon, StarIcon, UserIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // swr
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useUser from "hooks/use-user";
 // layouts
@@ -19,6 +19,9 @@ import { EmptySpace, EmptySpaceItem } from "components/ui/empty-space";
 import type { NextPage } from "next";
 // constants
 import { WORKSPACE_INVITATION } from "constants/fetch-keys";
+
+// services
+const workspaceService = new WorkspaceService();
 
 const WorkspaceInvitation: NextPage = () => {
   const router = useRouter();

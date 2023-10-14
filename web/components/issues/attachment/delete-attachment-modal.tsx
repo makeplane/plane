@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import issuesService from "services/issue/issue.service";
+import { IssueAttachmentService } from "services/issue";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -26,6 +26,9 @@ type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   data: IIssueAttachment | null;
 };
+
+// services
+const issueAttachmentService = new IssueAttachmentService();
 
 export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data }) => {
   const router = useRouter();
@@ -46,7 +49,7 @@ export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data
       false
     );
 
-    await issuesService
+    await issueAttachmentService
       .deleteIssueAttachment(workspaceSlug as string, projectId as string, issueId as string, assetId as string)
       .then(() => mutate(PROJECT_ISSUES_ACTIVITY(issueId as string)))
       .catch(() => {

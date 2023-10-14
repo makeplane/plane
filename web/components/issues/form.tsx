@@ -2,7 +2,8 @@ import React, { FC, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 // services
-import AIService from "services/ai.service";
+import { AIService } from "services/ai.service";
+import { FileService } from "services/file.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -28,8 +29,6 @@ import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import type { IUser, IIssue, ISearchIssueResponse } from "types";
 // components
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
-import fileService from "services/file.service";
-// services
 
 const defaultValues: Partial<IIssue> = {
   project: "",
@@ -82,7 +81,9 @@ export interface IssueFormProps {
   )[];
 }
 
+// services
 const aiService = new AIService();
+const fileService = new FileService();
 
 export const IssueForm: FC<IssueFormProps> = (props) => {
   const {

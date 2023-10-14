@@ -7,8 +7,8 @@ import useSWR, { mutate } from "swr";
 // next-themes
 import { useTheme } from "next-themes";
 // services
-import userService from "services/user.service";
-import workspaceService from "services/workspace.service";
+import { UserService } from "services/user.service";
+import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 import useWorkspaces from "hooks/use-workspaces";
@@ -27,6 +27,10 @@ import { ICurrentUserResponse, IUser, TOnboardingSteps } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { CURRENT_USER, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
+
+// services
+const userService = new UserService();
+const workspaceService = new WorkspaceService();
 
 const Onboarding: NextPage = () => {
   const [step, setStep] = useState<number | null>(null);

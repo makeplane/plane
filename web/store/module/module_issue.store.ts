@@ -4,7 +4,7 @@ import { RootStore } from "../root";
 // types
 import { IIssue } from "types";
 // services
-import ModuleService from "services/module.service";
+import { ModuleService } from "services/module.service";
 // helpers
 import { sortArrayByDate, sortArrayByPriority } from "constants/kanban-helpers";
 

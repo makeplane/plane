@@ -10,7 +10,7 @@ import useSWR from "swr";
 import { useFormContext, Controller } from "react-hook-form";
 
 // services
-import jiraImporterService from "services/integrations/jira.service";
+import { JiraImporterService } from "services/integrations";
 
 // fetch keys
 import { JIRA_IMPORTER_DETAIL } from "constants/fetch-keys";
@@ -26,6 +26,9 @@ type Props = {
   setCurrentStep: React.Dispatch<React.SetStateAction<IJiraIntegrationData>>;
   setDisableTopBarAfter: React.Dispatch<React.SetStateAction<TJiraIntegrationSteps | null>>;
 };
+
+// services
+const jiraImporterService = new JiraImporterService();
 
 export const JiraProjectDetail: React.FC<Props> = (props) => {
   const { setCurrentStep, setDisableTopBarAfter } = props;
