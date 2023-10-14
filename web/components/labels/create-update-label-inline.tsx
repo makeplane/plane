@@ -185,6 +185,7 @@ export const CreateUpdateLabelInline = forwardRef<HTMLDivElement, Props>(
             id="labelName"
             name="name"
             register={register}
+            autoFocus
             placeholder="Label title"
             validations={{
               required: "Label title is required",
