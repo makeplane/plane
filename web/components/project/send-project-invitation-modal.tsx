@@ -14,8 +14,8 @@ import { Avatar, CustomSearchSelect, CustomSelect } from "components/ui";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 // services
-import projectService from "services/project.service/project.service";
-import workspaceService from "services/workspace.service";
+import { ProjectService } from "services/project";
+import { WorkspaceService } from "services/workspace.service";
 // contexts
 import { useProjectMyMembership } from "contexts/project-member.context";
 // hooks
@@ -52,6 +52,10 @@ const defaultValues: FormValues = {
     },
   ],
 };
+
+// services
+const projectService = new ProjectService();
+const workspaceService = new WorkspaceService();
 
 const SendProjectInvitationModal: React.FC<Props> = (props) => {
   const { isOpen, setIsOpen, members, user, onSuccess } = props;

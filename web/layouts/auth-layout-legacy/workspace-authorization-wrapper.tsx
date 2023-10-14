@@ -6,10 +6,9 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import workspaceServices from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // contexts
 import { WorkspaceMemberProvider } from "contexts/workspace-member.context";
-import { WorkspaceViewProvider } from "contexts/workspace-view-context";
 // layouts
 import AppSidebar from "layouts/app-layout-legacy/app-sidebar";
 import AppHeader from "layouts/app-layout-legacy/app-header";
@@ -82,47 +81,45 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
   return (
     <UserAuthorizationLayout>
       <WorkspaceMemberProvider>
-        <WorkspaceViewProvider>
-          <CommandPalette />
-          <div className="relative flex h-screen w-full overflow-hidden">
-            <AppSidebar toggleSidebar={toggleSidebar} setToggleSidebar={setToggleSidebar} />
-            {settingsLayout && (memberType?.isGuest || memberType?.isViewer) ? (
-              <NotAuthorizedView
-                actionButton={
-                  <Link href={`/${workspaceSlug}`}>
-                    <a>
-                      <PrimaryButton className="flex items-center gap-1">
-                        <LayerDiagonalIcon height={16} width={16} color="white" /> Go to workspace
-                      </PrimaryButton>
-                    </a>
-                  </Link>
-                }
-                type="workspace"
+        <CommandPalette />
+        <div className="relative flex h-screen w-full overflow-hidden">
+          <AppSidebar toggleSidebar={toggleSidebar} setToggleSidebar={setToggleSidebar} />
+          {settingsLayout && (memberType?.isGuest || memberType?.isViewer) ? (
+            <NotAuthorizedView
+              actionButton={
+                <Link href={`/${workspaceSlug}`}>
+                  <a>
+                    <PrimaryButton className="flex items-center gap-1">
+                      <LayerDiagonalIcon height={16} width={16} color="white" /> Go to workspace
+                    </PrimaryButton>
+                  </a>
+                </Link>
+              }
+              type="workspace"
+            />
+          ) : (
+            <main
+              className={`relative flex h-full w-full flex-col overflow-hidden ${
+                bg === "primary"
+                  ? "bg-custom-background-100"
+                  : bg === "secondary"
+                  ? "bg-custom-background-90"
+                  : "bg-custom-background-80"
+              }`}
+            >
+              <AppHeader
+                breadcrumbs={breadcrumbs}
+                left={left}
+                right={right}
+                setToggleSidebar={setToggleSidebar}
+                noHeader={noHeader}
               />
-            ) : (
-              <main
-                className={`relative flex h-full w-full flex-col overflow-hidden ${
-                  bg === "primary"
-                    ? "bg-custom-background-100"
-                    : bg === "secondary"
-                    ? "bg-custom-background-90"
-                    : "bg-custom-background-80"
-                }`}
-              >
-                <AppHeader
-                  breadcrumbs={breadcrumbs}
-                  left={left}
-                  right={right}
-                  setToggleSidebar={setToggleSidebar}
-                  noHeader={noHeader}
-                />
-                <div className="h-full w-full overflow-hidden">
-                  <div className="relative h-full w-full overflow-x-hidden overflow-y-scroll">{children}</div>
-                </div>
-              </main>
-            )}
-          </div>
-        </WorkspaceViewProvider>
+              <div className="h-full w-full overflow-hidden">
+                <div className="relative h-full w-full overflow-x-hidden overflow-y-scroll">{children}</div>
+              </div>
+            </main>
+          )}
+        </div>
       </WorkspaceMemberProvider>
     </UserAuthorizationLayout>
   );

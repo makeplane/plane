@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import userService from "services/user.service";
+import { UserService } from "services/user.service";
 // components
 import { ActivityMessage } from "components/core";
 // ui
@@ -15,6 +15,9 @@ import recentActivityEmptyState from "public/empty-state/recent_activity.svg";
 import { timeAgo } from "helpers/date-time.helper";
 // fetch-keys
 import { USER_PROFILE_ACTIVITY } from "constants/fetch-keys";
+
+// services
+const userService = new UserService();
 
 export const ProfileActivity = () => {
   const router = useRouter();

@@ -7,12 +7,14 @@ import { useTheme } from "next-themes";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // services
-import authenticationService from "services/auth.service";
+import { AuthService } from "services/auth.service";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // types
 import type { NextPage } from "next";
+
+const authService = new AuthService();
 
 const MagicSignIn: NextPage = () => {
   const router = useRouter();
@@ -39,9 +41,9 @@ const MagicSignIn: NextPage = () => {
       return;
     } else {
       setIsSigningIn(() => true);
-      authenticationService
+      authService
         .magicSignIn({ token: password, key })
-        .then(async (res) => {
+        .then(async () => {
           setIsSigningIn(false);
           await mutateUser();
         })
@@ -70,7 +72,7 @@ const MagicSignIn: NextPage = () => {
               <span
                 className="cursor-pointer underline"
                 onClick={() => {
-                  authenticationService
+                  authService
                     .emailCode({ email: (key as string).split("_")[1] })
                     .then(() => {
                       setToastAlert({

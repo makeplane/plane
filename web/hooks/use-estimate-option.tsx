@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import estimatesService from "services/project.service/project_estimates.service";
+import { ProjectEstimateServices } from "services/project";
 // hooks
 import useProjectDetails from "hooks/use-project-details";
 // helpers
@@ -11,19 +11,22 @@ import { orderArrayBy } from "helpers/array.helper";
 // fetch-keys
 import { ESTIMATE_DETAILS } from "constants/fetch-keys";
 
+// services
+const projectEstimateService = new ProjectEstimateServices();
+
 const useEstimateOption = (estimateKey?: number | null) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   const { projectDetails } = useProjectDetails();
 
-  const { data: estimateDetails, error: estimateDetailsError } = useSWR(
+  const { data: estimateDetails } = useSWR(
     workspaceSlug && projectId && projectDetails && projectDetails?.estimate
       ? ESTIMATE_DETAILS(projectDetails.estimate as string)
       : null,
     workspaceSlug && projectId && projectDetails && projectDetails.estimate
       ? () =>
-          estimatesService.getEstimateDetails(
+          projectEstimateService.getEstimateDetails(
             workspaceSlug.toString(),
             projectId.toString(),
             projectDetails.estimate as string

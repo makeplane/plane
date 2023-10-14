@@ -7,7 +7,7 @@ import ToastAlert from "components/toast-alert";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // services
-import projectService from "services/project.service/project.service";
+import { ProjectService } from "services/project";
 // fetch-keys
 import { USER_PROJECT_VIEW } from "constants/fetch-keys";
 // helper
@@ -15,6 +15,9 @@ import { applyTheme, unsetCustomCssVariables } from "helpers/theme.helper";
 // constants
 
 export const themeContext = createContext<ContextType>({} as ContextType);
+
+// services
+const projectService = new ProjectService();
 
 type ThemeProps = {
   collapsed: boolean;

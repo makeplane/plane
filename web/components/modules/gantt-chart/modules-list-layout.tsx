@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { KeyedMutator } from "swr";
 
 // services
-import modulesService from "services/module.service";
+import { ModuleService } from "services/module.service";
 // hooks
 import useUser from "hooks/use-user";
 import useProjectDetails from "hooks/use-project-details";
@@ -19,6 +19,9 @@ type Props = {
   modules: IModule[];
   mutateModules: KeyedMutator<IModule[]>;
 };
+
+// services
+const moduleService = new ModuleService();
 
 export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules }) => {
   const router = useRouter();
@@ -56,7 +59,7 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules })
 
     if (newPayload.sort_order && payload.sort_order) newPayload.sort_order = payload.sort_order.newSortOrder;
 
-    modulesService.patchModule(workspaceSlug.toString(), module.project, module.id, newPayload, user);
+    moduleService.patchModule(workspaceSlug.toString(), module.project, module.id, newPayload, user);
   };
 
   const blockFormat = (blocks: IModule[]) =>

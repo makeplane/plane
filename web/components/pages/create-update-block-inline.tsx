@@ -4,9 +4,10 @@ import { mutate } from "swr";
 import { SparklesIcon } from "@heroicons/react/24/outline";
 import { Controller, useForm } from "react-hook-form";
 // services
-import PageService from "services/page.service";
-import IssueService from "services/issue/issue.service";
-import AIService from "services/ai.service";
+import { PageService } from "services/page.service";
+import { IssueService } from "services/issue/issue.service";
+import { AIService } from "services/ai.service";
+import { FileService } from "services/file.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -17,8 +18,6 @@ import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 import { IUser, IPageBlock } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
-// services
-import fileService from "services/file.service";
 
 type Props = {
   handleClose: () => void;
@@ -38,6 +37,7 @@ const defaultValues = {
 const aiService = new AIService();
 const pagesService = new PageService();
 const issueService = new IssueService();
+const fileService = new FileService();
 
 export const CreateUpdateBlockInline: FC<Props> = ({
   handleClose,

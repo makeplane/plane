@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
@@ -31,6 +31,9 @@ import { WORKSPACE_DETAILS, WORKSPACE_INVITATION_WITH_EMAIL, WORKSPACE_MEMBERS_W
 import { ROLE } from "constants/workspace";
 // helper
 import { truncateText } from "helpers/string.helper";
+
+// services
+const workspaceService = new WorkspaceService();
 
 const MembersSettings: NextPage = () => {
   const [selectedRemoveMember, setSelectedRemoveMember] = useState<string | null>(null);

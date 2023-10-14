@@ -1,21 +1,14 @@
 // react
 import React, { useState } from "react";
-
-// next
 import { useRouter } from "next/router";
-
-// swr
 import useSWR from "swr";
 
 // icons
 import { ChevronDown } from "lucide-react";
-
 // services
-import projectService from "services/project.service/project.service";
-
+import { ProjectService } from "services/project";
 // fetch key
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
-
 // components
 import { Avatar } from "components/ui/avatar";
 import { WebViewModal } from "./web-view-modal";
@@ -25,6 +18,9 @@ type Props = {
   onChange: (value: any) => void;
   disabled?: boolean;
 };
+
+// services
+const projectService = new ProjectService();
 
 export const AssigneeSelect: React.FC<Props> = (props) => {
   const { value, onChange, disabled = false } = props;

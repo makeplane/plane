@@ -6,7 +6,7 @@ import useSWR from "swr";
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
 // services
-import userService from "services/user.service";
+import { UserService } from "services/user.service";
 // hooks
 import useUser from "hooks/use-user";
 // ui
@@ -19,6 +19,9 @@ import { renderLongDetailDateFormat } from "helpers/date-time.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // fetch-keys
 import { USER_PROFILE_PROJECT_SEGREGATION } from "constants/fetch-keys";
+
+// services
+const userService = new UserService();
 
 export const ProfileSidebar = () => {
   const router = useRouter();

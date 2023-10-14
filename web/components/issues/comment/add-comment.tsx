@@ -1,7 +1,9 @@
 import React from "react";
 import { useRouter } from "next/router";
-// react-hook-form
 import { useForm, Controller } from "react-hook-form";
+
+// services
+import { FileService } from "services/file.service";
 // components
 import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
 // ui
@@ -9,8 +11,6 @@ import { Icon } from "components/ui";
 import { Button, Tooltip } from "@plane/ui";
 // types
 import type { IIssueComment } from "types";
-// services
-import fileService from "services/file.service";
 
 const defaultValues: Partial<IIssueComment> = {
   access: "INTERNAL",
@@ -40,6 +40,9 @@ const commentAccess: commentAccessType[] = [
     label: "Public",
   },
 ];
+
+// services
+const fileService = new FileService();
 
 export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAccessSpecifier = false }) => {
   const editorRef = React.useRef<any>(null);

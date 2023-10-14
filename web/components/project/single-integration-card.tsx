@@ -5,7 +5,7 @@ import Image from "next/image";
 import useSWR, { mutate } from "swr";
 
 // services
-import projectService from "services/project.service/project.service";
+import { ProjectService } from "services/project";
 // hooks
 import { useRouter } from "next/router";
 import useToast from "hooks/use-toast";
@@ -33,6 +33,9 @@ const integrationDetails: { [key: string]: any } = {
     description: "Get regular updates and control which notification you want to receive.",
   },
 };
+
+// services
+const projectService = new ProjectService();
 
 export const SingleIntegration: React.FC<Props> = ({ integration }) => {
   const router = useRouter();

@@ -2,7 +2,7 @@ import { FC, ReactNode } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // services
-import userService from "services/user.service";
+import { UserService } from "services/user.service";
 // ui
 import { Spinner } from "@plane/ui";
 // fetch-keys
@@ -11,6 +11,9 @@ import { CURRENT_USER } from "constants/fetch-keys";
 export interface IUserAuthWrapper {
   children: ReactNode;
 }
+
+// services
+const userService = new UserService();
 
 export const UserAuthWrapper: FC<IUserAuthWrapper> = (props) => {
   const { children } = props;

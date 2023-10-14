@@ -3,13 +3,15 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import projectService from "services/project.service/project.service";
+import { ProjectService } from "services/project";
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
 // types
 import { IProject } from "types";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
+
+const projectService = new ProjectService();
 
 const useProjects = (type?: "all" | boolean, fetchCondition?: boolean) => {
   fetchCondition = fetchCondition ?? true;

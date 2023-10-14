@@ -3,9 +3,11 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import projectService from "services/project.service/project.service";
+import { ProjectService } from "services/project";
 // fetch-keys
 import { PROJECT_DETAILS } from "constants/fetch-keys";
+
+const projectService = new ProjectService();
 
 const useProjectDetails = () => {
   const router = useRouter();

@@ -5,7 +5,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // services
-import projectService from "services/project.service/project.service";
+import { ProjectService } from "services/project";
 // components
 import { DeleteProjectModal, ProjectDetailsForm, ProjectDetailsFormLoader, SettingsSidebar } from "components/project";
 // hooks
@@ -17,19 +17,14 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
-import { IProject } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { PROJECT_DETAILS, USER_PROJECT_VIEW } from "constants/fetch-keys";
+import { USER_PROJECT_VIEW } from "constants/fetch-keys";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { observer } from "mobx-react-lite";
 
-const defaultValues: Partial<IProject> = {
-  name: "",
-  description: "",
-  identifier: "",
-  network: 0,
-};
+// services
+const projectService = new ProjectService();
 
 const GeneralSettings: NextPage = observer(() => {
   const { project: projectStore } = useMobxStore();

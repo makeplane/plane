@@ -7,8 +7,8 @@ import useSWR from "swr";
 // react-beautiful-dnd
 import { DropResult } from "react-beautiful-dnd";
 // services
-import issuesService from "services/issue/issue.service";
-import userService from "services/user.service";
+import { IssueService, IssueLabelService } from "services/issue";
+import { UserService } from "services/user.service";
 // hooks
 import useProfileIssues from "hooks/use-profile-issues";
 import useUser from "hooks/use-user";
@@ -21,6 +21,11 @@ import { orderArrayBy } from "helpers/array.helper";
 import { IIssue, IIssueFilterOptions, TIssuePriorities } from "types";
 // fetch-keys
 import { USER_PROFILE_PROJECT_SEGREGATION, WORKSPACE_LABELS } from "constants/fetch-keys";
+
+// services
+const issueService = new IssueService();
+const issueLabelService = new IssueLabelService();
+const userService = new UserService();
 
 export const ProfileIssuesView = () => {
   // create issue modal
@@ -66,7 +71,7 @@ export const ProfileIssuesView = () => {
   const { data: labels } = useSWR(
     workspaceSlug && (filters?.labels ?? []).length > 0 ? WORKSPACE_LABELS(workspaceSlug.toString()) : null,
     workspaceSlug && (filters?.labels ?? []).length > 0
-      ? () => issuesService.getWorkspaceLabels(workspaceSlug.toString())
+      ? () => issueLabelService.getWorkspaceIssueLabels(workspaceSlug.toString())
       : null
   );
 
@@ -116,7 +121,7 @@ export const ProfileIssuesView = () => {
         }, false);
 
         // patch request
-        issuesService
+        issueService
           .patchIssue(
             workspaceSlug as string,
             draggedItem.project,

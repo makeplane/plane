@@ -10,7 +10,7 @@ import { Controller, useForm } from "react-hook-form";
 // hooks
 import useToast from "hooks/use-toast";
 // services
-import userService from "services/user.service";
+import { UserService } from "services/user.service";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // ui
@@ -25,6 +25,9 @@ type FormData = {
   confirmPassword: string;
 };
 
+// services
+const userService = new UserService();
+
 const ResetPasswordPage: NextPage = () => {
   const [isLoading, setIsLoading] = useState(true);
 
@@ -36,7 +39,6 @@ const ResetPasswordPage: NextPage = () => {
   const { setTheme } = useTheme();
 
   const {
-    register,
     handleSubmit,
     control,
     formState: { errors, isSubmitting },

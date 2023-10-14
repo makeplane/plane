@@ -1,17 +1,11 @@
 import { createContext, useContext } from "react";
-
-// next
 import { useRouter } from "next/router";
-
-// swr
 import useSWR from "swr";
 
 // services
-import projectService from "services/project.service/project.service";
-
+import { ProjectService } from "services/project";
 // keys
 import { USER_PROJECT_VIEW } from "constants/fetch-keys";
-
 // types
 import { IProjectMember } from "types";
 
@@ -20,6 +14,9 @@ type ContextType = {
   memberDetails?: IProjectMember;
   error: any;
 };
+
+// services
+const projectService = new ProjectService();
 
 export const ProjectMemberContext = createContext<ContextType>({} as ContextType);
 

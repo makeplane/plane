@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import stateService from "services/project.service/project_state.service";
+import { ProjectStateService } from "services/project";
 // ui
 import { CustomSelect } from "components/ui";
 import { Spinner } from "@plane/ui";
@@ -22,6 +22,9 @@ type Props = {
   onChange: (val: string) => void;
   disabled?: boolean;
 };
+
+// services
+const stateService = new ProjectStateService();
 
 export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, disabled = false }) => {
   const router = useRouter();

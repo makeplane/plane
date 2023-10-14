@@ -10,7 +10,7 @@ import useUser from "hooks/use-user";
 // components
 import { ExistingIssuesListModal } from "components/core";
 // services
-import issuesService from "services/issue/issue.service";
+import { IssueService } from "services/issue";
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { BlockerIcon } from "components/icons";
@@ -23,6 +23,9 @@ type Props = {
   watch: UseFormWatch<IIssue>;
   disabled?: boolean;
 };
+
+// services
+const issueService = new IssueService();
 
 export const SidebarBlockerSelect: React.FC<Props> = ({ issueId, submitChanges, watch, disabled = false }) => {
   const [isBlockerModalOpen, setIsBlockerModalOpen] = useState(false);
@@ -65,7 +68,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({ issueId, submitChanges, 
 
     if (!user) return;
 
-    issuesService
+    issueService
       .createIssueRelation(workspaceSlug as string, projectId as string, issueId as string, user, {
         related_list: [
           ...selectedIssues.map((issue) => ({
@@ -137,7 +140,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({ issueId, submitChanges, 
 
                         if (!user) return;
 
-                        issuesService.deleteIssueRelation(
+                        issueService.deleteIssueRelation(
                           workspaceSlug as string,
                           projectId as string,
                           relation.issue_detail?.id as string,

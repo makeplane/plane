@@ -7,7 +7,7 @@ import useSWR, { mutate } from "swr";
 // react-hook-form
 import { useForm } from "react-hook-form";
 // services
-import issuesService from "services/issue/issue.service";
+import { IssueService, IssueArchiveService } from "services/issue";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
@@ -41,6 +41,10 @@ const defaultValues: Partial<IIssue> = {
   labels_list: [],
 };
 
+// services
+const issueService = new IssueService();
+const issueArchiveService = new IssueArchiveService();
+
 const ArchivedIssueDetailsPage: NextPage = () => {
   const [isRestoring, setIsRestoring] = useState(false);
 
@@ -54,7 +58,11 @@ const ArchivedIssueDetailsPage: NextPage = () => {
     workspaceSlug && projectId && archivedIssueId ? ISSUE_DETAILS(archivedIssueId as string) : null,
     workspaceSlug && projectId && archivedIssueId
       ? () =>
-          issuesService.retrieveArchivedIssue(workspaceSlug as string, projectId as string, archivedIssueId as string)
+          issueArchiveService.retrieveArchivedIssue(
+            workspaceSlug as string,
+            projectId as string,
+            archivedIssueId as string
+          )
       : null
   );
 
@@ -83,7 +91,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
         ...formData,
       };
 
-      await issuesService
+      await issueService
         .patchIssue(workspaceSlug as string, projectId as string, archivedIssueId as string, payload, user)
         .then(() => {
           mutateIssueDetails();
@@ -113,7 +121,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
 
     setIsRestoring(true);
 
-    await issuesService
+    await issueArchiveService
       .unarchiveIssue(workspaceSlug as string, projectId as string, archivedIssueId as string)
       .then(() => {
         setToastAlert({
