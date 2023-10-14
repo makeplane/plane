@@ -35,7 +35,7 @@ import {
 
 import JiraLogo from "public/services/jira.png";
 
-import { ICurrentUserResponse, IJiraImporterForm } from "types";
+import { IUser, IJiraImporterForm } from "types";
 
 const integrationWorkflowData: Array<{
   title: string;
@@ -65,7 +65,7 @@ const integrationWorkflowData: Array<{
 ];
 
 type Props = {
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
 // services

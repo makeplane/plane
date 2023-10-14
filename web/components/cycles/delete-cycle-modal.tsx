@@ -14,12 +14,12 @@ import { Button } from "@plane/ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
-import type { ICurrentUserResponse, ICycle, IProject } from "types";
+import type { IUser, ICycle, IProject } from "types";
 type TConfirmCycleDeletionProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   data?: ICycle | null;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 // fetch-keys
 import {

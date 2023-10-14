@@ -11,7 +11,7 @@ import { StateSelect } from "components/states";
 // hooks
 import useIssuesProperties from "hooks/use-issue-properties";
 // types
-import { ICurrentUserResponse, IIssue, IState } from "types";
+import { IUser, IIssue, IState } from "types";
 // fetch-keys
 import { SUB_ISSUES } from "constants/fetch-keys";
 
@@ -20,7 +20,7 @@ export interface IIssueProperty {
   projectId: string;
   parentIssue: IIssue;
   issue: IIssue;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   editable: boolean;
 }
 

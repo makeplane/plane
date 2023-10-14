@@ -18,7 +18,7 @@ import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { groupBy, orderArrayBy } from "helpers/array.helper";
 import { orderStateGroups } from "helpers/state.helper";
 // types
-import { ICurrentUserResponse, IState } from "types";
+import { IUser, IState } from "types";
 // fetch-keys
 import { STATES_LIST } from "constants/fetch-keys";
 
@@ -28,7 +28,7 @@ type Props = {
   statesList: IState[];
   handleEditState: () => void;
   handleDeleteState: () => void;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
 // services

@@ -6,7 +6,7 @@ import { UserService } from "services/user.service";
 // constants
 import { CURRENT_USER } from "constants/fetch-keys";
 // types
-import type { ICurrentUserResponse } from "types";
+import type { IUser } from "types";
 
 // services
 const userService = new UserService();
@@ -14,11 +14,7 @@ const userService = new UserService();
 export default function useUser({ redirectTo = "", redirectIfFound = false, options = {} } = {}) {
   const router = useRouter();
   // API to fetch user information
-  const { data, isLoading, error, mutate } = useSWR<ICurrentUserResponse>(
-    CURRENT_USER,
-    () => userService.currentUser(),
-    options
-  );
+  const { data, isLoading, error, mutate } = useSWR<IUser>(CURRENT_USER, () => userService.currentUser(), options);
 
   const user = error ? undefined : data;
 

@@ -11,7 +11,7 @@ import { CycleForm } from "components/cycles";
 // helper
 import { getDateRangeStatus } from "helpers/date-time.helper";
 // types
-import type { CycleDateCheckData, ICurrentUserResponse, ICycle, IProject } from "types";
+import type { CycleDateCheckData, IUser, ICycle, IProject } from "types";
 // fetch keys
 import {
   COMPLETED_CYCLES_LIST,
@@ -27,7 +27,7 @@ type CycleModalProps = {
   isOpen: boolean;
   handleClose: () => void;
   data?: ICycle | null;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
 // services

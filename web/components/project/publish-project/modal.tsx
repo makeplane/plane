@@ -21,7 +21,7 @@ import useProjectDetails from "hooks/use-project-details";
 import useUser from "hooks/use-user";
 
 type Props = {
-  // user: ICurrentUserResponse | undefined;
+  // user: IUser | undefined;
 };
 
 type FormData = {

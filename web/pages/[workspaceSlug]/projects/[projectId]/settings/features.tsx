@@ -1,9 +1,6 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
 // services
 import { ProjectService } from "services/project";
 import { TrackEventService, MiscellaneousEventType } from "services/track_event.service";
@@ -22,7 +19,7 @@ import { ModuleIcon } from "components/icons";
 import { FileText, Inbox, Layers } from "lucide-react";
 import { ContrastOutlined } from "@mui/icons-material";
 // types
-import { IProject } from "types";
+import { IProject, IUser } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS, USER_PROJECT_VIEW } from "constants/fetch-keys";
@@ -190,7 +187,7 @@ const FeaturesSettings: NextPage = () => {
                         projectName: projectDetails?.name,
                       },
                       getEventType(feature.title, !projectDetails?.[feature.property as keyof IProject]),
-                      user
+                      user as IUser
                     );
                     handleSubmit({
                       [feature.property]: !projectDetails?.[feature.property as keyof IProject],

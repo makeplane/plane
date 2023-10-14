@@ -15,7 +15,7 @@ import { Button } from "@plane/ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
-import type { ICurrentUserResponse, IPage } from "types";
+import type { IUser, IPage } from "types";
 // fetch-keys
 import { ALL_PAGES_LIST, FAVORITE_PAGES_LIST, MY_PAGES_LIST, RECENT_PAGES_LIST } from "constants/fetch-keys";
 
@@ -23,7 +23,7 @@ type TConfirmPageDeletionProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   data?: IPage | null;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
 // services

@@ -1,5 +1,4 @@
-import React from "react";
-
+import { FC, Fragment } from "react";
 // react-form
 import {
   Control,
@@ -31,15 +30,9 @@ type Props = {
   register: UseFormRegister<any>;
 };
 
-export const ColorPickerInput: React.FC<Props> = ({
-  name,
-  position = "left",
-  watch,
-  setValue,
-  error,
-  control,
-  register,
-}) => {
+export const ColorPickerInput: FC<Props> = (props) => {
+  const { name, position = "left", watch, setValue, error, control } = props;
+
   const handleColorChange = (newColor: ColorResult) => {
     const { hex } = newColor;
     setValue(name, hex);
@@ -110,7 +103,7 @@ export const ColorPickerInput: React.FC<Props> = ({
               </Popover.Button>
 
               <Transition
-                as={React.Fragment}
+                as={Fragment}
                 enter="transition ease-out duration-200"
                 enterFrom="opacity-0 translate-y-1"
                 enterTo="opacity-100 translate-y-0"

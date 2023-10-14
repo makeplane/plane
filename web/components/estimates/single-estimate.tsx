@@ -17,10 +17,10 @@ import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
 // types
-import { ICurrentUserResponse, IEstimate } from "types";
+import { IUser, IEstimate } from "types";
 
 type Props = {
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   estimate: IEstimate;
   editEstimate: (estimate: IEstimate) => void;
   handleEstimateDelete: (estimateId: string) => void;

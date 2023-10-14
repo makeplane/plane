@@ -23,7 +23,7 @@ import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
 // types
-import { ICurrentUserResponse, IUser, TOnboardingSteps } from "types";
+import { IUser, IUser, TOnboardingSteps } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { CURRENT_USER, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
@@ -48,7 +48,7 @@ const Onboarding: NextPage = () => {
   const updateLastWorkspace = async () => {
     if (!workspaces) return;
 
-    await mutate<ICurrentUserResponse>(
+    await mutate<IUser>(
       CURRENT_USER,
       (prevData) => {
         if (!prevData) return prevData;
@@ -82,7 +82,7 @@ const Onboarding: NextPage = () => {
       },
     };
 
-    mutate<ICurrentUserResponse>(
+    mutate<IUser>(
       CURRENT_USER,
       (prevData) => {
         if (!prevData) return prevData;
@@ -102,7 +102,7 @@ const Onboarding: NextPage = () => {
   const finishOnboarding = async () => {
     if (!user) return;
 
-    mutate<ICurrentUserResponse>(
+    mutate<IUser>(
       CURRENT_USER,
       (prevData) => {
         if (!prevData) return prevData;

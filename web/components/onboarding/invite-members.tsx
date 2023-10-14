@@ -16,14 +16,14 @@ import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { PlusIcon, XMarkIcon, CheckIcon } from "@heroicons/react/24/outline";
 // types
-import { ICurrentUserResponse, IWorkspace, TOnboardingSteps } from "types";
+import { IUser, IWorkspace, TOnboardingSteps } from "types";
 // constants
 import { ROLE } from "constants/workspace";
 
 type Props = {
   finishOnboarding: () => Promise<void>;
   stepChange: (steps: Partial<TOnboardingSteps>) => Promise<void>;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   workspace: IWorkspace | undefined;
 };
 

@@ -17,7 +17,7 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import type { ICurrentUserResponse, IWorkspace } from "types";
+import type { IUser, IWorkspace } from "types";
 // fetch-keys
 import { USER_WORKSPACES } from "constants/fetch-keys";
 
@@ -25,7 +25,7 @@ type Props = {
   isOpen: boolean;
   data: IWorkspace | null;
   onClose: () => void;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
 const defaultValues = {

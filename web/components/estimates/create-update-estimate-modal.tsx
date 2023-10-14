@@ -17,7 +17,7 @@ import { Button, Input, TextArea } from "@plane/ui";
 // helpers
 import { checkDuplicates } from "helpers/array.helper";
 // types
-import { ICurrentUserResponse, IEstimate, IEstimateFormData } from "types";
+import { IUser, IEstimate, IEstimateFormData } from "types";
 // fetch-keys
 import { ESTIMATES_LIST, ESTIMATE_DETAILS } from "constants/fetch-keys";
 
@@ -25,7 +25,7 @@ type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data?: IEstimate;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
 type FormValues = {

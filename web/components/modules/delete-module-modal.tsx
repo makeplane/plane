@@ -15,7 +15,7 @@ import { Button } from "@plane/ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
-import type { ICurrentUserResponse, IModule } from "types";
+import type { IUser, IModule } from "types";
 // fetch-keys
 import { MODULE_LIST } from "constants/fetch-keys";
 
@@ -23,7 +23,7 @@ type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   data?: IModule;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
 // services

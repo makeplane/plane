@@ -15,7 +15,7 @@ import { Button, Input } from "@plane/ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
-import { ICurrentUserResponse, IImporterService } from "types";
+import { IUser, IImporterService } from "types";
 // fetch-keys
 import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
 
@@ -23,7 +23,7 @@ type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data: IImporterService | null;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
 // services

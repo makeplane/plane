@@ -20,7 +20,7 @@ import { CreateWorkspaceForm } from "components/workspace";
 import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
 // types
-import { ICurrentUserResponse, IWorkspace } from "types";
+import { IUser, IWorkspace } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { CURRENT_USER } from "constants/fetch-keys";
@@ -42,7 +42,7 @@ const CreateWorkspace: NextPage = () => {
   const { user } = useUser();
 
   const onSubmit = async (workspace: IWorkspace) => {
-    mutate<ICurrentUserResponse>(
+    mutate<IUser>(
       CURRENT_USER,
       (prevData) => {
         if (!prevData) return prevData;

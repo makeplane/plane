@@ -1,9 +1,6 @@
 import { useContext, useMemo } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // contexts
 import { issueViewContext } from "contexts/issue-view.context";
 // services

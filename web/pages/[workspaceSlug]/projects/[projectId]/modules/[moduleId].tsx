@@ -1,9 +1,6 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // icons
 import { RectangleGroupIcon } from "@heroicons/react/24/outline";
 // services

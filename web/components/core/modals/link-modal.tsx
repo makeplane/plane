@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { FC, useEffect, Fragment } from "react";
 
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
@@ -23,9 +23,10 @@ const defaultValues: IIssueLink | ModuleLink = {
   url: "",
 };
 
-export const LinkModal: React.FC<Props> = ({ isOpen, handleClose, createIssueLink, updateIssueLink, status, data }) => {
+export const LinkModal: FC<Props> = (props) => {
+  const { isOpen, handleClose, createIssueLink, updateIssueLink, status, data } = props;
+  // form info
   const {
-    register,
     formState: { errors, isSubmitting },
     handleSubmit,
     control,
@@ -64,10 +65,10 @@ export const LinkModal: React.FC<Props> = ({ isOpen, handleClose, createIssueLin
   }, [data, reset]);
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
+    <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-20" onClose={onClose}>
         <Transition.Child
-          as={React.Fragment}
+          as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -81,7 +82,7 @@ export const LinkModal: React.FC<Props> = ({ isOpen, handleClose, createIssueLin
         <div className="fixed inset-0 z-10 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
             <Transition.Child
-              as={React.Fragment}
+              as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               enterTo="opacity-100 translate-y-0 sm:scale-100"

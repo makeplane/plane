@@ -1,22 +1,22 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 // components
 import { StateSelect } from "components/states";
 // services
-import trackEventServices from "services/track_event.service";
+import { TrackEventService } from "services/track_event.service";
 // types
-import { ICurrentUserResponse, IIssue, IState, Properties } from "types";
+import { IUser, IIssue, IState, Properties } from "types";
 
 type Props = {
   issue: IIssue;
   projectId: string;
   onChange: (formData: Partial<IIssue>) => void;
   properties: Properties;
-  user: ICurrentUserResponse | undefined;
+  user: IUser;
   isNotAllowed: boolean;
 };
+
+const trackEventService = new TrackEventService();
 
 export const StateColumn: React.FC<Props> = ({ issue, projectId, onChange, properties, user, isNotAllowed }) => {
   const router = useRouter();
@@ -31,7 +31,7 @@ export const StateColumn: React.FC<Props> = ({ issue, projectId, onChange, prope
       state: data,
       state_detail: newState,
     });
-    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+    trackEventService.trackIssuePartialPropertyUpdateEvent(
       {
         workspaceSlug,
         workspaceId: issue.workspace,
@@ -44,7 +44,7 @@ export const StateColumn: React.FC<Props> = ({ issue, projectId, onChange, prope
       user
     );
     if (oldState?.group !== "completed" && newState?.group !== "completed") {
-      trackEventServices.trackIssueMarkedAsDoneEvent(
+      trackEventService.trackIssueMarkedAsDoneEvent(
         {
           workspaceSlug: issue.workspace_detail.slug,
           workspaceId: issue.workspace_detail.id,

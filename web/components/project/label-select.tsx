@@ -18,7 +18,7 @@ import { CheckIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { PlusIcon } from "lucide-react";
 // types
 import { Tooltip } from "components/ui";
-import { ICurrentUserResponse, IIssueLabels } from "types";
+import { IUser, IIssueLabels } from "types";
 import { Placement } from "@popperjs/core";
 // constants
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
@@ -35,7 +35,7 @@ type Props = {
   placement?: Placement;
   hideDropdownArrow?: boolean;
   disabled?: boolean;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
 // services

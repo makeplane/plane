@@ -15,7 +15,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { ICurrentUserResponse, IIssueLabels } from "types";
+import type { IUser, IIssueLabels } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 
@@ -23,7 +23,7 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   data: IIssueLabels | null;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
 // services

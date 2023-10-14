@@ -14,7 +14,7 @@ import { CustomMenu } from "components/ui";
 import { ChevronDownIcon, XMarkIcon, PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Component, X } from "lucide-react";
 // types
-import { ICurrentUserResponse, IIssueLabels } from "types";
+import { IUser, IIssueLabels } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 
@@ -24,7 +24,7 @@ type Props = {
   addLabelToGroup: (parentLabel: IIssueLabels) => void;
   editLabel: (label: IIssueLabels) => void;
   handleLabelDelete: () => void;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
 // services

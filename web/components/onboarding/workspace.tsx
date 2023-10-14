@@ -3,7 +3,7 @@ import { useState } from "react";
 // ui
 import { Button } from "@plane/ui";
 // types
-import { ICurrentUserResponse, IWorkspace, TOnboardingSteps } from "types";
+import { IUser, IWorkspace, TOnboardingSteps } from "types";
 // constants
 import { CreateWorkspaceForm } from "components/workspace";
 
@@ -11,7 +11,7 @@ type Props = {
   finishOnboarding: () => Promise<void>;
   stepChange: (steps: Partial<TOnboardingSteps>) => Promise<void>;
   updateLastWorkspace: () => Promise<void>;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   workspaces: IWorkspace[] | undefined;
 };
 

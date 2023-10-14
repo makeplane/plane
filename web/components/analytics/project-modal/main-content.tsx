@@ -2,11 +2,10 @@ import React from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Tab } from "@headlessui/react";
-
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
-import trackEventServices from "services/track_event.service";
+import { TrackEventService } from "services/track_event.service";
 // components
 import { CustomAnalytics, ScopeAndDemand } from "components/analytics";
 // types
@@ -20,6 +19,8 @@ type Props = {
   moduleDetails: IModule | undefined;
   projectDetails: IProject | undefined;
 };
+
+const trackEventService = new TrackEventService();
 
 export const ProjectAnalyticsModalMainContent: React.FC<Props> = observer((props) => {
   const { fullScreen, cycleDetails, moduleDetails, projectDetails } = props;
@@ -70,7 +71,7 @@ export const ProjectAnalyticsModalMainContent: React.FC<Props> = observer((props
 
     const eventType = tab === "scope_and_demand" ? "SCOPE_AND_DEMAND_ANALYTICS" : "CUSTOM_ANALYTICS";
 
-    trackEventServices.trackAnalyticsEvent(
+    trackEventService.trackAnalyticsEvent(
       eventPayload,
       cycleDetails ? `CYCLE_${eventType}` : moduleDetails ? `MODULE_${eventType}` : `PROJECT_${eventType}`,
       user

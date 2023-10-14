@@ -88,7 +88,7 @@ export class DraftIssuesStore {
     workspaceSlug: string,
     projectId: string,
     issueForm: IIssue,
-    user: ICurrentUserResponse
+    user: IUser
   ): Promise<IIssue> => {
     try {
       const issueResponse = await issueService.createDraftIssue(workspaceSlug, projectId, issueForm, user);
@@ -113,7 +113,7 @@ export class DraftIssuesStore {
     projectId: string,
     issueId: string,
     issueForm: Partial<IIssue>,
-    user: ICurrentUserResponse
+    user: IUser
   ) => {
     // keep a copy of the issue in the store
     const originalIssue = { ...this.issues[issueId] };
@@ -152,7 +152,7 @@ export class DraftIssuesStore {
     }
   };
 
-  deleteDraftIssue = async (workspaceSlug: string, projectId: string, issueId: string, user: ICurrentUserResponse) => {
+  deleteDraftIssue = async (workspaceSlug: string, projectId: string, issueId: string, user: IUser) => {
     const issues = { ...this.issues };
     delete issues[issueId];
 

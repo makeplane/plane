@@ -26,7 +26,7 @@ import { ArrowLeftIcon, ListBulletIcon } from "@heroicons/react/24/outline";
 // images
 import GithubLogo from "public/services/github.png";
 // types
-import { ICurrentUserResponse, IGithubRepoCollaborator, IGithubServiceImportFormData } from "types";
+import { IUser, IGithubRepoCollaborator, IGithubServiceImportFormData } from "types";
 // fetch-keys
 import { APP_INTEGRATIONS, IMPORTER_SERVICES_LIST, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
 
@@ -80,7 +80,7 @@ const integrationWorkflowData = [
 ];
 
 type Props = {
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
 // services

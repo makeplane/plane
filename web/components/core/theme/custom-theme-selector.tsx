@@ -33,7 +33,9 @@ export const CustomThemeSelector: React.FC<Props> = observer(({ preLoadedData })
   const store: any = useMobxStore();
   const { setTheme } = useTheme();
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [darkPalette, setDarkPalette] = useState(false);
+
   const {
     register,
     formState: { errors, isSubmitting },

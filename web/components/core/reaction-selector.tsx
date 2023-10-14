@@ -1,24 +1,11 @@
 import { Fragment } from "react";
-
-// headless ui
 import { Popover, Transition } from "@headlessui/react";
-
 // helper
 import { renderEmoji } from "helpers/emoji.helper";
-
 // icons
 import { Icon } from "components/ui";
 
-const reactionEmojis = [
-  "128077",
-  "128078",
-  "128516",
-  "128165",
-  "128533",
-  "129505",
-  "9992",
-  "128064",
-];
+const reactionEmojis = ["128077", "128078", "128516", "128165", "128533", "129505", "9992", "128064"];
 
 interface Props {
   size?: "sm" | "md" | "lg";
@@ -28,7 +15,7 @@ interface Props {
 }
 
 export const ReactionSelector: React.FC<Props> = (props) => {
-  const { value, onSelect, position, size } = props;
+  const { onSelect, position, size } = props;
 
   return (
     <Popover className="relative">

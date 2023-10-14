@@ -9,7 +9,7 @@ import { CURRENT_USER } from "constants/fetch-keys";
 import { UserService } from "services/user.service";
 import { WorkspaceService } from "services/workspace.service";
 // types
-import type { IWorkspace, ICurrentUserResponse } from "types";
+import type { IWorkspace, IUser } from "types";
 
 const userService = new UserService();
 const workspaceService = new WorkspaceService();
@@ -25,7 +25,7 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
     isLoading,
     error,
     mutate,
-  } = useSWR<ICurrentUserResponse>(CURRENT_USER, () => userService.currentUser(), {
+  } = useSWR<IUser>(CURRENT_USER, () => userService.currentUser(), {
     refreshInterval: 0,
     shouldRetryOnError: false,
   });

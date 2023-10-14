@@ -2,11 +2,10 @@ import React, { Fragment, useEffect } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Tab } from "@headlessui/react";
-
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
-import trackEventServices from "services/track_event.service";
+import { TrackEventService } from "services/track_event.service";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
@@ -19,6 +18,8 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import emptyAnalytics from "public/empty-state/analytics.svg";
 // constants
 import { ANALYTICS_TABS } from "constants/analytics";
+
+const trackEventService = new TrackEventService();
 
 const AnalyticsPage = observer(() => {
   // router
@@ -40,14 +41,14 @@ const AnalyticsPage = observer(() => {
     const eventType =
       tab === "scope_and_demand" ? "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS" : "WORKSPACE_CUSTOM_ANALYTICS";
 
-    trackEventServices.trackAnalyticsEvent(eventPayload, eventType, user);
+    trackEventService.trackAnalyticsEvent(eventPayload, eventType, user);
   };
 
   useEffect(() => {
     if (!workspaceSlug) return;
 
     if (user && workspaceSlug)
-      trackEventServices.trackAnalyticsEvent(
+      trackEventService.trackAnalyticsEvent(
         { workspaceSlug: workspaceSlug?.toString() },
         "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS",
         user
