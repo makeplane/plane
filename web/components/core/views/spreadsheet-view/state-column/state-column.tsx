@@ -1,31 +1,24 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 // components
 import { StateSelect } from "components/states";
 // services
-import trackEventServices from "services/track-event.service";
+import { TrackEventService } from "services/track_event.service";
 // types
-import { ICurrentUserResponse, IIssue, IState, Properties } from "types";
+import { IUser, IIssue, IState, Properties } from "types";
 
 type Props = {
   issue: IIssue;
   projectId: string;
-  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
+  onChange: (formData: Partial<IIssue>) => void;
   properties: Properties;
-  user: ICurrentUserResponse | undefined;
+  user: IUser;
   isNotAllowed: boolean;
 };
 
-export const StateColumn: React.FC<Props> = ({
-  issue,
-  projectId,
-  partialUpdateIssue,
-  properties,
-  user,
-  isNotAllowed,
-}) => {
+const trackEventService = new TrackEventService();
+
+export const StateColumn: React.FC<Props> = ({ issue, projectId, onChange, properties, user, isNotAllowed }) => {
   const router = useRouter();
 
   const { workspaceSlug } = router.query;
@@ -34,14 +27,11 @@ export const StateColumn: React.FC<Props> = ({
     const oldState = states?.find((s) => s.id === issue.state);
     const newState = states?.find((s) => s.id === data);
 
-    partialUpdateIssue(
-      {
-        state: data,
-        state_detail: newState,
-      },
-      issue
-    );
-    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+    onChange({
+      state: data,
+      state_detail: newState,
+    });
+    trackEventService.trackIssuePartialPropertyUpdateEvent(
       {
         workspaceSlug,
         workspaceId: issue.workspace,
@@ -54,7 +44,7 @@ export const StateColumn: React.FC<Props> = ({
       user
     );
     if (oldState?.group !== "completed" && newState?.group !== "completed") {
-      trackEventServices.trackIssueMarkedAsDoneEvent(
+      trackEventService.trackIssueMarkedAsDoneEvent(
         {
           workspaceSlug: issue.workspace_detail.slug,
           workspaceId: issue.workspace_detail.id,

@@ -7,15 +7,15 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import IntegrationService from "services/integration";
+import { IntegrationService } from "services/integrations/integration.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { DangerButton, Input, SecondaryButton } from "components/ui";
+import { Button, Input } from "@plane/ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
-import { ICurrentUserResponse, IImporterService } from "types";
+import { IUser, IImporterService } from "types";
 // fetch-keys
 import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
 
@@ -23,8 +23,11 @@ type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data: IImporterService | null;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
+
+// services
+const integrationService = new IntegrationService();
 
 export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, user }) => {
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -46,7 +49,8 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, 
       false
     );
 
-    IntegrationService.deleteImporterService(workspaceSlug as string, data.service, data.id, user)
+    integrationService
+      .deleteImporterService(workspaceSlug as string, data.service, data.id, user)
       .catch(() =>
         setToastAlert({
           type: "error",
@@ -92,10 +96,7 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, 
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-500/20 p-4">
-                      <ExclamationTriangleIcon
-                        className="h-6 w-6 text-red-500"
-                        aria-hidden="true"
-                      />
+                      <ExclamationTriangleIcon className="h-6 w-6 text-red-500" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">
                       <h3 className="text-xl font-medium 2xl:text-2xl">Delete Project</h3>
@@ -104,38 +105,39 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, 
                   <span>
                     <p className="text-sm leading-7 text-custom-text-200">
                       Are you sure you want to delete import from{" "}
-                      <span className="break-words font-semibold capitalize text-custom-text-100">
-                        {data?.service}
-                      </span>
-                      ? All of the data related to the import will be permanently removed. This
-                      action cannot be undone.
+                      <span className="break-words font-semibold capitalize text-custom-text-100">{data?.service}</span>
+                      ? All of the data related to the import will be permanently removed. This action cannot be undone.
                     </p>
                   </span>
                   <div>
                     <p className="text-sm text-custom-text-200">
-                      To confirm, type{" "}
-                      <span className="font-medium text-custom-text-100">delete import</span> below:
+                      To confirm, type <span className="font-medium text-custom-text-100">delete import</span> below:
                     </p>
                     <Input
+                      id="typeDelete"
                       type="text"
                       name="typeDelete"
-                      className="mt-2"
+                      value=""
                       onChange={(e) => {
                         if (e.target.value === "delete import") setConfirmDeleteImport(true);
                         else setConfirmDeleteImport(false);
                       }}
                       placeholder="Enter 'delete import'"
+                      className="mt-2 w-full"
                     />
                   </div>
                   <div className="flex justify-end gap-2">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <DangerButton
+                    <Button variant="neutral-primary" onClick={handleClose}>
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="danger"
                       onClick={handleDeletion}
                       disabled={!confirmDeleteImport}
                       loading={deleteLoading}
                     >
                       {deleteLoading ? "Deleting..." : "Delete Project"}
-                    </DangerButton>
+                    </Button>
                   </div>
                 </div>
               </Dialog.Panel>

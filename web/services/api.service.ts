@@ -1,46 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const unAuthorizedStatus = [401];
-const nonValidatedRoutes = [
-  "/",
-  "/magic-sign-in",
-  "/reset-password",
-  "/workspace-member-invitation",
-  "/sign-up",
-  "/m/",
-];
-
-const validateRouteCheck = (route: string): boolean => {
-  let validationToggle = false;
-
-  let routeCheck = false;
-  nonValidatedRoutes.forEach((_route: string) => {
-    if (route.includes(_route)) {
-      routeCheck = true;
-    }
-  });
-
-  if (routeCheck) validationToggle = true;
-  return validationToggle;
-};
-
-axios.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    const { status }: any = error.response;
-    if (!validateRouteCheck(window.location.pathname)) {
-      if (unAuthorizedStatus.includes(status)) {
-        Cookies.remove("refreshToken", { path: "/" });
-        Cookies.remove("accessToken", { path: "/" });
-        window.location.href = `/?next_url=${window.location.pathname}`;
-      }
-    }
-    return Promise.reject(error);
-  }
-);
-
-abstract class APIService {
+export abstract class APIService {
   protected baseURL: string;
   protected headers: any = {};
 
@@ -76,15 +37,6 @@ abstract class APIService {
     return {
       Authorization: `Bearer ${this.getAccessToken()}`,
     };
-  }
-
-  getWithoutBase(url: string, config = {}): Promise<any> {
-    return axios({
-      method: "get",
-      url: url,
-      headers: this.getAccessToken() ? this.getHeaders() : {},
-      ...config,
-    });
   }
 
   get(url: string, config = {}): Promise<any> {
@@ -136,21 +88,7 @@ abstract class APIService {
     });
   }
 
-  mediaUpload(url: string, data = {}, config = {}): Promise<any> {
-    return axios({
-      method: "post",
-      url: this.baseURL + url,
-      data,
-      headers: this.getAccessToken()
-        ? { ...this.getHeaders(), "Content-Type": "multipart/form-data" }
-        : {},
-      ...config,
-    });
-  }
-
   request(config = {}) {
     return axios(config);
   }
 }
-
-export default APIService;

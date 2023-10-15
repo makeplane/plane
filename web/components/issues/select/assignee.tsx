@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import projectServices from "services/project.service";
+import { ProjectService } from "services/project";
 // ui
 import { AssigneesList, Avatar, CustomSearchSelect, Icon } from "components/ui";
 // fetch-keys
@@ -15,6 +15,8 @@ export type Props = {
   onChange: (value: string[]) => void;
 };
 
+const projectService = new ProjectService();
+
 export const IssueAssigneeSelect: React.FC<Props> = ({ projectId, value = [], onChange }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -22,7 +24,7 @@ export const IssueAssigneeSelect: React.FC<Props> = ({ projectId, value = [], on
   const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => projectServices.projectMembers(workspaceSlug as string, projectId as string)
+      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
       : null
   );
 

@@ -58,11 +58,7 @@ export const MembersSelect: React.FC<Props> = ({
     placement: placement ?? "bottom-start",
   });
 
-  const { members } = useProjectMembers(
-    workspaceSlug?.toString(),
-    projectId,
-    fetchStates && !renderWorkspaceMembers
-  );
+  const { members } = useProjectMembers(workspaceSlug?.toString(), projectId, fetchStates && !renderWorkspaceMembers);
 
   const { workspaceMembers } = useWorkspaceMembers(
     workspaceSlug?.toString() ?? "",
@@ -83,9 +79,7 @@ export const MembersSelect: React.FC<Props> = ({
   }));
 
   const filteredOptions =
-    query === ""
-      ? options
-      : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
+    query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const label = (
     <Tooltip
@@ -131,15 +125,11 @@ export const MembersSelect: React.FC<Props> = ({
                 ref={setReferenceElement}
                 type="button"
                 className={`flex items-center justify-between gap-1 w-full text-xs ${
-                  disabled
-                    ? "cursor-not-allowed text-custom-text-200"
-                    : "cursor-pointer hover:bg-custom-background-80"
+                  disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
                 } ${buttonClassName}`}
               >
                 {label}
-                {!hideDropdownArrow && !disabled && (
-                  <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
-                )}
+                {!hideDropdownArrow && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
               </button>
             </Combobox.Button>
             <Combobox.Options>

@@ -7,9 +7,9 @@ import { mutate } from "swr";
 // cmdk
 import { Command } from "cmdk";
 // services
-import issuesService from "services/issues.service";
+import { IssueService } from "services/issue";
 // types
-import { ICurrentUserResponse, IIssue, TIssuePriorities } from "types";
+import { IIssue, IUser, TIssuePriorities } from "types";
 // constants
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 import { PRIORITIES } from "constants/project";
@@ -19,8 +19,11 @@ import { CheckIcon, PriorityIcon } from "components/icons";
 type Props = {
   setIsPaletteOpen: Dispatch<SetStateAction<boolean>>;
   issue: IIssue;
-  user: ICurrentUserResponse;
+  user: IUser;
 };
+
+// services
+const issueService = new IssueService();
 
 export const ChangeIssuePriority: React.FC<Props> = ({ setIsPaletteOpen, issue, user }) => {
   const router = useRouter();
@@ -44,7 +47,7 @@ export const ChangeIssuePriority: React.FC<Props> = ({ setIsPaletteOpen, issue, 
       );
 
       const payload = { ...formData };
-      await issuesService
+      await issueService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)
         .then(() => {
           mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
@@ -64,11 +67,7 @@ export const ChangeIssuePriority: React.FC<Props> = ({ setIsPaletteOpen, issue, 
   return (
     <>
       {PRIORITIES.map((priority) => (
-        <Command.Item
-          key={priority}
-          onSelect={() => handleIssueState(priority)}
-          className="focus:outline-none"
-        >
+        <Command.Item key={priority} onSelect={() => handleIssueState(priority)} className="focus:outline-none">
           <div className="flex items-center space-x-3">
             <PriorityIcon priority={priority} />
             <span className="capitalize">{priority ?? "None"}</span>

@@ -1,7 +1,5 @@
-import React from "react";
-
+import { FC } from "react";
 import { useRouter } from "next/router";
-
 // hooks
 import useUser from "hooks/use-user";
 import useCommentReaction from "hooks/use-comment-reaction";
@@ -9,6 +7,7 @@ import useCommentReaction from "hooks/use-comment-reaction";
 import { ReactionSelector } from "components/core";
 // helper
 import { renderEmoji } from "helpers/emoji.helper";
+import { IssueCommentReaction } from "types";
 
 type Props = {
   projectId?: string | string[];
@@ -16,7 +15,7 @@ type Props = {
   readonly?: boolean;
 };
 
-export const CommentReaction: React.FC<Props> = (props) => {
+export const CommentReaction: FC<Props> = (props) => {
   const { projectId, commentId, readonly = false } = props;
 
   const router = useRouter();
@@ -24,19 +23,17 @@ export const CommentReaction: React.FC<Props> = (props) => {
 
   const { user } = useUser();
 
-  const {
-    commentReactions,
-    groupedReactions,
-    handleReactionCreate,
-    handleReactionDelete,
-    isLoading,
-  } = useCommentReaction(workspaceSlug, projectId, commentId);
+  const { commentReactions, groupedReactions, handleReactionCreate, handleReactionDelete } = useCommentReaction(
+    workspaceSlug,
+    projectId,
+    commentId
+  );
 
   const handleReactionClick = (reaction: string) => {
     if (!workspaceSlug || !projectId || !commentId) return;
 
     const isSelected = commentReactions?.some(
-      (r) => r.actor === user?.id && r.reaction === reaction
+      (r: IssueCommentReaction) => r.actor === user?.id && r.reaction === reaction
     );
 
     if (isSelected) {
@@ -54,8 +51,8 @@ export const CommentReaction: React.FC<Props> = (props) => {
           position="top"
           value={
             commentReactions
-              ?.filter((reaction) => reaction.actor === user?.id)
-              .map((r) => r.reaction) || []
+              ?.filter((reaction: IssueCommentReaction) => reaction.actor === user?.id)
+              .map((r: IssueCommentReaction) => r.reaction) || []
           }
           onSelect={handleReactionClick}
         />
@@ -73,7 +70,7 @@ export const CommentReaction: React.FC<Props> = (props) => {
               }}
               key={reaction}
               className={`flex items-center gap-1 text-custom-text-100 text-sm h-full px-2 py-1 rounded-md ${
-                commentReactions?.some((r) => r.actor === user?.id && r.reaction === reaction)
+                commentReactions?.some((r: IssueCommentReaction) => r.actor === user?.id && r.reaction === reaction)
                   ? "bg-custom-primary-100/10"
                   : "bg-custom-background-80"
               }`}
@@ -81,7 +78,7 @@ export const CommentReaction: React.FC<Props> = (props) => {
               <span>{renderEmoji(reaction)}</span>
               <span
                 className={
-                  commentReactions?.some((r) => r.actor === user?.id && r.reaction === reaction)
+                  commentReactions?.some((r: IssueCommentReaction) => r.actor === user?.id && r.reaction === reaction)
                     ? "text-custom-primary-100"
                     : ""
                 }

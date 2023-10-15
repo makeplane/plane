@@ -10,7 +10,8 @@ import useToast from "hooks/use-toast";
 // components
 import { SingleProgressStats } from "components/core";
 // ui
-import { CustomMenu, LinearProgressIndicator, Tooltip } from "components/ui";
+import { Tooltip, LinearProgressIndicator } from "@plane/ui";
+import { CustomMenu } from "components/ui";
 import { AssigneesList } from "components/ui/avatar";
 // icons
 import { CalendarDaysIcon } from "@heroicons/react/20/solid";
@@ -22,19 +23,9 @@ import {
   TriangleExclamationIcon,
   AlarmClockIcon,
 } from "components/icons";
-import {
-  ChevronDownIcon,
-  LinkIcon,
-  PencilIcon,
-  StarIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { ChevronDownIcon, LinkIcon, PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
 // helpers
-import {
-  getDateRangeStatus,
-  renderShortDateWithYearFormat,
-  findHowManyDaysLeft,
-} from "helpers/date-time.helper";
+import { getDateRangeStatus, renderShortDateWithYearFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
 import { ICycle } from "types";
@@ -93,12 +84,9 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
   const startDate = new Date(cycle.start_date ?? "");
 
   const handleCopyText = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`
-    ).then(() => {
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",
@@ -110,10 +98,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
   const progressIndicatorData = stateGroups.map((group, index) => ({
     id: index,
     name: group.title,
-    value:
-      cycle.total_issues > 0
-        ? ((cycle[group.key as keyof ICycle] as number) / cycle.total_issues) * 100
-        : 0,
+    value: cycle.total_issues > 0 ? ((cycle[group.key as keyof ICycle] as number) / cycle.total_issues) * 100 : 0,
     color: group.color,
   }));
 
@@ -150,9 +135,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                     />
                   </span>
                   <Tooltip tooltipContent={cycle.name} className="break-words" position="top-left">
-                    <h3 className="break-words text-lg font-semibold">
-                      {truncateText(cycle.name, 15)}
-                    </h3>
+                    <h3 className="break-words text-lg font-semibold">{truncateText(cycle.name, 15)}</h3>
                   </Tooltip>
                 </span>
                 <span className="flex items-center gap-1 capitalize">
@@ -184,9 +167,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                       <span className="flex gap-1 whitespace-nowrap">
                         {cycle.total_issues - cycle.completed_issues > 0 && (
                           <Tooltip
-                            tooltipContent={`${
-                              cycle.total_issues - cycle.completed_issues
-                            } more pending ${
+                            tooltipContent={`${cycle.total_issues - cycle.completed_issues} more pending ${
                               cycle.total_issues - cycle.completed_issues === 1 ? "issue" : "issues"
                             }`}
                           >
@@ -357,10 +338,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                   </Tooltip>
                   <Disclosure.Button>
                     <span className="p-1">
-                      <ChevronDownIcon
-                        className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
-                        aria-hidden="true"
-                      />
+                      <ChevronDownIcon className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`} aria-hidden="true" />
                     </span>
                   </Disclosure.Button>
                 </div>
@@ -370,10 +348,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                       <div className="col-span-2 space-y-3 px-4">
                         <div className="space-y-3 text-xs">
                           {stateGroups.map((group) => (
-                            <div
-                              key={group.key}
-                              className="flex items-center justify-between gap-2"
-                            >
+                            <div key={group.key} className="flex items-center justify-between gap-2">
                               <div className="flex  items-center gap-2">
                                 <span
                                   className="block h-2 w-2 rounded-full"
@@ -390,9 +365,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                                     -{" "}
                                     {cycle.total_issues > 0
                                       ? `${Math.round(
-                                          ((cycle[group.key as keyof ICycle] as number) /
-                                            cycle.total_issues) *
-                                            100
+                                          ((cycle[group.key as keyof ICycle] as number) / cycle.total_issues) * 100
                                         )}%`
                                       : "0%"}
                                   </span>

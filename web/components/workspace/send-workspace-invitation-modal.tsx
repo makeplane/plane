@@ -1,21 +1,18 @@
 import React, { useEffect } from "react";
-
-// swr
 import { mutate } from "swr";
-// react-hook-form
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-// headless
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, Input, PrimaryButton, SecondaryButton } from "components/ui";
+import { CustomSelect } from "components/ui";
+import { Button, Input } from "@plane/ui";
 // icons
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
-import { ICurrentUserResponse } from "types";
+import { IUser } from "types";
 // constants
 import { ROLE } from "constants/workspace";
 import { WORKSPACE_INVITATIONS } from "constants/fetch-keys";
@@ -24,7 +21,7 @@ type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   workspace_slug: string;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   onSuccess: () => void;
 };
 
@@ -45,6 +42,8 @@ const defaultValues: FormValues = {
     },
   ],
 };
+
+const workspaceService = new WorkspaceService();
 
 const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
   const { isOpen, setIsOpen, workspace_slug, user, onSuccess } = props;
@@ -77,7 +76,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
 
     await workspaceService
       .inviteWorkspace(workspace_slug, payload, user)
-      .then(async (res) => {
+      .then(async () => {
         setIsOpen(false);
         handleClose();
         setToastAlert({
@@ -145,16 +144,11 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
                   }}
                 >
                   <div className="space-y-5">
-                    <Dialog.Title
-                      as="h3"
-                      className="text-lg font-medium leading-6 text-custom-text-100"
-                    >
+                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                       Invite people to collaborate
                     </Dialog.Title>
                     <div className="mt-2">
-                      <p className="text-sm text-custom-text-200">
-                        Invite members to work on your workspace.
-                      </p>
+                      <p className="text-sm text-custom-text-200">Invite members to work on your workspace.</p>
                     </div>
 
                     <div className="space-y-4 mb-3">
@@ -171,12 +165,18 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
                                   message: "Invalid Email ID",
                                 },
                               }}
-                              render={({ field }) => (
+                              render={({ field: { value, onChange, ref } }) => (
                                 <>
                                   <Input
-                                    {...field}
-                                    className="text-xs sm:text-sm"
+                                    id={`emails.${index}.email`}
+                                    name={`emails.${index}.email`}
+                                    type="text"
+                                    value={value}
+                                    onChange={onChange}
+                                    ref={ref}
+                                    hasError={Boolean(errors.emails?.[index]?.email)}
                                     placeholder="Enter their email..."
+                                    className="text-xs sm:text-sm w-full"
                                   />
                                   {errors.emails?.[index]?.email && (
                                     <span className="ml-1 text-red-500 text-xs">
@@ -233,10 +233,12 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
                       Add more
                     </button>
                     <div className="flex items-center gap-2">
-                      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                      <PrimaryButton type="submit" loading={isSubmitting}>
+                      <Button variant="neutral-primary" onClick={handleClose}>
+                        Cancel
+                      </Button>
+                      <Button variant="primary" type="submit" loading={isSubmitting}>
                         {isSubmitting ? "Sending Invitation..." : "Send Invitation"}
-                      </PrimaryButton>
+                      </Button>
                     </div>
                   </div>
                 </form>

@@ -6,28 +6,22 @@ import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // ui components
-import {
-  ToggleSwitch,
-  PrimaryButton,
-  SecondaryButton,
-  Icon,
-  DangerButton,
-  Loader,
-} from "components/ui";
+import { Button, Loader, ToggleSwitch } from "@plane/ui";
+import { Icon } from "components/ui";
 import { CustomPopover } from "./popover";
 // mobx react lite
 import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
-import { IProjectPublishSettings, TProjectPublishViews } from "store/project-publish";
+import { IProjectPublishSettings, TProjectPublishViews } from "store/project";
 // hooks
 import useToast from "hooks/use-toast";
 import useProjectDetails from "hooks/use-project-details";
 import useUser from "hooks/use-user";
 
 type Props = {
-  // user: ICurrentUserResponse | undefined;
+  // user: IUser | undefined;
 };
 
 type FormData = {
@@ -65,22 +59,20 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
 
   let plane_deploy_url = process.env.NEXT_PUBLIC_DEPLOY_URL;
 
-  if (typeof window !== 'undefined' && !plane_deploy_url) {
-    plane_deploy_url= window.location.protocol + "//" + window.location.host + "/spaces";
+  if (typeof window !== "undefined" && !plane_deploy_url) {
+    plane_deploy_url = window.location.protocol + "//" + window.location.host + "/spaces";
   }
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
+  // store
   const store: RootStore = useMobxStore();
   const { projectPublish } = store;
-
+  // hooks
   const { user } = useUser();
-
   const { mutateProjectDetails } = useProjectDetails();
-
   const { setToastAlert } = useToast();
-
+  // form info
   const {
     control,
     formState: { isSubmitting },
@@ -94,17 +86,13 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
 
   const handleClose = () => {
     projectPublish.handleProjectModal(null);
-
     setIsUpdateRequired(false);
     reset({ ...defaultValues });
   };
 
   // prefill form with the saved settings if the project is already published
   useEffect(() => {
-    if (
-      projectPublish.projectPublishSettings &&
-      projectPublish.projectPublishSettings !== "not-initialized"
-    ) {
+    if (projectPublish.projectPublishSettings && projectPublish.projectPublishSettings !== "not-initialized") {
       let userBoards: TProjectPublishViews[] = [];
 
       if (projectPublish.projectPublishSettings?.views) {
@@ -143,11 +131,7 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
       projectPublish.project_id !== null &&
       projectPublish?.projectPublishSettings === "not-initialized"
     ) {
-      projectPublish.getProjectSettingsAsync(
-        workspaceSlug.toString(),
-        projectPublish.project_id,
-        null
-      );
+      projectPublish.getProjectSettingsAsync(workspaceSlug.toString(), projectPublish.project_id, null);
     }
   }, [workspaceSlug, projectPublish, projectPublish.projectPublishModal]);
 
@@ -202,12 +186,7 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
     setIsUnpublishing(true);
 
     projectPublish
-      .unPublishProject(
-        workspaceSlug.toString(),
-        projectPublish.project_id as string,
-        publishId,
-        null
-      )
+      .unPublishProject(workspaceSlug.toString(), projectPublish.project_id as string, publishId, null)
       .then((res) => {
         mutateProjectDetails();
 
@@ -269,11 +248,7 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
 
   // check if an update is required or not
   const checkIfUpdateIsRequired = () => {
-    if (
-      !projectPublish.projectPublishSettings ||
-      projectPublish.projectPublishSettings === "not-initialized"
-    )
-      return;
+    if (!projectPublish.projectPublishSettings || projectPublish.projectPublishSettings === "not-initialized") return;
 
     const currentSettings = projectPublish.projectPublishSettings as IProjectPublishSettings;
     const newSettings = getValues();
@@ -289,8 +264,7 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
 
     let viewCheckFlag = 0;
     viewOptions.forEach((option) => {
-      if (currentSettings.views[option.key] !== newSettings.views.includes(option.key))
-        viewCheckFlag++;
+      if (currentSettings.views[option.key] !== newSettings.views.includes(option.key)) viewCheckFlag++;
     });
 
     if (viewCheckFlag !== 0) {
@@ -333,13 +307,13 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
                   <div className="px-6 pt-4 flex items-center justify-between gap-2">
                     <h5 className="font-semibold text-xl inline-block">Publish</h5>
                     {projectPublish.projectPublishSettings !== "not-initialized" && (
-                      <DangerButton
+                      <Button
+                        variant="danger"
                         onClick={() => handleUnpublishProject(watch("id") ?? "")}
-                        className="!px-2 !py-1.5"
                         loading={isUnpublishing}
                       >
                         {isUnpublishing ? "Unpublishing..." : "Unpublish"}
-                      </DangerButton>
+                      </Button>
                     )}
                   </div>
 
@@ -416,9 +390,7 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
                                       }}
                                     >
                                       <div className="text-sm">{option.label}</div>
-                                      <div
-                                        className={`w-[18px] h-[18px] relative flex justify-center items-center`}
-                                      >
+                                      <div className={`w-[18px] h-[18px] relative flex justify-center items-center`}>
                                         {value.length > 0 && value.includes(option.key) && (
                                           <Icon iconName="done" className="!text-lg" />
                                         )}
@@ -504,19 +476,21 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
                     </div>
                     {!projectPublish.fetchSettingsLoader && (
                       <div className="relative flex items-center gap-2">
-                        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                        <Button variant="neutral-primary" onClick={handleClose}>
+                          Cancel
+                        </Button>
                         {watch("id") ? (
                           <>
                             {isUpdateRequired && (
-                              <PrimaryButton type="submit" loading={isSubmitting}>
+                              <Button variant="primary" type="submit" loading={isSubmitting}>
                                 {isSubmitting ? "Updating..." : "Update settings"}
-                              </PrimaryButton>
+                              </Button>
                             )}
                           </>
                         ) : (
-                          <PrimaryButton type="submit" loading={isSubmitting}>
+                          <Button variant="primary" type="submit" loading={isSubmitting}>
                             {isSubmitting ? "Publishing..." : "Publish"}
-                          </PrimaryButton>
+                          </Button>
                         )}
                       </div>
                     )}

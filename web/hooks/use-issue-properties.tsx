@@ -1,13 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
-
 import useSWR from "swr";
-
 // services
-import issueServices from "services/issues.service";
+import { IssueService } from "services/issue";
 // hooks
 import useUser from "hooks/use-user";
 // types
 import { IssuePriorities, Properties } from "types";
+
+const issueService = new IssueService();
 
 const initialValues: Properties = {
   assignee: true,
@@ -31,12 +31,8 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
   const { user } = useUser();
 
   const { data: issueProperties, mutate: mutateIssueProperties } = useSWR<IssuePriorities>(
-    workspaceSlug && projectId
-      ? `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-properties/`
-      : null,
-    workspaceSlug && projectId
-      ? () => issueServices.getIssueProperties(workspaceSlug, projectId)
-      : null
+    workspaceSlug && projectId ? `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-properties/` : null,
+    workspaceSlug && projectId ? () => issueService.getIssueProperties(workspaceSlug, projectId) : null
   );
 
   useEffect(() => {
@@ -45,12 +41,12 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
     setProperties({ ...initialValues, ...issueProperties.properties });
 
     if (Object.keys(issueProperties).length === 0)
-      issueServices.createIssueProperties(workspaceSlug, projectId, {
+      issueService.createIssueProperties(workspaceSlug, projectId, {
         properties: { ...initialValues },
         user: user.id,
       });
     else if (Object.keys(issueProperties?.properties).length === 0)
-      issueServices.patchIssueProperties(workspaceSlug, projectId, issueProperties.id, {
+      issueService.patchIssueProperties(workspaceSlug, projectId, issueProperties.id, {
         properties: { ...initialValues },
         user: user.id,
       });
@@ -68,11 +64,11 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
             ({
               ...prev,
               properties: { ...prev?.properties, [key]: !prev?.properties?.[key] },
-            }) as IssuePriorities,
+            } as IssuePriorities),
           false
         );
         if (Object.keys(issueProperties).length > 0) {
-          issueServices.patchIssueProperties(workspaceSlug, projectId, issueProperties.id, {
+          issueService.patchIssueProperties(workspaceSlug, projectId, issueProperties.id, {
             properties: {
               ...issueProperties.properties,
               [key]: !issueProperties.properties[key],
@@ -80,7 +76,7 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
             user: user.id,
           });
         } else {
-          issueServices.createIssueProperties(workspaceSlug, projectId, {
+          issueService.createIssueProperties(workspaceSlug, projectId, {
             properties: { ...initialValues },
             user: user.id,
           });

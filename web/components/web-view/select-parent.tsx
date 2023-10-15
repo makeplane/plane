@@ -1,24 +1,15 @@
-// react
 import React, { useState } from "react";
-
-// next
 import { useRouter } from "next/router";
-
-// swr
 import useSWR from "swr";
 
 // services
-import issuesService from "services/issues.service";
-
-// fetch key
+import { IssueService } from "services/issue";
+// constants
 import { ISSUE_DETAILS } from "constants/fetch-keys";
-
 // components
 import { IssuesSelectBottomSheet } from "components/web-view";
-
 // icons
 import { ChevronDown, X } from "lucide-react";
-
 // types
 import { ISearchIssueResponse } from "types";
 
@@ -27,6 +18,8 @@ type Props = {
   onChange: (value: any) => void;
   disabled?: boolean;
 };
+
+const issueService = new IssueService();
 
 export const ParentSelect: React.FC<Props> = (props) => {
   const { onChange, disabled = false } = props;
@@ -40,8 +33,7 @@ export const ParentSelect: React.FC<Props> = (props) => {
   const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId.toString()) : null,
     workspaceSlug && projectId && issueId
-      ? () =>
-          issuesService.retrieve(workspaceSlug.toString(), projectId.toString(), issueId.toString())
+      ? () => issueService.retrieve(workspaceSlug.toString(), projectId.toString(), issueId.toString())
       : null
   );
 
@@ -98,9 +90,7 @@ export const ParentSelect: React.FC<Props> = (props) => {
           onClick={() => {
             setIsParentModalOpen(true);
           }}
-          className={
-            "relative w-full px-2.5 py-0.5 text-base flex justify-between items-center gap-0.5"
-          }
+          className={"relative w-full px-2.5 py-0.5 text-base flex justify-between items-center gap-0.5"}
         >
           <span className="text-custom-text-200">Select issue</span>
           <ChevronDown className="w-4 h-4 text-custom-text-200" />

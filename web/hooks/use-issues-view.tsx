@@ -1,16 +1,13 @@
 import { useContext, useMemo } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // contexts
 import { issueViewContext } from "contexts/issue-view.context";
 // services
-import issuesService from "services/issues.service";
-import cyclesService from "services/cycles.service";
-import modulesService from "services/modules.service";
-import stateService from "services/state.service";
+import { IssueService, IssueArchiveService, IssueDraftService } from "services/issue";
+import { CycleService } from "services/cycle.service";
+import { ModuleService } from "services/module.service";
+import { ProjectStateService } from "services/project";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // types
@@ -25,6 +22,14 @@ import {
   STATES_LIST,
   VIEW_ISSUES,
 } from "constants/fetch-keys";
+
+// services
+const issueService = new IssueService();
+const issueArchiveService = new IssueArchiveService();
+const issueDraftService = new IssueDraftService();
+const cycleService = new CycleService();
+const moduleService = new ModuleService();
+const projectStateService = new ProjectStateService();
 
 const useIssuesView = () => {
   const {
@@ -56,12 +61,9 @@ const useIssuesView = () => {
   };
 
   const { data: projectIssues, mutate: mutateProjectIssues } = useSWR(
+    workspaceSlug && projectId && params ? PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params) : null,
     workspaceSlug && projectId && params
-      ? PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params)
-      : null,
-    workspaceSlug && projectId && params
-      ? () =>
-          issuesService.getIssuesWithParams(workspaceSlug as string, projectId as string, params)
+      ? () => issueService.getIssuesWithParams(workspaceSlug as string, projectId as string, params)
       : null
   );
 
@@ -70,7 +72,7 @@ const useIssuesView = () => {
       ? PROJECT_ARCHIVED_ISSUES_LIST_WITH_PARAMS(projectId as string, params)
       : null,
     workspaceSlug && projectId && params && isArchivedIssues && !archivedIssueId
-      ? () => issuesService.getArchivedIssues(workspaceSlug as string, projectId as string, params)
+      ? () => issueArchiveService.getArchivedIssues(workspaceSlug as string, projectId as string, params)
       : null
   );
 
@@ -79,32 +81,23 @@ const useIssuesView = () => {
       ? PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS(projectId as string, params)
       : null,
     workspaceSlug && projectId && params && isDraftIssues && !archivedIssueId
-      ? () => issuesService.getDraftIssues(workspaceSlug as string, projectId as string, params)
+      ? () => issueDraftService.getDraftIssues(workspaceSlug as string, projectId as string, params)
       : null
   );
 
   const { data: cycleIssues, mutate: mutateCycleIssues } = useSWR(
-    workspaceSlug && projectId && cycleId && params
-      ? CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params)
-      : null,
+    workspaceSlug && projectId && cycleId && params ? CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params) : null,
     workspaceSlug && projectId && cycleId && params
       ? () =>
-          cyclesService.getCycleIssuesWithParams(
-            workspaceSlug as string,
-            projectId as string,
-            cycleId as string,
-            params
-          )
+          cycleService.getCycleIssuesWithParams(workspaceSlug as string, projectId as string, cycleId as string, params)
       : null
   );
 
   const { data: moduleIssues, mutate: mutateModuleIssues } = useSWR(
-    workspaceSlug && projectId && moduleId && params
-      ? MODULE_ISSUES_WITH_PARAMS(moduleId as string, params)
-      : null,
+    workspaceSlug && projectId && moduleId && params ? MODULE_ISSUES_WITH_PARAMS(moduleId as string, params) : null,
     workspaceSlug && projectId && moduleId && params
       ? () =>
-          modulesService.getModuleIssuesWithParams(
+          moduleService.getModuleIssuesWithParams(
             workspaceSlug as string,
             projectId as string,
             moduleId as string,
@@ -116,21 +109,18 @@ const useIssuesView = () => {
   const { data: viewIssues, mutate: mutateViewIssues } = useSWR(
     workspaceSlug && projectId && viewId && params ? VIEW_ISSUES(viewId.toString(), params) : null,
     workspaceSlug && projectId && viewId && params
-      ? () =>
-          issuesService.getIssuesWithParams(workspaceSlug.toString(), projectId.toString(), params)
+      ? () => issueService.getIssuesWithParams(workspaceSlug.toString(), projectId.toString(), params)
       : null
   );
 
   const { data: states } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
+      ? () => projectStateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
   const statesList = getStatesList(states);
-  const activeStatesList = statesList?.filter(
-    (state) => state.group === "started" || state.group === "unstarted"
-  );
+  const activeStatesList = statesList?.filter((state) => state.group === "started" || state.group === "unstarted");
   const backlogStatesList = statesList?.filter((state) => state.group === "backlog");
 
   const stateIds =
@@ -141,8 +131,7 @@ const useIssuesView = () => {
       : statesList?.map((state) => state.id);
 
   const filteredStateIds =
-    (filters && filters?.state ? stateIds?.filter((s) => filters.state?.includes(s)) : stateIds) ??
-    [];
+    (filters && filters?.state ? stateIds?.filter((s) => filters.state?.includes(s)) : stateIds) ?? [];
 
   const emptyStatesObject: { [key: string]: [] } = {};
   for (let i = 0; i < filteredStateIds.length; i++) {

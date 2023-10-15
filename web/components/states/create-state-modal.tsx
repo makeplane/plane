@@ -1,36 +1,30 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// react-color
 import { TwitterPicker } from "react-color";
-// headless ui
 import { Dialog, Popover, Transition } from "@headlessui/react";
 // services
-import stateService from "services/state.service";
+import { ProjectStateService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { CustomSelect } from "components/ui";
+import { Button, Input, TextArea } from "@plane/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 // types
-import type { ICurrentUserResponse, IState, IStateResponse } from "types";
+import type { IUser, IState, IStateResponse } from "types";
 // fetch keys
 import { STATES_LIST } from "constants/fetch-keys";
 // constants
 import { GROUP_CHOICES } from "constants/project";
-
 // types
 type Props = {
   isOpen: boolean;
   projectId: string;
   handleClose: () => void;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
 const defaultValues: Partial<IState> = {
@@ -40,6 +34,8 @@ const defaultValues: Partial<IState> = {
   group: "backlog",
 };
 
+const projectStateService = new ProjectStateService();
+
 export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClose, user }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -47,7 +43,6 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
   const { setToastAlert } = useToast();
 
   const {
-    register,
     formState: { errors, isSubmitting },
     handleSubmit,
     watch,
@@ -69,7 +64,7 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
       ...formData,
     };
 
-    await stateService
+    await projectStateService
       .createState(workspaceSlug as string, projectId, payload, user)
       .then((res) => {
         mutate<IStateResponse>(
@@ -131,26 +126,35 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-80 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div>
-                    <Dialog.Title
-                      as="h3"
-                      className="text-lg font-medium leading-6 text-custom-text-100"
-                    >
+                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                       Create State
                     </Dialog.Title>
                     <div className="mt-2 space-y-3">
                       <div>
-                        <Input
-                          id="name"
-                          label="Name"
+                        <Controller
+                          control={control}
                           name="name"
-                          type="name"
-                          placeholder="Enter name"
-                          autoComplete="off"
-                          error={errors.name}
-                          register={register}
-                          validations={{
+                          rules={{
                             required: "Name is required",
                           }}
+                          render={({ field: { value, onChange, ref } }) => (
+                            <>
+                              <label htmlFor="name" className="text-custom-text-200 mb-2">
+                                Name
+                              </label>
+                              <Input
+                                id="name"
+                                name="name"
+                                type="text"
+                                value={value}
+                                onChange={onChange}
+                                ref={ref}
+                                hasError={Boolean(errors.name)}
+                                placeholder="Enter name"
+                                className="w-full"
+                              />
+                            </>
+                          )}
                         />
                       </div>
                       <div>
@@ -215,10 +219,7 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                                     name="color"
                                     control={control}
                                     render={({ field: { value, onChange } }) => (
-                                      <TwitterPicker
-                                        color={value}
-                                        onChange={(value) => onChange(value.hex)}
-                                      />
+                                      <TwitterPicker color={value} onChange={(value) => onChange(value.hex)} />
                                     )}
                                   />
                                 </Popover.Panel>
@@ -228,22 +229,33 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                         </Popover>
                       </div>
                       <div>
-                        <TextArea
-                          id="description"
+                        <label htmlFor="description" className="mb-2 text-custom-text-200">
+                          Description
+                        </label>
+                        <Controller
                           name="description"
-                          label="Description"
-                          placeholder="Enter description"
-                          error={errors.description}
-                          register={register}
+                          control={control}
+                          render={({ field: { value, onChange } }) => (
+                            <TextArea
+                              id="description"
+                              name="description"
+                              value={value}
+                              placeholder="Enter description"
+                              onChange={onChange}
+                              hasError={Boolean(errors?.description)}
+                            />
+                          )}
                         />
                       </div>
                     </div>
                   </div>
                   <div className="mt-5 flex justify-end gap-2">
-                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
-                    <PrimaryButton type="submit" loading={isSubmitting}>
+                    <Button variant="neutral-primary" onClick={onClose}>
+                      Cancel
+                    </Button>
+                    <Button variant="primary" type="submit" loading={isSubmitting}>
                       {isSubmitting ? "Creating State..." : "Create State"}
-                    </PrimaryButton>
+                    </Button>
                   </div>
                 </form>
               </Dialog.Panel>

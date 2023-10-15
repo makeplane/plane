@@ -1,9 +1,7 @@
 import { useEffect, useCallback } from "react";
-
 import useSWR, { mutate } from "swr";
-
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // types
 import {
   IIssueDisplayFilterOptions,
@@ -14,6 +12,8 @@ import {
 } from "types";
 // fetch-keys
 import { WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
+
+const workspaceService = new WorkspaceService();
 
 const initialValues: IWorkspaceViewProps = {
   display_filters: {
@@ -103,12 +103,7 @@ const useMyIssuesFilters = (workspaceSlug: string | undefined) => {
         },
       };
 
-      if (
-        displayFilter.layout &&
-        displayFilter.layout === "kanban" &&
-        groupBy === null &&
-        payload.display_filters
-      )
+      if (displayFilter.layout && displayFilter.layout === "kanban" && groupBy === null && payload.display_filters)
         payload.display_filters.group_by = "state_detail.group";
 
       saveData(payload);

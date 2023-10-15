@@ -1,36 +1,28 @@
-// react
 import React, { useState } from "react";
-
-// next
 import { useRouter } from "next/router";
-
-// swr
 import useSWR, { mutate } from "swr";
 
 // icons
 import { X, PlusIcon } from "lucide-react";
-
 // services
-import issuesService from "services/issues.service";
-
+import { IssueService } from "services/issue";
 // fetch key
 import { SUB_ISSUES } from "constants/fetch-keys";
-
 // hooks
 import useUser from "hooks/use-user";
-
 // ui
 import { Spinner } from "components/ui";
-
 // components
 import { Label, IssuesSelectBottomSheet, DeleteConfirmation } from "components/web-view";
-
 // types
 import { IIssue, ISearchIssueResponse } from "types";
 
 type Props = {
   issueDetails?: IIssue;
 };
+
+// services
+const issueService = new IssueService();
 
 export const SubIssueList: React.FC<Props> = (props) => {
   const { issueDetails } = props;
@@ -48,8 +40,7 @@ export const SubIssueList: React.FC<Props> = (props) => {
   const { data: subIssuesResponse } = useSWR(
     workspaceSlug && issueDetails ? SUB_ISSUES(issueDetails.id) : null,
     workspaceSlug && issueDetails
-      ? () =>
-          issuesService.subIssues(workspaceSlug as string, issueDetails.project, issueDetails.id)
+      ? () => issueService.subIssues(workspaceSlug as string, issueDetails.project, issueDetails.id)
       : null
   );
 
@@ -74,7 +65,7 @@ export const SubIssueList: React.FC<Props> = (props) => {
       false
     );
 
-    issuesService
+    issueService
       .patchIssue(workspaceSlug.toString(), issue.project, issue.id, { parent: null }, user)
       .finally(() => mutate(SUB_ISSUES(issueDetails.id)));
   };
@@ -85,7 +76,7 @@ export const SubIssueList: React.FC<Props> = (props) => {
     const payload = {
       sub_issue_ids: data.map((i) => i.id),
     };
-    await issuesService
+    await issueService
       .addSubIssues(workspaceSlug.toString(), projectId.toString(), issueId.toString(), payload)
       .finally(() => {
         mutate(SUB_ISSUES(issueId.toString()));

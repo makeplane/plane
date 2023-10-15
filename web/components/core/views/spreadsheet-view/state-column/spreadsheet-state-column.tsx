@@ -5,22 +5,22 @@ import { StateColumn } from "components/core";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
-import { ICurrentUserResponse, IIssue, Properties } from "types";
+import { IUser, IIssue, Properties } from "types";
 
 type Props = {
   issue: IIssue;
   projectId: string;
-  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
+  handleUpdateIssue: (issueId: string, data: Partial<IIssue>) => void;
   expandedIssues: string[];
   properties: Properties;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   isNotAllowed: boolean;
 };
 
 export const SpreadsheetStateColumn: React.FC<Props> = ({
   issue,
   projectId,
-  partialUpdateIssue,
+  handleUpdateIssue,
   expandedIssues,
   properties,
   user,
@@ -32,25 +32,27 @@ export const SpreadsheetStateColumn: React.FC<Props> = ({
 
   return (
     <div>
-      <StateColumn
-        issue={issue}
-        projectId={projectId}
-        properties={properties}
-        partialUpdateIssue={partialUpdateIssue}
-        user={user}
-        isNotAllowed={isNotAllowed}
-      />
+      {user && (
+        <StateColumn
+          issue={issue}
+          projectId={projectId}
+          properties={properties}
+          onChange={(data) => handleUpdateIssue(issue.id, data)}
+          user={user}
+          isNotAllowed={isNotAllowed}
+        />
+      )}
 
       {isExpanded &&
         !isLoading &&
         subIssues &&
         subIssues.length > 0 &&
-        subIssues.map((subIssue: IIssue) => (
+        subIssues.map((subIssue) => (
           <SpreadsheetStateColumn
             key={subIssue.id}
             issue={subIssue}
             projectId={subIssue.project_detail.id}
-            partialUpdateIssue={partialUpdateIssue}
+            handleUpdateIssue={handleUpdateIssue}
             expandedIssues={expandedIssues}
             properties={properties}
             user={user}

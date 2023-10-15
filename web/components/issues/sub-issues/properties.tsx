@@ -1,6 +1,9 @@
 import React from "react";
 // swr
 import { mutate } from "swr";
+// services
+import { IssueService } from "services/issue";
+import { TrackEventService } from "services/track_event.service";
 // components
 import { ViewDueDateSelect, ViewStartDateSelect } from "components/issues";
 import { MembersSelect, PrioritySelect } from "components/project";
@@ -8,21 +11,22 @@ import { StateSelect } from "components/states";
 // hooks
 import useIssuesProperties from "hooks/use-issue-properties";
 // types
-import { ICurrentUserResponse, IIssue, IState } from "types";
+import { IUser, IIssue, IState } from "types";
 // fetch-keys
 import { SUB_ISSUES } from "constants/fetch-keys";
-// services
-import issuesService from "services/issues.service";
-import trackEventServices from "services/track-event.service";
 
 export interface IIssueProperty {
   workspaceSlug: string;
   projectId: string;
   parentIssue: IIssue;
   issue: IIssue;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   editable: boolean;
 }
+
+// services
+const issueService = new IssueService();
+const trackEventService = new TrackEventService();
 
 export const IssueProperty: React.FC<IIssueProperty> = ({
   workspaceSlug,
@@ -36,7 +40,7 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
 
   const handlePriorityChange = (data: any) => {
     partialUpdateIssue({ priority: data });
-    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+    trackEventService.trackIssuePartialPropertyUpdateEvent(
       {
         workspaceSlug,
         workspaceId: issue.workspace,
@@ -46,7 +50,7 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
         issueId: issue.id,
       },
       "ISSUE_PROPERTY_UPDATE_PRIORITY",
-      user
+      user as IUser
     );
   };
 
@@ -58,7 +62,7 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
       state: data,
       state_detail: newState,
     });
-    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+    trackEventService.trackIssuePartialPropertyUpdateEvent(
       {
         workspaceSlug,
         workspaceId: issue.workspace,
@@ -68,10 +72,10 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
         issueId: issue.id,
       },
       "ISSUE_PROPERTY_UPDATE_STATE",
-      user
+      user as IUser
     );
     if (oldState?.group !== "completed" && newState?.group !== "completed") {
-      trackEventServices.trackIssueMarkedAsDoneEvent(
+      trackEventService.trackIssueMarkedAsDoneEvent(
         {
           workspaceSlug: issue.workspace_detail.slug,
           workspaceId: issue.workspace_detail.id,
@@ -80,7 +84,7 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
           projectName: issue.project_detail.name,
           issueId: issue.id,
         },
-        user
+        user as IUser
       );
     }
   };
@@ -95,7 +99,7 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
 
     partialUpdateIssue({ assignees_list: data, assignees: data });
 
-    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+    trackEventService.trackIssuePartialPropertyUpdateEvent(
       {
         workspaceSlug,
         workspaceId: issue.workspace,
@@ -105,7 +109,7 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
         issueId: issue.id,
       },
       "ISSUE_PROPERTY_UPDATE_ASSIGNEE",
-      user
+      user as IUser
     );
   };
 
@@ -123,13 +127,7 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
       false
     );
 
-    const issueResponse = await issuesService.patchIssue(
-      workspaceSlug as string,
-      issue.project,
-      issue.id,
-      data,
-      user
-    );
+    const issueResponse = await issueService.patchIssue(workspaceSlug as string, issue.project, issue.id, data, user);
 
     mutate(
       SUB_ISSUES(parentIssue.id),
@@ -182,12 +180,14 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
 
       {properties.due_date && issue.target_date && (
         <div className="flex-shrink-0 w-[104px]">
-          <ViewDueDateSelect
-            issue={issue}
-            partialUpdateIssue={partialUpdateIssue}
-            user={user}
-            isNotAllowed={!editable}
-          />
+          {user && (
+            <ViewDueDateSelect
+              issue={issue}
+              partialUpdateIssue={partialUpdateIssue}
+              user={user}
+              isNotAllowed={!editable}
+            />
+          )}
         </div>
       )}
 

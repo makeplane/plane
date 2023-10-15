@@ -9,9 +9,9 @@ import { Command } from "cmdk";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import workspaceService from "services/workspace.service";
-import issuesService from "services/issues.service";
-import inboxService from "services/inbox.service";
+import { WorkspaceService } from "services/workspace.service";
+import { IssueService } from "services/issue";
+import { InboxService } from "services/inbox.service";
 // hooks
 import useProjectDetails from "hooks/use-project-details";
 import useDebounce from "hooks/use-debounce";
@@ -26,7 +26,8 @@ import {
   commandGroups,
 } from "components/command-palette";
 // ui
-import { Icon, Loader, ToggleSwitch, Tooltip } from "components/ui";
+import { Icon } from "components/ui";
+import { Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
 import { DiscordIcon, GithubIcon, SettingIcon } from "components/icons";
 import { InboxIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
@@ -42,6 +43,11 @@ type Props = {
   isPaletteOpen: boolean;
   setIsPaletteOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
+
+// services
+const workspaceService = new WorkspaceService();
+const issueService = new IssueService();
+const inboxService = new InboxService();
 
 export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPaletteOpen }) => {
   const [placeholder, setPlaceholder] = useState("Type a command or search...");
@@ -79,16 +85,13 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
   const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
     workspaceSlug && projectId && issueId
-      ? () =>
-          issuesService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
+      ? () => issueService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
       : null
   );
 
   const { data: inboxList } = useSWR(
     workspaceSlug && projectId ? INBOX_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => inboxService.getInboxes(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => inboxService.getInboxes(workspaceSlug as string, projectId as string) : null
   );
 
   const updateIssue = useCallback(
@@ -110,7 +113,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
       );
 
       const payload = { ...formData };
-      await issuesService
+      await issueService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)
         .then(() => {
           mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
@@ -272,8 +275,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                 >
                   {issueDetails && (
                     <div className="overflow-hidden truncate rounded-md bg-custom-background-80 p-2 text-xs font-medium text-custom-text-200">
-                      {issueDetails.project_detail.identifier}-{issueDetails.sequence_id}{" "}
-                      {issueDetails.name}
+                      {issueDetails.project_detail.identifier}-{issueDetails.sequence_id} {issueDetails.name}
                     </div>
                   )}
                   {projectId && (
@@ -324,12 +326,9 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                     </h5>
                   )}
 
-                  {!isLoading &&
-                    resultsCount === 0 &&
-                    searchTerm !== "" &&
-                    debouncedSearchTerm !== "" && (
-                      <div className="my-4 text-center text-custom-text-200">No results found.</div>
-                    )}
+                  {!isLoading && resultsCount === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && (
+                    <div className="my-4 text-center text-custom-text-200">No results found.</div>
+                  )}
 
                   {(isLoading || isSearching) && (
                     <Command.Loading>
@@ -362,9 +361,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                               >
                                 <div className="flex items-center gap-2 overflow-hidden text-custom-text-200">
                                   <Icon iconName={currentSection.icon} />
-                                  <p className="block flex-1 truncate">
-                                    {currentSection.itemName(item)}
-                                  </p>
+                                  <p className="block flex-1 truncate">{currentSection.itemName(item)}</p>
                                 </div>
                               </Command.Item>
                             ))}
@@ -577,9 +574,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                               <Command.Item
                                 onSelect={() => {
                                   setIsPaletteOpen(false);
-                                  redirect(
-                                    `/${workspaceSlug}/projects/${projectId}/inbox/${inboxList?.[0]?.id}`
-                                  );
+                                  redirect(`/${workspaceSlug}/projects/${projectId}/inbox/${inboxList?.[0]?.id}`);
                                 }}
                                 className="focus:outline-none"
                               >
@@ -672,10 +667,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         <Command.Item
                           onSelect={() => {
                             setIsPaletteOpen(false);
-                            window.open(
-                              "https://github.com/makeplane/plane/issues/new/choose",
-                              "_blank"
-                            );
+                            window.open("https://github.com/makeplane/plane/issues/new/choose", "_blank");
                           }}
                           className="focus:outline-none"
                         >
@@ -759,29 +751,15 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                     </>
                   )}
                   {page === "change-issue-state" && issueDetails && (
-                    <ChangeIssueState
-                      issue={issueDetails}
-                      setIsPaletteOpen={setIsPaletteOpen}
-                      user={user}
-                    />
+                    <ChangeIssueState issue={issueDetails} setIsPaletteOpen={setIsPaletteOpen} user={user} />
                   )}
                   {page === "change-issue-priority" && issueDetails && (
-                    <ChangeIssuePriority
-                      issue={issueDetails}
-                      setIsPaletteOpen={setIsPaletteOpen}
-                      user={user}
-                    />
+                    <ChangeIssuePriority issue={issueDetails} setIsPaletteOpen={setIsPaletteOpen} user={user} />
                   )}
                   {page === "change-issue-assignee" && issueDetails && (
-                    <ChangeIssueAssignee
-                      issue={issueDetails}
-                      setIsPaletteOpen={setIsPaletteOpen}
-                      user={user}
-                    />
+                    <ChangeIssueAssignee issue={issueDetails} setIsPaletteOpen={setIsPaletteOpen} user={user} />
                   )}
-                  {page === "change-interface-theme" && (
-                    <ChangeInterfaceTheme setIsPaletteOpen={setIsPaletteOpen} />
-                  )}
+                  {page === "change-interface-theme" && <ChangeInterfaceTheme setIsPaletteOpen={setIsPaletteOpen} />}
                 </Command.List>
               </Command>
             </Dialog.Panel>

@@ -1,14 +1,11 @@
-import React, { useState, useEffect } from "react";
-
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
 // services
-import appinstallationsService from "services/app-installations.service";
+import { AppInstallationService } from "services/app_installation.service";
 // ui
-import { Loader } from "components/ui";
+import { Loader } from "@plane/ui";
 // hooks
-import useToast from "hooks/use-toast";
 import useIntegrationPopup from "hooks/use-integration-popup";
 // types
 import { IWorkspaceIntegration, ISlackIntegration } from "types";
@@ -19,9 +16,10 @@ type Props = {
   integration: IWorkspaceIntegration;
 };
 
+const appInstallationService = new AppInstallationService();
+
 export const SelectChannel: React.FC<Props> = ({ integration }) => {
-  const [slackChannelAvailabilityToggle, setSlackChannelAvailabilityToggle] =
-    useState<boolean>(false);
+  const [slackChannelAvailabilityToggle, setSlackChannelAvailabilityToggle] = useState<boolean>(false);
   const [slackChannel, setSlackChannel] = useState<ISlackIntegration | null>(null);
 
   const router = useRouter();
@@ -35,7 +33,7 @@ export const SelectChannel: React.FC<Props> = ({ integration }) => {
       : null,
     () =>
       workspaceSlug && projectId && integration.id
-        ? appinstallationsService.getSlackChannelDetail(
+        ? appInstallationService.getSlackChannelDetail(
             workspaceSlug as string,
             projectId as string,
             integration.id as string
@@ -64,13 +62,8 @@ export const SelectChannel: React.FC<Props> = ({ integration }) => {
       setSlackChannelAvailabilityToggle(false);
       setSlackChannel(null);
     });
-    appinstallationsService
-      .removeSlackChannel(
-        workspaceSlug as string,
-        projectId as string,
-        integration.id as string,
-        slackChannel?.id
-      )
+    appInstallationService
+      .removeSlackChannel(workspaceSlug as string, projectId as string, integration.id as string, slackChannel?.id)
       .catch((err) => console.log(err));
   };
 

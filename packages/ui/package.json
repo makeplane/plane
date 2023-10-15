@@ -1,23 +1,40 @@
 {
-  "name": "ui",
-  "version": "0.13.2",
-  "main": "./index.tsx",
-  "types": "./index.tsx",
+  "name": "@plane/ui",
+  "version": "0.0.1",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
   "license": "MIT",
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
-    "lint": "eslint *.ts*"
+    "build": "tsup src/index.tsx --format esm,cjs --dts --external react",
+    "dev": "tsup src/index.tsx --format esm,cjs --watch --dts --external react",
+    "lint": "eslint src/",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "devDependencies": {
-    "@types/react": "^18.0.17",
-    "@types/react-dom": "^18.0.6",
-    "@typescript-eslint/eslint-plugin": "^5.51.0",
+    "@types/node": "^20.5.2",
+    "@types/react": "18.2.0",
+    "@types/react-dom": "18.2.0",
     "classnames": "^2.3.2",
-    "eslint": "^7.32.0",
     "eslint-config-custom": "*",
-    "next": "12.3.2",
     "react": "^18.2.0",
     "tsconfig": "*",
     "tailwind-config-custom": "*",
+    "tsup": "^5.10.1",
     "typescript": "4.7.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@blueprintjs/core": "^4.16.3",
+    "@blueprintjs/popover2": "^1.13.3",
+    "@headlessui/react": "^1.7.17",
+    "clsx": "^2.0.0",
+    "next-themes": "^0.2.1"
   }
 }

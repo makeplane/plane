@@ -1,41 +1,35 @@
 import React, { useState } from "react";
-
 import Link from "next/link";
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
 // services
-import modulesService from "services/modules.service";
+import { ModuleService } from "services/module.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
 import { DeleteModuleModal } from "components/modules";
 // ui
-import { AssigneesList, Avatar, CustomMenu, Tooltip } from "components/ui";
+import { AssigneesList, CustomMenu } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // icons
-import {
-  CalendarDaysIcon,
-  LinkIcon,
-  PencilIcon,
-  StarIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
-import { CalendarMonthIcon, TargetIcon } from "components/icons";
+import { CalendarDaysIcon, LinkIcon, PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { TargetIcon } from "components/icons";
 
 // helpers
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
-import { ICurrentUserResponse, IModule } from "types";
+import { IUser, IModule } from "types";
 // fetch-key
 import { MODULE_LIST } from "constants/fetch-keys";
 
 type Props = {
   module: IModule;
   handleEditModule: () => void;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
+
+const moduleService = new ModuleService();
 
 export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, user }) => {
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
@@ -45,8 +39,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
 
   const { setToastAlert } = useToast();
 
-  const completionPercentage =
-    ((module.completed_issues + module.cancelled_issues) / module.total_issues) * 100;
+  const completionPercentage = ((module.completed_issues + module.cancelled_issues) / module.total_issues) * 100;
 
   const handleDeleteModule = () => {
     if (!module) return;
@@ -67,7 +60,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
       false
     );
 
-    modulesService
+    moduleService
       .addModuleToFavorites(workspaceSlug as string, projectId as string, {
         module: module.id,
       })
@@ -93,24 +86,19 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
       false
     );
 
-    modulesService
-      .removeModuleFromFavorites(workspaceSlug as string, projectId as string, module.id)
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't remove the module from favorites. Please try again.",
-        });
+    moduleService.removeModuleFromFavorites(workspaceSlug as string, projectId as string, module.id).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Couldn't remove the module from favorites. Please try again.",
       });
+    });
   };
 
   const handleCopyText = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${projectId}/modules/${module.id}`
-    ).then(() => {
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/modules/${module.id}`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",
@@ -125,12 +113,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
 
   return (
     <>
-      <DeleteModuleModal
-        isOpen={moduleDeleteModal}
-        setIsOpen={setModuleDeleteModal}
-        data={module}
-        user={user}
-      />
+      <DeleteModuleModal isOpen={moduleDeleteModal} setIsOpen={setModuleDeleteModal} data={module} user={user} />
       <div className="flex flex-col divide-y divide-custom-border-200 overflow-hidden rounded-[10px] border border-custom-border-200 bg-custom-background-100 text-xs">
         <div className="p-4">
           <div className="flex w-full flex-col gap-5">

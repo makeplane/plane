@@ -14,10 +14,11 @@ import { Controller, useForm } from "react-hook-form";
 import WebViewLayout from "layouts/web-view-layout";
 
 // components
+import { Button, Spinner } from "@plane/ui";
 import { RichTextEditor } from "@plane/rich-text-editor";
-import { PrimaryButton, Spinner } from "components/ui";
-import fileService from "services/file.service";
 // services
+import { FileService } from "services/file.service";
+const fileService = new FileService();
 
 const Editor: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -59,9 +60,7 @@ const Editor: NextPage = () => {
                 deleteFile={fileService.deleteImage}
                 borderOnFocus={false}
                 value={
-                  !value ||
-                  value === "" ||
-                  (typeof value === "object" && Object.keys(value).length === 0)
+                  !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
                     ? watch("data_html")
                     : value
                 }
@@ -77,8 +76,9 @@ const Editor: NextPage = () => {
             )}
           />
           {isEditable && (
-            <PrimaryButton
-              className="mt-4 w-[calc(100%-30px)] h-[45px] mx-[15px] text-[17px] my-[15px]"
+            <Button
+              variant="primary"
+              className="mt-4 w-[calc(100%-30px)] h-[45px] mx-[15px] text-[17px]"
               onClick={() => {
                 console.log(
                   "submitted",
@@ -89,7 +89,7 @@ const Editor: NextPage = () => {
               }}
             >
               Submit
-            </PrimaryButton>
+            </Button>
           )}
         </div>
       )}

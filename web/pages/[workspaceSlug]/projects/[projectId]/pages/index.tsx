@@ -8,18 +8,18 @@ import useSWR from "swr";
 // headless ui
 import { Tab } from "@headlessui/react";
 // services
-import projectService from "services/project.service";
+import { ProjectService } from "services/project";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
 import useUserAuth from "hooks/use-user-auth";
 // icons
 import { PlusIcon } from "components/icons";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import { RecentPagesList, CreateUpdatePageModal, TPagesListProps } from "components/pages";
 // ui
-import { PrimaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { ListBulletIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
@@ -31,35 +31,26 @@ import { PROJECT_DETAILS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
 
-const AllPagesList = dynamic<TPagesListProps>(
-  () => import("components/pages").then((a) => a.AllPagesList),
-  {
-    ssr: false,
-  }
-);
+const AllPagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.AllPagesList), {
+  ssr: false,
+});
 
-const FavoritePagesList = dynamic<TPagesListProps>(
-  () => import("components/pages").then((a) => a.FavoritePagesList),
-  {
-    ssr: false,
-  }
-);
+const FavoritePagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.FavoritePagesList), {
+  ssr: false,
+});
 
-const MyPagesList = dynamic<TPagesListProps>(
-  () => import("components/pages").then((a) => a.MyPagesList),
-  {
-    ssr: false,
-  }
-);
+const MyPagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.MyPagesList), {
+  ssr: false,
+});
 
-const OtherPagesList = dynamic<TPagesListProps>(
-  () => import("components/pages").then((a) => a.OtherPagesList),
-  {
-    ssr: false,
-  }
-);
+const OtherPagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.OtherPagesList), {
+  ssr: false,
+});
 
 const tabsList = ["Recent", "All", "Favorites", "Created by me", "Created by others"];
+
+// services
+const projectService = new ProjectService();
 
 const ProjectPages: NextPage = () => {
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
@@ -75,9 +66,7 @@ const ProjectPages: NextPage = () => {
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => projectService.getProject(workspaceSlug as string, projectId as string) : null
   );
 
   const currentTabValue = (tab: string | null) => {
@@ -109,22 +98,20 @@ const ProjectPages: NextPage = () => {
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-            <BreadcrumbItem
-              title={`${truncateText(projectDetails?.name ?? "Project", 32)} Pages`}
-            />
+            <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Pages`} />
           </Breadcrumbs>
         }
         right={
-          <PrimaryButton
-            className="flex items-center gap-2"
+          <Button
+            variant="primary"
+            prependIcon={<PlusIcon />}
             onClick={() => {
               const e = new KeyboardEvent("keydown", { key: "d" });
               document.dispatchEvent(e);
             }}
           >
-            <PlusIcon className="h-4 w-4" />
             Create Page
-          </PrimaryButton>
+          </Button>
         }
       >
         <div className="space-y-5 p-8 h-full overflow-hidden flex flex-col">

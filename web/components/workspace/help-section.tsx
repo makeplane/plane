@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import Link from "next/link";
 import { Transition } from "@headlessui/react";
+import { observer } from "mobx-react-lite";
 
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -38,14 +39,15 @@ const helpOptions = [
 ];
 
 export interface WorkspaceHelpSectionProps {
-  setSidebarActive: React.Dispatch<React.SetStateAction<boolean>>;
+  setSidebarActive?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = ({ setSidebarActive }) => {
-  const store: any = useMobxStore();
-
+export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(() => {
+  // store
+  const { theme: themeStore } = useMobxStore();
+  // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
-
+  // refs
   const helpOptionsRef = useRef<HTMLDivElement | null>(null);
 
   useOutsideClickDetector(helpOptionsRef, () => setIsNeedHelpOpen(false));
@@ -54,23 +56,23 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = ({ setS
     <>
       <div
         className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 py-2 px-4 ${
-          store?.theme?.sidebarCollapsed ? "flex-col" : ""
+          themeStore?.sidebarCollapsed ? "flex-col" : ""
         }`}
       >
-        {!store?.theme?.sidebarCollapsed && (
+        {!themeStore?.sidebarCollapsed && (
           <div className="w-1/2 text-center cursor-default rounded-md px-2.5 py-1.5 font-medium outline-none text-sm bg-green-500/10 text-green-500">
             Free Plan
           </div>
         )}
         <div
           className={`flex items-center gap-1 ${
-            store?.theme?.sidebarCollapsed ? "flex-col justify-center" : "justify-evenly w-1/2"
+            themeStore?.sidebarCollapsed ? "flex-col justify-center" : "justify-evenly w-1/2"
           }`}
         >
           <button
             type="button"
             className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-90 outline-none ${
-              store?.theme?.sidebarCollapsed ? "w-full" : ""
+              themeStore?.sidebarCollapsed ? "w-full" : ""
             }`}
             onClick={() => {
               const e = new KeyboardEvent("keydown", {
@@ -84,7 +86,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = ({ setS
           <button
             type="button"
             className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-90 outline-none ${
-              store?.theme?.sidebarCollapsed ? "w-full" : ""
+              themeStore?.sidebarCollapsed ? "w-full" : ""
             }`}
             onClick={() => setIsNeedHelpOpen((prev) => !prev)}
           >
@@ -93,20 +95,20 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = ({ setS
           <button
             type="button"
             className="grid place-items-center rounded-md p-1.5 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-90 outline-none md:hidden"
-            onClick={() => setSidebarActive(false)}
+            onClick={() => themeStore.setSidebarCollapsed(!themeStore?.sidebarCollapsed)}
           >
             <WestOutlined fontSize="small" />
           </button>
           <button
             type="button"
             className={`hidden md:grid place-items-center rounded-md p-1.5 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-90 outline-none ${
-              store?.theme?.sidebarCollapsed ? "w-full" : ""
+              themeStore?.sidebarCollapsed ? "w-full" : ""
             }`}
-            onClick={() => store.theme.setSidebarCollapsed(!store?.theme?.sidebarCollapsed)}
+            onClick={() => themeStore.setSidebarCollapsed(!themeStore?.sidebarCollapsed)}
           >
             <WestOutlined
               fontSize="small"
-              className={`duration-300 ${store?.theme?.sidebarCollapsed ? "rotate-180" : ""}`}
+              className={`duration-300 ${themeStore?.sidebarCollapsed ? "rotate-180" : ""}`}
             />
           </button>
         </div>
@@ -123,7 +125,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = ({ setS
           >
             <div
               className={`absolute bottom-2 min-w-[10rem] ${
-                store?.theme?.sidebarCollapsed ? "left-full" : "-left-[75px]"
+                themeStore?.sidebarCollapsed ? "left-full" : "-left-[75px]"
               } rounded bg-custom-background-100 p-1 shadow-custom-shadow-xs whitespace-nowrap divide-y divide-custom-border-200`}
               ref={helpOptionsRef}
             >
@@ -166,4 +168,4 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = ({ setS
       </div>
     </>
   );
-};
+});

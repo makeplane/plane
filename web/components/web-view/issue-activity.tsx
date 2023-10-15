@@ -1,30 +1,20 @@
 // react
 import React from "react";
-
-// next
 import { useRouter } from "next/router";
-
-// swr
 import useSWR, { mutate } from "swr";
 
 // fetch key
 import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
-
 // services
-import issuesService from "services/issues.service";
-
+import { IssueService, IssueCommentService } from "services/issue";
 // hooks
 import useUser from "hooks/use-user";
-
 // components
 import { Label, AddComment, ActivityMessage, ActivityIcon, CommentCard } from "components/web-view";
-
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
-
 // ui
 import { Icon } from "components/ui";
-
 // types
 import type { IIssue, IIssueComment } from "types";
 
@@ -32,6 +22,10 @@ type Props = {
   allowed: boolean;
   issueDetails: IIssue;
 };
+
+// services
+const issueService = new IssueService();
+const issueCommentService = new IssueCommentService();
 
 export const IssueActivity: React.FC<Props> = (props) => {
   const { issueDetails, allowed } = props;
@@ -44,27 +38,15 @@ export const IssueActivity: React.FC<Props> = (props) => {
   const { data: issueActivities, mutate: mutateIssueActivity } = useSWR(
     workspaceSlug && projectId && issueId ? PROJECT_ISSUES_ACTIVITY(issueId.toString()) : null,
     workspaceSlug && projectId && issueId
-      ? () =>
-          issuesService.getIssueActivities(
-            workspaceSlug.toString(),
-            projectId.toString(),
-            issueId.toString()
-          )
+      ? () => issueService.getIssueActivities(workspaceSlug.toString(), projectId.toString(), issueId.toString())
       : null
   );
 
   const handleCommentUpdate = async (comment: any, formData: any) => {
     if (!workspaceSlug || !projectId || !issueId || !allowed) return;
 
-    await issuesService
-      .patchIssueComment(
-        workspaceSlug as string,
-        projectId as string,
-        issueId as string,
-        comment,
-        formData,
-        user
-      )
+    await issueCommentService
+      .patchIssueComment(workspaceSlug as string, projectId as string, issueId as string, comment, formData, user)
       .then(() => mutateIssueActivity())
       .catch(() =>
         console.log(
@@ -82,14 +64,8 @@ export const IssueActivity: React.FC<Props> = (props) => {
 
     mutateIssueActivity((prevData: any) => prevData?.filter((p: any) => p.id !== commentId), false);
 
-    await issuesService
-      .deleteIssueComment(
-        workspaceSlug as string,
-        projectId as string,
-        issueId as string,
-        commentId,
-        user
-      )
+    await issueCommentService
+      .deleteIssueComment(workspaceSlug as string, projectId as string, issueId as string, commentId, user)
       .then(() => mutateIssueActivity())
       .catch(() =>
         console.log(
@@ -105,14 +81,8 @@ export const IssueActivity: React.FC<Props> = (props) => {
   const handleAddComment = async (formData: IIssueComment) => {
     if (!workspaceSlug || !issueDetails || !allowed) return;
 
-    await issuesService
-      .createIssueComment(
-        workspaceSlug.toString(),
-        issueDetails.project,
-        issueDetails.id,
-        formData,
-        user
-      )
+    await issueCommentService
+      .createIssueComment(workspaceSlug.toString(), issueDetails.project, issueDetails.id, formData, user)
       .then(() => {
         mutate(PROJECT_ISSUES_ACTIVITY(issueDetails.id));
       })
@@ -134,11 +104,7 @@ export const IssueActivity: React.FC<Props> = (props) => {
         <ul role="list" className="-mb-4">
           {issueActivities?.map((activityItem, index) => {
             // determines what type of action is performed
-            const message = activityItem.field ? (
-              <ActivityMessage activity={activityItem} />
-            ) : (
-              "created the issue."
-            );
+            const message = activityItem.field ? <ActivityMessage activity={activityItem} /> : "created the issue.";
 
             if ("field" in activityItem && activityItem.field !== "updated_by") {
               return (
@@ -157,15 +123,11 @@ export const IssueActivity: React.FC<Props> = (props) => {
                             <div className="ring-6 flex h-7 w-7 items-center justify-center rounded-full bg-custom-background-80 text-custom-text-200 ring-white">
                               {activityItem.field ? (
                                 activityItem.new_value === "restore" ? (
-                                  <Icon
-                                    iconName="history"
-                                    className="text-sm text-custom-text-200"
-                                  />
+                                  <Icon iconName="history" className="text-sm text-custom-text-200" />
                                 ) : (
                                   <ActivityIcon activity={activityItem} />
                                 )
-                              ) : activityItem.actor_detail.avatar &&
-                                activityItem.actor_detail.avatar !== "" ? (
+                              ) : activityItem.actor_detail.avatar && activityItem.actor_detail.avatar !== "" ? (
                                 <img
                                   src={activityItem.actor_detail.avatar}
                                   alt={activityItem.actor_detail.display_name}
@@ -188,13 +150,10 @@ export const IssueActivity: React.FC<Props> = (props) => {
                       </div>
                       <div className="min-w-0 flex-1 py-3">
                         <div className="text-xs text-custom-text-200 break-words">
-                          {activityItem.field === "archived_at" &&
-                          activityItem.new_value !== "restore" ? (
+                          {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
                             <span className="text-gray font-medium">Plane</span>
                           ) : activityItem.actor_detail.is_bot ? (
-                            <span className="text-gray font-medium">
-                              {activityItem.actor_detail.first_name} Bot
-                            </span>
+                            <span className="text-gray font-medium">{activityItem.actor_detail.first_name} Bot</span>
                           ) : (
                             <button
                               type="button"
@@ -206,10 +165,7 @@ export const IssueActivity: React.FC<Props> = (props) => {
                                 : activityItem.actor_detail.display_name}
                             </button>
                           )}{" "}
-                          {message}{" "}
-                          <span className="whitespace-nowrap">
-                            {timeAgo(activityItem.created_at)}
-                          </span>
+                          {message} <span className="whitespace-nowrap">{timeAgo(activityItem.created_at)}</span>
                         </div>
                       </div>
                     </div>
@@ -225,10 +181,7 @@ export const IssueActivity: React.FC<Props> = (props) => {
                     onSubmit={handleCommentUpdate}
                     handleCommentDeletion={handleCommentDelete}
                     disabled={
-                      !allowed ||
-                      !issueDetails ||
-                      issueDetails.state === "closed" ||
-                      issueDetails.state === "archived"
+                      !allowed || !issueDetails || issueDetails.state === "closed" || issueDetails.state === "archived"
                     }
                   />
                 </div>
@@ -240,10 +193,7 @@ export const IssueActivity: React.FC<Props> = (props) => {
                 <AddComment
                   onSubmit={handleAddComment}
                   disabled={
-                    !allowed ||
-                    !issueDetails ||
-                    issueDetails.state === "closed" ||
-                    issueDetails.state === "archived"
+                    !allowed || !issueDetails || issueDetails.state === "closed" || issueDetails.state === "archived"
                   }
                 />
               </div>

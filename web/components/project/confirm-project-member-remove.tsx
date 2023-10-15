@@ -1,10 +1,10 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
-import { SecondaryButton, DangerButton } from "components/ui";
+import { Button } from "@plane/ui";
 
 type Props = {
   isOpen: boolean;
@@ -57,33 +57,29 @@ const ConfirmProjectMemberRemove: React.FC<Props> = ({ isOpen, onClose, data, ha
                 <div className="bg-custom-background-80 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
                     <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                      <ExclamationTriangleIcon
-                        className="h-6 w-6 text-red-600"
-                        aria-hidden="true"
-                      />
+                      <ExclamationTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </div>
                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                      <Dialog.Title
-                        as="h3"
-                        className="text-lg font-medium leading-6 text-custom-text-100"
-                      >
+                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                         Remove {data?.display_name}?
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
                           Are you sure you want to remove member-{" "}
-                          <span className="font-bold">{data?.display_name}</span>? They will no
-                          longer have access to this project. This action cannot be undone.
+                          <span className="font-bold">{data?.display_name}</span>? They will no longer have access to
+                          this project. This action cannot be undone.
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="flex justify-end gap-2 p-4 sm:px-6">
-                  <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                  <DangerButton onClick={handleDeletion} loading={isDeleteLoading}>
+                  <Button variant="neutral-primary" onClick={handleClose}>
+                    Cancel
+                  </Button>
+                  <Button variant="danger" onClick={handleDeletion} loading={isDeleteLoading}>
                     {isDeleteLoading ? "Removing..." : "Remove"}
-                  </DangerButton>
+                  </Button>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

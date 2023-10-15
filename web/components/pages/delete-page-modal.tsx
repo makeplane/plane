@@ -7,36 +7,29 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import pagesService from "services/pages.service";
+import { PageService } from "services/page.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { DangerButton, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
-import type { ICurrentUserResponse, IPage } from "types";
+import type { IUser, IPage } from "types";
 // fetch-keys
-import {
-  ALL_PAGES_LIST,
-  FAVORITE_PAGES_LIST,
-  MY_PAGES_LIST,
-  RECENT_PAGES_LIST,
-} from "constants/fetch-keys";
+import { ALL_PAGES_LIST, FAVORITE_PAGES_LIST, MY_PAGES_LIST, RECENT_PAGES_LIST } from "constants/fetch-keys";
 
 type TConfirmPageDeletionProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   data?: IPage | null;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
-export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({
-  isOpen,
-  setIsOpen,
-  data,
-  user,
-}) => {
+// services
+const pageService = new PageService();
+
+export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({ isOpen, setIsOpen, data, user }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
@@ -53,7 +46,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({
     setIsDeleteLoading(true);
     if (!data || !workspaceSlug || !projectId) return;
 
-    await pagesService
+    await pageService
       .deletePage(workspaceSlug as string, data.project, data.id, user)
       .then(() => {
         mutate(RECENT_PAGES_LIST(projectId as string));
@@ -121,36 +114,29 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({
                 <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
                     <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-500/20 sm:mx-0 sm:h-10 sm:w-10">
-                      <ExclamationTriangleIcon
-                        className="h-6 w-6 text-red-600"
-                        aria-hidden="true"
-                      />
+                      <ExclamationTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </div>
                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                      <Dialog.Title
-                        as="h3"
-                        className="text-lg font-medium leading-6 text-custom-text-100"
-                      >
+                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                         Delete Page
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
                           Are you sure you want to delete Page-{" "}
-                          <span className="break-words font-medium text-custom-text-100">
-                            {data?.name}
-                          </span>
-                          ? All of the data related to the page will be permanently removed. This
-                          action cannot be undone.
+                          <span className="break-words font-medium text-custom-text-100">{data?.name}</span>? All of the
+                          data related to the page will be permanently removed. This action cannot be undone.
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="flex justify-end gap-2 p-4 sm:px-6">
-                  <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                  <DangerButton onClick={handleDeletion} loading={isDeleteLoading}>
+                  <Button variant="neutral-primary" onClick={handleClose}>
+                    Cancel
+                  </Button>
+                  <Button variant="danger" onClick={handleDeletion} loading={isDeleteLoading}>
                     {isDeleteLoading ? "Deleting..." : "Delete"}
-                  </DangerButton>
+                  </Button>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

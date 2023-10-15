@@ -1,21 +1,16 @@
-import React, { useEffect } from "react";
-
+import { Fragment } from "react";
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
-// react-hook-form
 import { useForm } from "react-hook-form";
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // components
 import { ModuleForm } from "components/modules";
 // services
-import modulesService from "services/modules.service";
+import { ModuleService } from "services/module.service";
 // hooks
 import useToast from "hooks/use-toast";
 // types
-import type { ICurrentUserResponse, IModule } from "types";
+import type { IUser, IModule } from "types";
 // fetch-keys
 import { MODULE_LIST } from "constants/fetch-keys";
 
@@ -23,7 +18,7 @@ type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   data?: IModule;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
 const defaultValues: Partial<IModule> = {
@@ -33,6 +28,8 @@ const defaultValues: Partial<IModule> = {
   lead: null,
   members_list: [],
 };
+
+const moduleService = new ModuleService();
 
 export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, user }) => {
   const router = useRouter();
@@ -50,7 +47,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, da
   });
 
   const createModule = async (payload: Partial<IModule>) => {
-    await modulesService
+    await moduleService
       .createModule(workspaceSlug as string, projectId as string, payload, user)
       .then(() => {
         mutate(MODULE_LIST(projectId as string));
@@ -72,7 +69,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, da
   };
 
   const updateModule = async (payload: Partial<IModule>) => {
-    await modulesService
+    await moduleService
       .updateModule(workspaceSlug as string, projectId as string, data?.id ?? "", payload, user)
       .then((res) => {
         mutate<IModule[]>(
@@ -115,10 +112,10 @@ export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, da
   };
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
+    <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
-          as={React.Fragment}
+          as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -132,7 +129,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, da
         <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
             <Transition.Child
-              as={React.Fragment}
+              as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               enterTo="opacity-100 translate-y-0 sm:scale-100"

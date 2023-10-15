@@ -9,14 +9,14 @@ import useUser from "hooks/use-user";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import issueServices from "services/issues.service";
+import { IssueDraftService } from "services/issue";
 // hooks
 import useIssuesView from "hooks/use-issues-view";
 import useToast from "hooks/use-toast";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
-import { SecondaryButton, DangerButton } from "components/ui";
+import { Button } from "@plane/ui";
 // types
 import type { IIssue } from "types";
 // fetch-keys
@@ -28,6 +28,8 @@ type Props = {
   data: IIssue | null;
   onSubmit?: () => Promise<void> | void;
 };
+
+const issueDraftService = new IssueDraftService();
 
 export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
   const { isOpen, handleClose, data, onSubmit } = props;
@@ -57,8 +59,8 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
 
     setIsDeleteLoading(true);
 
-    await issueServices
-      .deleteDraftIssue(workspaceSlug as string, data.project, data.id, user)
+    await issueDraftService
+      .deleteDraftIssue(workspaceSlug as string, data.project, data.id)
       .then(() => {
         setIsDeleteLoading(false);
         handleClose();
@@ -112,10 +114,7 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-500/20 p-4">
-                      <ExclamationTriangleIcon
-                        className="h-6 w-6 text-red-600"
-                        aria-hidden="true"
-                      />
+                      <ExclamationTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">
                       <h3 className="text-xl font-medium 2xl:text-2xl">Delete Draft Issue</h3>
@@ -127,15 +126,17 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
                       <span className="break-words font-medium text-custom-text-100">
                         {data?.project_detail.identifier}-{data?.sequence_id}
                       </span>
-                      {""}? All of the data related to the draft issue will be permanently removed.
-                      This action cannot be undone.
+                      {""}? All of the data related to the draft issue will be permanently removed. This action cannot
+                      be undone.
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
-                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
-                    <DangerButton onClick={handleDeletion} loading={isDeleteLoading}>
+                    <Button variant="neutral-primary" onClick={onClose}>
+                      Cancel
+                    </Button>
+                    <Button variant="danger" onClick={handleDeletion} loading={isDeleteLoading}>
                       {isDeleteLoading ? "Deleting..." : "Delete Issue"}
-                    </DangerButton>
+                    </Button>
                   </div>
                 </div>
               </Dialog.Panel>
