@@ -32,14 +32,16 @@ export const SpreadsheetStateColumn: React.FC<Props> = ({
 
   return (
     <div>
-      <StateColumn
-        issue={issue}
-        projectId={projectId}
-        properties={properties}
-        onChange={(data) => handleUpdateIssue(issue.id, data)}
-        user={user}
-        isNotAllowed={isNotAllowed}
-      />
+      {user && (
+        <StateColumn
+          issue={issue}
+          projectId={projectId}
+          properties={properties}
+          onChange={(data) => handleUpdateIssue(issue.id, data)}
+          user={user}
+          isNotAllowed={isNotAllowed}
+        />
+      )}
 
       {isExpanded &&
         !isLoading &&

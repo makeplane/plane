@@ -1,17 +1,12 @@
 import { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
-// react-datepicker
 import DatePicker from "react-datepicker";
-// headless ui
 import { Popover } from "@headlessui/react";
 // contexts
 import { useProjectMyMembership } from "contexts/project-member.context";
 // services
-import inboxServices from "services/inbox.service";
+import { InboxService } from "services/inbox.service";
 // hooks
 import useInboxView from "hooks/use-inbox-view";
 import useUserAuth from "hooks/use-user-auth";
@@ -40,6 +35,8 @@ import {
 import type { IInboxIssueDetail, TInboxStatus } from "types";
 // fetch-keys
 import { INBOX_ISSUE_DETAILS } from "constants/fetch-keys";
+
+const inboxService = new InboxService();
 
 export const InboxActionHeader = () => {
   const [date, setDate] = useState(new Date());
@@ -79,12 +76,12 @@ export const InboxActionHeader = () => {
       false
     );
 
-    await inboxServices
+    await inboxService
       .markInboxStatus(
         workspaceSlug.toString(),
         projectId.toString(),
         inboxId.toString(),
-        inboxIssues?.find((inboxIssue) => inboxIssue.bridge_id === inboxIssueId)?.bridge_id!,
+        inboxIssues?.find((inboxIssue: any) => inboxIssue.bridge_id === inboxIssueId)?.bridge_id!,
         data,
         user
       )
@@ -101,8 +98,8 @@ export const InboxActionHeader = () => {
       });
   };
 
-  const issue = inboxIssues?.find((issue) => issue.bridge_id === inboxIssueId);
-  const currentIssueIndex = inboxIssues?.findIndex((issue) => issue.bridge_id === inboxIssueId) ?? 0;
+  const issue = inboxIssues?.find((issue: any) => issue.bridge_id === inboxIssueId);
+  const currentIssueIndex = inboxIssues?.findIndex((issue: any) => issue.bridge_id === inboxIssueId) ?? 0;
 
   useEffect(() => {
     if (!issue?.issue_inbox[0].snoozed_till) return;
@@ -123,7 +120,9 @@ export const InboxActionHeader = () => {
       <SelectDuplicateInboxIssueModal
         isOpen={selectDuplicateIssue}
         onClose={() => setSelectDuplicateIssue(false)}
-        value={inboxIssues?.find((inboxIssue) => inboxIssue.bridge_id === inboxIssueId)?.issue_inbox[0].duplicate_to}
+        value={
+          inboxIssues?.find((inboxIssue: any) => inboxIssue.bridge_id === inboxIssueId)?.issue_inbox[0].duplicate_to
+        }
         onSubmit={(dupIssueId: string) => {
           markInboxStatus({
             status: 2,
@@ -134,7 +133,7 @@ export const InboxActionHeader = () => {
       <AcceptIssueModal
         isOpen={acceptIssueModal}
         handleClose={() => setAcceptIssueModal(false)}
-        data={inboxIssues?.find((i) => i.bridge_id === inboxIssueId)}
+        data={inboxIssues?.find((i: any) => i.bridge_id === inboxIssueId)}
         onSubmit={async () => {
           await markInboxStatus({
             status: 1,
@@ -144,7 +143,7 @@ export const InboxActionHeader = () => {
       <DeclineIssueModal
         isOpen={declineIssueModal}
         handleClose={() => setDeclineIssueModal(false)}
-        data={inboxIssues?.find((i) => i.bridge_id === inboxIssueId)}
+        data={inboxIssues?.find((i: any) => i.bridge_id === inboxIssueId)}
         onSubmit={async () => {
           await markInboxStatus({
             status: -1,
@@ -154,7 +153,7 @@ export const InboxActionHeader = () => {
       <DeleteIssueModal
         isOpen={deleteIssueModal}
         handleClose={() => setDeleteIssueModal(false)}
-        data={inboxIssues?.find((i) => i.bridge_id === inboxIssueId)}
+        data={inboxIssues?.find((i: any) => i.bridge_id === inboxIssueId)}
       />
       <div className="grid grid-cols-4 border-b border-custom-border-200 divide-x divide-custom-border-200">
         <div className="col-span-1 flex justify-between p-4">

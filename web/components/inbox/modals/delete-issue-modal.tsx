@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import inboxServices from "services/inbox.service";
+import { InboxService } from "services/inbox.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useInboxView from "hooks/use-inbox-view";
@@ -26,6 +26,8 @@ type Props = {
   handleClose: () => void;
   data: IInboxIssue | undefined;
 };
+
+const inboxService = new InboxService();
 
 export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data }) => {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -47,7 +49,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
 
     setIsDeleting(true);
 
-    inboxServices
+    inboxService
       .deleteInboxIssue(
         workspaceSlug.toString(),
         projectId.toString(),

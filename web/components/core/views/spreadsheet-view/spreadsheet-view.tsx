@@ -91,7 +91,6 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
         <CustomMenu
           customButtonClassName="!w-full"
           className="!w-full"
-          position="left"
           customButton={
             <div
               className={`relative group flex items-center justify-between gap-1.5 cursor-pointer text-sm text-custom-text-200 hover:text-custom-text-100 w-full py-3 px-2 ${
@@ -396,8 +395,6 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                         New Issue
                       </button>
                     }
-                    position="left"
-                    verticalPosition="top"
                     optionsClassName="left-5 !w-36"
                     noBorder
                   >

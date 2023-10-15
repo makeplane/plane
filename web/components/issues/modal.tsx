@@ -342,10 +342,9 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
           if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
 
-          if (globalViewId) mutate(GLOBAL_VIEW_ISSUES(globalViewId.toString(), globalViewParams));
+          if (globalViewId) mutate(GLOBAL_VIEW_ISSUES(globalViewId.toString()));
 
-          if (currentWorkspaceIssuePath)
-            mutate(GLOBAL_VIEW_ISSUES(workspaceSlug.toString(), currentWorkspaceIssuePath?.params));
+          if (currentWorkspaceIssuePath) mutate(GLOBAL_VIEW_ISSUES(workspaceSlug.toString()));
         })
         .catch(() => {
           setToastAlert({

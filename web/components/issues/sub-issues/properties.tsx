@@ -50,7 +50,7 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
         issueId: issue.id,
       },
       "ISSUE_PROPERTY_UPDATE_PRIORITY",
-      user
+      user as IUser
     );
   };
 
@@ -72,7 +72,7 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
         issueId: issue.id,
       },
       "ISSUE_PROPERTY_UPDATE_STATE",
-      user
+      user as IUser
     );
     if (oldState?.group !== "completed" && newState?.group !== "completed") {
       trackEventService.trackIssueMarkedAsDoneEvent(
@@ -84,7 +84,7 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
           projectName: issue.project_detail.name,
           issueId: issue.id,
         },
-        user
+        user as IUser
       );
     }
   };
@@ -109,7 +109,7 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
         issueId: issue.id,
       },
       "ISSUE_PROPERTY_UPDATE_ASSIGNEE",
-      user
+      user as IUser
     );
   };
 
@@ -180,12 +180,14 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
 
       {properties.due_date && issue.target_date && (
         <div className="flex-shrink-0 w-[104px]">
-          <ViewDueDateSelect
-            issue={issue}
-            partialUpdateIssue={partialUpdateIssue}
-            user={user}
-            isNotAllowed={!editable}
-          />
+          {user && (
+            <ViewDueDateSelect
+              issue={issue}
+              partialUpdateIssue={partialUpdateIssue}
+              user={user}
+              isNotAllowed={!editable}
+            />
+          )}
         </div>
       )}
 

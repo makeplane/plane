@@ -8,7 +8,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import useUser from "hooks/use-user";
 import useProjectDetails from "hooks/use-project-details";
 // components
-import { SpreadsheetColumns, SpreadsheetIssues } from "components/core";
+// import { SpreadsheetColumns, SpreadsheetIssues } from "components/core";
 import { IssuePeekOverview } from "components/issues";
 // ui
 import { Spinner } from "components/ui";
@@ -31,7 +31,7 @@ export const ProjectViewSpreadsheetLayout: React.FC = observer(() => {
 
   const { module: moduleStore, issueFilter: issueFilterStore } = useMobxStore();
 
-  const issues = moduleStore.getIssues;
+  // const issues = moduleStore.issues || [];
   const issueDisplayProperties = issueFilterStore.userDisplayProperties;
 
   const handleDisplayFiltersUpdate = useCallback(
@@ -74,14 +74,14 @@ export const ProjectViewSpreadsheetLayout: React.FC = observer(() => {
       />
       <div className="h-full rounded-lg text-custom-text-200 overflow-x-auto whitespace-nowrap bg-custom-background-100">
         <div className="sticky z-[2] top-0 border-b border-custom-border-200 bg-custom-background-90 w-full min-w-max">
-          <SpreadsheetColumns
+          {/* <SpreadsheetColumns
             columnData={columnData}
             displayFilters={issueFilterStore.userDisplayFilters}
             gridTemplateColumns={gridTemplateColumns}
             handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
-          />
+          /> */}
         </div>
-        {issues ? (
+        {/* {issues ? (
           <div className="flex flex-col h-full w-full bg-custom-background-100 rounded-sm ">
             {(issues as IIssueUnGroupedStructure).map((issue: IIssue, index) => (
               <SpreadsheetIssues
@@ -121,7 +121,7 @@ export const ProjectViewSpreadsheetLayout: React.FC = observer(() => {
           </div>
         ) : (
           <Spinner />
-        )}
+        )} */}
       </div>
     </>
   );

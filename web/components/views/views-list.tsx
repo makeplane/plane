@@ -6,8 +6,9 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { ProjectViewListItem } from "components/views";
+import { EmptyState } from "components/common";
 // ui
-import { EmptyState, Input, Loader } from "components/ui";
+import { Input, Loader } from "components/ui";
 // assets
 import emptyView from "public/empty-state/view.svg";
 // icons

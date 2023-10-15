@@ -1,11 +1,8 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
 // services
-import { ProjectService, ProjectEstimateServices } from "services/project";
+import { ProjectService, ProjectEstimateService } from "services/project";
 // hooks
 import useProjectDetails from "hooks/use-project-details";
 // layouts
@@ -34,7 +31,7 @@ import { truncateText } from "helpers/string.helper";
 
 // services
 const projectService = new ProjectService();
-const projectEstimateService = new ProjectEstimateServices();
+const projectEstimateService = new ProjectEstimateService();
 
 const EstimatesSettings: NextPage = () => {
   const [estimateFormOpen, setEstimateFormOpen] = useState(false);

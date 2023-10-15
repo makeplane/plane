@@ -1,10 +1,7 @@
 import { useState } from "react";
-
 import Link from "next/link";
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // services
 import { WorkspaceService } from "services/workspace.service";
 // contexts
@@ -31,6 +28,8 @@ type Props = {
   right?: JSX.Element;
 };
 
+const workspaceService = new WorkspaceService();
+
 export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
   children,
   noHeader = false,
@@ -46,7 +45,7 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
 
   const { data: workspaceMemberMe, error } = useSWR(
     workspaceSlug ? WORKSPACE_MEMBERS_ME(workspaceSlug as string) : null,
-    workspaceSlug ? () => workspaceServices.workspaceMemberMe(workspaceSlug.toString()) : null
+    workspaceSlug ? () => workspaceService.workspaceMemberMe(workspaceSlug.toString()) : null
   );
 
   if (!workspaceMemberMe && !error)
@@ -89,9 +88,9 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
               actionButton={
                 <Link href={`/${workspaceSlug}`}>
                   <a>
-                    <PrimaryButton className="flex items-center gap-1">
+                    <Button className="flex items-center gap-1">
                       <LayerDiagonalIcon height={16} width={16} color="white" /> Go to workspace
-                    </PrimaryButton>
+                    </Button>
                   </a>
                 </Link>
               }

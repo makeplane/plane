@@ -9,7 +9,7 @@ import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import { ProjectEstimateServices } from "services/project";
+import { ProjectEstimateService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -51,7 +51,7 @@ const defaultValues: Partial<FormValues> = {
 };
 
 // services
-const projectEstimateService = new ProjectEstimateServices();
+const projectEstimateService = new ProjectEstimateService();
 
 export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, isOpen, user }) => {
   const {

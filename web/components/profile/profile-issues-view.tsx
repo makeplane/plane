@@ -1,10 +1,6 @@
 import { useCallback, useState } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
-// react-beautiful-dnd
 import { DropResult } from "react-beautiful-dnd";
 // services
 import { IssueService, IssueLabelService } from "services/issue";
@@ -13,7 +9,7 @@ import { UserService } from "services/user.service";
 import useProfileIssues from "hooks/use-profile-issues";
 import useUser from "hooks/use-user";
 // components
-import { AllViews, FiltersList } from "components/core";
+import { FiltersList } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
@@ -266,7 +262,7 @@ export const ProfileIssuesView = () => {
           {<div className="mt-3 border-t border-custom-border-200" />}
         </>
       )}
-      <AllViews
+      {/* <AllViews
         addIssueToDate={addIssueToDate}
         addIssueToGroup={addIssueToGroup}
         disableUserActions={false}
@@ -293,7 +289,7 @@ export const ProfileIssuesView = () => {
           params,
           properties: displayProperties,
         }}
-      />
+      /> */}
     </>
   );
 };

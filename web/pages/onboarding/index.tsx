@@ -23,7 +23,7 @@ import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
 // types
-import { IUser, IUser, TOnboardingSteps } from "types";
+import { IUser, TOnboardingSteps } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { CURRENT_USER, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
@@ -56,13 +56,13 @@ const Onboarding: NextPage = () => {
         return {
           ...prevData,
           last_workspace_id: workspaces[0]?.id,
-          workspace: {
-            ...prevData.workspace,
-            fallback_workspace_id: workspaces[0]?.id,
-            fallback_workspace_slug: workspaces[0]?.slug,
-            last_workspace_id: workspaces[0]?.id,
-            last_workspace_slug: workspaces[0]?.slug,
-          },
+          // workspace: {
+          //   ...prevData.workspace,
+          //   fallback_workspace_id: workspaces[0]?.id,
+          //   fallback_workspace_slug: workspaces[0]?.slug,
+          //   last_workspace_id: workspaces[0]?.id,
+          //   last_workspace_slug: workspaces[0]?.slug,
+          // },
         };
       },
       false

@@ -248,7 +248,7 @@ export const SelectFilters: React.FC<Props> = ({ filters, onSelect, direction = 
   ];
   return (
     <>
-      {isDateFilterModalOpen && (
+      {/* {isDateFilterModalOpen && (
         <DateFilterModal
           title={dateFilterType.title}
           field={dateFilterType.type}
@@ -257,7 +257,7 @@ export const SelectFilters: React.FC<Props> = ({ filters, onSelect, direction = 
           isOpen={isDateFilterModalOpen}
           onSelect={onSelect}
         />
-      )}
+      )} */}
       <MultiLevelDropdown
         label="Filters"
         onSelect={onSelect}

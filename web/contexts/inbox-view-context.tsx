@@ -7,13 +7,14 @@ import useSWR from "swr";
 // components
 import ToastAlert from "components/toast-alert";
 // services
-import inboxServices from "services/inbox.service";
+import { InboxService } from "services/inbox.service";
 // types
 import { IInboxFilterOptions } from "types";
 // fetch-keys
 import { INBOX_DETAILS } from "constants/fetch-keys";
 
 export const inboxViewContext = createContext<ContextType>({} as ContextType);
+const inboxServices = new InboxService();
 
 type InboxViewProps = {
   filters: IInboxFilterOptions;
@@ -66,12 +67,7 @@ export const reducer: ReducerFunctionType = (state, action) => {
   }
 };
 
-const saveDataToServer = async (
-  workspaceSlug: string,
-  projectId: string,
-  inboxId: string,
-  state: any
-) => {
+const saveDataToServer = async (workspaceSlug: string, projectId: string, inboxId: string, state: any) => {
   await inboxServices.patchInbox(workspaceSlug, projectId, inboxId, {
     view_props: state,
   });
@@ -86,20 +82,14 @@ export const InboxViewContextProvider: React.FC<{ children: React.ReactNode }> =
   const { data: inboxDetails, mutate: mutateInboxDetails } = useSWR(
     workspaceSlug && projectId && inboxId ? INBOX_DETAILS(inboxId.toString()) : null,
     workspaceSlug && projectId && inboxId
-      ? () =>
-          inboxServices.getInboxById(
-            workspaceSlug.toString(),
-            projectId.toString(),
-            inboxId.toString()
-          )
+      ? () => inboxServices.getInboxById(workspaceSlug.toString(), projectId.toString(), inboxId.toString())
       : null
   );
 
   const setFilters = useCallback(
     (property: Partial<IInboxFilterOptions>) => {
       Object.keys(property).forEach((key) => {
-        if (property[key as keyof typeof property]?.length === 0)
-          property[key as keyof typeof property] = null;
+        if (property[key as keyof typeof property]?.length === 0) property[key as keyof typeof property] = null;
       });
 
       dispatch({
@@ -131,12 +121,7 @@ export const InboxViewContextProvider: React.FC<{ children: React.ReactNode }> =
         };
       }, false);
 
-      saveDataToServer(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        inboxId.toString(),
-        newViewProps
-      );
+      saveDataToServer(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), newViewProps);
     },
     [workspaceSlug, projectId, inboxId, mutateInboxDetails, state]
   );
@@ -165,12 +150,7 @@ export const InboxViewContextProvider: React.FC<{ children: React.ReactNode }> =
       };
     }, false);
 
-    saveDataToServer(
-      workspaceSlug.toString(),
-      projectId.toString(),
-      inboxId.toString(),
-      newViewProps
-    );
+    saveDataToServer(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), newViewProps);
   }, [inboxId, mutateInboxDetails, projectId, state, workspaceSlug]);
 
   useEffect(() => {

@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 // contexts
 import { useProjectMyMembership } from "contexts/project-member.context";
 // services
-import inboxServices from "services/inbox.service";
+import { InboxService } from "services/inbox.service";
 // hooks
 import useInboxView from "hooks/use-inbox-view";
 import useUserAuth from "hooks/use-user-auth";
@@ -31,7 +31,7 @@ import {
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
-import type { IInboxIssue, IIssue } from "types";
+import type { IInboxIssue, IIssue, IUser } from "types";
 // fetch-keys
 import { INBOX_ISSUES, INBOX_ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
@@ -44,6 +44,8 @@ const defaultValues: Partial<IInboxIssue> = {
   target_date: new Date().toString(),
   labels_list: [],
 };
+
+const inboxService = new InboxService();
 
 export const InboxMainContent: React.FC = () => {
   const router = useRouter();
@@ -63,7 +65,7 @@ export const InboxMainContent: React.FC = () => {
       : null,
     workspaceSlug && projectId && inboxId && inboxIssueId
       ? () =>
-          inboxServices.getInboxIssueById(
+          inboxService.getInboxIssueById(
             workspaceSlug.toString(),
             projectId.toString(),
             inboxId.toString(),
@@ -102,14 +104,14 @@ export const InboxMainContent: React.FC = () => {
 
       const payload = { issue: { ...formData } };
 
-      await inboxServices
+      await inboxService
         .patchInboxIssue(
           workspaceSlug.toString(),
           projectId.toString(),
           inboxId.toString(),
           issueDetails.issue_inbox[0].id,
           payload,
-          user
+          user as IUser
         )
         .then(() => {
           mutateIssueDetails();
@@ -124,7 +126,7 @@ export const InboxMainContent: React.FC = () => {
     (e: KeyboardEvent) => {
       if (!inboxIssues || !inboxIssueId) return;
 
-      const currentIssueIndex = inboxIssues.findIndex((issue) => issue.bridge_id === inboxIssueId);
+      const currentIssueIndex = inboxIssues.findIndex((issue: any) => issue.bridge_id === inboxIssueId);
 
       switch (e.key) {
         case "ArrowUp":

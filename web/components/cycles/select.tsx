@@ -1,17 +1,13 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 import useUserAuth from "hooks/use-user-auth";
-// headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { CyclesIcon } from "components/icons";
 // services
-import cycleServices from "services/cycle.service";
+import { CycleService } from "services/cycle.service";
 // components
 import { CreateUpdateCycleModal } from "components/cycles";
 // fetch-keys
@@ -23,6 +19,8 @@ export type IssueCycleSelectProps = {
   onChange: (value: any) => void;
   multiple?: boolean;
 };
+
+const cycleService = new CycleService();
 
 export const CycleSelect: React.FC<IssueCycleSelectProps> = ({ projectId, value, onChange, multiple = false }) => {
   // states
@@ -36,7 +34,7 @@ export const CycleSelect: React.FC<IssueCycleSelectProps> = ({ projectId, value,
   const { data: cycles } = useSWR(
     workspaceSlug && projectId ? CYCLES_LIST(projectId) : null,
     workspaceSlug && projectId
-      ? () => cycleServices.getCyclesWithParams(workspaceSlug as string, projectId as string, "all")
+      ? () => cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string, "all")
       : null
   );
 

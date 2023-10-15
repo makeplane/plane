@@ -1,11 +1,7 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
 import Image from "next/image";
-
 import { mutate } from "swr";
-
-// next-themes
 import { useTheme } from "next-themes";
 // services
 import { UserService } from "services/user.service";
@@ -50,13 +46,13 @@ const CreateWorkspace: NextPage = () => {
         return {
           ...prevData,
           last_workspace_id: workspace.id,
-          workspace: {
-            ...prevData.workspace,
-            fallback_workspace_id: workspace.id,
-            fallback_workspace_slug: workspace.slug,
-            last_workspace_id: workspace.id,
-            last_workspace_slug: workspace.slug,
-          },
+          // workspace: {
+          //   ...prevData.workspace,
+          //   fallback_workspace_id: workspace.id,
+          //   fallback_workspace_slug: workspace.slug,
+          //   last_workspace_id: workspace.id,
+          //   last_workspace_slug: workspace.slug,
+          // },
         };
       },
       false
