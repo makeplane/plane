@@ -20,6 +20,7 @@ export const EmailPasswordForm: React.FC<IEmailPasswordForm> = (props) => {
   const router = useRouter();
   // form info
   const {
+    control,
     handleSubmit,
     formState: { errors, isSubmitting, isValid, isDirty },
   } = useForm<EmailPasswordFormValues>({
@@ -37,6 +38,7 @@ export const EmailPasswordForm: React.FC<IEmailPasswordForm> = (props) => {
       <form className="space-y-4 mt-10 w-full sm:w-[360px] mx-auto" onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-1">
           <Controller
+            control={control}
             name="email"
             rules={{
               required: "Email address is required",
@@ -61,6 +63,7 @@ export const EmailPasswordForm: React.FC<IEmailPasswordForm> = (props) => {
         </div>
         <div className="space-y-1">
           <Controller
+            control={control}
             name="password"
             rules={{
               required: "Password is required",

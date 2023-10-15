@@ -17,10 +17,11 @@ import {
   EmailPasswordFormValues,
 } from "components/account";
 // ui
-import { Spinner } from "@plane/ui";
+import { Loader, Spinner } from "@plane/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 import { IUserSettings } from "types";
+import { useState } from "react";
 
 const appConfigService = new AppConfigService();
 const authService = new AuthService();
@@ -29,25 +30,34 @@ export const SignInView = observer(() => {
   const { user: userStore } = useMobxStore();
   // router
   const router = useRouter();
+  // states
+  const [isLoading, setLoading] = useState(false);
   // toast
   const { setToastAlert } = useToast();
   // fetch app config
-  const { data } = useSWR("APP_CONFIG", () => appConfigService.envConfig());
+  const { data, error } = useSWR("APP_CONFIG", () => appConfigService.envConfig());
   // fetch user info
-  const { data: user, error } = useSWR("USER_INFO", () => userStore.fetchCurrentUser());
+  useSWR("USER_INFO", () => userStore.fetchCurrentUser());
   // computed
   const enableEmailPassword =
-    data?.email_password_login || !(data?.email_password_login || data?.magic_login || data?.google || data?.github);
+    data &&
+    (data?.email_password_login || !(data?.email_password_login || data?.magic_login || data?.google || data?.github));
 
   const handleLoginRedirection = () =>
-    userStore.fetchCurrentUserSettings().then((userSettings: IUserSettings) => {
-      const workspaceSlug =
-        userSettings?.workspace?.last_workspace_slug || userSettings?.workspace?.fallback_workspace_slug;
-      router.push(`/${workspaceSlug}`);
-    });
+    userStore
+      .fetchCurrentUserSettings()
+      .then((userSettings: IUserSettings) => {
+        const workspaceSlug =
+          userSettings?.workspace?.last_workspace_slug || userSettings?.workspace?.fallback_workspace_slug;
+        router.push(`/${workspaceSlug}`);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
 
   const handleGoogleSignIn = async ({ clientId, credential }: any) => {
     try {
+      setLoading(true);
       if (clientId && credential) {
         const socialAuthPayload = {
           medium: "google",
@@ -59,9 +69,11 @@ export const SignInView = observer(() => {
           handleLoginRedirection();
         }
       } else {
+        setLoading(false);
         throw Error("Cant find credentials");
       }
     } catch (err: any) {
+      setLoading(false);
       setToastAlert({
         title: "Error signing in!",
         type: "error",
@@ -72,6 +84,7 @@ export const SignInView = observer(() => {
 
   const handleGitHubSignIn = async (credential: string) => {
     try {
+      setLoading(true);
       if (data && data.github && credential) {
         const socialAuthPayload = {
           medium: "github",
@@ -83,9 +96,11 @@ export const SignInView = observer(() => {
           handleLoginRedirection();
         }
       } else {
+        setLoading(false);
         throw Error("Cant find credentials");
       }
     } catch (err: any) {
+      setLoading(false);
       setToastAlert({
         title: "Error signing in!",
         type: "error",
@@ -94,29 +109,31 @@ export const SignInView = observer(() => {
     }
   };
 
-  const handlePasswordSignIn = async (formData: EmailPasswordFormValues) => {
-    await authService
+  const handlePasswordSignIn = (formData: EmailPasswordFormValues) => {
+    setLoading(true);
+    return authService
       .emailLogin(formData)
-      .then((response) => {
-        if (response) {
-          handleLoginRedirection();
-        }
+      .then(() => {
+        handleLoginRedirection();
       })
-      .catch((err) =>
+      .catch((err) => {
+        setLoading(false);
         setToastAlert({
           type: "error",
           title: "Error!",
           message: err?.error || "Something went wrong. Please try again later or contact the support team.",
-        })
-      );
+        });
+      });
   };
 
   const handleEmailCodeSignIn = async (response: any) => {
     try {
+      setLoading(true);
       if (response) {
         handleLoginRedirection();
       }
     } catch (err: any) {
+      setLoading(false);
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -127,7 +144,7 @@ export const SignInView = observer(() => {
 
   return (
     <>
-      {!user && !error ? (
+      {isLoading ? (
         <div className="grid place-items-center h-screen">
           <Spinner />
         </div>
@@ -148,31 +165,48 @@ export const SignInView = observer(() => {
               <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
                 Sign in to Plane
               </h1>
-              <>
-                {enableEmailPassword && <EmailPasswordForm onSubmit={handlePasswordSignIn} />}
-                {data?.magic_login && (
-                  <div className="flex flex-col divide-y divide-custom-border-200">
-                    <div className="pb-7">
-                      <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
-                    </div>
-                  </div>
-                )}
-                <div className="flex flex-col items-center justify-center gap-4 pt-7 sm:w-[360px] mx-auto overflow-hidden">
-                  {data?.google && <GoogleLoginButton clientId={data?.google} handleSignIn={handleGoogleSignIn} />}
-                  {data?.github && <GithubLoginButton clientId={data?.github} handleSignIn={handleGitHubSignIn} />}
+
+              {!data && !error ? (
+                <div className="pt-10 w-ful">
+                  <Loader className="space-y-4 w-full pb-4">
+                    <Loader.Item height="46px" width="360px" />
+                    <Loader.Item height="46px" width="360px" />
+                  </Loader>
+
+                  <Loader className="space-y-4 w-full pt-4">
+                    <Loader.Item height="46px" width="360px" />
+                    <Loader.Item height="46px" width="360px" />
+                  </Loader>
                 </div>
-              </>
-              <p className="pt-16 text-custom-text-200 text-sm text-center">
-                By signing up, you agree to the{" "}
-                <a
-                  href="https://plane.so/terms-and-conditions"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-medium underline"
-                >
-                  Terms & Conditions
-                </a>
-              </p>
+              ) : (
+                <>
+                  <>
+                    {enableEmailPassword && <EmailPasswordForm onSubmit={handlePasswordSignIn} />}
+                    {data?.magic_login && (
+                      <div className="flex flex-col divide-y divide-custom-border-200">
+                        <div className="pb-7">
+                          <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
+                        </div>
+                      </div>
+                    )}
+                    <div className="flex flex-col items-center justify-center gap-4 pt-7 sm:w-[360px] mx-auto overflow-hidden">
+                      {data?.google && <GoogleLoginButton clientId={data?.google} handleSignIn={handleGoogleSignIn} />}
+                      {data?.github && <GithubLoginButton clientId={data?.github} handleSignIn={handleGitHubSignIn} />}
+                    </div>
+                  </>
+                  <p className="pt-16 text-custom-text-200 text-sm text-center">
+                    By signing up, you agree to the{" "}
+                    <a
+                      href="https://plane.so/terms-and-conditions"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium underline"
+                    >
+                      Terms & Conditions
+                    </a>
+                  </p>
+                </>
+              )}
             </div>
           </div>
         </>
