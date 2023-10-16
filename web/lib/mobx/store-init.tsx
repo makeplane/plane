@@ -14,12 +14,13 @@ const MobxStoreInit = () => {
     module: moduleStore,
     globalViews: globalViewsStore,
     projectViews: projectViewsStore,
+    inbox: inboxStore,
   } = useMobxStore();
   // theme
   const { setTheme } = useTheme();
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, moduleId, globalViewId, viewId } = router.query;
+  const { workspaceSlug, projectId, moduleId, globalViewId, viewId, inboxId } = router.query;
 
   useEffect(() => {
     // sidebar collapsed toggle
@@ -51,17 +52,20 @@ const MobxStoreInit = () => {
     if (moduleId) moduleStore.setModuleId(moduleId.toString());
     if (globalViewId) globalViewsStore.setGlobalViewId(globalViewId.toString());
     if (viewId) projectViewsStore.setViewId(viewId.toString());
+    if (inboxId) inboxStore.setInboxId(inboxId.toString());
   }, [
     workspaceSlug,
     projectId,
     moduleId,
     globalViewId,
     viewId,
+    inboxId,
     workspaceStore,
     projectStore,
     moduleStore,
     globalViewsStore,
     projectViewsStore,
+    inboxStore,
   ]);
 
   return <></>;

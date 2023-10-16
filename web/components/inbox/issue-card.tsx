@@ -8,7 +8,7 @@ import { AlertTriangle, CalendarDays, CheckCircle, Clock, Copy, XCircle } from "
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
-import type { IInboxIssue } from "types";
+import { IInboxIssue } from "types";
 // constants
 import { INBOX_STATUS } from "constants/inbox";
 
@@ -26,7 +26,7 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
   const issueStatus = issue.issue_inbox[0].status;
 
   return (
-    <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${issue.bridge_id}`}>
+    <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${issue.issue_inbox[0].id}`}>
       <a>
         <div
           id={issue.id}

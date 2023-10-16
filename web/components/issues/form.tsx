@@ -33,14 +33,6 @@ import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 const defaultValues: Partial<IIssue> = {
   project: "",
   name: "",
-  description: {
-    type: "doc",
-    content: [
-      {
-        type: "paragraph",
-      },
-    ],
-  },
   description_html: "<p></p>",
   estimate_point: null,
   state: "",

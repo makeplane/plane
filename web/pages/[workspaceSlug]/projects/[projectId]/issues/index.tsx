@@ -27,7 +27,7 @@ const ProjectIssues: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { issueFilter: issueFilterStore, project: projectStore } = useMobxStore();
+  const { issueFilter: issueFilterStore, project: projectStore, inbox: inboxStore } = useMobxStore();
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -62,6 +62,21 @@ const ProjectIssues: NextPage = () => {
       ? () => projectStore.fetchProjectMembers(workspaceSlug.toString(), projectId.toString())
       : null
   );
+
+  useSWR(
+    workspaceSlug && projectId ? "REVALIDATE_PROJECT_DETAILS" : null,
+    workspaceSlug && projectId
+      ? () => projectStore.fetchProjectDetails(workspaceSlug.toString(), projectId.toString())
+      : null
+  );
+
+  useSWR(
+    workspaceSlug && projectId ? "REVALIDATE_INBOXES_LIST" : null,
+    workspaceSlug && projectId
+      ? () => inboxStore.fetchInboxesList(workspaceSlug.toString(), projectId.toString())
+      : null
+  );
+  // TODO: remove all the above fetching logic to project auth wrapper
 
   return (
     <ProjectAuthorizationWrapper

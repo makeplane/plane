@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-// react-poppper
+// react-popper
 import { usePopper } from "react-popper";
 // headless ui
 import { Combobox } from "@headlessui/react";
