@@ -337,12 +337,10 @@ export class CycleStore implements ICycleStore {
           }),
         };
       });
-
       const response = await this.cycleService.removeCycleFromFavorites(workspaceSlug, projectId, cycleId);
       return response;
     } catch (error) {
       console.log("Failed to remove cycle from favorites - Cycle Store", error);
-
       runInAction(() => {
         this.cycles = {
           ...this.cycles,

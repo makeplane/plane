@@ -13,7 +13,6 @@ type Props = {
 
 export const CycleForm: React.FC<Props> = (props) => {
   const { handleFormSubmit, handleClose, data } = props;
-
   // form data
   const {
     formState: { errors, isSubmitting },
