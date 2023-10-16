@@ -90,27 +90,21 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
     workspaceSlug && projectId ? () => cycleStore.fetchCycles(workspaceSlug, projectId, "current") : null
   );
 
-  console.log("isLoading", isLoading);
+  const activeCycle = cycleStore.cycles?.[projectId] || null;
+  const cycle = activeCycle ? activeCycle[0] : null;
+  const issues = (cycleStore?.active_cycle_issues as any) || null;
 
-  const { data: currentCycle } = useSWR(
-    workspaceSlug && projectId ? CURRENT_CYCLE_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string, "current")
-      : null
-  );
-  const cycle = currentCycle ? currentCycle[0] : null;
+  // const { data: issues } = useSWR(
+  //   workspaceSlug && projectId && cycle?.id ? CYCLE_ISSUES_WITH_PARAMS(cycle?.id, { priority: "urgent,high" }) : null,
+  //   workspaceSlug && projectId && cycle?.id
+  //     ? () =>
+  //         cycleService.getCycleIssuesWithParams(workspaceSlug as string, projectId as string, cycle.id, {
+  //           priority: "urgent,high",
+  //         })
+  //     : null
+  // ) as { data: IIssue[] | undefined };
 
-  const { data: issues } = useSWR(
-    workspaceSlug && projectId && cycle?.id ? CYCLE_ISSUES_WITH_PARAMS(cycle?.id, { priority: "urgent,high" }) : null,
-    workspaceSlug && projectId && cycle?.id
-      ? () =>
-          cycleService.getCycleIssuesWithParams(workspaceSlug as string, projectId as string, cycle.id, {
-            priority: "urgent,high",
-          })
-      : null
-  ) as { data: IIssue[] | undefined };
-
-  if (!currentCycle)
+  if (isLoading)
     return (
       <Loader>
         <Loader.Item height="250px" />
@@ -426,7 +420,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
             <div className="my-3 flex max-h-[240px] min-h-[240px] flex-col gap-2.5 overflow-y-scroll rounded-md">
               {issues ? (
                 issues.length > 0 ? (
-                  issues.map((issue) => (
+                  issues.map((issue: any) => (
                     <div
                       key={issue.id}
                       onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`)}
@@ -494,14 +488,15 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
                     width:
                       issues &&
                       `${
-                        (issues.filter((issue) => issue?.state_detail?.group === "completed")?.length / issues.length) *
+                        (issues.filter((issue: any) => issue?.state_detail?.group === "completed")?.length /
+                          issues.length) *
                           100 ?? 0
                       }%`,
                   }}
                 />
               </div>
               <div className="w-16 text-end text-xs text-custom-text-200">
-                {issues?.filter((issue) => issue?.state_detail?.group === "completed")?.length} of {issues?.length}
+                {issues?.filter((issue: any) => issue?.state_detail?.group === "completed")?.length} of {issues?.length}
               </div>
             </div>
           )}

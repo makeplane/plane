@@ -49,7 +49,10 @@ export const CyclesView: React.FC<Props> = ({ cycles, mutateCycles, viewType }) 
   console.log("cycleTab", cycleTab);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = router.query as {
+    workspaceSlug: string;
+    projectId: string;
+  };
 
   const { user } = useUserAuth();
   const { setToastAlert } = useToast();
@@ -201,7 +204,7 @@ export const CyclesView: React.FC<Props> = ({ cycles, mutateCycles, viewType }) 
               ))}
             </div>
           ) : (
-            <CyclesListGanttChartView cycles={cycles ?? []} mutateCycles={mutateCycles} />
+            <CyclesListGanttChartView workspaceSlug={workspaceSlug} cycles={cycles ?? []} mutateCycles={mutateCycles} />
           )
         ) : (
           <div className="h-full grid place-items-center text-center">
