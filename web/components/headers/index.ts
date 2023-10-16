@@ -8,3 +8,5 @@ export * from "./workspace-analytics";
 export * from "./workspace-dashboard";
 export * from "./projects";
 export * from "./profile-preferences";
+export * from "./cycles";
+export * from "./modules";

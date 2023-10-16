@@ -17,20 +17,39 @@ interface IProjectAuthWrapper {
 export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = (props) => {
   const { children } = props;
   // store
-  const { user: userStore } = useMobxStore();
+  const { user: userStore, project: projectStore } = useMobxStore();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   // fetching user project member information
   useSWR(
-    workspaceSlug && projectId ? `PROJECT_MEMBERS_ME_${workspaceSlug}` : null,
+    workspaceSlug && projectId ? `PROJECT_MEMBERS_ME_${workspaceSlug}_${projectId}` : null,
     workspaceSlug && projectId
       ? () => userStore.fetchUserProjectInfo(workspaceSlug.toString(), projectId.toString())
       : null
   );
-
-  // console.log("userStore.projectMemberInfo", userStore.projectMemberInfo);
+  // fetching project labels
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_LABELS_${workspaceSlug}_${projectId}` : null,
+    workspaceSlug && projectId
+      ? () => projectStore.fetchProjectLabels(workspaceSlug.toString(), projectId.toString())
+      : null
+  );
+  // fetching project members
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_MEMBERS_${workspaceSlug}_${projectId}` : null,
+    workspaceSlug && projectId
+      ? () => projectStore.fetchProjectMembers(workspaceSlug.toString(), projectId.toString())
+      : null
+  );
+  // fetching project states
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_STATES_${workspaceSlug}_${projectId}` : null,
+    workspaceSlug && projectId
+      ? () => projectStore.fetchProjectStates(workspaceSlug.toString(), projectId.toString())
+      : null
+  );
 
   // check if the project member apis is loading
   if (!userStore.projectMemberInfo && userStore.hasPermissionToProject === null) {

@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-
+import { NextPage } from "next";
 // hooks
 import useProjectDetails from "hooks/use-project-details";
 // layouts
@@ -15,8 +15,6 @@ import { Button } from "@plane/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
-// types
-import type { NextPage } from "next";
 
 const ProjectInbox: NextPage = () => {
   const router = useRouter();

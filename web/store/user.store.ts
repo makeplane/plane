@@ -176,7 +176,6 @@ class UserStore implements IUserStore {
   updateCurrentUser = async (data: Partial<IUser>) => {
     try {
       const response = await this.userService.updateUser(data);
-      console.log(response);
       runInAction(() => {
         this.currentUser = response;
       });
