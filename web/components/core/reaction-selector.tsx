@@ -3,7 +3,7 @@ import { Popover, Transition } from "@headlessui/react";
 // helper
 import { renderEmoji } from "helpers/emoji.helper";
 // icons
-import { Icon } from "components/ui";
+import { SmilePlus } from "lucide-react";
 
 const reactionEmojis = ["128077", "128078", "128516", "128165", "128533", "129505", "9992", "128064"];
 
@@ -31,7 +31,7 @@ export const ReactionSelector: React.FC<Props> = (props) => {
                 size === "sm" ? "w-6 h-6" : size === "md" ? "w-7 h-7" : "w-8 h-8"
               }`}
             >
-              <Icon iconName="add_reaction" className="text-custom-text-100 scale-125" />
+              <SmilePlus className="text-custom-text-100 h-3.5 w-3.5" />
             </span>
           </Popover.Button>
           <Transition

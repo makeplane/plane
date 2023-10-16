@@ -1,7 +1,6 @@
 import React from "react";
 
 // icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
 import { PriorityIcon, StateGroupIcon } from "@plane/ui";
 // ui
 import { Avatar } from "components/ui";
@@ -13,6 +12,7 @@ import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { IIssueFilterOptions, IIssueLabels, IState, IUserLite, TStateGroups } from "types";
 // constants
 import { STATE_GROUP_COLORS } from "constants/state";
+import { X } from "lucide-react";
 
 type Props = {
   filters: Partial<IIssueFilterOptions>;
@@ -73,7 +73,7 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
                                 })
                               }
                             >
-                              <XMarkIcon className="h-3 w-3" />
+                              <X className="h-3 w-3" />
                             </span>
                           </p>
                         );
@@ -103,7 +103,7 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
                                 })
                               }
                             >
-                              <XMarkIcon className="h-3 w-3" />
+                              <X className="h-3 w-3" />
                             </span>
                           </p>
                         );
@@ -125,7 +125,7 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
                           }`}
                         >
                           <span>
-                            <PriorityIcon priority={priority} />
+                            <PriorityIcon priority={priority} className="h-3 w-3" />
                           </span>
                           <span>{priority === "null" ? "None" : priority}</span>
                           <span
@@ -136,7 +136,7 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
                               })
                             }
                           >
-                            <XMarkIcon className="h-3 w-3" />
+                            <X className="h-3 w-3" />
                           </span>
                         </p>
                       ))
@@ -159,7 +159,7 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
                                 })
                               }
                             >
-                              <XMarkIcon className="h-3 w-3" />
+                              <X className="h-3 w-3" />
                             </span>
                           </div>
                         );
@@ -183,7 +183,7 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
                                 })
                               }
                             >
-                              <XMarkIcon className="h-3 w-3" />
+                              <X className="h-3 w-3" />
                             </span>
                           </div>
                         );
@@ -218,7 +218,7 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
                                 })
                               }
                             >
-                              <XMarkIcon
+                              <X
                                 className="h-3 w-3"
                                 style={{
                                   color: color,
@@ -251,7 +251,7 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
                                 })
                               }
                             >
-                              <XMarkIcon className="h-3 w-3" />
+                              <X className="h-3 w-3" />
                             </span>
                           </div>
                         );
@@ -279,7 +279,7 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
                                 })
                               }
                             >
-                              <XMarkIcon className="h-3 w-3" />
+                              <X className="h-3 w-3" />
                             </span>
                           </div>
                         );
@@ -293,7 +293,7 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
                       })
                     }
                   >
-                    <XMarkIcon className="h-3 w-3" />
+                    <X className="h-3 w-3" />
                   </button>
                 </div>
               </div>
@@ -308,7 +308,7 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
                     })
                   }
                 >
-                  <XMarkIcon className="h-3 w-3" />
+                  <X className="h-3 w-3" />
                 </button>
               </div>
             )}
@@ -322,7 +322,7 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
           className="flex items-center gap-x-1 rounded-full border border-custom-border-200 bg-custom-background-80 px-3 py-1.5 text-xs"
         >
           <span>Clear all filters</span>
-          <XMarkIcon className="h-3 w-3" />
+          <X className="h-3 w-3" />
         </button>
       )}
     </div>
