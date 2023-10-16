@@ -7,7 +7,7 @@ import { ProjectService } from "services/project";
 // ui
 import { Button } from "@plane/ui";
 // icons
-import { AssignmentClipboardIcon } from "components/icons";
+import { ClipboardList } from "lucide-react";
 // images
 import JoinProjectImg from "public/auth/project-not-authorized.svg";
 // fetch-keys
@@ -52,7 +52,7 @@ export const JoinProject: React.FC = () => {
       <div>
         <Button
           variant="primary"
-          prependIcon={<AssignmentClipboardIcon color="white" />}
+          prependIcon={<ClipboardList color="white" />}
           loading={isJoiningProject}
           onClick={handleJoin}
         >
