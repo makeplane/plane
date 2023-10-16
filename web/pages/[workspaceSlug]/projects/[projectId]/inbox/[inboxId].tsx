@@ -3,12 +3,11 @@ import useSWR from "swr";
 
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
-import useProjectDetails from "hooks/use-project-details";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
-import { InboxActionHeader, InboxMainContent, InboxIssuesListSidebar } from "components/inbox";
+import { InboxActionsHeader, InboxMainContent, InboxIssuesListSidebar } from "components/inbox";
+import { ProjectInboxHeader } from "components/headers";
 // helper
 import { truncateText } from "helpers/string.helper";
 // ui
@@ -20,9 +19,12 @@ const ProjectInbox: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query;
 
-  const { inboxIssues: inboxIssuesStore, inboxFilters: inboxFiltersStore } = useMobxStore();
+  const { inboxIssues: inboxIssuesStore, inboxFilters: inboxFiltersStore, project: projectStore } = useMobxStore();
 
-  const { projectDetails } = useProjectDetails();
+  const projectDetails =
+    workspaceSlug && projectId
+      ? projectStore.getProjectById(workspaceSlug.toString(), projectId.toString())
+      : undefined;
 
   useSWR(
     workspaceSlug && projectId && inboxId ? `REVALIDATE_INBOX_${inboxId.toString()}` : null,
@@ -39,13 +41,13 @@ const ProjectInbox: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-          <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Inbox`} />
+          <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "", 32)} Inbox`} />
         </Breadcrumbs>
       }
-      right={<></>}
+      right={<ProjectInboxHeader />}
     >
       <div className="flex flex-col h-full">
-        <InboxActionHeader />
+        <InboxActionsHeader />
         <div className="grid grid-cols-4 flex-1 divide-x divide-custom-border-200 overflow-hidden">
           <InboxIssuesListSidebar />
           <div className="col-span-3 h-full overflow-auto">

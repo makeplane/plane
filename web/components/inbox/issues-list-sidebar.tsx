@@ -23,7 +23,7 @@ export const InboxIssuesListSidebar = observer(() => {
         issuesList.length > 0 ? (
           <div className="divide-y divide-custom-border-200 overflow-auto h-full">
             {issuesList.map((issue) => (
-              <InboxIssueCard key={issue.id} active={issue.bridge_id === inboxIssueId} issue={issue} />
+              <InboxIssueCard key={issue.id} active={issue.issue_inbox[0].id === inboxIssueId} issue={issue} />
             ))}
           </div>
         ) : (

@@ -5,7 +5,6 @@ import { Dialog, Transition } from "@headlessui/react";
 // services
 import { ModuleService } from "services/module.service";
 import { IssueService, IssueDraftService } from "services/issue";
-import { InboxService } from "services/inbox.service";
 // hooks
 import useUser from "hooks/use-user";
 import useIssuesView from "hooks/use-issues-view";
@@ -31,8 +30,6 @@ import {
   PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS,
   GLOBAL_VIEW_ISSUES,
 } from "constants/fetch-keys";
-// constants
-import { INBOX_ISSUE_SOURCE } from "constants/inbox";
 
 export interface IssuesModalProps {
   data?: IIssue | null;
@@ -58,7 +55,6 @@ export interface IssuesModalProps {
 }
 
 const moduleService = new ModuleService();
-const inboxService = new InboxService();
 const issueService = new IssueService();
 const issueDraftService = new IssueDraftService();
 
@@ -79,7 +75,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const [prePopulateData, setPreloadedData] = useState<Partial<IIssue>>({});
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, viewId, globalViewId, inboxId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, viewId, globalViewId } = router.query;
 
   const { displayFilters, params } = useIssuesView();
   const { ...viewGanttParams } = params;
@@ -230,41 +226,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       });
   };
 
-  const addIssueToInbox = async (formData: Partial<IIssue>) => {
-    if (!workspaceSlug || !activeProject || !inboxId) return;
-
-    const payload = {
-      issue: {
-        name: formData.name,
-        description: formData.description,
-        description_html: formData.description_html,
-        priority: formData.priority,
-      },
-      source: INBOX_ISSUE_SOURCE,
-    };
-
-    await inboxService
-      .createInboxIssue(workspaceSlug.toString(), activeProject.toString(), inboxId.toString(), payload, user)
-      .then((res) => {
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Issue created successfully.",
-        });
-
-        router.push(
-          `/${workspaceSlug}/projects/${activeProject}/inbox/${inboxId}?inboxIssueId=${res.issue_inbox[0].id}`
-        );
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Issue could not be created. Please try again.",
-        });
-      });
-  };
-
   const workspaceIssuesPath = [
     {
       params: {
@@ -308,44 +269,42 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const createIssue = async (payload: Partial<IIssue>) => {
     if (!workspaceSlug || !activeProject) return;
 
-    if (inboxId) await addIssueToInbox(payload);
-    else
-      await issueService
-        .createIssues(workspaceSlug as string, activeProject ?? "", payload, user)
-        .then(async (res) => {
-          mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
-          if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res.id, payload.cycle);
-          if (payload.module && payload.module !== "") await addIssueToModule(res.id, payload.module);
+    await issueService
+      .createIssues(workspaceSlug as string, activeProject ?? "", payload, user)
+      .then(async (res) => {
+        mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
+        if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res.id, payload.cycle);
+        if (payload.module && payload.module !== "") await addIssueToModule(res.id, payload.module);
 
-          if (displayFilters.layout === "gantt_chart")
-            mutate(ganttFetchKey, {
-              start_target_date: true,
-              order_by: "sort_order",
-            });
-          if (groupedIssues) mutateMyIssues();
-
-          setToastAlert({
-            type: "success",
-            title: "Success!",
-            message: "Issue created successfully.",
+        if (displayFilters.layout === "gantt_chart")
+          mutate(ganttFetchKey, {
+            start_target_date: true,
+            order_by: "sort_order",
           });
+        if (groupedIssues) mutateMyIssues();
 
-          if (payload.assignees_list?.some((assignee) => assignee === user?.id))
-            mutate(USER_ISSUE(workspaceSlug as string));
-
-          if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
-
-          if (globalViewId) mutate(GLOBAL_VIEW_ISSUES(globalViewId.toString()));
-
-          if (currentWorkspaceIssuePath) mutate(GLOBAL_VIEW_ISSUES(workspaceSlug.toString()));
-        })
-        .catch(() => {
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "Issue could not be created. Please try again.",
-          });
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Issue created successfully.",
         });
+
+        if (payload.assignees_list?.some((assignee) => assignee === user?.id))
+          mutate(USER_ISSUE(workspaceSlug as string));
+
+        if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
+
+        if (globalViewId) mutate(GLOBAL_VIEW_ISSUES(globalViewId.toString()));
+
+        if (currentWorkspaceIssuePath) mutate(GLOBAL_VIEW_ISSUES(workspaceSlug.toString()));
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Issue could not be created. Please try again.",
+        });
+      });
 
     if (!createMore) onFormSubmitClose();
   };

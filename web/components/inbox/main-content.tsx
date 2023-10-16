@@ -3,36 +3,30 @@ import Router, { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { useForm } from "react-hook-form";
+import { AlertTriangle, CheckCircle2, Clock, Copy, ExternalLink, Inbox, XCircle } from "lucide-react";
 
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // contexts
 import { useProjectMyMembership } from "contexts/project-member.context";
-// services
-import { InboxService } from "services/inbox.service";
 // components
 import { IssueDescriptionForm, IssueDetailsSidebar, IssueReaction } from "components/issues";
 import { InboxIssueActivity } from "components/inbox";
 // ui
 import { Loader } from "@plane/ui";
-// icons
-import { AlertTriangle, CheckCircle2, Clock, Copy, ExternalLink, Inbox, XCircle } from "lucide-react";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
-import type { IInboxIssue, IIssue, IUser } from "types";
+import { IInboxIssue, IIssue } from "types";
 
 const defaultValues: Partial<IInboxIssue> = {
   name: "",
   description_html: "",
-  estimate_point: null,
   assignees_list: [],
   priority: "low",
   target_date: new Date().toString(),
   labels_list: [],
 };
-
-const inboxService = new InboxService();
 
 export const InboxMainContent: React.FC = observer(() => {
   const router = useRouter();
@@ -68,25 +62,22 @@ export const InboxMainContent: React.FC = observer(() => {
     async (formData: Partial<IInboxIssue>) => {
       if (!workspaceSlug || !projectId || !inboxIssueId || !inboxId || !issueDetails) return;
 
-      const payload = { issue: { ...formData } };
-
-      await inboxService.patchInboxIssue(
+      await inboxIssueDetailsStore.updateIssue(
         workspaceSlug.toString(),
         projectId.toString(),
         inboxId.toString(),
         issueDetails.issue_inbox[0].id,
-        payload,
-        user as IUser
+        formData
       );
     },
-    [workspaceSlug, inboxIssueId, projectId, inboxId, user, issueDetails]
+    [workspaceSlug, inboxIssueId, projectId, inboxId, issueDetails, inboxIssueDetailsStore]
   );
 
   const onKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (!issuesList || !inboxIssueId) return;
 
-      const currentIssueIndex = issuesList.findIndex((issue) => issue.bridge_id === inboxIssueId);
+      const currentIssueIndex = issuesList.findIndex((issue) => issue.issue_inbox[0].id === inboxIssueId);
 
       switch (e.key) {
         case "ArrowUp":
@@ -95,8 +86,8 @@ export const InboxMainContent: React.FC = observer(() => {
             query: {
               inboxIssueId:
                 currentIssueIndex === 0
-                  ? issuesList[issuesList.length - 1].bridge_id
-                  : issuesList[currentIssueIndex - 1].bridge_id,
+                  ? issuesList[issuesList.length - 1].issue_inbox[0].id
+                  : issuesList[currentIssueIndex - 1].issue_inbox[0].id,
             },
           });
           break;
@@ -106,8 +97,8 @@ export const InboxMainContent: React.FC = observer(() => {
             query: {
               inboxIssueId:
                 currentIssueIndex === issuesList.length - 1
-                  ? issuesList[0].bridge_id
-                  : issuesList[currentIssueIndex + 1].bridge_id,
+                  ? issuesList[0].issue_inbox[0].id
+                  : issuesList[currentIssueIndex + 1].issue_inbox[0].id,
             },
           });
           break;
@@ -149,10 +140,7 @@ export const InboxMainContent: React.FC = observer(() => {
                 {issuesList?.length} issues found. Select an issue from the sidebar to view its details.
               </span>
             ) : (
-              <span className="text-custom-text-200">
-                No issues found. Use <pre className="inline rounded bg-custom-background-80 px-2 py-1">C</pre> shortcut
-                to create a new issue
-              </span>
+              <span className="text-custom-text-200">No issues found</span>
             )}
           </div>
         </div>

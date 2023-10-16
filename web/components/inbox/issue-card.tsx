@@ -27,7 +27,7 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
   const issueStatus = issue.issue_inbox[0].status;
 
   return (
-    <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${issue.bridge_id}`}>
+    <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${issue.issue_inbox[0].id}`}>
       <a>
         <div
           id={issue.id}

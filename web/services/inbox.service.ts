@@ -3,7 +3,7 @@ import { TrackEventService } from "services/track_event.service";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 // types
-import type { IInboxIssue, IInbox, TInboxStatus, IInboxIssueDetail, IUser, IInboxQueryParams } from "types";
+import type { IInboxIssue, IInbox, TInboxStatus, IUser, IInboxQueryParams } from "types";
 
 const trackEventService = new TrackEventService();
 
@@ -56,7 +56,7 @@ export class InboxService extends APIService {
     projectId: string,
     inboxId: string,
     inboxIssueId: string
-  ): Promise<IInboxIssueDetail> {
+  ): Promise<IInboxIssue> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}/`
     )
@@ -140,11 +140,11 @@ export class InboxService extends APIService {
     projectId: string,
     inboxId: string,
     data: any,
-    user: IUser | undefined
-  ): Promise<IInboxIssueDetail> {
+    user: IUser
+  ): Promise<IInboxIssue> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/`, data)
       .then((response) => {
-        trackEventService.trackInboxEvent(response?.data, "INBOX_ISSUE_CREATE", user as IUser);
+        trackEventService.trackInboxEvent(response?.data, "INBOX_ISSUE_CREATE", user);
         return response?.data;
       })
       .catch((error) => {

@@ -41,7 +41,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
     setIsDeleting(true);
 
     inboxIssueDetailsStore
-      .deleteIssue(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), data.bridge_id)
+      .deleteIssue(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), data.issue_inbox[0].id)
       .then(() => {
         setToastAlert({
           type: "success",

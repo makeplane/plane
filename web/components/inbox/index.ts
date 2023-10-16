@@ -1,5 +1,5 @@
 export * from "./modals";
-export * from "./action-headers";
+export * from "./actions-header";
 export * from "./filters-dropdown";
 export * from "./filters-list";
 export * from "./issue-activity";

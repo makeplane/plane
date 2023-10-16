@@ -4,7 +4,7 @@ import { RootStore } from "../root";
 // services
 import { InboxService } from "services/inbox.service";
 // types
-import { IInboxIssue, IInboxIssueDetail, TInboxStatus } from "types";
+import { IInboxIssue, IIssue, TInboxStatus } from "types";
 // constants
 import { INBOX_ISSUE_SOURCE } from "constants/inbox";
 
@@ -15,7 +15,7 @@ export interface IInboxIssueDetailsStore {
 
   // observables
   issueDetails: {
-    [issueId: string]: IInboxIssueDetail;
+    [issueId: string]: IInboxIssue;
   };
 
   // actions
@@ -24,19 +24,19 @@ export interface IInboxIssueDetailsStore {
     projectId: string,
     inboxId: string,
     issueId: string
-  ) => Promise<IInboxIssueDetail>;
+  ) => Promise<IInboxIssue>;
   createIssue: (
     workspaceSlug: string,
     projectId: string,
     inboxId: string,
-    data: Partial<IInboxIssueDetail>
-  ) => Promise<IInboxIssueDetail>;
+    data: Partial<IIssue>
+  ) => Promise<IInboxIssue>;
   updateIssue: (
     workspaceSlug: string,
     projectId: string,
     inboxId: string,
     issueId: string,
-    data: Partial<IInboxIssueDetail>
+    data: Partial<IInboxIssue>
   ) => Promise<void>;
   updateIssueStatus: (
     workspaceSlug: string,
@@ -54,7 +54,7 @@ export class InboxIssueDetailsStore implements IInboxIssueDetailsStore {
   error: any | null = null;
 
   // observables
-  issueDetails: { [issueId: string]: IInboxIssueDetail } = {};
+  issueDetails: { [issueId: string]: IInboxIssue } = {};
 
   // root store
   rootStore;
@@ -109,7 +109,7 @@ export class InboxIssueDetailsStore implements IInboxIssueDetailsStore {
     }
   };
 
-  createIssue = async (workspaceSlug: string, projectId: string, inboxId: string, data: Partial<IInboxIssueDetail>) => {
+  createIssue = async (workspaceSlug: string, projectId: string, inboxId: string, data: Partial<IIssue>) => {
     const payload = {
       issue: {
         name: data.name,
@@ -134,6 +134,10 @@ export class InboxIssueDetailsStore implements IInboxIssueDetailsStore {
           ...this.issueDetails,
           [response.id]: response,
         };
+        this.rootStore.inboxIssues.inboxIssues = {
+          ...this.rootStore.inboxIssues.inboxIssues,
+          [inboxId]: [response, ...this.rootStore.inboxIssues.inboxIssues[inboxId]],
+        };
       });
 
       return response;
@@ -151,7 +155,7 @@ export class InboxIssueDetailsStore implements IInboxIssueDetailsStore {
     projectId: string,
     inboxId: string,
     issueId: string,
-    data: Partial<IInboxIssueDetail>
+    data: Partial<IInboxIssue>
   ) => {
     const updatedIssue = { ...this.issueDetails[issueId], ...data };
 
@@ -164,7 +168,7 @@ export class InboxIssueDetailsStore implements IInboxIssueDetailsStore {
         this.rootStore.inboxIssues.inboxIssues = {
           ...this.rootStore.inboxIssues.inboxIssues,
           [inboxId]: this.rootStore.inboxIssues.inboxIssues[inboxId].map((issue) => {
-            if (issue.id === issueId) return updatedIssue as IInboxIssue;
+            if (issue.issue_inbox[0].id === issueId) return updatedIssue;
 
             return issue;
           }),
@@ -213,7 +217,7 @@ export class InboxIssueDetailsStore implements IInboxIssueDetailsStore {
         this.rootStore.inboxIssues.inboxIssues = {
           ...this.rootStore.inboxIssues.inboxIssues,
           [inboxId]: this.rootStore.inboxIssues.inboxIssues[inboxId].map((issue) => {
-            if (issue.id === issueId) return updatedIssue as IInboxIssue;
+            if (issue.issue_inbox[0].id === issueId) return updatedIssue as IInboxIssue;
 
             return issue;
           }),
@@ -247,6 +251,12 @@ export class InboxIssueDetailsStore implements IInboxIssueDetailsStore {
     try {
       runInAction(() => {
         this.issueDetails = updatedIssues;
+        this.rootStore.inboxIssues.inboxIssues = {
+          ...this.rootStore.inboxIssues.inboxIssues,
+          [inboxId]: this.rootStore.inboxIssues.inboxIssues[inboxId]?.filter(
+            (issue) => issue.issue_inbox[0].id !== issueId
+          ),
+        };
       });
 
       await this.inboxService.deleteInboxIssue(

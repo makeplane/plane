@@ -25,7 +25,7 @@ import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Inbox, Trash2, 
 // types
 import type { TInboxStatus } from "types";
 
-export const InboxActionHeader = observer(() => {
+export const InboxActionsHeader = observer(() => {
   const [date, setDate] = useState(new Date());
   const [selectDuplicateIssue, setSelectDuplicateIssue] = useState(false);
   const [acceptIssueModal, setAcceptIssueModal] = useState(false);
@@ -51,7 +51,7 @@ export const InboxActionHeader = observer(() => {
         workspaceSlug.toString(),
         projectId.toString(),
         inboxId.toString(),
-        issuesList.find((inboxIssue: any) => inboxIssue.bridge_id === inboxIssueId)?.bridge_id!,
+        issuesList.find((inboxIssue: any) => inboxIssue.issue_inbox[0].id === inboxIssueId)?.issue_inbox[0].id!,
         data
       )
       .catch(() =>
@@ -63,8 +63,8 @@ export const InboxActionHeader = observer(() => {
       );
   };
 
-  const issue = issuesList?.find((issue) => issue.bridge_id === inboxIssueId);
-  const currentIssueIndex = issuesList?.findIndex((issue) => issue.bridge_id === inboxIssueId) ?? 0;
+  const issue = issuesList?.find((issue) => issue.issue_inbox[0].id === inboxIssueId);
+  const currentIssueIndex = issuesList?.findIndex((issue) => issue.issue_inbox[0].id === inboxIssueId) ?? 0;
 
   useEffect(() => {
     if (!issue?.issue_inbox[0].snoozed_till) return;
