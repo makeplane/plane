@@ -13,9 +13,7 @@ import { useProjectMyMembership } from "contexts/project-member.context";
 import { IssueDescriptionForm, IssueDetailsSidebar, IssueReaction } from "components/issues";
 import { InboxIssueActivity } from "components/inbox";
 // ui
-import { ExternalLinkIcon, Loader } from "@plane/ui";
-// icons
-import { AlertTriangle, CheckCircle, Clock, Copy, Inbox, XCircle } from "lucide-react";
+import { Loader } from "@plane/ui";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
@@ -136,8 +134,8 @@ export const InboxMainContent: React.FC = observer(() => {
       <div className="h-full p-4 grid place-items-center text-custom-text-200">
         <div className="grid h-full place-items-center">
           <div className="my-5 flex flex-col items-center gap-4">
-            <Inbox height={60} width={60} />
-            {inboxIssues && inboxIssues.length > 0 ? (
+            <Inbox size={60} strokeWidth={1.5} />
+            {issuesList && issuesList.length > 0 ? (
               <span className="text-custom-text-200">
                 {issuesList?.length} issues found. Select an issue from the sidebar to view its details.
               </span>
@@ -173,17 +171,17 @@ export const InboxMainContent: React.FC = observer(() => {
             >
               {issueStatus === -2 ? (
                 <>
-                  <AlertTriangle className="h-5 w-5" />
+                  <AlertTriangle size={18} strokeWidth={2} />
                   <p>This issue is still pending.</p>
                 </>
               ) : issueStatus === -1 ? (
                 <>
-                  <XCircle className="h-5 w-5" />
+                  <XCircle size={18} strokeWidth={2} />
                   <p>This issue has been declined.</p>
                 </>
               ) : issueStatus === 0 ? (
                 <>
-                  <Clock className="h-5 w-5" />
+                  <Clock size={18} strokeWidth={2} />
                   {new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date() ? (
                     <p>
                       This issue was snoozed till{" "}
@@ -198,12 +196,12 @@ export const InboxMainContent: React.FC = observer(() => {
                 </>
               ) : issueStatus === 1 ? (
                 <>
-                  <CheckCircle className="h-5 w-5" />
+                  <CheckCircle2 size={18} strokeWidth={2} />
                   <p>This issue has been accepted.</p>
                 </>
               ) : issueStatus === 2 ? (
                 <>
-                  <Copy className="h-5 w-5" />
+                  <Copy size={18} strokeWidth={2} />
                   <p className="flex items-center gap-1">
                     This issue has been marked as a duplicate of
                     <a
@@ -212,7 +210,7 @@ export const InboxMainContent: React.FC = observer(() => {
                       rel="noreferrer"
                       className="underline flex items-center gap-2"
                     >
-                      this issue <ExternalLinkIcon className="h-3 w-3" />
+                      this issue <ExternalLink size={12} strokeWidth={2} />
                     </a>
                     .
                   </p>

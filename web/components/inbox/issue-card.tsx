@@ -4,7 +4,7 @@ import Link from "next/link";
 // ui
 import { Tooltip, PriorityIcon } from "@plane/ui";
 // icons
-import { AlertTriangle, CalendarDays, CheckCircle, Clock, Copy, XCircle } from "lucide-react";
+import { AlertTriangle, CalendarDays, CheckCircle2, Clock, Copy, XCircle } from "lucide-react";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
@@ -55,7 +55,7 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
                     : "border-custom-border-200"
                 }`}
               >
-                <PriorityIcon priority={issue.priority ?? null} className="h-3.5 w-3.5" />
+                <PriorityIcon priority={issue.priority ?? null} className="text-sm" />
               </div>
             </Tooltip>
             <Tooltip
@@ -63,7 +63,7 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
               tooltipContent={`${renderShortDateWithYearFormat(issue.created_at ?? "")}`}
             >
               <div className="flex items-center gap-1 rounded border border-custom-border-200 shadow-sm text-xs px-2 py-[0.19rem] text-custom-text-200">
-                <CalendarDays className="h-3.5 w-3.5" />
+                <CalendarDays size={12} strokeWidth={1.5} />
                 <span>{renderShortDateWithYearFormat(issue.created_at ?? "")}</span>
               </div>
             </Tooltip>
@@ -77,29 +77,29 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
           >
             {issueStatus === -2 ? (
               <>
-                <AlertTriangle className="h-3.5 w-3.5" />
+                <AlertTriangle size={14} strokeWidth={2} />
                 <span>Pending</span>
               </>
             ) : issueStatus === -1 ? (
               <>
-                <XCircle className="h-3.5 w-3.5" />
+                <XCircle size={14} strokeWidth={2} />
                 <span>Declined</span>
               </>
             ) : issueStatus === 0 ? (
               <>
-                <Clock className="h-3.5 w-3.5" />
+                <Clock size={14} strokeWidth={2} />
                 <span>
                   {new Date(issue.issue_inbox[0].snoozed_till ?? "") < new Date() ? "Snoozed date passed" : "Snoozed"}
                 </span>
               </>
             ) : issueStatus === 1 ? (
               <>
-                <CheckCircle className="h-3.5 w-3.5" />
+                <CheckCircle2 size={14} strokeWidth={2} />
                 <span>Accepted</span>
               </>
             ) : (
               <>
-                <Copy className="h-3.5 w-3.5" />
+                <Copy size={14} strokeWidth={2} />
                 <span>Duplicate</span>
               </>
             )}
