@@ -37,41 +37,33 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
 
     def list(self, request, slug):
         try:
+            # Get query parameters
             snoozed = request.GET.get("snoozed", "false")
             archived = request.GET.get("archived", "false")
             read = request.GET.get("read", "true")
-
-            # Filter type
             type = request.GET.get("type", "all")
 
-            notifications = (
-                Notification.objects.filter(
-                    workspace__slug=slug, receiver_id=request.user.id
-                )
-                .select_related("workspace", "project", "triggered_by", "receiver")
+            notifications = Notification.objects.filter(workspace__slug=slug, receiver_id=request.user.id) \
+                .select_related("workspace", "project", "triggered_by", "receiver") \
                 .order_by("snoozed_till", "-created_at")
-            )
 
-            # Filter for snoozed notifications
-            if snoozed == "false":
-                notifications = notifications.filter(
-                    Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True),
-                )
+            # Filters based on query parameters
+            snoozed_filters = {
+                "true": Q(snoozed_till__lt=timezone.now()) | Q(snoozed_till__isnull=False),
+                "false": Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True),
+            }
 
-            if snoozed == "true":
-                notifications = notifications.filter(
-                    Q(snoozed_till__lt=timezone.now()) | Q(snoozed_till__isnull=False)
-                )
+            notifications = notifications.filter(snoozed_filters[snoozed])
+
+            archived_filters = {
+                "true": Q(archived_at__isnull=False),
+                "false": Q(archived_at__isnull=True),
+            }
+
+            notifications = notifications.filter(archived_filters[archived])
 
             if read == "false":
                 notifications = notifications.filter(read_at__isnull=True)
-
-            # Filter for archived or unarchive
-            if archived == "false":
-                notifications = notifications.filter(archived_at__isnull=True)
-
-            if archived == "true":
-                notifications = notifications.filter(archived_at__isnull=False)
 
             # Subscribed issues
             if type == "watching":
