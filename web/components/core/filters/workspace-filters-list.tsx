@@ -1,5 +1,4 @@
-import React from "react";
-
+import { FC } from "react";
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { PriorityIcon, StateGroupIcon } from "components/icons";
@@ -10,13 +9,7 @@ import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
-import {
-  IIssueLabels,
-  IProject,
-  IUserLite,
-  IWorkspaceIssueFilterOptions,
-  TStateGroups,
-} from "types";
+import { IIssueLabels, IProject, IUserLite, IWorkspaceIssueFilterOptions, TStateGroups } from "types";
 // constants
 import { STATE_GROUP_COLORS } from "constants/state";
 
@@ -30,20 +23,12 @@ type Props = {
   project?: IProject[] | undefined;
 };
 
-export const WorkspaceFiltersList: React.FC<Props> = ({
-  filters,
-  setFilters,
-  clearAllFilters,
-  labels,
-  members,
-  stateGroup,
-  project,
-}) => {
+export const WorkspaceFiltersList: FC<Props> = (props) => {
+  const { filters, setFilters, clearAllFilters, labels, members, project } = props;
+
   if (!filters) return <></>;
 
-  const nullFilters = Object.keys(filters).filter(
-    (key) => filters[key as keyof IWorkspaceIssueFilterOptions] === null
-  );
+  const nullFilters = Object.keys(filters).filter((key) => filters[key as keyof IWorkspaceIssueFilterOptions] === null);
 
   return (
     <div className="flex flex-1 flex-wrap items-center gap-2 text-xs">
@@ -189,9 +174,7 @@ export const WorkspaceFiltersList: React.FC<Props> = ({
                               className="cursor-pointer"
                               onClick={() =>
                                 setFilters({
-                                  created_by: filters.created_by?.filter(
-                                    (p: any) => p !== memberId
-                                  ),
+                                  created_by: filters.created_by?.filter((p: any) => p !== memberId),
                                 })
                               }
                             >

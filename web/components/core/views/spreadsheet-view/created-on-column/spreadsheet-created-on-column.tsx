@@ -5,22 +5,20 @@ import { CreatedOnColumn } from "components/core";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
-import { ICurrentUserResponse, IIssue, Properties } from "types";
+import { IUser, IIssue, Properties } from "types";
 
 type Props = {
   issue: IIssue;
-  projectId: string;
-  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
+  handleUpdateIssue: (formData: Partial<IIssue>) => void;
   expandedIssues: string[];
   properties: Properties;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   isNotAllowed: boolean;
 };
 
 export const SpreadsheetCreatedOnColumn: React.FC<Props> = ({
   issue,
-  projectId,
-  partialUpdateIssue,
+  handleUpdateIssue,
   expandedIssues,
   properties,
   user,
@@ -32,14 +30,7 @@ export const SpreadsheetCreatedOnColumn: React.FC<Props> = ({
 
   return (
     <div>
-      <CreatedOnColumn
-        issue={issue}
-        projectId={projectId}
-        properties={properties}
-        partialUpdateIssue={partialUpdateIssue}
-        user={user}
-        isNotAllowed={isNotAllowed}
-      />
+      <CreatedOnColumn issue={issue} properties={properties} />
 
       {isExpanded &&
         !isLoading &&
@@ -49,8 +40,7 @@ export const SpreadsheetCreatedOnColumn: React.FC<Props> = ({
           <SpreadsheetCreatedOnColumn
             key={subIssue.id}
             issue={subIssue}
-            projectId={subIssue.project_detail.id}
-            partialUpdateIssue={partialUpdateIssue}
+            handleUpdateIssue={handleUpdateIssue}
             expandedIssues={expandedIssues}
             properties={properties}
             user={user}

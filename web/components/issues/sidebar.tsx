@@ -1,10 +1,6 @@
 import React, { useCallback, useState } from "react";
-
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
-// react-hook-form
 import { Controller, UseFormWatch } from "react-hook-form";
 // hooks
 import useToast from "hooks/use-toast";
@@ -12,8 +8,8 @@ import useUserAuth from "hooks/use-user-auth";
 import useUserIssueNotificationSubscription from "hooks/use-issue-notification-subscription";
 import useEstimateOption from "hooks/use-estimate-option";
 // services
-import issuesService from "services/issues.service";
-import modulesService from "services/modules.service";
+import { IssueService } from "services/issue";
+import { ModuleService } from "services/module.service";
 // contexts
 import { useProjectMyMembership } from "contexts/project-member.context";
 // components
@@ -84,6 +80,9 @@ type Props = {
   uneditable?: boolean;
 };
 
+const issueService = new IssueService();
+const moduleService = new ModuleService();
+
 export const IssueDetailsSidebar: React.FC<Props> = ({
   control,
   submitChanges,
@@ -103,8 +102,11 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
 
   const { isEstimateActive } = useEstimateOption();
 
-  const { loading, handleSubscribe, handleUnsubscribe, subscribed } =
-    useUserIssueNotificationSubscription(workspaceSlug, projectId, issueId);
+  const { loading, handleSubscribe, handleUnsubscribe, subscribed } = useUserIssueNotificationSubscription(
+    workspaceSlug,
+    projectId,
+    issueId
+  );
 
   const { memberRole } = useProjectMyMembership();
 
@@ -114,7 +116,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
     (cycleDetails: ICycle) => {
       if (!workspaceSlug || !projectId || !issueDetail) return;
 
-      issuesService
+      issueService
         .addIssueToCycle(
           workspaceSlug as string,
           projectId as string,
@@ -124,7 +126,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
           },
           user
         )
-        .then((res) => {
+        .then(() => {
           mutate(ISSUE_DETAILS(issueId as string));
         });
     },
@@ -135,7 +137,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
     (moduleDetail: IModule) => {
       if (!workspaceSlug || !projectId || !issueDetail) return;
 
-      modulesService
+      moduleService
         .addIssuesToModule(
           workspaceSlug as string,
           projectId as string,
@@ -145,7 +147,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
           },
           user
         )
-        .then((res) => {
+        .then(() => {
           mutate(ISSUE_DETAILS(issueId as string));
         });
     },
@@ -157,7 +159,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
 
     const payload = { metadata: {}, ...formData };
 
-    await issuesService
+    await issueService
       .createIssueLink(workspaceSlug as string, projectId as string, issueDetail.id, payload)
       .then(() => mutate(ISSUE_DETAILS(issueDetail.id)))
       .catch((err) => {
@@ -197,15 +199,9 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
       false
     );
 
-    await issuesService
-      .updateIssueLink(
-        workspaceSlug as string,
-        projectId as string,
-        issueDetail.id,
-        linkId,
-        payload
-      )
-      .then((res) => {
+    await issueService
+      .updateIssueLink(workspaceSlug as string, projectId as string, issueDetail.id, linkId, payload)
+      .then(() => {
         mutate(ISSUE_DETAILS(issueDetail.id));
       })
       .catch((err) => {
@@ -224,9 +220,9 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
       false
     );
 
-    await issuesService
+    await issueService
       .deleteIssueLink(workspaceSlug as string, projectId as string, issueDetail.id, linkId)
-      .then((res) => {
+      .then(() => {
         mutate(ISSUE_DETAILS(issueDetail.id));
       })
       .catch((err) => {
@@ -235,12 +231,9 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
   };
 
   const handleCopyText = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issueDetail?.id}`
-    ).then(() => {
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issueDetail?.id}`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",
@@ -264,9 +257,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
     fieldsToShow.includes("dueDate");
 
   const showThirdSection =
-    fieldsToShow.includes("all") ||
-    fieldsToShow.includes("cycle") ||
-    fieldsToShow.includes("module");
+    fieldsToShow.includes("all") || fieldsToShow.includes("cycle") || fieldsToShow.includes("module");
 
   const startDate = watchIssue("start_date");
   const targetDate = watchIssue("target_date");
@@ -413,30 +404,27 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                     </div>
                   </div>
                 )}
-                {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) &&
-                  isEstimateActive && (
-                    <div className="flex flex-wrap items-center py-2">
-                      <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-                        <PlayIcon className="h-4 w-4 flex-shrink-0 -rotate-90" />
-                        <p>Estimate</p>
-                      </div>
-                      <div className="sm:basis-1/2">
-                        <Controller
-                          control={control}
-                          name="estimate_point"
-                          render={({ field: { value } }) => (
-                            <SidebarEstimateSelect
-                              value={value}
-                              onChange={(val: number | null) =>
-                                submitChanges({ estimate_point: val })
-                              }
-                              disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
-                            />
-                          )}
-                        />
-                      </div>
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) && isEstimateActive && (
+                  <div className="flex flex-wrap items-center py-2">
+                    <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
+                      <PlayIcon className="h-4 w-4 flex-shrink-0 -rotate-90" />
+                      <p>Estimate</p>
                     </div>
-                  )}
+                    <div className="sm:basis-1/2">
+                      <Controller
+                        control={control}
+                        name="estimate_point"
+                        render={({ field: { value } }) => (
+                          <SidebarEstimateSelect
+                            value={value}
+                            onChange={(val: number | null) => submitChanges({ estimate_point: val })}
+                            disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                          />
+                        )}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             )}
             {showSecondSection && (

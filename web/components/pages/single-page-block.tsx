@@ -1,27 +1,24 @@
 import React, { useEffect, useState, useRef } from "react";
-
 import { useRouter } from "next/router";
 import Link from "next/link";
-
 import { mutate } from "swr";
-
-// react-hook-form
 import { useForm } from "react-hook-form";
-// react-beautiful-dnd
 import { Draggable } from "react-beautiful-dnd";
 // services
-import pagesService from "services/pages.service";
-import issuesService from "services/issues.service";
-import aiService from "services/ai.service";
+import { PageService } from "services/page.service";
+import { IssueService } from "services/issue/issue.service";
+import { AIService } from "services/ai.service";
+import { FileService } from "services/file.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { GptAssistantModal } from "components/core";
 import { CreateUpdateBlockInline } from "components/pages";
-import { TipTapEditor } from "components/tiptap";
+import { RichTextEditor } from "@plane/rich-text-editor";
 // ui
-import { CustomMenu, TextArea } from "components/ui";
+import { CustomMenu } from "components/ui";
+import { TextArea } from "@plane/ui";
 // icons
 import { LayerDiagonalIcon } from "components/icons";
 import { ArrowPathIcon, LinkIcon } from "@heroicons/react/20/solid";
@@ -36,7 +33,7 @@ import {
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import { ICurrentUserResponse, IIssue, IPageBlock, IProject } from "types";
+import { IUser, IIssue, IPageBlock, IProject } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
 
@@ -45,16 +42,15 @@ type Props = {
   projectDetails: IProject | undefined;
   showBlockDetails: boolean;
   index: number;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
-export const SinglePageBlock: React.FC<Props> = ({
-  block,
-  projectDetails,
-  showBlockDetails,
-  index,
-  user,
-}) => {
+const aiService = new AIService();
+const pageService = new PageService();
+const issueService = new IssueService();
+const fileService = new FileService();
+
+export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBlockDetails, index, user }) => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [createBlockForm, setCreateBlockForm] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
@@ -69,7 +65,7 @@ export const SinglePageBlock: React.FC<Props> = ({
 
   const { setToastAlert } = useToast();
 
-  const { handleSubmit, watch, reset, setValue, register } = useForm<IPageBlock>({
+  const { handleSubmit, watch, reset, setValue } = useForm<IPageBlock>({
     defaultValues: {
       name: "",
       description: {},
@@ -95,7 +91,7 @@ export const SinglePageBlock: React.FC<Props> = ({
       false
     );
 
-    await pagesService
+    await pageService
       .patchPageBlock(
         workspaceSlug as string,
         projectId as string,
@@ -111,7 +107,7 @@ export const SinglePageBlock: React.FC<Props> = ({
       .then((res) => {
         mutate(PAGE_BLOCKS_LIST(pageId as string));
         if (block.issue && block.sync)
-          issuesService
+          issueService
             .patchIssue(
               workspaceSlug as string,
               projectId as string,
@@ -130,14 +126,8 @@ export const SinglePageBlock: React.FC<Props> = ({
   const pushBlockIntoIssues = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
-    await pagesService
-      .convertPageBlockToIssue(
-        workspaceSlug as string,
-        projectId as string,
-        pageId as string,
-        block.id,
-        user
-      )
+    await pageService
+      .convertPageBlockToIssue(workspaceSlug as string, projectId as string, pageId as string, block.id, user)
       .then((res: IIssue) => {
         mutate<IPageBlock[]>(
           PAGE_BLOCKS_LIST(pageId as string),
@@ -156,7 +146,7 @@ export const SinglePageBlock: React.FC<Props> = ({
           message: "Page block converted to issue successfully.",
         });
       })
-      .catch((res) => {
+      .catch(() => {
         setToastAlert({
           type: "error",
           title: "Error!",
@@ -174,14 +164,8 @@ export const SinglePageBlock: React.FC<Props> = ({
       false
     );
 
-    await pagesService
-      .deletePageBlock(
-        workspaceSlug as string,
-        projectId as string,
-        pageId as string,
-        block.id,
-        user
-      )
+    await pageService
+      .deletePageBlock(workspaceSlug as string, projectId as string, pageId as string, block.id, user)
       .catch(() => {
         setToastAlert({
           type: "error",
@@ -221,8 +205,7 @@ export const SinglePageBlock: React.FC<Props> = ({
           setToastAlert({
             type: "error",
             title: "Error!",
-            message:
-              "You have reached the maximum number of requests of 50 requests per month per user.",
+            message: "You have reached the maximum number of requests of 50 requests per month per user.",
           });
         else
           setToastAlert({
@@ -270,7 +253,7 @@ export const SinglePageBlock: React.FC<Props> = ({
       false
     );
 
-    pagesService.patchPageBlock(
+    pageService.patchPageBlock(
       workspaceSlug as string,
       projectId as string,
       pageId as string,
@@ -283,12 +266,9 @@ export const SinglePageBlock: React.FC<Props> = ({
   };
 
   const handleCopyText = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${projectId}/issues/${block.issue}`
-    ).then(() => {
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${block.issue}`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",
@@ -343,11 +323,7 @@ export const SinglePageBlock: React.FC<Props> = ({
               >
                 {block.issue && block.sync && (
                   <div className="flex flex-shrink-0 cursor-default items-center gap-1 rounded py-1 px-1.5 text-xs">
-                    {isSyncing ? (
-                      <ArrowPathIcon className="h-3 w-3 animate-spin" />
-                    ) : (
-                      <CheckIcon className="h-3 w-3" />
-                    )}
+                    {isSyncing ? <ArrowPathIcon className="h-3 w-3 animate-spin" /> : <CheckIcon className="h-3 w-3" />}
                     {isSyncing ? "Syncing..." : "Synced"}
                   </div>
                 )}
@@ -384,12 +360,12 @@ export const SinglePageBlock: React.FC<Props> = ({
                 </button>
                 <CustomMenu
                   customButton={
-                    <button
+                    <div
                       className="flex w-full cursor-pointer items-center justify-between gap-1 rounded px-2.5 py-1 text-left text-xs duration-300 hover:bg-custom-background-90"
                       onClick={() => setIsMenuActive(!isMenuActive)}
                     >
                       <BoltIcon className="h-4.5 w-3.5" />
-                    </button>
+                    </div>
                   }
                 >
                   {block.issue ? (
@@ -431,9 +407,7 @@ export const SinglePageBlock: React.FC<Props> = ({
                   <div className="flex items-center">
                     {block.issue && (
                       <div className="mr-1.5 flex">
-                        <Link
-                          href={`/${workspaceSlug}/projects/${projectId}/issues/${block.issue}`}
-                        >
+                        <Link href={`/${workspaceSlug}/projects/${projectId}/issues/${block.issue}`}>
                           <a className="flex h-6 flex-shrink-0 items-center gap-1 rounded bg-custom-background-80 px-1.5 py-1 text-xs">
                             <LayerDiagonalIcon height="16" width="16" />
                             {projectDetails?.identifier}-{block.issue_detail?.sequence_id}
@@ -442,17 +416,19 @@ export const SinglePageBlock: React.FC<Props> = ({
                       </div>
                     )}
                     <TextArea
+                      id="blockName"
                       name="blockName"
                       value={block.name}
-                      className="min-h-[20px] block w-full resize-none overflow-hidden border-none bg-transparent text-sm text-custom-text-100"
-                      noPadding
+                      placeholder="Title"
+                      className="min-h-[20px] block w-full resize-none overflow-hidden border-none bg-transparent text-sm text-custom-text-100 !p-0"
                     />
                   </div>
 
                   {showBlockDetails
                     ? block.description_html.length > 7 && (
-                        <TipTapEditor
-                          workspaceSlug={workspaceSlug as string}
+                        <RichTextEditor
+                          uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                          deleteFile={fileService.deleteImage}
                           value={block.description_html}
                           customClassName="text-sm min-h-[150px]"
                           noBorder

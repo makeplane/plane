@@ -5,22 +5,22 @@ import { AssigneeColumn } from "components/core";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
-import { ICurrentUserResponse, IIssue, Properties } from "types";
+import { IUser, IIssue, Properties } from "types";
 
 type Props = {
   issue: IIssue;
   projectId: string;
-  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
+  handleUpdateIssue: (issueId: string, data: Partial<IIssue>) => void;
   expandedIssues: string[];
   properties: Properties;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   isNotAllowed: boolean;
 };
 
 export const SpreadsheetAssigneeColumn: React.FC<Props> = ({
   issue,
   projectId,
-  partialUpdateIssue,
+  handleUpdateIssue,
   expandedIssues,
   properties,
   user,
@@ -36,7 +36,7 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = ({
         issue={issue}
         projectId={projectId}
         properties={properties}
-        partialUpdateIssue={partialUpdateIssue}
+        onChange={(data) => handleUpdateIssue(issue.id, data)}
         user={user}
         isNotAllowed={isNotAllowed}
       />
@@ -50,7 +50,7 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = ({
             key={subIssue.id}
             issue={subIssue}
             projectId={subIssue.project_detail.id}
-            partialUpdateIssue={partialUpdateIssue}
+            handleUpdateIssue={handleUpdateIssue}
             expandedIssues={expandedIssues}
             properties={properties}
             user={user}

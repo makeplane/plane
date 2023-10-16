@@ -1,8 +1,8 @@
 // layouts
-import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // components
-import { WorkspaceIssuesViewOptions } from "components/issues/workspace-views/workspace-issue-view-option";
-import { WorkspaceViewIssues } from "components/issues/workspace-views/workpace-view-issues";
+// import { WorkspaceIssuesViewOptions } from "components/issues/workspace-views/workspace-issue-view-option";
+// import { WorkspaceViewIssues } from "components/issues/workspace-views/workpace-view-issues";
 // ui
 import { PrimaryButton } from "components/ui";
 // icons
@@ -19,7 +19,7 @@ const WorkspaceView = () => (
     }
     right={
       <div className="flex items-center gap-2">
-        <WorkspaceIssuesViewOptions />
+        {/* <WorkspaceIssuesViewOptions /> */}
         <PrimaryButton
           className="flex items-center gap-2"
           onClick={() => {
@@ -33,7 +33,7 @@ const WorkspaceView = () => (
       </div>
     }
   >
-    <WorkspaceViewIssues />
+    {/* <WorkspaceViewIssues /> */}
   </WorkspaceAuthorizationLayout>
 );
 

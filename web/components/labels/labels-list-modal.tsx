@@ -1,17 +1,13 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-
-import useSWR, { mutate } from "swr";
-
-// headless ui
+import useSWR from "swr";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // icons
 import { RectangleStackIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // services
-import issuesService from "services/issues.service";
+import { IssueLabelService } from "services/issue";
 // types
-import { ICurrentUserResponse, IIssueLabels } from "types";
+import { IUser, IIssueLabels } from "types";
 // constants
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 
@@ -19,8 +15,10 @@ type Props = {
   isOpen: boolean;
   handleClose: () => void;
   parent: IIssueLabels | undefined;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
+
+const issueLabelService = new IssueLabelService();
 
 export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent, user }) => {
   const [query, setQuery] = useState("");
@@ -31,7 +29,7 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent, 
   const { data: issueLabels, mutate } = useSWR<IIssueLabels[]>(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
+      ? () => issueLabelService.getProjectIssueLabels(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -58,7 +56,7 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent, 
       false
     );
 
-    await issuesService
+    await issueLabelService
       .patchIssueLabel(
         workspaceSlug as string,
         projectId as string,
@@ -114,9 +112,7 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent, 
                   {filteredLabels.length > 0 && (
                     <li className="p-2">
                       {query === "" && (
-                        <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-custom-text-100">
-                          Labels
-                        </h2>
+                        <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-custom-text-100">Labels</h2>
                       )}
                       <ul className="text-sm text-gray-700">
                         {filteredLabels.map((label) => {

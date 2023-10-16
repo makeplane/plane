@@ -5,7 +5,7 @@ import { StartDateColumn } from "components/core";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
-import { ICurrentUserResponse, IIssue, Properties } from "types";
+import { IUser, IIssue, Properties } from "types";
 
 type Props = {
   issue: IIssue;
@@ -13,7 +13,7 @@ type Props = {
   partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
   expandedIssues: string[];
   properties: Properties;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   isNotAllowed: boolean;
 };
 

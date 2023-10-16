@@ -3,9 +3,7 @@
   "globalEnv": [
     "NEXT_PUBLIC_API_BASE_URL",
     "NEXT_PUBLIC_DEPLOY_URL",
-    "API_BASE_URL",
     "NEXT_PUBLIC_SENTRY_DSN",
-    "SENTRY_AUTH_TOKEN",
     "NEXT_PUBLIC_SENTRY_ENVIRONMENT",
     "NEXT_PUBLIC_GITHUB_APP_NAME",
     "NEXT_PUBLIC_ENABLE_SENTRY",
@@ -31,6 +29,48 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**", "dist/**"]
     },
+    "web#develop": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": [
+        "@plane/lite-text-editor#build",
+        "@plane/rich-text-editor#build",
+        "@plane/ui#build"
+      ]
+    },
+    "space#develop": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": [
+        "@plane/lite-text-editor#build",
+        "@plane/rich-text-editor#build",
+        "@plane/ui#build"
+      ]
+    },
+    "web#build": {
+      "cache": true,
+      "dependsOn": [
+        "@plane/lite-text-editor#build",
+        "@plane/rich-text-editor#build",
+        "@plane/ui#build"
+      ]
+    },
+    "space#build": {
+      "cache": true,
+      "dependsOn": [
+        "@plane/lite-text-editor#build",
+        "@plane/rich-text-editor#build",
+        "@plane/ui#build"
+      ]
+    },
+    "@plane/lite-text-editor#build": {
+      "cache": true,
+      "dependsOn": ["@plane/editor-core#build"]
+    },
+    "@plane/rich-text-editor#build": {
+      "cache": true,
+      "dependsOn": ["@plane/editor-core#build"]
+    },
     "test": {
       "dependsOn": ["^build"],
       "outputs": []
@@ -39,6 +79,9 @@
       "outputs": []
     },
     "dev": {
+      "cache": false
+    },
+    "develop": {
       "cache": false
     },
     "start": {

@@ -1,8 +1,8 @@
 import React from "react";
 import Link from "next/link";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // ui
-import { Input, PrimaryButton } from "components/ui";
+import { Button, Input } from "@plane/ui";
 // types
 type EmailPasswordFormValues = {
   email: string;
@@ -19,8 +19,8 @@ export const EmailSignUpForm: React.FC<Props> = (props) => {
   const { onSubmit } = props;
 
   const {
-    register,
     handleSubmit,
+    control,
     watch,
     formState: { errors, isSubmitting, isValid, isDirty },
   } = useForm<EmailPasswordFormValues>({
@@ -36,49 +36,60 @@ export const EmailSignUpForm: React.FC<Props> = (props) => {
 
   return (
     <>
-      <form
-        className="space-y-4 mt-10 w-full sm:w-[360px] mx-auto"
-        onSubmit={handleSubmit(onSubmit)}
-      >
+      <form className="space-y-4 mt-10 w-full sm:w-[360px] mx-auto" onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-1">
-          <Input
-            id="email"
-            type="email"
+          <Controller
+            control={control}
             name="email"
-            register={register}
-            validations={{
+            rules={{
               required: "Email address is required",
               validate: (value) =>
                 /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
                   value
                 ) || "Email address is not valid",
             }}
-            error={errors.email}
-            placeholder="Enter your email address..."
-            className="border-custom-border-300 h-[46px]"
+            render={({ field: { value, onChange, ref } }) => (
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                value={value}
+                onChange={onChange}
+                ref={ref}
+                hasError={Boolean(errors.email)}
+                placeholder="Enter your email address..."
+                className="border-custom-border-300 h-[46px] w-full"
+              />
+            )}
           />
         </div>
         <div className="space-y-1">
-          <Input
-            id="password"
-            type="password"
+          <Controller
+            control={control}
             name="password"
-            register={register}
-            validations={{
+            rules={{
               required: "Password is required",
             }}
-            error={errors.password}
-            placeholder="Enter your password..."
-            className="border-custom-border-300 h-[46px]"
+            render={({ field: { value, onChange, ref } }) => (
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                value={value ?? ""}
+                onChange={onChange}
+                ref={ref}
+                hasError={Boolean(errors.password)}
+                placeholder="Enter your password..."
+                className="border-custom-border-300 h-[46px] w-full"
+              />
+            )}
           />
         </div>
         <div className="space-y-1">
-          <Input
-            id="confirm_password"
-            type="password"
+          <Controller
+            control={control}
             name="confirm_password"
-            register={register}
-            validations={{
+            rules={{
               required: "Password is required",
               validate: (val: string) => {
                 if (watch("password") != val) {
@@ -86,27 +97,36 @@ export const EmailSignUpForm: React.FC<Props> = (props) => {
                 }
               },
             }}
-            error={errors.confirm_password}
-            placeholder="Confirm your password..."
-            className="border-custom-border-300 h-[46px]"
+            render={({ field: { value, onChange, ref } }) => (
+              <Input
+                id="confirm_password"
+                name="confirm_password"
+                type="password"
+                value={value}
+                onChange={onChange}
+                ref={ref}
+                hasError={Boolean(errors.confirm_password)}
+                placeholder="Confirm your password..."
+                className="border-custom-border-300 h-[46px] w-full"
+              />
+            )}
           />
         </div>
         <div className="text-right text-xs">
           <Link href="/">
-            <a className="text-custom-text-200 hover:text-custom-primary-100">
-              Already have an account? Sign in.
-            </a>
+            <a className="text-custom-text-200 hover:text-custom-primary-100">Already have an account? Sign in.</a>
           </Link>
         </div>
         <div>
-          <PrimaryButton
+          <Button
+            variant="primary"
             type="submit"
-            className="w-full text-center h-[46px]"
+            className="w-full"
             disabled={!isValid && isDirty}
             loading={isSubmitting}
           >
             {isSubmitting ? "Signing up..." : "Sign up"}
-          </PrimaryButton>
+          </Button>
         </div>
       </form>
     </>

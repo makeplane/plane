@@ -2,7 +2,8 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 // ui
-import { Icon, Loader } from "components/ui";
+import { Icon } from "components/ui";
+import { Loader } from "@plane/ui";
 // types
 import { IUserProfileData } from "types";
 

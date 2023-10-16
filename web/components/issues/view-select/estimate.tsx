@@ -1,17 +1,16 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 // services
-import trackEventServices from "services/track-event.service";
+import { TrackEventService } from "services/track_event.service";
 // hooks
 import useEstimateOption from "hooks/use-estimate-option";
 // ui
-import { CustomSelect, Tooltip } from "components/ui";
+import { CustomSelect } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // icons
 import { PlayIcon } from "@heroicons/react/24/outline";
 // types
-import { ICurrentUserResponse, IIssue } from "types";
+import { IUser, IIssue } from "types";
 
 type Props = {
   issue: IIssue;
@@ -20,16 +19,18 @@ type Props = {
   tooltipPosition?: "top" | "bottom";
   selfPositioned?: boolean;
   customButton?: boolean;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   isNotAllowed: boolean;
 };
+
+const trackEventService = new TrackEventService();
 
 export const ViewEstimateSelect: React.FC<Props> = ({
   issue,
   partialUpdateIssue,
-  position = "left",
+  // position = "left",
   tooltipPosition = "top",
-  selfPositioned = false,
+  // selfPositioned = false,
   customButton = false,
   user,
   isNotAllowed,
@@ -57,7 +58,7 @@ export const ViewEstimateSelect: React.FC<Props> = ({
       value={issue.estimate_point}
       onChange={(val: number) => {
         partialUpdateIssue({ estimate_point: val }, issue);
-        trackEventServices.trackIssuePartialPropertyUpdateEvent(
+        trackEventService.trackIssuePartialPropertyUpdateEvent(
           {
             workspaceSlug,
             workspaceId: issue.workspace,
@@ -67,15 +68,13 @@ export const ViewEstimateSelect: React.FC<Props> = ({
             issueId: issue.id,
           },
           "ISSUE_PROPERTY_UPDATE_ESTIMATE",
-          user
+          user as IUser
         );
       }}
       {...(customButton ? { customButton: estimateLabels } : { label: estimateLabels })}
       maxHeight="md"
       noChevron
       disabled={isNotAllowed}
-      position={position}
-      selfPositioned={selfPositioned}
       width="w-full min-w-[8rem]"
     >
       <CustomSelect.Option value={null}>

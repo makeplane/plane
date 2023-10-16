@@ -1,13 +1,10 @@
 import { useState, useEffect } from "react";
-
 import { useRouter } from "next/router";
 import Link from "next/link";
-
 import useSWR, { mutate } from "swr";
-
 // services
-import projectService from "services/project.service";
-import workspaceService from "services/workspace.service";
+import { ProjectService, ProjectInvitationService } from "services/project";
+import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
@@ -15,24 +12,17 @@ import useProjectMembers from "hooks/use-project-members";
 import useProjectDetails from "hooks/use-project-details";
 import { Controller, useForm } from "react-hook-form";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import ConfirmProjectMemberRemove from "components/project/confirm-project-member-remove";
 import SendProjectInvitationModal from "components/project/send-project-invitation-modal";
 import { MemberSelect, SettingsSidebar } from "components/project";
 // ui
-import {
-  CustomMenu,
-  CustomSearchSelect,
-  CustomSelect,
-  Icon,
-  Loader,
-  PrimaryButton,
-  SecondaryButton,
-} from "components/ui";
+import { Button, Loader } from "@plane/ui";
+import { CustomMenu, CustomSelect, Icon } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 // types
 import type { NextPage } from "next";
 import { IProject, IUserLite, IWorkspace } from "types";
@@ -41,7 +31,6 @@ import {
   PROJECTS_LIST,
   PROJECT_DETAILS,
   PROJECT_INVITATIONS_WITH_EMAIL,
-  PROJECT_MEMBERS,
   PROJECT_MEMBERS_WITH_EMAIL,
   USER_PROJECT_VIEW,
   WORKSPACE_DETAILS,
@@ -55,6 +44,11 @@ const defaultValues: Partial<IProject> = {
   project_lead: null,
   default_assignee: null,
 };
+
+// services
+const projectService = new ProjectService();
+const projectInvitationService = new ProjectInvitationService();
+const workspaceService = new WorkspaceService();
 
 const MembersSettings: NextPage = () => {
   const [inviteModal, setInviteModal] = useState(false);
@@ -74,41 +68,23 @@ const MembersSettings: NextPage = () => {
     Boolean(workspaceSlug && projectId)
   );
 
-  const {
-    handleSubmit,
-    reset,
-    control,
-    formState: { isSubmitting },
-  } = useForm<IProject>({ defaultValues });
+  const { reset, control } = useForm<IProject>({ defaultValues });
 
-  const { data: activeWorkspace } = useSWR(
-    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
-    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
-  );
-
-  const { data: people } = useSWR(
-    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
-      : null
+  const { data: activeWorkspace } = useSWR(workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null, () =>
+    workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null
   );
 
   const { data: projectMembers, mutate: mutateMembers } = useSWR(
-    workspaceSlug && projectId
-      ? PROJECT_MEMBERS_WITH_EMAIL(workspaceSlug.toString(), projectId.toString())
-      : null,
+    workspaceSlug && projectId ? PROJECT_MEMBERS_WITH_EMAIL(workspaceSlug.toString(), projectId.toString()) : null,
     workspaceSlug && projectId
       ? () => projectService.projectMembersWithEmail(workspaceSlug as string, projectId as string)
       : null
   );
 
   const { data: projectInvitations, mutate: mutateInvitations } = useSWR(
+    workspaceSlug && projectId ? PROJECT_INVITATIONS_WITH_EMAIL(workspaceSlug.toString(), projectId.toString()) : null,
     workspaceSlug && projectId
-      ? PROJECT_INVITATIONS_WITH_EMAIL(workspaceSlug.toString(), projectId.toString())
-      : null,
-    workspaceSlug && projectId
-      ? () =>
-          projectService.projectInvitationsWithEmail(workspaceSlug as string, projectId as string)
+      ? () => projectInvitationService.projectInvitationsWithEmail(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -148,37 +124,37 @@ const MembersSettings: NextPage = () => {
 
   const currentUser = projectMembers?.find((item) => item.member.id === user?.id);
 
-  const handleProjectInvitationSuccess = () => {};
+  // const handleProjectInvitationSuccess = () => {};
 
-  const onSubmit = async (formData: IProject) => {
-    if (!workspaceSlug || !projectId || !projectDetails) return;
+  // const onSubmit = async (formData: IProject) => {
+  //   if (!workspaceSlug || !projectId || !projectDetails) return;
 
-    const payload: Partial<IProject> = {
-      default_assignee: formData.default_assignee,
-      project_lead: formData.project_lead === "none" ? null : formData.project_lead,
-    };
+  //   const payload: Partial<IProject> = {
+  //     default_assignee: formData.default_assignee,
+  //     project_lead: formData.project_lead === "none" ? null : formData.project_lead,
+  //   };
 
-    await projectService
-      .updateProject(workspaceSlug as string, projectId as string, payload, user)
-      .then((res) => {
-        mutate(PROJECT_DETAILS(projectId as string));
+  //   await projectService
+  //     .updateProject(workspaceSlug as string, projectId as string, payload, user)
+  //     .then((res) => {
+  //       mutate(PROJECT_DETAILS(projectId as string));
 
-        mutate(
-          PROJECTS_LIST(workspaceSlug as string, {
-            is_favorite: "all",
-          })
-        );
+  //       mutate(
+  //         PROJECTS_LIST(workspaceSlug as string, {
+  //           is_favorite: "all",
+  //         })
+  //       );
 
-        setToastAlert({
-          title: "Success",
-          type: "success",
-          message: "Project updated successfully",
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  //       setToastAlert({
+  //         title: "Success",
+  //         type: "success",
+  //         message: "Project updated successfully",
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
 
   useEffect(() => {
     if (projectDetails)
@@ -200,7 +176,7 @@ const MembersSettings: NextPage = () => {
 
     await projectService
       .updateProject(workspaceSlug as string, projectId as string, payload, user)
-      .then((res) => {
+      .then(() => {
         mutate(PROJECT_DETAILS(projectId as string));
 
         mutate(
@@ -241,31 +217,21 @@ const MembersSettings: NextPage = () => {
           setSelectedRemoveMember(null);
           setSelectedInviteRemoveMember(null);
         }}
-        data={members.find(
-          (item) => item.id === selectedRemoveMember || item.id === selectedInviteRemoveMember
-        )}
+        data={members.find((item) => item.id === selectedRemoveMember || item.id === selectedInviteRemoveMember)}
         handleDelete={async () => {
           if (!activeWorkspace || !projectDetails) return;
           if (selectedRemoveMember) {
-            await projectService.deleteProjectMember(
-              activeWorkspace.slug,
-              projectDetails.id,
-              selectedRemoveMember
-            );
-            mutateMembers(
-              (prevData: any) => prevData?.filter((item: any) => item.id !== selectedRemoveMember),
-              false
-            );
+            await projectService.deleteProjectMember(activeWorkspace.slug, projectDetails.id, selectedRemoveMember);
+            mutateMembers((prevData: any) => prevData?.filter((item: any) => item.id !== selectedRemoveMember), false);
           }
           if (selectedInviteRemoveMember) {
-            await projectService.deleteProjectInvitation(
+            await projectInvitationService.deleteProjectInvitation(
               activeWorkspace.slug,
               projectDetails.id,
               selectedInviteRemoveMember
             );
             mutateInvitations(
-              (prevData: any) =>
-                prevData?.filter((item: any) => item.id !== selectedInviteRemoveMember),
+              (prevData: any) => prevData?.filter((item: any) => item.id !== selectedInviteRemoveMember),
               false
             );
           }
@@ -347,7 +313,9 @@ const MembersSettings: NextPage = () => {
 
           <div className="flex items-center justify-between gap-4 py-3.5 border-b border-custom-border-200">
             <h4 className="text-xl font-medium">Members</h4>
-            <PrimaryButton onClick={() => setInviteModal(true)}>Add Member</PrimaryButton>
+            <Button variant="primary" onClick={() => setInviteModal(true)}>
+              Add Member
+            </Button>
           </div>
           {!projectMembers || !projectInvitations ? (
             <Loader className="space-y-5">
@@ -360,10 +328,7 @@ const MembersSettings: NextPage = () => {
             <div className="divide-y divide-custom-border-200">
               {members.length > 0
                 ? members.map((member) => (
-                    <div
-                      key={member.id}
-                      className="flex items-center justify-between px-3.5 py-[18px]"
-                    >
+                    <div key={member.id} className="flex items-center justify-between px-3.5 py-[18px]">
                       <div className="flex items-center gap-x-6 gap-y-2">
                         {member.avatar && member.avatar !== "" ? (
                           <div className="relative flex h-10 w-10 items-center justify-center rounded-lg p-4 capitalize text-white">
@@ -389,19 +354,13 @@ const MembersSettings: NextPage = () => {
                                 <span>
                                   {member.first_name} {member.last_name}
                                 </span>
-                                <span className="text-custom-text-300 text-sm ml-2">
-                                  ({member.display_name})
-                                </span>
+                                <span className="text-custom-text-300 text-sm ml-2">({member.display_name})</span>
                               </a>
                             </Link>
                           ) : (
                             <h4 className="text-sm">{member.display_name || member.email}</h4>
                           )}
-                          {isOwner && (
-                            <p className="mt-0.5 text-xs text-custom-sidebar-text-300">
-                              {member.email}
-                            </p>
-                          )}
+                          {isOwner && <p className="mt-0.5 text-xs text-custom-sidebar-text-300">{member.email}</p>}
                         </div>
                       </div>
                       <div className="flex items-center gap-3 text-xs">
@@ -412,7 +371,7 @@ const MembersSettings: NextPage = () => {
                         )}
                         <CustomSelect
                           customButton={
-                            <button className="flex item-center gap-1">
+                            <div className="flex item-center gap-1">
                               <span
                                 className={`flex items-center text-sm font-medium ${
                                   member.memberId !== user?.id ? "" : "text-custom-sidebar-text-400"
@@ -423,7 +382,7 @@ const MembersSettings: NextPage = () => {
                               {member.memberId !== user?.id && (
                                 <Icon iconName="expand_more" className="text-lg font-medium" />
                               )}
-                            </button>
+                            </div>
                           }
                           value={member.role}
                           onChange={(value: 5 | 10 | 15 | 20 | undefined) => {
@@ -431,46 +390,30 @@ const MembersSettings: NextPage = () => {
 
                             mutateMembers(
                               (prevData: any) =>
-                                prevData.map((m: any) =>
-                                  m.id === member.id ? { ...m, role: value } : m
-                                ),
+                                prevData.map((m: any) => (m.id === member.id ? { ...m, role: value } : m)),
                               false
                             );
 
                             projectService
-                              .updateProjectMember(
-                                activeWorkspace.slug,
-                                projectDetails.id,
-                                member.id,
-                                {
-                                  role: value,
-                                }
-                              )
+                              .updateProjectMember(activeWorkspace.slug, projectDetails.id, member.id, {
+                                role: value,
+                              })
                               .catch(() => {
                                 setToastAlert({
                                   type: "error",
                                   title: "Error!",
-                                  message:
-                                    "An error occurred while updating member role. Please try again.",
+                                  message: "An error occurred while updating member role. Please try again.",
                                 });
                               });
                           }}
-                          position="right"
                           disabled={
                             member.memberId === user?.id ||
                             !member.member ||
-                            (currentUser &&
-                              currentUser.role !== 20 &&
-                              currentUser.role < member.role)
+                            (currentUser && currentUser.role !== 20 && currentUser.role < member.role)
                           }
                         >
                           {Object.keys(ROLE).map((key) => {
-                            if (
-                              currentUser &&
-                              currentUser.role !== 20 &&
-                              currentUser.role < parseInt(key)
-                            )
-                              return null;
+                            if (currentUser && currentUser.role !== 20 && currentUser.role < parseInt(key)) return null;
 
                             return (
                               <CustomSelect.Option key={key} value={key}>
@@ -489,10 +432,7 @@ const MembersSettings: NextPage = () => {
                             <span className="flex items-center justify-start gap-2">
                               <XMarkIcon className="h-4 w-4" />
 
-                              <span>
-                                {" "}
-                                {member.memberId !== user?.id ? "Remove member" : "Leave project"}
-                              </span>
+                              <span> {member.memberId !== user?.id ? "Remove member" : "Leave project"}</span>
                             </span>
                           </CustomMenu.MenuItem>
                         </CustomMenu>

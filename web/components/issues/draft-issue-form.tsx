@@ -1,11 +1,9 @@
 import React, { FC, useState, useEffect, useRef } from "react";
-
 import { useRouter } from "next/router";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
-import aiService from "services/ai.service";
+import { AIService } from "services/ai.service";
+import { FileService } from "services/file.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
@@ -24,12 +22,17 @@ import {
 import { CreateStateModal } from "components/states";
 import { CreateLabelModal } from "components/labels";
 // ui
-import { CustomMenu, Input, PrimaryButton, SecondaryButton, ToggleSwitch } from "components/ui";
-import { TipTapEditor } from "components/tiptap";
+import { CustomMenu } from "components/ui";
+import { Button, Input, ToggleSwitch } from "@plane/ui";
 // icons
 import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
-import type { ICurrentUserResponse, IIssue, ISearchIssueResponse } from "types";
+import type { IUser, IIssue, ISearchIssueResponse } from "types";
+// components
+import { RichTextEditorWithRef } from "@plane/rich-text-editor";
+
+const aiService = new AIService();
+const fileService = new FileService();
 
 const defaultValues: Partial<IIssue> = {
   project: "",
@@ -70,7 +73,7 @@ interface IssueFormProps {
   handleClose: () => void;
   handleDiscard: () => void;
   status: boolean;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   fieldsToShow: (
     | "project"
     | "name"
@@ -97,7 +100,6 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
     setActiveProject,
     createMore,
     setCreateMore,
-    handleClose,
     status,
     user,
     fieldsToShow,
@@ -122,7 +124,6 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
   const { setToastAlert } = useToast();
 
   const {
-    register,
     formState: { errors, isSubmitting },
     handleSubmit,
     reset,
@@ -165,9 +166,24 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(payload), isOpen, data]);
 
-  const onClose = () => {
-    handleClose();
-  };
+  // const onClose = () => {
+  //   handleClose();
+  // };
+
+  useEffect(() => {
+    if (!isOpen || data) return;
+
+    setLocalStorageValue(
+      JSON.stringify({
+        ...payload,
+      })
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(payload), isOpen, data]);
+
+  // const onClose = () => {
+  //   handleClose();
+  // };
 
   const handleCreateUpdateIssue = async (
     formData: Partial<IIssue>,
@@ -240,9 +256,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
           setToastAlert({
             type: "error",
             title: "Error!",
-            message:
-              error ||
-              "You have reached the maximum number of requests of 50 requests per month per user.",
+            message: error || "You have reached the maximum number of requests of 50 requests per month per user.",
           });
         else
           setToastAlert({
@@ -343,9 +357,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                   <span className="flex-shrink-0 text-custom-text-200">
                     {selectedParentIssue.project__identifier}-{selectedParentIssue.sequence_id}
                   </span>
-                  <span className="truncate font-medium">
-                    {selectedParentIssue.name.substring(0, 50)}
-                  </span>
+                  <span className="truncate font-medium">{selectedParentIssue.name.substring(0, 50)}</span>
                   <XMarkIcon
                     className="h-3 w-3 cursor-pointer"
                     onClick={() => {
@@ -360,21 +372,29 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
             <div className="mt-2 space-y-3">
               {(fieldsToShow.includes("all") || fieldsToShow.includes("name")) && (
                 <div>
-                  <Input
-                    id="name"
+                  <Controller
+                    control={control}
                     name="name"
-                    className="resize-none text-xl"
-                    placeholder="Title"
-                    autoComplete="off"
-                    error={errors.name}
-                    register={register}
-                    validations={{
+                    rules={{
                       required: "Title is required",
                       maxLength: {
                         value: 255,
                         message: "Title should be less than 255 characters",
                       },
                     }}
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Input
+                        id="name"
+                        name="name"
+                        type="text"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        hasError={Boolean(errors.name)}
+                        placeholder="Title"
+                        className="resize-none text-xl w-full"
+                      />
+                    )}
                   />
                 </div>
               )}
@@ -411,29 +431,24 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                   <Controller
                     name="description_html"
                     control={control}
-                    render={({ field: { value, onChange } }) => {
-                      if (!value && !watch("description_html")) return <></>;
-
-                      return (
-                        <TipTapEditor
-                          workspaceSlug={workspaceSlug as string}
-                          ref={editorRef}
-                          debouncedUpdatesEnabled={false}
-                          value={
-                            !value ||
-                            value === "" ||
-                            (typeof value === "object" && Object.keys(value).length === 0)
-                              ? watch("description_html")
-                              : value
-                          }
-                          customClassName="min-h-[150px]"
-                          onChange={(description: Object, description_html: string) => {
-                            onChange(description_html);
-                            setValue("description", description);
-                          }}
-                        />
-                      );
-                    }}
+                    render={({ field: { value, onChange } }) => (
+                      <RichTextEditorWithRef
+                        uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                        deleteFile={fileService.deleteImage}
+                        ref={editorRef}
+                        debouncedUpdatesEnabled={false}
+                        value={
+                          !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
+                            ? watch("description_html")
+                            : value
+                        }
+                        customClassName="min-h-[150px]"
+                        onChange={(description: Object, description_html: string) => {
+                          onChange(description_html);
+                          setValue("description", description);
+                        }}
+                      />
+                    )}
                   />
                   <GptAssistantModal
                     isOpen={gptAssistantModal}
@@ -481,11 +496,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                     control={control}
                     name="assignees"
                     render={({ field: { value, onChange } }) => (
-                      <IssueAssigneeSelect
-                        projectId={projectId}
-                        value={value}
-                        onChange={onChange}
-                      />
+                      <IssueAssigneeSelect projectId={projectId} value={value} onChange={onChange} />
                     )}
                   />
                 )}
@@ -567,24 +578,15 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                   <CustomMenu ellipsis>
                     {watch("parent") ? (
                       <>
-                        <CustomMenu.MenuItem
-                          renderAs="button"
-                          onClick={() => setParentIssueListModalOpen(true)}
-                        >
+                        <CustomMenu.MenuItem renderAs="button" onClick={() => setParentIssueListModalOpen(true)}>
                           Change parent issue
                         </CustomMenu.MenuItem>
-                        <CustomMenu.MenuItem
-                          renderAs="button"
-                          onClick={() => setValue("parent", null)}
-                        >
+                        <CustomMenu.MenuItem renderAs="button" onClick={() => setValue("parent", null)}>
                           Remove parent issue
                         </CustomMenu.MenuItem>
                       </>
                     ) : (
-                      <CustomMenu.MenuItem
-                        renderAs="button"
-                        onClick={() => setParentIssueListModalOpen(true)}
-                      >
+                      <CustomMenu.MenuItem renderAs="button" onClick={() => setParentIssueListModalOpen(true)}>
                         Select Parent Issue
                       </CustomMenu.MenuItem>
                     )}
@@ -603,23 +605,27 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
             <ToggleSwitch value={createMore} onChange={() => {}} size="md" />
           </div>
           <div className="flex items-center gap-2">
-            <SecondaryButton onClick={handleDiscard}>Discard</SecondaryButton>
-            <SecondaryButton
+            <Button variant="neutral-primary" onClick={handleDiscard}>
+              Discard
+            </Button>
+            <Button
+              variant="neutral-primary"
               loading={isSubmitting}
               onClick={handleSubmit((formData) =>
                 handleCreateUpdateIssue(formData, data?.id ? "updateDraft" : "createDraft")
               )}
             >
               {isSubmitting ? "Saving..." : "Save Draft"}
-            </SecondaryButton>
-            <PrimaryButton
+            </Button>
+            <Button
               loading={isSubmitting}
+              variant="primary"
               onClick={handleSubmit((formData) =>
                 handleCreateUpdateIssue(formData, data ? "convertToNewIssue" : "createNewIssue")
               )}
             >
               {isSubmitting ? "Saving..." : "Add Issue"}
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
       </form>

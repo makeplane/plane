@@ -1,49 +1,32 @@
-import React, { useState, useEffect } from "react";
-
+import { useState, useEffect, Fragment } from "react";
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// react-hook-form
 import { useForm, Controller } from "react-hook-form";
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import projectServices from "services/project.service";
+// icons
+import { XMarkIcon } from "@heroicons/react/24/outline";
 // hooks
 import useToast from "hooks/use-toast";
 import { useWorkspaceMyMembership } from "contexts/workspace-member.context";
 import useWorkspaceMembers from "hooks/use-workspace-members";
 // ui
-import {
-  Input,
-  TextArea,
-  CustomSelect,
-  PrimaryButton,
-  SecondaryButton,
-  Icon,
-  Avatar,
-  CustomSearchSelect,
-} from "components/ui";
-// icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { CustomSelect, Icon, Avatar, CustomSearchSelect } from "components/ui";
+import { Button, Input, TextArea } from "@plane/ui";
 // components
 import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
 // helpers
 import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
 // types
-import { ICurrentUserResponse, IProject } from "types";
-// fetch-keys
-import { PROJECTS_LIST } from "constants/fetch-keys";
+import { IUser, IProject } from "types";
 // constants
 import { NETWORK_CHOICES } from "constants/project";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setToFavorite?: boolean;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
 const defaultValues: Partial<IProject> = {
@@ -75,12 +58,11 @@ const IsGuestCondition: React.FC<{
   return null;
 };
 
-export const CreateProjectModal: React.FC<Props> = ({
-  isOpen,
-  setIsOpen,
-  setToFavorite = false,
-  user,
-}) => {
+export const CreateProjectModal: React.FC<Props> = (props) => {
+  const { isOpen, setIsOpen, setToFavorite = false } = props;
+  // store
+  const { project: projectStore } = useMobxStore();
+  // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
 
   const { setToastAlert } = useToast();
@@ -92,7 +74,6 @@ export const CreateProjectModal: React.FC<Props> = ({
   const { workspaceMembers } = useWorkspaceMembers(workspaceSlug?.toString() ?? "");
 
   const {
-    register,
     formState: { errors, isSubmitting },
     handleSubmit,
     reset,
@@ -113,42 +94,27 @@ export const CreateProjectModal: React.FC<Props> = ({
   const handleAddToFavorites = (projectId: string) => {
     if (!workspaceSlug) return;
 
-    mutate<IProject[]>(
-      PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
-      (prevData) =>
-        (prevData ?? []).map((p) => (p.id === projectId ? { ...p, is_favorite: true } : p)),
-      false
-    );
-
-    projectServices
-      .addProjectToFavorites(workspaceSlug as string, {
-        project: projectId,
-      })
-      .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't remove the project from favorites. Please try again.",
-        })
-      );
+    projectStore.addProjectToFavorites(workspaceSlug.toString(), projectId).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Couldn't remove the project from favorites. Please try again.",
+      });
+    });
   };
 
   const onSubmit = async (formData: IProject) => {
     if (!workspaceSlug) return;
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { emoji_and_icon, ...payload } = formData;
 
     if (typeof formData.emoji_and_icon === "object") payload.icon_prop = formData.emoji_and_icon;
     else payload.emoji = formData.emoji_and_icon;
 
-    await projectServices
-      .createProject(workspaceSlug.toString(), payload, user)
+    await projectStore
+      .createProject(workspaceSlug.toString(), payload)
       .then((res) => {
-        mutate<IProject[]>(
-          PROJECTS_LIST(workspaceSlug.toString(), { is_favorite: "all" }),
-          (prevData) => [res, ...(prevData ?? [])],
-          false
-        );
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -193,7 +159,7 @@ export const CreateProjectModal: React.FC<Props> = ({
     setIsChangeInIdentifierRequired(false);
   };
 
-  const options = workspaceMembers?.map((member) => ({
+  const options = workspaceMembers?.map((member: any) => ({
     value: member.member.id,
     query: member.member.display_name,
     content: (
@@ -206,14 +172,13 @@ export const CreateProjectModal: React.FC<Props> = ({
 
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === watch("network"));
 
-  if (memberDetails && isOpen)
-    if (memberDetails.role <= 10) return <IsGuestCondition setIsOpen={setIsOpen} />;
+  if (memberDetails && isOpen) if (memberDetails.role <= 10) return <IsGuestCondition setIsOpen={setIsOpen} />;
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
+    <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
-          as={React.Fragment}
+          as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -227,7 +192,7 @@ export const CreateProjectModal: React.FC<Props> = ({
         <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
             <Transition.Child
-              as={React.Fragment}
+              as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               enterTo="opacity-100 translate-y-0 sm:scale-100"
@@ -256,6 +221,7 @@ export const CreateProjectModal: React.FC<Props> = ({
                       onChange={(image) => {
                         setValue("cover_image", image);
                       }}
+                      control={control}
                       value={watch("cover_image")}
                     />
                   </div>
@@ -277,47 +243,43 @@ export const CreateProjectModal: React.FC<Props> = ({
                     />
                   </div>
                 </div>
-                <form
-                  onSubmit={handleSubmit(onSubmit)}
-                  className="divide-y-[0.5px] divide-custom-border-100 px-3"
-                >
+                <form onSubmit={handleSubmit(onSubmit)} className="divide-y-[0.5px] divide-custom-border-100 px-3">
                   <div className="mt-9 space-y-6 pb-5">
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-y-3 gap-x-2">
                       <div className="md:col-span-3">
-                        <Input
-                          id="name"
+                        <Controller
+                          control={control}
                           name="name"
-                          type="name"
-                          placeholder="Project Title"
-                          onChange={changeIdentifierOnNameChange}
-                          error={errors.name}
-                          register={register}
-                          validations={{
+                          rules={{
                             required: "Title is required",
                             maxLength: {
                               value: 255,
                               message: "Title should be less than 255 characters",
                             },
                           }}
-                          autoComplete="off"
-                          tabIndex={1}
+                          render={({ field: { value, ref } }) => (
+                            <Input
+                              id="name"
+                              name="name"
+                              type="text"
+                              value={value}
+                              onChange={changeIdentifierOnNameChange}
+                              ref={ref}
+                              hasError={Boolean(errors.name)}
+                              placeholder="Project Title"
+                              className="w-full"
+                            />
+                          )}
                         />
                       </div>
                       <div>
-                        <Input
-                          id="identifier"
+                        <Controller
+                          control={control}
                           name="identifier"
-                          type="text"
-                          className="text-sm"
-                          placeholder="Identifier"
-                          error={errors.identifier}
-                          register={register}
-                          onChange={handleIdentifierChange}
-                          validations={{
+                          rules={{
                             required: "Identifier is required",
                             validate: (value) =>
-                              /^[A-Z0-9]+$/.test(value.toUpperCase()) ||
-                              "Identifier must be in uppercase.",
+                              /^[A-Z0-9]+$/.test(value.toUpperCase()) || "Identifier must be in uppercase.",
                             minLength: {
                               value: 1,
                               message: "Identifier must at least be of 1 character",
@@ -327,16 +289,36 @@ export const CreateProjectModal: React.FC<Props> = ({
                               message: "Identifier must at most be of 12 characters",
                             },
                           }}
+                          render={({ field: { value, ref } }) => (
+                            <Input
+                              id="identifier"
+                              name="identifier"
+                              type="text"
+                              value={value}
+                              onChange={handleIdentifierChange}
+                              ref={ref}
+                              hasError={Boolean(errors.name)}
+                              placeholder="Identifier"
+                              className="text-sm w-full"
+                            />
+                          )}
                         />
                       </div>
                       <div className="md:col-span-4">
-                        <TextArea
-                          id="description"
+                        <Controller
                           name="description"
-                          className="text-sm !h-24"
-                          placeholder="Description..."
-                          error={errors.description}
-                          register={register}
+                          control={control}
+                          render={({ field: { value, onChange } }) => (
+                            <TextArea
+                              id="description"
+                              name="description"
+                              value={value}
+                              placeholder="Description..."
+                              onChange={onChange}
+                              className="text-sm !h-24"
+                              hasError={Boolean(errors?.name)}
+                            />
+                          )}
                         />
                       </div>
                     </div>
@@ -384,9 +366,7 @@ export const CreateProjectModal: React.FC<Props> = ({
                           name="project_lead"
                           control={control}
                           render={({ field: { value, onChange } }) => {
-                            const selectedMember = workspaceMembers?.find(
-                              (m) => m.member.id === value
-                            );
+                            const selectedMember = workspaceMembers?.find((m: any) => m.member.id === value);
 
                             return (
                               <CustomSearchSelect
@@ -409,16 +389,12 @@ export const CreateProjectModal: React.FC<Props> = ({
                                       </>
                                     ) : (
                                       <>
-                                        <Icon
-                                          iconName="group"
-                                          className="!text-sm text-custom-text-400"
-                                        />
+                                        <Icon iconName="group" className="!text-sm text-custom-text-400" />
                                         <span className="text-custom-text-400">Lead</span>
                                       </>
                                     )}
                                   </div>
                                 }
-                                verticalPosition="top"
                                 noChevron
                               />
                             );
@@ -429,10 +405,12 @@ export const CreateProjectModal: React.FC<Props> = ({
                   </div>
 
                   <div className="flex justify-end gap-2 pt-5">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <PrimaryButton type="submit" size="sm" loading={isSubmitting}>
+                    <Button variant="neutral-primary" onClick={handleClose}>
+                      Cancel
+                    </Button>
+                    <Button variant="primary" type="submit" size="sm" loading={isSubmitting}>
                       {isSubmitting ? "Creating..." : "Create Project"}
-                    </PrimaryButton>
+                    </Button>
                   </div>
                 </form>
               </Dialog.Panel>

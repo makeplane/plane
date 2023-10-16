@@ -1,6 +1,4 @@
-import { Properties } from "./workspace";
-
-export type TIssueViewOptions = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
+export type TIssueLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
 
 export type TIssueGroupByOptions =
   | "state"
@@ -33,26 +31,72 @@ export type TIssueOrderByOptions =
   | "start_date"
   | "-start_date";
 
+export type TIssueTypeFilters = "active" | "backlog" | null;
+
+export type TIssueExtraOptions = "show_empty_groups" | "sub_issue";
+
+export type TIssueParams =
+  | "priority"
+  | "state_group"
+  | "state"
+  | "assignees"
+  | "created_by"
+  | "subscriber"
+  | "labels"
+  | "start_date"
+  | "target_date"
+  | "project"
+  | "group_by"
+  | "sub_group_by"
+  | "order_by"
+  | "type"
+  | "sub_issue"
+  | "show_empty_groups"
+  | "start_target_date";
+
+export type TCalendarLayouts = "month" | "week";
+
 export interface IIssueFilterOptions {
   assignees?: string[] | null;
   created_by?: string[] | null;
   labels?: string[] | null;
   priority?: string[] | null;
-  start_date?: TStateGroups[] | null;
+  project?: string[] | null;
+  start_date?: string[] | null;
   state?: string[] | null;
-  state_group?: TStateGroups[] | null;
+  state_group?: string[] | null;
   subscriber?: string[] | null;
   target_date?: string[] | null;
 }
 
 export interface IIssueDisplayFilterOptions {
+  calendar?: {
+    show_weekends?: boolean;
+    layout?: TCalendarLayouts;
+  };
   group_by?: TIssueGroupByOptions;
-  layout?: TIssueViewOptions;
+  sub_group_by?: TIssueGroupByOptions;
+  layout?: TIssueLayouts;
   order_by?: TIssueOrderByOptions;
   show_empty_groups?: boolean;
   start_target_date?: boolean;
   sub_issue?: boolean;
-  type?: "active" | "backlog" | null;
+  type?: TIssueTypeFilters;
+}
+export interface IIssueDisplayProperties {
+  assignee: boolean;
+  start_date: boolean;
+  due_date: boolean;
+  labels: boolean;
+  key: boolean;
+  priority: boolean;
+  state: boolean;
+  sub_issue_count: boolean;
+  link: boolean;
+  attachment_count: boolean;
+  estimate: boolean;
+  created_on: boolean;
+  updated_on: boolean;
 }
 
 export interface IWorkspaceIssueFilterOptions {

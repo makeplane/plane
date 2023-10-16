@@ -1,17 +1,15 @@
 import { useEffect } from "react";
-
 import { mutate } from "swr";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // hooks
 import useToast from "hooks/use-toast";
 // services
-import userService from "services/user.service";
+import { UserService } from "services/user.service";
 // ui
-import { CustomSearchSelect, CustomSelect, Input, PrimaryButton } from "components/ui";
+import { CustomSearchSelect, CustomSelect } from "components/ui";
+import { Button, Input } from "@plane/ui";
 // types
-import { ICurrentUserResponse, IUser } from "types";
+import { IUser } from "types";
 // fetch-keys
 import { CURRENT_USER } from "constants/fetch-keys";
 // helpers
@@ -36,11 +34,12 @@ const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
   content: timeZone.label,
 }));
 
+const userService = new UserService();
+
 export const UserDetails: React.FC<Props> = ({ user }) => {
   const { setToastAlert } = useToast();
 
   const {
-    register,
     handleSubmit,
     control,
     reset,
@@ -63,7 +62,7 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
     await userService
       .updateUser(payload)
       .then(() => {
-        mutate<ICurrentUserResponse>(
+        mutate<IUser>(
           CURRENT_USER,
           (prevData) => {
             if (!prevData) return prevData;
@@ -82,7 +81,7 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
           message: "Details updated successfully.",
         });
       })
-      .catch((err) => {
+      .catch(() => {
         mutate(CURRENT_USER);
       });
   };
@@ -113,38 +112,56 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
       <div className="space-y-7 sm:w-3/4 md:w-2/5">
         <div className="space-y-1 text-sm">
           <label htmlFor="firstName">First Name</label>
-          <Input
-            id="firstName"
+          <Controller
+            control={control}
             name="first_name"
-            autoComplete="off"
-            placeholder="Enter your first name..."
-            register={register}
-            validations={{
+            rules={{
               required: "First name is required",
               maxLength: {
                 value: 24,
                 message: "First name cannot exceed the limit of 24 characters",
               },
             }}
-            error={errors.first_name}
+            render={({ field: { value, onChange, ref } }) => (
+              <Input
+                id="first_name"
+                name="first_name"
+                type="text"
+                value={value}
+                onChange={onChange}
+                ref={ref}
+                hasError={Boolean(errors.first_name)}
+                placeholder="Enter your first name..."
+                className="w-full"
+              />
+            )}
           />
         </div>
         <div className="space-y-1 text-sm">
           <label htmlFor="lastName">Last Name</label>
-          <Input
-            id="lastName"
+          <Controller
+            control={control}
             name="last_name"
-            autoComplete="off"
-            register={register}
-            placeholder="Enter your last name..."
-            validations={{
+            rules={{
               required: "Last name is required",
               maxLength: {
                 value: 24,
                 message: "Last name cannot exceed the limit of 24 characters",
               },
             }}
-            error={errors.last_name}
+            render={({ field: { value, onChange, ref } }) => (
+              <Input
+                id="last_name"
+                name="last_name"
+                type="text"
+                value={value}
+                onChange={onChange}
+                ref={ref}
+                hasError={Boolean(errors.last_name)}
+                placeholder="Enter your last name..."
+                className="w-full"
+              />
+            )}
           />
         </div>
         <div className="space-y-1 text-sm">
@@ -158,16 +175,9 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
                 <CustomSelect
                   value={value}
                   onChange={(val: any) => onChange(val)}
-                  label={
-                    value ? (
-                      value.toString()
-                    ) : (
-                      <span className="text-custom-text-400">Select your role...</span>
-                    )
-                  }
+                  label={value ? value.toString() : <span className="text-custom-text-400">Select your role...</span>}
                   input
                   width="w-full"
-                  verticalPosition="top"
                 >
                   {USER_ROLES.map((item) => (
                     <CustomSelect.Option key={item.value} value={item.value}>
@@ -190,29 +200,22 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
               render={({ field: { value, onChange } }) => (
                 <CustomSearchSelect
                   value={value}
-                  label={
-                    value
-                      ? TIME_ZONES.find((t) => t.value === value)?.label ?? value
-                      : "Select a timezone"
-                  }
+                  label={value ? TIME_ZONES.find((t) => t.value === value)?.label ?? value : "Select a timezone"}
                   options={timeZoneOptions}
                   onChange={onChange}
-                  verticalPosition="top"
                   optionsClassName="w-full"
                   input
                 />
               )}
             />
-            {errors?.user_timezone && (
-              <span className="text-sm text-red-500">{errors.user_timezone.message}</span>
-            )}
+            {errors?.user_timezone && <span className="text-sm text-red-500">{errors.user_timezone.message}</span>}
           </div>
         </div>
       </div>
 
-      <PrimaryButton type="submit" size="md" disabled={!isValid} loading={isSubmitting}>
+      <Button variant="primary" type="submit" size="md" disabled={!isValid} loading={isSubmitting}>
         {isSubmitting ? "Updating..." : "Continue"}
-      </PrimaryButton>
+      </Button>
     </form>
   );
 };

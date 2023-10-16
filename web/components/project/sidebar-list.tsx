@@ -1,20 +1,15 @@
 import React, { useState, FC, useRef, useEffect } from "react";
-
 import { useRouter } from "next/router";
-import { mutate } from "swr";
-
-// react-beautiful-dnd
+import useSWR from "swr";
 import { DragDropContext, Draggable, DropResult, Droppable } from "react-beautiful-dnd";
-// headless ui
 import { Disclosure, Transition } from "@headlessui/react";
+import { observer } from "mobx-react-lite";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
-import useProjects from "hooks/use-projects";
 // components
-import { CreateProjectModal, DeleteProjectModal, SingleSidebarProject } from "components/project";
-// services
-import projectService from "services/project.service";
+import { CreateProjectModal, ProjectSidebarListItem } from "components/project";
+
 // icons
 import { Icon } from "components/ui";
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -23,35 +18,32 @@ import { copyTextToClipboard } from "helpers/string.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
 import { IProject } from "types";
-// fetch-keys
-import { PROJECTS_LIST } from "constants/fetch-keys";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 
-export const ProjectSidebarList: FC = () => {
-  const store: any = useMobxStore();
-
-  const [isFavoriteProjectCreate, setIsFavoriteProjectCreate] = useState(false);
-  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
-  const [deleteProjectModal, setDeleteProjectModal] = useState(false);
-  const [projectToDelete, setProjectToDelete] = useState<IProject | null>(null);
-  const [projectToLeaveId, setProjectToLeaveId] = useState<string | null>(null);
-
+export const ProjectSidebarList: FC = observer(() => {
+  const { theme: themeStore, project: projectStore } = useMobxStore();
   // router
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  const containerRef = useRef<HTMLDivElement | null>(null);
-
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
+  // swr
+  useSWR(
+    workspaceSlug ? "PROJECTS_LIST" : null,
+    workspaceSlug ? () => projectStore.fetchProjects(workspaceSlug?.toString()) : null
+  );
+  // states
+  const [isFavoriteProjectCreate, setIsFavoriteProjectCreate] = useState(false);
+  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false); // scroll animation state
+  // refs
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  // user
   const { user } = useUserAuth();
+  // toast
   const { setToastAlert } = useToast();
 
-  const { projects: allProjects } = useProjects();
-
-  const joinedProjects = allProjects?.filter((p) => p.is_member);
-  const favoriteProjects = allProjects?.filter((p) => p.is_favorite);
+  const joinedProjects = workspaceSlug && projectStore.joinedProjects;
+  const favoriteProjects = workspaceSlug && projectStore.favoriteProjects;
 
   const orderedJoinedProjects: IProject[] | undefined = joinedProjects
     ? orderArrayBy(joinedProjects, "sort_order", "ascending")
@@ -61,14 +53,8 @@ export const ProjectSidebarList: FC = () => {
     ? orderArrayBy(favoriteProjects, "sort_order", "ascending")
     : undefined;
 
-  const handleDeleteProject = (project: IProject) => {
-    setProjectToDelete(project);
-    setDeleteProjectModal(true);
-  };
-
   const handleCopyText = (projectId: string) => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
     copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues`).then(() => {
       setToastAlert({
         type: "success",
@@ -85,39 +71,10 @@ export const ProjectSidebarList: FC = () => {
 
     if (source.index === destination.index) return;
 
-    const projectsList =
-      (destination.droppableId === "joined-projects"
-        ? orderedJoinedProjects
-        : orderedFavProjects) ?? [];
+    const updatedSortOrder = projectStore.orderProjectsWithSortOrder(source.index, destination.index, draggableId);
 
-    let updatedSortOrder = projectsList[source.index].sort_order;
-
-    if (destination.index === 0) updatedSortOrder = (projectsList[0].sort_order as number) - 1000;
-    else if (destination.index === projectsList.length - 1)
-      updatedSortOrder = (projectsList[projectsList.length - 1].sort_order as number) + 1000;
-    else {
-      const destinationSortingOrder = projectsList[destination.index].sort_order as number;
-      const relativeDestinationSortingOrder =
-        source.index < destination.index
-          ? (projectsList[destination.index + 1].sort_order as number)
-          : (projectsList[destination.index - 1].sort_order as number);
-
-      updatedSortOrder = (destinationSortingOrder + relativeDestinationSortingOrder) / 2;
-    }
-
-    mutate<IProject[]>(
-      PROJECTS_LIST(workspaceSlug as string, { is_favorite: "all" }),
-      (prevData) => {
-        if (!prevData) return prevData;
-        return prevData.map((p) =>
-          p.id === draggableId ? { ...p, sort_order: updatedSortOrder } : p
-        );
-      },
-      false
-    );
-
-    await projectService
-      .setProjectView(workspaceSlug as string, draggableId, { sort_order: updatedSortOrder })
+    projectStore
+      .updateProjectView(workspaceSlug.toString(), draggableId, { sort_order: updatedSortOrder })
       .catch(() => {
         setToastAlert({
           type: "error",
@@ -127,20 +84,20 @@ export const ProjectSidebarList: FC = () => {
       });
   };
 
-  const handleScroll = () => {
-    if (containerRef.current) {
-      const scrollTop = containerRef.current.scrollTop;
-      setIsScrolled(scrollTop > 0);
-    }
-  };
-
+  /**
+   * Implementing scroll animation styles based on the scroll length of the container
+   */
   useEffect(() => {
+    const handleScroll = () => {
+      if (containerRef.current) {
+        const scrollTop = containerRef.current.scrollTop;
+        setIsScrolled(scrollTop > 0);
+      }
+    };
     const currentContainerRef = containerRef.current;
-
     if (currentContainerRef) {
       currentContainerRef.addEventListener("scroll", handleScroll);
     }
-
     return () => {
       if (currentContainerRef) {
         currentContainerRef.removeEventListener("scroll", handleScroll);
@@ -154,12 +111,6 @@ export const ProjectSidebarList: FC = () => {
         isOpen={isProjectModalOpen}
         setIsOpen={setIsProjectModalOpen}
         setToFavorite={isFavoriteProjectCreate}
-        user={user}
-      />
-      <DeleteProjectModal
-        isOpen={deleteProjectModal}
-        onClose={() => setDeleteProjectModal(false)}
-        data={projectToDelete}
         user={user}
       />
       <div
@@ -176,7 +127,7 @@ export const ProjectSidebarList: FC = () => {
                   <Disclosure as="div" className="flex flex-col space-y-2" defaultOpen={true}>
                     {({ open }) => (
                       <>
-                        {!store?.theme?.sidebarCollapsed && (
+                        {!themeStore?.sidebarCollapsed && (
                           <div className="group flex justify-between items-center text-xs px-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 w-full">
                             <Disclosure.Button
                               as="button"
@@ -210,15 +161,13 @@ export const ProjectSidebarList: FC = () => {
                             >
                               {(provided, snapshot) => (
                                 <div ref={provided.innerRef} {...provided.draggableProps}>
-                                  <SingleSidebarProject
+                                  <ProjectSidebarListItem
                                     key={project.id}
                                     project={project}
-                                    sidebarCollapse={store?.theme?.sidebarCollapsed}
+                                    sidebarCollapse={themeStore?.sidebarCollapsed || false}
                                     provided={provided}
                                     snapshot={snapshot}
-                                    handleDeleteProject={() => handleDeleteProject(project)}
                                     handleCopyText={() => handleCopyText(project.id)}
-                                    handleProjectLeave={() => setProjectToLeaveId(project.id)}
                                     shortContextMenu
                                   />
                                 </div>
@@ -243,7 +192,7 @@ export const ProjectSidebarList: FC = () => {
                   <Disclosure as="div" className="flex flex-col space-y-2" defaultOpen={true}>
                     {({ open }) => (
                       <>
-                        {!store?.theme?.sidebarCollapsed && (
+                        {!themeStore?.sidebarCollapsed && (
                           <div className="group flex justify-between items-center text-xs px-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 w-full">
                             <Disclosure.Button
                               as="button"
@@ -280,14 +229,12 @@ export const ProjectSidebarList: FC = () => {
                               <Draggable key={project.id} draggableId={project.id} index={index}>
                                 {(provided, snapshot) => (
                                   <div ref={provided.innerRef} {...provided.draggableProps}>
-                                    <SingleSidebarProject
+                                    <ProjectSidebarListItem
                                       key={project.id}
                                       project={project}
-                                      sidebarCollapse={store?.theme?.sidebarCollapsed}
+                                      sidebarCollapse={themeStore?.sidebarCollapsed || false}
                                       provided={provided}
                                       snapshot={snapshot}
-                                      handleDeleteProject={() => handleDeleteProject(project)}
-                                      handleProjectLeave={() => setProjectToLeaveId(project.id)}
                                       handleCopyText={() => handleCopyText(project.id)}
                                     />
                                   </div>
@@ -318,10 +265,10 @@ export const ProjectSidebarList: FC = () => {
             }}
           >
             <PlusIcon className="h-5 w-5" />
-            {!store?.theme?.sidebarCollapsed && "Add Project"}
+            {!themeStore?.sidebarCollapsed && "Add Project"}
           </button>
         )}
       </div>
     </>
   );
-};
+});

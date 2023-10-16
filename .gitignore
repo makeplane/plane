@@ -16,6 +16,7 @@ node_modules
 
 # Production
 /build
+dist
 
 # Misc
 .DS_Store
@@ -73,3 +74,7 @@ pnpm-lock.yaml
 pnpm-workspace.yaml
 
 .npmrc
+
+
+## packages
+dist

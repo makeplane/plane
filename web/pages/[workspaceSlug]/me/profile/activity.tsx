@@ -1,25 +1,26 @@
 import useSWR from "swr";
-
 import { useRouter } from "next/router";
 import Link from "next/link";
-
 // services
-import userService from "services/user.service";
+import { UserService } from "services/user.service";
 // layouts
-import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // components
 import { ActivityIcon, ActivityMessage } from "components/core";
-import { TipTapEditor } from "components/tiptap";
+import { RichReadOnlyEditor } from "@plane/rich-text-editor";
 // icons
 import { ArrowTopRightOnSquareIcon, ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
 // ui
-import { Icon, Loader } from "components/ui";
+import { Icon } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { Loader } from "@plane/ui";
 // fetch-keys
 import { USER_ACTIVITY } from "constants/fetch-keys";
 // helper
 import { timeAgo } from "helpers/date-time.helper";
 import { SettingsSidebar } from "components/project";
+
+const userService = new UserService();
 
 const ProfileActivity = () => {
   const router = useRouter();
@@ -50,7 +51,7 @@ const ProfileActivity = () => {
             </div>
             <div className={`flex flex-col gap-2 py-4 w-full`}>
               <ul role="list" className="-mb-4">
-                {userActivity.results.map((activityItem: any, activityIdx: number) => {
+                {userActivity.results.map((activityItem: any) => {
                   if (activityItem.field === "comment") {
                     return (
                       <div key={activityItem.id} className="mt-2">
@@ -60,8 +61,7 @@ const ProfileActivity = () => {
                               activityItem.new_value === "restore" && (
                                 <Icon iconName="history" className="text-sm text-custom-text-200" />
                               )
-                            ) : activityItem.actor_detail.avatar &&
-                              activityItem.actor_detail.avatar !== "" ? (
+                            ) : activityItem.actor_detail.avatar && activityItem.actor_detail.avatar !== "" ? (
                               <img
                                 src={activityItem.actor_detail.avatar}
                                 alt={activityItem.actor_detail.display_name}
@@ -96,17 +96,11 @@ const ProfileActivity = () => {
                               </p>
                             </div>
                             <div className="issue-comments-section p-0">
-                              <TipTapEditor
-                                workspaceSlug={workspaceSlug as string}
-                                value={
-                                  activityItem?.new_value !== ""
-                                    ? activityItem.new_value
-                                    : activityItem.old_value
-                                }
+                              <RichReadOnlyEditor
+                                value={activityItem?.new_value !== "" ? activityItem.new_value : activityItem.old_value}
                                 customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
                                 noBorder
                                 borderOnFocus={false}
-                                editable={false}
                               />
                             </div>
                           </div>
@@ -124,9 +118,7 @@ const ProfileActivity = () => {
                     activityItem.field !== "estimate" ? (
                       <span className="text-custom-text-200">
                         created{" "}
-                        <Link
-                          href={`/${workspaceSlug}/projects/${activityItem.project}/issues/${activityItem.issue}`}
-                        >
+                        <Link href={`/${workspaceSlug}/projects/${activityItem.project}/issues/${activityItem.issue}`}>
                           <a className="inline-flex items-center hover:underline">
                             this issue. <ArrowTopRightOnSquareIcon className="ml-1 h-3.5 w-3.5" />
                           </a>
@@ -150,10 +142,7 @@ const ProfileActivity = () => {
                                     <div className="flex h-6 w-6 items-center justify-center">
                                       {activityItem.field ? (
                                         activityItem.new_value === "restore" ? (
-                                          <Icon
-                                            iconName="history"
-                                            className="!text-2xl text-custom-text-200"
-                                          />
+                                          <Icon iconName="history" className="!text-2xl text-custom-text-200" />
                                         ) : (
                                           <ActivityIcon activity={activityItem} />
                                         )
@@ -179,26 +168,19 @@ const ProfileActivity = () => {
                               </div>
                               <div className="min-w-0 flex-1 py-4 border-b border-custom-border-200">
                                 <div className="text-sm text-custom-text-200 break-words">
-                                  {activityItem.field === "archived_at" &&
-                                  activityItem.new_value !== "restore" ? (
+                                  {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
                                     <span className="text-gray font-medium">Plane</span>
                                   ) : activityItem.actor_detail.is_bot ? (
                                     <span className="text-gray font-medium">
                                       {activityItem.actor_detail.first_name} Bot
                                     </span>
                                   ) : (
-                                    <Link
-                                      href={`/${workspaceSlug}/profile/${activityItem.actor_detail.id}`}
-                                    >
-                                      <a className="text-gray font-medium">
-                                        {activityItem.actor_detail.display_name}
-                                      </a>
+                                    <Link href={`/${workspaceSlug}/profile/${activityItem.actor_detail.id}`}>
+                                      <a className="text-gray font-medium">{activityItem.actor_detail.display_name}</a>
                                     </Link>
                                   )}{" "}
                                   {message}{" "}
-                                  <span className="whitespace-nowrap">
-                                    {timeAgo(activityItem.created_at)}
-                                  </span>
+                                  <span className="whitespace-nowrap">{timeAgo(activityItem.created_at)}</span>
                                 </div>
                               </div>
                             </>

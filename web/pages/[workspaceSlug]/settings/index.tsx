@@ -7,20 +7,21 @@ import useSWR, { mutate } from "swr";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
-import workspaceService from "services/workspace.service";
-import fileService from "services/file.service";
+import { WorkspaceService } from "services/workspace.service";
+import { FileService } from "services/file.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // layouts
-import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // components
 import { ImageUploadModal } from "components/core";
 import { DeleteWorkspaceModal } from "components/workspace";
 import { SettingsSidebar } from "components/project";
 // ui
 import { Disclosure, Transition } from "@headlessui/react";
-import { Spinner, Input, CustomSelect, DangerButton, PrimaryButton, Icon } from "components/ui";
+import { CustomSelect, Icon } from "components/ui";
+import { Button, Input, Spinner } from "@plane/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { Pencil } from "lucide-react";
@@ -41,6 +42,10 @@ const defaultValues: Partial<IWorkspace> = {
   logo: null,
 };
 
+// services
+const workspaceService = new WorkspaceService();
+const fileService = new FileService();
+
 const WorkspaceSettings: NextPage = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isImageUploading, setIsImageUploading] = useState(false);
@@ -59,9 +64,8 @@ const WorkspaceSettings: NextPage = () => {
 
   const { setToastAlert } = useToast();
 
-  const { data: activeWorkspace } = useSWR(
-    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
-    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
+  const { data: activeWorkspace } = useSWR(workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null, () =>
+    workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null
   );
 
   const {
@@ -156,9 +160,7 @@ const WorkspaceSettings: NextPage = () => {
     <WorkspaceAuthorizationLayout
       breadcrumbs={
         <Breadcrumbs>
-          <BreadcrumbItem
-            title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)} Settings`}
-          />
+          <BreadcrumbItem title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)} Settings`} />
         </Breadcrumbs>
       }
     >
@@ -191,11 +193,7 @@ const WorkspaceSettings: NextPage = () => {
           <div className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
             <div className="flex gap-5 items-center pb-7 border-b border-custom-border-200">
               <div className="flex flex-col gap-1">
-                <button
-                  type="button"
-                  onClick={() => setIsImageUploadModalOpen(true)}
-                  disabled={!isAdmin}
-                >
+                <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!isAdmin}>
                   {watch("logo") && watch("logo") !== null && watch("logo") !== "" ? (
                     <div className="relative mx-auto flex h-14 w-14">
                       <img
@@ -214,8 +212,7 @@ const WorkspaceSettings: NextPage = () => {
               <div className="flex flex-col gap-1">
                 <h3 className="text-lg font-semibold leading-6">{watch("name")}</h3>
                 <span className="text-sm tracking-tight">{`${
-                  typeof window !== "undefined" &&
-                  window.location.origin.replace("http://", "").replace("https://", "")
+                  typeof window !== "undefined" && window.location.origin.replace("http://", "").replace("https://", "")
                 }/${activeWorkspace.slug}`}</span>
                 <div className="flex item-center gap-2.5">
                   <button
@@ -240,21 +237,30 @@ const WorkspaceSettings: NextPage = () => {
               <div className="grid grid-col grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 items-center justify-between gap-10 w-full">
                 <div className="flex flex-col gap-1 ">
                   <h4 className="text-sm">Workspace Name</h4>
-                  <Input
-                    id="name"
+                  <Controller
+                    control={control}
                     name="name"
-                    placeholder="Name"
-                    autoComplete="off"
-                    register={register}
-                    error={errors.name}
-                    validations={{
+                    rules={{
                       required: "Name is required",
                       maxLength: {
                         value: 80,
                         message: "Workspace name should not exceed 80 characters",
                       },
                     }}
-                    disabled={!isAdmin}
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Input
+                        id="name"
+                        name="name"
+                        type="text"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        hasError={Boolean(errors.name)}
+                        placeholder="Name"
+                        className="rounded-md font-medium w-full"
+                        disabled={!isAdmin}
+                      />
+                    )}
                   />
                 </div>
 
@@ -267,9 +273,7 @@ const WorkspaceSettings: NextPage = () => {
                       <CustomSelect
                         value={value}
                         onChange={onChange}
-                        label={
-                          ORGANIZATION_SIZE.find((c) => c === value) ?? "Select organization size"
-                        }
+                        label={ORGANIZATION_SIZE.find((c) => c === value) ?? "Select organization size"}
                         width="w-full"
                         input
                         disabled={!isAdmin}
@@ -286,30 +290,33 @@ const WorkspaceSettings: NextPage = () => {
 
                 <div className="flex flex-col gap-1 ">
                   <h4 className="text-sm">Workspace URL</h4>
-                  <Input
-                    id="url"
+                  <Controller
+                    control={control}
                     name="url"
-                    autoComplete="off"
-                    register={register}
-                    error={errors.url}
-                    className="w-full"
-                    value={`${
-                      typeof window !== "undefined" &&
-                      window.location.origin.replace("http://", "").replace("https://", "")
-                    }/${activeWorkspace.slug}`}
-                    disabled
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Input
+                        id="url"
+                        name="url"
+                        type="url"
+                        value={`${
+                          typeof window !== "undefined" &&
+                          window.location.origin.replace("http://", "").replace("https://", "")
+                        }/${activeWorkspace.slug}`}
+                        onChange={onChange}
+                        ref={ref}
+                        hasError={Boolean(errors.url)}
+                        className="w-full"
+                        disabled
+                      />
+                    )}
                   />
                 </div>
               </div>
 
               <div className="flex items-center justify-between py-2">
-                <PrimaryButton
-                  onClick={handleSubmit(onSubmit)}
-                  loading={isSubmitting}
-                  disabled={!isAdmin}
-                >
+                <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting} disabled={!isAdmin}>
                   {isSubmitting ? "Updating..." : "Update Workspace"}
-                </PrimaryButton>
+                </Button>
               </div>
             </div>
             {isAdmin && (
@@ -337,19 +344,14 @@ const WorkspaceSettings: NextPage = () => {
                       <Disclosure.Panel>
                         <div className="flex flex-col gap-8">
                           <span className="text-sm tracking-tight">
-                            The danger zone of the workspace delete page is a critical area that
-                            requires careful consideration and attention. When deleting a workspace,
-                            all of the data and resources within that workspace will be permanently
-                            removed and cannot be recovered.
+                            The danger zone of the workspace delete page is a critical area that requires careful
+                            consideration and attention. When deleting a workspace, all of the data and resources within
+                            that workspace will be permanently removed and cannot be recovered.
                           </span>
                           <div>
-                            <DangerButton
-                              onClick={() => setIsOpen(true)}
-                              className="!text-sm"
-                              outline
-                            >
+                            <Button variant="danger" onClick={() => setIsOpen(true)}>
                               Delete my workspace
-                            </DangerButton>
+                            </Button>
                           </div>
                         </div>
                       </Disclosure.Panel>

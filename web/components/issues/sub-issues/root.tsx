@@ -18,15 +18,15 @@ import useToast from "hooks/use-toast";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import { ICurrentUserResponse, IIssue, ISearchIssueResponse } from "types";
+import { IUser, IIssue, ISearchIssueResponse } from "types";
 // services
-import issuesService from "services/issues.service";
+import { IssueService } from "services/issue";
 // fetch keys
 import { SUB_ISSUES } from "constants/fetch-keys";
 
 export interface ISubIssuesRoot {
   parentIssue: IIssue;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 }
 
 export interface ISubIssuesRootLoaders {
@@ -39,9 +39,11 @@ export interface ISubIssuesRootLoadersHandler {
   issueId: string;
 }
 
+const issueService = new IssueService();
+
 export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId, peekIssue } = router.query as {
+  const { workspaceSlug, projectId } = router.query as {
     workspaceSlug: string;
     projectId: string;
     peekIssue: string;
@@ -51,11 +53,9 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
   const { setToastAlert } = useToast();
 
   const { data: issues, isLoading } = useSWR(
+    workspaceSlug && projectId && parentIssue && parentIssue?.id ? SUB_ISSUES(parentIssue?.id) : null,
     workspaceSlug && projectId && parentIssue && parentIssue?.id
-      ? SUB_ISSUES(parentIssue?.id)
-      : null,
-    workspaceSlug && projectId && parentIssue && parentIssue?.id
-      ? () => issuesService.subIssues(workspaceSlug, projectId, parentIssue.id)
+      ? () => issueService.subIssues(workspaceSlug, projectId, parentIssue.id)
       : null
   );
 
@@ -119,14 +119,14 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
     const payload = {
       sub_issue_ids: data.map((i) => i.id),
     };
-    await issuesService.addSubIssues(workspaceSlug, projectId, issueId, payload).finally(() => {
+    await issueService.addSubIssues(workspaceSlug, projectId, issueId, payload).finally(() => {
       if (issueId) mutate(SUB_ISSUES(issueId));
     });
   };
 
   const removeIssueFromSubIssues = async (parentIssueId: string, issue: IIssue) => {
     if (!workspaceSlug || !parentIssue || !issue?.id) return;
-    issuesService
+    issueService
       .patchIssue(workspaceSlug, projectId, issue.id, { parent: null }, user)
       .then(async () => {
         if (parentIssueId) await mutate(SUB_ISSUES(parentIssueId));
@@ -148,8 +148,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
   };
 
   const copyText = (text: string) => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
     copyTextToClipboard(`${originURL}/${text}`).then(() => {
       setToastAlert({
         type: "success",
@@ -177,9 +176,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
               <div className="relative flex items-center gap-4 text-xs">
                 <div
                   className="rounded border border-custom-border-100 shadow p-1.5 px-2 flex items-center gap-1 hover:bg-custom-background-80 transition-all cursor-pointer select-none"
-                  onClick={() =>
-                    handleIssuesLoader({ key: "visibility", issueId: parentIssue?.id })
-                  }
+                  onClick={() => handleIssuesLoader({ key: "visibility", issueId: parentIssue?.id })}
                 >
                   <div className="flex-shrink-0 w-[16px] h-[16px] flex justify-center items-center">
                     {issuesLoader.visibility.includes(parentIssue?.id) ? (
@@ -195,10 +192,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
                 <div className="w-full max-w-[250px] select-none">
                   <ProgressBar
                     total={issues?.sub_issues?.length || 0}
-                    done={
-                      (issues?.state_distribution?.cancelled || 0) +
-                      (issues?.state_distribution?.completed || 0)
-                    }
+                    done={(issues?.state_distribution?.cancelled || 0) + (issues?.state_distribution?.completed || 0)}
                   />
                 </div>
 
@@ -247,7 +241,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
                     </>
                   }
                   buttonClassName="whitespace-nowrap"
-                  position="left"
+                  // position="left"
                   noBorder
                   noChevron
                 >
@@ -283,7 +277,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
                       </>
                     }
                     buttonClassName="whitespace-nowrap"
-                    position="left"
+                    // position="left"
                     noBorder
                     noChevron
                   >
@@ -320,17 +314,15 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
               }}
             />
           )}
-          {isEditable &&
-            issueCrudOperation?.existing?.toggle &&
-            issueCrudOperation?.existing?.issueId && (
-              <ExistingIssuesListModal
-                isOpen={issueCrudOperation?.existing?.toggle}
-                handleClose={() => handleIssueCrudOperation("existing", null)}
-                searchParams={{ sub_issue: true, issue_id: issueCrudOperation?.existing?.issueId }}
-                handleOnSubmit={addAsSubIssueFromExistingIssues}
-                workspaceLevelToggle
-              />
-            )}
+          {isEditable && issueCrudOperation?.existing?.toggle && issueCrudOperation?.existing?.issueId && (
+            <ExistingIssuesListModal
+              isOpen={issueCrudOperation?.existing?.toggle}
+              handleClose={() => handleIssueCrudOperation("existing", null)}
+              searchParams={{ sub_issue: true, issue_id: issueCrudOperation?.existing?.issueId }}
+              handleOnSubmit={addAsSubIssueFromExistingIssues}
+              workspaceLevelToggle
+            />
+          )}
           {isEditable && issueCrudOperation?.edit?.toggle && issueCrudOperation?.edit?.issueId && (
             <>
               <CreateUpdateIssueModal
@@ -343,20 +335,18 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
               />
             </>
           )}
-          {isEditable &&
-            issueCrudOperation?.delete?.toggle &&
-            issueCrudOperation?.delete?.issueId && (
-              <DeleteIssueModal
-                isOpen={issueCrudOperation?.delete?.toggle}
-                handleClose={() => {
-                  mutateSubIssues(issueCrudOperation?.delete?.issueId);
-                  handleIssueCrudOperation("delete", null, null);
-                }}
-                data={issueCrudOperation?.delete?.issue}
-                user={user}
-                redirection={false}
-              />
-            )}
+          {isEditable && issueCrudOperation?.delete?.toggle && issueCrudOperation?.delete?.issueId && (
+            <DeleteIssueModal
+              isOpen={issueCrudOperation?.delete?.toggle}
+              handleClose={() => {
+                mutateSubIssues(issueCrudOperation?.delete?.issueId);
+                handleIssueCrudOperation("delete", null, null);
+              }}
+              data={issueCrudOperation?.delete?.issue}
+              user={user}
+              redirection={false}
+            />
+          )}
         </>
       )}
     </div>

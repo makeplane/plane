@@ -1,19 +1,17 @@
-import React, { useState } from "react";
-
+import { useState, FC } from "react";
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // services
-import issuesService from "services/issues.service";
+import { IssueLabelService } from "services/issue";
 // component
 import { CreateLabelModal } from "components/labels";
 // ui
-import { CustomSearchSelect, Tooltip } from "components/ui";
+import { CustomSearchSelect } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // icons
 import { PlusIcon, TagIcon } from "@heroicons/react/24/outline";
 // types
-import { ICurrentUserResponse, IIssue, IIssueLabels } from "types";
+import { IUser, IIssue, IIssueLabels } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 
@@ -24,15 +22,17 @@ type Props = {
   selfPositioned?: boolean;
   tooltipPosition?: "top" | "bottom";
   customButton?: boolean;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   isNotAllowed: boolean;
 };
 
-export const ViewLabelSelect: React.FC<Props> = ({
+const issueLabelStore = new IssueLabelService();
+
+export const ViewLabelSelect: FC<Props> = ({
   issue,
   partialUpdateIssue,
-  position = "left",
-  selfPositioned = false,
+  // position = "left",
+  // selfPositioned = false,
   tooltipPosition = "top",
   user,
   isNotAllowed,
@@ -46,7 +46,7 @@ export const ViewLabelSelect: React.FC<Props> = ({
   const { data: issueLabels } = useSWR<IIssueLabels[]>(
     projectId ? PROJECT_ISSUE_LABELS(projectId.toString()) : null,
     workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
+      ? () => issueLabelStore.getProjectIssueLabels(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -146,9 +146,7 @@ export const ViewLabelSelect: React.FC<Props> = ({
         {...(customButton ? { customButton: labelsLabel } : { label: labelsLabel })}
         multiple
         noChevron
-        position={position}
         disabled={isNotAllowed}
-        selfPositioned={selfPositioned}
         footerOption={footerOption}
         width="w-full min-w-[12rem]"
       />

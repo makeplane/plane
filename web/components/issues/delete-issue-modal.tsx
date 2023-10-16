@@ -1,24 +1,18 @@
-import React, { useEffect, useState } from "react";
-
+import { useEffect, useState, Fragment } from "react";
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import issueServices from "services/issues.service";
+import { IssueService, IssueArchiveService } from "services/issue";
 // hooks
 import useIssuesView from "hooks/use-issues-view";
-import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useToast from "hooks/use-toast";
-import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
-import { SecondaryButton, DangerButton } from "components/ui";
+import { Button } from "@plane/ui";
 // types
-import type { IIssue, ICurrentUserResponse, ISubIssueResponse } from "types";
+import type { IIssue, IUser, ISubIssueResponse } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES_WITH_PARAMS,
@@ -26,17 +20,19 @@ import {
   PROJECT_ARCHIVED_ISSUES_LIST_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   SUB_ISSUES,
-  VIEW_ISSUES,
 } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data: IIssue | null;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   onSubmit?: () => Promise<void>;
   redirection?: boolean;
 };
+
+const issueService = new IssueService();
+const issueArchiveService = new IssueArchiveService();
 
 export const DeleteIssueModal: React.FC<Props> = ({
   isOpen,
@@ -49,12 +45,10 @@ export const DeleteIssueModal: React.FC<Props> = ({
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, viewId, issueId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, issueId } = router.query;
   const isArchivedIssues = router.pathname.includes("archived-issues");
 
   const { displayFilters, params } = useIssuesView();
-  const { params: calendarParams } = useCalendarIssuesView();
-  const { params: spreadsheetParams } = useSpreadsheetIssuesView();
 
   const { setToastAlert } = useToast();
 
@@ -72,31 +66,10 @@ export const DeleteIssueModal: React.FC<Props> = ({
 
     setIsDeleteLoading(true);
 
-    await issueServices
+    await issueService
       .deleteIssue(workspaceSlug as string, data.project, data.id, user)
       .then(() => {
-        if (displayFilters.layout === "calendar") {
-          const calendarFetchKey = cycleId
-            ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), calendarParams)
-            : moduleId
-            ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), calendarParams)
-            : viewId
-            ? VIEW_ISSUES(viewId.toString(), calendarParams)
-            : PROJECT_ISSUES_LIST_WITH_PARAMS(data.project, calendarParams);
-
-          mutate<IIssue[]>(
-            calendarFetchKey,
-            (prevData) => (prevData ?? []).filter((p) => p.id !== data.id),
-            false
-          );
-        } else if (displayFilters.layout === "spreadsheet") {
-          const spreadsheetFetchKey = cycleId
-            ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), spreadsheetParams)
-            : moduleId
-            ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), spreadsheetParams)
-            : viewId
-            ? VIEW_ISSUES(viewId.toString(), spreadsheetParams)
-            : PROJECT_ISSUES_LIST_WITH_PARAMS(data.project, spreadsheetParams);
+        if (displayFilters.layout === "spreadsheet") {
           if (data.parent) {
             mutate<ISubIssueResponse>(
               SUB_ISSUES(data.parent.toString()),
@@ -109,13 +82,6 @@ export const DeleteIssueModal: React.FC<Props> = ({
                   sub_issues: updatedArray,
                 };
               },
-              false
-            );
-            mutate<IIssue[]>(spreadsheetFetchKey);
-          } else {
-            mutate<IIssue[]>(
-              spreadsheetFetchKey,
-              (prevData) => (prevData ?? []).filter((p) => p.id !== data.id),
               false
             );
           }
@@ -136,8 +102,7 @@ export const DeleteIssueModal: React.FC<Props> = ({
 
         if (issueId && redirection) router.back();
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
         setIsDeleteLoading(false);
       });
     if (onSubmit) await onSubmit();
@@ -147,7 +112,7 @@ export const DeleteIssueModal: React.FC<Props> = ({
     setIsDeleteLoading(true);
     if (!workspaceSlug || !projectId || !data) return;
 
-    await issueServices
+    await issueArchiveService
       .deleteArchivedIssue(workspaceSlug as string, projectId as string, data.id)
       .then(() => {
         mutate(PROJECT_ARCHIVED_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
@@ -165,14 +130,13 @@ export const DeleteIssueModal: React.FC<Props> = ({
       });
   };
 
-  const handleIssueDelete = () =>
-    isArchivedIssues ? handleArchivedIssueDeletion() : handleDeletion();
+  const handleIssueDelete = () => (isArchivedIssues ? handleArchivedIssueDeletion() : handleDeletion());
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
+    <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-20" onClose={onClose}>
         <Transition.Child
-          as={React.Fragment}
+          as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -186,7 +150,7 @@ export const DeleteIssueModal: React.FC<Props> = ({
         <div className="fixed inset-0 z-10 overflow-y-auto">
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <Transition.Child
-              as={React.Fragment}
+              as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               enterTo="opacity-100 translate-y-0 sm:scale-100"
@@ -198,10 +162,7 @@ export const DeleteIssueModal: React.FC<Props> = ({
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-500/20 p-4">
-                      <ExclamationTriangleIcon
-                        className="h-6 w-6 text-red-600"
-                        aria-hidden="true"
-                      />
+                      <ExclamationTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">
                       <h3 className="text-xl font-medium 2xl:text-2xl">Delete Issue</h3>
@@ -213,15 +174,17 @@ export const DeleteIssueModal: React.FC<Props> = ({
                       <span className="break-words font-medium text-custom-text-100">
                         {data?.project_detail.identifier}-{data?.sequence_id}
                       </span>
-                      {""}? All of the data related to the issue will be permanently removed. This
-                      action cannot be undone.
+                      {""}? All of the data related to the issue will be permanently removed. This action cannot be
+                      undone.
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
-                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
-                    <DangerButton onClick={handleIssueDelete} loading={isDeleteLoading}>
+                    <Button variant="neutral-primary" onClick={onClose}>
+                      Cancel
+                    </Button>
+                    <Button variant="danger" onClick={handleIssueDelete} loading={isDeleteLoading}>
                       {isDeleteLoading ? "Deleting..." : "Delete Issue"}
-                    </DangerButton>
+                    </Button>
                   </div>
                 </div>
               </Dialog.Panel>

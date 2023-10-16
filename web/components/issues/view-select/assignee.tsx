@@ -1,20 +1,13 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-
-import useSWR from "swr";
-
 // services
-import projectService from "services/project.service";
-import trackEventServices from "services/track-event.service";
+import { TrackEventService } from "services/track_event.service";
 // ui
-import { AssigneesList, Avatar, CustomSearchSelect, Icon, Tooltip } from "components/ui";
-// icons
-import { UserGroupIcon } from "@heroicons/react/24/outline";
+import { AssigneesList, Avatar, CustomSearchSelect, Icon } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // types
-import { ICurrentUserResponse, IIssue } from "types";
-// fetch-keys
-import { PROJECT_MEMBERS } from "constants/fetch-keys";
+import { IUser, IIssue } from "types";
+// hooks
 import useProjectMembers from "hooks/use-project-members";
 
 type Props = {
@@ -24,15 +17,17 @@ type Props = {
   tooltipPosition?: "top" | "bottom";
   selfPositioned?: boolean;
   customButton?: boolean;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   isNotAllowed: boolean;
 };
+
+const trackEventService = new TrackEventService();
 
 export const ViewAssigneeSelect: React.FC<Props> = ({
   issue,
   partialUpdateIssue,
-  position = "left",
-  selfPositioned = false,
+  // position = "left",
+  // selfPositioned = false,
   tooltipPosition = "top",
   user,
   isNotAllowed,
@@ -45,7 +40,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
 
   const { members } = useProjectMembers(workspaceSlug?.toString(), issue.project, fetchAssignees);
 
-  const options = members?.map((member) => ({
+  const options = members?.map((member: any) => ({
     value: member.member.id,
     query: member.member.display_name,
     content: (
@@ -96,7 +91,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
 
         partialUpdateIssue({ assignees_list: data }, issue);
 
-        trackEventServices.trackIssuePartialPropertyUpdateEvent(
+        trackEventService.trackIssuePartialPropertyUpdateEvent(
           {
             workspaceSlug,
             workspaceId: issue.workspace,
@@ -106,17 +101,15 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
             issueId: issue.id,
           },
           "ISSUE_PROPERTY_UPDATE_ASSIGNEE",
-          user
+          user as IUser
         );
       }}
       options={options}
       {...(customButton ? { customButton: assigneeLabel } : { label: assigneeLabel })}
       multiple
       noChevron
-      position={position}
       disabled={isNotAllowed}
       onOpen={() => setFetchAssignees(true)}
-      selfPositioned={selfPositioned}
       width="w-full min-w-[12rem]"
     />
   );

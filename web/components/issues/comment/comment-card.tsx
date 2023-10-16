@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-
-// react-hook-form
 import { useForm } from "react-hook-form";
+
+// services
+import { FileService } from "services/file.service";
 // icons
 import { ChatBubbleLeftEllipsisIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // hooks
@@ -9,11 +10,14 @@ import useUser from "hooks/use-user";
 // ui
 import { CustomMenu, Icon } from "components/ui";
 import { CommentReaction } from "components/issues";
-import { TipTapEditor } from "components/tiptap";
+import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-text-editor";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
 import type { IIssueComment } from "types";
+
+// services
+const fileService = new FileService();
 
 type Props = {
   comment: IIssueComment;
@@ -68,18 +72,14 @@ export const CommentCard: React.FC<Props> = ({
           <img
             src={comment.actor_detail.avatar}
             alt={
-              comment.actor_detail.is_bot
-                ? comment.actor_detail.first_name + " Bot"
-                : comment.actor_detail.display_name
+              comment.actor_detail.is_bot ? comment.actor_detail.first_name + " Bot" : comment.actor_detail.display_name
             }
             height={30}
             width={30}
             className="grid h-7 w-7 place-items-center rounded-full border-2 border-custom-border-200"
           />
         ) : (
-          <div
-            className={`grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-white`}
-          >
+          <div className={`grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-white`}>
             {comment.actor_detail.is_bot
               ? comment.actor_detail.first_name.charAt(0)
               : comment.actor_detail.display_name.charAt(0)}
@@ -87,31 +87,23 @@ export const CommentCard: React.FC<Props> = ({
         )}
 
         <span className="absolute -bottom-0.5 -right-1 rounded-tl bg-custom-background-80 px-0.5 py-px">
-          <ChatBubbleLeftEllipsisIcon
-            className="h-3.5 w-3.5 text-custom-text-200"
-            aria-hidden="true"
-          />
+          <ChatBubbleLeftEllipsisIcon className="h-3.5 w-3.5 text-custom-text-200" aria-hidden="true" />
         </span>
       </div>
       <div className="min-w-0 flex-1">
         <div>
           <div className="text-xs">
-            {comment.actor_detail.is_bot
-              ? comment.actor_detail.first_name + " Bot"
-              : comment.actor_detail.display_name}
+            {comment.actor_detail.is_bot ? comment.actor_detail.first_name + " Bot" : comment.actor_detail.display_name}
           </div>
-          <p className="mt-0.5 text-xs text-custom-text-200">
-            commented {timeAgo(comment.created_at)}
-          </p>
+          <p className="mt-0.5 text-xs text-custom-text-200">commented {timeAgo(comment.created_at)}</p>
         </div>
         <div className="issue-comments-section p-0">
-          <form
-            className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}
-            onSubmit={handleSubmit(onEnter)}
-          >
+          <form className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}>
             <div>
-              <TipTapEditor
-                workspaceSlug={workspaceSlug as string}
+              <LiteTextEditorWithRef
+                onEnterKeyPress={handleSubmit(onEnter)}
+                uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                deleteFile={fileService.deleteImage}
                 ref={editorRef}
                 value={watch("comment_html")}
                 debouncedUpdatesEnabled={false}
@@ -142,17 +134,12 @@ export const CommentCard: React.FC<Props> = ({
           <div className={`relative ${isEditing ? "hidden" : ""}`}>
             {showAccessSpecifier && (
               <div className="absolute top-1 right-1.5 z-[1] text-custom-text-300">
-                <Icon
-                  iconName={comment.access === "INTERNAL" ? "lock" : "public"}
-                  className="!text-xs"
-                />
+                <Icon iconName={comment.access === "INTERNAL" ? "lock" : "public"} className="!text-xs" />
               </div>
             )}
-            <TipTapEditor
-              workspaceSlug={workspaceSlug as string}
+            <LiteReadOnlyEditorWithRef
               ref={showEditorRef}
               value={comment.comment_html}
-              editable={false}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
             />
             <CommentReaction projectId={comment.project} commentId={comment.id} />
@@ -161,10 +148,7 @@ export const CommentCard: React.FC<Props> = ({
       </div>
       {user?.id === comment.actor && (
         <CustomMenu ellipsis>
-          <CustomMenu.MenuItem
-            onClick={() => setIsEditing(true)}
-            className="flex items-center gap-1"
-          >
+          <CustomMenu.MenuItem onClick={() => setIsEditing(true)} className="flex items-center gap-1">
             <Icon iconName="edit" />
             Edit comment
           </CustomMenu.MenuItem>

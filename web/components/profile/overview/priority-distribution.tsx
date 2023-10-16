@@ -1,5 +1,6 @@
 // ui
-import { BarGraph, ProfileEmptyState, Loader } from "components/ui";
+import { BarGraph, ProfileEmptyState } from "components/ui";
+import { Loader } from "@plane/ui";
 // image
 import emptyBarGraph from "public/empty-state/empty_bar_graph.svg";
 // helpers

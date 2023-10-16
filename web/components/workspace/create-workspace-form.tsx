@@ -1,17 +1,15 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-
+import { Dispatch, SetStateAction, useEffect, useState, FC } from "react";
 import { mutate } from "swr";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, Input, PrimaryButton } from "components/ui";
+import { CustomSelect } from "components/ui";
+import { Button, Input } from "@plane/ui";
 // types
-import { ICurrentUserResponse, IWorkspace } from "types";
+import { IUser, IWorkspace } from "types";
 // fetch-keys
 import { USER_WORKSPACES } from "constants/fetch-keys";
 // constants
@@ -25,7 +23,7 @@ type Props = {
     organization_size: string;
   };
   setDefaultValues: Dispatch<SetStateAction<any>>;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   secondaryButton?: React.ReactNode;
   primaryButtonText?: {
     loading: string;
@@ -49,7 +47,9 @@ const restrictedUrls = [
   "workspace-member-invitation",
 ];
 
-export const CreateWorkspaceForm: React.FC<Props> = ({
+const workspaceService = new WorkspaceService();
+
+export const CreateWorkspaceForm: FC<Props> = ({
   onSubmit,
   defaultValues,
   setDefaultValues,
@@ -66,7 +66,6 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
   const { setToastAlert } = useToast();
 
   const {
-    register,
     handleSubmit,
     control,
     setValue,
@@ -90,11 +89,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
                 message: "Workspace created successfully.",
               });
 
-              mutate<IWorkspace[]>(
-                USER_WORKSPACES,
-                (prevData) => [res, ...(prevData ?? [])],
-                false
-              );
+              mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) => [res, ...(prevData ?? [])], false);
               if (onSubmit) await onSubmit(res);
             })
             .catch(() =>
@@ -128,54 +123,61 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
       <div className="space-y-6 sm:space-y-7">
         <div className="space-y-1 text-sm">
           <label htmlFor="workspaceName">Workspace Name</label>
-          <Input
-            id="workspaceName"
+          <Controller
+            control={control}
             name="name"
-            register={register}
-            autoComplete="off"
-            onChange={(e) =>
-              setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"))
-            }
-            validations={{
+            rules={{
               required: "Workspace name is required",
               validate: (value) =>
-                /^[\w\s-]*$/.test(value) ||
-                `Name can only contain (" "), ( - ), ( _ ) & alphanumeric characters.`,
+                /^[\w\s-]*$/.test(value) || `Name can only contain (" "), ( - ), ( _ ) & alphanumeric characters.`,
               maxLength: {
                 value: 80,
                 message: "Workspace name should not exceed 80 characters",
               },
             }}
-            placeholder="Enter workspace name..."
-            error={errors.name}
+            render={({ field: { value, ref } }) => (
+              <Input
+                id="workspaceName"
+                name="name"
+                type="text"
+                value={value}
+                onChange={(e) => setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"))}
+                ref={ref}
+                hasError={Boolean(errors.name)}
+                placeholder="Enter workspace name..."
+                className="w-full"
+              />
+            )}
           />
         </div>
         <div className="space-y-1 text-sm">
           <label htmlFor="workspaceUrl">Workspace URL</label>
           <div className="flex w-full items-center rounded-md border border-custom-border-200 px-3">
-            <span className="whitespace-nowrap text-sm text-custom-text-200">
-              {window && window.location.host}/
-            </span>
-            <Input
-              id="workspaceUrl"
-              mode="trueTransparent"
-              autoComplete="off"
+            <span className="whitespace-nowrap text-sm text-custom-text-200">{window && window.location.host}/</span>
+            <Controller
+              control={control}
               name="slug"
-              register={register}
-              className="block w-full rounded-md bg-transparent py-2 !px-0 text-sm"
-              validations={{
+              rules={{
                 required: "Workspace URL is required",
               }}
-              onChange={(e) =>
-                /^[a-zA-Z0-9_-]+$/.test(e.target.value)
-                  ? setInvalidSlug(false)
-                  : setInvalidSlug(true)
-              }
+              render={({ field: { value, ref } }) => (
+                <Input
+                  id="workspaceUrl"
+                  name="slug"
+                  type="text"
+                  value={value}
+                  onChange={(e) =>
+                    /^[a-zA-Z0-9_-]+$/.test(e.target.value) ? setInvalidSlug(false) : setInvalidSlug(true)
+                  }
+                  ref={ref}
+                  hasError={Boolean(errors.slug)}
+                  placeholder="Enter workspace name..."
+                  className="block rounded-md bg-transparent py-2 !px-0 text-sm w-full"
+                />
+              )}
             />
           </div>
-          {slugError && (
-            <span className="-mt-3 text-sm text-red-500">Workspace URL is already taken!</span>
-          )}
+          {slugError && <span className="-mt-3 text-sm text-red-500">Workspace URL is already taken!</span>}
           {invalidSlug && (
             <span className="text-sm text-red-500">{`URL can only contain ( - ), ( _ ) & alphanumeric characters.`}</span>
           )}
@@ -216,9 +218,9 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
 
       <div className="flex items-center gap-4">
         {secondaryButton}
-        <PrimaryButton type="submit" size="md" disabled={!isValid} loading={isSubmitting}>
+        <Button variant="primary" type="submit" size="md" disabled={!isValid} loading={isSubmitting}>
           {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
-        </PrimaryButton>
+        </Button>
       </div>
     </form>
   );

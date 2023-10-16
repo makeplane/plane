@@ -12,7 +12,7 @@ import { X, CopyPlus } from "lucide-react";
 import { BlockerIcon } from "components/icons";
 import { ExistingIssuesListModal } from "components/core";
 // services
-import issuesService from "services/issues.service";
+import { IssueService } from "services/issue";
 // types
 import { BlockeIssueDetail, IIssue, ISearchIssueResponse } from "types";
 
@@ -22,6 +22,9 @@ type Props = {
   watch: UseFormWatch<IIssue>;
   disabled?: boolean;
 };
+
+// services
+const issueService = new IssueService();
 
 export const SidebarDuplicateSelect: React.FC<Props> = (props) => {
   const { issueId, submitChanges, watch, disabled = false } = props;
@@ -64,7 +67,7 @@ export const SidebarDuplicateSelect: React.FC<Props> = (props) => {
 
     if (!user) return;
 
-    issuesService
+    issueService
       .createIssueRelation(workspaceSlug as string, projectId as string, issueId as string, user, {
         related_list: [
           ...selectedIssues.map((issue) => ({
@@ -130,7 +133,7 @@ export const SidebarDuplicateSelect: React.FC<Props> = (props) => {
                       onClick={() => {
                         if (!user) return;
 
-                        issuesService
+                        issueService
                           .deleteIssueRelation(
                             workspaceSlug as string,
                             projectId as string,

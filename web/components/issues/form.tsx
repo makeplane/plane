@@ -1,11 +1,9 @@
 import React, { FC, useState, useEffect, useRef } from "react";
-
 import { useRouter } from "next/router";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
-import aiService from "services/ai.service";
+import { AIService } from "services/ai.service";
+import { FileService } from "services/file.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -23,12 +21,14 @@ import {
 import { CreateStateModal } from "components/states";
 import { CreateLabelModal } from "components/labels";
 // ui
-import { CustomMenu, Input, PrimaryButton, SecondaryButton, ToggleSwitch } from "components/ui";
-import { TipTapEditor } from "components/tiptap";
+import { CustomMenu } from "components/ui";
+import { Button, Input, ToggleSwitch } from "@plane/ui";
 // icons
 import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
-import type { ICurrentUserResponse, IIssue, ISearchIssueResponse } from "types";
+import type { IUser, IIssue, ISearchIssueResponse } from "types";
+// components
+import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 
 const defaultValues: Partial<IIssue> = {
   project: "",
@@ -63,7 +63,7 @@ export interface IssueFormProps {
   setCreateMore: React.Dispatch<React.SetStateAction<boolean>>;
   handleDiscardClose: () => void;
   status: boolean;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   handleFormDirty: (payload: Partial<IIssue> | null) => void;
   fieldsToShow: (
     | "project"
@@ -80,6 +80,10 @@ export interface IssueFormProps {
     | "all"
   )[];
 }
+
+// services
+const aiService = new AIService();
+const fileService = new FileService();
 
 export const IssueForm: FC<IssueFormProps> = (props) => {
   const {
@@ -112,7 +116,6 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
   const { setToastAlert } = useToast();
 
   const {
-    register,
     formState: { errors, isSubmitting, isDirty },
     handleSubmit,
     reset,
@@ -129,19 +132,18 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
   const issueName = watch("name");
 
   const payload: Partial<IIssue> = {
-    name: watch("name"),
-    description: watch("description"),
-    description_html: watch("description_html"),
-    state: watch("state"),
-    priority: watch("priority"),
-    assignees: watch("assignees"),
-    labels: watch("labels"),
-    start_date: watch("start_date"),
-    target_date: watch("target_date"),
-    project: watch("project"),
-    parent: watch("parent"),
-    cycle: watch("cycle"),
-    module: watch("module"),
+    name: getValues("name"),
+    description: getValues("description"),
+    state: getValues("state"),
+    priority: getValues("priority"),
+    assignees: getValues("assignees"),
+    labels: getValues("labels"),
+    start_date: getValues("start_date"),
+    target_date: getValues("target_date"),
+    project: getValues("project"),
+    parent: getValues("parent"),
+    cycle: getValues("cycle"),
+    module: getValues("module"),
   };
 
   useEffect(() => {
@@ -211,9 +213,7 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
           setToastAlert({
             type: "error",
             title: "Error!",
-            message:
-              error ||
-              "You have reached the maximum number of requests of 50 requests per month per user.",
+            message: error || "You have reached the maximum number of requests of 50 requests per month per user.",
           });
         else
           setToastAlert({
@@ -309,9 +309,7 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
                   <span className="flex-shrink-0 text-custom-text-200">
                     {selectedParentIssue.project__identifier}-{selectedParentIssue.sequence_id}
                   </span>
-                  <span className="truncate font-medium">
-                    {selectedParentIssue.name.substring(0, 50)}
-                  </span>
+                  <span className="truncate font-medium">{selectedParentIssue.name.substring(0, 50)}</span>
                   <XMarkIcon
                     className="h-3 w-3 cursor-pointer"
                     onClick={() => {
@@ -326,21 +324,29 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
             <div className="mt-2 space-y-3">
               {(fieldsToShow.includes("all") || fieldsToShow.includes("name")) && (
                 <div>
-                  <Input
-                    id="name"
+                  <Controller
+                    control={control}
                     name="name"
-                    className="resize-none text-xl"
-                    placeholder="Title"
-                    autoComplete="off"
-                    error={errors.name}
-                    register={register}
-                    validations={{
+                    rules={{
                       required: "Title is required",
                       maxLength: {
                         value: 255,
                         message: "Title should be less than 255 characters",
                       },
                     }}
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Input
+                        id="name"
+                        name="name"
+                        type="text"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        hasError={Boolean(errors.name)}
+                        placeholder="Title"
+                        className="resize-none text-xl w-full"
+                      />
+                    )}
                   />
                 </div>
               )}
@@ -377,29 +383,24 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
                   <Controller
                     name="description_html"
                     control={control}
-                    render={({ field: { value, onChange } }) => {
-                      if (!value && !watch("description_html")) return <></>;
-
-                      return (
-                        <TipTapEditor
-                          workspaceSlug={workspaceSlug as string}
-                          ref={editorRef}
-                          debouncedUpdatesEnabled={false}
-                          value={
-                            !value ||
-                            value === "" ||
-                            (typeof value === "object" && Object.keys(value).length === 0)
-                              ? watch("description_html")
-                              : value
-                          }
-                          customClassName="min-h-[150px]"
-                          onChange={(description: Object, description_html: string) => {
-                            onChange(description_html);
-                            setValue("description", description);
-                          }}
-                        />
-                      );
-                    }}
+                    render={({ field: { value, onChange } }) => (
+                      <RichTextEditorWithRef
+                        uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                        deleteFile={fileService.deleteImage}
+                        ref={editorRef}
+                        debouncedUpdatesEnabled={false}
+                        value={
+                          !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
+                            ? watch("description_html")
+                            : value
+                        }
+                        customClassName="min-h-[150px]"
+                        onChange={(description: Object, description_html: string) => {
+                          onChange(description_html);
+                          setValue("description", description);
+                        }}
+                      />
+                    )}
                   />
                   <GptAssistantModal
                     isOpen={gptAssistantModal}
@@ -447,11 +448,7 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
                     control={control}
                     name="assignees"
                     render={({ field: { value, onChange } }) => (
-                      <IssueAssigneeSelect
-                        projectId={projectId}
-                        value={value}
-                        onChange={onChange}
-                      />
+                      <IssueAssigneeSelect projectId={projectId} value={value} onChange={onChange} />
                     )}
                   />
                 )}
@@ -533,24 +530,15 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
                   <CustomMenu ellipsis>
                     {watch("parent") ? (
                       <>
-                        <CustomMenu.MenuItem
-                          renderAs="button"
-                          onClick={() => setParentIssueListModalOpen(true)}
-                        >
+                        <CustomMenu.MenuItem renderAs="button" onClick={() => setParentIssueListModalOpen(true)}>
                           Change parent issue
                         </CustomMenu.MenuItem>
-                        <CustomMenu.MenuItem
-                          renderAs="button"
-                          onClick={() => setValue("parent", null)}
-                        >
+                        <CustomMenu.MenuItem renderAs="button" onClick={() => setValue("parent", null)}>
                           Remove parent issue
                         </CustomMenu.MenuItem>
                       </>
                     ) : (
-                      <CustomMenu.MenuItem
-                        renderAs="button"
-                        onClick={() => setParentIssueListModalOpen(true)}
-                      >
+                      <CustomMenu.MenuItem renderAs="button" onClick={() => setParentIssueListModalOpen(true)}>
                         Select Parent Issue
                       </CustomMenu.MenuItem>
                     )}
@@ -569,14 +557,15 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
             <ToggleSwitch value={createMore} onChange={() => {}} size="md" />
           </div>
           <div className="flex items-center gap-2">
-            <SecondaryButton
+            <Button
+              variant="neutral-primary"
               onClick={() => {
                 handleDiscardClose();
               }}
             >
               Discard
-            </SecondaryButton>
-            <PrimaryButton type="submit" loading={isSubmitting}>
+            </Button>
+            <Button variant="primary" type="submit" loading={isSubmitting}>
               {status
                 ? isSubmitting
                   ? "Updating Issue..."
@@ -584,7 +573,7 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
                 : isSubmitting
                 ? "Adding Issue..."
                 : "Add Issue"}
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
       </form>

@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
-import fileService from "services/file.service";
-import userService from "services/user.service";
+import { FileService } from "services/file.service";
+import { UserService } from "services/user.service";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // layouts
-import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // components
 import { ImagePickerPopover, ImageUploadModal } from "components/core";
 import { SettingsSidebar } from "components/project";
 // ui
-import { CustomSearchSelect, CustomSelect, Input, PrimaryButton, Spinner } from "components/ui";
+import { Button, Input, Spinner } from "@plane/ui";
+import { CustomSearchSelect, CustomSelect } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { UserIcon } from "@heroicons/react/24/outline";
@@ -38,15 +37,17 @@ const defaultValues: Partial<IUser> = {
   user_timezone: "Asia/Kolkata",
 };
 
+const fileService = new FileService();
+const userService = new UserService();
+
 const Profile: NextPage = () => {
   const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
+  // form info
   const {
-    register,
     handleSubmit,
     reset,
     watch,
@@ -174,12 +175,9 @@ const Profile: NextPage = () => {
             <div className={`flex flex-col gap-8 pr-9 py-9 w-full overflow-y-auto`}>
               <div className="relative h-44 w-full mt-6">
                 <img
-                  src={
-                    watch("cover_image") ??
-                    "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"
-                  }
+                  src={watch("cover_image") ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
                   className="h-44 w-full rounded-lg object-cover"
-                  alt={myProfile?.name ?? "Cover image"}
+                  alt={myProfile?.first_name ?? "Cover image"}
                 />
                 <div className="flex items-end justify-between absolute left-8 -bottom-6">
                   <div className="flex gap-3">
@@ -214,10 +212,8 @@ const Profile: NextPage = () => {
                         onChange={(imageUrl) => {
                           setValue("cover_image", imageUrl);
                         }}
-                        value={
-                          watch("cover_image") ??
-                          "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"
-                        }
+                        control={control}
+                        value={watch("cover_image") ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
                       />
                     )}
                   />
@@ -245,42 +241,66 @@ const Profile: NextPage = () => {
               <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6 px-8">
                 <div className="flex flex-col gap-1">
                   <h4 className="text-sm">First Name</h4>
-                  <Input
+                  <Controller
+                    control={control}
                     name="first_name"
-                    id="first_name"
-                    register={register}
-                    error={errors.first_name}
-                    placeholder="Enter your first name"
-                    className="!px-3 !py-2 rounded-md font-medium"
-                    autoComplete="off"
-                    maxLength={24}
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Input
+                        id="first_name"
+                        name="first_name"
+                        type="text"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        hasError={Boolean(errors.first_name)}
+                        placeholder="Enter your first name"
+                        className="rounded-md font-medium w-full"
+                      />
+                    )}
                   />
                 </div>
 
                 <div className="flex flex-col gap-1">
                   <h4 className="text-sm">Last Name</h4>
-                  <Input
+
+                  <Controller
+                    control={control}
                     name="last_name"
-                    register={register}
-                    error={errors.last_name}
-                    id="last_name"
-                    placeholder="Enter your last name"
-                    autoComplete="off"
-                    className="!px-3 !py-2 rounded-md font-medium"
-                    maxLength={24}
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Input
+                        id="last_name"
+                        name="last_name"
+                        type="text"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        hasError={Boolean(errors.last_name)}
+                        placeholder="Enter your last name"
+                        className="rounded-md font-medium w-full"
+                      />
+                    )}
                   />
                 </div>
 
                 <div className="flex flex-col gap-1">
                   <h4 className="text-sm">Email</h4>
-                  <Input
-                    id="email"
+                  <Controller
+                    control={control}
                     name="email"
-                    autoComplete="off"
-                    register={register}
-                    className="!px-3 !py-2 rounded-md font-medium"
-                    error={errors.name}
-                    disabled
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        hasError={Boolean(errors.email)}
+                        placeholder="Enter your last name"
+                        className="rounded-md font-medium w-full"
+                        disabled
+                      />
+                    )}
                   />
                 </div>
 
@@ -298,8 +318,6 @@ const Profile: NextPage = () => {
                         buttonClassName={errors.role ? "border-red-500 bg-red-500/10" : ""}
                         width="w-full"
                         input
-                        verticalPosition="top"
-                        position="right"
                       >
                         {USER_ROLES.map((item) => (
                           <CustomSelect.Option key={item.value} value={item.value}>
@@ -309,29 +327,20 @@ const Profile: NextPage = () => {
                       </CustomSelect>
                     )}
                   />
-                  {errors.role && (
-                    <span className="text-xs text-red-500">Please select a role</span>
-                  )}
+                  {errors.role && <span className="text-xs text-red-500">Please select a role</span>}
                 </div>
 
                 <div className="flex flex-col gap-1">
                   <h4 className="text-sm">Display name </h4>
-
-                  <Input
-                    id="display_name"
+                  <Controller
+                    control={control}
                     name="display_name"
-                    autoComplete="off"
-                    register={register}
-                    error={errors.display_name}
-                    className="w-full"
-                    placeholder="Enter your display name"
-                    validations={{
+                    rules={{
                       required: "Display name is required.",
                       validate: (value) => {
                         if (value.trim().length < 1) return "Display name can't be empty.";
 
-                        if (value.split("  ").length > 1)
-                          return "Display name can't have two consecutive spaces.";
+                        if (value.split("  ").length > 1) return "Display name can't have two consecutive spaces.";
 
                         if (value.replace(/\s/g, "").length < 1)
                           return "Display name must be at least 1 characters long.";
@@ -342,6 +351,19 @@ const Profile: NextPage = () => {
                         return true;
                       },
                     }}
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Input
+                        id="display_name"
+                        name="display_name"
+                        type="text"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        hasError={Boolean(errors.display_name)}
+                        placeholder="Enter your display name"
+                        className="w-full"
+                      />
+                    )}
                   />
                 </div>
 
@@ -355,28 +377,21 @@ const Profile: NextPage = () => {
                     render={({ field: { value, onChange } }) => (
                       <CustomSearchSelect
                         value={value}
-                        label={
-                          value
-                            ? TIME_ZONES.find((t) => t.value === value)?.label ?? value
-                            : "Select a timezone"
-                        }
+                        label={value ? TIME_ZONES.find((t) => t.value === value)?.label ?? value : "Select a timezone"}
                         options={timeZoneOptions}
                         onChange={onChange}
-                        verticalPosition="top"
                         optionsClassName="w-full"
                         input
                       />
                     )}
                   />
-                  {errors.role && (
-                    <span className="text-xs text-red-500">Please select a role</span>
-                  )}
+                  {errors.role && <span className="text-xs text-red-500">Please select a role</span>}
                 </div>
 
                 <div className="flex items-center justify-between py-2">
-                  <PrimaryButton type="submit" loading={isSubmitting}>
+                  <Button variant="primary" type="submit" loading={isSubmitting}>
                     {isSubmitting ? "Updating Profile..." : "Update Profile"}
-                  </PrimaryButton>
+                  </Button>
                 </div>
               </div>
             </div>

@@ -1,11 +1,14 @@
 import React from "react";
 import { useRouter } from "next/router";
-// react-hook-form
 import { useForm, Controller } from "react-hook-form";
+
+// services
+import { FileService } from "services/file.service";
 // components
-import { TipTapEditor } from "components/tiptap";
+import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
 // ui
-import { Icon, SecondaryButton, Tooltip } from "components/ui";
+import { Icon } from "components/ui";
+import { Button, Tooltip } from "@plane/ui";
 // types
 import type { IIssueComment } from "types";
 
@@ -20,7 +23,12 @@ type Props = {
   showAccessSpecifier?: boolean;
 };
 
-const commentAccess = [
+type commentAccessType = {
+  icon: string;
+  key: string;
+  label: "Private" | "Public";
+};
+const commentAccess: commentAccessType[] = [
   {
     icon: "lock",
     key: "INTERNAL",
@@ -33,11 +41,10 @@ const commentAccess = [
   },
 ];
 
-export const AddComment: React.FC<Props> = ({
-  disabled = false,
-  onSubmit,
-  showAccessSpecifier = false,
-}) => {
+// services
+const fileService = new FileService();
+
+export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAccessSpecifier = false }) => {
   const editorRef = React.useRef<any>(null);
 
   const router = useRouter();
@@ -83,9 +90,7 @@ export const AddComment: React.FC<Props> = ({
                             <Icon
                               iconName={access.icon}
                               className={`w-4 h-4 -mt-1 ${
-                                value === access.key
-                                  ? "!text-custom-text-100"
-                                  : "!text-custom-text-400"
+                                value === access.key ? "!text-custom-text-100" : "!text-custom-text-400"
                               }`}
                             />
                           </button>
@@ -97,24 +102,33 @@ export const AddComment: React.FC<Props> = ({
               </div>
             )}
             <Controller
-              name="comment_html"
+              name="access"
               control={control}
-              render={({ field: { value, onChange } }) => (
-                <TipTapEditor
-                  workspaceSlug={workspaceSlug as string}
-                  ref={editorRef}
-                  value={!value || value === "" ? "<p></p>" : value}
-                  customClassName="p-3 min-h-[100px] shadow-sm"
-                  debouncedUpdatesEnabled={false}
-                  onChange={(comment_json: Object, comment_html: string) => onChange(comment_html)}
+              render={({ field: { onChange: onAccessChange, value: accessValue } }) => (
+                <Controller
+                  name="comment_html"
+                  control={control}
+                  render={({ field: { onChange: onCommentChange, value: commentValue } }) => (
+                    <LiteTextEditorWithRef
+                      onEnterKeyPress={handleSubmit(handleAddComment)}
+                      uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                      deleteFile={fileService.deleteImage}
+                      ref={editorRef}
+                      value={!commentValue || commentValue === "" ? "<p></p>" : commentValue}
+                      customClassName="p-3 min-h-[100px] shadow-sm"
+                      debouncedUpdatesEnabled={false}
+                      onChange={(comment_json: Object, comment_html: string) => onCommentChange(comment_html)}
+                      commentAccessSpecifier={{ accessValue, onAccessChange, showAccessSpecifier, commentAccess }}
+                    />
+                  )}
                 />
               )}
             />
           </div>
 
-          <SecondaryButton type="submit" disabled={isSubmitting || disabled} className="mt-2">
+          <Button variant="neutral-primary" type="submit" disabled={isSubmitting || disabled}>
             {isSubmitting ? "Adding..." : "Comment"}
-          </SecondaryButton>
+          </Button>
         </div>
       </form>
     </div>

@@ -1,22 +1,16 @@
-import React, { KeyboardEventHandler, useCallback, useEffect, useState } from "react";
-
+import { FC } from "react";
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
-
-// react-hook-form
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // services
-import pagesService from "services/pages.service";
-
+import { PageService } from "services/page.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { TextArea } from "components/ui";
+import { TextArea } from "@plane/ui";
 // types
-import { ICurrentUserResponse, IPageBlock } from "types";
+import { IUser, IPageBlock } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
 
@@ -25,26 +19,25 @@ const defaultValues = {
 };
 
 type Props = {
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
-export const CreateBlock: React.FC<Props> = ({ user }) => {
-  const [blockTitle, setBlockTitle] = useState("");
+const pageService = new PageService();
 
+export const CreateBlock: FC<Props> = ({ user }) => {
+  // const [blockTitle, setBlockTitle] = useState("");
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
-
+  // toast
   const { setToastAlert } = useToast();
-
+  // form info
   const {
     handleSubmit,
-    register,
     control,
     watch,
-    setValue,
-    setFocus,
     reset,
-    formState: { isSubmitting },
+    formState: { errors },
   } = useForm<IPageBlock>({
     defaultValues,
   });
@@ -52,7 +45,7 @@ export const CreateBlock: React.FC<Props> = ({ user }) => {
   const createPageBlock = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
-    await pagesService
+    await pageService
       .createPageBlock(
         workspaceSlug as string,
         projectId as string,
@@ -81,8 +74,7 @@ export const CreateBlock: React.FC<Props> = ({ user }) => {
   };
 
   const handleKeyDown = (e: any) => {
-    const keyCombination =
-      ((e.ctrlKey || e.metaKey) && e.key === "Enter") || (e.shiftKey && e.key === "Enter");
+    const keyCombination = ((e.ctrlKey || e.metaKey) && e.key === "Enter") || (e.shiftKey && e.key === "Enter");
 
     if (e.key === "Enter" && !keyCombination) {
       if (watch("name") && watch("name") !== "") {
@@ -100,16 +92,23 @@ export const CreateBlock: React.FC<Props> = ({ user }) => {
         onSubmit={handleSubmit(createPageBlock)}
       >
         <div className="flex min-h-full w-full">
-          <TextArea
-            id="name"
+          <Controller
             name="name"
-            placeholder="Title"
-            register={register}
-            className="min-h-full block w-full resize-none overflow-hidden border-none bg-transparent px-1 py-1 text-sm font-medium"
-            role="textbox"
-            onKeyDown={handleKeyDown}
-            maxLength={255}
-            noPadding
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <TextArea
+                id="name"
+                name="name"
+                value={value}
+                placeholder="Title"
+                role="textbox"
+                onKeyDown={handleKeyDown}
+                maxLength={255}
+                onChange={onChange}
+                className="min-h-full block w-full resize-none overflow-hidden border-none bg-transparent !px-1 !py-1 text-sm font-medium"
+                hasError={Boolean(errors?.name)}
+              />
+            )}
           />
         </div>
 

@@ -7,11 +7,11 @@ import { useDropzone } from "react-dropzone";
 // headless ui
 import { Transition, Dialog } from "@headlessui/react";
 // services
-import fileServices from "services/file.service";
+import { FileService } from "services/file.service";
 // hooks
 import useWorkspaceDetails from "hooks/use-workspace-details";
 // ui
-import { DangerButton, PrimaryButton, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // icons
 import { UserCircleIcon } from "components/icons";
 
@@ -24,6 +24,9 @@ type Props = {
   handleDelete: () => void;
   userImage?: boolean;
 };
+
+// services
+const fileService = new FileService();
 
 export const ImageUploadModal: React.FC<Props> = ({
   value,
@@ -64,7 +67,7 @@ export const ImageUploadModal: React.FC<Props> = ({
     formData.append("attributes", JSON.stringify({}));
 
     if (userImage) {
-      fileServices
+      fileService
         .uploadUserFile(formData)
         .then((res) => {
           const imageUrl = res.asset;
@@ -73,13 +76,13 @@ export const ImageUploadModal: React.FC<Props> = ({
           setIsImageUploading(false);
           setImage(null);
 
-          if (value) fileServices.deleteUserFile(value);
+          if (value) fileService.deleteUserFile(value);
         })
         .catch((err) => {
           console.error(err);
         });
     } else
-      fileServices
+      fileService
         .uploadFile(workspaceSlug as string, formData)
         .then((res) => {
           const imageUrl = res.asset;
@@ -87,7 +90,7 @@ export const ImageUploadModal: React.FC<Props> = ({
           setIsImageUploading(false);
           setImage(null);
 
-          if (value && workspaceDetails) fileServices.deleteFile(workspaceDetails.id, value);
+          if (value && workspaceDetails) fileService.deleteFile(workspaceDetails.id, value);
         })
         .catch((err) => {
           console.error(err);
@@ -127,10 +130,7 @@ export const ImageUploadModal: React.FC<Props> = ({
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-100 px-5 py-8 text-left shadow-xl transition-all sm:w-full sm:max-w-xl sm:p-6">
                 <div className="space-y-5">
-                  <Dialog.Title
-                    as="h3"
-                    className="text-lg font-medium leading-6 text-custom-text-100"
-                  >
+                  <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                     Upload Image
                   </Dialog.Title>
                   <div className="space-y-3">
@@ -161,9 +161,7 @@ export const ImageUploadModal: React.FC<Props> = ({
                           <div>
                             <UserCircleIcon className="mx-auto h-16 w-16 text-custom-text-200" />
                             <span className="mt-2 block text-sm font-medium text-custom-text-200">
-                              {isDragActive
-                                ? "Drop image here to upload"
-                                : "Drag & drop image here"}
+                              {isDragActive ? "Drop image here to upload" : "Drag & drop image here"}
                             </span>
                           </div>
                         )}
@@ -185,19 +183,17 @@ export const ImageUploadModal: React.FC<Props> = ({
                 </p>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
-                    <DangerButton onClick={handleDelete} outline disabled={!value}>
+                    <Button variant="danger" onClick={handleDelete} disabled={!value}>
                       {isRemoving ? "Removing..." : "Remove"}
-                    </DangerButton>
+                    </Button>
                   </div>
                   <div className="flex items-center gap-2">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <PrimaryButton
-                      onClick={handleSubmit}
-                      disabled={!image}
-                      loading={isImageUploading}
-                    >
+                    <Button variant="neutral-primary" onClick={handleClose}>
+                      Cancel
+                    </Button>
+                    <Button variant="primary" onClick={handleSubmit} disabled={!image} loading={isImageUploading}>
                       {isImageUploading ? "Uploading..." : "Upload & Save"}
-                    </PrimaryButton>
+                    </Button>
                   </div>
                 </div>
               </Dialog.Panel>

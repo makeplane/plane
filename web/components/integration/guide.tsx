@@ -9,16 +9,11 @@ import useSWR, { mutate } from "swr";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // services
-import IntegrationService from "services/integration";
+import { IntegrationService } from "services/integrations";
 // components
-import {
-  DeleteImportModal,
-  GithubImporterRoot,
-  JiraImporterRoot,
-  SingleImport,
-} from "components/integration";
+import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "components/integration";
 // ui
-import { Loader, PrimaryButton } from "components/ui";
+import { Button, Loader } from "@plane/ui";
 // icons
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 // types
@@ -27,6 +22,9 @@ import { IImporterService } from "types";
 import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
 // constants
 import { IMPORTERS_EXPORTERS_LIST } from "constants/workspace";
+
+// services
+const integrationService = new IntegrationService();
 
 const IntegrationGuide = () => {
   const [refreshing, setRefreshing] = useState(false);
@@ -40,7 +38,7 @@ const IntegrationGuide = () => {
 
   const { data: importerServices } = useSWR(
     workspaceSlug ? IMPORTER_SERVICES_LIST(workspaceSlug as string) : null,
-    workspaceSlug ? () => IntegrationService.getImporterServicesList(workspaceSlug as string) : null
+    workspaceSlug ? () => integrationService.getImporterServicesList(workspaceSlug as string) : null
   );
 
   const handleDeleteImport = (importService: IImporterService) => {
@@ -85,26 +83,17 @@ const IntegrationGuide = () => {
               >
                 <div className="flex items-start gap-4">
                   <div className="relative h-10 w-10 flex-shrink-0">
-                    <Image
-                      src={service.logo}
-                      layout="fill"
-                      objectFit="cover"
-                      alt={`${service.title} Logo`}
-                    />
+                    <Image src={service.logo} layout="fill" objectFit="cover" alt={`${service.title} Logo`} />
                   </div>
                   <div>
                     <h3 className="flex items-center gap-4 text-sm font-medium">{service.title}</h3>
-                    <p className="text-sm text-custom-text-200 tracking-tight">
-                      {service.description}
-                    </p>
+                    <p className="text-sm text-custom-text-200 tracking-tight">{service.description}</p>
                   </div>
                 </div>
                 <div className="flex-shrink-0">
                   <Link href={`/${workspaceSlug}/settings/imports?provider=${service.provider}`}>
                     <a>
-                      <PrimaryButton>
-                        <span className="capitalize">{service.type}</span>
-                      </PrimaryButton>
+                      <Button variant="primary">{service.type}</Button>
                     </a>
                   </Link>
                 </div>
@@ -119,9 +108,7 @@ const IntegrationGuide = () => {
                     className="flex flex-shrink-0 items-center gap-1 rounded bg-custom-background-80 py-1 px-1.5 text-xs outline-none"
                     onClick={() => {
                       setRefreshing(true);
-                      mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string)).then(() =>
-                        setRefreshing(false)
-                      );
+                      mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string)).then(() => setRefreshing(false));
                     }}
                   >
                     <ArrowPathIcon className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />{" "}
@@ -145,9 +132,7 @@ const IntegrationGuide = () => {
                       </div>
                     </div>
                   ) : (
-                    <p className="text-sm text-custom-text-200 px-4 py-6">
-                      No previous imports available.
-                    </p>
+                    <p className="text-sm text-custom-text-200 px-4 py-6">No previous imports available.</p>
                   )
                 ) : (
                   <Loader className="mt-6 grid grid-cols-1 gap-3">

@@ -1,11 +1,8 @@
 import { useState } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // services
-import issuesService from "services/issues.service";
+import { IssueLabelService } from "services/issue";
 // components
 import { DateFilterModal } from "components/core";
 // ui
@@ -15,7 +12,7 @@ import { PriorityIcon, StateGroupIcon } from "components/icons";
 // helpers
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 // types
-import { IIssueFilterOptions, IQuery, TStateGroups } from "types";
+import { IIssueFilterOptions, TStateGroups } from "types";
 // fetch-keys
 import { WORKSPACE_LABELS } from "constants/fetch-keys";
 // constants
@@ -23,18 +20,15 @@ import { GROUP_CHOICES, PRIORITIES } from "constants/project";
 import { DATE_FILTER_OPTIONS } from "constants/filters";
 
 type Props = {
-  filters: Partial<IIssueFilterOptions> | IQuery;
+  filters: Partial<IIssueFilterOptions> | any;
   onSelect: (option: any) => void;
   direction?: "left" | "right";
   height?: "sm" | "md" | "rg" | "lg";
 };
 
-export const MyIssuesSelectFilters: React.FC<Props> = ({
-  filters,
-  onSelect,
-  direction = "right",
-  height = "md",
-}) => {
+const issueLabelService = new IssueLabelService();
+
+export const MyIssuesSelectFilters: React.FC<Props> = ({ filters, onSelect, direction = "right", height = "md" }) => {
   const [isDateFilterModalOpen, setIsDateFilterModalOpen] = useState(false);
   const [dateFilterType, setDateFilterType] = useState<{
     title: string;
@@ -50,14 +44,12 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
 
   const { data: labels } = useSWR(
     workspaceSlug && fetchLabels ? WORKSPACE_LABELS(workspaceSlug.toString()) : null,
-    workspaceSlug && fetchLabels
-      ? () => issuesService.getWorkspaceLabels(workspaceSlug.toString())
-      : null
+    workspaceSlug && fetchLabels ? () => issueLabelService.getWorkspaceIssueLabels(workspaceSlug.toString()) : null
   );
 
   return (
     <>
-      {isDateFilterModalOpen && (
+      {/* {isDateFilterModalOpen && (
         <DateFilterModal
           title={dateFilterType.title}
           field={dateFilterType.type}
@@ -66,7 +58,7 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
           isOpen={isDateFilterModalOpen}
           onSelect={onSelect}
         />
-      )}
+      )} */}
       <MultiLevelDropdown
         label="Filters"
         onSelect={onSelect}
@@ -155,7 +147,7 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
                   key: "start_date",
                   value: option.value,
                 },
-                selected: checkIfArraysHaveSameElements(filters?.start_date ?? [], option.value),
+                selected: checkIfArraysHaveSameElements(filters?.start_date ?? [], [option.value]),
               })) ?? []),
               {
                 id: "custom",
@@ -191,7 +183,7 @@ export const MyIssuesSelectFilters: React.FC<Props> = ({
                   key: "target_date",
                   value: option.value,
                 },
-                selected: checkIfArraysHaveSameElements(filters?.target_date ?? [], option.value),
+                selected: checkIfArraysHaveSameElements(filters?.target_date ?? [], [option.value]),
               })) ?? []),
               {
                 id: "custom",

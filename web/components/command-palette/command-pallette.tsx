@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
 import useSWR from "swr";
+import { observer } from "mobx-react-lite";
 // hooks
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
@@ -12,19 +12,19 @@ import { CreateUpdateCycleModal } from "components/cycles";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { CreateUpdateModuleModal } from "components/modules";
 import { CreateProjectModal } from "components/project";
-import { CreateUpdateViewModal } from "components/views";
+import { CreateUpdateProjectViewModal } from "components/views";
 import { CreateUpdatePageModal } from "components/pages";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // services
-import issuesService from "services/issues.service";
-import inboxService from "services/inbox.service";
+import { IssueService } from "services/issue";
 // fetch keys
-import { INBOX_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
+import { ISSUE_DETAILS } from "constants/fetch-keys";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-import { observable } from "mobx";
-import { observer } from "mobx-react-lite";
+
+// services
+const issueService = new IssueService();
 
 export const CommandPalette: React.FC = observer(() => {
   const store: any = useMobxStore();
@@ -50,8 +50,7 @@ export const CommandPalette: React.FC = observer(() => {
   const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
     workspaceSlug && projectId && issueId
-      ? () =>
-          issuesService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
+      ? () => issueService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
       : null
   );
 
@@ -76,7 +75,7 @@ export const CommandPalette: React.FC = observer(() => {
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      const { key, ctrlKey, metaKey, altKey, shiftKey } = e;
+      const { key, ctrlKey, metaKey, altKey } = e;
       if (!key) return;
 
       const keyPressed = key.toLowerCase();
@@ -121,7 +120,7 @@ export const CommandPalette: React.FC = observer(() => {
         }
       }
     },
-    [copyIssueUrlToClipboard]
+    [copyIssueUrlToClipboard, store.theme]
   );
 
   useEffect(() => {
@@ -141,11 +140,7 @@ export const CommandPalette: React.FC = observer(() => {
     <>
       <ShortcutsModal isOpen={isShortcutsModalOpen} setIsOpen={setIsShortcutsModalOpen} />
       {workspaceSlug && (
-        <CreateProjectModal
-          isOpen={isProjectModalOpen}
-          setIsOpen={setIsProjectModalOpen}
-          user={user}
-        />
+        <CreateProjectModal isOpen={isProjectModalOpen} setIsOpen={setIsProjectModalOpen} user={user} />
       )}
       {projectId && (
         <>
@@ -159,10 +154,9 @@ export const CommandPalette: React.FC = observer(() => {
             setIsOpen={setIsCreateModuleModalOpen}
             user={user}
           />
-          <CreateUpdateViewModal
-            handleClose={() => setIsCreateViewModalOpen(false)}
+          <CreateUpdateProjectViewModal
             isOpen={isCreateViewModalOpen}
-            user={user}
+            onClose={() => setIsCreateViewModalOpen(false)}
           />
           <CreateUpdatePageModal
             isOpen={isCreateUpdatePageModalOpen}
@@ -184,11 +178,7 @@ export const CommandPalette: React.FC = observer(() => {
         handleClose={() => setIsIssueModalOpen(false)}
         fieldsToShow={inboxId ? ["name", "description", "priority"] : ["all"]}
         prePopulateData={
-          cycleId
-            ? { cycle: cycleId.toString() }
-            : moduleId
-            ? { module: moduleId.toString() }
-            : undefined
+          cycleId ? { cycle: cycleId.toString() } : moduleId ? { module: moduleId.toString() } : undefined
         }
       />
       <BulkDeleteIssuesModal
@@ -196,11 +186,7 @@ export const CommandPalette: React.FC = observer(() => {
         setIsOpen={setIsBulkDeleteIssuesModalOpen}
         user={user}
       />
-      <CommandK
-        deleteIssue={deleteIssue}
-        isPaletteOpen={isPaletteOpen}
-        setIsPaletteOpen={setIsPaletteOpen}
-      />
+      <CommandK deleteIssue={deleteIssue} isPaletteOpen={isPaletteOpen} setIsPaletteOpen={setIsPaletteOpen} />
     </>
   );
 });

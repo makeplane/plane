@@ -1,25 +1,16 @@
-// react
 import React, { useState } from "react";
-
-// next
 import { useRouter } from "next/router";
-
-// swr
 import useSWR from "swr";
 
 // icons
 import { ChevronDown } from "lucide-react";
-
 // services
-import stateService from "services/state.service";
-
+import { ProjectStateService } from "services/project";
 // fetch key
 import { STATES_LIST } from "constants/fetch-keys";
-
 // components
 import { StateGroupIcon } from "components/icons";
 import { WebViewModal } from "./web-view-modal";
-
 // helpers
 import { getStatesList } from "helpers/state.helper";
 
@@ -28,6 +19,9 @@ type Props = {
   onChange: (value: any) => void;
   disabled?: boolean;
 };
+
+// services
+const projectStateService = new ProjectStateService();
 
 export const StateSelect: React.FC<Props> = (props) => {
   const { value, onChange, disabled = false } = props;
@@ -40,7 +34,7 @@ export const StateSelect: React.FC<Props> = (props) => {
   const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
+      ? () => projectStateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
   const states = getStatesList(stateGroups);
@@ -77,12 +71,10 @@ export const StateSelect: React.FC<Props> = (props) => {
         type="button"
         disabled={disabled}
         onClick={() => setIsOpen(true)}
-        className={
-          "relative w-full px-2.5 py-0.5 text-base flex justify-between items-center gap-0.5 text-custom-text-100"
-        }
+        className={"relative w-full px-2.5 py-0.5 text-base flex justify-between items-center gap-0.5"}
       >
-        {selectedState?.name || "Select a state"}
-        <ChevronDown className="w-5 h-5" />
+        <span className="text-custom-text-200">{selectedState?.name || "Select a state"}</span>
+        <ChevronDown className="w-4 h-4 text-custom-text-200" />
       </button>
     </>
   );
