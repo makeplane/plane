@@ -1,11 +1,13 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 // next themes
 import { useTheme } from "next-themes";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { useRouter } from "next/router";
+import { applyTheme, unsetCustomCssVariables } from "helpers/theme.helper";
+import { observer } from "mobx-react-lite";
 
-const MobxStoreInit = () => {
+const MobxStoreInit = observer(() => {
   const {
     theme: themeStore,
     user: userStore,
@@ -15,11 +17,15 @@ const MobxStoreInit = () => {
     globalViews: globalViewsStore,
     projectViews: projectViewsStore,
   } = useMobxStore();
+  // state
+  const [dom, setDom] = useState<any>();
   // theme
   const { setTheme } = useTheme();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId, globalViewId, viewId } = router.query;
+
+  // const dom = useMemo(() => window && window.document?.querySelector<HTMLElement>("[data-theme='custom']"), [document]);
 
   useEffect(() => {
     // sidebar collapsed toggle
@@ -31,19 +37,19 @@ const MobxStoreInit = () => {
             : false
           : false
       );
-
-    // theme
-    if (themeStore.theme === null && userStore?.currentUserSettings) {
-      let currentTheme = localStorage.getItem("theme");
-      currentTheme = currentTheme && currentTheme != "undefined" ? currentTheme : "system";
-
-      // validating the theme and applying for initial state
-      if (currentTheme) {
-        setTheme(currentTheme);
-        themeStore.setTheme({ theme: { theme: currentTheme } });
-      }
-    }
   }, [themeStore, userStore, setTheme]);
+
+  useEffect(() => {
+    if (!userStore.currentUser) return;
+    if (window) {
+      setDom(window.document?.querySelector<HTMLElement>("[data-theme='custom']"));
+    }
+    setTheme(userStore.currentUser?.theme?.theme || "system");
+    if (userStore.currentUser?.theme?.theme === "custom" && dom) {
+      console.log("userStore.currentUser?.theme?.theme", userStore.currentUser?.theme);
+      applyTheme(userStore.currentUser?.theme?.palette, false);
+    } else unsetCustomCssVariables();
+  }, [userStore.currentUser, setTheme, dom]);
 
   useEffect(() => {
     if (workspaceSlug) workspaceStore.setWorkspaceSlug(workspaceSlug.toString());
@@ -65,6 +71,6 @@ const MobxStoreInit = () => {
   ]);
 
   return <></>;
-};
+});
 
 export default MobxStoreInit;

@@ -5,22 +5,23 @@ import useSWR from "swr";
 import { UserService } from "services/user.service";
 // ui
 import { Spinner } from "@plane/ui";
-// fetch-keys
-import { CURRENT_USER } from "constants/fetch-keys";
+// store
+import { useMobxStore } from "lib/mobx/store-provider";
 
 export interface IUserAuthWrapper {
   children: ReactNode;
 }
 
-// services
-const userService = new UserService();
-
 export const UserAuthWrapper: FC<IUserAuthWrapper> = (props) => {
   const { children } = props;
+  // store
+  const { user: userStore } = useMobxStore();
   // router
   const router = useRouter();
   // fetching user information
-  const { data: currentUser, error } = useSWR(CURRENT_USER, () => userService.currentUser());
+  const { data: currentUser, error } = useSWR("CURRENT_USER", () => userStore.fetchCurrentUser());
+  // fetching user settings
+  useSWR("CURRENT_USER_SETTINGS", () => userStore.fetchCurrentUserSettings());
 
   if (!currentUser && !error) {
     return (

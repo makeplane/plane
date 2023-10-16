@@ -7,3 +7,4 @@ export * from "./project-views";
 export * from "./workspace-analytics";
 export * from "./workspace-dashboard";
 export * from "./projects";
+export * from "./profile-preferences";
