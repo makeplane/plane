@@ -8,8 +8,8 @@ import useSWR from "swr";
 import { ProjectService } from "services/project";
 // ui
 import { AssigneesList, Avatar, CustomSearchSelect } from "components/ui";
+import { UserGroupIcon } from "@plane/ui";
 // icons
-import { UserGroupIcon } from "@heroicons/react/24/outline";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 

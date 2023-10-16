@@ -6,7 +6,7 @@ import { ProjectService } from "services/project";
 // ui
 import { Avatar, CustomSearchSelect } from "components/ui";
 // icons
-import { UserCircleIcon } from "@heroicons/react/24/outline";
+import { UserCircle } from "lucide-react";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -47,11 +47,7 @@ export const ModuleLeadSelect: React.FC<Props> = ({ value, onChange }) => {
       value={value}
       label={
         <div className="flex items-center gap-2">
-          {selectedOption ? (
-            <Avatar user={selectedOption} />
-          ) : (
-            <UserCircleIcon className="h-4 w-4 text-custom-text-200" />
-          )}
+          {selectedOption ? <Avatar user={selectedOption} /> : <UserCircle className="h-4 w-4 text-custom-text-200" />}
           {selectedOption ? selectedOption?.display_name : <span className="text-custom-text-200">Lead</span>}
         </div>
       }

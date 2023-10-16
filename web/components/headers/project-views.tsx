@@ -5,7 +5,7 @@ import { CreateUpdateProjectViewModal } from "components/views";
 // ui
 import { PrimaryButton } from "components/ui";
 // icons
-import { PlusIcon } from "lucide-react";
+import { Plus } from "lucide-react";
 
 export const ProjectViewsHeader = () => {
   const [createViewModal, setCreateViewModal] = useState(false);
@@ -22,7 +22,7 @@ export const ProjectViewsHeader = () => {
             document.dispatchEvent(e);
           }}
         >
-          <PlusIcon size={14} strokeWidth={2} />
+          <Plus size={14} strokeWidth={2} />
           Create View
         </PrimaryButton>
       </div>

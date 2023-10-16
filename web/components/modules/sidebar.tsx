@@ -2,15 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
-import {
-  ArrowLongRightIcon,
-  CalendarDaysIcon,
-  ChartPieIcon,
-  ChevronDownIcon,
-  DocumentIcon,
-  PlusIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
 import { Disclosure, Popover, Transition } from "@headlessui/react";
 import DatePicker from "react-datepicker";
 // services
@@ -26,8 +17,17 @@ import ProgressChart from "components/core/sidebar/progress-chart";
 import { CustomMenu, CustomSelect } from "components/ui";
 import { Loader, ProgressBar } from "@plane/ui";
 // icon
-import { ExclamationIcon } from "components/icons";
-import { LinkIcon } from "@heroicons/react/20/solid";
+import {
+  AlertCircle,
+  CalendarDays,
+  ChevronDown,
+  File,
+  LinkIcon,
+  MoveRight,
+  PieChart,
+  Plus,
+  Trash2,
+} from "lucide-react";
 // helpers
 import { renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
@@ -258,7 +258,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                             module.start_date ? "" : "text-custom-text-200"
                           }`}
                         >
-                          <CalendarDaysIcon className="h-3 w-3" />
+                          <CalendarDays className="h-3 w-3" />
                           <span>{renderShortDateWithYearFormat(new Date(`${module.start_date}`), "Start date")}</span>
                         </Popover.Button>
 
@@ -292,7 +292,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                     )}
                   </Popover>
                   <span>
-                    <ArrowLongRightIcon className="h-3 w-3 text-custom-text-200" />
+                    <MoveRight className="h-3 w-3 text-custom-text-200" />
                   </span>
                   <Popover className="flex h-full items-center justify-center rounded-lg">
                     {({}) => (
@@ -302,7 +302,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                             module.target_date ? "" : "text-custom-text-200"
                           }`}
                         >
-                          <CalendarDaysIcon className="h-3 w-3 " />
+                          <CalendarDays className="h-3 w-3 " />
 
                           <span>{renderShortDateWithYearFormat(new Date(`${module?.target_date}`), "End date")}</span>
                         </Popover.Button>
@@ -348,7 +348,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                     <CustomMenu width="lg" ellipsis>
                       <CustomMenu.MenuItem onClick={() => setModuleDeleteModal(true)}>
                         <span className="flex items-center justify-start gap-2">
-                          <TrashIcon className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4" />
                           <span>Delete</span>
                         </span>
                       </CustomMenu.MenuItem>
@@ -394,7 +394,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
 
                   <div className="flex items-center justify-start gap-1">
                     <div className="flex w-40 items-center justify-start gap-2 text-custom-text-200">
-                      <ChartPieIcon className="h-5 w-5" />
+                      <PieChart className="h-5 w-5" />
                       <span>Progress</span>
                     </div>
 
@@ -427,14 +427,11 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
 
                       {isStartValid && isEndValid ? (
                         <Disclosure.Button className="p-1">
-                          <ChevronDownIcon
-                            className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
-                            aria-hidden="true"
-                          />
+                          <ChevronDown className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`} aria-hidden="true" />
                         </Disclosure.Button>
                       ) : (
                         <div className="flex items-center gap-1">
-                          <ExclamationIcon height={14} width={14} className="fill-current text-custom-text-200" />
+                          <AlertCircle height={14} width={14} className="text-custom-text-200" />
                           <span className="text-xs italic text-custom-text-200">
                             Invalid date. Please enter valid date.
                           </span>
@@ -448,7 +445,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                             <div className="flex  items-start justify-between gap-4 py-2 text-xs">
                               <div className="flex items-center gap-1">
                                 <span>
-                                  <DocumentIcon className="h-3 w-3 text-custom-text-200" />
+                                  <File className="h-3 w-3 text-custom-text-200" />
                                 </span>
                                 <span>
                                   Pending Issues -{" "}
@@ -497,14 +494,11 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
 
                       {module.total_issues > 0 ? (
                         <Disclosure.Button className="p-1">
-                          <ChevronDownIcon
-                            className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
-                            aria-hidden="true"
-                          />
+                          <ChevronDown className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`} aria-hidden="true" />
                         </Disclosure.Button>
                       ) : (
                         <div className="flex items-center gap-1">
-                          <ExclamationIcon height={14} width={14} className="fill-current text-custom-text-200" />
+                          <AlertCircle height={14} width={14} className="text-custom-text-200" />
                           <span className="text-xs italic text-custom-text-200">
                             No issues found. Please add issue.
                           </span>
@@ -547,7 +541,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                   className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-90"
                   onClick={() => setModuleLinkModal(true)}
                 >
-                  <PlusIcon className="h-4 w-4" />
+                  <Plus className="h-4 w-4" />
                 </button>
               </div>
               <div className="mt-2 space-y-2 hover:bg-custom-background-80">

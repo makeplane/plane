@@ -1,15 +1,16 @@
+import { Globe2, Lock, LucideIcon } from "lucide-react";
 import { TIssuePriorities } from "types";
 
-export const NETWORK_CHOICES: { key: 0 | 2; label: string; icon: string }[] = [
+export const NETWORK_CHOICES: { key: 0 | 2; label: string; icon: LucideIcon }[] = [
   {
     key: 0,
     label: "Private",
-    icon: "lock",
+    icon: Lock,
   },
   {
     key: 2,
     label: "Public",
-    icon: "public",
+    icon: Globe2,
   },
 ];
 

@@ -9,7 +9,7 @@ import { WorkspaceService } from "services/workspace.service";
 // components
 import { Loader, MarkdownRenderer } from "components/ui";
 // icons
-import { XMarkIcon } from "@heroicons/react/20/solid";
+import { X } from "lucide-react";
 // helpers
 import { renderLongDateFormat } from "helpers/date-time.helper";
 
@@ -55,10 +55,7 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                     <span>Product Updates</span>
                     <span>
                       <button type="button" onClick={() => setIsOpen(false)}>
-                        <XMarkIcon
-                          className="h-6 w-6 text-custom-text-200 hover:text-custom-text-100"
-                          aria-hidden="true"
-                        />
+                        <X className="h-6 w-6 text-custom-text-200 hover:text-custom-text-100" aria-hidden="true" />
                       </button>
                     </span>
                   </Dialog.Title>

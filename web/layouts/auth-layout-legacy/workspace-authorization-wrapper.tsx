@@ -11,11 +11,9 @@ import AppSidebar from "layouts/app-layout-legacy/app-sidebar";
 import AppHeader from "layouts/app-layout-legacy/app-header";
 import { UserAuthorizationLayout } from "./user-authorization-wrapper";
 // components
-import { Button, Spinner } from "@plane/ui";
+import { Button, LayersIcon, Spinner } from "@plane/ui";
 import { NotAuthorizedView, NotAWorkspaceMember } from "components/auth-screens";
 import { CommandPalette } from "components/command-palette";
-// icons
-import { LayerDiagonalIcon } from "components/icons";
 // fetch-keys
 import { WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 
@@ -89,7 +87,7 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
                 <Link href={`/${workspaceSlug}`}>
                   <a>
                     <Button className="flex items-center gap-1">
-                      <LayerDiagonalIcon height={16} width={16} color="white" /> Go to workspace
+                      <LayersIcon height={16} width={16} color="white" /> Go to workspace
                     </Button>
                   </a>
                 </Link>

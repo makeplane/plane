@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Plus } from "lucide-react";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // hooks
@@ -87,7 +87,7 @@ const MyIssuesPage: NextPage = () => {
           <MyIssuesViewOptions />
           <Button
             variant="primary"
-            prependIcon={<PlusIcon />}
+            prependIcon={<Plus />}
             onClick={() => {
               const e = new KeyboardEvent("keydown", { key: "c" });
               document.dispatchEvent(e);

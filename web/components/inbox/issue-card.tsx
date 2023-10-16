@@ -2,10 +2,9 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 // ui
-import { Tooltip } from "@plane/ui";
+import { Tooltip, PriorityIcon } from "@plane/ui";
 // icons
-import { PriorityIcon } from "components/icons";
-import { AlertTriangle, Calendar, CheckCircle2, Clock, Copy, XCircle } from "lucide-react";
+import { AlertTriangle, CalendarDays, CheckCircle2, Clock, Copy, XCircle } from "lucide-react";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
@@ -64,7 +63,7 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
               tooltipContent={`${renderShortDateWithYearFormat(issue.created_at ?? "")}`}
             >
               <div className="flex items-center gap-1 rounded border border-custom-border-200 shadow-sm text-xs px-2 py-[0.19rem] text-custom-text-200">
-                <Calendar size={12} strokeWidth={1.5} />
+                <CalendarDays size={12} strokeWidth={1.5} />
                 <span>{renderShortDateWithYearFormat(issue.created_at ?? "")}</span>
               </div>
             </Tooltip>

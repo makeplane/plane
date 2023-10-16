@@ -10,16 +10,7 @@ import useToast from "hooks/use-toast";
 import { CustomMenu } from "components/ui";
 import { Tooltip } from "@plane/ui";
 // icons
-import {
-  DocumentTextIcon,
-  LinkIcon,
-  LockClosedIcon,
-  LockOpenIcon,
-  PencilIcon,
-  StarIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
-import { ExclamationIcon } from "components/icons";
+import { AlertCircle, FileText, LinkIcon, Lock, Pencil, Star, Trash2, Unlock } from "lucide-react";
 // helpers
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { renderLongDateFormat, renderShortDate, render24HourFormatTime } from "helpers/date-time.helper";
@@ -70,7 +61,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
           <div className="relative rounded p-4 text-custom-text-200 hover:bg-custom-background-80">
             <div className="flex items-center justify-between">
               <div className="flex flex-wrap items-center gap-2">
-                <DocumentTextIcon className="h-4 w-4" />
+                <FileText className="h-4 w-4" />
                 <p className="mr-2 truncate text-sm text-custom-text-100">{truncateText(page.name, 75)}</p>
                 {page.label_details.length > 0 &&
                   page.label_details.map((label) => (
@@ -109,7 +100,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                         handleRemoveFromFavorites();
                       }}
                     >
-                      <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                      <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
                     </button>
                   ) : (
                     <button
@@ -120,7 +111,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                         handleAddToFavorites();
                       }}
                     >
-                      <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
+                      <Star className="h-4 w-4 " color="rgb(var(--color-text-200))" />
                     </button>
                   )}
                   {page.created_by === user?.id && (
@@ -140,9 +131,9 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                         }}
                       >
                         {page.access ? (
-                          <LockClosedIcon className="h-4 w-4" color="rgb(var(--color-text-200))" />
+                          <Lock className="h-4 w-4" color="rgb(var(--color-text-200))" />
                         ) : (
-                          <LockOpenIcon className="h-4 w-4" color="rgb(var(--color-text-200))" />
+                          <Unlock className="h-4 w-4" color="rgb(var(--color-text-200))" />
                         )}
                       </button>
                     </Tooltip>
@@ -154,7 +145,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                     } on ${renderLongDateFormat(`${page.created_at}`)}`}
                   >
                     <span>
-                      <ExclamationIcon className="h-4 w-4 fill-current text-custom-text-200" />
+                      <AlertCircle className="h-4 w-4 text-custom-text-200" />
                     </span>
                   </Tooltip>
 
@@ -167,7 +158,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                       }}
                     >
                       <span className="flex items-center justify-start gap-2">
-                        <PencilIcon className="h-3.5 w-3.5" />
+                        <Pencil className="h-3.5 w-3.5" />
                         <span>Edit Page</span>
                       </span>
                     </CustomMenu.MenuItem>
@@ -179,7 +170,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                       }}
                     >
                       <span className="flex items-center justify-start gap-2">
-                        <TrashIcon className="h-3.5 w-3.5" />
+                        <Trash2 className="h-3.5 w-3.5" />
                         <span>Delete Page</span>
                       </span>
                     </CustomMenu.MenuItem>

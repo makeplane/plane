@@ -1,9 +1,7 @@
 import { useRouter } from "next/router";
 
 // ui
-import { Tooltip } from "@plane/ui";
-// icons
-import { StateGroupIcon } from "components/icons";
+import { Tooltip, StateGroupIcon } from "@plane/ui";
 // helpers
 import { renderShortDate } from "helpers/date-time.helper";
 // types

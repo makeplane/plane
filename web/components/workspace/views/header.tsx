@@ -9,7 +9,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CreateUpdateWorkspaceViewModal } from "components/workspace";
 // icon
-import { PlusIcon } from "lucide-react";
+import { Plus } from "lucide-react";
 // constants
 import { DEFAULT_GLOBAL_VIEWS_LIST } from "constants/workspace";
 
@@ -74,7 +74,7 @@ export const GlobalViewsHeader: React.FC = observer(() => {
           className="flex items-center justify-center flex-shrink-0 sticky -right-4 w-12 py-3 border-transparent bg-custom-background-100 hover:border-custom-border-200 hover:text-custom-text-400"
           onClick={() => setCreateViewModal(true)}
         >
-          <PlusIcon className="h-4 w-4 text-custom-primary-200" />
+          <Plus className="h-4 w-4 text-custom-primary-200" />
         </button>
       </div>
     </>

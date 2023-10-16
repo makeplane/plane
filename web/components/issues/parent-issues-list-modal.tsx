@@ -8,13 +8,10 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { ProjectService } from "services/project";
 // hooks
 import useDebounce from "hooks/use-debounce";
-// components
-import { LayerDiagonalIcon } from "components/icons";
 // ui
-import { Loader, ToggleSwitch, Tooltip } from "@plane/ui";
+import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
-import { LaunchOutlined } from "@mui/icons-material";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { Rocket, Search } from "lucide-react";
 // types
 import { ISearchIssueResponse } from "types";
 
@@ -105,7 +102,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                   }}
                 >
                   <div className="relative m-1">
-                    <MagnifyingGlassIcon
+                    <Search
                       className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-100 text-opacity-40"
                       aria-hidden="true"
                     />
@@ -154,7 +151,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
 
                     {!isSearching && issues.length === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && (
                       <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
-                        <LayerDiagonalIcon height="52" width="52" />
+                        <LayersIcon height="52" width="52" />
                         <h3 className="text-custom-text-200">
                           No issues found. Create a new issue with{" "}
                           <pre className="inline rounded bg-custom-background-80 px-2 py-1 text-sm">C</pre>.
@@ -200,11 +197,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                               rel="noopener noreferrer"
                               onClick={(e) => e.stopPropagation()}
                             >
-                              <LaunchOutlined
-                                sx={{
-                                  fontSize: 16,
-                                }}
-                              />
+                              <Rocket className="h-4 w-4" />
                             </a>
                           </Combobox.Option>
                         ))}

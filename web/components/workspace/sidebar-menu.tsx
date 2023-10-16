@@ -5,29 +5,29 @@ import { useRouter } from "next/router";
 import { NotificationPopover } from "components/notifications";
 import { Tooltip } from "@plane/ui";
 // icons
-import { BarChartRounded, GridViewOutlined, TaskAltOutlined, WorkOutlineOutlined } from "@mui/icons-material";
+import { BarChart, Briefcase, CheckCircle, LayoutGrid } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { observer } from "mobx-react-lite";
 
 const workspaceLinks = (workspaceSlug: string) => [
   {
-    Icon: GridViewOutlined,
+    Icon: LayoutGrid,
     name: "Dashboard",
     href: `/${workspaceSlug}`,
   },
   {
-    Icon: BarChartRounded,
+    Icon: BarChart,
     name: "Analytics",
     href: `/${workspaceSlug}/analytics`,
   },
   {
-    Icon: WorkOutlineOutlined,
+    Icon: Briefcase,
     name: "Projects",
     href: `/${workspaceSlug}/projects`,
   },
   {
-    Icon: TaskAltOutlined,
+    Icon: CheckCircle,
     name: "All Issues",
     href: `/${workspaceSlug}/workspace-views/all-issues`,
   },
@@ -60,7 +60,7 @@ export const WorkspaceSidebarMenu = observer(() => {
                       : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
                   } ${themeStore?.sidebarCollapsed ? "justify-center" : ""}`}
                 >
-                  {<link.Icon fontSize="small" />}
+                  {<link.Icon className="h-5 w-5" />}
                   {!themeStore?.sidebarCollapsed && link.name}
                 </div>
               </Tooltip>

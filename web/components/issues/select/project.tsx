@@ -3,7 +3,7 @@ import useProjects from "hooks/use-projects";
 // ui
 import { CustomSelect } from "components/ui";
 // icons
-import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
+import { Clipboard } from "lucide-react";
 
 export interface IssueProjectSelectProps {
   value: string;
@@ -18,10 +18,8 @@ export const IssueProjectSelect: React.FC<IssueProjectSelectProps> = ({ value, o
       value={value}
       label={
         <>
-          <ClipboardDocumentListIcon className="h-3 w-3" />
-          <span className="block truncate">
-            {projects?.find((i) => i.id === value)?.identifier ?? "Project"}
-          </span>
+          <Clipboard className="h-3 w-3" />
+          <span className="block truncate">{projects?.find((i) => i.id === value)?.identifier ?? "Project"}</span>
         </>
       }
       onChange={(val: string) => onChange(val)}

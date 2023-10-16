@@ -16,7 +16,7 @@ import { UserAuthorizationLayout } from "layouts/auth-layout-legacy/user-authori
 // ui
 import { Button } from "@plane/ui";
 // icons
-import { CheckCircleIcon } from "@heroicons/react/24/outline";
+import { CheckCircle2 } from "lucide-react";
 // images
 import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
 import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
@@ -167,7 +167,7 @@ const UserInvitationsPage: NextPage = () => {
                               isSelected ? "text-custom-primary-100" : "text-custom-text-200"
                             }`}
                           >
-                            <CheckCircleIcon className="h-5 w-5" />
+                            <CheckCircle2 className="h-5 w-5" />
                           </span>
                         </div>
                       );

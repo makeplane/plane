@@ -12,8 +12,8 @@ import { ExistingIssuesListModal } from "components/core";
 // services
 import { IssueService } from "services/issue";
 // icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import { BlockerIcon } from "components/icons";
+import { X } from "lucide-react";
+import { BlockerIcon } from "@plane/ui";
 // types
 import { BlockeIssueDetail, IIssue, ISearchIssueResponse } from "types";
 
@@ -149,7 +149,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({ issueId, submitChanges, 
                         );
                       }}
                     >
-                      <XMarkIcon className="h-2 w-2" />
+                      <X className="h-2 w-2" />
                     </button>
                   </div>
                 ))

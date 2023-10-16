@@ -6,7 +6,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { MultiLevelDropdown } from "components/ui";
 // icons
-import { PriorityIcon } from "components/icons";
+import { PriorityIcon } from "@plane/ui";
 // types
 import { IInboxFilterOptions } from "types";
 // constants

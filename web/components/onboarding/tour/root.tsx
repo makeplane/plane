@@ -9,7 +9,7 @@ import { TourSidebar } from "components/onboarding";
 // ui
 import { Button } from "@plane/ui";
 // icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { X } from "lucide-react";
 // images
 import PlaneWhiteLogo from "public/plane-logos/white-horizontal.svg";
 import IssuesTour from "public/onboarding/issues.webp";
@@ -121,7 +121,7 @@ export const TourRoot: React.FC<Props> = ({ onComplete }) => {
             className="fixed top-[19%] sm:top-[11.5%] right-[9%] md:right-[24%] lg:right-[19%] border border-custom-text-100 rounded-full p-1 translate-x-1/2 -translate-y-1/2 z-10 cursor-pointer"
             onClick={onComplete}
           >
-            <XMarkIcon className="h-3 w-3 text-custom-text-100" />
+            <X className="h-3 w-3 text-custom-text-100" />
           </button>
           <TourSidebar step={step} setStep={setStep} />
           <div className="col-span-10 lg:col-span-7 h-full overflow-hidden">

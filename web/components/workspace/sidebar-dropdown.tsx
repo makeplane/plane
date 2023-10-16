@@ -13,10 +13,10 @@ import useToast from "hooks/use-toast";
 import { UserService } from "services/user.service";
 import { AuthService } from "services/auth.service";
 // components
-import { Avatar, Icon } from "components/ui";
+import { Avatar } from "components/ui";
 import { Loader } from "@plane/ui";
 // icons
-import { CheckIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { Check, LogOut, Plus, Settings, UserCircle2 } from "lucide-react";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
@@ -43,12 +43,12 @@ const userLinks = (workspaceSlug: string, userId: string) => [
 const profileLinks = (workspaceSlug: string, userId: string) => [
   {
     name: "View profile",
-    icon: "account_circle",
+    icon: UserCircle2,
     link: `/${workspaceSlug}/profile/${userId}`,
   },
   {
     name: "Settings",
-    icon: "settings",
+    icon: Settings,
     link: `/${workspaceSlug}/me/profile`,
   },
 ];
@@ -180,7 +180,7 @@ export const WorkspaceSidebarDropdown = () => {
                               </h5>
                             </div>
                             <span className="p-1">
-                              <CheckIcon
+                              <Check
                                 className={`h-3 w-3.5 text-custom-sidebar-text-100 ${
                                   workspace.id === activeWorkspace?.id ? "opacity-100" : "opacity-0"
                                 }`}
@@ -201,7 +201,7 @@ export const WorkspaceSidebarDropdown = () => {
                     }}
                     className="flex w-full items-center gap-2 px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
                   >
-                    <PlusIcon className="h-4 w-4" />
+                    <Plus className="h-4 w-4" />
                     Create Workspace
                   </Menu.Item>
                 </div>
@@ -266,7 +266,7 @@ export const WorkspaceSidebarDropdown = () => {
                   <Menu.Item key={index} as="button" type="button">
                     <Link href={link.link}>
                       <a className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
-                        <Icon iconName={link.icon} className="!text-lg !leading-5" />
+                        <link.icon className="h-4 w-4" />
                         {link.name}
                       </a>
                     </Link>
@@ -280,7 +280,7 @@ export const WorkspaceSidebarDropdown = () => {
                   className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80"
                   onClick={handleSignOut}
                 >
-                  <Icon iconName="logout" className="!text-lg !leading-5" />
+                  <LogOut className="h-5 w-5" />
                   Sign out
                 </Menu.Item>
               </div>

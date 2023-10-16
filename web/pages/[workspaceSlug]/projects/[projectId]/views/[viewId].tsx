@@ -14,7 +14,7 @@ import { CustomMenu } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { EmptyState } from "components/common";
 // icons
-import { StackedLayersIcon } from "components/icons";
+import { PhotoFilterIcon } from "@plane/ui";
 // images
 import emptyView from "public/empty-state/view.svg";
 // helpers
@@ -62,7 +62,7 @@ const SingleView: React.FC = () => {
         <CustomMenu
           label={
             <>
-              <StackedLayersIcon height={12} width={12} />
+              <PhotoFilterIcon height={12} width={12} />
               {viewDetails?.name && truncateText(viewDetails.name, 40)}
             </>
           }

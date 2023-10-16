@@ -15,7 +15,7 @@ import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport }
 // ui
 import { Button, Loader } from "@plane/ui";
 // icons
-import { ArrowPathIcon } from "@heroicons/react/24/outline";
+import { RefreshCw } from "lucide-react";
 // types
 import { IImporterService } from "types";
 // fetch-keys
@@ -111,7 +111,7 @@ const IntegrationGuide = () => {
                       mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string)).then(() => setRefreshing(false));
                     }}
                   >
-                    <ArrowPathIcon className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />{" "}
+                    <RefreshCw className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />{" "}
                     {refreshing ? "Refreshing..." : "Refresh status"}
                   </button>
                 </h3>
