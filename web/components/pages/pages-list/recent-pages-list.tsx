@@ -45,8 +45,10 @@ export const RecentPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
             if (pages[key].length === 0) return null;
 
             return (
-              <div key={key} className="h-full overflow-hidden">
-                <h2 className="text-xl font-semibold capitalize mb-2">{replaceUnderscoreIfSnakeCase(key)}</h2>
+              <div key={key} className="h-full overflow-hidden pb-9">
+                <h2 className="text-xl font-semibold capitalize mb-2">
+                  {replaceUnderscoreIfSnakeCase(key)}
+                </h2>
                 <PagesView pages={pages[key as keyof RecentPagesResponse]} viewType={viewType} />
               </div>
             );

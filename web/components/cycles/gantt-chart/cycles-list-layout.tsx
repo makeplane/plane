@@ -16,6 +16,7 @@ import { CycleGanttBlock, CycleGanttSidebarBlock } from "components/cycles";
 import { ICycle } from "types";
 
 type Props = {
+  workspaceSlug: string;
   cycles: ICycle[];
   mutateCycles?: KeyedMutator<ICycle[]>;
 };
