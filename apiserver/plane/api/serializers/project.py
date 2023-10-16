@@ -1,6 +1,3 @@
-# Django imports
-from django.db import IntegrityError
-
 # Third party imports
 from rest_framework import serializers
 

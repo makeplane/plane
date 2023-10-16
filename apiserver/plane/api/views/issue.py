@@ -23,7 +23,6 @@ from django.db.models import (
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
-from django.db import IntegrityError
 
 # Third Party imports
 from rest_framework.response import Response
@@ -177,307 +176,281 @@ class IssueViewSet(BaseViewSet):
 
     @method_decorator(gzip_page)
     def list(self, request, slug, project_id):
-        try:
-            filters = issue_filters(request.query_params, "GET")
+        filters = issue_filters(request.query_params, "GET")
 
-            # Custom ordering for priority and state
-            priority_order = ["urgent", "high", "medium", "low", "none"]
-            state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
+        # Custom ordering for priority and state
+        priority_order = ["urgent", "high", "medium", "low", "none"]
+        state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
 
-            order_by_param = request.GET.get("order_by", "-created_at")
+        order_by_param = request.GET.get("order_by", "-created_at")
 
-            issue_queryset = (
-                self.get_queryset()
-                .filter(**filters)
-                .annotate(cycle_id=F("issue_cycle__cycle_id"))
-                .annotate(module_id=F("issue_module__module_id"))
-                .annotate(
-                    link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                    .order_by()
-                    .annotate(count=Func(F("id"), function="Count"))
-                    .values("count")
-                )
-                .annotate(
-                    attachment_count=IssueAttachment.objects.filter(
-                        issue=OuterRef("id")
-                    )
-                    .order_by()
-                    .annotate(count=Func(F("id"), function="Count"))
-                    .values("count")
-                )
-            )
-
-            # Priority Ordering
-            if order_by_param == "priority" or order_by_param == "-priority":
-                priority_order = (
-                    priority_order
-                    if order_by_param == "priority"
-                    else priority_order[::-1]
-                )
-                issue_queryset = issue_queryset.annotate(
-                    priority_order=Case(
-                        *[
-                            When(priority=p, then=Value(i))
-                            for i, p in enumerate(priority_order)
-                        ],
-                        output_field=CharField(),
-                    )
-                ).order_by("priority_order")
-
-            # State Ordering
-            elif order_by_param in [
-                "state__name",
-                "state__group",
-                "-state__name",
-                "-state__group",
-            ]:
-                state_order = (
-                    state_order
-                    if order_by_param in ["state__name", "state__group"]
-                    else state_order[::-1]
-                )
-                issue_queryset = issue_queryset.annotate(
-                    state_order=Case(
-                        *[
-                            When(state__group=state_group, then=Value(i))
-                            for i, state_group in enumerate(state_order)
-                        ],
-                        default=Value(len(state_order)),
-                        output_field=CharField(),
-                    )
-                ).order_by("state_order")
-            # assignee and label ordering
-            elif order_by_param in [
-                "labels__name",
-                "-labels__name",
-                "assignees__first_name",
-                "-assignees__first_name",
-            ]:
-                issue_queryset = issue_queryset.annotate(
-                    max_values=Max(
-                        order_by_param[1::]
-                        if order_by_param.startswith("-")
-                        else order_by_param
-                    )
-                ).order_by(
-                    "-max_values" if order_by_param.startswith("-") else "max_values"
-                )
-            else:
-                issue_queryset = issue_queryset.order_by(order_by_param)
-
-            issues = IssueLiteSerializer(issue_queryset, many=True).data
-
-            ## Grouping the results
-            group_by = request.GET.get("group_by", False)
-            sub_group_by = request.GET.get("sub_group_by", False)
-            if sub_group_by and sub_group_by == group_by:
-                return Response(
-                    {"error": "Group by and sub group by cannot be same"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            if group_by:
-                return Response(
-                    group_results(issues, group_by, sub_group_by), status=status.HTTP_200_OK
-                )
-
-            return Response(issues, status=status.HTTP_200_OK)
-
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-    def create(self, request, slug, project_id):
-        try:
-            project = Project.objects.get(pk=project_id)
-
-            serializer = IssueCreateSerializer(
-                data=request.data,
-                context={
-                    "project_id": project_id,
-                    "workspace_id": project.workspace_id,
-                    "default_assignee_id": project.default_assignee_id,
-                },
-            )
-
-            if serializer.is_valid():
-                serializer.save()
-
-                # Track the issue
-                issue_activity.delay(
-                    type="issue.activity.created",
-                    requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
-                    actor_id=str(request.user.id),
-                    issue_id=str(serializer.data.get("id", None)),
-                    project_id=str(project_id),
-                    current_instance=None,
-                    epoch=int(timezone.now().timestamp())
-                )
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        except Project.DoesNotExist:
-            return Response(
-                {"error": "Project was not found"}, status=status.HTTP_404_NOT_FOUND
-            )
-
-    def retrieve(self, request, slug, project_id, pk=None):
-        try:
-            issue = Issue.issue_objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+        issue_queryset = (
+            self.get_queryset()
+            .filter(**filters)
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(module_id=F("issue_module__module_id"))
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
-            ).get(
-                workspace__slug=slug, project_id=project_id, pk=pk
             )
-            return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
-        except Issue.DoesNotExist:
+            .annotate(
+                attachment_count=IssueAttachment.objects.filter(
+                    issue=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+        )
+
+        # Priority Ordering
+        if order_by_param == "priority" or order_by_param == "-priority":
+            priority_order = (
+                priority_order
+                if order_by_param == "priority"
+                else priority_order[::-1]
+            )
+            issue_queryset = issue_queryset.annotate(
+                priority_order=Case(
+                    *[
+                        When(priority=p, then=Value(i))
+                        for i, p in enumerate(priority_order)
+                    ],
+                    output_field=CharField(),
+                )
+            ).order_by("priority_order")
+
+        # State Ordering
+        elif order_by_param in [
+            "state__name",
+            "state__group",
+            "-state__name",
+            "-state__group",
+        ]:
+            state_order = (
+                state_order
+                if order_by_param in ["state__name", "state__group"]
+                else state_order[::-1]
+            )
+            issue_queryset = issue_queryset.annotate(
+                state_order=Case(
+                    *[
+                        When(state__group=state_group, then=Value(i))
+                        for i, state_group in enumerate(state_order)
+                    ],
+                    default=Value(len(state_order)),
+                    output_field=CharField(),
+                )
+            ).order_by("state_order")
+        # assignee and label ordering
+        elif order_by_param in [
+            "labels__name",
+            "-labels__name",
+            "assignees__first_name",
+            "-assignees__first_name",
+        ]:
+            issue_queryset = issue_queryset.annotate(
+                max_values=Max(
+                    order_by_param[1::]
+                    if order_by_param.startswith("-")
+                    else order_by_param
+                )
+            ).order_by(
+                "-max_values" if order_by_param.startswith("-") else "max_values"
+            )
+        else:
+            issue_queryset = issue_queryset.order_by(order_by_param)
+
+        issues = IssueLiteSerializer(issue_queryset, many=True).data
+
+        ## Grouping the results
+        group_by = request.GET.get("group_by", False)
+        sub_group_by = request.GET.get("sub_group_by", False)
+        if sub_group_by and sub_group_by == group_by:
             return Response(
-                {"error": "Issue Does not exist"}, status=status.HTTP_404_NOT_FOUND
+                {"error": "Group by and sub group by cannot be same"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
+
+        if group_by:
+            return Response(
+                group_results(issues, group_by, sub_group_by), status=status.HTTP_200_OK
+            )
+
+        return Response(issues, status=status.HTTP_200_OK)
+
+    def create(self, request, slug, project_id):
+        project = Project.objects.get(pk=project_id)
+
+        serializer = IssueCreateSerializer(
+            data=request.data,
+            context={
+                "project_id": project_id,
+                "workspace_id": project.workspace_id,
+                "default_assignee_id": project.default_assignee_id,
+            },
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+
+            # Track the issue
+            issue_activity.delay(
+                type="issue.activity.created",
+                requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
+                actor_id=str(request.user.id),
+                issue_id=str(serializer.data.get("id", None)),
+                project_id=str(project_id),
+                current_instance=None,
+                epoch=int(timezone.now().timestamp())
+            )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, slug, project_id, pk=None):
+        issue = Issue.issue_objects.annotate(
+            sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+            .order_by()
+            .annotate(count=Func(F("id"), function="Count"))
+            .values("count")
+        ).get(
+            workspace__slug=slug, project_id=project_id, pk=pk
+        )
+        return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
 
 
 class UserWorkSpaceIssues(BaseAPIView):
     @method_decorator(gzip_page)
     def get(self, request, slug):
-        try:
-            filters = issue_filters(request.query_params, "GET")
-            # Custom ordering for priority and state
-            priority_order = ["urgent", "high", "medium", "low", "none"]
-            state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
+        filters = issue_filters(request.query_params, "GET")
+        # Custom ordering for priority and state
+        priority_order = ["urgent", "high", "medium", "low", "none"]
+        state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
 
-            order_by_param = request.GET.get("order_by", "-created_at")
+        order_by_param = request.GET.get("order_by", "-created_at")
 
-            issue_queryset = (
-                Issue.issue_objects.filter(
-                    (
-                        Q(assignees__in=[request.user])
-                        | Q(created_by=request.user)
-                        | Q(issue_subscribers__subscriber=request.user)
-                    ),
-                    workspace__slug=slug,
+        issue_queryset = (
+            Issue.issue_objects.filter(
+                (
+                    Q(assignees__in=[request.user])
+                    | Q(created_by=request.user)
+                    | Q(issue_subscribers__subscriber=request.user)
+                ),
+                workspace__slug=slug,
+            )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("state")
+            .select_related("parent")
+            .prefetch_related("assignees")
+            .prefetch_related("labels")
+            .order_by(order_by_param)
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=IssueAttachment.objects.filter(
+                    issue=OuterRef("id")
                 )
-                .annotate(
-                    sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-                    .order_by()
-                    .annotate(count=Func(F("id"), function="Count"))
-                    .values("count")
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_reactions",
+                    queryset=IssueReaction.objects.select_related("actor"),
                 )
-                .select_related("project")
-                .select_related("workspace")
-                .select_related("state")
-                .select_related("parent")
-                .prefetch_related("assignees")
-                .prefetch_related("labels")
-                .order_by(order_by_param)
-                .annotate(
-                    link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                    .order_by()
-                    .annotate(count=Func(F("id"), function="Count"))
-                    .values("count")
-                )
-                .annotate(
-                    attachment_count=IssueAttachment.objects.filter(
-                        issue=OuterRef("id")
-                    )
-                    .order_by()
-                    .annotate(count=Func(F("id"), function="Count"))
-                    .values("count")
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_reactions",
-                        queryset=IssueReaction.objects.select_related("actor"),
-                    )
-                )
-                .filter(**filters)
-            ).distinct()
+            )
+            .filter(**filters)
+        ).distinct()
 
-            # Priority Ordering
-            if order_by_param == "priority" or order_by_param == "-priority":
-                priority_order = (
-                    priority_order
-                    if order_by_param == "priority"
-                    else priority_order[::-1]
+        # Priority Ordering
+        if order_by_param == "priority" or order_by_param == "-priority":
+            priority_order = (
+                priority_order
+                if order_by_param == "priority"
+                else priority_order[::-1]
+            )
+            issue_queryset = issue_queryset.annotate(
+                priority_order=Case(
+                    *[
+                        When(priority=p, then=Value(i))
+                        for i, p in enumerate(priority_order)
+                    ],
+                    output_field=CharField(),
                 )
-                issue_queryset = issue_queryset.annotate(
-                    priority_order=Case(
-                        *[
-                            When(priority=p, then=Value(i))
-                            for i, p in enumerate(priority_order)
-                        ],
-                        output_field=CharField(),
-                    )
-                ).order_by("priority_order")
+            ).order_by("priority_order")
 
-            # State Ordering
-            elif order_by_param in [
-                "state__name",
-                "state__group",
-                "-state__name",
-                "-state__group",
-            ]:
-                state_order = (
-                    state_order
-                    if order_by_param in ["state__name", "state__group"]
-                    else state_order[::-1]
+        # State Ordering
+        elif order_by_param in [
+            "state__name",
+            "state__group",
+            "-state__name",
+            "-state__group",
+        ]:
+            state_order = (
+                state_order
+                if order_by_param in ["state__name", "state__group"]
+                else state_order[::-1]
+            )
+            issue_queryset = issue_queryset.annotate(
+                state_order=Case(
+                    *[
+                        When(state__group=state_group, then=Value(i))
+                        for i, state_group in enumerate(state_order)
+                    ],
+                    default=Value(len(state_order)),
+                    output_field=CharField(),
                 )
-                issue_queryset = issue_queryset.annotate(
-                    state_order=Case(
-                        *[
-                            When(state__group=state_group, then=Value(i))
-                            for i, state_group in enumerate(state_order)
-                        ],
-                        default=Value(len(state_order)),
-                        output_field=CharField(),
-                    )
-                ).order_by("state_order")
-            # assignee and label ordering
-            elif order_by_param in [
-                "labels__name",
-                "-labels__name",
-                "assignees__first_name",
-                "-assignees__first_name",
-            ]:
-                issue_queryset = issue_queryset.annotate(
-                    max_values=Max(
-                        order_by_param[1::]
-                        if order_by_param.startswith("-")
-                        else order_by_param
-                    )
-                ).order_by(
-                    "-max_values" if order_by_param.startswith("-") else "max_values"
+            ).order_by("state_order")
+        # assignee and label ordering
+        elif order_by_param in [
+            "labels__name",
+            "-labels__name",
+            "assignees__first_name",
+            "-assignees__first_name",
+        ]:
+            issue_queryset = issue_queryset.annotate(
+                max_values=Max(
+                    order_by_param[1::]
+                    if order_by_param.startswith("-")
+                    else order_by_param
                 )
-            else:
-                issue_queryset = issue_queryset.order_by(order_by_param)
+            ).order_by(
+                "-max_values" if order_by_param.startswith("-") else "max_values"
+            )
+        else:
+            issue_queryset = issue_queryset.order_by(order_by_param)
 
-            issues = IssueLiteSerializer(issue_queryset, many=True).data
+        issues = IssueLiteSerializer(issue_queryset, many=True).data
 
-            ## Grouping the results
-            group_by = request.GET.get("group_by", False)
-            sub_group_by = request.GET.get("sub_group_by", False)
-            if sub_group_by and sub_group_by == group_by:
-                return Response(
-                    {"error": "Group by and sub group by cannot be same"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            
-            if group_by:
-                return Response(
-                    group_results(issues, group_by, sub_group_by), status=status.HTTP_200_OK
-                )
-
-            return Response(issues, status=status.HTTP_200_OK)
-        except Exception as e:
-            capture_exception(e)
+        ## Grouping the results
+        group_by = request.GET.get("group_by", False)
+        sub_group_by = request.GET.get("sub_group_by", False)
+        if sub_group_by and sub_group_by == group_by:
             return Response(
-                {"error": "Something went wrong please try again later"},
+                {"error": "Group by and sub group by cannot be same"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        
+        if group_by:
+            return Response(
+                group_results(issues, group_by, sub_group_by), status=status.HTTP_200_OK
+            )
+
+        return Response(issues, status=status.HTTP_200_OK)
 
 
 class WorkSpaceIssuesEndpoint(BaseAPIView):
@@ -487,20 +460,13 @@ class WorkSpaceIssuesEndpoint(BaseAPIView):
 
     @method_decorator(gzip_page)
     def get(self, request, slug):
-        try:
-            issues = (
-                Issue.issue_objects.filter(workspace__slug=slug)
-                .filter(project__project_projectmember__member=self.request.user)
-                .order_by("-created_at")
-            )
-            serializer = IssueSerializer(issues, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        issues = (
+            Issue.issue_objects.filter(workspace__slug=slug)
+            .filter(project__project_projectmember__member=self.request.user)
+            .order_by("-created_at")
+        )
+        serializer = IssueSerializer(issues, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class IssueActivityEndpoint(BaseAPIView):
@@ -510,42 +476,35 @@ class IssueActivityEndpoint(BaseAPIView):
 
     @method_decorator(gzip_page)
     def get(self, request, slug, project_id, issue_id):
-        try:
-            issue_activities = (
-                IssueActivity.objects.filter(issue_id=issue_id)
-                .filter(
-                    ~Q(field__in=["comment", "vote", "reaction", "draft"]),
-                    project__project_projectmember__member=self.request.user,
-                )
-                .select_related("actor", "workspace", "issue", "project")
-            ).order_by("created_at")
-            issue_comments = (
-                IssueComment.objects.filter(issue_id=issue_id)
-                .filter(project__project_projectmember__member=self.request.user)
-                .order_by("created_at")
-                .select_related("actor", "issue", "project", "workspace")
-                .prefetch_related(
-                    Prefetch(
-                        "comment_reactions",
-                        queryset=CommentReaction.objects.select_related("actor"),
-                    )
+        issue_activities = (
+            IssueActivity.objects.filter(issue_id=issue_id)
+            .filter(
+                ~Q(field__in=["comment", "vote", "reaction", "draft"]),
+                project__project_projectmember__member=self.request.user,
+            )
+            .select_related("actor", "workspace", "issue", "project")
+        ).order_by("created_at")
+        issue_comments = (
+            IssueComment.objects.filter(issue_id=issue_id)
+            .filter(project__project_projectmember__member=self.request.user)
+            .order_by("created_at")
+            .select_related("actor", "issue", "project", "workspace")
+            .prefetch_related(
+                Prefetch(
+                    "comment_reactions",
+                    queryset=CommentReaction.objects.select_related("actor"),
                 )
             )
-            issue_activities = IssueActivitySerializer(issue_activities, many=True).data
-            issue_comments = IssueCommentSerializer(issue_comments, many=True).data
+        )
+        issue_activities = IssueActivitySerializer(issue_activities, many=True).data
+        issue_comments = IssueCommentSerializer(issue_comments, many=True).data
 
-            result_list = sorted(
-                chain(issue_activities, issue_comments),
-                key=lambda instance: instance["created_at"],
-            )
+        result_list = sorted(
+            chain(issue_activities, issue_comments),
+            key=lambda instance: instance["created_at"],
+        )
 
-            return Response(result_list, status=status.HTTP_200_OK)
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        return Response(result_list, status=status.HTTP_200_OK)
 
 
 class IssueCommentViewSet(BaseViewSet):
@@ -677,30 +636,22 @@ class IssuePropertyViewSet(BaseViewSet):
         )
 
     def create(self, request, slug, project_id):
-        try:
-            issue_property, created = IssueProperty.objects.get_or_create(
-                user=request.user,
-                project_id=project_id,
-            )
+        issue_property, created = IssueProperty.objects.get_or_create(
+            user=request.user,
+            project_id=project_id,
+        )
 
-            if not created:
-                issue_property.properties = request.data.get("properties", {})
-                issue_property.save()
-
-                serializer = IssuePropertySerializer(issue_property)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-
+        if not created:
             issue_property.properties = request.data.get("properties", {})
             issue_property.save()
-            serializer = IssuePropertySerializer(issue_property)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            serializer = IssuePropertySerializer(issue_property)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        issue_property.properties = request.data.get("properties", {})
+        issue_property.save()
+        serializer = IssuePropertySerializer(issue_property)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class LabelViewSet(BaseViewSet):
@@ -711,17 +662,11 @@ class LabelViewSet(BaseViewSet):
     ]
 
     def create(self, request, slug, project_id):
-        try:
-            serializer = LabelSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save(project_id=project_id)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except IntegrityError:
-            return Response({"error": "Label with the same name already exists in the project"}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            capture_exception(e)
-            return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = LabelSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(project_id=project_id)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -744,33 +689,26 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
     ]
 
     def delete(self, request, slug, project_id):
-        try:
-            issue_ids = request.data.get("issue_ids", [])
+        issue_ids = request.data.get("issue_ids", [])
 
-            if not len(issue_ids):
-                return Response(
-                    {"error": "Issue IDs are required"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            issues = Issue.issue_objects.filter(
-                workspace__slug=slug, project_id=project_id, pk__in=issue_ids
-            )
-
-            total_issues = len(issues)
-
-            issues.delete()
-
+        if not len(issue_ids):
             return Response(
-                {"message": f"{total_issues} issues were deleted"},
-                status=status.HTTP_200_OK,
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
+                {"error": "Issue IDs are required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        issues = Issue.issue_objects.filter(
+            workspace__slug=slug, project_id=project_id, pk__in=issue_ids
+        )
+
+        total_issues = len(issues)
+
+        issues.delete()
+
+        return Response(
+            {"message": f"{total_issues} issues were deleted"},
+            status=status.HTTP_200_OK,
+        )
 
 
 class SubIssuesEndpoint(BaseAPIView):
@@ -780,111 +718,92 @@ class SubIssuesEndpoint(BaseAPIView):
 
     @method_decorator(gzip_page)
     def get(self, request, slug, project_id, issue_id):
-        try:
-            sub_issues = (
-                Issue.issue_objects.filter(parent_id=issue_id, workspace__slug=slug)
-                .select_related("project")
-                .select_related("workspace")
-                .select_related("state")
-                .select_related("parent")
-                .prefetch_related("assignees")
-                .prefetch_related("labels")
-                .annotate(
-                    sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-                    .order_by()
-                    .annotate(count=Func(F("id"), function="Count"))
-                    .values("count")
+        sub_issues = (
+            Issue.issue_objects.filter(parent_id=issue_id, workspace__slug=slug)
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("state")
+            .select_related("parent")
+            .prefetch_related("assignees")
+            .prefetch_related("labels")
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=IssueAttachment.objects.filter(
+                    issue=OuterRef("id")
                 )
-                .annotate(
-                    link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                    .order_by()
-                    .annotate(count=Func(F("id"), function="Count"))
-                    .values("count")
-                )
-                .annotate(
-                    attachment_count=IssueAttachment.objects.filter(
-                        issue=OuterRef("id")
-                    )
-                    .order_by()
-                    .annotate(count=Func(F("id"), function="Count"))
-                    .values("count")
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_reactions",
-                        queryset=IssueReaction.objects.select_related("actor"),
-                    )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_reactions",
+                    queryset=IssueReaction.objects.select_related("actor"),
                 )
             )
+        )
 
-            state_distribution = (
-                State.objects.filter(
-                    workspace__slug=slug, state_issue__parent_id=issue_id
-                )
-                .annotate(state_group=F("group"))
-                .values("state_group")
-                .annotate(state_count=Count("state_group"))
-                .order_by("state_group")
+        state_distribution = (
+            State.objects.filter(
+                workspace__slug=slug, state_issue__parent_id=issue_id
             )
+            .annotate(state_group=F("group"))
+            .values("state_group")
+            .annotate(state_count=Count("state_group"))
+            .order_by("state_group")
+        )
 
-            result = {
-                item["state_group"]: item["state_count"] for item in state_distribution
-            }
+        result = {
+            item["state_group"]: item["state_count"] for item in state_distribution
+        }
 
-            serializer = IssueLiteSerializer(
-                sub_issues,
-                many=True,
-            )
-            return Response(
-                {
-                    "sub_issues": serializer.data,
-                    "state_distribution": result,
-                },
-                status=status.HTTP_200_OK,
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        serializer = IssueLiteSerializer(
+            sub_issues,
+            many=True,
+        )
+        return Response(
+            {
+                "sub_issues": serializer.data,
+                "state_distribution": result,
+            },
+            status=status.HTTP_200_OK,
+        )
 
     # Assign multiple sub issues
     def post(self, request, slug, project_id, issue_id):
-        try:
-            parent_issue = Issue.issue_objects.get(pk=issue_id)
-            sub_issue_ids = request.data.get("sub_issue_ids", [])
+        parent_issue = Issue.issue_objects.get(pk=issue_id)
+        sub_issue_ids = request.data.get("sub_issue_ids", [])
 
-            if not len(sub_issue_ids):
-                return Response(
-                    {"error": "Sub Issue IDs are required"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            sub_issues = Issue.issue_objects.filter(id__in=sub_issue_ids)
-
-            for sub_issue in sub_issues:
-                sub_issue.parent = parent_issue
-
-            _ = Issue.objects.bulk_update(sub_issues, ["parent"], batch_size=10)
-
-            updated_sub_issues = Issue.issue_objects.filter(id__in=sub_issue_ids)
-
+        if not len(sub_issue_ids):
             return Response(
-                IssueFlatSerializer(updated_sub_issues, many=True).data,
-                status=status.HTTP_200_OK,
-            )
-        except Issue.DoesNotExist:
-            return Response(
-                {"Parent Issue does not exists"}, status=status.HTTP_400_BAD_REQUEST
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
+                {"error": "Sub Issue IDs are required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        sub_issues = Issue.issue_objects.filter(id__in=sub_issue_ids)
+
+        for sub_issue in sub_issues:
+            sub_issue.parent = parent_issue
+
+        _ = Issue.objects.bulk_update(sub_issues, ["parent"], batch_size=10)
+
+        updated_sub_issues = Issue.issue_objects.filter(id__in=sub_issue_ids)
+
+        return Response(
+            IssueFlatSerializer(updated_sub_issues, many=True).data,
+            status=status.HTTP_200_OK,
+        )
 
 class IssueLinkViewSet(BaseViewSet):
     permission_classes = [
@@ -966,41 +885,30 @@ class IssueLinkViewSet(BaseViewSet):
 
 class BulkCreateIssueLabelsEndpoint(BaseAPIView):
     def post(self, request, slug, project_id):
-        try:
-            label_data = request.data.get("label_data", [])
-            project = Project.objects.get(pk=project_id)
+        label_data = request.data.get("label_data", [])
+        project = Project.objects.get(pk=project_id)
 
-            labels = Label.objects.bulk_create(
-                [
-                    Label(
-                        name=label.get("name", "Migrated"),
-                        description=label.get("description", "Migrated Issue"),
-                        color="#" + "%06x" % random.randint(0, 0xFFFFFF),
-                        project_id=project_id,
-                        workspace_id=project.workspace_id,
-                        created_by=request.user,
-                        updated_by=request.user,
-                    )
-                    for label in label_data
-                ],
-                batch_size=50,
-                ignore_conflicts=True,
-            )
+        labels = Label.objects.bulk_create(
+            [
+                Label(
+                    name=label.get("name", "Migrated"),
+                    description=label.get("description", "Migrated Issue"),
+                    color="#" + "%06x" % random.randint(0, 0xFFFFFF),
+                    project_id=project_id,
+                    workspace_id=project.workspace_id,
+                    created_by=request.user,
+                    updated_by=request.user,
+                )
+                for label in label_data
+            ],
+            batch_size=50,
+            ignore_conflicts=True,
+        )
 
-            return Response(
-                {"labels": LabelSerializer(labels, many=True).data},
-                status=status.HTTP_201_CREATED,
-            )
-        except Project.DoesNotExist:
-            return Response(
-                {"error": "Project Does not exist"}, status=status.HTTP_404_NOT_FOUND
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        return Response(
+            {"labels": LabelSerializer(labels, many=True).data},
+            status=status.HTTP_201_CREATED,
+        )
 
 
 class IssueAttachmentEndpoint(BaseAPIView):
@@ -1012,66 +920,46 @@ class IssueAttachmentEndpoint(BaseAPIView):
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request, slug, project_id, issue_id):
-        try:
-            serializer = IssueAttachmentSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save(project_id=project_id, issue_id=issue_id)
-                issue_activity.delay(
-                    type="attachment.activity.created",
-                    requested_data=None,
-                    actor_id=str(self.request.user.id),
-                    issue_id=str(self.kwargs.get("issue_id", None)),
-                    project_id=str(self.kwargs.get("project_id", None)),
-                    current_instance=json.dumps(
-                        serializer.data,
-                        cls=DjangoJSONEncoder,
-                    ),
-                    epoch=int(timezone.now().timestamp())
-                )
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-    def delete(self, request, slug, project_id, issue_id, pk):
-        try:
-            issue_attachment = IssueAttachment.objects.get(pk=pk)
-            issue_attachment.asset.delete(save=False)
-            issue_attachment.delete()
+        serializer = IssueAttachmentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(project_id=project_id, issue_id=issue_id)
             issue_activity.delay(
-                type="attachment.activity.deleted",
+                type="attachment.activity.created",
                 requested_data=None,
                 actor_id=str(self.request.user.id),
                 issue_id=str(self.kwargs.get("issue_id", None)),
                 project_id=str(self.kwargs.get("project_id", None)),
-                current_instance=None,
+                current_instance=json.dumps(
+                    serializer.data,
+                    cls=DjangoJSONEncoder,
+                ),
                 epoch=int(timezone.now().timestamp())
             )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except IssueAttachment.DoesNotExist:
-            return Response(
-                {"error": "Issue Attachment does not exist"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+    def delete(self, request, slug, project_id, issue_id, pk):
+        issue_attachment = IssueAttachment.objects.get(pk=pk)
+        issue_attachment.asset.delete(save=False)
+        issue_attachment.delete()
+        issue_activity.delay(
+            type="attachment.activity.deleted",
+            requested_data=None,
+            actor_id=str(self.request.user.id),
+            issue_id=str(self.kwargs.get("issue_id", None)),
+            project_id=str(self.kwargs.get("project_id", None)),
+            current_instance=None,
+            epoch=int(timezone.now().timestamp())
+        )
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def get(self, request, slug, project_id, issue_id):
-        try:
-            issue_attachments = IssueAttachment.objects.filter(
-                issue_id=issue_id, workspace__slug=slug, project_id=project_id
-            )
-            serilaizer = IssueAttachmentSerializer(issue_attachments, many=True)
-            return Response(serilaizer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        issue_attachments = IssueAttachment.objects.filter(
+            issue_id=issue_id, workspace__slug=slug, project_id=project_id
+        )
+        serializer = IssueAttachmentSerializer(issue_attachments, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class IssueArchiveViewSet(BaseViewSet):
@@ -1102,141 +990,121 @@ class IssueArchiveViewSet(BaseViewSet):
 
     @method_decorator(gzip_page)
     def list(self, request, slug, project_id):
-        try:
-            filters = issue_filters(request.query_params, "GET")
-            show_sub_issues = request.GET.get("show_sub_issues", "true")
+        filters = issue_filters(request.query_params, "GET")
+        show_sub_issues = request.GET.get("show_sub_issues", "true")
 
-            # Custom ordering for priority and state
-            priority_order = ["urgent", "high", "medium", "low", "none"]
-            state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
+        # Custom ordering for priority and state
+        priority_order = ["urgent", "high", "medium", "low", "none"]
+        state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
 
-            order_by_param = request.GET.get("order_by", "-created_at")
+        order_by_param = request.GET.get("order_by", "-created_at")
 
-            issue_queryset = (
-                self.get_queryset()
-                .filter(**filters)
-                .annotate(cycle_id=F("issue_cycle__cycle_id"))
-                .annotate(module_id=F("issue_module__module_id"))
-                .annotate(
-                    link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                    .order_by()
-                    .annotate(count=Func(F("id"), function="Count"))
-                    .values("count")
-                )
-                .annotate(
-                    attachment_count=IssueAttachment.objects.filter(
-                        issue=OuterRef("id")
-                    )
-                    .order_by()
-                    .annotate(count=Func(F("id"), function="Count"))
-                    .values("count")
-                )
+        issue_queryset = (
+            self.get_queryset()
+            .filter(**filters)
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(module_id=F("issue_module__module_id"))
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
             )
-
-            # Priority Ordering
-            if order_by_param == "priority" or order_by_param == "-priority":
-                priority_order = (
-                    priority_order
-                    if order_by_param == "priority"
-                    else priority_order[::-1]
+            .annotate(
+                attachment_count=IssueAttachment.objects.filter(
+                    issue=OuterRef("id")
                 )
-                issue_queryset = issue_queryset.annotate(
-                    priority_order=Case(
-                        *[
-                            When(priority=p, then=Value(i))
-                            for i, p in enumerate(priority_order)
-                        ],
-                        output_field=CharField(),
-                    )
-                ).order_by("priority_order")
-
-            # State Ordering
-            elif order_by_param in [
-                "state__name",
-                "state__group",
-                "-state__name",
-                "-state__group",
-            ]:
-                state_order = (
-                    state_order
-                    if order_by_param in ["state__name", "state__group"]
-                    else state_order[::-1]
-                )
-                issue_queryset = issue_queryset.annotate(
-                    state_order=Case(
-                        *[
-                            When(state__group=state_group, then=Value(i))
-                            for i, state_group in enumerate(state_order)
-                        ],
-                        default=Value(len(state_order)),
-                        output_field=CharField(),
-                    )
-                ).order_by("state_order")
-            # assignee and label ordering
-            elif order_by_param in [
-                "labels__name",
-                "-labels__name",
-                "assignees__first_name",
-                "-assignees__first_name",
-            ]:
-                issue_queryset = issue_queryset.annotate(
-                    max_values=Max(
-                        order_by_param[1::]
-                        if order_by_param.startswith("-")
-                        else order_by_param
-                    )
-                ).order_by(
-                    "-max_values" if order_by_param.startswith("-") else "max_values"
-                )
-            else:
-                issue_queryset = issue_queryset.order_by(order_by_param)
-
-            issue_queryset = (
-                issue_queryset
-                if show_sub_issues == "true"
-                else issue_queryset.filter(parent__isnull=True)
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
             )
+        )
 
-            issues = IssueLiteSerializer(issue_queryset, many=True).data
-
-            ## Grouping the results
-            group_by = request.GET.get("group_by", False)
-            if group_by:
-                return Response(
-                    group_results(issues, group_by), status=status.HTTP_200_OK
+        # Priority Ordering
+        if order_by_param == "priority" or order_by_param == "-priority":
+            priority_order = (
+                priority_order
+                if order_by_param == "priority"
+                else priority_order[::-1]
+            )
+            issue_queryset = issue_queryset.annotate(
+                priority_order=Case(
+                    *[
+                        When(priority=p, then=Value(i))
+                        for i, p in enumerate(priority_order)
+                    ],
+                    output_field=CharField(),
                 )
+            ).order_by("priority_order")
 
-            return Response(issues, status=status.HTTP_200_OK)
+        # State Ordering
+        elif order_by_param in [
+            "state__name",
+            "state__group",
+            "-state__name",
+            "-state__group",
+        ]:
+            state_order = (
+                state_order
+                if order_by_param in ["state__name", "state__group"]
+                else state_order[::-1]
+            )
+            issue_queryset = issue_queryset.annotate(
+                state_order=Case(
+                    *[
+                        When(state__group=state_group, then=Value(i))
+                        for i, state_group in enumerate(state_order)
+                    ],
+                    default=Value(len(state_order)),
+                    output_field=CharField(),
+                )
+            ).order_by("state_order")
+        # assignee and label ordering
+        elif order_by_param in [
+            "labels__name",
+            "-labels__name",
+            "assignees__first_name",
+            "-assignees__first_name",
+        ]:
+            issue_queryset = issue_queryset.annotate(
+                max_values=Max(
+                    order_by_param[1::]
+                    if order_by_param.startswith("-")
+                    else order_by_param
+                )
+            ).order_by(
+                "-max_values" if order_by_param.startswith("-") else "max_values"
+            )
+        else:
+            issue_queryset = issue_queryset.order_by(order_by_param)
 
-        except Exception as e:
-            capture_exception(e)
+        issue_queryset = (
+            issue_queryset
+            if show_sub_issues == "true"
+            else issue_queryset.filter(parent__isnull=True)
+        )
+
+        issues = IssueLiteSerializer(issue_queryset, many=True).data
+
+        ## Grouping the results
+        group_by = request.GET.get("group_by", False)
+        if group_by:
             return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
+                group_results(issues, group_by), status=status.HTTP_200_OK
             )
+
+        return Response(issues, status=status.HTTP_200_OK)
 
     def retrieve(self, request, slug, project_id, pk=None):
-        try:
-            issue = Issue.objects.get(
-                workspace__slug=slug,
-                project_id=project_id,
-                archived_at__isnull=False,
-                pk=pk,
-            )
-            return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
-        except Issue.DoesNotExist:
-            return Response(
-                {"error": "Issue Does not exist"}, status=status.HTTP_404_NOT_FOUND
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        issue = Issue.objects.get(
+            workspace__slug=slug,
+            project_id=project_id,
+            archived_at__isnull=False,
+            pk=pk,
+        )
+        return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
 
     def unarchive(self, request, slug, project_id, pk=None):
-        try:
             issue = Issue.objects.get(
                 workspace__slug=slug,
                 project_id=project_id,
@@ -1256,16 +1124,6 @@ class IssueArchiveViewSet(BaseViewSet):
             )
 
             return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
-        except Issue.DoesNotExist:
-            return Response(
-                {"error": "Issue Does not exist"}, status=status.HTTP_404_NOT_FOUND
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong, please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
 
 
 class IssueSubscriberViewSet(BaseViewSet):
@@ -1307,122 +1165,77 @@ class IssueSubscriberViewSet(BaseViewSet):
         )
 
     def list(self, request, slug, project_id, issue_id):
-        try:
-            members = (
-                ProjectMember.objects.filter(
-                    workspace__slug=slug, project_id=project_id
-                )
-                .annotate(
-                    is_subscribed=Exists(
-                        IssueSubscriber.objects.filter(
-                            workspace__slug=slug,
-                            project_id=project_id,
-                            issue_id=issue_id,
-                            subscriber=OuterRef("member"),
-                        )
+        members = (
+            ProjectMember.objects.filter(
+                workspace__slug=slug, project_id=project_id
+            )
+            .annotate(
+                is_subscribed=Exists(
+                    IssueSubscriber.objects.filter(
+                        workspace__slug=slug,
+                        project_id=project_id,
+                        issue_id=issue_id,
+                        subscriber=OuterRef("member"),
                     )
                 )
-                .select_related("member")
             )
-            serializer = ProjectMemberLiteSerializer(members, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": e},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            .select_related("member")
+        )
+        serializer = ProjectMemberLiteSerializer(members, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, slug, project_id, issue_id, subscriber_id):
-        try:
-            issue_subscriber = IssueSubscriber.objects.get(
-                project=project_id,
-                subscriber=subscriber_id,
-                workspace__slug=slug,
-                issue=issue_id,
-            )
-            issue_subscriber.delete()
-            return Response(
-                status=status.HTTP_204_NO_CONTENT,
-            )
-        except IssueSubscriber.DoesNotExist:
-            return Response(
-                {"error": "User is not subscribed to this issue"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        issue_subscriber = IssueSubscriber.objects.get(
+            project=project_id,
+            subscriber=subscriber_id,
+            workspace__slug=slug,
+            issue=issue_id,
+        )
+        issue_subscriber.delete()
+        return Response(
+            status=status.HTTP_204_NO_CONTENT,
+        )
 
     def subscribe(self, request, slug, project_id, issue_id):
-        try:
-            if IssueSubscriber.objects.filter(
-                issue_id=issue_id,
-                subscriber=request.user,
-                workspace__slug=slug,
-                project=project_id,
-            ).exists():
-                return Response(
-                    {"message": "User already subscribed to the issue."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            subscriber = IssueSubscriber.objects.create(
-                issue_id=issue_id,
-                subscriber_id=request.user.id,
-                project_id=project_id,
-            )
-            serilaizer = IssueSubscriberSerializer(subscriber)
-            return Response(serilaizer.data, status=status.HTTP_201_CREATED)
-        except Exception as e:
-            capture_exception(e)
+        if IssueSubscriber.objects.filter(
+            issue_id=issue_id,
+            subscriber=request.user,
+            workspace__slug=slug,
+            project=project_id,
+        ).exists():
             return Response(
-                {"error": "Something went wrong, please try again later"},
+                {"message": "User already subscribed to the issue."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        subscriber = IssueSubscriber.objects.create(
+            issue_id=issue_id,
+            subscriber_id=request.user.id,
+            project_id=project_id,
+        )
+        serializer = IssueSubscriberSerializer(subscriber)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def unsubscribe(self, request, slug, project_id, issue_id):
-        try:
-            issue_subscriber = IssueSubscriber.objects.get(
-                project=project_id,
-                subscriber=request.user,
-                workspace__slug=slug,
-                issue=issue_id,
-            )
-            issue_subscriber.delete()
-            return Response(
-                status=status.HTTP_204_NO_CONTENT,
-            )
-        except IssueSubscriber.DoesNotExist:
-            return Response(
-                {"error": "User subscribed to this issue"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        issue_subscriber = IssueSubscriber.objects.get(
+            project=project_id,
+            subscriber=request.user,
+            workspace__slug=slug,
+            issue=issue_id,
+        )
+        issue_subscriber.delete()
+        return Response(
+            status=status.HTTP_204_NO_CONTENT,
+        )
 
     def subscription_status(self, request, slug, project_id, issue_id):
-        try:
-            issue_subscriber = IssueSubscriber.objects.filter(
-                issue=issue_id,
-                subscriber=request.user,
-                workspace__slug=slug,
-                project=project_id,
-            ).exists()
-            return Response({"subscribed": issue_subscriber}, status=status.HTTP_200_OK)
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong, please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        issue_subscriber = IssueSubscriber.objects.filter(
+            issue=issue_id,
+            subscriber=request.user,
+            workspace__slug=slug,
+            project=project_id,
+        ).exists()
+        return Response({"subscribed": issue_subscriber}, status=status.HTTP_200_OK)
 
 
 class IssueReactionViewSet(BaseViewSet):
@@ -1461,41 +1274,29 @@ class IssueReactionViewSet(BaseViewSet):
         )
 
     def destroy(self, request, slug, project_id, issue_id, reaction_code):
-        try:
-            issue_reaction = IssueReaction.objects.get(
-                workspace__slug=slug,
-                project_id=project_id,
-                issue_id=issue_id,
-                reaction=reaction_code,
-                actor=request.user,
-            )
-            issue_activity.delay(
-                type="issue_reaction.activity.deleted",
-                requested_data=None,
-                actor_id=str(self.request.user.id),
-                issue_id=str(self.kwargs.get("issue_id", None)),
-                project_id=str(self.kwargs.get("project_id", None)),
-                current_instance=json.dumps(
-                    {
-                        "reaction": str(reaction_code),
-                        "identifier": str(issue_reaction.id),
-                    }
-                ),
-                epoch=int(timezone.now().timestamp())
-            )
-            issue_reaction.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except IssueReaction.DoesNotExist:
-            return Response(
-                {"error": "Issue reaction does not exist"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        issue_reaction = IssueReaction.objects.get(
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_id=issue_id,
+            reaction=reaction_code,
+            actor=request.user,
+        )
+        issue_activity.delay(
+            type="issue_reaction.activity.deleted",
+            requested_data=None,
+            actor_id=str(self.request.user.id),
+            issue_id=str(self.kwargs.get("issue_id", None)),
+            project_id=str(self.kwargs.get("project_id", None)),
+            current_instance=json.dumps(
+                {
+                    "reaction": str(reaction_code),
+                    "identifier": str(issue_reaction.id),
+                }
+            ),
+            epoch=int(timezone.now().timestamp())
+        )
+        issue_reaction.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CommentReactionViewSet(BaseViewSet):
@@ -1534,42 +1335,30 @@ class CommentReactionViewSet(BaseViewSet):
         )
 
     def destroy(self, request, slug, project_id, comment_id, reaction_code):
-        try:
-            comment_reaction = CommentReaction.objects.get(
-                workspace__slug=slug,
-                project_id=project_id,
-                comment_id=comment_id,
-                reaction=reaction_code,
-                actor=request.user,
-            )
-            issue_activity.delay(
-                type="comment_reaction.activity.deleted",
-                requested_data=None,
-                actor_id=str(self.request.user.id),
-                issue_id=None,
-                project_id=str(self.kwargs.get("project_id", None)),
-                current_instance=json.dumps(
-                    {
-                        "reaction": str(reaction_code),
-                        "identifier": str(comment_reaction.id),
-                        "comment_id": str(comment_id),
-                    }
-                ),
-                epoch=int(timezone.now().timestamp())
-            )
-            comment_reaction.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except CommentReaction.DoesNotExist:
-            return Response(
-                {"error": "Comment reaction does not exist"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        comment_reaction = CommentReaction.objects.get(
+            workspace__slug=slug,
+            project_id=project_id,
+            comment_id=comment_id,
+            reaction=reaction_code,
+            actor=request.user,
+        )
+        issue_activity.delay(
+            type="comment_reaction.activity.deleted",
+            requested_data=None,
+            actor_id=str(self.request.user.id),
+            issue_id=None,
+            project_id=str(self.kwargs.get("project_id", None)),
+            current_instance=json.dumps(
+                {
+                    "reaction": str(reaction_code),
+                    "identifier": str(comment_reaction.id),
+                    "comment_id": str(comment_id),
+                }
+            ),
+            epoch=int(timezone.now().timestamp())
+        )
+        comment_reaction.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class IssueCommentPublicViewSet(BaseViewSet):
@@ -1626,109 +1415,67 @@ class IssueCommentPublicViewSet(BaseViewSet):
             return IssueComment.objects.none()
 
     def create(self, request, slug, project_id, issue_id):
-        try:
-            project_deploy_board = ProjectDeployBoard.objects.get(
-                workspace__slug=slug, project_id=project_id
-            )
+        project_deploy_board = ProjectDeployBoard.objects.get(
+            workspace__slug=slug, project_id=project_id
+        )
 
-            if not project_deploy_board.comments:
-                return Response(
-                    {"error": "Comments are not enabled for this project"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            serializer = IssueCommentSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save(
-                    project_id=project_id,
-                    issue_id=issue_id,
-                    actor=request.user,
-                    access="EXTERNAL",
-                )
-                issue_activity.delay(
-                    type="comment.activity.created",
-                    requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
-                    actor_id=str(request.user.id),
-                    issue_id=str(issue_id),
-                    project_id=str(project_id),
-                    current_instance=None,
-                    epoch=int(timezone.now().timestamp())
-                )
-                if not ProjectMember.objects.filter(
-                    project_id=project_id,
-                    member=request.user,
-                ).exists():
-                    # Add the user for workspace tracking
-                    _ = ProjectPublicMember.objects.get_or_create(
-                        project_id=project_id,
-                        member=request.user,
-                    )
-
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            capture_exception(e)
+        if not project_deploy_board.comments:
             return Response(
-                {"error": "Something went wrong please try again later"},
+                {"error": "Comments are not enabled for this project"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def partial_update(self, request, slug, project_id, issue_id, pk):
-        try:
-            project_deploy_board = ProjectDeployBoard.objects.get(
-                workspace__slug=slug, project_id=project_id
-            )
-
-            if not project_deploy_board.comments:
-                return Response(
-                    {"error": "Comments are not enabled for this project"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            comment = IssueComment.objects.get(
-                workspace__slug=slug, pk=pk, actor=request.user
-            )
-            serializer = IssueCommentSerializer(
-                comment, data=request.data, partial=True
-            )
-            if serializer.is_valid():
-                serializer.save()
-                issue_activity.delay(
-                    type="comment.activity.updated",
-                    requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
-                    actor_id=str(request.user.id),
-                    issue_id=str(issue_id),
-                    project_id=str(project_id),
-                    current_instance=json.dumps(
-                        IssueCommentSerializer(comment).data,
-                        cls=DjangoJSONEncoder,
-                    ),
-                    epoch=int(timezone.now().timestamp())
-                )
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except (IssueComment.DoesNotExist, ProjectDeployBoard.DoesNotExist):
-            return Response(
-                {"error": "IssueComent Does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-    def destroy(self, request, slug, project_id, issue_id, pk):
-        try:
-            project_deploy_board = ProjectDeployBoard.objects.get(
-                workspace__slug=slug, project_id=project_id
-            )
-
-            if not project_deploy_board.comments:
-                return Response(
-                    {"error": "Comments are not enabled for this project"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            comment = IssueComment.objects.get(
-                workspace__slug=slug, pk=pk, project_id=project_id, actor=request.user
+        serializer = IssueCommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(
+                project_id=project_id,
+                issue_id=issue_id,
+                actor=request.user,
+                access="EXTERNAL",
             )
             issue_activity.delay(
-                type="comment.activity.deleted",
-                requested_data=json.dumps({"comment_id": str(pk)}),
+                type="comment.activity.created",
+                requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
+                actor_id=str(request.user.id),
+                issue_id=str(issue_id),
+                project_id=str(project_id),
+                current_instance=None,
+                epoch=int(timezone.now().timestamp())
+            )
+            if not ProjectMember.objects.filter(
+                project_id=project_id,
+                member=request.user,
+            ).exists():
+                # Add the user for workspace tracking
+                _ = ProjectPublicMember.objects.get_or_create(
+                    project_id=project_id,
+                    member=request.user,
+                )
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def partial_update(self, request, slug, project_id, issue_id, pk):
+        project_deploy_board = ProjectDeployBoard.objects.get(
+            workspace__slug=slug, project_id=project_id
+        )
+
+        if not project_deploy_board.comments:
+            return Response(
+                {"error": "Comments are not enabled for this project"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        comment = IssueComment.objects.get(
+            workspace__slug=slug, pk=pk, actor=request.user
+        )
+        serializer = IssueCommentSerializer(
+            comment, data=request.data, partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
+            issue_activity.delay(
+                type="comment.activity.updated",
+                requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
                 actor_id=str(request.user.id),
                 issue_id=str(issue_id),
                 project_id=str(project_id),
@@ -1738,19 +1485,36 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 ),
                 epoch=int(timezone.now().timestamp())
             )
-            comment.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except (IssueComment.DoesNotExist, ProjectDeployBoard.DoesNotExist):
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, slug, project_id, issue_id, pk):
+        project_deploy_board = ProjectDeployBoard.objects.get(
+            workspace__slug=slug, project_id=project_id
+        )
+
+        if not project_deploy_board.comments:
             return Response(
-                {"error": "IssueComent Does not exists"},
+                {"error": "Comments are not enabled for this project"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        comment = IssueComment.objects.get(
+            workspace__slug=slug, pk=pk, project_id=project_id, actor=request.user
+        )
+        issue_activity.delay(
+            type="comment.activity.deleted",
+            requested_data=json.dumps({"comment_id": str(pk)}),
+            actor_id=str(request.user.id),
+            issue_id=str(issue_id),
+            project_id=str(project_id),
+            current_instance=json.dumps(
+                IssueCommentSerializer(comment).data,
+                cls=DjangoJSONEncoder,
+            ),
+            epoch=int(timezone.now().timestamp())
+        )
+        comment.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class IssueReactionPublicViewSet(BaseViewSet):
@@ -1779,98 +1543,74 @@ class IssueReactionPublicViewSet(BaseViewSet):
             return IssueReaction.objects.none()
 
     def create(self, request, slug, project_id, issue_id):
-        try:
-            project_deploy_board = ProjectDeployBoard.objects.get(
-                workspace__slug=slug, project_id=project_id
+        project_deploy_board = ProjectDeployBoard.objects.get(
+            workspace__slug=slug, project_id=project_id
+        )
+
+        if not project_deploy_board.reactions:
+            return Response(
+                {"error": "Reactions are not enabled for this project board"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
-            if not project_deploy_board.reactions:
-                return Response(
-                    {"error": "Reactions are not enabled for this project board"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            serializer = IssueReactionSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save(
-                    project_id=project_id, issue_id=issue_id, actor=request.user
-                )
-                if not ProjectMember.objects.filter(
+        serializer = IssueReactionSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(
+                project_id=project_id, issue_id=issue_id, actor=request.user
+            )
+            if not ProjectMember.objects.filter(
+                project_id=project_id,
+                member=request.user,
+            ).exists():
+                # Add the user for workspace tracking
+                _ = ProjectPublicMember.objects.get_or_create(
                     project_id=project_id,
                     member=request.user,
-                ).exists():
-                    # Add the user for workspace tracking
-                    _ = ProjectPublicMember.objects.get_or_create(
-                        project_id=project_id,
-                        member=request.user,
-                    )
-                issue_activity.delay(
-                    type="issue_reaction.activity.created",
-                    requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
-                    actor_id=str(self.request.user.id),
-                    issue_id=str(self.kwargs.get("issue_id", None)),
-                    project_id=str(self.kwargs.get("project_id", None)),
-                    current_instance=None,
-                    epoch=int(timezone.now().timestamp())
                 )
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except ProjectDeployBoard.DoesNotExist:
-            return Response(
-                {"error": "Project board does not exist"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-    def destroy(self, request, slug, project_id, issue_id, reaction_code):
-        try:
-            project_deploy_board = ProjectDeployBoard.objects.get(
-                workspace__slug=slug, project_id=project_id
-            )
-
-            if not project_deploy_board.reactions:
-                return Response(
-                    {"error": "Reactions are not enabled for this project board"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            issue_reaction = IssueReaction.objects.get(
-                workspace__slug=slug,
-                issue_id=issue_id,
-                reaction=reaction_code,
-                actor=request.user,
-            )
             issue_activity.delay(
-                type="issue_reaction.activity.deleted",
-                requested_data=None,
+                type="issue_reaction.activity.created",
+                requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
                 actor_id=str(self.request.user.id),
                 issue_id=str(self.kwargs.get("issue_id", None)),
                 project_id=str(self.kwargs.get("project_id", None)),
-                current_instance=json.dumps(
-                    {
-                        "reaction": str(reaction_code),
-                        "identifier": str(issue_reaction.id),
-                    }
-                ),
+                current_instance=None,
                 epoch=int(timezone.now().timestamp())
             )
-            issue_reaction.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except IssueReaction.DoesNotExist:
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, slug, project_id, issue_id, reaction_code):
+        project_deploy_board = ProjectDeployBoard.objects.get(
+            workspace__slug=slug, project_id=project_id
+        )
+
+        if not project_deploy_board.reactions:
             return Response(
-                {"error": "Issue reaction does not exist"},
+                {"error": "Reactions are not enabled for this project board"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        issue_reaction = IssueReaction.objects.get(
+            workspace__slug=slug,
+            issue_id=issue_id,
+            reaction=reaction_code,
+            actor=request.user,
+        )
+        issue_activity.delay(
+            type="issue_reaction.activity.deleted",
+            requested_data=None,
+            actor_id=str(self.request.user.id),
+            issue_id=str(self.kwargs.get("issue_id", None)),
+            project_id=str(self.kwargs.get("project_id", None)),
+            current_instance=json.dumps(
+                {
+                    "reaction": str(reaction_code),
+                    "identifier": str(issue_reaction.id),
+                }
+            ),
+            epoch=int(timezone.now().timestamp())
+        )
+        issue_reaction.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CommentReactionPublicViewSet(BaseViewSet):
@@ -1899,104 +1639,75 @@ class CommentReactionPublicViewSet(BaseViewSet):
             return CommentReaction.objects.none()
 
     def create(self, request, slug, project_id, comment_id):
-        try:
-            project_deploy_board = ProjectDeployBoard.objects.get(
-                workspace__slug=slug, project_id=project_id
-            )
+        project_deploy_board = ProjectDeployBoard.objects.get(
+            workspace__slug=slug, project_id=project_id
+        )
 
-            if not project_deploy_board.reactions:
-                return Response(
-                    {"error": "Reactions are not enabled for this board"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            serializer = CommentReactionSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save(
-                    project_id=project_id, comment_id=comment_id, actor=request.user
-                )
-                if not ProjectMember.objects.filter(
-                    project_id=project_id, member=request.user
-                ).exists():
-                    # Add the user for workspace tracking
-                    _ = ProjectPublicMember.objects.get_or_create(
-                        project_id=project_id,
-                        member=request.user,
-                    )
-                issue_activity.delay(
-                    type="comment_reaction.activity.created",
-                    requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
-                    actor_id=str(self.request.user.id),
-                    issue_id=None,
-                    project_id=str(self.kwargs.get("project_id", None)),
-                    current_instance=None,
-                    epoch=int(timezone.now().timestamp())
-                )
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except IssueComment.DoesNotExist:
+        if not project_deploy_board.reactions:
             return Response(
-                {"error": "Comment does not exist"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        except ProjectDeployBoard.DoesNotExist:
-            return Response(
-                {"error": "Project board does not exist"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
+                {"error": "Reactions are not enabled for this board"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def destroy(self, request, slug, project_id, comment_id, reaction_code):
-        try:
-            project_deploy_board = ProjectDeployBoard.objects.get(
-                workspace__slug=slug, project_id=project_id
+        serializer = CommentReactionSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(
+                project_id=project_id, comment_id=comment_id, actor=request.user
             )
-            if not project_deploy_board.reactions:
-                return Response(
-                    {"error": "Reactions are not enabled for this board"},
-                    status=status.HTTP_400_BAD_REQUEST,
+            if not ProjectMember.objects.filter(
+                project_id=project_id, member=request.user
+            ).exists():
+                # Add the user for workspace tracking
+                _ = ProjectPublicMember.objects.get_or_create(
+                    project_id=project_id,
+                    member=request.user,
                 )
-
-            comment_reaction = CommentReaction.objects.get(
-                project_id=project_id,
-                workspace__slug=slug,
-                comment_id=comment_id,
-                reaction=reaction_code,
-                actor=request.user,
-            )
             issue_activity.delay(
-                type="comment_reaction.activity.deleted",
-                requested_data=None,
+                type="comment_reaction.activity.created",
+                requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
                 actor_id=str(self.request.user.id),
                 issue_id=None,
                 project_id=str(self.kwargs.get("project_id", None)),
-                current_instance=json.dumps(
-                    {
-                        "reaction": str(reaction_code),
-                        "identifier": str(comment_reaction.id),
-                        "comment_id": str(comment_id),
-                    }
-                ),
+                current_instance=None,
                 epoch=int(timezone.now().timestamp())
             )
-            comment_reaction.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except CommentReaction.DoesNotExist:
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, slug, project_id, comment_id, reaction_code):
+        project_deploy_board = ProjectDeployBoard.objects.get(
+            workspace__slug=slug, project_id=project_id
+        )
+        if not project_deploy_board.reactions:
             return Response(
-                {"error": "Comment reaction does not exist"},
+                {"error": "Reactions are not enabled for this board"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+
+        comment_reaction = CommentReaction.objects.get(
+            project_id=project_id,
+            workspace__slug=slug,
+            comment_id=comment_id,
+            reaction=reaction_code,
+            actor=request.user,
+        )
+        issue_activity.delay(
+            type="comment_reaction.activity.deleted",
+            requested_data=None,
+            actor_id=str(self.request.user.id),
+            issue_id=None,
+            project_id=str(self.kwargs.get("project_id", None)),
+            current_instance=json.dumps(
+                {
+                    "reaction": str(reaction_code),
+                    "identifier": str(comment_reaction.id),
+                    "comment_id": str(comment_id),
+                }
+            ),
+            epoch=int(timezone.now().timestamp())
+        )
+        comment_reaction.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class IssueVotePublicViewSet(BaseViewSet):
@@ -2023,74 +1734,56 @@ class IssueVotePublicViewSet(BaseViewSet):
             return IssueVote.objects.none()
 
     def create(self, request, slug, project_id, issue_id):
-        try:
-            issue_vote, _ = IssueVote.objects.get_or_create(
-                actor_id=request.user.id,
+        issue_vote, _ = IssueVote.objects.get_or_create(
+            actor_id=request.user.id,
+            project_id=project_id,
+            issue_id=issue_id,
+        )
+        # Add the user for workspace tracking
+        if not ProjectMember.objects.filter(
+            project_id=project_id, member=request.user
+        ).exists():
+            _ = ProjectPublicMember.objects.get_or_create(
                 project_id=project_id,
-                issue_id=issue_id,
+                member=request.user,
             )
-            # Add the user for workspace tracking
-            if not ProjectMember.objects.filter(
-                project_id=project_id, member=request.user
-            ).exists():
-                _ = ProjectPublicMember.objects.get_or_create(
-                    project_id=project_id,
-                    member=request.user,
-                )
-            issue_vote.vote = request.data.get("vote", 1)
-            issue_vote.save()
-            issue_activity.delay(
-                type="issue_vote.activity.created",
-                requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
-                actor_id=str(self.request.user.id),
-                issue_id=str(self.kwargs.get("issue_id", None)),
-                project_id=str(self.kwargs.get("project_id", None)),
-                current_instance=None,
-                epoch=int(timezone.now().timestamp())
-            )
-            serializer = IssueVoteSerializer(issue_vote)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        except IntegrityError:
-            return Response(
-                {"error": "Reaction already exists"}, status=status.HTTP_400_BAD_REQUEST
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        issue_vote.vote = request.data.get("vote", 1)
+        issue_vote.save()
+        issue_activity.delay(
+            type="issue_vote.activity.created",
+            requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
+            actor_id=str(self.request.user.id),
+            issue_id=str(self.kwargs.get("issue_id", None)),
+            project_id=str(self.kwargs.get("project_id", None)),
+            current_instance=None,
+            epoch=int(timezone.now().timestamp())
+        )
+        serializer = IssueVoteSerializer(issue_vote)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, slug, project_id, issue_id):
-        try:
-            issue_vote = IssueVote.objects.get(
-                workspace__slug=slug,
-                project_id=project_id,
-                issue_id=issue_id,
-                actor_id=request.user.id,
-            )
-            issue_activity.delay(
-                type="issue_vote.activity.deleted",
-                requested_data=None,
-                actor_id=str(self.request.user.id),
-                issue_id=str(self.kwargs.get("issue_id", None)),
-                project_id=str(self.kwargs.get("project_id", None)),
-                current_instance=json.dumps(
-                    {
-                        "vote": str(issue_vote.vote),
-                        "identifier": str(issue_vote.id),
-                    }
-                ),
-                epoch=int(timezone.now().timestamp())
-            )
-            issue_vote.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        issue_vote = IssueVote.objects.get(
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_id=issue_id,
+            actor_id=request.user.id,
+        )
+        issue_activity.delay(
+            type="issue_vote.activity.deleted",
+            requested_data=None,
+            actor_id=str(self.request.user.id),
+            issue_id=str(self.kwargs.get("issue_id", None)),
+            project_id=str(self.kwargs.get("project_id", None)),
+            current_instance=json.dumps(
+                {
+                    "vote": str(issue_vote.vote),
+                    "identifier": str(issue_vote.id),
+                }
+            ),
+            epoch=int(timezone.now().timestamp())
+        )
+        issue_vote.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class IssueRelationViewSet(BaseViewSet):
@@ -2120,65 +1813,46 @@ class IssueRelationViewSet(BaseViewSet):
         return super().perform_destroy(instance)
 
     def create(self, request, slug, project_id, issue_id):
-        try:
-            related_list = request.data.get("related_list", [])
-            relation = request.data.get("relation", None)
-            project = Project.objects.get(pk=project_id)
+        related_list = request.data.get("related_list", [])
+        relation = request.data.get("relation", None)
+        project = Project.objects.get(pk=project_id)
 
-            issue_relation = IssueRelation.objects.bulk_create(
-                [
-                    IssueRelation(
-                        issue_id=related_issue["issue"],
-                        related_issue_id=related_issue["related_issue"],
-                        relation_type=related_issue["relation_type"],
-                        project_id=project_id,
-                        workspace_id=project.workspace_id,
-                        created_by=request.user,
-                        updated_by=request.user,
-                    )
-                    for related_issue in related_list
-                ],
-                batch_size=10,
-                ignore_conflicts=True,
-            )
+        issue_relation = IssueRelation.objects.bulk_create(
+            [
+                IssueRelation(
+                    issue_id=related_issue["issue"],
+                    related_issue_id=related_issue["related_issue"],
+                    relation_type=related_issue["relation_type"],
+                    project_id=project_id,
+                    workspace_id=project.workspace_id,
+                    created_by=request.user,
+                    updated_by=request.user,
+                )
+                for related_issue in related_list
+            ],
+            batch_size=10,
+            ignore_conflicts=True,
+        )
 
-            issue_activity.delay(
-                type="issue_relation.activity.created",
-                requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
-                actor_id=str(request.user.id),
-                issue_id=str(issue_id),
-                project_id=str(project_id),
-                current_instance=None,
-                epoch=int(timezone.now().timestamp())
-            )
-            
-            if relation == "blocking":
-                return Response(
-                    RelatedIssueSerializer(issue_relation, many=True).data,
-                    status=status.HTTP_201_CREATED,
-                )
-            else:
-                return Response(
-                    IssueRelationSerializer(issue_relation, many=True).data,
-                    status=status.HTTP_201_CREATED,
-                )
-        except IntegrityError as e:
-            if "already exists" in str(e):
-                return Response(
-                    {"name": "The issue is already taken"},
-                    status=status.HTTP_410_GONE,
-                )
-            else:
-                capture_exception(e)
-                return Response(
-                    {"error": "Something went wrong please try again later"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-        except Exception as e:
-            capture_exception(e)
+        issue_activity.delay(
+            type="issue_relation.activity.created",
+            requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+            actor_id=str(request.user.id),
+            issue_id=str(issue_id),
+            project_id=str(project_id),
+            current_instance=None,
+            epoch=int(timezone.now().timestamp())
+        )
+        
+        if relation == "blocking":
             return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
+                RelatedIssueSerializer(issue_relation, many=True).data,
+                status=status.HTTP_201_CREATED,
+            )
+        else:
+            return Response(
+                IssueRelationSerializer(issue_relation, many=True).data,
+                status=status.HTTP_201_CREATED,
             )
 
     def get_queryset(self):
@@ -2202,22 +1876,11 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
     ]
 
     def get(self, request, slug, project_id, issue_id):
-        try:
-            issue = Issue.objects.get(
-                workspace__slug=slug, project_id=project_id, pk=issue_id
-            )
-            serializer = IssuePublicSerializer(issue)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Issue.DoesNotExist:
-            return Response(
-                {"error": "Issue Does not exist"}, status=status.HTTP_400_BAD_REQUEST
-            )
-        except Exception as e:
-            print(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        issue = Issue.objects.get(
+            workspace__slug=slug, project_id=project_id, pk=issue_id
+        )
+        serializer = IssuePublicSerializer(issue)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ProjectIssuesPublicEndpoint(BaseAPIView):
@@ -2226,176 +1889,165 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
     ]
 
     def get(self, request, slug, project_id):
-        try:
-            project_deploy_board = ProjectDeployBoard.objects.get(
-                workspace__slug=slug, project_id=project_id
+        project_deploy_board = ProjectDeployBoard.objects.get(
+            workspace__slug=slug, project_id=project_id
+        )
+
+        filters = issue_filters(request.query_params, "GET")
+
+        # Custom ordering for priority and state
+        priority_order = ["urgent", "high", "medium", "low", "none"]
+        state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
+
+        order_by_param = request.GET.get("order_by", "-created_at")
+
+        issue_queryset = (
+            Issue.issue_objects.annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
             )
-
-            filters = issue_filters(request.query_params, "GET")
-
-            # Custom ordering for priority and state
-            priority_order = ["urgent", "high", "medium", "low", "none"]
-            state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
-
-            order_by_param = request.GET.get("order_by", "-created_at")
-
-            issue_queryset = (
-                Issue.issue_objects.annotate(
-                    sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-                    .order_by()
-                    .annotate(count=Func(F("id"), function="Count"))
-                    .values("count")
-                )
-                .filter(project_id=project_id)
-                .filter(workspace__slug=slug)
-                .select_related("project", "workspace", "state", "parent")
-                .prefetch_related("assignees", "labels")
-                .prefetch_related(
-                    Prefetch(
-                        "issue_reactions",
-                        queryset=IssueReaction.objects.select_related("actor"),
-                    )
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "votes",
-                        queryset=IssueVote.objects.select_related("actor"),
-                    )
-                )
-                .filter(**filters)
-                .annotate(cycle_id=F("issue_cycle__cycle_id"))
-                .annotate(module_id=F("issue_module__module_id"))
-                .annotate(
-                    link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                    .order_by()
-                    .annotate(count=Func(F("id"), function="Count"))
-                    .values("count")
-                )
-                .annotate(
-                    attachment_count=IssueAttachment.objects.filter(
-                        issue=OuterRef("id")
-                    )
-                    .order_by()
-                    .annotate(count=Func(F("id"), function="Count"))
-                    .values("count")
+            .filter(project_id=project_id)
+            .filter(workspace__slug=slug)
+            .select_related("project", "workspace", "state", "parent")
+            .prefetch_related("assignees", "labels")
+            .prefetch_related(
+                Prefetch(
+                    "issue_reactions",
+                    queryset=IssueReaction.objects.select_related("actor"),
                 )
             )
-
-            # Priority Ordering
-            if order_by_param == "priority" or order_by_param == "-priority":
-                priority_order = (
-                    priority_order
-                    if order_by_param == "priority"
-                    else priority_order[::-1]
+            .prefetch_related(
+                Prefetch(
+                    "votes",
+                    queryset=IssueVote.objects.select_related("actor"),
                 )
-                issue_queryset = issue_queryset.annotate(
-                    priority_order=Case(
-                        *[
-                            When(priority=p, then=Value(i))
-                            for i, p in enumerate(priority_order)
-                        ],
-                        output_field=CharField(),
-                    )
-                ).order_by("priority_order")
-
-            # State Ordering
-            elif order_by_param in [
-                "state__name",
-                "state__group",
-                "-state__name",
-                "-state__group",
-            ]:
-                state_order = (
-                    state_order
-                    if order_by_param in ["state__name", "state__group"]
-                    else state_order[::-1]
-                )
-                issue_queryset = issue_queryset.annotate(
-                    state_order=Case(
-                        *[
-                            When(state__group=state_group, then=Value(i))
-                            for i, state_group in enumerate(state_order)
-                        ],
-                        default=Value(len(state_order)),
-                        output_field=CharField(),
-                    )
-                ).order_by("state_order")
-            # assignee and label ordering
-            elif order_by_param in [
-                "labels__name",
-                "-labels__name",
-                "assignees__first_name",
-                "-assignees__first_name",
-            ]:
-                issue_queryset = issue_queryset.annotate(
-                    max_values=Max(
-                        order_by_param[1::]
-                        if order_by_param.startswith("-")
-                        else order_by_param
-                    )
-                ).order_by(
-                    "-max_values" if order_by_param.startswith("-") else "max_values"
-                )
-            else:
-                issue_queryset = issue_queryset.order_by(order_by_param)
-
-            issues = IssuePublicSerializer(issue_queryset, many=True).data
-
-            state_group_order = [
-                "backlog",
-                "unstarted",
-                "started",
-                "completed",
-                "cancelled",
-            ]
-
-            states = (
-                State.objects.filter(
-                    ~Q(name="Triage"),
-                    workspace__slug=slug,
-                    project_id=project_id,
-                )
-                .annotate(
-                    custom_order=Case(
-                        *[
-                            When(group=value, then=Value(index))
-                            for index, value in enumerate(state_group_order)
-                        ],
-                        default=Value(len(state_group_order)),
-                        output_field=IntegerField(),
-                    ),
-                )
-                .values("name", "group", "color", "id")
-                .order_by("custom_order", "sequence")
             )
-
-            labels = Label.objects.filter(
-                workspace__slug=slug, project_id=project_id
-            ).values("id", "name", "color", "parent")
-
-            ## Grouping the results
-            group_by = request.GET.get("group_by", False)
-            if group_by:
-                issues = group_results(issues, group_by)
-
-            return Response(
-                {
-                    "issues": issues,
-                    "states": states,
-                    "labels": labels,
-                },
-                status=status.HTTP_200_OK,
+            .filter(**filters)
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(module_id=F("issue_module__module_id"))
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
             )
-        except ProjectDeployBoard.DoesNotExist:
-            return Response(
-                {"error": "Board does not exists"}, status=status.HTTP_404_NOT_FOUND
+            .annotate(
+                attachment_count=IssueAttachment.objects.filter(
+                    issue=OuterRef("id")
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
             )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
+        )
+
+        # Priority Ordering
+        if order_by_param == "priority" or order_by_param == "-priority":
+            priority_order = (
+                priority_order
+                if order_by_param == "priority"
+                else priority_order[::-1]
             )
+            issue_queryset = issue_queryset.annotate(
+                priority_order=Case(
+                    *[
+                        When(priority=p, then=Value(i))
+                        for i, p in enumerate(priority_order)
+                    ],
+                    output_field=CharField(),
+                )
+            ).order_by("priority_order")
+
+        # State Ordering
+        elif order_by_param in [
+            "state__name",
+            "state__group",
+            "-state__name",
+            "-state__group",
+        ]:
+            state_order = (
+                state_order
+                if order_by_param in ["state__name", "state__group"]
+                else state_order[::-1]
+            )
+            issue_queryset = issue_queryset.annotate(
+                state_order=Case(
+                    *[
+                        When(state__group=state_group, then=Value(i))
+                        for i, state_group in enumerate(state_order)
+                    ],
+                    default=Value(len(state_order)),
+                    output_field=CharField(),
+                )
+            ).order_by("state_order")
+        # assignee and label ordering
+        elif order_by_param in [
+            "labels__name",
+            "-labels__name",
+            "assignees__first_name",
+            "-assignees__first_name",
+        ]:
+            issue_queryset = issue_queryset.annotate(
+                max_values=Max(
+                    order_by_param[1::]
+                    if order_by_param.startswith("-")
+                    else order_by_param
+                )
+            ).order_by(
+                "-max_values" if order_by_param.startswith("-") else "max_values"
+            )
+        else:
+            issue_queryset = issue_queryset.order_by(order_by_param)
+
+        issues = IssuePublicSerializer(issue_queryset, many=True).data
+
+        state_group_order = [
+            "backlog",
+            "unstarted",
+            "started",
+            "completed",
+            "cancelled",
+        ]
+
+        states = (
+            State.objects.filter(
+                ~Q(name="Triage"),
+                workspace__slug=slug,
+                project_id=project_id,
+            )
+            .annotate(
+                custom_order=Case(
+                    *[
+                        When(group=value, then=Value(index))
+                        for index, value in enumerate(state_group_order)
+                    ],
+                    default=Value(len(state_group_order)),
+                    output_field=IntegerField(),
+                ),
+            )
+            .values("name", "group", "color", "id")
+            .order_by("custom_order", "sequence")
+        )
+
+        labels = Label.objects.filter(
+            workspace__slug=slug, project_id=project_id
+        ).values("id", "name", "color", "parent")
+
+        ## Grouping the results
+        group_by = request.GET.get("group_by", False)
+        if group_by:
+            issues = group_results(issues, group_by)
+
+        return Response(
+            {
+                "issues": issues,
+                "states": states,
+                "labels": labels,
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 class IssueDraftViewSet(BaseViewSet):
@@ -2455,112 +2107,103 @@ class IssueDraftViewSet(BaseViewSet):
 
     @method_decorator(gzip_page)
     def list(self, request, slug, project_id):
-        try:
-            filters = issue_filters(request.query_params, "GET")
+        filters = issue_filters(request.query_params, "GET")
 
-            # Custom ordering for priority and state
-            priority_order = ["urgent", "high", "medium", "low", "none"]
-            state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
+        # Custom ordering for priority and state
+        priority_order = ["urgent", "high", "medium", "low", "none"]
+        state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
 
-            order_by_param = request.GET.get("order_by", "-created_at")
+        order_by_param = request.GET.get("order_by", "-created_at")
 
-            issue_queryset = (
-                self.get_queryset()
-                .filter(**filters)
-                .annotate(cycle_id=F("issue_cycle__cycle_id"))
-                .annotate(module_id=F("issue_module__module_id"))
-                .annotate(
-                    link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                    .order_by()
-                    .annotate(count=Func(F("id"), function="Count"))
-                    .values("count")
-                )
-                .annotate(
-                    attachment_count=IssueAttachment.objects.filter(
-                        issue=OuterRef("id")
-                    )
-                    .order_by()
-                    .annotate(count=Func(F("id"), function="Count"))
-                    .values("count")
-                )
+        issue_queryset = (
+            self.get_queryset()
+            .filter(**filters)
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(module_id=F("issue_module__module_id"))
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
             )
-
-            # Priority Ordering
-            if order_by_param == "priority" or order_by_param == "-priority":
-                priority_order = (
-                    priority_order
-                    if order_by_param == "priority"
-                    else priority_order[::-1]
+            .annotate(
+                attachment_count=IssueAttachment.objects.filter(
+                    issue=OuterRef("id")
                 )
-                issue_queryset = issue_queryset.annotate(
-                    priority_order=Case(
-                        *[
-                            When(priority=p, then=Value(i))
-                            for i, p in enumerate(priority_order)
-                        ],
-                        output_field=CharField(),
-                    )
-                ).order_by("priority_order")
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+        )
 
-            # State Ordering
-            elif order_by_param in [
-                "state__name",
-                "state__group",
-                "-state__name",
-                "-state__group",
-            ]:
-                state_order = (
-                    state_order
-                    if order_by_param in ["state__name", "state__group"]
-                    else state_order[::-1]
+        # Priority Ordering
+        if order_by_param == "priority" or order_by_param == "-priority":
+            priority_order = (
+                priority_order
+                if order_by_param == "priority"
+                else priority_order[::-1]
+            )
+            issue_queryset = issue_queryset.annotate(
+                priority_order=Case(
+                    *[
+                        When(priority=p, then=Value(i))
+                        for i, p in enumerate(priority_order)
+                    ],
+                    output_field=CharField(),
                 )
-                issue_queryset = issue_queryset.annotate(
-                    state_order=Case(
-                        *[
-                            When(state__group=state_group, then=Value(i))
-                            for i, state_group in enumerate(state_order)
-                        ],
-                        default=Value(len(state_order)),
-                        output_field=CharField(),
-                    )
-                ).order_by("state_order")
-            # assignee and label ordering
-            elif order_by_param in [
-                "labels__name",
-                "-labels__name",
-                "assignees__first_name",
-                "-assignees__first_name",
-            ]:
-                issue_queryset = issue_queryset.annotate(
-                    max_values=Max(
-                        order_by_param[1::]
-                        if order_by_param.startswith("-")
-                        else order_by_param
-                    )
-                ).order_by(
-                    "-max_values" if order_by_param.startswith("-") else "max_values"
+            ).order_by("priority_order")
+
+        # State Ordering
+        elif order_by_param in [
+            "state__name",
+            "state__group",
+            "-state__name",
+            "-state__group",
+        ]:
+            state_order = (
+                state_order
+                if order_by_param in ["state__name", "state__group"]
+                else state_order[::-1]
+            )
+            issue_queryset = issue_queryset.annotate(
+                state_order=Case(
+                    *[
+                        When(state__group=state_group, then=Value(i))
+                        for i, state_group in enumerate(state_order)
+                    ],
+                    default=Value(len(state_order)),
+                    output_field=CharField(),
                 )
-            else:
-                issue_queryset = issue_queryset.order_by(order_by_param)
-
-            issues = IssueLiteSerializer(issue_queryset, many=True).data
-
-            ## Grouping the results
-            group_by = request.GET.get("group_by", False)
-            if group_by:
-                return Response(
-                    group_results(issues, group_by), status=status.HTTP_200_OK
+            ).order_by("state_order")
+        # assignee and label ordering
+        elif order_by_param in [
+            "labels__name",
+            "-labels__name",
+            "assignees__first_name",
+            "-assignees__first_name",
+        ]:
+            issue_queryset = issue_queryset.annotate(
+                max_values=Max(
+                    order_by_param[1::]
+                    if order_by_param.startswith("-")
+                    else order_by_param
                 )
+            ).order_by(
+                "-max_values" if order_by_param.startswith("-") else "max_values"
+            )
+        else:
+            issue_queryset = issue_queryset.order_by(order_by_param)
 
-            return Response(issues, status=status.HTTP_200_OK)
+        issues = IssueLiteSerializer(issue_queryset, many=True).data
 
-        except Exception as e:
-            capture_exception(e)
+        ## Grouping the results
+        group_by = request.GET.get("group_by", False)
+        if group_by:
             return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
+                group_results(issues, group_by), status=status.HTTP_200_OK
             )
 
+        return Response(issues, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id):
         try:
@@ -2598,44 +2241,32 @@ class IssueDraftViewSet(BaseViewSet):
 
 
     def partial_update(self, request, slug, project_id, pk):
-        try:
-            issue = Issue.objects.get(
-                workspace__slug=slug, project_id=project_id, pk=pk
-            )
-            serializer = IssueSerializer(
-                issue, data=request.data, partial=True
-            )
+        issue = Issue.objects.get(
+            workspace__slug=slug, project_id=project_id, pk=pk
+        )
+        serializer = IssueSerializer(
+            issue, data=request.data, partial=True
+        )
 
-            if serializer.is_valid():
-                if(request.data.get("is_draft") is not None and not request.data.get("is_draft")):
-                    serializer.save(created_at=timezone.now(), updated_at=timezone.now())
-                else:
-                    serializer.save()
-                issue_activity.delay(
-                    type="issue_draft.activity.updated",
-                    requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
-                    actor_id=str(self.request.user.id),
-                    issue_id=str(self.kwargs.get("pk", None)),
-                    project_id=str(self.kwargs.get("project_id", None)),
-                    current_instance=json.dumps(
-                        IssueSerializer(issue).data,
-                        cls=DjangoJSONEncoder,
-                    ),
-                    epoch=int(timezone.now().timestamp())
-                )
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Issue.DoesNotExist:
-            return Response(
-                {"error": "Issue does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
+        if serializer.is_valid():
+            if(request.data.get("is_draft") is not None and not request.data.get("is_draft")):
+                serializer.save(created_at=timezone.now(), updated_at=timezone.now())
+            else:
+                serializer.save()
+            issue_activity.delay(
+                type="issue_draft.activity.updated",
+                requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("pk", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    IssueSerializer(issue).data,
+                    cls=DjangoJSONEncoder,
+                ),
+                epoch=int(timezone.now().timestamp())
             )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
     def retrieve(self, request, slug, project_id, pk=None):

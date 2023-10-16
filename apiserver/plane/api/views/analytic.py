@@ -28,81 +28,73 @@ class AnalyticsEndpoint(BaseAPIView):
     ]
 
     def get(self, request, slug):
-        try:
-            x_axis = request.GET.get("x_axis", False)
-            y_axis = request.GET.get("y_axis", False)
+        x_axis = request.GET.get("x_axis", False)
+        y_axis = request.GET.get("y_axis", False)
 
-            if not x_axis or not y_axis:
-                return Response(
-                    {"error": "x-axis and y-axis dimensions are required"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            segment = request.GET.get("segment", False)
-            filters = issue_filters(request.GET, "GET")
-
-            queryset = Issue.issue_objects.filter(workspace__slug=slug, **filters)
-
-            total_issues = queryset.count()
-            distribution = build_graph_plot(
-                queryset=queryset, x_axis=x_axis, y_axis=y_axis, segment=segment
-            )
-
-            colors = dict()
-            if x_axis in ["state__name", "state__group"] or segment in [
-                "state__name",
-                "state__group",
-            ]:
-                if x_axis in ["state__name", "state__group"]:
-                    key = "name" if x_axis == "state__name" else "group"
-                else:
-                    key = "name" if segment == "state__name" else "group"
-
-                colors = (
-                    State.objects.filter(
-                        ~Q(name="Triage"),
-                        workspace__slug=slug, project_id__in=filters.get("project__in")
-                    ).values(key, "color")
-                    if filters.get("project__in", False)
-                    else State.objects.filter(~Q(name="Triage"), workspace__slug=slug).values(key, "color")
-                )
-
-            if x_axis in ["labels__name"] or segment in ["labels__name"]:
-                colors = (
-                    Label.objects.filter(
-                        workspace__slug=slug, project_id__in=filters.get("project__in")
-                    ).values("name", "color")
-                    if filters.get("project__in", False)
-                    else Label.objects.filter(workspace__slug=slug).values(
-                        "name", "color"
-                    )
-                )
-
-            assignee_details = {}
-            if x_axis in ["assignees__id"] or segment in ["assignees__id"]:
-                assignee_details = (
-                    Issue.issue_objects.filter(workspace__slug=slug, **filters, assignees__avatar__isnull=False)
-                    .order_by("assignees__id")
-                    .distinct("assignees__id")
-                    .values("assignees__avatar", "assignees__display_name", "assignees__first_name", "assignees__last_name", "assignees__id")
-                )
-
-
+        if not x_axis or not y_axis:
             return Response(
-                {
-                    "total": total_issues,
-                    "distribution": distribution,
-                    "extras": {"colors": colors, "assignee_details": assignee_details},
-                },
-                status=status.HTTP_200_OK,
-            )
-
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
+                {"error": "x-axis and y-axis dimensions are required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        segment = request.GET.get("segment", False)
+        filters = issue_filters(request.GET, "GET")
+
+        queryset = Issue.issue_objects.filter(workspace__slug=slug, **filters)
+
+        total_issues = queryset.count()
+        distribution = build_graph_plot(
+            queryset=queryset, x_axis=x_axis, y_axis=y_axis, segment=segment
+        )
+
+        colors = dict()
+        if x_axis in ["state__name", "state__group"] or segment in [
+            "state__name",
+            "state__group",
+        ]:
+            if x_axis in ["state__name", "state__group"]:
+                key = "name" if x_axis == "state__name" else "group"
+            else:
+                key = "name" if segment == "state__name" else "group"
+
+            colors = (
+                State.objects.filter(
+                    ~Q(name="Triage"),
+                    workspace__slug=slug, project_id__in=filters.get("project__in")
+                ).values(key, "color")
+                if filters.get("project__in", False)
+                else State.objects.filter(~Q(name="Triage"), workspace__slug=slug).values(key, "color")
+            )
+
+        if x_axis in ["labels__name"] or segment in ["labels__name"]:
+            colors = (
+                Label.objects.filter(
+                    workspace__slug=slug, project_id__in=filters.get("project__in")
+                ).values("name", "color")
+                if filters.get("project__in", False)
+                else Label.objects.filter(workspace__slug=slug).values(
+                    "name", "color"
+                )
+            )
+
+        assignee_details = {}
+        if x_axis in ["assignees__id"] or segment in ["assignees__id"]:
+            assignee_details = (
+                Issue.issue_objects.filter(workspace__slug=slug, **filters, assignees__avatar__isnull=False)
+                .order_by("assignees__id")
+                .distinct("assignees__id")
+                .values("assignees__avatar", "assignees__display_name", "assignees__first_name", "assignees__last_name", "assignees__id")
+            )
+
+
+        return Response(
+            {
+                "total": total_issues,
+                "distribution": distribution,
+                "extras": {"colors": colors, "assignee_details": assignee_details},
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 class AnalyticViewViewset(BaseViewSet):
@@ -128,44 +120,31 @@ class SavedAnalyticEndpoint(BaseAPIView):
     ]
 
     def get(self, request, slug, analytic_id):
-        try:
-            analytic_view = AnalyticView.objects.get(
-                pk=analytic_id, workspace__slug=slug
-            )
+        analytic_view = AnalyticView.objects.get(
+            pk=analytic_id, workspace__slug=slug
+        )
 
-            filter = analytic_view.query
-            queryset = Issue.issue_objects.filter(**filter)
+        filter = analytic_view.query
+        queryset = Issue.issue_objects.filter(**filter)
 
-            x_axis = analytic_view.query_dict.get("x_axis", False)
-            y_axis = analytic_view.query_dict.get("y_axis", False)
+        x_axis = analytic_view.query_dict.get("x_axis", False)
+        y_axis = analytic_view.query_dict.get("y_axis", False)
 
-            if not x_axis or not y_axis:
-                return Response(
-                    {"error": "x-axis and y-axis dimensions are required"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            segment = request.GET.get("segment", False)
-            distribution = build_graph_plot(
-                queryset=queryset, x_axis=x_axis, y_axis=y_axis, segment=segment
-            )
-            total_issues = queryset.count()
+        if not x_axis or not y_axis:
             return Response(
-                {"total": total_issues, "distribution": distribution},
-                status=status.HTTP_200_OK,
-            )
-
-        except AnalyticView.DoesNotExist:
-            return Response(
-                {"error": "Analytic View Does not exist"},
+                {"error": "x-axis and y-axis dimensions are required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+
+        segment = request.GET.get("segment", False)
+        distribution = build_graph_plot(
+            queryset=queryset, x_axis=x_axis, y_axis=y_axis, segment=segment
+        )
+        total_issues = queryset.count()
+        return Response(
+            {"total": total_issues, "distribution": distribution},
+            status=status.HTTP_200_OK,
+        )
 
 
 class ExportAnalyticsEndpoint(BaseAPIView):
@@ -174,32 +153,25 @@ class ExportAnalyticsEndpoint(BaseAPIView):
     ]
 
     def post(self, request, slug):
-        try:
-            x_axis = request.data.get("x_axis", False)
-            y_axis = request.data.get("y_axis", False)
+        x_axis = request.data.get("x_axis", False)
+        y_axis = request.data.get("y_axis", False)
 
-            if not x_axis or not y_axis:
-                return Response(
-                    {"error": "x-axis and y-axis dimensions are required"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            analytic_export_task.delay(
-                email=request.user.email, data=request.data, slug=slug
-            )
-
+        if not x_axis or not y_axis:
             return Response(
-                {
-                    "message": f"Once the export is ready it will be emailed to you at {str(request.user.email)}"
-                },
-                status=status.HTTP_200_OK,
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
+                {"error": "x-axis and y-axis dimensions are required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        analytic_export_task.delay(
+            email=request.user.email, data=request.data, slug=slug
+        )
+
+        return Response(
+            {
+                "message": f"Once the export is ready it will be emailed to you at {str(request.user.email)}"
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 class DefaultAnalyticsEndpoint(BaseAPIView):
@@ -208,90 +180,82 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
     ]
 
     def get(self, request, slug):
-        try:
-            filters = issue_filters(request.GET, "GET")
+        filters = issue_filters(request.GET, "GET")
 
-            queryset = Issue.issue_objects.filter(workspace__slug=slug, **filters)
+        queryset = Issue.issue_objects.filter(workspace__slug=slug, **filters)
 
-            total_issues = queryset.count()
+        total_issues = queryset.count()
 
-            total_issues_classified = (
-                queryset.annotate(state_group=F("state__group"))
-                .values("state_group")
-                .annotate(state_count=Count("state_group"))
-                .order_by("state_group")
-            )
+        total_issues_classified = (
+            queryset.annotate(state_group=F("state__group"))
+            .values("state_group")
+            .annotate(state_count=Count("state_group"))
+            .order_by("state_group")
+        )
 
-            open_issues = queryset.filter(
+        open_issues = queryset.filter(
+            state__group__in=["backlog", "unstarted", "started"]
+        ).count()
+
+        open_issues_classified = (
+            queryset.filter(state__group__in=["backlog", "unstarted", "started"])
+            .annotate(state_group=F("state__group"))
+            .values("state_group")
+            .annotate(state_count=Count("state_group"))
+            .order_by("state_group")
+        )
+
+        issue_completed_month_wise = (
+            queryset.filter(completed_at__isnull=False)
+            .annotate(month=ExtractMonth("completed_at"))
+            .values("month")
+            .annotate(count=Count("*"))
+            .order_by("month")
+        )
+        most_issue_created_user = (
+            queryset.exclude(created_by=None)
+            .values("created_by__first_name", "created_by__last_name", "created_by__avatar", "created_by__display_name", "created_by__id")
+            .annotate(count=Count("id"))
+            .order_by("-count")
+        )[:5]
+
+        most_issue_closed_user = (
+            queryset.filter(completed_at__isnull=False, assignees__isnull=False)
+            .values("assignees__first_name", "assignees__last_name", "assignees__avatar", "assignees__display_name", "assignees__id")
+            .annotate(count=Count("id"))
+            .order_by("-count")
+        )[:5]
+
+        pending_issue_user = (
+            queryset.filter(completed_at__isnull=True)
+            .values("assignees__first_name", "assignees__last_name", "assignees__avatar", "assignees__display_name", "assignees__id")
+            .annotate(count=Count("id"))
+            .order_by("-count")
+        )
+
+        open_estimate_sum = (
+            queryset.filter(
                 state__group__in=["backlog", "unstarted", "started"]
-            ).count()
+            ).aggregate(open_estimate_sum=Sum("estimate_point"))
+        )["open_estimate_sum"]
+        print(open_estimate_sum)
+        
+        total_estimate_sum = queryset.aggregate(
+            total_estimate_sum=Sum("estimate_point")
+        )["total_estimate_sum"]
 
-            open_issues_classified = (
-                queryset.filter(state__group__in=["backlog", "unstarted", "started"])
-                .annotate(state_group=F("state__group"))
-                .values("state_group")
-                .annotate(state_count=Count("state_group"))
-                .order_by("state_group")
-            )
-
-            issue_completed_month_wise = (
-                queryset.filter(completed_at__isnull=False)
-                .annotate(month=ExtractMonth("completed_at"))
-                .values("month")
-                .annotate(count=Count("*"))
-                .order_by("month")
-            )
-            most_issue_created_user = (
-                queryset.exclude(created_by=None)
-                .values("created_by__first_name", "created_by__last_name", "created_by__avatar", "created_by__display_name", "created_by__id")
-                .annotate(count=Count("id"))
-                .order_by("-count")
-            )[:5]
-
-            most_issue_closed_user = (
-                queryset.filter(completed_at__isnull=False, assignees__isnull=False)
-                .values("assignees__first_name", "assignees__last_name", "assignees__avatar", "assignees__display_name", "assignees__id")
-                .annotate(count=Count("id"))
-                .order_by("-count")
-            )[:5]
-
-            pending_issue_user = (
-                queryset.filter(completed_at__isnull=True)
-                .values("assignees__first_name", "assignees__last_name", "assignees__avatar", "assignees__display_name", "assignees__id")
-                .annotate(count=Count("id"))
-                .order_by("-count")
-            )
-
-            open_estimate_sum = (
-                queryset.filter(
-                    state__group__in=["backlog", "unstarted", "started"]
-                ).aggregate(open_estimate_sum=Sum("estimate_point"))
-            )["open_estimate_sum"]
-            print(open_estimate_sum)
-            
-            total_estimate_sum = queryset.aggregate(
-                total_estimate_sum=Sum("estimate_point")
-            )["total_estimate_sum"]
-
-            return Response(
-                {
-                    "total_issues": total_issues,
-                    "total_issues_classified": total_issues_classified,
-                    "open_issues": open_issues,
-                    "open_issues_classified": open_issues_classified,
-                    "issue_completed_month_wise": issue_completed_month_wise,
-                    "most_issue_created_user": most_issue_created_user,
-                    "most_issue_closed_user": most_issue_closed_user,
-                    "pending_issue_user": pending_issue_user,
-                    "open_estimate_sum": open_estimate_sum,
-                    "total_estimate_sum": total_estimate_sum,
-                },
-                status=status.HTTP_200_OK,
-            )
-
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        return Response(
+            {
+                "total_issues": total_issues,
+                "total_issues_classified": total_issues_classified,
+                "open_issues": open_issues,
+                "open_issues_classified": open_issues_classified,
+                "issue_completed_month_wise": issue_completed_month_wise,
+                "most_issue_created_user": most_issue_created_user,
+                "most_issue_closed_user": most_issue_closed_user,
+                "pending_issue_user": pending_issue_user,
+                "open_estimate_sum": open_estimate_sum,
+                "total_estimate_sum": total_estimate_sum,
+            },
+            status=status.HTTP_200_OK,
+        )
