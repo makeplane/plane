@@ -33,8 +33,6 @@
   "dependencies": {
     "@blueprintjs/core": "^4.16.3",
     "@blueprintjs/popover2": "^1.13.3",
-    "@headlessui/react": "^1.7.17",
-    "clsx": "^2.0.0",
-    "next-themes": "^0.2.1"
+    "@headlessui/react": "^1.7.17"
   }
 }
