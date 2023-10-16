@@ -1,17 +1,20 @@
 import { FC } from "react";
+// components
+import { CyclesListItem } from "./cycles-list-item";
 // ui
 import { Loader } from "@plane/ui";
 // types
 import { ICycle } from "types";
-import { CyclesListItem } from "./cycles-list-item";
 
 export interface ICyclesList {
   cycles: ICycle[];
   filter: string;
+  workspaceSlug: string;
+  projectId: string;
 }
 
 export const CyclesList: FC<ICyclesList> = (props) => {
-  const { cycles, filter } = props;
+  const { cycles, filter, workspaceSlug, projectId } = props;
 
   return (
     <div>
@@ -22,7 +25,7 @@ export const CyclesList: FC<ICyclesList> = (props) => {
               {cycles.map((cycle) => (
                 <div className="hover:bg-custom-background-80" key={cycle.id}>
                   <div className="flex flex-col border-custom-border-200">
-                    <CyclesListItem cycle={cycle} />
+                    <CyclesListItem cycle={cycle} workspaceSlug={workspaceSlug} projectId={projectId} />
                   </div>
                 </div>
               ))}

@@ -1,11 +1,14 @@
-import React, { FC } from "react";
+import { FC, MouseEvent, useState } from "react";
+// next imports
 import Link from "next/link";
-import { useRouter } from "next/router";
+// headless ui
 import { Disclosure, Transition } from "@headlessui/react";
 // hooks
 import useToast from "hooks/use-toast";
 // components
 import { SingleProgressStats } from "components/core";
+import { CycleCreateEditModal } from "./cycle-create-edit-modal";
+import { CycleDeleteModal } from "./cycle-delete-modal";
 // ui
 import { CustomMenu } from "components/ui";
 import { AssigneesList } from "components/ui/avatar";
@@ -26,6 +29,8 @@ import { getDateRangeStatus, renderShortDateWithYearFormat, findHowManyDaysLeft 
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
 import { ICycle } from "types";
+// store
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const stateGroups = [
   {
@@ -56,15 +61,23 @@ const stateGroups = [
 ];
 
 export interface ICyclesBoardCard {
+  workspaceSlug: string;
+  projectId: string;
   cycle: ICycle;
-  filter: string;
 }
 
 export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
-  const { cycle } = props;
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { cycle, workspaceSlug, projectId } = props;
+
+  const [updateModal, setUpdateModal] = useState(false);
+  const updateModalCallback = () => {};
+
+  const [deleteModal, setDeleteModal] = useState(false);
+  const deleteModalCallback = () => {};
+
+  // store
+  const { cycle: cycleStore } = useMobxStore();
+
   // toast
   const { setToastAlert } = useToast();
 
@@ -100,14 +113,52 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
     cancelled: cycle.cancelled_issues,
   };
 
-  const handleRemoveFromFavorites = () => {};
-  const handleAddToFavorites = () => {};
+  const handleAddToFavorites = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (!workspaceSlug || !projectId) return;
 
-  const handleEditCycle = () => {};
-  const handleDeleteCycle = () => {};
+    cycleStore.addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycle.id).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Couldn't add the cycle to favorites. Please try again.",
+      });
+    });
+  };
+
+  const handleRemoveFromFavorites = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (!workspaceSlug || !projectId) return;
+
+    cycleStore.removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycle.id).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Couldn't add the cycle to favorites. Please try again.",
+      });
+    });
+  };
 
   return (
     <div>
+      <CycleCreateEditModal
+        cycle={cycle}
+        modal={updateModal}
+        modalClose={() => setUpdateModal(false)}
+        onSubmit={updateModalCallback}
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+      />
+
+      <CycleDeleteModal
+        cycle={cycle}
+        modal={deleteModal}
+        modalClose={() => setDeleteModal(false)}
+        onSubmit={deleteModalCallback}
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+      />
+
       <div className="flex flex-col rounded-[10px] bg-custom-background-100 border border-custom-border-200 text-xs shadow">
         <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
           <a className="w-full">
@@ -241,7 +292,10 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
                 <div className="flex items-center">
                   {!isCompleted && (
                     <button
-                      onClick={handleEditCycle}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setUpdateModal(true);
+                      }}
                       className="cursor-pointer rounded p-1 text-custom-text-200 duration-300 hover:bg-custom-background-80"
                     >
                       <PencilIcon className="h-4 w-4" />
@@ -250,7 +304,12 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
 
                   <CustomMenu width="auto" verticalEllipsis>
                     {!isCompleted && (
-                      <CustomMenu.MenuItem onClick={handleDeleteCycle}>
+                      <CustomMenu.MenuItem
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setDeleteModal(true);
+                        }}
+                      >
                         <span className="flex items-center justify-start gap-2">
                           <TrashIcon className="h-4 w-4" />
                           <span>Delete cycle</span>
