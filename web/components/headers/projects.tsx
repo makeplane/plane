@@ -39,10 +39,10 @@ export const ProjectsHeader = observer(() => {
         </div>
       </div>
       <div className="flex items-center gap-3">
-        <div className="flex w-full gap-1 items-center justify-start rounded-md px-2 py-1.5 border border-custom-border-300 bg-custom-background-90">
-          <Search size={12} strokeWidth={2} />
+        <div className="flex w-full gap-1 items-center justify-start text-custom-text-400 rounded-md px-2.5 py-1.5 border border-custom-border-200 bg-custom-background-100">
+          <Search className="h-3.5 w-3.5" />
           <input
-            className="w-full border-none bg-transparent text-xs text-custom-text-200 focus:outline-none"
+            className="min-w-[234px] w-full border-none bg-transparent text-sm focus:outline-none"
             value={projectStore.searchQuery}
             onChange={(e) => projectStore.setSearchQuery(e.target.value)}
             placeholder="Search"
@@ -50,13 +50,13 @@ export const ProjectsHeader = observer(() => {
         </div>
 
         <Button
-          className="flex items-center gap-1 flex-shrink-0"
+          prependIcon={<Plus />}
+          size="md"
           onClick={() => {
             const e = new KeyboardEvent("keydown", { key: "p" });
             document.dispatchEvent(e);
           }}
         >
-          <Plus size={14} strokeWidth={3} />
           Add Project
         </Button>
       </div>

@@ -5,19 +5,20 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 // icons
-import { CalendarDays, Link2Icon, Pencil, Plus, Star, Trash2 } from "lucide-react";
+import { Globe2, LinkIcon, Lock, Pencil, Star } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Tooltip } from "@plane/ui";
+import { Button, Tooltip } from "@plane/ui";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
-import { copyTextToClipboard, truncateText } from "helpers/string.helper";
+import { copyTextToClipboard } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // types
 import type { IProject } from "types";
 // components
 import { DeleteProjectModal, JoinProjectModal } from "components/project";
+import { AssigneesList } from "components/ui";
 
 export type ProjectCardProps = {
   project: IProject;
@@ -75,6 +76,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
     });
   };
 
+  const projectMembersIds = project.members.map((member) => member.member_id);
+
   return (
     <>
       {/* Delete Project Modal  */}
@@ -83,6 +86,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
         isOpen={deleteProjectModalOpen}
         onClose={() => setDeleteProjectModal(false)}
       />
+      {/* Join Project Modal */}
       {workspaceSlug && (
         <JoinProjectModal
           workspaceSlug={workspaceSlug?.toString()}
@@ -93,123 +97,124 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
       )}
 
       {/* Card Information */}
-      <div className="flex flex-col rounded-[10px] bg-custom-background-90 shadow">
+      <div className="flex flex-col rounded bg-custom-background-100 shadow-custom-shadow-xs">
         <Link href={`/${workspaceSlug as string}/projects/${project.id}/issues`}>
           <a>
-            <div className="relative h-32 w-full rounded-t-[10px]">
+            <div className="relative h-[118px] w-full rounded-t ">
+              <div className="absolute z-[1] inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+
               <img
                 src={
                   project.cover_image ??
                   "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
                 }
                 alt={project.name}
-                className="absolute top-0 left-0 h-full w-full object-cover rounded-t-[10px]"
+                className="absolute top-0 left-0 h-full w-full object-cover rounded-t"
               />
-              <div className="absolute bottom-4 right-4 flex items-center gap-3 text-white">
-                {!project.is_member ? (
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setJoinProjectModal(true);
-                    }}
-                    className="flex cursor-pointer items-center gap-1 rounded bg-green-600 px-2 py-1 text-xs"
-                  >
-                    <Plus height={12} width={12} />
-                    <span>Select to Join</span>
-                  </button>
-                ) : (
-                  <span className="cursor-default rounded bg-green-600 px-2 py-1 text-xs">Joined</span>
-                )}
-              </div>
 
-              <div className="absolute top-4 right-4 bg-slate-300 rounded z-10">
-                <button
-                  className="grid h-6 w-9 place-items-center cursor-pointer"
-                  onClick={(e) => {
-                    if (project.is_favorite) {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleRemoveFromFavorites();
-                    } else {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleAddToFavorites();
-                    }
-                  }}
-                >
-                  <Star className={`h-3.5 w-3.5 ${project.is_favorite ? "text-orange-400" : ""} `} />
-                </button>
-              </div>
-              <div className="absolute bottom-4 left-4 bg-slate-300 rounded-md">
-                {project.emoji ? (
-                  <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                    {renderEmoji(project.emoji)}
-                  </span>
-                ) : project.icon_prop ? (
-                  renderEmoji(project.icon_prop)
-                ) : null}
-              </div>
-            </div>
-          </a>
-        </Link>
-        <div className="flex h-full flex-col rounded-b-[10px] p-4 text-custom-text-200">
-          <Link href={`/${workspaceSlug as string}/projects/${project.id}/issues`}>
-            <a>
-              <div className="flex items-center gap-1">
-                <h3 className="text-1.5xl font-medium text-custom-text-100">{project.name}</h3>
-              </div>
-              <p className="mt-3.5 mb-7 break-words">{truncateText(project.description ?? "", 100)}</p>
-            </a>
-          </Link>
-          <div className="flex h-full items-end justify-between">
-            <Tooltip
-              tooltipContent={`Created at ${renderShortDateWithYearFormat(project.created_at)}`}
-              position="bottom"
-            >
-              <div className="flex cursor-default items-center gap-1.5 text-xs">
-                <CalendarDays height={14} width={14} />
-                {renderShortDateWithYearFormat(project.created_at)}
-              </div>
-            </Tooltip>
-            {project.is_member ? (
-              <div className="flex items-center gap-1">
-                <div className="flex items-center justify-center p-1 hover:bg-custom-background-80 rounded">
+              <div className="absolute h-9 w-full bottom-4 z-10 flex items-center justify-between px-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="h-9 w-9 flex item-center justify-center rounded bg-white/90 flex-shrink-0">
+                    <span className="flex items-center justify-center">
+                      {project.emoji
+                        ? renderEmoji(project.emoji)
+                        : project.icon_prop
+                        ? renderEmoji(project.icon_prop)
+                        : null}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col justify-center h-9">
+                    <h3 className="text-sm text-white font-medium line-clamp-1">{project.name}</h3>
+                    <span className="flex items-center gap-1.5">
+                      <p className="text-xs text-white">
+                        Created on {renderShortDateWithYearFormat(project?.created_at)}
+                      </p>
+                      {project.network === 0 ? (
+                        <Lock className="h-3 w-3 text-white" />
+                      ) : (
+                        <Globe2 className="h-3 w-3 text-white" />
+                      )}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center h-full gap-2">
                   <button
+                    className="flex items-center justify-center h-6 w-6 rounded bg-white/30"
                     onClick={(e) => {
                       e.stopPropagation();
                       e.preventDefault();
                       handleCopyText();
                     }}
                   >
-                    <Link2Icon height={16} width={16} className="-rotate-45" />
+                    <LinkIcon className="h-3 w-3 text-white" />
+                  </button>
+                  <button
+                    className="flex items-center justify-center h-6 w-6 rounded bg-white/30"
+                    onClick={(e) => {
+                      if (project.is_favorite) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleRemoveFromFavorites();
+                      } else {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleAddToFavorites();
+                      }
+                    }}
+                  >
+                    <Star
+                      className={`h-3 w-3 ${project.is_favorite ? "fill-orange-400 text-transparent" : "text-white"} `}
+                    />
                   </button>
                 </div>
+              </div>
+            </div>
+
+            <div className="h-[104px] w-full flex flex-col justify-between p-4 rounded-b">
+              <p className="text-xs text-custom-text-200 break-words line-clamp-2">{project.description}</p>
+              <div className="flex item-center justify-between">
+                <Tooltip
+                  tooltipHeading="Members"
+                  tooltipContent={
+                    project.members && project.members.length > 0
+                      ? project.members.map((member) => member?.member__display_name).join(", ")
+                      : "No Assignee"
+                  }
+                  position="top"
+                >
+                  <div className="flex items-center cursor-pointer w-full gap-2 text-custom-text-200">
+                    <AssigneesList userIds={projectMembersIds} length={3} showLength={true} />
+                  </div>
+                </Tooltip>
                 {(isOwner || isMember) && (
                   <Link href={`/${workspaceSlug}/projects/${project.id}/settings`}>
-                    <a className="flex items-center justify-center p-1 hover:bg-custom-background-80 rounded">
-                      <Pencil height={16} width={16} />
+                    <a className="flex items-center justify-center p-1 text-custom-text-400 hover:bg-custom-background-80 hover:text-custom-text-200 rounded">
+                      <Pencil className="h-3.5 w-3.5" />
                     </a>
                   </Link>
                 )}
-                {isOwner && (
-                  <div className="flex items-center justify-center p-1 hover:bg-custom-background-80 rounded">
-                    <button
+
+                {!project.is_member ? (
+                  <div className="flex items-center">
+                    <Button
+                      variant="link-primary"
+                      className="!p-0"
                       onClick={(e) => {
-                        e.stopPropagation();
                         e.preventDefault();
-                        setDeleteProjectModal(true);
+                        e.stopPropagation();
+                        setJoinProjectModal(true);
                       }}
                     >
-                      <Trash2 height={16} width={16} />
-                    </button>
+                      Join
+                    </Button>
                   </div>
-                )}
+                ) : null}
               </div>
-            ) : null}
-          </div>
-        </div>
+            </div>
+          </a>
+        </Link>
       </div>
     </>
   );
