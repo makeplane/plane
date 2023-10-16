@@ -11,7 +11,7 @@ import useToast from "hooks/use-toast";
 // components
 import { SidebarProgressStats } from "components/core";
 import ProgressChart from "components/core/sidebar/progress-chart";
-import { DeleteCycleModal } from "components/cycles";
+import { CycleDeleteModal } from "components/cycles/cycle-delete-modal";
 // ui
 import { CustomMenu, CustomRangeDatePicker } from "components/ui";
 import { Loader, ProgressBar } from "@plane/ui";
@@ -49,7 +49,11 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId } = router.query;
+  const { workspaceSlug, projectId, cycleId } = router.query as {
+    workspaceSlug: string;
+    projectId: string;
+    cycleId: string;
+  };
 
   const { setToastAlert } = useToast();
 
@@ -261,7 +265,16 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
 
   return (
     <>
-      <DeleteCycleModal isOpen={cycleDeleteModal} setIsOpen={setCycleDeleteModal} data={cycle} user={user} />
+      {cycle && (
+        <CycleDeleteModal
+          cycle={cycle}
+          modal={cycleDeleteModal}
+          modalClose={() => setCycleDeleteModal(false)}
+          onSubmit={() => {}}
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+        />
+      )}
       <div
         className={`fixed top-[66px] z-20 ${
           isOpen ? "right-0" : "-right-[24rem]"
