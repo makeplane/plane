@@ -7,6 +7,7 @@ from datetime import datetime
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db.models import (
+    Prefetch,
     Q,
     Exists,
     OuterRef,
@@ -29,6 +30,7 @@ from sentry_sdk import capture_exception
 from .base import BaseViewSet, BaseAPIView
 from plane.api.serializers import (
     ProjectSerializer,
+    ProjectListSerializer,
     ProjectMemberSerializer,
     ProjectDetailSerializer,
     ProjectMemberInviteSerializer,
@@ -86,12 +88,6 @@ class ProjectViewSet(BaseViewSet):
         return ProjectDetailSerializer
 
     def get_queryset(self):
-        subquery = ProjectFavorite.objects.filter(
-            user=self.request.user,
-            project_id=OuterRef("pk"),
-            workspace__slug=self.kwargs.get("slug"),
-        )
-
         return self.filter_queryset(
             super()
             .get_queryset()
@@ -100,7 +96,15 @@ class ProjectViewSet(BaseViewSet):
             .select_related(
                 "workspace", "workspace__owner", "default_assignee", "project_lead"
             )
-            .annotate(is_favorite=Exists(subquery))
+            .annotate(
+                is_favorite=Exists(
+                    ProjectFavorite.objects.filter(
+                        user=self.request.user,
+                        project_id=OuterRef("pk"),
+                        workspace__slug=self.kwargs.get("slug"),
+                    )
+                )
+            )
             .annotate(
                 is_member=Exists(
                     ProjectMember.objects.filter(
@@ -149,12 +153,8 @@ class ProjectViewSet(BaseViewSet):
 
     def list(self, request, slug):
         try:
-            is_favorite = request.GET.get("is_favorite", "all")
-            subquery = ProjectFavorite.objects.filter(
-                user=self.request.user,
-                project_id=OuterRef("pk"),
-                workspace__slug=self.kwargs.get("slug"),
-            )
+            fields = [field for field in request.GET.get("fields", "").split(",") if field]
+
             sort_order_query = ProjectMember.objects.filter(
                 member=request.user,
                 project_id=OuterRef("pk"),
@@ -162,37 +162,31 @@ class ProjectViewSet(BaseViewSet):
             ).values("sort_order")
             projects = (
                 self.get_queryset()
-                .annotate(is_favorite=Exists(subquery))
                 .annotate(sort_order=Subquery(sort_order_query))
-                .order_by("sort_order", "name")
-                .annotate(
-                    total_members=ProjectMember.objects.filter(
-                        project_id=OuterRef("id")
+                .prefetch_related(
+                    Prefetch(
+                        "project_projectmember",
+                        queryset=ProjectMember.objects.filter(
+                            workspace__slug=slug,
+                        ).select_related("member"),
                     )
-                    .order_by()
-                    .annotate(count=Func(F("id"), function="Count"))
-                    .values("count")
                 )
-                .annotate(
-                    total_cycles=Cycle.objects.filter(project_id=OuterRef("id"))
-                    .order_by()
-                    .annotate(count=Func(F("id"), function="Count"))
-                    .values("count")
-                )
-                .annotate(
-                    total_modules=Module.objects.filter(project_id=OuterRef("id"))
-                    .order_by()
-                    .annotate(count=Func(F("id"), function="Count"))
-                    .values("count")
-                )
+                .order_by("sort_order", "name")
             )
+            if request.GET.get("per_page", False) and request.GET.get("cursor", False):
+                return self.paginate(
+                    request=request,
+                    queryset=(projects),
+                    on_results=lambda projects: ProjectListSerializer(
+                        projects, many=True
+                    ).data,
+                )
 
-            if is_favorite == "true":
-                projects = projects.filter(is_favorite=True)
-            if is_favorite == "false":
-                projects = projects.filter(is_favorite=False)
-
-            return Response(ProjectDetailSerializer(projects, many=True).data)
+            return Response(
+                ProjectListSerializer(
+                    projects, many=True, fields=fields if fields else None
+                ).data
+            )
         except Exception as e:
             capture_exception(e)
             return Response(
