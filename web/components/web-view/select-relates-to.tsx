@@ -1,33 +1,26 @@
-// react
 import React, { useState } from "react";
-
-// next
 import { useRouter } from "next/router";
-
-// swr
 import { mutate } from "swr";
 
 // services
-import issuesService from "services/issues.service";
-
+import { IssueService } from "services/issue";
 // hooks
 import useUser from "hooks/use-user";
-
 // fetch keys
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
-
 // icons
 import { ChevronDown } from "lucide-react";
-
 // components
 import { IssuesSelectBottomSheet } from "components/web-view";
-
 // types
 import { BlockeIssueDetail, ISearchIssueResponse } from "types";
 
 type Props = {
   disabled?: boolean;
 };
+
+// services
+const issueService = new IssueService();
 
 export const RelatesSelect: React.FC<Props> = (props) => {
   const { disabled = false } = props;
@@ -64,23 +57,17 @@ export const RelatesSelect: React.FC<Props> = (props) => {
       },
     }));
 
-    issuesService
-      .createIssueRelation(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        issueId.toString(),
-        user,
-        {
-          related_list: [
-            ...selectedIssues.map((issue) => ({
-              issue: issueId as string,
-              issue_detail: issue.blocker_issue_detail,
-              related_issue: issue.blocker_issue_detail.id,
-              relation_type: "relates_to" as const,
-            })),
-          ],
-        }
-      )
+    issueService
+      .createIssueRelation(workspaceSlug.toString(), projectId.toString(), issueId.toString(), user, {
+        related_list: [
+          ...selectedIssues.map((issue) => ({
+            issue: issueId as string,
+            issue_detail: issue.blocker_issue_detail,
+            related_issue: issue.blocker_issue_detail.id,
+            relation_type: "relates_to" as const,
+          })),
+        ],
+      })
       .then(() => {
         mutate(ISSUE_DETAILS(issueId as string));
         mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));

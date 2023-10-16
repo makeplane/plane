@@ -7,7 +7,7 @@ import useSWR from "swr";
 // react-popper
 import { usePopper } from "react-popper";
 // services
-import stateService from "services/state.service";
+import { ProjectStateService } from "services/project";
 // headless ui
 import { Combobox } from "@headlessui/react";
 // icons
@@ -34,6 +34,9 @@ type Props = {
   hideDropdownArrow?: boolean;
   disabled?: boolean;
 };
+
+// services
+const projectStateService = new ProjectStateService();
 
 export const StateSelect: React.FC<Props> = ({
   value,
@@ -63,7 +66,7 @@ export const StateSelect: React.FC<Props> = ({
   const { data: stateGroups } = useSWR(
     workspaceSlug && projectId && fetchStates ? STATES_LIST(projectId) : null,
     workspaceSlug && projectId && fetchStates
-      ? () => stateService.getStates(workspaceSlug as string, projectId)
+      ? () => projectStateService.getStates(workspaceSlug.toString(), projectId)
       : null
   );
 
@@ -81,16 +84,12 @@ export const StateSelect: React.FC<Props> = ({
   }));
 
   const filteredOptions =
-    query === ""
-      ? options
-      : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
+    query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const label = (
     <Tooltip tooltipHeading="State" tooltipContent={value?.name ?? ""} position="top">
       <div className="flex items-center cursor-pointer w-full gap-2 text-custom-text-200">
-        <span className="h-3.5 w-3.5">
-          {value && <StateGroupIcon stateGroup={value.group} color={value.color} />}
-        </span>
+        <span className="h-3.5 w-3.5">{value && <StateGroupIcon stateGroup={value.group} color={value.color} />}</span>
         <span className="truncate">{value?.name ?? "State"}</span>
       </div>
     </Tooltip>
@@ -116,15 +115,11 @@ export const StateSelect: React.FC<Props> = ({
                 ref={setReferenceElement}
                 type="button"
                 className={`flex items-center justify-between gap-1 w-full text-xs px-2.5 py-1 rounded-md shadow-sm border border-custom-border-300 duration-300 focus:outline-none ${
-                  disabled
-                    ? "cursor-not-allowed text-custom-text-200"
-                    : "cursor-pointer hover:bg-custom-background-80"
+                  disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
                 } ${buttonClassName}`}
               >
                 {label}
-                {!hideDropdownArrow && !disabled && (
-                  <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
-                )}
+                {!hideDropdownArrow && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
               </button>
             </Combobox.Button>
             <Combobox.Options>

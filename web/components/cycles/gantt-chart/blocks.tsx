@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 
 // ui
-import { Tooltip } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // icons
 import { ContrastIcon } from "components/icons";
 // helpers
@@ -44,9 +44,7 @@ export const CycleGanttBlock = ({ data }: { data: ICycle }) => {
         }
         position="top-left"
       >
-        <div className="relative text-custom-text-100 text-sm truncate py-1 px-2.5 w-full">
-          {data?.name}
-        </div>
+        <div className="relative text-custom-text-100 text-sm truncate py-1 px-2.5 w-full">{data?.name}</div>
       </Tooltip>
     </div>
   );

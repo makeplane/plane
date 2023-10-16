@@ -1,23 +1,20 @@
 import React, { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
-// react-hook-form
 import { useForm } from "react-hook-form";
 // headless ui
 import { Disclosure, Popover, Transition } from "@headlessui/react";
 // services
-import cyclesService from "services/cycles.service";
+import { CycleService } from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
 import { SidebarProgressStats } from "components/core";
 import ProgressChart from "components/core/sidebar/progress-chart";
-import { DeleteCycleModal } from "components/cycles";
+import { CycleDeleteModal } from "components/cycles/cycle-delete-modal";
 // ui
-import { CustomMenu, CustomRangeDatePicker, Loader, ProgressBar } from "components/ui";
+import { CustomMenu, CustomRangeDatePicker } from "components/ui";
+import { Loader, ProgressBar } from "@plane/ui";
 // icons
 import {
   CalendarDaysIcon,
@@ -32,13 +29,9 @@ import {
 import { ExclamationIcon } from "components/icons";
 // helpers
 import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
-import {
-  isDateGreaterThanToday,
-  renderDateFormat,
-  renderShortDateWithYearFormat,
-} from "helpers/date-time.helper";
+import { isDateGreaterThanToday, renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
-import { ICurrentUserResponse, ICycle } from "types";
+import { IUser, ICycle } from "types";
 // fetch-keys
 import { CYCLE_DETAILS } from "constants/fetch-keys";
 
@@ -47,20 +40,20 @@ type Props = {
   isOpen: boolean;
   cycleStatus: string;
   isCompleted: boolean;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
-export const CycleDetailsSidebar: React.FC<Props> = ({
-  cycle,
-  isOpen,
-  cycleStatus,
-  isCompleted,
-  user,
-}) => {
+const cycleService = new CycleService();
+
+export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatus, isCompleted, user }) => {
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId } = router.query;
+  const { workspaceSlug, projectId, cycleId } = router.query as {
+    workspaceSlug: string;
+    projectId: string;
+    cycleId: string;
+  };
 
   const { setToastAlert } = useToast();
 
@@ -76,21 +69,16 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
   const submitChanges = (data: Partial<ICycle>) => {
     if (!workspaceSlug || !projectId || !cycleId) return;
 
-    mutate<ICycle>(
-      CYCLE_DETAILS(cycleId as string),
-      (prevData) => ({ ...(prevData as ICycle), ...data }),
-      false
-    );
+    mutate<ICycle>(CYCLE_DETAILS(cycleId as string), (prevData) => ({ ...(prevData as ICycle), ...data }), false);
 
-    cyclesService
+    cycleService
       .patchCycle(workspaceSlug as string, projectId as string, cycleId as string, data, user)
       .then(() => mutate(CYCLE_DETAILS(cycleId as string)))
       .catch((e) => console.log(e));
   };
 
   const handleCopyText = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
     copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/cycles/${cycle?.id}`)
       .then(() => {
@@ -116,11 +104,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
 
   const dateChecker = async (payload: any) => {
     try {
-      const res = await cyclesService.cycleDateCheck(
-        workspaceSlug as string,
-        projectId as string,
-        payload
-      );
+      const res = await cycleService.cycleDateCheck(workspaceSlug as string, projectId as string, payload);
       return res.status;
     } catch (err) {
       return false;
@@ -277,20 +261,22 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
   const isStartValid = new Date(`${cycle?.start_date}`) <= new Date();
   const isEndValid = new Date(`${cycle?.end_date}`) >= new Date(`${cycle?.start_date}`);
 
-  const progressPercentage = cycle
-    ? Math.round((cycle.completed_issues / cycle.total_issues) * 100)
-    : null;
+  const progressPercentage = cycle ? Math.round((cycle.completed_issues / cycle.total_issues) * 100) : null;
 
   return (
     <>
-      <DeleteCycleModal
-        isOpen={cycleDeleteModal}
-        setIsOpen={setCycleDeleteModal}
-        data={cycle}
-        user={user}
-      />
+      {cycle && (
+        <CycleDeleteModal
+          cycle={cycle}
+          modal={cycleDeleteModal}
+          modalClose={() => setCycleDeleteModal(false)}
+          onSubmit={() => {}}
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+        />
+      )}
       <div
-        className={`fixed top-[66px] ${
+        className={`fixed top-[66px] z-20 ${
           isOpen ? "right-0" : "-right-[24rem]"
         } h-full w-[24rem] overflow-y-auto border-l border-custom-border-200 bg-custom-sidebar-background-100 pt-5 pb-10 duration-300`}
       >
@@ -305,7 +291,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                 </div>
                 <div className="relative flex h-full w-52 items-center gap-2">
                   <Popover className="flex h-full items-center justify-center rounded-lg">
-                    {({ open }) => (
+                    {({}) => (
                       <>
                         <Popover.Button
                           disabled={isCompleted ?? false}
@@ -316,9 +302,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                           <CalendarDaysIcon className="h-3 w-3" />
                           <span>
                             {renderShortDateWithYearFormat(
-                              new Date(
-                                `${watch("start_date") ? watch("start_date") : cycle?.start_date}`
-                              ),
+                              new Date(`${watch("start_date") ? watch("start_date") : cycle?.start_date}`),
                               "Start date"
                             )}
                           </span>
@@ -355,7 +339,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                     <ArrowLongRightIcon className="h-3 w-3 text-custom-text-200" />
                   </span>
                   <Popover className="flex h-full items-center justify-center rounded-lg">
-                    {({ open }) => (
+                    {({}) => (
                       <>
                         <Popover.Button
                           disabled={isCompleted ?? false}
@@ -367,9 +351,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
 
                           <span>
                             {renderShortDateWithYearFormat(
-                              new Date(
-                                `${watch("end_date") ? watch("end_date") : cycle?.end_date}`
-                              ),
+                              new Date(`${watch("end_date") ? watch("end_date") : cycle?.end_date}`),
                               "End date"
                             )}
                           </span>
@@ -409,9 +391,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                 <div className="flex w-full flex-col items-start justify-start gap-2">
                   <div className="flex w-full items-start justify-between gap-2">
                     <div className="max-w-[300px]">
-                      <h4 className="text-xl font-semibold text-custom-text-100 break-words w-full">
-                        {cycle.name}
-                      </h4>
+                      <h4 className="text-xl font-semibold text-custom-text-100 break-words w-full">{cycle.name}</h4>
                     </div>
                     <CustomMenu width="lg" ellipsis>
                       {!isCompleted && (
@@ -480,9 +460,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
             <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 p-6">
               <Disclosure defaultOpen>
                 {({ open }) => (
-                  <div
-                    className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}
-                  >
+                  <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
                     <div className="flex w-full items-center justify-between gap-2    ">
                       <div className="flex items-center justify-start gap-2 text-sm">
                         <span className="font-medium text-custom-text-200">Progress</span>
@@ -503,11 +481,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                         </Disclosure.Button>
                       ) : (
                         <div className="flex items-center gap-1">
-                          <ExclamationIcon
-                            height={14}
-                            width={14}
-                            className="fill-current text-custom-text-200"
-                          />
+                          <ExclamationIcon height={14} width={14} className="fill-current text-custom-text-200" />
                           <span className="text-xs italic text-custom-text-200">
                             {cycleStatus === "upcoming"
                               ? "Cycle is yet to start."
@@ -527,8 +501,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                                 </span>
                                 <span>
                                   Pending Issues -{" "}
-                                  {cycle.total_issues -
-                                    (cycle.completed_issues + cycle.cancelled_issues)}
+                                  {cycle.total_issues - (cycle.completed_issues + cycle.cancelled_issues)}
                                 </span>
                               </div>
 
@@ -564,9 +537,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
             <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 p-6">
               <Disclosure defaultOpen>
                 {({ open }) => (
-                  <div
-                    className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}
-                  >
+                  <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
                     <div className="flex w-full items-center justify-between gap-2">
                       <div className="flex items-center justify-start gap-2 text-sm">
                         <span className="font-medium text-custom-text-200">Other Information</span>
@@ -581,11 +552,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                         </Disclosure.Button>
                       ) : (
                         <div className="flex items-center gap-1">
-                          <ExclamationIcon
-                            height={14}
-                            width={14}
-                            className="fill-current text-custom-text-200"
-                          />
+                          <ExclamationIcon height={14} width={14} className="fill-current text-custom-text-200" />
                           <span className="text-xs italic text-custom-text-200">
                             No issues found. Please add issue.
                           </span>

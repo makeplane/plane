@@ -5,9 +5,10 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import stateService from "services/state.service";
+import { ProjectStateService } from "services/project";
 // ui
-import { Spinner, CustomSelect } from "components/ui";
+import { CustomSelect } from "components/ui";
+import { Spinner } from "@plane/ui";
 // icons
 import { StateGroupIcon } from "components/icons";
 // helpers
@@ -22,15 +23,16 @@ type Props = {
   disabled?: boolean;
 };
 
+// services
+const stateService = new ProjectStateService();
+
 export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, disabled = false }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, inboxIssueId } = router.query;
 
   const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => stateService.getStates(workspaceSlug as string, projectId as string) : null
   );
   const states = getStatesList(stateGroups);
 

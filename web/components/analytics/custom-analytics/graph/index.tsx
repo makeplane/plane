@@ -6,7 +6,7 @@ import { CustomTooltip } from "./custom-tooltip";
 import { BarGraph } from "components/ui";
 // helpers
 import { findStringWithMostCharacters } from "helpers/array.helper";
-import { generateBarColor } from "helpers/analytics.helper";
+import { generateBarColor, generateDisplayName } from "helpers/analytics.helper";
 // types
 import { IAnalyticsParams, IAnalyticsResponse } from "types";
 
@@ -21,21 +21,7 @@ type Props = {
   fullScreen: boolean;
 };
 
-export const AnalyticsGraph: React.FC<Props> = ({
-  analytics,
-  barGraphData,
-  params,
-  yAxisKey,
-  fullScreen,
-}) => {
-  const renderAssigneeName = (assigneeId: string): string => {
-    const assignee = analytics.extras.assignee_details.find((a) => a.assignees__id === assigneeId);
-
-    if (!assignee) return "?";
-
-    return assignee.assignees__display_name || "?";
-  };
-
+export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, params, yAxisKey, fullScreen }) => {
   const generateYAxisTickValues = () => {
     if (!analytics) return [];
 
@@ -110,7 +96,7 @@ export const AnalyticsGraph: React.FC<Props> = ({
                       <text x={0} y={21} textAnchor="middle" fontSize={9} fill="#ffffff">
                         {params.x_axis === "assignees__id"
                           ? datum.value && datum.value !== "None"
-                            ? renderAssigneeName(datum.value)[0].toUpperCase()
+                            ? generateDisplayName(datum.value, analytics, params, "x_axis")[0].toUpperCase()
                             : "?"
                           : datum.value && datum.value !== "None"
                           ? `${datum.value}`.toUpperCase()[0]
@@ -119,7 +105,13 @@ export const AnalyticsGraph: React.FC<Props> = ({
                     </g>
                   );
               }
-            : undefined,
+            : (datum) => (
+                <g transform={`translate(${datum.x},${datum.y})`}>
+                  <text x={0} y={21} textAnchor="middle" fontSize={10}>
+                    {generateDisplayName(datum.value, analytics, params, "x_axis")}
+                  </text>
+                </g>
+              ),
       }}
       theme={{
         axis: {},

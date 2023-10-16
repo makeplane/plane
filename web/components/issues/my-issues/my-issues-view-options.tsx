@@ -7,7 +7,7 @@ import useMyIssuesFilters from "hooks/my-issues/use-my-issues-filter";
 // components
 import { MyIssuesSelectFilters } from "components/issues";
 // ui
-import { Tooltip } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // icons
 import { FormatListBulletedOutlined } from "@mui/icons-material";
 import { CreditCard } from "lucide-react";
@@ -15,9 +15,9 @@ import { CreditCard } from "lucide-react";
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 // types
-import { TIssueViewOptions } from "types";
+import { TIssueLayouts } from "types";
 
-const issueViewOptions: { type: TIssueViewOptions; Icon: any }[] = [
+const issueViewOptions: { type: TIssueLayouts; Icon: any }[] = [
   {
     type: "list",
     Icon: FormatListBulletedOutlined,
@@ -32,15 +32,11 @@ export const MyIssuesViewOptions: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, globalViewId } = router.query;
 
-  const { displayFilters, setDisplayFilters, filters, setFilters } = useMyIssuesFilters(
-    workspaceSlug?.toString()
-  );
+  const { displayFilters, setDisplayFilters, filters, setFilters } = useMyIssuesFilters(workspaceSlug?.toString());
 
   const workspaceViewPathName = ["workspace-views/all-issues"];
 
-  const isWorkspaceViewPath = workspaceViewPathName.some((pathname) =>
-    router.pathname.includes(pathname)
-  );
+  const isWorkspaceViewPath = workspaceViewPathName.some((pathname) => router.pathname.includes(pathname));
 
   const showFilters = isWorkspaceViewPath || globalViewId;
 
@@ -50,9 +46,7 @@ export const MyIssuesViewOptions: React.FC = () => {
         {issueViewOptions.map((option) => (
           <Tooltip
             key={option.type}
-            tooltipContent={
-              <span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} View</span>
-            }
+            tooltipContent={<span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} View</span>}
             position="bottom"
           >
             <button
@@ -64,8 +58,7 @@ export const MyIssuesViewOptions: React.FC = () => {
               }`}
               onClick={() => {
                 setDisplayFilters({ layout: option.type });
-                if (option.type === "spreadsheet")
-                  router.push(`/${workspaceSlug}/workspace-views/all-issues`);
+                if (option.type === "spreadsheet") router.push(`/${workspaceSlug}/workspace-views/all-issues`);
                 else router.push(`/${workspaceSlug}/workspace-views`);
               }}
             >
@@ -96,9 +89,7 @@ export const MyIssuesViewOptions: React.FC = () => {
 
               if (valueExists)
                 setFilters({
-                  [option.key]: ((filters[key] ?? []) as any[])?.filter(
-                    (val) => val !== option.value
-                  ),
+                  [option.key]: ((filters[key] ?? []) as any[])?.filter((val) => val !== option.value),
                 });
               else
                 setFilters({

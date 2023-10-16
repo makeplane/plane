@@ -6,7 +6,8 @@ import { useRouter } from "next/router";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomMenu, LinearProgressIndicator, Tooltip } from "components/ui";
+import { CustomMenu } from "components/ui";
+import { Tooltip, LinearProgressIndicator } from "@plane/ui";
 // icons
 import { CalendarDaysIcon } from "@heroicons/react/20/solid";
 import {
@@ -19,11 +20,7 @@ import {
 } from "components/icons";
 import { LinkIcon, PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
 // helpers
-import {
-  getDateRangeStatus,
-  renderShortDateWithYearFormat,
-  findHowManyDaysLeft,
-} from "helpers/date-time.helper";
+import { getDateRangeStatus, renderShortDateWithYearFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
 import { ICycle } from "types";
@@ -125,12 +122,9 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
   const startDate = new Date(cycle.start_date ?? "");
 
   const handleCopyText = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`
-    ).then(() => {
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",
@@ -142,10 +136,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
   const progressIndicatorData = stateGroups.map((group, index) => ({
     id: index,
     name: group.title,
-    value:
-      cycle.total_issues > 0
-        ? ((cycle[group.key as keyof ICycle] as number) / cycle.total_issues) * 100
-        : 0,
+    value: cycle.total_issues > 0 ? ((cycle[group.key as keyof ICycle] as number) / cycle.total_issues) * 100 : 0,
     color: group.color,
   }));
 
@@ -176,18 +167,10 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                     }`}
                   />
                   <div className="max-w-2xl">
-                    <Tooltip
-                      tooltipContent={cycle.name}
-                      className="break-words"
-                      position="top-left"
-                    >
-                      <h3 className="break-words w-full text-base font-semibold">
-                        {truncateText(cycle.name, 60)}
-                      </h3>
+                    <Tooltip tooltipContent={cycle.name} className="break-words" position="top-left">
+                      <h3 className="break-words w-full text-base font-semibold">{truncateText(cycle.name, 60)}</h3>
                     </Tooltip>
-                    <p className="mt-2 text-custom-text-200 break-words w-full">
-                      {cycle.description}
-                    </p>
+                    <p className="mt-2 text-custom-text-200 break-words w-full">{cycle.description}</p>
                   </div>
                 </div>
                 <div className="flex-shrink-0 flex items-center gap-4">
@@ -219,9 +202,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                       <span className="flex items-center gap-1">
                         {cycle.total_issues - cycle.completed_issues > 0 && (
                           <Tooltip
-                            tooltipContent={`${
-                              cycle.total_issues - cycle.completed_issues
-                            } more pending ${
+                            tooltipContent={`${cycle.total_issues - cycle.completed_issues} more pending ${
                               cycle.total_issues - cycle.completed_issues === 1 ? "issue" : "issues"
                             }`}
                           >
@@ -293,12 +274,8 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                         <span className="flex gap-1 whitespace-nowrap">
                           {cycle.total_issues > 0 ? (
                             <>
-                              <RadialProgressBar
-                                progress={(cycle.completed_issues / cycle.total_issues) * 100}
-                              />
-                              <span>
-                                {Math.floor((cycle.completed_issues / cycle.total_issues) * 100)} %
-                              </span>
+                              <RadialProgressBar progress={(cycle.completed_issues / cycle.total_issues) * 100} />
+                              <span>{Math.floor((cycle.completed_issues / cycle.total_issues) * 100)} %</span>
                             </>
                           ) : (
                             <span className="normal-case">No issues present</span>
@@ -315,9 +292,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                         </span>
                       ) : (
                         <span className="flex gap-1">
-                          <RadialProgressBar
-                            progress={(cycle.total_issues / cycle.completed_issues) * 100}
-                          />
+                          <RadialProgressBar progress={(cycle.total_issues / cycle.completed_issues) * 100} />
                           {cycleStatus}
                         </span>
                       )}

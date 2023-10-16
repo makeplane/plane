@@ -1,40 +1,21 @@
+// components
+import { GlobalViewsHeader } from "components/workspace";
+import { GlobalIssuesHeader } from "components/headers";
+import { GlobalViewLayoutRoot } from "components/issues";
 // layouts
-import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
-import { PrimaryButton } from "components/ui";
-// component
-import { WorkspaceIssuesViewOptions } from "components/issues/workspace-views/workspace-issue-view-option";
-import { WorkspaceAllIssue } from "components/issues/workspace-views/workspace-all-issue";
-// icons
-import { PlusIcon } from "@heroicons/react/24/outline";
-import { CheckCircle } from "lucide-react";
+import { AppLayout } from "layouts/app-layout";
+// types
+import { NextPage } from "next";
 
-const WorkspaceViewAllIssue = () => (
-  <WorkspaceAuthorizationLayout
-    breadcrumbs={
-      <div className="flex gap-2 items-center">
-        <CheckCircle className="h-[18px] w-[18px] stroke-[1.5]" />
-        <span className="text-sm font-medium">Workspace issues</span>
+const GlobalViewAllIssues: NextPage = () => (
+  <AppLayout header={<GlobalIssuesHeader activeLayout="spreadsheet" />}>
+    <div className="h-full overflow-hidden bg-custom-background-100">
+      <div className="h-full w-full flex flex-col border-b border-custom-border-300">
+        <GlobalViewsHeader />
+        <GlobalViewLayoutRoot type="all-issues" />
       </div>
-    }
-    right={
-      <div className="flex items-center gap-2">
-        <WorkspaceIssuesViewOptions />
-
-        <PrimaryButton
-          className="flex items-center gap-2"
-          onClick={() => {
-            const e = new KeyboardEvent("keydown", { key: "c" });
-            document.dispatchEvent(e);
-          }}
-        >
-          <PlusIcon className="h-4 w-4" />
-          Add Issue
-        </PrimaryButton>
-      </div>
-    }
-  >
-    <WorkspaceAllIssue />
-  </WorkspaceAuthorizationLayout>
+    </div>
+  </AppLayout>
 );
 
-export default WorkspaceViewAllIssue;
+export default GlobalViewAllIssues;

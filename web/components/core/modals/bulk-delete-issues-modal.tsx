@@ -1,26 +1,22 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
 // react hook form
 import { SubmitHandler, useForm } from "react-hook-form";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
-import issuesServices from "services/issues.service";
+import { IssueService } from "services/issue";
 // hooks
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
-import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 // ui
-import { DangerButton, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // icons
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { LayerDiagonalIcon } from "components/icons";
 // types
-import { ICurrentUserResponse, IIssue } from "types";
+import { IUser, IIssue } from "types";
 // fetch keys
 import {
   CYCLE_DETAILS,
@@ -39,8 +35,10 @@ type FormInput = {
 type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
+
+const issueService = new IssueService();
 
 export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user }) => {
   const [query, setQuery] = useState("");
@@ -49,17 +47,13 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
   const { data: issues } = useSWR(
-    workspaceSlug && projectId
-      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
-      : null,
-    workspaceSlug && projectId
-      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string) : null,
+    workspaceSlug && projectId ? () => issueService.getIssues(workspaceSlug as string, projectId as string) : null
   );
 
   const { setToastAlert } = useToast();
   const { displayFilters, params } = useIssuesView();
-  const { params: calendarParams } = useCalendarIssuesView();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { order_by, group_by, ...viewGanttParams } = params;
 
   const {
@@ -94,14 +88,6 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
 
     if (!Array.isArray(data.delete_issue_ids)) data.delete_issue_ids = [data.delete_issue_ids];
 
-    const calendarFetchKey = cycleId
-      ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), calendarParams)
-      : moduleId
-      ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), calendarParams)
-      : viewId
-      ? VIEW_ISSUES(viewId.toString(), calendarParams)
-      : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", calendarParams);
-
     const ganttFetchKey = cycleId
       ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString())
       : moduleId
@@ -110,7 +96,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
       ? VIEW_ISSUES(viewId.toString(), viewGanttParams)
       : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "");
 
-    await issuesServices
+    await issueService
       .bulkDeleteIssues(
         workspaceSlug as string,
         projectId as string,
@@ -126,8 +112,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
           message: "Issues deleted successfully!",
         });
 
-        if (displayFilters.layout === "calendar") mutate(calendarFetchKey);
-        else if (displayFilters.layout === "gantt_chart") mutate(ganttFetchKey);
+        if (displayFilters.layout === "gantt_chart") mutate(ganttFetchKey);
         else {
           if (cycleId) {
             mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), params));
@@ -155,9 +140,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
       : issues?.filter(
           (issue) =>
             issue.name.toLowerCase().includes(query.toLowerCase()) ||
-            `${issue.project_detail.identifier}-${issue.sequence_id}`
-              .toLowerCase()
-              .includes(query.toLowerCase())
+            `${issue.project_detail.identifier}-${issue.sequence_id}`.toLowerCase().includes(query.toLowerCase())
         ) ?? [];
 
   return (
@@ -216,7 +199,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
                               key={issue.id}
                               as="div"
                               value={issue.id}
-                              className={({ active, selected }) =>
+                              className={({ active }) =>
                                 `flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2 ${
                                   active ? "bg-custom-background-80 text-custom-text-100" : ""
                                 }`
@@ -257,10 +240,12 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
 
                 {filteredIssues.length > 0 && (
                   <div className="flex items-center justify-end gap-2 p-3">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <DangerButton onClick={handleSubmit(handleDelete)} loading={isSubmitting}>
+                    <Button variant="neutral-primary" onClick={handleClose}>
+                      Cancel
+                    </Button>
+                    <Button variant="danger" onClick={handleSubmit(handleDelete)} loading={isSubmitting}>
                       {isSubmitting ? "Deleting..." : "Delete selected issues"}
-                    </DangerButton>
+                    </Button>
                   </div>
                 )}
               </form>

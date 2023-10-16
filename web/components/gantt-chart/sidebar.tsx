@@ -5,7 +5,7 @@ import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 // hooks
 import { useChart } from "./hooks";
 // ui
-import { Loader } from "components/ui";
+import { Loader } from "@plane/ui";
 // icons
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 // helpers
@@ -22,6 +22,7 @@ type Props = {
 };
 
 export const GanttSidebar: React.FC<Props> = (props) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { title, blockUpdateHandler, blocks, SidebarBlockRender, enableReorder } = props;
 
   const router = useRouter();
@@ -55,8 +56,7 @@ export const GanttSidebar: React.FC<Props> = (props) => {
     // update the sort order to the lowest if dropped at the top
     if (destination.index === 0) updatedSortOrder = blocks[0].sort_order - 1000;
     // update the sort order to the highest if dropped at the bottom
-    else if (destination.index === blocks.length - 1)
-      updatedSortOrder = blocks[blocks.length - 1].sort_order + 1000;
+    else if (destination.index === blocks.length - 1) updatedSortOrder = blocks[blocks.length - 1].sort_order + 1000;
     // update the sort order to the average of the two adjacent blocks if dropped in between
     else {
       const destinationSortingOrder = blocks[destination.index].sort_order;
@@ -95,11 +95,7 @@ export const GanttSidebar: React.FC<Props> = (props) => {
             <>
               {blocks ? (
                 blocks.map((block, index) => {
-                  const duration = findTotalDaysInRange(
-                    block.start_date ?? "",
-                    block.target_date ?? "",
-                    true
-                  );
+                  const duration = findTotalDaysInRange(block.start_date ?? "", block.target_date ?? "", true);
 
                   return (
                     <Draggable
@@ -110,9 +106,7 @@ export const GanttSidebar: React.FC<Props> = (props) => {
                     >
                       {(provided, snapshot) => (
                         <div
-                          className={`h-11 ${
-                            snapshot.isDragging ? "bg-custom-background-80 rounded" : ""
-                          }`}
+                          className={`h-11 ${snapshot.isDragging ? "bg-custom-background-80 rounded" : ""}`}
                           onMouseEnter={() => updateActiveBlock(block)}
                           onMouseLeave={() => updateActiveBlock(null)}
                           ref={provided.innerRef}

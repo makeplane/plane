@@ -4,20 +4,16 @@ import useSWR, { mutate } from "swr";
 import { useRouter } from "next/router";
 
 // services
-import pagesService from "services/pages.service";
-import projectService from "services/project.service";
+import { PageService } from "services/page.service";
+import { ProjectService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // components
-import {
-  CreateUpdatePageModal,
-  DeletePageModal,
-  SinglePageDetailedItem,
-  SinglePageListItem,
-} from "components/pages";
+import { CreateUpdatePageModal, DeletePageModal, SinglePageDetailedItem, SinglePageListItem } from "components/pages";
 // ui
-import { EmptyState, Loader } from "components/ui";
+import { EmptyState } from "components/common";
+import { Loader } from "@plane/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // images
@@ -36,6 +32,10 @@ type Props = {
   pages: IPage[] | undefined;
   viewType: TPageViewProps;
 };
+
+// services
+const pageService = new PageService();
+const projectService = new ProjectService();
 
 export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
@@ -91,13 +91,9 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
         }),
       false
     );
-    mutate<IPage[]>(
-      FAVORITE_PAGES_LIST(projectId.toString()),
-      (prevData) => [page, ...(prevData ?? [])],
-      false
-    );
+    mutate<IPage[]>(FAVORITE_PAGES_LIST(projectId.toString()), (prevData) => [page, ...(prevData ?? [])], false);
 
-    pagesService
+    pageService
       .addPageToFavorites(workspaceSlug.toString(), projectId.toString(), {
         page: page.id,
       })
@@ -147,7 +143,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
       false
     );
 
-    pagesService
+    pageService
       .removePageFromFavorites(workspaceSlug.toString(), projectId.toString(), page.id)
       .then(() => {
         mutate(RECENT_PAGES_LIST(projectId.toString()));
@@ -185,11 +181,9 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
       false
     );
 
-    pagesService
-      .patchPage(workspaceSlug.toString(), projectId.toString(), page.id, formData, user)
-      .then(() => {
-        mutate(RECENT_PAGES_LIST(projectId.toString()));
-      });
+    pageService.patchPage(workspaceSlug.toString(), projectId.toString(), page.id, formData, user).then(() => {
+      mutate(RECENT_PAGES_LIST(projectId.toString()));
+    });
   };
 
   return (

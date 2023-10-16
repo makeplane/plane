@@ -1,13 +1,9 @@
-import React, { Dispatch, SetStateAction, useCallback } from "react";
-
+import { Dispatch, SetStateAction, useCallback, FC } from "react";
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
-// cmdk
 import { Command } from "cmdk";
 // services
-import issuesService from "services/issues.service";
+import { IssueService } from "services/issue";
 // hooks
 import useProjectMembers from "hooks/use-project-members";
 // constants
@@ -17,22 +13,25 @@ import { Avatar } from "components/ui";
 // icons
 import { CheckIcon } from "components/icons";
 // types
-import { ICurrentUserResponse, IIssue } from "types";
+import { IUser, IIssue } from "types";
 
 type Props = {
   setIsPaletteOpen: Dispatch<SetStateAction<boolean>>;
   issue: IIssue;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
-export const ChangeIssueAssignee: React.FC<Props> = ({ setIsPaletteOpen, issue, user }) => {
+// services
+const issueService = new IssueService();
+
+export const ChangeIssueAssignee: FC<Props> = ({ setIsPaletteOpen, issue, user }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
   const { members } = useProjectMembers(workspaceSlug as string, projectId as string);
 
   const options =
-    members?.map(({ member }) => ({
+    members?.map(({ member }: any) => ({
       value: member.id,
       query: member.display_name,
       content: (
@@ -67,7 +66,7 @@ export const ChangeIssueAssignee: React.FC<Props> = ({ setIsPaletteOpen, issue, 
       );
 
       const payload = { ...formData };
-      await issuesService
+      await issueService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)
         .then(() => {
           mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
@@ -94,7 +93,7 @@ export const ChangeIssueAssignee: React.FC<Props> = ({ setIsPaletteOpen, issue, 
 
   return (
     <>
-      {options.map((option) => (
+      {options.map((option: any) => (
         <Command.Item
           key={option.value}
           onSelect={() => handleIssueAssignees(option.value)}

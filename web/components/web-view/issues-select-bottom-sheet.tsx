@@ -1,21 +1,15 @@
-// react
 import React, { useState, useEffect } from "react";
-
-// next
 import { useRouter } from "next/router";
 
 // hooks
 import useUser from "hooks/use-user";
 import useDebounce from "hooks/use-debounce";
-
 // services
-import projectService from "services/project.service";
-
+import { ProjectService } from "services/project";
 // components
 import { WebViewModal } from "components/web-view";
 import { LayerDiagonalIcon } from "components/icons";
 import { Loader, PrimaryButton, SecondaryButton, ToggleSwitch } from "components/ui";
-
 // types
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "types";
 
@@ -26,6 +20,9 @@ type IssuesSelectBottomSheetProps = {
   searchParams: Partial<TProjectIssuesSearchParams>;
   singleSelect?: boolean;
 };
+
+// services
+const projectService = new ProjectService();
 
 export const IssuesSelectBottomSheet: React.FC<IssuesSelectBottomSheetProps> = (props) => {
   const { isOpen, onClose, onSubmit, searchParams, singleSelect = false } = props;
@@ -85,15 +82,7 @@ export const IssuesSelectBottomSheet: React.FC<IssuesSelectBottomSheetProps> = (
       })
       .then((res) => setIssues(res))
       .finally(() => setIsSearching(false));
-  }, [
-    debouncedSearchTerm,
-    isOpen,
-    isWorkspaceLevel,
-    issueId,
-    projectId,
-    workspaceSlug,
-    searchParams,
-  ]);
+  }, [debouncedSearchTerm, isOpen, isWorkspaceLevel, issueId, projectId, workspaceSlug, searchParams]);
 
   return (
     <WebViewModal isOpen={isOpen} onClose={handleClose} modalTitle="Select issue">
@@ -112,15 +101,8 @@ export const IssuesSelectBottomSheet: React.FC<IssuesSelectBottomSheetProps> = (
           isWorkspaceLevel ? "text-custom-text-100" : "text-custom-text-200"
         }`}
       >
-        <ToggleSwitch
-          value={isWorkspaceLevel}
-          onChange={() => setIsWorkspaceLevel((prevData) => !prevData)}
-        />
-        <button
-          type="button"
-          onClick={() => setIsWorkspaceLevel((prevData) => !prevData)}
-          className="flex-shrink-0"
-        >
+        <ToggleSwitch value={isWorkspaceLevel} onChange={() => setIsWorkspaceLevel((prevData) => !prevData)} />
+        <button type="button" onClick={() => setIsWorkspaceLevel((prevData) => !prevData)} className="flex-shrink-0">
           Workspace Level
         </button>
       </div>

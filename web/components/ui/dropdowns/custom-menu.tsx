@@ -68,15 +68,10 @@ const CustomMenu = ({
                     onClick={menuButtonOnClick}
                     disabled={disabled}
                     className={`relative grid place-items-center rounded p-1 text-custom-text-200 hover:text-custom-text-100 outline-none ${
-                      disabled
-                        ? "cursor-not-allowed"
-                        : "cursor-pointer hover:bg-custom-background-80"
+                      disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
                     } ${buttonClassName}`}
                   >
-                    <MoreHorizOutlined
-                      fontSize="small"
-                      className={verticalEllipsis ? "rotate-90" : ""}
-                    />
+                    <MoreHorizOutlined fontSize="small" className={verticalEllipsis ? "rotate-90" : ""} />
                   </button>
                 </Menu.Button>
               ) : (
@@ -86,9 +81,7 @@ const CustomMenu = ({
                     type="button"
                     className={`flex items-center justify-between gap-1 rounded-md px-2.5 py-1 text-xs whitespace-nowrap duration-300 ${
                       open ? "bg-custom-background-90 text-custom-text-100" : "text-custom-text-200"
-                    } ${
-                      noBorder ? "" : "border border-custom-border-300 shadow-sm focus:outline-none"
-                    } ${
+                    } ${noBorder ? "" : "border border-custom-border-300 shadow-sm focus:outline-none"} ${
                       disabled
                         ? "cursor-not-allowed text-custom-text-200"
                         : "cursor-pointer hover:bg-custom-background-80"
@@ -142,13 +135,7 @@ type MenuItemProps = {
   className?: string;
 };
 
-const MenuItem: React.FC<MenuItemProps> = ({
-  children,
-  renderAs,
-  href,
-  onClick,
-  className = "",
-}) => (
+const MenuItem: React.FC<MenuItemProps> = ({ children, renderAs, href, onClick, className = "" }) => (
   <Menu.Item as="div">
     {({ active, close }) =>
       renderAs === "a" ? (

@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // layouts
-import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // components
 import { CustomThemeSelector, ThemeSwitch } from "components/core";
 // ui
-import { Spinner } from "components/ui";
+import { Spinner } from "@plane/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
 import { ICustomTheme } from "types";
@@ -36,17 +36,13 @@ const ProfilePreferences = observer(() => {
           background: currentTheme.background !== "" ? currentTheme.background : "#0d101b",
           text: currentTheme.text !== "" ? currentTheme.text : "#c5c5c5",
           primary: currentTheme.primary !== "" ? currentTheme.primary : "#3f76ff",
-          sidebarBackground:
-            currentTheme.sidebarBackground !== "" ? currentTheme.sidebarBackground : "#0d101b",
+          sidebarBackground: currentTheme.sidebarBackground !== "" ? currentTheme.sidebarBackground : "#0d101b",
           sidebarText: currentTheme.sidebarText !== "" ? currentTheme.sidebarText : "#c5c5c5",
           darkPalette: false,
-          palette:
-            currentTheme.palette !== ",,,,"
-              ? currentTheme.palette
-              : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
+          palette: currentTheme.palette !== ",,,," ? currentTheme.palette : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
           theme: "custom",
         });
-      setCustomThemeSelectorOptions((prevData) => true);
+      setCustomThemeSelectorOptions(() => true);
     }
   }, [store, store?.theme?.theme]);
 
@@ -71,9 +67,7 @@ const ProfilePreferences = observer(() => {
             <div className="grid grid-cols-12 gap-4 sm:gap-16 py-6">
               <div className="col-span-12 sm:col-span-6">
                 <h4 className="text-lg font-semibold text-custom-text-100">Theme</h4>
-                <p className="text-sm text-custom-text-200">
-                  Select or customize your interface color scheme.
-                </p>
+                <p className="text-sm text-custom-text-200">Select or customize your interface color scheme.</p>
               </div>
               <div className="col-span-12 sm:col-span-6">
                 <ThemeSwitch

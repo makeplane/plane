@@ -3,34 +3,27 @@ import React, { useEffect, useRef, useState } from "react";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // react-hook-form
-import {
-  Control,
-  Controller,
-  FieldArrayWithId,
-  UseFieldArrayRemove,
-  useFieldArray,
-  useForm,
-} from "react-hook-form";
+import { Control, Controller, FieldArrayWithId, UseFieldArrayRemove, useFieldArray, useForm } from "react-hook-form";
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Input, PrimaryButton, SecondaryButton } from "components/ui";
+import { Button, Input } from "@plane/ui";
 // hooks
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { PlusIcon, XMarkIcon, CheckIcon } from "@heroicons/react/24/outline";
 // types
-import { ICurrentUserResponse, IWorkspace, TOnboardingSteps } from "types";
+import { IUser, IWorkspace, TOnboardingSteps } from "types";
 // constants
 import { ROLE } from "constants/workspace";
 
 type Props = {
   finishOnboarding: () => Promise<void>;
   stepChange: (steps: Partial<TOnboardingSteps>) => Promise<void>;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   workspace: IWorkspace | undefined;
 };
 
@@ -52,6 +45,9 @@ type InviteMemberFormProps = {
   errors: any;
 };
 
+// services
+const workspaceService = new WorkspaceService();
+
 const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
   const { control, index, fields, remove, errors } = props;
 
@@ -60,12 +56,7 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  useDynamicDropdownPosition(
-    isDropdownOpen,
-    () => setIsDropdownOpen(false),
-    buttonRef,
-    dropdownRef
-  );
+  useDynamicDropdownPosition(isDropdownOpen, () => setIsDropdownOpen(false), buttonRef, dropdownRef);
 
   return (
     <div className="group relative grid grid-cols-11 gap-4">
@@ -80,15 +71,18 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
               message: "Invalid Email ID",
             },
           }}
-          render={({ field }) => (
-            <>
-              <Input {...field} className="text-xs sm:text-sm" placeholder="Enter their email..." />
-              {errors.emails?.[index]?.email && (
-                <span className="text-red-500 text-xs">
-                  {errors.emails?.[index]?.email?.message}
-                </span>
-              )}
-            </>
+          render={({ field: { value, onChange, ref } }) => (
+            <Input
+              id={`emails.${index}.email`}
+              name={`emails.${index}.email`}
+              type="text"
+              value={value}
+              onChange={onChange}
+              ref={ref}
+              hasError={Boolean(errors.emails?.[index]?.email)}
+              placeholder="Enter their email..."
+              className="text-xs sm:text-sm w-full"
+            />
           )}
         />
       </div>
@@ -266,12 +260,12 @@ export const InviteMembers: React.FC<Props> = (props) => {
         </button>
       </div>
       <div className="flex items-center gap-4">
-        <PrimaryButton type="submit" disabled={!isValid} loading={isSubmitting} size="md">
+        <Button variant="primary" type="submit" disabled={!isValid} loading={isSubmitting} size="md">
           {isSubmitting ? "Sending..." : "Send Invite"}
-        </PrimaryButton>
-        <SecondaryButton className="border border-none bg-transparent" size="md" onClick={nextStep}>
+        </Button>
+        <Button variant="neutral-primary" size="md" onClick={nextStep}>
           Skip this step
-        </SecondaryButton>
+        </Button>
       </div>
     </form>
   );

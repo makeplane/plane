@@ -7,7 +7,6 @@ export * from "./avatar";
 export * from "./date";
 export * from "./datepicker";
 export * from "./empty-space";
-export * from "./empty-state";
 export * from "./icon";
 export * from "./labels-list";
 export * from "./linear-progress-indicator";

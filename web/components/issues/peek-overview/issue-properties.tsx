@@ -1,15 +1,11 @@
-// mobx
-import { observer } from "mobx-react-lite";
-// headless ui
-import { Disclosure } from "@headlessui/react";
+import { FC } from "react";
+// components
 import { StateGroupIcon } from "components/icons";
 // hooks
 import useToast from "hooks/use-toast";
-import useUser from "hooks/use-user";
 // components
 import {
   SidebarAssigneeSelect,
-  SidebarEstimateSelect,
   SidebarPrioritySelect,
   SidebarStateSelect,
   TPeekOverviewModes,
@@ -19,7 +15,7 @@ import { CustomDatePicker, Icon } from "components/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import { IIssue, TIssuePriorities } from "types";
+import { IIssue } from "types";
 
 type Props = {
   handleDeleteIssue: () => void;
@@ -30,14 +26,9 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const PeekOverviewIssueProperties: React.FC<Props> = ({
-  handleDeleteIssue,
-  handleUpdateIssue,
-  issue,
-  mode,
-  readOnly,
-  workspaceSlug,
-}) => {
+export const PeekOverviewIssueProperties: FC<Props> = (props) => {
+  const { handleDeleteIssue, handleUpdateIssue, issue, mode, readOnly } = props;
+  // toast
   const { setToastAlert } = useToast();
 
   const startDate = issue.start_date;
@@ -66,10 +57,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
       {mode === "full" && (
         <div className="flex justify-between gap-2 pb-3">
           <h6 className="flex items-center gap-2 font-medium">
-            <StateGroupIcon
-              stateGroup={issue.state_detail.group}
-              color={issue.state_detail.color}
-            />
+            <StateGroupIcon stateGroup={issue.state_detail.group} color={issue.state_detail.color} />
             {issue.project_detail.identifier}-{issue.sequence_id}
           </h6>
           <div className="flex items-center gap-2">

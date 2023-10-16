@@ -135,47 +135,10 @@ export const getFetchKeysForIssueMutation = (options: {
   moduleId?: string | string[];
   viewId?: string | string[];
   projectId: string;
-  calendarParams: any;
-  spreadsheetParams: any;
   viewGanttParams: any;
   ganttParams: any;
 }) => {
-  const {
-    cycleId,
-    moduleId,
-    viewId,
-    projectId,
-    calendarParams,
-    spreadsheetParams,
-    viewGanttParams,
-    ganttParams,
-  } = options;
-
-  const calendarFetchKey = cycleId
-    ? { calendarFetchKey: CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), calendarParams) }
-    : moduleId
-    ? { calendarFetchKey: MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), calendarParams) }
-    : viewId
-    ? { calendarFetchKey: VIEW_ISSUES(viewId.toString(), calendarParams) }
-    : {
-        calendarFetchKey: PROJECT_ISSUES_LIST_WITH_PARAMS(
-          projectId?.toString() ?? "",
-          calendarParams
-        ),
-      };
-
-  const spreadsheetFetchKey = cycleId
-    ? { spreadsheetFetchKey: CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), spreadsheetParams) }
-    : moduleId
-    ? { spreadsheetFetchKey: MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), spreadsheetParams) }
-    : viewId
-    ? { spreadsheetFetchKey: VIEW_ISSUES(viewId.toString(), spreadsheetParams) }
-    : {
-        spreadsheetFetchKey: PROJECT_ISSUES_LIST_WITH_PARAMS(
-          projectId?.toString() ?? "",
-          spreadsheetParams
-        ),
-      };
+  const { cycleId, moduleId, viewId, projectId, viewGanttParams, ganttParams } = options;
 
   const ganttFetchKey = cycleId
     ? { ganttFetchKey: CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), ganttParams) }
@@ -186,8 +149,6 @@ export const getFetchKeysForIssueMutation = (options: {
     : { ganttFetchKey: PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", ganttParams) };
 
   return {
-    ...calendarFetchKey,
-    ...spreadsheetFetchKey,
     ...ganttFetchKey,
   };
 };

@@ -7,7 +7,7 @@ import { UseFormWatch } from "react-hook-form";
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
 // services
-import issuesService from "services/issues.service";
+import { IssueService } from "services/issue";
 // components
 import { ExistingIssuesListModal } from "components/core";
 // icons
@@ -23,12 +23,10 @@ type Props = {
   disabled?: boolean;
 };
 
-export const SidebarBlockedSelect: React.FC<Props> = ({
-  issueId,
-  submitChanges,
-  watch,
-  disabled = false,
-}) => {
+// services
+const issueService = new IssueService();
+
+export const SidebarBlockedSelect: React.FC<Props> = ({ issueId, submitChanges, watch, disabled = false }) => {
   const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
 
   const { user } = useUser();
@@ -41,8 +39,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
     setIsBlockedModalOpen(false);
   };
 
-  const blockedByIssue =
-    watch("related_issues")?.filter((i) => i.relation_type === "blocked_by") || [];
+  const blockedByIssue = watch("related_issues")?.filter((i) => i.relation_type === "blocked_by") || [];
 
   const onSubmit = async (data: ISearchIssueResponse[]) => {
     if (data.length === 0) {
@@ -70,7 +67,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
 
     if (!user) return;
 
-    issuesService
+    issueService
       .createIssueRelation(workspaceSlug as string, projectId as string, issueId as string, user, {
         related_list: [
           ...selectedIssues.map((issue) => ({
@@ -125,9 +122,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
                       type="button"
                       className="opacity-0 duration-300 group-hover:opacity-100"
                       onClick={() => {
-                        const updatedRelations = watch("related_issues")?.filter(
-                          (i) => i.id !== relation.id
-                        );
+                        const updatedRelations = watch("related_issues")?.filter((i) => i.id !== relation.id);
 
                         submitChanges({
                           related_issues: updatedRelations,
@@ -135,7 +130,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
 
                         if (!user) return;
 
-                        issuesService.deleteIssueRelation(
+                        issueService.deleteIssueRelation(
                           workspaceSlug as string,
                           projectId as string,
                           issueId as string,

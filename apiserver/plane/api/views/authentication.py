@@ -86,14 +86,11 @@ class SignUpEndpoint(BaseAPIView):
         user.token_updated_at = timezone.now()
         user.save()
 
-        serialized_user = UserSerializer(user).data
-
         access_token, refresh_token = get_tokens_for_user(user)
 
         data = {
             "access_token": access_token,
             "refresh_token": refresh_token,
-            "user": serialized_user,
         }
 
         # Send Analytics
@@ -119,7 +116,6 @@ class SignUpEndpoint(BaseAPIView):
             )
 
         return Response(data, status=status.HTTP_200_OK)
-
 
 
 class SignInEndpoint(BaseAPIView):
@@ -172,8 +168,6 @@ class SignInEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        serialized_user = UserSerializer(user).data
-
         # settings last active for the user
         user.last_active = timezone.now()
         user.last_login_time = timezone.now()
@@ -207,7 +201,6 @@ class SignInEndpoint(BaseAPIView):
         data = {
             "access_token": access_token,
             "refresh_token": refresh_token,
-            "user": serialized_user,
         }
 
         return Response(data, status=status.HTTP_200_OK)
@@ -215,27 +208,27 @@ class SignInEndpoint(BaseAPIView):
 
 class SignOutEndpoint(BaseAPIView):
     def post(self, request):
-            refresh_token = request.data.get("refresh_token", False)
+        refresh_token = request.data.get("refresh_token", False)
 
-            if not refresh_token:
-                capture_message("No refresh token provided")
-                return Response(
-                    {
-                        "error": "Something went wrong. Please try again later or contact the support team."
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+        if not refresh_token:
+            capture_message("No refresh token provided")
+            return Response(
+                {
+                    "error": "Something went wrong. Please try again later or contact the support team."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-            user = User.objects.get(pk=request.user.id)
+        user = User.objects.get(pk=request.user.id)
 
-            user.last_logout_time = timezone.now()
-            user.last_logout_ip = request.META.get("REMOTE_ADDR")
+        user.last_logout_time = timezone.now()
+        user.last_logout_ip = request.META.get("REMOTE_ADDR")
 
-            user.save()
+        user.save()
 
-            token = RefreshToken(refresh_token)
-            token.blacklist()
-            return Response({"message": "success"}, status=status.HTTP_200_OK)
+        token = RefreshToken(refresh_token)
+        token.blacklist()
+        return Response({"message": "success"}, status=status.HTTP_200_OK)
 
 
 class MagicSignInGenerateEndpoint(BaseAPIView):
@@ -308,105 +301,99 @@ class MagicSignInEndpoint(BaseAPIView):
     ]
 
     def post(self, request):
-            user_token = request.data.get("token", "").strip()
-            key = request.data.get("key", False).strip().lower()
+        user_token = request.data.get("token", "").strip()
+        key = request.data.get("key", False).strip().lower()
 
-            if not key or user_token == "":
-                return Response(
-                    {"error": "User token and key are required"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+        if not key or user_token == "":
+            return Response(
+                {"error": "User token and key are required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-            ri = redis_instance()
+        ri = redis_instance()
 
-            if ri.exists(key):
-                data = json.loads(ri.get(key))
+        if ri.exists(key):
+            data = json.loads(ri.get(key))
 
-                token = data["token"]
-                email = data["email"]
+            token = data["token"]
+            email = data["email"]
 
-                if str(token) == str(user_token):
-                    if User.objects.filter(email=email).exists():
-                        user = User.objects.get(email=email)
-                        # Send event to Jitsu for tracking
-                        if settings.ANALYTICS_BASE_API:
-                            _ = requests.post(
-                                settings.ANALYTICS_BASE_API,
-                                headers={
-                                    "Content-Type": "application/json",
-                                    "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
+            if str(token) == str(user_token):
+                if User.objects.filter(email=email).exists():
+                    user = User.objects.get(email=email)
+                    # Send event to Jitsu for tracking
+                    if settings.ANALYTICS_BASE_API:
+                        _ = requests.post(
+                            settings.ANALYTICS_BASE_API,
+                            headers={
+                                "Content-Type": "application/json",
+                                "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
+                            },
+                            json={
+                                "event_id": uuid.uuid4().hex,
+                                "event_data": {
+                                    "medium": "code",
                                 },
-                                json={
-                                    "event_id": uuid.uuid4().hex,
-                                    "event_data": {
-                                        "medium": "code",
-                                    },
-                                    "user": {"email": email, "id": str(user.id)},
-                                    "device_ctx": {
-                                        "ip": request.META.get("REMOTE_ADDR"),
-                                        "user_agent": request.META.get(
-                                            "HTTP_USER_AGENT"
-                                        ),
-                                    },
-                                    "event_type": "SIGN_IN",
+                                "user": {"email": email, "id": str(user.id)},
+                                "device_ctx": {
+                                    "ip": request.META.get("REMOTE_ADDR"),
+                                    "user_agent": request.META.get("HTTP_USER_AGENT"),
                                 },
-                            )
-                    else:
-                        user = User.objects.create(
-                            email=email,
-                            username=uuid.uuid4().hex,
-                            password=make_password(uuid.uuid4().hex),
-                            is_password_autoset=True,
+                                "event_type": "SIGN_IN",
+                            },
                         )
-                        # Send event to Jitsu for tracking
-                        if settings.ANALYTICS_BASE_API:
-                            _ = requests.post(
-                                settings.ANALYTICS_BASE_API,
-                                headers={
-                                    "Content-Type": "application/json",
-                                    "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
-                                },
-                                json={
-                                    "event_id": uuid.uuid4().hex,
-                                    "event_data": {
-                                        "medium": "code",
-                                    },
-                                    "user": {"email": email, "id": str(user.id)},
-                                    "device_ctx": {
-                                        "ip": request.META.get("REMOTE_ADDR"),
-                                        "user_agent": request.META.get(
-                                            "HTTP_USER_AGENT"
-                                        ),
-                                    },
-                                    "event_type": "SIGN_UP",
-                                },
-                            )
-
-                    user.last_active = timezone.now()
-                    user.last_login_time = timezone.now()
-                    user.last_login_ip = request.META.get("REMOTE_ADDR")
-                    user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
-                    user.token_updated_at = timezone.now()
-                    user.save()
-                    serialized_user = UserSerializer(user).data
-
-                    access_token, refresh_token = get_tokens_for_user(user)
-                    data = {
-                        "access_token": access_token,
-                        "refresh_token": refresh_token,
-                        "user": serialized_user,
-                    }
-
-                    return Response(data, status=status.HTTP_200_OK)
-
                 else:
-                    return Response(
-                        {"error": "Your login code was incorrect. Please try again."},
-                        status=status.HTTP_400_BAD_REQUEST,
+                    user = User.objects.create(
+                        email=email,
+                        username=uuid.uuid4().hex,
+                        password=make_password(uuid.uuid4().hex),
+                        is_password_autoset=True,
                     )
+                    # Send event to Jitsu for tracking
+                    if settings.ANALYTICS_BASE_API:
+                        _ = requests.post(
+                            settings.ANALYTICS_BASE_API,
+                            headers={
+                                "Content-Type": "application/json",
+                                "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
+                            },
+                            json={
+                                "event_id": uuid.uuid4().hex,
+                                "event_data": {
+                                    "medium": "code",
+                                },
+                                "user": {"email": email, "id": str(user.id)},
+                                "device_ctx": {
+                                    "ip": request.META.get("REMOTE_ADDR"),
+                                    "user_agent": request.META.get("HTTP_USER_AGENT"),
+                                },
+                                "event_type": "SIGN_UP",
+                            },
+                        )
+
+                user.last_active = timezone.now()
+                user.last_login_time = timezone.now()
+                user.last_login_ip = request.META.get("REMOTE_ADDR")
+                user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
+                user.token_updated_at = timezone.now()
+                user.save()
+
+                access_token, refresh_token = get_tokens_for_user(user)
+                data = {
+                    "access_token": access_token,
+                    "refresh_token": refresh_token,
+                }
+
+                return Response(data, status=status.HTTP_200_OK)
 
             else:
                 return Response(
-                    {"error": "The magic code/link has expired please try again"},
+                    {"error": "Your login code was incorrect. Please try again."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+
+        else:
+            return Response(
+                {"error": "The magic code/link has expired please try again"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )

@@ -1,44 +1,44 @@
-import {
-  IIssue,
-  IIssueActivity,
-  IIssueLite,
-  IWorkspace,
-  IWorkspaceLite,
-  NestedKeyOf,
-  Properties,
-  TStateGroups,
-} from ".";
+import { IIssueActivity, IIssueLite, TStateGroups } from ".";
 
 export interface IUser {
+  id: string;
   avatar: string;
   cover_image: string | null;
-  created_at: readonly Date;
-  created_location: readonly string;
-  date_joined: readonly Date;
-  email: string;
+  date_joined: string;
   display_name: string;
+  email: string;
   first_name: string;
-  id: readonly string;
+  last_name: string;
+  is_active: boolean;
+  is_bot: boolean;
   is_email_verified: boolean;
+  is_managed: boolean;
   is_onboarded: boolean;
   is_tour_completed: boolean;
-  last_location: readonly string;
-  last_login: readonly Date;
-  last_name: string;
-  mobile_number: string;
-  my_issues_prop: {
-    properties: Properties;
-    groupBy: NestedKeyOf<IIssue> | null;
-  } | null;
-  onboarding_step: TOnboardingSteps;
-  role: string;
-  token: string;
-  theme: ICustomTheme;
-  updated_at: readonly Date;
-  username: string;
+  mobile_number: string | null;
+  role: string | null;
+  onboarding_step: {
+    workspace_join?: boolean;
+    profile_complete?: boolean;
+    workspace_create?: boolean;
+    workspace_invite?: boolean;
+  };
+  last_workspace_id: string;
   user_timezone: string;
+  username: string;
+  theme: ICustomTheme;
+}
 
-  [...rest: string]: any;
+export interface IUserSettings {
+  id: string;
+  email: string;
+  workspace: {
+    last_workspace_id: string;
+    last_workspace_slug: string;
+    fallback_workspace_id: string;
+    fallback_workspace_slug: string;
+    invites: number;
+  };
 }
 
 export interface ICustomTheme {
@@ -52,18 +52,6 @@ export interface ICustomTheme {
   theme: string;
 }
 
-export interface ICurrentUserResponse extends IUser {
-  assigned_issues: number;
-  last_workspace_id: string | null;
-  workspace_invites: number;
-  workspace: {
-    fallback_workspace_id: string | null;
-    fallback_workspace_slug: string | null;
-    invites: number;
-    last_workspace_id: string | null;
-    last_workspace_slug: string | null;
-  };
-}
 export interface IUserLite {
   avatar: string;
   created_at: Date;
@@ -166,32 +154,32 @@ export interface IUserProfileProjectSegregation {
   };
 }
 
-export interface ICurrentUser {
-  id: readonly string;
-  avatar: string;
-  first_name: string;
-  last_name: string;
-  username: string;
-  email: string;
-  mobile_number: string;
-  is_email_verified: boolean;
-  is_tour_completed: boolean;
-  onboarding_step: TOnboardingSteps;
-  is_onboarded: boolean;
-  role: string;
-}
+// export interface ICurrentUser {
+//   id: readonly string;
+//   avatar: string;
+//   first_name: string;
+//   last_name: string;
+//   username: string;
+//   email: string;
+//   mobile_number: string;
+//   is_email_verified: boolean;
+//   is_tour_completed: boolean;
+//   onboarding_step: TOnboardingSteps;
+//   is_onboarded: boolean;
+//   role: string;
+// }
 
-export interface ICustomTheme {
-  background: string;
-  text: string;
-  primary: string;
-  sidebarBackground: string;
-  sidebarText: string;
-  darkPalette: boolean;
-  palette: string;
-  theme: string;
-}
+// export interface ICustomTheme {
+//   background: string;
+//   text: string;
+//   primary: string;
+//   sidebarBackground: string;
+//   sidebarText: string;
+//   darkPalette: boolean;
+//   palette: string;
+//   theme: string;
+// }
 
-export interface ICurrentUserSettings {
-  theme: ICustomTheme;
-}
+// export interface ICurrentUserSettings {
+//   theme: ICustomTheme;
+// }

@@ -61,29 +61,6 @@ class CycleViewSet(BaseViewSet):
             project_id=self.kwargs.get("project_id"), owned_by=self.request.user
         )
 
-    def perform_destroy(self, instance):
-        cycle_issues = list(
-            CycleIssue.objects.filter(cycle_id=self.kwargs.get("pk")).values_list(
-                "issue", flat=True
-            )
-        )
-        issue_activity.delay(
-            type="cycle.activity.deleted",
-            requested_data=json.dumps(
-                {
-                    "cycle_id": str(self.kwargs.get("pk")),
-                    "issues": [str(issue_id) for issue_id in cycle_issues],
-                }
-            ),
-            actor_id=str(self.request.user.id),
-            issue_id=str(self.kwargs.get("pk", None)),
-            project_id=str(self.kwargs.get("project_id", None)),
-            current_instance=None,
-            epoch=int(timezone.now().timestamp())
-        )
-
-        return super().perform_destroy(instance)
-
     def get_queryset(self):
         subquery = CycleFavorite.objects.filter(
             user=self.request.user,
@@ -203,12 +180,6 @@ class CycleViewSet(BaseViewSet):
         order_by = request.GET.get("order_by", "sort_order")
 
         queryset = queryset.order_by(order_by)
-
-        # All Cycles
-        if cycle_view == "all":
-            return Response(
-                CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
-            )
 
         # Current Cycle
         if cycle_view == "current":
@@ -346,10 +317,10 @@ class CycleViewSet(BaseViewSet):
                 CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
             )
 
+        # If no matching view is found return all cycles
         return Response(
-            {"error": "No matching view found"}, status=status.HTTP_400_BAD_REQUEST
+            CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
         )
-
 
     def create(self, request, slug, project_id):
         if (
@@ -376,9 +347,7 @@ class CycleViewSet(BaseViewSet):
             )
 
     def partial_update(self, request, slug, project_id, pk):
-        cycle = Cycle.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=pk
-        )
+        cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
 
         request_data = request.data
 
@@ -402,7 +371,6 @@ class CycleViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
     def retrieve(self, request, slug, project_id, pk):
         queryset = self.get_queryset().get(pk=pk)
 
@@ -418,9 +386,7 @@ class CycleViewSet(BaseViewSet):
             .annotate(assignee_id=F("assignees__id"))
             .annotate(avatar=F("assignees__avatar"))
             .annotate(display_name=F("assignees__display_name"))
-            .values(
-                "first_name", "last_name", "assignee_id", "avatar", "display_name"
-            )
+            .values("first_name", "last_name", "assignee_id", "avatar", "display_name")
             .annotate(
                 total_issues=Count(
                     "assignee_id",
@@ -507,6 +473,40 @@ class CycleViewSet(BaseViewSet):
             status=status.HTTP_200_OK,
         )
 
+    def destroy(self, request, slug, project_id, pk):
+        try:
+            cycle_issues = list(
+                CycleIssue.objects.filter(cycle_id=self.kwargs.get("pk")).values_list(
+                    "issue", flat=True
+                )
+            )
+            cycle = Cycle.objects.get(
+                workspace__slug=slug, project_id=project_id, pk=pk
+            )
+            # Delete the cycle
+            cycle.delete()
+            issue_activity.delay(
+                type="cycle.activity.deleted",
+                requested_data=json.dumps(
+                    {
+                        "cycle_id": str(pk),
+                        "issues": [str(issue_id) for issue_id in cycle_issues],
+                    }
+                ),
+                actor_id=str(request.user.id),
+                issue_id=str(pk),
+                project_id=str(project_id),
+                current_instance=None,
+                epoch=int(timezone.now().timestamp()),
+            )
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
 
 class CycleIssueViewSet(BaseViewSet):
     serializer_class = CycleIssueSerializer
@@ -526,23 +526,6 @@ class CycleIssueViewSet(BaseViewSet):
             project_id=self.kwargs.get("project_id"),
             cycle_id=self.kwargs.get("cycle_id"),
         )
-
-    def perform_destroy(self, instance):
-        issue_activity.delay(
-            type="cycle.activity.deleted",
-            requested_data=json.dumps(
-                {
-                    "cycle_id": str(self.kwargs.get("cycle_id")),
-                    "issues": [str(instance.issue_id)],
-                }
-            ),
-            actor_id=str(self.request.user.id),
-            issue_id=str(self.kwargs.get("pk", None)),
-            project_id=str(self.kwargs.get("project_id", None)),
-            current_instance=None,
-            epoch=int(timezone.now().timestamp())
-        )
-        return super().perform_destroy(instance)
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -598,9 +581,7 @@ class CycleIssueViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                attachment_count=IssueAttachment.objects.filter(
-                    issue=OuterRef("id")
-                )
+                attachment_count=IssueAttachment.objects.filter(issue=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -708,7 +689,7 @@ class CycleIssueViewSet(BaseViewSet):
                     ),
                 }
             ),
-            epoch=int(timezone.now().timestamp())
+            epoch=int(timezone.now().timestamp()),
         )
 
         # Return all Cycle Issues
@@ -716,6 +697,35 @@ class CycleIssueViewSet(BaseViewSet):
             CycleIssueSerializer(self.get_queryset(), many=True).data,
             status=status.HTTP_200_OK,
         )
+
+    def destroy(self, request, slug, project_id, cycle_id, pk):
+        try:
+            cycle_issue = CycleIssue.objects.get(
+                pk=pk, workspace__slug=slug, project_id=project_id, cycle_id=cycle_id
+            )
+            issue_id = cycle_issue.issue_id
+            cycle_issue.delete()
+            issue_activity.delay(
+                type="cycle.activity.deleted",
+                requested_data=json.dumps(
+                    {
+                        "cycle_id": str(self.kwargs.get("cycle_id")),
+                        "issues": [str(issue_id)],
+                    }
+                ),
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("pk", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=None,
+                epoch=int(timezone.now().timestamp()),
+            )
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class CycleDateCheckEndpoint(BaseAPIView):
@@ -746,7 +756,7 @@ class CycleDateCheckEndpoint(BaseAPIView):
         if cycles.exists():
             return Response(
                 {
-                    "error": "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
+                    "error": "You have a cycle already on the given dates, if you want to create a draft cycle you can do that by removing dates",
                     "status": False,
                 }
             )

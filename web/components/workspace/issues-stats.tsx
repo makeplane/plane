@@ -1,7 +1,7 @@
 // components
 import { ActivityGraph } from "components/workspace";
 // ui
-import { Loader, Tooltip } from "components/ui";
+import { Loader, Tooltip } from "@plane/ui";
 // icons
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 // types
@@ -23,10 +23,7 @@ export const IssuesStats: React.FC<Props> = ({ data }) => {
             <h4 className="text-sm">Issues assigned to you</h4>
             <h5 className="mt-2 text-2xl font-semibold">
               {data ? (
-                <div
-                  className="cursor-pointer"
-                  onClick={() => router.push(`/${workspaceSlug}/me/my-issues`)}
-                >
+                <div className="cursor-pointer" onClick={() => router.push(`/${workspaceSlug}/me/my-issues`)}>
                   {data.assigned_issues_count}
                 </div>
               ) : (

@@ -1,28 +1,17 @@
-import React, { useCallback, useState } from "react";
-
+import { FC, useCallback, useState } from "react";
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
+import { Popover2 } from "@blueprintjs/popover2";
 // components
 import { ViewDueDateSelect, ViewEstimateSelect, ViewStartDateSelect } from "components/issues";
 import { LabelSelect, MembersSelect, PrioritySelect } from "components/project";
 import { StateSelect } from "components/states";
-import { Popover2 } from "@blueprintjs/popover2";
 // icons
 import { Icon } from "components/ui";
-import {
-  EllipsisHorizontalIcon,
-  LinkIcon,
-  PencilIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
-// hooks
-import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
-import useToast from "hooks/use-toast";
+import { EllipsisHorizontalIcon, LinkIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 // services
-import issuesService from "services/issues.service";
-import trackEventServices from "services/track-event.service";
+import { IssueService } from "services/issue";
+import { TrackEventService } from "services/track_event.service";
 // constant
 import {
   CYCLE_DETAILS,
@@ -34,18 +23,12 @@ import {
   VIEW_ISSUES,
 } from "constants/fetch-keys";
 // types
-import {
-  ICurrentUserResponse,
-  IIssue,
-  IState,
-  ISubIssueResponse,
-  Properties,
-  TIssuePriorities,
-  UserAuth,
-} from "types";
+import { IUser, IIssue, IState, ISubIssueResponse, Properties, TIssuePriorities, UserAuth } from "types";
 // helper
 import { copyTextToClipboard } from "helpers/string.helper";
 import { renderLongDetailDateFormat } from "helpers/date-time.helper";
+// hooks
+import useToast from "hooks/use-toast";
 
 type Props = {
   issue: IIssue;
@@ -58,33 +41,37 @@ type Props = {
   handleDeleteIssue: (issue: IIssue) => void;
   gridTemplateColumns: string;
   disableUserActions: boolean;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   userAuth: UserAuth;
   nestingLevel: number;
 };
 
-export const SingleSpreadsheetIssue: React.FC<Props> = ({
-  issue,
-  projectId,
-  index,
-  expanded,
-  handleToggleExpand,
-  properties,
-  handleEditIssue,
-  handleDeleteIssue,
-  gridTemplateColumns,
-  disableUserActions,
-  user,
-  userAuth,
-  nestingLevel,
-}) => {
+const issueService = new IssueService();
+const trackEventService = new TrackEventService();
+
+export const SingleSpreadsheetIssue: FC<Props> = (props) => {
+  const {
+    issue,
+    projectId,
+    index,
+    expanded,
+    handleToggleExpand,
+    properties,
+    handleEditIssue,
+    handleDeleteIssue,
+    gridTemplateColumns,
+    disableUserActions,
+    user,
+    userAuth,
+    nestingLevel,
+  } = props;
+  // states
   const [isOpen, setIsOpen] = useState(false);
-
+  // router
   const router = useRouter();
-
   const { workspaceSlug, cycleId, moduleId, viewId } = router.query;
 
-  const { params } = useSpreadsheetIssuesView();
+  const params = {};
 
   const { setToastAlert } = useToast();
 
@@ -137,14 +124,12 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
           false
         );
 
-      issuesService
+      issueService
         .patchIssue(workspaceSlug as string, projectId, issue.id as string, formData, user)
         .then(() => {
           if (issue.parent) {
             mutate(SUB_ISSUES(issue.parent as string));
           } else {
-            mutate(fetchKey);
-
             if (cycleId) mutate(CYCLE_DETAILS(cycleId as string));
             if (moduleId) mutate(MODULE_DETAILS(moduleId as string));
           }
@@ -153,7 +138,8 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
           console.log(error);
         });
     },
-    [workspaceSlug, projectId, cycleId, moduleId, viewId, params, user]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [workspaceSlug, projectId, cycleId, moduleId, user]
   );
 
   const openPeekOverview = () => {
@@ -166,11 +152,8 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
   };
 
   const handleCopyText = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`
-    ).then(() => {
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",
@@ -190,7 +173,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
       },
       issue
     );
-    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+    trackEventService.trackIssuePartialPropertyUpdateEvent(
       {
         workspaceSlug,
         workspaceId: issue.workspace,
@@ -200,10 +183,10 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         issueId: issue.id,
       },
       "ISSUE_PROPERTY_UPDATE_STATE",
-      user
+      user as IUser
     );
     if (oldState?.group !== "completed" && newState?.group !== "completed") {
-      trackEventServices.trackIssueMarkedAsDoneEvent(
+      trackEventService.trackIssueMarkedAsDoneEvent(
         {
           workspaceSlug: issue.workspace_detail.slug,
           workspaceId: issue.workspace_detail.id,
@@ -212,14 +195,14 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
           projectName: issue.project_detail.name,
           issueId: issue.id,
         },
-        user
+        user as IUser
       );
     }
   };
 
   const handlePriorityChange = (data: TIssuePriorities) => {
     partialUpdateIssue({ priority: data }, issue);
-    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+    trackEventService.trackIssuePartialPropertyUpdateEvent(
       {
         workspaceSlug,
         workspaceId: issue.workspace,
@@ -229,7 +212,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         issueId: issue.id,
       },
       "ISSUE_PROPERTY_UPDATE_PRIORITY",
-      user
+      user as IUser
     );
   };
 
@@ -241,7 +224,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
 
     partialUpdateIssue({ assignees_list: data }, issue);
 
-    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+    trackEventService.trackIssuePartialPropertyUpdateEvent(
       {
         workspaceSlug,
         workspaceId: issue.workspace,
@@ -251,7 +234,7 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
         issueId: issue.id,
       },
       "ISSUE_PROPERTY_UPDATE_ASSIGNEE",
-      user
+      user as IUser
     );
   };
 
@@ -426,14 +409,16 @@ export const SingleSpreadsheetIssue: React.FC<Props> = ({
 
         {properties.due_date && (
           <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
-            <ViewDueDateSelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              tooltipPosition={tooltipPosition}
-              noBorder
-              user={user}
-              isNotAllowed={isNotAllowed}
-            />
+            {user && (
+              <ViewDueDateSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                tooltipPosition={tooltipPosition}
+                noBorder
+                user={user}
+                isNotAllowed={isNotAllowed}
+              />
+            )}
           </div>
         )}
         {properties.estimate && (

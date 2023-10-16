@@ -1,49 +1,32 @@
-import { useEffect } from "react";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
-
 // ui
-import { DateSelect, Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { Button, Input, TextArea } from "@plane/ui";
+import { DateSelect } from "components/ui";
 // types
 import { ICycle } from "types";
 
 type Props = {
   handleFormSubmit: (values: Partial<ICycle>) => Promise<void>;
   handleClose: () => void;
-  status: boolean;
   data?: ICycle | null;
 };
 
-const defaultValues: Partial<ICycle> = {
-  name: "",
-  description: "",
-  start_date: null,
-  end_date: null,
-};
-
-export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, status, data }) => {
+export const CycleForm: React.FC<Props> = (props) => {
+  const { handleFormSubmit, handleClose, data } = props;
+  // form data
   const {
-    register,
     formState: { errors, isSubmitting },
     handleSubmit,
     control,
-    reset,
     watch,
   } = useForm<ICycle>({
-    defaultValues,
+    defaultValues: {
+      name: data?.name || "",
+      description: data?.description || "",
+      start_date: data?.start_date || null,
+      end_date: data?.end_date || null,
+    },
   });
-
-  const handleCreateUpdateCycle = async (formData: Partial<ICycle>) => {
-    await handleFormSubmit(formData);
-  };
-
-  useEffect(() => {
-    reset({
-      ...defaultValues,
-      ...data,
-    });
-  }, [data, reset]);
 
   const startDate = watch("start_date");
   const endDate = watch("end_date");
@@ -55,39 +38,50 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
   maxDate?.setDate(maxDate.getDate() - 1);
 
   return (
-    <form onSubmit={handleSubmit(handleCreateUpdateCycle)}>
+    <form onSubmit={handleSubmit(handleFormSubmit)}>
       <div className="space-y-5">
-        <h3 className="text-lg font-medium leading-6 text-custom-text-100">
-          {status ? "Update" : "Create"} Cycle
-        </h3>
+        <h3 className="text-lg font-medium leading-6 text-custom-text-100">{status ? "Update" : "Create"} Cycle</h3>
         <div className="space-y-3">
           <div>
-            <Input
-              autoComplete="off"
-              id="name"
+            <Controller
               name="name"
-              type="name"
-              className="resize-none text-xl"
-              placeholder="Title"
-              error={errors.name}
-              register={register}
-              validations={{
+              control={control}
+              rules={{
                 required: "Name is required",
                 maxLength: {
                   value: 255,
                   message: "Name should be less than 255 characters",
                 },
               }}
+              render={({ field: { value, onChange } }) => (
+                <Input
+                  id="cycle_name"
+                  name="name"
+                  type="text"
+                  placeholder="Cycle Name"
+                  className="resize-none text-xl w-full p-2"
+                  value={value}
+                  onChange={onChange}
+                  hasError={Boolean(errors?.name)}
+                />
+              )}
             />
           </div>
           <div>
-            <TextArea
-              id="description"
+            <Controller
               name="description"
-              placeholder="Description"
-              className="h-32 resize-none text-sm"
-              error={errors.description}
-              register={register}
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <TextArea
+                  id="cycle_description"
+                  name="description"
+                  placeholder="Description"
+                  className="h-32 resize-none text-sm"
+                  hasError={Boolean(errors?.description)}
+                  value={value}
+                  onChange={onChange}
+                />
+              )}
             />
           </div>
 
@@ -112,12 +106,7 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
                 control={control}
                 name="end_date"
                 render={({ field: { value, onChange } }) => (
-                  <DateSelect
-                    label="End date"
-                    value={value}
-                    onChange={(val) => onChange(val)}
-                    minDate={minDate}
-                  />
+                  <DateSelect label="End date" value={value} onChange={(val) => onChange(val)} minDate={minDate} />
                 )}
               />
             </div>
@@ -125,16 +114,18 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
         </div>
       </div>
       <div className="-mx-5 mt-5 flex justify-end gap-2 border-t border-custom-border-200 px-5 pt-5">
-        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-        <PrimaryButton type="submit" loading={isSubmitting}>
-          {status
+        <Button variant="neutral-primary" onClick={handleClose}>
+          Cancel
+        </Button>
+        <Button variant="primary" type="submit" loading={isSubmitting}>
+          {data
             ? isSubmitting
               ? "Updating Cycle..."
               : "Update Cycle"
             : isSubmitting
             ? "Creating Cycle..."
             : "Create Cycle"}
-        </PrimaryButton>
+        </Button>
       </div>
     </form>
   );
