@@ -1,15 +1,16 @@
 import React from "react";
 import { useRouter } from "next/router";
-// react-hook-form
 import { useForm, Controller } from "react-hook-form";
+
+// services
+import { FileService } from "services/file.service";
 // components
 import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
 // ui
-import { SecondaryButton } from "components/ui";
+import { Icon } from "components/ui";
+import { Button, Tooltip } from "@plane/ui";
 // types
 import type { IIssueComment } from "types";
-// services
-import fileService from "services/file.service";
 
 const defaultValues: Partial<IIssueComment> = {
   access: "INTERNAL",
@@ -26,7 +27,7 @@ type commentAccessType = {
   icon: string;
   key: string;
   label: "Private" | "Public";
-}
+};
 const commentAccess: commentAccessType[] = [
   {
     icon: "lock",
@@ -40,11 +41,10 @@ const commentAccess: commentAccessType[] = [
   },
 ];
 
-export const AddComment: React.FC<Props> = ({
-  disabled = false,
-  onSubmit,
-  showAccessSpecifier = false,
-}) => {
+// services
+const fileService = new FileService();
+
+export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAccessSpecifier = false }) => {
   const editorRef = React.useRef<any>(null);
 
   const router = useRouter();
@@ -71,6 +71,36 @@ export const AddComment: React.FC<Props> = ({
       <form onSubmit={handleSubmit(handleAddComment)}>
         <div>
           <div className="relative">
+            {showAccessSpecifier && (
+              <div className="absolute bottom-2 left-3 z-[1]">
+                <Controller
+                  control={control}
+                  name="access"
+                  render={({ field: { onChange, value } }) => (
+                    <div className="flex border border-custom-border-300 divide-x divide-custom-border-300 rounded overflow-hidden">
+                      {commentAccess.map((access) => (
+                        <Tooltip key={access.key} tooltipContent={access.label}>
+                          <button
+                            type="button"
+                            onClick={() => onChange(access.key)}
+                            className={`grid place-items-center p-1 hover:bg-custom-background-80 ${
+                              value === access.key ? "bg-custom-background-80" : ""
+                            }`}
+                          >
+                            <Icon
+                              iconName={access.icon}
+                              className={`w-4 h-4 -mt-1 ${
+                                value === access.key ? "!text-custom-text-100" : "!text-custom-text-400"
+                              }`}
+                            />
+                          </button>
+                        </Tooltip>
+                      ))}
+                    </div>
+                  )}
+                />
+              </div>
+            )}
             <Controller
               name="access"
               control={control}
@@ -96,9 +126,9 @@ export const AddComment: React.FC<Props> = ({
             />
           </div>
 
-          <SecondaryButton type="submit" disabled={isSubmitting || disabled} className="mt-2">
+          <Button variant="neutral-primary" type="submit" disabled={isSubmitting || disabled}>
             {isSubmitting ? "Adding..." : "Comment"}
-          </SecondaryButton>
+          </Button>
         </div>
       </form>
     </div>

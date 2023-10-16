@@ -187,7 +187,6 @@ def filter_target_date(params, filter, method):
     if method == "GET":
         target_dates = params.get("target_date").split(",")
         if len(target_dates) and "" not in target_dates:
-
             date_filter(filter=filter, date_term="target_date", queries=target_dates)
     else:
         if params.get("target_date", None) and len(params.get("target_date")):

@@ -17,12 +17,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const AnalyticsLeaderboard: React.FC<Props> = ({
-  users,
-  title,
-  emptyStateMessage,
-  workspaceSlug,
-}) => (
+export const AnalyticsLeaderBoard: React.FC<Props> = ({ users, title, emptyStateMessage, workspaceSlug }) => (
   <div className="p-3 border border-custom-border-200 rounded-[10px]">
     <h6 className="text-base font-medium">{title}</h6>
     {users.length > 0 ? (

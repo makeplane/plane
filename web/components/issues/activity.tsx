@@ -7,7 +7,8 @@ import { useRouter } from "next/router";
 import { ActivityIcon, ActivityMessage } from "components/core";
 import { CommentCard } from "components/issues/comment";
 // ui
-import { Icon, Loader, Tooltip } from "components/ui";
+import { Icon } from "components/ui";
+import { Loader, Tooltip } from "@plane/ui";
 // helpers
 import { render24HourFormatTime, renderLongDateFormat, timeAgo } from "helpers/date-time.helper";
 // types
@@ -52,11 +53,7 @@ export const IssueActivitySection: React.FC<Props> = ({
       <ul role="list" className="-mb-4">
         {activity.map((activityItem, index) => {
           // determines what type of action is performed
-          const message = activityItem.field ? (
-            <ActivityMessage activity={activityItem} />
-          ) : (
-            "created the issue."
-          );
+          const message = activityItem.field ? <ActivityMessage activity={activityItem} /> : "created the issue.";
 
           if ("field" in activityItem && activityItem.field !== "updated_by") {
             return (
@@ -79,8 +76,7 @@ export const IssueActivitySection: React.FC<Props> = ({
                               ) : (
                                 <ActivityIcon activity={activityItem} />
                               )
-                            ) : activityItem.actor_detail.avatar &&
-                              activityItem.actor_detail.avatar !== "" ? (
+                            ) : activityItem.actor_detail.avatar && activityItem.actor_detail.avatar !== "" ? (
                               <img
                                 src={activityItem.actor_detail.avatar}
                                 alt={activityItem.actor_detail.display_name}
@@ -103,13 +99,10 @@ export const IssueActivitySection: React.FC<Props> = ({
                     </div>
                     <div className="min-w-0 flex-1 py-3">
                       <div className="text-xs text-custom-text-200 break-words">
-                        {activityItem.field === "archived_at" &&
-                        activityItem.new_value !== "restore" ? (
+                        {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
                           <span className="text-gray font-medium">Plane</span>
                         ) : activityItem.actor_detail.is_bot ? (
-                          <span className="text-gray font-medium">
-                            {activityItem.actor_detail.first_name} Bot
-                          </span>
+                          <span className="text-gray font-medium">{activityItem.actor_detail.first_name} Bot</span>
                         ) : (
                           <Link href={`/${workspaceSlug}/profile/${activityItem.actor_detail.id}`}>
                             <a className="text-gray font-medium">
@@ -121,13 +114,11 @@ export const IssueActivitySection: React.FC<Props> = ({
                         )}{" "}
                         {message}{" "}
                         <Tooltip
-                          tooltipContent={`${renderLongDateFormat(
+                          tooltipContent={`${renderLongDateFormat(activityItem.created_at)}, ${render24HourFormatTime(
                             activityItem.created_at
-                          )}, ${render24HourFormatTime(activityItem.created_at)}`}
+                          )}`}
                         >
-                          <span className="whitespace-nowrap">
-                            {timeAgo(activityItem.created_at)}
-                          </span>
+                          <span className="whitespace-nowrap">{timeAgo(activityItem.created_at)}</span>
                         </Tooltip>
                       </div>
                     </div>

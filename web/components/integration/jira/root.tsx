@@ -16,13 +16,13 @@ import { ArrowLeftIcon, ListBulletIcon } from "@heroicons/react/24/outline";
 import { CogIcon, UsersIcon, CheckIcon } from "components/icons";
 
 // services
-import jiraImporterService from "services/integration/jira.service";
+import { JiraImporterService } from "services/integrations";
 
 // fetch keys
 import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
 
 // components
-import { PrimaryButton, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 import {
   JiraGetImportDetail,
   JiraProjectDetail,
@@ -35,7 +35,7 @@ import {
 
 import JiraLogo from "public/services/jira.png";
 
-import { ICurrentUserResponse, IJiraImporterForm } from "types";
+import { IUser, IJiraImporterForm } from "types";
 
 const integrationWorkflowData: Array<{
   title: string;
@@ -65,8 +65,11 @@ const integrationWorkflowData: Array<{
 ];
 
 type Props = {
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
+
+// services
+const jiraImporterService = new JiraImporterService();
 
 export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
   const [currentStep, setCurrentStep] = useState<IJiraIntegrationData>({
@@ -100,9 +103,7 @@ export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
   };
 
   const activeIntegrationState = () => {
-    const currentElementIndex = integrationWorkflowData.findIndex(
-      (i) => i?.key === currentStep?.state
-    );
+    const currentElementIndex = integrationWorkflowData.findIndex((i) => i?.key === currentStep?.state);
 
     return currentElementIndex;
   };
@@ -155,9 +156,7 @@ export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
                   <div
                     key={index}
                     className={`border-b px-7 ${
-                      index <= activeIntegrationState() - 1
-                        ? `border-custom-primary`
-                        : `border-custom-border-200`
+                      index <= activeIntegrationState() - 1 ? `border-custom-primary` : `border-custom-border-200`
                     }`}
                   >
                     {" "}
@@ -174,10 +173,7 @@ export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
               <div className="h-full w-full overflow-y-auto">
                 {currentStep.state === "import-configure" && <JiraGetImportDetail />}
                 {currentStep.state === "display-import-data" && (
-                  <JiraProjectDetail
-                    setDisableTopBarAfter={setDisableTopBarAfter}
-                    setCurrentStep={setCurrentStep}
-                  />
+                  <JiraProjectDetail setDisableTopBarAfter={setDisableTopBarAfter} setCurrentStep={setCurrentStep} />
                 )}
                 {currentStep?.state === "import-users" && <JiraImportUsers />}
                 {currentStep?.state === "import-confirmation" && <JiraConfirmImport />}
@@ -185,7 +181,8 @@ export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
 
               <div className="-mx-4 mt-4 flex justify-end gap-4 border-t border-custom-border-200 p-4 pb-0">
                 {currentStep?.state !== "import-configure" && (
-                  <SecondaryButton
+                  <Button
+                    variant="neutral-primary"
                     onClick={() => {
                       const currentElementIndex = integrationWorkflowData.findIndex(
                         (i) => i?.key === currentStep?.state
@@ -196,18 +193,13 @@ export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
                     }}
                   >
                     Back
-                  </SecondaryButton>
+                  </Button>
                 )}
-                <PrimaryButton
-                  disabled={
-                    disableTopBarAfter === currentStep?.state ||
-                    !isValid ||
-                    methods.formState.isSubmitting
-                  }
+                <Button
+                  variant="primary"
+                  disabled={disableTopBarAfter === currentStep?.state || !isValid || methods.formState.isSubmitting}
                   onClick={() => {
-                    const currentElementIndex = integrationWorkflowData.findIndex(
-                      (i) => i?.key === currentStep?.state
-                    );
+                    const currentElementIndex = integrationWorkflowData.findIndex((i) => i?.key === currentStep?.state);
 
                     if (currentElementIndex === integrationWorkflowData.length - 1) {
                       methods.handleSubmit(onSubmit)();
@@ -219,7 +211,7 @@ export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
                   }}
                 >
                   {currentStep?.state === "import-confirmation" ? "Confirm & Import" : "Next"}
-                </PrimaryButton>
+                </Button>
               </div>
             </form>
           </FormProvider>

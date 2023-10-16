@@ -1,13 +1,10 @@
 import React, { useState } from "react";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// react-color
 import { TwitterPicker } from "react-color";
-// headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
-import { CustomMenu, Input, PrimaryButton, SecondaryButton } from "components/ui";
+import { CustomMenu } from "components/ui";
+import { Button, Input } from "@plane/ui";
 // icons
 import { PencilIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
 // types
@@ -29,7 +26,6 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
   const [newLabelForm, setNewLabelForm] = useState(false);
 
   const {
-    register,
     formState: { errors, isSubmitting },
     watch,
     control,
@@ -54,9 +50,7 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
             <CustomMenu ellipsis>
               {/* <CustomMenu.MenuItem>Convert to group</CustomMenu.MenuItem> */}
               <CustomMenu.MenuItem onClick={() => editLabel(label)}>Edit</CustomMenu.MenuItem>
-              <CustomMenu.MenuItem onClick={() => handleLabelDelete(label.id)}>
-                Delete
-              </CustomMenu.MenuItem>
+              <CustomMenu.MenuItem onClick={() => handleLabelDelete(label.id)}>Delete</CustomMenu.MenuItem>
             </CustomMenu>
           </div>
           <div className={`flex items-center gap-2 ${newLabelForm ? "" : "hidden"}`}>
@@ -93,10 +87,7 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
                           name="color"
                           control={control}
                           render={({ field: { value, onChange } }) => (
-                            <TwitterPicker
-                              color={value}
-                              onChange={(value) => onChange(value.hex)}
-                            />
+                            <TwitterPicker color={value} onChange={(value) => onChange(value.hex)} />
                           )}
                         />
                       </Popover.Panel>
@@ -106,20 +97,33 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
               </Popover>
             </div>
             <div className="flex w-full flex-col justify-center">
-              <Input
-                type="text"
-                id="labelName"
+              <Controller
+                control={control}
                 name="name"
-                register={register}
-                placeholder="Label title"
-                validations={{
+                rules={{
                   required: "Label title is required",
                 }}
-                error={errors.name}
+                render={({ field: { value, onChange, ref } }) => (
+                  <Input
+                    id="labelName"
+                    name="name"
+                    type="text"
+                    value={value}
+                    onChange={onChange}
+                    ref={ref}
+                    hasError={Boolean(errors.name)}
+                    placeholder="Label title"
+                    className="w-full"
+                  />
+                )}
               />
             </div>
-            <SecondaryButton onClick={() => setNewLabelForm(false)}>Cancel</SecondaryButton>
-            <PrimaryButton loading={isSubmitting}>{isSubmitting ? "Adding" : "Add"}</PrimaryButton>
+            <Button variant="neutral-primary" onClick={() => setNewLabelForm(false)}>
+              Cancel
+            </Button>
+            <Button variant="primary" loading={isSubmitting}>
+              {isSubmitting ? "Adding" : "Add"}
+            </Button>
           </div>
         </div>
       ) : (

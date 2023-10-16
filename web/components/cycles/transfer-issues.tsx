@@ -5,17 +5,19 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // component
-import { PrimaryButton, Tooltip } from "components/ui";
+import { Button } from "@plane/ui";
 // icon
 import { ExclamationIcon, TransferIcon } from "components/icons";
 // services
-import cycleServices from "services/cycles.service";
+import { CycleService } from "services/cycle.service";
 // fetch-key
 import { CYCLE_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   handleClick: () => void;
 };
+
+const cycleService = new CycleService();
 
 export const TransferIssues: React.FC<Props> = ({ handleClick }) => {
   const router = useRouter();
@@ -24,12 +26,7 @@ export const TransferIssues: React.FC<Props> = ({ handleClick }) => {
   const { data: cycleDetails } = useSWR(
     cycleId ? CYCLE_DETAILS(cycleId as string) : null,
     workspaceSlug && projectId && cycleId
-      ? () =>
-          cycleServices.getCycleDetails(
-            workspaceSlug as string,
-            projectId as string,
-            cycleId as string
-          )
+      ? () => cycleService.getCycleDetails(workspaceSlug as string, projectId as string, cycleId as string)
       : null
   );
 
@@ -45,10 +42,9 @@ export const TransferIssues: React.FC<Props> = ({ handleClick }) => {
 
       {transferableIssuesCount > 0 && (
         <div>
-          <PrimaryButton onClick={handleClick} className="flex items-center gap-3 rounded-lg">
-            <TransferIcon className="h-4 w-4" color="white" />
-            <span className="text-white">Transfer Issues</span>
-          </PrimaryButton>
+          <Button variant="primary" prependIcon={<TransferIcon color="white" />} onClick={handleClick}>
+            Transfer Issues
+          </Button>
         </div>
       )}
     </div>

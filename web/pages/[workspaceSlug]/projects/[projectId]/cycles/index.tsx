@@ -1,26 +1,18 @@
 import React, { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
-
-// headless ui
 import { Tab } from "@headlessui/react";
+import useSWR from "swr";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
 import useUserAuth from "hooks/use-user-auth";
-import useProjectDetails from "hooks/use-project-details";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
-import {
-  ActiveCycleDetails,
-  AllCyclesList,
-  CompletedCyclesList,
-  CreateUpdateCycleModal,
-  DraftCyclesList,
-  UpcomingCyclesList,
-} from "components/cycles";
+import { CyclesView, ActiveCycleDetails, CreateUpdateCycleModal } from "components/cycles";
 // ui
-import { EmptyState, Icon, PrimaryButton } from "components/ui";
+import { Button } from "@plane/ui";
+import { EmptyState } from "components/common";
+import { Icon } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -31,54 +23,42 @@ import { SelectCycleType } from "types";
 import type { NextPage } from "next";
 // helper
 import { truncateText } from "helpers/string.helper";
+import { useMobxStore } from "lib/mobx/store-provider";
+import { observer } from "mobx-react-lite";
+// constants
+import { CYCLE_TAB_LIST, CYCLE_VIEWS } from "constants/cycle";
 
-const tabsList = ["All", "Active", "Upcoming", "Completed", "Drafts"];
+type ICycleAPIFilter = "all" | "current" | "upcoming" | "draft" | "completed" | "incomplete";
+type ICycleView = "list" | "board" | "gantt";
 
-const cycleViews = [
-  {
-    key: "list",
-    icon: "list",
-  },
-  {
-    key: "board",
-    icon: "dataset",
-  },
-  {
-    key: "gantt",
-    icon: "view_timeline",
-  },
-];
-
-const ProjectCycles: NextPage = () => {
+const ProjectCyclesPage: NextPage = observer(() => {
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+  // store
+  const { project: projectStore } = useMobxStore();
+  const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : null;
+  // states
   const [selectedCycle, setSelectedCycle] = useState<SelectCycleType>();
   const [createUpdateCycleModal, setCreateUpdateCycleModal] = useState(false);
-
-  const { storedValue: cycleTab, setValue: setCycleTab } = useLocalStorage("cycleTab", "All");
-  const { storedValue: cyclesView, setValue: setCyclesView } = useLocalStorage("cycleView", "list");
-
-  const currentTabValue = (tab: string | null) => {
-    switch (tab) {
-      case "All":
-        return 0;
-      case "Active":
-        return 1;
-      case "Upcoming":
-        return 2;
-      case "Completed":
-        return 3;
-      case "Drafts":
-        return 4;
-      default:
-        return 0;
-    }
-  };
-
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
+  // local storage
+  const { storedValue: cycleTab, setValue: setCycleTab } = useLocalStorage("cycle_tab", "all");
+  const { storedValue: cyclesView, setValue: setCyclesView } = useLocalStorage("cycle_view", "list");
+  // hooks
   const { user } = useUserAuth();
-  const { projectDetails } = useProjectDetails();
+  // api call fetch project details
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_DETAILS_${projectId}` : null,
+    workspaceSlug && projectId
+      ? () => {
+          projectStore.fetchProjectDetails(workspaceSlug.toString(), projectId.toString());
+        }
+      : null
+  );
 
+  /**
+   * Clearing form data after closing the modal
+   */
   useEffect(() => {
     if (createUpdateCycleModal) return;
 
@@ -87,6 +67,12 @@ const ProjectCycles: NextPage = () => {
       clearTimeout(timer);
     }, 500);
   }, [createUpdateCycleModal]);
+
+  useEffect(() => {
+    if (cycleTab === "draft" && cyclesView === "gantt") {
+      setCyclesView("list");
+    }
+  }, [cycleTab, cyclesView, setCyclesView]);
 
   return (
     <ProjectAuthorizationWrapper
@@ -97,16 +83,16 @@ const ProjectCycles: NextPage = () => {
         </Breadcrumbs>
       }
       right={
-        <PrimaryButton
-          className="flex items-center gap-2"
+        <Button
+          variant="primary"
+          prependIcon={<PlusIcon />}
           onClick={() => {
             const e = new KeyboardEvent("keydown", { key: "q" });
             document.dispatchEvent(e);
           }}
         >
-          <PlusIcon className="h-4 w-4" />
           Add Cycle
-        </PrimaryButton>
+        </Button>
       }
     >
       <CreateUpdateCycleModal
@@ -137,60 +123,42 @@ const ProjectCycles: NextPage = () => {
         <Tab.Group
           as="div"
           className="h-full flex flex-col overflow-hidden"
-          defaultIndex={currentTabValue(cycleTab)}
-          selectedIndex={currentTabValue(cycleTab)}
+          defaultIndex={CYCLE_TAB_LIST.findIndex((i) => i.key === cycleTab)}
+          selectedIndex={CYCLE_TAB_LIST.findIndex((i) => i.key === cycleTab)}
           onChange={(i) => {
-            switch (i) {
-              case 0:
-                return setCycleTab("All");
-              case 1:
-                return setCycleTab("Active");
-              case 2:
-                return setCycleTab("Upcoming");
-              case 3:
-                return setCycleTab("Completed");
-              case 4:
-                return setCycleTab("Drafts");
-              default:
-                return setCycleTab("All");
+            try {
+              setCycleTab(CYCLE_TAB_LIST[i].key);
+            } catch (e) {
+              setCycleTab(CYCLE_TAB_LIST[0].key);
             }
           }}
         >
           <div className="flex flex-col sm:flex-row gap-4 justify-between border-b border-custom-border-300 px-4 sm:px-5 pb-4 sm:pb-0">
             <Tab.List as="div" className="flex items-center overflow-x-scroll">
-              {tabsList.map((tab, index) => {
-                if (cyclesView === "gantt_chart" && (tab === "Active" || tab === "Drafts"))
-                  return null;
-
-                return (
-                  <Tab
-                    key={index}
-                    className={({ selected }) =>
-                      `border-b-2 p-4 text-sm font-medium outline-none ${
-                        selected
-                          ? "border-custom-primary-100 text-custom-primary-100"
-                          : "border-transparent"
-                      }`
-                    }
-                  >
-                    {tab}
-                  </Tab>
-                );
-              })}
+              {CYCLE_TAB_LIST.map((tab) => (
+                <Tab
+                  key={tab.key}
+                  className={({ selected }) =>
+                    `border-b-2 p-4 text-sm font-medium outline-none ${
+                      selected ? "border-custom-primary-100 text-custom-primary-100" : "border-transparent"
+                    }`
+                  }
+                >
+                  {tab.name}
+                </Tab>
+              ))}
             </Tab.List>
             <div className="justify-end sm:justify-start flex items-center gap-x-1">
-              {cycleViews.map((view) => {
-                if (cycleTab === "Active") return null;
-                if (view.key === "gantt" && cycleTab === "Drafts") return null;
+              {CYCLE_VIEWS.map((view) => {
+                if (cycleTab === "active") return null;
+                if (view.key === "gantt" && cycleTab === "draft") return null;
 
                 return (
                   <button
                     key={view.key}
                     type="button"
                     className={`grid h-8 w-8 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-80 ${
-                      cyclesView === view.key
-                        ? "bg-custom-background-80 text-custom-text-100"
-                        : "text-custom-text-200"
+                      cyclesView === view.key ? "bg-custom-background-80 text-custom-text-100" : "text-custom-text-200"
                     }`}
                     onClick={() => setCyclesView(view.key)}
                   >
@@ -202,29 +170,53 @@ const ProjectCycles: NextPage = () => {
           </div>
           <Tab.Panels as={React.Fragment}>
             <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
-              <AllCyclesList viewType={cyclesView} />
+              {cycleTab && cyclesView && workspaceSlug && projectId && (
+                <CyclesView
+                  filter="all"
+                  view={cyclesView as ICycleView}
+                  workspaceSlug={workspaceSlug?.toString()}
+                  projectId={projectId?.toString()}
+                />
+              )}
             </Tab.Panel>
-            {cyclesView !== "gantt_chart" && (
-              <Tab.Panel as="div" className="p-4 sm:p-5 space-y-5 h-full overflow-y-auto">
-                <ActiveCycleDetails />
-              </Tab.Panel>
-            )}
+            <Tab.Panel as="div" className="p-4 sm:p-5 space-y-5 h-full overflow-y-auto">
+              <ActiveCycleDetails />
+            </Tab.Panel>
             <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
-              <UpcomingCyclesList viewType={cyclesView} />
+              {cycleTab && cyclesView && workspaceSlug && projectId && (
+                <CyclesView
+                  filter="upcoming"
+                  view={cyclesView as ICycleView}
+                  workspaceSlug={workspaceSlug?.toString()}
+                  projectId={projectId?.toString()}
+                />
+              )}
             </Tab.Panel>
             <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
-              <CompletedCyclesList viewType={cyclesView} />
+              {cycleTab && cyclesView && workspaceSlug && projectId && (
+                <CyclesView
+                  filter="completed"
+                  view={cyclesView as ICycleView}
+                  workspaceSlug={workspaceSlug?.toString()}
+                  projectId={projectId?.toString()}
+                />
+              )}
             </Tab.Panel>
-            {cyclesView !== "gantt_chart" && (
-              <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
-                <DraftCyclesList viewType={cyclesView} />
-              </Tab.Panel>
-            )}
+            <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
+              {cycleTab && cyclesView && workspaceSlug && projectId && (
+                <CyclesView
+                  filter="draft"
+                  view={cyclesView as ICycleView}
+                  workspaceSlug={workspaceSlug?.toString()}
+                  projectId={projectId?.toString()}
+                />
+              )}
+            </Tab.Panel>
           </Tab.Panels>
         </Tab.Group>
       )}
     </ProjectAuthorizationWrapper>
   );
-};
+});
 
-export default ProjectCycles;
+export default ProjectCyclesPage;

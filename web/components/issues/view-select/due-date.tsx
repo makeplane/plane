@@ -1,13 +1,13 @@
 import { useRouter } from "next/router";
-
 // ui
-import { CustomDatePicker, Tooltip } from "components/ui";
+import { CustomDatePicker } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // helpers
 import { findHowManyDaysLeft, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // services
-import trackEventServices from "services/track-event.service";
+import { TrackEventService } from "services/track_event.service";
 // types
-import { ICurrentUserResponse, IIssue } from "types";
+import { IUser, IIssue } from "types";
 import useIssuesView from "hooks/use-issues-view";
 
 type Props = {
@@ -17,9 +17,11 @@ type Props = {
   handleOnClose?: () => void;
   tooltipPosition?: "top" | "bottom";
   noBorder?: boolean;
-  user: ICurrentUserResponse | undefined;
+  user: IUser;
   isNotAllowed: boolean;
 };
+
+const trackEventService = new TrackEventService();
 
 export const ViewDueDateSelect: React.FC<Props> = ({
   issue,
@@ -42,9 +44,7 @@ export const ViewDueDateSelect: React.FC<Props> = ({
   return (
     <Tooltip
       tooltipHeading="Due date"
-      tooltipContent={
-        issue.target_date ? renderShortDateWithYearFormat(issue.target_date) ?? "N/A" : "N/A"
-      }
+      tooltipContent={issue.target_date ? renderShortDateWithYearFormat(issue.target_date) ?? "N/A" : "N/A"}
       position={tooltipPosition}
     >
       <div
@@ -66,7 +66,7 @@ export const ViewDueDateSelect: React.FC<Props> = ({
               },
               issue
             );
-            trackEventServices.trackIssuePartialPropertyUpdateEvent(
+            trackEventService.trackIssuePartialPropertyUpdateEvent(
               {
                 workspaceSlug,
                 workspaceId: issue.workspace,
@@ -80,9 +80,7 @@ export const ViewDueDateSelect: React.FC<Props> = ({
             );
           }}
           className={`${issue?.target_date ? "w-[6.5rem]" : "w-[5rem] text-center"} ${
-            displayFilters.layout === "kanban"
-              ? "bg-custom-background-90"
-              : "bg-custom-background-100"
+            displayFilters.layout === "kanban" ? "bg-custom-background-90" : "bg-custom-background-100"
           }`}
           minDate={minDate ?? undefined}
           noBorder={noBorder}

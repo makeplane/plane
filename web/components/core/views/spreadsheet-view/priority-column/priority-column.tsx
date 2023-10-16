@@ -1,38 +1,32 @@
-import React from "react";
-
+import { FC } from "react";
 import { useRouter } from "next/router";
-
 // components
 import { PrioritySelect } from "components/project";
 // services
-import trackEventServices from "services/track-event.service";
+import { TrackEventService } from "services/track_event.service";
 // types
-import { ICurrentUserResponse, IIssue, Properties, TIssuePriorities } from "types";
+import { IUser, IIssue, Properties, TIssuePriorities } from "types";
 
 type Props = {
   issue: IIssue;
   projectId: string;
   partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
   properties: Properties;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   isNotAllowed: boolean;
 };
 
-export const PriorityColumn: React.FC<Props> = ({
-  issue,
-  projectId,
-  partialUpdateIssue,
-  properties,
-  user,
-  isNotAllowed,
-}) => {
-  const router = useRouter();
+const trackEventService = new TrackEventService();
 
+export const PriorityColumn: FC<Props> = (props) => {
+  const { issue, partialUpdateIssue, properties, user, isNotAllowed } = props;
+  // router
+  const router = useRouter();
   const { workspaceSlug } = router.query;
 
   const handlePriorityChange = (data: TIssuePriorities) => {
     partialUpdateIssue({ priority: data }, issue);
-    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+    trackEventService.trackIssuePartialPropertyUpdateEvent(
       {
         workspaceSlug,
         workspaceId: issue.workspace,
@@ -42,7 +36,7 @@ export const PriorityColumn: React.FC<Props> = ({
         issueId: issue.id,
       },
       "ISSUE_PROPERTY_UPDATE_PRIORITY",
-      user
+      user as IUser
     );
   };
 

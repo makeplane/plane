@@ -6,10 +6,13 @@ import useSWR from "swr";
 // keys
 import { CURRENT_USER } from "constants/fetch-keys";
 // services
-import userService from "services/user.service";
-import workspaceService from "services/workspace.service";
+import { UserService } from "services/user.service";
+import { WorkspaceService } from "services/workspace.service";
 // types
-import type { IWorkspace, ICurrentUserResponse } from "types";
+import type { IWorkspace, IUser } from "types";
+
+const userService = new UserService();
+const workspaceService = new WorkspaceService();
 
 const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "admin") => {
   const router = useRouter();
@@ -22,7 +25,7 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
     isLoading,
     error,
     mutate,
-  } = useSWR<ICurrentUserResponse>(CURRENT_USER, () => userService.currentUser(), {
+  } = useSWR<IUser>(CURRENT_USER, () => userService.currentUser(), {
     refreshInterval: 0,
     shouldRetryOnError: false,
   });
@@ -109,8 +112,8 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
     isLoading: isRouteAccess,
     user: error ? undefined : user,
     mutateUser: mutate,
-    assignedIssuesLength: user?.assigned_issues ?? 0,
-    workspaceInvitesLength: user?.workspace_invites ?? 0,
+    // assignedIssuesLength: user?.assigned_issues ?? 0,
+    // workspaceInvitesLength: user?.workspace_invites ?? 0,
   };
 };
 

@@ -7,13 +7,13 @@ import { mutate } from "swr";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
-import projectService from "services/project.service";
+import { ProjectService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
 import useDebounce from "hooks/use-debounce";
 // ui
-import { Loader, PrimaryButton, SecondaryButton, ToggleSwitch, Tooltip } from "components/ui";
+import { Button, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
 import { LaunchOutlined } from "@mui/icons-material";
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -35,6 +35,8 @@ type Props = {
   handleOnSubmit: (data: ISearchIssueResponse[]) => Promise<void>;
   workspaceLevelToggle?: boolean;
 };
+
+const projectService = new ProjectService();
 
 export const ExistingIssuesListModal: React.FC<Props> = ({
   isOpen,
@@ -117,12 +119,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
 
   return (
     <>
-      <Transition.Root
-        show={isOpen}
-        as={React.Fragment}
-        afterLeave={() => setSearchTerm("")}
-        appear
-      >
+      <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setSearchTerm("")} appear>
         <Dialog as="div" className="relative z-20" onClose={handleClose}>
           <Transition.Child
             as={React.Fragment}
@@ -180,11 +177,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                             <button
                               type="button"
                               className="group p-1"
-                              onClick={() =>
-                                setSelectedIssues((prevData) =>
-                                  prevData.filter((i) => i.id !== issue.id)
-                                )
-                              }
+                              onClick={() => setSelectedIssues((prevData) => prevData.filter((i) => i.id !== issue.id))}
                             >
                               <XMarkIcon className="h-3 w-3 text-custom-text-200 group-hover:text-custom-text-100" />
                             </button>
@@ -232,21 +225,15 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                       </h5>
                     )}
 
-                    {!isSearching &&
-                      issues.length === 0 &&
-                      searchTerm !== "" &&
-                      debouncedSearchTerm !== "" && (
-                        <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
-                          <LayerDiagonalIcon height="52" width="52" />
-                          <h3 className="text-custom-text-200">
-                            No issues found. Create a new issue with{" "}
-                            <pre className="inline rounded bg-custom-background-80 px-2 py-1 text-sm">
-                              C
-                            </pre>
-                            .
-                          </h3>
-                        </div>
-                      )}
+                    {!isSearching && issues.length === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && (
+                      <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
+                        <LayerDiagonalIcon height="52" width="52" />
+                        <h3 className="text-custom-text-200">
+                          No issues found. Create a new issue with{" "}
+                          <pre className="inline rounded bg-custom-background-80 px-2 py-1 text-sm">C</pre>.
+                        </h3>
+                      </div>
+                    )}
 
                     {isSearching ? (
                       <Loader className="space-y-3 p-3">
@@ -256,9 +243,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                         <Loader.Item height="40px" />
                       </Loader>
                     ) : (
-                      <ul
-                        className={`text-sm text-custom-text-100 ${issues.length > 0 ? "p-2" : ""}`}
-                      >
+                      <ul className={`text-sm text-custom-text-100 ${issues.length > 0 ? "p-2" : ""}`}>
                         {issues.map((issue) => {
                           const selected = selectedIssues.some((i) => i.id === issue.id);
 
@@ -309,10 +294,12 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                 </Combobox>
                 {selectedIssues.length > 0 && (
                   <div className="flex items-center justify-end gap-2 p-3">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <PrimaryButton onClick={onSubmit} loading={isSubmitting}>
+                    <Button variant="neutral-primary" onClick={handleClose}>
+                      Cancel
+                    </Button>
+                    <Button variant="primary" onClick={onSubmit} loading={isSubmitting}>
                       {isSubmitting ? "Adding..." : "Add selected issues"}
-                    </PrimaryButton>
+                    </Button>
                   </div>
                 )}
               </Dialog.Panel>

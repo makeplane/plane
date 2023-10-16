@@ -11,8 +11,9 @@ module.exports = {
       "./layouts/**/*.tsx",
       "./pages/**/*.tsx",
       "./ui/**/*.tsx",
-      "../packages/editor/**/*.{js,ts,jsx,tsx}"
-    ]
+      "../packages/ui/**/*.{js,ts,jsx,tsx}",
+      "../packages/editor/**/*.{js,ts,jsx,tsx}",
+    ],
   },
   theme: {
     extend: {

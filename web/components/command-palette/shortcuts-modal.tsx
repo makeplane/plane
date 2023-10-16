@@ -6,7 +6,7 @@ import { XMarkIcon } from "@heroicons/react/20/solid";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { CommandIcon } from "components/icons";
 // ui
-import { Input } from "components/ui";
+import { Input } from "@plane/ui";
 
 type Props = {
   isOpen: boolean;
@@ -48,9 +48,7 @@ const allShortcuts = shortcuts.map((i) => i.shortcuts).flat(1);
 export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
   const [query, setQuery] = useState("");
   const filteredShortcuts = allShortcuts.filter((shortcut) =>
-    shortcut.description.toLowerCase().includes(query.trim().toLowerCase()) || query === ""
-      ? true
-      : false
+    shortcut.description.toLowerCase().includes(query.trim().toLowerCase()) || query === "" ? true : false
   );
 
   useEffect(() => {
@@ -105,12 +103,13 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                         <div className="flex w-full items-center justify-start gap-1 rounded border-[0.6px] border-custom-border-200 bg-custom-background-90 px-3 py-2">
                           <MagnifyingGlassIcon className="h-3.5 w-3.5 text-custom-text-200" />
                           <Input
-                            className="w-full  border-none bg-transparent py-1 px-2 text-xs text-custom-text-200 focus:outline-none"
                             id="search"
                             name="search"
                             type="text"
-                            placeholder="Search for shortcuts"
+                            value={query}
                             onChange={(e) => setQuery(e.target.value)}
+                            placeholder="Search for shortcuts"
+                            className="w-full border-none bg-transparent py-1 px-2 text-xs text-custom-text-200 focus:outline-none"
                           />
                         </div>
                       </div>
@@ -121,9 +120,7 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                               <div key={shortcut.keys} className="flex w-full flex-col">
                                 <div className="flex flex-col gap-y-3">
                                   <div className="flex items-center justify-between">
-                                    <p className="text-sm text-custom-text-200">
-                                      {shortcut.description}
-                                    </p>
+                                    <p className="text-sm text-custom-text-200">{shortcut.description}</p>
                                     <div className="flex items-center gap-x-2.5">
                                       {shortcut.keys.split(",").map((key, index) => (
                                         <span key={index} className="flex items-center gap-1">

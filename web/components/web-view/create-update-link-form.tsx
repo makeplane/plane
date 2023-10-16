@@ -1,27 +1,15 @@
-// react
 import React, { useEffect } from "react";
-
-// next
 import { useRouter } from "next/router";
-
-// swr
 import { mutate } from "swr";
-
-// react hooks form
-import { useForm } from "react-hook-form";
-
+import { Controller, useForm } from "react-hook-form";
 // services
-import issuesService from "services/issues.service";
-
+import { IssueService } from "services/issue";
 // fetch keys
 import { ISSUE_DETAILS } from "constants/fetch-keys";
-
 // hooks
 import useToast from "hooks/use-toast";
-
 // ui
-import { PrimaryButton, Input } from "components/ui";
-
+import { Button, Input } from "@plane/ui";
 // types
 import type { linkDetails, IIssueLink } from "types";
 
@@ -32,6 +20,8 @@ type Props = {
   onSuccess: () => void;
 };
 
+const issueService = new IssueService();
+
 export const CreateUpdateLinkForm: React.FC<Props> = (props) => {
   const { isOpen, data, links, onSuccess } = props;
 
@@ -41,8 +31,8 @@ export const CreateUpdateLinkForm: React.FC<Props> = (props) => {
   const { setToastAlert } = useToast();
 
   const {
-    register,
     handleSubmit,
+    control,
     reset,
     formState: { errors, isSubmitting },
   } = useForm({
@@ -74,13 +64,8 @@ export const CreateUpdateLinkForm: React.FC<Props> = (props) => {
     const payload = { metadata: {}, ...formData };
 
     if (!data)
-      await issuesService
-        .createIssueLink(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          issueId.toString(),
-          payload
-        )
+      await issueService
+        .createIssueLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), payload)
         .then(() => {
           onSuccess();
           mutate(ISSUE_DETAILS(issueId.toString()));
@@ -110,20 +95,10 @@ export const CreateUpdateLinkForm: React.FC<Props> = (props) => {
           : l
       );
 
-      mutate(
-        ISSUE_DETAILS(issueId.toString()),
-        (prevData) => ({ ...prevData, issue_link: updatedLinks }),
-        false
-      );
+      mutate(ISSUE_DETAILS(issueId.toString()), (prevData: any) => ({ ...prevData, issue_link: updatedLinks }), false);
 
-      await issuesService
-        .updateIssueLink(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          issueId.toString(),
-          data!.id,
-          payload
-        )
+      await issueService
+        .updateIssueLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), data!.id, payload)
         .then(() => {
           onSuccess();
           mutate(ISSUE_DETAILS(issueId.toString()));
@@ -137,49 +112,63 @@ export const CreateUpdateLinkForm: React.FC<Props> = (props) => {
         <div className="space-y-5">
           <div className="mt-2 space-y-3">
             <div>
-              <Input
-                id="url"
-                label="URL"
+              <Controller
+                control={control}
                 name="url"
-                type="url"
-                placeholder="https://..."
-                autoComplete="off"
-                error={errors.url}
-                register={register}
-                validations={{
+                rules={{
                   required: "URL is required",
                 }}
+                render={({ field: { value, onChange, ref } }) => (
+                  <>
+                    <label htmlFor="url" className="text-custom-text-200 mb-2">
+                      URL
+                    </label>
+                    <Input
+                      id="url"
+                      name="url"
+                      type="url"
+                      value={value}
+                      onChange={onChange}
+                      ref={ref}
+                      hasError={Boolean(errors.url)}
+                      placeholder="https://..."
+                      className="w-full"
+                    />
+                  </>
+                )}
               />
             </div>
             <div>
-              <Input
-                id="title"
-                label="Title (optional)"
+              <Controller
+                control={control}
                 name="title"
-                type="text"
-                placeholder="Enter title"
-                autoComplete="off"
-                error={errors.title}
-                register={register}
+                render={({ field: { value, onChange, ref } }) => (
+                  <>
+                    <label htmlFor="title" className="text-custom-text-200 mb-2">
+                      {`Title (optional)`}
+                    </label>
+                    <Input
+                      id="title"
+                      name="title"
+                      type="text"
+                      value={value}
+                      onChange={onChange}
+                      ref={ref}
+                      hasError={Boolean(errors.title)}
+                      placeholder="Enter title"
+                      className="w-full"
+                    />
+                  </>
+                )}
               />
             </div>
           </div>
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <PrimaryButton
-          type="submit"
-          loading={isSubmitting}
-          className="w-full !py-2 text-custom-text-300 !text-base flex items-center justify-center"
-        >
-          {data
-            ? isSubmitting
-              ? "Updating Link..."
-              : "Update Link"
-            : isSubmitting
-            ? "Adding Link..."
-            : "Add Link"}
-        </PrimaryButton>
+        <Button variant="primary" type="submit" loading={isSubmitting}>
+          {data ? (isSubmitting ? "Updating Link..." : "Update Link") : isSubmitting ? "Adding Link..." : "Add Link"}
+        </Button>
       </div>
     </form>
   );

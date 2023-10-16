@@ -7,24 +7,28 @@ import useSWR, { mutate } from "swr";
 // cmdk
 import { Command } from "cmdk";
 // services
-import issuesService from "services/issues.service";
-import stateService from "services/state.service";
+import { IssueService } from "services/issue";
+import { ProjectStateService } from "services/project";
 // ui
-import { Spinner } from "components/ui";
+import { Spinner } from "@plane/ui";
 // icons
 import { CheckIcon, StateGroupIcon } from "components/icons";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // types
-import { ICurrentUserResponse, IIssue } from "types";
+import { IUser, IIssue } from "types";
 // fetch keys
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY, STATES_LIST } from "constants/fetch-keys";
 
 type Props = {
   setIsPaletteOpen: Dispatch<SetStateAction<boolean>>;
   issue: IIssue;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
+
+// services
+const issueService = new IssueService();
+const stateService = new ProjectStateService();
 
 export const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen, issue, user }) => {
   const router = useRouter();
@@ -32,9 +36,7 @@ export const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen, issue, use
 
   const { data: stateGroups, mutate: mutateIssueDetails } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => stateService.getStates(workspaceSlug as string, projectId as string) : null
   );
   const states = getStatesList(stateGroups);
 
@@ -55,7 +57,7 @@ export const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen, issue, use
       );
 
       const payload = { ...formData };
-      await issuesService
+      await issueService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)
         .then(() => {
           mutateIssueDetails();
@@ -78,18 +80,9 @@ export const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen, issue, use
       {states ? (
         states.length > 0 ? (
           states.map((state) => (
-            <Command.Item
-              key={state.id}
-              onSelect={() => handleIssueState(state.id)}
-              className="focus:outline-none"
-            >
+            <Command.Item key={state.id} onSelect={() => handleIssueState(state.id)} className="focus:outline-none">
               <div className="flex items-center space-x-3">
-                <StateGroupIcon
-                  stateGroup={state.group}
-                  color={state.color}
-                  height="16px"
-                  width="16px"
-                />
+                <StateGroupIcon stateGroup={state.group} color={state.color} height="16px" width="16px" />
                 <p>{state.name}</p>
               </div>
               <div>{state.id === issue.state && <CheckIcon className="h-3 w-3" />}</div>

@@ -7,7 +7,8 @@ import userService from "services/user.service";
 // hooks
 // import useToast from "hooks/use-toast";
 // ui
-import { Input, PrimaryButton, SecondaryButton } from "components/ui";
+import { Input } from "components/ui";
+import { Button } from "@plane/ui";
 // types
 type Props = {
   setIsResettingPassword: React.Dispatch<React.SetStateAction<boolean>>;
@@ -77,12 +78,12 @@ export const EmailResetPasswordForm: React.FC<Props> = ({ setIsResettingPassword
         {errors.email && <div className="text-sm text-red-500">{errors.email.message}</div>}
       </div>
       <div className="mt-5 flex flex-col-reverse sm:flex-row items-center gap-2">
-        <SecondaryButton className="w-full text-center h-[46px]" onClick={() => setIsResettingPassword(false)}>
+        <Button variant="neutral-primary" className="w-full" onClick={() => setIsResettingPassword(false)}>
           Go Back
-        </SecondaryButton>
-        <PrimaryButton type="submit" className="w-full text-center h-[46px]" loading={isSubmitting}>
+        </Button>
+        <Button variant="primary" className="w-full" type="submit" loading={isSubmitting}>
           {isSubmitting ? "Sending link..." : "Send reset link"}
-        </PrimaryButton>
+        </Button>
       </div>
     </form>
   );

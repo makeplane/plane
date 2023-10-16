@@ -3,9 +3,9 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import projectService from "services/project.service";
+import { ProjectService } from "services/project";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // helper
@@ -13,7 +13,6 @@ import { truncateText } from "helpers/string.helper";
 // components
 import { IssuesFilterView, IssuesView } from "components/core";
 // ui
-import { Icon } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { X, PenSquare } from "lucide-react";
@@ -22,15 +21,16 @@ import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS } from "constants/fetch-keys";
 
+// services
+const projectService = new ProjectService();
+
 const ProjectDraftIssues: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => projectService.getProject(workspaceSlug as string, projectId as string) : null
   );
 
   return (
@@ -39,9 +39,7 @@ const ProjectDraftIssues: NextPage = () => {
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-            <BreadcrumbItem
-              title={`${truncateText(projectDetails?.name ?? "Project", 32)} Draft Issues`}
-            />
+            <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Draft Issues`} />
           </Breadcrumbs>
         }
         right={

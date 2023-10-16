@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // types
 import { IWorkspaceMember } from "types";
 // fetch-keys
@@ -22,6 +22,9 @@ export const WorkspaceMemberContext = createContext<ContextType>({} as ContextTy
 type Props = {
   children: React.ReactNode;
 };
+
+// services
+const workspaceService = new WorkspaceService();
 
 export const WorkspaceMemberProvider: React.FC<Props> = (props) => {
   const { children } = props;
@@ -46,8 +49,7 @@ export const WorkspaceMemberProvider: React.FC<Props> = (props) => {
 export const useWorkspaceMyMembership = () => {
   const context = useContext(WorkspaceMemberContext);
 
-  if (context === undefined)
-    throw new Error(`useWorkspaceMember must be used within a WorkspaceMemberProvider.`);
+  if (context === undefined) throw new Error(`useWorkspaceMember must be used within a WorkspaceMemberProvider.`);
 
   return {
     ...context,

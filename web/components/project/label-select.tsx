@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 // react-popper
 import { usePopper } from "react-popper";
 // services
-import issuesService from "services/issues.service";
+import { IssueLabelService } from "services/issue";
 // headless ui
 import { Combobox } from "@headlessui/react";
 // component
@@ -18,7 +18,7 @@ import { CheckIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { PlusIcon } from "lucide-react";
 // types
 import { Tooltip } from "components/ui";
-import { ICurrentUserResponse, IIssueLabels } from "types";
+import { IUser, IIssueLabels } from "types";
 import { Placement } from "@popperjs/core";
 // constants
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
@@ -35,8 +35,11 @@ type Props = {
   placement?: Placement;
   hideDropdownArrow?: boolean;
   disabled?: boolean;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
+
+// services
+const issueLabelService = new IssueLabelService();
 
 export const LabelSelect: React.FC<Props> = ({
   value,
@@ -70,7 +73,7 @@ export const LabelSelect: React.FC<Props> = ({
   const { data: issueLabels } = useSWR<IIssueLabels[]>(
     projectId && fetchStates ? PROJECT_ISSUE_LABELS(projectId) : null,
     workspaceSlug && projectId && fetchStates
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId)
+      ? () => issueLabelService.getProjectIssueLabels(workspaceSlug.toString(), projectId)
       : null
   );
 
@@ -91,9 +94,7 @@ export const LabelSelect: React.FC<Props> = ({
   }));
 
   const filteredOptions =
-    query === ""
-      ? options
-      : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
+    query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const label = (
     <div className={`flex  items-center gap-2 text-custom-text-200`}>
@@ -186,9 +187,7 @@ export const LabelSelect: React.FC<Props> = ({
                   }  ${buttonClassName}`}
                 >
                   {label}
-                  {!hideDropdownArrow && !disabled && (
-                    <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
-                  )}
+                  {!hideDropdownArrow && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
                 </button>
               </Combobox.Button>
 

@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // types
 import { IWorkspace } from "types";
 // constants
@@ -21,6 +21,9 @@ export interface WorkspaceContextProps {
   mutateWorkspaces: () => void;
 }
 
+// services
+const workspaceService = new WorkspaceService();
+
 export const WorkspaceContext = createContext<WorkspaceContextProps>({} as WorkspaceContextProps);
 
 export const WorkspaceProvider: FC<WorkspaceProviderProps> = (props) => {
@@ -29,11 +32,7 @@ export const WorkspaceProvider: FC<WorkspaceProviderProps> = (props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // API to fetch user information
-  const {
-    data = [],
-    error,
-    mutate,
-  } = useSWR<IWorkspace[]>(USER_WORKSPACES, () => workspaceService.userWorkspaces());
+  const { data = [], error, mutate } = useSWR<IWorkspace[]>(USER_WORKSPACES, () => workspaceService.userWorkspaces());
   // active workspace
   const activeWorkspace = data?.find((w) => w.slug === workspaceSlug);
 

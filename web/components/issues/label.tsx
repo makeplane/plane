@@ -1,9 +1,6 @@
 import React from "react";
-
 // components
-import { Tooltip } from "components/ui";
-// types
-import { IIssue } from "types";
+import { Tooltip } from "@plane/ui";
 
 type Props = {
   labelDetails: any[];
@@ -36,11 +33,7 @@ export const ViewIssueLabel: React.FC<Props> = ({ labelDetails, maxRender = 1 })
         </>
       ) : (
         <div className="flex cursor-default items-center flex-shrink-0 rounded-md border border-custom-border-300 px-2.5 py-1 text-xs shadow-sm">
-          <Tooltip
-            position="top"
-            tooltipHeading="Labels"
-            tooltipContent={labelDetails.map((l) => l.name).join(", ")}
-          >
+          <Tooltip position="top" tooltipHeading="Labels" tooltipContent={labelDetails.map((l) => l.name).join(", ")}>
             <div className="flex items-center gap-1.5 text-custom-text-200">
               <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
               {`${labelDetails.length} Labels`}

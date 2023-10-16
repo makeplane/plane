@@ -1,21 +1,17 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // services
-import stateServices from "services/state.service";
+import { ProjectStateService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { DangerButton, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // types
-import type { ICurrentUserResponse, IState, IStateResponse } from "types";
+import type { IUser, IState, IStateResponse } from "types";
 // fetch-keys
 import { STATES_LIST } from "constants/fetch-keys";
 
@@ -23,8 +19,10 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   data: IState | null;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
+
+const projectStateService = new ProjectStateService();
 
 export const DeleteStateModal: React.FC<Props> = ({ isOpen, onClose, data, user }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
@@ -44,7 +42,7 @@ export const DeleteStateModal: React.FC<Props> = ({ isOpen, onClose, data, user 
 
     setIsDeleteLoading(true);
 
-    await stateServices
+    await projectStateService
       .deleteState(workspaceSlug as string, data.project, data.id, user)
       .then(() => {
         mutate<IStateResponse>(
@@ -112,34 +110,29 @@ export const DeleteStateModal: React.FC<Props> = ({ isOpen, onClose, data, user 
                 <div className="bg-custom-background-80 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
                     <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                      <ExclamationTriangleIcon
-                        className="h-6 w-6 text-red-600"
-                        aria-hidden="true"
-                      />
+                      <ExclamationTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </div>
                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                      <Dialog.Title
-                        as="h3"
-                        className="text-lg font-medium leading-6 text-custom-text-100"
-                      >
+                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                         Delete State
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
                           Are you sure you want to delete state-{" "}
-                          <span className="font-medium text-custom-text-100">{data?.name}</span>?
-                          All of the data related to the state will be permanently removed. This
-                          action cannot be undone.
+                          <span className="font-medium text-custom-text-100">{data?.name}</span>? All of the data
+                          related to the state will be permanently removed. This action cannot be undone.
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="flex justify-end gap-2 p-4 sm:px-6">
-                  <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                  <DangerButton onClick={handleDeletion} loading={isDeleteLoading}>
+                  <Button variant="neutral-primary" onClick={handleClose}>
+                    Cancel
+                  </Button>
+                  <Button variant="danger" onClick={handleDeletion} loading={isDeleteLoading}>
                     {isDeleteLoading ? "Deleting..." : "Delete"}
-                  </DangerButton>
+                  </Button>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

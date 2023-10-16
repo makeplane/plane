@@ -1,11 +1,8 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // services
-import projectServices from "services/project.service";
+import { ProjectService } from "services/project";
 // ui
 import { AssigneesList, Avatar, CustomSearchSelect } from "components/ui";
 // icons
@@ -18,6 +15,8 @@ type Props = {
   onChange: () => void;
 };
 
+const projectService = new ProjectService();
+
 export const ModuleMembersSelect: React.FC<Props> = ({ value, onChange }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -25,7 +24,7 @@ export const ModuleMembersSelect: React.FC<Props> = ({ value, onChange }) => {
   const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => projectServices.projectMembers(workspaceSlug as string, projectId as string)
+      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
       : null
   );
   const options = members?.map((member) => ({

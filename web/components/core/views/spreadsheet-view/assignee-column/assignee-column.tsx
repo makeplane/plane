@@ -1,31 +1,24 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 // components
 import { MembersSelect } from "components/project";
 // services
-import trackEventServices from "services/track-event.service";
+import { TrackEventService } from "services/track_event.service";
 // types
-import { ICurrentUserResponse, IIssue, Properties } from "types";
+import { IUser, IIssue, Properties } from "types";
 
 type Props = {
   issue: IIssue;
   projectId: string;
-  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
+  onChange: (formData: Partial<IIssue>) => void;
   properties: Properties;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   isNotAllowed: boolean;
 };
 
-export const AssigneeColumn: React.FC<Props> = ({
-  issue,
-  projectId,
-  partialUpdateIssue,
-  properties,
-  user,
-  isNotAllowed,
-}) => {
+const trackEventService = new TrackEventService();
+
+export const AssigneeColumn: React.FC<Props> = ({ issue, projectId, onChange, properties, user, isNotAllowed }) => {
   const router = useRouter();
 
   const { workspaceSlug } = router.query;
@@ -36,9 +29,9 @@ export const AssigneeColumn: React.FC<Props> = ({
     if (newData.includes(data)) newData.splice(newData.indexOf(data), 1);
     else newData.push(data);
 
-    partialUpdateIssue({ assignees_list: data }, issue);
+    onChange({ assignees_list: data });
 
-    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+    trackEventService.trackIssuePartialPropertyUpdateEvent(
       {
         workspaceSlug,
         workspaceId: issue.workspace,
@@ -48,7 +41,7 @@ export const AssigneeColumn: React.FC<Props> = ({
         issueId: issue.id,
       },
       "ISSUE_PROPERTY_UPDATE_ASSIGNEE",
-      user
+      user as IUser
     );
   };
 

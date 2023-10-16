@@ -11,13 +11,14 @@ import { TwitterPicker } from "react-color";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // services
-import stateService from "services/state.service";
+import { ProjectStateService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, Input, PrimaryButton, SecondaryButton, Tooltip } from "components/ui";
+import { CustomSelect } from "components/ui";
+import { Button, Input, Tooltip } from "@plane/ui";
 // types
-import type { ICurrentUserResponse, IState, IStateResponse } from "types";
+import type { IUser, IState, IStateResponse } from "types";
 // fetch-keys
 import { STATES_LIST } from "constants/fetch-keys";
 // constants
@@ -27,7 +28,7 @@ type Props = {
   data: IState | null;
   onClose: () => void;
   selectedGroup: StateGroup | null;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   groupLength: number;
 };
 
@@ -39,20 +40,15 @@ const defaultValues: Partial<IState> = {
   group: "backlog",
 };
 
-export const CreateUpdateStateInline: React.FC<Props> = ({
-  data,
-  onClose,
-  selectedGroup,
-  user,
-  groupLength,
-}) => {
+const projectStateService = new ProjectStateService();
+
+export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, selectedGroup, user, groupLength }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
 
   const {
-    register,
     handleSubmit,
     formState: { errors, isSubmitting },
     watch,
@@ -90,7 +86,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
     };
 
     if (!data) {
-      await stateService
+      await projectStateService
         .createState(workspaceSlug.toString(), projectId.toString(), { ...payload }, user)
         .then((res) => {
           mutate<IStateResponse>(
@@ -128,7 +124,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
             });
         });
     } else {
-      await stateService
+      await projectStateService
         .updateState(
           workspaceSlug.toString(),
           projectId.toString(),
@@ -153,8 +149,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
             setToastAlert({
               type: "error",
               title: "Error!",
-              message:
-                "Another state exists with the same name. Please try again with another name.",
+              message: "Another state exists with the same name. Please try again with another name.",
             });
           else
             setToastAlert({
@@ -213,26 +208,32 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
           )}
         </Popover>
       </div>
-      <Input
-        id="name"
+      <Controller
+        control={control}
         name="name"
-        register={register}
-        autoFocus
-        placeholder="Name"
-        validations={{
+        rules={{
           required: true,
         }}
-        error={errors.name}
-        autoComplete="off"
+        render={({ field: { value, onChange, ref } }) => (
+          <Input
+            id="name"
+            name="name"
+            type="text"
+            value={value}
+            onChange={onChange}
+            ref={ref}
+            hasError={Boolean(errors.name)}
+            placeholder="Name"
+            className="w-full"
+          />
+        )}
       />
       {data && (
         <Controller
           name="group"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <Tooltip
-              tooltipContent={groupLength === 1 ? "Cannot have an empty group." : "Choose State"}
-            >
+            <Tooltip tooltipContent={groupLength === 1 ? "Cannot have an empty group." : "Choose State"}>
               <div>
                 <CustomSelect
                   disabled={groupLength === 1}
@@ -256,18 +257,29 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
           )}
         />
       )}
-      <Input
-        id="description"
+      <Controller
+        control={control}
         name="description"
-        register={register}
-        placeholder="Description"
-        error={errors.description}
-        autoComplete="off"
+        render={({ field: { value, onChange, ref } }) => (
+          <Input
+            id="description"
+            name="description"
+            type="text"
+            value={value}
+            onChange={onChange}
+            ref={ref}
+            hasError={Boolean(errors.description)}
+            placeholder="Description"
+            className="w-full"
+          />
+        )}
       />
-      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-      <PrimaryButton type="submit" loading={isSubmitting}>
+      <Button variant="neutral-primary" onClick={handleClose}>
+        Cancel
+      </Button>
+      <Button variant="primary" type="submit" loading={isSubmitting}>
         {isSubmitting ? (data ? "Updating..." : "Creating...") : data ? "Update" : "Create"}
-      </PrimaryButton>
+      </Button>
     </form>
   );
 };

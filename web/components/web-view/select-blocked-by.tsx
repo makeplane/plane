@@ -1,36 +1,27 @@
-// react
 import React, { useState } from "react";
-
-// next
 import { useRouter } from "next/router";
-
-// swr
 import { mutate } from "swr";
-
-// react hook form
 import { useFormContext } from "react-hook-form";
 
 // services
-import issuesService from "services/issues.service";
-
+import { IssueService } from "services/issue";
 // hooks
 import useUser from "hooks/use-user";
-
 // fetch keys
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
-
 // icons
 import { ChevronDown } from "lucide-react";
-
 // components
 import { IssuesSelectBottomSheet } from "components/web-view";
-
 // types
 import type { IIssue, BlockeIssueDetail, ISearchIssueResponse } from "types";
 
 type Props = {
   disabled?: boolean;
 };
+
+// services
+const issueService = new IssueService();
 
 export const BlockedBySelect: React.FC<Props> = (props) => {
   const { disabled = false } = props;
@@ -71,25 +62,19 @@ export const BlockedBySelect: React.FC<Props> = (props) => {
 
     const relatedIssues = watch("related_issues");
 
-    await issuesService
-      .createIssueRelation(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        issueId.toString(),
-        user,
-        {
-          related_list: [
-            ...selectedIssues.map((issue) => ({
-              issue: issueId as string,
-              relation_type: "blocked_by" as const,
-              issue_detail: issue.blocked_issue_detail,
-              related_issue: issue.blocked_issue_detail.id,
-            })),
-          ],
-        }
-      )
+    await issueService
+      .createIssueRelation(workspaceSlug.toString(), projectId.toString(), issueId.toString(), user, {
+        related_list: [
+          ...selectedIssues.map((issue) => ({
+            issue: issueId as string,
+            relation_type: "blocked_by" as const,
+            issue_detail: issue.blocked_issue_detail,
+            related_issue: issue.blocked_issue_detail.id,
+          })),
+        ],
+      })
       .then((response) => {
-        mutate(ISSUE_DETAILS(issueId as string), (prevData) => {
+        mutate<IIssue>(ISSUE_DETAILS(issueId as string), (prevData) => {
           if (!prevData) return prevData;
           return {
             ...prevData,

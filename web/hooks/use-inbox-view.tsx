@@ -7,11 +7,13 @@ import useSWR from "swr";
 // contexts
 import { inboxViewContext } from "contexts/inbox-view-context";
 // services
-import inboxServices from "services/inbox.service";
+import { InboxService } from "services/inbox.service";
 // types
 import { IInboxQueryParams } from "types";
 // fetch-keys
 import { INBOX_ISSUES } from "constants/fetch-keys";
+
+const inboxService = new InboxService();
 
 const useInboxView = () => {
   const { filters, setFilters, clearAllFilters } = useContext(inboxViewContext);
@@ -25,17 +27,9 @@ const useInboxView = () => {
   };
 
   const { data: inboxIssues, mutate: mutateInboxIssues } = useSWR(
+    workspaceSlug && projectId && inboxId && params ? INBOX_ISSUES(inboxId.toString(), params) : null,
     workspaceSlug && projectId && inboxId && params
-      ? INBOX_ISSUES(inboxId.toString(), params)
-      : null,
-    workspaceSlug && projectId && inboxId && params
-      ? () =>
-          inboxServices.getInboxIssues(
-            workspaceSlug.toString(),
-            projectId.toString(),
-            inboxId.toString(),
-            params
-          )
+      ? () => inboxService.getInboxIssues(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), params)
       : null
   );
 
@@ -43,8 +37,7 @@ const useInboxView = () => {
   Object.keys(filters ?? {}).forEach((key) => {
     const filterKey = key as keyof typeof filters;
 
-    if (filters[filterKey] && Array.isArray(filters[filterKey]))
-      filtersLength += (filters[filterKey] ?? []).length;
+    if (filters[filterKey] && Array.isArray(filters[filterKey])) filtersLength += (filters[filterKey] ?? []).length;
   });
 
   return {

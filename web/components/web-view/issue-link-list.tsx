@@ -1,29 +1,16 @@
-// react
 import React, { useState } from "react";
-
-// next
-import Link from "next/link";
 import { useRouter } from "next/router";
-
-// swr
 import { mutate } from "swr";
-
 // services
-import issuesService from "services/issues.service";
-
+import { IssueService } from "services/issue";
 // icons
-// import { LinkIcon, PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Link as LinkIcon, Plus, Pencil, X } from "lucide-react";
-
 // components
 import { Label, WebViewModal, CreateUpdateLinkForm, DeleteConfirmation } from "components/web-view";
-
 // ui
-import { SecondaryButton } from "components/ui";
-
+import { Button } from "@plane/ui";
 // fetch keys
 import { ISSUE_DETAILS } from "constants/fetch-keys";
-
 // types
 import type { IIssue } from "types";
 
@@ -31,6 +18,8 @@ type Props = {
   allowed: boolean;
   issueDetails: IIssue;
 };
+
+const issueService = new IssueService();
 
 export const IssueLinks: React.FC<Props> = (props) => {
   const { issueDetails, allowed } = props;
@@ -55,7 +44,7 @@ export const IssueLinks: React.FC<Props> = (props) => {
       false
     );
 
-    await issuesService
+    await issueService
       .deleteIssueLink(workspaceSlug as string, projectId as string, issueDetails.id, linkId)
       .then(() => {
         mutate(ISSUE_DETAILS(issueDetails.id));
@@ -140,15 +129,9 @@ export const IssueLinks: React.FC<Props> = (props) => {
             )}
           </div>
         ))}
-        <SecondaryButton
-          type="button"
-          disabled={!allowed}
-          onClick={() => setIsOpen(true)}
-          className="w-full !py-2 text-custom-text-300 !text-base flex items-center justify-center"
-        >
-          <Plus className="w-[18px] h-[18px] inline-block mr-1" />
-          <span>Add</span>
-        </SecondaryButton>
+        <Button variant="neutral-primary" prependIcon={<Plus />} disabled={!allowed} onClick={() => setIsOpen(true)}>
+          Add
+        </Button>
       </div>
     </div>
   );
