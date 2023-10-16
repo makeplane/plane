@@ -112,8 +112,8 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
     isLoading: isRouteAccess,
     user: error ? undefined : user,
     mutateUser: mutate,
-    assignedIssuesLength: user?.assigned_issues ?? 0,
-    workspaceInvitesLength: user?.workspace_invites ?? 0,
+    // assignedIssuesLength: user?.assigned_issues ?? 0,
+    // workspaceInvitesLength: user?.workspace_invites ?? 0,
   };
 };
 

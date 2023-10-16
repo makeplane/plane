@@ -1,22 +1,24 @@
 import { createContext, useCallback, useEffect, useReducer } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
 // components
 import ToastAlert from "components/toast-alert";
 // services
-import projectService from "services/project.service/project.service";
-import cyclesService from "services/cycle.service";
-import modulesService from "services/module.service";
-import viewsService from "services/view.service";
+import { ProjectService } from "services/project";
+import { CycleService } from "services/cycle.service";
+import { ModuleService } from "services/module.service";
+import { ViewService } from "services/view.service";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // types
 import { IIssueFilterOptions, IProjectMember, IUser, IIssueDisplayFilterOptions, IProjectViewProps } from "types";
 // fetch-keys
 import { CYCLE_DETAILS, MODULE_DETAILS, USER_PROJECT_VIEW, VIEW_DETAILS } from "constants/fetch-keys";
+
+const projectService = new ProjectService();
+const cycleService = new CycleService();
+const moduleService = new ModuleService();
+const viewService = new ViewService();
 
 export const issueViewContext = createContext<ContextType>({} as ContextType);
 
@@ -137,7 +139,7 @@ const saveCycleFilters = async (
   state: any,
   user: IUser | undefined
 ) => {
-  await cyclesService.patchCycle(
+  await cycleService.patchCycle(
     workspaceSlug,
     projectId,
     cycleId,
@@ -155,7 +157,7 @@ const saveModuleFilters = async (
   state: any,
   user: IUser | undefined
 ) => {
-  await modulesService.patchModule(
+  await moduleService.patchModule(
     workspaceSlug,
     projectId,
     moduleId,
@@ -173,7 +175,7 @@ const saveViewFilters = async (
   state: any,
   user: IUser | undefined
 ) => {
-  await viewsService.patchView(
+  await viewService.patchView(
     workspaceSlug,
     projectId,
     viewId,
@@ -222,21 +224,21 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
   const { data: viewDetails, mutate: mutateViewDetails } = useSWR(
     workspaceSlug && projectId && viewId ? VIEW_DETAILS(viewId as string) : null,
     workspaceSlug && projectId && viewId
-      ? () => viewsService.getViewDetails(workspaceSlug as string, projectId as string, viewId as string)
+      ? () => viewService.getViewDetails(workspaceSlug as string, projectId as string, viewId as string)
       : null
   );
 
   const { data: cycleDetails, mutate: mutateCycleDetails } = useSWR(
     workspaceSlug && projectId && cycleId ? CYCLE_DETAILS(cycleId as string) : null,
     workspaceSlug && projectId && cycleId
-      ? () => cyclesService.getCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString())
+      ? () => cycleService.getCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString())
       : null
   );
 
   const { data: moduleDetails, mutate: mutateModuleDetails } = useSWR(
     workspaceSlug && projectId && moduleId ? MODULE_DETAILS(moduleId.toString()) : null,
     workspaceSlug && projectId && moduleId
-      ? () => modulesService.getModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString())
+      ? () => moduleService.getModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString())
       : null
   );
 

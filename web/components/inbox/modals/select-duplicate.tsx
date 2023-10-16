@@ -6,7 +6,7 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 // hooks
 import useToast from "hooks/use-toast";
 // services
-import issuesServices from "services/issue/issue.service";
+import { IssueService } from "services/issue";
 // ui
 import { Button } from "@plane/ui";
 // icons
@@ -21,6 +21,8 @@ type Props = {
   onClose: () => void;
   onSubmit: (issueId: string) => void;
 };
+
+const issueService = new IssueService();
 
 export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
   const { isOpen, onClose, onSubmit, value } = props;
@@ -37,7 +39,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
     workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string) : null,
     workspaceSlug && projectId
       ? () =>
-          issuesServices
+          issueService
             .getIssues(workspaceSlug as string, projectId as string)
             .then((res) => res.filter((issue) => issue.id !== issueId))
       : null

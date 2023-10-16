@@ -1,13 +1,9 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
-// headless ui
 import { Combobox, Transition } from "@headlessui/react";
 // services
-import issuesServices from "services/issue/issue.service";
+import { IssueLabelService } from "services/issue";
 // ui
 import { IssueLabelsList } from "components/ui";
 // icons
@@ -24,6 +20,8 @@ type Props = {
   projectId: string;
 };
 
+const issueLabelService = new IssueLabelService();
+
 export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, projectId }) => {
   // states
   const [query, setQuery] = useState("");
@@ -33,7 +31,9 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
 
   const { data: issueLabels } = useSWR<IIssueLabels[]>(
     projectId ? PROJECT_ISSUE_LABELS(projectId) : null,
-    workspaceSlug && projectId ? () => issuesServices.getIssueLabels(workspaceSlug as string, projectId) : null
+    workspaceSlug && projectId
+      ? () => issueLabelService.getProjectIssueLabels(workspaceSlug as string, projectId)
+      : null
   );
 
   const filteredOptions =

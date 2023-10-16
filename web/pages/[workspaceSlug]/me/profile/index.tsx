@@ -177,7 +177,7 @@ const Profile: NextPage = () => {
                 <img
                   src={watch("cover_image") ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
                   className="h-44 w-full rounded-lg object-cover"
-                  alt={myProfile?.name ?? "Cover image"}
+                  alt={myProfile?.first_name ?? "Cover image"}
                 />
                 <div className="flex items-end justify-between absolute left-8 -bottom-6">
                   <div className="flex gap-3">

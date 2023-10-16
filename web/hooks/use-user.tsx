@@ -47,7 +47,7 @@ export default function useUser({ redirectTo = "", redirectIfFound = false, opti
     isUserLoading: isLoading,
     mutateUser: mutate,
     userError: error,
-    assignedIssuesLength: user?.assigned_issues ?? 0,
-    workspaceInvitesLength: user?.workspace_invites ?? 0,
+    // assignedIssuesLength: user?.assigned_issues ?? 0,
+    // workspaceInvitesLength: user?.workspace_invites ?? 0,
   };
 }

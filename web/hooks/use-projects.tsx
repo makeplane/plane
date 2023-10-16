@@ -1,7 +1,5 @@
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // services
 import { ProjectService } from "services/project";
 // helpers
@@ -21,9 +19,7 @@ const useProjects = (type?: "all" | boolean, fetchCondition?: boolean) => {
 
   const { data: projects, mutate: mutateProjects } = useSWR(
     workspaceSlug && fetchCondition ? PROJECTS_LIST(workspaceSlug as string, { is_favorite: type ?? "all" }) : null,
-    workspaceSlug && fetchCondition
-      ? () => projectService.getProjects(workspaceSlug as string, { is_favorite: type ?? "all" })
-      : null
+    workspaceSlug && fetchCondition ? () => projectService.getProjects(workspaceSlug as string) : null
   );
 
   const recentProjects = [...(projects ?? [])]

@@ -2,6 +2,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 // types
 import { RootStore } from "../root";
 import { IIssueType } from "store/issue";
+import { IUser } from "types";
 
 export interface ICycleIssueKanBanViewStore {
   kanBanToggle: {
@@ -293,7 +294,7 @@ export class CycleIssueKanBanViewStore implements ICycleIssueKanBanViewStore {
         updateIssue.projectId,
         updateIssue.issueId,
         updateIssue,
-        undefined
+        {} as IUser
       );
     }
   };
@@ -442,7 +443,7 @@ export class CycleIssueKanBanViewStore implements ICycleIssueKanBanViewStore {
         updateIssue.projectId,
         updateIssue.issueId,
         updateIssue,
-        undefined
+        {} as IUser
       );
     }
   };

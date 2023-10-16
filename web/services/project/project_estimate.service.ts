@@ -8,7 +8,7 @@ import { API_BASE_URL } from "helpers/common.helper";
 
 const trackEventService = new TrackEventService();
 
-export class ProjectEstimateServices extends APIService {
+export class ProjectEstimateService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }

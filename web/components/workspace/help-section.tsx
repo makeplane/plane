@@ -39,7 +39,7 @@ const helpOptions = [
 ];
 
 export interface WorkspaceHelpSectionProps {
-  setSidebarActive: React.Dispatch<React.SetStateAction<boolean>>;
+  setSidebarActive?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(() => {

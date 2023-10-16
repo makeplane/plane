@@ -1,24 +1,20 @@
 import { useMemo, useState } from "react";
-
 import { useRouter } from "next/router";
-
 // swr
 import useSWR from "swr";
 import useSWRInfinite from "swr/infinite";
-
 // services
-import userNotificationServices from "services/notification.service";
-
+import { NotificationService } from "services/notification.service";
 // hooks
 import useToast from "./use-toast";
-
 // fetch-keys
 import { UNREAD_NOTIFICATIONS_COUNT, getPaginatedNotificationKey } from "constants/fetch-keys";
-
 // type
 import type { NotificationType, NotificationCount, IMarkAllAsReadPayload } from "types";
 
 const PER_PAGE = 30;
+
+const userNotificationServices = new NotificationService();
 
 const useUserNotification = () => {
   const router = useRouter();

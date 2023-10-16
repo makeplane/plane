@@ -195,7 +195,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
     if (!workspaceSlug || !activeProject || !user) return;
 
     await issueDraftService
-      .createDraftIssue(workspaceSlug as string, activeProject ?? "", payload, user)
+      .createDraftIssue(workspaceSlug as string, activeProject ?? "", payload)
       .then(async () => {
         mutate(PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
 
@@ -225,7 +225,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
     if (!user) return;
 
     await issueDraftService
-      .updateDraftIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload, user)
+      .updateDraftIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload)
       .then((res) => {
         if (isUpdatingSingleIssue) {
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);

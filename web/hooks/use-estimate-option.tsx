@@ -1,9 +1,7 @@
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // services
-import { ProjectEstimateServices } from "services/project";
+import { ProjectEstimateService } from "services/project";
 // hooks
 import useProjectDetails from "hooks/use-project-details";
 // helpers
@@ -12,7 +10,7 @@ import { orderArrayBy } from "helpers/array.helper";
 import { ESTIMATE_DETAILS } from "constants/fetch-keys";
 
 // services
-const projectEstimateService = new ProjectEstimateServices();
+const projectEstimateService = new ProjectEstimateService();
 
 const useEstimateOption = (estimateKey?: number | null) => {
   const router = useRouter();

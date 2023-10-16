@@ -8,8 +8,6 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 import { ProjectService } from "services/project";
 // components
 import { DeleteProjectModal, ProjectDetailsForm, ProjectDetailsFormLoader, SettingsSidebar } from "components/project";
-// hooks
-import useUserAuth from "hooks/use-user-auth";
 // components
 import { Button, Loader } from "@plane/ui";
 import { Icon } from "components/ui";
@@ -30,8 +28,6 @@ const GeneralSettings: NextPage = observer(() => {
   const { project: projectStore } = useMobxStore();
   // states
   const [selectProject, setSelectedProject] = useState<string | null>(null);
-  // user info
-  const { user } = useUserAuth();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;

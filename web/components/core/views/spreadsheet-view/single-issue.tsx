@@ -409,14 +409,16 @@ export const SingleSpreadsheetIssue: FC<Props> = (props) => {
 
         {properties.due_date && (
           <div className="flex items-center text-xs text-custom-text-200 text-center p-2 group-hover:bg-custom-background-80 border-custom-border-200">
-            <ViewDueDateSelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              tooltipPosition={tooltipPosition}
-              noBorder
-              user={user}
-              isNotAllowed={isNotAllowed}
-            />
+            {user && (
+              <ViewDueDateSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                tooltipPosition={tooltipPosition}
+                noBorder
+                user={user}
+                isNotAllowed={isNotAllowed}
+              />
+            )}
           </div>
         )}
         {properties.estimate && (

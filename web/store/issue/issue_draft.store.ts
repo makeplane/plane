@@ -1,14 +1,15 @@
 // mobx
 import { action, observable, runInAction, makeAutoObservable } from "mobx";
 // services
-import { issueService } from "services/issue/issue.service";
+import { IssueDraftService } from "services/issue";
 // types
-import type { IIssue } from "types";
+import type { IIssue, IUser } from "types";
 
 export class DraftIssuesStore {
   issues: { [key: string]: IIssue } = {};
   isIssuesLoading: boolean = false;
   rootStore: any | null = null;
+  issueDraftService;
 
   constructor(_rootStore: any | null = null) {
     makeAutoObservable(this, {
@@ -23,6 +24,7 @@ export class DraftIssuesStore {
     });
 
     this.rootStore = _rootStore;
+    this.issueDraftService = new IssueDraftService();
   }
 
   /**
@@ -32,7 +34,7 @@ export class DraftIssuesStore {
   loadDraftIssues = async (workspaceSlug: string, projectId: string, params?: any) => {
     this.isIssuesLoading = true;
     try {
-      const issuesResponse = await issueService.getDraftIssues(workspaceSlug, projectId, params);
+      const issuesResponse = await this.issueDraftService.getDraftIssues(workspaceSlug, projectId, params);
 
       const issues = Array.isArray(issuesResponse) ? { allIssues: issuesResponse } : issuesResponse;
 
@@ -58,7 +60,7 @@ export class DraftIssuesStore {
     if (this.issues[issueId]) return this.issues[issueId];
 
     try {
-      const issueResponse: IIssue = await issueService.getDraftIssueById(workspaceSlug, projectId, issueId);
+      const issueResponse: IIssue = await this.issueDraftService.getDraftIssueById(workspaceSlug, projectId, issueId);
 
       const issues = {
         ...this.issues,
@@ -91,7 +93,7 @@ export class DraftIssuesStore {
     user: IUser
   ): Promise<IIssue> => {
     try {
-      const issueResponse = await issueService.createDraftIssue(workspaceSlug, projectId, issueForm, user);
+      const issueResponse = await this.issueDraftService.createDraftIssue(workspaceSlug, projectId, issueForm);
 
       const issues = {
         ...this.issues,
@@ -128,12 +130,11 @@ export class DraftIssuesStore {
       });
 
       // make a patch request to update the issue
-      const issueResponse: IIssue = await issueService.updateDraftIssue(
+      const issueResponse: IIssue = await this.issueDraftService.updateDraftIssue(
         workspaceSlug,
         projectId,
         issueId,
-        issueForm,
-        user
+        issueForm
       );
 
       const updatedIssues = { ...this.issues };
@@ -161,7 +162,7 @@ export class DraftIssuesStore {
         this.issues = issues;
       });
 
-      issueService.deleteDraftIssue(workspaceSlug, projectId, issueId, user);
+      this.issueDraftService.deleteDraftIssue(workspaceSlug, projectId, issueId);
     } catch (error) {
       console.error("Deleting issue error", error);
     }

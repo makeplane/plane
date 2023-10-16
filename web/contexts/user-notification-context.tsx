@@ -1,17 +1,15 @@
 import { createContext, useCallback, useEffect, useReducer } from "react";
 
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // services
-import userNotificationServices from "services/notification.service";
-
+import { NotificationService } from "services/notification.service";
 // fetch-keys
 import { UNREAD_NOTIFICATIONS_COUNT, USER_WORKSPACE_NOTIFICATIONS } from "constants/fetch-keys";
-
 // type
 import type { NotificationType, NotificationCount, IUserNotification } from "types";
+
+const notificationService = new NotificationService();
 
 export const userNotificationContext = createContext<ContextType>({} as ContextType);
 
@@ -104,12 +102,12 @@ const UserNotificationContextProvider: React.FC<{
 
   const { data: notifications, mutate: notificationsMutate } = useSWR(
     workspaceSlug ? USER_WORKSPACE_NOTIFICATIONS(workspaceSlug.toString(), params) : null,
-    workspaceSlug ? () => userNotificationServices.getUserNotifications(workspaceSlug.toString(), params) : null
+    workspaceSlug ? () => notificationService.getUserNotifications(workspaceSlug.toString(), params) : null
   );
 
   const { data: notificationCount, mutate: mutateNotificationCount } = useSWR(
     workspaceSlug ? UNREAD_NOTIFICATIONS_COUNT(workspaceSlug.toString()) : null,
-    () => (workspaceSlug ? userNotificationServices.getUnreadNotificationsCount(workspaceSlug.toString()) : null)
+    () => (workspaceSlug ? notificationService.getUnreadNotificationsCount(workspaceSlug.toString()) : null)
   );
 
   const handleReadMutation = (action: "read" | "unread") => {
@@ -143,7 +141,7 @@ const UserNotificationContextProvider: React.FC<{
     handleReadMutation(isRead ? "unread" : "read");
 
     if (isRead) {
-      await userNotificationServices
+      await notificationService
         .markUserNotificationAsUnread(workspaceSlug.toString(), notificationId)
         .catch(() => {
           throw new Error("Something went wrong");
@@ -153,7 +151,7 @@ const UserNotificationContextProvider: React.FC<{
           mutateNotificationCount();
         });
     } else {
-      await userNotificationServices
+      await notificationService
         .markUserNotificationAsRead(workspaceSlug.toString(), notificationId)
         .catch(() => {
           throw new Error("Something went wrong");
@@ -174,7 +172,7 @@ const UserNotificationContextProvider: React.FC<{
     }
 
     if (isArchived) {
-      await userNotificationServices
+      await notificationService
         .markUserNotificationAsUnarchived(workspaceSlug.toString(), notificationId)
         .catch(() => {
           throw new Error("Something went wrong");
@@ -188,7 +186,7 @@ const UserNotificationContextProvider: React.FC<{
         (prev: any) => prev?.filter((prevNotification: any) => prevNotification.id !== notificationId),
         false
       );
-      await userNotificationServices
+      await notificationService
         .markUserNotificationAsArchived(workspaceSlug.toString(), notificationId)
         .catch(() => {
           throw new Error("Something went wrong");
@@ -216,7 +214,7 @@ const UserNotificationContextProvider: React.FC<{
     );
 
     if (isSnoozed) {
-      await userNotificationServices
+      await notificationService
         .patchUserNotification(workspaceSlug.toString(), notificationId, {
           snoozed_till: null,
         })
@@ -224,7 +222,7 @@ const UserNotificationContextProvider: React.FC<{
           notificationsMutate();
         });
     } else {
-      await userNotificationServices
+      await notificationService
         .patchUserNotification(workspaceSlug.toString(), notificationId, {
           snoozed_till: dateTime,
         })

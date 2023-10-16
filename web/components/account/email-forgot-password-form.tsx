@@ -18,6 +18,7 @@ export const EmailForgotPasswordForm: FC<IEmailForgotPasswordForm> = (props) => 
   const router = useRouter();
   // form data
   const {
+    control,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<EmailForgotPasswordFormValues>({
@@ -32,6 +33,7 @@ export const EmailForgotPasswordForm: FC<IEmailForgotPasswordForm> = (props) => 
     <form className="space-y-4 mt-10 w-full sm:w-[360px] mx-auto" onSubmit={handleSubmit(onSubmit)}>
       <div className="space-y-1">
         <Controller
+          control={control}
           name="email"
           rules={{
             required: "Email address is required",
