@@ -7,7 +7,7 @@ import { Combobox } from "@headlessui/react";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { CheckIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { PriorityIcon } from "components/icons";
+import { PriorityIcon } from "@plane/ui";
 // components
 import { Tooltip } from "components/ui";
 // types

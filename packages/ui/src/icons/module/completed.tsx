@@ -1,13 +1,8 @@
-import React from "react";
+import * as React from "react";
 
-type Props = {
-  width?: string;
-  height?: string;
-  className?: string;
-  color?: string;
-};
+import { ISvgIcons } from "../type";
 
-export const ModuleCompletedIcon: React.FC<Props> = ({
+export const ModuleCompletedIcon: React.FC<ISvgIcons> = ({
   width = "20",
   height = "20",
   className,

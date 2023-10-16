@@ -1,7 +1,7 @@
 import { FC } from "react";
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { PriorityIcon, StateGroupIcon } from "components/icons";
+import { PriorityIcon, StateGroupIcon } from "@plane/ui";
 // ui
 import { Avatar } from "components/ui";
 // helpers

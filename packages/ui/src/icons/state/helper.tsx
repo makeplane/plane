@@ -2,6 +2,8 @@ export interface IStateGroupIcon {
   className?: string;
   color?: string;
   stateGroup: TStateGroups;
+  height?: string;
+  width?: string;
 }
 
 export type TStateGroups =

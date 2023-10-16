@@ -1,6 +1,6 @@
 import { FC } from "react";
 // components
-import { StateGroupIcon } from "components/icons";
+import { StateGroupIcon } from "@plane/ui";
 // hooks
 import useToast from "hooks/use-toast";
 // components

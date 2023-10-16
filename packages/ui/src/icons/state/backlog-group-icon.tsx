@@ -1,21 +1,19 @@
-import React from "react";
+import * as React from "react";
 
 import { ISvgIcons } from "../type";
 
 export const BacklogGroupIcon: React.FC<ISvgIcons> = ({
-  className = "",
-  color = "#a3a3a3",
-  height = "20",
   width = "20",
-  ...rest
+  height = "20",
+  className,
+  color = "#a3a3a3",
 }) => (
   <svg
     height={height}
     width={width}
     className={className}
-    viewBox="0 0 16 16"
     xmlns="http://www.w3.org/2000/svg"
-    {...rest}
+    viewBox="0 0 323.15 323.03"
   >
     <g id="Layer_2" data-name="Layer 2">
       <g id="Layer_1-2" data-name="Layer 1">

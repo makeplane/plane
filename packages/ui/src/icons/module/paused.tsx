@@ -1,13 +1,12 @@
-import React from "react";
+import * as React from "react";
 
-type Props = {
-  width?: string;
-  height?: string;
-  className?: string;
-  color?: string;
-};
+import { ISvgIcons } from "../type";
 
-export const ModulePausedIcon: React.FC<Props> = ({ width = "20", height = "20", className }) => (
+export const ModulePausedIcon: React.FC<ISvgIcons> = ({
+  width = "20",
+  height = "20",
+  className,
+}) => (
   <svg
     width={width}
     height={height}

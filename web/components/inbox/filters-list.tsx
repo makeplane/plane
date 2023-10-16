@@ -2,7 +2,7 @@
 import useInboxView from "hooks/use-inbox-view";
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { PriorityIcon } from "components/icons";
+import { PriorityIcon } from "@plane/ui";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
@@ -26,9 +26,7 @@ export const InboxFiltersList = () => {
               key={key}
               className="flex items-center gap-x-2 rounded-full border border-custom-border-200 bg-custom-background-80 px-2 py-1"
             >
-              <span className="capitalize text-custom-text-200">
-                {replaceUnderscoreIfSnakeCase(key)}:
-              </span>
+              <span className="capitalize text-custom-text-200">{replaceUnderscoreIfSnakeCase(key)}:</span>
               {filters[filterKey] === null || (filters[filterKey]?.length ?? 0) <= 0 ? (
                 <span className="inline-flex items-center px-2 py-0.5 font-medium">None</span>
               ) : (

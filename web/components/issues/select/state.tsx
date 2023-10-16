@@ -10,7 +10,7 @@ import { ProjectStateService } from "services/project";
 import { CustomSearchSelect } from "components/ui";
 // icons
 import { PlusIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
-import { StateGroupIcon } from "components/icons";
+import { StateGroupIcon } from "@plane/ui";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // fetch keys

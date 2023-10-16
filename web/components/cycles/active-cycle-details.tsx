@@ -12,14 +12,13 @@ import useToast from "hooks/use-toast";
 // ui
 import { AssigneesList } from "components/ui/avatar";
 import { SingleProgressStats } from "components/core";
-import { Loader, Tooltip, LinearProgressIndicator } from "@plane/ui";
+import { Loader, Tooltip, LinearProgressIndicator, PriorityIcon, StateGroupIcon } from "@plane/ui";
 // components
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { ActiveCycleProgressStats } from "components/cycles";
 
 // icons
 import { CalendarDaysIcon } from "@heroicons/react/20/solid";
-import { PriorityIcon } from "components/icons/priority-icon";
 import {
   TargetIcon,
   ContrastIcon,
@@ -28,7 +27,6 @@ import {
   TriangleExclamationIcon,
   AlarmClockIcon,
   LayerDiagonalIcon,
-  StateGroupIcon,
 } from "components/icons";
 import { StarIcon } from "@heroicons/react/24/outline";
 // components

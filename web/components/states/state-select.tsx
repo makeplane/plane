@@ -13,7 +13,7 @@ import { Combobox } from "@headlessui/react";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { CheckIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { StateGroupIcon } from "components/icons";
+import { StateGroupIcon } from "@plane/ui";
 // types
 import { Tooltip } from "components/ui";
 import { Placement } from "@popperjs/core";

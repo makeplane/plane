@@ -10,9 +10,9 @@ import { Command } from "cmdk";
 import { IssueService } from "services/issue";
 import { ProjectStateService } from "services/project";
 // ui
-import { Spinner } from "@plane/ui";
+import { Spinner, StateGroupIcon } from "@plane/ui";
 // icons
-import { CheckIcon, StateGroupIcon } from "components/icons";
+import { CheckIcon } from "components/icons";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // types

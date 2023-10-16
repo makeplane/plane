@@ -14,7 +14,8 @@ import { IIssue, IUser, TIssuePriorities } from "types";
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 import { PRIORITIES } from "constants/project";
 // icons
-import { CheckIcon, PriorityIcon } from "components/icons";
+import { CheckIcon } from "components/icons";
+import { PriorityIcon } from "@plane/ui";
 
 type Props = {
   setIsPaletteOpen: Dispatch<SetStateAction<boolean>>;

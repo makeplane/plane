@@ -3,7 +3,7 @@ import useInboxView from "hooks/use-inbox-view";
 // ui
 import { MultiLevelDropdown } from "components/ui";
 // icons
-import { PriorityIcon } from "components/icons";
+import { PriorityIcon } from "@plane/ui";
 // constants
 import { PRIORITIES } from "constants/project";
 import { INBOX_STATUS } from "constants/inbox";

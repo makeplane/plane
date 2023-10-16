@@ -1,21 +1,19 @@
-import React from "react";
+import * as React from "react";
 
 import { ISvgIcons } from "../type";
 
 export const StartedGroupIcon: React.FC<ISvgIcons> = ({
-  className = "",
-  color = "#f39e1f",
-  height = "20",
   width = "20",
-  ...rest
+  height = "20",
+  className,
+  color = "#f39e1f",
 }) => (
   <svg
     height={height}
     width={width}
     className={className}
-    viewBox="0 0 16 16"
     xmlns="http://www.w3.org/2000/svg"
-    {...rest}
+    viewBox="0 0 152.93 152.95"
   >
     <g id="Layer_2" data-name="Layer 2">
       <g id="Layer_1-2" data-name="Layer 1">

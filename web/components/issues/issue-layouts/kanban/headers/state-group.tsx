@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 // components
 import { HeaderGroupByCard } from "./group-by-card";
 import { HeaderSubGroupByCard } from "./sub-group-by-card";
-import { StateGroupIcon } from "components/icons";
+import { StateGroupIcon } from "@plane/ui";
 // constants
 import { issueStateGroupByKey } from "constants/issue";
 
