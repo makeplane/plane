@@ -1,69 +1,48 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// headless ui
+import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import { InboxService } from "services/inbox.service";
+
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
-import useInboxView from "hooks/use-inbox-view";
-import useUser from "hooks/use-user";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { Button } from "@plane/ui";
 // types
 import type { IInboxIssue } from "types";
-// fetch-keys
-import { INBOX_ISSUES } from "constants/fetch-keys";
 
 type Props = {
+  data: IInboxIssue;
   isOpen: boolean;
-  handleClose: () => void;
-  data: IInboxIssue | undefined;
+  onClose: () => void;
 };
 
-const inboxService = new InboxService();
-
-export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data }) => {
+export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClose, data }) => {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query;
 
-  const { user } = useUser();
-  const { setToastAlert } = useToast();
-  const { params } = useInboxView();
+  const { inboxIssueDetails: inboxIssueDetailsStore } = useMobxStore();
 
-  const onClose = () => {
+  const { setToastAlert } = useToast();
+
+  const handleClose = () => {
     setIsDeleting(false);
-    handleClose();
+    onClose();
   };
 
   const handleDelete = () => {
-    if (!workspaceSlug || !projectId || !inboxId || !data) return;
+    if (!workspaceSlug || !projectId || !inboxId) return;
 
     setIsDeleting(true);
 
-    inboxService
-      .deleteInboxIssue(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        inboxId.toString(),
-        data.bridge_id.toString(),
-        user
-      )
+    inboxIssueDetailsStore
+      .deleteIssue(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), data.issue_inbox[0].id)
       .then(() => {
-        mutate<IInboxIssue[]>(
-          INBOX_ISSUES(inboxId.toString(), params),
-          (prevData) => (prevData ?? []).filter((i) => i.id !== data.id),
-          false
-        );
-
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -75,7 +54,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
           pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
         });
 
-        onClose();
+        handleClose();
       })
       .catch(() =>
         setToastAlert({
@@ -148,4 +127,4 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
       </Dialog>
     </Transition.Root>
   );
-};
+});

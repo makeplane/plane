@@ -1,34 +1,69 @@
-// hooks
-import useInboxView from "hooks/use-inbox-view";
+import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
+
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { PriorityIcon } from "components/icons";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
-import { TIssuePriorities } from "types";
+import { IInboxFilterOptions, TIssuePriorities } from "types";
 // constants
 import { INBOX_STATUS } from "constants/inbox";
 
-export const InboxFiltersList = () => {
-  const { filters, setFilters, clearAllFilters, filtersLength } = useInboxView();
+export const InboxFiltersList = observer(() => {
+  const router = useRouter();
+  const { workspaceSlug, projectId, inboxId } = router.query;
 
-  if (filtersLength <= 0) return <></>;
+  const { inboxFilters: inboxFiltersStore } = useMobxStore();
+
+  const filters = inboxId ? inboxFiltersStore.inboxFilters[inboxId.toString()]?.filters : undefined;
+
+  const handleUpdateFilter = (filter: Partial<IInboxFilterOptions>) => {
+    if (!workspaceSlug || !projectId || !inboxId) return;
+
+    inboxFiltersStore.updateInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString(), filter);
+  };
+
+  const handleClearAllFilters = () => {
+    if (!workspaceSlug || !projectId || !inboxId) return;
+
+    const newFilters: IInboxFilterOptions = {};
+    Object.keys(filters ?? {}).forEach((key) => {
+      newFilters[key as keyof IInboxFilterOptions] = null;
+    });
+
+    inboxFiltersStore.updateInboxFilters(
+      workspaceSlug.toString(),
+      projectId.toString(),
+      inboxId.toString(),
+      newFilters
+    );
+  };
+
+  let filtersLength = 0;
+  Object.keys(filters ?? {}).forEach((key) => {
+    const filterKey = key as keyof IInboxFilterOptions;
+
+    if (filters?.[filterKey] && Array.isArray(filters[filterKey])) filtersLength += (filters[filterKey] ?? []).length;
+  });
+
+  if (!filters || filtersLength <= 0) return null;
 
   return (
     <div className="flex items-center gap-2 flex-wrap text-[0.65rem] p-3">
       {Object.keys(filters).map((key) => {
-        const filterKey = key as keyof typeof filters;
+        const filterKey = key as keyof IInboxFilterOptions;
 
-        if (filters[filterKey] !== null)
+        if (filters[filterKey])
           return (
             <div
               key={key}
               className="flex items-center gap-x-2 rounded-full border border-custom-border-200 bg-custom-background-80 px-2 py-1"
             >
-              <span className="capitalize text-custom-text-200">
-                {replaceUnderscoreIfSnakeCase(key)}:
-              </span>
+              <span className="capitalize text-custom-text-200">{replaceUnderscoreIfSnakeCase(key)}:</span>
               {filters[filterKey] === null || (filters[filterKey]?.length ?? 0) <= 0 ? (
                 <span className="inline-flex items-center px-2 py-0.5 font-medium">None</span>
               ) : (
@@ -57,7 +92,7 @@ export const InboxFiltersList = () => {
                             type="button"
                             className="cursor-pointer"
                             onClick={() =>
-                              setFilters({
+                              handleUpdateFilter({
                                 priority: filters.priority?.filter((p) => p !== priority),
                               })
                             }
@@ -69,7 +104,7 @@ export const InboxFiltersList = () => {
                       <button
                         type="button"
                         onClick={() =>
-                          setFilters({
+                          handleUpdateFilter({
                             priority: null,
                           })
                         }
@@ -89,7 +124,7 @@ export const InboxFiltersList = () => {
                             type="button"
                             className="cursor-pointer"
                             onClick={() =>
-                              setFilters({
+                              handleUpdateFilter({
                                 inbox_status: filters.inbox_status?.filter((p) => p !== status),
                               })
                             }
@@ -101,7 +136,7 @@ export const InboxFiltersList = () => {
                       <button
                         type="button"
                         onClick={() =>
-                          setFilters({
+                          handleUpdateFilter({
                             inbox_status: null,
                           })
                         }
@@ -119,7 +154,7 @@ export const InboxFiltersList = () => {
       })}
       <button
         type="button"
-        onClick={clearAllFilters}
+        onClick={handleClearAllFilters}
         className="flex items-center gap-x-1 rounded-full border border-custom-border-200 bg-custom-background-80 px-3 py-1.5 text-custom-text-200 hover:text-custom-text-100"
       >
         <span>Clear all</span>
@@ -127,4 +162,4 @@ export const InboxFiltersList = () => {
       </button>
     </div>
   );
-};
+});

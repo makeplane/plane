@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-// react-poppper
+// react-popper
 import { usePopper } from "react-popper";
 // headless ui
 import { Combobox } from "@headlessui/react";
@@ -58,9 +58,7 @@ export const CustomSearchSelect = ({
   });
 
   const filteredOptions =
-    query === ""
-      ? options
-      : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
+    query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const props: any = {
     value,
@@ -105,9 +103,7 @@ export const CustomSearchSelect = ({
                   } ${buttonClassName}`}
                 >
                   {label}
-                  {!noChevron && !disabled && (
-                    <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
-                  )}
+                  {!noChevron && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
                 </button>
               </Combobox.Button>
             )}
@@ -164,14 +160,10 @@ export const CustomSearchSelect = ({
                                     active || selected ? "opacity-100" : "opacity-0"
                                   }`}
                                 >
-                                  <CheckIcon
-                                    className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`}
-                                  />
+                                  <CheckIcon className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
                                 </div>
                               ) : (
-                                <CheckIcon
-                                  className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`}
-                                />
+                                <CheckIcon className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
                               )}
                             </>
                           )}

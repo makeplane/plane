@@ -11,9 +11,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // services
 import { WorkspaceService } from "services/workspace.service";
 import { IssueService } from "services/issue";
-import { InboxService } from "services/inbox.service";
 // hooks
-import useProjectDetails from "hooks/use-project-details";
 import useDebounce from "hooks/use-debounce";
 import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
@@ -30,13 +28,13 @@ import { Icon } from "components/ui";
 import { Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
 import { DiscordIcon, GithubIcon, SettingIcon } from "components/icons";
-import { InboxIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { IIssue, IWorkspaceSearchResults } from "types";
 // fetch-keys
-import { INBOX_LIST, ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
+import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 type Props = {
   deleteIssue: () => void;
@@ -47,7 +45,6 @@ type Props = {
 // services
 const workspaceService = new WorkspaceService();
 const issueService = new IssueService();
-const inboxService = new InboxService();
 
 export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPaletteOpen }) => {
   const [placeholder, setPlaceholder] = useState("Type a command or search...");
@@ -80,18 +77,12 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
   const { setToastAlert } = useToast();
 
   const { user } = useUser();
-  const { projectDetails } = useProjectDetails();
 
   const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
     workspaceSlug && projectId && issueId
       ? () => issueService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
       : null
-  );
-
-  const { data: inboxList } = useSWR(
-    workspaceSlug && projectId ? INBOX_LIST(projectId as string) : null,
-    workspaceSlug && projectId ? () => inboxService.getInboxes(workspaceSlug as string, projectId as string) : null
   );
 
   const updateIssue = useCallback(
@@ -569,22 +560,6 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                               <kbd>D</kbd>
                             </Command.Item>
                           </Command.Group>
-                          {projectDetails && projectDetails.inbox_view && (
-                            <Command.Group heading="Inbox">
-                              <Command.Item
-                                onSelect={() => {
-                                  setIsPaletteOpen(false);
-                                  redirect(`/${workspaceSlug}/projects/${projectId}/inbox/${inboxList?.[0]?.id}`);
-                                }}
-                                className="focus:outline-none"
-                              >
-                                <div className="flex items-center gap-2 text-custom-text-200">
-                                  <InboxIcon className="h-4 w-4" color="#6b7280" />
-                                  Open inbox
-                                </div>
-                              </Command.Item>
-                            </Command.Group>
-                          )}
                         </>
                       )}
 
