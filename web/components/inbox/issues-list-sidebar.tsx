@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import useSWR from "swr";
 
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -9,18 +8,11 @@ import { InboxIssueCard, InboxFiltersList } from "components/inbox";
 // ui
 import { Loader } from "@plane/ui";
 
-export const IssuesListSidebar = observer(() => {
+export const InboxIssuesListSidebar = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId, inboxId, inboxIssueId } = router.query;
+  const { inboxId, inboxIssueId } = router.query;
 
   const { inboxIssues: inboxIssuesStore } = useMobxStore();
-
-  useSWR(
-    workspaceSlug && projectId && inboxId ? `INBOX_ISSUES_${inboxId.toString()}` : null,
-    workspaceSlug && projectId && inboxId
-      ? () => inboxIssuesStore.fetchInboxIssues(workspaceSlug.toString(), projectId.toString(), inboxId.toString())
-      : null
-  );
 
   const issuesList = inboxId ? inboxIssuesStore.inboxIssues[inboxId.toString()] : undefined;
 

@@ -10,7 +10,6 @@ import { InboxService } from "services/inbox.service";
 import useUser from "hooks/use-user";
 import useIssuesView from "hooks/use-issues-view";
 import useToast from "hooks/use-toast";
-import useInboxView from "hooks/use-inbox-view";
 import useProjects from "hooks/use-projects";
 import useMyIssues from "hooks/my-issues/use-my-issues";
 import useLocalStorage from "hooks/use-local-storage";
@@ -29,7 +28,6 @@ import {
   CYCLE_DETAILS,
   MODULE_DETAILS,
   VIEW_ISSUES,
-  INBOX_ISSUES,
   PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS,
   GLOBAL_VIEW_ISSUES,
 } from "constants/fetch-keys";
@@ -85,14 +83,11 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
   const { displayFilters, params } = useIssuesView();
   const { ...viewGanttParams } = params;
-  const { params: inboxParams } = useInboxView();
 
   const { user } = useUser();
   const { projects } = useProjects();
 
   const { groupedIssues, mutateMyIssues } = useMyIssues(workspaceSlug?.toString());
-
-  const globalViewParams = {};
 
   const { setValue: setValueInLocalStorage, clearValue: clearLocalStorageValue } = useLocalStorage<any>(
     "draftedIssue",
@@ -260,8 +255,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         router.push(
           `/${workspaceSlug}/projects/${activeProject}/inbox/${inboxId}?inboxIssueId=${res.issue_inbox[0].id}`
         );
-
-        mutate(INBOX_ISSUES(inboxId.toString(), inboxParams));
       })
       .catch(() => {
         setToastAlert({

@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
+
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
 // icons
@@ -10,7 +13,6 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { Button } from "@plane/ui";
 // types
 import type { IInboxIssue } from "types";
-import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   data: IInboxIssue;
@@ -18,7 +20,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const DeleteIssueModal: React.FC<Props> = observer(({ isOpen, onClose, data }) => {
+export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClose, data }) => {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const router = useRouter();

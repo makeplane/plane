@@ -1,7 +1,5 @@
-import { IIssue, IIssueFilterOptions, IIssueLabels } from "./issues";
+import { IIssue } from "./issues";
 import type { IProjectLite } from "./projects";
-import { IState } from "./state";
-import { IUserLite } from "./users";
 
 export interface IInboxIssue extends Partial<IIssue> {
   bridge_id: string;
@@ -67,16 +65,11 @@ interface StatusDuplicate {
   duplicate_to: string;
 }
 
-export type TInboxStatus =
-  | StatusReject
-  | StatusSnoozed
-  | StatusAccepted
-  | StatusDuplicate
-  | StatePending;
+export type TInboxStatus = StatusReject | StatusSnoozed | StatusAccepted | StatusDuplicate | StatePending;
 
 export interface IInboxFilterOptions {
-  priority: string[] | null;
-  inbox_status: number[] | null;
+  priority?: string[] | null;
+  inbox_status?: number[] | null;
 }
 
 export interface IInboxQueryParams {

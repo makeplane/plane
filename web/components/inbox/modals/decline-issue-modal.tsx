@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
+
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
@@ -10,18 +9,18 @@ import { Button } from "@plane/ui";
 import type { IInboxIssue } from "types";
 
 type Props = {
+  data: IInboxIssue;
   isOpen: boolean;
-  handleClose: () => void;
-  data: IInboxIssue | undefined;
+  onClose: () => void;
   onSubmit: () => Promise<void>;
 };
 
-export const DeclineIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, onSubmit }) => {
+export const DeclineIssueModal: React.FC<Props> = ({ isOpen, onClose, data, onSubmit }) => {
   const [isDeclining, setIsDeclining] = useState(false);
 
-  const onClose = () => {
+  const handleClose = () => {
     setIsDeclining(false);
-    handleClose();
+    onClose();
   };
 
   const handleDecline = () => {
@@ -32,7 +31,7 @@ export const DeclineIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, 
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={onClose}>
+      <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -76,7 +75,7 @@ export const DeclineIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, 
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
-                    <Button variant="neutral-primary" onClick={onClose}>
+                    <Button variant="neutral-primary" onClick={handleClose}>
                       Cancel
                     </Button>
                     <Button variant="danger" onClick={handleDecline} loading={isDeclining}>
