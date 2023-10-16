@@ -18,8 +18,7 @@ import { Button, Input, Spinner } from "@plane/ui";
 import { CustomSearchSelect, CustomSelect } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { UserIcon } from "@heroicons/react/24/outline";
-import { UserCircle } from "lucide-react";
+import { User2, UserCircle2 } from "lucide-react";
 // types
 import type { NextPage } from "next";
 import type { IUser } from "types";
@@ -185,7 +184,7 @@ const Profile: NextPage = () => {
                       <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
                         {!watch("avatar") || watch("avatar") === "" ? (
                           <div className="h-16 w-16 rounded-md bg-custom-background-80 p-2">
-                            <UserIcon className="h-full w-full text-custom-text-200" />
+                            <User2 className="h-full w-full text-custom-text-200" />
                           </div>
                         ) : (
                           <div className="relative h-16 w-16 overflow-hidden">
@@ -231,7 +230,7 @@ const Profile: NextPage = () => {
                 <Link href={`/${workspaceSlug}/profile/${myProfile.id}`}>
                   <a className="flex item-center cursor-pointer gap-2 h-4 leading-4 text-sm text-custom-primary-100">
                     <span className="h-4 w-4">
-                      <UserCircle className="h-4 w-4" />
+                      <UserCircle2 className="h-4 w-4" />
                     </span>
                     View Profile
                   </a>

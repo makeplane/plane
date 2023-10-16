@@ -3,8 +3,8 @@ import React from "react";
 
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { CheckIcon, CubeIcon, ShareIcon, StarIcon, UserIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // swr
+import { Boxes, Check, Share2, Star, User2, X } from "lucide-react";
 // services
 import { WorkspaceService } from "services/workspace.service";
 // hooks
@@ -73,7 +73,7 @@ const WorkspaceInvitation: NextPage = () => {
                       title={`You are already a member of ${invitationDetail.workspace.name}`}
                       description="Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
                     >
-                      <EmptySpaceItem Icon={CubeIcon} title="Continue to Dashboard" action={() => router.push("/")} />
+                      <EmptySpaceItem Icon={Boxes} title="Continue to Dashboard" action={() => router.push("/")} />
                     </EmptySpace>
                   </>
                 ) : (
@@ -81,9 +81,9 @@ const WorkspaceInvitation: NextPage = () => {
                     title={`You have been invited to ${invitationDetail.workspace.name}`}
                     description="Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
                   >
-                    <EmptySpaceItem Icon={CheckIcon} title="Accept" action={handleAccept} />
+                    <EmptySpaceItem Icon={Check} title="Accept" action={handleAccept} />
                     <EmptySpaceItem
-                      Icon={XMarkIcon}
+                      Icon={X}
                       title="Ignore"
                       action={() => {
                         router.push("/");
@@ -102,7 +102,7 @@ const WorkspaceInvitation: NextPage = () => {
           >
             {!user ? (
               <EmptySpaceItem
-                Icon={UserIcon}
+                Icon={User2}
                 title="Sign in to continue"
                 action={() => {
                   router.push("/");
@@ -110,7 +110,7 @@ const WorkspaceInvitation: NextPage = () => {
               />
             ) : (
               <EmptySpaceItem
-                Icon={CubeIcon}
+                Icon={Boxes}
                 title="Continue to Dashboard"
                 action={() => {
                   router.push("/");
@@ -118,14 +118,14 @@ const WorkspaceInvitation: NextPage = () => {
               />
             )}
             <EmptySpaceItem
-              Icon={StarIcon}
+              Icon={Star}
               title="Star us on GitHub"
               action={() => {
                 router.push("https://github.com/makeplane");
               }}
             />
             <EmptySpaceItem
-              Icon={ShareIcon}
+              Icon={Share2}
               title="Join our community of active creators"
               action={() => {
                 router.push("https://discord.com/invite/8SR2N9PAcJ");

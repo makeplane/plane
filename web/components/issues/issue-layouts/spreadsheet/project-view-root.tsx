@@ -13,7 +13,7 @@ import { IssuePeekOverview } from "components/issues";
 // ui
 import { Spinner } from "components/ui";
 // icon
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Plus } from "lucide-react";
 // types
 import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "types";
 import { IIssueUnGroupedStructure } from "store/issue";
@@ -114,7 +114,7 @@ export const ProjectViewSpreadsheetLayout: React.FC = observer(() => {
                   document.dispatchEvent(e);
                 }}
               >
-                <PlusIcon className="h-4 w-4" />
+                <Plus className="h-4 w-4" />
                 Add Issue
               </button>
             </div>

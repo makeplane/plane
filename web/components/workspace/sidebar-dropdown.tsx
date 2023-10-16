@@ -13,10 +13,10 @@ import useToast from "hooks/use-toast";
 import { UserService } from "services/user.service";
 import { AuthService } from "services/auth.service";
 // components
-import { Avatar, Icon } from "components/ui";
+import { Avatar } from "components/ui";
 import { Loader } from "@plane/ui";
 // icons
-import { Check, Plus, Settings, UserCircle2 } from "lucide-react";
+import { Check, LogOut, Plus, Settings, UserCircle2 } from "lucide-react";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
@@ -280,7 +280,7 @@ export const WorkspaceSidebarDropdown = () => {
                   className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80"
                   onClick={handleSignOut}
                 >
-                  <Icon iconName="logout" className="!text-lg !leading-5" />
+                  <LogOut className="h-5 w-5" />
                   Sign out
                 </Menu.Item>
               </div>

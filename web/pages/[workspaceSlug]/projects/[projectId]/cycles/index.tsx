@@ -11,7 +11,6 @@ import { CycleCreateEditModal } from "components/cycles/cycle-create-edit-modal"
 // ui
 import { Button } from "@plane/ui";
 import { EmptyState } from "components/common";
-import { Icon } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // images
 import emptyCycle from "public/empty-state/cycle.svg";
@@ -168,7 +167,7 @@ const ProjectCyclesPage: NextPage = observer(() => {
                       }`}
                       onClick={() => handleCurrentLayout(view.key as TCycleLayout)}
                     >
-                      <Icon iconName={view.icon} className="!text-base" />
+                      {view.icon}
                     </button>
                   );
                 })}

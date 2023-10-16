@@ -12,9 +12,7 @@ import useUser from "hooks/use-user";
 // ui
 import { Loader, Tooltip } from "@plane/ui";
 // icons
-import { ChevronDown } from "lucide-react";
-// icons
-import { EditOutlined } from "@mui/icons-material";
+import { ChevronDown, Pencil } from "lucide-react";
 // helpers
 import { renderLongDetailDateFormat } from "helpers/date-time.helper";
 import { renderEmoji } from "helpers/emoji.helper";
@@ -71,11 +69,7 @@ export const ProfileSidebar = () => {
               <div className="absolute top-3.5 right-3.5 h-5 w-5 bg-white rounded grid place-items-center">
                 <Link href={`/${workspaceSlug}/me/profile`}>
                   <a className="grid place-items-center text-black">
-                    <EditOutlined
-                      sx={{
-                        fontSize: 12,
-                      }}
-                    />
+                    <Pencil className="h-3 w-3" />
                   </a>
                 </Link>
               </div>

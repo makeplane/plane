@@ -2,7 +2,7 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
 // icons
-import { Bars3Icon } from "@heroicons/react/24/outline";
+import { Menu } from "lucide-react";
 // ui components
 import { Tooltip } from "@plane/ui";
 // hooks
@@ -42,7 +42,7 @@ const Header: React.FC<Props> = ({ breadcrumbs, left, right, setToggleSidebar, n
             className="grid h-8 w-8 place-items-center rounded border border-custom-border-200"
             onClick={() => setToggleSidebar((prevData) => !prevData)}
           >
-            <Bars3Icon className="h-5 w-5" />
+            <Menu className="h-5 w-5" />
           </button>
         </div>
         <div>{breadcrumbs}</div>

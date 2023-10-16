@@ -10,9 +10,9 @@ import useWorkspaceMembers from "hooks/use-workspace-members";
 // headless ui
 import { Combobox } from "@headlessui/react";
 // components
-import { AssigneesList, Avatar, Icon, Tooltip } from "components/ui";
+import { AssigneesList, Avatar, Tooltip } from "components/ui";
 // icons
-import { Check, ChevronDown, Search } from "lucide-react";
+import { Check, ChevronDown, Search, User2 } from "lucide-react";
 // types
 import { IUser } from "types";
 import { Placement } from "@popperjs/core";
@@ -98,7 +98,7 @@ export const MembersSelect: React.FC<Props> = ({
             className="flex items-center justify-between gap-1 w-full text-xs px-2.5 py-1 rounded-md shadow-sm border border-custom-border-300 duration-300 focus:outline-none
           "
           >
-            <Icon iconName="person" className="text-sm !leading-4" />
+            <User2 className="h-3.5 w-3.5" />
           </span>
         )}
       </div>

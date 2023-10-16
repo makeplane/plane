@@ -13,10 +13,10 @@ import { truncateText } from "helpers/string.helper";
 // components
 import { IssuesFilterView, IssuesView } from "components/core";
 // ui
-import { Icon } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { X } from "lucide-react";
+import { ArchiveIcon } from "@plane/ui";
 // types
 import type { NextPage } from "next";
 // fetch-keys
@@ -56,10 +56,10 @@ const ProjectArchivedIssues: NextPage = () => {
               onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/issues/`)}
               className="flex items-center gap-1.5 rounded-full border border-custom-border-200 px-3 py-1.5 text-xs"
             >
-              <Icon iconName="archive" className="text-base" />
+              <ArchiveIcon className="h-4 w-4" />
               <span>Archived Issues</span>
 
-              <XMarkIcon className="h-3 w-3" />
+              <X className="h-3 w-3" />
             </button>
           </div>
           <IssuesView />
