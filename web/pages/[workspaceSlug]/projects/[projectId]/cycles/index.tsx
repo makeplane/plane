@@ -1,24 +1,20 @@
-import React, { useCallback, useEffect } from "react";
-// next imports
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-// headless ui
 import { Tab } from "@headlessui/react";
-// swr
 import useSWR from "swr";
-// icons
 import { Plus } from "lucide-react";
-// images
-import emptyCycle from "public/empty-state/cycle.svg";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import { CyclesView, ActiveCycleDetails } from "components/cycles";
-import { CycleCreateEdit } from "components/cycles/cycle-create-edit";
+import { CycleCreateEditModal } from "components/cycles/cycle-create-edit-modal";
 // ui
 import { Button } from "@plane/ui";
 import { EmptyState } from "components/common";
 import { Icon } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+// images
+import emptyCycle from "public/empty-state/cycle.svg";
 // types
 import { TCycleView, TCycleLayout } from "types";
 import type { NextPage } from "next";
@@ -32,12 +28,15 @@ import { CYCLE_TAB_LIST, CYCLE_VIEWS } from "constants/cycle";
 import { setLocalStorage, getLocalStorage } from "lib/local-storage";
 
 const ProjectCyclesPage: NextPage = observer(() => {
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
+  const [createModal, setCreateModal] = useState(false);
+  const createOnSubmit = () => {};
 
   // store
   const { project: projectStore, cycle: cycleStore } = useMobxStore();
+
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
   useSWR(
     workspaceSlug && projectId ? `PROJECT_DETAILS_${projectId}` : null,
@@ -86,9 +85,6 @@ const ProjectCyclesPage: NextPage = observer(() => {
   const cycleView = cycleStore?.cycleView;
   const cycleLayout = cycleStore?.cycleLayout;
 
-  const [createModal, setCreateModal] = React.useState(false);
-  const createOnSubmit = () => {};
-
   return (
     <ProjectAuthorizationWrapper
       breadcrumbs={
@@ -109,7 +105,7 @@ const ProjectCyclesPage: NextPage = observer(() => {
         </Button>
       }
     >
-      <CycleCreateEdit
+      <CycleCreateEditModal
         workspaceSlug={workspaceSlug}
         projectId={projectId}
         modal={createModal}
@@ -180,7 +176,7 @@ const ProjectCyclesPage: NextPage = observer(() => {
             )}
           </div>
 
-          <Tab.Panels as={React.Fragment}>
+          <Tab.Panels as={Fragment}>
             <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
               {cycleView && cycleLayout && workspaceSlug && projectId && (
                 <CyclesView

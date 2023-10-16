@@ -1,13 +1,12 @@
-import React from "react";
-// next imports
+import { MouseEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-// swr
 import useSWR, { mutate } from "swr";
 // services
 import { CycleService } from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
+import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { AssigneesList } from "components/ui/avatar";
 import { SingleProgressStats } from "components/core";
@@ -15,6 +14,7 @@ import { Loader, Tooltip, LinearProgressIndicator } from "@plane/ui";
 // components
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { ActiveCycleProgressStats } from "components/cycles";
+import { ViewIssueLabel } from "components/issues";
 // icons
 import { CalendarDaysIcon } from "@heroicons/react/20/solid";
 import { PriorityIcon } from "components/icons/priority-icon";
@@ -29,8 +29,6 @@ import {
   StateGroupIcon,
 } from "components/icons";
 import { StarIcon } from "@heroicons/react/24/outline";
-// components
-import { ViewIssueLabel } from "components/issues";
 // helpers
 import { getDateRangeStatus, renderShortDateWithYearFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
@@ -38,7 +36,6 @@ import { truncateText } from "helpers/string.helper";
 import { ICycle, IIssue } from "types";
 // fetch-keys
 import { CURRENT_CYCLE_LIST, CYCLES_LIST, CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
-import { useMobxStore } from "lib/mobx/store-provider";
 
 const stateGroups = [
   {
@@ -154,70 +151,28 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
 
   const cycleStatus = getDateRangeStatus(cycle.start_date, cycle.end_date);
 
-  const handleAddToFavorites = () => {
-    if (!workspaceSlug || !projectId || !cycle) return;
+  const handleAddToFavorites = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (!workspaceSlug || !projectId) return;
 
-    mutate<ICycle[]>(
-      CURRENT_CYCLE_LIST(projectId as string),
-      (prevData) =>
-        (prevData ?? []).map((c) => ({
-          ...c,
-          is_favorite: c.id === cycle.id ? true : c.is_favorite,
-        })),
-      false
-    );
-
-    mutate(
-      CYCLES_LIST(projectId as string),
-      (prevData: any) =>
-        (prevData ?? []).map((c: any) => ({
-          ...c,
-          is_favorite: c.id === cycle.id ? true : c.is_favorite,
-        })),
-      false
-    );
-
-    cycleService
-      .addCycleToFavorites(workspaceSlug as string, projectId as string, {
-        cycle: cycle.id,
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't add the cycle to favorites. Please try again.",
-        });
-      });
-  };
-
-  const handleRemoveFromFavorites = () => {
-    if (!workspaceSlug || !projectId || !cycle) return;
-
-    mutate<ICycle[]>(
-      CURRENT_CYCLE_LIST(projectId as string),
-      (prevData) =>
-        (prevData ?? []).map((c) => ({
-          ...c,
-          is_favorite: c.id === cycle.id ? false : c.is_favorite,
-        })),
-      false
-    );
-
-    mutate(
-      CYCLES_LIST(projectId as string),
-      (prevData: any) =>
-        (prevData ?? []).map((c: any) => ({
-          ...c,
-          is_favorite: c.id === cycle.id ? false : c.is_favorite,
-        })),
-      false
-    );
-
-    cycleService.removeCycleFromFavorites(workspaceSlug as string, projectId as string, cycle.id).catch(() => {
+    cycleStore.addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycle.id).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
-        message: "Couldn't remove the cycle from favorites. Please try again.",
+        message: "Couldn't add the cycle to favorites. Please try again.",
+      });
+    });
+  };
+
+  const handleRemoveFromFavorites = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (!workspaceSlug || !projectId) return;
+
+    cycleStore.removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycle.id).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Couldn't add the cycle to favorites. Please try again.",
       });
     });
   };
@@ -304,8 +259,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
                   {cycle.is_favorite ? (
                     <button
                       onClick={(e) => {
-                        e.preventDefault();
-                        handleRemoveFromFavorites();
+                        handleRemoveFromFavorites(e);
                       }}
                     >
                       <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
@@ -313,8 +267,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
                   ) : (
                     <button
                       onClick={(e) => {
-                        e.preventDefault();
-                        handleAddToFavorites();
+                        handleAddToFavorites(e);
                       }}
                     >
                       <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />

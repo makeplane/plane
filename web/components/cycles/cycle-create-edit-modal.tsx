@@ -1,16 +1,13 @@
-import React from "react";
-// headless ui
+import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-// react mobx lite
 import { observer } from "mobx-react-lite";
 // components
 import { CycleForm } from "./form";
 // hooks
 import useToast from "hooks/use-toast";
+import { useMobxStore } from "lib/mobx/store-provider";
 // types
 import { CycleDateCheckData, ICycle } from "types";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 
 interface ICycleCreateEdit {
   cycle?: ICycle | null;
@@ -21,7 +18,7 @@ interface ICycleCreateEdit {
   projectId: string;
 }
 
-export const CycleCreateEdit: React.FC<ICycleCreateEdit> = observer((props) => {
+export const CycleCreateEditModal: React.FC<ICycleCreateEdit> = observer((props) => {
   const { modal, modalClose, cycle = null, onSubmit, workspaceSlug, projectId } = props;
 
   const { cycle: cycleStore } = useMobxStore();
@@ -100,10 +97,10 @@ export const CycleCreateEdit: React.FC<ICycleCreateEdit> = observer((props) => {
   };
 
   return (
-    <Transition.Root show={modal} as={React.Fragment}>
+    <Transition.Root show={modal} as={Fragment}>
       <Dialog as="div" className="relative z-20" onClose={modalClose}>
         <Transition.Child
-          as={React.Fragment}
+          as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -117,7 +114,7 @@ export const CycleCreateEdit: React.FC<ICycleCreateEdit> = observer((props) => {
         <div className="fixed inset-0 z-10 overflow-y-auto">
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <Transition.Child
-              as={React.Fragment}
+              as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               enterTo="opacity-100 translate-y-0 sm:scale-100"

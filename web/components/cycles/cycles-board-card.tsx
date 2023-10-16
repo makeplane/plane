@@ -1,4 +1,4 @@
-import React, { FC, MouseEvent } from "react";
+import { FC, MouseEvent, useState } from "react";
 // next imports
 import Link from "next/link";
 // headless ui
@@ -7,8 +7,8 @@ import { Disclosure, Transition } from "@headlessui/react";
 import useToast from "hooks/use-toast";
 // components
 import { SingleProgressStats } from "components/core";
-import { CycleCreateEdit } from "./cycle-create-edit";
-import { CycleDelete } from "./cycle-delete";
+import { CycleCreateEditModal } from "./cycle-create-edit-modal";
+import { CycleDeleteModal } from "./cycle-delete-modal";
 // ui
 import { CustomMenu } from "components/ui";
 import { AssigneesList } from "components/ui/avatar";
@@ -68,6 +68,12 @@ export interface ICyclesBoardCard {
 
 export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
   const { cycle, workspaceSlug, projectId } = props;
+
+  const [updateModal, setUpdateModal] = useState(false);
+  const updateModalCallback = () => {};
+
+  const [deleteModal, setDeleteModal] = useState(false);
+  const deleteModalCallback = () => {};
 
   // store
   const { cycle: cycleStore } = useMobxStore();
@@ -133,19 +139,9 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
     });
   };
 
-  const [updateModal, setUpdateModal] = React.useState(false);
-  const updateModalCallback = () => {
-    // callback function to be called
-  };
-
-  const [deleteModal, setDeleteModal] = React.useState(false);
-  const deleteModalCallback = () => {
-    // callback function to be called
-  };
-
   return (
     <div>
-      <CycleCreateEdit
+      <CycleCreateEditModal
         cycle={cycle}
         modal={updateModal}
         modalClose={() => setUpdateModal(false)}
@@ -154,7 +150,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
         projectId={projectId}
       />
 
-      <CycleDelete
+      <CycleDeleteModal
         cycle={cycle}
         modal={deleteModal}
         modalClose={() => setDeleteModal(false)}

@@ -1,10 +1,10 @@
-import React, { FC, MouseEvent } from "react";
+import { FC, MouseEvent, useState } from "react";
 import Link from "next/link";
 // hooks
 import useToast from "hooks/use-toast";
 // components
-import { CycleCreateEdit } from "./cycle-create-edit";
-import { CycleDelete } from "./cycle-delete";
+import { CycleCreateEditModal } from "./cycle-create-edit-modal";
+import { CycleDeleteModal } from "./cycle-delete-modal";
 // ui
 import { RadialProgressBar, Tooltip, LinearProgressIndicator } from "@plane/ui";
 import { CustomMenu } from "components/ui";
@@ -18,13 +18,14 @@ import {
   TriangleExclamationIcon,
   AlarmClockIcon,
 } from "components/icons";
+// hooks
+import { useMobxStore } from "lib/mobx/store-provider";
 import { LinkIcon, PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
 // helpers
 import { getDateRangeStatus, renderShortDateWithYearFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { ICycle } from "types";
-import { useMobxStore } from "lib/mobx/store-provider";
 
 type TCyclesListItem = {
   cycle: ICycle;
@@ -66,6 +67,12 @@ const stateGroups = [
 
 export const CyclesListItem: FC<TCyclesListItem> = (props) => {
   const { cycle, workspaceSlug, projectId } = props;
+
+  const [updateModal, setUpdateModal] = useState(false);
+  const updateModalCallback = () => {};
+
+  const [deleteModal, setDeleteModal] = useState(false);
+  const deleteModalCallback = () => {};
 
   // store
   const { cycle: cycleStore } = useMobxStore();
@@ -122,12 +129,6 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
       });
     });
   };
-
-  const [updateModal, setUpdateModal] = React.useState(false);
-  const updateModalCallback = () => {};
-
-  const [deleteModal, setDeleteModal] = React.useState(false);
-  const deleteModalCallback = () => {};
 
   return (
     <>
@@ -347,7 +348,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
         </div>
       </div>
 
-      <CycleCreateEdit
+      <CycleCreateEditModal
         cycle={cycle}
         modal={updateModal}
         modalClose={() => setUpdateModal(false)}
@@ -356,7 +357,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
         projectId={projectId}
       />
 
-      <CycleDelete
+      <CycleDeleteModal
         cycle={cycle}
         modal={deleteModal}
         modalClose={() => setDeleteModal(false)}
