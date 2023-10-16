@@ -7,7 +7,7 @@ import useSWR from "swr";
 // react-hook-form
 import { UseFormSetValue } from "react-hook-form";
 // services
-import GithubIntegrationService from "services/github.service";
+import { GithubIntegrationService } from "services/integrations";
 // ui
 import { Button, Loader } from "@plane/ui";
 // types
@@ -22,6 +22,9 @@ type Props = {
   setValue: UseFormSetValue<TFormValues>;
 };
 
+// services
+const githubIntegrationService = new GithubIntegrationService();
+
 export const GithubRepoDetails: FC<Props> = ({ selectedRepo, handleStepChange, setUsers, setValue }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -30,7 +33,7 @@ export const GithubRepoDetails: FC<Props> = ({ selectedRepo, handleStepChange, s
     workspaceSlug && selectedRepo ? GITHUB_REPOSITORY_INFO(workspaceSlug as string, selectedRepo.name) : null,
     workspaceSlug && selectedRepo
       ? () =>
-          GithubIntegrationService.getGithubRepoInfo(workspaceSlug as string, {
+          githubIntegrationService.getGithubRepoInfo(workspaceSlug as string, {
             owner: selectedRepo.owner.login,
             repo: selectedRepo.name,
           })

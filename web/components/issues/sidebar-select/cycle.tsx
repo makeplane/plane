@@ -5,11 +5,11 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // services
-import issuesService from "services/issue.service";
-import cyclesService from "services/cycles.service";
+import { IssueService } from "services/issue";
+import { CycleService } from "services/cycle.service";
 // ui
-import { CustomSelect, Tooltip } from "components/ui";
-import { Spinner } from "@plane/ui";
+import { CustomSelect } from "components/ui";
+import { Spinner, Tooltip } from "@plane/ui";
 // helper
 import { truncateText } from "helpers/string.helper";
 // types
@@ -23,6 +23,10 @@ type Props = {
   disabled?: boolean;
 };
 
+// services
+const issueService = new IssueService();
+const cycleService = new CycleService();
+
 export const SidebarCycleSelect: React.FC<Props> = ({ issueDetail, handleCycleChange, disabled = false }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
@@ -30,16 +34,16 @@ export const SidebarCycleSelect: React.FC<Props> = ({ issueDetail, handleCycleCh
   const { data: incompleteCycles } = useSWR(
     workspaceSlug && projectId ? INCOMPLETE_CYCLES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => cyclesService.getCyclesWithParams(workspaceSlug as string, projectId as string, "incomplete")
+      ? () => cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string, "incomplete")
       : null
   );
 
   const removeIssueFromCycle = (bridgeId: string, cycleId: string) => {
     if (!workspaceSlug || !projectId) return;
 
-    issuesService
+    issueService
       .removeIssueFromCycle(workspaceSlug as string, projectId as string, cycleId, bridgeId)
-      .then((res) => {
+      .then(() => {
         mutate(ISSUE_DETAILS(issueId as string));
 
         mutate(CYCLE_ISSUES(cycleId));
@@ -76,7 +80,6 @@ export const SidebarCycleSelect: React.FC<Props> = ({ issueDetail, handleCycleCh
           : handleCycleChange(incompleteCycles?.find((c) => c.id === value) as ICycle);
       }}
       width="w-full"
-      position="right"
       maxHeight="rg"
       disabled={disabled}
     >

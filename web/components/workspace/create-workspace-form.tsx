@@ -1,18 +1,15 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-
+import { Dispatch, SetStateAction, useEffect, useState, FC } from "react";
 import { mutate } from "swr";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
 import { CustomSelect } from "components/ui";
 import { Button, Input } from "@plane/ui";
 // types
-import { ICurrentUserResponse, IWorkspace } from "types";
+import { IUser, IWorkspace } from "types";
 // fetch-keys
 import { USER_WORKSPACES } from "constants/fetch-keys";
 // constants
@@ -26,7 +23,7 @@ type Props = {
     organization_size: string;
   };
   setDefaultValues: Dispatch<SetStateAction<any>>;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   secondaryButton?: React.ReactNode;
   primaryButtonText?: {
     loading: string;
@@ -50,7 +47,9 @@ const restrictedUrls = [
   "workspace-member-invitation",
 ];
 
-export const CreateWorkspaceForm: React.FC<Props> = ({
+const workspaceService = new WorkspaceService();
+
+export const CreateWorkspaceForm: FC<Props> = ({
   onSubmit,
   defaultValues,
   setDefaultValues,
@@ -67,7 +66,6 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
   const { setToastAlert } = useToast();
 
   const {
-    register,
     handleSubmit,
     control,
     setValue,

@@ -24,7 +24,7 @@ export const ThemeSwitch: React.FC<Props> = observer(
   ({ setPreLoadedData, customThemeSelectorOptions, setCustomThemeSelectorOptions }) => {
     const store: any = useMobxStore();
 
-    const { user, mutateUser } = useUser();
+    const { user } = useUser();
     const { theme, setTheme } = useTheme();
 
     const updateUserTheme = (newTheme: string) => {
@@ -72,19 +72,15 @@ export const ThemeSwitch: React.FC<Props> = observer(
         }
         onChange={({ value, type }: { value: string; type: string }) => {
           if (value === "custom") {
-            if (user?.theme.palette) {
+            if (user?.theme?.palette) {
               setPreLoadedData({
-                background: user.theme.background !== "" ? user.theme.background : "#0d101b",
+                background: user.theme?.background !== "" ? user.theme.background : "#0d101b",
                 text: user.theme.text !== "" ? user.theme.text : "#c5c5c5",
                 primary: user.theme.primary !== "" ? user.theme.primary : "#3f76ff",
-                sidebarBackground:
-                  user.theme.sidebarBackground !== "" ? user.theme.sidebarBackground : "#0d101b",
+                sidebarBackground: user.theme.sidebarBackground !== "" ? user.theme.sidebarBackground : "#0d101b",
                 sidebarText: user.theme.sidebarText !== "" ? user.theme.sidebarText : "#c5c5c5",
                 darkPalette: false,
-                palette:
-                  user.theme.palette !== ",,,,"
-                    ? user.theme.palette
-                    : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
+                palette: user.theme.palette !== ",,,," ? user.theme.palette : "#0d101b,#c5c5c5,#3f76ff,#0d101b,#c5c5c5",
                 theme: "custom",
               });
             }
@@ -100,7 +96,6 @@ export const ThemeSwitch: React.FC<Props> = observer(
         }}
         input
         width="w-full"
-        position="right"
       >
         {THEMES_OBJ.map(({ value, label, type, icon }) => (
           <CustomSelect.Option key={value} value={{ value, type }}>

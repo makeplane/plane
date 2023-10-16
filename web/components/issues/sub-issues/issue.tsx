@@ -10,9 +10,10 @@ import { IssuePeekOverview } from "components/issues/peek-overview";
 import { SubIssuesRootList } from "./issues-list";
 import { IssueProperty } from "./properties";
 // ui
-import { Tooltip, CustomMenu } from "components/ui";
+import { CustomMenu } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // types
-import { ICurrentUserResponse, IIssue } from "types";
+import { IUser, IIssue } from "types";
 import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
 // fetch keys
 import { SUB_ISSUES } from "constants/fetch-keys";
@@ -23,7 +24,7 @@ export interface ISubIssues {
   parentIssue: IIssue;
   issue: any;
   spacingLeft?: number;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   editable: boolean;
   removeIssueFromSubIssues: (parentIssueId: string, issue: IIssue) => void;
   issuesLoader: ISubIssuesRootLoaders;

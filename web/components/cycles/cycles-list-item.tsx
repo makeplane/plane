@@ -6,8 +6,8 @@ import useToast from "hooks/use-toast";
 import { CycleCreateEdit } from "./cycle-create-edit";
 import { CycleDelete } from "./cycle-delete";
 // ui
-import { RadialProgressBar } from "@plane/ui";
-import { CustomMenu, LinearProgressIndicator, Tooltip } from "components/ui";
+import { RadialProgressBar, Tooltip, LinearProgressIndicator } from "@plane/ui";
+import { CustomMenu } from "components/ui";
 // icons
 import { CalendarDaysIcon } from "@heroicons/react/20/solid";
 import {

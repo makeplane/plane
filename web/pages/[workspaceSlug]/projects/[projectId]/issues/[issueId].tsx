@@ -7,7 +7,7 @@ import useSWR, { mutate } from "swr";
 // react-hook-form
 import { useForm } from "react-hook-form";
 // services
-import issuesService from "services/issue.service";
+import { IssueService } from "services/issue";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // layouts
@@ -15,7 +15,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import { IssueDetailsSidebar, IssueMainContent } from "components/issues";
 // ui
-import { EmptyState } from "components/ui";
+import { EmptyState } from "components/common";
 import { Breadcrumbs } from "components/breadcrumbs";
 import { Loader } from "@plane/ui";
 // images
@@ -43,6 +43,9 @@ const defaultValues: Partial<IIssue> = {
   target_date: null,
 };
 
+// services
+const issueService = new IssueService();
+
 const IssueDetailsPage: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
@@ -57,7 +60,7 @@ const IssueDetailsPage: NextPage = () => {
   } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
     workspaceSlug && projectId && issueId
-      ? () => issuesService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
+      ? () => issueService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
       : null
   );
 
@@ -89,7 +92,7 @@ const IssueDetailsPage: NextPage = () => {
       delete payload.related_issues;
       delete payload.issue_relations;
 
-      await issuesService
+      await issueService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)
         .then(() => {
           mutateIssueDetails();

@@ -7,7 +7,8 @@ import { useRouter } from "next/router";
 import useToast from "hooks/use-toast";
 
 // icons
-import { CustomMenu, Icon, Tooltip } from "components/ui";
+import { CustomMenu, Icon } from "components/ui";
+import { Tooltip } from "@plane/ui";
 
 // helper
 import { stripHTML, replaceUnderscoreIfSnakeCase, truncateText } from "helpers/string.helper";
@@ -66,8 +67,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
         <span className="absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 bg-custom-primary-100 rounded-full" />
       )}
       <div className="relative w-12 h-12 rounded-full">
-        {notification.triggered_by_details.avatar &&
-        notification.triggered_by_details.avatar !== "" ? (
+        {notification.triggered_by_details.avatar && notification.triggered_by_details.avatar !== "" ? (
           <div className="h-12 w-12 rounded-full">
             <Image
               src={notification.triggered_by_details.avatar}
@@ -98,15 +98,13 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
               ? notification.triggered_by_details.first_name
               : notification.triggered_by_details.display_name}{" "}
           </span>
-          {notification.data.issue_activity.field !== "comment" &&
-            notification.data.issue_activity.verb}{" "}
+          {notification.data.issue_activity.field !== "comment" && notification.data.issue_activity.verb}{" "}
           {notification.data.issue_activity.field === "comment"
             ? "commented"
             : notification.data.issue_activity.field === "None"
             ? null
             : replaceUnderscoreIfSnakeCase(notification.data.issue_activity.field)}{" "}
-          {notification.data.issue_activity.field !== "comment" &&
-          notification.data.issue_activity.field !== "None"
+          {notification.data.issue_activity.field !== "comment" && notification.data.issue_activity.field !== "None"
             ? "to"
             : ""}
           <span className="font-semibold">
@@ -148,14 +146,11 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             <p className="text-custom-text-300 flex items-center justify-end gap-x-1 flex-shrink-0">
               <Icon iconName="schedule" className="!text-base -my-0.5" />
               <span>
-                Till {renderShortDate(notification.snoozed_till)},{" "}
-                {render12HourFormatTime(notification.snoozed_till)}
+                Till {renderShortDate(notification.snoozed_till)}, {render12HourFormatTime(notification.snoozed_till)}
               </span>
             </p>
           ) : (
-            <p className="text-custom-text-300 flex-shrink-0">
-              {formatDateDistance(notification.created_at)}
-            </p>
+            <p className="text-custom-text-300 flex-shrink-0">{formatDateDistance(notification.created_at)}</p>
           )}
         </div>
       </div>
@@ -168,9 +163,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             onClick: () => {
               markNotificationReadStatusToggle(notification.id).then(() => {
                 setToastAlert({
-                  title: notification.read_at
-                    ? "Notification marked as unread"
-                    : "Notification marked as read",
+                  title: notification.read_at ? "Notification marked as unread" : "Notification marked as read",
                   type: "success",
                 });
               });
@@ -183,9 +176,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             onClick: () => {
               markNotificationArchivedStatus(notification.id).then(() => {
                 setToastAlert({
-                  title: notification.archived_at
-                    ? "Notification un-archived"
-                    : "Notification archived",
+                  title: notification.archived_at ? "Notification un-archived" : "Notification archived",
                   type: "success",
                 });
               });
@@ -214,12 +205,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                 e.stopPropagation();
               }}
               customButton={
-                <button
-                  type="button"
-                  className="text-sm flex w-full items-center gap-x-2 bg-custom-background-80 hover:bg-custom-background-100 p-0.5 rounded"
-                >
+                <div className="text-sm flex w-full items-center gap-x-2 bg-custom-background-80 hover:bg-custom-background-100 p-0.5 rounded">
                   <Icon iconName="schedule" className="h-5 w-5 text-custom-text-300" />
-                </button>
+                </div>
               }
               optionsClassName="!z-20"
             >

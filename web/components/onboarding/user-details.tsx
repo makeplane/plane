@@ -1,18 +1,15 @@
 import { useEffect } from "react";
-
 import { mutate } from "swr";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // hooks
 import useToast from "hooks/use-toast";
 // services
-import userService from "services/user.service";
+import { UserService } from "services/user.service";
 // ui
 import { CustomSearchSelect, CustomSelect } from "components/ui";
 import { Button, Input } from "@plane/ui";
 // types
-import { ICurrentUserResponse, IUser } from "types";
+import { IUser } from "types";
 // fetch-keys
 import { CURRENT_USER } from "constants/fetch-keys";
 // helpers
@@ -37,11 +34,12 @@ const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
   content: timeZone.label,
 }));
 
+const userService = new UserService();
+
 export const UserDetails: React.FC<Props> = ({ user }) => {
   const { setToastAlert } = useToast();
 
   const {
-    register,
     handleSubmit,
     control,
     reset,
@@ -64,7 +62,7 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
     await userService
       .updateUser(payload)
       .then(() => {
-        mutate<ICurrentUserResponse>(
+        mutate<IUser>(
           CURRENT_USER,
           (prevData) => {
             if (!prevData) return prevData;
@@ -83,7 +81,7 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
           message: "Details updated successfully.",
         });
       })
-      .catch((err) => {
+      .catch(() => {
         mutate(CURRENT_USER);
       });
   };
@@ -180,7 +178,6 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
                   label={value ? value.toString() : <span className="text-custom-text-400">Select your role...</span>}
                   input
                   width="w-full"
-                  verticalPosition="top"
                 >
                   {USER_ROLES.map((item) => (
                     <CustomSelect.Option key={item.value} value={item.value}>
@@ -206,7 +203,6 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
                   label={value ? TIME_ZONES.find((t) => t.value === value)?.label ?? value : "Select a timezone"}
                   options={timeZoneOptions}
                   onChange={onChange}
-                  verticalPosition="top"
                   optionsClassName="w-full"
                   input
                 />

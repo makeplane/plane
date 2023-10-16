@@ -14,14 +14,14 @@ import { Avatar, CustomSearchSelect, CustomSelect } from "components/ui";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 // services
-import projectService from "services/project.service";
-import workspaceService from "services/workspace.service";
+import { ProjectService } from "services/project";
+import { WorkspaceService } from "services/workspace.service";
 // contexts
 import { useProjectMyMembership } from "contexts/project-member.context";
 // hooks
 import useToast from "hooks/use-toast";
 // types
-import { ICurrentUserResponse } from "types";
+import { IUser } from "types";
 // fetch-keys
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // constants
@@ -31,7 +31,7 @@ type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   members: any[];
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   onSuccess: () => void;
 };
 
@@ -52,6 +52,10 @@ const defaultValues: FormValues = {
     },
   ],
 };
+
+// services
+const projectService = new ProjectService();
+const workspaceService = new WorkspaceService();
 
 const SendProjectInvitationModal: React.FC<Props> = (props) => {
   const { isOpen, setIsOpen, members, user, onSuccess } = props;
@@ -208,7 +212,6 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
                                     onChange(val);
                                   }}
                                   options={options}
-                                  position="left"
                                   width="w-full min-w-[12rem]"
                                 />
                               )}
@@ -230,12 +233,12 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
                                   <CustomSelect
                                     {...field}
                                     customButton={
-                                      <button className="flex w-full items-center justify-between gap-1 rounded-md border border-custom-border-200 shadow-sm duration-300 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 focus:outline-none px-3 py-2.5 text-sm text-left">
+                                      <div className="flex w-full items-center justify-between gap-1 rounded-md border border-custom-border-200 shadow-sm duration-300 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 focus:outline-none px-3 py-2.5 text-sm text-left">
                                         <span className="capitalize">
                                           {field.value ? ROLE[field.value] : "Select role"}
                                         </span>
                                         <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
-                                      </button>
+                                      </div>
                                     }
                                     input
                                     width="w-full"

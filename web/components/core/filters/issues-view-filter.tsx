@@ -11,8 +11,8 @@ import useEstimateOption from "hooks/use-estimate-option";
 // components
 import { SelectFilters } from "components/views";
 // ui
-import { CustomMenu, Tooltip } from "components/ui";
-import { ToggleSwitch } from "@plane/ui";
+import { CustomMenu } from "components/ui";
+import { ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import {
@@ -77,5 +77,297 @@ export const IssuesFilterView: React.FC = () => {
 
   const { isEstimateActive } = useEstimateOption();
 
-  return null;
+  return (
+    <div className="flex items-center gap-2">
+      {!isArchivedIssues && !isDraftIssues && (
+        <div className="flex items-center gap-x-1">
+          {issueViewOptions.map((option) => (
+            <Tooltip
+              key={option.type}
+              tooltipContent={<span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} Layout</span>}
+              position="bottom"
+            >
+              <button
+                type="button"
+                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80 duration-300 ${
+                  displayFilters.layout === option.type
+                    ? "bg-custom-sidebar-background-80"
+                    : "text-custom-sidebar-text-200"
+                }`}
+                onClick={() => setDisplayFilters({ layout: option.type })}
+              >
+                <option.Icon
+                  sx={{
+                    fontSize: 16,
+                  }}
+                  className={option.type === "gantt_chart" ? "rotate-90" : ""}
+                />
+              </button>
+            </Tooltip>
+          ))}
+        </div>
+      )}
+      {isDraftIssues && (
+        <div className="flex items-center gap-x-1">
+          {issueViewForDraftIssues.map((option) => (
+            <Tooltip
+              key={option.type}
+              tooltipContent={<span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} View</span>}
+              position="bottom"
+            >
+              <button
+                type="button"
+                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80 duration-300 ${
+                  displayFilters.layout === option.type
+                    ? "bg-custom-sidebar-background-80"
+                    : "text-custom-sidebar-text-200"
+                }`}
+                onClick={() => setDisplayFilters({ layout: option.type })}
+              >
+                <option.Icon
+                  sx={{
+                    fontSize: 16,
+                  }}
+                  className={option.type === "gantt_chart" ? "rotate-90" : ""}
+                />
+              </button>
+            </Tooltip>
+          ))}
+        </div>
+      )}
+      <SelectFilters
+        filters={filters}
+        onSelect={(option) => {
+          const key = option.key as keyof typeof filters;
+
+          if (key === "start_date" || key === "target_date") {
+            const valueExists = checkIfArraysHaveSameElements(filters[key] ?? [], option.value);
+
+            setFilters({
+              [key]: valueExists ? null : option.value,
+            });
+          } else {
+            const valueExists = filters[key]?.includes(option.value);
+
+            if (valueExists)
+              setFilters(
+                {
+                  [option.key]: ((filters[key] ?? []) as any[])?.filter((val) => val !== option.value),
+                },
+                !Boolean(viewId)
+              );
+            else
+              setFilters(
+                {
+                  [option.key]: [...((filters[key] ?? []) as any[]), option.value],
+                },
+                !Boolean(viewId)
+              );
+          }
+        }}
+        direction="left"
+        height="rg"
+      />
+      <Popover className="relative">
+        {({ open }) => (
+          <>
+            <Popover.Button
+              className={`group flex items-center gap-2 rounded-md border border-custom-border-200 px-3 py-1.5 text-xs hover:bg-custom-sidebar-background-90 hover:text-custom-sidebar-text-100 focus:outline-none duration-300 ${
+                open ? "bg-custom-sidebar-background-90 text-custom-sidebar-text-100" : "text-custom-sidebar-text-200"
+              }`}
+            >
+              Display
+              <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+            </Popover.Button>
+
+            <Transition
+              as={React.Fragment}
+              enter="transition ease-out duration-200"
+              enterFrom="opacity-0 translate-y-1"
+              enterTo="opacity-100 translate-y-0"
+              leave="transition ease-in duration-150"
+              leaveFrom="opacity-100 translate-y-0"
+              leaveTo="opacity-0 translate-y-1"
+            >
+              <Popover.Panel className="absolute right-0 z-30 mt-1 w-screen max-w-xs transform rounded-lg border border-custom-border-200 bg-custom-background-90 p-3 shadow-lg">
+                <div className="relative divide-y-2 divide-custom-border-200">
+                  <div className="space-y-4 pb-3 text-xs">
+                    {displayFilters.layout !== "calendar" &&
+                      displayFilters.layout !== "spreadsheet" &&
+                      displayFilters.layout !== "gantt_chart" && (
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-custom-text-200">Group by</h4>
+                          <div className="w-28">
+                            <CustomMenu
+                              label={
+                                ISSUE_GROUP_BY_OPTIONS.find((option) => option.key === displayFilters.group_by)
+                                  ?.title ?? "Select"
+                              }
+                              className="!w-full"
+                              buttonClassName="w-full"
+                            >
+                              {ISSUE_GROUP_BY_OPTIONS.map((option) => {
+                                if (displayFilters.layout === "kanban" && option.key === null) return null;
+                                if (option.key === "project") return null;
+
+                                if (isDraftIssues && option.key === "state_detail.group") return null;
+
+                                return (
+                                  <CustomMenu.MenuItem
+                                    key={option.key}
+                                    onClick={() => setDisplayFilters({ group_by: option.key })}
+                                  >
+                                    {option.title}
+                                  </CustomMenu.MenuItem>
+                                );
+                              })}
+                            </CustomMenu>
+                          </div>
+                        </div>
+                      )}
+                    {displayFilters.layout !== "calendar" && displayFilters.layout !== "spreadsheet" && (
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-custom-text-200">Order by</h4>
+                        <div className="w-28">
+                          <CustomMenu
+                            label={
+                              ISSUE_ORDER_BY_OPTIONS.find((option) => option.key === displayFilters.order_by)?.title ??
+                              "Select"
+                            }
+                            className="!w-full"
+                            buttonClassName="w-full"
+                          >
+                            {ISSUE_ORDER_BY_OPTIONS.map((option) =>
+                              displayFilters.group_by === "priority" && option.key === "priority" ? null : (
+                                <CustomMenu.MenuItem
+                                  key={option.key}
+                                  onClick={() => {
+                                    setDisplayFilters({ order_by: option.key });
+                                  }}
+                                >
+                                  {option.title}
+                                </CustomMenu.MenuItem>
+                              )
+                            )}
+                          </CustomMenu>
+                        </div>
+                      </div>
+                    )}
+                    {!isArchivedIssues && (
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-custom-text-200">Issue type</h4>
+                        <div className="w-28">
+                          <CustomMenu
+                            label={
+                              ISSUE_FILTER_OPTIONS.find((option) => option.key === displayFilters.type)?.title ??
+                              "Select"
+                            }
+                            className="!w-full"
+                            buttonClassName="w-full"
+                          >
+                            {ISSUE_FILTER_OPTIONS.map((option) => (
+                              <CustomMenu.MenuItem
+                                key={option.key}
+                                onClick={() =>
+                                  setDisplayFilters({
+                                    type: option.key,
+                                  })
+                                }
+                              >
+                                {option.title}
+                              </CustomMenu.MenuItem>
+                            ))}
+                          </CustomMenu>
+                        </div>
+                      </div>
+                    )}
+
+                    {displayFilters.layout !== "calendar" && displayFilters.layout !== "spreadsheet" && (
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-custom-text-200">Show sub-issues</h4>
+                        <div className="w-28">
+                          <ToggleSwitch
+                            value={displayFilters.sub_issue ?? true}
+                            onChange={() => setDisplayFilters({ sub_issue: !displayFilters.sub_issue })}
+                          />
+                        </div>
+                      </div>
+                    )}
+                    {displayFilters.layout !== "calendar" &&
+                      displayFilters.layout !== "spreadsheet" &&
+                      displayFilters.layout !== "gantt_chart" && (
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-custom-text-200">Show empty groups</h4>
+                          <div className="w-28">
+                            <ToggleSwitch
+                              value={displayFilters.show_empty_groups ?? true}
+                              onChange={() =>
+                                setDisplayFilters({
+                                  show_empty_groups: !displayFilters.show_empty_groups,
+                                })
+                              }
+                            />
+                          </div>
+                        </div>
+                      )}
+                    {displayFilters.layout !== "calendar" &&
+                      displayFilters.layout !== "spreadsheet" &&
+                      displayFilters.layout !== "gantt_chart" && (
+                        <div className="relative flex justify-end gap-x-3">
+                          <button type="button" onClick={() => resetFilterToDefault()}>
+                            Reset to default
+                          </button>
+                          <button
+                            type="button"
+                            className="font-medium text-custom-primary"
+                            onClick={() => setNewFilterDefaultView()}
+                          >
+                            Set as default
+                          </button>
+                        </div>
+                      )}
+                  </div>
+
+                  {displayFilters.layout !== "gantt_chart" && (
+                    <div className="space-y-2 py-3">
+                      <h4 className="text-sm text-custom-text-200">Display Properties</h4>
+                      <div className="flex flex-wrap items-center gap-2 text-custom-text-200">
+                        {Object.keys(properties).map((key) => {
+                          if (key === "estimate" && !isEstimateActive) return null;
+
+                          if (
+                            displayFilters.layout === "spreadsheet" &&
+                            (key === "attachment_count" || key === "link" || key === "sub_issue_count")
+                          )
+                            return null;
+
+                          if (displayFilters.layout !== "spreadsheet" && (key === "created_on" || key === "updated_on"))
+                            return null;
+
+                          return (
+                            <button
+                              key={key}
+                              type="button"
+                              className={`rounded border px-2 py-1 text-xs capitalize ${
+                                properties[key as keyof Properties]
+                                  ? "border-custom-primary bg-custom-primary text-white"
+                                  : "border-custom-border-200"
+                              }`}
+                              onClick={() => setProperties(key as keyof Properties)}
+                            >
+                              {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </Popover.Panel>
+            </Transition>
+          </>
+        )}
+      </Popover>
+    </div>
+  );
 };

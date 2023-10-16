@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import projectService from "services/project.service";
+import { ProjectService } from "services/project";
 // ui
 import { AssigneesList, Avatar, CustomSearchSelect } from "components/ui";
 // icons
@@ -17,6 +17,9 @@ type Props = {
   value: string[] | undefined;
   onChange: (val: string[]) => void;
 };
+
+// services
+const projectService = new ProjectService();
 
 export const SidebarMembersSelect: React.FC<Props> = ({ value, onChange }) => {
   const router = useRouter();
@@ -64,7 +67,6 @@ export const SidebarMembersSelect: React.FC<Props> = ({ value, onChange }) => {
           options={options}
           onChange={onChange}
           maxHeight="md"
-          position="right"
           multiple
         />
       </div>

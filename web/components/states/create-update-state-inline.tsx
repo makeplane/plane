@@ -11,14 +11,14 @@ import { TwitterPicker } from "react-color";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // services
-import stateService from "services/project_state.service";
+import { ProjectStateService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, Tooltip } from "components/ui";
-import { Button, Input } from "@plane/ui";
+import { CustomSelect } from "components/ui";
+import { Button, Input, Tooltip } from "@plane/ui";
 // types
-import type { ICurrentUserResponse, IState, IStateResponse } from "types";
+import type { IUser, IState, IStateResponse } from "types";
 // fetch-keys
 import { STATES_LIST } from "constants/fetch-keys";
 // constants
@@ -28,7 +28,7 @@ type Props = {
   data: IState | null;
   onClose: () => void;
   selectedGroup: StateGroup | null;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   groupLength: number;
 };
 
@@ -40,6 +40,8 @@ const defaultValues: Partial<IState> = {
   group: "backlog",
 };
 
+const projectStateService = new ProjectStateService();
+
 export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, selectedGroup, user, groupLength }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -47,7 +49,6 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
   const { setToastAlert } = useToast();
 
   const {
-    register,
     handleSubmit,
     formState: { errors, isSubmitting },
     watch,
@@ -85,7 +86,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
     };
 
     if (!data) {
-      await stateService
+      await projectStateService
         .createState(workspaceSlug.toString(), projectId.toString(), { ...payload }, user)
         .then((res) => {
           mutate<IStateResponse>(
@@ -123,7 +124,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
             });
         });
     } else {
-      await stateService
+      await projectStateService
         .updateState(
           workspaceSlug.toString(),
           projectId.toString(),

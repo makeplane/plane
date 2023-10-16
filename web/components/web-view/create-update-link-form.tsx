@@ -1,29 +1,17 @@
-// react
 import React, { useEffect } from "react";
-
-// next
 import { useRouter } from "next/router";
-
-// swr
 import { mutate } from "swr";
-
-// react hooks form
 import { Controller, useForm } from "react-hook-form";
-
 // services
-import issuesService from "services/issue.service";
-
+import { IssueService } from "services/issue";
 // fetch keys
 import { ISSUE_DETAILS } from "constants/fetch-keys";
-
 // hooks
 import useToast from "hooks/use-toast";
-
 // ui
 import { Button, Input } from "@plane/ui";
-
 // types
-import type { linkDetails, IIssueLink, IIssue } from "types";
+import type { linkDetails, IIssueLink } from "types";
 
 type Props = {
   isOpen: boolean;
@@ -31,6 +19,8 @@ type Props = {
   links?: linkDetails[];
   onSuccess: () => void;
 };
+
+const issueService = new IssueService();
 
 export const CreateUpdateLinkForm: React.FC<Props> = (props) => {
   const { isOpen, data, links, onSuccess } = props;
@@ -41,7 +31,6 @@ export const CreateUpdateLinkForm: React.FC<Props> = (props) => {
   const { setToastAlert } = useToast();
 
   const {
-    register,
     handleSubmit,
     control,
     reset,
@@ -75,7 +64,7 @@ export const CreateUpdateLinkForm: React.FC<Props> = (props) => {
     const payload = { metadata: {}, ...formData };
 
     if (!data)
-      await issuesService
+      await issueService
         .createIssueLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), payload)
         .then(() => {
           onSuccess();
@@ -106,9 +95,9 @@ export const CreateUpdateLinkForm: React.FC<Props> = (props) => {
           : l
       );
 
-      mutate(ISSUE_DETAILS(issueId.toString()), (prevData) => ({ ...prevData, issue_link: updatedLinks }), false);
+      mutate(ISSUE_DETAILS(issueId.toString()), (prevData: any) => ({ ...prevData, issue_link: updatedLinks }), false);
 
-      await issuesService
+      await issueService
         .updateIssueLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), data!.id, payload)
         .then(() => {
           onSuccess();

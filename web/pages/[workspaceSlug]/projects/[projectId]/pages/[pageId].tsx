@@ -14,9 +14,9 @@ import { TwitterPicker } from "react-color";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 // services
-import projectService from "services/project.service";
-import pagesService from "services/page.service";
-import issuesService from "services/issue.service";
+import { ProjectService } from "services/project";
+import { PageService } from "services/page.service";
+import { IssueLabelService } from "services/issue";
 // hooks
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
@@ -28,8 +28,9 @@ import { CreateLabelModal } from "components/labels";
 import { CreateBlock } from "components/pages/create-block";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-import { CustomSearchSelect, EmptyState, Tooltip } from "components/ui";
-import { TextArea, Loader, ToggleSwitch } from "@plane/ui";
+import { CustomSearchSelect } from "components/ui";
+import { EmptyState } from "components/common";
+import { TextArea, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // images
 import emptyPage from "public/empty-state/page.svg";
 // icons
@@ -60,6 +61,11 @@ import {
   USER_PROJECT_VIEW,
 } from "constants/fetch-keys";
 
+// services
+const projectService = new ProjectService();
+const pageService = new PageService();
+const issueLabelService = new IssueLabelService();
+
 const SinglePage: NextPage = () => {
   const [createBlockForm, setCreateBlockForm] = useState(false);
   const [labelModal, setLabelModal] = useState(false);
@@ -86,20 +92,22 @@ const SinglePage: NextPage = () => {
   const { data: pageDetails, error } = useSWR(
     workspaceSlug && projectId && pageId ? PAGE_DETAILS(pageId as string) : null,
     workspaceSlug && projectId
-      ? () => pagesService.getPageDetails(workspaceSlug as string, projectId as string, pageId as string)
+      ? () => pageService.getPageDetails(workspaceSlug as string, projectId as string, pageId as string)
       : null
   );
 
   const { data: pageBlocks } = useSWR(
     workspaceSlug && projectId && pageId ? PAGE_BLOCKS_LIST(pageId as string) : null,
     workspaceSlug && projectId
-      ? () => pagesService.listPageBlocks(workspaceSlug as string, projectId as string, pageId as string)
+      ? () => pageService.listPageBlocks(workspaceSlug as string, projectId as string, pageId as string)
       : null
   );
 
   const { data: labels } = useSWR<IIssueLabels[]>(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
-    workspaceSlug && projectId ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string) : null
+    workspaceSlug && projectId
+      ? () => issueLabelService.getProjectIssueLabels(workspaceSlug as string, projectId as string)
+      : null
   );
 
   const { data: memberDetails } = useSWR(
@@ -114,7 +122,7 @@ const SinglePage: NextPage = () => {
 
     if (!formData.name || formData.name.length === 0 || formData.name === "") return;
 
-    await pagesService
+    await pageService
       .patchPage(workspaceSlug as string, projectId as string, pageId as string, formData, user)
       .then(() => {
         mutate<IPage>(
@@ -141,7 +149,7 @@ const SinglePage: NextPage = () => {
       false
     );
 
-    await pagesService
+    await pageService
       .patchPage(workspaceSlug as string, projectId as string, pageId as string, formData, user)
       .then(() => {
         mutate(PAGE_DETAILS(pageId as string));
@@ -166,7 +174,7 @@ const SinglePage: NextPage = () => {
       });
     });
 
-    pagesService.addPageToFavorites(workspaceSlug as string, projectId as string, {
+    pageService.addPageToFavorites(workspaceSlug as string, projectId as string, {
       page: pageId as string,
     });
   };
@@ -189,7 +197,7 @@ const SinglePage: NextPage = () => {
       });
     });
 
-    pagesService.removePageFromFavorites(workspaceSlug as string, projectId as string, pageId as string);
+    pageService.removePageFromFavorites(workspaceSlug as string, projectId as string, pageId as string);
   };
 
   const handleOnDragEnd = (result: DropResult) => {
@@ -219,7 +227,7 @@ const SinglePage: NextPage = () => {
       false
     );
 
-    pagesService.patchPageBlock(
+    pageService.patchPageBlock(
       workspaceSlug as string,
       projectId as string,
       pageId as string,
@@ -392,13 +400,10 @@ const SinglePage: NextPage = () => {
                   )}
                   <CustomSearchSelect
                     customButton={
-                      <button
-                        type="button"
-                        className="flex items-center gap-1 rounded-sm bg-custom-background-80 p-1.5 text-xs"
-                      >
+                      <div className="flex items-center gap-1 rounded-sm bg-custom-background-80 p-1.5 text-xs">
                         <PlusIcon className="h-3.5 w-3.5" />
                         {pageDetails.labels.length <= 0 && <span>Add Label</span>}
-                      </button>
+                      </div>
                     }
                     value={pageDetails.labels}
                     footerOption={

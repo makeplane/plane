@@ -5,8 +5,8 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import workspaceService from "services/workspace.service";
-import IntegrationService from "services/integration.service";
+import { WorkspaceService } from "services/workspace.service";
+import { IntegrationService } from "services/integrations";
 // layouts
 import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // components
@@ -23,6 +23,10 @@ import { WORKSPACE_DETAILS, APP_INTEGRATIONS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
 
+// services
+const workspaceService = new WorkspaceService();
+const integrationService = new IntegrationService();
+
 const WorkspaceIntegrations: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -32,7 +36,7 @@ const WorkspaceIntegrations: NextPage = () => {
   );
 
   const { data: appIntegrations } = useSWR(workspaceSlug ? APP_INTEGRATIONS : null, () =>
-    workspaceSlug ? IntegrationService.getAppIntegrationsList() : null
+    workspaceSlug ? integrationService.getAppIntegrationsList() : null
   );
 
   return (

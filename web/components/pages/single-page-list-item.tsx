@@ -7,7 +7,8 @@ import { useRouter } from "next/router";
 import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
 // ui
-import { CustomMenu, Tooltip } from "components/ui";
+import { CustomMenu } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // icons
 import {
   DocumentTextIcon,
@@ -21,11 +22,7 @@ import {
 import { ExclamationIcon } from "components/icons";
 // helpers
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
-import {
-  renderLongDateFormat,
-  renderShortDate,
-  render24HourFormatTime,
-} from "helpers/date-time.helper";
+import { renderLongDateFormat, renderShortDate, render24HourFormatTime } from "helpers/date-time.helper";
 // types
 import { IPage, IProjectMember } from "types";
 
@@ -56,11 +53,8 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
   const { setToastAlert } = useToast();
 
   const handleCopyText = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${projectId}/pages/${page.id}`
-    ).then(() => {
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/pages/${page.id}`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",
@@ -77,9 +71,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
             <div className="flex items-center justify-between">
               <div className="flex flex-wrap items-center gap-2">
                 <DocumentTextIcon className="h-4 w-4" />
-                <p className="mr-2 truncate text-sm text-custom-text-100">
-                  {truncateText(page.name, 75)}
-                </p>
+                <p className="mr-2 truncate text-sm text-custom-text-100">{truncateText(page.name, 75)}</p>
                 {page.label_details.length > 0 &&
                   page.label_details.map((label) => (
                     <div
@@ -102,13 +94,11 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
               <div className="ml-2 flex flex-shrink-0">
                 <div className="flex items-center gap-2">
                   <Tooltip
-                    tooltipContent={`Last updated at ${render24HourFormatTime(
+                    tooltipContent={`Last updated at ${render24HourFormatTime(page.updated_at)} on ${renderShortDate(
                       page.updated_at
-                    )} on ${renderShortDate(page.updated_at)}`}
+                    )}`}
                   >
-                    <p className="text-sm text-custom-text-200">
-                      {render24HourFormatTime(page.updated_at)}
-                    </p>
+                    <p className="text-sm text-custom-text-200">{render24HourFormatTime(page.updated_at)}</p>
                   </Tooltip>
                   {page.is_favorite ? (
                     <button
@@ -160,8 +150,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                   <Tooltip
                     position="top-right"
                     tooltipContent={`Created by ${
-                      people?.find((person) => person.member.id === page.created_by)?.member
-                        .display_name ?? ""
+                      people?.find((person) => person.member.id === page.created_by)?.member.display_name ?? ""
                     } on ${renderLongDateFormat(`${page.created_at}`)}`}
                   >
                     <span>

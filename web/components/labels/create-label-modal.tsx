@@ -1,23 +1,17 @@
 import React, { useEffect } from "react";
-
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// react-color
 import { TwitterPicker } from "react-color";
-// headless ui
 import { Dialog, Popover, Transition } from "@headlessui/react";
 // services
-import issuesService from "services/issue.service";
+import { IssueLabelService } from "services/issue";
 // ui
 import { Button, Input } from "@plane/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 // types
-import type { ICurrentUserResponse, IIssueLabels, IState } from "types";
+import type { IUser, IIssueLabels, IState } from "types";
 // constants
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "constants/label";
@@ -28,7 +22,7 @@ type Props = {
   projectId: string;
   handleClose: () => void;
   onSuccess?: (response: IIssueLabels) => void;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
 const defaultValues: Partial<IState> = {
@@ -36,12 +30,13 @@ const defaultValues: Partial<IState> = {
   color: "rgb(var(--color-text-200))",
 };
 
+const issueLabelService = new IssueLabelService();
+
 export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClose, user, onSuccess }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
   const {
-    register,
     formState: { errors, isSubmitting },
     handleSubmit,
     watch,
@@ -64,7 +59,7 @@ export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClo
   const onSubmit = async (formData: IIssueLabels) => {
     if (!workspaceSlug) return;
 
-    await issuesService
+    await issueLabelService
       .createIssueLabel(workspaceSlug as string, projectId as string, formData, user)
       .then((res) => {
         mutate<IIssueLabels[]>(PROJECT_ISSUE_LABELS(projectId), (prevData) => [res, ...(prevData ?? [])], false);

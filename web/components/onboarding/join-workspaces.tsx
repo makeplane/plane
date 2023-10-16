@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import useSWR, { mutate } from "swr";
 
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useUser from "hooks/use-user";
 // ui
@@ -24,6 +24,9 @@ type Props = {
   stepChange: (steps: Partial<TOnboardingSteps>) => Promise<void>;
   updateLastWorkspace: () => Promise<void>;
 };
+
+// services
+const workspaceService = new WorkspaceService();
 
 export const JoinWorkspaces: React.FC<Props> = ({ finishOnboarding, stepChange, updateLastWorkspace }) => {
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);

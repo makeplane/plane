@@ -1,7 +1,7 @@
 // services
-import APIService from "services/api.service";
-import trackEventServices from "services/track_event.service";
-
+import { APIService } from "services/api.service";
+import { TrackEventService } from "services/track_event.service";
+// types
 import type {
   IIssue,
   IUser,
@@ -11,8 +11,10 @@ import type {
   IUserSettings,
   IUserWorkspaceDashboard,
 } from "types";
-
+// helpers
 import { API_BASE_URL } from "helpers/common.helper";
+
+const trackEventService = new TrackEventService();
 
 export class UserService extends APIService {
   constructor() {
@@ -73,11 +75,11 @@ export class UserService extends APIService {
       is_onboarded: true,
     })
       .then((response) => {
-        trackEventServices.trackUserOnboardingCompleteEvent(
+        trackEventService.trackUserOnboardingCompleteEvent(
           {
             user_role: userRole ?? "None",
           },
-          user
+          user as IUser
         );
         return response?.data;
       })
@@ -91,7 +93,7 @@ export class UserService extends APIService {
       is_tour_completed: true,
     })
       .then((response) => {
-        trackEventServices.trackUserTourCompleteEvent({ user_role: user.role ?? "None" }, user);
+        trackEventService.trackUserTourCompleteEvent({ user_role: user.role ?? "None" }, user);
         return response?.data;
       })
       .catch((error) => {
@@ -188,5 +190,3 @@ export class UserService extends APIService {
       });
   }
 }
-
-export default new UserService();

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 
 // services
-import projectService from "services/project.service";
+import { ProjectService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
 import useProjectDetails from "hooks/use-project-details";
@@ -17,14 +17,17 @@ import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
 // types
-import { ICurrentUserResponse, IEstimate } from "types";
+import { IUser, IEstimate } from "types";
 
 type Props = {
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   estimate: IEstimate;
   editEstimate: (estimate: IEstimate) => void;
   handleEstimateDelete: (estimateId: string) => void;
 };
+
+// services
+const projectService = new ProjectService();
 
 export const SingleEstimate: React.FC<Props> = ({ user, estimate, editEstimate, handleEstimateDelete }) => {
   const [isDeleteEstimateModalOpen, setIsDeleteEstimateModalOpen] = useState(false);

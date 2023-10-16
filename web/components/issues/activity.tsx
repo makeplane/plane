@@ -7,8 +7,8 @@ import { useRouter } from "next/router";
 import { ActivityIcon, ActivityMessage } from "components/core";
 import { CommentCard } from "components/issues/comment";
 // ui
-import { Icon, Tooltip } from "components/ui";
-import { Loader } from "@plane/ui";
+import { Icon } from "components/ui";
+import { Loader, Tooltip } from "@plane/ui";
 // helpers
 import { render24HourFormatTime, renderLongDateFormat, timeAgo } from "helpers/date-time.helper";
 // types

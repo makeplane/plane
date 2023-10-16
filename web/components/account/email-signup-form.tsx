@@ -19,7 +19,6 @@ export const EmailSignUpForm: React.FC<Props> = (props) => {
   const { onSubmit } = props;
 
   const {
-    register,
     handleSubmit,
     control,
     watch,

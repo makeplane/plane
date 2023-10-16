@@ -1,11 +1,9 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-// hooks
-import useTheme from "hooks/use-theme";
 // components
 import { NotificationPopover } from "components/notifications";
-import { Tooltip } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // icons
 import { BarChartRounded, GridViewOutlined, TaskAltOutlined, WorkOutlineOutlined } from "@mui/icons-material";
 // mobx store

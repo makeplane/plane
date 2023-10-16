@@ -5,7 +5,7 @@ import { StateColumn } from "components/core";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
-import { ICurrentUserResponse, IIssue, Properties } from "types";
+import { IUser, IIssue, Properties } from "types";
 
 type Props = {
   issue: IIssue;
@@ -13,7 +13,7 @@ type Props = {
   handleUpdateIssue: (issueId: string, data: Partial<IIssue>) => void;
   expandedIssues: string[];
   properties: Properties;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   isNotAllowed: boolean;
 };
 
@@ -32,14 +32,16 @@ export const SpreadsheetStateColumn: React.FC<Props> = ({
 
   return (
     <div>
-      <StateColumn
-        issue={issue}
-        projectId={projectId}
-        properties={properties}
-        onChange={(data) => handleUpdateIssue(issue.id, data)}
-        user={user}
-        isNotAllowed={isNotAllowed}
-      />
+      {user && (
+        <StateColumn
+          issue={issue}
+          projectId={projectId}
+          properties={properties}
+          onChange={(data) => handleUpdateIssue(issue.id, data)}
+          user={user}
+          isNotAllowed={isNotAllowed}
+        />
+      )}
 
       {isExpanded &&
         !isLoading &&

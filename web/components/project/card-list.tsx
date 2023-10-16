@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { ProjectCard } from "components/project";
-import { EmptyState } from "components/ui";
+import { EmptyState } from "components/common";
 import { Loader } from "@plane/ui";
 // images
 import emptyProject from "public/empty-state/project.svg";
@@ -21,6 +21,8 @@ export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
   const { project: projectStore } = useMobxStore();
 
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
+
+  console.log("projects", projects);
 
   if (!projects) {
     return (

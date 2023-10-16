@@ -2,15 +2,14 @@ import useSWR from "swr";
 
 // fetch keys
 import { ISSUE_REACTION_LIST } from "constants/fetch-keys";
-
 // helpers
 import { groupReactions } from "helpers/emoji.helper";
-
 // services
-import reactionService from "services/issue_reaction.service";
-
+import { IssueReactionService } from "services/issue";
 // hooks
 import useUser from "./use-user";
+
+const issueReactionService = new IssueReactionService();
 
 const useIssueReaction = (
   workspaceSlug?: string | string[] | null,
@@ -28,7 +27,8 @@ const useIssueReaction = (
       ? ISSUE_REACTION_LIST(workspaceSlug.toString(), projectId.toString(), issueId.toString())
       : null,
     workspaceSlug && projectId && issueId
-      ? () => reactionService.listIssueReactions(workspaceSlug.toString(), projectId.toString(), issueId.toString())
+      ? () =>
+          issueReactionService.listIssueReactions(workspaceSlug.toString(), projectId.toString(), issueId.toString())
       : null
   );
 
@@ -43,7 +43,7 @@ const useIssueReaction = (
   const handleReactionCreate = async (reaction: string) => {
     if (!workspaceSlug || !projectId || !issueId) return;
 
-    const data = await reactionService.createIssueReaction(
+    const data = await issueReactionService.createIssueReaction(
       workspaceSlug.toString(),
       projectId.toString(),
       issueId.toString(),
@@ -68,7 +68,7 @@ const useIssueReaction = (
       false
     );
 
-    await reactionService.deleteIssueReaction(
+    await issueReactionService.deleteIssueReaction(
       workspaceSlug.toString(),
       projectId.toString(),
       issueId.toString(),

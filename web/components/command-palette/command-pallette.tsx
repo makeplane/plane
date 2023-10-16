@@ -17,11 +17,14 @@ import { CreateUpdatePageModal } from "components/pages";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // services
-import issuesService from "services/issue.service";
+import { IssueService } from "services/issue";
 // fetch keys
 import { ISSUE_DETAILS } from "constants/fetch-keys";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
+
+// services
+const issueService = new IssueService();
 
 export const CommandPalette: React.FC = observer(() => {
   const store: any = useMobxStore();
@@ -47,7 +50,7 @@ export const CommandPalette: React.FC = observer(() => {
   const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
     workspaceSlug && projectId && issueId
-      ? () => issuesService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
+      ? () => issueService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
       : null
   );
 
@@ -117,7 +120,7 @@ export const CommandPalette: React.FC = observer(() => {
         }
       }
     },
-    [copyIssueUrlToClipboard]
+    [copyIssueUrlToClipboard, store.theme]
   );
 
   useEffect(() => {

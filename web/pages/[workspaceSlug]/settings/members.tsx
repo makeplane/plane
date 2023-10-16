@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
@@ -31,6 +31,9 @@ import { WORKSPACE_DETAILS, WORKSPACE_INVITATION_WITH_EMAIL, WORKSPACE_MEMBERS_W
 import { ROLE } from "constants/workspace";
 // helper
 import { truncateText } from "helpers/string.helper";
+
+// services
+const workspaceService = new WorkspaceService();
 
 const MembersSettings: NextPage = () => {
   const [selectedRemoveMember, setSelectedRemoveMember] = useState<string | null>(null);
@@ -249,7 +252,7 @@ const MembersSettings: NextPage = () => {
                         )}
                         <CustomSelect
                           customButton={
-                            <button className="flex item-center gap-1">
+                            <div className="flex item-center gap-1">
                               <span
                                 className={`flex items-center text-sm font-medium ${
                                   member.memberId !== user?.id ? "" : "text-custom-sidebar-text-400"
@@ -260,7 +263,7 @@ const MembersSettings: NextPage = () => {
                               {member.memberId !== user?.id && (
                                 <Icon iconName="expand_more" className="text-lg font-medium" />
                               )}
-                            </button>
+                            </div>
                           }
                           value={member.role}
                           onChange={(value: 5 | 10 | 15 | 20 | undefined) => {
@@ -284,7 +287,6 @@ const MembersSettings: NextPage = () => {
                                 });
                               });
                           }}
-                          position="right"
                           disabled={
                             member.memberId === currentUser?.member.id ||
                             !member.status ||

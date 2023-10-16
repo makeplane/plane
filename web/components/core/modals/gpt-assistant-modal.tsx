@@ -1,16 +1,17 @@
-import React, { useEffect, useState, forwardRef, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
-import aiService from "services/ai.service";
-import trackEventServices from "services/track_event.service";
+import { AIService } from "services/ai.service";
+import { TrackEventService } from "services/track_event.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // ui
-import { TipTapEditor } from "components/tiptap";
 import { Button, Input } from "@plane/ui";
+// components
+import { RichReadOnlyEditor, RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
 // types
 import { IIssue, IPageBlock } from "types";
 
@@ -30,6 +31,10 @@ type FormData = {
   prompt: string;
   task: string;
 };
+
+// services
+const aiService = new AIService();
+const trackEventService = new TrackEventService();
 
 export const GptAssistantModal: React.FC<Props> = ({
   isOpen,
@@ -57,7 +62,6 @@ export const GptAssistantModal: React.FC<Props> = ({
   const {
     handleSubmit,
     control,
-    register,
     reset,
     setFocus,
     formState: { isSubmitting },
@@ -139,13 +143,11 @@ export const GptAssistantModal: React.FC<Props> = ({
       {((content && content !== "") || (htmlContent && htmlContent !== "<p></p>")) && (
         <div className="text-sm">
           Content:
-          <TipTapEditor
-            workspaceSlug={workspaceSlug as string}
+          <RichReadOnlyEditorWithRef
             value={htmlContent ?? `<p>${content}</p>`}
             customClassName="-m-3"
             noBorder
             borderOnFocus={false}
-            editable={false}
             ref={editorRef}
           />
         </div>
@@ -153,13 +155,11 @@ export const GptAssistantModal: React.FC<Props> = ({
       {response !== "" && (
         <div className="page-block-section text-sm">
           Response:
-          <TipTapEditor
-            workspaceSlug={workspaceSlug as string}
+          <RichReadOnlyEditor
             value={`<p>${response}</p>`}
             customClassName="-mx-3 -my-3"
             noBorder
             borderOnFocus={false}
-            editable={false}
           />
         </div>
       )}
@@ -193,8 +193,10 @@ export const GptAssistantModal: React.FC<Props> = ({
             onClick={() => {
               onResponse(response);
               onClose();
-              if (block) trackEventServices.trackUseGPTResponseEvent(block, "USE_GPT_RESPONSE_IN_PAGE_BLOCK", user);
-              else if (issue) trackEventServices.trackUseGPTResponseEvent(issue, "USE_GPT_RESPONSE_IN_ISSUE", user);
+              if (block && user)
+                trackEventService.trackUseGPTResponseEvent(block, "USE_GPT_RESPONSE_IN_PAGE_BLOCK", user);
+              else if (issue && user)
+                trackEventService.trackUseGPTResponseEvent(issue, "USE_GPT_RESPONSE_IN_ISSUE", user);
             }}
           >
             Use this response

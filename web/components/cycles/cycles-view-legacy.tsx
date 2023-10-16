@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { KeyedMutator, mutate } from "swr";
 // services
-import cyclesService from "services/cycles.service";
+import { CycleService } from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
@@ -29,13 +29,14 @@ import {
   DRAFT_CYCLES_LIST,
   UPCOMING_CYCLES_LIST,
 } from "constants/fetch-keys";
-import { CYCLE_TAB_LIST, CYCLE_VIEWS } from "constants/cycle";
 
 type Props = {
   cycles: ICycle[] | undefined;
   mutateCycles?: KeyedMutator<ICycle[]>;
   viewType: string | null;
 };
+
+const cycleService = new CycleService();
 
 export const CyclesView: React.FC<Props> = ({ cycles, mutateCycles, viewType }) => {
   const [createUpdateCycleModal, setCreateUpdateCycleModal] = useState(false);
@@ -97,7 +98,7 @@ export const CyclesView: React.FC<Props> = ({ cycles, mutateCycles, viewType }) 
       false
     );
 
-    cyclesService
+    cycleService
       .addCycleToFavorites(workspaceSlug as string, projectId as string, {
         cycle: cycle.id,
       })
@@ -144,7 +145,7 @@ export const CyclesView: React.FC<Props> = ({ cycles, mutateCycles, viewType }) 
       false
     );
 
-    cyclesService.removeCycleFromFavorites(workspaceSlug as string, projectId as string, cycle.id).catch(() => {
+    cycleService.removeCycleFromFavorites(workspaceSlug as string, projectId as string, cycle.id).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",

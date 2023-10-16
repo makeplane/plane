@@ -1,14 +1,11 @@
-import React, { useState, useEffect } from "react";
-
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
 // services
-import appinstallationsService from "services/app_installation.service";
+import { AppInstallationService } from "services/app_installation.service";
 // ui
 import { Loader } from "@plane/ui";
 // hooks
-import useToast from "hooks/use-toast";
 import useIntegrationPopup from "hooks/use-integration-popup";
 // types
 import { IWorkspaceIntegration, ISlackIntegration } from "types";
@@ -18,6 +15,8 @@ import { SLACK_CHANNEL_INFO } from "constants/fetch-keys";
 type Props = {
   integration: IWorkspaceIntegration;
 };
+
+const appInstallationService = new AppInstallationService();
 
 export const SelectChannel: React.FC<Props> = ({ integration }) => {
   const [slackChannelAvailabilityToggle, setSlackChannelAvailabilityToggle] = useState<boolean>(false);
@@ -34,7 +33,7 @@ export const SelectChannel: React.FC<Props> = ({ integration }) => {
       : null,
     () =>
       workspaceSlug && projectId && integration.id
-        ? appinstallationsService.getSlackChannelDetail(
+        ? appInstallationService.getSlackChannelDetail(
             workspaceSlug as string,
             projectId as string,
             integration.id as string
@@ -63,7 +62,7 @@ export const SelectChannel: React.FC<Props> = ({ integration }) => {
       setSlackChannelAvailabilityToggle(false);
       setSlackChannel(null);
     });
-    appinstallationsService
+    appInstallationService
       .removeSlackChannel(workspaceSlug as string, projectId as string, integration.id as string, slackChannel?.id)
       .catch((err) => console.log(err));
   };

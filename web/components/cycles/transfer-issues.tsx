@@ -9,13 +9,15 @@ import { Button } from "@plane/ui";
 // icon
 import { ExclamationIcon, TransferIcon } from "components/icons";
 // services
-import cycleServices from "services/cycles.service";
+import { CycleService } from "services/cycle.service";
 // fetch-key
 import { CYCLE_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   handleClick: () => void;
 };
+
+const cycleService = new CycleService();
 
 export const TransferIssues: React.FC<Props> = ({ handleClick }) => {
   const router = useRouter();
@@ -24,7 +26,7 @@ export const TransferIssues: React.FC<Props> = ({ handleClick }) => {
   const { data: cycleDetails } = useSWR(
     cycleId ? CYCLE_DETAILS(cycleId as string) : null,
     workspaceSlug && projectId && cycleId
-      ? () => cycleServices.getCycleDetails(workspaceSlug as string, projectId as string, cycleId as string)
+      ? () => cycleService.getCycleDetails(workspaceSlug as string, projectId as string, cycleId as string)
       : null
   );
 

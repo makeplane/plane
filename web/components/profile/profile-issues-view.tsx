@@ -1,19 +1,15 @@
 import { useCallback, useState } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
-// react-beautiful-dnd
 import { DropResult } from "react-beautiful-dnd";
 // services
-import issuesService from "services/issue.service";
-import userService from "services/user.service";
+import { IssueService, IssueLabelService } from "services/issue";
+import { UserService } from "services/user.service";
 // hooks
 import useProfileIssues from "hooks/use-profile-issues";
 import useUser from "hooks/use-user";
 // components
-import { AllViews, FiltersList } from "components/core";
+import { FiltersList } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
@@ -21,6 +17,11 @@ import { orderArrayBy } from "helpers/array.helper";
 import { IIssue, IIssueFilterOptions, TIssuePriorities } from "types";
 // fetch-keys
 import { USER_PROFILE_PROJECT_SEGREGATION, WORKSPACE_LABELS } from "constants/fetch-keys";
+
+// services
+const issueService = new IssueService();
+const issueLabelService = new IssueLabelService();
+const userService = new UserService();
 
 export const ProfileIssuesView = () => {
   // create issue modal
@@ -66,7 +67,7 @@ export const ProfileIssuesView = () => {
   const { data: labels } = useSWR(
     workspaceSlug && (filters?.labels ?? []).length > 0 ? WORKSPACE_LABELS(workspaceSlug.toString()) : null,
     workspaceSlug && (filters?.labels ?? []).length > 0
-      ? () => issuesService.getWorkspaceLabels(workspaceSlug.toString())
+      ? () => issueLabelService.getWorkspaceIssueLabels(workspaceSlug.toString())
       : null
   );
 
@@ -116,7 +117,7 @@ export const ProfileIssuesView = () => {
         }, false);
 
         // patch request
-        issuesService
+        issueService
           .patchIssue(
             workspaceSlug as string,
             draggedItem.project,
@@ -207,8 +208,7 @@ export const ProfileIssuesView = () => {
   const isMySubscribedIssues =
     (filters.subscriber && filters.subscriber.length > 0 && router.pathname.includes("my-issues")) ?? false;
 
-  const disableAddIssueOption =
-    isSubscribedIssuesRoute || isMySubscribedIssues || user?.id !== userId;
+  const disableAddIssueOption = isSubscribedIssuesRoute || isMySubscribedIssues || user?.id !== userId;
 
   return (
     <>
@@ -262,7 +262,7 @@ export const ProfileIssuesView = () => {
           {<div className="mt-3 border-t border-custom-border-200" />}
         </>
       )}
-      <AllViews
+      {/* <AllViews
         addIssueToDate={addIssueToDate}
         addIssueToGroup={addIssueToGroup}
         disableUserActions={false}
@@ -289,7 +289,7 @@ export const ProfileIssuesView = () => {
           params,
           properties: displayProperties,
         }}
-      />
+      /> */}
     </>
   );
 };

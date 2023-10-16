@@ -1,24 +1,23 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // icons
-import { ArrowLeftIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
+import { RectangleGroupIcon } from "@heroicons/react/24/outline";
 // services
-import modulesService from "services/modules.service";
+import { ModuleService } from "services/module.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
-import { ExistingIssuesListModal, IssuesFilterView } from "components/core";
+import { ExistingIssuesListModal } from "components/core";
 import { ModuleDetailsSidebar } from "components/modules";
-import { AnalyticsProjectModal } from "components/analytics";
+import { ModuleLayoutRoot } from "components/issues";
+import { ModuleIssuesHeader } from "components/headers";
 // ui
-import { CustomMenu, EmptyState } from "components/ui";
+import { CustomMenu } from "components/ui";
+import { EmptyState } from "components/common";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // images
 import emptyModule from "public/empty-state/module.svg";
@@ -28,13 +27,13 @@ import { truncateText } from "helpers/string.helper";
 import { ISearchIssueResponse } from "types";
 // fetch-keys
 import { MODULE_DETAILS, MODULE_ISSUES, MODULE_LIST } from "constants/fetch-keys";
-import { ModuleAllLayouts } from "components/issues";
-import { ModuleIssuesHeader } from "components/headers";
+
+// services
+const moduleService = new ModuleService();
 
 const SingleModule: React.FC = () => {
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
   const [moduleSidebar, setModuleSidebar] = useState(false);
-  const [analyticsModal, setAnalyticsModal] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
@@ -45,20 +44,20 @@ const SingleModule: React.FC = () => {
 
   const { data: modules } = useSWR(
     workspaceSlug && projectId ? MODULE_LIST(projectId as string) : null,
-    workspaceSlug && projectId ? () => modulesService.getModules(workspaceSlug as string, projectId as string) : null
+    workspaceSlug && projectId ? () => moduleService.getModules(workspaceSlug as string, projectId as string) : null
   );
 
   const { data: moduleIssues } = useSWR(
     workspaceSlug && projectId && moduleId ? MODULE_ISSUES(moduleId as string) : null,
     workspaceSlug && projectId && moduleId
-      ? () => modulesService.getModuleIssues(workspaceSlug as string, projectId as string, moduleId as string)
+      ? () => moduleService.getModuleIssues(workspaceSlug as string, projectId as string, moduleId as string)
       : null
   );
 
   const { data: moduleDetails, error } = useSWR(
     moduleId ? MODULE_DETAILS(moduleId as string) : null,
     workspaceSlug && projectId
-      ? () => modulesService.getModuleDetails(workspaceSlug as string, projectId as string, moduleId as string)
+      ? () => moduleService.getModuleDetails(workspaceSlug as string, projectId as string, moduleId as string)
       : null
   );
 
@@ -69,7 +68,7 @@ const SingleModule: React.FC = () => {
       issues: data.map((i) => i.id),
     };
 
-    await modulesService
+    await moduleService
       .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId as string, payload, user)
       .catch(() =>
         setToastAlert({
@@ -138,13 +137,12 @@ const SingleModule: React.FC = () => {
           />
         ) : (
           <>
-            <AnalyticsProjectModal isOpen={analyticsModal} onClose={() => setAnalyticsModal(false)} />
             <div
-              className={`relative overflow-y-auto h-full flex flex-col ${moduleSidebar ? "mr-[24rem]" : ""} ${
-                analyticsModal ? "mr-[50%]" : ""
+              className={`relative overflow-y-auto h-full flex flex-col ${
+                moduleSidebar ? "mr-[24rem]" : ""
               } duration-300`}
             >
-              <ModuleAllLayouts />
+              <ModuleLayoutRoot />
             </div>
             <ModuleDetailsSidebar
               module={moduleDetails}

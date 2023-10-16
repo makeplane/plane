@@ -3,7 +3,7 @@ import * as Sentry from "@sentry/nextjs";
 import { useRouter } from "next/router";
 
 // services
-import authenticationService from "services/authentication.service";
+import { AuthService } from "services/auth.service";
 // hooks
 import useToast from "hooks/use-toast";
 // layouts
@@ -11,13 +11,16 @@ import DefaultLayout from "layouts/default-layout";
 // ui
 import { Button } from "@plane/ui";
 
+// services
+const authService = new AuthService();
+
 const CustomErrorComponent = () => {
   const router = useRouter();
 
   const { setToastAlert } = useToast();
 
   const handleSignOut = async () => {
-    await authenticationService
+    await authService
       .signOut()
       .catch(() =>
         setToastAlert({

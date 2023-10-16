@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // icons

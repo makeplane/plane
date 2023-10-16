@@ -12,24 +12,24 @@ export interface IAppLayout {
 
 export const AppLayout: FC<IAppLayout> = (props) => {
   const { children, header } = props;
+
   return (
-    <div>
+    <>
       {/* <CommandPalette /> */}
       <UserAuthWrapper>
         <WorkspaceAuthWrapper>
-          <div className="flex w-full h-full">
+          <div className="relative flex h-screen w-full overflow-hidden">
             <AppSidebar />
-            <div className="relative flex flex-col h-screen w-full overflow-hidden">
-              <div className="w-full">{header}</div>
-              <main className={`relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100`}>
-                <div className="h-full w-full overflow-hidden">
-                  <div className="relative h-full w-full overflow-x-hidden overflow-y-scroll">{children}</div>
-                </div>
-              </main>
-            </div>
+            <main className="relative flex flex-col h-full w-full overflow-hidden bg-custom-background-100">
+              {/* <div className="relative w-full">{header}</div> */}
+              {header}
+              <div className="h-full w-full overflow-hidden">
+                <div className="relative h-full w-full overflow-x-hidden overflow-y-scroll">{children}</div>
+              </div>
+            </main>
           </div>
         </WorkspaceAuthWrapper>
       </UserAuthWrapper>
-    </div>
+    </>
   );
 };

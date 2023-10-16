@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import stateService from "services/project_state.service";
+import { ProjectStateService } from "services/project";
 // hooks
 import useProjectDetails from "hooks/use-project-details";
 import useUserAuth from "hooks/use-user-auth";
@@ -27,6 +27,9 @@ import type { NextPage } from "next";
 // fetch-keys
 import { STATES_LIST } from "constants/fetch-keys";
 
+// services
+const projectStateService = new ProjectStateService();
+
 const StatesSettings: NextPage = () => {
   const [activeGroup, setActiveGroup] = useState<StateGroup>(null);
   const [selectedState, setSelectedState] = useState<string | null>(null);
@@ -41,7 +44,9 @@ const StatesSettings: NextPage = () => {
 
   const { data: states } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
-    workspaceSlug && projectId ? () => stateService.getStates(workspaceSlug as string, projectId as string) : null
+    workspaceSlug && projectId
+      ? () => projectStateService.getStates(workspaceSlug as string, projectId as string)
+      : null
   );
   const orderedStateGroups = orderStateGroups(states);
   const statesList = getStatesList(orderedStateGroups);

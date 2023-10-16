@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // services
-import issuesService from "services/issue.service";
+import { IssueService, IssueCommentService } from "services/issue";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
@@ -37,6 +37,10 @@ type Props = {
   uneditable?: boolean;
 };
 
+// services
+const issueService = new IssueService();
+const issueCommentService = new IssueCommentService();
+
 export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges, uneditable = false }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
@@ -51,7 +55,7 @@ export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges,
   const { data: siblingIssues } = useSWR(
     workspaceSlug && projectId && issueDetails?.parent ? SUB_ISSUES(issueDetails.parent) : null,
     workspaceSlug && projectId && issueDetails?.parent
-      ? () => issuesService.subIssues(workspaceSlug as string, projectId as string, issueDetails.parent ?? "")
+      ? () => issueService.subIssues(workspaceSlug as string, projectId as string, issueDetails.parent ?? "")
       : null
   );
   const siblingIssuesList = siblingIssues?.sub_issues.filter((i) => i.id !== issueDetails.id);
@@ -59,14 +63,14 @@ export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges,
   const { data: issueActivity, mutate: mutateIssueActivity } = useSWR(
     workspaceSlug && projectId && issueId ? PROJECT_ISSUES_ACTIVITY(issueId.toString()) : null,
     workspaceSlug && projectId && issueId
-      ? () => issuesService.getIssueActivities(workspaceSlug.toString(), projectId.toString(), issueId.toString())
+      ? () => issueService.getIssueActivities(workspaceSlug.toString(), projectId.toString(), issueId.toString())
       : null
   );
 
   const handleCommentUpdate = async (commentId: string, data: Partial<IIssueComment>) => {
     if (!workspaceSlug || !projectId || !issueId) return;
 
-    await issuesService
+    await issueCommentService
       .patchIssueComment(workspaceSlug as string, projectId as string, issueId as string, commentId, data, user)
       .then(() => mutateIssueActivity());
   };
@@ -76,7 +80,7 @@ export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges,
 
     mutateIssueActivity((prevData: any) => prevData?.filter((p: any) => p.id !== commentId), false);
 
-    await issuesService
+    await issueCommentService
       .deleteIssueComment(workspaceSlug as string, projectId as string, issueId as string, commentId, user)
       .then(() => mutateIssueActivity());
   };
@@ -84,7 +88,7 @@ export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges,
   const handleAddComment = async (formData: IIssueComment) => {
     if (!workspaceSlug || !issueDetails) return;
 
-    await issuesService
+    await issueCommentService
       .createIssueComment(workspaceSlug.toString(), issueDetails.project, issueDetails.id, formData, user)
       .then(() => {
         mutate(PROJECT_ISSUES_ACTIVITY(issueDetails.id));
@@ -124,7 +128,7 @@ export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges,
               </a>
             </Link>
 
-            <CustomMenu position="left" ellipsis optionsClassName="px-1.5">
+            <CustomMenu ellipsis optionsClassName="px-1.5">
               {siblingIssuesList ? (
                 siblingIssuesList.length > 0 ? (
                   <>

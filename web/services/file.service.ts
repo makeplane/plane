@@ -1,8 +1,9 @@
 // services
-import APIService from "services/api.service";
+import { APIService } from "services/api.service";
+// helpers
 import { API_BASE_URL } from "helpers/common.helper";
 
-interface UnSplashImage {
+export interface UnSplashImage {
   id: string;
   created_at: Date;
   updated_at: Date;
@@ -17,7 +18,7 @@ interface UnSplashImage {
   [key: string]: any;
 }
 
-interface UnSplashImageUrls {
+export interface UnSplashImageUrls {
   raw: string;
   full: string;
   regular: string;
@@ -26,9 +27,11 @@ interface UnSplashImageUrls {
   small_s3: string;
 }
 
-export class FileServices extends APIService {
+export class FileService extends APIService {
   constructor() {
     super(API_BASE_URL);
+    this.uploadFile = this.uploadFile.bind(this);
+    this.deleteImage = this.deleteImage.bind(this);
   }
 
   async uploadFile(workspaceSlug: string, file: FormData): Promise<any> {
@@ -42,6 +45,17 @@ export class FileServices extends APIService {
       .catch((error) => {
         throw error?.response?.data;
       });
+  }
+
+  getUploadFileFunction(workspaceSlug: string): (file: File) => Promise<string> {
+    return async (file: File) => {
+      const formData = new FormData();
+      formData.append("asset", file);
+      formData.append("attributes", JSON.stringify({}));
+
+      const data = await this.uploadFile(workspaceSlug, formData);
+      return data.asset;
+    };
   }
 
   async deleteImage(assetUrlWithWorkspaceId: string): Promise<any> {
@@ -107,5 +121,3 @@ export class FileServices extends APIService {
       });
   }
 }
-
-export default new FileServices();

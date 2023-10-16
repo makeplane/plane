@@ -3,14 +3,14 @@ import React from "react";
 // components
 import { LabelSelect } from "components/project";
 // types
-import { ICurrentUserResponse, IIssue, Properties } from "types";
+import { IUser, IIssue, Properties } from "types";
 
 type Props = {
   issue: IIssue;
   projectId: string;
   partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
   properties: Properties;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   isNotAllowed: boolean;
 };
 

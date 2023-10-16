@@ -6,7 +6,11 @@
   "workspaces": [
     "web",
     "space",
-    "packages/*"
+    "packages/editor/*",
+    "packages/eslint-config-custom",
+    "packages/tailwind-config-custom",
+    "packages/tsconfig",
+    "packages/ui"
   ],
   "scripts": {
     "build": "turbo run build",
@@ -23,7 +27,10 @@
     "prettier": "latest",
     "prettier-plugin-tailwindcss": "^0.5.4",
     "tailwindcss": "^3.3.3",
-    "turbo": "latest"
+    "turbo": "^1.10.14"
+  },
+  "resolutions": {
+    "@types/react": "18.2.0"
   },
   "packageManager": "yarn@1.22.19"
 }

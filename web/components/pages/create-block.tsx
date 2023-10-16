@@ -1,22 +1,16 @@
-import React, { KeyboardEventHandler, useCallback, useEffect, useState } from "react";
-
+import { FC } from "react";
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
-import pagesService from "services/page.service";
-
+import { PageService } from "services/page.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
 import { TextArea } from "@plane/ui";
 // types
-import { ICurrentUserResponse, IPageBlock } from "types";
+import { IUser, IPageBlock } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
 
@@ -25,26 +19,25 @@ const defaultValues = {
 };
 
 type Props = {
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
-export const CreateBlock: React.FC<Props> = ({ user }) => {
-  const [blockTitle, setBlockTitle] = useState("");
+const pageService = new PageService();
 
+export const CreateBlock: FC<Props> = ({ user }) => {
+  // const [blockTitle, setBlockTitle] = useState("");
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
-
+  // toast
   const { setToastAlert } = useToast();
-
+  // form info
   const {
     handleSubmit,
-    register,
     control,
     watch,
-    setValue,
-    setFocus,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<IPageBlock>({
     defaultValues,
   });
@@ -52,7 +45,7 @@ export const CreateBlock: React.FC<Props> = ({ user }) => {
   const createPageBlock = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
-    await pagesService
+    await pageService
       .createPageBlock(
         workspaceSlug as string,
         projectId as string,

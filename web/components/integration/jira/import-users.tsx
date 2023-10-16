@@ -1,31 +1,26 @@
 import { FC } from "react";
-
-// next
 import { useRouter } from "next/router";
-
-// swr
 import useSWR from "swr";
-
-// react-hook-form
 import { useFormContext, useFieldArray, Controller } from "react-hook-form";
-
 // fetch keys
 import { WORKSPACE_MEMBERS_WITH_EMAIL } from "constants/fetch-keys";
-
 // services
-import workspaceService from "services/workspace.service";
-
+import { WorkspaceService } from "services/workspace.service";
 // components
 import { CustomSelect, CustomSearchSelect, Avatar } from "components/ui";
 import { Input, ToggleSwitch } from "@plane/ui";
-
+// types
 import { IJiraImporterForm } from "types";
 
+const workspaceService = new WorkspaceService();
+
 export const JiraImportUsers: FC = () => {
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+  // form info
   const {
     control,
     watch,
-    register,
     formState: { errors },
   } = useFormContext<IJiraImporterForm>();
 
@@ -33,9 +28,6 @@ export const JiraImportUsers: FC = () => {
     control,
     name: "data.users",
   });
-
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
 
   const { data: members } = useSWR(
     workspaceSlug ? WORKSPACE_MEMBERS_WITH_EMAIL(workspaceSlug?.toString() ?? "") : null,

@@ -8,7 +8,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import useUser from "hooks/use-user";
 import useProjectDetails from "hooks/use-project-details";
 // components
-import { SpreadsheetColumns, SpreadsheetIssues } from "components/core";
+// import { SpreadsheetColumns, SpreadsheetIssues } from "components/core";
 import { IssuePeekOverview } from "components/issues";
 // ui
 import { CustomMenu } from "components/ui";
@@ -30,9 +30,9 @@ export const ModuleSpreadsheetLayout: React.FC = observer(() => {
   const { user } = useUser();
   const { projectDetails } = useProjectDetails();
 
-  const { module: moduleStore, issueFilter: issueFilterStore } = useMobxStore();
+  const { moduleIssue: moduleIssueStore, issueFilter: issueFilterStore } = useMobxStore();
 
-  const issues = moduleStore.getIssues;
+  const issues = moduleIssueStore.getIssues;
   const issueDisplayProperties = issueFilterStore.userDisplayProperties;
 
   const handleDisplayFiltersUpdate = useCallback(
@@ -75,34 +75,35 @@ export const ModuleSpreadsheetLayout: React.FC = observer(() => {
       />
       <div className="h-full rounded-lg text-custom-text-200 overflow-x-auto whitespace-nowrap bg-custom-background-100">
         <div className="sticky z-[2] top-0 border-b border-custom-border-200 bg-custom-background-90 w-full min-w-max">
-          <SpreadsheetColumns
+          {/* <SpreadsheetColumns
             columnData={columnData}
             displayFilters={issueFilterStore.userDisplayFilters}
             gridTemplateColumns={gridTemplateColumns}
             handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
-          />
+          /> */}
         </div>
         {issues ? (
           <div className="flex flex-col h-full w-full bg-custom-background-100 rounded-sm ">
             {(issues as IIssueUnGroupedStructure).map((issue: IIssue, index) => (
-              <SpreadsheetIssues
-                key={`${issue.id}_${index}`}
-                index={index}
-                issue={issue}
-                expandedIssues={expandedIssues}
-                setExpandedIssues={setExpandedIssues}
-                gridTemplateColumns={gridTemplateColumns}
-                properties={issueDisplayProperties}
-                handleIssueAction={() => {}}
-                disableUserActions={!isAllowed}
-                user={user}
-                userAuth={{
-                  isViewer: projectDetails?.member_role === 5,
-                  isGuest: projectDetails?.member_role === 10,
-                  isMember: projectDetails?.member_role === 15,
-                  isOwner: projectDetails?.member_role === 20,
-                }}
-              />
+              <></>
+              // <SpreadsheetIssues
+              //   key={`${issue.id}_${index}`}
+              //   index={index}
+              //   issue={issue}
+              //   expandedIssues={expandedIssues}
+              //   setExpandedIssues={setExpandedIssues}
+              //   gridTemplateColumns={gridTemplateColumns}
+              //   properties={issueDisplayProperties}
+              //   handleIssueAction={() => {}}
+              //   disableUserActions={!isAllowed}
+              //   user={user}
+              //   userAuth={{
+              //     isViewer: projectDetails?.member_role === 5,
+              //     isGuest: projectDetails?.member_role === 10,
+              //     isMember: projectDetails?.member_role === 15,
+              //     isOwner: projectDetails?.member_role === 20,
+              //   }}
+              // />
             ))}
             <div
               className="relative group grid auto-rows-[minmax(44px,1fr)] hover:rounded-sm hover:bg-custom-background-80 border-b border-custom-border-200 w-full min-w-max"
@@ -120,7 +121,6 @@ export const ModuleSpreadsheetLayout: React.FC = observer(() => {
                       Add Issue
                     </button>
                   }
-                  position="left"
                   optionsClassName="left-5 !w-36"
                   noBorder
                 >

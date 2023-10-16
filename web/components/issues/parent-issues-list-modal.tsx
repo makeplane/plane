@@ -5,14 +5,13 @@ import { useRouter } from "next/router";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
-import projectService from "services/project.service";
+import { ProjectService } from "services/project";
 // hooks
 import useDebounce from "hooks/use-debounce";
 // components
 import { LayerDiagonalIcon } from "components/icons";
 // ui
-import { Tooltip } from "components/ui";
-import { Loader, ToggleSwitch } from "@plane/ui";
+import { Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
 import { LaunchOutlined } from "@mui/icons-material";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
@@ -27,6 +26,9 @@ type Props = {
   projectId: string;
   issueId?: string;
 };
+
+// services
+const projectService = new ProjectService();
 
 export const ParentIssuesListModal: React.FC<Props> = ({
   isOpen,

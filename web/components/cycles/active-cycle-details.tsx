@@ -5,14 +5,13 @@ import { useRouter } from "next/router";
 // swr
 import useSWR, { mutate } from "swr";
 // services
-import cyclesService from "services/cycles.service";
+import { CycleService } from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { LinearProgressIndicator, Tooltip } from "components/ui";
 import { AssigneesList } from "components/ui/avatar";
 import { SingleProgressStats } from "components/core";
-import { Loader } from "@plane/ui";
+import { Loader, Tooltip, LinearProgressIndicator } from "@plane/ui";
 // components
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { ActiveCycleProgressStats } from "components/cycles";
@@ -75,6 +74,9 @@ interface IActiveCycleDetails {
 }
 
 export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
+  // services
+  const cycleService = new CycleService();
+
   const router = useRouter();
 
   const { workspaceSlug, projectId } = props;
@@ -93,7 +95,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
   const { data: currentCycle } = useSWR(
     workspaceSlug && projectId ? CURRENT_CYCLE_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => cyclesService.getCyclesWithParams(workspaceSlug as string, projectId as string, "current")
+      ? () => cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string, "current")
       : null
   );
   const cycle = currentCycle ? currentCycle[0] : null;
@@ -102,7 +104,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
     workspaceSlug && projectId && cycle?.id ? CYCLE_ISSUES_WITH_PARAMS(cycle?.id, { priority: "urgent,high" }) : null,
     workspaceSlug && projectId && cycle?.id
       ? () =>
-          cyclesService.getCycleIssuesWithParams(workspaceSlug as string, projectId as string, cycle.id, {
+          cycleService.getCycleIssuesWithParams(workspaceSlug as string, projectId as string, cycle.id, {
             priority: "urgent,high",
           })
       : null
@@ -181,7 +183,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
       false
     );
 
-    cyclesService
+    cycleService
       .addCycleToFavorites(workspaceSlug as string, projectId as string, {
         cycle: cycle.id,
       })
@@ -217,7 +219,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
       false
     );
 
-    cyclesService.removeCycleFromFavorites(workspaceSlug as string, projectId as string, cycle.id).catch(() => {
+    cycleService.removeCycleFromFavorites(workspaceSlug as string, projectId as string, cycle.id).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",

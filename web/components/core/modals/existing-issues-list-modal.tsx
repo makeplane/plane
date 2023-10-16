@@ -7,14 +7,13 @@ import { mutate } from "swr";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
-import projectService from "services/project.service";
+import { ProjectService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
 import useDebounce from "hooks/use-debounce";
 // ui
-import { Button, Loader, ToggleSwitch } from "@plane/ui";
-import { Tooltip } from "components/ui";
+import { Button, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
 import { LaunchOutlined } from "@mui/icons-material";
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -36,6 +35,8 @@ type Props = {
   handleOnSubmit: (data: ISearchIssueResponse[]) => Promise<void>;
   workspaceLevelToggle?: boolean;
 };
+
+const projectService = new ProjectService();
 
 export const ExistingIssuesListModal: React.FC<Props> = ({
   isOpen,

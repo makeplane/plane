@@ -10,8 +10,8 @@ import useEstimateOption from "hooks/use-estimate-option";
 // components
 import { MyIssuesSelectFilters } from "components/issues";
 // ui
-import { CustomMenu, Tooltip } from "components/ui";
-import { ToggleSwitch } from "@plane/ui";
+import { CustomMenu } from "components/ui";
+import { ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { FormatListBulletedOutlined, GridViewOutlined } from "@mui/icons-material";
@@ -21,7 +21,7 @@ import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 // types
 import { Properties, TIssueLayouts } from "types";
 // constants
-import { GROUP_BY_OPTIONS, ORDER_BY_OPTIONS, FILTER_ISSUE_OPTIONS } from "constants/issue";
+import { ISSUE_GROUP_BY_OPTIONS, ISSUE_ORDER_BY_OPTIONS, ISSUE_FILTER_OPTIONS } from "constants/issue";
 
 const issueViewOptions: { type: TIssueLayouts; Icon: any }[] = [
   {
@@ -140,13 +140,13 @@ export const ProfileIssuesViewOptions: React.FC = () => {
                               label={
                                 displayFilters?.group_by === "project"
                                   ? "Project"
-                                  : GROUP_BY_OPTIONS.find((option) => option.key === displayFilters?.group_by)?.name ??
-                                    "Select"
+                                  : ISSUE_GROUP_BY_OPTIONS.find((option) => option.key === displayFilters?.group_by)
+                                      ?.title ?? "Select"
                               }
                               className="!w-full"
                               buttonClassName="w-full"
                             >
-                              {GROUP_BY_OPTIONS.map((option) => {
+                              {ISSUE_GROUP_BY_OPTIONS.map((option) => {
                                 if (displayFilters?.layout === "kanban" && option.key === null) return null;
                                 if (option.key === "state" || option.key === "created_by" || option.key === "assignees")
                                   return null;
@@ -156,7 +156,7 @@ export const ProfileIssuesViewOptions: React.FC = () => {
                                     key={option.key}
                                     onClick={() => setDisplayFilters({ group_by: option.key })}
                                   >
-                                    {option.name}
+                                    {option.title}
                                   </CustomMenu.MenuItem>
                                 );
                               })}
@@ -168,13 +168,13 @@ export const ProfileIssuesViewOptions: React.FC = () => {
                           <div className="w-28">
                             <CustomMenu
                               label={
-                                ORDER_BY_OPTIONS.find((option) => option.key === displayFilters?.order_by)?.name ??
-                                "Select"
+                                ISSUE_ORDER_BY_OPTIONS.find((option) => option.key === displayFilters?.order_by)
+                                  ?.title ?? "Select"
                               }
                               className="!w-full"
                               buttonClassName="w-full"
                             >
-                              {ORDER_BY_OPTIONS.map((option) => {
+                              {ISSUE_ORDER_BY_OPTIONS.map((option) => {
                                 if (displayFilters?.group_by === "priority" && option.key === "priority") return null;
                                 if (option.key === "sort_order") return null;
 
@@ -185,7 +185,7 @@ export const ProfileIssuesViewOptions: React.FC = () => {
                                       setDisplayFilters({ order_by: option.key });
                                     }}
                                   >
-                                    {option.name}
+                                    {option.title}
                                   </CustomMenu.MenuItem>
                                 );
                               })}
@@ -200,14 +200,14 @@ export const ProfileIssuesViewOptions: React.FC = () => {
                         <CustomMenu
                           label={
                             <span className="truncate">
-                              {FILTER_ISSUE_OPTIONS.find((option) => option.key === displayFilters?.type)?.name ??
+                              {ISSUE_FILTER_OPTIONS.find((option) => option.key === displayFilters?.type)?.title ??
                                 "Select"}
                             </span>
                           }
                           className="!w-full"
                           buttonClassName="w-full"
                         >
-                          {FILTER_ISSUE_OPTIONS.map((option) => (
+                          {ISSUE_FILTER_OPTIONS.map((option) => (
                             <CustomMenu.MenuItem
                               key={option.key}
                               onClick={() =>
@@ -216,7 +216,7 @@ export const ProfileIssuesViewOptions: React.FC = () => {
                                 })
                               }
                             >
-                              {option.name}
+                              {option.title}
                             </CustomMenu.MenuItem>
                           ))}
                         </CustomMenu>

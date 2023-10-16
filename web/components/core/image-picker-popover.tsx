@@ -4,11 +4,9 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import { useDropzone } from "react-dropzone";
 import { Tab, Transition, Popover } from "@headlessui/react";
-
 import { Control, Controller } from "react-hook-form";
-
 // services
-import fileService from "services/file.service";
+import { FileService } from "services/file.service";
 // hooks
 import useWorkspaceDetails from "hooks/use-workspace-details";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
@@ -37,6 +35,9 @@ type Props = {
   onChange: (data: string) => void;
   disabled?: boolean;
 };
+
+// services
+const fileService = new FileService();
 
 export const ImagePickerPopover: React.FC<Props> = ({ label, value, control, onChange, disabled = false }) => {
   const ref = useRef<HTMLDivElement>(null);

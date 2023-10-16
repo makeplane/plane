@@ -5,7 +5,7 @@ import useSWR from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // components
 import { Loader, MarkdownRenderer } from "components/ui";
 // icons
@@ -17,6 +17,9 @@ type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
+
+// services
+const workspaceService = new WorkspaceService();
 
 export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
   const { data: updates } = useSWR("PRODUCT_UPDATES", () => workspaceService.getProductUpdates());
@@ -48,10 +51,7 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
             >
               <Dialog.Panel className="relative overflow-hidden rounded-lg bg-custom-background-100 border border-custom-border-100 shadow-custom-shadow-rg] min-w-[100%] sm:min-w-[50%] sm:max-w-[50%]">
                 <div className="flex flex-col p-4 max-h-[90vh] w-full">
-                  <Dialog.Title
-                    as="h3"
-                    className="flex items-center justify-between text-lg font-semibold"
-                  >
+                  <Dialog.Title as="h3" className="flex items-center justify-between text-lg font-semibold">
                     <span>Product Updates</span>
                     <span>
                       <button type="button" onClick={() => setIsOpen(false)}>

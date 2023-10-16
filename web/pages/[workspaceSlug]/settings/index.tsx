@@ -7,8 +7,8 @@ import useSWR, { mutate } from "swr";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
-import workspaceService from "services/workspace.service";
-import fileService from "services/file.service";
+import { WorkspaceService } from "services/workspace.service";
+import { FileService } from "services/file.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
@@ -41,6 +41,10 @@ const defaultValues: Partial<IWorkspace> = {
   organization_size: "2-10",
   logo: null,
 };
+
+// services
+const workspaceService = new WorkspaceService();
+const fileService = new FileService();
 
 const WorkspaceSettings: NextPage = () => {
   const [isOpen, setIsOpen] = useState(false);

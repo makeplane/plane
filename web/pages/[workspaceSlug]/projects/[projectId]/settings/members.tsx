@@ -1,13 +1,10 @@
 import { useState, useEffect } from "react";
-
 import { useRouter } from "next/router";
 import Link from "next/link";
-
 import useSWR, { mutate } from "swr";
-
 // services
-import projectService from "services/project.service";
-import workspaceService from "services/workspace.service";
+import { ProjectService, ProjectInvitationService } from "services/project";
+import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
@@ -22,10 +19,10 @@ import SendProjectInvitationModal from "components/project/send-project-invitati
 import { MemberSelect, SettingsSidebar } from "components/project";
 // ui
 import { Button, Loader } from "@plane/ui";
-import { CustomMenu, CustomSearchSelect, CustomSelect, Icon } from "components/ui";
+import { CustomMenu, CustomSelect, Icon } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 // types
 import type { NextPage } from "next";
 import { IProject, IUserLite, IWorkspace } from "types";
@@ -34,7 +31,6 @@ import {
   PROJECTS_LIST,
   PROJECT_DETAILS,
   PROJECT_INVITATIONS_WITH_EMAIL,
-  PROJECT_MEMBERS,
   PROJECT_MEMBERS_WITH_EMAIL,
   USER_PROJECT_VIEW,
   WORKSPACE_DETAILS,
@@ -48,6 +44,11 @@ const defaultValues: Partial<IProject> = {
   project_lead: null,
   default_assignee: null,
 };
+
+// services
+const projectService = new ProjectService();
+const projectInvitationService = new ProjectInvitationService();
+const workspaceService = new WorkspaceService();
 
 const MembersSettings: NextPage = () => {
   const [inviteModal, setInviteModal] = useState(false);
@@ -67,22 +68,10 @@ const MembersSettings: NextPage = () => {
     Boolean(workspaceSlug && projectId)
   );
 
-  const {
-    handleSubmit,
-    reset,
-    control,
-    formState: { isSubmitting },
-  } = useForm<IProject>({ defaultValues });
+  const { reset, control } = useForm<IProject>({ defaultValues });
 
   const { data: activeWorkspace } = useSWR(workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null, () =>
     workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null
-  );
-
-  const { data: people } = useSWR(
-    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
-      : null
   );
 
   const { data: projectMembers, mutate: mutateMembers } = useSWR(
@@ -95,7 +84,7 @@ const MembersSettings: NextPage = () => {
   const { data: projectInvitations, mutate: mutateInvitations } = useSWR(
     workspaceSlug && projectId ? PROJECT_INVITATIONS_WITH_EMAIL(workspaceSlug.toString(), projectId.toString()) : null,
     workspaceSlug && projectId
-      ? () => projectService.projectInvitationsWithEmail(workspaceSlug as string, projectId as string)
+      ? () => projectInvitationService.projectInvitationsWithEmail(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -135,37 +124,37 @@ const MembersSettings: NextPage = () => {
 
   const currentUser = projectMembers?.find((item) => item.member.id === user?.id);
 
-  const handleProjectInvitationSuccess = () => {};
+  // const handleProjectInvitationSuccess = () => {};
 
-  const onSubmit = async (formData: IProject) => {
-    if (!workspaceSlug || !projectId || !projectDetails) return;
+  // const onSubmit = async (formData: IProject) => {
+  //   if (!workspaceSlug || !projectId || !projectDetails) return;
 
-    const payload: Partial<IProject> = {
-      default_assignee: formData.default_assignee,
-      project_lead: formData.project_lead === "none" ? null : formData.project_lead,
-    };
+  //   const payload: Partial<IProject> = {
+  //     default_assignee: formData.default_assignee,
+  //     project_lead: formData.project_lead === "none" ? null : formData.project_lead,
+  //   };
 
-    await projectService
-      .updateProject(workspaceSlug as string, projectId as string, payload, user)
-      .then((res) => {
-        mutate(PROJECT_DETAILS(projectId as string));
+  //   await projectService
+  //     .updateProject(workspaceSlug as string, projectId as string, payload, user)
+  //     .then((res) => {
+  //       mutate(PROJECT_DETAILS(projectId as string));
 
-        mutate(
-          PROJECTS_LIST(workspaceSlug as string, {
-            is_favorite: "all",
-          })
-        );
+  //       mutate(
+  //         PROJECTS_LIST(workspaceSlug as string, {
+  //           is_favorite: "all",
+  //         })
+  //       );
 
-        setToastAlert({
-          title: "Success",
-          type: "success",
-          message: "Project updated successfully",
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  //       setToastAlert({
+  //         title: "Success",
+  //         type: "success",
+  //         message: "Project updated successfully",
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
 
   useEffect(() => {
     if (projectDetails)
@@ -187,7 +176,7 @@ const MembersSettings: NextPage = () => {
 
     await projectService
       .updateProject(workspaceSlug as string, projectId as string, payload, user)
-      .then((res) => {
+      .then(() => {
         mutate(PROJECT_DETAILS(projectId as string));
 
         mutate(
@@ -236,7 +225,7 @@ const MembersSettings: NextPage = () => {
             mutateMembers((prevData: any) => prevData?.filter((item: any) => item.id !== selectedRemoveMember), false);
           }
           if (selectedInviteRemoveMember) {
-            await projectService.deleteProjectInvitation(
+            await projectInvitationService.deleteProjectInvitation(
               activeWorkspace.slug,
               projectDetails.id,
               selectedInviteRemoveMember
@@ -382,7 +371,7 @@ const MembersSettings: NextPage = () => {
                         )}
                         <CustomSelect
                           customButton={
-                            <button className="flex item-center gap-1">
+                            <div className="flex item-center gap-1">
                               <span
                                 className={`flex items-center text-sm font-medium ${
                                   member.memberId !== user?.id ? "" : "text-custom-sidebar-text-400"
@@ -393,7 +382,7 @@ const MembersSettings: NextPage = () => {
                               {member.memberId !== user?.id && (
                                 <Icon iconName="expand_more" className="text-lg font-medium" />
                               )}
-                            </button>
+                            </div>
                           }
                           value={member.role}
                           onChange={(value: 5 | 10 | 15 | 20 | undefined) => {
@@ -417,7 +406,6 @@ const MembersSettings: NextPage = () => {
                                 });
                               });
                           }}
-                          position="right"
                           disabled={
                             member.memberId === user?.id ||
                             !member.member ||

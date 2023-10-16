@@ -1,17 +1,11 @@
 import React, { Fragment } from "react";
-
-// hooks
-import useTheme from "hooks/use-theme";
-
 import { Popover, Transition } from "@headlessui/react";
-
 // hooks
 import useUserNotification from "hooks/use-user-notifications";
-
 // components
-import { EmptyState, Tooltip } from "components/ui";
+import { EmptyState } from "components/common";
 import { SnoozeNotificationModal, NotificationCard, NotificationHeader } from "components/notifications";
-import { Loader } from "@plane/ui";
+import { Loader, Tooltip } from "@plane/ui";
 // icons
 import { NotificationsOutlined } from "@mui/icons-material";
 // images
@@ -50,9 +44,6 @@ export const NotificationPopover = () => {
     setFetchNotifications,
     markAllNotificationsAsRead,
   } = useUserNotification();
-
-  // theme context
-  const { collapsed: sidebarCollapse } = useTheme();
 
   return (
     <>

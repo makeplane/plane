@@ -61,6 +61,8 @@ export const ViewKanBanLayout: React.FC = observer(() => {
             group_by={group_by}
             handleIssues={updateIssue}
             display_properties={display_properties}
+            kanBanToggle={() => {}}
+            handleKanBanToggle={() => {}}
           />
         ) : (
           <KanBanSwimLanes
@@ -69,6 +71,8 @@ export const ViewKanBanLayout: React.FC = observer(() => {
             group_by={group_by}
             handleIssues={updateIssue}
             display_properties={display_properties}
+            kanBanToggle={() => {}}
+            handleKanBanToggle={() => {}}
           />
         )}
       </DragDropContext>

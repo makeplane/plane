@@ -1,21 +1,17 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // services
-import stateServices from "services/project_state.service";
+import { ProjectStateService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { ICurrentUserResponse, IState, IStateResponse } from "types";
+import type { IUser, IState, IStateResponse } from "types";
 // fetch-keys
 import { STATES_LIST } from "constants/fetch-keys";
 
@@ -23,8 +19,10 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   data: IState | null;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
+
+const projectStateService = new ProjectStateService();
 
 export const DeleteStateModal: React.FC<Props> = ({ isOpen, onClose, data, user }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
@@ -44,7 +42,7 @@ export const DeleteStateModal: React.FC<Props> = ({ isOpen, onClose, data, user 
 
     setIsDeleteLoading(true);
 
-    await stateServices
+    await projectStateService
       .deleteState(workspaceSlug as string, data.project, data.id, user)
       .then(() => {
         mutate<IStateResponse>(

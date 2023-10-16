@@ -5,13 +5,16 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import userService from "services/user.service";
+import { UserService } from "services/user.service";
 // hooks
 import useMyIssuesFilters from "hooks/my-issues/use-my-issues-filter";
 // types
 import { IIssue } from "types";
 // fetch-keys
 import { USER_ISSUES } from "constants/fetch-keys";
+
+// services
+const userService = new UserService();
 
 const useMyIssues = (workspaceSlug: string | undefined) => {
   const router = useRouter();
@@ -33,9 +36,7 @@ const useMyIssues = (workspaceSlug: string | undefined) => {
   };
 
   const { data: myIssues, mutate: mutateMyIssues } = useSWR(
-    workspaceSlug && router.pathname.includes("my-issues")
-      ? USER_ISSUES(workspaceSlug.toString(), params)
-      : null,
+    workspaceSlug && router.pathname.includes("my-issues") ? USER_ISSUES(workspaceSlug.toString(), params) : null,
     workspaceSlug && router.pathname.includes("my-issues")
       ? () => userService.userIssues(workspaceSlug.toString(), params)
       : null

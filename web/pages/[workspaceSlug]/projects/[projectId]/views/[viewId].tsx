@@ -3,15 +3,16 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import projectService from "services/project.service";
-import viewsService from "services/views.service";
+import { ProjectService } from "services/project";
+import { ViewService } from "services/view.service";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
-import { ProjectViewAllLayouts } from "components/issues";
+import { ProjectViewLayoutRoot } from "components/issues";
 // ui
-import { CustomMenu, EmptyState } from "components/ui";
+import { CustomMenu } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { EmptyState } from "components/common";
 // icons
 import { StackedLayersIcon } from "components/icons";
 // images
@@ -21,6 +22,10 @@ import { truncateText } from "helpers/string.helper";
 // fetch-keys
 import { PROJECT_DETAILS, VIEWS_LIST, VIEW_DETAILS } from "constants/fetch-keys";
 import { ProjectViewIssuesHeader } from "components/headers";
+
+// services
+const projectService = new ProjectService();
+const viewService = new ViewService();
 
 const SingleView: React.FC = () => {
   const router = useRouter();
@@ -33,13 +38,13 @@ const SingleView: React.FC = () => {
 
   const { data: views } = useSWR(
     workspaceSlug && projectId ? VIEWS_LIST(projectId as string) : null,
-    workspaceSlug && projectId ? () => viewsService.getViews(workspaceSlug as string, projectId as string) : null
+    workspaceSlug && projectId ? () => viewService.getViews(workspaceSlug as string, projectId as string) : null
   );
 
   const { data: viewDetails, error } = useSWR(
     workspaceSlug && projectId && viewId ? VIEW_DETAILS(viewId as string) : null,
     workspaceSlug && projectId && viewId
-      ? () => viewsService.getViewDetails(workspaceSlug as string, projectId as string, viewId as string)
+      ? () => viewService.getViewDetails(workspaceSlug as string, projectId as string, viewId as string)
       : null
   );
 
@@ -88,7 +93,7 @@ const SingleView: React.FC = () => {
           }}
         />
       ) : (
-        <ProjectViewAllLayouts />
+        <ProjectViewLayoutRoot />
       )}
     </ProjectAuthorizationWrapper>
   );

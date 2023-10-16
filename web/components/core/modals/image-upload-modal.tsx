@@ -7,7 +7,7 @@ import { useDropzone } from "react-dropzone";
 // headless ui
 import { Transition, Dialog } from "@headlessui/react";
 // services
-import fileServices from "services/file.service";
+import { FileService } from "services/file.service";
 // hooks
 import useWorkspaceDetails from "hooks/use-workspace-details";
 // ui
@@ -24,6 +24,9 @@ type Props = {
   handleDelete: () => void;
   userImage?: boolean;
 };
+
+// services
+const fileService = new FileService();
 
 export const ImageUploadModal: React.FC<Props> = ({
   value,
@@ -64,7 +67,7 @@ export const ImageUploadModal: React.FC<Props> = ({
     formData.append("attributes", JSON.stringify({}));
 
     if (userImage) {
-      fileServices
+      fileService
         .uploadUserFile(formData)
         .then((res) => {
           const imageUrl = res.asset;
@@ -73,13 +76,13 @@ export const ImageUploadModal: React.FC<Props> = ({
           setIsImageUploading(false);
           setImage(null);
 
-          if (value) fileServices.deleteUserFile(value);
+          if (value) fileService.deleteUserFile(value);
         })
         .catch((err) => {
           console.error(err);
         });
     } else
-      fileServices
+      fileService
         .uploadFile(workspaceSlug as string, formData)
         .then((res) => {
           const imageUrl = res.asset;
@@ -87,7 +90,7 @@ export const ImageUploadModal: React.FC<Props> = ({
           setIsImageUploading(false);
           setImage(null);
 
-          if (value && workspaceDetails) fileServices.deleteFile(workspaceDetails.id, value);
+          if (value && workspaceDetails) fileService.deleteFile(workspaceDetails.id, value);
         })
         .catch((err) => {
           console.error(err);

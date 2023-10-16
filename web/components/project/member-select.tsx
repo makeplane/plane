@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import projectService from "services/project.service";
+import { ProjectService } from "services/project";
 // ui
 import { Avatar, CustomSearchSelect } from "components/ui";
 // icon
@@ -18,6 +18,9 @@ type Props = {
   onChange: (val: string) => void;
   isDisabled?: boolean;
 };
+
+// services
+const projectService = new ProjectService();
 
 export const MemberSelect: React.FC<Props> = ({ value, onChange, isDisabled = false }) => {
   const router = useRouter();
@@ -77,7 +80,6 @@ export const MemberSelect: React.FC<Props> = ({ value, onChange, isDisabled = fa
         ]
       }
       maxHeight="md"
-      position="right"
       width="w-full"
       onChange={onChange}
       disabled={isDisabled}

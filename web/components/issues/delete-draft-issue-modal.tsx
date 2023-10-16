@@ -9,7 +9,7 @@ import useUser from "hooks/use-user";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import issueServices from "services/issue.service";
+import { IssueDraftService } from "services/issue";
 // hooks
 import useIssuesView from "hooks/use-issues-view";
 import useToast from "hooks/use-toast";
@@ -28,6 +28,8 @@ type Props = {
   data: IIssue | null;
   onSubmit?: () => Promise<void> | void;
 };
+
+const issueDraftService = new IssueDraftService();
 
 export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
   const { isOpen, handleClose, data, onSubmit } = props;
@@ -57,8 +59,8 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
 
     setIsDeleteLoading(true);
 
-    await issueServices
-      .deleteDraftIssue(workspaceSlug as string, data.project, data.id, user)
+    await issueDraftService
+      .deleteDraftIssue(workspaceSlug as string, data.project, data.id)
       .then(() => {
         setIsDeleteLoading(false);
         handleClose();

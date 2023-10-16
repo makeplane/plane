@@ -38,6 +38,7 @@ export const ProjectViewGanttLayout: React.FC = observer(() => {
           title="Issues"
           loaderTitle="Issues"
           blocks={issues ? renderIssueBlocksStructure(issues as IIssueUnGroupedStructure) : null}
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           blockUpdateHandler={(block, payload) => {
             // TODO: update mutation logic
             // updateGanttIssue(block, payload, mutateGanttIssues, user, workspaceSlug?.toString())

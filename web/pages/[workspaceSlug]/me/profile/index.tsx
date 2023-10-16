@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
-import fileService from "services/file.service";
-import userService from "services/user.service";
+import { FileService } from "services/file.service";
+import { UserService } from "services/user.service";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
@@ -39,15 +37,17 @@ const defaultValues: Partial<IUser> = {
   user_timezone: "Asia/Kolkata",
 };
 
+const fileService = new FileService();
+const userService = new UserService();
+
 const Profile: NextPage = () => {
   const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
+  // form info
   const {
-    register,
     handleSubmit,
     reset,
     watch,
@@ -177,7 +177,7 @@ const Profile: NextPage = () => {
                 <img
                   src={watch("cover_image") ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
                   className="h-44 w-full rounded-lg object-cover"
-                  alt={myProfile?.name ?? "Cover image"}
+                  alt={myProfile?.first_name ?? "Cover image"}
                 />
                 <div className="flex items-end justify-between absolute left-8 -bottom-6">
                   <div className="flex gap-3">
@@ -318,8 +318,6 @@ const Profile: NextPage = () => {
                         buttonClassName={errors.role ? "border-red-500 bg-red-500/10" : ""}
                         width="w-full"
                         input
-                        verticalPosition="top"
-                        position="right"
                       >
                         {USER_ROLES.map((item) => (
                           <CustomSelect.Option key={item.value} value={item.value}>
@@ -382,7 +380,6 @@ const Profile: NextPage = () => {
                         label={value ? TIME_ZONES.find((t) => t.value === value)?.label ?? value : "Select a timezone"}
                         options={timeZoneOptions}
                         onChange={onChange}
-                        verticalPosition="top"
                         optionsClassName="w-full"
                         input
                       />

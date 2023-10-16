@@ -1,31 +1,20 @@
 // react
 import React from "react";
-
-// next
 import { useRouter } from "next/router";
-
-// swr
 import useSWR, { mutate } from "swr";
 
 // fetch key
 import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
-
 // services
-import issuesService from "services/issue.service";
-
+import { IssueService, IssueCommentService } from "services/issue";
 // hooks
 import useUser from "hooks/use-user";
-
 // components
-import { CommentCard } from "components/issues/comment";
-import { Label, AddComment, ActivityMessage, ActivityIcon } from "components/web-view";
-
+import { Label, AddComment, ActivityMessage, ActivityIcon, CommentCard } from "components/web-view";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
-
 // ui
 import { Icon } from "components/ui";
-
 // types
 import type { IIssue, IIssueComment } from "types";
 
@@ -33,6 +22,10 @@ type Props = {
   allowed: boolean;
   issueDetails: IIssue;
 };
+
+// services
+const issueService = new IssueService();
+const issueCommentService = new IssueCommentService();
 
 export const IssueActivity: React.FC<Props> = (props) => {
   const { issueDetails, allowed } = props;
@@ -45,32 +38,50 @@ export const IssueActivity: React.FC<Props> = (props) => {
   const { data: issueActivities, mutate: mutateIssueActivity } = useSWR(
     workspaceSlug && projectId && issueId ? PROJECT_ISSUES_ACTIVITY(issueId.toString()) : null,
     workspaceSlug && projectId && issueId
-      ? () => issuesService.getIssueActivities(workspaceSlug.toString(), projectId.toString(), issueId.toString())
+      ? () => issueService.getIssueActivities(workspaceSlug.toString(), projectId.toString(), issueId.toString())
       : null
   );
 
-  const handleCommentUpdate = async (comment: any) => {
-    if (!workspaceSlug || !projectId || !issueId) return;
+  const handleCommentUpdate = async (comment: any, formData: any) => {
+    if (!workspaceSlug || !projectId || !issueId || !allowed) return;
 
-    await issuesService
-      .patchIssueComment(workspaceSlug as string, projectId as string, issueId as string, comment.id, comment, user)
-      .then(() => mutateIssueActivity());
+    await issueCommentService
+      .patchIssueComment(workspaceSlug as string, projectId as string, issueId as string, comment, formData, user)
+      .then(() => mutateIssueActivity())
+      .catch(() =>
+        console.log(
+          "toast",
+          JSON.stringify({
+            type: "error",
+            message: "Comment could not be updated. Please try again.",
+          })
+        )
+      );
   };
 
   const handleCommentDelete = async (commentId: string) => {
-    if (!workspaceSlug || !projectId || !issueId) return;
+    if (!workspaceSlug || !projectId || !issueId || !allowed) return;
 
     mutateIssueActivity((prevData: any) => prevData?.filter((p: any) => p.id !== commentId), false);
 
-    await issuesService
+    await issueCommentService
       .deleteIssueComment(workspaceSlug as string, projectId as string, issueId as string, commentId, user)
-      .then(() => mutateIssueActivity());
+      .then(() => mutateIssueActivity())
+      .catch(() =>
+        console.log(
+          "toast",
+          JSON.stringify({
+            type: "error",
+            message: "Comment could not be deleted. Please try again.",
+          })
+        )
+      );
   };
 
   const handleAddComment = async (formData: IIssueComment) => {
-    if (!workspaceSlug || !issueDetails) return;
+    if (!workspaceSlug || !issueDetails || !allowed) return;
 
-    await issuesService
+    await issueCommentService
       .createIssueComment(workspaceSlug.toString(), issueDetails.project, issueDetails.id, formData, user)
       .then(() => {
         mutate(PROJECT_ISSUES_ACTIVITY(issueDetails.id));
@@ -80,7 +91,6 @@ export const IssueActivity: React.FC<Props> = (props) => {
           "toast",
           JSON.stringify({
             type: "error",
-            title: "Error!",
             message: "Comment could not be posted. Please try again.",
           })
         )
@@ -90,7 +100,7 @@ export const IssueActivity: React.FC<Props> = (props) => {
   return (
     <div>
       <Label>Activity</Label>
-      <div className="mt-1 space-y-[6px] p-2 border rounded-[4px]">
+      <div className="mt-1 space-y-[6px] p-2 border border-custom-border-200 rounded-[4px]">
         <ul role="list" className="-mb-4">
           {issueActivities?.map((activityItem, index) => {
             // determines what type of action is performed
@@ -170,20 +180,25 @@ export const IssueActivity: React.FC<Props> = (props) => {
                     comment={activityItem as any}
                     onSubmit={handleCommentUpdate}
                     handleCommentDeletion={handleCommentDelete}
+                    disabled={
+                      !allowed || !issueDetails || issueDetails.state === "closed" || issueDetails.state === "archived"
+                    }
                   />
                 </div>
               );
           })}
-          <li>
-            <div className="my-4">
-              <AddComment
-                onSubmit={handleAddComment}
-                disabled={
-                  !allowed || !issueDetails || issueDetails.state === "closed" || issueDetails.state === "archived"
-                }
-              />
-            </div>
-          </li>
+          {allowed && (
+            <li>
+              <div className="my-4">
+                <AddComment
+                  onSubmit={handleAddComment}
+                  disabled={
+                    !allowed || !issueDetails || issueDetails.state === "closed" || issueDetails.state === "archived"
+                  }
+                />
+              </div>
+            </li>
+          )}
         </ul>
       </div>
     </div>

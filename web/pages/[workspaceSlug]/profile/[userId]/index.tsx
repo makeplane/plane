@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import userService from "services/user.service";
+import { UserService } from "services/user.service";
 // layouts
 import { ProfileAuthWrapper } from "layouts/profile-layout";
 // components
@@ -23,15 +23,16 @@ import { IUserStateDistribution, TStateGroups } from "types";
 import { USER_PROFILE_DATA } from "constants/fetch-keys";
 import { GROUP_CHOICES } from "constants/project";
 
+// services
+const userService = new UserService();
+
 const ProfileOverview: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
 
   const { data: userProfile } = useSWR(
     workspaceSlug && userId ? USER_PROFILE_DATA(workspaceSlug.toString(), userId.toString()) : null,
-    workspaceSlug && userId
-      ? () => userService.getUserProfileData(workspaceSlug.toString(), userId.toString())
-      : null
+    workspaceSlug && userId ? () => userService.getUserProfileData(workspaceSlug.toString(), userId.toString()) : null
   );
 
   const stateDistribution: IUserStateDistribution[] = Object.keys(GROUP_CHOICES).map((key) => {
@@ -48,10 +49,7 @@ const ProfileOverview: NextPage = () => {
         <ProfileWorkload stateDistribution={stateDistribution} />
         <div className="grid grid-cols-1 xl:grid-cols-2 items-stretch gap-5">
           <ProfilePriorityDistribution userProfile={userProfile} />
-          <ProfileStateDistribution
-            stateDistribution={stateDistribution}
-            userProfile={userProfile}
-          />
+          <ProfileStateDistribution stateDistribution={stateDistribution} userProfile={userProfile} />
         </div>
         <ProfileActivity />
       </div>

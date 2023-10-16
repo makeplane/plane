@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, FC } from "react";
 // ui
 import { Button } from "@plane/ui";
 // helpers
@@ -11,9 +11,10 @@ type Props = {
   refreshing: boolean;
 };
 
-export const SingleExport: React.FC<Props> = ({ service, refreshing }) => {
+export const SingleExport: FC<Props> = ({ service, refreshing }) => {
   const provider = service.provider;
-  const [isLoading, setIsLoading] = React.useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isLoading, setIsLoading] = useState(false);
 
   const checkExpiry = (inputDateString: string) => {
     const currentDate = new Date();

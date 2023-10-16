@@ -1,10 +1,6 @@
-import React, { forwardRef, useEffect } from "react";
-
+import { forwardRef, useEffect, Fragment } from "react";
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
-// react-hook-form
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
@@ -13,7 +9,7 @@ import { TwitterPicker } from "react-color";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // services
-import issuesService from "services/issue.service";
+import { IssueLabelService } from "services/issue";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
@@ -35,6 +31,8 @@ const defaultValues: Partial<IIssueLabels> = {
   color: "rgb(var(--color-text-200))",
 };
 
+const issueLabelService = new IssueLabelService();
+
 export const CreateUpdateLabelInline = forwardRef<HTMLDivElement, Props>(function CreateUpdateLabelInline(props, ref) {
   const { labelForm, setLabelForm, isUpdating, labelToUpdate, onClose } = props;
 
@@ -46,7 +44,6 @@ export const CreateUpdateLabelInline = forwardRef<HTMLDivElement, Props>(functio
   const {
     handleSubmit,
     control,
-    register,
     reset,
     formState: { errors, isSubmitting },
     watch,
@@ -64,20 +61,22 @@ export const CreateUpdateLabelInline = forwardRef<HTMLDivElement, Props>(functio
   const handleLabelCreate: SubmitHandler<IIssueLabels> = async (formData) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;
 
-    await issuesService.createIssueLabel(workspaceSlug as string, projectId as string, formData, user).then((res) => {
-      mutate<IIssueLabels[]>(
-        PROJECT_ISSUE_LABELS(projectId as string),
-        (prevData) => [res, ...(prevData ?? [])],
-        false
-      );
-      handleClose();
-    });
+    await issueLabelService
+      .createIssueLabel(workspaceSlug as string, projectId as string, formData, user)
+      .then((res) => {
+        mutate<IIssueLabels[]>(
+          PROJECT_ISSUE_LABELS(projectId as string),
+          (prevData) => [res, ...(prevData ?? [])],
+          false
+        );
+        handleClose();
+      });
   };
 
   const handleLabelUpdate: SubmitHandler<IIssueLabels> = async (formData) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;
 
-    await issuesService
+    await issueLabelService
       .patchIssueLabel(workspaceSlug as string, projectId as string, labelToUpdate?.id ?? "", formData, user)
       .then(() => {
         reset(defaultValues);
@@ -137,7 +136,7 @@ export const CreateUpdateLabelInline = forwardRef<HTMLDivElement, Props>(functio
               </Popover.Button>
 
               <Transition
-                as={React.Fragment}
+                as={Fragment}
                 enter="transition ease-out duration-200"
                 enterFrom="opacity-0 translate-y-1"
                 enterTo="opacity-100 translate-y-0"

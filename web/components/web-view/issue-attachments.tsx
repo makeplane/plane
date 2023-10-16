@@ -1,29 +1,18 @@
-// react
 import React, { useState, useCallback } from "react";
-
-// next
 import Link from "next/link";
 import { useRouter } from "next/router";
-
-// swr
 import useSWR, { mutate } from "swr";
-
-// services
-import issuesService from "services/issue.service";
-
-// react dropzone
 import { useDropzone } from "react-dropzone";
-
+// services
+import { IssueAttachmentService } from "services/issue";
 // fetch key
 import { ISSUE_ATTACHMENTS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
-
 // icons
 import { FileText, ChevronRight, X, Image as ImageIcon } from "lucide-react";
-
 // components
-import { Label, WebViewModal } from "components/web-view";
-import { DeleteAttachmentModal } from "components/issues";
-
+import { Label, WebViewModal, DeleteConfirmation } from "components/web-view";
+// helpers
+import { getFileName } from "helpers/attachment.helper";
 // types
 import type { IIssueAttachment } from "types";
 
@@ -32,6 +21,8 @@ type Props = {
 };
 
 const isImage = (fileName: string) => /\.(gif|jpe?g|tiff?|png|webp|bmp)$/i.test(fileName);
+
+const issueAttachmentService = new IssueAttachmentService();
 
 export const IssueAttachments: React.FC<Props> = (props) => {
   const { allowed } = props;
@@ -47,7 +38,7 @@ export const IssueAttachments: React.FC<Props> = (props) => {
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      if (!acceptedFiles[0] || !workspaceSlug) return;
+      if (!acceptedFiles[0] || !workspaceSlug || !allowed) return;
 
       const formData = new FormData();
       formData.append("asset", acceptedFiles[0]);
@@ -60,7 +51,7 @@ export const IssueAttachments: React.FC<Props> = (props) => {
       );
       setIsLoading(true);
 
-      issuesService
+      issueAttachmentService
         .uploadIssueAttachment(workspaceSlug as string, projectId as string, issueId as string, formData)
         .then((res) => {
           mutate<IIssueAttachment[]>(
@@ -80,7 +71,7 @@ export const IssueAttachments: React.FC<Props> = (props) => {
           setIsOpen(false);
           setIsLoading(false);
         })
-        .catch((err) => {
+        .catch(() => {
           setIsLoading(false);
           console.log(
             "toast",
@@ -92,8 +83,31 @@ export const IssueAttachments: React.FC<Props> = (props) => {
           );
         });
     },
-    [issueId, projectId, workspaceSlug]
+    [issueId, projectId, workspaceSlug, allowed]
   );
+
+  const handleDeletion = async (assetId: string) => {
+    if (!workspaceSlug || !projectId) return;
+
+    mutate<IIssueAttachment[]>(
+      ISSUE_ATTACHMENTS(issueId as string),
+      (prevData) => (prevData ?? [])?.filter((p) => p.id !== assetId),
+      false
+    );
+
+    await issueAttachmentService
+      .deleteIssueAttachment(workspaceSlug as string, projectId as string, issueId as string, assetId as string)
+      .then(() => mutate(PROJECT_ISSUES_ACTIVITY(issueId as string)))
+      .catch(() => {
+        console.log(
+          "toast",
+          JSON.stringify({
+            type: "error",
+            message: "Something went wrong please try again.",
+          })
+        );
+      });
+  };
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
@@ -104,16 +118,29 @@ export const IssueAttachments: React.FC<Props> = (props) => {
   const { data: attachments } = useSWR<IIssueAttachment[]>(
     workspaceSlug && projectId && issueId ? ISSUE_ATTACHMENTS(issueId as string) : null,
     workspaceSlug && projectId && issueId
-      ? () => issuesService.getIssueAttachment(workspaceSlug.toString(), projectId.toString(), issueId.toString())
+      ? () =>
+          issueAttachmentService.getIssueAttachment(workspaceSlug.toString(), projectId.toString(), issueId.toString())
       : null
   );
 
   return (
     <div>
-      <DeleteAttachmentModal
+      <DeleteConfirmation
+        title="Delete Attachment"
+        content={
+          <p className="text-sm text-custom-text-200">
+            Are you sure you want to delete attachment-{" "}
+            <span className="font-bold">{getFileName(deleteAttachment?.attributes?.name ?? "")}</span>? This attachment
+            will be permanently removed. This action cannot be undone.
+          </p>
+        }
         isOpen={allowed && attachmentDeleteModal}
-        setIsOpen={setAttachmentDeleteModal}
-        data={deleteAttachment}
+        onCancel={() => setAttachmentDeleteModal(false)}
+        onConfirm={() => {
+          if (!deleteAttachment) return;
+          handleDeletion(deleteAttachment.id);
+          setAttachmentDeleteModal(false);
+        }}
       />
 
       <WebViewModal isOpen={isOpen} onClose={() => setIsOpen(false)} modalTitle="Insert file">
@@ -169,6 +196,7 @@ export const IssueAttachments: React.FC<Props> = (props) => {
         ))}
         <button
           type="button"
+          disabled={!allowed}
           onClick={() => setIsOpen(true)}
           className="bg-custom-primary-100/10 border border-dotted rounded-[4px] border-custom-primary-100 text-center py-2 w-full text-custom-primary-100"
         >

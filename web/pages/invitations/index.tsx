@@ -1,15 +1,12 @@
 import React, { useState } from "react";
-
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
-// next-themes
 import { useTheme } from "next-themes";
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
+import { UserService } from "services/user.service";
 // hooks
 import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
@@ -29,13 +26,16 @@ import { truncateText } from "helpers/string.helper";
 // types
 import type { NextPage } from "next";
 import type { IWorkspaceMemberInvitation } from "types";
-// fetch-keys
-import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
-import userService from "services/user.service";
+// components
+import { EmptyState } from "components/common";
 
-const OnBoard: NextPage = () => {
+// services
+const workspaceService = new WorkspaceService();
+const userService = new UserService();
+
+const UserInvitationsPage: NextPage = () => {
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
 
@@ -47,7 +47,7 @@ const OnBoard: NextPage = () => {
 
   const { setToastAlert } = useToast();
 
-  const { data: invitations, mutate: mutateInvitations } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
+  const { data: invitations } = useSWR<IWorkspaceMemberInvitation[]>("USER_WORKSPACE_INVITATIONS", () =>
     workspaceService.userWorkspaceInvitations()
   );
 
@@ -214,4 +214,4 @@ const OnBoard: NextPage = () => {
   );
 };
 
-export default OnBoard;
+export default UserInvitationsPage;

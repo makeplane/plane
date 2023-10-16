@@ -10,9 +10,9 @@ import { SingleProgressStats } from "components/core";
 import { CycleCreateEdit } from "./cycle-create-edit";
 import { CycleDelete } from "./cycle-delete";
 // ui
-import { CustomMenu, LinearProgressIndicator, Tooltip } from "components/ui";
+import { CustomMenu } from "components/ui";
 import { AssigneesList } from "components/ui/avatar";
-import { RadialProgressBar } from "@plane/ui";
+import { Tooltip, LinearProgressIndicator } from "@plane/ui";
 // icons
 import { CalendarDaysIcon } from "@heroicons/react/20/solid";
 import {

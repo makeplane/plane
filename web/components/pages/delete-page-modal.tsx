@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import pagesService from "services/page.service";
+import { PageService } from "services/page.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -15,7 +15,7 @@ import { Button } from "@plane/ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
-import type { ICurrentUserResponse, IPage } from "types";
+import type { IUser, IPage } from "types";
 // fetch-keys
 import { ALL_PAGES_LIST, FAVORITE_PAGES_LIST, MY_PAGES_LIST, RECENT_PAGES_LIST } from "constants/fetch-keys";
 
@@ -23,8 +23,11 @@ type TConfirmPageDeletionProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   data?: IPage | null;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
+
+// services
+const pageService = new PageService();
 
 export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({ isOpen, setIsOpen, data, user }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
@@ -43,7 +46,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({ isOpen, s
     setIsDeleteLoading(true);
     if (!data || !workspaceSlug || !projectId) return;
 
-    await pagesService
+    await pageService
       .deletePage(workspaceSlug as string, data.project, data.id, user)
       .then(() => {
         mutate(RECENT_PAGES_LIST(projectId as string));
