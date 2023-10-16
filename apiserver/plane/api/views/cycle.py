@@ -474,38 +474,29 @@ class CycleViewSet(BaseViewSet):
         )
 
     def destroy(self, request, slug, project_id, pk):
-        try:
-            cycle_issues = list(
-                CycleIssue.objects.filter(cycle_id=self.kwargs.get("pk")).values_list(
-                    "issue", flat=True
-                )
+        cycle_issues = list(
+            CycleIssue.objects.filter(cycle_id=self.kwargs.get("pk")).values_list(
+                "issue", flat=True
             )
-            cycle = Cycle.objects.get(
-                workspace__slug=slug, project_id=project_id, pk=pk
-            )
-            # Delete the cycle
-            cycle.delete()
-            issue_activity.delay(
-                type="cycle.activity.deleted",
-                requested_data=json.dumps(
-                    {
-                        "cycle_id": str(pk),
-                        "issues": [str(issue_id) for issue_id in cycle_issues],
-                    }
-                ),
-                actor_id=str(request.user.id),
-                issue_id=str(pk),
-                project_id=str(project_id),
-                current_instance=None,
-                epoch=int(timezone.now().timestamp()),
-            )
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        )
+        cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
+        # Delete the cycle
+        cycle.delete()
+        issue_activity.delay(
+            type="cycle.activity.deleted",
+            requested_data=json.dumps(
+                {
+                    "cycle_id": str(pk),
+                    "issues": [str(issue_id) for issue_id in cycle_issues],
+                }
+            ),
+            actor_id=str(request.user.id),
+            issue_id=str(pk),
+            project_id=str(project_id),
+            current_instance=None,
+            epoch=int(timezone.now().timestamp()),
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CycleIssueViewSet(BaseViewSet):
@@ -699,33 +690,26 @@ class CycleIssueViewSet(BaseViewSet):
         )
 
     def destroy(self, request, slug, project_id, cycle_id, pk):
-        try:
-            cycle_issue = CycleIssue.objects.get(
-                pk=pk, workspace__slug=slug, project_id=project_id, cycle_id=cycle_id
-            )
-            issue_id = cycle_issue.issue_id
-            cycle_issue.delete()
-            issue_activity.delay(
-                type="cycle.activity.deleted",
-                requested_data=json.dumps(
-                    {
-                        "cycle_id": str(self.kwargs.get("cycle_id")),
-                        "issues": [str(issue_id)],
-                    }
-                ),
-                actor_id=str(self.request.user.id),
-                issue_id=str(self.kwargs.get("pk", None)),
-                project_id=str(self.kwargs.get("project_id", None)),
-                current_instance=None,
-                epoch=int(timezone.now().timestamp()),
-            )
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        cycle_issue = CycleIssue.objects.get(
+            pk=pk, workspace__slug=slug, project_id=project_id, cycle_id=cycle_id
+        )
+        issue_id = cycle_issue.issue_id
+        cycle_issue.delete()
+        issue_activity.delay(
+            type="cycle.activity.deleted",
+            requested_data=json.dumps(
+                {
+                    "cycle_id": str(self.kwargs.get("cycle_id")),
+                    "issues": [str(issue_id)],
+                }
+            ),
+            actor_id=str(self.request.user.id),
+            issue_id=str(self.kwargs.get("pk", None)),
+            project_id=str(self.kwargs.get("project_id", None)),
+            current_instance=None,
+            epoch=int(timezone.now().timestamp()),
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CycleDateCheckEndpoint(BaseAPIView):

@@ -32,82 +32,43 @@ class UserEndpoint(BaseViewSet):
         return self.request.user
 
     def retrieve(self, request):
-        try:
-            serialized_data = UserMeSerializer(request.user).data
-            return Response(
-                serialized_data,
-                status=status.HTTP_200_OK,
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        serialized_data = UserMeSerializer(request.user).data
+        return Response(
+            serialized_data,
+            status=status.HTTP_200_OK,
+        )
 
     def retrieve_user_settings(self, request):
-        try:
-            serialized_data = UserMeSettingsSerializer(request.user).data
-            return Response(serialized_data, status=status.HTTP_200_OK)
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        serialized_data = UserMeSettingsSerializer(request.user).data
+        return Response(serialized_data, status=status.HTTP_200_OK)
 
 
 class UpdateUserOnBoardedEndpoint(BaseAPIView):
     def patch(self, request):
-        try:
-            user = User.objects.get(pk=request.user.id)
-            user.is_onboarded = request.data.get("is_onboarded", False)
-            user.save()
-            return Response(
-                {"message": "Updated successfully"}, status=status.HTTP_200_OK
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        user = User.objects.get(pk=request.user.id)
+        user.is_onboarded = request.data.get("is_onboarded", False)
+        user.save()
+        return Response({"message": "Updated successfully"}, status=status.HTTP_200_OK)
 
 
 class UpdateUserTourCompletedEndpoint(BaseAPIView):
     def patch(self, request):
-        try:
-            user = User.objects.get(pk=request.user.id)
-            user.is_tour_completed = request.data.get("is_tour_completed", False)
-            user.save()
-            return Response(
-                {"message": "Updated successfully"}, status=status.HTTP_200_OK
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        user = User.objects.get(pk=request.user.id)
+        user.is_tour_completed = request.data.get("is_tour_completed", False)
+        user.save()
+        return Response({"message": "Updated successfully"}, status=status.HTTP_200_OK)
 
 
 class UserActivityEndpoint(BaseAPIView, BasePaginator):
     def get(self, request, slug):
-        try:
-            queryset = IssueActivity.objects.filter(
-                actor=request.user, workspace__slug=slug
-            ).select_related("actor", "workspace", "issue", "project")
+        queryset = IssueActivity.objects.filter(
+            actor=request.user, workspace__slug=slug
+        ).select_related("actor", "workspace", "issue", "project")
 
-            return self.paginate(
-                request=request,
-                queryset=queryset,
-                on_results=lambda issue_activities: IssueActivitySerializer(
-                    issue_activities, many=True
-                ).data,
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        return self.paginate(
+            request=request,
+            queryset=queryset,
+            on_results=lambda issue_activities: IssueActivitySerializer(
+                issue_activities, many=True
+            ).data,
+        )

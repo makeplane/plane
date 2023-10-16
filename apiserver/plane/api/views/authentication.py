@@ -213,9 +213,7 @@ class SignOutEndpoint(BaseAPIView):
         if not refresh_token:
             capture_message("No refresh token provided")
             return Response(
-                {
-                    "error": "Something went wrong. Please try again later or contact the support team."
-                },
+                {"error": "No refresh token provided"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
