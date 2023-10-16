@@ -4,7 +4,6 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Command } from "cmdk";
 import { THEMES_OBJ } from "constants/themes";
 import { useTheme } from "next-themes";
-import { SettingIcon } from "components/icons";
 import userService from "services/user.service";
 import useUser from "hooks/use-user";
 // helper
@@ -13,6 +12,7 @@ import { unsetCustomCssVariables } from "helpers/theme.helper";
 import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
+import { Settings } from "lucide-react";
 
 type Props = {
   setIsPaletteOpen: Dispatch<SetStateAction<boolean>>;
@@ -55,7 +55,7 @@ export const ChangeInterfaceTheme: React.FC<Props> = observer(({ setIsPaletteOpe
           className="focus:outline-none"
         >
           <div className="flex items-center gap-2 text-custom-text-200">
-            <SettingIcon className="h-4 w-4 text-custom-text-200" />
+            <Settings className="h-4 w-4 text-custom-text-200" />
             {theme.label}
           </div>
         </Command.Item>

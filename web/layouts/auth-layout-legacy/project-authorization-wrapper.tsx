@@ -13,10 +13,8 @@ import AppSidebar from "layouts/app-layout-legacy/app-sidebar";
 import { NotAuthorizedView, JoinProject } from "components/auth-screens";
 import { CommandPalette } from "components/command-palette";
 // ui
-import { Button, Spinner } from "@plane/ui";
+import { Button, Spinner, LayersIcon } from "@plane/ui";
 import { EmptyState } from "components/ui";
-// icons
-import { LayerDiagonalIcon } from "components/icons";
 // images
 import emptyProject from "public/empty-state/project.svg";
 
@@ -91,7 +89,7 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
             actionButton={
               <Link href={`/${workspaceSlug}/projects/${projectId}/issues`}>
                 <a>
-                  <Button variant="primary" prependIcon={<LayerDiagonalIcon color="white" />}>
+                  <Button variant="primary" prependIcon={<LayersIcon className="h-3 w-3" />}>
                     Go to issues
                   </Button>
                 </a>

@@ -1,9 +1,8 @@
 import { useRouter } from "next/router";
 
 // ui
-import { Tooltip } from "@plane/ui";
+import { ContrastIcon, Tooltip } from "@plane/ui";
 // icons
-import { ContrastIcon } from "components/icons";
 // helpers
 import { getDateRangeStatus, renderShortDate } from "helpers/date-time.helper";
 // types

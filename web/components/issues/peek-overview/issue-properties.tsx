@@ -2,7 +2,6 @@
 import { observer } from "mobx-react-lite";
 // headless ui
 import { Disclosure } from "@headlessui/react";
-import { StateGroupIcon } from "components/icons";
 // hooks
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
@@ -18,7 +17,7 @@ import {
 import { CustomDatePicker } from "components/ui";
 // icons
 import { BarChart, Calendar, Link2, Trash } from "lucide-react";
-import { DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
+import { DoubleCircleIcon, UserGroupIcon, StateGroupIcon } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types

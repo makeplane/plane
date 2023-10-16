@@ -15,8 +15,7 @@ import { DeleteModuleModal } from "components/modules";
 import { AssigneesList, Avatar, CustomMenu } from "components/ui";
 import { Tooltip } from "@plane/ui";
 // icons
-import { CalendarMonthIcon, TargetIcon } from "components/icons";
-import { CalendarDays, LinkIcon, Pencil, Star, Trash } from "lucide-react";
+import { CalendarDays, LinkIcon, Pencil, Star, Target, Trash } from "lucide-react";
 
 // helpers
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
@@ -172,7 +171,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
                 <span>{renderShortDateWithYearFormat(startDate, "Not set")}</span>
               </div>
               <div className="flex items-start gap-1">
-                <TargetIcon className="h-4 w-4" />
+                <Target className="h-4 w-4" />
                 <span>End:</span>
                 <span>{renderShortDateWithYearFormat(endDate, "Not set")}</span>
               </div>

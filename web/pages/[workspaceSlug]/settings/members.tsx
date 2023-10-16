@@ -22,8 +22,7 @@ import { Button, Loader } from "@plane/ui";
 import { CustomMenu, CustomSelect } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { ChevronDown } from "lucide-react";
-import { XMarkIcon } from "components/icons";
+import { ChevronDown, X } from "lucide-react";
 // types
 import type { NextPage } from "next";
 // fetch-keys
@@ -311,7 +310,7 @@ const MembersSettings: NextPage = () => {
                             }}
                           >
                             <span className="flex items-center justify-start gap-2">
-                              <XMarkIcon className="h-4 w-4" />
+                              <X className="h-4 w-4" />
 
                               <span> {user?.id === member.memberId ? "Leave" : "Remove member"}</span>
                             </span>

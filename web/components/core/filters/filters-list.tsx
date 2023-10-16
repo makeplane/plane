@@ -2,9 +2,9 @@ import React from "react";
 
 // icons
 import { X } from "lucide-react";
-import { PriorityIcon, StateGroupIcon } from "components/icons";
 // ui
 import { Avatar } from "components/ui";
+import { PriorityIcon, StateGroupIcon } from "@plane/ui";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // helpers
@@ -103,7 +103,7 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
                                 })
                               }
                             >
-                              <XMarkIcon className="h-3 w-3" />
+                              <X className="h-3 w-3" />
                             </span>
                           </p>
                         );
@@ -136,7 +136,7 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
                               })
                             }
                           >
-                            <XMarkIcon className="h-3 w-3" />
+                            <X className="h-3 w-3" />
                           </span>
                         </p>
                       ))
@@ -159,7 +159,7 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
                                 })
                               }
                             >
-                              <XMarkIcon className="h-3 w-3" />
+                              <X className="h-3 w-3" />
                             </span>
                           </div>
                         );
@@ -183,7 +183,7 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
                                 })
                               }
                             >
-                              <XMarkIcon className="h-3 w-3" />
+                              <X className="h-3 w-3" />
                             </span>
                           </div>
                         );
@@ -218,7 +218,7 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
                                 })
                               }
                             >
-                              <XMarkIcon
+                              <X
                                 className="h-3 w-3"
                                 style={{
                                   color: color,
@@ -251,7 +251,7 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
                                 })
                               }
                             >
-                              <XMarkIcon className="h-3 w-3" />
+                              <X className="h-3 w-3" />
                             </span>
                           </div>
                         );
@@ -279,7 +279,7 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
                                 })
                               }
                             >
-                              <XMarkIcon className="h-3 w-3" />
+                              <X className="h-3 w-3" />
                             </span>
                           </div>
                         );
@@ -293,7 +293,7 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
                       })
                     }
                   >
-                    <XMarkIcon className="h-3 w-3" />
+                    <X className="h-3 w-3" />
                   </button>
                 </div>
               </div>
@@ -308,7 +308,7 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
                     })
                   }
                 >
-                  <XMarkIcon className="h-3 w-3" />
+                  <X className="h-3 w-3" />
                 </button>
               </div>
             )}
@@ -322,7 +322,7 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
           className="flex items-center gap-x-1 rounded-full border border-custom-border-200 bg-custom-background-80 px-3 py-1.5 text-xs"
         >
           <span>Clear all filters</span>
-          <XMarkIcon className="h-3 w-3" />
+          <X className="h-3 w-3" />
         </button>
       )}
     </div>

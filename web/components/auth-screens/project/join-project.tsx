@@ -9,12 +9,11 @@ import { mutate } from "swr";
 import projectService from "services/project.service";
 // ui
 import { Button } from "@plane/ui";
-// icons
-import { AssignmentClipboardIcon } from "components/icons";
 // images
 import JoinProjectImg from "public/auth/project-not-authorized.svg";
 // fetch-keys
 import { USER_PROJECT_VIEW } from "constants/fetch-keys";
+import { ClipboardList } from "lucide-react";
 
 export const JoinProject: React.FC = () => {
   const [isJoiningProject, setIsJoiningProject] = useState(false);
@@ -55,7 +54,7 @@ export const JoinProject: React.FC = () => {
       <div>
         <Button
           variant="primary"
-          prependIcon={<AssignmentClipboardIcon color="white" />}
+          prependIcon={<ClipboardList className="h-3 w-3" />}
           loading={isJoiningProject}
           onClick={handleJoin}
         >

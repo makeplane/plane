@@ -15,7 +15,7 @@ import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 // ui
 import { Avatar } from "components/ui";
 // icons
-import { CheckIcon } from "components/icons";
+import { Check } from "lucide-react";
 // types
 import { ICurrentUserResponse, IIssue } from "types";
 
@@ -43,7 +43,7 @@ export const ChangeIssueAssignee: React.FC<Props> = ({ setIsPaletteOpen, issue, 
           </div>
           {issue.assignees.includes(member.id) && (
             <div>
-              <CheckIcon className="h-3 w-3" />
+              <Check className="h-3 w-3" />
             </div>
           )}
         </>

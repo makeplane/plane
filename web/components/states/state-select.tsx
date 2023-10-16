@@ -12,9 +12,8 @@ import projectStateService from "services/project_state.service";
 import { Combobox } from "@headlessui/react";
 // icons
 import { ChevronDown, Check, Search } from "lucide-react";
-import { StateGroupIcon } from "components/icons";
 // types
-import { Tooltip } from "@plane/ui";
+import { Tooltip, StateGroupIcon } from "@plane/ui";
 // constants
 import { IState } from "types";
 import { STATES_LIST } from "constants/fetch-keys";

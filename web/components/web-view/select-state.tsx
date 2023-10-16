@@ -17,7 +17,7 @@ import stateService from "services/project_state.service";
 import { STATES_LIST } from "constants/fetch-keys";
 
 // components
-import { StateGroupIcon } from "components/icons";
+import { StateGroupIcon } from "@plane/ui";
 import { WebViewModal } from "./web-view-modal";
 
 // helpers

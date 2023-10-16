@@ -2,9 +2,9 @@ import React from "react";
 
 // icons
 import { X } from "lucide-react";
-import { PriorityIcon, StateGroupIcon } from "components/icons";
 // ui
 import { Avatar } from "components/ui";
+import { PriorityIcon, StateGroupIcon } from "@plane/ui";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // helpers

@@ -20,8 +20,17 @@ import { DeleteCycleModal } from "components/cycles";
 import { CustomMenu, CustomRangeDatePicker } from "components/ui";
 import { Loader, ProgressBar } from "@plane/ui";
 // icons
-import { ExclamationIcon } from "components/icons";
-import { CalendarDays, ChevronDown, File, LinkIcon, MoveRight, PieChart, Trash, UserCircle2 } from "lucide-react";
+import {
+  AlertCircle,
+  CalendarDays,
+  ChevronDown,
+  File,
+  LinkIcon,
+  MoveRight,
+  PieChart,
+  Trash,
+  UserCircle2,
+} from "lucide-react";
 // helpers
 import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
 import { isDateGreaterThanToday, renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-time.helper";
@@ -458,7 +467,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
                         </Disclosure.Button>
                       ) : (
                         <div className="flex items-center gap-1">
-                          <ExclamationIcon height={14} width={14} className="fill-current text-custom-text-200" />
+                          <AlertCircle className="h-3.5 w-3.5 text-custom-text-200" />
                           <span className="text-xs italic text-custom-text-200">
                             {cycleStatus === "upcoming"
                               ? "Cycle is yet to start."
@@ -526,7 +535,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
                         </Disclosure.Button>
                       ) : (
                         <div className="flex items-center gap-1">
-                          <ExclamationIcon height={14} width={14} className="fill-current text-custom-text-200" />
+                          <AlertCircle className="h-3.5 w-3.5 text-custom-text-200" />
                           <span className="text-xs italic text-custom-text-200">
                             No issues found. Please add issue.
                           </span>

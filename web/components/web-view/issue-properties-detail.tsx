@@ -20,14 +20,13 @@ import useUser from "hooks/use-user";
 import { ISSUE_DETAILS } from "constants/fetch-keys";
 
 // icons
-import { BlockedIcon, BlockerIcon } from "components/icons";
 import { ChevronDown, PlayIcon, User, X, CalendarDays, LayoutGrid, Users } from "lucide-react";
 
 // hooks
 import useEstimateOption from "hooks/use-estimate-option";
 
 // ui
-import { Button } from "@plane/ui";
+import { Button, BlockedIcon, BlockerIcon } from "@plane/ui";
 import { CustomDatePicker } from "components/ui";
 
 // components

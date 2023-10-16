@@ -10,15 +10,15 @@ import { Command } from "cmdk";
 import issuesService from "services/issue.service";
 import stateService from "services/project_state.service";
 // ui
-import { Spinner } from "@plane/ui";
+import { Spinner, StateGroupIcon } from "@plane/ui";
 // icons
-import { CheckIcon, StateGroupIcon } from "components/icons";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // types
 import { ICurrentUserResponse, IIssue } from "types";
 // fetch keys
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY, STATES_LIST } from "constants/fetch-keys";
+import { Check } from "lucide-react";
 
 type Props = {
   setIsPaletteOpen: Dispatch<SetStateAction<boolean>>;
@@ -81,7 +81,7 @@ export const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen, issue, use
                 <StateGroupIcon stateGroup={state.group} color={state.color} height="16px" width="16px" />
                 <p>{state.name}</p>
               </div>
-              <div>{state.id === issue.state && <CheckIcon className="h-3 w-3" />}</div>
+              <div>{state.id === issue.state && <Check className="h-3 w-3" />}</div>
             </Command.Item>
           ))
         ) : (

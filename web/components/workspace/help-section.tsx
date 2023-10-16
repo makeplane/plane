@@ -9,9 +9,9 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // icons
 import { FileText, Github, HelpCircle, MessagesSquare, MoveLeft, Zap } from "lucide-react";
-import { DiscordIcon } from "components/icons";
 // assets
 import packageJson from "package.json";
+import { DiscordIcon } from "@plane/ui";
 
 const helpOptions = [
   {

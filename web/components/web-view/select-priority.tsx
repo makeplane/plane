@@ -8,7 +8,7 @@ import { ChevronDown } from "lucide-react";
 import { PRIORITIES } from "constants/project";
 
 // components
-import { PriorityIcon } from "components/icons";
+import { PriorityIcon } from "@plane/ui";
 import { WebViewModal } from "./web-view-modal";
 
 // helpers

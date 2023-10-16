@@ -19,13 +19,12 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { GptAssistantModal } from "components/core";
 import { CreateUpdateBlockInline } from "components/pages";
-import { TipTapEditor } from "components/tiptap";
+import { TipTapEditor, LayersIcon } from "components/tiptap";
 // ui
 import { CustomMenu } from "components/ui";
 import { TextArea } from "@plane/ui";
 // icons
 import { RefreshCw, LinkIcon, Zap, Check, MoreVertical, Pencil, Sparkles, Trash } from "lucide-react";
-import { LayerDiagonalIcon } from "components/icons";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
@@ -384,7 +383,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
                   ) : (
                     <CustomMenu.MenuItem onClick={pushBlockIntoIssues}>
                       <span className="flex items-center gap-1">
-                        <LayerDiagonalIcon className="h-4 w-4" />
+                        <LayersIcon className="h-4 w-4" />
                         Push into issues
                       </span>
                     </CustomMenu.MenuItem>
@@ -407,7 +406,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
                       <div className="mr-1.5 flex">
                         <Link href={`/${workspaceSlug}/projects/${projectId}/issues/${block.issue}`}>
                           <a className="flex h-6 flex-shrink-0 items-center gap-1 rounded bg-custom-background-80 px-1.5 py-1 text-xs">
-                            <LayerDiagonalIcon height="16" width="16" />
+                            <LayersIcon className="h-4 w-4" />
                             {projectDetails?.identifier}-{block.issue_detail?.sequence_id}
                           </a>
                         </Link>

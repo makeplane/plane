@@ -7,10 +7,9 @@ import { mutate } from "swr";
 // services
 import stateService from "services/project_state.service";
 // ui
-import { Tooltip } from "@plane/ui";
+import { Tooltip, StateGroupIcon } from "@plane/ui";
 // icons
 import { Pencil, X, ArrowDown, ArrowUp } from "lucide-react";
-import { StateGroupIcon } from "components/icons";
 
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";

@@ -33,8 +33,7 @@ import { TextArea, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // images
 import emptyPage from "public/empty-state/page.svg";
 // icons
-import { ArrowLeft, Lock, Unlock, Plus, Star, LinkIcon, X, ChevronDown } from "lucide-react";
-import { ColorPalletteIcon } from "components/icons";
+import { ArrowLeft, Lock, Unlock, Plus, Star, LinkIcon, X, ChevronDown, Palette } from "lucide-react";
 // helpers
 import { render24HourFormatTime, renderShortDate } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
@@ -484,7 +483,7 @@ const SinglePage: NextPage = () => {
                                 }}
                               />
                             ) : (
-                              <ColorPalletteIcon height={16} width={16} />
+                              <Palette height={16} width={16} />
                             )}
                           </Popover.Button>
 

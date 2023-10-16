@@ -12,24 +12,20 @@ import useToast from "hooks/use-toast";
 // ui
 import { AssigneesList } from "components/ui/avatar";
 import { SingleProgressStats } from "components/core";
-import { Loader, Tooltip, LinearProgressIndicator } from "@plane/ui";
+import {
+  Loader,
+  Tooltip,
+  LinearProgressIndicator,
+  ContrastIcon,
+  PriorityIcon,
+  StateGroupIcon,
+  RunningIcon,
+} from "@plane/ui";
 // components
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { ActiveCycleProgressStats } from "components/cycles";
-
 // icons
-import { CalendarDays, Star } from "lucide-react";
-import { PriorityIcon } from "components/icons/priority-icon";
-import {
-  TargetIcon,
-  ContrastIcon,
-  PersonRunningIcon,
-  ArrowRightIcon,
-  TriangleExclamationIcon,
-  AlarmClockIcon,
-  LayerDiagonalIcon,
-  StateGroupIcon,
-} from "components/icons";
+import { AlarmClock, AlertTriangle, CalendarDays, LayersIcon, MoveRight, Star, Target } from "lucide-react";
 // components
 import { ViewIssueLabel } from "components/issues";
 // helpers
@@ -262,12 +258,12 @@ export const ActiveCycleDetails: React.FC = () => {
                   >
                     {cycleStatus === "current" ? (
                       <span className="flex gap-1 whitespace-nowrap">
-                        <PersonRunningIcon className="h-4 w-4" />
+                        <RunningIcon className="h-4 w-4" />
                         {findHowManyDaysLeft(cycle.end_date ?? new Date())} Days Left
                       </span>
                     ) : cycleStatus === "upcoming" ? (
                       <span className="flex gap-1 whitespace-nowrap">
-                        <AlarmClockIcon className="h-4 w-4" />
+                        <AlarmClock className="h-4 w-4" />
                         {findHowManyDaysLeft(cycle.start_date ?? new Date())} Days Left
                       </span>
                     ) : cycleStatus === "completed" ? (
@@ -279,7 +275,7 @@ export const ActiveCycleDetails: React.FC = () => {
                             }`}
                           >
                             <span>
-                              <TriangleExclamationIcon className="h-3.5 w-3.5 fill-current" />
+                              <AlertTriangle className="h-3.5 w-3.5" />
                             </span>
                           </Tooltip>
                         )}{" "}
@@ -316,9 +312,9 @@ export const ActiveCycleDetails: React.FC = () => {
                   <CalendarDays className="h-4 w-4" />
                   <span>{renderShortDateWithYearFormat(startDate)}</span>
                 </div>
-                <ArrowRightIcon className="h-4 w-4 text-custom-text-200" />
+                <MoveRight className="h-4 w-4 text-custom-text-200" />
                 <div className="flex items-start gap-1">
-                  <TargetIcon className="h-4 w-4" />
+                  <Target className="h-4 w-4" />
                   <span>{renderShortDateWithYearFormat(endDate)}</span>
                 </div>
               </div>
@@ -350,7 +346,7 @@ export const ActiveCycleDetails: React.FC = () => {
 
               <div className="flex items-center gap-4 text-custom-text-200">
                 <div className="flex gap-2">
-                  <LayerDiagonalIcon className="h-4 w-4 flex-shrink-0" />
+                  <LayersIcon className="h-4 w-4" />
                   {cycle.total_issues} issues
                 </div>
                 <div className="flex items-center gap-2">
@@ -502,7 +498,7 @@ export const ActiveCycleDetails: React.FC = () => {
             </div>
             <div className="flex items-center gap-1">
               <span>
-                <LayerDiagonalIcon className="h-5 w-5 flex-shrink-0 text-custom-text-200" />
+                <LayersIcon className="h-5 w-5 flex-shrink-0 text-custom-text-200" />
               </span>
               <span>Pending Issues - {cycle.total_issues - (cycle.completed_issues + cycle.cancelled_issues)}</span>
             </div>

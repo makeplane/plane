@@ -11,7 +11,7 @@ import { DateFilterModal } from "components/core";
 // ui
 import { MultiLevelDropdown } from "components/ui";
 // icons
-import { PriorityIcon, StateGroupIcon } from "components/icons";
+import { PriorityIcon, StateGroupIcon } from "@plane/ui";
 // helpers
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
 // types

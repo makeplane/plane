@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 // icons
 import { ArrowLeft } from "lucide-react";
-import { CyclesIcon } from "components/icons";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // contexts
@@ -21,7 +20,7 @@ import cycleServices from "services/cycles.service";
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // ui
-import { Button } from "@plane/ui";
+import { Button, ContrastIcon } from "@plane/ui";
 import { CustomMenu, EmptyState } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // images
@@ -107,7 +106,7 @@ const SingleCycle: React.FC = () => {
           <CustomMenu
             label={
               <>
-                <CyclesIcon className="h-3 w-3" />
+                <ContrastIcon className="h-3 w-3" />
                 {cycleDetails?.name && truncateText(cycleDetails.name, 40)}
               </>
             }

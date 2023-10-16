@@ -8,9 +8,7 @@ import useToast from "hooks/use-toast";
 // services
 import issuesServices from "services/issue.service";
 // ui
-import { Button } from "@plane/ui";
-// icons
-import { LayerDiagonalIcon } from "components/icons";
+import { Button, LayersIcon } from "@plane/ui";
 // fetch-keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 import { Search } from "lucide-react";
@@ -153,7 +151,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                         </li>
                       ) : (
                         <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
-                          <LayerDiagonalIcon height="56" width="56" />
+                          <LayersIcon height="56" width="56" />
                           <h3 className="text-sm text-custom-text-200">
                             No issues found. Create a new issue with{" "}
                             <pre className="inline rounded bg-custom-background-80 px-2 py-1">C</pre>.

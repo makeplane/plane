@@ -2,9 +2,8 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 // ui
-import { Tooltip } from "@plane/ui";
+import { Tooltip, PriorityIcon } from "@plane/ui";
 // icons
-import { PriorityIcon } from "components/icons";
 import { AlertTriangle, CalendarDays, CheckCircle, Clock, Files, XCircle } from "lucide-react";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";

@@ -12,8 +12,7 @@ import issuesService from "services/issue.service";
 import { DateFilterModal } from "components/core";
 // ui
 import { Avatar, MultiLevelDropdown } from "components/ui";
-// icons
-import { PriorityIcon, StateGroupIcon } from "components/icons";
+import { PriorityIcon, StateGroupIcon } from "@plane/ui";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";

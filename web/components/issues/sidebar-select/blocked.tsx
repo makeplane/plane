@@ -11,7 +11,7 @@ import issuesService from "services/issue.service";
 // components
 import { ExistingIssuesListModal } from "components/core";
 // icons
-import { BlockedIcon } from "components/icons";
+import { BlockedIcon } from "@plane/ui";
 import { X } from "lucide-react";
 // types
 import { BlockeIssueDetail, IIssue, ISearchIssueResponse } from "types";

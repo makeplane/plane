@@ -13,8 +13,17 @@ import {
   Triangle,
   Users2,
 } from "lucide-react";
-import { ArchiveIcon, DiceIcon, DoubleCircleIcon, LayersIcon, Tooltip, UserGroupIcon } from "@plane/ui";
-import { BlockedIcon, BlockerIcon, RelatedIcon } from "components/icons";
+import {
+  ArchiveIcon,
+  DiceIcon,
+  DoubleCircleIcon,
+  LayersIcon,
+  Tooltip,
+  UserGroupIcon,
+  BlockedIcon,
+  BlockerIcon,
+  RelatedIcon,
+} from "@plane/ui";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { capitalizeFirstLetter } from "helpers/string.helper";

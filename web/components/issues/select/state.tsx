@@ -9,8 +9,7 @@ import stateService from "services/project_state.service";
 // ui
 import { CustomSearchSelect } from "components/ui";
 // icons
-import { DoubleCircleIcon } from "@plane/ui";
-import { StateGroupIcon } from "components/icons";
+import { DoubleCircleIcon, StateGroupIcon } from "@plane/ui";
 import { Plus } from "lucide-react";
 // helpers
 import { getStatesList } from "helpers/state.helper";

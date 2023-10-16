@@ -22,14 +22,14 @@ import {
   GithubImportConfirm,
 } from "components/integration";
 // icons
-import { CogIcon, CloudUploadIcon, UsersIcon, CheckIcon } from "components/icons";
-import { ArrowLeft, List } from "lucide-react";
+import { ArrowLeft, Check, List, Settings, UploadCloud } from "lucide-react";
 // images
 import GithubLogo from "public/services/github.png";
 // types
 import { ICurrentUserResponse, IGithubRepoCollaborator, IGithubServiceImportFormData } from "types";
 // fetch-keys
 import { APP_INTEGRATIONS, IMPORTER_SERVICES_LIST, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
+import { UserGroupIcon } from "@plane/ui";
 
 export type TIntegrationSteps = "import-configure" | "import-data" | "repo-details" | "import-users" | "import-confirm";
 export interface IIntegrationData {
@@ -60,23 +60,23 @@ const integrationWorkflowData = [
   {
     title: "Configure",
     key: "import-configure",
-    icon: CogIcon,
+    icon: Settings,
   },
   {
     title: "Import Data",
     key: "import-data",
-    icon: CloudUploadIcon,
+    icon: UploadCloud,
   },
   { title: "Issues", key: "repo-details", icon: List },
   {
     title: "Users",
     key: "import-users",
-    icon: UsersIcon,
+    icon: UserGroupIcon,
   },
   {
     title: "Confirm",
     key: "import-confirm",
-    icon: CheckIcon,
+    icon: Check,
   },
 ];
 

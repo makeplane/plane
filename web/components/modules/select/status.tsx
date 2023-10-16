@@ -5,8 +5,7 @@ import { Controller, FieldError, Control } from "react-hook-form";
 // ui
 import { CustomSelect } from "components/ui";
 // icons
-import { DoubleCircleIcon } from "@plane/ui";
-import { ModuleStatusIcon } from "components/icons";
+import { DoubleCircleIcon, ModuleStatusIcon } from "@plane/ui";
 // types
 import type { IModule } from "types";
 // constants

@@ -7,9 +7,8 @@ import { useRouter } from "next/router";
 // component
 import { CustomSearchSelect, CustomSelect } from "components/ui";
 import { SelectMonthModal } from "components/automation";
-import { ToggleSwitch, DoubleCircleIcon } from "@plane/ui";
+import { ToggleSwitch, DoubleCircleIcon, StateGroupIcon } from "@plane/ui";
 // icons
-import { StateGroupIcon } from "components/icons";
 import { ArchiveX } from "lucide-react";
 // services
 import stateService from "services/project_state.service";

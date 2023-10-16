@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // icons
-import { CalendarDays, ChevronDown, File, LinkIcon, MoveRight, PieChart, Plus, Trash } from "lucide-react";
+import { AlertCircle, CalendarDays, ChevronDown, File, LinkIcon, MoveRight, PieChart, Plus, Trash } from "lucide-react";
 import { Disclosure, Popover, Transition } from "@headlessui/react";
 import DatePicker from "react-datepicker";
 // services
@@ -22,8 +22,6 @@ import { DeleteModuleModal, SidebarLeadSelect, SidebarMembersSelect } from "comp
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { CustomMenu, CustomSelect } from "components/ui";
 import { Loader, ProgressBar } from "@plane/ui";
-// icon
-import { ExclamationIcon } from "components/icons";
 // helpers
 import { renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
@@ -425,7 +423,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                         </Disclosure.Button>
                       ) : (
                         <div className="flex items-center gap-1">
-                          <ExclamationIcon height={14} width={14} className="fill-current text-custom-text-200" />
+                          <AlertCircle className="h-3.5 w-3.5 text-custom-text-200" />
                           <span className="text-xs italic text-custom-text-200">
                             Invalid date. Please enter valid date.
                           </span>
@@ -492,7 +490,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                         </Disclosure.Button>
                       ) : (
                         <div className="flex items-center gap-1">
-                          <ExclamationIcon height={14} width={14} className="fill-current text-custom-text-200" />
+                          <AlertCircle className="h-3.5 w-3.5 text-custom-text-200" />
+
                           <span className="text-xs italic text-custom-text-200">
                             No issues found. Please add issue.
                           </span>

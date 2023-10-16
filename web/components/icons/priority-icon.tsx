@@ -1,4 +1,5 @@
 // types
+import { AlertCircle, Ban, SignalHigh, SignalLow, SignalMedium } from "lucide-react";
 import { TIssuePriorities } from "types";
 
 type Props = {
@@ -10,16 +11,18 @@ export const PriorityIcon: React.FC<Props> = ({ priority, className = "" }) => {
   if (!className || className === "") className = "text-xs flex items-center";
 
   return (
-    <span className={`material-symbols-rounded ${className}`}>
-      {priority === "urgent"
-        ? "error"
-        : priority === "high"
-        ? "signal_cellular_alt"
-        : priority === "medium"
-        ? "signal_cellular_alt_2_bar"
-        : priority === "low"
-        ? "signal_cellular_alt_1_bar"
-        : "block"}
-    </span>
+    <>
+      {priority === "urgent" ? (
+        <AlertCircle className={`h-3.5 w-3.5 ${className}`} />
+      ) : priority === "high" ? (
+        <SignalHigh className={`h-3.5 w-3.5 ${className}`} />
+      ) : priority === "medium" ? (
+        <SignalMedium className={`h-3.5 w-3.5 ${className}`} />
+      ) : priority === "low" ? (
+        <SignalLow className={`h-3.5 w-3.5 ${className}`} />
+      ) : (
+        <Ban className={`h-3.5 w-3.5 ${className}`} />
+      )}
+    </>
   );
 };

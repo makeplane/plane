@@ -7,7 +7,7 @@ import useEstimateOption from "hooks/use-estimate-option";
 // services
 import issuesService from "services/issue.service";
 // icons
-import { DiceIcon, Tooltip } from "@plane/ui";
+import { DiceIcon, Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon } from "@plane/ui";
 import {
   TagIcon,
   CopyPlus,
@@ -24,7 +24,6 @@ import {
   MessageSquareIcon,
   Users2,
 } from "lucide-react";
-import { BlockedIcon, BlockerIcon, RelatedIcon, StackedLayersHorizontalIcon } from "components/icons";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { capitalizeFirstLetter } from "helpers/string.helper";
@@ -356,7 +355,7 @@ const activityDetails: {
       if (activity.verb === "created") return "created the issue.";
       else return "deleted an issue.";
     },
-    icon: <StackedLayersHorizontalIcon width={12} height={12} color="#6b7280" aria-hidden="true" />,
+    icon: <LayersIcon width={12} height={12} color="#6b7280" aria-hidden="true" />,
   },
   labels: {
     message: (activity, showIssue) => {

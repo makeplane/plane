@@ -27,8 +27,7 @@ import {
 // ui
 import { Button } from "@plane/ui";
 // icons
-import { InboxIcon, StackedLayersHorizontalIcon } from "components/icons";
-import { CheckCircle, ChevronDown, ChevronUp, Clock, Trash, XCircle } from "lucide-react";
+import { CheckCircle, ChevronDown, ChevronUp, Clock, Copy, Inbox, Trash, XCircle } from "lucide-react";
 // types
 import type { IInboxIssueDetail, TInboxStatus } from "types";
 // fetch-keys
@@ -152,7 +151,7 @@ export const InboxActionHeader = () => {
       <div className="grid grid-cols-4 border-b border-custom-border-200 divide-x divide-custom-border-200">
         <div className="col-span-1 flex justify-between p-4">
           <div className="flex items-center gap-2">
-            <InboxIcon className="h-4 w-4 text-custom-text-200" />
+            <Inbox className="h-4 w-4 text-custom-text-200" />
             <h3 className="font-medium">Inbox</h3>
           </div>
           <FiltersDropdown />
@@ -233,7 +232,7 @@ export const InboxActionHeader = () => {
                   <Button
                     variant="neutral-primary"
                     size="sm"
-                    prependIcon={<StackedLayersHorizontalIcon className="text-custom-text-200" />}
+                    prependIcon={<Copy className="h-3.5 w-3.5 text-custom-text-200" />}
                     onClick={() => setSelectDuplicateIssue(true)}
                   >
                     Mark as duplicate

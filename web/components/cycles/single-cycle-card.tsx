@@ -10,19 +10,22 @@ import useToast from "hooks/use-toast";
 // components
 import { SingleProgressStats } from "components/core";
 // ui
-import { Tooltip, LinearProgressIndicator } from "@plane/ui";
+import { Tooltip, LinearProgressIndicator, ContrastIcon, RunningIcon } from "@plane/ui";
 import { CustomMenu } from "components/ui";
 import { AssigneesList } from "components/ui/avatar";
 // icons
-import { CalendarDays, ChevronDown, LinkIcon, Pencil, Star, Trash } from "lucide-react";
 import {
-  TargetIcon,
-  ContrastIcon,
-  PersonRunningIcon,
-  ArrowRightIcon,
-  TriangleExclamationIcon,
-  AlarmClockIcon,
-} from "components/icons";
+  AlarmClock,
+  AlertTriangle,
+  CalendarDays,
+  ChevronDown,
+  LinkIcon,
+  MoveRight,
+  Pencil,
+  Star,
+  Target,
+  Trash,
+} from "lucide-react";
 // helpers
 import { getDateRangeStatus, renderShortDateWithYearFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
@@ -154,12 +157,12 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                   >
                     {cycleStatus === "current" ? (
                       <span className="flex gap-1 whitespace-nowrap">
-                        <PersonRunningIcon className="h-4 w-4" />
+                        <RunningIcon className="h-4 w-4" />
                         {findHowManyDaysLeft(cycle.end_date ?? new Date())} Days Left
                       </span>
                     ) : cycleStatus === "upcoming" ? (
                       <span className="flex gap-1 whitespace-nowrap">
-                        <AlarmClockIcon className="h-4 w-4" />
+                        <AlarmClock className="h-4 w-4" />
                         {findHowManyDaysLeft(cycle.start_date ?? new Date())} Days Left
                       </span>
                     ) : cycleStatus === "completed" ? (
@@ -171,7 +174,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                             }`}
                           >
                             <span>
-                              <TriangleExclamationIcon className="h-3.5 w-3.5 fill-current" />
+                              <AlertTriangle className="h-3.5 w-3.5" />
                             </span>
                           </Tooltip>
                         )}{" "}
@@ -209,9 +212,9 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                       <CalendarDays className="h-4 w-4" />
                       <span>{renderShortDateWithYearFormat(startDate)}</span>
                     </div>
-                    <ArrowRightIcon className="h-4 w-4" />
+                    <MoveRight className="h-4 w-4" />
                     <div className="flex items-start gap-1">
-                      <TargetIcon className="h-4 w-4" />
+                      <Target className="h-4 w-4" />
                       <span>{renderShortDateWithYearFormat(endDate)}</span>
                     </div>
                   </>

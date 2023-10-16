@@ -8,8 +8,7 @@ import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
 // types
 import { IIssueLite } from "types";
-import { Loader } from "@plane/ui";
-import { LayerDiagonalIcon } from "components/icons";
+import { Loader, LayersIcon } from "@plane/ui";
 
 type Props = {
   issues: IIssueLite[] | undefined;
@@ -78,7 +77,7 @@ export const IssuesList: React.FC<Props> = ({ issues, type }) => {
             ) : (
               <div className="grid h-full place-items-center">
                 <div className="my-5 flex flex-col items-center gap-4">
-                  <LayerDiagonalIcon height={60} width={60} />
+                  <LayersIcon height={60} width={60} />
                   <span className="text-custom-text-200">
                     No issues found. Use <pre className="inline rounded bg-custom-background-80 px-2 py-1">C</pre>{" "}
                     shortcut to create a new issue

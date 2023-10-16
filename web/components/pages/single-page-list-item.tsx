@@ -10,13 +10,12 @@ import useToast from "hooks/use-toast";
 import { CustomMenu } from "components/ui";
 import { Tooltip } from "@plane/ui";
 // icons
-import { ExclamationIcon } from "components/icons";
+import { AlertCircle, FileText, LinkIcon, Lock, Pencil, Star, Trash, Unlock } from "lucide-react";
 // helpers
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { renderLongDateFormat, renderShortDate, render24HourFormatTime } from "helpers/date-time.helper";
 // types
 import { IPage, IProjectMember } from "types";
-import { FileText, LinkIcon, Lock, Pencil, Star, Trash, Unlock } from "lucide-react";
 
 type TSingleStatProps = {
   page: IPage;
@@ -146,7 +145,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                     } on ${renderLongDateFormat(`${page.created_at}`)}`}
                   >
                     <span>
-                      <ExclamationIcon className="h-4 w-4 fill-current text-custom-text-200" />
+                      <AlertCircle className="h-4 w-4 text-custom-text-200" />
                     </span>
                   </Tooltip>
 

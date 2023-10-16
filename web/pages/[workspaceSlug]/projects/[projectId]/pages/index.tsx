@@ -12,8 +12,6 @@ import projectService from "services/project.service";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
 import useUserAuth from "hooks/use-user-auth";
-// icons
-import { PlusIcon } from "components/icons";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
@@ -22,7 +20,7 @@ import { RecentPagesList, CreateUpdatePageModal, TPagesListProps } from "compone
 import { Button } from "@plane/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { Grid2x2, List } from "lucide-react";
+import { Grid2x2, List, Plus } from "lucide-react";
 // types
 import { TPageViewProps } from "types";
 import type { NextPage } from "next";
@@ -101,7 +99,7 @@ const ProjectPages: NextPage = () => {
         right={
           <Button
             variant="primary"
-            prependIcon={<PlusIcon />}
+            prependIcon={<Plus className="h-3 w-3" />}
             onClick={() => {
               const e = new KeyboardEvent("keydown", { key: "d" });
               document.dispatchEvent(e);

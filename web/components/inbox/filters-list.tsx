@@ -2,7 +2,7 @@
 import useInboxView from "hooks/use-inbox-view";
 // icons
 import { X } from "lucide-react";
-import { PriorityIcon } from "components/icons";
+import { PriorityIcon } from "@plane/ui";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types

@@ -36,9 +36,10 @@ import {
   ToggleSwitch,
   Tooltip,
   UserGroupIcon,
+  DiscordIcon,
+  GithubIcon,
 } from "@plane/ui";
 // icons
-import { DiscordIcon, GithubIcon, SettingIcon } from "components/icons";
 import {
   BarChart,
   FolderPlus,
@@ -716,7 +717,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         className="focus:outline-none"
                       >
                         <div className="flex items-center gap-2 text-custom-text-200">
-                          <SettingIcon className="h-4 w-4 text-custom-text-200" />
+                          <Settings className="h-4 w-4 text-custom-text-200" />
                           General
                         </div>
                       </Command.Item>
@@ -725,7 +726,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         className="focus:outline-none"
                       >
                         <div className="flex items-center gap-2 text-custom-text-200">
-                          <SettingIcon className="h-4 w-4 text-custom-text-200" />
+                          <Settings className="h-4 w-4 text-custom-text-200" />
                           Members
                         </div>
                       </Command.Item>
@@ -734,7 +735,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         className="focus:outline-none"
                       >
                         <div className="flex items-center gap-2 text-custom-text-200">
-                          <SettingIcon className="h-4 w-4 text-custom-text-200" />
+                          <Settings className="h-4 w-4 text-custom-text-200" />
                           Billing and Plans
                         </div>
                       </Command.Item>
@@ -743,7 +744,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         className="focus:outline-none"
                       >
                         <div className="flex items-center gap-2 text-custom-text-200">
-                          <SettingIcon className="h-4 w-4 text-custom-text-200" />
+                          <Settings className="h-4 w-4 text-custom-text-200" />
                           Integrations
                         </div>
                       </Command.Item>
@@ -752,7 +753,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         className="focus:outline-none"
                       >
                         <div className="flex items-center gap-2 text-custom-text-200">
-                          <SettingIcon className="h-4 w-4 text-custom-text-200" />
+                          <Settings className="h-4 w-4 text-custom-text-200" />
                           Import
                         </div>
                       </Command.Item>
@@ -761,7 +762,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         className="focus:outline-none"
                       >
                         <div className="flex items-center gap-2 text-custom-text-200">
-                          <SettingIcon className="h-4 w-4 text-custom-text-200" />
+                          <Settings className="h-4 w-4 text-custom-text-200" />
                           Export
                         </div>
                       </Command.Item>

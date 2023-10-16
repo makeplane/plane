@@ -6,9 +6,7 @@ import { useRouter } from "next/router";
 import trackEventServices from "services/track_event.service";
 // ui
 import { CustomSelect } from "components/ui";
-import { Tooltip } from "@plane/ui";
-// icons
-import { PriorityIcon } from "components/icons/priority-icon";
+import { Tooltip, PriorityIcon } from "@plane/ui";
 // helpers
 import { capitalizeFirstLetter } from "helpers/string.helper";
 // types

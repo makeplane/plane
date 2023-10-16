@@ -25,7 +25,7 @@ import { SubIssuesRoot } from "./sub-issues";
 import { CustomMenu } from "components/ui";
 // icons
 import { MinusCircle } from "lucide-react";
-import { LayerDiagonalIcon } from "components/icons";
+import { LayersIcon } from "@plane/ui";
 // types
 import { IIssue, IIssueComment } from "types";
 // fetch-keys
@@ -138,7 +138,7 @@ export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges,
                         href={`/${workspaceSlug}/projects/${projectId as string}/issues/${issue.id}`}
                         className="flex items-center gap-2 py-2"
                       >
-                        <LayerDiagonalIcon className="h-4 w-4" />
+                        <LayersIcon className="h-4 w-4" />
                         {issueDetails.project_detail.identifier}-{issue.sequence_id}
                       </CustomMenu.MenuItem>
                     ))}

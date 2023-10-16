@@ -13,10 +13,9 @@ import useToast from "hooks/use-toast";
 // components
 import { CustomAnalyticsSidebarHeader, CustomAnalyticsSidebarProjectsList } from "components/analytics";
 // ui
-import { Button } from "@plane/ui";
+import { Button, LayersIcon } from "@plane/ui";
 // icons
-import { ArrowDownTrayIcon, ArrowPathIcon, CalendarDaysIcon } from "@heroicons/react/24/outline";
-import { LayerDiagonalIcon } from "components/icons";
+import { CalendarDays, Download, RefreshCw } from "lucide-react";
 // helpers
 import { renderShortDate } from "helpers/date-time.helper";
 // types
@@ -164,12 +163,12 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer(
       >
         <div className="flex items-center gap-2 flex-wrap">
           <div className="flex items-center gap-1 bg-custom-background-80 rounded-md px-3 py-1 text-custom-text-200 text-xs">
-            <LayerDiagonalIcon height={14} width={14} />
+            <LayersIcon className="h-3.5 w-3.5" />
             {analytics ? analytics.total : "..."} Issues
           </div>
           {isProjectLevel && (
             <div className="flex items-center gap-1 bg-custom-background-80 rounded-md px-3 py-1 text-custom-text-200 text-xs">
-              <CalendarDaysIcon className="h-3.5 w-3.5" />
+              <CalendarDays className="h-3.5 w-3.5" />
               {renderShortDate(
                 (cycleId
                   ? cycleDetails?.created_at
@@ -195,7 +194,7 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer(
         <div className="flex items-center gap-2 flex-wrap justify-self-end">
           <Button
             variant="neutral-primary"
-            prependIcon={<ArrowPathIcon className="h-3.5 w-3.5" />}
+            prependIcon={<RefreshCw className="h-3.5 w-3.5" />}
             onClick={() => {
               if (!workspaceSlug) return;
 
@@ -204,7 +203,7 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer(
           >
             Refresh
           </Button>
-          <Button variant="primary" prependIcon={<ArrowDownTrayIcon />} onClick={exportAnalytics}>
+          <Button variant="primary" prependIcon={<Download className="h-3.5 w-3.5" />} onClick={exportAnalytics}>
             Export as CSV
           </Button>
         </div>

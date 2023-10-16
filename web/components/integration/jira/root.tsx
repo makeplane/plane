@@ -12,8 +12,7 @@ import { mutate } from "swr";
 import { FormProvider, useForm } from "react-hook-form";
 
 // icons
-import { ArrowLeft, List } from "lucide-react";
-import { CogIcon, UsersIcon, CheckIcon } from "components/icons";
+import { ArrowLeft, Check, List, Settings } from "lucide-react";
 
 // services
 import jiraImporterService from "services/jira.service";
@@ -22,7 +21,7 @@ import jiraImporterService from "services/jira.service";
 import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
 
 // components
-import { Button } from "@plane/ui";
+import { Button, UserGroupIcon } from "@plane/ui";
 import {
   JiraGetImportDetail,
   JiraProjectDetail,
@@ -45,7 +44,7 @@ const integrationWorkflowData: Array<{
   {
     title: "Configure",
     key: "import-configure",
-    icon: CogIcon,
+    icon: Settings,
   },
   {
     title: "Import Data",
@@ -55,12 +54,12 @@ const integrationWorkflowData: Array<{
   {
     title: "Users",
     key: "import-users",
-    icon: UsersIcon,
+    icon: UserGroupIcon,
   },
   {
     title: "Confirm",
     key: "import-confirmation",
-    icon: CheckIcon,
+    icon: Check,
   },
 ];
 

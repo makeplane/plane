@@ -6,9 +6,8 @@ import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 import { Combobox } from "@headlessui/react";
 // icons
 import { ChevronDown, Check, Search } from "lucide-react";
-import { PriorityIcon } from "components/icons";
 // components
-import { Tooltip } from "@plane/ui";
+import { Tooltip, PriorityIcon } from "@plane/ui";
 // types
 import { TIssuePriorities } from "types";
 // constants
