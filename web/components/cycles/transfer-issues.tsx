@@ -5,9 +5,9 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // component
-import { Button } from "@plane/ui";
+import { Button, TransferIcon } from "@plane/ui";
 // icon
-import { ExclamationIcon, TransferIcon } from "components/icons";
+import { AlertCircle } from "lucide-react";
 // services
 import { CycleService } from "services/cycle.service";
 // fetch-key
@@ -36,7 +36,7 @@ export const TransferIssues: React.FC<Props> = ({ handleClick }) => {
   return (
     <div className="-mt-2 mb-4 flex items-center justify-between px-8 pt-6">
       <div className="flex items-center gap-2 text-sm text-custom-text-200">
-        <ExclamationIcon height={14} width={14} className="fill-current text-custom-text-200" />
+        <AlertCircle className="h-3.5 w-3.5 text-custom-text-200" />
         <span>Completed cycles are not editable.</span>
       </div>
 

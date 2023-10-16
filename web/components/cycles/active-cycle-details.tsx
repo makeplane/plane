@@ -12,23 +12,22 @@ import useToast from "hooks/use-toast";
 // ui
 import { AssigneesList } from "components/ui/avatar";
 import { SingleProgressStats } from "components/core";
-import { Loader, Tooltip, LinearProgressIndicator, PriorityIcon, StateGroupIcon } from "@plane/ui";
+import {
+  Loader,
+  Tooltip,
+  LinearProgressIndicator,
+  PriorityIcon,
+  StateGroupIcon,
+  ContrastIcon,
+  RunningIcon,
+  LayersIcon,
+  LayerStackIcon,
+} from "@plane/ui";
 // components
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { ActiveCycleProgressStats } from "components/cycles";
-
 // icons
-import { CalendarDaysIcon } from "@heroicons/react/20/solid";
-import {
-  TargetIcon,
-  ContrastIcon,
-  PersonRunningIcon,
-  ArrowRightIcon,
-  TriangleExclamationIcon,
-  AlarmClockIcon,
-  LayerDiagonalIcon,
-} from "components/icons";
-import { StarIcon } from "@heroicons/react/24/outline";
+import { AlarmClock, AlertTriangle, ArrowRight, CalendarDays, Star, Target } from "lucide-react";
 // components
 import { ViewIssueLabel } from "components/issues";
 // helpers
@@ -264,12 +263,12 @@ export const ActiveCycleDetails: React.FC = () => {
                   >
                     {cycleStatus === "current" ? (
                       <span className="flex gap-1 whitespace-nowrap">
-                        <PersonRunningIcon className="h-4 w-4" />
+                        <RunningIcon className="h-4 w-4" />
                         {findHowManyDaysLeft(cycle.end_date ?? new Date())} Days Left
                       </span>
                     ) : cycleStatus === "upcoming" ? (
                       <span className="flex gap-1 whitespace-nowrap">
-                        <AlarmClockIcon className="h-4 w-4" />
+                        <AlarmClock className="h-4 w-4" />
                         {findHowManyDaysLeft(cycle.start_date ?? new Date())} Days Left
                       </span>
                     ) : cycleStatus === "completed" ? (
@@ -281,7 +280,7 @@ export const ActiveCycleDetails: React.FC = () => {
                             }`}
                           >
                             <span>
-                              <TriangleExclamationIcon className="h-3.5 w-3.5 fill-current" />
+                              <AlertTriangle className="h-3.5 w-3.5" />
                             </span>
                           </Tooltip>
                         )}{" "}
@@ -298,7 +297,7 @@ export const ActiveCycleDetails: React.FC = () => {
                         handleRemoveFromFavorites();
                       }}
                     >
-                      <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                      <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
                     </button>
                   ) : (
                     <button
@@ -307,7 +306,7 @@ export const ActiveCycleDetails: React.FC = () => {
                         handleAddToFavorites();
                       }}
                     >
-                      <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
+                      <Star className="h-4 w-4 " color="rgb(var(--color-text-200))" />
                     </button>
                   )}
                 </span>
@@ -315,12 +314,12 @@ export const ActiveCycleDetails: React.FC = () => {
 
               <div className="flex items-center justify-start gap-5 text-custom-text-200">
                 <div className="flex items-start gap-1">
-                  <CalendarDaysIcon className="h-4 w-4" />
+                  <CalendarDays className="h-4 w-4" />
                   <span>{renderShortDateWithYearFormat(startDate)}</span>
                 </div>
-                <ArrowRightIcon className="h-4 w-4 text-custom-text-200" />
+                <ArrowRight className="h-4 w-4 text-custom-text-200" />
                 <div className="flex items-start gap-1">
-                  <TargetIcon className="h-4 w-4" />
+                  <Target className="h-4 w-4" />
                   <span>{renderShortDateWithYearFormat(endDate)}</span>
                 </div>
               </div>
@@ -352,7 +351,7 @@ export const ActiveCycleDetails: React.FC = () => {
 
               <div className="flex items-center gap-4 text-custom-text-200">
                 <div className="flex gap-2">
-                  <LayerDiagonalIcon className="h-4 w-4 flex-shrink-0" />
+                  <LayersIcon className="h-4 w-4 flex-shrink-0" />
                   {cycle.total_issues} issues
                 </div>
                 <div className="flex items-center gap-2">
@@ -504,7 +503,7 @@ export const ActiveCycleDetails: React.FC = () => {
             </div>
             <div className="flex items-center gap-1">
               <span>
-                <LayerDiagonalIcon className="h-5 w-5 flex-shrink-0 text-custom-text-200" />
+                <LayerStackIcon className="h-5 w-5 flex-shrink-0 text-custom-text-200" />
               </span>
               <span>Pending Issues - {cycle.total_issues - (cycle.completed_issues + cycle.cancelled_issues)}</span>
             </div>

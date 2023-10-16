@@ -4,19 +4,20 @@ import { useRouter } from "next/router";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { RadialProgressBar, Tooltip, LinearProgressIndicator } from "@plane/ui";
+import { RadialProgressBar, Tooltip, LinearProgressIndicator, ContrastIcon, RunningIcon } from "@plane/ui";
 import { CustomMenu } from "components/ui";
 // icons
-import { CalendarDaysIcon } from "@heroicons/react/20/solid";
 import {
-  TargetIcon,
-  ContrastIcon,
-  PersonRunningIcon,
-  ArrowRightIcon,
-  TriangleExclamationIcon,
-  AlarmClockIcon,
-} from "components/icons";
-import { LinkIcon, PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
+  AlarmClock,
+  AlertTriangle,
+  ArrowRight,
+  CalendarDays,
+  LinkIcon,
+  Pencil,
+  Star,
+  Target,
+  Trash2,
+} from "lucide-react";
 // helpers
 import { getDateRangeStatus, renderShortDateWithYearFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
@@ -174,12 +175,12 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                   >
                     {cycleStatus === "current" ? (
                       <span className="flex gap-1 whitespace-nowrap">
-                        <PersonRunningIcon className="h-4 w-4" />
+                        <RunningIcon className="h-4 w-4" />
                         {findHowManyDaysLeft(cycle.end_date ?? new Date())} days left
                       </span>
                     ) : cycleStatus === "upcoming" ? (
                       <span className="flex gap-1">
-                        <AlarmClockIcon className="h-4 w-4" />
+                        <AlarmClock className="h-4 w-4" />
                         {findHowManyDaysLeft(cycle.start_date ?? new Date())} days left
                       </span>
                     ) : cycleStatus === "completed" ? (
@@ -191,7 +192,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                             }`}
                           >
                             <span>
-                              <TriangleExclamationIcon className="h-3.5 w-3.5 fill-current" />
+                              <AlertTriangle className="h-3.5 w-3.5" />
                             </span>
                           </Tooltip>
                         )}{" "}
@@ -205,12 +206,12 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                   {cycleStatus !== "draft" && (
                     <div className="flex items-center justify-start gap-2 text-custom-text-200">
                       <div className="flex items-start gap-1 whitespace-nowrap">
-                        <CalendarDaysIcon className="h-4 w-4" />
+                        <CalendarDays className="h-4 w-4" />
                         <span>{renderShortDateWithYearFormat(startDate)}</span>
                       </div>
-                      <ArrowRightIcon className="h-4 w-4" />
+                      <ArrowRight className="h-4 w-4" />
                       <div className="flex items-start gap-1 whitespace-nowrap">
-                        <TargetIcon className="h-4 w-4" />
+                        <Target className="h-4 w-4" />
                         <span>{renderShortDateWithYearFormat(endDate)}</span>
                       </div>
                     </div>
@@ -284,11 +285,11 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                   </Tooltip>
                   {cycle.is_favorite ? (
                     <button type="button" onClick={handleRemoveFromFavorites}>
-                      <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                      <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
                     </button>
                   ) : (
                     <button type="button" onClick={handleAddToFavorites}>
-                      <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
+                      <Star className="h-4 w-4 " color="rgb(var(--color-text-200))" />
                     </button>
                   )}
                   <div className="flex items-center">
@@ -296,7 +297,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                       {!isCompleted && (
                         <CustomMenu.MenuItem onClick={handleEditCycle}>
                           <span className="flex items-center justify-start gap-2">
-                            <PencilIcon className="h-4 w-4" />
+                            <Pencil className="h-4 w-4" />
                             <span>Edit Cycle</span>
                           </span>
                         </CustomMenu.MenuItem>
@@ -304,7 +305,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                       {!isCompleted && (
                         <CustomMenu.MenuItem onClick={handleDeleteCycle}>
                           <span className="flex items-center justify-start gap-2">
-                            <TrashIcon className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4" />
                             <span>Delete cycle</span>
                           </span>
                         </CustomMenu.MenuItem>
