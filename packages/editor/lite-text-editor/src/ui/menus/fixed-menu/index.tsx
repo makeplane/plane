@@ -33,7 +33,7 @@ type EditorBubbleMenuProps = {
     showAccessSpecifier: boolean;
     commentAccess:
       | {
-          icon: LucideIcon;
+          icon: any;
           key: string;
           label: "Private" | "Public";
         }[]

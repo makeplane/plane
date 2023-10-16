@@ -8,7 +8,7 @@ import { FileService } from "services/file.service";
 import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
 // ui
 import { Button, Tooltip } from "@plane/ui";
-import { Globe2, Lock, LucideIcon } from "lucide-react";
+import { Globe2, Lock } from "lucide-react";
 
 // types
 import type { IIssueComment } from "types";
@@ -25,7 +25,7 @@ type Props = {
 };
 
 type commentAccessType = {
-  icon: LucideIcon;
+  icon: any;
   key: string;
   label: "Private" | "Public";
 };

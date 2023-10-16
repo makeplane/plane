@@ -8,7 +8,6 @@ import {
 } from "@plane/editor-core";
 import { FixedMenu } from "./menus/fixed-menu";
 import { LiteTextEditorExtensions } from "./extensions";
-import { LucideIcon } from "lucide-react";
 
 export type UploadImage = (file: File) => Promise<string>;
 export type DeleteImage = (assetUrlWithWorkspaceId: string) => Promise<any>;
@@ -33,7 +32,7 @@ interface ILiteTextEditor {
     onAccessChange: (accessKey: string) => void;
     showAccessSpecifier: boolean;
     commentAccess: {
-      icon: LucideIcon;
+      icon: any;
       key: string;
       label: "Private" | "Public";
     }[];
