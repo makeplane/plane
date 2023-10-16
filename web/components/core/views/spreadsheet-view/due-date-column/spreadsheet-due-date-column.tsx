@@ -5,26 +5,22 @@ import { DueDateColumn } from "components/core";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
-import { IUser, IIssue, Properties } from "types";
+import { IIssue, Properties } from "types";
 
 type Props = {
   issue: IIssue;
-  projectId: string;
-  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
+  onChange: (date: string | null) => void;
   expandedIssues: string[];
   properties: Properties;
-  user: IUser | undefined;
-  isNotAllowed: boolean;
+  disabled: boolean;
 };
 
 export const SpreadsheetDueDateColumn: React.FC<Props> = ({
   issue,
-  projectId,
-  partialUpdateIssue,
+  onChange,
   expandedIssues,
   properties,
-  user,
-  isNotAllowed,
+  disabled,
 }) => {
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
@@ -32,14 +28,7 @@ export const SpreadsheetDueDateColumn: React.FC<Props> = ({
 
   return (
     <div>
-      <DueDateColumn
-        issue={issue}
-        projectId={projectId}
-        properties={properties}
-        partialUpdateIssue={partialUpdateIssue}
-        user={user}
-        isNotAllowed={isNotAllowed}
-      />
+      <DueDateColumn issue={issue} properties={properties} onChange={onChange} disabled={disabled} />
 
       {isExpanded &&
         !isLoading &&
@@ -49,12 +38,10 @@ export const SpreadsheetDueDateColumn: React.FC<Props> = ({
           <SpreadsheetDueDateColumn
             key={subIssue.id}
             issue={subIssue}
-            projectId={subIssue.project_detail.id}
-            partialUpdateIssue={partialUpdateIssue}
+            onChange={onChange}
             expandedIssues={expandedIssues}
             properties={properties}
-            user={user}
-            isNotAllowed={isNotAllowed}
+            disabled={disabled}
           />
         ))}
     </div>

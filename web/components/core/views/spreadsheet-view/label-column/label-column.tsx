@@ -3,28 +3,18 @@ import React from "react";
 // components
 import { LabelSelect } from "components/project";
 // types
-import { IUser, IIssue, Properties } from "types";
+import { IIssue, Properties, IIssueLabels } from "types";
 
 type Props = {
   issue: IIssue;
-  projectId: string;
-  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
+  onChange: (data: string[]) => void;
+  labels: IIssueLabels[] | undefined;
   properties: Properties;
-  user: IUser | undefined;
-  isNotAllowed: boolean;
+  disabled: boolean;
 };
 
-export const LabelColumn: React.FC<Props> = ({
-  issue,
-  projectId,
-  partialUpdateIssue,
-  properties,
-  user,
-  isNotAllowed,
-}) => {
-  const handleLabelChange = (data: any) => {
-    partialUpdateIssue({ labels_list: data }, issue);
-  };
+export const LabelColumn: React.FC<Props> = (props) => {
+  const { issue, onChange, labels, properties, disabled } = props;
 
   return (
     <div className="flex items-center text-sm h-11 w-full bg-custom-background-100">
@@ -32,13 +22,11 @@ export const LabelColumn: React.FC<Props> = ({
         {properties.labels && (
           <LabelSelect
             value={issue.labels}
-            projectId={projectId}
-            onChange={handleLabelChange}
-            labelsDetails={issue.label_details}
+            onChange={onChange}
+            labels={labels ?? []}
             hideDropdownArrow
             maxRender={1}
-            user={user}
-            disabled={isNotAllowed}
+            disabled={disabled}
           />
         )}
       </span>

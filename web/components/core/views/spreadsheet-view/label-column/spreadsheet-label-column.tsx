@@ -5,27 +5,20 @@ import { LabelColumn } from "components/core";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
-import { IUser, IIssue, Properties } from "types";
+import { IIssue, Properties, IIssueLabels } from "types";
 
 type Props = {
   issue: IIssue;
-  projectId: string;
-  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
+  onChange: (formData: Partial<IIssue>) => void;
+  labels: IIssueLabels[] | undefined;
   expandedIssues: string[];
   properties: Properties;
-  user: IUser | undefined;
-  isNotAllowed: boolean;
+  disabled: boolean;
 };
 
-export const SpreadsheetLabelColumn: React.FC<Props> = ({
-  issue,
-  projectId,
-  partialUpdateIssue,
-  expandedIssues,
-  properties,
-  user,
-  isNotAllowed,
-}) => {
+export const SpreadsheetLabelColumn: React.FC<Props> = (props) => {
+  const { issue, onChange, labels, expandedIssues, properties, disabled } = props;
+
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
   const { subIssues, isLoading } = useSubIssue(issue.project_detail.id, issue.id, isExpanded);
@@ -34,11 +27,10 @@ export const SpreadsheetLabelColumn: React.FC<Props> = ({
     <div>
       <LabelColumn
         issue={issue}
-        projectId={projectId}
+        onChange={(data) => onChange({ labels_list: data })}
+        labels={labels}
         properties={properties}
-        partialUpdateIssue={partialUpdateIssue}
-        user={user}
-        isNotAllowed={isNotAllowed}
+        disabled={disabled}
       />
 
       {isExpanded &&
@@ -49,12 +41,11 @@ export const SpreadsheetLabelColumn: React.FC<Props> = ({
           <SpreadsheetLabelColumn
             key={subIssue.id}
             issue={subIssue}
-            projectId={subIssue.project_detail.id}
-            partialUpdateIssue={partialUpdateIssue}
+            onChange={onChange}
+            labels={labels}
             expandedIssues={expandedIssues}
             properties={properties}
-            user={user}
-            isNotAllowed={isNotAllowed}
+            disabled={disabled}
           />
         ))}
     </div>

@@ -1,7 +1,4 @@
 import React from "react";
-import { useRouter } from "next/router";
-// services
-import { TrackEventService } from "services/track_event.service";
 // hooks
 import useEstimateOption from "hooks/use-estimate-option";
 // ui
@@ -10,34 +7,23 @@ import { Tooltip } from "@plane/ui";
 // icons
 import { PlayIcon } from "@heroicons/react/24/outline";
 // types
-import { IUser, IIssue } from "types";
+import { IIssue } from "types";
 
 type Props = {
   issue: IIssue;
-  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
-  position?: "left" | "right";
+  onChange: (data: number) => void;
   tooltipPosition?: "top" | "bottom";
-  selfPositioned?: boolean;
   customButton?: boolean;
-  user: IUser | undefined;
-  isNotAllowed: boolean;
+  disabled: boolean;
 };
-
-const trackEventService = new TrackEventService();
 
 export const ViewEstimateSelect: React.FC<Props> = ({
   issue,
-  partialUpdateIssue,
-  // position = "left",
+  onChange,
   tooltipPosition = "top",
-  // selfPositioned = false,
   customButton = false,
-  user,
-  isNotAllowed,
+  disabled,
 }) => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
   const { isEstimateActive, estimatePoints } = useEstimateOption(issue.estimate_point);
 
   const estimateValue = estimatePoints?.find((e) => e.key === issue.estimate_point)?.value;
@@ -56,25 +42,11 @@ export const ViewEstimateSelect: React.FC<Props> = ({
   return (
     <CustomSelect
       value={issue.estimate_point}
-      onChange={(val: number) => {
-        partialUpdateIssue({ estimate_point: val }, issue);
-        trackEventService.trackIssuePartialPropertyUpdateEvent(
-          {
-            workspaceSlug,
-            workspaceId: issue.workspace,
-            projectId: issue.project_detail.id,
-            projectIdentifier: issue.project_detail.identifier,
-            projectName: issue.project_detail.name,
-            issueId: issue.id,
-          },
-          "ISSUE_PROPERTY_UPDATE_ESTIMATE",
-          user as IUser
-        );
-      }}
+      onChange={onChange}
       {...(customButton ? { customButton: estimateLabels } : { label: estimateLabels })}
       maxHeight="md"
       noChevron
-      disabled={isNotAllowed}
+      disabled={disabled}
       width="w-full min-w-[8rem]"
     >
       <CustomSelect.Option value={null}>

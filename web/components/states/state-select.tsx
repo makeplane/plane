@@ -25,7 +25,7 @@ import { getStatesList } from "helpers/state.helper";
 
 type Props = {
   value: IState;
-  onChange: (data: any, states: IState[] | undefined) => void;
+  onChange: (state: IState) => void;
   projectId: string;
   className?: string;
   buttonClassName?: string;
@@ -101,7 +101,9 @@ export const StateSelect: React.FC<Props> = ({
       className={`flex-shrink-0 text-left ${className}`}
       value={value.id}
       onChange={(data: string) => {
-        onChange(data, states);
+        const selectedState = states?.find((state) => state.id === data);
+
+        if (selectedState) onChange(selectedState);
       }}
       disabled={disabled}
     >

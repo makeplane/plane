@@ -9,22 +9,20 @@ import { IUser, IIssue, Properties } from "types";
 
 type Props = {
   issue: IIssue;
-  projectId: string;
-  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
+  onChange: (data: Partial<IIssue>) => void;
   expandedIssues: string[];
   properties: Properties;
   user: IUser | undefined;
-  isNotAllowed: boolean;
+  disabled: boolean;
 };
 
 export const SpreadsheetPriorityColumn: React.FC<Props> = ({
   issue,
-  projectId,
-  partialUpdateIssue,
+  onChange,
   expandedIssues,
   properties,
   user,
-  isNotAllowed,
+  disabled,
 }) => {
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
@@ -34,11 +32,9 @@ export const SpreadsheetPriorityColumn: React.FC<Props> = ({
     <div>
       <PriorityColumn
         issue={issue}
-        projectId={projectId}
         properties={properties}
-        partialUpdateIssue={partialUpdateIssue}
-        user={user}
-        isNotAllowed={isNotAllowed}
+        onChange={(data) => onChange({ priority: data })}
+        disabled={disabled}
       />
 
       {isExpanded &&
@@ -49,12 +45,11 @@ export const SpreadsheetPriorityColumn: React.FC<Props> = ({
           <SpreadsheetPriorityColumn
             key={subIssue.id}
             issue={subIssue}
-            projectId={subIssue.project_detail.id}
-            partialUpdateIssue={partialUpdateIssue}
+            onChange={onChange}
             expandedIssues={expandedIssues}
             properties={properties}
             user={user}
-            isNotAllowed={isNotAllowed}
+            disabled={disabled}
           />
         ))}
     </div>

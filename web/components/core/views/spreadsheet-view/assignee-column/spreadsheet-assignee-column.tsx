@@ -5,26 +5,24 @@ import { AssigneeColumn } from "components/core";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
-import { IUser, IIssue, Properties } from "types";
+import { IIssue, Properties, IUserLite } from "types";
 
 type Props = {
   issue: IIssue;
-  projectId: string;
-  handleUpdateIssue: (issueId: string, data: Partial<IIssue>) => void;
+  members: IUserLite[] | undefined;
+  onChange: (data: Partial<IIssue>) => void;
   expandedIssues: string[];
   properties: Properties;
-  user: IUser | undefined;
-  isNotAllowed: boolean;
+  disabled: boolean;
 };
 
 export const SpreadsheetAssigneeColumn: React.FC<Props> = ({
   issue,
-  projectId,
-  handleUpdateIssue,
+  members,
+  onChange,
   expandedIssues,
   properties,
-  user,
-  isNotAllowed,
+  disabled,
 }) => {
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
@@ -34,27 +32,25 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = ({
     <div>
       <AssigneeColumn
         issue={issue}
-        projectId={projectId}
+        members={members}
         properties={properties}
-        onChange={(data) => handleUpdateIssue(issue.id, data)}
-        user={user}
-        isNotAllowed={isNotAllowed}
+        onChange={(data) => onChange({ assignees_list: data })}
+        disabled={disabled}
       />
 
       {isExpanded &&
         !isLoading &&
         subIssues &&
         subIssues.length > 0 &&
-        subIssues.map((subIssue: IIssue) => (
+        subIssues.map((subIssue) => (
           <SpreadsheetAssigneeColumn
             key={subIssue.id}
             issue={subIssue}
-            projectId={subIssue.project_detail.id}
-            handleUpdateIssue={handleUpdateIssue}
+            onChange={onChange}
             expandedIssues={expandedIssues}
             properties={properties}
-            user={user}
-            isNotAllowed={isNotAllowed}
+            members={members}
+            disabled={disabled}
           />
         ))}
     </div>

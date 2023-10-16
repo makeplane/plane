@@ -1,44 +1,17 @@
-import { FC } from "react";
-import { useRouter } from "next/router";
 // components
 import { PrioritySelect } from "components/project";
-// services
-import { TrackEventService } from "services/track_event.service";
 // types
-import { IUser, IIssue, Properties, TIssuePriorities } from "types";
+import { IIssue, Properties, TIssuePriorities } from "types";
 
 type Props = {
   issue: IIssue;
-  projectId: string;
-  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
+  onChange: (data: TIssuePriorities) => void;
   properties: Properties;
-  user: IUser | undefined;
-  isNotAllowed: boolean;
+  disabled: boolean;
 };
 
-const trackEventService = new TrackEventService();
-
-export const PriorityColumn: FC<Props> = (props) => {
-  const { issue, partialUpdateIssue, properties, user, isNotAllowed } = props;
-  // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
-  const handlePriorityChange = (data: TIssuePriorities) => {
-    partialUpdateIssue({ priority: data }, issue);
-    trackEventService.trackIssuePartialPropertyUpdateEvent(
-      {
-        workspaceSlug,
-        workspaceId: issue.workspace,
-        projectId: issue.project_detail.id,
-        projectIdentifier: issue.project_detail.identifier,
-        projectName: issue.project_detail.name,
-        issueId: issue.id,
-      },
-      "ISSUE_PROPERTY_UPDATE_PRIORITY",
-      user as IUser
-    );
-  };
+export const PriorityColumn: React.FC<Props> = (props) => {
+  const { issue, onChange, properties, disabled } = props;
 
   return (
     <div className="flex items-center text-sm h-11 w-full bg-custom-background-100">
@@ -46,10 +19,10 @@ export const PriorityColumn: FC<Props> = (props) => {
         {properties.priority && (
           <PrioritySelect
             value={issue.priority}
-            onChange={handlePriorityChange}
+            onChange={onChange}
             buttonClassName="!p-0 !rounded-none !shadow-none !border-0"
             hideDropdownArrow
-            disabled={isNotAllowed}
+            disabled={disabled}
           />
         )}
       </span>

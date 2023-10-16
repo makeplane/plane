@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { CheckIcon, ChevronDownIcon, PlusIcon } from "lucide-react";
 
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
@@ -22,15 +23,24 @@ import { CustomMenu, Icon } from "components/ui";
 import { IssuePeekOverview } from "components/issues";
 import { Spinner } from "@plane/ui";
 // types
-import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueOrderByOptions } from "types";
-// icon
-import { CheckIcon, ChevronDownIcon, PlusIcon } from "lucide-react";
+import {
+  IIssue,
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueLabels,
+  IStateResponse,
+  IUserLite,
+  TIssueOrderByOptions,
+} from "types";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
   displayFilters: IIssueDisplayFilterOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
   issues: IIssue[] | undefined;
+  members?: IUserLite[] | undefined;
+  labels?: IIssueLabels[] | undefined;
+  states?: IStateResponse | undefined;
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
   handleUpdateIssue: (issueId: string, data: Partial<IIssue>) => void;
   openIssuesListModal?: (() => void) | null;
@@ -43,6 +53,9 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     displayFilters,
     handleDisplayFilterUpdate,
     issues,
+    members,
+    labels,
+    states,
     handleIssueAction,
     handleUpdateIssue,
     openIssuesListModal,
@@ -253,11 +266,13 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
           <Component
             key={issue.id}
             issue={issue}
-            projectId={issue.project_detail.id}
-            handleUpdateIssue={handleUpdateIssue}
+            onChange={(data: Partial<IIssue>) => handleUpdateIssue(issue.id, data)}
             expandedIssues={expandedIssues}
             properties={displayProperties}
-            isNotAllowed={disableUserActions}
+            disabled={disableUserActions}
+            members={members}
+            labels={labels}
+            states={states}
           />
         ))}
       </div>
@@ -274,14 +289,10 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
   useEffect(() => {
     const currentContainerRef = containerRef.current;
 
-    if (currentContainerRef) {
-      currentContainerRef.addEventListener("scroll", handleScroll);
-    }
+    if (currentContainerRef) currentContainerRef.addEventListener("scroll", handleScroll);
 
     return () => {
-      if (currentContainerRef) {
-        currentContainerRef.removeEventListener("scroll", handleScroll);
-      }
+      if (currentContainerRef) currentContainerRef.removeEventListener("scroll", handleScroll);
     };
   }, []);
 

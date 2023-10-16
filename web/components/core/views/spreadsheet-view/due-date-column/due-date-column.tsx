@@ -2,31 +2,22 @@ import { FC } from "react";
 // components
 import { ViewDueDateSelect } from "components/issues";
 // types
-import { IUser, IIssue, Properties } from "types";
+import { IIssue, Properties } from "types";
 
 type Props = {
   issue: IIssue;
-  projectId: string;
-  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
+  onChange: (date: string | null) => void;
   properties: Properties;
-  user: IUser | undefined;
-  isNotAllowed: boolean;
+  disabled: boolean;
 };
 
 export const DueDateColumn: FC<Props> = (props) => {
-  const { issue, partialUpdateIssue, properties, user, isNotAllowed } = props;
+  const { issue, onChange, properties, disabled } = props;
+
   return (
     <div className="flex items-center text-sm h-11 w-full bg-custom-background-100">
       <span className="flex items-center px-4 py-2.5 h-full w-full flex-shrink-0 border-r border-b border-custom-border-100">
-        {properties.due_date && user && (
-          <ViewDueDateSelect
-            issue={issue}
-            partialUpdateIssue={partialUpdateIssue}
-            noBorder
-            user={user}
-            isNotAllowed={isNotAllowed}
-          />
-        )}
+        {properties.due_date && <ViewDueDateSelect issue={issue} onChange={onChange} noBorder disabled={disabled} />}
       </span>
     </div>
   );

@@ -1,49 +1,19 @@
 import React from "react";
-import { useRouter } from "next/router";
 // components
 import { MembersSelect } from "components/project";
-// services
-import { TrackEventService } from "services/track_event.service";
 // types
-import { IUser, IIssue, Properties } from "types";
+import { IIssue, IUserLite, Properties } from "types";
 
 type Props = {
   issue: IIssue;
-  projectId: string;
-  onChange: (formData: Partial<IIssue>) => void;
+  onChange: (members: string[]) => void;
+  members: IUserLite[] | undefined;
   properties: Properties;
-  user: IUser | undefined;
-  isNotAllowed: boolean;
+  disabled: boolean;
 };
 
-const trackEventService = new TrackEventService();
-
-export const AssigneeColumn: React.FC<Props> = ({ issue, projectId, onChange, properties, user, isNotAllowed }) => {
-  const router = useRouter();
-
-  const { workspaceSlug } = router.query;
-
-  const handleAssigneeChange = (data: any) => {
-    const newData = issue.assignees ?? [];
-
-    if (newData.includes(data)) newData.splice(newData.indexOf(data), 1);
-    else newData.push(data);
-
-    onChange({ assignees_list: data });
-
-    trackEventService.trackIssuePartialPropertyUpdateEvent(
-      {
-        workspaceSlug,
-        workspaceId: issue.workspace,
-        projectId: issue.project_detail.id,
-        projectIdentifier: issue.project_detail.identifier,
-        projectName: issue.project_detail.name,
-        issueId: issue.id,
-      },
-      "ISSUE_PROPERTY_UPDATE_ASSIGNEE",
-      user as IUser
-    );
-  };
+export const AssigneeColumn: React.FC<Props> = (props) => {
+  const { issue, onChange, members, properties, disabled } = props;
 
   return (
     <div className="flex items-center text-sm h-11 w-full bg-custom-background-100">
@@ -51,12 +21,12 @@ export const AssigneeColumn: React.FC<Props> = ({ issue, projectId, onChange, pr
         {properties.assignee && (
           <MembersSelect
             value={issue.assignees}
-            projectId={projectId}
-            onChange={handleAssigneeChange}
-            membersDetails={issue.assignee_details}
+            onChange={onChange}
+            members={members ?? []}
             buttonClassName="!p-0 !rounded-none !shadow-none !border-0"
             hideDropdownArrow
-            disabled={isNotAllowed}
+            disabled={disabled}
+            multiple
           />
         )}
       </span>
