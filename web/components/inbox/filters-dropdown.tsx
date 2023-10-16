@@ -36,7 +36,7 @@ export const FiltersDropdown: React.FC = observer(() => {
           if (!workspaceSlug || !projectId || !inboxId) return;
 
           const key = option.key as keyof IInboxFilterOptions;
-          const currentValue = filters?.[key] ?? [];
+          const currentValue: any[] = filters?.[key] ?? [];
 
           const valueExists = currentValue.includes(option.value);
 

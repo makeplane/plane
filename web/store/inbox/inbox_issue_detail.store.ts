@@ -126,7 +126,7 @@ export class InboxIssueDetailsStore implements IInboxIssueDetailsStore {
         projectId,
         inboxId,
         payload,
-        this.rootStore.user.currentUser
+        this.rootStore.user.currentUser ?? undefined
       );
 
       runInAction(() => {
@@ -181,7 +181,7 @@ export class InboxIssueDetailsStore implements IInboxIssueDetailsStore {
         inboxId,
         issueId,
         { issue: data },
-        this.rootStore.user.currentUser
+        this.rootStore.user.currentUser ?? undefined
       );
     } catch (error) {
       runInAction(() => {
@@ -230,7 +230,7 @@ export class InboxIssueDetailsStore implements IInboxIssueDetailsStore {
         inboxId,
         issueId,
         data,
-        this.rootStore.user.currentUser
+        this.rootStore.user.currentUser ?? undefined
       );
     } catch (error) {
       runInAction(() => {
@@ -264,7 +264,7 @@ export class InboxIssueDetailsStore implements IInboxIssueDetailsStore {
         projectId,
         inboxId,
         issueId,
-        this.rootStore.user.currentUser
+        this.rootStore.user.currentUser ?? undefined
       );
     } catch (error) {
       runInAction(() => {
