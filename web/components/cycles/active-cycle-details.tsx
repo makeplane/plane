@@ -439,7 +439,7 @@ export const ActiveCycleDetails: React.FC = () => {
                               : "border-orange-500/20 bg-orange-500/20 text-orange-500"
                           }`}
                         >
-                          <PriorityIcon priority={issue.priority} className="text-sm" />
+                          <PriorityIcon priority={issue.priority} className="h-3 w-3" />
                         </div>
                         <ViewIssueLabel labelDetails={issue.label_details} maxRender={2} />
                         <div className={`flex items-center gap-2 text-custom-text-200`}>

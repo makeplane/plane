@@ -51,7 +51,7 @@ export const PrioritySelect: React.FC<Props> = ({
     query: priority,
     content: (
       <div className="flex items-center gap-2">
-        <PriorityIcon priority={priority} className="text-sm" />
+        <PriorityIcon priority={priority} className="h-3.5 w-3.5" />
         {priority ?? "None"}
       </div>
     ),
@@ -69,10 +69,10 @@ export const PrioritySelect: React.FC<Props> = ({
           value === "urgent" ? "border-red-500/20 bg-red-500" : "border-custom-border-300 bg-custom-background-100"
         } items-center`}
       >
-        <span className="flex gap-1 items-center text-custom-text-200 text-xs">
+        <span className="flex gap-1 items-center text-custom-text-200 ">
           <PriorityIcon
             priority={value}
-            className={`text-sm ${
+            className={`w-3.5 ${
               value === "urgent"
                 ? "text-white"
                 : value === "high"

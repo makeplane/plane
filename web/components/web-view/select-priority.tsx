@@ -61,7 +61,7 @@ export const PrioritySelect: React.FC<Props> = (props) => {
                       : "border-custom-border-200 text-custom-text-200"
                   }`}
                 >
-                  <PriorityIcon priority={priority} className="text-sm" />
+                  <PriorityIcon priority={priority} className="h-3.5 w-3.5" />
                 </span>
               ),
             })) || []

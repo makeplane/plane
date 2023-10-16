@@ -74,7 +74,7 @@ export const ViewPrioritySelect: React.FC<Props> = ({
             <span className="flex gap-1 items-center text-custom-text-200 text-xs">
               <PriorityIcon
                 priority={issue.priority}
-                className={`text-sm ${
+                className={`h-3.5 w-3.5 ${
                   issue.priority === "urgent"
                     ? "text-white"
                     : issue.priority === "high"
@@ -97,7 +97,7 @@ export const ViewPrioritySelect: React.FC<Props> = ({
       {PRIORITIES?.map((priority) => (
         <CustomSelect.Option key={priority} value={priority} className="capitalize">
           <>
-            <PriorityIcon priority={priority} className="text-sm" />
+            <PriorityIcon priority={priority} className="h-3.5 w-3.5" />
             {priority ?? "None"}
           </>
         </CustomSelect.Option>
