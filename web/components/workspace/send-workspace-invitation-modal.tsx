@@ -10,7 +10,7 @@ import useToast from "hooks/use-toast";
 import { CustomSelect } from "components/ui";
 import { Button, Input } from "@plane/ui";
 // icons
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Plus, X } from "lucide-react";
 // types
 import { IUser } from "types";
 // constants
@@ -215,7 +215,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
                               className="self-center place-items-center rounded -ml-3"
                               onClick={() => remove(index)}
                             >
-                              <XMarkIcon className="h-3.5 w-3.5 text-custom-text-200" />
+                              <X className="h-3.5 w-3.5 text-custom-text-200" />
                             </button>
                           )}
                         </div>
@@ -229,7 +229,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
                       className="flex items-center gap-2 outline-custom-primary bg-transparent text-custom-primary text-sm font-medium py-2 pr-3"
                       onClick={appendField}
                     >
-                      <PlusIcon className="h-4 w-4" />
+                      <Plus className="h-4 w-4" />
                       Add more
                     </button>
                     <div className="flex items-center gap-2">

@@ -8,7 +8,7 @@ import useDebounce from "hooks/use-debounce";
 import { ProjectService } from "services/project";
 // components
 import { WebViewModal } from "components/web-view";
-import { LayerDiagonalIcon } from "components/icons";
+import { LayersIcon } from "@plane/ui";
 import { Loader, PrimaryButton, SecondaryButton, ToggleSwitch } from "components/ui";
 // types
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "types";
@@ -88,7 +88,7 @@ export const IssuesSelectBottomSheet: React.FC<IssuesSelectBottomSheetProps> = (
     <WebViewModal isOpen={isOpen} onClose={handleClose} modalTitle="Select issue">
       {!isSearching && issues.length === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && (
         <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
-          <LayerDiagonalIcon height="52" width="52" />
+          <LayersIcon height="52" width="52" />
           <h3 className="text-custom-text-200">
             No issues found. Create a new issue with{" "}
             <pre className="inline rounded bg-custom-background-80 px-2 py-1 text-sm">C</pre>.

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 // react-hook-form
 import { useForm } from "react-hook-form";
 // icons
-import { ChatBubbleLeftEllipsisIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Check, MessageSquare, X } from "lucide-react";
 // service
 import { FileService } from "services/file.service";
 // hooks
@@ -86,7 +86,7 @@ export const CommentCard: React.FC<Props> = (props) => {
         )}
 
         <span className="absolute -bottom-0.5 -right-1 rounded-tl bg-custom-background-80 px-0.5 py-px">
-          <ChatBubbleLeftEllipsisIcon className="h-3.5 w-3.5 text-custom-text-200" aria-hidden="true" />
+          <MessageSquare className="h-3.5 w-3.5 text-custom-text-200" />
         </span>
       </div>
       <div className="min-w-0 flex-1">
@@ -119,14 +119,14 @@ export const CommentCard: React.FC<Props> = (props) => {
                 disabled={isSubmitting || disabled}
                 className="group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300 hover:bg-green-500"
               >
-                <CheckIcon className="h-3 w-3 text-green-500 duration-300 group-hover:text-white" />
+                <Check className="h-3 w-3 text-green-500 duration-300 group-hover:text-white" />
               </button>
               <button
                 type="button"
                 className="group rounded border border-red-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
                 onClick={() => setIsEditing(false)}
               >
-                <XMarkIcon className="h-3 w-3 text-red-500 duration-300 group-hover:text-white" />
+                <X className="h-3 w-3 text-red-500 duration-300 group-hover:text-white" />
               </button>
             </div>
           </form>

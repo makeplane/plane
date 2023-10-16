@@ -3,7 +3,7 @@ import { ActivityGraph } from "components/workspace";
 // ui
 import { Loader, Tooltip } from "@plane/ui";
 // icons
-import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import { Info } from "lucide-react";
 // types
 import { IUserWorkspaceDashboard } from "types";
 import { useRouter } from "next/router";
@@ -80,7 +80,7 @@ export const IssuesStats: React.FC<Props> = ({ data }) => {
             tooltipContent="Your profile activity graph is a record of actions you've performed on issues across the workspace."
             className="w-72 border border-custom-border-200"
           >
-            <InformationCircleIcon className="h-3 w-3" />
+            <Info className="h-3 w-3" />
           </Tooltip>
         </h3>
         <ActivityGraph activities={data?.issue_activities} />
