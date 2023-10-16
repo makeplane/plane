@@ -3,9 +3,8 @@ import React from "react";
 // react-hook-form
 import { Control, Controller, UseFormWatch } from "react-hook-form";
 // ui
-import { Squares2X2Icon } from "@heroicons/react/24/outline";
+import { DoubleCircleIcon } from "@plane/ui";
 import { CustomSelect } from "components/ui";
-// icons
 // types
 import { IModule } from "types";
 // common
@@ -21,7 +20,7 @@ type Props = {
 export const SidebarStatusSelect: React.FC<Props> = ({ control, submitChanges, watch }) => (
   <div className="flex flex-wrap items-center py-2">
     <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-      <Squares2X2Icon className="h-4 w-4 flex-shrink-0" />
+      <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
       <p>Status</p>
     </div>
     <div className="sm:basis-1/2">
@@ -31,11 +30,7 @@ export const SidebarStatusSelect: React.FC<Props> = ({ control, submitChanges, w
         render={({ field: { value } }) => (
           <CustomSelect
             label={
-              <span
-                className={`flex items-center gap-2 text-left capitalize ${
-                  value ? "" : "text-custom-text-100"
-                }`}
-              >
+              <span className={`flex items-center gap-2 text-left capitalize ${value ? "" : "text-custom-text-100"}`}>
                 <span
                   className="h-2 w-2 flex-shrink-0 rounded-full"
                   style={{
@@ -53,10 +48,7 @@ export const SidebarStatusSelect: React.FC<Props> = ({ control, submitChanges, w
             {MODULE_STATUS.map((option) => (
               <CustomSelect.Option key={option.value} value={option.value}>
                 <>
-                  <span
-                    className="h-2 w-2 flex-shrink-0 rounded-full"
-                    style={{ backgroundColor: option.color }}
-                  />
+                  <span className="h-2 w-2 flex-shrink-0 rounded-full" style={{ backgroundColor: option.color }} />
                   {option.label}
                 </>
               </CustomSelect.Option>

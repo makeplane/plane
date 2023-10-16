@@ -48,6 +48,7 @@ from plane.api.serializers import (
     IssueActivitySerializer,
     IssueLiteSerializer,
     WorkspaceMemberAdminSerializer,
+    WorkspaceMemberMeSerializer,
 )
 from plane.api.views.base import BaseAPIView
 from . import BaseViewSet
@@ -825,7 +826,7 @@ class WorkspaceMemberUserEndpoint(BaseAPIView):
             workspace_member = WorkspaceMember.objects.get(
                 member=request.user, workspace__slug=slug
             )
-            serializer = WorkSpaceMemberSerializer(workspace_member)
+            serializer = WorkspaceMemberMeSerializer(workspace_member)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except (Workspace.DoesNotExist, WorkspaceMember.DoesNotExist):
             return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)

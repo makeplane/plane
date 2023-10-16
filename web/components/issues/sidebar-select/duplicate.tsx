@@ -9,7 +9,7 @@ import useUser from "hooks/use-user";
 // icons
 import { X, CopyPlus } from "lucide-react";
 // components
-import { BlockerIcon } from "components/icons";
+import { BlockerIcon } from "@plane/ui";
 import { ExistingIssuesListModal } from "components/core";
 // services
 import { IssueService } from "services/issue";

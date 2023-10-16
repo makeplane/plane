@@ -7,8 +7,9 @@ import { FileService } from "services/file.service";
 // components
 import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
 // ui
-import { Icon } from "components/ui";
 import { Button, Tooltip } from "@plane/ui";
+import { Globe2, Lock } from "lucide-react";
+
 // types
 import type { IIssueComment } from "types";
 
@@ -24,18 +25,18 @@ type Props = {
 };
 
 type commentAccessType = {
-  icon: string;
+  icon: any;
   key: string;
   label: "Private" | "Public";
 };
 const commentAccess: commentAccessType[] = [
   {
-    icon: "lock",
+    icon: Lock,
     key: "INTERNAL",
     label: "Private",
   },
   {
-    icon: "public",
+    icon: Globe2,
     key: "EXTERNAL",
     label: "Public",
   },
@@ -87,8 +88,7 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAc
                               value === access.key ? "bg-custom-background-80" : ""
                             }`}
                           >
-                            <Icon
-                              iconName={access.icon}
+                            <access.icon
                               className={`w-4 h-4 -mt-1 ${
                                 value === access.key ? "!text-custom-text-100" : "!text-custom-text-400"
                               }`}

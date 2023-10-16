@@ -1,5 +1,5 @@
 // icons
-import { PlayIcon } from "@heroicons/react/24/outline";
+import { Triangle } from "lucide-react";
 // types
 import { IDefaultAnalyticsResponse, TStateGroups } from "types";
 // constants
@@ -52,7 +52,7 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => (
     </div>
     <div className="!mt-6 flex w-min items-center gap-2 whitespace-nowrap rounded-md border border-custom-border-200 bg-custom-background-80 p-2 text-xs">
       <p className="flex items-center gap-1 text-custom-text-200">
-        <PlayIcon className="h-4 w-4 -rotate-90" aria-hidden="true" />
+        <Triangle className="h-4 w-4" />
         <span>Estimate Demand:</span>
       </p>
       <p className="font-medium">

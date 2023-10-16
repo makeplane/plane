@@ -5,8 +5,7 @@ import { Menu, Transition } from "@headlessui/react";
 // ui
 import { Loader } from "components/ui";
 // icons
-import { CheckIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
-import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/20/solid";
+import { Check, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 
 type MultiLevelDropdownProps = {
   label: string;
@@ -52,7 +51,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                 }`}
               >
                 {label}
-                <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+                <ChevronDown className="h-3 w-3" aria-hidden="true" />
               </Menu.Button>
             </div>
             <Transition
@@ -94,13 +93,9 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                               direction === "right" ? "justify-between" : ""
                             }`}
                           >
-                            {direction === "left" && option.hasChildren && (
-                              <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
-                            )}
+                            {direction === "left" && option.hasChildren && <ChevronLeft className="h-4 w-4" />}
                             <span>{option.label}</span>
-                            {direction === "right" && option.hasChildren && (
-                              <ChevronRightIcon className="h-4 w-4" aria-hidden="true" />
-                            )}
+                            {direction === "right" && option.hasChildren && <ChevronRight className="h-4 w-4" />}
                           </div>
                         </>
                       )}
@@ -108,9 +103,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                     {option.hasChildren && option.id === openChildFor && (
                       <div
                         className={`absolute top-0 min-w-36 whitespace-nowrap origin-top-right select-none overflow-y-scroll rounded-md bg-custom-background-90 border border-custom-border-300 shadow-lg focus:outline-none ${
-                          direction === "left"
-                            ? "right-full -translate-x-1"
-                            : "left-full translate-x-1"
+                          direction === "left" ? "right-full -translate-x-1" : "left-full translate-x-1"
                         } ${
                           height === "sm"
                             ? "max-h-28"
@@ -126,9 +119,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                         {option.children ? (
                           <div className="space-y-1 p-1">
                             {option.children.length === 0 ? (
-                              <p className="text-custom-text-200 text-center px-1 py-1.5">
-                                No {option.label} found
-                              </p> //if no children found, show this message.
+                              <p className="text-custom-text-200 text-center px-1 py-1.5">No {option.label} found</p> //if no children found, show this message.
                             ) : (
                               option.children.map((child) => {
                                 if (child.element) return child.element;
@@ -143,10 +134,8 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                                       } flex w-full items-center justify-between break-words rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80`}
                                     >
                                       {child.label}{" "}
-                                      <CheckIcon
-                                        className={`h-3.5 w-3.5 opacity-0 ${
-                                          child.selected ? "opacity-100" : ""
-                                        }`}
+                                      <Check
+                                        className={`h-3.5 w-3.5 opacity-0 ${child.selected ? "opacity-100" : ""}`}
                                       />
                                     </button>
                                   );

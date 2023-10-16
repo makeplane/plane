@@ -5,7 +5,7 @@ import React, { Fragment } from "react";
 import { Transition, Dialog } from "@headlessui/react";
 
 // icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { X } from "lucide-react";
 
 type Props = {
   isOpen: boolean;
@@ -49,10 +49,7 @@ export const WebViewModal = (props: Props) => {
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-none rounded-tr-[20px] rounded-tl-[20px] bg-custom-background-100 p-6 text-left shadow-xl transition-all sm:mt-8 w-full">
                 <div className="flex justify-between items-center w-full">
-                  <Dialog.Title
-                    as="h3"
-                    className="text-2xl font-semibold leading-6 text-custom-text-100"
-                  >
+                  <Dialog.Title as="h3" className="text-2xl font-semibold leading-6 text-custom-text-100">
                     {modalTitle}
                   </Dialog.Title>
                   <button
@@ -60,7 +57,7 @@ export const WebViewModal = (props: Props) => {
                     className="inline-flex justify-center items-center p-2 rounded-md text-custom-text-200 hover:text-custom-text-100 focus:outline-none"
                     onClick={handleClose}
                   >
-                    <XMarkIcon className="w-6 h-6 text-custom-text-200" />
+                    <X className="w-6 h-6 text-custom-text-200" />
                   </button>
                 </div>
                 <div className="flex flex-col mt-6 h-full max-h-[70vh]">{children}</div>

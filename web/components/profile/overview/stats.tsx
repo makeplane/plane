@@ -2,8 +2,8 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 // ui
-import { Icon } from "components/ui";
-import { Loader } from "@plane/ui";
+import { CreateIcon, LayerStackIcon, Loader } from "@plane/ui";
+import { UserCircle2 } from "lucide-react";
 // types
 import { IUserProfileData } from "types";
 
@@ -17,19 +17,19 @@ export const ProfileStats: React.FC<Props> = ({ userProfile }) => {
 
   const overviewCards = [
     {
-      icon: "new_window",
+      icon: CreateIcon,
       route: "created",
       title: "Issues created",
       value: userProfile?.created_issues ?? "...",
     },
     {
-      icon: "account_circle",
+      icon: UserCircle2,
       route: "assigned",
       title: "Issues assigned",
       value: userProfile?.assigned_issues ?? "...",
     },
     {
-      icon: "subscriptions",
+      icon: LayerStackIcon,
       route: "subscribed",
       title: "Issues subscribed",
       value: userProfile?.subscribed_issues ?? "...",
@@ -45,7 +45,7 @@ export const ProfileStats: React.FC<Props> = ({ userProfile }) => {
             <Link key={card.route} href={`/${workspaceSlug}/profile/${userId}/${card.route}`}>
               <a className="flex items-center gap-3 p-4 rounded border border-custom-border-100 whitespace-nowrap">
                 <div className="h-11 w-11 bg-custom-background-90 rounded grid place-items-center">
-                  <Icon iconName={card.icon} className="!text-xl" />
+                  <card.icon className="h-5 w-5" />
                 </div>
                 <div className="space-y-1">
                   <p className="text-custom-text-400 text-sm">{card.title}</p>

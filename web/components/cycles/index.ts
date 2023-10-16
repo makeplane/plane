@@ -3,7 +3,6 @@ export * from "./active-cycle-details";
 export * from "./active-cycle-stats";
 export * from "./gantt-chart";
 export * from "./cycles-view";
-export * from "./delete-cycle-modal";
 export * from "./form";
 export * from "./modal";
 export * from "./select";

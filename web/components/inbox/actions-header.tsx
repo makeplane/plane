@@ -1,44 +1,31 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { mutate } from "swr";
+import { observer } from "mobx-react-lite";
 import DatePicker from "react-datepicker";
 import { Popover } from "@headlessui/react";
+
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // contexts
 import { useProjectMyMembership } from "contexts/project-member.context";
-// services
-import { InboxService } from "services/inbox.service";
 // hooks
-import useInboxView from "hooks/use-inbox-view";
-import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // components
 import {
   AcceptIssueModal,
   DeclineIssueModal,
-  DeleteIssueModal,
+  DeleteInboxIssueModal,
   FiltersDropdown,
   SelectDuplicateInboxIssueModal,
 } from "components/inbox";
 // ui
 import { Button } from "@plane/ui";
 // icons
-import { InboxIcon, StackedLayersHorizontalIcon } from "components/icons";
-import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  CheckCircleIcon,
-  ClockIcon,
-  XCircleIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Inbox, Trash2, XCircle } from "lucide-react";
 // types
-import type { IInboxIssueDetail, TInboxStatus } from "types";
-// fetch-keys
-import { INBOX_ISSUE_DETAILS } from "constants/fetch-keys";
+import type { TInboxStatus } from "types";
 
-const inboxService = new InboxService();
-
-export const InboxActionHeader = () => {
+export const InboxActionsHeader = observer(() => {
   const [date, setDate] = useState(new Date());
   const [selectDuplicateIssue, setSelectDuplicateIssue] = useState(false);
   const [acceptIssueModal, setAcceptIssueModal] = useState(false);
@@ -48,42 +35,24 @@ export const InboxActionHeader = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId, inboxIssueId } = router.query;
 
-  const { user } = useUserAuth();
+  const { inboxIssues: inboxIssuesStore, inboxIssueDetails: inboxIssueDetailsStore, user: userStore } = useMobxStore();
+
+  const user = userStore?.currentUser;
+  const issuesList = inboxId ? inboxIssuesStore.inboxIssues[inboxId.toString()] : null;
+
   const { memberRole } = useProjectMyMembership();
-  const { issues: inboxIssues, mutate: mutateInboxIssues } = useInboxView();
   const { setToastAlert } = useToast();
 
   const markInboxStatus = async (data: TInboxStatus) => {
-    if (!workspaceSlug || !projectId || !inboxId || !inboxIssueId) return;
+    if (!workspaceSlug || !projectId || !inboxId || !inboxIssueId || !issuesList) return;
 
-    mutate<IInboxIssueDetail>(
-      INBOX_ISSUE_DETAILS(inboxId as string, inboxIssueId as string),
-      (prevData) => {
-        if (!prevData) return prevData;
-
-        return {
-          ...prevData,
-          issue_inbox: [{ ...prevData.issue_inbox[0], ...data }],
-        };
-      },
-      false
-    );
-    mutateInboxIssues(
-      (prevData: any) =>
-        (prevData ?? []).map((i: any) =>
-          i.bridge_id === inboxIssueId ? { ...i, issue_inbox: [{ ...i.issue_inbox[0], ...data }] } : i
-        ),
-      false
-    );
-
-    await inboxService
-      .markInboxStatus(
+    await inboxIssueDetailsStore
+      .updateIssueStatus(
         workspaceSlug.toString(),
         projectId.toString(),
         inboxId.toString(),
-        inboxIssues?.find((inboxIssue: any) => inboxIssue.bridge_id === inboxIssueId)?.bridge_id!,
-        data,
-        user
+        issuesList.find((inboxIssue: any) => inboxIssue.issue_inbox[0].id === inboxIssueId)?.issue_inbox[0].id!,
+        data
       )
       .catch(() =>
         setToastAlert({
@@ -91,15 +60,11 @@ export const InboxActionHeader = () => {
           title: "Error!",
           message: "Something went wrong while updating inbox status. Please try again.",
         })
-      )
-      .finally(() => {
-        mutate(INBOX_ISSUE_DETAILS(inboxId as string, inboxIssueId as string));
-        mutateInboxIssues();
-      });
+      );
   };
 
-  const issue = inboxIssues?.find((issue: any) => issue.bridge_id === inboxIssueId);
-  const currentIssueIndex = inboxIssues?.findIndex((issue: any) => issue.bridge_id === inboxIssueId) ?? 0;
+  const issue = issuesList?.find((issue) => issue.issue_inbox[0].id === inboxIssueId);
+  const currentIssueIndex = issuesList?.findIndex((issue) => issue.issue_inbox[0].id === inboxIssueId) ?? 0;
 
   useEffect(() => {
     if (!issue?.issue_inbox[0].snoozed_till) return;
@@ -117,48 +82,46 @@ export const InboxActionHeader = () => {
 
   return (
     <>
-      <SelectDuplicateInboxIssueModal
-        isOpen={selectDuplicateIssue}
-        onClose={() => setSelectDuplicateIssue(false)}
-        value={
-          inboxIssues?.find((inboxIssue: any) => inboxIssue.bridge_id === inboxIssueId)?.issue_inbox[0].duplicate_to
-        }
-        onSubmit={(dupIssueId: string) => {
-          markInboxStatus({
-            status: 2,
-            duplicate_to: dupIssueId,
-          }).finally(() => setSelectDuplicateIssue(false));
-        }}
-      />
-      <AcceptIssueModal
-        isOpen={acceptIssueModal}
-        handleClose={() => setAcceptIssueModal(false)}
-        data={inboxIssues?.find((i: any) => i.bridge_id === inboxIssueId)}
-        onSubmit={async () => {
-          await markInboxStatus({
-            status: 1,
-          }).finally(() => setAcceptIssueModal(false));
-        }}
-      />
-      <DeclineIssueModal
-        isOpen={declineIssueModal}
-        handleClose={() => setDeclineIssueModal(false)}
-        data={inboxIssues?.find((i: any) => i.bridge_id === inboxIssueId)}
-        onSubmit={async () => {
-          await markInboxStatus({
-            status: -1,
-          }).finally(() => setDeclineIssueModal(false));
-        }}
-      />
-      <DeleteIssueModal
-        isOpen={deleteIssueModal}
-        handleClose={() => setDeleteIssueModal(false)}
-        data={inboxIssues?.find((i: any) => i.bridge_id === inboxIssueId)}
-      />
+      {issue && (
+        <>
+          <SelectDuplicateInboxIssueModal
+            isOpen={selectDuplicateIssue}
+            onClose={() => setSelectDuplicateIssue(false)}
+            value={issue?.issue_inbox[0].duplicate_to}
+            onSubmit={(dupIssueId) => {
+              markInboxStatus({
+                status: 2,
+                duplicate_to: dupIssueId,
+              }).finally(() => setSelectDuplicateIssue(false));
+            }}
+          />
+          <AcceptIssueModal
+            data={issue}
+            isOpen={acceptIssueModal}
+            onClose={() => setAcceptIssueModal(false)}
+            onSubmit={async () => {
+              await markInboxStatus({
+                status: 1,
+              }).finally(() => setAcceptIssueModal(false));
+            }}
+          />
+          <DeclineIssueModal
+            data={issue}
+            isOpen={declineIssueModal}
+            onClose={() => setDeclineIssueModal(false)}
+            onSubmit={async () => {
+              await markInboxStatus({
+                status: -1,
+              }).finally(() => setDeclineIssueModal(false));
+            }}
+          />
+          <DeleteInboxIssueModal data={issue} isOpen={deleteIssueModal} onClose={() => setDeleteIssueModal(false)} />
+        </>
+      )}
       <div className="grid grid-cols-4 border-b border-custom-border-200 divide-x divide-custom-border-200">
         <div className="col-span-1 flex justify-between p-4">
           <div className="flex items-center gap-2">
-            <InboxIcon className="h-4 w-4 text-custom-text-200" />
+            <Inbox className="text-custom-text-200" size={16} strokeWidth={2} />
             <h3 className="font-medium">Inbox</h3>
           </div>
           <FiltersDropdown />
@@ -174,7 +137,7 @@ export const InboxActionHeader = () => {
                   document.dispatchEvent(e);
                 }}
               >
-                <ChevronUpIcon className="h-3.5 w-3.5" />
+                <ChevronUp size={14} strokeWidth={2} />
               </button>
               <button
                 type="button"
@@ -184,10 +147,10 @@ export const InboxActionHeader = () => {
                   document.dispatchEvent(e);
                 }}
               >
-                <ChevronDownIcon className="h-3.5 w-3.5" />
+                <ChevronDown size={14} strokeWidth={2} />
               </button>
               <div className="text-sm">
-                {currentIssueIndex + 1}/{inboxIssues?.length ?? 0}
+                {currentIssueIndex + 1}/{issuesList?.length ?? 0}
               </div>
             </div>
             <div className="flex items-center gap-3 flex-wrap">
@@ -195,11 +158,7 @@ export const InboxActionHeader = () => {
                 <div className="flex-shrink-0">
                   <Popover className="relative">
                     <Popover.Button as="button" type="button">
-                      <Button
-                        variant="neutral-primary"
-                        prependIcon={<ClockIcon className="text-custom-text-200" />}
-                        size="sm"
-                      >
+                      <Button variant="neutral-primary" prependIcon={<Clock size={14} strokeWidth={2} />} size="sm">
                         Snooze
                       </Button>
                     </Popover.Button>
@@ -239,7 +198,7 @@ export const InboxActionHeader = () => {
                   <Button
                     variant="neutral-primary"
                     size="sm"
-                    prependIcon={<StackedLayersHorizontalIcon className="text-custom-text-200" />}
+                    prependIcon={<FileStack size={14} strokeWidth={2} />}
                     onClick={() => setSelectDuplicateIssue(true)}
                   >
                     Mark as duplicate
@@ -251,7 +210,7 @@ export const InboxActionHeader = () => {
                   <Button
                     variant="neutral-primary"
                     size="sm"
-                    prependIcon={<CheckCircleIcon className="text-green-500" />}
+                    prependIcon={<CheckCircle2 className="text-green-500" size={14} strokeWidth={2} />}
                     onClick={() => setAcceptIssueModal(true)}
                   >
                     Accept
@@ -263,7 +222,7 @@ export const InboxActionHeader = () => {
                   <Button
                     variant="neutral-primary"
                     size="sm"
-                    prependIcon={<XCircleIcon className="text-red-500" />}
+                    prependIcon={<XCircle className="text-red-500" size={14} strokeWidth={2} />}
                     onClick={() => setDeclineIssueModal(true)}
                   >
                     Decline
@@ -275,7 +234,7 @@ export const InboxActionHeader = () => {
                   <Button
                     variant="neutral-primary"
                     size="sm"
-                    prependIcon={<TrashIcon className="text-red-500" />}
+                    prependIcon={<Trash2 className="text-red-500" size={14} strokeWidth={2} />}
                     onClick={() => setDeleteIssueModal(true)}
                   >
                     Delete
@@ -288,4 +247,4 @@ export const InboxActionHeader = () => {
       </div>
     </>
   );
-};
+});

@@ -7,12 +7,12 @@ import { useRouter } from "next/router";
 import { ActivityIcon, ActivityMessage } from "components/core";
 import { CommentCard } from "components/issues/comment";
 // ui
-import { Icon } from "components/ui";
 import { Loader, Tooltip } from "@plane/ui";
 // helpers
 import { render24HourFormatTime, renderLongDateFormat, timeAgo } from "helpers/date-time.helper";
 // types
 import { IIssueActivity, IIssueComment } from "types";
+import { History } from "lucide-react";
 
 type Props = {
   activity: IIssueActivity[] | undefined;
@@ -72,7 +72,7 @@ export const IssueActivitySection: React.FC<Props> = ({
                           <div className="ring-6 flex h-7 w-7 items-center justify-center rounded-full bg-custom-background-80 text-custom-text-200 ring-white">
                             {activityItem.field ? (
                               activityItem.new_value === "restore" ? (
-                                <Icon iconName="history" className="text-sm text-custom-text-200" />
+                                <History className="h-3.5 w-3.5 text-custom-text-200" />
                               ) : (
                                 <ActivityIcon activity={activityItem} />
                               )

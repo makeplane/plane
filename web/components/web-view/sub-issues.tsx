@@ -121,11 +121,11 @@ export const SubIssueList: React.FC<Props> = (props) => {
 
         {subIssuesResponse?.sub_issues?.map((subIssue) => (
           <div key={subIssue.id} className="flex items-center justify-between gap-2 py-2">
-            <div className="flex items-center">
+            <div className="grid grid-flow-col ">
               <p className="mr-3 text-sm text-custom-text-300">
                 {subIssue.project_detail.identifier}-{subIssue.sequence_id}
               </p>
-              <p className="text-sm font-normal">{subIssue.name}</p>
+              <p className="text-sm font-normal truncate ">{subIssue.name}</p>
             </div>
             <button
               type="button"

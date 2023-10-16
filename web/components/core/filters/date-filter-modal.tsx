@@ -8,7 +8,7 @@ import { DateFilterSelect } from "./date-filter-select";
 // ui
 import { Button } from "@plane/ui";
 // icons
-import { XMarkIcon } from "@heroicons/react/20/solid";
+import { X } from "lucide-react";
 // helpers
 import { renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 
@@ -85,7 +85,7 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                         <DateFilterSelect title={title} value={value} onChange={onChange} />
                       )}
                     />
-                    <XMarkIcon className="border-base h-4 w-4 cursor-pointer" onClick={handleClose} />
+                    <X className="h-4 w-4 cursor-pointer" onClick={handleClose} />
                   </div>
                   <div className="flex w-full justify-between gap-4">
                     <Controller

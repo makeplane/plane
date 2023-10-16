@@ -34,17 +34,7 @@ import { TextArea, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // images
 import emptyPage from "public/empty-state/page.svg";
 // icons
-import {
-  ArrowLeftIcon,
-  LockClosedIcon,
-  LockOpenIcon,
-  PlusIcon,
-  StarIcon,
-  LinkIcon,
-  XMarkIcon,
-  ChevronDownIcon,
-} from "@heroicons/react/24/outline";
-import { ColorPalletteIcon } from "components/icons";
+import { ArrowLeft, Lock, LinkIcon, Palette, Plus, Star, Unlock, X, ChevronDown } from "lucide-react";
 // helpers
 import { render24HourFormatTime, renderShortDate } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
@@ -343,7 +333,7 @@ const SinglePage: NextPage = () => {
                     className="flex items-center gap-2 text-sm text-custom-text-200"
                     onClick={() => router.back()}
                   >
-                    <ArrowLeftIcon className="h-4 w-4" />
+                    <ArrowLeft className="h-4 w-4" />
                   </button>
 
                   <Controller
@@ -392,7 +382,7 @@ const SinglePage: NextPage = () => {
                               }}
                             />
                             {label.name}
-                            <XMarkIcon className="h-2.5 w-2.5 group-hover:text-red-500" />
+                            <X className="h-2.5 w-2.5 group-hover:text-red-500" />
                           </div>
                         );
                       })}
@@ -401,7 +391,7 @@ const SinglePage: NextPage = () => {
                   <CustomSearchSelect
                     customButton={
                       <div className="flex items-center gap-1 rounded-sm bg-custom-background-80 p-1.5 text-xs">
-                        <PlusIcon className="h-3.5 w-3.5" />
+                        <Plus className="h-3.5 w-3.5" />
                         {pageDetails.labels.length <= 0 && <span>Add Label</span>}
                       </div>
                     }
@@ -415,7 +405,7 @@ const SinglePage: NextPage = () => {
                         }}
                       >
                         <span className="flex items-center justify-start gap-1 text-custom-text-200">
-                          <PlusIcon className="h-4 w-4" aria-hidden="true" />
+                          <Plus className="h-4 w-4" aria-hidden="true" />
                           <span>Create New Label</span>
                         </span>
                       </button>
@@ -447,7 +437,7 @@ const SinglePage: NextPage = () => {
                           }`}
                         >
                           Display
-                          <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+                          <ChevronDown className="h-3 w-3" aria-hidden="true" />
                         </Popover.Button>
 
                         <Transition
@@ -498,7 +488,7 @@ const SinglePage: NextPage = () => {
                                 }}
                               />
                             ) : (
-                              <ColorPalletteIcon height={16} width={16} />
+                              <Palette height={16} width={16} />
                             )}
                           </Popover.Button>
 
@@ -559,22 +549,22 @@ const SinglePage: NextPage = () => {
                     >
                       {pageDetails.access ? (
                         <button onClick={() => partialUpdatePage({ access: 0 })} className="z-10">
-                          <LockClosedIcon className="h-4 w-4" />
+                          <Lock className="h-4 w-4" />
                         </button>
                       ) : (
                         <button onClick={() => partialUpdatePage({ access: 1 })} type="button" className="z-10">
-                          <LockOpenIcon className="h-4 w-4" />
+                          <Unlock className="h-4 w-4" />
                         </button>
                       )}
                     </Tooltip>
                   )}
                   {pageDetails.is_favorite ? (
                     <button onClick={handleRemoveFromFavorites} className="z-10">
-                      <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                      <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
                     </button>
                   ) : (
                     <button onClick={handleAddToFavorites} type="button" className="z-10">
-                      <StarIcon className="h-4 w-4" />
+                      <Star className="h-4 w-4" />
                     </button>
                   )}
                 </div>

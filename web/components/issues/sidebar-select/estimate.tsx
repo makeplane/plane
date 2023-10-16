@@ -5,7 +5,7 @@ import useEstimateOption from "hooks/use-estimate-option";
 // ui
 import { CustomSelect } from "components/ui";
 // icons
-import { PlayIcon } from "@heroicons/react/24/outline";
+import { Triangle } from "lucide-react";
 
 type Props = {
   value: number | null;
@@ -21,11 +21,7 @@ export const SidebarEstimateSelect: React.FC<Props> = ({ value, onChange, disabl
       value={value}
       customButton={
         <div className="flex items-center gap-1.5 !text-sm bg-custom-background-80 rounded px-2.5 py-0.5">
-          <PlayIcon
-            className={`h-4 w-4 -rotate-90 ${
-              value !== null ? "text-custom-text-100" : "text-custom-text-200"
-            }`}
-          />
+          <Triangle className={`h-4 w-4 ${value !== null ? "text-custom-text-100" : "text-custom-text-200"}`} />
           {estimatePoints?.find((e) => e.key === value)?.value ?? "No estimate"}
         </div>
       }
@@ -35,7 +31,7 @@ export const SidebarEstimateSelect: React.FC<Props> = ({ value, onChange, disabl
       <CustomSelect.Option value={null}>
         <>
           <span>
-            <PlayIcon className="h-4 w-4 -rotate-90" />
+            <Triangle className="h-4 w-4" />
           </span>
           None
         </>
@@ -45,7 +41,7 @@ export const SidebarEstimateSelect: React.FC<Props> = ({ value, onChange, disabl
           <CustomSelect.Option key={point.key} value={point.key}>
             <>
               <span>
-                <PlayIcon className="h-4 w-4 -rotate-90" />
+                <Triangle className="h-4 w-4" />
               </span>
               {point.value}
             </>

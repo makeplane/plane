@@ -7,8 +7,7 @@ import useEstimateOption from "hooks/use-estimate-option";
 // services
 import { IssueLabelService } from "services/issue";
 // icons
-import { Tooltip } from "@plane/ui";
-import { Icon } from "components/ui";
+import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon } from "@plane/ui";
 import {
   TagIcon,
   CopyPlus,
@@ -23,8 +22,8 @@ import {
   LayoutGridIcon,
   SignalMediumIcon,
   MessageSquareIcon,
+  UsersIcon,
 } from "lucide-react";
-import { BlockedIcon, BlockerIcon, RelatedIcon, StackedLayersHorizontalIcon } from "components/icons";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { capitalizeFirstLetter } from "helpers/string.helper";
@@ -359,7 +358,7 @@ const activityDetails: {
       if (activity.verb === "created") return "created the issue.";
       else return "deleted an issue.";
     },
-    icon: <StackedLayersHorizontalIcon width={12} height={12} color="#6b7280" aria-hidden="true" />,
+    icon: <LayersIcon width={12} height={12} color="#6b7280" aria-hidden="true" />,
   },
   labels: {
     message: (activity, showIssue) => {
@@ -517,7 +516,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Icon iconName="dataset" className="!text-xs !text-[#6b7280]" aria-hidden="true" />,
+    icon: <DiceIcon className="h-3 w-3 !text-[#6b7280]" aria-hidden="true" />,
   },
   name: {
     message: (activity, showIssue) => (
@@ -563,7 +562,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Icon iconName="supervised_user_circle" className="!text-xs !text-[#6b7280]" aria-hidden="true" />,
+    icon: <UsersIcon className="h-3 w-3 !text-[#6b7280]" aria-hidden="true" />,
   },
   priority: {
     message: (activity, showIssue) => (

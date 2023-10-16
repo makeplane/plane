@@ -1,27 +1,26 @@
 import React, { useState } from "react";
-
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
+
 // icons
-import { CheckCircleIcon } from "@heroicons/react/24/outline";
+import { CheckCircle } from "lucide-react";
 // ui
 import { Button } from "@plane/ui";
 // types
 import type { IInboxIssue } from "types";
 
 type Props = {
+  data: IInboxIssue;
   isOpen: boolean;
-  handleClose: () => void;
-  data: IInboxIssue | undefined;
+  onClose: () => void;
   onSubmit: () => Promise<void>;
 };
 
-export const AcceptIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, onSubmit }) => {
+export const AcceptIssueModal: React.FC<Props> = ({ isOpen, onClose, data, onSubmit }) => {
   const [isAccepting, setIsAccepting] = useState(false);
 
-  const onClose = () => {
+  const handleClose = () => {
     setIsAccepting(false);
-    handleClose();
+    onClose();
   };
 
   const handleAccept = () => {
@@ -32,7 +31,7 @@ export const AcceptIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, o
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={onClose}>
+      <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -60,7 +59,7 @@ export const AcceptIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, o
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-green-500/20 p-4">
-                      <CheckCircleIcon className="h-6 w-6 text-green-600" aria-hidden="true" />
+                      <CheckCircle className="h-6 w-6 text-green-600" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">
                       <h3 className="text-xl font-medium 2xl:text-2xl">Accept Issue</h3>
@@ -76,7 +75,7 @@ export const AcceptIssueModal: React.FC<Props> = ({ isOpen, handleClose, data, o
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
-                    <Button variant="neutral-primary" onClick={onClose}>
+                    <Button variant="neutral-primary" onClick={handleClose}>
                       Cancel
                     </Button>
                     <Button variant="primary" onClick={handleAccept} loading={isAccepting}>

@@ -12,9 +12,7 @@ import { DeleteModuleModal } from "components/modules";
 import { AssigneesList, CustomMenu } from "components/ui";
 import { Tooltip } from "@plane/ui";
 // icons
-import { CalendarDaysIcon, LinkIcon, PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { TargetIcon } from "components/icons";
-
+import { CalendarDays, LinkIcon, Pencil, Star, Target, Trash2 } from "lucide-react";
 // helpers
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
@@ -134,24 +132,24 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
                 </div>
                 {module.is_favorite ? (
                   <button type="button" onClick={handleRemoveFromFavorites}>
-                    <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                    <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
                   </button>
                 ) : (
                   <button type="button" onClick={handleAddToFavorites}>
-                    <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
+                    <Star className="h-4 w-4 " color="rgb(var(--color-text-200))" />
                   </button>
                 )}
 
                 <CustomMenu width="auto" verticalEllipsis>
                   <CustomMenu.MenuItem onClick={handleEditModule}>
                     <span className="flex items-center justify-start gap-2">
-                      <PencilIcon className="h-4 w-4" />
+                      <Pencil className="h-4 w-4" />
                       <span>Edit module</span>
                     </span>
                   </CustomMenu.MenuItem>
                   <CustomMenu.MenuItem onClick={handleDeleteModule}>
                     <span className="flex items-center justify-start gap-2">
-                      <TrashIcon className="h-4 w-4" />
+                      <Trash2 className="h-4 w-4" />
                       <span>Delete module</span>
                     </span>
                   </CustomMenu.MenuItem>
@@ -166,12 +164,12 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
             </div>
             <div className="grid grid-cols-2 gap-2 text-custom-text-200">
               <div className="flex items-start gap-1">
-                <CalendarDaysIcon className="h-4 w-4" />
+                <CalendarDays className="h-4 w-4" />
                 <span>Start:</span>
                 <span>{renderShortDateWithYearFormat(startDate, "Not set")}</span>
               </div>
               <div className="flex items-start gap-1">
-                <TargetIcon className="h-4 w-4" />
+                <Target className="h-4 w-4" />
                 <span>End:</span>
                 <span>{renderShortDateWithYearFormat(endDate, "Not set")}</span>
               </div>

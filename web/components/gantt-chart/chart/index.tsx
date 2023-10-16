@@ -2,7 +2,6 @@ import { FC, useEffect, useState } from "react";
 // next
 import { useRouter } from "next/router";
 // icons
-import { ArrowsPointingInIcon, ArrowsPointingOutIcon } from "@heroicons/react/20/solid";
 // components
 import { GanttChartBlocks } from "components/gantt-chart";
 import { GanttSidebar } from "../sidebar";
@@ -14,7 +13,7 @@ import { MonthChartView } from "./month";
 // import { QuarterChartView } from "./quarter";
 // import { YearChartView } from "./year";
 // icons
-import { PlusIcon } from "lucide-react";
+import { Expand, PlusIcon, Shrink } from "lucide-react";
 // views
 import {
   // generateHourChart,
@@ -275,11 +274,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
           className="transition-all border border-custom-border-200 p-1 flex justify-center items-center cursor-pointer rounded-sm hover:bg-custom-background-80"
           onClick={() => setFullScreenMode((prevData) => !prevData)}
         >
-          {fullScreenMode ? (
-            <ArrowsPointingInIcon className="h-4 w-4" />
-          ) : (
-            <ArrowsPointingOutIcon className="h-4 w-4" />
-          )}
+          {fullScreenMode ? <Shrink className="h-4 w-4" /> : <Expand className="h-4 w-4" />}
         </div>
       </div>
 

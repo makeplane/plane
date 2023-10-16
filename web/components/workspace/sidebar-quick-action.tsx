@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 
 // ui
-import { Icon } from "components/ui";
-import { ChevronDown, PenSquare } from "lucide-react";
+import { ChevronDown, PenSquare, Search } from "lucide-react";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
 // components
@@ -52,7 +51,7 @@ export const WorkspaceSidebarQuickAction = () => {
               document.dispatchEvent(e);
             }}
           >
-            <Icon iconName="edit_square" className="!text-lg !leading-4 text-custom-sidebar-text-300" />
+            <PenSquare className="h-4 w-4 text-custom-sidebar-text-300" />
             {!store?.theme?.sidebarCollapsed && <span className="text-sm font-medium">New Issue</span>}
           </button>
 
@@ -106,7 +105,7 @@ export const WorkspaceSidebarQuickAction = () => {
             document.dispatchEvent(e);
           }}
         >
-          <Icon iconName="search" className="!text-lg !leading-4 text-custom-sidebar-text-300" />
+          <Search className="h-4 w-4 text-custom-sidebar-text-300" />
         </button>
       </div>
     </>

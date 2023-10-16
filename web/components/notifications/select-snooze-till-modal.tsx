@@ -8,7 +8,8 @@ import { getAllTimeIn30MinutesInterval } from "helpers/date-time.helper";
 import useToast from "hooks/use-toast";
 // components
 import { Button } from "@plane/ui";
-import { Icon, CustomDatePicker, CustomSelect } from "components/ui";
+import { CustomDatePicker, CustomSelect } from "components/ui";
+import { X } from "lucide-react";
 // types
 import type { IUserNotification } from "types";
 
@@ -150,7 +151,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
 
                     <div>
                       <button type="button" onClick={handleClose}>
-                        <Icon iconName="close" className="w-5 h-5 text-custom-text-100" />
+                        <X className="w-5 h-5 text-custom-text-100" />
                       </button>
                     </div>
                   </div>

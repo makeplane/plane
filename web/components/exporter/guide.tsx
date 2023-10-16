@@ -14,9 +14,8 @@ import { IntegrationService } from "services/integrations";
 import { Exporter, SingleExport } from "components/exporter";
 // ui
 import { Button, Loader } from "@plane/ui";
-import { Icon } from "components/ui";
 // icons
-import { ArrowPathIcon } from "@heroicons/react/24/outline";
+import { MoveLeft, MoveRight, RefreshCw } from "lucide-react";
 // fetch-keys
 import { EXPORT_SERVICES_LIST } from "constants/fetch-keys";
 // constants
@@ -92,7 +91,7 @@ const IntegrationGuide = () => {
                     );
                   }}
                 >
-                  <ArrowPathIcon className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />{" "}
+                  <RefreshCw className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />{" "}
                   {refreshing ? "Refreshing..." : "Refresh status"}
                 </button>
               </div>
@@ -106,7 +105,7 @@ const IntegrationGuide = () => {
                       : "cursor-not-allowed opacity-75"
                   }`}
                 >
-                  <Icon iconName="keyboard_arrow_left" className="!text-lg" />
+                  <MoveLeft className="h-4 w-4" />
                   <div className="pr-1">Prev</div>
                 </button>
                 <button
@@ -119,7 +118,7 @@ const IntegrationGuide = () => {
                   }`}
                 >
                   <div className="pl-1">Next</div>
-                  <Icon iconName="keyboard_arrow_right" className="!text-lg" />
+                  <MoveRight className="h-4 w-4" />
                 </button>
               </div>
             </div>

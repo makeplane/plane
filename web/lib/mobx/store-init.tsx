@@ -16,6 +16,7 @@ const MobxStoreInit = observer(() => {
     module: moduleStore,
     globalViews: globalViewsStore,
     projectViews: projectViewsStore,
+    inbox: inboxStore,
   } = useMobxStore();
   // state
   const [dom, setDom] = useState<any>();
@@ -23,7 +24,7 @@ const MobxStoreInit = observer(() => {
   const { setTheme } = useTheme();
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, moduleId, globalViewId, viewId } = router.query;
+  const { workspaceSlug, projectId, moduleId, globalViewId, viewId, inboxId } = router.query;
 
   // const dom = useMemo(() => window && window.document?.querySelector<HTMLElement>("[data-theme='custom']"), [document]);
 
@@ -57,17 +58,20 @@ const MobxStoreInit = observer(() => {
     if (moduleId) moduleStore.setModuleId(moduleId.toString());
     if (globalViewId) globalViewsStore.setGlobalViewId(globalViewId.toString());
     if (viewId) projectViewsStore.setViewId(viewId.toString());
+    if (inboxId) inboxStore.setInboxId(inboxId.toString());
   }, [
     workspaceSlug,
     projectId,
     moduleId,
     globalViewId,
     viewId,
+    inboxId,
     workspaceStore,
     projectStore,
     moduleStore,
     globalViewsStore,
     projectViewsStore,
+    inboxStore,
   ]);
 
   return <></>;

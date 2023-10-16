@@ -12,7 +12,7 @@ import useUser from "hooks/use-user";
 // ui
 import { Input, Spinner } from "@plane/ui";
 // icons
-import { PlusIcon, RectangleGroupIcon, TagIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Component, Plus, Tag, X } from "lucide-react";
 // types
 import { IIssue, IIssueLabels } from "types";
 // fetch-keys
@@ -94,7 +94,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
     <div className={`space-y-3 py-3 ${uneditable ? "opacity-60" : ""}`}>
       <div className="flex items-start justify-between">
         <div className="flex basis-1/2 items-center gap-x-2 text-sm text-custom-text-200">
-          <TagIcon className="h-4 w-4" />
+          <Tag className="h-4 w-4" />
           <p>Label</p>
         </div>
         <div className="basis-1/2">
@@ -121,7 +121,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
                       }}
                     />
                     {label.name}
-                    <XMarkIcon className="h-2 w-2 group-hover:text-red-500" />
+                    <X className="h-2 w-2 group-hover:text-red-500" />
                   </span>
                 );
             })}
@@ -188,7 +188,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
                                     return (
                                       <div className="border-y border-custom-border-100 bg-custom-background-90">
                                         <div className="flex select-none items-center gap-2 truncate p-2 font-medium text-custom-text-100">
-                                          <RectangleGroupIcon className="h-3 w-3" />
+                                          <Component className="h-3 w-3" />
                                           {label.name}
                                         </div>
                                         <div>
@@ -240,11 +240,11 @@ export const SidebarLabelSelect: React.FC<Props> = ({
               >
                 {createLabelForm ? (
                   <>
-                    <XMarkIcon className="h-3 w-3" /> Cancel
+                    <X className="h-3 w-3" /> Cancel
                   </>
                 ) : (
                   <>
-                    <PlusIcon className="h-3 w-3" /> New
+                    <Plus className="h-3 w-3" /> New
                   </>
                 )}
               </button>
@@ -317,10 +317,10 @@ export const SidebarLabelSelect: React.FC<Props> = ({
             className="grid place-items-center rounded bg-red-500 p-2.5"
             onClick={() => setCreateLabelForm(false)}
           >
-            <XMarkIcon className="h-4 w-4 text-white" />
+            <X className="h-4 w-4 text-white" />
           </button>
           <button type="submit" className="grid place-items-center rounded bg-green-500 p-2.5" disabled={isSubmitting}>
-            <PlusIcon className="h-4 w-4 text-white" />
+            <Plus className="h-4 w-4 text-white" />
           </button>
         </form>
       )}

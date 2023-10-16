@@ -6,8 +6,7 @@ import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // ui
 import { PrimaryButton } from "components/ui";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Plus } from "lucide-react";
 
 const WorkspaceView = () => (
   <WorkspaceAuthorizationLayout
@@ -27,7 +26,7 @@ const WorkspaceView = () => (
             document.dispatchEvent(e);
           }}
         >
-          <PlusIcon className="h-4 w-4" />
+          <Plus className="h-4 w-4" />
           Add Issue
         </PrimaryButton>
       </div>

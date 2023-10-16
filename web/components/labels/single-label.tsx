@@ -7,8 +7,7 @@ import { CustomMenu } from "components/ui";
 // types
 import { IIssueLabels } from "types";
 //icons
-import { PencilIcon } from "@heroicons/react/24/outline";
-import { Component, X } from "lucide-react";
+import { Component, Pencil, X } from "lucide-react";
 
 type Props = {
   label: IIssueLabels;
@@ -17,12 +16,7 @@ type Props = {
   handleLabelDelete: () => void;
 };
 
-export const SingleLabel: React.FC<Props> = ({
-  label,
-  addLabelToGroup,
-  editLabel,
-  handleLabelDelete,
-}) => {
+export const SingleLabel: React.FC<Props> = ({ label, addLabelToGroup, editLabel, handleLabelDelete }) => {
   const [isMenuActive, setIsMenuActive] = useState(false);
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
 
@@ -60,16 +54,13 @@ export const SingleLabel: React.FC<Props> = ({
           </CustomMenu.MenuItem>
           <CustomMenu.MenuItem onClick={() => editLabel(label)}>
             <span className="flex items-center justify-start gap-2">
-              <PencilIcon className="h-4 w-4" />
+              <Pencil className="h-4 w-4" />
               <span>Edit label</span>
             </span>
           </CustomMenu.MenuItem>
         </CustomMenu>
         <div className="py-0.5">
-          <button
-            className="flex h-4 w-4 items-center justify-start gap-2"
-            onClick={handleLabelDelete}
-          >
+          <button className="flex h-4 w-4 items-center justify-start gap-2" onClick={handleLabelDelete}>
             <X className="h-4 w-4  text-custom-sidebar-text-400 flex-shrink-0" />
           </button>
         </div>

@@ -1,38 +1,32 @@
-import React from "react";
-
+import { MouseEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
 // services
 import { CycleService } from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
+import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { AssigneesList } from "components/ui/avatar";
 import { SingleProgressStats } from "components/core";
-import { Loader, Tooltip, LinearProgressIndicator } from "@plane/ui";
+import {
+  Loader,
+  Tooltip,
+  LinearProgressIndicator,
+  ContrastIcon,
+  RunningIcon,
+  LayersIcon,
+  StateGroupIcon,
+  PriorityIcon,
+} from "@plane/ui";
 // components
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { ActiveCycleProgressStats } from "components/cycles";
-
-// icons
-import { CalendarDaysIcon } from "@heroicons/react/20/solid";
-import { PriorityIcon } from "components/icons/priority-icon";
-import {
-  TargetIcon,
-  ContrastIcon,
-  PersonRunningIcon,
-  ArrowRightIcon,
-  TriangleExclamationIcon,
-  AlarmClockIcon,
-  LayerDiagonalIcon,
-  StateGroupIcon,
-} from "components/icons";
-import { StarIcon } from "@heroicons/react/24/outline";
-// components
 import { ViewIssueLabel } from "components/issues";
+// icons
+import { AlarmClock, AlertTriangle, ArrowRight, CalendarDays, Star, Target } from "lucide-react";
+
 // helpers
 import { getDateRangeStatus, renderShortDateWithYearFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
@@ -69,34 +63,43 @@ const stateGroups = [
   },
 ];
 
-// services
-const cycleService = new CycleService();
+interface IActiveCycleDetails {
+  workspaceSlug: string;
+  projectId: string;
+}
 
-export const ActiveCycleDetails: React.FC = () => {
+export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
+  // services
+  const cycleService = new CycleService();
+
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+
+  const { workspaceSlug, projectId } = props;
+
+  const { cycle: cycleStore } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
-  const { data: currentCycle } = useSWR(
-    workspaceSlug && projectId ? CURRENT_CYCLE_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string, "current")
-      : null
+  const { isLoading } = useSWR(
+    workspaceSlug && projectId ? `ACTIVE_CYCLE_ISSUE_${projectId}_CURRENT` : null,
+    workspaceSlug && projectId ? () => cycleStore.fetchCycles(workspaceSlug, projectId, "current") : null
   );
-  const cycle = currentCycle ? currentCycle[0] : null;
 
-  const { data: issues } = useSWR(
-    workspaceSlug && projectId && cycle?.id ? CYCLE_ISSUES_WITH_PARAMS(cycle?.id, { priority: "urgent,high" }) : null,
-    workspaceSlug && projectId && cycle?.id
-      ? () =>
-          cycleService.getCycleIssuesWithParams(workspaceSlug as string, projectId as string, cycle.id, {
-            priority: "urgent,high",
-          })
-      : null
-  ) as { data: IIssue[] | undefined };
+  const activeCycle = cycleStore.cycles?.[projectId] || null;
+  const cycle = activeCycle ? activeCycle[0] : null;
+  const issues = (cycleStore?.active_cycle_issues as any) || null;
 
-  if (!currentCycle)
+  // const { data: issues } = useSWR(
+  //   workspaceSlug && projectId && cycle?.id ? CYCLE_ISSUES_WITH_PARAMS(cycle?.id, { priority: "urgent,high" }) : null,
+  //   workspaceSlug && projectId && cycle?.id
+  //     ? () =>
+  //         cycleService.getCycleIssuesWithParams(workspaceSlug as string, projectId as string, cycle.id, {
+  //           priority: "urgent,high",
+  //         })
+  //     : null
+  // ) as { data: IIssue[] | undefined };
+
+  if (isLoading)
     return (
       <Loader>
         <Loader.Item height="250px" />
@@ -146,70 +149,28 @@ export const ActiveCycleDetails: React.FC = () => {
 
   const cycleStatus = getDateRangeStatus(cycle.start_date, cycle.end_date);
 
-  const handleAddToFavorites = () => {
-    if (!workspaceSlug || !projectId || !cycle) return;
+  const handleAddToFavorites = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (!workspaceSlug || !projectId) return;
 
-    mutate<ICycle[]>(
-      CURRENT_CYCLE_LIST(projectId as string),
-      (prevData) =>
-        (prevData ?? []).map((c) => ({
-          ...c,
-          is_favorite: c.id === cycle.id ? true : c.is_favorite,
-        })),
-      false
-    );
-
-    mutate(
-      CYCLES_LIST(projectId as string),
-      (prevData: any) =>
-        (prevData ?? []).map((c: any) => ({
-          ...c,
-          is_favorite: c.id === cycle.id ? true : c.is_favorite,
-        })),
-      false
-    );
-
-    cycleService
-      .addCycleToFavorites(workspaceSlug as string, projectId as string, {
-        cycle: cycle.id,
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't add the cycle to favorites. Please try again.",
-        });
-      });
-  };
-
-  const handleRemoveFromFavorites = () => {
-    if (!workspaceSlug || !projectId || !cycle) return;
-
-    mutate<ICycle[]>(
-      CURRENT_CYCLE_LIST(projectId as string),
-      (prevData) =>
-        (prevData ?? []).map((c) => ({
-          ...c,
-          is_favorite: c.id === cycle.id ? false : c.is_favorite,
-        })),
-      false
-    );
-
-    mutate(
-      CYCLES_LIST(projectId as string),
-      (prevData: any) =>
-        (prevData ?? []).map((c: any) => ({
-          ...c,
-          is_favorite: c.id === cycle.id ? false : c.is_favorite,
-        })),
-      false
-    );
-
-    cycleService.removeCycleFromFavorites(workspaceSlug as string, projectId as string, cycle.id).catch(() => {
+    cycleStore.addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycle.id).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
-        message: "Couldn't remove the cycle from favorites. Please try again.",
+        message: "Couldn't add the cycle to favorites. Please try again.",
+      });
+    });
+  };
+
+  const handleRemoveFromFavorites = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (!workspaceSlug || !projectId) return;
+
+    cycleStore.removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycle.id).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Couldn't add the cycle to favorites. Please try again.",
       });
     });
   };
@@ -266,12 +227,12 @@ export const ActiveCycleDetails: React.FC = () => {
                   >
                     {cycleStatus === "current" ? (
                       <span className="flex gap-1 whitespace-nowrap">
-                        <PersonRunningIcon className="h-4 w-4" />
+                        <RunningIcon className="h-4 w-4" />
                         {findHowManyDaysLeft(cycle.end_date ?? new Date())} Days Left
                       </span>
                     ) : cycleStatus === "upcoming" ? (
                       <span className="flex gap-1 whitespace-nowrap">
-                        <AlarmClockIcon className="h-4 w-4" />
+                        <AlarmClock className="h-4 w-4" />
                         {findHowManyDaysLeft(cycle.start_date ?? new Date())} Days Left
                       </span>
                     ) : cycleStatus === "completed" ? (
@@ -283,7 +244,7 @@ export const ActiveCycleDetails: React.FC = () => {
                             }`}
                           >
                             <span>
-                              <TriangleExclamationIcon className="h-3.5 w-3.5 fill-current" />
+                              <AlertTriangle className="h-3.5 w-3.5" />
                             </span>
                           </Tooltip>
                         )}{" "}
@@ -296,20 +257,18 @@ export const ActiveCycleDetails: React.FC = () => {
                   {cycle.is_favorite ? (
                     <button
                       onClick={(e) => {
-                        e.preventDefault();
-                        handleRemoveFromFavorites();
+                        handleRemoveFromFavorites(e);
                       }}
                     >
-                      <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                      <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
                     </button>
                   ) : (
                     <button
                       onClick={(e) => {
-                        e.preventDefault();
-                        handleAddToFavorites();
+                        handleAddToFavorites(e);
                       }}
                     >
-                      <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
+                      <Star className="h-4 w-4 " color="rgb(var(--color-text-200))" />
                     </button>
                   )}
                 </span>
@@ -317,12 +276,12 @@ export const ActiveCycleDetails: React.FC = () => {
 
               <div className="flex items-center justify-start gap-5 text-custom-text-200">
                 <div className="flex items-start gap-1">
-                  <CalendarDaysIcon className="h-4 w-4" />
+                  <CalendarDays className="h-4 w-4" />
                   <span>{renderShortDateWithYearFormat(startDate)}</span>
                 </div>
-                <ArrowRightIcon className="h-4 w-4 text-custom-text-200" />
+                <ArrowRight className="h-4 w-4 text-custom-text-200" />
                 <div className="flex items-start gap-1">
-                  <TargetIcon className="h-4 w-4" />
+                  <Target className="h-4 w-4" />
                   <span>{renderShortDateWithYearFormat(endDate)}</span>
                 </div>
               </div>
@@ -354,7 +313,7 @@ export const ActiveCycleDetails: React.FC = () => {
 
               <div className="flex items-center gap-4 text-custom-text-200">
                 <div className="flex gap-2">
-                  <LayerDiagonalIcon className="h-4 w-4 flex-shrink-0" />
+                  <LayersIcon className="h-4 w-4 flex-shrink-0" />
                   {cycle.total_issues} issues
                 </div>
                 <div className="flex items-center gap-2">
@@ -412,7 +371,7 @@ export const ActiveCycleDetails: React.FC = () => {
             <div className="my-3 flex max-h-[240px] min-h-[240px] flex-col gap-2.5 overflow-y-scroll rounded-md">
               {issues ? (
                 issues.length > 0 ? (
-                  issues.map((issue) => (
+                  issues.map((issue: any) => (
                     <div
                       key={issue.id}
                       onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`)}
@@ -480,14 +439,15 @@ export const ActiveCycleDetails: React.FC = () => {
                     width:
                       issues &&
                       `${
-                        (issues.filter((issue) => issue?.state_detail?.group === "completed")?.length / issues.length) *
+                        (issues.filter((issue: any) => issue?.state_detail?.group === "completed")?.length /
+                          issues.length) *
                           100 ?? 0
                       }%`,
                   }}
                 />
               </div>
               <div className="w-16 text-end text-xs text-custom-text-200">
-                {issues?.filter((issue) => issue?.state_detail?.group === "completed")?.length} of {issues?.length}
+                {issues?.filter((issue: any) => issue?.state_detail?.group === "completed")?.length} of {issues?.length}
               </div>
             </div>
           )}
@@ -506,7 +466,7 @@ export const ActiveCycleDetails: React.FC = () => {
             </div>
             <div className="flex items-center gap-1">
               <span>
-                <LayerDiagonalIcon className="h-5 w-5 flex-shrink-0 text-custom-text-200" />
+                <LayersIcon className="h-5 w-5 flex-shrink-0 text-custom-text-200" />
               </span>
               <span>Pending Issues - {cycle.total_issues - (cycle.completed_issues + cycle.cancelled_issues)}</span>
             </div>

@@ -13,7 +13,7 @@ import useWorkspaceDetails from "hooks/use-workspace-details";
 // ui
 import { Button } from "@plane/ui";
 // icons
-import { UserCircleIcon } from "components/icons";
+import { UserCircle2 } from "lucide-react";
 
 type Props = {
   value?: string | null;
@@ -159,7 +159,7 @@ export const ImageUploadModal: React.FC<Props> = ({
                           </>
                         ) : (
                           <div>
-                            <UserCircleIcon className="mx-auto h-16 w-16 text-custom-text-200" />
+                            <UserCircle2 className="mx-auto h-16 w-16 text-custom-text-200" />
                             <span className="mt-2 block text-sm font-medium text-custom-text-200">
                               {isDragActive ? "Drop image here to upload" : "Drag & drop image here"}
                             </span>

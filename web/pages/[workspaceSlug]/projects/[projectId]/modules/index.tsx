@@ -16,13 +16,29 @@ import { ModulesHeader } from "components/headers";
 import { Loader } from "@plane/ui";
 import { EmptyState } from "components/common";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { GanttChart, LayoutGrid, Plus } from "lucide-react";
 // images
 import emptyModule from "public/empty-state/module.svg";
 // types
 import { IModule, SelectModuleType } from "types/modules";
 // fetch-keys
 import { MODULE_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+<<<<<<< HEAD
+=======
+// helper
+import { replaceUnderscoreIfSnakeCase, truncateText } from "helpers/string.helper";
+
+const moduleViewOptions: { type: "grid" | "gantt_chart"; icon: any }[] = [
+  {
+    type: "gantt_chart",
+    icon: GanttChart,
+  },
+  {
+    type: "grid",
+    icon: LayoutGrid,
+  },
+];
+>>>>>>> ceb878e72f0c9aada8eb67d4f5855d25729c3f80
 
 // services
 const projectService = new ProjectService();
@@ -63,8 +79,49 @@ const ProjectModules: NextPage = () => {
   }, [createUpdateModule]);
 
   return (
+<<<<<<< HEAD
     <AppLayout
       header={<ModulesHeader name={activeProject?.name} modulesView={modulesView} setModulesView={setModulesView} />}
+=======
+    <ProjectAuthorizationWrapper
+      breadcrumbs={
+        <Breadcrumbs>
+          <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
+          <BreadcrumbItem title={`${truncateText(activeProject?.name ?? "Project", 32)} Modules`} />
+        </Breadcrumbs>
+      }
+      right={
+        <div className="flex items-center gap-2">
+          {moduleViewOptions.map((option) => (
+            <Tooltip
+              key={option.type}
+              tooltipContent={<span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} Layout</span>}
+              position="bottom"
+            >
+              <button
+                type="button"
+                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80 duration-300 ${
+                  modulesView === option.type ? "bg-custom-sidebar-background-80" : "text-custom-sidebar-text-200"
+                }`}
+                onClick={() => setModulesView(option.type)}
+              >
+                <option.icon className="h-4 w-4" />
+              </button>
+            </Tooltip>
+          ))}
+          <Button
+            variant="primary"
+            prependIcon={<Plus />}
+            onClick={() => {
+              const e = new KeyboardEvent("keydown", { key: "m" });
+              document.dispatchEvent(e);
+            }}
+          >
+            Add Module
+          </Button>
+        </div>
+      }
+>>>>>>> ceb878e72f0c9aada8eb67d4f5855d25729c3f80
     >
       <CreateUpdateModuleModal
         isOpen={createUpdateModule}
@@ -99,7 +156,7 @@ const ProjectModules: NextPage = () => {
             description="Modules are smaller, focused projects that help you group and organize issues."
             image={emptyModule}
             primaryButton={{
-              icon: <PlusIcon className="h-4 w-4" />,
+              icon: <Plus className="h-4 w-4" />,
               text: "New Module",
               onClick: () => {
                 const e = new KeyboardEvent("keydown", {

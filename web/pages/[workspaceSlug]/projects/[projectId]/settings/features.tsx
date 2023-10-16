@@ -12,12 +12,10 @@ import useUserAuth from "hooks/use-user-auth";
 // components
 import { SettingsSidebar } from "components/project";
 // ui
-import { ToggleSwitch } from "@plane/ui";
+import { ContrastIcon, DiceIcon, ToggleSwitch } from "@plane/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { ModuleIcon } from "components/icons";
 import { FileText, Inbox, Layers } from "lucide-react";
-import { ContrastOutlined } from "@mui/icons-material";
 // types
 import { IProject, IUser } from "types";
 import type { NextPage } from "next";
@@ -30,14 +28,14 @@ const featuresList = [
   {
     title: "Cycles",
     description: "Cycles are enabled for all the projects in this workspace. Access them from the sidebar.",
-    icon: <ContrastOutlined className="!text-base !leading-4 text-purple-500 flex-shrink-0 rotate-180" />,
+    icon: <ContrastIcon className="h-4 w-4 text-purple-500 flex-shrink-0 rotate-180" />,
 
     property: "cycle_view",
   },
   {
     title: "Modules",
     description: "Modules are enabled for all the projects in this workspace. Access it from the sidebar.",
-    icon: <ModuleIcon width={16} height={16} className="flex-shrink-0" />,
+    icon: <DiceIcon width={16} height={16} className="flex-shrink-0" />,
     property: "module_view",
   },
   {

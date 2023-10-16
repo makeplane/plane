@@ -13,7 +13,7 @@ import { ProjectService } from "services/project";
 import useLocalStorage from "hooks/use-local-storage";
 import useUserAuth from "hooks/use-user-auth";
 // icons
-import { PlusIcon } from "components/icons";
+import { LayoutGrid, List, Plus } from "lucide-react";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
@@ -21,8 +21,6 @@ import { RecentPagesList, CreateUpdatePageModal, TPagesListProps } from "compone
 // ui
 import { Button } from "@plane/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-// icons
-import { ListBulletIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
 // types
 import { TPageViewProps } from "types";
 import type { NextPage } from "next";
@@ -104,7 +102,7 @@ const ProjectPages: NextPage = () => {
         right={
           <Button
             variant="primary"
-            prependIcon={<PlusIcon />}
+            prependIcon={<Plus />}
             onClick={() => {
               const e = new KeyboardEvent("keydown", { key: "d" });
               document.dispatchEvent(e);
@@ -125,7 +123,7 @@ const ProjectPages: NextPage = () => {
                 }`}
                 onClick={() => setViewType("list")}
               >
-                <ListBulletIcon className="h-4 w-4" />
+                <List className="h-4 w-4" />
               </button>
               <button
                 type="button"
@@ -134,7 +132,7 @@ const ProjectPages: NextPage = () => {
                 }`}
                 onClick={() => setViewType("detailed")}
               >
-                <Squares2X2Icon className="h-4 w-4" />
+                <LayoutGrid className="h-4 w-4" />
               </button>
             </div>
           </div>

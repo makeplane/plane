@@ -24,8 +24,8 @@ import { SubIssuesRoot } from "./sub-issues";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
-import { LayerDiagonalIcon } from "components/icons";
-import { MinusCircleIcon } from "@heroicons/react/24/outline";
+import { LayersIcon } from "@plane/ui";
+import { MinusCircle } from "lucide-react";
 // types
 import { IIssue, IIssueComment } from "types";
 // fetch-keys
@@ -142,7 +142,7 @@ export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges,
                         href={`/${workspaceSlug}/projects/${projectId as string}/issues/${issue.id}`}
                         className="flex items-center gap-2 py-2"
                       >
-                        <LayerDiagonalIcon className="h-4 w-4" />
+                        <LayersIcon className="h-4 w-4" />
                         {issueDetails.project_detail.identifier}-{issue.sequence_id}
                       </CustomMenu.MenuItem>
                     ))}
@@ -158,7 +158,7 @@ export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges,
                 onClick={() => submitChanges({ parent: null })}
                 className="flex items-center gap-2 text-red-500 py-2"
               >
-                <MinusCircleIcon className="h-4 w-4" />
+                <MinusCircle className="h-4 w-4" />
                 <span> Remove Parent Issue</span>
               </CustomMenu.MenuItem>
             </CustomMenu>

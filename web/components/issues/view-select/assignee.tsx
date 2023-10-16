@@ -3,8 +3,9 @@ import { useRouter } from "next/router";
 // services
 import { TrackEventService } from "services/track_event.service";
 // ui
-import { AssigneesList, Avatar, CustomSearchSelect, Icon } from "components/ui";
+import { AssigneesList, Avatar, CustomSearchSelect } from "components/ui";
 import { Tooltip } from "@plane/ui";
+import { User2 } from "lucide-react";
 // types
 import { IUser, IIssue } from "types";
 // hooks
@@ -72,7 +73,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
           </div>
         ) : (
           <div className="flex items-center justify-center gap-2 px-1.5 py-1 rounded shadow-sm border border-custom-border-300">
-            <Icon iconName="person" className="text-sm !leading-4" />
+            <User2 className="h-4 w-4" />
           </div>
         )}
       </div>

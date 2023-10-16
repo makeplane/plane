@@ -11,22 +11,22 @@ import useToast from "hooks/use-toast";
 // components
 import { SidebarProgressStats } from "components/core";
 import ProgressChart from "components/core/sidebar/progress-chart";
-import { DeleteCycleModal } from "components/cycles";
+import { CycleDeleteModal } from "components/cycles/cycle-delete-modal";
 // ui
 import { CustomMenu, CustomRangeDatePicker } from "components/ui";
 import { Loader, ProgressBar } from "@plane/ui";
 // icons
 import {
-  CalendarDaysIcon,
-  ChartPieIcon,
-  ArrowLongRightIcon,
-  TrashIcon,
-  UserCircleIcon,
-  ChevronDownIcon,
-  DocumentIcon,
+  CalendarDays,
+  ChevronDown,
+  File,
+  MoveRight,
   LinkIcon,
-} from "@heroicons/react/24/outline";
-import { ExclamationIcon } from "components/icons";
+  PieChart,
+  Trash2,
+  UserCircle2,
+  AlertCircle,
+} from "lucide-react";
 // helpers
 import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
 import { isDateGreaterThanToday, renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-time.helper";
@@ -49,7 +49,11 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId } = router.query;
+  const { workspaceSlug, projectId, cycleId } = router.query as {
+    workspaceSlug: string;
+    projectId: string;
+    cycleId: string;
+  };
 
   const { setToastAlert } = useToast();
 
@@ -261,7 +265,16 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
 
   return (
     <>
-      <DeleteCycleModal isOpen={cycleDeleteModal} setIsOpen={setCycleDeleteModal} data={cycle} user={user} />
+      {cycle && (
+        <CycleDeleteModal
+          cycle={cycle}
+          modal={cycleDeleteModal}
+          modalClose={() => setCycleDeleteModal(false)}
+          onSubmit={() => {}}
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+        />
+      )}
       <div
         className={`fixed top-[66px] z-20 ${
           isOpen ? "right-0" : "-right-[24rem]"
@@ -286,7 +299,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
                             cycle.start_date ? "" : "text-custom-text-200"
                           }`}
                         >
-                          <CalendarDaysIcon className="h-3 w-3" />
+                          <CalendarDays className="h-3 w-3" />
                           <span>
                             {renderShortDateWithYearFormat(
                               new Date(`${watch("start_date") ? watch("start_date") : cycle?.start_date}`),
@@ -323,7 +336,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
                     )}
                   </Popover>
                   <span>
-                    <ArrowLongRightIcon className="h-3 w-3 text-custom-text-200" />
+                    <MoveRight className="h-3 w-3 text-custom-text-200" />
                   </span>
                   <Popover className="flex h-full items-center justify-center rounded-lg">
                     {({}) => (
@@ -334,7 +347,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
                             cycle.end_date ? "" : "text-custom-text-200"
                           }`}
                         >
-                          <CalendarDaysIcon className="h-3 w-3" />
+                          <CalendarDays className="h-3 w-3" />
 
                           <span>
                             {renderShortDateWithYearFormat(
@@ -384,7 +397,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
                       {!isCompleted && (
                         <CustomMenu.MenuItem onClick={() => setCycleDeleteModal(true)}>
                           <span className="flex items-center justify-start gap-2">
-                            <TrashIcon className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4" />
                             <span>Delete</span>
                           </span>
                         </CustomMenu.MenuItem>
@@ -406,7 +419,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
                 <div className="flex flex-col  gap-4  text-sm">
                   <div className="flex items-center justify-start gap-1">
                     <div className="flex w-40 items-center justify-start gap-2 text-custom-text-200">
-                      <UserCircleIcon className="h-5 w-5" />
+                      <UserCircle2 className="h-5 w-5" />
                       <span>Lead</span>
                     </div>
 
@@ -430,7 +443,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
 
                   <div className="flex items-center justify-start gap-1">
                     <div className="flex w-40 items-center justify-start gap-2 text-custom-text-200">
-                      <ChartPieIcon className="h-5 w-5" />
+                      <PieChart className="h-5 w-5" />
                       <span>Progress</span>
                     </div>
 
@@ -461,14 +474,11 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
                       </div>
                       {isStartValid && isEndValid ? (
                         <Disclosure.Button>
-                          <ChevronDownIcon
-                            className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
-                            aria-hidden="true"
-                          />
+                          <ChevronDown className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`} aria-hidden="true" />
                         </Disclosure.Button>
                       ) : (
                         <div className="flex items-center gap-1">
-                          <ExclamationIcon height={14} width={14} className="fill-current text-custom-text-200" />
+                          <AlertCircle className="h-3.5 w-3.5 text-custom-text-200" />
                           <span className="text-xs italic text-custom-text-200">
                             {cycleStatus === "upcoming"
                               ? "Cycle is yet to start."
@@ -484,7 +494,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
                             <div className="flex  items-start justify-between gap-4 py-2 text-xs">
                               <div className="flex items-center gap-1">
                                 <span>
-                                  <DocumentIcon className="h-3 w-3 text-custom-text-200" />
+                                  <File className="h-3 w-3 text-custom-text-200" />
                                 </span>
                                 <span>
                                   Pending Issues -{" "}
@@ -532,14 +542,11 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
 
                       {cycle.total_issues > 0 ? (
                         <Disclosure.Button>
-                          <ChevronDownIcon
-                            className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
-                            aria-hidden="true"
-                          />
+                          <ChevronDown className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`} aria-hidden="true" />
                         </Disclosure.Button>
                       ) : (
                         <div className="flex items-center gap-1">
-                          <ExclamationIcon height={14} width={14} className="fill-current text-custom-text-200" />
+                          <AlertCircle className="h-3.5 w-3.5 text-custom-text-200" />
                           <span className="text-xs italic text-custom-text-200">
                             No issues found. Please add issue.
                           </span>

@@ -6,7 +6,7 @@ import { ProjectService } from "services/project";
 // ui
 import { Avatar, CustomSearchSelect } from "components/ui";
 // icons
-import { UserCircleIcon } from "@heroicons/react/24/outline";
+import { UserCircle2 } from "lucide-react";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -46,7 +46,7 @@ export const SidebarLeadSelect: FC<Props> = (props) => {
   return (
     <div className="flex items-center justify-start gap-1">
       <div className="flex w-40 items-center justify-start gap-2 text-custom-text-200">
-        <UserCircleIcon className="h-5 w-5" />
+        <UserCircle2 className="h-5 w-5" />
         <span>Lead</span>
       </div>
       <div className="sm:basis-1/2">
