@@ -10,8 +10,9 @@ import { UserService } from "services/user.service";
 // hooks
 import useUser from "hooks/use-user";
 // ui
-import { Icon } from "components/ui";
 import { Loader, Tooltip } from "@plane/ui";
+// icons
+import { ChevronDown } from "lucide-react";
 // icons
 import { EditOutlined } from "@mui/icons-material";
 // helpers
@@ -162,7 +163,7 @@ export const ProfileSidebar = () => {
                                 </div>
                               </Tooltip>
                             )}
-                            <Icon iconName="arrow_drop_down" className="!text-lg" />
+                            <ChevronDown className="h-4 w-4" />
                           </div>
                         </Disclosure.Button>
                         <Transition

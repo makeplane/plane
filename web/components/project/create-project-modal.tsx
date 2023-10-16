@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 // icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { X } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
 import { useWorkspaceMyMembership } from "contexts/workspace-member.context";
@@ -212,7 +212,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
 
                   <div className="absolute right-2 top-2 p-2">
                     <button type="button" onClick={handleClose}>
-                      <XMarkIcon className="h-5 w-5 text-white" />
+                      <X className="h-5 w-5 text-white" />
                     </button>
                   </div>
                   <div className="absolute bottom-2 right-2">

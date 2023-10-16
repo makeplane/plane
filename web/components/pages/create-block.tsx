@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
-import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
+import { SendHorizonal } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 // services
 import { PageService } from "services/page.service";
@@ -114,7 +114,7 @@ export const CreateBlock: FC<Props> = ({ user }) => {
 
         <div className="absolute right-2 bottom-2 flex items-center p-1">
           <button type="submit">
-            <PaperAirplaneIcon className="h-5 w-5 text-custom-text-100" />
+            <SendHorizonal className="h-5 w-5 text-custom-text-100" />
           </button>
         </div>
       </form>
