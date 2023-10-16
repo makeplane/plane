@@ -115,8 +115,9 @@ export const IssueWebViewForm: React.FC<Props> = (props) => {
           <Controller
             name="description_html"
             control={control}
-            render={({ field: { value, onChange } }) => (
-              <RichTextEditor
+            render={({ field: { value, onChange } }) => {
+              if(value==null)return <></>;
+              return <RichTextEditor
                 uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                 deleteFile={fileService.deleteImage}
                 value={
@@ -136,7 +137,7 @@ export const IssueWebViewForm: React.FC<Props> = (props) => {
                   handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
                 }}
               />
-            )}
+            }}
           />
           <div
             className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${

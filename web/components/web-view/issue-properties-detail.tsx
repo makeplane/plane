@@ -232,6 +232,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                           JSON.stringify({
                             issue_id: relation.issue_detail?.id,
                             project_id: relation.issue_detail?.project_detail.id,
+                            issue_identifier: `${relation.issue_detail?.project_detail.identifier}-${relation.issue_detail?.sequence_id}`
                           })
                         )
                       }
@@ -294,6 +295,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                           JSON.stringify({
                             issue_id: relation.issue_detail?.id,
                             project_id: relation.issue_detail?.project_detail.id,
+                            issue_identifier: `${relation.issue_detail?.project_detail.identifier}-${relation.issue_detail?.sequence_id}`
                           })
                         )
                       }
@@ -356,6 +358,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                           JSON.stringify({
                             issue_id: relation.issue_detail?.id,
                             project_id: relation.issue_detail?.project_detail.id,
+                            issue_identifier: `${relation.issue_detail?.project_detail.identifier}-${relation.issue_detail?.sequence_id}`
                           })
                         )
                       }
@@ -418,6 +421,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                           JSON.stringify({
                             issue_id: relation.issue_detail?.id,
                             project_id: relation.issue_detail?.project_detail.id,
+                            issue_identifier: `${relation.issue_detail?.project_detail.identifier}-${relation.issue_detail?.sequence_id}`
                           })
                         )
                       }
