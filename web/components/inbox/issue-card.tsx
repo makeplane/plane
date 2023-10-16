@@ -4,14 +4,7 @@ import Link from "next/link";
 // ui
 import { Tooltip, PriorityIcon } from "@plane/ui";
 // icons
-import {
-  CalendarDaysIcon,
-  CheckCircleIcon,
-  ClockIcon,
-  DocumentDuplicateIcon,
-  ExclamationTriangleIcon,
-  XCircleIcon,
-} from "@heroicons/react/24/outline";
+import { AlertTriangle, CalendarDays, CheckCircle, Clock, Copy, XCircle } from "lucide-react";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
@@ -70,7 +63,7 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
               tooltipContent={`${renderShortDateWithYearFormat(issue.created_at ?? "")}`}
             >
               <div className="flex items-center gap-1 rounded border border-custom-border-200 shadow-sm text-xs px-2 py-[0.19rem] text-custom-text-200">
-                <CalendarDaysIcon className="h-3.5 w-3.5" />
+                <CalendarDays className="h-3.5 w-3.5" />
                 <span>{renderShortDateWithYearFormat(issue.created_at ?? "")}</span>
               </div>
             </Tooltip>
@@ -84,29 +77,29 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
           >
             {issueStatus === -2 ? (
               <>
-                <ExclamationTriangleIcon className="h-3.5 w-3.5" />
+                <AlertTriangle className="h-3.5 w-3.5" />
                 <span>Pending</span>
               </>
             ) : issueStatus === -1 ? (
               <>
-                <XCircleIcon className="h-3.5 w-3.5" />
+                <XCircle className="h-3.5 w-3.5" />
                 <span>Declined</span>
               </>
             ) : issueStatus === 0 ? (
               <>
-                <ClockIcon className="h-3.5 w-3.5" />
+                <Clock className="h-3.5 w-3.5" />
                 <span>
                   {new Date(issue.issue_inbox[0].snoozed_till ?? "") < new Date() ? "Snoozed date passed" : "Snoozed"}
                 </span>
               </>
             ) : issueStatus === 1 ? (
               <>
-                <CheckCircleIcon className="h-3.5 w-3.5" />
+                <CheckCircle className="h-3.5 w-3.5" />
                 <span>Accepted</span>
               </>
             ) : (
               <>
-                <DocumentDuplicateIcon className="h-3.5 w-3.5" />
+                <Copy className="h-3.5 w-3.5" />
                 <span>Duplicate</span>
               </>
             )}

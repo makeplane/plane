@@ -1,7 +1,7 @@
 // hooks
 import useInboxView from "hooks/use-inbox-view";
 // icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { X } from "lucide-react";
 import { PriorityIcon } from "@plane/ui";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
@@ -60,7 +60,7 @@ export const InboxFiltersList = () => {
                               })
                             }
                           >
-                            <XMarkIcon className="h-3 w-3" />
+                            <X className="h-3 w-3" />
                           </button>
                         </div>
                       ))}
@@ -72,7 +72,7 @@ export const InboxFiltersList = () => {
                           })
                         }
                       >
-                        <XMarkIcon className="h-3 w-3" />
+                        <X className="h-3 w-3" />
                       </button>
                     </div>
                   ) : filterKey === "inbox_status" ? (
@@ -92,7 +92,7 @@ export const InboxFiltersList = () => {
                               })
                             }
                           >
-                            <XMarkIcon className="h-3 w-3" />
+                            <X className="h-3 w-3" />
                           </button>
                         </div>
                       ))}
@@ -104,7 +104,7 @@ export const InboxFiltersList = () => {
                           })
                         }
                       >
-                        <XMarkIcon className="h-3 w-3" />
+                        <X className="h-3 w-3" />
                       </button>
                     </div>
                   ) : (
@@ -121,7 +121,7 @@ export const InboxFiltersList = () => {
         className="flex items-center gap-x-1 rounded-full border border-custom-border-200 bg-custom-background-80 px-3 py-1.5 text-custom-text-200 hover:text-custom-text-100"
       >
         <span>Clear all</span>
-        <XMarkIcon className="h-3 w-3" />
+        <X className="h-3 w-3" />
       </button>
     </div>
   );
