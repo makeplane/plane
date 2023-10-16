@@ -9,7 +9,7 @@ import { IssueLabelService } from "services/issue";
 // ui
 import { Button, Input } from "@plane/ui";
 // icons
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { ChevronDown } from "lucide-react";
 // types
 import type { IUser, IIssueLabels, IState } from "types";
 // constants
@@ -120,7 +120,7 @@ export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                                   }}
                                 />
                               )}
-                              <ChevronDownIcon
+                              <ChevronDown
                                 className={`ml-2 h-5 w-5 group-hover:text-custom-text-200 ${
                                   open ? "text-gray-600" : "text-gray-400"
                                 }`}

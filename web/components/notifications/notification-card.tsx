@@ -7,8 +7,9 @@ import { useRouter } from "next/router";
 import useToast from "hooks/use-toast";
 
 // icons
-import { CustomMenu, Icon } from "components/ui";
-import { Tooltip } from "@plane/ui";
+import { CustomMenu } from "components/ui";
+import { ArchiveIcon, Tooltip } from "@plane/ui";
+import { ArchiveRestore, Clock, User2 } from "lucide-react";
 
 // helper
 import { stripHTML, replaceUnderscoreIfSnakeCase, truncateText } from "helpers/string.helper";
@@ -85,7 +86,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
               ) : notification.triggered_by_details.display_name?.[0] ? (
                 notification.triggered_by_details.display_name?.[0]?.toUpperCase()
               ) : (
-                <Icon iconName="person" className="h-6 w-6" />
+                <User2 className="h-4 w-4" />
               )}
             </span>
           </div>
@@ -144,7 +145,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
           </p>
           {notification.snoozed_till ? (
             <p className="text-custom-text-300 flex items-center justify-end gap-x-1 flex-shrink-0">
-              <Icon iconName="schedule" className="!text-base -my-0.5" />
+              <Clock className="h-4 w-4" />
               <span>
                 Till {renderShortDate(notification.snoozed_till)}, {render12HourFormatTime(notification.snoozed_till)}
               </span>
@@ -172,7 +173,11 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
           {
             id: 2,
             name: notification.archived_at ? "Unarchive" : "Archive",
-            icon: notification.archived_at ? "unarchive" : "archive",
+            icon: notification.archived_at ? (
+              <ArchiveRestore className="h-4 w-4 text-custom-text-300" />
+            ) : (
+              <ArchiveIcon className="h-4 w-4 text-custom-text-300" />
+            ),
             onClick: () => {
               markNotificationArchivedStatus(notification.id).then(() => {
                 setToastAlert({
@@ -193,7 +198,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
               key={item.id}
               className="text-sm flex w-full items-center gap-x-2 bg-custom-background-80 hover:bg-custom-background-100 p-0.5 rounded outline-none"
             >
-              <Icon iconName={item.icon} className="h-5 w-5 text-custom-text-300" />
+              {item.icon}
             </button>
           </Tooltip>
         ))}
@@ -206,7 +211,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
               }}
               customButton={
                 <div className="text-sm flex w-full items-center gap-x-2 bg-custom-background-80 hover:bg-custom-background-100 p-0.5 rounded">
-                  <Icon iconName="schedule" className="h-5 w-5 text-custom-text-300" />
+                  <Clock className="h-4 w-4 text-custom-text-300" />
                 </div>
               }
               optionsClassName="!z-20"
