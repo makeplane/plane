@@ -135,7 +135,7 @@ export const SubIssueList: React.FC<Props> = (props) => {
                 setIssueSelectedForDelete(subIssue);
               }}
             >
-              <X className="w-[18px] h-[18px] text-custom-text-400" />
+              <X className="w-4 h-4 text-custom-text-400" />
             </button>
           </div>
         ))}
@@ -146,7 +146,7 @@ export const SubIssueList: React.FC<Props> = (props) => {
         onClick={() => setIsBottomSheetOpen(true)}
         className="flex items-center gap-x-1 mt-3"
       >
-        <PlusIcon className="w-[18px] h-[18px] text-custom-text-400" />
+        <PlusIcon className="w-4 h-4 text-custom-text-400" />
         <p className="text-sm text-custom-text-400">Add sub issue</p>
       </button>
     </div>

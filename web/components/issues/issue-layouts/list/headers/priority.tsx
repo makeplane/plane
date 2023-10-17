@@ -1,14 +1,13 @@
-// mobx
+import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // lucide icons
 import { AlertCircle, SignalHigh, SignalMedium, SignalLow, Ban } from "lucide-react";
 // components
 import { HeaderGroupByCard } from "./group-by-card";
-// constants
-import { issuePriorityByKey } from "constants/issue";
 
 export interface IPriorityHeader {
   column_id: string;
+  column_value: any;
   issues_count: number;
 }
 
@@ -38,8 +37,10 @@ const Icon = ({ priority }: any) => (
   </div>
 );
 
-export const PriorityHeader: React.FC<IPriorityHeader> = observer(({ column_id, issues_count }) => {
-  const priority = column_id && issuePriorityByKey(column_id);
+export const PriorityHeader: FC<IPriorityHeader> = observer((props) => {
+  const { column_id, column_value, issues_count } = props;
+
+  const priority = column_value ?? null;
 
   return (
     <>

@@ -1,5 +1,6 @@
 import { FC, ReactNode } from "react";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -14,7 +15,7 @@ interface IProjectAuthWrapper {
   children: ReactNode;
 }
 
-export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = (props) => {
+export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { children } = props;
   // store
   const { user: userStore, project: projectStore } = useMobxStore();
@@ -88,4 +89,4 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = (props) => {
   }
 
   return <>{children}</>;
-};
+});

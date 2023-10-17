@@ -115,7 +115,7 @@ export const IssueLinks: React.FC<Props> = (props) => {
                     setSelectedLink(link.id);
                   }}
                 >
-                  <Pencil className="w-[18px] h-[18px] text-custom-text-400" />
+                  <Pencil className="w-4 h-4 text-custom-text-400" />
                 </button>
                 <button
                   type="button"
@@ -123,7 +123,7 @@ export const IssueLinks: React.FC<Props> = (props) => {
                     setDeleteSelected(link.id);
                   }}
                 >
-                  <X className="w-[18px] h-[18px] text-custom-text-400" />
+                  <X className="w-4 h-4 text-custom-text-400" />
                 </button>
               </div>
             )}

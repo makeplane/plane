@@ -34,6 +34,8 @@
     "@blueprintjs/core": "^4.16.3",
     "@blueprintjs/popover2": "^1.13.3",
     "@headlessui/react": "^1.7.17",
-    "react-color": "^2.19.3"
+    "@popperjs/core": "^2.11.8",
+    "react-color": "^2.19.3",
+    "react-popper": "^2.3.0"
   }
 }

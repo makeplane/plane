@@ -148,7 +148,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
                         className="flex w-full items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-custom-background-80"
                       >
                         <div className="grid place-items-center flex-shrink-0">
-                          <Icon className="text-custom-text-200 h-3.5 w-3.5" size={14} />
+                          <Icon className="text-custom-text-200 h-3.5 w-3.5" />
                         </div>
                         <span className="text-xs">{name}</span>
                       </button>

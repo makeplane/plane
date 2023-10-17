@@ -1,4 +1,3 @@
-// mobx lite
 import { enableStaticRendering } from "mobx-react-lite";
 // store imports
 import UserStore from "store/user.store";
@@ -54,6 +53,19 @@ import {
   IGlobalViewsStore,
 } from "store/global-view";
 import {
+  ProfileIssueStore,
+  IProfileIssueStore,
+  ProfileIssueFilterStore,
+  IProfileIssueFilterStore,
+} from "store/profile-issues";
+import {
+  ArchivedIssueStore,
+  IArchivedIssueStore,
+  ArchivedIssueFilterStore,
+  IArchivedIssueFilterStore,
+} from "store/archived-issues";
+import { DraftIssueStore, IDraftIssueStore, DraftIssueFilterStore, IDraftIssueFilterStore } from "store/draft-issues";
+import {
   IInboxFiltersStore,
   IInboxIssueDetailsStore,
   IInboxIssuesStore,
@@ -102,6 +114,15 @@ export class RootStore {
   globalViewIssues: IGlobalViewIssuesStore;
   globalViewFilters: IGlobalViewFiltersStore;
 
+  profileIssues: IProfileIssueStore;
+  profileIssueFilters: IProfileIssueFilterStore;
+
+  archivedIssues: IArchivedIssueStore;
+  archivedIssueFilters: IArchivedIssueFilterStore;
+
+  draftIssues: IDraftIssueStore;
+  draftIssueFilters: IDraftIssueFilterStore;
+
   inbox: IInboxStore;
   inboxIssues: IInboxIssuesStore;
   inboxIssueDetails: IInboxIssueDetailsStore;
@@ -142,6 +163,15 @@ export class RootStore {
     this.globalViews = new GlobalViewsStore(this);
     this.globalViewIssues = new GlobalViewIssuesStore(this);
     this.globalViewFilters = new GlobalViewFiltersStore(this);
+
+    this.profileIssues = new ProfileIssueStore(this);
+    this.profileIssueFilters = new ProfileIssueFilterStore(this);
+
+    this.archivedIssues = new ArchivedIssueStore(this);
+    this.archivedIssueFilters = new ArchivedIssueFilterStore(this);
+
+    this.draftIssues = new DraftIssueStore(this);
+    this.draftIssueFilters = new DraftIssueFilterStore(this);
 
     this.inbox = new InboxStore(this);
     this.inboxIssues = new InboxIssuesStore(this);
