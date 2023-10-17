@@ -116,7 +116,7 @@ export const ProjectSidebarList: FC = observer(() => {
       />
       <div
         ref={containerRef}
-        className={`h-full overflow-y-auto px-4 space-y-3 pt-3 ${
+        className={`h-full overflow-y-auto px-4 space-y-2 ${
           isScrolled ? "border-t border-custom-sidebar-border-300" : ""
         }`}
       >
@@ -125,7 +125,7 @@ export const ProjectSidebarList: FC = observer(() => {
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 {orderedFavProjects && orderedFavProjects.length > 0 && (
-                  <Disclosure as="div" className="flex flex-col space-y-2" defaultOpen={true}>
+                  <Disclosure as="div" className="flex flex-col" defaultOpen={true}>
                     {({ open }) => (
                       <>
                         {!isCollapsed && (
@@ -133,7 +133,7 @@ export const ProjectSidebarList: FC = observer(() => {
                             <Disclosure.Button
                               as="button"
                               type="button"
-                              className="group flex items-center gap-1 px-1.5 text-xs font-semibold text-custom-sidebar-text-400 text-left hover:bg-custom-sidebar-background-80 rounded w-full whitespace-nowrap"
+                              className="group flex items-center gap-1 px-1.5 text-sm font-semibold text-custom-sidebar-text-400 text-left hover:bg-custom-sidebar-background-80 rounded w-full whitespace-nowrap"
                             >
                               Favorites
                               {open ? (
@@ -190,7 +190,7 @@ export const ProjectSidebarList: FC = observer(() => {
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 {orderedJoinedProjects && orderedJoinedProjects.length > 0 && (
-                  <Disclosure as="div" className="flex flex-col space-y-2" defaultOpen={true}>
+                  <Disclosure as="div" className="flex flex-col" defaultOpen={true}>
                     {({ open }) => (
                       <>
                         {!isCollapsed && (
@@ -198,7 +198,7 @@ export const ProjectSidebarList: FC = observer(() => {
                             <Disclosure.Button
                               as="button"
                               type="button"
-                              className="group flex items-center gap-1 px-1.5 text-xs font-semibold text-custom-sidebar-text-400 text-left hover:bg-custom-sidebar-background-80 rounded w-full whitespace-nowrap"
+                              className="group flex items-center gap-1 px-1.5 text-sm font-semibold text-custom-sidebar-text-400 text-left hover:bg-custom-sidebar-background-80 rounded w-full whitespace-nowrap"
                             >
                               Projects
                               {open ? (

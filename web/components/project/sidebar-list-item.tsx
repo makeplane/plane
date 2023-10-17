@@ -298,7 +298,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
               leaveFrom="transform scale-100 opacity-100"
               leaveTo="transform scale-95 opacity-0"
             >
-              <Disclosure.Panel className={`space-y-2 mt-1 ${isCollapsed ? "" : "ml-[2.25rem]"}`}>
+              <Disclosure.Panel className={`space-y-1 mt-1 ${isCollapsed ? "" : "ml-[2.25rem]"}`}>
                 {navigation(workspaceSlug as string, project?.id).map((item) => {
                   if (
                     (item.name === "Cycles" && !project.cycle_view) ||

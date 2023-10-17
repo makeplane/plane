@@ -390,7 +390,7 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
                                       }}
                                     >
                                       <div className="text-sm">{option.label}</div>
-                                      <div className={`w-[18px] h-[18px] relative flex justify-center items-center`}>
+                                      <div className={`w-4 h-4 relative flex justify-center items-center`}>
                                         {value.length > 0 && value.includes(option.key) && (
                                           <Check className="h-5 w-5" />
                                         )}

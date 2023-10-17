@@ -12,7 +12,7 @@ const WorkspaceView = () => (
   <WorkspaceAuthorizationLayout
     breadcrumbs={
       <div className="flex gap-2 items-center">
-        <CheckCircle className="h-[18px] w-[18px] stroke-[1.5]" />
+        <CheckCircle className="h-4 w-4 stroke-[1.5]" />
         <span className="text-sm font-medium">Workspace issues</span>
       </div>
     }

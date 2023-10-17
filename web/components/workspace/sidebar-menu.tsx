@@ -60,7 +60,7 @@ export const WorkspaceSidebarMenu = observer(() => {
                       : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
                   } ${themeStore?.sidebarCollapsed ? "justify-center" : ""}`}
                 >
-                  {<link.Icon className="h-[18px] w-[18px]" />}
+                  {<link.Icon className="h-4 w-4" />}
                   {!themeStore?.sidebarCollapsed && link.name}
                 </div>
               </Tooltip>
