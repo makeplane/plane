@@ -1,11 +1,8 @@
-import React from "react";
-import { useRouter } from "next/router";
+import { FC, Fragment } from "react";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useMobxStore } from "lib/mobx/store-provider";
 import useToast from "hooks/use-toast";
 // components
 import { ProjectViewForm } from "components/views";
@@ -17,31 +14,24 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   preLoadedData?: Partial<IProjectView> | null;
+  workspaceSlug: string;
+  projectId: string;
 };
 
-export const CreateUpdateProjectViewModal: React.FC<Props> = observer((props) => {
-  const { data, isOpen, onClose, preLoadedData } = props;
-
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
+export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
+  const { data, isOpen, onClose, preLoadedData, workspaceSlug, projectId } = props;
+  // store
   const { projectViews: projectViewsStore } = useMobxStore();
-
+  // hooks
   const { setToastAlert } = useToast();
 
   const handleClose = () => {
     onClose();
   };
 
-  const createView = async (formData: IProjectView) => {
-    if (!workspaceSlug || !projectId) return;
-
-    const payload = {
-      ...formData,
-    };
-
+  const createView = async (payload: IProjectView) => {
     await projectViewsStore
-      .createView(workspaceSlug.toString(), projectId.toString(), payload)
+      .createView(workspaceSlug, projectId, payload)
       .then(() => handleClose())
       .catch(() =>
         setToastAlert({
@@ -52,15 +42,9 @@ export const CreateUpdateProjectViewModal: React.FC<Props> = observer((props) =>
       );
   };
 
-  const updateView = async (formData: IProjectView) => {
-    if (!workspaceSlug || !projectId) return;
-
-    const payload = {
-      ...formData,
-    };
-
+  const updateView = async (payload: IProjectView) => {
     await projectViewsStore
-      .updateView(workspaceSlug.toString(), projectId.toString(), data?.id as string, payload)
+      .updateView(workspaceSlug, projectId, data?.id as string, payload)
       .then(() => handleClose())
       .catch(() =>
         setToastAlert({
@@ -77,10 +61,10 @@ export const CreateUpdateProjectViewModal: React.FC<Props> = observer((props) =>
   };
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
+    <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
-          as={React.Fragment}
+          as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -94,7 +78,7 @@ export const CreateUpdateProjectViewModal: React.FC<Props> = observer((props) =>
         <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
             <Transition.Child
-              as={React.Fragment}
+              as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               enterTo="opacity-100 translate-y-0 sm:scale-100"

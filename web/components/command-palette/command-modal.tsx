@@ -1,12 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
-// cmdk
 import { Command } from "cmdk";
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import { WorkspaceService } from "services/workspace.service";
@@ -60,16 +55,20 @@ import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 type Props = {
   deleteIssue: () => void;
   isPaletteOpen: boolean;
-  setIsPaletteOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  closePalette: () => void;
 };
 
 // services
 const workspaceService = new WorkspaceService();
 const issueService = new IssueService();
 
-export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPaletteOpen }) => {
+export const CommandModal: React.FC<Props> = (props) => {
+  const { deleteIssue, isPaletteOpen, closePalette } = props;
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId, issueId } = router.query;
+  // states
   const [placeholder, setPlaceholder] = useState("Type a command or search...");
-
   const [resultsCount, setResultsCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
@@ -86,14 +85,11 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
     },
   });
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
-
   const [pages, setPages] = useState<string[]>([]);
+
   const page = pages[pages.length - 1];
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
-
-  const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -141,7 +137,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
   const handleIssueAssignees = (assignee: string) => {
     if (!issueDetails) return;
 
-    setIsPaletteOpen(false);
+    closePalette();
     const updatedAssignees = issueDetails.assignees ?? [];
 
     if (updatedAssignees.includes(assignee)) {
@@ -153,12 +149,12 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
   };
 
   const redirect = (path: string) => {
-    setIsPaletteOpen(false);
+    closePalette();
     router.push(path);
   };
 
   const createNewWorkspace = () => {
-    setIsPaletteOpen(false);
+    closePalette();
     router.push("/create-workspace");
   };
 
@@ -236,7 +232,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
       }}
       as={React.Fragment}
     >
-      <Dialog as="div" className="relative z-30" onClose={() => setIsPaletteOpen(false)}>
+      <Dialog as="div" className="relative z-30" onClose={() => closePalette()}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -269,7 +265,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                   // when search is empty and page is undefined
                   // when user tries to close the modal with esc
                   if (e.key === "Escape" && !page && !searchTerm) {
-                    setIsPaletteOpen(false);
+                    closePalette();
                   }
                   // Escape goes to previous page
                   // Backspace goes to previous page when search is empty
@@ -365,7 +361,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                               <Command.Item
                                 key={item.id}
                                 onSelect={() => {
-                                  setIsPaletteOpen(false);
+                                  closePalette();
                                   router.push(currentSection.path(item));
                                 }}
                                 value={`${key}-${item?.name}`}
@@ -388,7 +384,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         <Command.Group heading="Issue actions">
                           <Command.Item
                             onSelect={() => {
-                              setIsPaletteOpen(false);
+                              closePalette();
                               setPlaceholder("Change state...");
                               setSearchTerm("");
                               setPages([...pages, "change-issue-state"]);
@@ -455,7 +451,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                           </Command.Item>
                           <Command.Item
                             onSelect={() => {
-                              setIsPaletteOpen(false);
+                              closePalette();
                               copyIssueUrlToClipboard();
                             }}
                             className="focus:outline-none"
@@ -470,7 +466,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                       <Command.Group heading="Issue">
                         <Command.Item
                           onSelect={() => {
-                            setIsPaletteOpen(false);
+                            closePalette();
                             const e = new KeyboardEvent("keydown", {
                               key: "c",
                             });
@@ -490,7 +486,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         <Command.Group heading="Project">
                           <Command.Item
                             onSelect={() => {
-                              setIsPaletteOpen(false);
+                              closePalette();
                               const e = new KeyboardEvent("keydown", {
                                 key: "p",
                               });
@@ -512,7 +508,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                           <Command.Group heading="Cycle">
                             <Command.Item
                               onSelect={() => {
-                                setIsPaletteOpen(false);
+                                closePalette();
                                 const e = new KeyboardEvent("keydown", {
                                   key: "q",
                                 });
@@ -530,7 +526,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                           <Command.Group heading="Module">
                             <Command.Item
                               onSelect={() => {
-                                setIsPaletteOpen(false);
+                                closePalette();
                                 const e = new KeyboardEvent("keydown", {
                                   key: "m",
                                 });
@@ -548,7 +544,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                           <Command.Group heading="View">
                             <Command.Item
                               onSelect={() => {
-                                setIsPaletteOpen(false);
+                                closePalette();
                                 const e = new KeyboardEvent("keydown", {
                                   key: "v",
                                 });
@@ -566,7 +562,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                           <Command.Group heading="Page">
                             <Command.Item
                               onSelect={() => {
-                                setIsPaletteOpen(false);
+                                closePalette();
                                 const e = new KeyboardEvent("keydown", {
                                   key: "d",
                                 });
@@ -623,7 +619,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                       <Command.Group heading="Help">
                         <Command.Item
                           onSelect={() => {
-                            setIsPaletteOpen(false);
+                            closePalette();
                             const e = new KeyboardEvent("keydown", {
                               key: "h",
                             });
@@ -638,7 +634,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         </Command.Item>
                         <Command.Item
                           onSelect={() => {
-                            setIsPaletteOpen(false);
+                            closePalette();
                             window.open("https://docs.plane.so/", "_blank");
                           }}
                           className="focus:outline-none"
@@ -650,7 +646,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         </Command.Item>
                         <Command.Item
                           onSelect={() => {
-                            setIsPaletteOpen(false);
+                            closePalette();
                             window.open("https://discord.com/invite/A92xrEGCge", "_blank");
                           }}
                           className="focus:outline-none"
@@ -662,7 +658,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         </Command.Item>
                         <Command.Item
                           onSelect={() => {
-                            setIsPaletteOpen(false);
+                            closePalette();
                             window.open("https://github.com/makeplane/plane/issues/new/choose", "_blank");
                           }}
                           className="focus:outline-none"
@@ -674,7 +670,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                         </Command.Item>
                         <Command.Item
                           onSelect={() => {
-                            setIsPaletteOpen(false);
+                            closePalette();
                             (window as any).$crisp.push(["do", "chat:open"]);
                           }}
                           className="focus:outline-none"
@@ -747,15 +743,15 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                     </>
                   )}
                   {page === "change-issue-state" && issueDetails && (
-                    <ChangeIssueState issue={issueDetails} setIsPaletteOpen={setIsPaletteOpen} user={user} />
+                    <ChangeIssueState issue={issueDetails} setIsPaletteOpen={closePalette} user={user} />
                   )}
                   {page === "change-issue-priority" && issueDetails && (
-                    <ChangeIssuePriority issue={issueDetails} setIsPaletteOpen={setIsPaletteOpen} user={user} />
+                    <ChangeIssuePriority issue={issueDetails} setIsPaletteOpen={closePalette} user={user} />
                   )}
                   {page === "change-issue-assignee" && issueDetails && (
-                    <ChangeIssueAssignee issue={issueDetails} setIsPaletteOpen={setIsPaletteOpen} user={user} />
+                    <ChangeIssueAssignee issue={issueDetails} setIsPaletteOpen={closePalette} user={user} />
                   )}
-                  {page === "change-interface-theme" && <ChangeInterfaceTheme setIsPaletteOpen={setIsPaletteOpen} />}
+                  {page === "change-interface-theme" && <ChangeInterfaceTheme setIsPaletteOpen={closePalette} />}
                 </Command.List>
               </Command>
             </Dialog.Panel>

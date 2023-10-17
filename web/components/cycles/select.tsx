@@ -50,7 +50,14 @@ export const CycleSelect: React.FC<IssueCycleSelectProps> = ({ projectId, value,
 
   return (
     <>
-      <CreateUpdateCycleModal isOpen={isCycleModalActive} handleClose={closeCycleModal} user={user} />
+      {workspaceSlug && projectId && (
+        <CreateUpdateCycleModal
+          isOpen={isCycleModalActive}
+          handleClose={closeCycleModal}
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={projectId.toString()}
+        />
+      )}
       <Listbox as="div" className="relative" value={value} onChange={onChange} multiple={multiple}>
         {({ open }) => (
           <>

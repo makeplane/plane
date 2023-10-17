@@ -1,10 +1,11 @@
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect, Fragment, FC } from "react";
 import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 // icons
 import { Users2, X } from "lucide-react";
 // hooks
+import { useMobxStore } from "lib/mobx/store-provider";
 import useToast from "hooks/use-toast";
 import { useWorkspaceMyMembership } from "contexts/workspace-member.context";
 import useWorkspaceMembers from "hooks/use-workspace-members";
@@ -17,16 +18,15 @@ import EmojiIconPicker from "components/emoji-icon-picker";
 // helpers
 import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
 // types
-import { IUser, IProject } from "types";
+import { IProject } from "types";
 // constants
 import { NETWORK_CHOICES } from "constants/project";
-import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onClose: () => void;
   setToFavorite?: boolean;
-  user: IUser | undefined;
+  workspaceSlug: string;
 };
 
 const defaultValues: Partial<IProject> = {
@@ -40,35 +40,33 @@ const defaultValues: Partial<IProject> = {
   project_lead: null,
 };
 
-const IsGuestCondition: React.FC<{
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({ setIsOpen }) => {
+interface IIsGuestCondition {
+  onClose: () => void;
+}
+
+const IsGuestCondition: FC<IIsGuestCondition> = ({ onClose }) => {
   const { setToastAlert } = useToast();
 
   useEffect(() => {
-    setIsOpen(false);
-
+    onClose();
     setToastAlert({
       title: "Error",
       type: "error",
       message: "You don't have permission to create project.",
     });
-  }, [setIsOpen, setToastAlert]);
+  }, [onClose, setToastAlert]);
 
   return null;
 };
 
 export const CreateProjectModal: React.FC<Props> = (props) => {
-  const { isOpen, setIsOpen, setToFavorite = false } = props;
+  const { isOpen, onClose, setToFavorite = false, workspaceSlug } = props;
   // store
   const { project: projectStore } = useMobxStore();
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
 
   const { setToastAlert } = useToast();
-
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
 
   const { memberDetails } = useWorkspaceMyMembership();
   const { workspaceMembers } = useWorkspaceMembers(workspaceSlug?.toString() ?? "");
@@ -86,7 +84,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
   });
 
   const handleClose = () => {
-    setIsOpen(false);
+    onClose();
     setIsChangeInIdentifierRequired(true);
     reset(defaultValues);
   };
@@ -172,7 +170,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
 
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === watch("network"));
 
-  if (memberDetails && isOpen) if (memberDetails.role <= 10) return <IsGuestCondition setIsOpen={setIsOpen} />;
+  if (memberDetails && isOpen) if (memberDetails.role <= 10) return <IsGuestCondition onClose={onClose} />;
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>

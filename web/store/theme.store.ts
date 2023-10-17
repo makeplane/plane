@@ -3,7 +3,15 @@ import { action, observable, makeObservable } from "mobx";
 // helper
 import { applyTheme, unsetCustomCssVariables } from "helpers/theme.helper";
 
-class ThemeStore {
+export interface IThemeStore {
+  theme: string | null;
+  sidebarCollapsed: boolean | null;
+
+  setSidebarCollapsed: (collapsed?: boolean) => void;
+  setTheme: (theme: any) => void;
+}
+
+class ThemeStore implements IThemeStore {
   sidebarCollapsed: boolean | null = null;
   theme: string | null = null;
   // root store
@@ -24,8 +32,8 @@ class ThemeStore {
     this.initialLoad();
   }
 
-  setSidebarCollapsed(collapsed: boolean | null = null) {
-    if (collapsed === null) {
+  setSidebarCollapsed(collapsed?: boolean) {
+    if (!collapsed) {
       let _sidebarCollapsed: string | boolean | null = localStorage.getItem("app_sidebar_collapsed");
       _sidebarCollapsed = _sidebarCollapsed ? (_sidebarCollapsed === "true" ? true : false) : false;
       this.sidebarCollapsed = _sidebarCollapsed;

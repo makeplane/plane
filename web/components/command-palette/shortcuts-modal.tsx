@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { FC, useEffect, useState, Dispatch, SetStateAction, Fragment } from "react";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // icons
@@ -8,7 +8,7 @@ import { Input } from "@plane/ui";
 
 type Props = {
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onClose: () => void;
 };
 
 const shortcuts = [
@@ -43,8 +43,11 @@ const shortcuts = [
 
 const allShortcuts = shortcuts.map((i) => i.shortcuts).flat(1);
 
-export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
+export const ShortcutsModal: FC<Props> = (props) => {
+  const { isOpen, onClose } = props;
+  // states
   const [query, setQuery] = useState("");
+  // computed
   const filteredShortcuts = allShortcuts.filter((shortcut) =>
     shortcut.description.toLowerCase().includes(query.trim().toLowerCase()) || query === "" ? true : false
   );
@@ -54,10 +57,10 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
   }, [isOpen]);
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={setIsOpen}>
+    <Transition.Root show={isOpen} as={Fragment}>
+      <Dialog as="div" className="relative z-20" onClose={onClose}>
         <Transition.Child
-          as={React.Fragment}
+          as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -71,7 +74,7 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
         <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <Transition.Child
-              as={React.Fragment}
+              as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               enterTo="opacity-100 translate-y-0 sm:scale-100"
@@ -89,7 +92,7 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                       >
                         <span>Keyboard Shortcuts</span>
                         <span>
-                          <button type="button" onClick={() => setIsOpen(false)}>
+                          <button type="button" onClick={onClose}>
                             <X className="h-6 w-6 text-custom-text-200 hover:text-custom-text-100" aria-hidden="true" />
                           </button>
                         </span>

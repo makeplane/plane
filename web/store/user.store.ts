@@ -8,7 +8,7 @@ import { WorkspaceService } from "services/workspace.service";
 import { IUser, IUserSettings } from "types/users";
 import { IWorkspaceMember, IProjectMember } from "types";
 
-interface IUserStore {
+export interface IUserStore {
   loader: boolean;
 
   currentUser: IUser | null;
@@ -28,9 +28,11 @@ interface IUserStore {
 
   fetchUserWorkspaceInfo: (workspaceSlug: string) => Promise<IWorkspaceMember>;
   fetchUserProjectInfo: (workspaceSlug: string, projectId: string) => Promise<IProjectMember>;
+  fetchUserDashboardInfo: (workspaceSlug: string, month: number) => Promise<any>;
 
   updateTourCompleted: () => Promise<void>;
   updateCurrentUser: (data: Partial<IUser>) => Promise<IUser>;
+  updateCurrentUserTheme: (theme: string) => Promise<IUser>;
 }
 
 class UserStore implements IUserStore {
