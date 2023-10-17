@@ -5,13 +5,12 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 // icons
-import { Globe2, LinkIcon, Lock, Pencil, Star } from "lucide-react";
+import { LinkIcon, Lock, Pencil, Star } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
 import { Button, Tooltip } from "@plane/ui";
 // helpers
-import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // types
@@ -128,11 +127,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                     <h3 className="text-white font-semibold line-clamp-1">{project.name}</h3>
                     <span className="flex items-center gap-1.5">
                       <p className="text-xs font-medium text-white">{project.identifier} </p>
-                      {project.network === 0 ? (
-                        <Lock className="h-2.5 w-2.5 text-white " />
-                      ) : (
-                        <Globe2 className="h-2.5 w-2.5 text-white " />
-                      )}
+                      {project.network === 0 && <Lock className="h-2.5 w-2.5 text-white " />}
                     </span>
                   </div>
                 </div>
