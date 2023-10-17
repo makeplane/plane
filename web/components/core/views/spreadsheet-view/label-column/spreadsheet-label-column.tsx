@@ -5,19 +5,18 @@ import { LabelColumn } from "components/core";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
-import { IIssue, Properties, IIssueLabels } from "types";
+import { IIssue, IIssueLabels } from "types";
 
 type Props = {
   issue: IIssue;
   onChange: (formData: Partial<IIssue>) => void;
   labels: IIssueLabels[] | undefined;
   expandedIssues: string[];
-  properties: Properties;
   disabled: boolean;
 };
 
 export const SpreadsheetLabelColumn: React.FC<Props> = (props) => {
-  const { issue, onChange, labels, expandedIssues, properties, disabled } = props;
+  const { issue, onChange, labels, expandedIssues, disabled } = props;
 
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
@@ -29,7 +28,6 @@ export const SpreadsheetLabelColumn: React.FC<Props> = (props) => {
         issue={issue}
         onChange={(data) => onChange({ labels_list: data })}
         labels={labels}
-        properties={properties}
         disabled={disabled}
       />
 
@@ -44,7 +42,6 @@ export const SpreadsheetLabelColumn: React.FC<Props> = (props) => {
             onChange={onChange}
             labels={labels}
             expandedIssues={expandedIssues}
-            properties={properties}
             disabled={disabled}
           />
         ))}

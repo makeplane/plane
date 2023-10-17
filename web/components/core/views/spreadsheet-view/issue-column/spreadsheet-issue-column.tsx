@@ -14,7 +14,6 @@ type Props = {
   setExpandedIssues: React.Dispatch<React.SetStateAction<string[]>>;
   properties: Properties;
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
-  setCurrentProjectId: React.Dispatch<React.SetStateAction<string | null>>;
   disableUserActions: boolean;
   nestingLevel?: number;
 };
@@ -26,7 +25,6 @@ export const SpreadsheetIssuesColumn: React.FC<Props> = ({
   setExpandedIssues,
   properties,
   handleIssueAction,
-  setCurrentProjectId,
   disableUserActions,
   nestingLevel = 0,
 }) => {
@@ -57,7 +55,6 @@ export const SpreadsheetIssuesColumn: React.FC<Props> = ({
         properties={properties}
         handleEditIssue={() => handleIssueAction(issue, "edit")}
         handleDeleteIssue={() => handleIssueAction(issue, "delete")}
-        setCurrentProjectId={setCurrentProjectId}
         disableUserActions={disableUserActions}
         nestingLevel={nestingLevel}
       />
@@ -75,7 +72,6 @@ export const SpreadsheetIssuesColumn: React.FC<Props> = ({
             setExpandedIssues={setExpandedIssues}
             properties={properties}
             handleIssueAction={handleIssueAction}
-            setCurrentProjectId={setCurrentProjectId}
             disableUserActions={disableUserActions}
             nestingLevel={nestingLevel + 1}
           />

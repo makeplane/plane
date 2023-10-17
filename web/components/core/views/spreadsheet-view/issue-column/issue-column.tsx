@@ -21,7 +21,6 @@ type Props = {
   properties: Properties;
   handleEditIssue: (issue: IIssue) => void;
   handleDeleteIssue: (issue: IIssue) => void;
-  setCurrentProjectId: React.Dispatch<React.SetStateAction<string | null>>;
   disableUserActions: boolean;
   nestingLevel: number;
 };
@@ -34,7 +33,6 @@ export const IssueColumn: React.FC<Props> = ({
   properties,
   handleEditIssue,
   handleDeleteIssue,
-  setCurrentProjectId,
   disableUserActions,
   nestingLevel,
 }) => {
@@ -48,7 +46,7 @@ export const IssueColumn: React.FC<Props> = ({
 
   const openPeekOverview = () => {
     const { query } = router;
-    setCurrentProjectId(issue.project_detail.id);
+
     router.push({
       pathname: router.pathname,
       query: { ...query, peekIssue: issue.id },

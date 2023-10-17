@@ -5,25 +5,17 @@ import { AssigneeColumn } from "components/core";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
-import { IIssue, Properties, IUserLite } from "types";
+import { IIssue, IUserLite } from "types";
 
 type Props = {
   issue: IIssue;
   members: IUserLite[] | undefined;
   onChange: (data: Partial<IIssue>) => void;
   expandedIssues: string[];
-  properties: Properties;
   disabled: boolean;
 };
 
-export const SpreadsheetAssigneeColumn: React.FC<Props> = ({
-  issue,
-  members,
-  onChange,
-  expandedIssues,
-  properties,
-  disabled,
-}) => {
+export const SpreadsheetAssigneeColumn: React.FC<Props> = ({ issue, members, onChange, expandedIssues, disabled }) => {
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
   const { subIssues, isLoading } = useSubIssue(issue.project_detail.id, issue.id, isExpanded);
@@ -33,7 +25,6 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = ({
       <AssigneeColumn
         issue={issue}
         members={members}
-        properties={properties}
         onChange={(data) => onChange({ assignees_list: data })}
         disabled={disabled}
       />
@@ -48,7 +39,6 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = ({
             issue={subIssue}
             onChange={onChange}
             expandedIssues={expandedIssues}
-            properties={properties}
             members={members}
             disabled={disabled}
           />

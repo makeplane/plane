@@ -1,5 +1,3 @@
-// hooks
-import useIssuesView from "hooks/use-issues-view";
 // ui
 import { CustomDatePicker } from "components/ui";
 import { Tooltip } from "@plane/ui";
@@ -27,8 +25,6 @@ export const ViewDueDateSelect: React.FC<Props> = ({
   noBorder = false,
   disabled,
 }) => {
-  const { displayFilters } = useIssuesView();
-
   const minDate = issue.start_date ? new Date(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
 
@@ -51,9 +47,7 @@ export const ViewDueDateSelect: React.FC<Props> = ({
           placeholder="Due date"
           value={issue?.target_date}
           onChange={onChange}
-          className={`${issue?.target_date ? "w-[6.5rem]" : "w-[5rem] text-center"} ${
-            displayFilters.layout === "kanban" ? "bg-custom-background-90" : "bg-custom-background-100"
-          }`}
+          className={`bg-transparent ${issue?.target_date ? "w-[6.5rem]" : "w-[5rem] text-center"}`}
           minDate={minDate ?? undefined}
           noBorder={noBorder}
           handleOnOpen={handleOnOpen}

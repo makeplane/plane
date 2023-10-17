@@ -5,25 +5,19 @@ import { StateColumn } from "components/core";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
-import { IIssue, Properties } from "types";
+import { IIssue, IStateResponse } from "types";
 
 type Props = {
   issue: IIssue;
-  projectId: string;
   onChange: (data: Partial<IIssue>) => void;
+  states: IStateResponse | undefined;
   expandedIssues: string[];
-  properties: Properties;
-  isNotAllowed: boolean;
+  disabled: boolean;
 };
 
-export const SpreadsheetStateColumn: React.FC<Props> = ({
-  issue,
-  projectId,
-  onChange,
-  expandedIssues,
-  properties,
-  isNotAllowed,
-}) => {
+export const SpreadsheetStateColumn: React.FC<Props> = (props) => {
+  const { issue, onChange, states, expandedIssues, disabled } = props;
+
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
   const { subIssues, isLoading } = useSubIssue(issue.project_detail.id, issue.id, isExpanded);
@@ -32,10 +26,9 @@ export const SpreadsheetStateColumn: React.FC<Props> = ({
     <div>
       <StateColumn
         issue={issue}
-        projectId={projectId}
-        properties={properties}
         onChange={(data) => onChange({ state: data.id, state_detail: data })}
-        isNotAllowed={isNotAllowed}
+        states={states}
+        disabled={disabled}
       />
 
       {isExpanded &&
@@ -46,11 +39,10 @@ export const SpreadsheetStateColumn: React.FC<Props> = ({
           <SpreadsheetStateColumn
             key={subIssue.id}
             issue={subIssue}
-            projectId={subIssue.project_detail.id}
             onChange={onChange}
+            states={states}
             expandedIssues={expandedIssues}
-            properties={properties}
-            isNotAllowed={isNotAllowed}
+            disabled={disabled}
           />
         ))}
     </div>

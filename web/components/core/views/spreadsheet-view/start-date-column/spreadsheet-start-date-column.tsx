@@ -5,41 +5,23 @@ import { StartDateColumn } from "components/core";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
-import { IUser, IIssue, Properties } from "types";
+import { IIssue } from "types";
 
 type Props = {
   issue: IIssue;
-  projectId: string;
-  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
+  onChange: (formData: Partial<IIssue>) => void;
   expandedIssues: string[];
-  properties: Properties;
-  user: IUser | undefined;
-  isNotAllowed: boolean;
+  disabled: boolean;
 };
 
-export const SpreadsheetStartDateColumn: React.FC<Props> = ({
-  issue,
-  projectId,
-  partialUpdateIssue,
-  expandedIssues,
-  properties,
-  user,
-  isNotAllowed,
-}) => {
+export const SpreadsheetStartDateColumn: React.FC<Props> = ({ issue, onChange, expandedIssues, disabled }) => {
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
   const { subIssues, isLoading } = useSubIssue(issue.project_detail.id, issue.id, isExpanded);
 
   return (
     <div>
-      <StartDateColumn
-        issue={issue}
-        projectId={projectId}
-        properties={properties}
-        partialUpdateIssue={partialUpdateIssue}
-        user={user}
-        isNotAllowed={isNotAllowed}
-      />
+      <StartDateColumn issue={issue} onChange={(val) => onChange({ start_date: val })} disabled={disabled} />
 
       {isExpanded &&
         !isLoading &&
@@ -49,12 +31,9 @@ export const SpreadsheetStartDateColumn: React.FC<Props> = ({
           <SpreadsheetStartDateColumn
             key={subIssue.id}
             issue={subIssue}
-            projectId={subIssue.project_detail.id}
-            partialUpdateIssue={partialUpdateIssue}
+            onChange={onChange}
             expandedIssues={expandedIssues}
-            properties={properties}
-            user={user}
-            isNotAllowed={isNotAllowed}
+            disabled={disabled}
           />
         ))}
     </div>

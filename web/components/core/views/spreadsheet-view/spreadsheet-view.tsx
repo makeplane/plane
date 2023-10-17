@@ -1,35 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import {
-  ArrowDownWideNarrow,
-  ArrowUpNarrowWide,
-  CheckIcon,
-  ChevronDownIcon,
-  Eraser,
-  ListFilter,
-  MoveRight,
-  PlusIcon,
-} from "lucide-react";
-
-// hooks
-import useLocalStorage from "hooks/use-local-storage";
+import { PlusIcon } from "lucide-react";
 // components
 import {
+  SpreadsheetColumnsList,
   // ListInlineCreateIssueForm,
-  SpreadsheetAssigneeColumn,
-  SpreadsheetCreatedOnColumn,
-  SpreadsheetDueDateColumn,
-  SpreadsheetEstimateColumn,
   SpreadsheetIssuesColumn,
-  SpreadsheetLabelColumn,
-  SpreadsheetPriorityColumn,
-  SpreadsheetStartDateColumn,
-  SpreadsheetStateColumn,
-  SpreadsheetUpdatedOnColumn,
 } from "components/core";
 import { CustomMenu } from "components/ui";
-import { IssuePeekOverview } from "components/issues";
 import { Spinner } from "@plane/ui";
 // types
 import {
@@ -39,7 +18,6 @@ import {
   IIssueLabels,
   IStateResponse,
   IUserLite,
-  TIssueOrderByOptions,
 } from "types";
 
 type Props = {
@@ -72,7 +50,6 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
   } = props;
 
   const [expandedIssues, setExpandedIssues] = useState<string[]>([]);
-  const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
 
   const [isInlineCreateIssueFormOpen, setIsInlineCreateIssueFormOpen] = useState(false);
 
@@ -81,191 +58,9 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const router = useRouter();
-  const { workspaceSlug, cycleId, moduleId } = router.query;
+  const { cycleId, moduleId } = router.query;
 
   const type = cycleId ? "cycle" : moduleId ? "module" : "issue";
-
-  const { storedValue: selectedMenuItem, setValue: setSelectedMenuItem } = useLocalStorage(
-    "spreadsheetViewSorting",
-    ""
-  );
-  const { storedValue: activeSortingProperty, setValue: setActiveSortingProperty } = useLocalStorage(
-    "spreadsheetViewActiveSortingProperty",
-    ""
-  );
-
-  const handleOrderBy = (order: TIssueOrderByOptions, itemKey: string) => {
-    handleDisplayFilterUpdate({ order_by: order });
-
-    setSelectedMenuItem(`${order}_${itemKey}`);
-    setActiveSortingProperty(order === "-created_at" ? "" : itemKey);
-  };
-
-  const renderColumn = (
-    header: string,
-    propertyName: string,
-    Component: React.ComponentType<any>,
-    ascendingOrder: TIssueOrderByOptions,
-    descendingOrder: TIssueOrderByOptions
-  ) => (
-    <div className="relative flex flex-col h-max w-full bg-custom-background-100">
-      <div className="flex items-center min-w-[9rem] px-4 py-2.5 text-sm font-medium z-[1] h-11 w-full sticky top-0 bg-custom-background-90 border border-l-0 border-custom-border-100">
-        <CustomMenu
-          customButtonClassName="!w-full"
-          className="!w-full"
-          customButton={
-            <div
-              className={`relative group flex items-center justify-between gap-1.5 cursor-pointer text-sm text-custom-text-200 hover:text-custom-text-100 w-full py-3 px-2 ${
-                activeSortingProperty === propertyName ? "bg-custom-background-80" : ""
-              }`}
-            >
-              {activeSortingProperty === propertyName && (
-                <div className="absolute top-1 right-1.5 bg-custom-primary rounded-full flex items-center justify-center h-3.5 w-3.5">
-                  <ListFilter className="h-3 w-3 text-white" />
-                </div>
-              )}
-
-              {header}
-              <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
-            </div>
-          }
-          width="xl"
-        >
-          <CustomMenu.MenuItem
-            onClick={() => {
-              handleOrderBy(ascendingOrder, propertyName);
-            }}
-          >
-            <div
-              className={`group flex gap-1.5 px-1 items-center justify-between ${
-                selectedMenuItem === `${ascendingOrder}_${propertyName}`
-                  ? "text-custom-text-100"
-                  : "text-custom-text-200 hover:text-custom-text-100"
-              }`}
-            >
-              <div className="flex gap-2 items-center">
-                {propertyName === "assignee" || propertyName === "labels" ? (
-                  <>
-                    <ArrowDownWideNarrow className="h-4 w-4 stroke-[1.5]" />
-                    <span>A</span>
-                    <MoveRight className="h-3.5 w-3.5" />
-                    <span>Z</span>
-                  </>
-                ) : propertyName === "due_date" || propertyName === "created_on" || propertyName === "updated_on" ? (
-                  <>
-                    <ArrowDownWideNarrow className="h-4 w-4 stroke-[1.5]" />
-                    <span>New</span>
-                    <MoveRight className="h-3.5 w-3.5" />
-                    <span>Old</span>
-                  </>
-                ) : (
-                  <>
-                    <ArrowDownWideNarrow className="h-4 w-4 stroke-[1.5]" />
-                    <span>First</span>
-                    <MoveRight className="h-3.5 w-3.5" />
-                    <span>Last</span>
-                  </>
-                )}
-              </div>
-
-              <CheckIcon
-                className={`h-3.5 w-3.5 opacity-0 group-hover:opacity-100 ${
-                  selectedMenuItem === `${ascendingOrder}_${propertyName}` ? "opacity-100" : ""
-                }`}
-              />
-            </div>
-          </CustomMenu.MenuItem>
-          <CustomMenu.MenuItem
-            className={`mt-0.5 ${
-              selectedMenuItem === `${descendingOrder}_${propertyName}` ? "bg-custom-background-80" : ""
-            }`}
-            key={propertyName}
-            onClick={() => {
-              handleOrderBy(descendingOrder, propertyName);
-            }}
-          >
-            <div
-              className={`group flex gap-1.5 px-1 items-center justify-between ${
-                selectedMenuItem === `${descendingOrder}_${propertyName}`
-                  ? "text-custom-text-100"
-                  : "text-custom-text-200 hover:text-custom-text-100"
-              }`}
-            >
-              <div className="flex gap-2 items-center">
-                {propertyName === "assignee" || propertyName === "labels" ? (
-                  <>
-                    <ArrowUpNarrowWide className="h-4 w-4 stroke-[1.5]" />
-                    <span>Z</span>
-                    <MoveRight className="h-3.5 w-3.5" />
-                    <span>A</span>
-                  </>
-                ) : propertyName === "due_date" ? (
-                  <>
-                    <ArrowUpNarrowWide className="h-4 w-4 stroke-[1.5]" />
-                    <span>Old</span>
-                    <MoveRight className="h-3.5 w-3.5" />
-                    <span>New</span>
-                  </>
-                ) : (
-                  <>
-                    <ArrowUpNarrowWide className="h-4 w-4 stroke-[1.5]" />
-                    <span>Last</span>
-                    <MoveRight className="h-3.5 w-3.5" />
-                    <span>First</span>
-                  </>
-                )}
-              </div>
-
-              <CheckIcon
-                className={`h-3.5 w-3.5 opacity-0 group-hover:opacity-100 ${
-                  selectedMenuItem === `${descendingOrder}_${propertyName}` ? "opacity-100" : ""
-                }`}
-              />
-            </div>
-          </CustomMenu.MenuItem>
-          {selectedMenuItem &&
-            selectedMenuItem !== "" &&
-            displayFilters?.order_by !== "-created_at" &&
-            selectedMenuItem.includes(propertyName) && (
-              <CustomMenu.MenuItem
-                className={`mt-0.5${
-                  selectedMenuItem === `-created_at_${propertyName}` ? "bg-custom-background-80" : ""
-                }`}
-                key={propertyName}
-                onClick={() => {
-                  handleOrderBy("-created_at", propertyName);
-                }}
-              >
-                <div className={`group flex gap-1.5 px-1 items-center justify-between `}>
-                  <div className="flex gap-1.5 items-center">
-                    <span className="relative flex items-center justify-center h-6 w-6">
-                      <Eraser className="h-3.5 w-3.5" />
-                    </span>
-
-                    <span>Clear sorting</span>
-                  </div>
-                </div>
-              </CustomMenu.MenuItem>
-            )}
-        </CustomMenu>
-      </div>
-      <div className="h-full min-w-[9rem] w-full">
-        {issues?.map((issue) => (
-          <Component
-            key={issue.id}
-            issue={issue}
-            onChange={(data: Partial<IIssue>) => handleUpdateIssue(issue.id, data)}
-            expandedIssues={expandedIssues}
-            properties={displayProperties}
-            disabled={disableUserActions}
-            members={members}
-            labels={labels}
-            states={states}
-          />
-        ))}
-      </div>
-    </div>
-  );
 
   const handleScroll = () => {
     if (containerRef.current) {
@@ -286,11 +81,6 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <IssuePeekOverview
-        projectId={currentProjectId ?? ""}
-        workspaceSlug={workspaceSlug?.toString() ?? ""}
-        readOnly={disableUserActions}
-      />
       <div className="relative flex h-full w-full rounded-lg text-custom-text-200 overflow-x-auto whitespace-nowrap bg-custom-background-200">
         <div className="h-full w-full flex flex-col">
           <div ref={containerRef} className="flex max-h-full h-full overflow-y-auto">
@@ -317,7 +107,6 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                         projectId={issue.project_detail.id}
                         expandedIssues={expandedIssues}
                         setExpandedIssues={setExpandedIssues}
-                        setCurrentProjectId={setCurrentProjectId}
                         properties={displayProperties}
                         handleIssueAction={handleIssueAction}
                         disableUserActions={disableUserActions}
@@ -325,34 +114,22 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                     ))}
                   </div>
                 </div>
-                {displayProperties.state &&
-                  renderColumn("State", "state", SpreadsheetStateColumn, "state__name", "-state__name")}
 
-                {displayProperties.priority &&
-                  renderColumn("Priority", "priority", SpreadsheetPriorityColumn, "priority", "-priority")}
-                {displayProperties.assignee &&
-                  renderColumn(
-                    "Assignees",
-                    "assignee",
-                    SpreadsheetAssigneeColumn,
-                    "assignees__first_name",
-                    "-assignees__first_name"
-                  )}
-                {displayProperties.labels &&
-                  renderColumn("Label", "labels", SpreadsheetLabelColumn, "labels__name", "-labels__name")}
-                {displayProperties.start_date &&
-                  renderColumn("Start Date", "start_date", SpreadsheetStartDateColumn, "-start_date", "start_date")}
-                {displayProperties.due_date &&
-                  renderColumn("Due Date", "due_date", SpreadsheetDueDateColumn, "-target_date", "target_date")}
-                {displayProperties.estimate &&
-                  renderColumn("Estimate", "estimate", SpreadsheetEstimateColumn, "estimate_point", "-estimate_point")}
-                {displayProperties.created_on &&
-                  renderColumn("Created On", "created_on", SpreadsheetCreatedOnColumn, "-created_at", "created_at")}
-                {displayProperties.updated_on &&
-                  renderColumn("Updated On", "updated_on", SpreadsheetUpdatedOnColumn, "-updated_at", "updated_at")}
+                <SpreadsheetColumnsList
+                  displayFilters={displayFilters}
+                  displayProperties={displayProperties}
+                  disableUserActions={disableUserActions}
+                  expandedIssues={expandedIssues}
+                  handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+                  handleUpdateIssue={handleUpdateIssue}
+                  issues={issues}
+                  members={members}
+                  labels={labels}
+                  states={states}
+                />
               </>
             ) : (
-              <div className="flex flex-col justify-center items-center h-full w-full">
+              <div className="grid place-items-center h-full w-full">
                 <Spinner />
               </div>
             )}
@@ -370,41 +147,39 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
               /> */}
             </div>
 
-            {type === "issue"
-              ? !disableUserActions &&
-                !isInlineCreateIssueFormOpen && (
-                  <button
-                    className="flex gap-1.5 items-center text-custom-primary-100 pl-4 py-2.5 text-sm sticky left-0 z-[1] w-full"
-                    onClick={() => setIsInlineCreateIssueFormOpen(true)}
-                  >
-                    <PlusIcon className="h-4 w-4" />
-                    New Issue
-                  </button>
-                )
-              : !disableUserActions &&
-                !isInlineCreateIssueFormOpen && (
-                  <CustomMenu
-                    className="sticky left-0 z-10"
-                    customButton={
-                      <button
-                        className="flex gap-1.5 items-center text-custom-primary-100 pl-4 py-2.5 text-sm sticky left-0 z-[1] border-custom-border-200 w-full"
-                        type="button"
-                      >
-                        <PlusIcon className="h-4 w-4" />
-                        New Issue
-                      </button>
-                    }
-                    optionsClassName="left-5 !w-36"
-                    noBorder
-                  >
-                    <CustomMenu.MenuItem onClick={() => setIsInlineCreateIssueFormOpen(true)}>
-                      Create new
-                    </CustomMenu.MenuItem>
-                    {openIssuesListModal && (
-                      <CustomMenu.MenuItem onClick={openIssuesListModal}>Add an existing issue</CustomMenu.MenuItem>
-                    )}
-                  </CustomMenu>
-                )}
+            {!disableUserActions &&
+              !isInlineCreateIssueFormOpen &&
+              (type === "issue" ? (
+                <button
+                  className="flex gap-1.5 items-center text-custom-primary-100 pl-4 py-2.5 text-sm sticky left-0 z-[1] w-full"
+                  onClick={() => setIsInlineCreateIssueFormOpen(true)}
+                >
+                  <PlusIcon className="h-4 w-4" />
+                  New Issue
+                </button>
+              ) : (
+                <CustomMenu
+                  className="sticky left-0 z-10"
+                  customButton={
+                    <button
+                      className="flex gap-1.5 items-center text-custom-primary-100 pl-4 py-2.5 text-sm sticky left-0 z-[1] border-custom-border-200 w-full"
+                      type="button"
+                    >
+                      <PlusIcon className="h-4 w-4" />
+                      New Issue
+                    </button>
+                  }
+                  optionsClassName="left-5 !w-36"
+                  noBorder
+                >
+                  <CustomMenu.MenuItem onClick={() => setIsInlineCreateIssueFormOpen(true)}>
+                    Create new
+                  </CustomMenu.MenuItem>
+                  {openIssuesListModal && (
+                    <CustomMenu.MenuItem onClick={openIssuesListModal}>Add an existing issue</CustomMenu.MenuItem>
+                  )}
+                </CustomMenu>
+              ))}
           </div>
         </div>
       </div>

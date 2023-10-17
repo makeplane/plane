@@ -31,7 +31,7 @@ export const ViewEstimateSelect: React.FC<Props> = ({
   const estimateLabels = (
     <Tooltip tooltipHeading="Estimate" tooltipContent={estimateValue} position={tooltipPosition}>
       <div className="flex items-center gap-1 text-custom-text-200">
-        <Triangle className="h-3.5 w-3.5" />
+        <Triangle className="h-3 w-3" />
         {estimateValue ?? "None"}
       </div>
     </Tooltip>
@@ -52,7 +52,7 @@ export const ViewEstimateSelect: React.FC<Props> = ({
       <CustomSelect.Option value={null}>
         <>
           <span>
-            <Triangle className="h-4 w-4" />
+            <Triangle className="h-3 w-3" />
           </span>
           None
         </>
@@ -60,9 +60,7 @@ export const ViewEstimateSelect: React.FC<Props> = ({
       {estimatePoints?.map((estimate) => (
         <CustomSelect.Option key={estimate.id} value={estimate.key}>
           <>
-            <span>
-              <Triangle className="h-4 w-4" />
-            </span>
+            <Triangle className="h-3 w-3" />
             {estimate.value}
           </>
         </CustomSelect.Option>
