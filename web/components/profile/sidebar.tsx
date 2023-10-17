@@ -86,7 +86,7 @@ export const ProfileSidebar = () => {
                 <img
                   src={userProjectsData.user_data.avatar}
                   alt={userProjectsData.user_data.display_name}
-                  className="rounded"
+                  className="rounded h-full w-full object-cover"
                 />
               ) : (
                 <div className="bg-custom-background-90 flex justify-center items-center w-[52px] h-[52px] rounded text-custom-text-100">
