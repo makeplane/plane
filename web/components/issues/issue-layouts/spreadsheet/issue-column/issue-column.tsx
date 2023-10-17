@@ -81,47 +81,45 @@ export const IssueColumn: React.FC<Props> = ({
                   canEscapeKeyClose
                   onInteraction={(nextOpenState) => setIsOpen(nextOpenState)}
                   content={
-                    <div
-                      className={`flex flex-col gap-1.5 overflow-y-scroll whitespace-nowrap rounded-md border p-1 text-xs shadow-lg focus:outline-none max-h-44 min-w-full border-custom-border-100 bg-custom-background-90`}
-                    >
+                    <div className="flex flex-col whitespace-nowrap rounded-md border border-custom-border-100 p-1 text-xs shadow-lg focus:outline-none min-w-full bg-custom-background-100 space-y-0.5">
                       <button
                         type="button"
-                        className="hover:text-custom-text-200 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80"
+                        className="hover:text-custom-text-200 w-full select-none gap-2 rounded p-1 text-left text-custom-text-200 hover:bg-custom-background-80"
                         onClick={() => {
                           handleEditIssue(issue);
                           setIsOpen(false);
                         }}
                       >
-                        <div className="flex items-center justify-start gap-2">
-                          <Pencil className="h-4 w-4" />
+                        <div className="flex items-center gap-2">
+                          <Pencil className="h-3 w-3" />
                           <span>Edit issue</span>
                         </div>
                       </button>
 
                       <button
                         type="button"
-                        className="hover:text-custom-text-200 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80"
+                        className="hover:text-custom-text-200 w-full select-none gap-2 rounded p-1 text-left text-custom-text-200 hover:bg-custom-background-80"
                         onClick={() => {
                           handleDeleteIssue(issue);
                           setIsOpen(false);
                         }}
                       >
-                        <div className="flex items-center justify-start gap-2">
-                          <Trash2 className="h-4 w-4" />
+                        <div className="flex items-center gap-2">
+                          <Trash2 className="h-3 w-3" />
                           <span>Delete issue</span>
                         </div>
                       </button>
 
                       <button
                         type="button"
-                        className="hover:text-custom-text-200 w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80"
+                        className="hover:text-custom-text-200 w-full select-none gap-2 rounded p-1 text-left text-custom-text-200 hover:bg-custom-background-80"
                         onClick={() => {
                           handleCopyText();
                           setIsOpen(false);
                         }}
                       >
-                        <div className="flex items-center justify-start gap-2">
-                          <LinkIcon className="h-4 w-4" />
+                        <div className="flex items-center gap-2">
+                          <LinkIcon className="h-3 w-3" />
                           <span>Copy issue link</span>
                         </div>
                       </button>

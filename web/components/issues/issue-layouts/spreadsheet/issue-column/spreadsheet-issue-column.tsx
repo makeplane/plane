@@ -32,11 +32,10 @@ export const SpreadsheetIssuesColumn: React.FC<Props> = ({
     setExpandedIssues((prevState) => {
       const newArray = [...prevState];
       const index = newArray.indexOf(issueId);
-      if (index > -1) {
-        newArray.splice(index, 1);
-      } else {
-        newArray.push(issueId);
-      }
+
+      if (index > -1) newArray.splice(index, 1);
+      else newArray.push(issueId);
+
       return newArray;
     });
   };
