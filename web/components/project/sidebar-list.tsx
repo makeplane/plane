@@ -198,7 +198,7 @@ export const ProjectSidebarList: FC = observer(() => {
                             <Disclosure.Button
                               as="button"
                               type="button"
-                              className="flex items-center gap-1 font-semibold text-left whitespace-nowrap"
+                              className="group flex items-center gap-1 px-1.5 text-xs font-semibold text-custom-sidebar-text-400 text-left hover:bg-custom-sidebar-background-80 rounded w-full whitespace-nowrap"
                             >
                               Projects
                               {open ? (

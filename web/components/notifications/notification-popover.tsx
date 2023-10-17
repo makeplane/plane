@@ -75,7 +75,7 @@ export const NotificationPopover = () => {
                       : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
                   } ${store?.theme?.sidebarCollapsed ? "justify-center" : ""}`}
                 >
-                  <Bell className="h-5 w-5" />
+                  <Bell className="h-[18px] w-[18px]" />
                   {store?.theme?.sidebarCollapsed ? null : <span>Notifications</span>}
                   {totalNotificationCount && totalNotificationCount > 0 ? (
                     store?.theme?.sidebarCollapsed ? (

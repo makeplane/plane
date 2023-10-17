@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { NotificationPopover } from "components/notifications";
 import { Tooltip } from "@plane/ui";
 // icons
-import { BarChart, Briefcase, CheckCircle, LayoutGrid } from "lucide-react";
+import { BarChart2, Briefcase, CheckCircle, LayoutGrid } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { observer } from "mobx-react-lite";
@@ -17,7 +17,7 @@ const workspaceLinks = (workspaceSlug: string) => [
     href: `/${workspaceSlug}`,
   },
   {
-    Icon: BarChart,
+    Icon: BarChart2,
     name: "Analytics",
     href: `/${workspaceSlug}/analytics`,
   },
@@ -60,7 +60,7 @@ export const WorkspaceSidebarMenu = observer(() => {
                       : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
                   } ${themeStore?.sidebarCollapsed ? "justify-center" : ""}`}
                 >
-                  {<link.Icon className="h-5 w-5" />}
+                  {<link.Icon className="h-[18px] w-[18px]" />}
                   {!themeStore?.sidebarCollapsed && link.name}
                 </div>
               </Tooltip>

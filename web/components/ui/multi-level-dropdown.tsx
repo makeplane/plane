@@ -93,9 +93,9 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                               direction === "right" ? "justify-between" : ""
                             }`}
                           >
-                            {direction === "left" && option.hasChildren && <ChevronLeft className="h-4 w-4" />}
+                            {direction === "left" && option.hasChildren && <ChevronLeft className="h-3.5 w-3.5" />}
                             <span>{option.label}</span>
-                            {direction === "right" && option.hasChildren && <ChevronRight className="h-4 w-4" />}
+                            {direction === "right" && option.hasChildren && <ChevronRight className="h-3.5 w-3.5" />}
                           </div>
                         </>
                       )}
