@@ -121,11 +121,11 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                                         <span key={index} className="flex items-center gap-1">
                                           {key === "Ctrl" ? (
                                             <span className="flex h-full items-center rounded-sm border border-custom-border-200 bg-custom-background-90 p-1.5">
-                                              <Command className="h-4 w-4 fill-current text-custom-text-200" />
+                                              <Command className="h-4 w-4 text-custom-text-200" />
                                             </span>
                                           ) : key === "Ctrl" ? (
                                             <kbd className="rounded-sm border border-custom-border-200 bg-custom-background-90 p-1.5 text-sm font-medium text-custom-text-200">
-                                              <Command className="h-4 w-4 fill-current text-custom-text-200" />
+                                              <Command className="h-4 w-4 text-custom-text-200" />
                                             </kbd>
                                           ) : (
                                             <kbd className="rounded-sm border border-custom-border-200 bg-custom-background-90 px-2 py-1 text-sm font-medium text-custom-text-200">
@@ -164,11 +164,11 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                                         <span key={index} className="flex items-center gap-1">
                                           {key === "Ctrl" ? (
                                             <span className="flex h-full items-center rounded-sm border border-custom-border-200 bg-custom-background-90 p-1.5 text-custom-text-200">
-                                              <Command className="h-4 w-4 fill-current text-custom-text-200" />
+                                              <Command className="h-4 w-4 text-custom-text-200" />
                                             </span>
                                           ) : key === "Ctrl" ? (
                                             <kbd className="rounded-sm border border-custom-border-200 bg-custom-background-90 p-1.5 text-sm font-medium text-custom-text-200">
-                                              <Command className="h-4 w-4 fill-current text-custom-text-200" />
+                                              <Command className="h-4 w-4 text-custom-text-200" />
                                             </kbd>
                                           ) : (
                                             <kbd className="rounded-sm border border-custom-border-200 bg-custom-background-90 px-2 py-1 text-sm font-medium text-custom-text-200">
