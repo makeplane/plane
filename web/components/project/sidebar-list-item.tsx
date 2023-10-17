@@ -151,13 +151,13 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                 >
                   <button
                     type="button"
-                    className={`absolute top-1/2 -translate-y-1/2 -left-4 hidden rounded p-0.5 text-custom-sidebar-text-400 ${
+                    className={`absolute top-1/2 -translate-y-1/2 -left-2.5 hidden rounded p-0.5 text-custom-sidebar-text-400 ${
                       isCollapsed ? "" : "group-hover:!flex"
                     } ${project.sort_order === null ? "opacity-60 cursor-not-allowed" : ""}`}
                     {...provided?.dragHandleProps}
                   >
-                    <MoreVertical className="h-4" />
-                    <MoreVertical className="-ml-5 h-4" />
+                    <MoreVertical className="h-3.5" />
+                    <MoreVertical className="-ml-5 h-3.5" />
                   </button>
                 </Tooltip>
               )}
@@ -210,7 +210,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   {!shortContextMenu && isAdmin && (
                     <CustomMenu.MenuItem onClick={handleDeleteProjectClick}>
                       <span className="flex items-center justify-start gap-2 ">
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-3.5 w-3.5 stroke-[1.5]" />
                         <span>Delete project</span>
                       </span>
                     </CustomMenu.MenuItem>
@@ -218,7 +218,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   {!project.is_favorite && (
                     <CustomMenu.MenuItem onClick={handleAddToFavorites}>
                       <span className="flex items-center justify-start gap-2">
-                        <Star className="h-4 w-4" />
+                        <Star className="h-3.5 w-3.5 stroke-[1.5]" />
                         <span>Add to favorites</span>
                       </span>
                     </CustomMenu.MenuItem>
@@ -226,14 +226,14 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   {project.is_favorite && (
                     <CustomMenu.MenuItem onClick={handleRemoveFromFavorites}>
                       <span className="flex items-center justify-start gap-2">
-                        <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                        <Star className="h-3.5 w-3.5 stroke-[1.5] text-orange-400" fill="#f6ad55" />
                         <span>Remove from favorites</span>
                       </span>
                     </CustomMenu.MenuItem>
                   )}
                   <CustomMenu.MenuItem onClick={handleCopyText}>
                     <span className="flex items-center justify-start gap-2">
-                      <LinkIcon className="h-4 w-4" />
+                      <LinkIcon className="h-3.5 w-3.5 stroke-[1.5]" />
                       <span>Copy project link</span>
                     </span>
                   </CustomMenu.MenuItem>
@@ -243,7 +243,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                     <CustomMenu.MenuItem onClick={() => projectPublish.handleProjectModal(project?.id)}>
                       <div className="flex-shrink-0 relative flex items-center justify-start gap-2">
                         <div className="rounded transition-all w-4 h-4 flex justify-center items-center text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 duration-300 cursor-pointer">
-                          <Share2 className="h-4 w-4" />
+                          <Share2 className="h-3.5 w-3.5 stroke-[1.5]" />
                         </div>
                         <div>{project.is_deployed ? "Publish settings" : "Publish"}</div>
                       </div>
@@ -255,7 +255,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                       onClick={() => router.push(`/${workspaceSlug}/projects/${project?.id}/archived-issues/`)}
                     >
                       <div className="flex items-center justify-start gap-2">
-                        <ArchiveIcon className="h-3.5 w-3.5" />
+                        <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
                         <span>Archived Issues</span>
                       </div>
                     </CustomMenu.MenuItem>
@@ -264,7 +264,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                     onClick={() => router.push(`/${workspaceSlug}/projects/${project?.id}/draft-issues`)}
                   >
                     <div className="flex items-center justify-start gap-2">
-                      <PenSquare className="!text-base !leading-4 w-[14px] h-[14px] text-custom-text-300" />
+                      <PenSquare className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
                       <span>Draft Issues</span>
                     </div>
                   </CustomMenu.MenuItem>
@@ -272,7 +272,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                     onClick={() => router.push(`/${workspaceSlug}/projects/${project?.id}/settings`)}
                   >
                     <div className="flex items-center justify-start gap-2">
-                      <Settings className="h-4 w-4" />
+                      <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
                       <span>Settings</span>
                     </div>
                   </CustomMenu.MenuItem>
@@ -281,7 +281,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   {isViewerOrGuest && (
                     <CustomMenu.MenuItem onClick={handleLeaveProject}>
                       <div className="flex items-center justify-start gap-2">
-                        <LogOut className="h-4 w-4" />
+                        <LogOut className="h-3.5 w-3.5 stroke-[1.5]" />
                         <span>Leave Project</span>
                       </div>
                     </CustomMenu.MenuItem>
@@ -324,7 +324,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                                 : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
                             } ${isCollapsed ? "justify-center" : ""}`}
                           >
-                            <item.Icon className="h-4 w-4" />
+                            <item.Icon className="h-4 w-4 stroke-[1.5]" />
                             {!isCollapsed && item.name}
                           </div>
                         </Tooltip>
