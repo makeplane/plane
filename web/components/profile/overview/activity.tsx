@@ -7,8 +7,9 @@ import { UserService } from "services/user.service";
 // components
 import { ActivityMessage } from "components/core";
 // ui
-import { ProfileEmptyState, Icon } from "components/ui";
+import { ProfileEmptyState } from "components/ui";
 import { Loader } from "@plane/ui";
+import { Rocket } from "lucide-react";
 // image
 import recentActivityEmptyState from "public/empty-state/recent_activity.svg";
 // helpers
@@ -69,7 +70,7 @@ export const ProfileActivity = () => {
                             className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
                           >
                             Issue
-                            <Icon iconName="launch" className="!text-xs" />
+                            <Rocket className="h-3 w-3" />
                           </a>
                         </span>
                       )}

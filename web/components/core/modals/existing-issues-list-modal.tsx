@@ -13,11 +13,9 @@ import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
 import useDebounce from "hooks/use-debounce";
 // ui
-import { Button, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
+import { Button, LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
-import { LaunchOutlined } from "@mui/icons-material";
-import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { LayerDiagonalIcon } from "components/icons";
+import { Rocket, Search, X } from "lucide-react";
 // types
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "types";
 // fetch-keys
@@ -153,7 +151,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                   }}
                 >
                   <div className="relative m-1">
-                    <MagnifyingGlassIcon
+                    <Search
                       className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-100 text-opacity-40"
                       aria-hidden="true"
                     />
@@ -179,7 +177,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                               className="group p-1"
                               onClick={() => setSelectedIssues((prevData) => prevData.filter((i) => i.id !== issue.id))}
                             >
-                              <XMarkIcon className="h-3 w-3 text-custom-text-200 group-hover:text-custom-text-100" />
+                              <X className="h-3 w-3 text-custom-text-200 group-hover:text-custom-text-100" />
                             </button>
                           </div>
                         ))}
@@ -227,7 +225,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
 
                     {!isSearching && issues.length === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && (
                       <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
-                        <LayerDiagonalIcon height="52" width="52" />
+                        <LayersIcon height="52" width="52" />
                         <h3 className="text-custom-text-200">
                           No issues found. Create a new issue with{" "}
                           <pre className="inline rounded bg-custom-background-80 px-2 py-1 text-sm">C</pre>.
@@ -279,11 +277,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                                 rel="noopener noreferrer"
                                 onClick={(e) => e.stopPropagation()}
                               >
-                                <LaunchOutlined
-                                  sx={{
-                                    fontSize: 16,
-                                  }}
-                                />
+                                <Rocket className="h-4 w-4" />
                               </a>
                             </Combobox.Option>
                           );

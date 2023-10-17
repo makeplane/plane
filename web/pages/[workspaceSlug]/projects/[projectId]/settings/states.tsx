@@ -18,7 +18,7 @@ import { SettingsSidebar } from "components/project";
 import { Loader } from "@plane/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Plus } from "lucide-react";
 // helpers
 import { getStatesList, orderStateGroups } from "helpers/state.helper";
 import { truncateText } from "helpers/string.helper";
@@ -92,7 +92,7 @@ const StatesSettings: NextPage = () => {
                             className="flex items-center gap-2 text-custom-primary-100 px-2 hover:text-custom-primary-200 outline-none"
                             onClick={() => setActiveGroup(key as keyof StateGroup)}
                           >
-                            <PlusIcon className="h-4 w-4" />
+                            <Plus className="h-4 w-4" />
                           </button>
                         </div>
                         <div className="flex flex-col gap-2 rounded">

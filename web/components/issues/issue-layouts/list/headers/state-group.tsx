@@ -2,7 +2,8 @@ import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // components
 import { HeaderGroupByCard } from "./group-by-card";
-import { StateGroupIcon } from "components/icons";
+// ui
+import { StateGroupIcon } from "@plane/ui";
 
 export interface IStateGroupHeader {
   column_id: string;

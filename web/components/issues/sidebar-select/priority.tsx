@@ -3,7 +3,7 @@ import React from "react";
 // ui
 import { CustomSelect } from "components/ui";
 // icons
-import { PriorityIcon } from "components/icons/priority-icon";
+import { PriorityIcon } from "@plane/ui";
 // types
 import { TIssuePriorities } from "types";
 // constants
@@ -32,7 +32,7 @@ export const SidebarPrioritySelect: React.FC<Props> = ({ value, onChange, disabl
         }`}
       >
         <span className="grid place-items-center -my-1">
-          <PriorityIcon priority={value} className="!text-sm" />
+          <PriorityIcon priority={value} className="h-3.5 w-3.5" />
         </span>
         <span>{value ?? "None"}</span>
       </div>
@@ -45,7 +45,7 @@ export const SidebarPrioritySelect: React.FC<Props> = ({ value, onChange, disabl
     {PRIORITIES.map((option) => (
       <CustomSelect.Option key={option} value={option} className="capitalize">
         <>
-          <PriorityIcon priority={option} className="text-sm" />
+          <PriorityIcon priority={option} className="h-3.5 w-3.5" />
           {option ?? "None"}
         </>
       </CustomSelect.Option>

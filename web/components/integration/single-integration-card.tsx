@@ -15,7 +15,7 @@ import { Button, Loader } from "@plane/ui";
 // icons
 import GithubLogo from "public/services/github.png";
 import SlackLogo from "public/services/slack.png";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 // types
 import { IAppIntegration, IWorkspaceIntegration } from "types";
 // fetch-keys
@@ -102,7 +102,7 @@ export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
           <h3 className="flex items-center gap-2 text-sm font-medium">
             {integration.title}
             {workspaceIntegrations
-              ? isInstalled && <CheckCircle2 className="h-3.5 w-3.5 text-white fill-green-500" />
+              ? isInstalled && <CheckCircle className="h-3.5 w-3.5 text-white fill-green-500" />
               : null}
           </h3>
           <p className="text-sm text-custom-text-200 tracking-tight">

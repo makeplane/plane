@@ -10,12 +10,10 @@ import useEstimateOption from "hooks/use-estimate-option";
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 // icons
 import { PlayIcon, User, X, CalendarDays, LayoutGrid, Users, CopyPlus } from "lucide-react";
-import { RectangleGroupIcon } from "@heroicons/react/24/outline";
-import { BlockedIcon, BlockerIcon, RelatedIcon, ContrastIcon } from "components/icons";
 //services
 import { IssueService } from "services/issue";
 // components
-import { Button } from "@plane/ui";
+import { Button, DiceIcon, BlockedIcon, BlockerIcon, RelatedIcon, ContrastIcon } from "@plane/ui";
 import {
   Label,
   StateSelect,
@@ -234,6 +232,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                           JSON.stringify({
                             issue_id: relation.issue_detail?.id,
                             project_id: relation.issue_detail?.project_detail.id,
+                            issue_identifier: `${relation.issue_detail?.project_detail.identifier}-${relation.issue_detail?.sequence_id}`
                           })
                         )
                       }
@@ -296,6 +295,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                           JSON.stringify({
                             issue_id: relation.issue_detail?.id,
                             project_id: relation.issue_detail?.project_detail.id,
+                            issue_identifier: `${relation.issue_detail?.project_detail.identifier}-${relation.issue_detail?.sequence_id}`
                           })
                         )
                       }
@@ -358,6 +358,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                           JSON.stringify({
                             issue_id: relation.issue_detail?.id,
                             project_id: relation.issue_detail?.project_detail.id,
+                            issue_identifier: `${relation.issue_detail?.project_detail.identifier}-${relation.issue_detail?.sequence_id}`
                           })
                         )
                       }
@@ -420,6 +421,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                           JSON.stringify({
                             issue_id: relation.issue_detail?.id,
                             project_id: relation.issue_detail?.project_detail.id,
+                            issue_identifier: `${relation.issue_detail?.project_detail.identifier}-${relation.issue_detail?.sequence_id}`
                           })
                         )
                       }
@@ -493,7 +495,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
             <div className="border border-custom-border-200 rounded-[4px] p-2">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-1">
-                  <RectangleGroupIcon className="h-4 w-4 flex-shrink-0 text-custom-text-400" />
+                  <DiceIcon className="h-4 w-4 flex-shrink-0 text-custom-text-400" />
                   <span className="text-sm text-custom-text-400">Module</span>
                 </div>
                 <div>

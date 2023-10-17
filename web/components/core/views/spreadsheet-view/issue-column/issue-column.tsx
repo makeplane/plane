@@ -5,8 +5,7 @@ import { useRouter } from "next/router";
 // components
 import { Popover2 } from "@blueprintjs/popover2";
 // icons
-import { Icon } from "components/ui";
-import { EllipsisHorizontalIcon, LinkIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { MoreHorizontal, LinkIcon, Pencil, Trash2, ChevronRight } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
 // types
@@ -100,7 +99,7 @@ export const IssueColumn: React.FC<Props> = ({
                         }}
                       >
                         <div className="flex items-center justify-start gap-2">
-                          <PencilIcon className="h-4 w-4" />
+                          <Pencil className="h-4 w-4" />
                           <span>Edit issue</span>
                         </div>
                       </button>
@@ -114,7 +113,7 @@ export const IssueColumn: React.FC<Props> = ({
                         }}
                       >
                         <div className="flex items-center justify-start gap-2">
-                          <TrashIcon className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4" />
                           <span>Delete issue</span>
                         </div>
                       </button>
@@ -136,7 +135,7 @@ export const IssueColumn: React.FC<Props> = ({
                   }
                   placement="bottom-start"
                 >
-                  <EllipsisHorizontalIcon className="h-5 w-5 text-custom-text-200" />
+                  <MoreHorizontal className="h-5 w-5 text-custom-text-200" />
                 </Popover2>
               </div>
             )}
@@ -148,7 +147,7 @@ export const IssueColumn: React.FC<Props> = ({
                 className="h-5 w-5 hover:bg-custom-background-90 hover:text-custom-text-100 rounded-sm cursor-pointer"
                 onClick={() => handleToggleExpand(issue.id)}
               >
-                <Icon iconName="chevron_right" className={`${expanded ? "rotate-90" : ""}`} />
+                <ChevronRight className={`h-3.5 w-3.5 ${expanded ? "rotate-90" : ""}`} />
               </button>
             </div>
           )}

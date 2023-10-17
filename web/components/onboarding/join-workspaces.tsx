@@ -9,7 +9,7 @@ import useUser from "hooks/use-user";
 // ui
 import { Button } from "@plane/ui";
 // icons
-import { CheckCircleIcon } from "@heroicons/react/24/outline";
+import { CheckCircle } from "lucide-react";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
@@ -110,7 +110,7 @@ export const JoinWorkspaces: React.FC<Props> = ({ finishOnboarding, stepChange, 
                   <p className="text-xs text-custom-text-200">{ROLE[invitation.role]}</p>
                 </div>
                 <span className={`flex-shrink-0 ${isSelected ? "text-custom-primary-100" : "text-custom-text-200"}`}>
-                  <CheckCircleIcon className="h-5 w-5" />
+                  <CheckCircle className="h-5 w-5" />
                 </span>
               </div>
             );

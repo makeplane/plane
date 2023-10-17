@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 
 // icons
-import { StateGroupIcon } from "components/icons";
+import { StateGroupIcon } from "@plane/ui";
 import { X } from "lucide-react";
 // helpers
 import { getStatesList } from "helpers/state.helper";

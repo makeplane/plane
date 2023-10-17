@@ -5,7 +5,8 @@ import useSWR from "swr";
 // services
 import { ProjectService } from "services/project";
 // ui
-import { AssigneesList, Avatar, CustomSearchSelect, Icon } from "components/ui";
+import { AssigneesList, Avatar, CustomSearchSelect } from "components/ui";
+import { User2 } from "lucide-react";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -52,7 +53,7 @@ export const IssueAssigneeSelect: React.FC<Props> = ({ projectId, value = [], on
             </div>
           ) : (
             <div className="flex items-center justify-center gap-2 px-1.5 py-1 rounded shadow-sm border border-custom-border-300 hover:bg-custom-background-80">
-              <Icon iconName="person" className="!text-base !leading-4" />
+              <User2 className="h-4 w-4" />
               <span className="text-custom-text-200">Assignee</span>
             </div>
           )}

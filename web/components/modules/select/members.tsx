@@ -6,7 +6,7 @@ import { ProjectService } from "services/project";
 // ui
 import { AssigneesList, Avatar, CustomSearchSelect } from "components/ui";
 // icons
-import { UserGroupIcon } from "@heroicons/react/24/outline";
+import { UserGroupIcon } from "@plane/ui";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 

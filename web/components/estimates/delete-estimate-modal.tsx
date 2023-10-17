@@ -6,7 +6,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { IEstimate } from "types";
 
 // icons
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { AlertTriangle } from "lucide-react";
 // ui
 import { Button } from "@plane/ui";
 
@@ -59,7 +59,7 @@ export const DeleteEstimateModal: React.FC<Props> = ({ isOpen, handleClose, data
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-500/20 p-4">
-                      <ExclamationTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
+                      <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">
                       <h3 className="text-xl font-medium 2xl:text-2xl">Delete Estimate</h3>

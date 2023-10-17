@@ -1,14 +1,9 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-
-// cmdk
 import { Command } from "cmdk";
-import { THEMES_OBJ } from "constants/themes";
+import { THEME_OPTIONS } from "constants/themes";
 import { useTheme } from "next-themes";
-import { SettingIcon } from "components/icons";
 import useUser from "hooks/use-user";
-// helper
-import { unsetCustomCssVariables } from "helpers/theme.helper";
-// mobx react lite
+import { Settings } from "lucide-react";
 import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -44,7 +39,7 @@ export const ChangeInterfaceTheme: React.FC<Props> = observer(({ setIsPaletteOpe
 
   return (
     <>
-      {THEMES_OBJ.filter((t) => t.value !== "custom").map((theme) => (
+      {THEME_OPTIONS.filter((t) => t.value !== "custom").map((theme) => (
         <Command.Item
           key={theme.value}
           onSelect={() => {
@@ -54,7 +49,7 @@ export const ChangeInterfaceTheme: React.FC<Props> = observer(({ setIsPaletteOpe
           className="focus:outline-none"
         >
           <div className="flex items-center gap-2 text-custom-text-200">
-            <SettingIcon className="h-4 w-4 text-custom-text-200" />
+            <Settings className="h-4 w-4 text-custom-text-200" />
             {theme.label}
           </div>
         </Command.Item>

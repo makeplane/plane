@@ -3,13 +3,13 @@ import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 // icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { Users2, X } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
 import { useWorkspaceMyMembership } from "contexts/workspace-member.context";
 import useWorkspaceMembers from "hooks/use-workspace-members";
 // ui
-import { CustomSelect, Icon, Avatar, CustomSearchSelect } from "components/ui";
+import { CustomSelect, Avatar, CustomSearchSelect } from "components/ui";
 import { Button, Input, TextArea } from "@plane/ui";
 // components
 import { ImagePickerPopover } from "components/core";
@@ -212,7 +212,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
 
                   <div className="absolute right-2 top-2 p-2">
                     <button type="button" onClick={handleClose}>
-                      <XMarkIcon className="h-5 w-5 text-white" />
+                      <X className="h-5 w-5 text-white" />
                     </button>
                   </div>
                   <div className="absolute bottom-2 right-2">
@@ -337,7 +337,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                                 <div className="flex items-center gap-2 -mb-0.5 py-1">
                                   {currentNetwork ? (
                                     <>
-                                      <Icon iconName={currentNetwork?.icon} className="!text-xs" />
+                                      <currentNetwork.icon className="h-3 w-3" />
                                       {currentNetwork.label}
                                     </>
                                   ) : (
@@ -353,7 +353,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                                   value={network.key}
                                   className="flex items-center gap-1"
                                 >
-                                  <Icon iconName={network.icon} className="!text-xs" />
+                                  <network.icon className="h-3 w-3" />
                                   {network.label}
                                 </CustomSelect.Option>
                               ))}
@@ -381,15 +381,12 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                                         <Avatar user={selectedMember?.member} />
                                         <span>{selectedMember?.member.display_name} </span>
                                         <span onClick={() => onChange(null)}>
-                                          <Icon
-                                            iconName="close"
-                                            className="!text-xs -mb-0.5 text-custom-text-200 hover:text-custom-text-100"
-                                          />
+                                          <X className="h-3 w-3 -mb-0.5 text-custom-text-200 hover:text-custom-text-100" />
                                         </span>
                                       </>
                                     ) : (
                                       <>
-                                        <Icon iconName="group" className="!text-sm text-custom-text-400" />
+                                        <Users2 className="h-3.5 w-3.5 text-custom-text-400" />
                                         <span className="text-custom-text-400">Lead</span>
                                       </>
                                     )}

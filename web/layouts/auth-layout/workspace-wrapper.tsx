@@ -10,11 +10,6 @@ import { useMobxStore } from "lib/mobx/store-provider";
 
 export interface IWorkspaceAuthWrapper {
   children: ReactNode;
-  noHeader?: boolean;
-  bg?: "primary" | "secondary";
-  breadcrumbs?: JSX.Element;
-  left?: JSX.Element;
-  right?: JSX.Element;
 }
 
 export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
@@ -45,12 +40,8 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     workspaceSlug ? () => workspaceStore.fetchWorkspaceLabels(workspaceSlug.toString()) : null
   );
 
-  // console.log("workspaceSlug", workspaceSlug);
-
-  // console.log("userStore.memberInfo", userStore.memberInfo);
-
   // while data is being loaded
-  if (!userStore.memberInfo && userStore.hasPermissionToWorkspace === null) {
+  if (!userStore.workspaceMemberInfo && userStore.hasPermissionToWorkspace === null) {
     return (
       <div className="grid h-screen place-items-center p-4 bg-custom-background-100">
         <div className="flex flex-col items-center gap-3 text-center">

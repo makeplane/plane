@@ -65,6 +65,16 @@ import {
   IArchivedIssueFilterStore,
 } from "store/archived-issues";
 import { DraftIssueStore, IDraftIssueStore, DraftIssueFilterStore, IDraftIssueFilterStore } from "store/draft-issues";
+import {
+  IInboxFiltersStore,
+  IInboxIssueDetailsStore,
+  IInboxIssuesStore,
+  IInboxStore,
+  InboxFiltersStore,
+  InboxIssueDetailsStore,
+  InboxIssuesStore,
+  InboxStore,
+} from "store/inbox";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -113,6 +123,11 @@ export class RootStore {
   draftIssues: IDraftIssueStore;
   draftIssueFilters: IDraftIssueFilterStore;
 
+  inbox: IInboxStore;
+  inboxIssues: IInboxIssuesStore;
+  inboxIssueDetails: IInboxIssueDetailsStore;
+  inboxFilters: IInboxFiltersStore;
+
   constructor() {
     this.user = new UserStore(this);
     this.theme = new ThemeStore(this);
@@ -157,5 +172,10 @@ export class RootStore {
 
     this.draftIssues = new DraftIssueStore(this);
     this.draftIssueFilters = new DraftIssueFilterStore(this);
+
+    this.inbox = new InboxStore(this);
+    this.inboxIssues = new InboxIssuesStore(this);
+    this.inboxIssueDetails = new InboxIssueDetailsStore(this);
+    this.inboxFilters = new InboxFiltersStore(this);
   }
 }

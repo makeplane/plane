@@ -8,7 +8,7 @@ import { CreateUpdateWorkspaceViewModal, DeleteGlobalViewModal } from "component
 // ui
 import { CustomMenu } from "components/ui";
 // icons
-import { PencilIcon, Sparkles, TrashIcon } from "lucide-react";
+import { Pencil, Sparkles, Trash2 } from "lucide-react";
 // helpers
 import { truncateText } from "helpers/string.helper";
 import { calculateTotalFilters } from "helpers/filter.helper";
@@ -59,7 +59,7 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
                       }}
                     >
                       <span className="flex items-center justify-start gap-2">
-                        <PencilIcon size={14} strokeWidth={2} />
+                        <Pencil size={14} strokeWidth={2} />
                         <span>Edit View</span>
                       </span>
                     </CustomMenu.MenuItem>
@@ -71,7 +71,7 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
                       }}
                     >
                       <span className="flex items-center justify-start gap-2">
-                        <TrashIcon size={14} strokeWidth={2} />
+                        <Trash2 size={14} strokeWidth={2} />
                         <span>Delete View</span>
                       </span>
                     </CustomMenu.MenuItem>

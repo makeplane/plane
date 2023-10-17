@@ -1,5 +1,6 @@
 from django.urls import path
 
+from rest_framework_simplejwt.views import TokenRefreshView
 
 # Create your urls here.
 
@@ -191,6 +192,9 @@ from plane.api.views import (
 )
 
 
+#TODO: Delete this file
+# This url file has been deprecated use apiserver/plane/urls folder to create new urls
+
 urlpatterns = [
     #  Social Auth
     path("social-auth/", OauthEndpoint.as_view(), name="oauth"),
@@ -203,6 +207,7 @@ urlpatterns = [
         "magic-generate/", MagicSignInGenerateEndpoint.as_view(), name="magic-generate"
     ),
     path("magic-sign-in/", MagicSignInEndpoint.as_view(), name="magic-sign-in"),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     # Email verification
     path("email-verify/", VerifyEmailEndpoint.as_view(), name="email-verify"),
     path(
@@ -226,6 +231,15 @@ urlpatterns = [
         "users/me/",
         UserEndpoint.as_view(
             {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
+        ),
+        name="users",
+    ),
+    path(
+        "users/me/settings/",
+        UserEndpoint.as_view(
+            {
+                "get": "retrieve_user_settings",
+            }
         ),
         name="users",
     ),
@@ -556,6 +570,7 @@ urlpatterns = [
         "workspaces/<str:slug>/user-favorite-projects/",
         ProjectFavoritesViewSet.as_view(
             {
+                "get": "list",
                 "post": "create",
             }
         ),

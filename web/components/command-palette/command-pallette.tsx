@@ -41,7 +41,7 @@ export const CommandPalette: React.FC = observer(() => {
   const [isCreateUpdatePageModalOpen, setIsCreateUpdatePageModalOpen] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, issueId, inboxId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, projectId, issueId, cycleId, moduleId } = router.query;
 
   const { user } = useUser();
 
@@ -176,7 +176,6 @@ export const CommandPalette: React.FC = observer(() => {
       <CreateUpdateIssueModal
         isOpen={isIssueModalOpen}
         handleClose={() => setIsIssueModalOpen(false)}
-        fieldsToShow={inboxId ? ["name", "description", "priority"] : ["all"]}
         prePopulateData={
           cycleId ? { cycle: cycleId.toString() } : moduleId ? { module: moduleId.toString() } : undefined
         }

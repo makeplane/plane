@@ -14,7 +14,7 @@ import { IssuePeekOverview } from "components/issues";
 import { CustomMenu } from "components/ui";
 import { Spinner } from "@plane/ui";
 // icon
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Plus } from "lucide-react";
 // types
 import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "types";
 import { IIssueUnGroupedStructure } from "store/issue";
@@ -117,7 +117,7 @@ export const ModuleSpreadsheetLayout: React.FC = observer(() => {
                       className="flex gap-1.5 items-center  pl-7 py-2.5 text-sm sticky left-0 z-[1] text-custom-text-200 bg-custom-background-100 group-hover:text-custom-text-100 group-hover:bg-custom-background-80 border-custom-border-200 w-full"
                       type="button"
                     >
-                      <PlusIcon className="h-4 w-4" />
+                      <Plus className="h-4 w-4" />
                       Add Issue
                     </button>
                   }

@@ -16,16 +16,16 @@ import { ColorResult, SketchPicker } from "react-color";
 import { Popover, Transition } from "@headlessui/react";
 import { Input } from "@plane/ui";
 // icons
-import { ColorPickerIcon } from "components/icons";
+import { Palette } from "lucide-react";
 // types
-import { ICustomTheme } from "types";
+import { IUserTheme } from "types";
 
 type Props = {
-  name: keyof ICustomTheme;
+  name: keyof IUserTheme;
   position?: "left" | "right";
   watch: UseFormWatch<any>;
   setValue: UseFormSetValue<any>;
-  control: Control<ICustomTheme, any>;
+  control: Control<IUserTheme, any>;
   error: FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined;
   register: UseFormRegister<any>;
 };
@@ -38,7 +38,7 @@ export const ColorPickerInput: FC<Props> = (props) => {
     setValue(name, hex);
   };
 
-  const getColorText = (colorName: keyof ICustomTheme) => {
+  const getColorText = (colorName: keyof IUserTheme) => {
     switch (colorName) {
       case "background":
         return "Background";
@@ -98,7 +98,7 @@ export const ColorPickerInput: FC<Props> = (props) => {
                     }}
                   />
                 ) : (
-                  <ColorPickerIcon height={14} width={14} className="fill-current text-custom-text-100" />
+                  <Palette className="h-3.5 w-3.5 text-custom-text-100" />
                 )}
               </Popover.Button>
 

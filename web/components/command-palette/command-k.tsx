@@ -11,9 +11,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // services
 import { WorkspaceService } from "services/workspace.service";
 import { IssueService } from "services/issue";
-import { InboxService } from "services/inbox.service";
 // hooks
-import useProjectDetails from "hooks/use-project-details";
 import useDebounce from "hooks/use-debounce";
 import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
@@ -26,17 +24,38 @@ import {
   commandGroups,
 } from "components/command-palette";
 // ui
-import { Icon } from "components/ui";
-import { Loader, ToggleSwitch, Tooltip } from "@plane/ui";
+import {
+  FileText,
+  FolderPlus,
+  LinkIcon,
+  MessageSquare,
+  Rocket,
+  Settings,
+  Signal,
+  Trash2,
+  UserMinus2,
+  UserPlus2,
+} from "lucide-react";
+import {
+  ContrastIcon,
+  DiceIcon,
+  DoubleCircleIcon,
+  LayersIcon,
+  Loader,
+  PhotoFilterIcon,
+  ToggleSwitch,
+  Tooltip,
+  UserGroupIcon,
+} from "@plane/ui";
 // icons
 import { DiscordIcon, GithubIcon, SettingIcon } from "components/icons";
-import { InboxIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { IIssue, IWorkspaceSearchResults } from "types";
 // fetch-keys
-import { INBOX_LIST, ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
+import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 type Props = {
   deleteIssue: () => void;
@@ -47,7 +66,6 @@ type Props = {
 // services
 const workspaceService = new WorkspaceService();
 const issueService = new IssueService();
-const inboxService = new InboxService();
 
 export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPaletteOpen }) => {
   const [placeholder, setPlaceholder] = useState("Type a command or search...");
@@ -80,18 +98,12 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
   const { setToastAlert } = useToast();
 
   const { user } = useUser();
-  const { projectDetails } = useProjectDetails();
 
   const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
     workspaceSlug && projectId && issueId
       ? () => issueService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
       : null
-  );
-
-  const { data: inboxList } = useSWR(
-    workspaceSlug && projectId ? INBOX_LIST(projectId as string) : null,
-    workspaceSlug && projectId ? () => inboxService.getInboxes(workspaceSlug as string, projectId as string) : null
   );
 
   const updateIssue = useCallback(
@@ -360,7 +372,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                                 className="focus:outline-none"
                               >
                                 <div className="flex items-center gap-2 overflow-hidden text-custom-text-200">
-                                  <Icon iconName={currentSection.icon} />
+                                  {currentSection.icon}
                                   <p className="block flex-1 truncate">{currentSection.itemName(item)}</p>
                                 </div>
                               </Command.Item>
@@ -384,7 +396,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                             className="focus:outline-none"
                           >
                             <div className="flex items-center gap-2 text-custom-text-200">
-                              <Icon iconName="grid_view" />
+                              <DoubleCircleIcon className="h-3.5 w-3.5" />
                               Change state...
                             </div>
                           </Command.Item>
@@ -397,7 +409,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                             className="focus:outline-none"
                           >
                             <div className="flex items-center gap-2 text-custom-text-200">
-                              <Icon iconName="bar_chart" />
+                              <Signal className="h-3.5 w-3.5" />
                               Change priority...
                             </div>
                           </Command.Item>
@@ -410,7 +422,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                             className="focus:outline-none"
                           >
                             <div className="flex items-center gap-2 text-custom-text-200">
-                              <Icon iconName="group" />
+                              <UserGroupIcon className="h-3.5 w-3.5" />
                               Assign to...
                             </div>
                           </Command.Item>
@@ -424,12 +436,12 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                             <div className="flex items-center gap-2 text-custom-text-200">
                               {issueDetails?.assignees.includes(user.id) ? (
                                 <>
-                                  <Icon iconName="person_remove" />
+                                  <UserMinus2 className="h-3.5 w-3.5" />
                                   Un-assign from me
                                 </>
                               ) : (
                                 <>
-                                  <Icon iconName="person_add" />
+                                  <UserPlus2 className="h-3.5 w-3.5" />
                                   Assign to me
                                 </>
                               )}
@@ -437,7 +449,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                           </Command.Item>
                           <Command.Item onSelect={deleteIssue} className="focus:outline-none">
                             <div className="flex items-center gap-2 text-custom-text-200">
-                              <Icon iconName="delete" />
+                              <Trash2 className="h-3.5 w-3.5" />
                               Delete issue
                             </div>
                           </Command.Item>
@@ -449,7 +461,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                             className="focus:outline-none"
                           >
                             <div className="flex items-center gap-2 text-custom-text-200">
-                              <Icon iconName="link" />
+                              <LinkIcon className="h-3.5 w-3.5" />
                               Copy issue URL
                             </div>
                           </Command.Item>
@@ -467,7 +479,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                           className="focus:bg-custom-background-80"
                         >
                           <div className="flex items-center gap-2 text-custom-text-200">
-                            <Icon iconName="stack" />
+                            <LayersIcon className="h-3.5 w-3.5" />
                             Create new issue
                           </div>
                           <kbd>C</kbd>
@@ -487,7 +499,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                             className="focus:outline-none"
                           >
                             <div className="flex items-center gap-2 text-custom-text-200">
-                              <Icon iconName="create_new_folder" />
+                              <FolderPlus className="h-3.5 w-3.5" />
                               Create new project
                             </div>
                             <kbd>P</kbd>
@@ -509,7 +521,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                               className="focus:outline-none"
                             >
                               <div className="flex items-center gap-2 text-custom-text-200">
-                                <Icon iconName="contrast" />
+                                <ContrastIcon className="h-3.5 w-3.5" />
                                 Create new cycle
                               </div>
                               <kbd>Q</kbd>
@@ -527,7 +539,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                               className="focus:outline-none"
                             >
                               <div className="flex items-center gap-2 text-custom-text-200">
-                                <Icon iconName="dataset" />
+                                <DiceIcon className="h-3.5 w-3.5" />
                                 Create new module
                               </div>
                               <kbd>M</kbd>
@@ -545,7 +557,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                               className="focus:outline-none"
                             >
                               <div className="flex items-center gap-2 text-custom-text-200">
-                                <Icon iconName="photo_filter" />
+                                <PhotoFilterIcon className="h-3.5 w-3.5" />
                                 Create new view
                               </div>
                               <kbd>V</kbd>
@@ -563,28 +575,12 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                               className="focus:outline-none"
                             >
                               <div className="flex items-center gap-2 text-custom-text-200">
-                                <Icon iconName="article" />
+                                <FileText className="h-3.5 w-3.5" />
                                 Create new page
                               </div>
                               <kbd>D</kbd>
                             </Command.Item>
                           </Command.Group>
-                          {projectDetails && projectDetails.inbox_view && (
-                            <Command.Group heading="Inbox">
-                              <Command.Item
-                                onSelect={() => {
-                                  setIsPaletteOpen(false);
-                                  redirect(`/${workspaceSlug}/projects/${projectId}/inbox/${inboxList?.[0]?.id}`);
-                                }}
-                                className="focus:outline-none"
-                              >
-                                <div className="flex items-center gap-2 text-custom-text-200">
-                                  <InboxIcon className="h-4 w-4" color="#6b7280" />
-                                  Open inbox
-                                </div>
-                              </Command.Item>
-                            </Command.Group>
-                          )}
                         </>
                       )}
 
@@ -598,7 +594,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                           className="focus:outline-none"
                         >
                           <div className="flex items-center gap-2 text-custom-text-200">
-                            <Icon iconName="settings" />
+                            <Settings className="h-3.5 w-3.5" />
                             Search settings...
                           </div>
                         </Command.Item>
@@ -606,7 +602,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                       <Command.Group heading="Account">
                         <Command.Item onSelect={createNewWorkspace} className="focus:outline-none">
                           <div className="flex items-center gap-2 text-custom-text-200">
-                            <Icon iconName="create_new_folder" />
+                            <FolderPlus className="h-3.5 w-3.5" />
                             Create new workspace
                           </div>
                         </Command.Item>
@@ -619,7 +615,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                           className="focus:outline-none"
                         >
                           <div className="flex items-center gap-2 text-custom-text-200">
-                            <Icon iconName="settings" />
+                            <Settings className="h-3.5 w-3.5" />
                             Change interface theme...
                           </div>
                         </Command.Item>
@@ -636,7 +632,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                           className="focus:outline-none"
                         >
                           <div className="flex items-center gap-2 text-custom-text-200">
-                            <Icon iconName="rocket_launch" />
+                            <Rocket className="h-3.5 w-3.5" />
                             Open keyboard shortcuts
                           </div>
                         </Command.Item>
@@ -648,7 +644,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                           className="focus:outline-none"
                         >
                           <div className="flex items-center gap-2 text-custom-text-200">
-                            <Icon iconName="article" />
+                            <FileText className="h-3.5 w-3.5" />
                             Open Plane documentation
                           </div>
                         </Command.Item>
@@ -684,7 +680,7 @@ export const CommandK: React.FC<Props> = ({ deleteIssue, isPaletteOpen, setIsPal
                           className="focus:outline-none"
                         >
                           <div className="flex items-center gap-2 text-custom-text-200">
-                            <Icon iconName="sms" />
+                            <MessageSquare className="h-3.5 w-3.5" />
                             Chat with us
                           </div>
                         </Command.Item>

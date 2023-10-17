@@ -4,10 +4,8 @@ import { useRouter } from "next/router";
 // component
 import { CustomSearchSelect, CustomSelect } from "components/ui";
 import { SelectMonthModal } from "components/automation";
-import { ToggleSwitch } from "@plane/ui";
+import { ToggleSwitch, StateGroupIcon, DoubleCircleIcon } from "@plane/ui";
 // icons
-import { Squares2X2Icon } from "@heroicons/react/24/outline";
-import { StateGroupIcon } from "components/icons";
 import { ArchiveX } from "lucide-react";
 // services
 import { ProjectStateService } from "services/project";
@@ -157,7 +155,7 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
                             width="16px"
                           />
                         ) : (
-                          <Squares2X2Icon className="h-3.5 w-3.5 text-custom-text-200" />
+                          <DoubleCircleIcon className="h-3.5 w-3.5 text-custom-text-200" />
                         )}
                         {selectedOption?.name
                           ? selectedOption.name

@@ -4,11 +4,11 @@ import { useForm } from "react-hook-form";
 // services
 import { FileService } from "services/file.service";
 // icons
-import { ChatBubbleLeftEllipsisIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Check, Globe2, Lock, MessageSquare, Pencil, Trash2, X } from "lucide-react";
 // hooks
 import useUser from "hooks/use-user";
 // ui
-import { CustomMenu, Icon } from "components/ui";
+import { CustomMenu } from "components/ui";
 import { CommentReaction } from "components/issues";
 import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-text-editor";
 // helpers
@@ -87,7 +87,7 @@ export const CommentCard: React.FC<Props> = ({
         )}
 
         <span className="absolute -bottom-0.5 -right-1 rounded-tl bg-custom-background-80 px-0.5 py-px">
-          <ChatBubbleLeftEllipsisIcon className="h-3.5 w-3.5 text-custom-text-200" aria-hidden="true" />
+          <MessageSquare className="h-3.5 w-3.5 text-custom-text-200" aria-hidden="true" />
         </span>
       </div>
       <div className="min-w-0 flex-1">
@@ -120,21 +120,21 @@ export const CommentCard: React.FC<Props> = ({
                 disabled={isSubmitting}
                 className="group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300 hover:bg-green-500"
               >
-                <CheckIcon className="h-3 w-3 text-green-500 duration-300 group-hover:text-white" />
+                <Check className="h-3 w-3 text-green-500 duration-300 group-hover:text-white" />
               </button>
               <button
                 type="button"
                 className="group rounded border border-red-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
                 onClick={() => setIsEditing(false)}
               >
-                <XMarkIcon className="h-3 w-3 text-red-500 duration-300 group-hover:text-white" />
+                <X className="h-3 w-3 text-red-500 duration-300 group-hover:text-white" />
               </button>
             </div>
           </form>
           <div className={`relative ${isEditing ? "hidden" : ""}`}>
             {showAccessSpecifier && (
               <div className="absolute top-1 right-1.5 z-[1] text-custom-text-300">
-                <Icon iconName={comment.access === "INTERNAL" ? "lock" : "public"} className="!text-xs" />
+                {comment.access === "INTERNAL" ? <Lock className="h-3 w-3" /> : <Globe2 className="h-3 w-3" />}
               </div>
             )}
             <LiteReadOnlyEditorWithRef
@@ -149,7 +149,7 @@ export const CommentCard: React.FC<Props> = ({
       {user?.id === comment.actor && (
         <CustomMenu ellipsis>
           <CustomMenu.MenuItem onClick={() => setIsEditing(true)} className="flex items-center gap-1">
-            <Icon iconName="edit" />
+            <Pencil className="h-3 w-3" />
             Edit comment
           </CustomMenu.MenuItem>
           {showAccessSpecifier && (
@@ -160,7 +160,7 @@ export const CommentCard: React.FC<Props> = ({
                   onClick={() => onSubmit(comment.id, { access: "EXTERNAL" })}
                   className="flex items-center gap-1"
                 >
-                  <Icon iconName="public" />
+                  <Globe2 className="h-3 w-3" />
                   Switch to public comment
                 </CustomMenu.MenuItem>
               ) : (
@@ -169,7 +169,7 @@ export const CommentCard: React.FC<Props> = ({
                   onClick={() => onSubmit(comment.id, { access: "INTERNAL" })}
                   className="flex items-center gap-1"
                 >
-                  <Icon iconName="lock" />
+                  <Lock className="h-3 w-3" />
                   Switch to private comment
                 </CustomMenu.MenuItem>
               )}
@@ -181,7 +181,7 @@ export const CommentCard: React.FC<Props> = ({
             }}
             className="flex items-center gap-1"
           >
-            <Icon iconName="delete" />
+            <Trash2 className="h-3 w-3" />
             Delete comment
           </CustomMenu.MenuItem>
         </CustomMenu>

@@ -1,10 +1,4 @@
-import {
-  CalendarDaysIcon,
-  PlayIcon,
-  Squares2X2Icon,
-  TagIcon,
-  UserGroupIcon,
-} from "@heroicons/react/24/outline";
+import { CalendarDaysIcon, PlayIcon, Squares2X2Icon, TagIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 
 export const SPREADSHEET_COLUMN = [
   {

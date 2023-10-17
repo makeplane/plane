@@ -13,8 +13,7 @@ import { MyIssuesSelectFilters } from "components/issues";
 import { CustomMenu } from "components/ui";
 import { ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import { FormatListBulletedOutlined, GridViewOutlined } from "@mui/icons-material";
+import { ChevronDown, Kanban, List } from "lucide-react";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
@@ -26,11 +25,11 @@ import { ISSUE_GROUP_BY_OPTIONS, ISSUE_ORDER_BY_OPTIONS, ISSUE_FILTER_OPTIONS } 
 const issueViewOptions: { type: TIssueLayouts; Icon: any }[] = [
   {
     type: "list",
-    Icon: FormatListBulletedOutlined,
+    Icon: List,
   },
   {
     type: "kanban",
-    Icon: GridViewOutlined,
+    Icon: Kanban,
   },
 ];
 
@@ -70,12 +69,7 @@ export const ProfileIssuesViewOptions: React.FC = () => {
               }`}
               onClick={() => setDisplayFilters({ layout: option.type })}
             >
-              <option.Icon
-                sx={{
-                  fontSize: 16,
-                }}
-                className={option.type === "gantt_chart" ? "rotate-90" : ""}
-              />
+              <option.Icon className="h-3.5 w-3.5" />
             </button>
           </Tooltip>
         ))}
@@ -116,7 +110,7 @@ export const ProfileIssuesViewOptions: React.FC = () => {
               }`}
             >
               Display
-              <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+              <ChevronDown className="h-3 w-3" aria-hidden="true" />
             </Popover.Button>
 
             <Transition

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState, FC, Dispatch, SetStateAction, useRef } from "react";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
-import { SparklesIcon } from "@heroicons/react/24/outline";
+import { Sparkle } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 // services
 import { PageService } from "services/page.service";
@@ -344,7 +344,7 @@ export const CreateUpdateBlockInline: FC<Props> = ({
                   "Generating response..."
                 ) : (
                   <>
-                    <SparklesIcon className="h-4 w-4" />I{"'"}m feeling lucky
+                    <Sparkle className="h-4 w-4" />I{"'"}m feeling lucky
                   </>
                 )}
               </button>
@@ -354,7 +354,7 @@ export const CreateUpdateBlockInline: FC<Props> = ({
                 className="ml-2 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-80"
                 onClick={() => setGptAssistantModal(true)}
               >
-                <SparklesIcon className="h-4 w-4" />
+                <Sparkle className="h-4 w-4" />
                 AI
               </button>
             </div>

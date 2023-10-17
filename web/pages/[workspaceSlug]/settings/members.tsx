@@ -19,10 +19,10 @@ import SendWorkspaceInvitationModal from "components/workspace/send-workspace-in
 import { SettingsSidebar } from "components/project";
 // ui
 import { Button, Loader } from "@plane/ui";
-import { CustomMenu, CustomSelect, Icon } from "components/ui";
+import { CustomMenu, CustomSelect } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { XMarkIcon } from "components/icons";
+import { ChevronDown, X } from "lucide-react";
 // types
 import type { NextPage } from "next";
 // fetch-keys
@@ -260,9 +260,7 @@ const MembersSettings: NextPage = () => {
                               >
                                 {ROLE[member.role as keyof typeof ROLE]}
                               </span>
-                              {member.memberId !== user?.id && (
-                                <Icon iconName="expand_more" className="text-lg font-medium" />
-                              )}
+                              {member.memberId !== user?.id && <ChevronDown className="h-4 w-4" />}
                             </div>
                           }
                           value={member.role}
@@ -314,7 +312,7 @@ const MembersSettings: NextPage = () => {
                             }}
                           >
                             <span className="flex items-center justify-start gap-2">
-                              <XMarkIcon className="h-4 w-4" />
+                              <X className="h-4 w-4" />
 
                               <span> {user?.id === member.memberId ? "Leave" : "Remove member"}</span>
                             </span>

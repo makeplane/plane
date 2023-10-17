@@ -1,71 +1,52 @@
 import { useCallback, useEffect } from "react";
-
 import Router, { useRouter } from "next/router";
-
-import useSWR, { mutate } from "swr";
-
-// react hook form
+import { observer } from "mobx-react-lite";
+import useSWR from "swr";
 import { useForm } from "react-hook-form";
+import { AlertTriangle, CheckCircle2, Clock, Copy, ExternalLink, Inbox, XCircle } from "lucide-react";
+
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // contexts
 import { useProjectMyMembership } from "contexts/project-member.context";
-// services
-import { InboxService } from "services/inbox.service";
-// hooks
-import useInboxView from "hooks/use-inbox-view";
-import useUserAuth from "hooks/use-user-auth";
 // components
 import { IssueDescriptionForm, IssueDetailsSidebar, IssueReaction } from "components/issues";
 import { InboxIssueActivity } from "components/inbox";
 // ui
 import { Loader } from "@plane/ui";
-// icons
-import {
-  ArrowTopRightOnSquareIcon,
-  CheckCircleIcon,
-  ClockIcon,
-  DocumentDuplicateIcon,
-  ExclamationTriangleIcon,
-  InboxIcon,
-  XCircleIcon,
-} from "@heroicons/react/24/outline";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
-import type { IInboxIssue, IIssue, IUser } from "types";
-// fetch-keys
-import { INBOX_ISSUES, INBOX_ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
+import { IInboxIssue, IIssue } from "types";
 
 const defaultValues: Partial<IInboxIssue> = {
   name: "",
   description_html: "",
-  estimate_point: null,
   assignees_list: [],
   priority: "low",
   target_date: new Date().toString(),
   labels_list: [],
 };
 
-const inboxService = new InboxService();
-
-export const InboxMainContent: React.FC = () => {
+export const InboxMainContent: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId, inboxIssueId } = router.query;
 
-  const { user } = useUserAuth();
+  const { inboxIssues: inboxIssuesStore, inboxIssueDetails: inboxIssueDetailsStore, user: userStore } = useMobxStore();
+
+  const user = userStore.currentUser;
+
   const { memberRole } = useProjectMyMembership();
-  const { params, issues: inboxIssues } = useInboxView();
 
   const { reset, control, watch } = useForm<IIssue>({
     defaultValues,
   });
 
-  const { data: issueDetails, mutate: mutateIssueDetails } = useSWR(
-    workspaceSlug && projectId && inboxId && inboxIssueId
-      ? INBOX_ISSUE_DETAILS(inboxId.toString(), inboxIssueId.toString())
-      : null,
+  useSWR(
+    workspaceSlug && projectId && inboxId && inboxIssueId ? `INBOX_ISSUE_DETAILS_${inboxIssueId.toString()}` : null,
     workspaceSlug && projectId && inboxId && inboxIssueId
       ? () =>
-          inboxService.getInboxIssueById(
+          inboxIssueDetailsStore.fetchIssueDetails(
             workspaceSlug.toString(),
             projectId.toString(),
             inboxId.toString(),
@@ -74,59 +55,29 @@ export const InboxMainContent: React.FC = () => {
       : null
   );
 
+  const issuesList = inboxId ? inboxIssuesStore.inboxIssues[inboxId.toString()] : undefined;
+  const issueDetails = inboxIssueId ? inboxIssueDetailsStore.issueDetails[inboxIssueId.toString()] : undefined;
+
   const submitChanges = useCallback(
     async (formData: Partial<IInboxIssue>) => {
       if (!workspaceSlug || !projectId || !inboxIssueId || !inboxId || !issueDetails) return;
 
-      mutateIssueDetails((prevData: any) => {
-        if (!prevData) return prevData;
-
-        return {
-          ...prevData,
-          ...formData,
-        };
-      }, false);
-      mutate<IInboxIssue[]>(
-        INBOX_ISSUES(inboxId.toString(), params),
-        (prevData) =>
-          (prevData ?? []).map((i) => {
-            if (i.bridge_id === inboxIssueId) {
-              return {
-                ...i,
-                ...formData,
-              };
-            }
-
-            return i;
-          }),
-        false
+      await inboxIssueDetailsStore.updateIssue(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        inboxId.toString(),
+        issueDetails.issue_inbox[0].id,
+        formData
       );
-
-      const payload = { issue: { ...formData } };
-
-      await inboxService
-        .patchInboxIssue(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          inboxId.toString(),
-          issueDetails.issue_inbox[0].id,
-          payload,
-          user as IUser
-        )
-        .then(() => {
-          mutateIssueDetails();
-          mutate(INBOX_ISSUES(inboxId.toString(), params));
-          mutate(PROJECT_ISSUES_ACTIVITY(issueDetails.id));
-        });
     },
-    [workspaceSlug, inboxIssueId, projectId, mutateIssueDetails, inboxId, user, issueDetails, params]
+    [workspaceSlug, inboxIssueId, projectId, inboxId, issueDetails, inboxIssueDetailsStore]
   );
 
   const onKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (!inboxIssues || !inboxIssueId) return;
+      if (!issuesList || !inboxIssueId) return;
 
-      const currentIssueIndex = inboxIssues.findIndex((issue: any) => issue.bridge_id === inboxIssueId);
+      const currentIssueIndex = issuesList.findIndex((issue) => issue.issue_inbox[0].id === inboxIssueId);
 
       switch (e.key) {
         case "ArrowUp":
@@ -135,8 +86,8 @@ export const InboxMainContent: React.FC = () => {
             query: {
               inboxIssueId:
                 currentIssueIndex === 0
-                  ? inboxIssues[inboxIssues.length - 1].bridge_id
-                  : inboxIssues[currentIssueIndex - 1].bridge_id,
+                  ? issuesList[issuesList.length - 1].issue_inbox[0].id
+                  : issuesList[currentIssueIndex - 1].issue_inbox[0].id,
             },
           });
           break;
@@ -145,9 +96,9 @@ export const InboxMainContent: React.FC = () => {
             pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
             query: {
               inboxIssueId:
-                currentIssueIndex === inboxIssues.length - 1
-                  ? inboxIssues[0].bridge_id
-                  : inboxIssues[currentIssueIndex + 1].bridge_id,
+                currentIssueIndex === issuesList.length - 1
+                  ? issuesList[0].issue_inbox[0].id
+                  : issuesList[currentIssueIndex + 1].issue_inbox[0].id,
             },
           });
           break;
@@ -155,7 +106,7 @@ export const InboxMainContent: React.FC = () => {
           break;
       }
     },
-    [workspaceSlug, projectId, inboxIssueId, inboxId, inboxIssues]
+    [workspaceSlug, projectId, inboxIssueId, inboxId, issuesList]
   );
 
   useEffect(() => {
@@ -183,16 +134,13 @@ export const InboxMainContent: React.FC = () => {
       <div className="h-full p-4 grid place-items-center text-custom-text-200">
         <div className="grid h-full place-items-center">
           <div className="my-5 flex flex-col items-center gap-4">
-            <InboxIcon height={60} width={60} />
-            {inboxIssues && inboxIssues.length > 0 ? (
+            <Inbox size={60} strokeWidth={1.5} />
+            {issuesList && issuesList.length > 0 ? (
               <span className="text-custom-text-200">
-                {inboxIssues?.length} issues found. Select an issue from the sidebar to view its details.
+                {issuesList?.length} issues found. Select an issue from the sidebar to view its details.
               </span>
             ) : (
-              <span className="text-custom-text-200">
-                No issues found. Use <pre className="inline rounded bg-custom-background-80 px-2 py-1">C</pre> shortcut
-                to create a new issue
-              </span>
+              <span className="text-custom-text-200">No issues found</span>
             )}
           </div>
         </div>
@@ -223,17 +171,17 @@ export const InboxMainContent: React.FC = () => {
             >
               {issueStatus === -2 ? (
                 <>
-                  <ExclamationTriangleIcon className="h-5 w-5" />
+                  <AlertTriangle size={18} strokeWidth={2} />
                   <p>This issue is still pending.</p>
                 </>
               ) : issueStatus === -1 ? (
                 <>
-                  <XCircleIcon className="h-5 w-5" />
+                  <XCircle size={18} strokeWidth={2} />
                   <p>This issue has been declined.</p>
                 </>
               ) : issueStatus === 0 ? (
                 <>
-                  <ClockIcon className="h-5 w-5" />
+                  <Clock size={18} strokeWidth={2} />
                   {new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date() ? (
                     <p>
                       This issue was snoozed till{" "}
@@ -248,12 +196,12 @@ export const InboxMainContent: React.FC = () => {
                 </>
               ) : issueStatus === 1 ? (
                 <>
-                  <CheckCircleIcon className="h-5 w-5" />
+                  <CheckCircle2 size={18} strokeWidth={2} />
                   <p>This issue has been accepted.</p>
                 </>
               ) : issueStatus === 2 ? (
                 <>
-                  <DocumentDuplicateIcon className="h-5 w-5" />
+                  <Copy size={18} strokeWidth={2} />
                   <p className="flex items-center gap-1">
                     This issue has been marked as a duplicate of
                     <a
@@ -262,7 +210,7 @@ export const InboxMainContent: React.FC = () => {
                       rel="noreferrer"
                       className="underline flex items-center gap-2"
                     >
-                      this issue <ArrowTopRightOnSquareIcon className="h-3 w-3" />
+                      this issue <ExternalLink size={12} strokeWidth={2} />
                     </a>
                     .
                   </p>
@@ -286,7 +234,7 @@ export const InboxMainContent: React.FC = () => {
             <InboxIssueActivity issueDetails={issueDetails} />
           </div>
 
-          <div className="basis-1/3 space-y-5 border-custom-border-200 p-5">
+          <div className="basis-1/3 space-y-5 border-custom-border-200 py-5">
             <IssueDetailsSidebar
               control={control}
               issueDetail={issueDetails}
@@ -314,4 +262,4 @@ export const InboxMainContent: React.FC = () => {
       )}
     </>
   );
-};
+});

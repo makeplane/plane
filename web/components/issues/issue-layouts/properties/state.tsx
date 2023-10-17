@@ -3,8 +3,7 @@ import { Combobox } from "@headlessui/react";
 import { ChevronDown, Search, X, Check } from "lucide-react";
 import { observer } from "mobx-react-lite";
 // components
-import { Tooltip } from "@plane/ui";
-import { StateGroupIcon } from "components/icons";
+import { Tooltip, StateGroupIcon } from "@plane/ui";
 // hooks
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 

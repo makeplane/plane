@@ -11,8 +11,7 @@ import useUserAuth from "hooks/use-user-auth";
 import { CreateProjectModal, ProjectSidebarListItem } from "components/project";
 
 // icons
-import { Icon } from "components/ui";
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 import { orderArrayBy } from "helpers/array.helper";
@@ -84,6 +83,8 @@ export const ProjectSidebarList: FC = observer(() => {
       });
   };
 
+  const isCollapsed = themeStore.sidebarCollapsed || false;
+
   /**
    * Implementing scroll animation styles based on the scroll length of the container
    */
@@ -127,18 +128,19 @@ export const ProjectSidebarList: FC = observer(() => {
                   <Disclosure as="div" className="flex flex-col space-y-2" defaultOpen={true}>
                     {({ open }) => (
                       <>
-                        {!themeStore?.sidebarCollapsed && (
-                          <div className="group flex justify-between items-center text-xs px-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 w-full">
+                        {!isCollapsed && (
+                          <div className="group flex justify-between items-center text-xs p-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 w-full">
                             <Disclosure.Button
                               as="button"
                               type="button"
                               className="group flex items-center gap-1 px-1.5 text-xs font-semibold text-custom-sidebar-text-400 text-left hover:bg-custom-sidebar-background-80 rounded w-full whitespace-nowrap"
                             >
                               Favorites
-                              <Icon
-                                iconName={open ? "arrow_drop_down" : "arrow_right"}
-                                className="group-hover:opacity-100 opacity-0 !text-lg"
-                              />
+                              {open ? (
+                                <ChevronDown className="h-3 w-3 group-hover:opacity-100 opacity-0" />
+                              ) : (
+                                <ChevronRight className="h-3 w-3 group-hover:opacity-100 opacity-0" />
+                              )}
                             </Disclosure.Button>
                             <button
                               className="group-hover:opacity-100 opacity-0"
@@ -147,7 +149,7 @@ export const ProjectSidebarList: FC = observer(() => {
                                 setIsProjectModalOpen(true);
                               }}
                             >
-                              <Icon iconName="add" />
+                              <Plus className="h-3 w-3" />
                             </button>
                           </div>
                         )}
@@ -164,7 +166,6 @@ export const ProjectSidebarList: FC = observer(() => {
                                   <ProjectSidebarListItem
                                     key={project.id}
                                     project={project}
-                                    sidebarCollapse={themeStore?.sidebarCollapsed || false}
                                     provided={provided}
                                     snapshot={snapshot}
                                     handleCopyText={() => handleCopyText(project.id)}
@@ -192,18 +193,19 @@ export const ProjectSidebarList: FC = observer(() => {
                   <Disclosure as="div" className="flex flex-col space-y-2" defaultOpen={true}>
                     {({ open }) => (
                       <>
-                        {!themeStore?.sidebarCollapsed && (
-                          <div className="group flex justify-between items-center text-xs px-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 w-full">
+                        {!isCollapsed && (
+                          <div className="group flex justify-between items-center text-xs p-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 w-full">
                             <Disclosure.Button
                               as="button"
                               type="button"
-                              className="flex items-center gap-1 font-semibold text-left whitespace-nowrap"
+                              className="group flex items-center gap-1 px-1.5 text-xs font-semibold text-custom-sidebar-text-400 text-left hover:bg-custom-sidebar-background-80 rounded w-full whitespace-nowrap"
                             >
                               Projects
-                              <Icon
-                                iconName={open ? "arrow_drop_down" : "arrow_right"}
-                                className="group-hover:opacity-100 opacity-0 !text-lg"
-                              />
+                              {open ? (
+                                <ChevronDown className="h-3 w-3 group-hover:opacity-100 opacity-0" />
+                              ) : (
+                                <ChevronRight className="h-3 w-3 group-hover:opacity-100 opacity-0" />
+                              )}
                             </Disclosure.Button>
                             <button
                               className="group-hover:opacity-100 opacity-0"
@@ -212,7 +214,7 @@ export const ProjectSidebarList: FC = observer(() => {
                                 setIsProjectModalOpen(true);
                               }}
                             >
-                              <Icon iconName="add" />
+                              <Plus className="h-3 w-3" />
                             </button>
                           </div>
                         )}
@@ -232,7 +234,6 @@ export const ProjectSidebarList: FC = observer(() => {
                                     <ProjectSidebarListItem
                                       key={project.id}
                                       project={project}
-                                      sidebarCollapse={themeStore?.sidebarCollapsed || false}
                                       provided={provided}
                                       snapshot={snapshot}
                                       handleCopyText={() => handleCopyText(project.id)}
@@ -264,8 +265,8 @@ export const ProjectSidebarList: FC = observer(() => {
               document.dispatchEvent(e);
             }}
           >
-            <PlusIcon className="h-5 w-5" />
-            {!themeStore?.sidebarCollapsed && "Add Project"}
+            <Plus className="h-5 w-5" />
+            {!isCollapsed && "Add Project"}
           </button>
         )}
       </div>
