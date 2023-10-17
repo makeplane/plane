@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { SpreadsheetView } from "components/core";
+import { SpreadsheetView } from "components/issues";
 // types
 import { IIssueDisplayFilterOptions } from "types";
 // constants

@@ -1,7 +1,7 @@
 import React from "react";
 
 // components
-import { IssueColumn } from "components/core";
+import { IssueColumn } from "components/issues";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types

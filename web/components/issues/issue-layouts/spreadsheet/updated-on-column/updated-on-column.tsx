@@ -1,14 +1,13 @@
-import { FC } from "react";
+// helpers
+import { renderLongDetailDateFormat } from "helpers/date-time.helper";
 // types
 import { IIssue } from "types";
-// helper
-import { renderLongDetailDateFormat } from "helpers/date-time.helper";
 
 type Props = {
   issue: IIssue;
 };
 
-export const UpdatedOnColumn: FC<Props> = (props) => {
+export const UpdatedOnColumn: React.FC<Props> = (props) => {
   const { issue } = props;
 
   return (

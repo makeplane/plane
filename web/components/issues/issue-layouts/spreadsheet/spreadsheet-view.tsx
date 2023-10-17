@@ -7,7 +7,7 @@ import {
   SpreadsheetColumnsList,
   // ListInlineCreateIssueForm,
   SpreadsheetIssuesColumn,
-} from "components/core";
+} from "components/issues";
 import { CustomMenu } from "components/ui";
 import { Spinner } from "@plane/ui";
 // types

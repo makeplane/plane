@@ -1,37 +1,46 @@
 import React from "react";
 
 // components
-import { StartDateColumn } from "components/core";
+import { LabelColumn } from "components/issues";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
-import { IIssue } from "types";
+import { IIssue, IIssueLabels } from "types";
 
 type Props = {
   issue: IIssue;
   onChange: (formData: Partial<IIssue>) => void;
+  labels: IIssueLabels[] | undefined;
   expandedIssues: string[];
   disabled: boolean;
 };
 
-export const SpreadsheetStartDateColumn: React.FC<Props> = ({ issue, onChange, expandedIssues, disabled }) => {
+export const SpreadsheetLabelColumn: React.FC<Props> = (props) => {
+  const { issue, onChange, labels, expandedIssues, disabled } = props;
+
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
   const { subIssues, isLoading } = useSubIssue(issue.project_detail.id, issue.id, isExpanded);
 
   return (
     <div>
-      <StartDateColumn issue={issue} onChange={(val) => onChange({ start_date: val })} disabled={disabled} />
+      <LabelColumn
+        issue={issue}
+        onChange={(data) => onChange({ labels_list: data })}
+        labels={labels}
+        disabled={disabled}
+      />
 
       {isExpanded &&
         !isLoading &&
         subIssues &&
         subIssues.length > 0 &&
         subIssues.map((subIssue: IIssue) => (
-          <SpreadsheetStartDateColumn
+          <SpreadsheetLabelColumn
             key={subIssue.id}
             issue={subIssue}
             onChange={onChange}
+            labels={labels}
             expandedIssues={expandedIssues}
             disabled={disabled}
           />

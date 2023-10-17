@@ -1,7 +1,7 @@
 import React from "react";
 
 // components
-import { UpdatedOnColumn } from "components/core";
+import { UpdatedOnColumn } from "components/issues";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types

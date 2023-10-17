@@ -1,5 +1,5 @@
 // components
-import { SpreadsheetColumn } from "components/core";
+import { SpreadsheetColumn } from "components/issues";
 // types
 import {
   IIssue,

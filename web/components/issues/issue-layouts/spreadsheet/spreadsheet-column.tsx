@@ -20,7 +20,7 @@ import {
   SpreadsheetStartDateColumn,
   SpreadsheetStateColumn,
   SpreadsheetUpdatedOnColumn,
-} from "components/core";
+} from "components/issues";
 // ui
 import { CustomMenu } from "components/ui";
 // types

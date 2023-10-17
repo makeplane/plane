@@ -1,17 +1,13 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-
-// components
 import { Popover2 } from "@blueprintjs/popover2";
-// icons
 import { MoreHorizontal, LinkIcon, Pencil, Trash2, ChevronRight } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
+// helpers
+import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { IIssue, Properties } from "types";
-// helper
-import { copyTextToClipboard } from "helpers/string.helper";
 
 type Props = {
   issue: IIssue;
