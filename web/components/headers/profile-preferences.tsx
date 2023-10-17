@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { ArrowLeft } from "lucide-react";
 // components
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { BreadcrumbItem, Breadcrumbs } from "@plane/ui";
 
 export const ProfilePreferencesHeader = () => {
   const router = useRouter();
@@ -21,7 +21,7 @@ export const ProfilePreferencesHeader = () => {
           </button>
         </div>
         <div>
-          <Breadcrumbs>
+          <Breadcrumbs onBack={() => router.back()}>
             <BreadcrumbItem title="My Profile Preferences" />
           </Breadcrumbs>
         </div>

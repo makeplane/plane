@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 // components
-import { ProfileIssuesViewOptions } from "components/profile";
+import { ProfileIssuesFilter } from "components/profile";
 // types
 import { UserAuth } from "types";
 
@@ -43,9 +43,7 @@ export const ProfileNavbar: React.FC<Props> = ({ memberRole }) => {
   const { workspaceSlug, userId } = router.query;
 
   const tabsList =
-    memberRole.isOwner || memberRole.isMember || memberRole.isViewer
-      ? [...viewerTabs, ...adminTabs]
-      : viewerTabs;
+    memberRole.isOwner || memberRole.isMember || memberRole.isViewer ? [...viewerTabs, ...adminTabs] : viewerTabs;
 
   return (
     <div className="sticky -top-0.5 z-[1] md:static px-4 sm:px-5 flex items-center justify-between gap-4 bg-custom-background-100 border-b border-custom-border-300">
@@ -64,7 +62,7 @@ export const ProfileNavbar: React.FC<Props> = ({ memberRole }) => {
           </Link>
         ))}
       </div>
-      <ProfileIssuesViewOptions />
+      <ProfileIssuesFilter />
     </div>
   );
 };

@@ -121,7 +121,9 @@ export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observe
                     </div>
                   </Tooltip>
                 ) : (
-                  <div className="text-xs">Select option</div>
+                  <Tooltip tooltipHeading={`Estimates`} tooltipContent={``}>
+                    <div className="text-xs">Select Estimates</div>
+                  </Tooltip>
                 )}
 
                 {dropdownArrow && !disabled && (

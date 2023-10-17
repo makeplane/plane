@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { ArrowLeft } from "lucide-react";
 // ui
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { BreadcrumbItem, Breadcrumbs } from "@plane/ui";
 
 export const WorkspaceAnalyticsHeader = () => {
   const router = useRouter();
@@ -22,7 +22,7 @@ export const WorkspaceAnalyticsHeader = () => {
             </button>
           </div>
           <div>
-            <Breadcrumbs>
+            <Breadcrumbs onBack={() => router.back()}>
               <BreadcrumbItem title="Workspace Analytics" />
             </Breadcrumbs>
           </div>

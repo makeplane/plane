@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 // hooks
 import { useWorkspaceMyMembership } from "contexts/workspace-member.context";
 // layouts
@@ -5,24 +6,27 @@ import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // components
 import { ProfileNavbar, ProfileSidebar } from "components/profile";
 // ui
-import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
+import { Breadcrumbs, BreadcrumbItem } from "@plane/ui";
 
 type Props = {
   children: React.ReactNode;
   className?: string;
 };
 
-export const ProfileAuthWrapper = (props: Props) => (
-  <WorkspaceAuthorizationLayout
-    breadcrumbs={
-      <Breadcrumbs>
-        <BreadcrumbItem title="User Profile" />
-      </Breadcrumbs>
-    }
-  >
-    <ProfileLayout {...props} />
-  </WorkspaceAuthorizationLayout>
-);
+export const ProfileAuthWrapper = (props: Props) => {
+  const router = useRouter();
+  return (
+    <WorkspaceAuthorizationLayout
+      breadcrumbs={
+        <Breadcrumbs onBack={() => router.back()}>
+          <BreadcrumbItem title="User Profile" />
+        </Breadcrumbs>
+      }
+    >
+      <ProfileLayout {...props} />
+    </WorkspaceAuthorizationLayout>
+  );
+};
 
 const ProfileLayout: React.FC<Props> = ({ children, className }) => {
   const { memberRole } = useWorkspaceMyMembership();

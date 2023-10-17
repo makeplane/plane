@@ -30,7 +30,9 @@ export const LayoutSelection: React.FC<Props> = (props) => {
             <layout.icon
               size={14}
               strokeWidth={2}
-              className={`${selectedLayout == layout.key ? "text-custom-text-100" : "text-custom-text-200"}`}
+              className={`h-3.5 w-3.5 ${
+                selectedLayout == layout.key ? "text-custom-text-100" : "text-custom-text-200"
+              }`}
             />
           </button>
         </Tooltip>

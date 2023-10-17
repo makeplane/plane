@@ -303,8 +303,8 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
                 className="absolute top-4 -left-0 hidden rounded p-0.5 group-hover:!flex"
                 {...provided.dragHandleProps}
               >
-                <MoreVertical className="h-[18px]" />
-                <MoreVertical className="-ml-2.5 h-[18px]" />
+                <MoreVertical className="h-4" />
+                <MoreVertical className="-ml-2.5 h-4" />
               </button>
               <div
                 ref={actionSectionRef}

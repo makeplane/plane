@@ -1,6 +1,7 @@
 import React from "react";
 
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 import useSWR from "swr";
 
@@ -14,8 +15,7 @@ import { SingleIntegrationCard } from "components/integration";
 import { SettingsSidebar } from "components/project";
 // ui
 import { IntegrationAndImportExportBanner } from "components/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-import { Loader } from "@plane/ui";
+import { BreadcrumbItem, Breadcrumbs, Loader } from "@plane/ui";
 // types
 import type { NextPage } from "next";
 // fetch-keys
@@ -42,11 +42,15 @@ const WorkspaceIntegrations: NextPage = () => {
   return (
     <WorkspaceAuthorizationLayout
       breadcrumbs={
-        <Breadcrumbs>
+        <Breadcrumbs onBack={() => router.back()}>
           <BreadcrumbItem
-            title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)}`}
-            link={`/${workspaceSlug}`}
-            linkTruncate
+            link={
+              <Link href={`/${workspaceSlug}`}>
+                <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                  <p className="truncate">{`${truncateText(activeWorkspace?.name ?? "Workspace", 32)}`}</p>
+                </a>
+              </Link>
+            }
           />
           <BreadcrumbItem title="Integrations Settings" unshrinkTitle />
         </Breadcrumbs>

@@ -1,8 +1,7 @@
 import { useRouter } from "next/router";
 import { ArrowLeft, Search, Plus } from "lucide-react";
 // ui
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-import { Button } from "@plane/ui";
+import { BreadcrumbItem, Breadcrumbs, Button } from "@plane/ui";
 // helper
 import { truncateText } from "helpers/string.helper";
 // hooks
@@ -30,7 +29,7 @@ export const ProjectsHeader = observer(() => {
           </button>
         </div>
         <div>
-          <Breadcrumbs>
+          <Breadcrumbs onBack={() => router.back()}>
             <BreadcrumbItem
               title={`${truncateText(currentWorkspace?.name ?? "Workspace", 32)} Projects`}
               unshrinkTitle={false}

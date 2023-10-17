@@ -21,8 +21,7 @@ import { SettingsSidebar } from "components/project";
 // ui
 import { Disclosure, Transition } from "@headlessui/react";
 import { CustomSelect } from "components/ui";
-import { Button, Input, Spinner } from "@plane/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { BreadcrumbItem, Breadcrumbs, Button, Input, Spinner } from "@plane/ui";
 // icons
 import { ChevronDown, ChevronUp, Pencil } from "lucide-react";
 // helpers
@@ -159,7 +158,7 @@ const WorkspaceSettings: NextPage = () => {
   return (
     <WorkspaceAuthorizationLayout
       breadcrumbs={
-        <Breadcrumbs>
+        <Breadcrumbs onBack={() => router.back()}>
           <BreadcrumbItem title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)} Settings`} />
         </Breadcrumbs>
       }

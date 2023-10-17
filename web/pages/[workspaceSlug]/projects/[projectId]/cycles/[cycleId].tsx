@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import useSWR from "swr";
 // icons
-import { ContrastIcon } from "@plane/ui";
 import { ArrowLeft } from "lucide-react";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
@@ -19,9 +19,9 @@ import { CycleService } from "services/cycle.service";
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // ui
+import { BreadcrumbItem, Breadcrumbs, ContrastIcon } from "@plane/ui";
 import { CustomMenu } from "components/ui";
 import { EmptyState } from "components/common";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // images
 import emptyCycle from "public/empty-state/cycle.svg";
 // helpers
@@ -97,11 +97,18 @@ const SingleCycle: React.FC = () => {
       />
       <ProjectAuthorizationWrapper
         breadcrumbs={
-          <Breadcrumbs>
-            <BreadcrumbItem
-              title={`${truncateText(cycleDetails?.project_detail.name ?? "Project", 32)} Cycles`}
-              link={`/${workspaceSlug}/projects/${projectId}/cycles`}
-              linkTruncate
+          <Breadcrumbs onBack={() => router.back()}>
+            <Breadcrumbs.BreadcrumbItem
+              link={
+                <Link href={`/${workspaceSlug}/projects/${projectId}/cycles`}>
+                  <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                    <p className="truncate">{`${truncateText(
+                      cycleDetails?.project_detail.name ?? "Project",
+                      32
+                    )} Cycles`}</p>
+                  </a>
+                </Link>
+              }
             />
           </Breadcrumbs>
         }

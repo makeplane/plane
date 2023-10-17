@@ -23,165 +23,155 @@ class AnalyticsEndpoint(BaseAPIView):
     ]
 
     def get(self, request, slug):
-        try:
-            x_axis = request.GET.get("x_axis", False)
-            y_axis = request.GET.get("y_axis", False)
-            segment = request.GET.get("segment", False)
+        x_axis = request.GET.get("x_axis", False)
+        y_axis = request.GET.get("y_axis", False)
+        segment = request.GET.get("segment", False)
 
-            valid_xaxis_segment = [
-                "state_id",
-                "state__group",
-                "labels__id",
-                "assignees__id",
-                "estimate_point",
-                "issue_cycle__cycle_id",
-                "issue_module__module_id",
-                "priority",
-                "start_date",
-                "target_date",
-                "created_at",
-                "completed_at",
-            ]
+        valid_xaxis_segment = [
+            "state_id",
+            "state__group",
+            "labels__id",
+            "assignees__id",
+            "estimate_point",
+            "issue_cycle__cycle_id",
+            "issue_module__module_id",
+            "priority",
+            "start_date",
+            "target_date",
+            "created_at",
+            "completed_at",
+        ]
 
-            valid_yaxis = [
-                "issue_count",
-                "estimate",
-            ]
+        valid_yaxis = [
+            "issue_count",
+            "estimate",
+        ]
 
-            # Check for x-axis and y-axis as thery are required parameters
-            if (
-                not x_axis
-                or not y_axis
-                or not x_axis in valid_xaxis_segment
-                or not y_axis in valid_yaxis
-            ):
-                return Response(
-                    {
-                        "error": "x-axis and y-axis dimensions are required and the values should be valid"
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            # If segment is present it cannot be same as x-axis
-            if segment and (segment not in valid_xaxis_segment or x_axis == segment):
-                return Response(
-                    {
-                        "error": "Both segment and x axis cannot be same and segment should be valid"
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            # Additional filters that need to be applied
-            filters = issue_filters(request.GET, "GET")
-
-            # Get the issues for the workspace with the additional filters applied
-            queryset = Issue.issue_objects.filter(workspace__slug=slug, **filters)
-
-            # Get the total issue count
-            total_issues = queryset.count()
-
-            # Build the graph payload
-            distribution = build_graph_plot(
-                queryset=queryset, x_axis=x_axis, y_axis=y_axis, segment=segment
-            )
-
-            state_details = {}
-            if x_axis in ["state_id"] or segment in ["state_id"]:
-                state_details = (
-                    Issue.issue_objects.filter(
-                        workspace__slug=slug,
-                        **filters,
-                    )
-                    .distinct("state_id")
-                    .order_by("state_id")
-                    .values("state_id", "state__name", "state__color")
-                )
-
-            label_details = {}
-            if x_axis in ["labels__id"] or segment in ["labels__id"]:
-                label_details = (
-                    Issue.objects.filter(
-                        workspace__slug=slug, **filters, labels__id__isnull=False
-                    )
-                    .distinct("labels__id")
-                    .order_by("labels__id")
-                    .values("labels__id", "labels__color", "labels__name")
-                )
-
-            assignee_details = {}
-            if x_axis in ["assignees__id"] or segment in ["assignees__id"]:
-                assignee_details = (
-                    Issue.issue_objects.filter(
-                        workspace__slug=slug, **filters, assignees__avatar__isnull=False
-                    )
-                    .order_by("assignees__id")
-                    .distinct("assignees__id")
-                    .values(
-                        "assignees__avatar",
-                        "assignees__display_name",
-                        "assignees__first_name",
-                        "assignees__last_name",
-                        "assignees__id",
-                    )
-                )
-
-            cycle_details = {}
-            if x_axis in ["issue_cycle__cycle_id"] or segment in [
-                "issue_cycle__cycle_id"
-            ]:
-                cycle_details = (
-                    Issue.issue_objects.filter(
-                        workspace__slug=slug,
-                        **filters,
-                        issue_cycle__cycle_id__isnull=False,
-                    )
-                    .distinct("issue_cycle__cycle_id")
-                    .order_by("issue_cycle__cycle_id")
-                    .values(
-                        "issue_cycle__cycle_id",
-                        "issue_cycle__cycle__name",
-                    )
-                )
-
-            module_details = {}
-            if x_axis in ["issue_module__module_id"] or segment in [
-                "issue_module__module_id"
-            ]:
-                module_details = (
-                    Issue.issue_objects.filter(
-                        workspace__slug=slug,
-                        **filters,
-                        issue_module__module_id__isnull=False,
-                    )
-                    .distinct("issue_module__module_id")
-                    .order_by("issue_module__module_id")
-                    .values(
-                        "issue_module__module_id",
-                        "issue_module__module__name",
-                    )
-                )
-
+        # Check for x-axis and y-axis as thery are required parameters
+        if (
+            not x_axis
+            or not y_axis
+            or not x_axis in valid_xaxis_segment
+            or not y_axis in valid_yaxis
+        ):
             return Response(
                 {
-                    "total": total_issues,
-                    "distribution": distribution,
-                    "extras": {
-                        "state_details": state_details,
-                        "assignee_details": assignee_details,
-                        "label_details": label_details,
-                        "cycle_details": cycle_details,
-                        "module_details": module_details,
-                    },
+                    "error": "x-axis and y-axis dimensions are required and the values should be valid"
                 },
-                status=status.HTTP_200_OK,
-            )
-
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # If segment is present it cannot be same as x-axis
+        if segment and (segment not in valid_xaxis_segment or x_axis == segment):
+            return Response(
+                {
+                    "error": "Both segment and x axis cannot be same and segment should be valid"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Additional filters that need to be applied
+        filters = issue_filters(request.GET, "GET")
+
+        # Get the issues for the workspace with the additional filters applied
+        queryset = Issue.issue_objects.filter(workspace__slug=slug, **filters)
+
+        # Get the total issue count
+        total_issues = queryset.count()
+
+        # Build the graph payload
+        distribution = build_graph_plot(
+            queryset=queryset, x_axis=x_axis, y_axis=y_axis, segment=segment
+        )
+
+        state_details = {}
+        if x_axis in ["state_id"] or segment in ["state_id"]:
+            state_details = (
+                Issue.issue_objects.filter(
+                    workspace__slug=slug,
+                    **filters,
+                )
+                .distinct("state_id")
+                .order_by("state_id")
+                .values("state_id", "state__name", "state__color")
+            )
+
+        label_details = {}
+        if x_axis in ["labels__id"] or segment in ["labels__id"]:
+            label_details = (
+                Issue.objects.filter(
+                    workspace__slug=slug, **filters, labels__id__isnull=False
+                )
+                .distinct("labels__id")
+                .order_by("labels__id")
+                .values("labels__id", "labels__color", "labels__name")
+            )
+
+        assignee_details = {}
+        if x_axis in ["assignees__id"] or segment in ["assignees__id"]:
+            assignee_details = (
+                Issue.issue_objects.filter(
+                    workspace__slug=slug, **filters, assignees__avatar__isnull=False
+                )
+                .order_by("assignees__id")
+                .distinct("assignees__id")
+                .values(
+                    "assignees__avatar",
+                    "assignees__display_name",
+                    "assignees__first_name",
+                    "assignees__last_name",
+                    "assignees__id",
+                )
+            )
+
+        cycle_details = {}
+        if x_axis in ["issue_cycle__cycle_id"] or segment in ["issue_cycle__cycle_id"]:
+            cycle_details = (
+                Issue.issue_objects.filter(
+                    workspace__slug=slug,
+                    **filters,
+                    issue_cycle__cycle_id__isnull=False,
+                )
+                .distinct("issue_cycle__cycle_id")
+                .order_by("issue_cycle__cycle_id")
+                .values(
+                    "issue_cycle__cycle_id",
+                    "issue_cycle__cycle__name",
+                )
+            )
+
+        module_details = {}
+        if x_axis in ["issue_module__module_id"] or segment in [
+            "issue_module__module_id"
+        ]:
+            module_details = (
+                Issue.issue_objects.filter(
+                    workspace__slug=slug,
+                    **filters,
+                    issue_module__module_id__isnull=False,
+                )
+                .distinct("issue_module__module_id")
+                .order_by("issue_module__module_id")
+                .values(
+                    "issue_module__module_id",
+                    "issue_module__module__name",
+                )
+            )
+
+        return Response(
+            {
+                "total": total_issues,
+                "distribution": distribution,
+                "extras": {
+                    "state_details": state_details,
+                    "assignee_details": assignee_details,
+                    "label_details": label_details,
+                    "cycle_details": cycle_details,
+                    "module_details": module_details,
+                },
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 class AnalyticViewViewset(BaseViewSet):
@@ -207,44 +197,29 @@ class SavedAnalyticEndpoint(BaseAPIView):
     ]
 
     def get(self, request, slug, analytic_id):
-        try:
-            analytic_view = AnalyticView.objects.get(
-                pk=analytic_id, workspace__slug=slug
-            )
+        analytic_view = AnalyticView.objects.get(pk=analytic_id, workspace__slug=slug)
 
-            filter = analytic_view.query
-            queryset = Issue.issue_objects.filter(**filter)
+        filter = analytic_view.query
+        queryset = Issue.issue_objects.filter(**filter)
 
-            x_axis = analytic_view.query_dict.get("x_axis", False)
-            y_axis = analytic_view.query_dict.get("y_axis", False)
+        x_axis = analytic_view.query_dict.get("x_axis", False)
+        y_axis = analytic_view.query_dict.get("y_axis", False)
 
-            if not x_axis or not y_axis:
-                return Response(
-                    {"error": "x-axis and y-axis dimensions are required"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            segment = request.GET.get("segment", False)
-            distribution = build_graph_plot(
-                queryset=queryset, x_axis=x_axis, y_axis=y_axis, segment=segment
-            )
-            total_issues = queryset.count()
+        if not x_axis or not y_axis:
             return Response(
-                {"total": total_issues, "distribution": distribution},
-                status=status.HTTP_200_OK,
-            )
-
-        except AnalyticView.DoesNotExist:
-            return Response(
-                {"error": "Analytic View Does not exist"},
+                {"error": "x-axis and y-axis dimensions are required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+
+        segment = request.GET.get("segment", False)
+        distribution = build_graph_plot(
+            queryset=queryset, x_axis=x_axis, y_axis=y_axis, segment=segment
+        )
+        total_issues = queryset.count()
+        return Response(
+            {"total": total_issues, "distribution": distribution},
+            status=status.HTTP_200_OK,
+        )
 
 
 class ExportAnalyticsEndpoint(BaseAPIView):
@@ -253,72 +228,63 @@ class ExportAnalyticsEndpoint(BaseAPIView):
     ]
 
     def post(self, request, slug):
-        try:
-            x_axis = request.data.get("x_axis", False)
-            y_axis = request.data.get("y_axis", False)
-            segment = request.data.get("segment", False)
+        x_axis = request.data.get("x_axis", False)
+        y_axis = request.data.get("y_axis", False)
+        segment = request.data.get("segment", False)
 
-            
-            valid_xaxis_segment = [
-                "state_id",
-                "state__group",
-                "labels__id",
-                "assignees__id",
-                "estimate_point",
-                "issue_cycle__cycle_id",
-                "issue_module__module_id",
-                "priority",
-                "start_date",
-                "target_date",
-                "created_at",
-                "completed_at",
-            ]
+        valid_xaxis_segment = [
+            "state_id",
+            "state__group",
+            "labels__id",
+            "assignees__id",
+            "estimate_point",
+            "issue_cycle__cycle_id",
+            "issue_module__module_id",
+            "priority",
+            "start_date",
+            "target_date",
+            "created_at",
+            "completed_at",
+        ]
 
-            valid_yaxis = [
-                "issue_count",
-                "estimate",
-            ]
+        valid_yaxis = [
+            "issue_count",
+            "estimate",
+        ]
 
-            # Check for x-axis and y-axis as thery are required parameters
-            if (
-                not x_axis
-                or not y_axis
-                or not x_axis in valid_xaxis_segment
-                or not y_axis in valid_yaxis
-            ):
-                return Response(
-                    {
-                        "error": "x-axis and y-axis dimensions are required and the values should be valid"
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            # If segment is present it cannot be same as x-axis
-            if segment and (segment not in valid_xaxis_segment or x_axis == segment):
-                return Response(
-                    {
-                        "error": "Both segment and x axis cannot be same and segment should be valid"
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-
-            analytic_export_task.delay(
-                email=request.user.email, data=request.data, slug=slug
-            )
-
+        # Check for x-axis and y-axis as thery are required parameters
+        if (
+            not x_axis
+            or not y_axis
+            or not x_axis in valid_xaxis_segment
+            or not y_axis in valid_yaxis
+        ):
             return Response(
                 {
-                    "message": f"Once the export is ready it will be emailed to you at {str(request.user.email)}"
+                    "error": "x-axis and y-axis dimensions are required and the values should be valid"
                 },
-                status=status.HTTP_200_OK,
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # If segment is present it cannot be same as x-axis
+        if segment and (segment not in valid_xaxis_segment or x_axis == segment):
+            return Response(
+                {
+                    "error": "Both segment and x axis cannot be same and segment should be valid"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        analytic_export_task.delay(
+            email=request.user.email, data=request.data, slug=slug
+        )
+
+        return Response(
+            {
+                "message": f"Once the export is ready it will be emailed to you at {str(request.user.email)}"
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 class DefaultAnalyticsEndpoint(BaseAPIView):
@@ -327,102 +293,92 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
     ]
 
     def get(self, request, slug):
-        try:
-            filters = issue_filters(request.GET, "GET")
-            base_issues = Issue.issue_objects.filter(workspace__slug=slug, **filters)
+        filters = issue_filters(request.GET, "GET")
+        base_issues = Issue.issue_objects.filter(workspace__slug=slug, **filters)
 
-            total_issues = base_issues.count()
+        total_issues = base_issues.count()
 
-            state_groups = base_issues.annotate(state_group=F("state__group"))
+        state_groups = base_issues.annotate(state_group=F("state__group"))
 
-            total_issues_classified = (
-                state_groups.values("state_group")
-                .annotate(state_count=Count("state_group"))
-                .order_by("state_group")
-            )
+        total_issues_classified = (
+            state_groups.values("state_group")
+            .annotate(state_count=Count("state_group"))
+            .order_by("state_group")
+        )
 
-            open_issues_groups = ["backlog", "unstarted", "started"]
-            open_issues_queryset = state_groups.filter(
-                state__group__in=open_issues_groups
-            )
+        open_issues_groups = ["backlog", "unstarted", "started"]
+        open_issues_queryset = state_groups.filter(state__group__in=open_issues_groups)
 
-            open_issues = open_issues_queryset.count()
-            open_issues_classified = (
-                open_issues_queryset.values("state_group")
-                .annotate(state_count=Count("state_group"))
-                .order_by("state_group")
-            )
+        open_issues = open_issues_queryset.count()
+        open_issues_classified = (
+            open_issues_queryset.values("state_group")
+            .annotate(state_count=Count("state_group"))
+            .order_by("state_group")
+        )
 
-            issue_completed_month_wise = (
-                base_issues.filter(completed_at__isnull=False)
-                .annotate(month=ExtractMonth("completed_at"))
-                .values("month")
-                .annotate(count=Count("*"))
-                .order_by("month")
-            )
+        issue_completed_month_wise = (
+            base_issues.filter(completed_at__isnull=False)
+            .annotate(month=ExtractMonth("completed_at"))
+            .values("month")
+            .annotate(count=Count("*"))
+            .order_by("month")
+        )
 
-            user_details = [
-                "created_by__first_name",
-                "created_by__last_name",
-                "created_by__avatar",
-                "created_by__display_name",
-                "created_by__id",
-            ]
+        user_details = [
+            "created_by__first_name",
+            "created_by__last_name",
+            "created_by__avatar",
+            "created_by__display_name",
+            "created_by__id",
+        ]
 
-            most_issue_created_user = (
-                base_issues.exclude(created_by=None)
-                .values(*user_details)
-                .annotate(count=Count("id"))
-                .order_by("-count")[:5]
-            )
+        most_issue_created_user = (
+            base_issues.exclude(created_by=None)
+            .values(*user_details)
+            .annotate(count=Count("id"))
+            .order_by("-count")[:5]
+        )
 
-            user_assignee_details = [
-                "assignees__first_name",
-                "assignees__last_name",
-                "assignees__avatar",
-                "assignees__display_name",
-                "assignees__id",
-            ]
+        user_assignee_details = [
+            "assignees__first_name",
+            "assignees__last_name",
+            "assignees__avatar",
+            "assignees__display_name",
+            "assignees__id",
+        ]
 
-            most_issue_closed_user = (
-                base_issues.filter(completed_at__isnull=False)
-                .exclude(assignees=None)
-                .values(*user_assignee_details)
-                .annotate(count=Count("id"))
-                .order_by("-count")[:5]
-            )
+        most_issue_closed_user = (
+            base_issues.filter(completed_at__isnull=False)
+            .exclude(assignees=None)
+            .values(*user_assignee_details)
+            .annotate(count=Count("id"))
+            .order_by("-count")[:5]
+        )
 
-            pending_issue_user = (
-                base_issues.filter(completed_at__isnull=True)
-                .values(*user_assignee_details)
-                .annotate(count=Count("id"))
-                .order_by("-count")
-            )
+        pending_issue_user = (
+            base_issues.filter(completed_at__isnull=True)
+            .values(*user_assignee_details)
+            .annotate(count=Count("id"))
+            .order_by("-count")
+        )
 
-            open_estimate_sum = open_issues_queryset.aggregate(
-                sum=Sum("estimate_point")
-            )["sum"]
-            total_estimate_sum = base_issues.aggregate(sum=Sum("estimate_point"))["sum"]
+        open_estimate_sum = open_issues_queryset.aggregate(sum=Sum("estimate_point"))[
+            "sum"
+        ]
+        total_estimate_sum = base_issues.aggregate(sum=Sum("estimate_point"))["sum"]
 
-            return Response(
-                {
-                    "total_issues": total_issues,
-                    "total_issues_classified": total_issues_classified,
-                    "open_issues": open_issues,
-                    "open_issues_classified": open_issues_classified,
-                    "issue_completed_month_wise": issue_completed_month_wise,
-                    "most_issue_created_user": most_issue_created_user,
-                    "most_issue_closed_user": most_issue_closed_user,
-                    "pending_issue_user": pending_issue_user,
-                    "open_estimate_sum": open_estimate_sum,
-                    "total_estimate_sum": total_estimate_sum,
-                },
-                status=status.HTTP_200_OK,
-            )
-
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong. Please try again later."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        return Response(
+            {
+                "total_issues": total_issues,
+                "total_issues_classified": total_issues_classified,
+                "open_issues": open_issues,
+                "open_issues_classified": open_issues_classified,
+                "issue_completed_month_wise": issue_completed_month_wise,
+                "most_issue_created_user": most_issue_created_user,
+                "most_issue_closed_user": most_issue_closed_user,
+                "pending_issue_user": pending_issue_user,
+                "open_estimate_sum": open_estimate_sum,
+                "total_estimate_sum": total_estimate_sum,
+            },
+            status=status.HTTP_200_OK,
+        )

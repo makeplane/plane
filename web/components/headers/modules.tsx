@@ -1,10 +1,10 @@
 import { Dispatch, FC, SetStateAction } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { ArrowLeft, Plus } from "lucide-react";
 // components
-import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
 // ui
-import { Button, Tooltip } from "@plane/ui";
+import { Breadcrumbs, BreadcrumbItem, Button, Tooltip } from "@plane/ui";
 import { Icon } from "components/ui";
 // helper
 import { replaceUnderscoreIfSnakeCase, truncateText } from "helpers/string.helper";
@@ -34,9 +34,9 @@ export const ModulesHeader: FC<IModulesHeader> = (props) => {
 
   return (
     <div
-      className={`relative flex w-full flex-shrink-0 flex-row z-10 items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4`}
+      className={`relative z-10 flex w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4`}
     >
-      <div className="flex items-center gap-2 flex-grow w-full whitespace-nowrap overflow-ellipsis">
+      <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <div className="block md:hidden">
           <button
             type="button"
@@ -47,9 +47,17 @@ export const ModulesHeader: FC<IModulesHeader> = (props) => {
           </button>
         </div>
         <div>
-          <Breadcrumbs>
-            <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-            <BreadcrumbItem title={`${truncateText(name ?? "Project", 32)} Cycles`} />
+          <Breadcrumbs onBack={() => router.back()}>
+            <BreadcrumbItem
+              link={
+                <Link href={`/${workspaceSlug}/projects`}>
+                  <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                    <p>Projects</p>
+                  </a>
+                </Link>
+              }
+            />
+            <BreadcrumbItem title={`${truncateText(name ?? "Project", 32)} Modules`} />
           </Breadcrumbs>
         </div>
       </div>
@@ -62,7 +70,7 @@ export const ModulesHeader: FC<IModulesHeader> = (props) => {
           >
             <button
               type="button"
-              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80 duration-300 ${
+              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-sidebar-background-80 ${
                 modulesView === option.type ? "bg-custom-sidebar-background-80" : "text-custom-sidebar-text-200"
               }`}
               onClick={() => setModulesView(option.type)}

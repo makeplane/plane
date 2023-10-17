@@ -266,7 +266,7 @@ export const WorkspaceSidebarDropdown = () => {
                   <Menu.Item key={index} as="button" type="button">
                     <Link href={link.link}>
                       <a className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
-                        <link.icon className="h-4 w-4" />
+                        <link.icon className="h-4 w-4 stroke-[1.5]" />
                         {link.name}
                       </a>
                     </Link>
@@ -280,7 +280,7 @@ export const WorkspaceSidebarDropdown = () => {
                   className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80"
                   onClick={handleSignOut}
                 >
-                  <LogOut className="h-5 w-5" />
+                  <LogOut className="h-4 w-4 stroke-[1.5]" />
                   Sign out
                 </Menu.Item>
               </div>

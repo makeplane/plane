@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 import useSWR from "swr";
 
@@ -15,8 +16,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 import { CreateUpdateStateInline, DeleteStateModal, SingleState, StateGroup } from "components/states";
 import { SettingsSidebar } from "components/project";
 // ui
-import { Loader } from "@plane/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { BreadcrumbItem, Breadcrumbs, Loader } from "@plane/ui";
 // icons
 import { Plus } from "lucide-react";
 // helpers
@@ -61,11 +61,15 @@ const StatesSettings: NextPage = () => {
       />
       <ProjectAuthorizationWrapper
         breadcrumbs={
-          <Breadcrumbs>
+          <Breadcrumbs onBack={() => router.back()}>
             <BreadcrumbItem
-              title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
-              link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
-              linkTruncate
+              link={
+                <Link href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}>
+                  <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                    <p className="truncate">{`${truncateText(projectDetails?.name ?? "Project", 32)}`}</p>
+                  </a>
+                </Link>
+              }
             />
             <BreadcrumbItem title="States Settings" unshrinkTitle />
           </Breadcrumbs>

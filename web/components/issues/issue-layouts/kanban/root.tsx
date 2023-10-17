@@ -1,7 +1,5 @@
-import React from "react";
-// react beautiful dnd
+import { FC } from "react";
 import { DragDropContext } from "@hello-pangea/dnd";
-// mobx
 import { observer } from "mobx-react-lite";
 // components
 import { KanBanSwimLanes } from "./swimlanes";
@@ -9,11 +7,14 @@ import { KanBan } from "./default";
 // store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
+// constants
+import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 
 export interface IKanBanLayout {}
 
-export const KanBanLayout: React.FC = observer(() => {
+export const KanBanLayout: FC = observer(() => {
   const {
+    project: projectStore,
     issue: issueStore,
     issueFilter: issueFilterStore,
     issueKanBanView: issueKanBanViewStore,
@@ -55,6 +56,14 @@ export const KanBanLayout: React.FC = observer(() => {
     issueKanBanViewStore.handleKanBanToggle(toggle, value);
   };
 
+  const states = projectStore?.projectStates || null;
+  const priorities = ISSUE_PRIORITIES || null;
+  const labels = projectStore?.projectLabels || null;
+  const members = projectStore?.projectMembers || null;
+  const stateGroups = ISSUE_STATE_GROUPS || null;
+  const projects = projectStore?.projectStates || null;
+  const estimates = null;
+
   return (
     <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
       <DragDropContext onDragEnd={onDragEnd}>
@@ -67,6 +76,13 @@ export const KanBanLayout: React.FC = observer(() => {
             display_properties={display_properties}
             kanBanToggle={issueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            // states={states}
+            // stateGroups={stateGroups}
+            // priorities={priorities}
+            // labels={labels}
+            // members={members}
+            // projects={projects}
+            // estimates={estimates}
           />
         ) : (
           <KanBanSwimLanes
@@ -77,6 +93,13 @@ export const KanBanLayout: React.FC = observer(() => {
             display_properties={display_properties}
             kanBanToggle={issueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            // states={states}
+            // stateGroups={stateGroups}
+            // priorities={priorities}
+            // labels={labels}
+            // members={members}
+            // projects={projects}
+            // estimates={estimates}
           />
         )}
       </DragDropContext>

@@ -31,6 +31,7 @@ export interface IProjectStore {
 
   // computed
   searchedProjects: IProject[];
+  workspaceProjects: IProject[];
   projectStatesByGroups: IStateResponse | null;
   projectStates: IState[] | null;
   projectLabels: IIssueLabels[] | null;
@@ -119,6 +120,7 @@ export class ProjectStore implements IProjectStore {
 
       // computed
       searchedProjects: computed,
+      workspaceProjects: computed,
       projectStatesByGroups: computed,
       projectStates: computed,
       projectLabels: computed,
@@ -174,6 +176,11 @@ export class ProjectStore implements IProjectStore {
             project.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
             project.identifier.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
+  }
+
+  get workspaceProjects() {
+    if (!this.rootStore.workspace.workspaceSlug) return [];
+    return this.projects?.[this.rootStore.workspace.workspaceSlug];
   }
 
   get joinedProjects() {

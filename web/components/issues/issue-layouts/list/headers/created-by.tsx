@@ -1,21 +1,19 @@
-// mobx
+import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // components
 import { HeaderGroupByCard } from "./group-by-card";
 import { Icon } from "./assignee";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
 
 export interface ICreatedByHeader {
   column_id: string;
+  column_value: any;
   issues_count: number;
 }
 
-export const CreatedByHeader: React.FC<ICreatedByHeader> = observer(({ column_id, issues_count }) => {
-  const { project: projectStore }: RootStore = useMobxStore();
+export const CreatedByHeader: FC<ICreatedByHeader> = observer((props) => {
+  const { column_id, column_value, issues_count } = props;
 
-  const createdBy = (column_id && projectStore?.getProjectMemberByUserId(column_id)) ?? null;
+  const createdBy = column_value ?? null;
 
   return (
     <>

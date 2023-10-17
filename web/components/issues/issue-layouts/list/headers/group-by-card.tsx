@@ -1,6 +1,6 @@
 import React from "react";
 // lucide icons
-import { Circle } from "lucide-react";
+import { CircleDashed } from "lucide-react";
 // mobx
 import { observer } from "mobx-react-lite";
 
@@ -20,7 +20,7 @@ export const HeaderGroupByCard = observer(({ icon, title, count }: IHeaderGroupB
       }`}
     >
       <div className="flex-shrink-0 w-[20px] h-[20px] rounded-sm overflow-hidden flex justify-center items-center">
-        {icon ? icon : <Circle width={14} strokeWidth={2} />}
+        {icon ? icon : <CircleDashed width={14} strokeWidth={2} />}
       </div>
 
       <div className={`flex items-center gap-1 ${verticalAlignPosition ? `flex-col` : `flex-row w-full`}`}>

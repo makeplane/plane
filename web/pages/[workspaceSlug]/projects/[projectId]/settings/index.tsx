@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
+
 import useSWR from "swr";
 import { Disclosure, Transition } from "@headlessui/react";
 // layouts
@@ -8,8 +10,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 import { ProjectService } from "services/project";
 // components
 import { DeleteProjectModal, ProjectDetailsForm, ProjectDetailsFormLoader, SettingsSidebar } from "components/project";
-import { Button, Loader } from "@plane/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { BreadcrumbItem, Breadcrumbs, Button, Loader } from "@plane/ui";
 import { ChevronDown, ChevronUp } from "lucide-react";
 // helpers
 import { truncateText } from "helpers/string.helper";
@@ -58,11 +59,15 @@ const GeneralSettings: NextPage = observer(() => {
   return (
     <ProjectAuthorizationWrapper
       breadcrumbs={
-        <Breadcrumbs>
+        <Breadcrumbs onBack={() => router.back()}>
           <BreadcrumbItem
-            title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
-            link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
-            linkTruncate
+            link={
+              <Link href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}>
+                <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                  <p className="truncate">{`${truncateText(projectDetails?.name ?? "Project", 32)}`}</p>
+                </a>
+              </Link>
+            }
           />
           <BreadcrumbItem title="General Settings" unshrinkTitle />
         </Breadcrumbs>

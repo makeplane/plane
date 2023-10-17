@@ -1,6 +1,7 @@
 import React from "react";
 
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 import useSWR, { mutate } from "swr";
 
@@ -16,7 +17,7 @@ import useToast from "hooks/use-toast";
 import { AutoArchiveAutomation, AutoCloseAutomation } from "components/automation";
 import { SettingsSidebar } from "components/project";
 // ui
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { BreadcrumbItem, Breadcrumbs } from "@plane/ui";
 // types
 import type { NextPage } from "next";
 import { IProject } from "types";
@@ -76,11 +77,15 @@ const AutomationsSettings: NextPage = () => {
   return (
     <ProjectAuthorizationWrapper
       breadcrumbs={
-        <Breadcrumbs>
+        <Breadcrumbs onBack={() => router.back()}>
           <BreadcrumbItem
-            title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
-            link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
-            linkTruncate
+            link={
+              <Link href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}>
+                <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                  <p className="truncate">{`${truncateText(projectDetails?.name ?? "Project", 32)}`}</p>
+                </a>
+              </Link>
+            }
           />
           <BreadcrumbItem title="Automations Settings" unshrinkTitle />
         </Breadcrumbs>
