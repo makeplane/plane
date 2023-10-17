@@ -5,7 +5,7 @@ import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // components
 import { ProfileNavbar, ProfileSidebar } from "components/profile";
 // ui
-import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
+import { Breadcrumbs, BreadcrumbItem } from "@plane/ui";
 
 type Props = {
   children: React.ReactNode;

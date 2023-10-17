@@ -19,8 +19,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import { RecentPagesList, CreateUpdatePageModal, TPagesListProps } from "components/pages";
 // ui
-import { Button } from "@plane/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { BreadcrumbItem, Breadcrumbs, Button } from "@plane/ui";
 // types
 import { TPageViewProps } from "types";
 import type { NextPage } from "next";

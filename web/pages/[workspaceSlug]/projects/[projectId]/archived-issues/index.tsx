@@ -13,10 +13,9 @@ import { truncateText } from "helpers/string.helper";
 // components
 import { IssuesFilterView, IssuesView } from "components/core";
 // ui
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { ArchiveIcon, BreadcrumbItem, Breadcrumbs } from "@plane/ui";
 // icons
 import { X } from "lucide-react";
-import { ArchiveIcon } from "@plane/ui";
 // types
 import type { NextPage } from "next";
 // fetch-keys

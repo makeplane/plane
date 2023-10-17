@@ -12,8 +12,7 @@ import useUserAuth from "hooks/use-user-auth";
 // components
 import { SettingsSidebar } from "components/project";
 // ui
-import { ContrastIcon, DiceIcon, ToggleSwitch } from "@plane/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { BreadcrumbItem, Breadcrumbs, ContrastIcon, DiceIcon, ToggleSwitch } from "@plane/ui";
 // icons
 import { FileText, Inbox, Layers } from "lucide-react";
 // types

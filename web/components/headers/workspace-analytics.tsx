@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { ArrowLeft } from "lucide-react";
 // ui
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { BreadcrumbItem, Breadcrumbs } from "@plane/ui";
 
 export const WorkspaceAnalyticsHeader = () => {
   const router = useRouter();

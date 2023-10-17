@@ -14,9 +14,8 @@ import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 import { ImagePickerPopover, ImageUploadModal } from "components/core";
 import { SettingsSidebar } from "components/project";
 // ui
-import { Button, Input, Spinner } from "@plane/ui";
+import { BreadcrumbItem, Breadcrumbs, Button, Input, Spinner } from "@plane/ui";
 import { CustomSearchSelect, CustomSelect } from "components/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { User2, UserCircle2 } from "lucide-react";
 // types

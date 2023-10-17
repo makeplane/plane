@@ -11,8 +11,7 @@ import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // component
 import { SettingsSidebar } from "components/project";
 // ui
-import { Button } from "@plane/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { BreadcrumbItem, Breadcrumbs, Button } from "@plane/ui";
 // types
 import type { NextPage } from "next";
 // fetch-keys

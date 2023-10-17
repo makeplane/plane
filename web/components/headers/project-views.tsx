@@ -5,7 +5,7 @@ import { ArrowLeft, Plus } from "lucide-react";
 // components
 import { CreateUpdateProjectViewModal } from "components/views";
 // components
-import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
+import { Breadcrumbs, BreadcrumbItem } from "@plane/ui";
 // ui
 import { PrimaryButton } from "components/ui";
 // helpers

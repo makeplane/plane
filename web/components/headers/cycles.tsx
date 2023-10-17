@@ -1,10 +1,8 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
 import { ArrowLeft, Plus } from "lucide-react";
-// components
-import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
 // ui
-import { Button } from "@plane/ui";
+import { Breadcrumbs, BreadcrumbItem, Button } from "@plane/ui";
 // helpers
 import { truncateText } from "helpers/string.helper";
 

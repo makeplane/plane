@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// icons
-import { DiceIcon } from "@plane/ui";
 // services
 import { ModuleService } from "services/module.service";
 // hooks
@@ -16,9 +14,9 @@ import { ModuleDetailsSidebar } from "components/modules";
 import { ModuleLayoutRoot } from "components/issues";
 import { ModuleIssuesHeader } from "components/headers";
 // ui
+import { BreadcrumbItem, Breadcrumbs, DiceIcon } from "@plane/ui";
 import { CustomMenu } from "components/ui";
 import { EmptyState } from "components/common";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // images
 import emptyModule from "public/empty-state/module.svg";
 // helpers

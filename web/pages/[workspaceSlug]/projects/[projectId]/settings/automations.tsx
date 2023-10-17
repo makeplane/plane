@@ -16,7 +16,7 @@ import useToast from "hooks/use-toast";
 import { AutoArchiveAutomation, AutoCloseAutomation } from "components/automation";
 import { SettingsSidebar } from "components/project";
 // ui
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { BreadcrumbItem, Breadcrumbs } from "@plane/ui";
 // types
 import type { NextPage } from "next";
 import { IProject } from "types";

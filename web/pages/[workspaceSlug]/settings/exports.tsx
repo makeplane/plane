@@ -10,7 +10,7 @@ import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 import ExportGuide from "components/exporter/guide";
 import { SettingsSidebar } from "components/project";
 // ui
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { BreadcrumbItem, Breadcrumbs } from "@plane/ui";
 // types
 import type { NextPage } from "next";
 // fetch-keys

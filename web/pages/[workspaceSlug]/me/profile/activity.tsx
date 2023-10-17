@@ -11,8 +11,7 @@ import { RichReadOnlyEditor } from "@plane/rich-text-editor";
 // icons
 import { History, MessageSquare } from "lucide-react";
 // ui
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-import { ExternalLinkIcon, Loader } from "@plane/ui";
+import { BreadcrumbItem, Breadcrumbs, ExternalLinkIcon, Loader } from "@plane/ui";
 // fetch-keys
 import { USER_ACTIVITY } from "constants/fetch-keys";
 // helper

@@ -10,11 +10,10 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import { ProjectViewLayoutRoot } from "components/issues";
 // ui
+import { BreadcrumbItem, Breadcrumbs, PhotoFilterIcon } from "@plane/ui";
 import { CustomMenu } from "components/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { EmptyState } from "components/common";
 // icons
-import { PhotoFilterIcon } from "@plane/ui";
 // images
 import emptyView from "public/empty-state/view.svg";
 // helpers

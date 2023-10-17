@@ -14,8 +14,7 @@ import { SingleIntegrationCard } from "components/integration";
 import { SettingsSidebar } from "components/project";
 // ui
 import { IntegrationAndImportExportBanner } from "components/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-import { Loader } from "@plane/ui";
+import { BreadcrumbItem, Breadcrumbs, Loader } from "@plane/ui";
 // types
 import type { NextPage } from "next";
 // fetch-keys

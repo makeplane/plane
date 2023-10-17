@@ -21,9 +21,8 @@ import {
 } from "components/labels";
 import { SettingsSidebar } from "components/project";
 // ui
-import { Button, Loader } from "@plane/ui";
+import { BreadcrumbItem, Breadcrumbs, Button, Loader } from "@plane/ui";
 import { EmptyState } from "components/common";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // images
 import emptyLabel from "public/empty-state/label.svg";
 // types

@@ -16,8 +16,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import { IssueDetailsSidebar, IssueMainContent } from "components/issues";
 // ui
-import { Breadcrumbs } from "components/breadcrumbs";
-import { ArchiveIcon, Loader } from "@plane/ui";
+import { ArchiveIcon, Breadcrumbs, Loader } from "@plane/ui";
 // icons
 import { History } from "lucide-react";
 // types

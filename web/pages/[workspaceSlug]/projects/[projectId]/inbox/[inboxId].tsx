@@ -11,7 +11,7 @@ import { ProjectInboxHeader } from "components/headers";
 // helper
 import { truncateText } from "helpers/string.helper";
 // ui
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { BreadcrumbItem, Breadcrumbs } from "@plane/ui";
 
 const ProjectInbox: NextPage = () => {
   const router = useRouter();

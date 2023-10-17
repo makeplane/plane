@@ -2,9 +2,8 @@ import { Dispatch, FC, SetStateAction } from "react";
 import { useRouter } from "next/router";
 import { ArrowLeft, Plus } from "lucide-react";
 // components
-import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
 // ui
-import { Button, Tooltip } from "@plane/ui";
+import { Breadcrumbs, BreadcrumbItem, Button, Tooltip } from "@plane/ui";
 import { Icon } from "components/ui";
 // helper
 import { replaceUnderscoreIfSnakeCase, truncateText } from "helpers/string.helper";

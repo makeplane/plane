@@ -13,8 +13,7 @@ import { ProjectService } from "services/project";
 import { SettingsSidebar, SingleIntegration } from "components/project";
 // ui
 import { EmptyState } from "components/common";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-import { Loader } from "@plane/ui";
+import { BreadcrumbItem, Breadcrumbs, Loader } from "@plane/ui";
 // images
 import emptyIntegration from "public/empty-state/integration.svg";
 // types

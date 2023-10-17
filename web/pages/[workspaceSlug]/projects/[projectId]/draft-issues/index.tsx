@@ -13,7 +13,7 @@ import { truncateText } from "helpers/string.helper";
 // components
 import { IssuesFilterView, IssuesView } from "components/core";
 // ui
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { BreadcrumbItem, Breadcrumbs } from "@plane/ui";
 // icons
 import { X, PenSquare } from "lucide-react";
 // types

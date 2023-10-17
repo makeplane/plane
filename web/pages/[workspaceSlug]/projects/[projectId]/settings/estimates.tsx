@@ -14,9 +14,8 @@ import { SettingsSidebar } from "components/project";
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // ui
-import { Button, Loader } from "@plane/ui";
+import { BreadcrumbItem, Breadcrumbs, Button, Loader } from "@plane/ui";
 import { EmptyState } from "components/common";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { Plus } from "lucide-react";
 // images

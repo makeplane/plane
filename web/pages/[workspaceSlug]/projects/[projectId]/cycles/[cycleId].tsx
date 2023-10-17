@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // icons
-import { ContrastIcon } from "@plane/ui";
 import { ArrowLeft } from "lucide-react";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
@@ -19,9 +18,9 @@ import { CycleService } from "services/cycle.service";
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // ui
+import { BreadcrumbItem, Breadcrumbs, ContrastIcon } from "@plane/ui";
 import { CustomMenu } from "components/ui";
 import { EmptyState } from "components/common";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // images
 import emptyCycle from "public/empty-state/cycle.svg";
 // helpers

@@ -8,8 +8,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 import { ProjectService } from "services/project";
 // components
 import { DeleteProjectModal, ProjectDetailsForm, ProjectDetailsFormLoader, SettingsSidebar } from "components/project";
-import { Button, Loader } from "@plane/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { BreadcrumbItem, Breadcrumbs, Button, Loader } from "@plane/ui";
 import { ChevronDown, ChevronUp } from "lucide-react";
 // helpers
 import { truncateText } from "helpers/string.helper";
