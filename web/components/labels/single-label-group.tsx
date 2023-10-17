@@ -163,7 +163,7 @@ export const SingleLabelGroup: React.FC<Props> = ({
 
                       <div className="flex items-center">
                         <button className="flex items-center justify-start gap-2" onClick={handleLabelDelete}>
-                          <X className="h-[18px] w-[18px] text-custom-sidebar-text-400 flex-shrink-0" />
+                          <X className="h-4 w-4 text-custom-sidebar-text-400 flex-shrink-0" />
                         </button>
                       </div>
                     </div>

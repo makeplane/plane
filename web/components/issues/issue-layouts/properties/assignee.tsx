@@ -124,7 +124,7 @@ export const IssuePropertyAssignee: FC<IIssuePropertyAssignee> = observer((props
                       tooltipContent={(selectedOption.map((_label: IFiltersOption) => _label.title) || []).join(", ")}
                     >
                       <div className="flex-shrink-0 flex justify-center items-center gap-1 text-xs">
-                        <div className="flex-shrink-0 w-[14px] h-[14px] rounded-sm flex justify-center items-center text-white capitalize relative overflow-hidden text-xs">
+                        <div className="flex-shrink-0 w-4 h-4 rounded-sm flex justify-center items-center text-white capitalize relative overflow-hidden text-xs">
                           {selectedOption[0] && selectedOption[0].avatar ? (
                             <img
                               src={selectedOption[0].avatar}
