@@ -1,13 +1,13 @@
-// mobx
+import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // components
 import { HeaderGroupByCard } from "./group-by-card";
+// ui
 import { StateGroupIcon } from "@plane/ui";
-// constants
-import { issueStateGroupByKey } from "constants/issue";
 
 export interface IStateGroupHeader {
   column_id: string;
+  column_value: any;
   issues_count: number;
 }
 
@@ -17,8 +17,10 @@ export const Icon = ({ stateGroup, color }: { stateGroup: any; color?: any }) =>
   </div>
 );
 
-export const StateGroupHeader: React.FC<IStateGroupHeader> = observer(({ column_id, issues_count }) => {
-  const stateGroup = column_id && issueStateGroupByKey(column_id);
+export const StateGroupHeader: FC<IStateGroupHeader> = observer((props) => {
+  const { column_id, column_value, issues_count } = props;
+
+  const stateGroup = column_value ?? null;
 
   return (
     <>

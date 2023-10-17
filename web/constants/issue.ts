@@ -220,6 +220,90 @@ export interface ILayoutDisplayFiltersOptions {
 export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
   [pageType: string]: { [layoutType: string]: ILayoutDisplayFiltersOptions };
 } = {
+  profile_issues: {
+    list: {
+      filters: ["priority", "state_group", "labels", "start_date", "target_date"],
+      display_properties: true,
+      display_filters: {
+        group_by: ["state_detail.group", "priority", "project", "labels", null],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
+        type: [null, "active", "backlog"],
+      },
+      extra_options: {
+        access: true,
+        values: ["show_empty_groups"],
+      },
+    },
+    kanban: {
+      filters: ["priority", "state_group", "labels", "start_date", "target_date"],
+      display_properties: true,
+      display_filters: {
+        group_by: ["state_detail.group", "priority", "project", "labels", null],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
+        type: [null, "active", "backlog"],
+      },
+      extra_options: {
+        access: true,
+        values: ["show_empty_groups"],
+      },
+    },
+  },
+  archived_issues: {
+    list: {
+      filters: ["priority", "state_group", "labels", "start_date", "target_date"],
+      display_properties: true,
+      display_filters: {
+        group_by: ["state_detail.group", "priority", "project", "labels", null],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
+        type: [null, "active", "backlog"],
+      },
+      extra_options: {
+        access: true,
+        values: ["show_empty_groups"],
+      },
+    },
+    kanban: {
+      filters: ["priority", "state_group", "labels", "start_date", "target_date"],
+      display_properties: true,
+      display_filters: {
+        group_by: ["state_detail.group", "priority", "project", "labels", null],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
+        type: [null, "active", "backlog"],
+      },
+      extra_options: {
+        access: true,
+        values: ["show_empty_groups"],
+      },
+    },
+  },
+  draft_issues: {
+    list: {
+      filters: ["priority", "state_group", "labels", "start_date", "target_date"],
+      display_properties: true,
+      display_filters: {
+        group_by: ["state_detail.group", "priority", "project", "labels", null],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
+        type: [null, "active", "backlog"],
+      },
+      extra_options: {
+        access: true,
+        values: ["show_empty_groups"],
+      },
+    },
+    kanban: {
+      filters: ["priority", "state_group", "labels", "start_date", "target_date"],
+      display_properties: true,
+      display_filters: {
+        group_by: ["state_detail.group", "priority", "project", "labels", null],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
+        type: [null, "active", "backlog"],
+      },
+      extra_options: {
+        access: true,
+        values: ["show_empty_groups"],
+      },
+    },
+  },
   my_issues: {
     spreadsheet: {
       filters: ["priority", "state_group", "labels", "assignees", "created_by", "project", "start_date", "target_date"],
