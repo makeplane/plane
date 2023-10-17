@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 import useSWR, { mutate } from "swr";
 
@@ -16,8 +17,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import { IssueDetailsSidebar, IssueMainContent } from "components/issues";
 // ui
-import { Breadcrumbs } from "components/breadcrumbs";
-import { ArchiveIcon, Loader } from "@plane/ui";
+import { ArchiveIcon, Breadcrumbs, Loader } from "@plane/ui";
 // icons
 import { History } from "lucide-react";
 // types
@@ -145,11 +145,18 @@ const ArchivedIssueDetailsPage: NextPage = () => {
   return (
     <ProjectAuthorizationWrapper
       breadcrumbs={
-        <Breadcrumbs>
+        <Breadcrumbs onBack={() => router.back()}>
           <Breadcrumbs.BreadcrumbItem
-            title={`${truncateText(issueDetails?.project_detail.name ?? "Project", 32)} Issues`}
-            link={`/${workspaceSlug}/projects/${projectId as string}/issues`}
-            linkTruncate
+            link={
+              <Link href={`/${workspaceSlug}/projects/${projectId as string}/issues`}>
+                <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                  <p className="truncate">{`${truncateText(
+                    issueDetails?.project_detail.name ?? "Project",
+                    32
+                  )} Issues`}</p>
+                </a>
+              </Link>
+            }
           />
           <Breadcrumbs.BreadcrumbItem
             title={`Issue ${issueDetails?.project_detail.identifier ?? "Project"}-${

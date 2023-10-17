@@ -11,8 +11,7 @@ import useMyIssuesFilters from "hooks/my-issues/use-my-issues-filter";
 // components
 import { MyIssuesView, MyIssuesViewOptions } from "components/issues";
 // ui
-import { Button } from "@plane/ui";
-import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
+import { Breadcrumbs, BreadcrumbItem, Button } from "@plane/ui";
 // types
 import type { NextPage } from "next";
 import useUser from "hooks/use-user";
@@ -78,7 +77,7 @@ const MyIssuesPage: NextPage = () => {
   return (
     <WorkspaceAuthorizationLayout
       breadcrumbs={
-        <Breadcrumbs>
+        <Breadcrumbs onBack={() => router.back()}>
           <BreadcrumbItem title="My Issues" />
         </Breadcrumbs>
       }

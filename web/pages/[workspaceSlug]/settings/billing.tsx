@@ -1,6 +1,7 @@
 import React from "react";
 
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 import useSWR from "swr";
 
@@ -11,8 +12,7 @@ import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // component
 import { SettingsSidebar } from "components/project";
 // ui
-import { Button } from "@plane/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { BreadcrumbItem, Breadcrumbs, Button } from "@plane/ui";
 // types
 import type { NextPage } from "next";
 // fetch-keys
@@ -24,9 +24,8 @@ import { truncateText } from "helpers/string.helper";
 const workspaceService = new WorkspaceService();
 
 const BillingSettings: NextPage = () => {
-  const {
-    query: { workspaceSlug },
-  } = useRouter();
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
   const { data: activeWorkspace } = useSWR(workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null, () =>
     workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null
@@ -35,11 +34,15 @@ const BillingSettings: NextPage = () => {
   return (
     <WorkspaceAuthorizationLayout
       breadcrumbs={
-        <Breadcrumbs>
+        <Breadcrumbs onBack={() => router.back()}>
           <BreadcrumbItem
-            title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)}`}
-            link={`/${workspaceSlug}`}
-            linkTruncate
+            link={
+              <Link href={`/${workspaceSlug}`}>
+                <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                  <p className="truncate">{`${truncateText(activeWorkspace?.name ?? "Workspace", 32)}`}</p>
+                </a>
+              </Link>
+            }
           />
           <BreadcrumbItem title="Billing & Plans Settings" unshrinkTitle />
         </Breadcrumbs>

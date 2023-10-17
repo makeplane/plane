@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import useSWR from "swr";
-// icons
-import { DiceIcon } from "@plane/ui";
 // services
 import { ModuleService } from "services/module.service";
 // hooks
@@ -16,9 +15,9 @@ import { ModuleDetailsSidebar } from "components/modules";
 import { ModuleLayoutRoot } from "components/issues";
 import { ModuleIssuesHeader } from "components/headers";
 // ui
+import { BreadcrumbItem, Breadcrumbs, DiceIcon } from "@plane/ui";
 import { CustomMenu } from "components/ui";
 import { EmptyState } from "components/common";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // images
 import emptyModule from "public/empty-state/module.svg";
 // helpers
@@ -93,11 +92,18 @@ const SingleModule: React.FC = () => {
       />
       <ProjectAuthorizationWrapper
         breadcrumbs={
-          <Breadcrumbs>
+          <Breadcrumbs onBack={() => router.back()}>
             <BreadcrumbItem
-              title={`${truncateText(moduleDetails?.project_detail.name ?? "Project", 32)} Modules`}
-              link={`/${workspaceSlug}/projects/${projectId}/modules`}
-              linkTruncate
+              link={
+                <Link href={`/${workspaceSlug}/projects/${projectId}/modules`}>
+                  <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                    <p className="truncate">{`${truncateText(
+                      moduleDetails?.project_detail.name ?? "Project",
+                      32
+                    )} Modules`}</p>
+                  </a>
+                </Link>
+              }
             />
           </Breadcrumbs>
         }

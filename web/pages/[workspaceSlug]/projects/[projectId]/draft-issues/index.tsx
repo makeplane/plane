@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 import useSWR from "swr";
 
@@ -13,7 +14,7 @@ import { truncateText } from "helpers/string.helper";
 // components
 import { IssuesFilterView, IssuesView } from "components/core";
 // ui
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { BreadcrumbItem, Breadcrumbs } from "@plane/ui";
 // icons
 import { X, PenSquare } from "lucide-react";
 // types
@@ -37,8 +38,16 @@ const ProjectDraftIssues: NextPage = () => {
     <IssueViewContextProvider>
       <ProjectAuthorizationWrapper
         breadcrumbs={
-          <Breadcrumbs>
-            <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
+          <Breadcrumbs onBack={() => router.back()}>
+            <BreadcrumbItem
+              link={
+                <Link href={`/${workspaceSlug}/projects`}>
+                  <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                    <p>Projects</p>
+                  </a>
+                </Link>
+              }
+            />
             <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Draft Issues`} />
           </Breadcrumbs>
         }

@@ -1,11 +1,11 @@
 import { FC, useState } from "react";
 import { useRouter } from "next/router";
 // icons
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, Link, Plus } from "lucide-react";
 // components
 import { CreateUpdateProjectViewModal } from "components/views";
 // components
-import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
+import { Breadcrumbs, BreadcrumbItem } from "@plane/ui";
 // ui
 import { PrimaryButton } from "components/ui";
 // helpers
@@ -40,8 +40,16 @@ export const ProjectViewsHeader: FC<IProjectViewsHeader> = (props) => {
             </button>
           </div>
           <div>
-            <Breadcrumbs>
-              <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
+            <Breadcrumbs onBack={() => router.back()}>
+              <BreadcrumbItem
+                link={
+                  <Link href={`/${workspaceSlug}/projects`}>
+                    <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                      <p>Projects</p>
+                    </a>
+                  </Link>
+                }
+              />
               <BreadcrumbItem title={`${truncateText(title ?? "Project", 32)} Cycles`} />
             </Breadcrumbs>
           </div>

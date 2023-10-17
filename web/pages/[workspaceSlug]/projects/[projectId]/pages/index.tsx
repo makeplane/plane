@@ -1,4 +1,5 @@
 import { useState, Fragment } from "react";
+import Link from "next/link";
 
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
@@ -19,8 +20,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import { RecentPagesList, CreateUpdatePageModal, TPagesListProps } from "components/pages";
 // ui
-import { Button } from "@plane/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { BreadcrumbItem, Breadcrumbs, Button } from "@plane/ui";
 // types
 import { TPageViewProps } from "types";
 import type { NextPage } from "next";
@@ -94,8 +94,16 @@ const ProjectPages: NextPage = () => {
       />
       <ProjectAuthorizationWrapper
         breadcrumbs={
-          <Breadcrumbs>
-            <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
+          <Breadcrumbs onBack={() => router.back()}>
+            <BreadcrumbItem
+              link={
+                <Link href={`/${workspaceSlug}/projects`}>
+                  <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                    <p>Projects</p>
+                  </a>
+                </Link>
+              }
+            />
             <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Pages`} />
           </Breadcrumbs>
         }

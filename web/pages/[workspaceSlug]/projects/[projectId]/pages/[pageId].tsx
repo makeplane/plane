@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 
 import { useRouter } from "next/router";
 
@@ -27,10 +28,9 @@ import { CreateUpdateBlockInline, SinglePageBlock } from "components/pages";
 import { CreateLabelModal } from "components/labels";
 import { CreateBlock } from "components/pages/create-block";
 // ui
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { CustomSearchSelect } from "components/ui";
 import { EmptyState } from "components/common";
-import { TextArea, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
+import { BreadcrumbItem, Breadcrumbs, TextArea, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // images
 import emptyPage from "public/empty-state/page.svg";
 // icons
@@ -306,8 +306,16 @@ const SinglePage: NextPage = () => {
   return (
     <ProjectAuthorizationWrapper
       breadcrumbs={
-        <Breadcrumbs>
-          <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
+        <Breadcrumbs onBack={() => router.back()}>
+          <BreadcrumbItem
+            link={
+              <Link href={`/${workspaceSlug}/projects`}>
+                <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                  <p>Projects</p>
+                </a>
+              </Link>
+            }
+          />
           <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Pages`} />
         </Breadcrumbs>
       }

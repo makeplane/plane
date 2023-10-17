@@ -9,8 +9,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 import { ProjectAnalyticsModal } from "components/analytics";
 // ui
-import { Button } from "@plane/ui";
-import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
+import { Breadcrumbs, BreadcrumbItem, Button } from "@plane/ui";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
@@ -115,8 +114,16 @@ export const ProjectIssuesHeader: FC = observer(() => {
             </button>
           </div>
           <div>
-            <Breadcrumbs>
-              <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
+            <Breadcrumbs onBack={() => router.back()}>
+              <BreadcrumbItem
+                link={
+                  <Link href={`/${workspaceSlug}/projects`}>
+                    <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                      <p>Projects</p>
+                    </a>
+                  </Link>
+                }
+              />
               <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Issues`} />
             </Breadcrumbs>
           </div>
