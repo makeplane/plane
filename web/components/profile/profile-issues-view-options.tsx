@@ -69,12 +69,7 @@ export const ProfileIssuesViewOptions: React.FC = () => {
               }`}
               onClick={() => setDisplayFilters({ layout: option.type })}
             >
-              <option.Icon
-                sx={{
-                  fontSize: 16,
-                }}
-                className={option.type === "gantt_chart" ? "rotate-90" : ""}
-              />
+              <option.Icon className="h-3.5 w-3.5" />
             </button>
           </Tooltip>
         ))}
