@@ -83,6 +83,8 @@ export const ProjectSidebarList: FC = observer(() => {
       });
   };
 
+  const isCollapsed = themeStore.sidebarCollapsed || false;
+
   /**
    * Implementing scroll animation styles based on the scroll length of the container
    */
@@ -126,7 +128,7 @@ export const ProjectSidebarList: FC = observer(() => {
                   <Disclosure as="div" className="flex flex-col space-y-2" defaultOpen={true}>
                     {({ open }) => (
                       <>
-                        {!themeStore?.sidebarCollapsed && (
+                        {!isCollapsed && (
                           <div className="group flex justify-between items-center text-xs p-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 w-full">
                             <Disclosure.Button
                               as="button"
@@ -164,7 +166,6 @@ export const ProjectSidebarList: FC = observer(() => {
                                   <ProjectSidebarListItem
                                     key={project.id}
                                     project={project}
-                                    sidebarCollapse={themeStore?.sidebarCollapsed || false}
                                     provided={provided}
                                     snapshot={snapshot}
                                     handleCopyText={() => handleCopyText(project.id)}
@@ -192,7 +193,7 @@ export const ProjectSidebarList: FC = observer(() => {
                   <Disclosure as="div" className="flex flex-col space-y-2" defaultOpen={true}>
                     {({ open }) => (
                       <>
-                        {!themeStore?.sidebarCollapsed && (
+                        {!isCollapsed && (
                           <div className="group flex justify-between items-center text-xs p-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 w-full">
                             <Disclosure.Button
                               as="button"
@@ -233,7 +234,6 @@ export const ProjectSidebarList: FC = observer(() => {
                                     <ProjectSidebarListItem
                                       key={project.id}
                                       project={project}
-                                      sidebarCollapse={themeStore?.sidebarCollapsed || false}
                                       provided={provided}
                                       snapshot={snapshot}
                                       handleCopyText={() => handleCopyText(project.id)}
@@ -266,7 +266,7 @@ export const ProjectSidebarList: FC = observer(() => {
             }}
           >
             <Plus className="h-5 w-5" />
-            {!themeStore?.sidebarCollapsed && "Add Project"}
+            {!isCollapsed && "Add Project"}
           </button>
         )}
       </div>
