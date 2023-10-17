@@ -413,17 +413,39 @@ export class ProjectStore implements IProjectStore {
 
   addProjectToFavorites = async (workspaceSlug: string, projectId: string) => {
     try {
+      runInAction(() => {
+        this.projects = {
+          ...this.projects,
+          [workspaceSlug]: this.projects[workspaceSlug].map((project) => {
+            if (project.id === projectId) {
+              return { ...project, is_favorite: true };
+            }
+            return project;
+          }),
+        };
+      });
       const response = await this.projectService.addProjectToFavorites(workspaceSlug, projectId);
-      await this.fetchProjects(workspaceSlug);
       return response;
     } catch (error) {
       console.log("Failed to add project to favorite");
+      await this.fetchProjects(workspaceSlug);
       throw error;
     }
   };
 
   removeProjectFromFavorites = async (workspaceSlug: string, projectId: string) => {
     try {
+      runInAction(() => {
+        this.projects = {
+          ...this.projects,
+          [workspaceSlug]: this.projects[workspaceSlug].map((project) => {
+            if (project.id === projectId) {
+              return { ...project, is_favorite: false };
+            }
+            return project;
+          }),
+        };
+      });
       const response = await this.projectService.removeProjectFromFavorites(workspaceSlug, projectId);
       await this.fetchProjects(workspaceSlug);
       return response;

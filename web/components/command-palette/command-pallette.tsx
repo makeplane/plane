@@ -123,6 +123,7 @@ export const CommandPalette: FC = observer(() => {
         } else if (keyPressed === "h") {
           toggleShortcutModal(true);
         } else if (keyPressed === "q") {
+          console.log("cycle command");
           toggleCreateCycleModal(true);
         } else if (keyPressed === "m") {
           toggleCreateModuleModal(true);
