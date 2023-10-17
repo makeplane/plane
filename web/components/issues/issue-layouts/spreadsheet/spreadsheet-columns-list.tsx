@@ -1,3 +1,4 @@
+import { observer } from "mobx-react-lite";
 // components
 import { SpreadsheetColumn } from "components/issues";
 // types
@@ -16,14 +17,14 @@ type Props = {
   disableUserActions: boolean;
   expandedIssues: string[];
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
-  handleUpdateIssue: (issueId: string, data: Partial<IIssue>) => void;
+  handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
   issues: IIssue[] | undefined;
   members?: IUserLite[] | undefined;
   labels?: IIssueLabels[] | undefined;
   states?: IStateResponse | undefined;
 };
 
-export const SpreadsheetColumnsList: React.FC<Props> = (props) => {
+export const SpreadsheetColumnsList: React.FC<Props> = observer((props) => {
   const {
     disableUserActions,
     displayFilters,
@@ -47,6 +48,7 @@ export const SpreadsheetColumnsList: React.FC<Props> = (props) => {
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
           handleUpdateIssue={handleUpdateIssue}
           issues={issues}
+          states={states}
           property="state"
         />
       )}
@@ -142,4 +144,4 @@ export const SpreadsheetColumnsList: React.FC<Props> = (props) => {
       )}
     </>
   );
-};
+});

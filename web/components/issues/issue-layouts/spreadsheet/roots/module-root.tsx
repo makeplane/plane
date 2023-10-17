@@ -1,22 +1,71 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// hooks
-import useUser from "hooks/use-user";
-import useProjectDetails from "hooks/use-project-details";
 // components
-// import { SpreadsheetColumns, SpreadsheetIssues } from "components/core";
-import { IssuePeekOverview } from "components/issues";
-// ui
-import { CustomMenu } from "components/ui";
-import { Spinner } from "@plane/ui";
-// icon
-import { Plus } from "lucide-react";
+import { SpreadsheetView } from "components/issues";
 // types
-import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "types";
+import { IIssue, IIssueDisplayFilterOptions } from "types";
+// constants
 import { IIssueUnGroupedStructure } from "store/issue";
 
-export const ModuleSpreadsheetLayout: React.FC = observer(() => <></>);
+export const ModuleSpreadsheetLayout: React.FC = observer(() => {
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
+  const {
+    issueFilter: issueFilterStore,
+    moduleIssue: moduleIssueStore,
+    issueDetail: issueDetailStore,
+    project: projectStore,
+    user: userStore,
+  } = useMobxStore();
+
+  const user = userStore.currentUser;
+  const issues = moduleIssueStore.getIssues;
+
+  const handleDisplayFiltersUpdate = useCallback(
+    (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
+      if (!workspaceSlug || !projectId) return;
+
+      issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
+        display_filters: {
+          ...updatedDisplayFilter,
+        },
+      });
+    },
+    [issueFilterStore, projectId, workspaceSlug]
+  );
+
+  const handleUpdateIssue = useCallback(
+    (issue: IIssue, data: Partial<IIssue>) => {
+      if (!workspaceSlug || !projectId || !user) return;
+
+      const payload = {
+        ...issue,
+        ...data,
+      };
+
+      moduleIssueStore.updateIssueStructure(null, null, payload);
+      issueDetailStore.updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, data, user);
+    },
+    [issueDetailStore, moduleIssueStore, projectId, user, workspaceSlug]
+  );
+
+  return (
+    <SpreadsheetView
+      displayProperties={issueFilterStore.userDisplayProperties}
+      displayFilters={issueFilterStore.userDisplayFilters}
+      handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
+      issues={issues as IIssueUnGroupedStructure}
+      members={projectId ? projectStore.members?.[projectId.toString()]?.map((m) => m.member) : undefined}
+      labels={projectId ? projectStore.labels?.[projectId.toString()] ?? undefined : undefined}
+      states={projectId ? projectStore.states?.[projectId.toString()] : undefined}
+      handleIssueAction={() => {}}
+      handleUpdateIssue={handleUpdateIssue}
+      disableUserActions={false}
+    />
+  );
+});

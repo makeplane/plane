@@ -7,7 +7,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { SpreadsheetView } from "components/issues";
 // types
-import { IIssueDisplayFilterOptions } from "types";
+import { IIssue, IIssueDisplayFilterOptions } from "types";
 // constants
 import { IIssueUnGroupedStructure } from "store/issue";
 
@@ -15,8 +15,15 @@ export const ProjectSpreadsheetLayout: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { issue: issueStore, issueFilter: issueFilterStore, project: projectStore } = useMobxStore();
+  const {
+    issue: issueStore,
+    issueFilter: issueFilterStore,
+    issueDetail: issueDetailStore,
+    project: projectStore,
+    user: userStore,
+  } = useMobxStore();
 
+  const user = userStore.currentUser;
   const issues = issueStore.getIssues;
 
   const handleDisplayFiltersUpdate = useCallback(
@@ -32,6 +39,21 @@ export const ProjectSpreadsheetLayout: React.FC = observer(() => {
     [issueFilterStore, projectId, workspaceSlug]
   );
 
+  const handleUpdateIssue = useCallback(
+    (issue: IIssue, data: Partial<IIssue>) => {
+      if (!workspaceSlug || !projectId || !user) return;
+
+      const payload = {
+        ...issue,
+        ...data,
+      };
+
+      issueStore.updateIssueStructure(null, null, payload);
+      issueDetailStore.updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, data, user);
+    },
+    [issueStore, issueDetailStore, projectId, user, workspaceSlug]
+  );
+
   return (
     <SpreadsheetView
       displayProperties={issueFilterStore.userDisplayProperties}
@@ -42,9 +64,7 @@ export const ProjectSpreadsheetLayout: React.FC = observer(() => {
       labels={projectId ? projectStore.labels?.[projectId.toString()] ?? undefined : undefined}
       states={projectId ? projectStore.states?.[projectId.toString()] : undefined}
       handleIssueAction={() => {}}
-      handleUpdateIssue={(issueId, data) => {
-        console.log(issueId, data);
-      }}
+      handleUpdateIssue={handleUpdateIssue}
       disableUserActions={false}
     />
   );

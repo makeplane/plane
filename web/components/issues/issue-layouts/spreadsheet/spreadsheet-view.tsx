@@ -29,7 +29,7 @@ type Props = {
   labels?: IIssueLabels[] | undefined;
   states?: IStateResponse | undefined;
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
-  handleUpdateIssue: (issueId: string, data: Partial<IIssue>) => void;
+  handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
   openIssuesListModal?: (() => void) | null;
   disableUserActions: boolean;
 };
@@ -63,10 +63,10 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
   const type = cycleId ? "cycle" : moduleId ? "module" : "issue";
 
   const handleScroll = () => {
-    if (containerRef.current) {
-      const scrollLeft = containerRef.current.scrollLeft;
-      setIsScrolled(scrollLeft > 0);
-    }
+    if (!containerRef.current) return;
+
+    const scrollLeft = containerRef.current.scrollLeft;
+    setIsScrolled(scrollLeft > 0);
   };
 
   useEffect(() => {
@@ -90,7 +90,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                   <div
                     className="relative flex flex-col h-max w-full bg-custom-background-100 z-[2]"
                     style={{
-                      boxShadow: isScrolled ? "8px -9px 12px rgba(0, 0, 0, 0.15)" : "",
+                      boxShadow: isScrolled ? "8px -9px 12px rgba(0, 0, 0, 0.05)" : "",
                     }}
                   >
                     <div className="flex items-center text-sm font-medium z-[2] h-11 w-full sticky top-0 bg-custom-background-90 border border-l-0 border-custom-border-100">
