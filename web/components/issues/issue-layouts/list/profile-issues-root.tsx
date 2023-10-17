@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // components
 import { List } from "./default";
@@ -8,31 +8,32 @@ import { RootStore } from "store/root";
 // constants
 import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 
-export interface ICycleListLayout {}
+export interface IProfileIssuesListLayout {}
 
-export const CycleListLayout: React.FC = observer(() => {
+export const ProfileIssuesListLayout: FC = observer(() => {
   const {
+    workspace: workspaceStore,
     project: projectStore,
-    issueFilter: issueFilterStore,
-    cycleIssue: cycleIssueStore,
+    profileIssueFilters: profileIssueFiltersStore,
+    profileIssues: profileIssuesIssueStore,
   }: RootStore = useMobxStore();
 
-  const issues = cycleIssueStore?.getIssues;
+  const issues = profileIssuesIssueStore?.getIssues;
 
-  const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
+  const group_by: string | null = profileIssueFiltersStore?.userDisplayFilters?.group_by || null;
 
-  const display_properties = issueFilterStore?.userDisplayProperties || null;
+  const display_properties = profileIssueFiltersStore?.userDisplayProperties || null;
 
   const updateIssue = (group_by: string | null, issue: any) => {
-    cycleIssueStore.updateIssueStructure(group_by, null, issue);
+    profileIssuesIssueStore.updateIssueStructure(group_by, null, issue);
   };
 
   const states = projectStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
-  const labels = projectStore?.projectLabels || null;
+  const labels = workspaceStore.workspaceLabels || null;
   const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
-  const projects = projectStore?.projectStates || null;
+  const projects = projectStore?.workspaceProjects || null;
   const estimates = null;
 
   return (

@@ -8,7 +8,7 @@ import { IssuePropertyPriority } from "../properties/priority";
 import { IssuePropertyLabels } from "../properties/labels";
 import { IssuePropertyAssignee } from "../properties/assignee";
 import { IssuePropertyEstimates } from "../properties/estimates";
-import { IssuePropertyStartDate } from "../properties/date";
+import { IssuePropertyDate } from "../properties/date";
 import { Tooltip } from "@plane/ui";
 
 export interface IKanBanProperties {
@@ -129,7 +129,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer(
 
         {/* start date */}
         {display_properties && display_properties?.start_date && (
-          <IssuePropertyStartDate
+          <IssuePropertyDate
             value={issue?.start_date || null}
             onChange={(date: string) => handleStartDate(date)}
             disabled={false}
@@ -138,7 +138,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer(
 
         {/* target/due date */}
         {display_properties && display_properties?.due_date && (
-          <IssuePropertyStartDate
+          <IssuePropertyDate
             value={issue?.target_date || null}
             onChange={(date: string) => handleTargetDate(date)}
             disabled={false}
