@@ -2,25 +2,23 @@ import { Fragment, useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Tab } from "@headlessui/react";
 import useSWR from "swr";
+import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
+// hooks
+import { useMobxStore } from "lib/mobx/store-provider";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
+import { AppLayout } from "layouts/app-layout";
 // components
+import { CyclesHeader } from "components/headers";
 import { CyclesView, ActiveCycleDetails } from "components/cycles";
 import { CycleCreateEditModal } from "components/cycles/cycle-create-edit-modal";
 // ui
-import { Button } from "@plane/ui";
 import { EmptyState } from "components/common";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // images
 import emptyCycle from "public/empty-state/cycle.svg";
 // types
 import { TCycleView, TCycleLayout } from "types";
 import type { NextPage } from "next";
-// helper
-import { truncateText } from "helpers/string.helper";
-import { useMobxStore } from "lib/mobx/store-provider";
-import { observer } from "mobx-react-lite";
 // constants
 import { CYCLE_TAB_LIST, CYCLE_VIEWS } from "constants/cycle";
 // lib cookie
@@ -85,25 +83,7 @@ const ProjectCyclesPage: NextPage = observer(() => {
   const cycleLayout = cycleStore?.cycleLayout;
 
   return (
-    <ProjectAuthorizationWrapper
-      breadcrumbs={
-        <Breadcrumbs>
-          <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-          <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Cycles`} />
-        </Breadcrumbs>
-      }
-      right={
-        <Button
-          variant="primary"
-          prependIcon={<Plus />}
-          onClick={() => {
-            setCreateModal(true);
-          }}
-        >
-          Add Cycle
-        </Button>
-      }
-    >
+    <AppLayout header={<CyclesHeader name={projectDetails?.name} />} withProjectWrapper>
       <CycleCreateEditModal
         workspaceSlug={workspaceSlug}
         projectId={projectId}
@@ -226,7 +206,7 @@ const ProjectCyclesPage: NextPage = observer(() => {
           </Tab.Panels>
         </Tab.Group>
       )}
-    </ProjectAuthorizationWrapper>
+    </AppLayout>
   );
 });
 

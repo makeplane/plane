@@ -342,13 +342,12 @@ export class ProjectStore implements IProjectStore {
       this.error = null;
 
       const labelResponse = await this.issueLabelService.getProjectIssueLabels(workspaceSlug, projectId);
-      const _labels = {
-        ...this.labels,
-        [projectId]: labelResponse,
-      };
 
       runInAction(() => {
-        this.labels = _labels;
+        this.labels = {
+          ...this.labels,
+          [projectId]: labelResponse,
+        };
         this.loader = false;
         this.error = null;
       });

@@ -1,35 +1,58 @@
 // mobx
 import { action, observable, runInAction, makeObservable } from "mobx";
 // services
+import { ProjectService } from "services/project";
 import { UserService } from "services/user.service";
 import { WorkspaceService } from "services/workspace.service";
 // interfaces
 import { IUser, IUserSettings } from "types/users";
+import { IWorkspaceMember, IProjectMember } from "types";
 
 interface IUserStore {
   loader: boolean;
+
   currentUser: IUser | null;
   currentUserSettings: IUserSettings | null;
+
   dashboardInfo: any;
-  memberInfo: any;
+
+  workspaceMemberInfo: any;
   hasPermissionToWorkspace: boolean | null;
+
+  projectMemberInfo: any;
+  projectNotFound: boolean;
+  hasPermissionToProject: boolean | null;
+
   fetchCurrentUser: () => Promise<IUser>;
   fetchCurrentUserSettings: () => Promise<IUserSettings>;
+
+  fetchUserWorkspaceInfo: (workspaceSlug: string) => Promise<IWorkspaceMember>;
+  fetchUserProjectInfo: (workspaceSlug: string, projectId: string) => Promise<IProjectMember>;
+
   updateTourCompleted: () => Promise<void>;
+  updateCurrentUser: (data: Partial<IUser>) => Promise<IUser>;
 }
 
 class UserStore implements IUserStore {
   loader: boolean = false;
+
   currentUser: IUser | null = null;
   currentUserSettings: IUserSettings | null = null;
+
   dashboardInfo: any = null;
-  memberInfo: any = null;
+
+  workspaceMemberInfo: any = null;
   hasPermissionToWorkspace: boolean | null = null;
+
+  projectMemberInfo: any = null;
+  projectNotFound: boolean = false;
+  hasPermissionToProject: boolean | null = null;
   // root store
   rootStore;
   // services
   userService;
   workspaceService;
+  projectService;
 
   constructor(_rootStore: any) {
     makeObservable(this, {
@@ -38,8 +61,11 @@ class UserStore implements IUserStore {
       currentUser: observable.ref,
       currentUserSettings: observable.ref,
       dashboardInfo: observable.ref,
-      memberInfo: observable.ref,
+      workspaceMemberInfo: observable.ref,
       hasPermissionToWorkspace: observable.ref,
+      projectMemberInfo: observable.ref,
+      projectNotFound: observable.ref,
+      hasPermissionToProject: observable.ref,
       // action
       fetchCurrentUser: action,
       fetchCurrentUserSettings: action,
@@ -48,6 +74,7 @@ class UserStore implements IUserStore {
     this.rootStore = _rootStore;
     this.userService = new UserService();
     this.workspaceService = new WorkspaceService();
+    this.projectService = new ProjectService();
   }
 
   fetchCurrentUser = async () => {
@@ -94,7 +121,7 @@ class UserStore implements IUserStore {
     try {
       const response = await this.workspaceService.workspaceMemberMe(workspaceSlug.toString());
       runInAction(() => {
-        this.memberInfo = response;
+        this.workspaceMemberInfo = response;
         this.hasPermissionToWorkspace = true;
       });
       return response;
@@ -102,6 +129,29 @@ class UserStore implements IUserStore {
       runInAction(() => {
         this.hasPermissionToWorkspace = false;
       });
+      throw error;
+    }
+  };
+
+  fetchUserProjectInfo = async (workspaceSlug: string, projectId: string) => {
+    try {
+      const response = await this.projectService.projectMemberMe(workspaceSlug, projectId);
+
+      console.log("response", response);
+      runInAction(() => {
+        this.projectMemberInfo = response;
+        this.hasPermissionToWorkspace = true;
+      });
+      return response;
+    } catch (error: any) {
+      runInAction(() => {
+        this.hasPermissionToWorkspace = false;
+      });
+      if (error?.status === 404) {
+        runInAction(() => {
+          this.projectNotFound = true;
+        });
+      }
       throw error;
     }
   };
@@ -123,107 +173,37 @@ class UserStore implements IUserStore {
     }
   };
 
-  // setCurrentUser = async () => {
-  //   try {
-  //     let userResponse: ICurrentUser | null = await UserService.currentUser();
-  //     userResponse = userResponse || null;
+  updateCurrentUser = async (data: Partial<IUser>) => {
+    try {
+      const response = await this.userService.updateUser(data);
+      runInAction(() => {
+        this.currentUser = response;
+      });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
 
-  //     if (userResponse) {
-  //       const userPayload: ICurrentUser = {
-  //         id: userResponse?.id,
-  //         avatar: userResponse?.avatar,
-  //         first_name: userResponse?.first_name,
-  //         last_name: userResponse?.last_name,
-  //         username: userResponse?.username,
-  //         email: userResponse?.email,
-  //         mobile_number: userResponse?.mobile_number,
-  //         is_email_verified: userResponse?.is_email_verified,
-  //         is_tour_completed: userResponse?.is_tour_completed,
-  //         onboarding_step: userResponse?.onboarding_step,
-  //         is_onboarded: userResponse?.is_onboarded,
-  //         role: userResponse?.role,
-  //       };
-  //       runInAction(() => {
-  //         this.currentUser = userPayload;
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.error("Fetching current user error", error);
-  //   }
-  // };
-
-  // setCurrentUserSettings = async () => {
-  //   try {
-  //     let userSettingsResponse: ICurrentUserSettings | null = await UserService.currentUser();
-  //     userSettingsResponse = userSettingsResponse || null;
-
-  //     if (userSettingsResponse) {
-  //       const themePayload = {
-  //         theme: { ...userSettingsResponse?.theme },
-  //       };
-  //       runInAction(() => {
-  //         this.currentUserSettings = themePayload;
-  //         this.rootStore.theme.setTheme(themePayload);
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.error("Fetching current user error", error);
-  //   }
-  // };
-
-  // updateCurrentUser = async (user: ICurrentUser) => {
-  //   try {
-  //     let userResponse: ICurrentUser = await UserService.updateUser(user);
-  //     userResponse = userResponse || null;
-
-  //     if (userResponse) {
-  //       const userPayload: ICurrentUser = {
-  //         id: userResponse?.id,
-  //         avatar: userResponse?.avatar,
-  //         first_name: userResponse?.first_name,
-  //         last_name: userResponse?.last_name,
-  //         username: userResponse?.username,
-  //         email: userResponse?.email,
-  //         mobile_number: userResponse?.mobile_number,
-  //         is_email_verified: userResponse?.is_email_verified,
-  //         is_tour_completed: userResponse?.is_tour_completed,
-  //         onboarding_step: userResponse?.onboarding_step,
-  //         is_onboarded: userResponse?.is_onboarded,
-  //         role: userResponse?.role,
-  //       };
-  //       runInAction(() => {
-  //         this.currentUser = userPayload;
-  //       });
-  //       return userPayload;
-  //     }
-  //   } catch (error) {
-  //     console.error("Updating user error", error);
-  //     return error;
-  //   }
-  // };
-
-  // updateCurrentUserSettings = async (userTheme: ICurrentUserSettings) => {
-  //   try {
-  //     let userSettingsResponse: ICurrentUserSettings = await UserService.updateUser(userTheme);
-  //     userSettingsResponse = userSettingsResponse || null;
-  //     if (userSettingsResponse) {
-  //       const themePayload = {
-  //         theme: { ...userSettingsResponse?.theme },
-  //       };
-  //       runInAction(() => {
-  //         this.currentUserSettings = themePayload;
-  //         this.rootStore.theme.setTheme(themePayload);
-  //       });
-  //       return themePayload;
-  //     }
-  //   } catch (error) {
-  //     console.error("Updating user settings error", error);
-  //     return error;
-  //   }
-  // };
-
-  // init load
-  initialLoad() {}
+  updateCurrentUserTheme = async (theme: string) => {
+    try {
+      runInAction(() => {
+        this.currentUser = {
+          ...this.currentUser,
+          theme: {
+            ...this.currentUser?.theme,
+            theme,
+          },
+        } as IUser;
+      });
+      const response = await this.userService.updateUser({
+        theme: { ...this.currentUser?.theme, theme },
+      } as IUser);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
 }
 
 export default UserStore;
