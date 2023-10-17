@@ -220,7 +220,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
                                 }
                               >
                                 <div className="flex items-center gap-1 w-full px-1">
-                                  <div className="flex-shrink-0 w-[18px] h-[18px] rounded-sm flex justify-center items-center text-white capitalize relative overflow-hidden">
+                                  <div className="flex-shrink-0 w-4 h-4 rounded-sm flex justify-center items-center text-white capitalize relative overflow-hidden">
                                     {option && option.avatar ? (
                                       <img
                                         src={option.avatar}

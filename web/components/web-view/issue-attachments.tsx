@@ -189,7 +189,7 @@ export const IssueAttachments: React.FC<Props> = (props) => {
                   setAttachmentDeleteModal(true);
                 }}
               >
-                <X className="w-[18px] h-[18px] text-custom-text-400" />
+                <X className="w-4 h-4 text-custom-text-400" />
               </button>
             )}
           </div>
