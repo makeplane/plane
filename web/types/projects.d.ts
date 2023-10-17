@@ -33,6 +33,7 @@ export interface IProject {
   is_favorite: boolean;
   is_member: boolean;
   member_role: 5 | 10 | 15 | 20 | null;
+  members: IProjectMemberLite[];
   issue_views_view: boolean;
   module_view: boolean;
   name: string;
@@ -61,6 +62,13 @@ type ProjectPreferences = {
     block_display: boolean;
   };
 };
+
+export interface IProjectMemberLite {
+  id: string;
+  member__avatar: string;
+  member__display_name: string;
+  member_id: string;
+}
 
 export interface IProjectMember {
   id: string;
