@@ -32,65 +32,39 @@ class IntegrationViewSet(BaseViewSet):
     model = Integration
 
     def create(self, request):
-        try:
-            serializer = IntegrationSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        serializer = IntegrationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, pk):
-        try:
-            integration = Integration.objects.get(pk=pk)
-            if integration.verified:
-                return Response(
-                    {"error": "Verified integrations cannot be updated"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            serializer = IntegrationSerializer(
-                integration, data=request.data, partial=True
-            )
-
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        except Integration.DoesNotExist:
+        integration = Integration.objects.get(pk=pk)
+        if integration.verified:
             return Response(
-                {"error": "Integration Does not exist"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
+                {"error": "Verified integrations cannot be updated"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def destroy(self, request, pk):
-        try:
-            integration = Integration.objects.get(pk=pk)
-            if integration.verified:
-                return Response(
-                    {"error": "Verified integrations cannot be updated"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+        serializer = IntegrationSerializer(
+            integration, data=request.data, partial=True
+        )
 
-            integration.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except Integration.DoesNotExist:
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, pk):
+        integration = Integration.objects.get(pk=pk)
+        if integration.verified:
             return Response(
-                {"error": "Integration Does not exist"},
-                status=status.HTTP_404_NOT_FOUND,
+                {"error": "Verified integrations cannot be updated"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
+
+        integration.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class WorkspaceIntegrationViewSet(BaseViewSet):

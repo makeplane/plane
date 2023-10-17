@@ -1164,31 +1164,24 @@ class IssueSubscriberViewSet(BaseViewSet):
         )
 
     def list(self, request, slug, project_id, issue_id):
-        try:
-            members = (
-                ProjectMember.objects.filter(
-                    workspace__slug=slug, project_id=project_id
-                )
-                .annotate(
-                    is_subscribed=Exists(
-                        IssueSubscriber.objects.filter(
-                            workspace__slug=slug,
-                            project_id=project_id,
-                            issue_id=issue_id,
-                            subscriber=OuterRef("member"),
-                        )
+        members = (
+            ProjectMember.objects.filter(
+                workspace__slug=slug, project_id=project_id
+            )
+            .annotate(
+                is_subscribed=Exists(
+                    IssueSubscriber.objects.filter(
+                        workspace__slug=slug,
+                        project_id=project_id,
+                        issue_id=issue_id,
+                        subscriber=OuterRef("member"),
                     )
                 )
-                .select_related("member")
             )
-            serializer = ProjectMemberLiteSerializer(members, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": e},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            .select_related("member")
+        )
+        serializer = ProjectMemberLiteSerializer(members, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, slug, project_id, issue_id, subscriber_id):
         issue_subscriber = IssueSubscriber.objects.get(
@@ -1219,7 +1212,8 @@ class IssueSubscriberViewSet(BaseViewSet):
             subscriber_id=request.user.id,
             project_id=project_id,
         )
-        serilaizer = IssueSubscriberSerializer(subscriber)
+        serializer = IssueSubscriberSerializer(subscriber)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def unsubscribe(self, request, slug, project_id, issue_id):
         issue_subscriber = IssueSubscriber.objects.get(
@@ -2185,38 +2179,32 @@ class IssueDraftViewSet(BaseViewSet):
         return Response(issues, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id):
-        try:
-            project = Project.objects.get(pk=project_id)
+        project = Project.objects.get(pk=project_id)
 
-            serializer = IssueCreateSerializer(
-                data=request.data,
-                context={
-                    "project_id": project_id,
-                    "workspace_id": project.workspace_id,
-                    "default_assignee_id": project.default_assignee_id,
-                },
+        serializer = IssueCreateSerializer(
+            data=request.data,
+            context={
+                "project_id": project_id,
+                "workspace_id": project.workspace_id,
+                "default_assignee_id": project.default_assignee_id,
+            },
+        )
+
+        if serializer.is_valid():
+            serializer.save(is_draft=True)
+
+            # Track the issue
+            issue_activity.delay(
+                type="issue_draft.activity.created",
+                requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
+                actor_id=str(request.user.id),
+                issue_id=str(serializer.data.get("id", None)),
+                project_id=str(project_id),
+                current_instance=None,
+                epoch=int(timezone.now().timestamp()),
             )
-
-            if serializer.is_valid():
-                serializer.save(is_draft=True)
-
-                # Track the issue
-                issue_activity.delay(
-                    type="issue_draft.activity.created",
-                    requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
-                    actor_id=str(request.user.id),
-                    issue_id=str(serializer.data.get("id", None)),
-                    project_id=str(project_id),
-                    current_instance=None,
-                    epoch=int(timezone.now().timestamp()),
-                )
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        except Project.DoesNotExist:
-            return Response(
-                {"error": "Project was not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, slug, project_id, pk):
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
@@ -2245,15 +2233,10 @@ class IssueDraftViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, slug, project_id, pk=None):
-        try:
-            issue = Issue.objects.get(
-                workspace__slug=slug, project_id=project_id, pk=pk, is_draft=True
-            )
-            return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
-        except Issue.DoesNotExist:
-            return Response(
-                {"error": "Issue Does not exist"}, status=status.HTTP_404_NOT_FOUND
-            )
+        issue = Issue.objects.get(
+            workspace__slug=slug, project_id=project_id, pk=pk, is_draft=True
+        )
+        return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
 
     def destroy(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)

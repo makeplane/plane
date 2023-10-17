@@ -965,30 +965,26 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
     ]
 
     def get(self, request):
-        try:
-            files = []
-            s3 = boto3.client(
-                "s3",
-                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-            )
-            params = {
-                "Bucket": settings.AWS_S3_BUCKET_NAME,
-                "Prefix": "static/project-cover/",
-            }
+        files = []
+        s3 = boto3.client(
+            "s3",
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        )
+        params = {
+            "Bucket": settings.AWS_S3_BUCKET_NAME,
+            "Prefix": "static/project-cover/",
+        }
 
-            response = s3.list_objects_v2(**params)
-            # Extracting file keys from the response
-            if "Contents" in response:
-                for content in response["Contents"]:
-                    if not content["Key"].endswith(
-                        "/"
-                    ):  # This line ensures we're only getting files, not "sub-folders"
-                        files.append(
-                            f"https://{settings.AWS_S3_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{content['Key']}"
-                        )
+        response = s3.list_objects_v2(**params)
+        # Extracting file keys from the response
+        if "Contents" in response:
+            for content in response["Contents"]:
+                if not content["Key"].endswith(
+                    "/"
+                ):  # This line ensures we're only getting files, not "sub-folders"
+                    files.append(
+                        f"https://{settings.AWS_S3_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{content['Key']}"
+                    )
 
-            return Response(files, status=status.HTTP_200_OK)
-        except Exception as e:
-            capture_exception(e)
-            return Response([], status=status.HTTP_200_OK)
+        return Response(files, status=status.HTTP_200_OK)

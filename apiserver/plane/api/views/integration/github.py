@@ -30,30 +30,24 @@ class GithubRepositoriesEndpoint(BaseAPIView):
     ]
 
     def get(self, request, slug, workspace_integration_id):
-        try:
-            page = request.GET.get("page", 1)
-            workspace_integration = WorkspaceIntegration.objects.get(
-                workspace__slug=slug, pk=workspace_integration_id
-            )
+        page = request.GET.get("page", 1)
+        workspace_integration = WorkspaceIntegration.objects.get(
+            workspace__slug=slug, pk=workspace_integration_id
+        )
 
-            if workspace_integration.integration.provider != "github":
-                return Response(
-                    {"error": "Not a github integration"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            access_tokens_url = workspace_integration.metadata["access_tokens_url"]
-            repositories_url = (
-                workspace_integration.metadata["repositories_url"]
-                + f"?per_page=100&page={page}"
-            )
-            repositories = get_github_repos(access_tokens_url, repositories_url)
-            return Response(repositories, status=status.HTTP_200_OK)
-        except WorkspaceIntegration.DoesNotExist:
+        if workspace_integration.integration.provider != "github":
             return Response(
-                {"error": "Workspace Integration Does not exists"},
+                {"error": "Not a github integration"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        access_tokens_url = workspace_integration.metadata["access_tokens_url"]
+        repositories_url = (
+            workspace_integration.metadata["repositories_url"]
+            + f"?per_page=100&page={page}"
+        )
+        repositories = get_github_repos(access_tokens_url, repositories_url)
+        return Response(repositories, status=status.HTTP_200_OK)
 
 
 class GithubRepositorySyncViewSet(BaseViewSet):
