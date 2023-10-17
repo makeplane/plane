@@ -97,7 +97,11 @@ export const CycleSelect: React.FC<Props> = (props) => {
 
   return (
     <>
-      <WebViewModal isOpen={isBottomSheetOpen} onClose={() => setIsBottomSheetOpen(false)} modalTitle="Select Module">
+      <WebViewModal
+        isOpen={isBottomSheetOpen}
+        onClose={() => setIsBottomSheetOpen(false)}
+        modalTitle="Select Cycle"
+      >
         <WebViewModal.Options
           options={[
             ...(incompleteCycles ?? []).map((cycle) => ({

@@ -9,8 +9,8 @@ import useSWR from "swr";
 import { Tooltip } from "@plane/ui";
 import { DeleteAttachmentModal } from "./delete-attachment-modal";
 // icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import { ExclamationIcon, getFileIcon } from "components/icons";
+import { getFileIcon } from "components/icons";
+import { AlertCircle, X } from "lucide-react";
 // services
 import { IssueAttachmentService } from "services/issue";
 import { ProjectService } from "services/project";
@@ -77,7 +77,7 @@ export const IssueAttachments = () => {
                         } uploaded on ${renderLongDateFormat(file.updated_at)}`}
                       >
                         <span>
-                          <ExclamationIcon className="h-3 w-3 fill-current" />
+                          <AlertCircle className="h-3 w-3" />
                         </span>
                       </Tooltip>
                     </div>
@@ -97,7 +97,7 @@ export const IssueAttachments = () => {
                 setAttachmentDeleteModal(true);
               }}
             >
-              <XMarkIcon className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" />
+              <X className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" />
             </button>
           </div>
         ))}

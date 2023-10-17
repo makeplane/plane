@@ -19,10 +19,10 @@ import SendProjectInvitationModal from "components/project/send-project-invitati
 import { MemberSelect, SettingsSidebar } from "components/project";
 // ui
 import { Button, Loader } from "@plane/ui";
-import { CustomMenu, CustomSelect, Icon } from "components/ui";
+import { CustomMenu, CustomSelect } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { ChevronDown, X } from "lucide-react";
 // types
 import type { NextPage } from "next";
 import { IProject, IUserLite, IWorkspace } from "types";
@@ -379,9 +379,7 @@ const MembersSettings: NextPage = () => {
                               >
                                 {ROLE[member.role as keyof typeof ROLE]}
                               </span>
-                              {member.memberId !== user?.id && (
-                                <Icon iconName="expand_more" className="text-lg font-medium" />
-                              )}
+                              {member.memberId !== user?.id && <ChevronDown className="h-4 w-4" />}
                             </div>
                           }
                           value={member.role}
@@ -430,7 +428,7 @@ const MembersSettings: NextPage = () => {
                             }}
                           >
                             <span className="flex items-center justify-start gap-2">
-                              <XMarkIcon className="h-4 w-4" />
+                              <X className="h-4 w-4" />
 
                               <span> {member.memberId !== user?.id ? "Remove member" : "Leave project"}</span>
                             </span>

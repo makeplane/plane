@@ -18,13 +18,22 @@ import {
   SpreadsheetStateColumn,
   SpreadsheetUpdatedOnColumn,
 } from "components/core";
-import { CustomMenu, Icon } from "components/ui";
+import { CustomMenu } from "components/ui";
 import { IssuePeekOverview } from "components/issues";
 import { Spinner } from "@plane/ui";
 // types
 import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueOrderByOptions } from "types";
 // icon
-import { CheckIcon, ChevronDownIcon, PlusIcon } from "lucide-react";
+import {
+  ArrowDownWideNarrow,
+  ArrowUpNarrowWide,
+  CheckIcon,
+  ChevronDownIcon,
+  Eraser,
+  ListFilter,
+  MoveRight,
+  PlusIcon,
+} from "lucide-react";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -98,11 +107,8 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
               }`}
             >
               {activeSortingProperty === propertyName && (
-                <div className="absolute top-1 right-1.5">
-                  <Icon
-                    iconName="filter_list"
-                    className="flex items-center justify-center h-3.5 w-3.5 rounded-full bg-custom-primary text-xs text-white"
-                  />
+                <div className="absolute top-1 right-1.5 bg-custom-primary rounded-full flex items-center justify-center h-3.5 w-3.5">
+                  <ListFilter className="h-3 w-3 text-white" />
                 </div>
               )}
 
@@ -127,32 +133,23 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
               <div className="flex gap-2 items-center">
                 {propertyName === "assignee" || propertyName === "labels" ? (
                   <>
-                    <span className="relative flex items-center h-6 w-6">
-                      <Icon iconName="east" className="absolute left-0 rotate-90 text-xs leading-3" />
-                      <Icon iconName="sort" className="absolute right-0 text-sm" />
-                    </span>
+                    <ArrowDownWideNarrow className="h-4 w-4 stroke-[1.5]" />
                     <span>A</span>
-                    <Icon iconName="east" className="text-sm" />
+                    <MoveRight className="h-3.5 w-3.5" />
                     <span>Z</span>
                   </>
                 ) : propertyName === "due_date" || propertyName === "created_on" || propertyName === "updated_on" ? (
                   <>
-                    <span className="relative flex items-center h-6 w-6">
-                      <Icon iconName="east" className="absolute left-0 rotate-90 text-xs leading-3" />
-                      <Icon iconName="sort" className="absolute right-0 text-sm" />
-                    </span>
+                    <ArrowDownWideNarrow className="h-4 w-4 stroke-[1.5]" />
                     <span>New</span>
-                    <Icon iconName="east" className="text-sm" />
+                    <MoveRight className="h-3.5 w-3.5" />
                     <span>Old</span>
                   </>
                 ) : (
                   <>
-                    <span className="relative flex items-center h-6 w-6">
-                      <Icon iconName="east" className="absolute left-0 rotate-90 text-xs leading-3" />
-                      <Icon iconName="sort" className="absolute right-0 text-sm" />
-                    </span>
+                    <ArrowDownWideNarrow className="h-4 w-4 stroke-[1.5]" />
                     <span>First</span>
-                    <Icon iconName="east" className="text-sm" />
+                    <MoveRight className="h-3.5 w-3.5" />
                     <span>Last</span>
                   </>
                 )}
@@ -184,32 +181,23 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
               <div className="flex gap-2 items-center">
                 {propertyName === "assignee" || propertyName === "labels" ? (
                   <>
-                    <span className="relative flex items-center h-6 w-6">
-                      <Icon iconName="east" className="absolute left-0 -rotate-90 text-xs leading-3" />
-                      <Icon iconName="sort" className="absolute rotate-180 transform scale-x-[-1] right-0 text-sm" />
-                    </span>
+                    <ArrowUpNarrowWide className="h-4 w-4 stroke-[1.5]" />
                     <span>Z</span>
-                    <Icon iconName="east" className="text-sm" />
+                    <MoveRight className="h-3.5 w-3.5" />
                     <span>A</span>
                   </>
                 ) : propertyName === "due_date" ? (
                   <>
-                    <span className="relative flex items-center h-6 w-6">
-                      <Icon iconName="east" className="absolute left-0 -rotate-90 text-xs leading-3" />
-                      <Icon iconName="sort" className="absolute rotate-180 transform scale-x-[-1] right-0 text-sm" />
-                    </span>
+                    <ArrowUpNarrowWide className="h-4 w-4 stroke-[1.5]" />
                     <span>Old</span>
-                    <Icon iconName="east" className="text-sm" />
+                    <MoveRight className="h-3.5 w-3.5" />
                     <span>New</span>
                   </>
                 ) : (
                   <>
-                    <span className="relative flex items-center h-6 w-6">
-                      <Icon iconName="east" className="absolute left-0 -rotate-90 text-xs leading-3" />
-                      <Icon iconName="sort" className="absolute rotate-180 transform scale-x-[-1] right-0 text-sm" />
-                    </span>
+                    <ArrowUpNarrowWide className="h-4 w-4 stroke-[1.5]" />
                     <span>Last</span>
-                    <Icon iconName="east" className="text-sm" />
+                    <MoveRight className="h-3.5 w-3.5" />
                     <span>First</span>
                   </>
                 )}
@@ -238,7 +226,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                 <div className={`group flex gap-1.5 px-1 items-center justify-between `}>
                   <div className="flex gap-1.5 items-center">
                     <span className="relative flex items-center justify-center h-6 w-6">
-                      <Icon iconName="ink_eraser" className="text-sm" />
+                      <Eraser className="h-3.5 w-3.5" />
                     </span>
 
                     <span>Clear sorting</span>

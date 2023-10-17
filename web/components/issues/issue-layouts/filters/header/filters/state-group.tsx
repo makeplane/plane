@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 // components
 import { FilterHeader, FilterOption } from "components/issues";
 // icons
-import { StateGroupIcon } from "components/icons";
+import { StateGroupIcon } from "@plane/ui";
 // constants
 import { ISSUE_STATE_GROUPS } from "constants/issue";
 

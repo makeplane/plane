@@ -8,9 +8,8 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // icons
-import { Bolt, HelpOutlineOutlined, WestOutlined } from "@mui/icons-material";
-import { DiscordIcon } from "components/icons";
-import { FileText, Github, MessagesSquare } from "lucide-react";
+import { FileText, HelpCircle, MessagesSquare, MoveLeft, Zap } from "lucide-react";
+import { DiscordIcon, GithubIcon } from "@plane/ui";
 // assets
 import packageJson from "package.json";
 
@@ -28,7 +27,7 @@ const helpOptions = [
   {
     name: "Report a bug",
     href: "https://github.com/makeplane/plane/issues/new/choose",
-    Icon: Github,
+    Icon: GithubIcon,
   },
   {
     name: "Chat with us",
@@ -81,7 +80,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
               document.dispatchEvent(e);
             }}
           >
-            <Bolt fontSize="small" />
+            <Zap className="h-3.5 w-3.5" />
           </button>
           <button
             type="button"
@@ -90,14 +89,14 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
             }`}
             onClick={() => setIsNeedHelpOpen((prev) => !prev)}
           >
-            <HelpOutlineOutlined fontSize="small" />
+            <HelpCircle className="h-3.5 w-3.5" />
           </button>
           <button
             type="button"
             className="grid place-items-center rounded-md p-1.5 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-90 outline-none md:hidden"
             onClick={() => themeStore.setSidebarCollapsed(!themeStore?.sidebarCollapsed)}
           >
-            <WestOutlined fontSize="small" />
+            <MoveLeft className="h-3.5 w-3.5" />
           </button>
           <button
             type="button"
@@ -106,10 +105,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
             }`}
             onClick={() => themeStore.setSidebarCollapsed(!themeStore?.sidebarCollapsed)}
           >
-            <WestOutlined
-              fontSize="small"
-              className={`duration-300 ${themeStore?.sidebarCollapsed ? "rotate-180" : ""}`}
-            />
+            <MoveLeft className={`h-3.5 w-3.5 duration-300 ${themeStore?.sidebarCollapsed ? "rotate-180" : ""}`} />
           </button>
         </div>
 

@@ -1,3 +1,5 @@
+import { GanttChart, Kanban, List } from "lucide-react";
+
 export const CYCLE_TAB_LIST = [
   {
     key: "all",
@@ -24,14 +26,14 @@ export const CYCLE_TAB_LIST = [
 export const CYCLE_VIEWS = [
   {
     key: "list",
-    icon: "list",
+    icon: <List className="h-4 w-4" />,
   },
   {
     key: "board",
-    icon: "dataset",
+    icon: <Kanban className="h-4 w-4" />,
   },
   {
     key: "gantt",
-    icon: "view_timeline",
+    icon: <GanttChart className="h-4 w-4" />,
   },
 ];

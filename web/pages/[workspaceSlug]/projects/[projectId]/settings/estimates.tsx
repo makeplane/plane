@@ -18,7 +18,7 @@ import { Button, Loader } from "@plane/ui";
 import { EmptyState } from "components/common";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Plus } from "lucide-react";
 // images
 import emptyEstimate from "public/empty-state/estimate.svg";
 // types
@@ -168,7 +168,7 @@ const EstimatesSettings: NextPage = () => {
                     description="Estimates help you communicate the complexity of an issue."
                     image={emptyEstimate}
                     primaryButton={{
-                      icon: <PlusIcon className="h-4 w-4" />,
+                      icon: <Plus className="h-4 w-4" />,
                       text: "Add Estimate",
                       onClick: () => {
                         setEstimateToUpdate(undefined);

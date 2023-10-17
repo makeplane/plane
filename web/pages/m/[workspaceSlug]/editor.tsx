@@ -54,26 +54,25 @@ const Editor: NextPage = () => {
           <Controller
             name="data_html"
             control={control}
-            render={({ field: { value, onChange } }) => (
-              <RichTextEditor
-                uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                deleteFile={fileService.deleteImage}
-                borderOnFocus={false}
-                value={
-                  !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
-                    ? watch("data_html")
-                    : value
-                }
-                noBorder={true}
-                customClassName="h-full shadow-sm overflow-auto"
-                editorContentCustomClassNames="pb-9"
-                onChange={(description: Object, description_html: string) => {
-                  onChange(description_html);
-                  setValue("data_html", description_html);
-                  setValue("data", JSON.stringify(description));
-                }}
-              />
-            )}
+            render={({ field: { value, onChange } }) => {
+              if (value == null) return <></>;
+              return (
+                <RichTextEditor
+                  uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                  deleteFile={fileService.deleteImage}
+                  borderOnFocus={false}
+                  value={!value || value === "" ? "<p></p>" : value}
+                  noBorder={true}
+                  customClassName="h-full shadow-sm overflow-auto"
+                  editorContentCustomClassNames="pb-9"
+                  onChange={(description: Object, description_html: string) => {
+                    onChange(description_html);
+                    setValue("data_html", description_html);
+                    setValue("data", JSON.stringify(description));
+                  }}
+                />
+              );
+            }}
           />
           {isEditable && (
             <Button

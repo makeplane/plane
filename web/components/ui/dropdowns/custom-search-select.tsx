@@ -5,8 +5,7 @@ import { usePopper } from "react-popper";
 // headless ui
 import { Combobox } from "@headlessui/react";
 // icons
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { CheckIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { Check, ChevronDown, Search } from "lucide-react";
 // types
 import { DropdownProps } from "./types";
 
@@ -103,7 +102,7 @@ export const CustomSearchSelect = ({
                   } ${buttonClassName}`}
                 >
                   {label}
-                  {!noChevron && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
+                  {!noChevron && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
                 </button>
               </Combobox.Button>
             )}
@@ -117,7 +116,7 @@ export const CustomSearchSelect = ({
                 {...attributes.popper}
               >
                 <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] border-custom-border-200 bg-custom-background-90 px-2">
-                  <MagnifyingGlassIcon className="h-3 w-3 text-custom-text-200" />
+                  <Search className="h-3 w-3 text-custom-text-200" />
                   <Combobox.Input
                     className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                     value={query}
@@ -160,10 +159,10 @@ export const CustomSearchSelect = ({
                                     active || selected ? "opacity-100" : "opacity-0"
                                   }`}
                                 >
-                                  <CheckIcon className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
+                                  <Check className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
                                 </div>
                               ) : (
-                                <CheckIcon className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
+                                <Check className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
                               )}
                             </>
                           )}

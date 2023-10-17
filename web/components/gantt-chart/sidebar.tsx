@@ -7,7 +7,7 @@ import { useChart } from "./hooks";
 // ui
 import { Loader } from "@plane/ui";
 // icons
-import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
+import { MoreVertical } from "lucide-react";
 // helpers
 import { findTotalDaysInRange } from "helpers/date-time.helper";
 // types
@@ -124,8 +124,8 @@ export const GanttSidebar: React.FC<Props> = (props) => {
                                 className="rounded p-0.5 text-custom-sidebar-text-200 flex flex-shrink-0 opacity-0 group-hover:opacity-100"
                                 {...provided.dragHandleProps}
                               >
-                                <EllipsisVerticalIcon className="h-4" />
-                                <EllipsisVerticalIcon className="h-4 -ml-5" />
+                                <MoreVertical className="h-4" />
+                                <MoreVertical className="h-4 -ml-5" />
                               </button>
                             )}
                             <div className="flex-grow truncate h-full flex items-center justify-between gap-2">

@@ -1,7 +1,7 @@
 // ui
 import { CustomMenu } from "components/ui";
 // icons
-import { TrashIcon } from "@heroicons/react/24/outline";
+import { Trash2 } from "lucide-react";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
@@ -48,7 +48,7 @@ export const SingleImport: React.FC<Props> = ({ service, refreshing, handleDelet
     <CustomMenu ellipsis>
       <CustomMenu.MenuItem onClick={handleDelete}>
         <span className="flex items-center justify-start gap-2">
-          <TrashIcon className="h-3.5 w-3.5" />
+          <Trash2 className="h-3.5 w-3.5" />
           Delete import
         </span>
       </CustomMenu.MenuItem>

@@ -3,7 +3,7 @@ import React from "react";
 // ui
 import { CustomSelect } from "components/ui";
 // icons
-import { PriorityIcon } from "components/icons/priority-icon";
+import { PriorityIcon } from "@plane/ui";
 // types
 import { TIssuePriorities } from "types";
 // constants
@@ -20,14 +20,9 @@ export const IssuePrioritySelect: React.FC<Props> = ({ value, onChange }) => (
     label={
       <div className="flex items-center justify-center gap-2 text-xs">
         <span className="flex items-center">
-          <PriorityIcon
-            priority={value}
-            className={`text-xs ${value ? "" : "text-custom-text-200"}`}
-          />
+          <PriorityIcon priority={value} className={`h-3.5 w-3.5 ${value ? "" : "text-custom-text-200"}`} />
         </span>
-        <span className={`${value ? "" : "text-custom-text-200"} capitalize`}>
-          {value ?? "Priority"}
-        </span>
+        <span className={`${value ? "" : "text-custom-text-200"} capitalize`}>{value ?? "Priority"}</span>
       </div>
     }
     onChange={onChange}

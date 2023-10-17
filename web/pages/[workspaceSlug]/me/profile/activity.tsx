@@ -9,11 +9,10 @@ import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 import { ActivityIcon, ActivityMessage } from "components/core";
 import { RichReadOnlyEditor } from "@plane/rich-text-editor";
 // icons
-import { ArrowTopRightOnSquareIcon, ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
+import { History, MessageSquare } from "lucide-react";
 // ui
-import { Icon } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-import { Loader } from "@plane/ui";
+import { ExternalLinkIcon, Loader } from "@plane/ui";
 // fetch-keys
 import { USER_ACTIVITY } from "constants/fetch-keys";
 // helper
@@ -59,7 +58,7 @@ const ProfileActivity = () => {
                           <div className="relative px-1">
                             {activityItem.field ? (
                               activityItem.new_value === "restore" && (
-                                <Icon iconName="history" className="text-sm text-custom-text-200" />
+                                <History className="h-3.5 w-3.5 text-custom-text-200" />
                               )
                             ) : activityItem.actor_detail.avatar && activityItem.actor_detail.avatar !== "" ? (
                               <img
@@ -78,10 +77,7 @@ const ProfileActivity = () => {
                             )}
 
                             <span className="ring-6 flex h-6 w-6 items-center justify-center rounded-full bg-custom-background-80 text-custom-text-200 ring-white">
-                              <ChatBubbleLeftEllipsisIcon
-                                className="h-6 w-6 !text-2xl text-custom-text-200"
-                                aria-hidden="true"
-                              />
+                              <MessageSquare className="h-6 w-6 !text-2xl text-custom-text-200" aria-hidden="true" />
                             </span>
                           </div>
                           <div className="min-w-0 flex-1">
@@ -120,7 +116,7 @@ const ProfileActivity = () => {
                         created{" "}
                         <Link href={`/${workspaceSlug}/projects/${activityItem.project}/issues/${activityItem.issue}`}>
                           <a className="inline-flex items-center hover:underline">
-                            this issue. <ArrowTopRightOnSquareIcon className="ml-1 h-3.5 w-3.5" />
+                            this issue. <ExternalLinkIcon className="ml-1 h-3.5 w-3.5" />
                           </a>
                         </Link>
                       </span>
@@ -142,7 +138,7 @@ const ProfileActivity = () => {
                                     <div className="flex h-6 w-6 items-center justify-center">
                                       {activityItem.field ? (
                                         activityItem.new_value === "restore" ? (
-                                          <Icon iconName="history" className="!text-2xl text-custom-text-200" />
+                                          <History className="h-5 w-5 text-custom-text-200" />
                                         ) : (
                                           <ActivityIcon activity={activityItem} />
                                         )

@@ -7,11 +7,9 @@ import { mutate } from "swr";
 // services
 import { ProjectStateService } from "services/project";
 // ui
-import { Tooltip } from "@plane/ui";
+import { Tooltip, StateGroupIcon } from "@plane/ui";
 // icons
-import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/24/outline";
-import { StateGroupIcon } from "components/icons";
-import { Pencil, X } from "lucide-react";
+import { ArrowDown, ArrowUp, Pencil, X } from "lucide-react";
 
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
@@ -167,7 +165,7 @@ export const SingleState: React.FC<Props> = ({
             className="hidden text-custom-text-200 group-hover:inline-block"
             onClick={() => handleMove(state, "up")}
           >
-            <ArrowUpIcon className="h-4 w-4" />
+            <ArrowUp className="h-4 w-4" />
           </button>
         )}
         {!(index === groupLength - 1) && (
@@ -176,7 +174,7 @@ export const SingleState: React.FC<Props> = ({
             className="hidden text-custom-text-200 group-hover:inline-block"
             onClick={() => handleMove(state, "down")}
           >
-            <ArrowDownIcon className="h-4 w-4" />
+            <ArrowDown className="h-4 w-4" />
           </button>
         )}
 

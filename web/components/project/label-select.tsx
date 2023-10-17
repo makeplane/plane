@@ -13,9 +13,7 @@ import { Combobox } from "@headlessui/react";
 // component
 import { CreateLabelModal } from "components/labels";
 // icons
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { CheckIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { PlusIcon } from "lucide-react";
+import { Check, ChevronDown, PlusIcon, Search } from "lucide-react";
 // types
 import { Tooltip } from "components/ui";
 import { IUser, IIssueLabels } from "types";
@@ -187,7 +185,7 @@ export const LabelSelect: React.FC<Props> = ({
                   }  ${buttonClassName}`}
                 >
                   {label}
-                  {!hideDropdownArrow && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
+                  {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
                 </button>
               </Combobox.Button>
 
@@ -199,7 +197,7 @@ export const LabelSelect: React.FC<Props> = ({
                   {...attributes.popper}
                 >
                   <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
-                    <MagnifyingGlassIcon className="h-3.5 w-3.5 text-custom-text-300" />
+                    <Search className="h-3.5 w-3.5 text-custom-text-300" />
                     <Combobox.Input
                       className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                       value={query}
@@ -224,7 +222,7 @@ export const LabelSelect: React.FC<Props> = ({
                             {({ selected }) => (
                               <>
                                 {option.content}
-                                {selected && <CheckIcon className={`h-3.5 w-3.5`} />}
+                                {selected && <Check className="h-3.5 w-3.5" />}
                               </>
                             )}
                           </Combobox.Option>

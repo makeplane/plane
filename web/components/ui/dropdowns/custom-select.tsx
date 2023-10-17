@@ -5,8 +5,7 @@ import { usePopper } from "react-popper";
 // headless ui
 import { Listbox } from "@headlessui/react";
 // icons
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { CheckIcon } from "@heroicons/react/24/outline";
+import { Check, ChevronDown } from "lucide-react";
 // types
 import { DropdownProps } from "./types";
 
@@ -73,7 +72,7 @@ const CustomSelect = ({
               } ${buttonClassName}`}
             >
               {label}
-              {!noChevron && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
+              {!noChevron && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
             </button>
           </Listbox.Button>
         )}
@@ -120,7 +119,7 @@ const Option: React.FC<OptionProps> = ({ children, value, className }) => (
     {({ selected }) => (
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">{children}</div>
-        {selected && <CheckIcon className="h-4 w-4 flex-shrink-0" />}
+        {selected && <Check className="h-4 w-4 flex-shrink-0" />}
       </div>
     )}
   </Listbox.Option>

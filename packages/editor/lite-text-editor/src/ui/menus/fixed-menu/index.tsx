@@ -1,7 +1,19 @@
 import { Editor } from "@tiptap/react";
-import { BoldIcon } from "lucide-react";
+import { BoldIcon, LucideIcon } from "lucide-react";
 
-import { BoldItem, BulletListItem, cn, CodeItem, ImageItem, ItalicItem, NumberedListItem, QuoteItem, StrikeThroughItem, TableItem, UnderLineItem } from "@plane/editor-core";
+import {
+  BoldItem,
+  BulletListItem,
+  cn,
+  CodeItem,
+  ImageItem,
+  ItalicItem,
+  NumberedListItem,
+  QuoteItem,
+  StrikeThroughItem,
+  TableItem,
+  UnderLineItem,
+} from "@plane/editor-core";
 import { Icon } from "./icon";
 import { Tooltip } from "../../tooltip";
 import { UploadImage } from "../..";
@@ -16,18 +28,22 @@ export interface BubbleMenuItem {
 type EditorBubbleMenuProps = {
   editor: Editor;
   commentAccessSpecifier?: {
-    accessValue: string,
-    onAccessChange: (accessKey: string) => void,
-    showAccessSpecifier: boolean,
-    commentAccess: {
-      icon: string;
-      key: string;
-      label: "Private" | "Public";
-    }[] | undefined;
-  }
+    accessValue: string;
+    onAccessChange: (accessKey: string) => void;
+    showAccessSpecifier: boolean;
+    commentAccess:
+      | {
+          icon: any;
+          key: string;
+          label: "Private" | "Public";
+        }[]
+      | undefined;
+  };
   uploadFile: UploadImage;
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
-}
+  setIsSubmitting?: (
+    isSubmitting: "submitting" | "submitted" | "saved"
+  ) => void;
+};
 
 export const FixedMenu = (props: EditorBubbleMenuProps) => {
   const basicMarkItems: BubbleMenuItem[] = [
@@ -56,31 +72,33 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
     props.commentAccessSpecifier?.onAccessChange(accessKey);
   };
 
-
   return (
-    <div
-      className="flex w-fit divide-x divide-custom-border-300 rounded border border-custom-border-300 bg-custom-background-100 shadow-xl"
-    >
-      {props.commentAccessSpecifier && (<div className="flex border border-custom-border-300 mt-0 divide-x divide-custom-border-300 rounded overflow-hidden">
-        {props?.commentAccessSpecifier.commentAccess?.map((access) => (
-          <Tooltip key={access.key} tooltipContent={access.label}>
-            <button
-              type="button"
-              onClick={() => handleAccessChange(access.key)}
-              className={`grid place-basicMarkItems-center p-1 hover:bg-custom-background-80 ${props.commentAccessSpecifier?.accessValue === access.key ? "bg-custom-background-80" : ""
+    <div className="flex w-fit divide-x divide-custom-border-300 rounded border border-custom-border-300 bg-custom-background-100 shadow-xl">
+      {props.commentAccessSpecifier && (
+        <div className="flex border border-custom-border-300 mt-0 divide-x divide-custom-border-300 rounded overflow-hidden">
+          {props?.commentAccessSpecifier.commentAccess?.map((access) => (
+            <Tooltip key={access.key} tooltipContent={access.label}>
+              <button
+                type="button"
+                onClick={() => handleAccessChange(access.key)}
+                className={`grid place-basicMarkItems-center p-1 hover:bg-custom-background-80 ${
+                  props.commentAccessSpecifier?.accessValue === access.key
+                    ? "bg-custom-background-80"
+                    : ""
                 }`}
-            >
-              <Icon
-                iconName={access.icon}
-                className={`w-4 h-4 ${props.commentAccessSpecifier?.accessValue === access.key
-                  ? "!text-custom-text-100"
-                  : "!text-custom-text-400"
+              >
+                <access.icon
+                  className={`w-4 h-4 ${
+                    props.commentAccessSpecifier?.accessValue === access.key
+                      ? "!text-custom-text-100"
+                      : "!text-custom-text-400"
                   }`}
-              />
-            </button>
-          </Tooltip>
-        ))}
-      </div>)}
+                />
+              </button>
+            </Tooltip>
+          ))}
+        </div>
+      )}
       <div className="flex">
         {basicMarkItems.map((item, index) => (
           <button

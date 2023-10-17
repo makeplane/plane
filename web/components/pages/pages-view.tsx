@@ -15,7 +15,7 @@ import { CreateUpdatePageModal, DeletePageModal, SinglePageDetailedItem, SingleP
 import { EmptyState } from "components/common";
 import { Loader } from "@plane/ui";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Plus } from "lucide-react";
 // images
 import emptyPage from "public/empty-state/page.svg";
 // types
@@ -255,7 +255,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
               description="You can think of Pages as an AI-powered notepad."
               image={emptyPage}
               primaryButton={{
-                icon: <PlusIcon className="h-4 w-4" />,
+                icon: <Plus className="h-4 w-4" />,
                 text: "New Page",
                 onClick: () => {
                   const e = new KeyboardEvent("keydown", {

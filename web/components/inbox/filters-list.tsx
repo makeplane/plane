@@ -4,8 +4,8 @@ import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import { PriorityIcon } from "components/icons";
+import { X } from "lucide-react";
+import { PriorityIcon } from "@plane/ui";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
@@ -97,7 +97,7 @@ export const InboxFiltersList = observer(() => {
                               })
                             }
                           >
-                            <XMarkIcon className="h-3 w-3" />
+                            <X className="h-3 w-3" />
                           </button>
                         </div>
                       ))}
@@ -109,7 +109,7 @@ export const InboxFiltersList = observer(() => {
                           })
                         }
                       >
-                        <XMarkIcon className="h-3 w-3" />
+                        <X className="h-3 w-3" />
                       </button>
                     </div>
                   ) : filterKey === "inbox_status" ? (
@@ -129,7 +129,7 @@ export const InboxFiltersList = observer(() => {
                               })
                             }
                           >
-                            <XMarkIcon className="h-3 w-3" />
+                            <X className="h-3 w-3" />
                           </button>
                         </div>
                       ))}
@@ -141,7 +141,7 @@ export const InboxFiltersList = observer(() => {
                           })
                         }
                       >
-                        <XMarkIcon className="h-3 w-3" />
+                        <X className="h-3 w-3" />
                       </button>
                     </div>
                   ) : (
@@ -158,7 +158,7 @@ export const InboxFiltersList = observer(() => {
         className="flex items-center gap-x-1 rounded-full border border-custom-border-200 bg-custom-background-80 px-3 py-1.5 text-custom-text-200 hover:text-custom-text-100"
       >
         <span>Clear all</span>
-        <XMarkIcon className="h-3 w-3" />
+        <X className="h-3 w-3" />
       </button>
     </div>
   );

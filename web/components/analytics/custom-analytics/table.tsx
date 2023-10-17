@@ -1,7 +1,7 @@
 import { BarDatum } from "@nivo/bar";
 
 // icons
-import { PriorityIcon } from "components/icons";
+import { PriorityIcon } from "@plane/ui";
 // helpers
 import { generateBarColor, generateDisplayName } from "helpers/analytics.helper";
 // types

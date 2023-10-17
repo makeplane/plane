@@ -11,8 +11,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Button } from "@plane/ui";
 import { Avatar, CustomSearchSelect, CustomSelect } from "components/ui";
 //icons
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { ChevronDown, Plus, X } from "lucide-react";
 // services
 import { ProjectService } from "services/project";
 import { WorkspaceService } from "services/workspace.service";
@@ -205,7 +204,7 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
                                       ) : (
                                         <div className="flex items-center gap-2 py-0.5">Select co-worker</div>
                                       )}
-                                      <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+                                      <ChevronDown className="h-3 w-3" aria-hidden="true" />
                                     </button>
                                   }
                                   onChange={(val: string) => {
@@ -237,7 +236,7 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
                                         <span className="capitalize">
                                           {field.value ? ROLE[field.value] : "Select role"}
                                         </span>
-                                        <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+                                        <ChevronDown className="h-3 w-3" aria-hidden="true" />
                                       </div>
                                     }
                                     input
@@ -268,7 +267,7 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
                                   className="self-center place-items-center rounded"
                                   onClick={() => remove(index)}
                                 >
-                                  <XMarkIcon className="h-4 w-4 text-custom-text-200" />
+                                  <X className="h-4 w-4 text-custom-text-200" />
                                 </button>
                               )}
                             </div>
@@ -284,7 +283,7 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
                       className="flex items-center gap-2 outline-custom-primary bg-transparent text-custom-primary text-sm font-medium py-2 pr-3"
                       onClick={appendField}
                     >
-                      <PlusIcon className="h-4 w-4" />
+                      <Plus className="h-4 w-4" />
                       Add more
                     </button>
                     <div className="flex items-center gap-2">

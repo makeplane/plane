@@ -8,8 +8,8 @@ import { CycleService } from "services/cycle.service";
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
 //icons
-import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { ContrastIcon, ExclamationIcon, TransferIcon } from "components/icons";
+import { ContrastIcon, TransferIcon } from "@plane/ui";
+import { AlertCircle, Search, X } from "lucide-react";
 // fetch-key
 import { CYCLE_ISSUES_WITH_PARAMS, INCOMPLETE_CYCLES_LIST } from "constants/fetch-keys";
 // types
@@ -104,15 +104,15 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center justify-between px-5">
                     <div className="flex items-center gap-3">
-                      <TransferIcon className="h-4 w-5" color="#495057" />
+                      <TransferIcon className="h-4 w-4" color="#495057" />
                       <h4 className="text-xl font-medium text-custom-text-100">Transfer Issues</h4>
                     </div>
                     <button onClick={handleClose}>
-                      <XMarkIcon className="h-4 w-4" />
+                      <X className="h-4 w-4" />
                     </button>
                   </div>
                   <div className="flex items-center gap-2 border-b border-custom-border-200 px-5 pb-3">
-                    <MagnifyingGlassIcon className="h-4 w-4 text-custom-text-200" />
+                    <Search className="h-4 w-4 text-custom-text-200" />
                     <input
                       className="bg-custom-background-90 outline-none"
                       placeholder="Search for a cycle..."
@@ -145,7 +145,7 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
                         ))
                       ) : (
                         <div className="flex w-full items-center justify-center gap-4 p-5 text-sm">
-                          <ExclamationIcon height={14} width={14} className="fill-current text-custom-text-200" />
+                          <AlertCircle className="h-3.5 w-3.5 text-custom-text-200" />
                           <span className="text-center text-custom-text-200">
                             You don’t have any current cycle. Please create one to transfer the issues.
                           </span>

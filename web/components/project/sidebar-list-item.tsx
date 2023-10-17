@@ -5,18 +5,19 @@ import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
 import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // icons
-import { EllipsisVerticalIcon, LinkIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
 import {
-  ArchiveOutlined,
-  ArticleOutlined,
-  ContrastOutlined,
-  DatasetOutlined,
-  ExpandMoreOutlined,
-  FilterNoneOutlined,
-  PhotoFilterOutlined,
-  SettingsOutlined,
-} from "@mui/icons-material";
-import { PenSquare } from "lucide-react";
+  MoreVertical,
+  PenSquare,
+  LinkIcon,
+  Star,
+  Trash2,
+  FileText,
+  Settings,
+  Share2,
+  LogOut,
+  ChevronDown,
+} from "lucide-react";
+import { Tooltip, ArchiveIcon, PhotoFilterIcon, DiceIcon, ContrastIcon, LayersIcon } from "@plane/ui";
 // hooks
 import useToast from "hooks/use-toast";
 // helpers
@@ -27,10 +28,9 @@ import { IProject } from "types";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 // components
-import { CustomMenu, Icon } from "components/ui";
+import { CustomMenu } from "components/ui";
 import { LeaveProjectModal, DeleteProjectModal } from "components/project";
 import { PublishProjectModal } from "components/project/publish-project";
-import { Tooltip } from "@plane/ui";
 
 type Props = {
   project: IProject;
@@ -45,32 +45,32 @@ const navigation = (workspaceSlug: string, projectId: string) => [
   {
     name: "Issues",
     href: `/${workspaceSlug}/projects/${projectId}/issues`,
-    Icon: FilterNoneOutlined,
+    Icon: LayersIcon,
   },
   {
     name: "Cycles",
     href: `/${workspaceSlug}/projects/${projectId}/cycles`,
-    Icon: ContrastOutlined,
+    Icon: ContrastIcon,
   },
   {
     name: "Modules",
     href: `/${workspaceSlug}/projects/${projectId}/modules`,
-    Icon: DatasetOutlined,
+    Icon: DiceIcon,
   },
   {
     name: "Views",
     href: `/${workspaceSlug}/projects/${projectId}/views`,
-    Icon: PhotoFilterOutlined,
+    Icon: PhotoFilterIcon,
   },
   {
     name: "Pages",
     href: `/${workspaceSlug}/projects/${projectId}/pages`,
-    Icon: ArticleOutlined,
+    Icon: FileText,
   },
   {
     name: "Settings",
     href: `/${workspaceSlug}/projects/${projectId}/settings`,
-    Icon: SettingsOutlined,
+    Icon: Settings,
   },
 ];
 
@@ -156,8 +156,8 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                     } ${project.sort_order === null ? "opacity-60 cursor-not-allowed" : ""}`}
                     {...provided?.dragHandleProps}
                   >
-                    <EllipsisVerticalIcon className="h-4" />
-                    <EllipsisVerticalIcon className="-ml-5 h-4" />
+                    <MoreVertical className="h-4" />
+                    <MoreVertical className="-ml-5 h-4" />
                   </button>
                 </Tooltip>
               )}
@@ -192,9 +192,8 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                     )}
                   </div>
                   {!sidebarCollapse && (
-                    <ExpandMoreOutlined
-                      fontSize="small"
-                      className={`flex-shrink-0 ${
+                    <ChevronDown
+                      className={`h-4 w-4 flex-shrink-0 ${
                         open ? "rotate-180" : ""
                       } !hidden group-hover:!block text-custom-sidebar-text-400 duration-300`}
                     />
@@ -211,7 +210,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   {!shortContextMenu && isAdmin && (
                     <CustomMenu.MenuItem onClick={handleDeleteProjectClick}>
                       <span className="flex items-center justify-start gap-2 ">
-                        <TrashIcon className="h-4 w-4" />
+                        <Trash2 className="h-4 w-4" />
                         <span>Delete project</span>
                       </span>
                     </CustomMenu.MenuItem>
@@ -219,7 +218,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   {!project.is_favorite && (
                     <CustomMenu.MenuItem onClick={handleAddToFavorites}>
                       <span className="flex items-center justify-start gap-2">
-                        <StarIcon className="h-4 w-4" />
+                        <Star className="h-4 w-4" />
                         <span>Add to favorites</span>
                       </span>
                     </CustomMenu.MenuItem>
@@ -227,7 +226,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   {project.is_favorite && (
                     <CustomMenu.MenuItem onClick={handleRemoveFromFavorites}>
                       <span className="flex items-center justify-start gap-2">
-                        <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                        <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
                         <span>Remove from favorites</span>
                       </span>
                     </CustomMenu.MenuItem>
@@ -244,7 +243,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                     <CustomMenu.MenuItem onClick={() => projectPublish.handleProjectModal(project?.id)}>
                       <div className="flex-shrink-0 relative flex items-center justify-start gap-2">
                         <div className="rounded transition-all w-4 h-4 flex justify-center items-center text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 duration-300 cursor-pointer">
-                          <Icon iconName="ios_share" className="!text-base" />
+                          <Share2 className="h-4 w-4" />
                         </div>
                         <div>{project.is_deployed ? "Publish settings" : "Publish"}</div>
                       </div>
@@ -256,7 +255,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                       onClick={() => router.push(`/${workspaceSlug}/projects/${project?.id}/archived-issues/`)}
                     >
                       <div className="flex items-center justify-start gap-2">
-                        <ArchiveOutlined fontSize="small" />
+                        <ArchiveIcon className="h-3.5 w-3.5" />
                         <span>Archived Issues</span>
                       </div>
                     </CustomMenu.MenuItem>
@@ -273,7 +272,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                     onClick={() => router.push(`/${workspaceSlug}/projects/${project?.id}/settings`)}
                   >
                     <div className="flex items-center justify-start gap-2">
-                      <Icon iconName="settings" className="!text-base !leading-4" />
+                      <Settings className="h-4 w-4" />
                       <span>Settings</span>
                     </div>
                   </CustomMenu.MenuItem>
@@ -282,7 +281,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   {isViewerOrGuest && (
                     <CustomMenu.MenuItem onClick={handleLeaveProject}>
                       <div className="flex items-center justify-start gap-2">
-                        <Icon iconName="logout" className="!text-base !leading-4" />
+                        <LogOut className="h-4 w-4" />
                         <span>Leave Project</span>
                       </div>
                     </CustomMenu.MenuItem>
@@ -325,11 +324,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                                 : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
                             } ${sidebarCollapse ? "justify-center" : ""}`}
                           >
-                            <item.Icon
-                              sx={{
-                                fontSize: 18,
-                              }}
-                            />
+                            <item.Icon className="h-4 w-4" />
                             {!sidebarCollapse && item.name}
                           </div>
                         </Tooltip>

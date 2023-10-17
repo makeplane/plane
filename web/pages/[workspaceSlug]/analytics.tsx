@@ -13,7 +13,7 @@ import { CustomAnalytics, ScopeAndDemand } from "components/analytics";
 import { WorkspaceAnalyticsHeader } from "components/headers";
 import { EmptyState } from "components/common";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Plus } from "lucide-react";
 // assets
 import emptyAnalytics from "public/empty-state/analytics.svg";
 // constants
@@ -93,7 +93,7 @@ const AnalyticsPage = observer(() => {
               description="Let's create your first project and analyze the stats with various graphs."
               image={emptyAnalytics}
               primaryButton={{
-                icon: <PlusIcon className="h-4 w-4" />,
+                icon: <Plus className="h-4 w-4" />,
                 text: "New Project",
                 onClick: () => {
                   const e = new KeyboardEvent("keydown", {

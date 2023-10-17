@@ -16,7 +16,7 @@ import { ColorResult, SketchPicker } from "react-color";
 import { Popover, Transition } from "@headlessui/react";
 import { Input } from "@plane/ui";
 // icons
-import { ColorPickerIcon } from "components/icons";
+import { Palette } from "lucide-react";
 // types
 import { ICustomTheme } from "types";
 
@@ -98,7 +98,7 @@ export const ColorPickerInput: FC<Props> = (props) => {
                     }}
                   />
                 ) : (
-                  <ColorPickerIcon height={14} width={14} className="fill-current text-custom-text-100" />
+                  <Palette className="h-3.5 w-3.5 text-custom-text-100" />
                 )}
               </Popover.Button>
 

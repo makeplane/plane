@@ -1,6 +1,6 @@
 import { FC } from "react";
 // components
-import { StateGroupIcon } from "components/icons";
+import { DoubleCircleIcon, StateGroupIcon, UserGroupIcon } from "@plane/ui";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -11,11 +11,12 @@ import {
   TPeekOverviewModes,
 } from "components/issues";
 // ui
-import { CustomDatePicker, Icon } from "components/ui";
+import { CustomDatePicker } from "components/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { IIssue } from "types";
+import { CalendarDays, LinkIcon, Signal, Trash2 } from "lucide-react";
 
 type Props = {
   handleDeleteIssue: () => void;
@@ -62,10 +63,10 @@ export const PeekOverviewIssueProperties: FC<Props> = (props) => {
           </h6>
           <div className="flex items-center gap-2">
             <button type="button" onClick={handleCopyLink} className="-rotate-45">
-              <Icon iconName="link" />
+              <LinkIcon className="h-3.5 w-3.5" />
             </button>
             <button type="button" onClick={handleDeleteIssue}>
-              <Icon iconName="delete" />
+              <Trash2 className="h-3.5 w-3.5" />
             </button>
           </div>
         </div>
@@ -73,7 +74,7 @@ export const PeekOverviewIssueProperties: FC<Props> = (props) => {
       <div className={`space-y-4 ${mode === "full" ? "pt-3" : ""}`}>
         <div className="flex items-center gap-2 text-sm">
           <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
-            <Icon iconName="radio_button_checked" className="!text-base flex-shrink-0" />
+            <DoubleCircleIcon className="h-3.5 w-3.5 flex-shrink-0" />
             <span className="flex-grow truncate">State</span>
           </div>
           <div className="w-3/4">
@@ -86,7 +87,7 @@ export const PeekOverviewIssueProperties: FC<Props> = (props) => {
         </div>
         <div className="flex items-center gap-2 text-sm">
           <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
-            <Icon iconName="group" className="!text-base flex-shrink-0" />
+            <UserGroupIcon className="h-3.5 w-3.5" />
             <span className="flex-grow truncate">Assignees</span>
           </div>
           <div className="w-3/4">
@@ -99,7 +100,7 @@ export const PeekOverviewIssueProperties: FC<Props> = (props) => {
         </div>
         <div className="flex items-center gap-2 text-sm">
           <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
-            <Icon iconName="signal_cellular_alt" className="!text-base flex-shrink-0" />
+            <Signal className="h-3.5 w-3.5" />
             <span className="flex-grow truncate">Priority</span>
           </div>
           <div className="w-3/4">
@@ -112,7 +113,7 @@ export const PeekOverviewIssueProperties: FC<Props> = (props) => {
         </div>
         <div className="flex items-center gap-2 text-sm">
           <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
-            <Icon iconName="calendar_today" className="!text-base flex-shrink-0" />
+            <CalendarDays className="h-3.5 w-3.5" />
             <span className="flex-grow truncate">Start date</span>
           </div>
           <div>
@@ -132,7 +133,7 @@ export const PeekOverviewIssueProperties: FC<Props> = (props) => {
         </div>
         <div className="flex items-center gap-2 text-sm">
           <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
-            <Icon iconName="calendar_today" className="!text-base flex-shrink-0" />
+            <CalendarDays className="h-3.5 w-3.5" />
             <span className="flex-grow truncate">Due date</span>
           </div>
           <div>
