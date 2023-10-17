@@ -200,11 +200,15 @@ const MembersSettings: NextPage = () => {
   return (
     <ProjectAuthorizationWrapper
       breadcrumbs={
-        <Breadcrumbs>
+        <Breadcrumbs onBack={() => router.back()}>
           <BreadcrumbItem
-            title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
-            link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
-            linkTruncate
+            link={
+              <Link href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}>
+                <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                  <p className="truncate">{`${truncateText(projectDetails?.name ?? "Project", 32)}`}</p>
+                </a>
+              </Link>
+            }
           />
           <BreadcrumbItem title="Members Settings" unshrinkTitle />
         </Breadcrumbs>

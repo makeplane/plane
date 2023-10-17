@@ -114,8 +114,16 @@ export const ProjectIssuesHeader: FC = observer(() => {
             </button>
           </div>
           <div>
-            <Breadcrumbs>
-              <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
+            <Breadcrumbs onBack={() => router.back()}>
+              <BreadcrumbItem
+                link={
+                  <Link href={`/${workspaceSlug}/projects`}>
+                    <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                      <p>Projects</p>
+                    </a>
+                  </Link>
+                }
+              />
               <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Issues`} />
             </Breadcrumbs>
           </div>

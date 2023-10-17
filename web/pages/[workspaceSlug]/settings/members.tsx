@@ -100,11 +100,15 @@ const MembersSettings: NextPage = () => {
   return (
     <WorkspaceAuthorizationLayout
       breadcrumbs={
-        <Breadcrumbs>
+        <Breadcrumbs onBack={() => router.back()}>
           <BreadcrumbItem
-            title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)}`}
-            link={`/${workspaceSlug}`}
-            linkTruncate
+            link={
+              <Link href={`/${workspaceSlug}`}>
+                <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                  <p className="truncate">{`${truncateText(activeWorkspace?.name ?? "Workspace", 32)}`}</p>
+                </a>
+              </Link>
+            }
           />
           <BreadcrumbItem title="Members Settings" unshrinkTitle />
         </Breadcrumbs>

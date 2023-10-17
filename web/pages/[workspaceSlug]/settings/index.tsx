@@ -158,7 +158,7 @@ const WorkspaceSettings: NextPage = () => {
   return (
     <WorkspaceAuthorizationLayout
       breadcrumbs={
-        <Breadcrumbs>
+        <Breadcrumbs onBack={() => router.back()}>
           <BreadcrumbItem title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)} Settings`} />
         </Breadcrumbs>
       }

@@ -22,7 +22,7 @@ export const WorkspaceAnalyticsHeader = () => {
             </button>
           </div>
           <div>
-            <Breadcrumbs>
+            <Breadcrumbs onBack={() => router.back()}>
               <BreadcrumbItem title="Workspace Analytics" />
             </Breadcrumbs>
           </div>

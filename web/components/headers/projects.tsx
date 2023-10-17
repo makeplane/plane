@@ -29,7 +29,7 @@ export const ProjectsHeader = observer(() => {
           </button>
         </div>
         <div>
-          <Breadcrumbs>
+          <Breadcrumbs onBack={() => router.back()}>
             <BreadcrumbItem
               title={`${truncateText(currentWorkspace?.name ?? "Workspace", 32)} Projects`}
               unshrinkTitle={false}

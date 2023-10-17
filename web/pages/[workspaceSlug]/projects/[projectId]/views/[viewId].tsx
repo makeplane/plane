@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 import useSWR from "swr";
 
@@ -50,10 +51,15 @@ const SingleView: React.FC = () => {
   return (
     <ProjectAuthorizationWrapper
       breadcrumbs={
-        <Breadcrumbs>
+        <Breadcrumbs onBack={() => router.back()}>
           <BreadcrumbItem
-            title={`${activeProject?.name ?? "Project"} Views`}
-            link={`/${workspaceSlug}/projects/${activeProject?.id}/cycles`}
+            link={
+              <Link href={`/${workspaceSlug}/projects/${activeProject?.id}/cycles`}>
+                <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                  <p className="truncate">{`${activeProject?.name ?? "Project"} Views`}</p>
+                </a>
+              </Link>
+            }
           />
         </Breadcrumbs>
       }

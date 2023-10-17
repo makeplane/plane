@@ -21,7 +21,7 @@ export const ProfilePreferencesHeader = () => {
           </button>
         </div>
         <div>
-          <Breadcrumbs>
+          <Breadcrumbs onBack={() => router.back()}>
             <BreadcrumbItem title="My Profile Preferences" />
           </Breadcrumbs>
         </div>

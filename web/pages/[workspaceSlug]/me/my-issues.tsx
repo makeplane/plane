@@ -77,7 +77,7 @@ const MyIssuesPage: NextPage = () => {
   return (
     <WorkspaceAuthorizationLayout
       breadcrumbs={
-        <Breadcrumbs>
+        <Breadcrumbs onBack={() => router.back()}>
           <BreadcrumbItem title="My Issues" />
         </Breadcrumbs>
       }

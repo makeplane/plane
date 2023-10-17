@@ -146,7 +146,7 @@ const Profile: NextPage = () => {
   return (
     <WorkspaceAuthorizationLayout
       breadcrumbs={
-        <Breadcrumbs>
+        <Breadcrumbs onBack={() => router.back()}>
           <BreadcrumbItem title="My Profile" />
         </Breadcrumbs>
       }

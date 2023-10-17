@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import useSWR from "swr";
 // icons
 import { ArrowLeft } from "lucide-react";
@@ -96,11 +97,18 @@ const SingleCycle: React.FC = () => {
       />
       <ProjectAuthorizationWrapper
         breadcrumbs={
-          <Breadcrumbs>
-            <BreadcrumbItem
-              title={`${truncateText(cycleDetails?.project_detail.name ?? "Project", 32)} Cycles`}
-              link={`/${workspaceSlug}/projects/${projectId}/cycles`}
-              linkTruncate
+          <Breadcrumbs onBack={() => router.back()}>
+            <Breadcrumbs.BreadcrumbItem
+              link={
+                <Link href={`/${workspaceSlug}/projects/${projectId}/cycles`}>
+                  <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                    <p className="truncate">{`${truncateText(
+                      cycleDetails?.project_detail.name ?? "Project",
+                      32
+                    )} Cycles`}</p>
+                  </a>
+                </Link>
+              }
             />
           </Breadcrumbs>
         }

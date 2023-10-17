@@ -32,7 +32,7 @@ const ProfileActivity = () => {
   return (
     <WorkspaceAuthorizationLayout
       breadcrumbs={
-        <Breadcrumbs>
+        <Breadcrumbs onBack={() => router.back()}>
           <BreadcrumbItem title="My Profile Activity" />
         </Breadcrumbs>
       }

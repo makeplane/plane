@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 
 import { useRouter } from "next/router";
 
@@ -305,8 +306,16 @@ const SinglePage: NextPage = () => {
   return (
     <ProjectAuthorizationWrapper
       breadcrumbs={
-        <Breadcrumbs>
-          <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
+        <Breadcrumbs onBack={() => router.back()}>
+          <BreadcrumbItem
+            link={
+              <Link href={`/${workspaceSlug}/projects`}>
+                <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                  <p>Projects</p>
+                </a>
+              </Link>
+            }
+          />
           <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Pages`} />
         </Breadcrumbs>
       }

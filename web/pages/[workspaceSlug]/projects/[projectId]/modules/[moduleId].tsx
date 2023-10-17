@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import useSWR from "swr";
 // services
 import { ModuleService } from "services/module.service";
@@ -91,11 +92,18 @@ const SingleModule: React.FC = () => {
       />
       <ProjectAuthorizationWrapper
         breadcrumbs={
-          <Breadcrumbs>
+          <Breadcrumbs onBack={() => router.back()}>
             <BreadcrumbItem
-              title={`${truncateText(moduleDetails?.project_detail.name ?? "Project", 32)} Modules`}
-              link={`/${workspaceSlug}/projects/${projectId}/modules`}
-              linkTruncate
+              link={
+                <Link href={`/${workspaceSlug}/projects/${projectId}/modules`}>
+                  <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                    <p className="truncate">{`${truncateText(
+                      moduleDetails?.project_detail.name ?? "Project",
+                      32
+                    )} Modules`}</p>
+                  </a>
+                </Link>
+              }
             />
           </Breadcrumbs>
         }
