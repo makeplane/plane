@@ -85,7 +85,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
                 return Response({"error": f"key {e} does not exist"}, status=status.HTTP_400_BAD_REQUEST)
             
             capture_exception(e)
-            return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
     def dispatch(self, request, *args, **kwargs):
@@ -162,7 +162,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
                 return Response({"error": f"key {e} does not exist"}, status=status.HTTP_400_BAD_REQUEST)
             
             capture_exception(e)
-            return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
     def dispatch(self, request, *args, **kwargs):
