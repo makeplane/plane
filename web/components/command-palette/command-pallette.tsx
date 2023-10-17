@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, FC } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
@@ -6,7 +6,7 @@ import { observer } from "mobx-react-lite";
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
 // components
-import { CommandK, ShortcutsModal } from "components/command-palette";
+import { CommandModal, ShortcutsModal } from "components/command-palette";
 import { BulkDeleteIssuesModal } from "components/core";
 import { CreateUpdateCycleModal } from "components/cycles";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
@@ -26,22 +26,34 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // services
 const issueService = new IssueService();
 
-export const CommandPalette: React.FC = observer(() => {
-  const store: any = useMobxStore();
-
-  const [isPaletteOpen, setIsPaletteOpen] = useState(false);
-  const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
-  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
-  const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
-  const [isCreateCycleModalOpen, setIsCreateCycleModalOpen] = useState(false);
-  const [isCreateViewModalOpen, setIsCreateViewModalOpen] = useState(false);
-  const [isCreateModuleModalOpen, setIsCreateModuleModalOpen] = useState(false);
-  const [isBulkDeleteIssuesModalOpen, setIsBulkDeleteIssuesModalOpen] = useState(false);
-  const [deleteIssueModal, setDeleteIssueModal] = useState(false);
-  const [isCreateUpdatePageModalOpen, setIsCreateUpdatePageModalOpen] = useState(false);
-
+export const CommandPalette: FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId, cycleId, moduleId } = router.query;
+  // store
+  const { commandPalette, theme: themeStore } = useMobxStore();
+  const {
+    isCommandPaletteOpen,
+    toggleCommandPaletteModal,
+    isCreateIssueModalOpen,
+    toggleCreateIssueModal,
+    isCreateCycleModalOpen,
+    toggleCreateCycleModal,
+    isCreatePageModalOpen,
+    toggleCreatePageModal,
+    isCreateProjectModalOpen,
+    toggleCreateProjectModal,
+    isCreateModuleModalOpen,
+    toggleCreateModuleModal,
+    isCreateViewModalOpen,
+    toggleCreateViewModal,
+    isShortcutModalOpen,
+    toggleShortcutModal,
+    isBulkDeleteIssueModalOpen,
+    toggleBulkDeleteIssueModal,
+    isDeleteIssueModalOpen,
+    toggleDeleteIssueModal,
+  } = commandPalette;
+  const { setSidebarCollapsed } = themeStore;
 
   const { user } = useUser();
 
@@ -55,7 +67,7 @@ export const CommandPalette: React.FC = observer(() => {
   );
 
   const copyIssueUrlToClipboard = useCallback(() => {
-    if (!router.query.issueId) return;
+    if (!issueId) return;
 
     const url = new URL(window.location.href);
     copyTextToClipboard(url.href)
@@ -71,7 +83,7 @@ export const CommandPalette: React.FC = observer(() => {
           title: "Some error occurred",
         });
       });
-  }, [router, setToastAlert]);
+  }, [setToastAlert, issueId]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -91,101 +103,142 @@ export const CommandPalette: React.FC = observer(() => {
       if (cmdClicked) {
         if (keyPressed === "k") {
           e.preventDefault();
-          setIsPaletteOpen(true);
+          toggleCommandPaletteModal(true);
         } else if (keyPressed === "c" && altKey) {
           e.preventDefault();
           copyIssueUrlToClipboard();
         } else if (keyPressed === "b") {
           e.preventDefault();
-          store.theme.setSidebarCollapsed(!store?.theme?.sidebarCollapsed);
+          setSidebarCollapsed();
         }
       } else {
         if (keyPressed === "c") {
-          setIsIssueModalOpen(true);
+          toggleCreateIssueModal(true);
         } else if (keyPressed === "p") {
-          setIsProjectModalOpen(true);
+          toggleCreateProjectModal(true);
         } else if (keyPressed === "v") {
-          setIsCreateViewModalOpen(true);
+          toggleCreateViewModal(true);
         } else if (keyPressed === "d") {
-          setIsCreateUpdatePageModalOpen(true);
+          toggleCreatePageModal(true);
         } else if (keyPressed === "h") {
-          setIsShortcutsModalOpen(true);
+          toggleShortcutModal(true);
         } else if (keyPressed === "q") {
-          setIsCreateCycleModalOpen(true);
+          toggleCreateCycleModal(true);
         } else if (keyPressed === "m") {
-          setIsCreateModuleModalOpen(true);
+          toggleCreateModuleModal(true);
         } else if (keyPressed === "backspace" || keyPressed === "delete") {
           e.preventDefault();
-          setIsBulkDeleteIssuesModalOpen(true);
+          toggleBulkDeleteIssueModal(true);
         }
       }
     },
-    [copyIssueUrlToClipboard, store.theme]
+    [
+      copyIssueUrlToClipboard,
+      toggleCreateProjectModal,
+      toggleCreateViewModal,
+      toggleCreatePageModal,
+      toggleShortcutModal,
+      toggleCreateCycleModal,
+      toggleCreateModuleModal,
+      toggleBulkDeleteIssueModal,
+      toggleCommandPaletteModal,
+      setSidebarCollapsed,
+      toggleCreateIssueModal,
+    ]
   );
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
-
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
   if (!user) return null;
 
   const deleteIssue = () => {
-    setIsPaletteOpen(false);
-    setDeleteIssueModal(true);
+    toggleCommandPaletteModal(false);
+    toggleDeleteIssueModal(true);
   };
 
   return (
     <>
-      <ShortcutsModal isOpen={isShortcutsModalOpen} setIsOpen={setIsShortcutsModalOpen} />
+      <ShortcutsModal
+        isOpen={isShortcutModalOpen}
+        onClose={() => {
+          toggleShortcutModal(false);
+        }}
+      />
       {workspaceSlug && (
-        <CreateProjectModal isOpen={isProjectModalOpen} setIsOpen={setIsProjectModalOpen} user={user} />
+        <CreateProjectModal
+          isOpen={isCreateProjectModalOpen}
+          onClose={() => {
+            toggleCreateProjectModal(false);
+          }}
+          workspaceSlug={workspaceSlug.toString()}
+        />
       )}
-      {projectId && (
+      {workspaceSlug && projectId && (
         <>
           <CreateUpdateCycleModal
             isOpen={isCreateCycleModalOpen}
-            handleClose={() => setIsCreateCycleModalOpen(false)}
-            user={user}
+            handleClose={() => toggleCreateCycleModal(false)}
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
           />
           <CreateUpdateModuleModal
             isOpen={isCreateModuleModalOpen}
-            setIsOpen={setIsCreateModuleModalOpen}
-            user={user}
+            onClose={() => {
+              toggleCreateModuleModal(false);
+            }}
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
           />
           <CreateUpdateProjectViewModal
             isOpen={isCreateViewModalOpen}
-            onClose={() => setIsCreateViewModalOpen(false)}
+            onClose={() => toggleCreateViewModal(false)}
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
           />
           <CreateUpdatePageModal
-            isOpen={isCreateUpdatePageModalOpen}
-            handleClose={() => setIsCreateUpdatePageModalOpen(false)}
+            isOpen={isCreatePageModalOpen}
+            handleClose={() => toggleCreatePageModal(false)}
             user={user}
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
           />
         </>
       )}
-      {issueId && issueDetails && (
-        <DeleteIssueModal
-          handleClose={() => setDeleteIssueModal(false)}
-          isOpen={deleteIssueModal}
-          data={issueDetails}
-          user={user}
-        />
-      )}
+
       <CreateUpdateIssueModal
-        isOpen={isIssueModalOpen}
-        handleClose={() => setIsIssueModalOpen(false)}
+        isOpen={isCreateIssueModalOpen}
+        handleClose={() => toggleCreateIssueModal(false)}
         prePopulateData={
           cycleId ? { cycle: cycleId.toString() } : moduleId ? { module: moduleId.toString() } : undefined
         }
       />
+
+      {issueId && issueDetails && (
+        <DeleteIssueModal
+          handleClose={() => toggleDeleteIssueModal(false)}
+          isOpen={isDeleteIssueModalOpen}
+          data={issueDetails}
+          user={user}
+        />
+      )}
+
       <BulkDeleteIssuesModal
-        isOpen={isBulkDeleteIssuesModalOpen}
-        setIsOpen={setIsBulkDeleteIssuesModalOpen}
+        isOpen={isBulkDeleteIssueModalOpen}
+        onClose={() => {
+          toggleBulkDeleteIssueModal(false);
+        }}
         user={user}
       />
-      <CommandK deleteIssue={deleteIssue} isPaletteOpen={isPaletteOpen} setIsPaletteOpen={setIsPaletteOpen} />
+      <CommandModal
+        deleteIssue={deleteIssue}
+        isPaletteOpen={isCommandPaletteOpen}
+        closePalette={() => {
+          toggleCommandPaletteModal(false);
+        }}
+      />
     </>
   );
 });

@@ -1,5 +1,4 @@
 import { Fragment } from "react";
-import { useRouter } from "next/router";
 import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 // services
@@ -11,7 +10,7 @@ import { CycleForm } from "components/cycles";
 // helper
 import { getDateRangeStatus } from "helpers/date-time.helper";
 // types
-import type { CycleDateCheckData, IUser, ICycle, IProject } from "types";
+import type { CycleDateCheckData, ICycle, IProject, IUser } from "types";
 // fetch keys
 import {
   COMPLETED_CYCLES_LIST,
@@ -27,23 +26,21 @@ type CycleModalProps = {
   isOpen: boolean;
   handleClose: () => void;
   data?: ICycle | null;
-  user: IUser | undefined;
+  workspaceSlug: string;
+  projectId: string;
 };
 
 // services
 const cycleService = new CycleService();
 
-export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({ isOpen, handleClose, data, user }) => {
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+export const CreateUpdateCycleModal: React.FC<CycleModalProps> = (props) => {
+  const { isOpen, handleClose, data, workspaceSlug, projectId } = props;
 
   const { setToastAlert } = useToast();
 
   const createCycle = async (payload: Partial<ICycle>) => {
-    if (!workspaceSlug || !projectId) return;
-
     await cycleService
-      .createCycle(workspaceSlug.toString(), projectId.toString(), payload, user)
+      .createCycle(workspaceSlug.toString(), projectId.toString(), payload, {} as IUser)
       .then((res) => {
         switch (getDateRangeStatus(res.start_date, res.end_date)) {
           case "completed":
@@ -91,10 +88,8 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({ isOpen, hand
   };
 
   const updateCycle = async (cycleId: string, payload: Partial<ICycle>) => {
-    if (!workspaceSlug || !projectId) return;
-
     await cycleService
-      .updateCycle(workspaceSlug.toString(), projectId.toString(), cycleId, payload, user)
+      .updateCycle(workspaceSlug.toString(), projectId.toString(), cycleId, payload, {} as IUser)
       .then((res) => {
         switch (getDateRangeStatus(data?.start_date, data?.end_date)) {
           case "completed":
@@ -177,7 +172,6 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({ isOpen, hand
     if (isDateValid) {
       if (data) await updateCycle(data.id, payload);
       else await createCycle(payload);
-
       handleClose();
     } else
       setToastAlert({

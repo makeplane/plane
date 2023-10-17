@@ -19,13 +19,20 @@ export const ProjectViewsHeader: FC<IProjectViewsHeader> = (props) => {
   const { title } = props;
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId } = router.query;
   // states
   const [createViewModal, setCreateViewModal] = useState(false);
 
   return (
     <>
-      <CreateUpdateProjectViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
+      {workspaceSlug && projectId && (
+        <CreateUpdateProjectViewModal
+          isOpen={createViewModal}
+          onClose={() => setCreateViewModal(false)}
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={projectId.toString()}
+        />
+      )}
       <div
         className={`relative flex w-full flex-shrink-0 flex-row z-10 items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4`}
       >

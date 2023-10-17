@@ -33,18 +33,20 @@ type FormInput = {
 
 type Props = {
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onClose: () => void;
   user: IUser | undefined;
 };
 
 const issueService = new IssueService();
 
-export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user }) => {
-  const [query, setQuery] = useState("");
-
+export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
+  const { isOpen, onClose, user } = props;
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
-
+  // states
+  const [query, setQuery] = useState("");
+  // fetching project issues.
   const { data: issues } = useSWR(
     workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string) : null,
     workspaceSlug && projectId ? () => issueService.getIssues(workspaceSlug as string, projectId as string) : null
@@ -68,9 +70,9 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
   });
 
   const handleClose = () => {
-    setIsOpen(false);
     setQuery("");
     reset();
+    onClose();
   };
 
   const handleDelete: SubmitHandler<FormInput> = async (data) => {

@@ -16,7 +16,7 @@ export const AppLayout: FC<IAppLayout> = (props) => {
 
   return (
     <>
-      {/* <CommandPalette /> */}
+      <CommandPalette />
       <UserAuthWrapper>
         <WorkspaceAuthWrapper>
           <div className="relative flex h-screen w-full overflow-hidden">

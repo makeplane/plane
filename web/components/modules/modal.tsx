@@ -1,5 +1,4 @@
 import { Fragment } from "react";
-import { useRouter } from "next/router";
 import { mutate } from "swr";
 import { useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
@@ -16,9 +15,10 @@ import { MODULE_LIST } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onClose: () => void;
   data?: IModule;
-  user: IUser | undefined;
+  workspaceSlug: string;
+  projectId: string;
 };
 
 const defaultValues: Partial<IModule> = {
@@ -31,15 +31,14 @@ const defaultValues: Partial<IModule> = {
 
 const moduleService = new ModuleService();
 
-export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, user }) => {
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+export const CreateUpdateModuleModal: React.FC<Props> = (props) => {
+  const { isOpen, onClose, data, workspaceSlug, projectId } = props;
 
   const { setToastAlert } = useToast();
 
   const handleClose = () => {
-    setIsOpen(false);
     reset(defaultValues);
+    onClose();
   };
 
   const { reset } = useForm<IModule>({
@@ -48,7 +47,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, da
 
   const createModule = async (payload: Partial<IModule>) => {
     await moduleService
-      .createModule(workspaceSlug as string, projectId as string, payload, user)
+      .createModule(workspaceSlug as string, projectId as string, payload, {} as IUser)
       .then(() => {
         mutate(MODULE_LIST(projectId as string));
         handleClose();
@@ -70,7 +69,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, da
 
   const updateModule = async (payload: Partial<IModule>) => {
     await moduleService
-      .updateModule(workspaceSlug as string, projectId as string, data?.id ?? "", payload, user)
+      .updateModule(workspaceSlug as string, projectId as string, data?.id ?? "", payload, {} as IUser)
       .then((res) => {
         mutate<IModule[]>(
           MODULE_LIST(projectId as string),

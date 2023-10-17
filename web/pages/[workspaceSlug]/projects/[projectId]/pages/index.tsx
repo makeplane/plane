@@ -51,12 +51,11 @@ const tabsList = ["Recent", "All", "Favorites", "Created by me", "Created by oth
 const projectService = new ProjectService();
 
 const ProjectPages: NextPage = () => {
-  const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
-
-  const [viewType, setViewType] = useState<TPageViewProps>("list");
-
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+  // states
+  const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
+  const [viewType, setViewType] = useState<TPageViewProps>("list");
 
   const { user } = useUserAuth();
 
@@ -87,11 +86,16 @@ const ProjectPages: NextPage = () => {
 
   return (
     <>
-      <CreateUpdatePageModal
-        isOpen={createUpdatePageModal}
-        handleClose={() => setCreateUpdatePageModal(false)}
-        user={user}
-      />
+      {workspaceSlug && projectId && (
+        <CreateUpdatePageModal
+          isOpen={createUpdatePageModal}
+          handleClose={() => setCreateUpdatePageModal(false)}
+          user={user}
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={projectId.toString()}
+        />
+      )}
+
       <ProjectAuthorizationWrapper
         breadcrumbs={
           <Breadcrumbs onBack={() => router.back()}>
