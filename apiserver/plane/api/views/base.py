@@ -71,7 +71,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
             return response
         except Exception as e:
             if isinstance(e, IntegrityError):
-                return Response({"error": "The value is already taken"}, status=status.HTTP_410_GONE)
+                return Response({"error": "The payload is not valid"}, status=status.HTTP_400_BAD_REQUEST)
             
             if isinstance(e, ValidationError):
                 return Response({"error": "Please provide valid detail"}, status=status.HTTP_400_BAD_REQUEST)
@@ -85,7 +85,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
                 return Response({"error": f"key {e} does not exist"}, status=status.HTTP_400_BAD_REQUEST)
             
             capture_exception(e)
-            return Response({"error": "Something went wrong please try again later","e":str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_400_BAD_REQUEST)
 
 
     def dispatch(self, request, *args, **kwargs):
@@ -149,7 +149,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
             return response
         except Exception as e:
             if isinstance(e, IntegrityError):
-                return Response({"error": "The value is already taken"}, status=status.HTTP_410_GONE)
+                return Response({"error": "The payload is not valid"}, status=status.HTTP_400_BAD_REQUEST)
             
             if isinstance(e, ValidationError):
                 return Response({"error": "Please provide valid detail"}, status=status.HTTP_400_BAD_REQUEST)
@@ -162,7 +162,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
                 return Response({"error": f"key {e} does not exist"}, status=status.HTTP_400_BAD_REQUEST)
             
             capture_exception(e)
-            return Response({"error": "Something went wrong please try again later","e":str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_400_BAD_REQUEST)
 
 
     def dispatch(self, request, *args, **kwargs):
