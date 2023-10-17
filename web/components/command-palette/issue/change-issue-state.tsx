@@ -10,9 +10,9 @@ import { Command } from "cmdk";
 import { IssueService } from "services/issue";
 import { ProjectStateService } from "services/project";
 // ui
-import { Spinner } from "@plane/ui";
+import { Spinner, StateGroupIcon } from "@plane/ui";
 // icons
-import { CheckIcon, StateGroupIcon } from "components/icons";
+import { Check } from "lucide-react";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // types
@@ -85,7 +85,7 @@ export const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen, issue, use
                 <StateGroupIcon stateGroup={state.group} color={state.color} height="16px" width="16px" />
                 <p>{state.name}</p>
               </div>
-              <div>{state.id === issue.state && <CheckIcon className="h-3 w-3" />}</div>
+              <div>{state.id === issue.state && <Check className="h-3 w-3" />}</div>
             </Command.Item>
           ))
         ) : (

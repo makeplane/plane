@@ -13,8 +13,7 @@ import { Button, Input } from "@plane/ui";
 // hooks
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // icons
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { PlusIcon, XMarkIcon, CheckIcon } from "@heroicons/react/24/outline";
+import { Check, ChevronDown, Plus, X } from "lucide-react";
 // types
 import { IUser, IWorkspace, TOnboardingSteps } from "types";
 // constants
@@ -108,7 +107,7 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
                 className="flex items-center px-2.5 py-2 text-xs justify-between gap-1 w-full rounded-md border border-custom-border-300 shadow-sm duration-300 focus:outline-none"
               >
                 <span className="text-xs sm:text-sm">{ROLE[value]}</span>
-                <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+                <ChevronDown className="h-3 w-3" aria-hidden="true" />
               </Listbox.Button>
 
               <Transition
@@ -139,7 +138,7 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
                         {({ selected }) => (
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2">{value}</div>
-                            {selected && <CheckIcon className="h-4 w-4 flex-shrink-0" />}
+                            {selected && <Check className="h-4 w-4 flex-shrink-0" />}
                           </div>
                         )}
                       </Listbox.Option>
@@ -157,7 +156,7 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
           className="hidden group-hover:grid self-center place-items-center rounded -ml-3"
           onClick={() => remove(index)}
         >
-          <XMarkIcon className="h-3.5 w-3.5 text-custom-text-200" />
+          <X className="h-3.5 w-3.5 text-custom-text-200" />
         </button>
       )}
     </div>
@@ -255,7 +254,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
           className="flex items-center gap-2 outline-custom-primary-100 bg-transparent text-custom-primary-100 text-xs font-medium py-2 pr-3"
           onClick={appendField}
         >
-          <PlusIcon className="h-3 w-3" />
+          <Plus className="h-3 w-3" />
           Add another
         </button>
       </div>

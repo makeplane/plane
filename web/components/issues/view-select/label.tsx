@@ -9,7 +9,7 @@ import { CreateLabelModal } from "components/labels";
 import { CustomSearchSelect } from "components/ui";
 import { Tooltip } from "@plane/ui";
 // icons
-import { PlusIcon, TagIcon } from "@heroicons/react/24/outline";
+import { Plus, Tag } from "lucide-react";
 // types
 import { IUser, IIssue, IIssueLabels } from "types";
 // fetch-keys
@@ -107,7 +107,7 @@ export const ViewLabelSelect: FC<Props> = ({
           </>
         ) : (
           <>
-            <TagIcon className="h-3.5 w-3.5 text-custom-text-200" />
+            <Tag className="h-3.5 w-3.5 text-custom-text-200" />
           </>
         )}
       </div>
@@ -121,7 +121,7 @@ export const ViewLabelSelect: FC<Props> = ({
       onClick={() => setLabelModal(true)}
     >
       <span className="flex items-center justify-start gap-1 text-custom-text-200">
-        <PlusIcon className="h-4 w-4" aria-hidden="true" />
+        <Plus className="h-4 w-4" aria-hidden="true" />
         <span>Create New Label</span>
       </span>
     </button>

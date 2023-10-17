@@ -9,7 +9,7 @@ import { Menu } from "@headlessui/react";
 // ui
 import { DropdownProps } from "components/ui";
 // icons
-import { ExpandMoreOutlined, MoreHorizOutlined } from "@mui/icons-material";
+import { ChevronDown, MoreHorizontal } from "lucide-react";
 
 export type CustomMenuProps = DropdownProps & {
   children: React.ReactNode;
@@ -71,7 +71,7 @@ const CustomMenu = ({
                       disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
                     } ${buttonClassName}`}
                   >
-                    <MoreHorizOutlined fontSize="small" className={verticalEllipsis ? "rotate-90" : ""} />
+                    <MoreHorizontal className={`h-3.5 w-3.5 ${verticalEllipsis ? "rotate-90" : ""}`} />
                   </button>
                 </Menu.Button>
               ) : (
@@ -88,14 +88,7 @@ const CustomMenu = ({
                     } ${buttonClassName}`}
                   >
                     {label}
-                    {!noChevron && (
-                      <ExpandMoreOutlined
-                        sx={{
-                          fontSize: 14,
-                        }}
-                        aria-hidden="true"
-                      />
-                    )}
+                    {!noChevron && <ChevronDown className="h-3.5 w-3.5" />}
                   </button>
                 </Menu.Button>
               )}

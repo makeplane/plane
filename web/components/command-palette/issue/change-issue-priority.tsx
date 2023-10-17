@@ -14,7 +14,8 @@ import { IIssue, IUser, TIssuePriorities } from "types";
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 import { PRIORITIES } from "constants/project";
 // icons
-import { CheckIcon, PriorityIcon } from "components/icons";
+import { PriorityIcon } from "@plane/ui";
+import { Check } from "lucide-react";
 
 type Props = {
   setIsPaletteOpen: Dispatch<SetStateAction<boolean>>;
@@ -72,7 +73,7 @@ export const ChangeIssuePriority: React.FC<Props> = ({ setIsPaletteOpen, issue, 
             <PriorityIcon priority={priority} />
             <span className="capitalize">{priority ?? "None"}</span>
           </div>
-          <div>{priority === issue.priority && <CheckIcon className="h-3 w-3" />}</div>
+          <div>{priority === issue.priority && <Check className="h-3 w-3" />}</div>
         </Command.Item>
       ))}
     </>

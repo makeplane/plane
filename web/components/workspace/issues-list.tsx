@@ -2,14 +2,13 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 // icons
-import { ExclamationTriangleIcon } from "@heroicons/react/20/solid";
+import { AlertTriangle } from "lucide-react";
+import { LayersIcon, Loader } from "@plane/ui";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
 // types
 import { IIssueLite } from "types";
-import { Loader } from "@plane/ui";
-import { LayerDiagonalIcon } from "components/icons";
 
 type Props = {
   issues: IIssueLite[] | undefined;
@@ -63,7 +62,7 @@ export const IssuesList: React.FC<Props> = ({ issues, type }) => {
                             type === "overdue" ? (dateDifference > 6 ? "text-red-500" : "text-yellow-400") : ""
                           }`}
                         >
-                          {type === "overdue" && <ExclamationTriangleIcon className="h-3.5 w-3.5" />}
+                          {type === "overdue" && <AlertTriangle className="h-3.5 w-3.5" />}
                           {dateDifference} {dateDifference > 1 ? "days" : "day"}
                         </h5>
                         <h5 className="col-span-2">{truncateText(issue.name, 30)}</h5>
@@ -78,7 +77,7 @@ export const IssuesList: React.FC<Props> = ({ issues, type }) => {
             ) : (
               <div className="grid h-full place-items-center">
                 <div className="my-5 flex flex-col items-center gap-4">
-                  <LayerDiagonalIcon height={60} width={60} />
+                  <LayersIcon height={60} width={60} />
                   <span className="text-custom-text-200">
                     No issues found. Use <pre className="inline rounded bg-custom-background-80 px-2 py-1">C</pre>{" "}
                     shortcut to create a new issue

@@ -9,7 +9,7 @@ import { ProjectStateService } from "services/project";
 // fetch key
 import { STATES_LIST } from "constants/fetch-keys";
 // components
-import { StateGroupIcon } from "components/icons";
+import { StateGroupIcon } from "@plane/ui";
 import { WebViewModal } from "./web-view-modal";
 // helpers
 import { getStatesList } from "helpers/state.helper";

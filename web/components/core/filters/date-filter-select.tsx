@@ -3,7 +3,8 @@ import React from "react";
 // ui
 import { CustomSelect } from "components/ui";
 // icons
-import { CalendarBeforeIcon, CalendarAfterIcon, CalendarMonthIcon } from "components/icons";
+import { CalendarAfterIcon, CalendarBeforeIcon } from "@plane/ui";
+import { CalendarDays } from "lucide-react";
 // fetch-keys
 
 type Props = {
@@ -32,7 +33,7 @@ const dueDateRange: DueDate[] = [
   {
     name: "range",
     value: "range",
-    icon: <CalendarMonthIcon className="h-4 w-4 " />,
+    icon: <CalendarDays className="h-4 w-4 " />,
   },
 ];
 

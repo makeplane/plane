@@ -4,12 +4,10 @@ import useSWR from "swr";
 // services
 import { ProjectStateService, ProjectService } from "services/project";
 import { IssueLabelService } from "services/issue";
-// components
-import { DateFilterModal } from "components/core";
 // ui
 import { Avatar, MultiLevelDropdown } from "components/ui";
 // icons
-import { PriorityIcon, StateGroupIcon } from "components/icons";
+import { PriorityIcon, StateGroupIcon } from "@plane/ui";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
@@ -248,16 +246,6 @@ export const SelectFilters: React.FC<Props> = ({ filters, onSelect, direction = 
   ];
   return (
     <>
-      {/* {isDateFilterModalOpen && (
-        <DateFilterModal
-          title={dateFilterType.title}
-          field={dateFilterType.type}
-          filters={filters as IIssueFilterOptions}
-          handleClose={() => setIsDateFilterModalOpen(false)}
-          isOpen={isDateFilterModalOpen}
-          onSelect={onSelect}
-        />
-      )} */}
       <MultiLevelDropdown
         label="Filters"
         onSelect={onSelect}

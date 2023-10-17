@@ -14,7 +14,7 @@ import { Label, AddComment, ActivityMessage, ActivityIcon, CommentCard } from "c
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // ui
-import { Icon } from "components/ui";
+import { History } from "lucide-react";
 // types
 import type { IIssue, IIssueComment } from "types";
 
@@ -123,7 +123,7 @@ export const IssueActivity: React.FC<Props> = (props) => {
                             <div className="ring-6 flex h-7 w-7 items-center justify-center rounded-full bg-custom-background-80 text-custom-text-200 ring-white">
                               {activityItem.field ? (
                                 activityItem.new_value === "restore" ? (
-                                  <Icon iconName="history" className="text-sm text-custom-text-200" />
+                                  <History className="h-3.5 w-3.5 text-custom-text-200" />
                                 ) : (
                                   <ActivityIcon activity={activityItem} />
                                 )

@@ -20,11 +20,11 @@ import { DeleteWorkspaceModal } from "components/workspace";
 import { SettingsSidebar } from "components/project";
 // ui
 import { Disclosure, Transition } from "@headlessui/react";
-import { CustomSelect, Icon } from "components/ui";
+import { CustomSelect } from "components/ui";
 import { Button, Input, Spinner } from "@plane/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { Pencil } from "lucide-react";
+import { ChevronDown, ChevronUp, Pencil } from "lucide-react";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
@@ -329,7 +329,8 @@ const WorkspaceSettings: NextPage = () => {
                       className="flex items-center justify-between w-full py-4"
                     >
                       <span className="text-xl tracking-tight">Delete Workspace</span>
-                      <Icon iconName={open ? "expand_less" : "expand_more"} className="!text-2xl" />
+                      {/* <Icon iconName={open ? "expand_less" : "expand_more"} className="!text-2xl" /> */}
+                      {open ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
                     </Disclosure.Button>
 
                     <Transition

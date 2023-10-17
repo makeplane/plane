@@ -7,7 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 // ui components
 import { Button, Loader, ToggleSwitch } from "@plane/ui";
-import { Icon } from "components/ui";
+import { Check, CircleDot, Globe2 } from "lucide-react";
 import { CustomPopover } from "./popover";
 // mobx react lite
 import { observer } from "mobx-react-lite";
@@ -341,7 +341,7 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
                           </div>
                           <div className="flex items-center gap-1 text-custom-primary-100 mt-3">
                             <div className="w-5 h-5 overflow-hidden flex items-center">
-                              <Icon iconName="radio_button_checked" className="!text-lg" />
+                              <CircleDot className="h-5 w-5" />
                             </div>
                             <div className="text-sm">This project is live on web</div>
                           </div>
@@ -392,7 +392,7 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
                                       <div className="text-sm">{option.label}</div>
                                       <div className={`w-[18px] h-[18px] relative flex justify-center items-center`}>
                                         {value.length > 0 && value.includes(option.key) && (
-                                          <Icon iconName="done" className="!text-lg" />
+                                          <Check className="h-5 w-5" />
                                         )}
                                       </div>
                                     </div>
@@ -471,7 +471,7 @@ export const PublishProjectModal: React.FC<Props> = observer(() => {
                   {/* modal handlers */}
                   <div className="border-t border-custom-border-200 px-6 py-5 relative flex justify-between items-center">
                     <div className="flex items-center gap-1 text-custom-text-400 text-sm">
-                      <Icon iconName="public" className="!text-base" />
+                      <Globe2 className="h-4 w-4" />
                       <div className="text-sm">Anyone with the link can access</div>
                     </div>
                     {!projectPublish.fetchSettingsLoader && (

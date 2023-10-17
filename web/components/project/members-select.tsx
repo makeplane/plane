@@ -5,10 +5,9 @@ import { Placement } from "@popperjs/core";
 // headless ui
 import { Combobox } from "@headlessui/react";
 // components
-import { AssigneesList, Avatar, Icon, Tooltip } from "components/ui";
+import { AssigneesList, Avatar, Tooltip } from "components/ui";
 // icons
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { CheckIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { Check, ChevronDown, Search, User2 } from "lucide-react";
 // types
 import { IUserLite } from "types";
 
@@ -89,7 +88,7 @@ export const MembersSelect: React.FC<Props> = ({
             className="flex items-center justify-between gap-1 w-full text-xs px-2.5 py-1 rounded-md shadow-sm border border-custom-border-300 duration-300 focus:outline-none
           "
           >
-            <Icon iconName="person" className="text-sm !leading-4" />
+            <User2 className="h-3.5 w-3.5" />
           </span>
         )}
       </div>
@@ -110,7 +109,7 @@ export const MembersSelect: React.FC<Props> = ({
           } ${buttonClassName}`}
         >
           {label}
-          {!hideDropdownArrow && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
+          {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
         </button>
       </Combobox.Button>
       <Combobox.Options>
@@ -121,7 +120,7 @@ export const MembersSelect: React.FC<Props> = ({
           {...attributes.popper}
         >
           <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
-            <MagnifyingGlassIcon className="h-3.5 w-3.5 text-custom-text-300" />
+            <Search className="h-3.5 w-3.5 text-custom-text-300" />
             <Combobox.Input
               className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
               value={query}
@@ -146,7 +145,7 @@ export const MembersSelect: React.FC<Props> = ({
                     {({ selected }) => (
                       <>
                         {option.content}
-                        {selected && <CheckIcon className={`h-3.5 w-3.5`} />}
+                        {selected && <Check className={`h-3.5 w-3.5`} />}
                       </>
                     )}
                   </Combobox.Option>

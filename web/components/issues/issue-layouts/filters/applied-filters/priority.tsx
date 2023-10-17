@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 
 // icons
-import { PriorityIcon } from "components/icons";
+import { PriorityIcon } from "@plane/ui";
 import { X } from "lucide-react";
 // types
 import { TIssuePriorities } from "types";
@@ -20,7 +20,7 @@ export const AppliedPriorityFilters: React.FC<Props> = observer((props) => {
         <div key={priority} className="text-xs flex items-center gap-1 bg-custom-background-80 p-1 rounded">
           <PriorityIcon
             priority={priority as TIssuePriorities}
-            className={`!text-xs ${
+            className={`h-3 w-3 ${
               priority === "urgent"
                 ? "text-red-500"
                 : priority === "high"

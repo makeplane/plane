@@ -10,8 +10,7 @@ import useToast from "hooks/use-toast";
 import { CustomMenu } from "components/ui";
 import { Tooltip } from "@plane/ui";
 // icons
-import { LinkIcon, LockClosedIcon, LockOpenIcon, PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { ExclamationIcon } from "components/icons";
+import { AlertCircle, LinkIcon, Lock, Pencil, Star, Trash2, Unlock } from "lucide-react";
 // helpers
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { render24HourFormatTime, renderShortDate, renderLongDateFormat } from "helpers/date-time.helper";
@@ -101,7 +100,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                   }}
                   className="z-10 grid place-items-center"
                 >
-                  <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                  <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
                 </button>
               ) : (
                 <button
@@ -113,7 +112,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                   }}
                   className="z-10 grid place-items-center"
                 >
-                  <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
+                  <Star className="h-4 w-4 " color="rgb(var(--color-text-200))" />
                 </button>
               )}
               {page.created_by === user?.id && (
@@ -133,9 +132,9 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                     }}
                   >
                     {page.access ? (
-                      <LockClosedIcon className="h-4 w-4" color="rgb(var(--color-text-200))" />
+                      <Lock className="h-4 w-4" color="rgb(var(--color-text-200))" />
                     ) : (
-                      <LockOpenIcon className="h-4 w-4" color="rgb(var(--color-text-200))" />
+                      <Unlock className="h-4 w-4" color="rgb(var(--color-text-200))" />
                     )}
                   </button>
                 </Tooltip>
@@ -147,7 +146,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                 } on ${renderLongDateFormat(`${page.created_at}`)}`}
               >
                 <span>
-                  <ExclamationIcon className="h-4 w-4 fill-current text-custom-text-200" />
+                  <AlertCircle className="h-4 w-4 text-custom-text-200" />
                 </span>
               </Tooltip>
               <CustomMenu verticalEllipsis>
@@ -159,7 +158,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                   }}
                 >
                   <span className="flex items-center justify-start gap-2">
-                    <PencilIcon className="h-3.5 w-3.5" />
+                    <Pencil className="h-3.5 w-3.5" />
                     <span>Edit Page</span>
                   </span>
                 </CustomMenu.MenuItem>
@@ -171,7 +170,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                   }}
                 >
                   <span className="flex items-center justify-start gap-2">
-                    <TrashIcon className="h-3.5 w-3.5" />
+                    <Trash2 className="h-3.5 w-3.5" />
                     <span>Delete Page</span>
                   </span>
                 </CustomMenu.MenuItem>

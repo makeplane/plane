@@ -2,7 +2,7 @@ import * as React from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 // icons
-import { Icon } from "components/ui";
+import { MoveLeft } from "lucide-react";
 
 type BreadcrumbsProps = {
   children: any;
@@ -19,10 +19,7 @@ const Breadcrumbs = ({ children }: BreadcrumbsProps) => {
           className="group grid h-7 w-7 flex-shrink-0 cursor-pointer place-items-center rounded border border-custom-sidebar-border-200 text-center text-sm hover:bg-custom-sidebar-background-90"
           onClick={() => router.back()}
         >
-          <Icon
-            iconName="keyboard_backspace"
-            className="text-base leading-4 text-custom-sidebar-text-200 group-hover:text-custom-sidebar-text-100"
-          />
+          <MoveLeft className="h-4 w-4 text-custom-sidebar-text-200 group-hover:text-custom-sidebar-text-100" />
         </button>
         {children}
       </div>
@@ -48,14 +45,8 @@ const BreadcrumbItem: React.FC<BreadcrumbItemProps> = ({
   <>
     {link ? (
       <Link href={link}>
-        <a
-          className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm ${
-            linkTruncate ? "truncate" : ""
-          }`}
-        >
-          <p
-            className={`${linkTruncate ? "truncate" : ""}${icon ? "flex items-center gap-2" : ""}`}
-          >
+        <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm ${linkTruncate ? "truncate" : ""}`}>
+          <p className={`${linkTruncate ? "truncate" : ""}${icon ? "flex items-center gap-2" : ""}`}>
             {icon ?? null}
             {title}
           </p>

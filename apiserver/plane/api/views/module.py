@@ -141,29 +141,6 @@ class ModuleViewSet(BaseViewSet):
             .order_by(order_by, "name")
         )
 
-    def perform_destroy(self, instance):
-        module_issues = list(
-            ModuleIssue.objects.filter(module_id=self.kwargs.get("pk")).values_list(
-                "issue", flat=True
-            )
-        )
-        issue_activity.delay(
-            type="module.activity.deleted",
-            requested_data=json.dumps(
-                {
-                    "module_id": str(self.kwargs.get("pk")),
-                    "issues": [str(issue_id) for issue_id in module_issues],
-                }
-            ),
-            actor_id=str(self.request.user.id),
-            issue_id=str(self.kwargs.get("pk", None)),
-            project_id=str(self.kwargs.get("project_id", None)),
-            current_instance=None,
-            epoch=int(timezone.now().timestamp())
-        )
-
-        return super().perform_destroy(instance)
-
     def create(self, request, slug, project_id):
         try:
             project = Project.objects.get(workspace__slug=slug, pk=project_id)
@@ -309,6 +286,37 @@ class ModuleViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+    def destroy(self, request, slug, project_id, pk):
+        try:
+            module = Module.objects.get(
+                workspace__slug=slug, project_id=project_id, pk=pk
+            )
+            module_issues = list(
+                ModuleIssue.objects.filter(module_id=pk).values_list("issue", flat=True)
+            )
+            module.delete()
+            issue_activity.delay(
+                type="module.activity.deleted",
+                requested_data=json.dumps(
+                    {
+                        "module_id": str(pk),
+                        "issues": [str(issue_id) for issue_id in module_issues],
+                    }
+                ),
+                actor_id=str(request.user.id),
+                issue_id=str(pk),
+                project_id=str(project_id),
+                current_instance=None,
+                epoch=int(timezone.now().timestamp()),
+            )
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
 
 class ModuleIssueViewSet(BaseViewSet):
     serializer_class = ModuleIssueSerializer
@@ -329,22 +337,6 @@ class ModuleIssueViewSet(BaseViewSet):
             module_id=self.kwargs.get("module_id"),
         )
 
-    def perform_destroy(self, instance):
-        issue_activity.delay(
-            type="module.activity.deleted",
-            requested_data=json.dumps(
-                {
-                    "module_id": str(self.kwargs.get("module_id")),
-                    "issues": [str(instance.issue_id)],
-                }
-            ),
-            actor_id=str(self.request.user.id),
-            issue_id=str(self.kwargs.get("pk", None)),
-            project_id=str(self.kwargs.get("project_id", None)),
-            current_instance=None,
-            epoch=int(timezone.now().timestamp())
-        )
-        return super().perform_destroy(instance)
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -510,7 +502,7 @@ class ModuleIssueViewSet(BaseViewSet):
                         ),
                     }
                 ),
-                epoch=int(timezone.now().timestamp())
+                epoch=int(timezone.now().timestamp()),
             )
 
             return Response(
@@ -521,6 +513,34 @@ class ModuleIssueViewSet(BaseViewSet):
             return Response(
                 {"error": "Module Does not exists"}, status=status.HTTP_400_BAD_REQUEST
             )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def destroy(self, request, slug, project_id, module_id, pk):
+        try:
+            module_issue = ModuleIssue.objects.get(
+                workspace__slug=slug, project_id=project_id, module_id=module_id, pk=pk
+            )
+            module_issue.delete()
+            issue_activity.delay(
+                type="module.activity.deleted",
+                requested_data=json.dumps(
+                    {
+                        "module_id": str(module_id),
+                        "issues": [str(module_issue.issue_id)],
+                    }
+                ),
+                actor_id=str(request.user.id),
+                issue_id=str(pk),
+                project_id=str(project_id),
+                current_instance=None,
+                epoch=int(timezone.now().timestamp()),
+            )
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
             capture_exception(e)
             return Response(

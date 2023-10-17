@@ -7,7 +7,7 @@ import { IssueLabelService } from "services/issue";
 // ui
 import { IssueLabelsList } from "components/ui";
 // icons
-import { CheckIcon, MagnifyingGlassIcon, PlusIcon, RectangleGroupIcon, TagIcon } from "@heroicons/react/24/outline";
+import { Check, Component, Plus, Search, Tag } from "lucide-react";
 // types
 import type { IIssueLabels } from "types";
 // fetch-keys
@@ -54,7 +54,7 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
               </span>
             ) : (
               <span className="flex items-center justify-center gap-2 px-2 py-1 text-xs rounded shadow-sm border border-custom-border-300 hover:bg-custom-background-80">
-                <TagIcon className="h-3.5 w-3.5 text-custom-text-200" />
+                <Tag className="h-3.5 w-3.5 text-custom-text-200" />
                 <span className=" text-custom-text-200">Label</span>
               </span>
             )}
@@ -75,7 +75,7 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                 bg-custom-background-90 px-2 py-2 text-xs shadow-md focus:outline-none`}
             >
               <div className="flex w-full items-center justify-start rounded-sm  border-[0.6px] border-custom-border-200 bg-custom-background-90 px-2">
-                <MagnifyingGlassIcon className="h-3 w-3 text-custom-text-200" />
+                <Search className="h-3 w-3 text-custom-text-200" />
                 <Combobox.Input
                   className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 focus:outline-none"
                   onChange={(event) => setQuery(event.target.value)}
@@ -113,7 +113,7 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                                     <span>{label.name}</span>
                                   </div>
                                   <div className="flex items-center justify-center rounded p-1">
-                                    <CheckIcon className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
+                                    <Check className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
                                   </div>
                                 </div>
                               )}
@@ -123,7 +123,7 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                         return (
                           <div className="border-y border-custom-border-200">
                             <div className="flex select-none items-center gap-2 truncate p-2 text-custom-text-100">
-                              <RectangleGroupIcon className="h-3 w-3" /> {label.name}
+                              <Component className="h-3 w-3" /> {label.name}
                             </div>
                             <div>
                               {children.map((child) => (
@@ -148,7 +148,7 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                                         <span>{child.name}</span>
                                       </div>
                                       <div className="flex items-center justify-center rounded p-1">
-                                        <CheckIcon className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
+                                        <Check className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
                                       </div>
                                     </div>
                                   )}
@@ -170,7 +170,7 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                   onClick={() => setIsOpen(true)}
                 >
                   <span className="flex items-center justify-start gap-1 text-custom-text-200">
-                    <PlusIcon className="h-4 w-4" aria-hidden="true" />
+                    <Plus className="h-4 w-4" aria-hidden="true" />
                     <span>Create New Label</span>
                   </span>
                 </button>

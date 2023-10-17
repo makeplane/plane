@@ -3,7 +3,7 @@ import { TrackEventService } from "services/track_event.service";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 // types
-import type { IInboxIssue, IInbox, TInboxStatus, IInboxIssueDetail, IUser, IInboxQueryParams } from "types";
+import type { IInboxIssue, IInbox, TInboxStatus, IUser, IInboxQueryParams } from "types";
 
 const trackEventService = new TrackEventService();
 
@@ -56,7 +56,7 @@ export class InboxService extends APIService {
     projectId: string,
     inboxId: string,
     inboxIssueId: string
-  ): Promise<IInboxIssueDetail> {
+  ): Promise<IInboxIssue> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}/`
     )
@@ -77,7 +77,7 @@ export class InboxService extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}/`
     )
       .then((response) => {
-        trackEventService.trackInboxEvent(response?.data, "INBOX_ISSUE_DELETE", user as IUser);
+        if (user) trackEventService.trackInboxEvent(response?.data, "INBOX_ISSUE_DELETE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -120,14 +120,14 @@ export class InboxService extends APIService {
     inboxId: string,
     inboxIssueId: string,
     data: { issue: Partial<IInboxIssue> },
-    user: IUser
-  ): Promise<IInboxIssue> {
+    user: IUser | undefined
+  ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/${inboxIssueId}/`,
       data
     )
       .then((response) => {
-        trackEventService.trackInboxEvent(response?.data, "INBOX_ISSUE_UPDATE", user);
+        if (user) trackEventService.trackInboxEvent(response?.data, "INBOX_ISSUE_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {
@@ -141,10 +141,10 @@ export class InboxService extends APIService {
     inboxId: string,
     data: any,
     user: IUser | undefined
-  ): Promise<IInboxIssueDetail> {
+  ): Promise<IInboxIssue> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/inboxes/${inboxId}/inbox-issues/`, data)
       .then((response) => {
-        trackEventService.trackInboxEvent(response?.data, "INBOX_ISSUE_CREATE", user as IUser);
+        if (user) trackEventService.trackInboxEvent(response?.data, "INBOX_ISSUE_CREATE", user);
         return response?.data;
       })
       .catch((error) => {

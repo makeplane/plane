@@ -8,7 +8,7 @@ import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
 // icons
 import { X } from "lucide-react";
-import { BlockerIcon, RelatedIcon } from "components/icons";
+import { BlockerIcon, RelatedIcon } from "@plane/ui";
 // components
 import { ExistingIssuesListModal } from "components/core";
 // services

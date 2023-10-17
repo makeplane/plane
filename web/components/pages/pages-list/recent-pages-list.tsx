@@ -12,7 +12,7 @@ import { PagesView } from "components/pages";
 import { EmptyState } from "components/common";
 import { Loader } from "@plane/ui";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Plus } from "lucide-react";
 // images
 import emptyPage from "public/empty-state/page.svg";
 // helpers
@@ -46,9 +46,7 @@ export const RecentPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
 
             return (
               <div key={key} className="h-full overflow-hidden pb-9">
-                <h2 className="text-xl font-semibold capitalize mb-2">
-                  {replaceUnderscoreIfSnakeCase(key)}
-                </h2>
+                <h2 className="text-xl font-semibold capitalize mb-2">{replaceUnderscoreIfSnakeCase(key)}</h2>
                 <PagesView pages={pages[key as keyof RecentPagesResponse]} viewType={viewType} />
               </div>
             );
@@ -59,7 +57,7 @@ export const RecentPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
             description="You can think of Pages as an AI-powered notepad."
             image={emptyPage}
             primaryButton={{
-              icon: <PlusIcon className="h-4 w-4" />,
+              icon: <Plus className="h-4 w-4" />,
               text: "New Page",
               onClick: () => {
                 const e = new KeyboardEvent("keydown", {

@@ -11,10 +11,9 @@ import { IssueService } from "services/issue";
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
 // ui
-import { Button } from "@plane/ui";
+import { Button, LayersIcon } from "@plane/ui";
 // icons
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { LayerDiagonalIcon } from "components/icons";
+import { Search } from "lucide-react";
 // types
 import { IUser, IIssue } from "types";
 // fetch keys
@@ -170,7 +169,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
                   }}
                 >
                   <div className="relative m-1">
-                    <MagnifyingGlassIcon
+                    <Search
                       className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-100 text-opacity-40"
                       aria-hidden="true"
                     />
@@ -228,7 +227,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen, user
                       </li>
                     ) : (
                       <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
-                        <LayerDiagonalIcon height="56" width="56" />
+                        <LayersIcon height="56" width="56" />
                         <h3 className="text-custom-text-200">
                           No issues found. Create a new issue with{" "}
                           <pre className="inline rounded bg-custom-background-80 px-2 py-1">C</pre>.

@@ -15,11 +15,10 @@ import { ModuleService } from "services/module.service";
 import { CreateUpdateModuleModal, ModulesListGanttChartView, SingleModuleCard } from "components/modules";
 // ui
 import { Button, Loader, Tooltip } from "@plane/ui";
-import { Icon } from "components/ui";
 import { EmptyState } from "components/common";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { GanttChart, LayoutGrid, Plus } from "lucide-react";
 // images
 import emptyModule from "public/empty-state/module.svg";
 // types
@@ -33,11 +32,11 @@ import { replaceUnderscoreIfSnakeCase, truncateText } from "helpers/string.helpe
 const moduleViewOptions: { type: "grid" | "gantt_chart"; icon: any }[] = [
   {
     type: "gantt_chart",
-    icon: "view_timeline",
+    icon: GanttChart,
   },
   {
     type: "grid",
-    icon: "table_rows",
+    icon: LayoutGrid,
   },
 ];
 
@@ -103,13 +102,13 @@ const ProjectModules: NextPage = () => {
                 }`}
                 onClick={() => setModulesView(option.type)}
               >
-                <Icon iconName={option.icon} className={`!text-base ${option.type === "grid" ? "rotate-90" : ""}`} />
+                <option.icon className="h-4 w-4" />
               </button>
             </Tooltip>
           ))}
           <Button
             variant="primary"
-            prependIcon={<PlusIcon />}
+            prependIcon={<Plus />}
             onClick={() => {
               const e = new KeyboardEvent("keydown", { key: "m" });
               document.dispatchEvent(e);
@@ -153,7 +152,7 @@ const ProjectModules: NextPage = () => {
             description="Modules are smaller, focused projects that help you group and organize issues."
             image={emptyModule}
             primaryButton={{
-              icon: <PlusIcon className="h-4 w-4" />,
+              icon: <Plus className="h-4 w-4" />,
               text: "New Module",
               onClick: () => {
                 const e = new KeyboardEvent("keydown", {

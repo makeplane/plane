@@ -5,7 +5,7 @@ import useEstimateOption from "hooks/use-estimate-option";
 import { CustomSelect } from "components/ui";
 import { Tooltip } from "@plane/ui";
 // icons
-import { PlayIcon } from "@heroicons/react/24/outline";
+import { Triangle } from "lucide-react";
 // types
 import { IIssue } from "types";
 
@@ -31,7 +31,7 @@ export const ViewEstimateSelect: React.FC<Props> = ({
   const estimateLabels = (
     <Tooltip tooltipHeading="Estimate" tooltipContent={estimateValue} position={tooltipPosition}>
       <div className="flex items-center gap-1 text-custom-text-200">
-        <PlayIcon className="h-3.5 w-3.5 -rotate-90" />
+        <Triangle className="h-3.5 w-3.5" />
         {estimateValue ?? "None"}
       </div>
     </Tooltip>
@@ -52,7 +52,7 @@ export const ViewEstimateSelect: React.FC<Props> = ({
       <CustomSelect.Option value={null}>
         <>
           <span>
-            <PlayIcon className="h-4 w-4 -rotate-90" />
+            <Triangle className="h-4 w-4" />
           </span>
           None
         </>
@@ -61,7 +61,7 @@ export const ViewEstimateSelect: React.FC<Props> = ({
         <CustomSelect.Option key={estimate.id} value={estimate.key}>
           <>
             <span>
-              <PlayIcon className="h-4 w-4 -rotate-90" />
+              <Triangle className="h-4 w-4" />
             </span>
             {estimate.value}
           </>

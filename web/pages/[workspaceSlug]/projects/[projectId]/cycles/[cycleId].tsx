@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // icons
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
-import { CyclesIcon } from "components/icons";
+import { ContrastIcon } from "@plane/ui";
+import { ArrowLeft } from "lucide-react";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // contexts
@@ -109,7 +109,7 @@ const SingleCycle: React.FC = () => {
           <CustomMenu
             label={
               <>
-                <CyclesIcon className="h-3 w-3" />
+                <ContrastIcon className="h-3 w-3" />
                 {cycleDetails?.name && truncateText(cycleDetails.name, 40)}
               </>
             }
@@ -137,7 +137,7 @@ const SingleCycle: React.FC = () => {
               }`}
               onClick={() => setCycleSidebar((prevData) => !prevData)}
             >
-              <ArrowLeftIcon className="h-4 w-4" />
+              <ArrowLeft className="h-4 w-4" />
             </button>
           </div>
         }

@@ -8,10 +8,9 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 import { ProjectService } from "services/project";
 // components
 import { DeleteProjectModal, ProjectDetailsForm, ProjectDetailsFormLoader, SettingsSidebar } from "components/project";
-// components
 import { Button, Loader } from "@plane/ui";
-import { Icon } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { ChevronDown, ChevronUp } from "lucide-react";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
@@ -98,7 +97,7 @@ const GeneralSettings: NextPage = observer(() => {
                     className="flex items-center justify-between w-full py-4"
                   >
                     <span className="text-xl tracking-tight">Delete Project</span>
-                    <Icon iconName={open ? "expand_less" : "expand_more"} className="!text-2xl" />
+                    {open ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
                   </Disclosure.Button>
 
                   <Transition

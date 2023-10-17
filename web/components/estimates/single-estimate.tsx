@@ -13,7 +13,7 @@ import { DeleteEstimateModal } from "components/estimates";
 import { Button } from "@plane/ui";
 import { CustomMenu } from "components/ui";
 //icons
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { Pencil, Trash2 } from "lucide-react";
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
 // types
@@ -89,7 +89,7 @@ export const SingleEstimate: React.FC<Props> = ({ user, estimate, editEstimate, 
                 }}
               >
                 <div className="flex items-center justify-start gap-2">
-                  <PencilIcon className="h-3.5 w-3.5" />
+                  <Pencil className="h-3.5 w-3.5" />
                   <span>Edit estimate</span>
                 </div>
               </CustomMenu.MenuItem>
@@ -100,7 +100,7 @@ export const SingleEstimate: React.FC<Props> = ({ user, estimate, editEstimate, 
                   }}
                 >
                   <div className="flex items-center justify-start gap-2">
-                    <TrashIcon className="h-3.5 w-3.5" />
+                    <Trash2 className="h-3.5 w-3.5" />
                     <span>Delete estimate</span>
                   </div>
                 </CustomMenu.MenuItem>

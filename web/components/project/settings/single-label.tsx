@@ -6,7 +6,7 @@ import { Popover, Transition } from "@headlessui/react";
 import { CustomMenu } from "components/ui";
 import { Button, Input } from "@plane/ui";
 // icons
-import { PencilIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
+import { Component, Pencil } from "lucide-react";
 // types
 import { IIssueLabels } from "types";
 
@@ -129,7 +129,7 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
       ) : (
         <div className="rounded-md bg-custom-background-80 p-4 text-custom-text-100">
           <h3 className="flex items-center gap-2 font-medium leading-5">
-            <RectangleGroupIcon className="h-5 w-5" />
+            <Component className="h-5 w-5" />
             This is the label group title
           </h3>
           <div className="mt-4 pl-5">
@@ -139,7 +139,7 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
                 This is the label title
               </h5>
               <button type="button" className="hidden group-hover:block">
-                <PencilIcon className="h-3 w-3" />
+                <Pencil className="h-3 w-3" />
               </button>
             </div>
           </div>
