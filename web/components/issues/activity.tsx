@@ -82,7 +82,7 @@ export const IssueActivitySection: React.FC<Props> = ({
                                 alt={activityItem.actor_detail.display_name}
                                 height={24}
                                 width={24}
-                                className="rounded-full"
+                                className="rounded-full h-full w-full object-cover"
                               />
                             ) : (
                               <div

@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
+import { NextPage } from "next";
 import useSWR from "swr";
-
-// mobx store
+// hooks
 import { useMobxStore } from "lib/mobx/store-provider";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
@@ -12,8 +12,6 @@ import { ProjectInboxHeader } from "components/headers";
 import { truncateText } from "helpers/string.helper";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-// types
-import type { NextPage } from "next";
 
 const ProjectInbox: NextPage = () => {
   const router = useRouter();

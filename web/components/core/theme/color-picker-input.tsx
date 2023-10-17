@@ -18,14 +18,14 @@ import { Input } from "@plane/ui";
 // icons
 import { Palette } from "lucide-react";
 // types
-import { ICustomTheme } from "types";
+import { IUserTheme } from "types";
 
 type Props = {
-  name: keyof ICustomTheme;
+  name: keyof IUserTheme;
   position?: "left" | "right";
   watch: UseFormWatch<any>;
   setValue: UseFormSetValue<any>;
-  control: Control<ICustomTheme, any>;
+  control: Control<IUserTheme, any>;
   error: FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined;
   register: UseFormRegister<any>;
 };
@@ -38,7 +38,7 @@ export const ColorPickerInput: FC<Props> = (props) => {
     setValue(name, hex);
   };
 
-  const getColorText = (colorName: keyof ICustomTheme) => {
+  const getColorText = (colorName: keyof IUserTheme) => {
     switch (colorName) {
       case "background":
         return "Background";

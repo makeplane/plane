@@ -1248,6 +1248,9 @@ def issue_activity(
             "comment_reaction.activity.deleted",
             "issue_vote.activity.created",
             "issue_vote.activity.deleted",
+            "issue_draft.activity.created",
+            "issue_draft.activity.updated",
+            "issue_draft.activity.deleted",
         ]:
             issue = Issue.objects.filter(pk=issue_id).first()
 
@@ -1340,6 +1343,9 @@ def issue_activity(
             "comment_reaction.activity.deleted",
             "issue_vote.activity.created",
             "issue_vote.activity.deleted",
+            "issue_draft.activity.created",
+            "issue_draft.activity.updated",
+            "issue_draft.activity.deleted",
         ]:
             # Create Notifications
             bulk_notifications = []

@@ -1,38 +1,20 @@
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // mobx
 import { useMobxStore } from "lib/mobx/store-provider";
-// services
-import { ProjectService } from "services/project";
-// layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
-// helper
-import { truncateText } from "helpers/string.helper";
 // components
 import { ProjectLayoutRoot } from "components/issues";
 import { ProjectIssuesHeader } from "components/headers";
-// ui
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
 import type { NextPage } from "next";
-// fetch-keys
-import { PROJECT_DETAILS } from "constants/fetch-keys";
-
-// services
-const projectService = new ProjectService();
+// layouts
+import { AppLayout } from "layouts/app-layout";
 
 const ProjectIssues: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { issueFilter: issueFilterStore, project: projectStore, inbox: inboxStore } = useMobxStore();
-
-  const { data: projectDetails } = useSWR(
-    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId ? () => projectService.getProject(workspaceSlug as string, projectId as string) : null
-  );
+  const { issueFilter: issueFilterStore } = useMobxStore();
 
   // TODO: update the fetch keys
   useSWR(
@@ -42,57 +24,12 @@ const ProjectIssues: NextPage = () => {
       : null
   );
 
-  useSWR(
-    workspaceSlug && projectId ? "REVALIDATE_PROJECT_STATES_LIST" : null,
-    workspaceSlug && projectId
-      ? () => projectStore.fetchProjectStates(workspaceSlug.toString(), projectId.toString())
-      : null
-  );
-
-  useSWR(
-    workspaceSlug && projectId ? "REVALIDATE_PROJECT_LABELS_LIST" : null,
-    workspaceSlug && projectId
-      ? () => projectStore.fetchProjectLabels(workspaceSlug.toString(), projectId.toString())
-      : null
-  );
-
-  useSWR(
-    workspaceSlug && projectId ? "REVALIDATE_PROJECT_MEMBERS_LIST" : null,
-    workspaceSlug && projectId
-      ? () => projectStore.fetchProjectMembers(workspaceSlug.toString(), projectId.toString())
-      : null
-  );
-
-  useSWR(
-    workspaceSlug && projectId ? "REVALIDATE_PROJECT_DETAILS" : null,
-    workspaceSlug && projectId
-      ? () => projectStore.fetchProjectDetails(workspaceSlug.toString(), projectId.toString())
-      : null
-  );
-
-  useSWR(
-    workspaceSlug && projectId ? "REVALIDATE_INBOXES_LIST" : null,
-    workspaceSlug && projectId
-      ? () => inboxStore.fetchInboxesList(workspaceSlug.toString(), projectId.toString())
-      : null
-  );
-  // TODO: remove all the above fetching logic to project auth wrapper
-
   return (
-    <ProjectAuthorizationWrapper
-      breadcrumbs={
-        <Breadcrumbs>
-          <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-          <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Issues`} />
-        </Breadcrumbs>
-      }
-      right={<ProjectIssuesHeader />}
-      bg="secondary"
-    >
+    <AppLayout header={<ProjectIssuesHeader />} withProjectWrapper>
       <div className="h-full w-full flex flex-col">
         <ProjectLayoutRoot />
       </div>
-    </ProjectAuthorizationWrapper>
+    </AppLayout>
   );
 };
 

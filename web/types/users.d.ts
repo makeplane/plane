@@ -26,7 +26,7 @@ export interface IUser {
   last_workspace_id: string;
   user_timezone: string;
   username: string;
-  theme: ICustomTheme;
+  theme: IUserTheme;
 }
 
 export interface IUserSettings {
@@ -41,7 +41,7 @@ export interface IUserSettings {
   };
 }
 
-export interface ICustomTheme {
+export interface IUserTheme {
   background: string;
   text: string;
   primary: string;

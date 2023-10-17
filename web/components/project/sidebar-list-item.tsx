@@ -26,7 +26,6 @@ import { renderEmoji } from "helpers/emoji.helper";
 import { IProject } from "types";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
 // components
 import { CustomMenu } from "components/ui";
 import { LeaveProjectModal, DeleteProjectModal } from "components/project";
@@ -34,7 +33,6 @@ import { PublishProjectModal } from "components/project/publish-project";
 
 type Props = {
   project: IProject;
-  sidebarCollapse: boolean;
   provided?: DraggableProvided;
   snapshot?: DraggableStateSnapshot;
   handleCopyText: () => void;
@@ -75,9 +73,9 @@ const navigation = (workspaceSlug: string, projectId: string) => [
 ];
 
 export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
-  const { project, sidebarCollapse, provided, snapshot, handleCopyText, shortContextMenu = false } = props;
+  const { project, provided, snapshot, handleCopyText, shortContextMenu = false } = props;
   // store
-  const { projectPublish, project: projectStore }: RootStore = useMobxStore();
+  const { projectPublish, project: projectStore, theme: themeStore } = useMobxStore();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -89,6 +87,8 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
 
   const isAdmin = project.member_role === 20;
   const isViewerOrGuest = project.member_role === 10 || project.member_role === 5;
+
+  const isCollapsed = themeStore.sidebarCollapsed;
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug) return;
@@ -152,7 +152,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   <button
                     type="button"
                     className={`absolute top-1/2 -translate-y-1/2 -left-4 hidden rounded p-0.5 text-custom-sidebar-text-400 ${
-                      sidebarCollapse ? "" : "group-hover:!flex"
+                      isCollapsed ? "" : "group-hover:!flex"
                     } ${project.sort_order === null ? "opacity-60 cursor-not-allowed" : ""}`}
                     {...provided?.dragHandleProps}
                   >
@@ -161,16 +161,16 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   </button>
                 </Tooltip>
               )}
-              <Tooltip tooltipContent={`${project.name}`} position="right" className="ml-2" disabled={!sidebarCollapse}>
+              <Tooltip tooltipContent={`${project.name}`} position="right" className="ml-2" disabled={!isCollapsed}>
                 <Disclosure.Button
                   as="div"
                   className={`flex items-center flex-grow truncate cursor-pointer select-none text-left text-sm font-medium ${
-                    sidebarCollapse ? "justify-center" : `justify-between`
+                    isCollapsed ? "justify-center" : `justify-between`
                   }`}
                 >
                   <div
                     className={`flex items-center flex-grow w-full truncate gap-x-2 ${
-                      sidebarCollapse ? "justify-center" : ""
+                      isCollapsed ? "justify-center" : ""
                     }`}
                   >
                     {project.emoji ? (
@@ -187,11 +187,11 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                       </span>
                     )}
 
-                    {!sidebarCollapse && (
+                    {!isCollapsed && (
                       <p className={`truncate ${open ? "" : "text-custom-sidebar-text-200"}`}>{project.name}</p>
                     )}
                   </div>
-                  {!sidebarCollapse && (
+                  {!isCollapsed && (
                     <ChevronDown
                       className={`h-4 w-4 flex-shrink-0 ${
                         open ? "rotate-180" : ""
@@ -201,7 +201,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                 </Disclosure.Button>
               </Tooltip>
 
-              {!sidebarCollapse && (
+              {!isCollapsed && (
                 <CustomMenu
                   className="hidden group-hover:block flex-shrink-0"
                   buttonClassName="!text-custom-sidebar-text-400 hover:text-custom-sidebar-text-400"
@@ -298,7 +298,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
               leaveFrom="transform scale-100 opacity-100"
               leaveTo="transform scale-95 opacity-0"
             >
-              <Disclosure.Panel className={`space-y-2 mt-1 ${sidebarCollapse ? "" : "ml-[2.25rem]"}`}>
+              <Disclosure.Panel className={`space-y-2 mt-1 ${isCollapsed ? "" : "ml-[2.25rem]"}`}>
                 {navigation(workspaceSlug as string, project?.id).map((item) => {
                   if (
                     (item.name === "Cycles" && !project.cycle_view) ||
@@ -315,17 +315,17 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                           tooltipContent={`${project?.name}: ${item.name}`}
                           position="right"
                           className="ml-2"
-                          disabled={!sidebarCollapse}
+                          disabled={!isCollapsed}
                         >
                           <div
                             className={`group flex items-center rounded-md px-2 py-1.5 gap-2.5 text-xs font-medium outline-none ${
                               router.asPath.includes(item.href)
                                 ? "bg-custom-primary-100/10 text-custom-primary-100"
                                 : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
-                            } ${sidebarCollapse ? "justify-center" : ""}`}
+                            } ${isCollapsed ? "justify-center" : ""}`}
                           >
                             <item.Icon className="h-4 w-4" />
-                            {!sidebarCollapse && item.name}
+                            {!isCollapsed && item.name}
                           </div>
                         </Tooltip>
                       </a>
