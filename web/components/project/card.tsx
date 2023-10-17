@@ -125,7 +125,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                   </div>
 
                   <div className="flex flex-col justify-center h-9">
-                    <h3 className="text-sm text-white font-medium line-clamp-1">{project.name}</h3>
+                    <h3 className="text-sm text-white font-semibold line-clamp-1">{project.name}</h3>
                     <span className="flex items-center gap-1.5">
                       <p className="text-xs text-white">
                         Created on {renderShortDateWithYearFormat(project?.created_at)}
@@ -170,6 +170,12 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                   </button>
                 </div>
               </div>
+
+              <div className="absolute top-3 right-3">
+                <Button variant="primary" size="sm" className="text-[0.6rem] !py-0.5 rounded-full">
+                  Joined
+                </Button>
+              </div>
             </div>
 
             <div className="h-[104px] w-full flex flex-col justify-between p-4 rounded-b">
@@ -178,13 +184,11 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                 <Tooltip
                   tooltipHeading="Members"
                   tooltipContent={
-                    project.members && project.members.length > 0
-                      ? project.members.map((member) => member?.member__display_name).join(", ")
-                      : "No Assignee"
+                    project.members && project.members.length > 0 ? `${project.members.length} Members` : "No Member"
                   }
                   position="top"
                 >
-                  <div className="flex items-center cursor-pointer w-full gap-2 text-custom-text-200">
+                  <div className="flex items-center cursor-pointer gap-2 text-custom-text-200">
                     <AssigneesList userIds={projectMembersIds} length={3} showLength={true} />
                   </div>
                 </Tooltip>

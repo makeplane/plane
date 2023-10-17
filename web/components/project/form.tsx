@@ -113,8 +113,10 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="relative h-44 w-full mt-6">
+        <div className="absolute z-[1] inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+
         <img src={watch("cover_image")!} alt={watch("cover_image")!} className="h-44 w-full rounded-md object-cover" />
-        <div className="flex items-end justify-between gap-3 absolute bottom-4 w-full px-4">
+        <div className="flex items-end z-10 justify-between gap-3 absolute bottom-4 w-full px-4">
           <div className="flex gap-3 flex-grow truncate">
             <div className="flex items-center justify-center flex-shrink-0 bg-custom-background-90 h-[52px] w-[52px] rounded-lg">
               <div className="h-7 w-7 grid place-items-center">
