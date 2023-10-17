@@ -1,21 +1,14 @@
 import React from "react";
-
+import type { NextPage } from "next";
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
-// mobx store
+// hooks
 import { useMobxStore } from "lib/mobx/store-provider";
-// layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import { ProjectViewsHeader } from "components/headers";
-// ui
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-// components
 import { ProjectViewsList } from "components/views";
-// types
-import type { NextPage } from "next";
+// layouts
+import { AppLayout } from "layouts/app-layout";
 
 const ProjectViews: NextPage = () => {
   const router = useRouter();
@@ -43,17 +36,9 @@ const ProjectViews: NextPage = () => {
       : undefined;
 
   return (
-    <ProjectAuthorizationWrapper
-      breadcrumbs={
-        <Breadcrumbs>
-          <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-          <BreadcrumbItem title={`${projectDetails?.name ?? "Project"} Views`} />
-        </Breadcrumbs>
-      }
-      right={<ProjectViewsHeader />}
-    >
+    <AppLayout header={<ProjectViewsHeader title={projectDetails?.name} />}>
       <ProjectViewsList />
-    </ProjectAuthorizationWrapper>
+    </AppLayout>
   );
 };
 
