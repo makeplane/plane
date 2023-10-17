@@ -24,7 +24,7 @@ import { CreateLabelModal } from "components/labels";
 import { CustomMenu } from "components/ui";
 import { Button, Input, ToggleSwitch } from "@plane/ui";
 // icons
-import { Sparkle, X } from "lucide-react";
+import { LayoutPanelTop, Sparkle, X } from "lucide-react";
 // types
 import type { IUser, IIssue, ISearchIssueResponse } from "types";
 // components
@@ -491,7 +491,7 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
                   </div>
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) && (
-                  <div>
+                  <>
                     <Controller
                       control={control}
                       name="estimate_point"
@@ -499,42 +499,76 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
                         <IssueEstimateSelect value={value} onChange={onChange} />
                       )}
                     />
-                  </div>
+                  </>
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
-                  <Controller
-                    control={control}
-                    name="parent"
-                    render={({ field: { onChange } }) => (
-                      <ParentIssuesListModal
-                        isOpen={parentIssueListModalOpen}
-                        handleClose={() => setParentIssueListModalOpen(false)}
-                        onChange={(issue) => {
-                          onChange(issue.id);
-                          setSelectedParentIssue(issue);
-                        }}
-                        projectId={projectId}
-                      />
-                    )}
-                  />
-                )}
-                {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
-                  <CustomMenu ellipsis>
-                    {watch("parent") ? (
-                      <>
-                        <CustomMenu.MenuItem renderAs="button" onClick={() => setParentIssueListModalOpen(true)}>
-                          Change parent issue
+                  <>
+                    <CustomMenu
+                      customButton={
+                        <button className="flex cursor-pointer items-center rounded-md border border-custom-border-200 text-xs shadow-sm duration-200">
+                          <span className="flex items-center justify-center gap-2 px-2 py-1 text-xs text-custom-text-200 hover:bg-custom-background-80">
+                            {watch("parent") ? (
+                              <>
+                                <LayoutPanelTop className="h-3.5 w-3.5 flex-shrink-0" />
+                                <span className="whitespace-nowrap text-custom-text-100">
+                                  {selectedParentIssue &&
+                                    `${selectedParentIssue.project__identifier}-
+                                  ${selectedParentIssue.sequence_id}`}
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                <LayoutPanelTop className="h-3.5 w-3.5 flex-shrink-0" />
+                                <span className="whitespace-nowrap">Add Parent</span>
+                              </>
+                            )}
+                          </span>
+                        </button>
+                      }
+                    >
+                      {watch("parent") ? (
+                        <>
+                          <CustomMenu.MenuItem
+                            renderAs="button"
+                            className="!p-1"
+                            onClick={() => setParentIssueListModalOpen(true)}
+                          >
+                            Change parent issue
+                          </CustomMenu.MenuItem>
+                          <CustomMenu.MenuItem
+                            renderAs="button"
+                            className="!p-1"
+                            onClick={() => setValue("parent", null)}
+                          >
+                            Remove parent issue
+                          </CustomMenu.MenuItem>
+                        </>
+                      ) : (
+                        <CustomMenu.MenuItem
+                          renderAs="button"
+                          className="!p-1"
+                          onClick={() => setParentIssueListModalOpen(true)}
+                        >
+                          Select Parent Issue
                         </CustomMenu.MenuItem>
-                        <CustomMenu.MenuItem renderAs="button" onClick={() => setValue("parent", null)}>
-                          Remove parent issue
-                        </CustomMenu.MenuItem>
-                      </>
-                    ) : (
-                      <CustomMenu.MenuItem renderAs="button" onClick={() => setParentIssueListModalOpen(true)}>
-                        Select Parent Issue
-                      </CustomMenu.MenuItem>
-                    )}
-                  </CustomMenu>
+                      )}
+                    </CustomMenu>
+                    <Controller
+                      control={control}
+                      name="parent"
+                      render={({ field: { onChange } }) => (
+                        <ParentIssuesListModal
+                          isOpen={parentIssueListModalOpen}
+                          handleClose={() => setParentIssueListModalOpen(false)}
+                          onChange={(issue) => {
+                            onChange(issue.id);
+                            setSelectedParentIssue(issue);
+                          }}
+                          projectId={projectId}
+                        />
+                      )}
+                    />
+                  </>
                 )}
               </div>
             </div>
