@@ -47,13 +47,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {prependIcon && (
           <div className={buttonIconStyle}>
-            {React.cloneElement(prependIcon, { "stroke-width": 2 })}
+            {React.cloneElement(prependIcon, { strokeWidth: 2 })}
           </div>
         )}
         {children}
         {appendIcon && (
           <div className={buttonIconStyle}>
-            {React.cloneElement(appendIcon, { "stroke-width": 2 })}
+            {React.cloneElement(appendIcon, { strokeWidth: 2 })}
           </div>
         )}
       </button>
