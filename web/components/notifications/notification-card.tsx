@@ -9,7 +9,7 @@ import useToast from "hooks/use-toast";
 // icons
 import { CustomMenu } from "components/ui";
 import { ArchiveIcon, Tooltip } from "@plane/ui";
-import { ArchiveRestore, Clock, User2 } from "lucide-react";
+import { ArchiveRestore, Clock, MessageSquare, User2 } from "lucide-react";
 
 // helper
 import { stripHTML, replaceUnderscoreIfSnakeCase, truncateText } from "helpers/string.helper";
@@ -160,7 +160,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
           {
             id: 1,
             name: notification.read_at ? "Mark as unread" : "Mark as read",
-            icon: "chat_bubble",
+            icon: <MessageSquare className="h-3.5 w-3.5 text-custom-text-300" />,
             onClick: () => {
               markNotificationReadStatusToggle(notification.id).then(() => {
                 setToastAlert({
@@ -174,9 +174,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             id: 2,
             name: notification.archived_at ? "Unarchive" : "Archive",
             icon: notification.archived_at ? (
-              <ArchiveRestore className="h-4 w-4 text-custom-text-300" />
+              <ArchiveRestore className="h-3.5 w-3.5 text-custom-text-300" />
             ) : (
-              <ArchiveIcon className="h-4 w-4 text-custom-text-300" />
+              <ArchiveIcon className="h-3.5 w-3.5 text-custom-text-300" />
             ),
             onClick: () => {
               markNotificationArchivedStatus(notification.id).then(() => {
@@ -204,43 +204,42 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
         ))}
 
         <Tooltip tooltipContent="Snooze">
-          <div>
-            <CustomMenu
-              menuButtonOnClick={(e: { stopPropagation: () => void }) => {
-                e.stopPropagation();
-              }}
-              customButton={
-                <div className="text-sm flex w-full items-center gap-x-2 bg-custom-background-80 hover:bg-custom-background-100 p-0.5 rounded">
-                  <Clock className="h-4 w-4 text-custom-text-300" />
-                </div>
-              }
-              optionsClassName="!z-20"
-            >
-              {snoozeOptions.map((item) => (
-                <CustomMenu.MenuItem
-                  key={item.label}
-                  renderAs="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
+          <CustomMenu
+            className="flex items-center"
+            menuButtonOnClick={(e: { stopPropagation: () => void }) => {
+              e.stopPropagation();
+            }}
+            customButton={
+              <div className="text-sm flex w-full items-center gap-x-2 bg-custom-background-80 hover:bg-custom-background-100 p-0.5 rounded">
+                <Clock className="h-3.5 w-3.5 text-custom-text-300" />
+              </div>
+            }
+            optionsClassName="!z-20"
+          >
+            {snoozeOptions.map((item) => (
+              <CustomMenu.MenuItem
+                key={item.label}
+                renderAs="button"
+                onClick={(e) => {
+                  e.stopPropagation();
 
-                    if (!item.value) {
-                      setSelectedNotificationForSnooze(notification.id);
-                      return;
-                    }
+                  if (!item.value) {
+                    setSelectedNotificationForSnooze(notification.id);
+                    return;
+                  }
 
-                    markSnoozeNotification(notification.id, item.value).then(() => {
-                      setToastAlert({
-                        title: `Notification snoozed till ${renderLongDateFormat(item.value)}`,
-                        type: "success",
-                      });
+                  markSnoozeNotification(notification.id, item.value).then(() => {
+                    setToastAlert({
+                      title: `Notification snoozed till ${renderLongDateFormat(item.value)}`,
+                      type: "success",
                     });
-                  }}
-                >
-                  {item.label}
-                </CustomMenu.MenuItem>
-              ))}
-            </CustomMenu>
-          </div>
+                  });
+                }}
+              >
+                {item.label}
+              </CustomMenu.MenuItem>
+            ))}
+          </CustomMenu>
         </Tooltip>
       </div>
     </div>
