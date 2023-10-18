@@ -535,6 +535,7 @@ export const IssuesView: React.FC<Props> = ({
               clearAllFilters={() =>
                 setFilters({
                   assignees: null,
+                  mentions: null,
                   created_by: null,
                   labels: null,
                   priority: null,

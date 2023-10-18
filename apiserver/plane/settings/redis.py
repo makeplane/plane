@@ -11,7 +11,7 @@ def redis_instance():
         or os.environ.get("DJANGO_SETTINGS_MODULE", "plane.settings.production")
         == "plane.settings.local"
     ):
-        ri = redis.Redis.from_url(settings.REDIS_URL, db=0)
+        ri = redis.Redis.from_url("redis://localhost:6379/", db=0)
     else:
         url = urlparse(settings.REDIS_URL)
         ri = redis.Redis(

@@ -18,9 +18,9 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("PGUSER", "plane"),
-        "USER": "",
-        "PASSWORD": "",
+        "NAME": os.environ.get("PGUSER", "postgres"),
+        "USER": "plane",
+        "PASSWORD": "plane",
         "HOST": os.environ.get("PGHOST", "localhost"),
     }
 }
@@ -85,7 +85,7 @@ else:
 
 REDIS_HOST = "localhost"
 REDIS_PORT = 6379
-REDIS_URL = os.environ.get("REDIS_URL")
+REDIS_URL = "redis://localhost:6379/"
 
 
 MEDIA_URL = "/uploads/"
@@ -108,8 +108,8 @@ SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
 
 LOGGER_BASE_URL = os.environ.get("LOGGER_BASE_URL", False)
 
-CELERY_RESULT_BACKEND = os.environ.get("REDIS_URL")
-CELERY_BROKER_URL = os.environ.get("REDIS_URL")
+CELERY_RESULT_BACKEND = "redis://localhost:6379/"
+CELERY_BROKER_URL = "redis://localhost:6379/"
 
 GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)
 

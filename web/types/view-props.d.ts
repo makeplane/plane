@@ -35,6 +35,7 @@ export type TIssueOrderByOptions =
 
 export interface IIssueFilterOptions {
   assignees?: string[] | null;
+  mentions?: string[] | null;
   created_by?: string[] | null;
   labels?: string[] | null;
   priority?: string[] | null;

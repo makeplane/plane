@@ -2290,6 +2290,11 @@
   resolved "https://registry.yarnpkg.com/@tiptap/extension-list-item/-/extension-list-item-2.1.8.tgz#b5dc1e04bfb96ca10a0821821ade5014fa188dbb"
   integrity sha512-fiYVRhHvcXMcVuuiXBx/0AFWwGoKzs9784VSuVUeSSzSuH6vOchM1kZCH+v6acs7vltFKNDrluyEiwGIz1b8qA==
 
+"@tiptap/extension-mention@^2.1.11":
+  version "2.1.11"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-mention/-/extension-mention-2.1.11.tgz#cad9ee38335cc7c737371957b659254c0eb8e4ee"
+  integrity sha512-QMHmAkhiDQEgAdUHdKRfVna0AINcbSbQCrpgwKLIHGWcpbi1zJbAPpm+xngbl0I9ZNxaMzbP4utTAzeQ92pJkw==
+
 "@tiptap/extension-ordered-list@^2.1.8":
   version "2.1.8"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-ordered-list/-/extension-ordered-list-2.1.8.tgz#f489ac85ccd93ad811318bed6af7906c035ba313"

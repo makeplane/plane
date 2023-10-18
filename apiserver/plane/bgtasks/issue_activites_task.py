@@ -26,6 +26,7 @@ from plane.db.models import (
     IssueSubscriber,
     Notification,
     IssueAssignee,
+    IssueMention,
     IssueReaction,
     CommentReaction,
     IssueComment,
@@ -1562,6 +1563,22 @@ def issue_activity(
                                 },
                             )
                         )
+                        
+            # Create New Mentions Here
+            aggregated_issue_mentions = []
+            
+            for mention_id in new_mentions:
+                mentioned_user = User.objects.get(pk=mention_id)
+                aggregated_issue_mentions.append(
+                    IssueMention(
+                        mention=mentioned_user,
+                        issue=issue,
+                        project=project,
+                        workspace=project.workspace
+                    )
+                )
+                
+            IssueMention.objects.bulk_create(aggregated_issue_mentions, batch_size=100)
 
             # Bulk create notifications
             Notification.objects.bulk_create(

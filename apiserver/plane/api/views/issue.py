@@ -107,6 +107,7 @@ class IssueViewSet(BaseViewSet):
     filterset_fields = [
         "state__name",
         "assignees__id",
+        "mentions__id",
         "workspace__id",
     ]
 
@@ -167,6 +168,7 @@ class IssueViewSet(BaseViewSet):
             .select_related("workspace")
             .select_related("state")
             .select_related("parent")
+            .prefetch_related("mentions")
             .prefetch_related("assignees")
             .prefetch_related("labels")
             .prefetch_related(
@@ -187,6 +189,8 @@ class IssueViewSet(BaseViewSet):
             state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
 
             order_by_param = request.GET.get("order_by", "-created_at")
+            
+            # Add a mention_filter here in place
 
             issue_queryset = (
                 self.get_queryset()
@@ -286,6 +290,8 @@ class IssueViewSet(BaseViewSet):
             return Response(issues, status=status.HTTP_200_OK)
 
         except Exception as e:
+            print("===================EXCEPTION OCCURED====================")
+            print(e)
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
@@ -475,6 +481,8 @@ class UserWorkSpaceIssues(BaseAPIView):
 
             return Response(issues, status=status.HTTP_200_OK)
         except Exception as e:
+            print("========================EXCEPTION OCCURED==========================")
+            print(e)
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},

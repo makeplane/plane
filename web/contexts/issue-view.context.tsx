@@ -57,6 +57,7 @@ export const initialState: StateType = {
   filters: {
     priority: null,
     assignees: null,
+    mentions: null,
     labels: null,
     state: null,
     state_group: null,

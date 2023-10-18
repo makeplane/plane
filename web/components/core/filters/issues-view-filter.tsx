@@ -152,6 +152,7 @@ export const IssuesFilterView: React.FC = () => {
       <SelectFilters
         filters={filters}
         onSelect={(option) => {
+          console.log("Messed Up!")
           const key = option.key as keyof typeof filters;
 
           if (key === "start_date" || key === "target_date") {
@@ -163,7 +164,7 @@ export const IssuesFilterView: React.FC = () => {
           } else {
             const valueExists = filters[key]?.includes(option.value);
 
-            if (valueExists)
+            if (valueExists) {
               setFilters(
                 {
                   [option.key]: ((filters[key] ?? []) as any[])?.filter(
@@ -172,13 +173,15 @@ export const IssuesFilterView: React.FC = () => {
                 },
                 !Boolean(viewId)
               );
-            else
+            }
+            else {
               setFilters(
                 {
                   [option.key]: [...((filters[key] ?? []) as any[]), option.value],
                 },
                 !Boolean(viewId)
               );
+            }
           }
         }}
         direction="left"
@@ -299,7 +302,7 @@ export const IssuesFilterView: React.FC = () => {
                                   })
                                 }
                               >
-                                {option.name}
+                                {"Henit"}
                               </CustomMenu.MenuItem>
                             ))}
                           </CustomMenu>

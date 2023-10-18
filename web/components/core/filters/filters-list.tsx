@@ -93,7 +93,6 @@ export const FiltersList: React.FC<Props> = ({
                     : key === "state_group"
                     ? filters.state_group?.map((stateGroup) => {
                         const group = stateGroup as TStateGroups;
-
                         return (
                           <p
                             key={group}
@@ -152,10 +151,34 @@ export const FiltersList: React.FC<Props> = ({
                           </span>
                         </p>
                       ))
+                    : key === "mentions"
+                    ? filters.mentions?.map((mentionId: string) => {
+                      const member = members?.find((m) => m.id === mentionId);
+                      return (
+                        <div
+                          key={mentionId}
+                          className="inline-flex items-center gap-x-1 rounded-full bg-custom-background-90 px-1"
+                        >
+                          <Avatar user={member} />
+                          <span>{member?.display_name}</span>
+                          <span
+                            className="cursor-pointer"
+                            onClick={() =>
+                              setFilters({
+                                mentions: filters.mentions?.filter(
+                                  (p: any) => p !== mentionId
+                                ),
+                              })
+                            }
+                          >
+                            <XMarkIcon className="h-3 w-3" />
+                          </span>
+                        </div>
+                      );
+                    })
                     : key === "assignees"
                     ? filters.assignees?.map((memberId: string) => {
                         const member = members?.find((m) => m.id === memberId);
-
                         return (
                           <div
                             key={memberId}
@@ -165,12 +188,13 @@ export const FiltersList: React.FC<Props> = ({
                             <span>{member?.display_name}</span>
                             <span
                               className="cursor-pointer"
-                              onClick={() =>
+                              onClick={() => {
                                 setFilters({
-                                  subscriber: filters.subscriber?.filter(
+                                  mentions: filters.mentions?.filter(
                                     (p: any) => p !== memberId
                                   ),
                                 })
+                              }
                               }
                             >
                               <XMarkIcon className="h-3 w-3" />

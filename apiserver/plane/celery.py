@@ -4,7 +4,7 @@ from plane.settings.redis import redis_instance
 from celery.schedules import crontab
 
 # Set the default Django settings module for the 'celery' program.
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "plane.settings.production")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "plane.settings.local")
 
 ri = redis_instance()
 

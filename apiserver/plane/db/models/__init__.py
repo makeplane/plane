@@ -30,6 +30,7 @@ from .issue import (
     IssueBlocker,
     IssueLabel,
     IssueAssignee,
+    IssueMention,
     Label,
     IssueBlocker,
     IssueRelation,
