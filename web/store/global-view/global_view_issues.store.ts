@@ -1,4 +1,4 @@
-import { observable, action, makeObservable, runInAction } from "mobx";
+import { observable, action, makeObservable, runInAction, autorun } from "mobx";
 // services
 import { ProjectService } from "services/project";
 import { WorkspaceService } from "services/workspace.service";
@@ -55,9 +55,21 @@ export class GlobalViewIssuesStore implements IGlobalViewIssuesStore {
     });
 
     this.rootStore = _rootStore;
-
     this.projectService = new ProjectService();
     this.workspaceService = new WorkspaceService();
+
+    autorun(() => {
+      const workspaceSlug = this.rootStore.workspace.workspaceSlug;
+      const globalViewId = this.rootStore.globalViews.globalViewId;
+
+      if (
+        workspaceSlug &&
+        globalViewId &&
+        this.rootStore.globalViewFilters.storedFilters[globalViewId] &&
+        this.rootStore.issueFilter.userDisplayFilters
+      )
+        this.fetchViewIssues(workspaceSlug, globalViewId, this.rootStore.globalViewFilters.storedFilters[globalViewId]);
+    });
   }
 
   computedFilter = (filters: any, filteredParams: any) => {

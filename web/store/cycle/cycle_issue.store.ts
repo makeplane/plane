@@ -1,4 +1,4 @@
-import { observable, action, computed, makeObservable, runInAction } from "mobx";
+import { observable, action, computed, makeObservable, runInAction, autorun } from "mobx";
 // store
 import { RootStore } from "../root";
 // types
@@ -69,8 +69,24 @@ export class CycleIssueStore implements ICycleIssueStore {
       fetchIssues: action,
       updateIssueStructure: action,
     });
+
     this.rootStore = _rootStore;
     this.cycleService = new CycleService();
+
+    autorun(() => {
+      const workspaceSlug = this.rootStore.workspace.workspaceSlug;
+      const projectId = this.rootStore.project.projectId;
+      const cycleId = this.rootStore.cycle.cycleId;
+
+      if (
+        workspaceSlug &&
+        projectId &&
+        cycleId &&
+        this.rootStore.cycleIssueFilter.cycleFilters &&
+        this.rootStore.issueFilter.userDisplayFilters
+      )
+        this.fetchIssues(workspaceSlug, projectId, cycleId);
+    });
   }
 
   get getIssueType() {
