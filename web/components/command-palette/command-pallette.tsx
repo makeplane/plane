@@ -55,8 +55,6 @@ export const CommandPalette: FC = observer(() => {
   } = commandPalette;
   const { toggleSidebar } = themeStore;
 
-  console.log("isCreateCycleModalOpen", isCreateCycleModalOpen);
-
   const { user } = useUser();
 
   const { setToastAlert } = useToast();
@@ -130,7 +128,6 @@ export const CommandPalette: FC = observer(() => {
           toggleCreateModuleModal(true);
         } else if (keyPressed === "backspace" || keyPressed === "delete") {
           e.preventDefault();
-          console.log("sdasd");
           toggleBulkDeleteIssueModal(true);
         }
       }
