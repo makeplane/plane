@@ -61,20 +61,19 @@ services:
     restart: always
     command: /usr/local/bin/start.sh web/server.js web
     deploy:
-      replicas: 2
+      replicas: ${WEB_REPLICAS:-1}
     depends_on:
       - api
       - worker
 
   space:
     <<: *app-env
-    container_name: space
     platform: linux/amd64
     image: makeplane/plane-space:latest
     restart: always
     command: /usr/local/bin/start.sh space/server.js space
     deploy:
-      replicas: 2
+      replicas: ${SPACE_REPLICAS:-1}
     depends_on:
       - api
       - worker
@@ -82,13 +81,12 @@ services:
 
   api:
     <<: *app-env
-    container_name: api
     platform: linux/amd64
     image: makeplane/plane-backend:latest
     restart: always
     command: ./bin/takeoff
     deploy:
-      replicas: 2
+      replicas: ${API_REPLICAS:-1}
     depends_on:
       - plane-db
       - plane-redis
