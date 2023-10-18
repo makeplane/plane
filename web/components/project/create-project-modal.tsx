@@ -67,7 +67,7 @@ export interface ICreateProjectForm {
   description: string;
   emoji_and_icon: string;
   network: number;
-  project_lead: IWorkspaceMember | null;
+  project_lead: string;
   cover_image: string;
 }
 
@@ -341,12 +341,12 @@ export const CreateProjectModal: React.FC<Props> = observer((props) => {
                             <CustomSelect
                               value={value}
                               onChange={onChange}
-                              buttonClassName="border-[0.5px] !px-2 shadow-md"
+                              buttonClassName="border-[0.5px] shadow-md !py-1.5"
                               label={
-                                <div className="flex items-center gap-2 -mb-0.5 py-1">
+                                <div className="flex items-center gap-2">
                                   {currentNetwork ? (
                                     <>
-                                      <currentNetwork.icon className="h-3 w-3" />
+                                      <currentNetwork.icon className="h-[18px] w-[18px]" />
                                       {currentNetwork.label}
                                     </>
                                   ) : (
@@ -362,7 +362,7 @@ export const CreateProjectModal: React.FC<Props> = observer((props) => {
                                   value={network.key}
                                   className="flex items-center gap-1"
                                 >
-                                  <network.icon className="h-3 w-3" />
+                                  <network.icon className="h-4 w-4" />
                                   {network.label}
                                 </CustomSelect.Option>
                               ))}
@@ -378,7 +378,7 @@ export const CreateProjectModal: React.FC<Props> = observer((props) => {
                             <WorkspaceMemberSelect
                               value={value}
                               onChange={onChange}
-                              options={workspaceMembers}
+                              workspaceMembers={workspaceMembers}
                               placeholder="Select Lead"
                             />
                           )}
