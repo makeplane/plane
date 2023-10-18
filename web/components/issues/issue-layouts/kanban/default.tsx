@@ -114,10 +114,18 @@ export interface IKanBan {
   display_properties: any;
   kanBanToggle: any;
   handleKanBanToggle: any;
+
+  states: any;
+  stateGroups: any;
+  priorities: any;
+  labels: any;
+  members: any;
+  projects: any;
+  estimates: any;
 }
 
-export const KanBan: React.FC<IKanBan> = observer(
-  ({
+export const KanBan: React.FC<IKanBan> = observer((props) => {
+  const {
     issues,
     sub_group_by,
     group_by,
@@ -126,107 +134,114 @@ export const KanBan: React.FC<IKanBan> = observer(
     display_properties,
     kanBanToggle,
     handleKanBanToggle,
-  }) => {
-    const { project: projectStore, issueKanBanView: issueKanBanViewStore }: RootStore = useMobxStore();
+    states,
+    stateGroups,
+    priorities,
+    labels,
+    members,
+    projects,
+    estimates,
+  } = props;
 
-    return (
-      <div className="relative w-full h-full">
-        {group_by && group_by === "state" && (
-          <GroupByKanBan
-            issues={issues}
-            group_by={group_by}
-            sub_group_by={sub_group_by}
-            sub_group_id={sub_group_id}
-            list={projectStore?.projectStates}
-            listKey={`id`}
-            isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
-            handleIssues={handleIssues}
-            display_properties={display_properties}
-            kanBanToggle={kanBanToggle}
-            handleKanBanToggle={handleKanBanToggle}
-          />
-        )}
+  const { project: projectStore, issueKanBanView: issueKanBanViewStore }: RootStore = useMobxStore();
 
-        {group_by && group_by === "state_detail.group" && (
-          <GroupByKanBan
-            issues={issues}
-            group_by={group_by}
-            sub_group_by={sub_group_by}
-            sub_group_id={sub_group_id}
-            list={ISSUE_STATE_GROUPS}
-            listKey={`key`}
-            isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
-            handleIssues={handleIssues}
-            display_properties={display_properties}
-            kanBanToggle={kanBanToggle}
-            handleKanBanToggle={handleKanBanToggle}
-          />
-        )}
+  return (
+    <div className="relative w-full h-full">
+      {group_by && group_by === "state" && (
+        <GroupByKanBan
+          issues={issues}
+          group_by={group_by}
+          sub_group_by={sub_group_by}
+          sub_group_id={sub_group_id}
+          list={projectStore?.projectStates}
+          listKey={`id`}
+          isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
+          handleIssues={handleIssues}
+          display_properties={display_properties}
+          kanBanToggle={kanBanToggle}
+          handleKanBanToggle={handleKanBanToggle}
+        />
+      )}
 
-        {group_by && group_by === "priority" && (
-          <GroupByKanBan
-            issues={issues}
-            group_by={group_by}
-            sub_group_by={sub_group_by}
-            sub_group_id={sub_group_id}
-            list={ISSUE_PRIORITIES}
-            listKey={`key`}
-            isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
-            handleIssues={handleIssues}
-            display_properties={display_properties}
-            kanBanToggle={kanBanToggle}
-            handleKanBanToggle={handleKanBanToggle}
-          />
-        )}
+      {group_by && group_by === "state_detail.group" && (
+        <GroupByKanBan
+          issues={issues}
+          group_by={group_by}
+          sub_group_by={sub_group_by}
+          sub_group_id={sub_group_id}
+          list={ISSUE_STATE_GROUPS}
+          listKey={`key`}
+          isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
+          handleIssues={handleIssues}
+          display_properties={display_properties}
+          kanBanToggle={kanBanToggle}
+          handleKanBanToggle={handleKanBanToggle}
+        />
+      )}
 
-        {group_by && group_by === "labels" && (
-          <GroupByKanBan
-            issues={issues}
-            group_by={group_by}
-            sub_group_by={sub_group_by}
-            sub_group_id={sub_group_id}
-            list={projectStore?.projectLabels}
-            listKey={`id`}
-            isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
-            handleIssues={handleIssues}
-            display_properties={display_properties}
-            kanBanToggle={kanBanToggle}
-            handleKanBanToggle={handleKanBanToggle}
-          />
-        )}
+      {group_by && group_by === "priority" && (
+        <GroupByKanBan
+          issues={issues}
+          group_by={group_by}
+          sub_group_by={sub_group_by}
+          sub_group_id={sub_group_id}
+          list={ISSUE_PRIORITIES}
+          listKey={`key`}
+          isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
+          handleIssues={handleIssues}
+          display_properties={display_properties}
+          kanBanToggle={kanBanToggle}
+          handleKanBanToggle={handleKanBanToggle}
+        />
+      )}
 
-        {group_by && group_by === "assignees" && (
-          <GroupByKanBan
-            issues={issues}
-            group_by={group_by}
-            sub_group_by={sub_group_by}
-            sub_group_id={sub_group_id}
-            list={projectStore?.projectMembers}
-            listKey={`member.id`}
-            isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
-            handleIssues={handleIssues}
-            display_properties={display_properties}
-            kanBanToggle={kanBanToggle}
-            handleKanBanToggle={handleKanBanToggle}
-          />
-        )}
+      {group_by && group_by === "labels" && (
+        <GroupByKanBan
+          issues={issues}
+          group_by={group_by}
+          sub_group_by={sub_group_by}
+          sub_group_id={sub_group_id}
+          list={projectStore?.projectLabels}
+          listKey={`id`}
+          isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
+          handleIssues={handleIssues}
+          display_properties={display_properties}
+          kanBanToggle={kanBanToggle}
+          handleKanBanToggle={handleKanBanToggle}
+        />
+      )}
 
-        {group_by && group_by === "created_by" && (
-          <GroupByKanBan
-            issues={issues}
-            group_by={group_by}
-            sub_group_by={sub_group_by}
-            sub_group_id={sub_group_id}
-            list={projectStore?.projectMembers}
-            listKey={`member.id`}
-            isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
-            handleIssues={handleIssues}
-            display_properties={display_properties}
-            kanBanToggle={kanBanToggle}
-            handleKanBanToggle={handleKanBanToggle}
-          />
-        )}
-      </div>
-    );
-  }
-);
+      {group_by && group_by === "assignees" && (
+        <GroupByKanBan
+          issues={issues}
+          group_by={group_by}
+          sub_group_by={sub_group_by}
+          sub_group_id={sub_group_id}
+          list={projectStore?.projectMembers}
+          listKey={`member.id`}
+          isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
+          handleIssues={handleIssues}
+          display_properties={display_properties}
+          kanBanToggle={kanBanToggle}
+          handleKanBanToggle={handleKanBanToggle}
+        />
+      )}
+
+      {group_by && group_by === "created_by" && (
+        <GroupByKanBan
+          issues={issues}
+          group_by={group_by}
+          sub_group_by={sub_group_by}
+          sub_group_id={sub_group_id}
+          list={projectStore?.projectMembers}
+          listKey={`member.id`}
+          isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
+          handleIssues={handleIssues}
+          display_properties={display_properties}
+          kanBanToggle={kanBanToggle}
+          handleKanBanToggle={handleKanBanToggle}
+        />
+      )}
+    </div>
+  );
+});

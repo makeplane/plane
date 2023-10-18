@@ -2,7 +2,6 @@ import React from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components

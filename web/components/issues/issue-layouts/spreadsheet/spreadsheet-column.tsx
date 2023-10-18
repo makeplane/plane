@@ -165,22 +165,22 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
             )}
         </CustomMenu>
       </div>
+
       <div className="h-full min-w-[8rem] w-full">
-        {issues?.map((issue) => {
-          if (property === "state")
-            return (
+        {issues?.map((issue) => (
+          <div
+            key={`${property}-${issue.id}`}
+            className="h-11 flex items-center px-4 py-2.5 border-b-[0.5px] border-custom-border-200"
+          >
+            {property === "state" ? (
               <SpreadsheetStateColumn
-                key={`${property}-${issue.id}`}
                 disabled={disableUserActions}
                 expandedIssues={expandedIssues}
                 issue={issue}
                 onChange={(data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
                 states={states}
               />
-            );
-
-          if (property === "priority")
-            return (
+            ) : property === "priority" ? (
               <SpreadsheetPriorityColumn
                 key={`${property}-${issue.id}`}
                 disabled={disableUserActions}
@@ -188,10 +188,7 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
                 issue={issue}
                 onChange={(data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
               />
-            );
-
-          if (property === "estimate")
-            return (
+            ) : property === "estimate" ? (
               <SpreadsheetEstimateColumn
                 key={`${property}-${issue.id}`}
                 disabled={disableUserActions}
@@ -199,9 +196,7 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
                 issue={issue}
                 onChange={(data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
               />
-            );
-          if (property === "assignee")
-            return (
+            ) : property === "assignee" ? (
               <SpreadsheetAssigneeColumn
                 key={`${property}-${issue.id}`}
                 disabled={disableUserActions}
@@ -210,9 +205,7 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
                 members={members}
                 onChange={(data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
               />
-            );
-          if (property === "labels")
-            return (
+            ) : property === "labels" ? (
               <SpreadsheetLabelColumn
                 key={`${property}-${issue.id}`}
                 disabled={disableUserActions}
@@ -221,9 +214,7 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
                 labels={labels}
                 onChange={(data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
               />
-            );
-          if (property === "start_date")
-            return (
+            ) : property === "start_date" ? (
               <SpreadsheetStartDateColumn
                 key={`${property}-${issue.id}`}
                 disabled={disableUserActions}
@@ -231,9 +222,7 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
                 issue={issue}
                 onChange={(data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
               />
-            );
-          if (property === "due_date")
-            return (
+            ) : property === "due_date" ? (
               <SpreadsheetDueDateColumn
                 key={`${property}-${issue.id}`}
                 disabled={disableUserActions}
@@ -241,26 +230,21 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
                 issue={issue}
                 onChange={(data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
               />
-            );
-          if (property === "created_on")
-            return (
+            ) : property === "created_on" ? (
               <SpreadsheetCreatedOnColumn
                 key={`${property}-${issue.id}`}
                 expandedIssues={expandedIssues}
                 issue={issue}
               />
-            );
-          if (property === "updated_on")
-            return (
+            ) : property === "updated_on" ? (
               <SpreadsheetUpdatedOnColumn
                 key={`${property}-${issue.id}`}
                 expandedIssues={expandedIssues}
                 issue={issue}
               />
-            );
-
-          return null;
-        })}
+            ) : null}
+          </div>
+        ))}
       </div>
     </div>
   );
