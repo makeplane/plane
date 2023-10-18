@@ -16,7 +16,7 @@ then
     mv .env ./archive/$TS.env
 fi
 
-curl -s -o docker-compose.yaml  https://raw.githubusercontent.com/makeplane/plane/dev/mg-self-host/docker-compose-hub.yml
-curl -s -o .env https://raw.githubusercontent.com/makeplane/plane/dev/mg-self-host/selfhost.env
+curl -s -o docker-compose.yaml  https://raw.githubusercontent.com/makeplane/plane/$BRANCH/docker-compose-hub.yml
+curl -s -o .env https://raw.githubusercontent.com/makeplane/plane/$BRANCH/selfhost.env
 
 # docker compose up -d
