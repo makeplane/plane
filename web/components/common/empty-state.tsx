@@ -15,7 +15,6 @@ type Props = {
     onClick: () => void;
   };
   secondaryButton?: React.ReactNode;
-  isFullScreen?: boolean;
   disabled?: boolean;
 };
 
@@ -25,10 +24,9 @@ export const EmptyState: React.FC<Props> = ({
   image,
   primaryButton,
   secondaryButton,
-  isFullScreen = true,
   disabled = false,
 }) => (
-  <div className={`h-full w-full mx-auto grid place-items-center p-8 ${isFullScreen ? "md:w-4/5 lg:w-3/5" : ""}`}>
+  <div className={`flex items-center justify-center h-full w-full`}>
     <div className="text-center flex flex-col items-center w-full">
       <Image src={image} className="w-52 sm:w-60" alt={primaryButton?.text} />
       <h6 className="text-xl font-semibold mt-6 sm:mt-8 mb-3">{title}</h6>
