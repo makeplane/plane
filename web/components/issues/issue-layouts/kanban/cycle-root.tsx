@@ -9,11 +9,14 @@ import { KanBan } from "./default";
 // store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
+// constants
+import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 
 export interface ICycleKanBanLayout {}
 
 export const CycleKanBanLayout: React.FC = observer(() => {
   const {
+    project: projectStore,
     cycleIssue: cycleIssueStore,
     issueFilter: issueFilterStore,
     cycleIssueKanBanView: cycleIssueKanBanViewStore,
@@ -55,6 +58,14 @@ export const CycleKanBanLayout: React.FC = observer(() => {
     cycleIssueKanBanViewStore.handleKanBanToggle(toggle, value);
   };
 
+  const states = projectStore?.projectStates || null;
+  const priorities = ISSUE_PRIORITIES || null;
+  const labels = projectStore?.projectLabels || null;
+  const members = projectStore?.projectMembers || null;
+  const stateGroups = ISSUE_STATE_GROUPS || null;
+  const projects = projectStore?.projectStates || null;
+  const estimates = null;
+
   return (
     <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
       <DragDropContext onDragEnd={onDragEnd}>
@@ -67,6 +78,13 @@ export const CycleKanBanLayout: React.FC = observer(() => {
             display_properties={display_properties}
             kanBanToggle={cycleIssueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            states={states}
+            stateGroups={stateGroups}
+            priorities={priorities}
+            labels={labels}
+            members={members}
+            projects={projects}
+            estimates={estimates}
           />
         ) : (
           <KanBanSwimLanes
@@ -77,6 +95,13 @@ export const CycleKanBanLayout: React.FC = observer(() => {
             display_properties={display_properties}
             kanBanToggle={cycleIssueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            states={states}
+            stateGroups={stateGroups}
+            priorities={priorities}
+            labels={labels}
+            members={members}
+            projects={projects}
+            estimates={estimates}
           />
         )}
       </DragDropContext>

@@ -9,11 +9,14 @@ import { KanBan } from "./default";
 // store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
+// constants
+import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 
 export interface IViewKanBanLayout {}
 
 export const ViewKanBanLayout: React.FC = observer(() => {
   const {
+    project: projectStore,
     issue: issueStore,
     issueFilter: issueFilterStore,
     issueKanBanView: issueKanBanViewStore,
@@ -51,6 +54,14 @@ export const ViewKanBanLayout: React.FC = observer(() => {
     issueStore.updateIssueStructure(group_by, sub_group_by, issue);
   };
 
+  const states = projectStore?.projectStates || null;
+  const priorities = ISSUE_PRIORITIES || null;
+  const labels = projectStore?.projectLabels || null;
+  const members = projectStore?.projectMembers || null;
+  const stateGroups = ISSUE_STATE_GROUPS || null;
+  const projects = projectStore?.projectStates || null;
+  const estimates = null;
+
   return (
     <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
       <DragDropContext onDragEnd={onDragEnd}>
@@ -63,6 +74,13 @@ export const ViewKanBanLayout: React.FC = observer(() => {
             display_properties={display_properties}
             kanBanToggle={() => {}}
             handleKanBanToggle={() => {}}
+            states={states}
+            stateGroups={stateGroups}
+            priorities={priorities}
+            labels={labels}
+            members={members}
+            projects={projects}
+            estimates={estimates}
           />
         ) : (
           <KanBanSwimLanes
@@ -73,6 +91,13 @@ export const ViewKanBanLayout: React.FC = observer(() => {
             display_properties={display_properties}
             kanBanToggle={() => {}}
             handleKanBanToggle={() => {}}
+            states={states}
+            stateGroups={stateGroups}
+            priorities={priorities}
+            labels={labels}
+            members={members}
+            projects={projects}
+            estimates={estimates}
           />
         )}
       </DragDropContext>
