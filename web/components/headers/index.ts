@@ -11,3 +11,4 @@ export * from "./projects";
 export * from "./profile-preferences";
 export * from "./cycles";
 export * from "./modules";
+export * from "./project-settings";
