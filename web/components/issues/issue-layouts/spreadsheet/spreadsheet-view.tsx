@@ -8,8 +8,7 @@ import {
   // ListInlineCreateIssueForm,
   SpreadsheetIssuesColumn,
 } from "components/issues";
-import { CustomMenu } from "components/ui";
-import { Spinner } from "@plane/ui";
+import { CustomMenu, Spinner } from "@plane/ui";
 // types
 import {
   IIssue,

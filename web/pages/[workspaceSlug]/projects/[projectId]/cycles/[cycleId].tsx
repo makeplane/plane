@@ -19,8 +19,7 @@ import { CycleService } from "services/cycle.service";
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // ui
-import { BreadcrumbItem, Breadcrumbs, ContrastIcon } from "@plane/ui";
-import { CustomMenu } from "components/ui";
+import { BreadcrumbItem, Breadcrumbs, CustomMenu, ContrastIcon } from "@plane/ui";
 import { EmptyState } from "components/common";
 // images
 import emptyCycle from "public/empty-state/cycle.svg";
@@ -126,8 +125,7 @@ const SingleCycle: React.FC = () => {
             {cycles?.map((cycle) => (
               <CustomMenu.MenuItem
                 key={cycle.id}
-                renderAs="a"
-                href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}
+                onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`)}
               >
                 {truncateText(cycle.name, 40)}
               </CustomMenu.MenuItem>

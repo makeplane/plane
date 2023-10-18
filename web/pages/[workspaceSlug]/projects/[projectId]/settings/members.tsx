@@ -18,8 +18,8 @@ import ConfirmProjectMemberRemove from "components/project/confirm-project-membe
 import SendProjectInvitationModal from "components/project/send-project-invitation-modal";
 import { MemberSelect, SettingsSidebar } from "components/project";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Button, Loader } from "@plane/ui";
-import { CustomMenu, CustomSelect } from "components/ui";
+import { BreadcrumbItem, Breadcrumbs, Button, CustomMenu, Loader } from "@plane/ui";
+import { CustomSelect } from "components/ui";
 // icons
 import { ChevronDown, X } from "lucide-react";
 // types

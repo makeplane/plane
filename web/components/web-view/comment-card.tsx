@@ -9,7 +9,7 @@ import { FileService } from "services/file.service";
 // hooks
 import useUser from "hooks/use-user";
 // ui
-import { CustomMenu } from "components/ui";
+import { CustomMenu } from "@plane/ui";
 import { CommentReaction } from "components/issues";
 import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-text-editor";
 
@@ -155,7 +155,6 @@ export const CommentCard: React.FC<Props> = (props) => {
             <>
               {comment.access === "INTERNAL" ? (
                 <CustomMenu.MenuItem
-                  renderAs="button"
                   onClick={() => onSubmit(comment.id, { access: "EXTERNAL" })}
                   className="flex items-center gap-1"
                 >
@@ -164,7 +163,6 @@ export const CommentCard: React.FC<Props> = (props) => {
                 </CustomMenu.MenuItem>
               ) : (
                 <CustomMenu.MenuItem
-                  renderAs="button"
                   onClick={() => onSubmit(comment.id, { access: "INTERNAL" })}
                   className="flex items-center gap-1"
                 >

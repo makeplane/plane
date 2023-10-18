@@ -11,8 +11,7 @@ import useEstimateOption from "hooks/use-estimate-option";
 // components
 import { SelectFilters } from "components/views";
 // ui
-import { CustomMenu } from "components/ui";
-import { ToggleSwitch, Tooltip } from "@plane/ui";
+import { CustomMenu, ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
 import { CalendarDays, ChevronDown, GanttChart, Kanban, List, Sheet } from "lucide-react";
 // helpers

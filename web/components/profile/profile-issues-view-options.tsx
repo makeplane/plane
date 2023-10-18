@@ -10,8 +10,7 @@ import useEstimateOption from "hooks/use-estimate-option";
 // components
 import { MyIssuesSelectFilters } from "components/issues";
 // ui
-import { CustomMenu } from "components/ui";
-import { ToggleSwitch, Tooltip } from "@plane/ui";
+import { CustomMenu, ToggleSwitch, Tooltip } from "@plane/ui";
 // icons
 import { ChevronDown, Kanban, List } from "lucide-react";
 // helpers

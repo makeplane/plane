@@ -22,7 +22,7 @@ import {
   SpreadsheetUpdatedOnColumn,
 } from "components/issues";
 // ui
-import { CustomMenu } from "components/ui";
+import { CustomMenu } from "@plane/ui";
 // types
 import {
   IIssue,
@@ -101,10 +101,7 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
           }
           width="xl"
         >
-          <CustomMenu.MenuItem
-            renderAs="button"
-            onClick={() => handleOrderBy(propertyDetails.ascendingOrderKey, property)}
-          >
+          <CustomMenu.MenuItem onClick={() => handleOrderBy(propertyDetails.ascendingOrderKey, property)}>
             <div
               className={`flex gap-1.5 px-1 items-center justify-between ${
                 selectedMenuItem === `${propertyDetails.ascendingOrderKey}_${property}`
@@ -124,10 +121,7 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
               )}
             </div>
           </CustomMenu.MenuItem>
-          <CustomMenu.MenuItem
-            renderAs="button"
-            onClick={() => handleOrderBy(propertyDetails.descendingOrderKey, property)}
-          >
+          <CustomMenu.MenuItem onClick={() => handleOrderBy(propertyDetails.descendingOrderKey, property)}>
             <div
               className={`flex gap-1.5 px-1 items-center justify-between ${
                 selectedMenuItem === `${propertyDetails.descendingOrderKey}_${property}`
@@ -152,7 +146,6 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
             displayFilters?.order_by !== "-created_at" &&
             selectedMenuItem.includes(property) && (
               <CustomMenu.MenuItem
-                renderAs="button"
                 className={`mt-0.5 ${selectedMenuItem === `-created_at_${property}` ? "bg-custom-background-80" : ""}`}
                 key={property}
                 onClick={() => handleOrderBy("-created_at", property)}
