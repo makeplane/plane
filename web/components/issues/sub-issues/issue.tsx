@@ -110,7 +110,6 @@ export const SubIssues: React.FC<ISubIssues> = ({
           <div className="flex-shrink-0 text-sm">
             <IssueProperty
               workspaceSlug={workspaceSlug}
-              projectId={projectId}
               parentIssue={parentIssue}
               issue={issue}
               user={user}

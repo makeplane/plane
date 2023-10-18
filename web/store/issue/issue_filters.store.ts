@@ -45,7 +45,7 @@ export class IssueFilterStore implements IIssueFilterStore {
   error: any | null = null;
 
   // observables
-  userDisplayProperties: any = {};
+  userDisplayProperties: IIssueDisplayProperties = {};
   userDisplayFilters: IIssueDisplayFilterOptions = {};
   userFilters: IIssueFilterOptions = {};
   defaultDisplayFilters: IIssueDisplayFilterOptions = {};
@@ -144,7 +144,7 @@ export class IssueFilterStore implements IIssueFilterStore {
   fetchUserProjectFilters = async (workspaceSlug: string, projectId: string) => {
     try {
       const memberResponse = await this.projectService.projectMemberMe(workspaceSlug, projectId);
-      const issueProperties = await this.issueService.getIssueProperties(workspaceSlug, projectId);
+      const issueProperties = await this.issueService.getIssueDisplayProperties(workspaceSlug, projectId);
 
       runInAction(() => {
         this.userFilters = memberResponse?.view_props?.filters;
@@ -207,7 +207,7 @@ export class IssueFilterStore implements IIssueFilterStore {
     projectId: string,
     properties: Partial<IIssueDisplayProperties>
   ) => {
-    const newProperties = {
+    const newProperties: IIssueDisplayProperties = {
       ...this.userDisplayProperties,
       ...properties,
     };
@@ -217,7 +217,7 @@ export class IssueFilterStore implements IIssueFilterStore {
         this.userDisplayProperties = newProperties;
       });
 
-      // await this.issueService.patchIssueProperties(workspaceSlug, projectId, newProperties);
+      await this.issueService.patchIssueDisplayProperties(workspaceSlug, projectId, newProperties);
     } catch (error) {
       this.fetchUserProjectFilters(workspaceSlug, projectId);
 

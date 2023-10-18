@@ -5,14 +5,14 @@ import { IssueColumn } from "components/issues";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
-import { IIssue, Properties } from "types";
+import { IIssue, IIssueDisplayProperties } from "types";
 
 type Props = {
   issue: IIssue;
   projectId: string;
   expandedIssues: string[];
   setExpandedIssues: React.Dispatch<React.SetStateAction<string[]>>;
-  properties: Properties;
+  properties: IIssueDisplayProperties;
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
   disableUserActions: boolean;
   nestingLevel?: number;
