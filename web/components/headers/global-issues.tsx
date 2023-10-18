@@ -139,7 +139,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
                 </FiltersDropdown>
               )}
 
-              <FiltersDropdown title="View">
+              <FiltersDropdown title="Display">
                 <DisplayFiltersSelection
                   displayFilters={workspaceFilterStore.workspaceDisplayFilters}
                   displayProperties={workspaceFilterStore.workspaceDisplayProperties}
