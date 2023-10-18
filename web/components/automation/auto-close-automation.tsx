@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import useSWR from "swr";
 import { useRouter } from "next/router";
 // component
-import { CustomSearchSelect } from "components/ui";
 import { SelectMonthModal } from "components/automation";
-import { CustomSelect, ToggleSwitch, StateGroupIcon, DoubleCircleIcon } from "@plane/ui";
+import { CustomSelect, CustomSearchSelect, ToggleSwitch, StateGroupIcon, DoubleCircleIcon } from "@plane/ui";
 // icons
 import { ArchiveX } from "lucide-react";
 // services

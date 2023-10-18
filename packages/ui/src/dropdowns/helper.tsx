@@ -30,6 +30,32 @@ export interface ICustomSelectProps extends IDropdownProps {
   onChange: any;
 }
 
+interface CustomSearchSelectProps {
+  footerOption?: JSX.Element;
+  onChange: any;
+  options:
+    | {
+        value: any;
+        query: string;
+        content: React.ReactNode;
+      }[]
+    | undefined;
+}
+
+interface SingleValueProps {
+  multiple?: false;
+  value: any;
+}
+
+interface MultipleValuesProps {
+  multiple?: true;
+  value: any[] | null;
+}
+
+export type ICustomSearchSelectProps = IDropdownProps &
+  CustomSearchSelectProps &
+  (SingleValueProps | MultipleValuesProps);
+
 export interface ICustomMenuItemProps {
   children: React.ReactNode;
   onClick?: (args?: any) => void;

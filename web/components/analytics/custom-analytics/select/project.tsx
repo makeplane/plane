@@ -1,5 +1,5 @@
 // ui
-import { CustomSearchSelect } from "components/ui";
+import { CustomSearchSelect } from "@plane/ui";
 // types
 import { IProject } from "types";
 

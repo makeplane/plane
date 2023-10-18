@@ -10,8 +10,8 @@ import useToast from "hooks/use-toast";
 import { useWorkspaceMyMembership } from "contexts/workspace-member.context";
 import useWorkspaceMembers from "hooks/use-workspace-members";
 // ui
-import { Avatar, CustomSearchSelect } from "components/ui";
-import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
+import { Button, CustomSelect, CustomSearchSelect, Input, TextArea } from "@plane/ui";
+import { Avatar } from "components/ui";
 // components
 import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";

@@ -6,8 +6,7 @@ import useToast from "hooks/use-toast";
 // services
 import { UserService } from "services/user.service";
 // ui
-import { CustomSearchSelect } from "components/ui";
-import { Button, CustomSelect, Input } from "@plane/ui";
+import { Button, CustomSelect, CustomSearchSelect, Input } from "@plane/ui";
 // types
 import { IUser } from "types";
 // fetch-keys
