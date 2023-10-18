@@ -1,13 +1,8 @@
 #!/bin/bash
-cp ./.env.example ./.env
 
-# Export for tr error in mac
-export LC_ALL=C
-export LC_CTYPE=C
+BRANCH=${BRANCH:-master}
 
-cp ./web/.env.example ./web/.env
-cp ./space/.env.example ./space/.env
-cp ./apiserver/.env.example ./apiserver/.env
-
-# Generate the SECRET_KEY that will be used by django
-echo -e "SECRET_KEY=\"$(tr -dc 'a-z0-9' < /dev/urandom | head -c50)\""  >> ./apiserver/.env
+mkdir -p ./plane-app
+cd plane-app
+curl -o docker-compose.yaml  https://raw.githubusercontent.com/makeplane/plane/dev/mg-self-host/docker-compose-hub.yml
+curl -o .env https://raw.githubusercontent.com/makeplane/plane/dev/mg-self-host/selfhost.env
