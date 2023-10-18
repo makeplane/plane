@@ -68,7 +68,7 @@ export interface IProjectStore {
   joinProject: (workspaceSlug: string, projectIds: string[]) => Promise<void>;
   leaveProject: (workspaceSlug: string, projectId: string) => Promise<void>;
   createProject: (workspaceSlug: string, data: any) => Promise<any>;
-  updateProject: (workspaceSlug: string, projectId: string, data: any) => Promise<any>;
+  updateProject: (workspaceSlug: string, projectId: string, data: Partial<IProject>) => Promise<any>;
   deleteProject: (workspaceSlug: string, projectId: string) => Promise<void>;
 }
 
@@ -568,18 +568,26 @@ export class ProjectStore implements IProjectStore {
     }
   };
 
-  updateProject = async (workspaceSlug: string, projectId: string, data: any) => {
+  updateProject = async (workspaceSlug: string, projectId: string, data: Partial<IProject>) => {
     try {
+      runInAction(() => {
+        this.projects = {
+          ...this.projects,
+          [workspaceSlug]: this.projects[workspaceSlug].map((p) => (p.id === projectId ? { ...p, ...data } : p)),
+        };
+      });
+
       const response = await this.projectService.updateProject(
         workspaceSlug,
         projectId,
         data,
         this.rootStore.user.currentUser
       );
-      await this.fetchProjects(workspaceSlug);
       return response;
     } catch (error) {
       console.log("Failed to create project from project store");
+
+      this.fetchProjects(workspaceSlug);
       throw error;
     }
   };

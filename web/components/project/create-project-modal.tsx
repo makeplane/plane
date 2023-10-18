@@ -173,17 +173,6 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
     onChange(alphanumericValue.toUpperCase());
   };
 
-  // const options = workspaceMembers?.map((member: any) => ({
-  //   value: member.member.id,
-  //   query: member.member.display_name,
-  //   content: (
-  //     <div className="flex items-center gap-2">
-  //       <Avatar user={member.member} />
-  //       {member.member.display_name}
-  //     </div>
-  //   ),
-  // }));
-
   return (
     <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>

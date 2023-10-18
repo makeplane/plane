@@ -30,14 +30,11 @@ const MobxStoreInit = observer(() => {
 
   useEffect(() => {
     // sidebar collapsed toggle
-    if (localStorage && localStorage.getItem("app_sidebar_collapsed") && themeStore?.sidebarCollapsed === null)
-      themeStore.setSidebarCollapsed(
-        localStorage.getItem("app_sidebar_collapsed")
-          ? localStorage.getItem("app_sidebar_collapsed") === "true"
-            ? true
-            : false
-          : false
-      );
+    const localValue = localStorage && localStorage.getItem("app_sidebar_collapsed");
+    const localBoolValue = localValue ? (localValue === "true" ? true : false) : false;
+    if (localValue && themeStore?.sidebarCollapsed === undefined) {
+      themeStore.toggleSidebar(localBoolValue);
+    }
   }, [themeStore, userStore, setTheme]);
 
   useEffect(() => {
