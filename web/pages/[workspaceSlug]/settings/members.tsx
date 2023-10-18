@@ -18,8 +18,7 @@ import ConfirmWorkspaceMemberRemove from "components/workspace/confirm-workspace
 import SendWorkspaceInvitationModal from "components/workspace/send-workspace-invitation-modal";
 import { SettingsSidebar } from "components/project";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Button, CustomMenu, Loader } from "@plane/ui";
-import { CustomSelect } from "components/ui";
+import { BreadcrumbItem, Breadcrumbs, Button, CustomMenu, CustomSelect, Loader } from "@plane/ui";
 // icons
 import { ChevronDown, X } from "lucide-react";
 // types

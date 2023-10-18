@@ -5,11 +5,11 @@ import { usePopper } from "react-popper";
 // headless ui
 import { Menu } from "@headlessui/react";
 // type
-import { IDropdownProps, IMenuItemProps } from "../helper";
+import { ICustomMenuDropdownProps, ICustomMenuItemProps } from "./helper";
 // icons
 import { ChevronDown, MoreHorizontal } from "lucide-react";
 
-const CustomMenu = (props: IDropdownProps) => {
+const CustomMenu = (props: ICustomMenuDropdownProps) => {
   const {
     buttonClassName = "",
     customButtonClassName = "",
@@ -128,7 +128,7 @@ const CustomMenu = (props: IDropdownProps) => {
   );
 };
 
-const MenuItem: React.FC<IMenuItemProps> = (props) => {
+const MenuItem: React.FC<ICustomMenuItemProps> = (props) => {
   const { children, onClick, className = "" } = props;
   return (
     <Menu.Item as="div">

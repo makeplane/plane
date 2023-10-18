@@ -8,8 +8,7 @@ import useSWR, { mutate } from "swr";
 import { IssueService } from "services/issue";
 import { CycleService } from "services/cycle.service";
 // ui
-import { CustomSelect } from "components/ui";
-import { Spinner, Tooltip } from "@plane/ui";
+import { CustomSelect, Spinner, Tooltip } from "@plane/ui";
 // helper
 import { truncateText } from "helpers/string.helper";
 // types

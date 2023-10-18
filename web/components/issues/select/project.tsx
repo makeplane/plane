@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // ui
-import { CustomSelect } from "components/ui";
+import { CustomSelect } from "@plane/ui";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
 // icons

@@ -14,6 +14,9 @@ export interface IDropdownProps {
   optionsClassName?: string;
   width?: "auto" | string;
   placement?: Placement;
+}
+
+export interface ICustomMenuDropdownProps extends IDropdownProps {
   children: React.ReactNode;
   ellipsis?: boolean;
   noBorder?: boolean;
@@ -21,8 +24,20 @@ export interface IDropdownProps {
   menuButtonOnClick?: (...args: any) => void;
 }
 
-export interface IMenuItemProps {
+export interface ICustomSelectProps extends IDropdownProps {
+  children: React.ReactNode;
+  value: any;
+  onChange: any;
+}
+
+export interface ICustomMenuItemProps {
   children: React.ReactNode;
   onClick?: (args?: any) => void;
+  className?: string;
+}
+
+export interface ICustomSelectItemProps {
+  children: React.ReactNode;
+  value: any;
   className?: string;
 }
