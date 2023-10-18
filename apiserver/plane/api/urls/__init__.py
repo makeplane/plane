@@ -21,7 +21,7 @@ from .unsplash import urlpatterns as unsplash_urls
 from .user import urlpatterns as user_urls
 from .views import urlpatterns as view_urls
 from .workspace import urlpatterns as workspace_urls
-
+from .external_api import urlpatterns as externalapi_urls
 
 urlpatterns = [
     *analytic_urls,
@@ -30,6 +30,7 @@ urlpatterns = [
     *configuration_urls,
     *cycle_urls,
     *estimate_urls,
+    *externalapi_urls,
     *gpt_urls,
     *importer_urls,
     *inbox_urls,

@@ -83,7 +83,9 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
             if isinstance(e, KeyError):
                 capture_exception(e)
                 return Response({"error": f"key {e} does not exist"}, status=status.HTTP_400_BAD_REQUEST)
-            
+
+            if settings.DEBUG:
+                print(e)
             capture_exception(e)
             return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -161,6 +163,8 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
             if isinstance(e, KeyError):
                 return Response({"error": f"key {e} does not exist"}, status=status.HTTP_400_BAD_REQUEST)
             
+            if settings.DEBUG:
+                print(e)
             capture_exception(e)
             return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
