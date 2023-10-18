@@ -23,8 +23,8 @@ function download(){
         mv $PLANE_INSTALL_DIR/.env $PLANE_INSTALL_DIR/archive/$TS.env
     fi
 
-    curl -s -o $PLANE_INSTALL_DIR/docker-compose.yaml  https://raw.githubusercontent.com/makeplane/plane/$BRANCH/selfhost.yml
-    curl -s -o $PLANE_INSTALL_DIR/.env https://raw.githubusercontent.com/makeplane/plane/$BRANCH/selfhost.env
+    curl -s -o $PLANE_INSTALL_DIR/docker-compose.yaml  https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/docker-compose.yml
+    curl -s -o $PLANE_INSTALL_DIR/.env https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/variables.env
 
     echo ""
     echo "Latest version is now available for you to use"
