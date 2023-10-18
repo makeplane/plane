@@ -1,23 +1,30 @@
 import React from "react";
+import { useRouter } from "next/router";
 import Link from "next/link";
+import { observer } from "mobx-react-lite";
 import { useFormContext, Controller } from "react-hook-form";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // icons
 import { Plus } from "lucide-react";
-// hooks
-import useProjects from "hooks/use-projects";
 // components
 import { CustomSelect } from "components/ui";
 import { Input } from "@plane/ui";
 // types
 import { IJiraImporterForm } from "types";
 
-export const JiraGetImportDetail: React.FC = () => {
+export const JiraGetImportDetail: React.FC = observer(() => {
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
   const {
     control,
     formState: { errors },
   } = useFormContext<IJiraImporterForm>();
 
-  const { projects } = useProjects();
+  const { project: projectStore } = useMobxStore();
+
+  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
 
   return (
     <div className="h-full w-full space-y-8 overflow-y-auto">
@@ -201,4 +208,4 @@ export const JiraGetImportDetail: React.FC = () => {
       </div>
     </div>
   );
-};
+});

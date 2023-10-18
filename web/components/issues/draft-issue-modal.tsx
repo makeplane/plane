@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
-
+import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
-
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { IssueService, IssueDraftService } from "services/issue";
 import { ModuleService } from "services/module.service";
@@ -14,7 +13,6 @@ import useUser from "hooks/use-user";
 import useIssuesView from "hooks/use-issues-view";
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
-import useProjects from "hooks/use-projects";
 import useMyIssues from "hooks/my-issues/use-my-issues";
 // components
 import { DraftIssueForm } from "components/issues";
@@ -62,7 +60,7 @@ const issueService = new IssueService();
 const issueDraftService = new IssueDraftService();
 const moduleService = new ModuleService();
 
-export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) => {
+export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer((props) => {
   const {
     data,
     handleClose,
@@ -81,11 +79,14 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
+  const { project: projectStore } = useMobxStore();
+
+  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
+
   const { displayFilters, params } = useIssuesView();
   const { ...viewGanttParams } = params;
 
   const { user } = useUser();
-  const { projects } = useProjects();
 
   const { clearValue: clearDraftIssueLocalStorage } = useLocalStorage("draftedIssue", {});
 
@@ -414,4 +415,4 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = (props) =
       </Transition.Root>
     </>
   );
-};
+});

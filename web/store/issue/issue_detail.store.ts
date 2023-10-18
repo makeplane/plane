@@ -21,13 +21,13 @@ export interface IIssueDetailStore {
   setPeekId: (issueId: string | null) => void;
   setPeekMode: (issueId: IPeekMode | null) => void;
   // fetch issue details
-  fetchIssueDetails: (workspaceId: string, projectId: string, issueId: string) => void;
+  fetchIssueDetails: (workspaceSlug: string, projectId: string, issueId: string) => void;
   // creating issue
-  createIssue: (workspaceId: string, projectId: string, data: Partial<IIssue>, user: IUser) => void;
+  createIssue: (workspaceSlug: string, projectId: string, data: Partial<IIssue>, user: IUser) => void;
   // updating issue
-  updateIssue: (workspaceId: string, projectId: string, issueId: string, data: Partial<IIssue>, user: IUser) => void;
+  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>, user: IUser) => void;
   // deleting issue
-  deleteIssue: (workspaceId: string, projectId: string, issueId: string, user: IUser) => void;
+  deleteIssue: (workspaceSlug: string, projectId: string, issueId: string, user: IUser) => void;
 }
 
 export class IssueDetailStore implements IIssueDetailStore {
@@ -74,12 +74,12 @@ export class IssueDetailStore implements IIssueDetailStore {
 
   setPeekMode = (mode: IPeekMode | null) => (this.peekMode = mode);
 
-  fetchIssueDetails = async (workspaceId: string, projectId: string, issueId: string) => {
+  fetchIssueDetails = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
       this.loader = true;
       this.error = null;
 
-      const issueDetailsResponse = await this.issueService.retrieve(workspaceId, projectId, issueId);
+      const issueDetailsResponse = await this.issueService.retrieve(workspaceSlug, projectId, issueId);
 
       runInAction(() => {
         this.loader = false;
@@ -99,14 +99,14 @@ export class IssueDetailStore implements IIssueDetailStore {
     }
   };
 
-  createIssue = async (workspaceId: string, projectId: string, data: Partial<IIssue>, user: IUser) => {
+  createIssue = async (workspaceSlug: string, projectId: string, data: Partial<IIssue>, user: IUser) => {
     try {
       runInAction(() => {
         this.loader = true;
         this.error = null;
       });
 
-      const response = await this.issueService.createIssues(workspaceId, projectId, data, user);
+      const response = await this.issueService.createIssues(workspaceSlug, projectId, data, user);
 
       runInAction(() => {
         this.loader = false;
@@ -124,7 +124,7 @@ export class IssueDetailStore implements IIssueDetailStore {
   };
 
   updateIssue = async (
-    workspaceId: string,
+    workspaceSlug: string,
     projectId: string,
     issueId: string,
     data: Partial<IIssue>,
@@ -143,7 +143,7 @@ export class IssueDetailStore implements IIssueDetailStore {
         this.issues = newIssues;
       });
 
-      const response = await this.issueService.patchIssue(workspaceId, projectId, issueId, data, user);
+      const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data, user);
 
       runInAction(() => {
         this.loader = false;
@@ -157,7 +157,7 @@ export class IssueDetailStore implements IIssueDetailStore {
         };
       });
     } catch (error) {
-      this.fetchIssueDetails(workspaceId, projectId, issueId);
+      this.fetchIssueDetails(workspaceSlug, projectId, issueId);
 
       runInAction(() => {
         this.loader = false;
@@ -168,7 +168,7 @@ export class IssueDetailStore implements IIssueDetailStore {
     }
   };
 
-  deleteIssue = async (workspaceId: string, projectId: string, issueId: string, user: IUser) => {
+  deleteIssue = async (workspaceSlug: string, projectId: string, issueId: string, user: IUser) => {
     const newIssues = { ...this.issues };
     delete newIssues[issueId];
 
@@ -179,14 +179,14 @@ export class IssueDetailStore implements IIssueDetailStore {
         this.issues = newIssues;
       });
 
-      await this.issueService.deleteIssue(workspaceId, projectId, issueId, user);
+      await this.issueService.deleteIssue(workspaceSlug, projectId, issueId, user);
 
       runInAction(() => {
         this.loader = false;
         this.error = null;
       });
     } catch (error) {
-      this.fetchIssueDetails(workspaceId, projectId, issueId);
+      this.fetchIssueDetails(workspaceSlug, projectId, issueId);
 
       runInAction(() => {
         this.loader = false;

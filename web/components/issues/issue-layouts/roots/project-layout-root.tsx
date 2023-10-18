@@ -12,32 +12,27 @@ import {
   GanttLayout,
   KanBanLayout,
   ProjectAppliedFiltersRoot,
-  SpreadsheetLayout,
+  ProjectSpreadsheetLayout,
 } from "components/issues";
 
 export const ProjectLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as {
-    workspaceSlug: string;
-    projectId: string;
-    cycleId: string;
-    moduleId: string;
-  };
+  const { workspaceSlug, projectId } = router.query;
 
   const { issue: issueStore, project: projectStore, issueFilter: issueFilterStore } = useMobxStore();
 
   useSWR(
-    workspaceSlug && projectId ? `PROJECT_ISSUES` : null,
+    workspaceSlug && projectId ? `REVALIDATE_PROJECT_ISSUES_${projectId.toString()}` : null,
     async () => {
       if (workspaceSlug && projectId) {
-        await issueFilterStore.fetchUserProjectFilters(workspaceSlug, projectId);
+        await issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
 
-        await projectStore.fetchProjectStates(workspaceSlug, projectId);
-        await projectStore.fetchProjectLabels(workspaceSlug, projectId);
-        await projectStore.fetchProjectMembers(workspaceSlug, projectId);
-        await projectStore.fetchProjectEstimates(workspaceSlug, projectId);
+        await projectStore.fetchProjectStates(workspaceSlug.toString(), projectId.toString());
+        await projectStore.fetchProjectLabels(workspaceSlug.toString(), projectId.toString());
+        await projectStore.fetchProjectMembers(workspaceSlug.toString(), projectId.toString());
+        await projectStore.fetchProjectEstimates(workspaceSlug.toString(), projectId.toString());
 
-        await issueStore.fetchIssues(workspaceSlug, projectId);
+        await issueStore.fetchIssues(workspaceSlug.toString(), projectId.toString());
       }
     },
     { revalidateOnFocus: false }
@@ -58,7 +53,7 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
         ) : activeLayout === "gantt_chart" ? (
           <GanttLayout />
         ) : activeLayout === "spreadsheet" ? (
-          <SpreadsheetLayout />
+          <ProjectSpreadsheetLayout />
         ) : null}
       </div>
     </div>

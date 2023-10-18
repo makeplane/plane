@@ -98,7 +98,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   return (
     <>
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
-      <div className="relative w-full flex items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+      <div className="relative w-full flex items-center z-10 justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
         <div className="flex gap-2 items-center">
           {activeLayout === "spreadsheet" && <CheckCircle size={16} strokeWidth={2} />}
           <span className="text-sm font-medium">Workspace {activeLayout === "spreadsheet" ? "Issues" : "Views"}</span>
@@ -139,7 +139,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
                 </FiltersDropdown>
               )}
 
-              <FiltersDropdown title="View">
+              <FiltersDropdown title="Display">
                 <DisplayFiltersSelection
                   displayFilters={workspaceFilterStore.workspaceDisplayFilters}
                   displayProperties={workspaceFilterStore.workspaceDisplayProperties}
