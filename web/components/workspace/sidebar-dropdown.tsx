@@ -1,13 +1,13 @@
 import { Fragment } from "react";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
-// headless ui
 import { Menu, Transition } from "@headlessui/react";
-// next-themes
 import { useTheme } from "next-themes";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useUser from "hooks/use-user";
-import useWorkspaces from "hooks/use-workspaces";
 import useToast from "hooks/use-toast";
 // services
 import { UserService } from "services/user.service";
@@ -21,8 +21,6 @@ import { Check, LogOut, Plus, Settings, UserCircle2 } from "lucide-react";
 import { truncateText } from "helpers/string.helper";
 // types
 import { IWorkspace } from "types";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 
 // Static Data
 const userLinks = (workspaceSlug: string, userId: string) => [
@@ -56,19 +54,19 @@ const profileLinks = (workspaceSlug: string, userId: string) => [
 const userService = new UserService();
 const authService = new AuthService();
 
-export const WorkspaceSidebarDropdown = () => {
-  const store: any = useMobxStore();
-
+export const WorkspaceSidebarDropdown = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const { theme: themeStore, workspace: workspaceStore } = useMobxStore();
+
+  const { workspaces, currentWorkspace: activeWorkspace } = workspaceStore;
 
   const { user, mutateUser } = useUser();
 
   const { setTheme } = useTheme();
 
   const { setToastAlert } = useToast();
-
-  const { activeWorkspace, workspaces } = useWorkspaces();
 
   const handleWorkspaceNavigation = (workspace: IWorkspace) => {
     userService
@@ -111,7 +109,7 @@ export const WorkspaceSidebarDropdown = () => {
         <Menu.Button className="text-custom-sidebar-text-200 flex w-full items-center rounded-sm text-sm font-medium focus:outline-none">
           <div
             className={`flex w-full items-center gap-x-2 rounded-sm bg-custom-sidebar-background-80 p-1 ${
-              store?.theme?.sidebarCollapsed ? "justify-center" : ""
+              themeStore.sidebarCollapsed ? "justify-center" : ""
             }`}
           >
             <div className="relative grid h-6 w-6 place-items-center rounded bg-gray-700 uppercase text-white">
@@ -126,7 +124,7 @@ export const WorkspaceSidebarDropdown = () => {
               )}
             </div>
 
-            {!store?.theme?.sidebarCollapsed && (
+            {!themeStore.sidebarCollapsed && (
               <h4 className="text-custom-text-100">
                 {activeWorkspace?.name ? truncateText(activeWorkspace.name, 14) : "Loading..."}
               </h4>
@@ -241,7 +239,7 @@ export const WorkspaceSidebarDropdown = () => {
         </Transition>
       </Menu>
 
-      {!store?.theme?.sidebarCollapsed && (
+      {!themeStore.sidebarCollapsed && (
         <Menu as="div" className="relative flex-shrink-0">
           <Menu.Button className="grid place-items-center outline-none">
             <Avatar user={user} height="28px" width="28px" fontSize="14px" />
@@ -290,4 +288,4 @@ export const WorkspaceSidebarDropdown = () => {
       )}
     </div>
   );
-};
+});
