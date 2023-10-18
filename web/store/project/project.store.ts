@@ -576,7 +576,6 @@ export class ProjectStore implements IProjectStore {
         data,
         this.rootStore.user.currentUser
       );
-      await this.fetchProjectDetails(workspaceSlug, projectId);
       await this.fetchProjects(workspaceSlug);
       return response;
     } catch (error) {

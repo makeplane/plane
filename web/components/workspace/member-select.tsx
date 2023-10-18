@@ -11,15 +11,15 @@ import { Check, Search, User2 } from "lucide-react";
 import { IWorkspaceMember } from "types";
 
 export interface IWorkspaceMemberSelect {
-  value: string;
-  onChange: (value: string) => void;
-  workspaceMembers: IWorkspaceMember[];
+  value: IWorkspaceMember | undefined;
+  onChange: (value: IWorkspaceMember) => void;
+  options: IWorkspaceMember[];
   placeholder?: string;
   disabled?: boolean;
 }
 
 export const WorkspaceMemberSelect: FC<IWorkspaceMemberSelect> = (props) => {
-  const { value, onChange, workspaceMembers, placeholder = "Select Member", disabled = false } = props;
+  const { value, onChange, options, placeholder = "Select Member", disabled = false } = props;
   // states
   const [query, setQuery] = useState("");
 
@@ -30,28 +30,30 @@ export const WorkspaceMemberSelect: FC<IWorkspaceMemberSelect> = (props) => {
     placement: "auto",
   });
 
-  const options = workspaceMembers?.map((member: any) => ({
-    value: member.member.id,
-    query: member.member.display_name,
-    content: (
-      <div className="flex items-center gap-2">
-        <Avatar user={member.member} />
-        {member.member.display_name}
-      </div>
-    ),
-  }));
+  // const options = workspaceMembers?.map((member: any) => ({
+  //   value: member.member.id,
+  //   query: member.member.display_name,
+  //   content: (
+  //     <div className="flex items-center gap-2">
+  //       <Avatar user={member.member} />
+  //       {member.member.display_name}
+  //     </div>
+  //   ),
+  // }));
 
-  const selectedOption = workspaceMembers?.find((member) => member.member.id === value);
+  // const selectedOption = workspaceMembers?.find((member) => member.member.id === value);
 
   const filteredOptions =
-    query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
+    query === ""
+      ? options
+      : options?.filter((option) => option.member.display_name.toLowerCase().includes(query.toLowerCase()));
 
   const label = (
     <Tooltip
       tooltipHeading="Assignee"
       tooltipContent={
-        workspaceMembers && workspaceMembers.length > 0
-          ? workspaceMembers.map((assignee) => assignee?.member.display_name).join(", ")
+        options && options.length > 0
+          ? options.map((assignee) => assignee?.member.display_name).join(", ")
           : "No Assignee"
       }
       position="top"
@@ -62,8 +64,8 @@ export const WorkspaceMemberSelect: FC<IWorkspaceMemberSelect> = (props) => {
       >
         {value ? (
           <>
-            <Avatar height="18px" width="18px" user={selectedOption?.member} />
-            <span className="text-xs leading-4"> {selectedOption?.member.display_name}</span>
+            <Avatar height="18px" width="18px" user={value?.member} />
+            <span className="text-xs leading-4"> {value?.member.display_name}</span>
           </>
         ) : (
           <>
@@ -107,10 +109,10 @@ export const WorkspaceMemberSelect: FC<IWorkspaceMemberSelect> = (props) => {
           <div className={`mt-2 space-y-1 max-h-48 overflow-y-scroll`}>
             {filteredOptions ? (
               filteredOptions.length > 0 ? (
-                filteredOptions.map((option) => (
+                filteredOptions.map((workspaceMember: IWorkspaceMember) => (
                   <Listbox.Option
-                    key={option.value}
-                    value={option.value}
+                    key={workspaceMember.id}
+                    value={workspaceMember}
                     className={({ active, selected }) =>
                       `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
                         active && !selected ? "bg-custom-background-80" : ""
@@ -119,7 +121,10 @@ export const WorkspaceMemberSelect: FC<IWorkspaceMemberSelect> = (props) => {
                   >
                     {({ selected }) => (
                       <>
-                        {option.content}
+                        <div className="flex items-center gap-2">
+                          <Avatar user={workspaceMember.member} />
+                          {workspaceMember.member.display_name}
+                        </div>
                         {selected && <Check className="h-3.5 w-3.5" />}
                       </>
                     )}
