@@ -263,7 +263,7 @@ class ProjectViewSet(BaseViewSet):
                 )
 
                 project = self.get_queryset().filter(pk=serializer.data["id"]).first()
-                serializer = ProjectDetailSerializer(project)
+                serializer = ProjectListSerializer(project)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(
                 serializer.errors,
@@ -314,6 +314,8 @@ class ProjectViewSet(BaseViewSet):
                         color="#ff7700",
                     )
 
+                project = self.get_queryset().filter(pk=serializer.data["id"]).first()
+                serializer = ProjectListSerializer(project)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
