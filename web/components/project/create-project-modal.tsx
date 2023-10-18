@@ -18,9 +18,11 @@ import EmojiIconPicker from "components/emoji-icon-picker";
 // helpers
 import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
 // types
-import { IProject } from "types";
+import { IProject, IWorkspaceMember } from "types";
 // constants
 import { NETWORK_CHOICES } from "constants/project";
+import { WorkspaceMemberSelect } from "components/workspace";
+import { observer } from "mobx-react-lite";
 
 type Props = {
   isOpen: boolean;
@@ -29,7 +31,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-const defaultValues: Partial<IProject> = {
+const defaultValues = {
   cover_image:
     "https://images.unsplash.com/photo-1531045535792-b515d59c3d1f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80",
   description: "",
@@ -59,17 +61,28 @@ const IsGuestCondition: FC<IIsGuestCondition> = ({ onClose }) => {
   return null;
 };
 
-export const CreateProjectModal: React.FC<Props> = (props) => {
+export interface ICreateProjectForm {
+  name: string;
+  identifier: string;
+  description: string;
+  emoji_and_icon: string;
+  network: number;
+  project_lead: IWorkspaceMember | null;
+  cover_image: string;
+}
+
+export const CreateProjectModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose, setToFavorite = false, workspaceSlug } = props;
   // store
-  const { project: projectStore } = useMobxStore();
+  const { project: projectStore, workspace: workspaceStore } = useMobxStore();
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
-
+  // toast
   const { setToastAlert } = useToast();
 
   const { memberDetails } = useWorkspaceMyMembership();
-  const { workspaceMembers } = useWorkspaceMembers(workspaceSlug?.toString() ?? "");
+
+  const workspaceMembers = workspaceStore.members[workspaceSlug] || [];
 
   const {
     formState: { errors, isSubmitting },
@@ -78,7 +91,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
     control,
     watch,
     setValue,
-  } = useForm<IProject>({
+  } = useForm<ICreateProjectForm>({
     defaultValues,
     reValidateMode: "onChange",
   });
@@ -101,7 +114,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
     });
   };
 
-  const onSubmit = async (formData: IProject) => {
+  const onSubmit = async (formData: ICreateProjectForm) => {
     if (!workspaceSlug) return;
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -157,16 +170,16 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
     setIsChangeInIdentifierRequired(false);
   };
 
-  const options = workspaceMembers?.map((member: any) => ({
-    value: member.member.id,
-    query: member.member.display_name,
-    content: (
-      <div className="flex items-center gap-2">
-        <Avatar user={member.member} />
-        {member.member.display_name}
-      </div>
-    ),
-  }));
+  // const options = workspaceMembers?.map((member: any) => ({
+  //   value: member.member.id,
+  //   query: member.member.display_name,
+  //   content: (
+  //     <div className="flex items-center gap-2">
+  //       <Avatar user={member.member} />
+  //       {member.member.display_name}
+  //     </div>
+  //   ),
+  // }));
 
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === watch("network"));
 
@@ -255,14 +268,13 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                               message: "Title should be less than 255 characters",
                             },
                           }}
-                          render={({ field: { value, ref } }) => (
+                          render={({ field: { value, onChange } }) => (
                             <Input
                               id="name"
                               name="name"
                               type="text"
                               value={value}
-                              onChange={changeIdentifierOnNameChange}
-                              ref={ref}
+                              onChange={onChange}
                               hasError={Boolean(errors.name)}
                               placeholder="Project Title"
                               className="w-full"
@@ -287,14 +299,13 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                               message: "Identifier must at most be of 12 characters",
                             },
                           }}
-                          render={({ field: { value, ref } }) => (
+                          render={({ field: { value, onChange } }) => (
                             <Input
                               id="identifier"
                               name="identifier"
                               type="text"
                               value={value}
-                              onChange={handleIdentifierChange}
-                              ref={ref}
+                              onChange={onChange}
                               hasError={Boolean(errors.name)}
                               placeholder="Identifier"
                               className="text-sm w-full"
@@ -363,37 +374,45 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                         <Controller
                           name="project_lead"
                           control={control}
-                          render={({ field: { value, onChange } }) => {
-                            const selectedMember = workspaceMembers?.find((m: any) => m.member.id === value);
+                          render={({ field: { value, onChange } }) => (
+                            <WorkspaceMemberSelect
+                              value={value}
+                              onChange={onChange}
+                              options={workspaceMembers}
+                              placeholder="Select Lead"
+                            />
+                          )}
+                          // render={({ field: { value, onChange } }) => {
+                          //   const selectedMember = workspaceMembers?.find((m: any) => m.member.id === value);
 
-                            return (
-                              <CustomSearchSelect
-                                value={value}
-                                onChange={onChange}
-                                options={options}
-                                buttonClassName="border-[0.5px] !px-2 shadow-md"
-                                label={
-                                  <div className="flex items-center justify-center gap-2 py-[1px]">
-                                    {value ? (
-                                      <>
-                                        <Avatar user={selectedMember?.member} />
-                                        <span>{selectedMember?.member.display_name} </span>
-                                        <span onClick={() => onChange(null)}>
-                                          <X className="h-3 w-3 -mb-0.5 text-custom-text-200 hover:text-custom-text-100" />
-                                        </span>
-                                      </>
-                                    ) : (
-                                      <>
-                                        <Users2 className="h-3.5 w-3.5 text-custom-text-400" />
-                                        <span className="text-custom-text-400">Lead</span>
-                                      </>
-                                    )}
-                                  </div>
-                                }
-                                noChevron
-                              />
-                            );
-                          }}
+                          //   return (
+                          //     <CustomSearchSelect
+                          //       value={value}
+                          //       onChange={onChange}
+                          //       options={options}
+                          //       buttonClassName="border-[0.5px] !px-2 shadow-md"
+                          //       label={
+                          //         <div className="flex items-center justify-center gap-2 py-[1px]">
+                          //           {value ? (
+                          //             <>
+                          //               <Avatar user={selectedMember?.member} />
+                          //               <span>{selectedMember?.member.display_name} </span>
+                          //               <span onClick={() => onChange(null)}>
+                          //                 <X className="h-3 w-3 -mb-0.5 text-custom-text-200 hover:text-custom-text-100" />
+                          //               </span>
+                          //             </>
+                          //           ) : (
+                          //             <>
+                          //               <Users2 className="h-3.5 w-3.5 text-custom-text-400" />
+                          //               <span className="text-custom-text-400">Lead</span>
+                          //             </>
+                          //           )}
+                          //         </div>
+                          //       }
+                          //       noChevron
+                          //     />
+                          //   );
+                          // }}
                         />
                       </div>
                     </div>
@@ -415,4 +434,4 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+});
