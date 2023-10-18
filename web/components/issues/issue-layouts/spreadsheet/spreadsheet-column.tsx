@@ -168,7 +168,10 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
 
       <div className="h-full min-w-[8rem] w-full">
         {issues?.map((issue) => (
-          <div className="h-11 flex items-center px-4 py-2.5 border-b-[0.5px] border-custom-border-200">
+          <div
+            key={`${property}-${issue.id}`}
+            className="h-11 flex items-center px-4 py-2.5 border-b-[0.5px] border-custom-border-200"
+          >
             {property === "state" ? (
               <SpreadsheetStateColumn
                 disabled={disableUserActions}
