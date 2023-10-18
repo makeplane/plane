@@ -1,14 +1,16 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { useDropzone } from "react-dropzone";
 import { Tab, Transition, Popover } from "@headlessui/react";
 import { Control, Controller } from "react-hook-form";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { FileService } from "services/file.service";
 // hooks
-import useWorkspaceDetails from "hooks/use-workspace-details";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { Button, Input, Loader } from "@plane/ui";
@@ -39,11 +41,8 @@ type Props = {
 // services
 const fileService = new FileService();
 
-export const ImagePickerPopover: React.FC<Props> = ({ label, value, control, onChange, disabled = false }) => {
-  const ref = useRef<HTMLDivElement>(null);
-
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+export const ImagePickerPopover: React.FC<Props> = observer((props) => {
+  const { label, value, control, onChange, disabled = false } = props;
 
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
@@ -53,6 +52,14 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, control, onC
   const [formData, setFormData] = useState({
     search: "",
   });
+
+  const ref = useRef<HTMLDivElement>(null);
+
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
+  const { workspace: workspaceStore } = useMobxStore();
+  const { currentWorkspace: workspaceDetails } = workspaceStore;
 
   const { data: unsplashImages, error: unsplashError } = useSWR(
     `UNSPLASH_IMAGES_${searchParams}`,
@@ -69,8 +76,6 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, control, onC
   });
 
   const imagePickerRef = useRef<HTMLDivElement>(null);
-
-  const { workspaceDetails } = useWorkspaceDetails();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setImage(acceptedFiles[0]);
@@ -344,4 +349,4 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, control, onC
       </Transition>
     </Popover>
   );
-};
+});
