@@ -23,7 +23,7 @@ function download(){
         mv $PLANE_INSTALL_DIR/.env $PLANE_INSTALL_DIR/archive/$TS.env
     fi
 
-    curl -s -o $PLANE_INSTALL_DIR/docker-compose.yaml  https://raw.githubusercontent.com/makeplane/plane/$BRANCH/docker-compose-hub.yml
+    curl -s -o $PLANE_INSTALL_DIR/docker-compose.yaml  https://raw.githubusercontent.com/makeplane/plane/$BRANCH/selfhost.yml
     curl -s -o $PLANE_INSTALL_DIR/.env https://raw.githubusercontent.com/makeplane/plane/$BRANCH/selfhost.env
 
     echo ""
