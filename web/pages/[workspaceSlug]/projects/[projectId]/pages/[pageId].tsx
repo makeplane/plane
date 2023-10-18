@@ -95,11 +95,11 @@ const SinglePage: NextPage = () => {
     workspaceSlug && projectId && pageId ? PAGE_DETAILS(pageId as string) : null,
     workspaceSlug && projectId
       ? () =>
-          pagesService.getPageDetails(
-            workspaceSlug as string,
-            projectId as string,
-            pageId as string
-          )
+        pagesService.getPageDetails(
+          workspaceSlug as string,
+          projectId as string,
+          pageId as string
+        )
       : null
   );
 
@@ -107,11 +107,11 @@ const SinglePage: NextPage = () => {
     workspaceSlug && projectId && pageId ? PAGE_BLOCKS_LIST(pageId as string) : null,
     workspaceSlug && projectId
       ? () =>
-          pagesService.listPageBlocks(
-            workspaceSlug as string,
-            projectId as string,
-            pageId as string
-          )
+        pagesService.listPageBlocks(
+          workspaceSlug as string,
+          projectId as string,
+          pageId as string
+        )
       : null
   );
 
@@ -364,7 +364,32 @@ const SinglePage: NextPage = () => {
       ) : pageDetails ? (
         <div className="flex h-full flex-col justify-between space-y-4 overflow-hidden p-4">
           <div className="h-full w-full overflow-y-auto">
-            <div className="flex items-start justify-between gap-2">
+            <main className="items-center self-center flex w-full h-full grow flex-col pb-10 max-md:max-w-full">
+              <header className="border-custom-border self-stretch flex flex-col py-2 border-b border-solid max-md:max-w-full">
+                <nav className="self-center flex ml-0 w-full items-start justify-between gap-5 max-md:max-w-full max-md:flex-wrap max-md:justify-center">
+                  <img loading="lazy" srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/15cb2454-ddc6-424e-a592-670a4f2cb580?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/15cb2454-ddc6-424e-a592-670a4f2cb580?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/15cb2454-ddc6-424e-a592-670a4f2cb580?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/15cb2454-ddc6-424e-a592-670a4f2cb580?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/15cb2454-ddc6-424e-a592-670a4f2cb580?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/15cb2454-ddc6-424e-a592-670a4f2cb580?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/15cb2454-ddc6-424e-a592-670a4f2cb580?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/15cb2454-ddc6-424e-a592-670a4f2cb580?apiKey=f709319a27ce40b6bb229a42ebdfd918&" className="aspect-square object-cover object-center w-8 shrink-0" />
+                  <div className="self-center flex items-start gap-3 my-auto max-md:justify-center">
+                    <img loading="lazy" srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/ce993b6c-d617-4660-a04c-899e7317a676?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/ce993b6c-d617-4660-a04c-899e7317a676?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/ce993b6c-d617-4660-a04c-899e7317a676?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/ce993b6c-d617-4660-a04c-899e7317a676?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/ce993b6c-d617-4660-a04c-899e7317a676?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/ce993b6c-d617-4660-a04c-899e7317a676?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/ce993b6c-d617-4660-a04c-899e7317a676?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/ce993b6c-d617-4660-a04c-899e7317a676?apiKey=f709319a27ce40b6bb229a42ebdfd918&" className="aspect-square object-cover object-center w-4 shrink-0" />
+                    <img loading="lazy" srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/b1c4f586-084b-466d-8f18-7b5a5a556241?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/b1c4f586-084b-466d-8f18-7b5a5a556241?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/b1c4f586-084b-466d-8f18-7b5a5a556241?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/b1c4f586-084b-466d-8f18-7b5a5a556241?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/b1c4f586-084b-466d-8f18-7b5a5a556241?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/b1c4f586-084b-466d-8f18-7b5a5a556241?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/b1c4f586-084b-466d-8f18-7b5a5a556241?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/b1c4f586-084b-466d-8f18-7b5a5a556241?apiKey=f709319a27ce40b6bb229a42ebdfd918&" className="aspect-square object-cover object-center w-4 shrink-0" />
+                    <img loading="lazy" srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/3ce79568-6026-4ad5-8c12-76c276464375?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/3ce79568-6026-4ad5-8c12-76c276464375?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/3ce79568-6026-4ad5-8c12-76c276464375?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/3ce79568-6026-4ad5-8c12-76c276464375?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/3ce79568-6026-4ad5-8c12-76c276464375?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/3ce79568-6026-4ad5-8c12-76c276464375?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/3ce79568-6026-4ad5-8c12-76c276464375?apiKey=f709319a27ce40b6bb229a42ebdfd918&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/3ce79568-6026-4ad5-8c12-76c276464375?apiKey=f709319a27ce40b6bb229a42ebdfd918&" className="aspect-square object-cover object-center w-4 shrink-0" />
+                  </div>
+                </nav>
+              </header>
+              <section className="items-start self-center flex w-[892px] max-w-full flex-col mt-7 mb-[478px]">
+                <div className="items-center self-stretch flex flex-col px-5 py-2 max-md:max-w-full">
+                  <input
+                    type="text"
+                    value={"Page Title"}
+                    onChange={(e) => { console.log(e.target.value )}}
+                    className="text-black text-2xl font-semibold leading-8 tracking-tight self-center w-[700px] max-w-full"
+                  />
+                </div>
+                <div className="items-center self-stretch flex flex-col px-5 py-2 max-md:max-w-full">
+                  <p className="text-white text-base leading-6 tracking-tight self-center w-[700px] max-w-full">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                </div>
+              </section>
+            </main>
+            {/* <div className="flex items-start justify-between gap-2">
               <div className="flex w-full flex-col gap-2">
                 <div className="flex w-full items-center gap-2">
                   <button
@@ -612,9 +637,9 @@ const SinglePage: NextPage = () => {
                   )}
                 </div>
               </div>
-            </div>
+            </div> */}
 
-            <div className="mt-5 h-full w-full">
+            {/* <div className="mt-5 h-full w-full">
               {pageBlocks ? (
                 <>
                   <DragDropContext onDragEnd={handleOnDragEnd}>
@@ -673,11 +698,11 @@ const SinglePage: NextPage = () => {
                   <Loader.Item height="150px" />
                 </Loader>
               )}
-            </div>
+            </div> */}
           </div>
-          <div>
+          {/* <div>
             <CreateBlock user={user} />
-          </div>
+          </div> */}
         </div>
       ) : (
         <Loader className="p-8">
