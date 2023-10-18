@@ -1,4 +1,4 @@
-import { observable, action, makeObservable, runInAction } from "mobx";
+import { observable, action, makeObservable, runInAction, computed } from "mobx";
 // services
 import { IssueService } from "services/issue";
 // types
@@ -20,12 +20,22 @@ export interface IIssueDetailStore {
 
   setPeekId: (issueId: string | null) => void;
   setPeekMode: (issueId: IPeekMode | null) => void;
+
+  // computed
+  getIssue: IIssue | null;
+
   // fetch issue details
   fetchIssueDetails: (workspaceSlug: string, projectId: string, issueId: string) => void;
   // creating issue
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<IIssue>, user: IUser) => void;
   // updating issue
-  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>, user: IUser) => void;
+  updateIssue: (
+    workspaceId: string,
+    projectId: string,
+    issueId: string,
+    data: Partial<IIssue>,
+    user: IUser | undefined
+  ) => void;
   // deleting issue
   deleteIssue: (workspaceSlug: string, projectId: string, issueId: string, user: IUser) => void;
 }
@@ -57,6 +67,8 @@ export class IssueDetailStore implements IIssueDetailStore {
 
       issues: observable.ref,
 
+      getIssue: computed,
+
       setPeekId: action,
       setPeekMode: action,
 
@@ -70,6 +82,12 @@ export class IssueDetailStore implements IIssueDetailStore {
     this.issueService = new IssueService();
   }
 
+  get getIssue() {
+    if (!this.peekId) return null;
+    const _issue = this.issues[this.peekId];
+    return _issue || null;
+  }
+
   setPeekId = (issueId: string | null) => (this.peekId = issueId);
 
   setPeekMode = (mode: IPeekMode | null) => (this.peekMode = mode);
@@ -78,6 +96,7 @@ export class IssueDetailStore implements IIssueDetailStore {
     try {
       this.loader = true;
       this.error = null;
+      this.peekId = issueId;
 
       const issueDetailsResponse = await this.issueService.retrieve(workspaceSlug, projectId, issueId);
 

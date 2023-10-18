@@ -76,13 +76,13 @@ export const KanBanLayout: FC = observer(() => {
             display_properties={display_properties}
             kanBanToggle={issueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
-            // states={states}
-            // stateGroups={stateGroups}
-            // priorities={priorities}
-            // labels={labels}
-            // members={members}
-            // projects={projects}
-            // estimates={estimates}
+            states={states}
+            stateGroups={stateGroups}
+            priorities={priorities}
+            labels={labels}
+            members={members}
+            projects={projects}
+            estimates={estimates}
           />
         ) : (
           <KanBanSwimLanes
@@ -93,13 +93,13 @@ export const KanBanLayout: FC = observer(() => {
             display_properties={display_properties}
             kanBanToggle={issueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
-            // states={states}
-            // stateGroups={stateGroups}
-            // priorities={priorities}
-            // labels={labels}
-            // members={members}
-            // projects={projects}
-            // estimates={estimates}
+            states={states}
+            stateGroups={stateGroups}
+            priorities={priorities}
+            labels={labels}
+            members={members}
+            projects={projects}
+            estimates={estimates}
           />
         )}
       </DragDropContext>
