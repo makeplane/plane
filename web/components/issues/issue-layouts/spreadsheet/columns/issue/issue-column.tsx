@@ -63,7 +63,7 @@ export const IssueColumn: React.FC<Props> = ({
   const paddingLeft = `${nestingLevel * 54}px`;
 
   return (
-    <div className="group flex items-center w-[28rem] text-sm h-11 sticky top-0 bg-custom-background-100 truncate border-b border-r border-custom-border-100">
+    <div className="group flex items-center w-[28rem] text-sm h-11 sticky top-0 bg-custom-background-100 truncate border-b border-custom-border-100">
       {properties.key && (
         <div
           className="flex gap-1.5 px-4 pr-0 py-2.5 items-center min-w-[96px]"
