@@ -34,6 +34,7 @@ import {
 } from "types";
 // constants
 import { SPREADSHEET_PROPERTY_DETAILS } from "constants/spreadsheet";
+import { Command } from "cmdk";
 
 type Props = {
   disableUserActions: boolean;
@@ -166,101 +167,89 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
         </CustomMenu>
       </div>
       <div className="h-full min-w-[8rem] w-full">
-        {issues?.map((issue) => {
-          if (property === "state")
-            return (
-              <SpreadsheetStateColumn
+        <Command.Group>
+          <>
+            {issues?.map((issue) => (
+              <Command.Item
                 key={`${property}-${issue.id}`}
-                disabled={disableUserActions}
-                expandedIssues={expandedIssues}
-                issue={issue}
-                onChange={(data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
-                states={states}
-              />
-            );
-
-          if (property === "priority")
-            return (
-              <SpreadsheetPriorityColumn
-                key={`${property}-${issue.id}`}
-                disabled={disableUserActions}
-                expandedIssues={expandedIssues}
-                issue={issue}
-                onChange={(data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
-              />
-            );
-
-          if (property === "estimate")
-            return (
-              <SpreadsheetEstimateColumn
-                key={`${property}-${issue.id}`}
-                disabled={disableUserActions}
-                expandedIssues={expandedIssues}
-                issue={issue}
-                onChange={(data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
-              />
-            );
-          if (property === "assignee")
-            return (
-              <SpreadsheetAssigneeColumn
-                key={`${property}-${issue.id}`}
-                disabled={disableUserActions}
-                expandedIssues={expandedIssues}
-                issue={issue}
-                members={members}
-                onChange={(data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
-              />
-            );
-          if (property === "labels")
-            return (
-              <SpreadsheetLabelColumn
-                key={`${property}-${issue.id}`}
-                disabled={disableUserActions}
-                expandedIssues={expandedIssues}
-                issue={issue}
-                labels={labels}
-                onChange={(data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
-              />
-            );
-          if (property === "start_date")
-            return (
-              <SpreadsheetStartDateColumn
-                key={`${property}-${issue.id}`}
-                disabled={disableUserActions}
-                expandedIssues={expandedIssues}
-                issue={issue}
-                onChange={(data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
-              />
-            );
-          if (property === "due_date")
-            return (
-              <SpreadsheetDueDateColumn
-                key={`${property}-${issue.id}`}
-                disabled={disableUserActions}
-                expandedIssues={expandedIssues}
-                issue={issue}
-                onChange={(data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
-              />
-            );
-          if (property === "created_on")
-            return (
-              <SpreadsheetCreatedOnColumn
-                key={`${property}-${issue.id}`}
-                expandedIssues={expandedIssues}
-                issue={issue}
-              />
-            );
-          if (property === "updated_on")
-            return (
-              <SpreadsheetUpdatedOnColumn
-                key={`${property}-${issue.id}`}
-                expandedIssues={expandedIssues}
-                issue={issue}
-              />
-            );
-
-          return null;
-        })}
+                value={`${property}-${issue.id}`}
+                className="h-11 flex items-center px-4 py-2.5 border-b-[0.5px] border-custom-border-200"
+              >
+                {property === "state" ? (
+                  <SpreadsheetStateColumn
+                    disabled={disableUserActions}
+                    expandedIssues={expandedIssues}
+                    issue={issue}
+                    onChange={(data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
+                    states={states}
+                  />
+                ) : property === "priority" ? (
+                  <SpreadsheetPriorityColumn
+                    key={`${property}-${issue.id}`}
+                    disabled={disableUserActions}
+                    expandedIssues={expandedIssues}
+                    issue={issue}
+                    onChange={(data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
+                  />
+                ) : property === "estimate" ? (
+                  <SpreadsheetEstimateColumn
+                    key={`${property}-${issue.id}`}
+                    disabled={disableUserActions}
+                    expandedIssues={expandedIssues}
+                    issue={issue}
+                    onChange={(data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
+                  />
+                ) : property === "assignee" ? (
+                  <SpreadsheetAssigneeColumn
+                    key={`${property}-${issue.id}`}
+                    disabled={disableUserActions}
+                    expandedIssues={expandedIssues}
+                    issue={issue}
+                    members={members}
+                    onChange={(data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
+                  />
+                ) : property === "labels" ? (
+                  <SpreadsheetLabelColumn
+                    key={`${property}-${issue.id}`}
+                    disabled={disableUserActions}
+                    expandedIssues={expandedIssues}
+                    issue={issue}
+                    labels={labels}
+                    onChange={(data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
+                  />
+                ) : property === "start_date" ? (
+                  <SpreadsheetStartDateColumn
+                    key={`${property}-${issue.id}`}
+                    disabled={disableUserActions}
+                    expandedIssues={expandedIssues}
+                    issue={issue}
+                    onChange={(data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
+                  />
+                ) : property === "due_date" ? (
+                  <SpreadsheetDueDateColumn
+                    key={`${property}-${issue.id}`}
+                    disabled={disableUserActions}
+                    expandedIssues={expandedIssues}
+                    issue={issue}
+                    onChange={(data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
+                  />
+                ) : property === "created_on" ? (
+                  <SpreadsheetCreatedOnColumn
+                    key={`${property}-${issue.id}`}
+                    expandedIssues={expandedIssues}
+                    issue={issue}
+                  />
+                ) : property === "updated_on" ? (
+                  <SpreadsheetUpdatedOnColumn
+                    key={`${property}-${issue.id}`}
+                    expandedIssues={expandedIssues}
+                    issue={issue}
+                  />
+                ) : null}
+              </Command.Item>
+            ))}
+          </>
+        </Command.Group>
       </div>
     </div>
   );

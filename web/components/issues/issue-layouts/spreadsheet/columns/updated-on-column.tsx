@@ -1,9 +1,9 @@
 import React from "react";
 
-// components
-import { CreatedOnColumn } from "components/issues";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
+// helpers
+import { renderLongDetailDateFormat } from "helpers/date-time.helper";
 // types
 import { IIssue } from "types";
 
@@ -12,22 +12,24 @@ type Props = {
   expandedIssues: string[];
 };
 
-export const SpreadsheetCreatedOnColumn: React.FC<Props> = ({ issue, expandedIssues }) => {
+export const SpreadsheetUpdatedOnColumn: React.FC<Props> = (props) => {
+  const { issue, expandedIssues } = props;
+
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
   const { subIssues, isLoading } = useSubIssue(issue.project_detail.id, issue.id, isExpanded);
 
   return (
-    <div>
-      <CreatedOnColumn issue={issue} />
+    <>
+      {renderLongDetailDateFormat(issue.updated_at)}
 
       {isExpanded &&
         !isLoading &&
         subIssues &&
         subIssues.length > 0 &&
         subIssues.map((subIssue: IIssue) => (
-          <SpreadsheetCreatedOnColumn key={subIssue.id} issue={subIssue} expandedIssues={expandedIssues} />
+          <SpreadsheetUpdatedOnColumn key={subIssue.id} issue={subIssue} expandedIssues={expandedIssues} />
         ))}
-    </div>
+    </>
   );
 };
