@@ -18,11 +18,18 @@ interface IProjectAuthWrapper {
 export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { children } = props;
   // store
-  const { user: userStore, project: projectStore } = useMobxStore();
+  const { user: userStore, project: projectStore, inbox: inboxStore } = useMobxStore();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  // fetching project details
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_DETAILS_${workspaceSlug.toString()}_${projectId.toString()}` : null,
+    workspaceSlug && projectId
+      ? () => projectStore.fetchProjectDetails(workspaceSlug.toString(), projectId.toString())
+      : null
+  );
   // fetching user project member information
   useSWR(
     workspaceSlug && projectId ? `PROJECT_MEMBERS_ME_${workspaceSlug}_${projectId}` : null,
@@ -50,6 +57,17 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     workspaceSlug && projectId
       ? () => projectStore.fetchProjectStates(workspaceSlug.toString(), projectId.toString())
       : null
+  );
+  // fetching project inboxes if inbox is enabled
+  useSWR(
+    workspaceSlug && projectId && inboxStore.isInboxEnabled ? `PROJECT_INBOXES_${workspaceSlug}_${projectId}` : null,
+    workspaceSlug && projectId && inboxStore.isInboxEnabled
+      ? () => inboxStore.fetchInboxesList(workspaceSlug.toString(), projectId.toString())
+      : null,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
   );
 
   // check if the project member apis is loading

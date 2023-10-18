@@ -157,16 +157,14 @@ export const ProjectIssuesHeader: FC = observer(() => {
               }
             />
           </FiltersDropdown>
-          {projectId && inboxStore.isInboxEnabled(projectId.toString()) && (
+          {projectId && inboxStore.isInboxEnabled && inboxDetails && (
             <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxStore.getInboxId(projectId.toString())}`}>
               <a>
                 <Button variant="neutral-primary" size="sm" className="relative">
                   Inbox
-                  {inboxDetails && (
-                    <span className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full text-custom-text-100 bg-custom-sidebar-background-80 border border-custom-sidebar-border-200">
-                      {inboxDetails.pending_issue_count}
-                    </span>
-                  )}
+                  <span className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full text-custom-text-100 bg-custom-sidebar-background-80 border border-custom-sidebar-border-200">
+                    {inboxDetails.pending_issue_count}
+                  </span>
                 </Button>
               </a>
             </Link>
