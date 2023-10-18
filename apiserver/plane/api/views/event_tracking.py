@@ -4,8 +4,6 @@ import json
 
 # Module imports
 from . import BaseAPIView
-from plane.db.models import User
-from plane.api.serializers import UserAdminLiteSerializer
 
 # Third party imports
 from rest_framework import status
@@ -32,8 +30,6 @@ class EventTrackingEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        user = User.objects.get(pk=request.user.id)
-
         _ = requests.post(
             settings.ANALYTICS_BASE_API,
             params={"token": settings.ANALYTICS_SECRET_KEY},
@@ -41,7 +37,12 @@ class EventTrackingEndpoint(BaseAPIView):
                 {
                     "eventName": event_name,
                     "extra": extra,
-                    "user": UserAdminLiteSerializer(user).data,
+                    "user": {
+                        "id": str(request.user.id),
+                        "email": str(request.user.email),
+                        "first_name": str(request.user.first_name),
+                        "last_name": str(request.user.last_name),
+                    },
                 },
                 cls=DjangoJSONEncoder,
             ),
