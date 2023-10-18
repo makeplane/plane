@@ -18,7 +18,14 @@ interface IProjectAuthWrapper {
 export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { children } = props;
   // store
-  const { user: userStore, project: projectStore, inbox: inboxStore } = useMobxStore();
+  const {
+    user: userStore,
+    project: projectStore,
+    cycle: cycleStore,
+    module: moduleStore,
+    projectViews: projectViewsStore,
+    inbox: inboxStore,
+  } = useMobxStore();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -58,6 +65,26 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
       ? () => projectStore.fetchProjectStates(workspaceSlug.toString(), projectId.toString())
       : null
   );
+  // fetching project cycles
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_ALL_CYCLES_${workspaceSlug}_${projectId}` : null,
+    workspaceSlug && projectId
+      ? () => cycleStore.fetchCycles(workspaceSlug.toString(), projectId.toString(), "all")
+      : null
+  );
+  // fetching project modules
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_MODULES_${workspaceSlug}_${projectId}` : null,
+    workspaceSlug && projectId ? () => moduleStore.fetchModules(workspaceSlug.toString(), projectId.toString()) : null
+  );
+  // fetching project views
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_VIEWS_${workspaceSlug}_${projectId}` : null,
+    workspaceSlug && projectId
+      ? () => projectViewsStore.fetchAllViews(workspaceSlug.toString(), projectId.toString())
+      : null
+  );
+  // TODO: fetching project pages
   // fetching project inboxes if inbox is enabled
   useSWR(
     workspaceSlug && projectId && inboxStore.isInboxEnabled ? `PROJECT_INBOXES_${workspaceSlug}_${projectId}` : null,
