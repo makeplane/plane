@@ -12,13 +12,14 @@ import useProjectMembers from "hooks/use-project-members";
 import useProjectDetails from "hooks/use-project-details";
 import { Controller, useForm } from "react-hook-form";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
+import { ProjectSettingLayout } from "layouts/setting-layout/project-setting-layout";
 // components
 import ConfirmProjectMemberRemove from "components/project/confirm-project-member-remove";
 import SendProjectInvitationModal from "components/project/send-project-invitation-modal";
-import { MemberSelect, SettingsSidebar } from "components/project";
+import { MemberSelect } from "components/project";
+import { ProjectSettingHeader } from "components/headers";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Button, Loader } from "@plane/ui";
+import { Button, Loader } from "@plane/ui";
 import { CustomMenu, CustomSelect } from "components/ui";
 // icons
 import { ChevronDown, X } from "lucide-react";
@@ -36,8 +37,6 @@ import {
 } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
-// helper
-import { truncateText } from "helpers/string.helper";
 
 const defaultValues: Partial<IProject> = {
   project_lead: null,
@@ -198,22 +197,7 @@ const MembersSettings: NextPage = () => {
   const isAdmin = memberDetails?.role === 20;
 
   return (
-    <ProjectAuthorizationWrapper
-      breadcrumbs={
-        <Breadcrumbs onBack={() => router.back()}>
-          <BreadcrumbItem
-            link={
-              <Link href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}>
-                <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
-                  <p className="truncate">{`${truncateText(projectDetails?.name ?? "Project", 32)}`}</p>
-                </a>
-              </Link>
-            }
-          />
-          <BreadcrumbItem title="Members Settings" unshrinkTitle />
-        </Breadcrumbs>
-      }
-    >
+    <ProjectSettingLayout header={<ProjectSettingHeader title="Members Settings" />}>
       <ConfirmProjectMemberRemove
         isOpen={Boolean(selectedRemoveMember) || Boolean(selectedInviteRemoveMember)}
         onClose={() => {
@@ -252,200 +236,195 @@ const MembersSettings: NextPage = () => {
         user={user}
         onSuccess={() => mutateMembers()}
       />
-      <div className="flex flex-row gap-2 h-full">
-        <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
-          <SettingsSidebar />
+      <section className={`pr-9 py-8 w-full overflow-y-auto`}>
+        <div className="flex items-center py-3.5 border-b border-custom-border-200">
+          <h3 className="text-xl font-medium">Defaults</h3>
         </div>
-        <section className={`pr-9 py-8 w-full overflow-y-auto`}>
-          <div className="flex items-center py-3.5 border-b border-custom-border-200">
-            <h3 className="text-xl font-medium">Defaults</h3>
-          </div>
-          <div className="flex flex-col gap-2 pb-4 w-full">
-            <div className="flex items-center py-8 gap-4 w-full">
-              <div className="flex flex-col gap-2 w-1/2">
-                <h4 className="text-sm">Project Lead</h4>
-                <div className="">
-                  {projectDetails ? (
-                    <Controller
-                      control={control}
-                      name="project_lead"
-                      render={({ field: { value } }) => (
-                        <MemberSelect
-                          value={value}
-                          onChange={(val: string) => {
-                            submitChanges({ project_lead: val });
-                          }}
-                          isDisabled={!isAdmin}
-                        />
-                      )}
-                    />
-                  ) : (
-                    <Loader className="h-9 w-full">
-                      <Loader.Item width="100%" height="100%" />
-                    </Loader>
-                  )}
-                </div>
+        <div className="flex flex-col gap-2 pb-4 w-full">
+          <div className="flex items-center py-8 gap-4 w-full">
+            <div className="flex flex-col gap-2 w-1/2">
+              <h4 className="text-sm">Project Lead</h4>
+              <div className="">
+                {projectDetails ? (
+                  <Controller
+                    control={control}
+                    name="project_lead"
+                    render={({ field: { value } }) => (
+                      <MemberSelect
+                        value={value}
+                        onChange={(val: string) => {
+                          submitChanges({ project_lead: val });
+                        }}
+                        isDisabled={!isAdmin}
+                      />
+                    )}
+                  />
+                ) : (
+                  <Loader className="h-9 w-full">
+                    <Loader.Item width="100%" height="100%" />
+                  </Loader>
+                )}
               </div>
+            </div>
 
-              <div className="flex flex-col gap-2 w-1/2">
-                <h4 className="text-sm">Default Assignee</h4>
-                <div className="">
-                  {projectDetails ? (
-                    <Controller
-                      control={control}
-                      name="default_assignee"
-                      render={({ field: { value } }) => (
-                        <MemberSelect
-                          value={value}
-                          onChange={(val: string) => {
-                            submitChanges({ default_assignee: val });
-                          }}
-                          isDisabled={!isAdmin}
-                        />
-                      )}
-                    />
-                  ) : (
-                    <Loader className="h-9 w-full">
-                      <Loader.Item width="100%" height="100%" />
-                    </Loader>
-                  )}
-                </div>
+            <div className="flex flex-col gap-2 w-1/2">
+              <h4 className="text-sm">Default Assignee</h4>
+              <div className="">
+                {projectDetails ? (
+                  <Controller
+                    control={control}
+                    name="default_assignee"
+                    render={({ field: { value } }) => (
+                      <MemberSelect
+                        value={value}
+                        onChange={(val: string) => {
+                          submitChanges({ default_assignee: val });
+                        }}
+                        isDisabled={!isAdmin}
+                      />
+                    )}
+                  />
+                ) : (
+                  <Loader className="h-9 w-full">
+                    <Loader.Item width="100%" height="100%" />
+                  </Loader>
+                )}
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="flex items-center justify-between gap-4 py-3.5 border-b border-custom-border-200">
-            <h4 className="text-xl font-medium">Members</h4>
-            <Button variant="primary" onClick={() => setInviteModal(true)}>
-              Add Member
-            </Button>
-          </div>
-          {!projectMembers || !projectInvitations ? (
-            <Loader className="space-y-5">
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-            </Loader>
-          ) : (
-            <div className="divide-y divide-custom-border-200">
-              {members.length > 0
-                ? members.map((member) => (
-                    <div key={member.id} className="flex items-center justify-between px-3.5 py-[18px]">
-                      <div className="flex items-center gap-x-6 gap-y-2">
-                        {member.avatar && member.avatar !== "" ? (
-                          <div className="relative flex h-10 w-10 items-center justify-center rounded-lg p-4 capitalize text-white">
-                            <img
-                              src={member.avatar}
-                              alt={member.display_name}
-                              className="absolute top-0 left-0 h-full w-full object-cover rounded-lg"
-                            />
-                          </div>
-                        ) : member.display_name || member.email ? (
-                          <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-gray-700 p-4 capitalize text-white">
-                            {(member.display_name || member.email)?.charAt(0)}
-                          </div>
-                        ) : (
-                          <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-gray-700 p-4 capitalize text-white">
-                            ?
-                          </div>
-                        )}
-                        <div>
-                          {member.member ? (
-                            <Link href={`/${workspaceSlug}/profile/${member.memberId}`}>
-                              <a className="text-sm">
-                                <span>
-                                  {member.first_name} {member.last_name}
-                                </span>
-                                <span className="text-custom-text-300 text-sm ml-2">({member.display_name})</span>
-                              </a>
-                            </Link>
-                          ) : (
-                            <h4 className="text-sm">{member.display_name || member.email}</h4>
-                          )}
-                          {isOwner && <p className="mt-0.5 text-xs text-custom-sidebar-text-300">{member.email}</p>}
+        <div className="flex items-center justify-between gap-4 py-3.5 border-b border-custom-border-200">
+          <h4 className="text-xl font-medium">Members</h4>
+          <Button variant="primary" onClick={() => setInviteModal(true)}>
+            Add Member
+          </Button>
+        </div>
+        {!projectMembers || !projectInvitations ? (
+          <Loader className="space-y-5">
+            <Loader.Item height="40px" />
+            <Loader.Item height="40px" />
+            <Loader.Item height="40px" />
+            <Loader.Item height="40px" />
+          </Loader>
+        ) : (
+          <div className="divide-y divide-custom-border-200">
+            {members.length > 0
+              ? members.map((member) => (
+                  <div key={member.id} className="flex items-center justify-between px-3.5 py-[18px]">
+                    <div className="flex items-center gap-x-6 gap-y-2">
+                      {member.avatar && member.avatar !== "" ? (
+                        <div className="relative flex h-10 w-10 items-center justify-center rounded-lg p-4 capitalize text-white">
+                          <img
+                            src={member.avatar}
+                            alt={member.display_name}
+                            className="absolute top-0 left-0 h-full w-full object-cover rounded-lg"
+                          />
                         </div>
-                      </div>
-                      <div className="flex items-center gap-3 text-xs">
-                        {!member.member && (
-                          <div className="mr-2 flex items-center justify-center rounded-full bg-yellow-500/20 px-2 py-1 text-center text-xs text-yellow-500">
-                            Pending
-                          </div>
-                        )}
-                        <CustomSelect
-                          customButton={
-                            <div className="flex item-center gap-1">
-                              <span
-                                className={`flex items-center text-sm font-medium ${
-                                  member.memberId !== user?.id ? "" : "text-custom-sidebar-text-400"
-                                }`}
-                              >
-                                {ROLE[member.role as keyof typeof ROLE]}
+                      ) : member.display_name || member.email ? (
+                        <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-gray-700 p-4 capitalize text-white">
+                          {(member.display_name || member.email)?.charAt(0)}
+                        </div>
+                      ) : (
+                        <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-gray-700 p-4 capitalize text-white">
+                          ?
+                        </div>
+                      )}
+                      <div>
+                        {member.member ? (
+                          <Link href={`/${workspaceSlug}/profile/${member.memberId}`}>
+                            <a className="text-sm">
+                              <span>
+                                {member.first_name} {member.last_name}
                               </span>
-                              {member.memberId !== user?.id && <ChevronDown className="h-4 w-4" />}
-                            </div>
-                          }
-                          value={member.role}
-                          onChange={(value: 5 | 10 | 15 | 20 | undefined) => {
-                            if (!activeWorkspace || !projectDetails) return;
-
-                            mutateMembers(
-                              (prevData: any) =>
-                                prevData.map((m: any) => (m.id === member.id ? { ...m, role: value } : m)),
-                              false
-                            );
-
-                            projectService
-                              .updateProjectMember(activeWorkspace.slug, projectDetails.id, member.id, {
-                                role: value,
-                              })
-                              .catch(() => {
-                                setToastAlert({
-                                  type: "error",
-                                  title: "Error!",
-                                  message: "An error occurred while updating member role. Please try again.",
-                                });
-                              });
-                          }}
-                          disabled={
-                            member.memberId === user?.id ||
-                            !member.member ||
-                            (currentUser && currentUser.role !== 20 && currentUser.role < member.role)
-                          }
-                        >
-                          {Object.keys(ROLE).map((key) => {
-                            if (currentUser && currentUser.role !== 20 && currentUser.role < parseInt(key)) return null;
-
-                            return (
-                              <CustomSelect.Option key={key} value={key}>
-                                <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
-                              </CustomSelect.Option>
-                            );
-                          })}
-                        </CustomSelect>
-                        <CustomMenu ellipsis disabled={!isAdmin}>
-                          <CustomMenu.MenuItem
-                            onClick={() => {
-                              if (member.member) setSelectedRemoveMember(member.id);
-                              else setSelectedInviteRemoveMember(member.id);
-                            }}
-                          >
-                            <span className="flex items-center justify-start gap-2">
-                              <X className="h-4 w-4" />
-
-                              <span> {member.memberId !== user?.id ? "Remove member" : "Leave project"}</span>
-                            </span>
-                          </CustomMenu.MenuItem>
-                        </CustomMenu>
+                              <span className="text-custom-text-300 text-sm ml-2">({member.display_name})</span>
+                            </a>
+                          </Link>
+                        ) : (
+                          <h4 className="text-sm">{member.display_name || member.email}</h4>
+                        )}
+                        {isOwner && <p className="mt-0.5 text-xs text-custom-sidebar-text-300">{member.email}</p>}
                       </div>
                     </div>
-                  ))
-                : null}
-            </div>
-          )}
-        </section>
-      </div>
-    </ProjectAuthorizationWrapper>
+                    <div className="flex items-center gap-3 text-xs">
+                      {!member.member && (
+                        <div className="mr-2 flex items-center justify-center rounded-full bg-yellow-500/20 px-2 py-1 text-center text-xs text-yellow-500">
+                          Pending
+                        </div>
+                      )}
+                      <CustomSelect
+                        customButton={
+                          <div className="flex item-center gap-1">
+                            <span
+                              className={`flex items-center text-sm font-medium ${
+                                member.memberId !== user?.id ? "" : "text-custom-sidebar-text-400"
+                              }`}
+                            >
+                              {ROLE[member.role as keyof typeof ROLE]}
+                            </span>
+                            {member.memberId !== user?.id && <ChevronDown className="h-4 w-4" />}
+                          </div>
+                        }
+                        value={member.role}
+                        onChange={(value: 5 | 10 | 15 | 20 | undefined) => {
+                          if (!activeWorkspace || !projectDetails) return;
+
+                          mutateMembers(
+                            (prevData: any) =>
+                              prevData.map((m: any) => (m.id === member.id ? { ...m, role: value } : m)),
+                            false
+                          );
+
+                          projectService
+                            .updateProjectMember(activeWorkspace.slug, projectDetails.id, member.id, {
+                              role: value,
+                            })
+                            .catch(() => {
+                              setToastAlert({
+                                type: "error",
+                                title: "Error!",
+                                message: "An error occurred while updating member role. Please try again.",
+                              });
+                            });
+                        }}
+                        disabled={
+                          member.memberId === user?.id ||
+                          !member.member ||
+                          (currentUser && currentUser.role !== 20 && currentUser.role < member.role)
+                        }
+                      >
+                        {Object.keys(ROLE).map((key) => {
+                          if (currentUser && currentUser.role !== 20 && currentUser.role < parseInt(key)) return null;
+
+                          return (
+                            <CustomSelect.Option key={key} value={key}>
+                              <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
+                            </CustomSelect.Option>
+                          );
+                        })}
+                      </CustomSelect>
+                      <CustomMenu ellipsis disabled={!isAdmin}>
+                        <CustomMenu.MenuItem
+                          onClick={() => {
+                            if (member.member) setSelectedRemoveMember(member.id);
+                            else setSelectedInviteRemoveMember(member.id);
+                          }}
+                        >
+                          <span className="flex items-center justify-start gap-2">
+                            <X className="h-4 w-4" />
+
+                            <span> {member.memberId !== user?.id ? "Remove member" : "Leave project"}</span>
+                          </span>
+                        </CustomMenu.MenuItem>
+                      </CustomMenu>
+                    </div>
+                  </div>
+                ))
+              : null}
+          </div>
+        )}
+      </section>
+    </ProjectSettingLayout>
   );
 };
 

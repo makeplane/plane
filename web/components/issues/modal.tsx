@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { ModuleService } from "services/module.service";
 import { IssueService, IssueDraftService } from "services/issue";
@@ -9,7 +12,6 @@ import { IssueService, IssueDraftService } from "services/issue";
 import useUser from "hooks/use-user";
 import useIssuesView from "hooks/use-issues-view";
 import useToast from "hooks/use-toast";
-import useProjects from "hooks/use-projects";
 import useMyIssues from "hooks/my-issues/use-my-issues";
 import useLocalStorage from "hooks/use-local-storage";
 // components
@@ -58,15 +60,17 @@ const moduleService = new ModuleService();
 const issueService = new IssueService();
 const issueDraftService = new IssueDraftService();
 
-export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
-  data,
-  handleClose,
-  isOpen,
-  isUpdatingSingleIssue = false,
-  prePopulateData: prePopulateDataProps,
-  fieldsToShow = ["all"],
-  onSubmit,
-}) => {
+export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((props) => {
+  const {
+    data,
+    handleClose,
+    isOpen,
+    isUpdatingSingleIssue = false,
+    prePopulateData: prePopulateDataProps,
+    fieldsToShow = ["all"],
+    onSubmit,
+  } = props;
+
   // states
   const [createMore, setCreateMore] = useState(false);
   const [formDirtyState, setFormDirtyState] = useState<any>(null);
@@ -77,11 +81,14 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId, globalViewId } = router.query;
 
+  const { project: projectStore } = useMobxStore();
+
+  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
+
   const { displayFilters, params } = useIssuesView();
   const { ...viewGanttParams } = params;
 
   const { user } = useUser();
-  const { projects } = useProjects();
 
   const { groupedIssues, mutateMyIssues } = useMyIssues(workspaceSlug?.toString());
 
@@ -461,4 +468,4 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       </Transition.Root>
     </>
   );
-};
+});

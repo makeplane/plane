@@ -16,14 +16,14 @@ export const FullScreenPeekIcon: React.FC<ISvgIcons> = ({
   >
     <path
       d="M19 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V5C21 3.89543 20.1046 3 19 3Z"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M20 3H12V5V19V21H20C20.5523 21 21 20.1046 21 19V5C21 3.89543 20.5523 3 20 3Z"
       fill="currentColor"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );

@@ -173,7 +173,6 @@ export const NotificationPopover = () => {
                           title="You're updated with all the notifications"
                           description="You have read all the notifications."
                           image={emptyNotification}
-                          isFullScreen={false}
                         />
                       </div>
                     )

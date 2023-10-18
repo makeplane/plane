@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-// headless ui
+import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { ProjectExportService } from "services/project";
 // hooks
@@ -11,8 +13,6 @@ import { Button } from "@plane/ui";
 import { CustomSearchSelect } from "components/ui";
 // types
 import { IUser, IImporterService } from "types";
-// fetch-keys
-import useProjects from "hooks/use-projects";
 
 type Props = {
   isOpen: boolean;
@@ -25,11 +25,18 @@ type Props = {
 
 const projectExportService = new ProjectExportService();
 
-export const Exporter: React.FC<Props> = ({ isOpen, handleClose, user, provider, mutateServices }) => {
+export const Exporter: React.FC<Props> = observer((props) => {
+  const { isOpen, handleClose, user, provider, mutateServices } = props;
+
   const [exportLoading, setExportLoading] = useState(false);
+
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  const { projects } = useProjects();
+
+  const { project: projectStore } = useMobxStore();
+
+  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
+
   const { setToastAlert } = useToast();
 
   const options = projects?.map((project) => ({
@@ -164,4 +171,4 @@ export const Exporter: React.FC<Props> = ({ isOpen, handleClose, user, provider,
       </Dialog>
     </Transition.Root>
   );
-};
+});

@@ -139,7 +139,6 @@ class UserStore implements IUserStore {
     try {
       const response = await this.projectService.projectMemberMe(workspaceSlug, projectId);
 
-      console.log("response", response);
       runInAction(() => {
         this.projectMemberInfo = response;
         this.hasPermissionToWorkspace = true;

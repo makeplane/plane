@@ -1,4 +1,4 @@
-import { observable, action, makeObservable, runInAction } from "mobx";
+import { observable, action, makeObservable, runInAction, computed } from "mobx";
 // types
 import { RootStore } from "../root";
 // services
@@ -24,11 +24,13 @@ export interface IInboxStore {
   // actions
   setInboxId: (inboxId: string) => void;
 
-  isInboxEnabled: (projectId: string) => boolean;
   getInboxId: (projectId: string) => string | null;
 
   fetchInboxesList: (workspaceSlug: string, projectId: string) => Promise<IInbox[]>;
   fetchInboxDetails: (workspaceSlug: string, projectId: string, inboxId: string) => Promise<IInbox>;
+
+  // computed
+  isInboxEnabled: boolean;
 }
 
 export class InboxStore implements IInboxStore {
@@ -68,21 +70,27 @@ export class InboxStore implements IInboxStore {
       setInboxId: action,
 
       fetchInboxesList: action,
-      isInboxEnabled: action,
       getInboxId: action,
+
+      // computed
+      isInboxEnabled: computed,
     });
 
     this.rootStore = _rootStore;
     this.inboxService = new InboxService();
   }
 
-  isInboxEnabled = (projectId: string) => {
+  get isInboxEnabled() {
+    const projectId = this.rootStore.project.projectId;
+
+    if (!projectId) return false;
+
     const projectDetails = this.rootStore.project.project_details[projectId];
 
     if (!projectDetails) return false;
 
     return projectDetails.inbox_view;
-  };
+  }
 
   getInboxId = (projectId: string) => {
     const projectDetails = this.rootStore.project.project_details[projectId];
