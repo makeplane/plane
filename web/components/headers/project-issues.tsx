@@ -100,9 +100,7 @@ export const ProjectIssuesHeader: FC = observer(() => {
         onClose={() => setAnalyticsModal(false)}
         projectDetails={projectDetails ?? undefined}
       />
-      <div
-        className={`relative flex w-full flex-shrink-0 flex-row z-10 items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4`}
-      >
+      <div className="relative flex w-full flex-shrink-0 flex-row z-10 items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
         <div className="flex items-center gap-2 flex-grow w-full whitespace-nowrap overflow-ellipsis">
           <div className="block md:hidden">
             <button
@@ -128,7 +126,7 @@ export const ProjectIssuesHeader: FC = observer(() => {
             </Breadcrumbs>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <LayoutSelection
             layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
             onChange={(layout) => handleLayoutChange(layout)}
@@ -146,7 +144,7 @@ export const ProjectIssuesHeader: FC = observer(() => {
               states={projectStore.states?.[projectId?.toString() ?? ""] ?? undefined}
             />
           </FiltersDropdown>
-          <FiltersDropdown title="View">
+          <FiltersDropdown title="Display">
             <DisplayFiltersSelection
               displayFilters={issueFilterStore.userDisplayFilters}
               displayProperties={issueFilterStore.userDisplayProperties}
