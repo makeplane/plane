@@ -607,12 +607,6 @@ class IssueUserDisplayPropertyEndpoint(BaseAPIView):
             user=request.user,
             project_id=project_id,
         )
-        if not created:
-            issue_property.properties = request.data.get("properties", {})
-            issue_property.save()
-
-            serializer = IssuePropertySerializer(issue_property)
-            return Response(serializer.data, status=status.HTTP_200_OK)
 
         if not created:
             issue_property.properties = request.data.get("properties", {})

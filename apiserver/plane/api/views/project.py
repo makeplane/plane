@@ -357,11 +357,11 @@ class InviteProjectEndpoint(BaseAPIView):
         email = request.data.get("email", False)
         role = request.data.get("role", False)
 
-        _ = IssueProperty.objects.create(user=user, project_id=project_id)
-
-        return Response(
-            {"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST
-        )
+        # Check if email is provided
+        if not email:
+            return Response(
+                {"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         validate_email(email)
         # Check if user is already a member of workspace
@@ -403,6 +403,8 @@ class InviteProjectEndpoint(BaseAPIView):
         project_member = ProjectMember.objects.create(
             member=user, project_id=project_id, role=role
         )
+
+        _ = IssueProperty.objects.create(user=user, project_id=project_id)
 
         return Response(
             ProjectMemberSerializer(project_member).data, status=status.HTTP_200_OK
