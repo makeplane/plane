@@ -1,6 +1,7 @@
 #!/bin/bash
 
 BRANCH=${BRANCH:-master}
+SCRIPT_DIR=$PWD
 PLANE_INSTALL_DIR=$PWD/plane-app
 mkdir -p $PLANE_INSTALL_DIR/archive
 
@@ -10,6 +11,7 @@ function install(){
     download
 }
 function download(){
+    cd $SCRIPT_DIR
     TS=$(date +%s)
     if [ -e docker-compose.yaml ]
     then
@@ -33,13 +35,19 @@ function download(){
 
 }
 function startServices(){
-     docker compose -f $PLANE_INSTALL_DIR/docker-compose.yaml --env-file $PLANE_INSTALL_DIR/.env up -d
+    cd $PLANE_INSTALL_DIR
+    docker compose up -d
+    cd $SCRIPT_DIR
 }
 function stopServices(){
-     docker compose -f $PLANE_INSTALL_DIR/docker-compose.yaml --env-file $PLANE_INSTALL_DIR/.env down
+    cd $PLANE_INSTALL_DIR
+    docker compose down
+    cd $SCRIPT_DIR
 }
 function restartServices(){
-     docker compose -f $PLANE_INSTALL_DIR/docker-compose.yaml --env-file $PLANE_INSTALL_DIR/.env restart
+    cd $PLANE_INSTALL_DIR
+    docker compose restart
+    cd $SCRIPT_DIR
 }
 function upgrade(){
     echo "***** STOPPING SERVICES ****"
