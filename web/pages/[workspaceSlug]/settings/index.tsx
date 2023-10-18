@@ -13,19 +13,17 @@ import { FileService } from "services/file.service";
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // layouts
-import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
+import { WorkspaceSettingLayout } from "layouts/setting-layout/workspace-setting-layout";
 // components
 import { ImageUploadModal } from "components/core";
 import { DeleteWorkspaceModal } from "components/workspace";
-import { SettingsSidebar } from "components/project";
+import { WorkspaceSettingHeader } from "components/headers";
 // ui
 import { Disclosure, Transition } from "@headlessui/react";
 import { CustomSelect } from "components/ui";
-import { BreadcrumbItem, Breadcrumbs, Button, Input, Spinner } from "@plane/ui";
+import { Button, Input, Spinner } from "@plane/ui";
 // icons
 import { ChevronDown, ChevronUp, Pencil } from "lucide-react";
-// helpers
-import { truncateText } from "helpers/string.helper";
 // types
 import type { IWorkspace } from "types";
 import type { NextPage } from "next";
@@ -68,7 +66,6 @@ const WorkspaceSettings: NextPage = () => {
   );
 
   const {
-    register,
     handleSubmit,
     control,
     reset,
@@ -156,13 +153,7 @@ const WorkspaceSettings: NextPage = () => {
   const isAdmin = memberDetails?.role === 20;
 
   return (
-    <WorkspaceAuthorizationLayout
-      breadcrumbs={
-        <Breadcrumbs onBack={() => router.back()}>
-          <BreadcrumbItem title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)} Settings`} />
-        </Breadcrumbs>
-      }
-    >
+    <WorkspaceSettingLayout header={<WorkspaceSettingHeader title="General Settings" />}>
       <ImageUploadModal
         isOpen={isImageUploadModalOpen}
         onClose={() => setIsImageUploadModalOpen(false)}
@@ -184,190 +175,185 @@ const WorkspaceSettings: NextPage = () => {
         data={activeWorkspace ?? null}
         user={user}
       />
-      <div className="flex flex-row gap-2 h-full">
-        <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
-          <SettingsSidebar />
-        </div>
-        {activeWorkspace ? (
-          <div className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
-            <div className="flex gap-5 items-center pb-7 border-b border-custom-border-200">
-              <div className="flex flex-col gap-1">
-                <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!isAdmin}>
+      {activeWorkspace ? (
+        <div className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
+          <div className="flex gap-5 items-center pb-7 border-b border-custom-border-200">
+            <div className="flex flex-col gap-1">
+              <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!isAdmin}>
+                {watch("logo") && watch("logo") !== null && watch("logo") !== "" ? (
+                  <div className="relative mx-auto flex h-14 w-14">
+                    <img
+                      src={watch("logo")!}
+                      className="absolute top-0 left-0 h-full w-full object-cover rounded-md"
+                      alt="Workspace Logo"
+                    />
+                  </div>
+                ) : (
+                  <div className="relative flex h-14 w-14 items-center justify-center rounded bg-gray-700 p-4 uppercase text-white">
+                    {activeWorkspace?.name?.charAt(0) ?? "N"}
+                  </div>
+                )}
+              </button>
+            </div>
+            <div className="flex flex-col gap-1">
+              <h3 className="text-lg font-semibold leading-6">{watch("name")}</h3>
+              <span className="text-sm tracking-tight">{`${
+                typeof window !== "undefined" && window.location.origin.replace("http://", "").replace("https://", "")
+              }/${activeWorkspace.slug}`}</span>
+              <div className="flex item-center gap-2.5">
+                <button
+                  className="flex items-center gap-1.5 text-xs text-left text-custom-primary-100 font-medium"
+                  onClick={() => setIsImageUploadModalOpen(true)}
+                  disabled={!isAdmin}
+                >
                   {watch("logo") && watch("logo") !== null && watch("logo") !== "" ? (
-                    <div className="relative mx-auto flex h-14 w-14">
-                      <img
-                        src={watch("logo")!}
-                        className="absolute top-0 left-0 h-full w-full object-cover rounded-md"
-                        alt="Workspace Logo"
-                      />
-                    </div>
+                    <>
+                      <Pencil className="h-3 w-3" />
+                      Edit logo
+                    </>
                   ) : (
-                    <div className="relative flex h-14 w-14 items-center justify-center rounded bg-gray-700 p-4 uppercase text-white">
-                      {activeWorkspace?.name?.charAt(0) ?? "N"}
-                    </div>
+                    "Upload logo"
                   )}
                 </button>
               </div>
-              <div className="flex flex-col gap-1">
-                <h3 className="text-lg font-semibold leading-6">{watch("name")}</h3>
-                <span className="text-sm tracking-tight">{`${
-                  typeof window !== "undefined" && window.location.origin.replace("http://", "").replace("https://", "")
-                }/${activeWorkspace.slug}`}</span>
-                <div className="flex item-center gap-2.5">
-                  <button
-                    className="flex items-center gap-1.5 text-xs text-left text-custom-primary-100 font-medium"
-                    onClick={() => setIsImageUploadModalOpen(true)}
-                    disabled={!isAdmin}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-8 my-10">
+            <div className="grid grid-col grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 items-center justify-between gap-10 w-full">
+              <div className="flex flex-col gap-1 ">
+                <h4 className="text-sm">Workspace Name</h4>
+                <Controller
+                  control={control}
+                  name="name"
+                  rules={{
+                    required: "Name is required",
+                    maxLength: {
+                      value: 80,
+                      message: "Workspace name should not exceed 80 characters",
+                    },
+                  }}
+                  render={({ field: { value, onChange, ref } }) => (
+                    <Input
+                      id="name"
+                      name="name"
+                      type="text"
+                      value={value}
+                      onChange={onChange}
+                      ref={ref}
+                      hasError={Boolean(errors.name)}
+                      placeholder="Name"
+                      className="rounded-md font-medium w-full"
+                      disabled={!isAdmin}
+                    />
+                  )}
+                />
+              </div>
+
+              <div className="flex flex-col gap-1 ">
+                <h4 className="text-sm">Company Size</h4>
+                <Controller
+                  name="organization_size"
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <CustomSelect
+                      value={value}
+                      onChange={onChange}
+                      label={ORGANIZATION_SIZE.find((c) => c === value) ?? "Select organization size"}
+                      width="w-full"
+                      input
+                      disabled={!isAdmin}
+                    >
+                      {ORGANIZATION_SIZE?.map((item) => (
+                        <CustomSelect.Option key={item} value={item}>
+                          {item}
+                        </CustomSelect.Option>
+                      ))}
+                    </CustomSelect>
+                  )}
+                />
+              </div>
+
+              <div className="flex flex-col gap-1 ">
+                <h4 className="text-sm">Workspace URL</h4>
+                <Controller
+                  control={control}
+                  name="url"
+                  render={({ field: { onChange, ref } }) => (
+                    <Input
+                      id="url"
+                      name="url"
+                      type="url"
+                      value={`${
+                        typeof window !== "undefined" &&
+                        window.location.origin.replace("http://", "").replace("https://", "")
+                      }/${activeWorkspace.slug}`}
+                      onChange={onChange}
+                      ref={ref}
+                      hasError={Boolean(errors.url)}
+                      className="w-full"
+                      disabled
+                    />
+                  )}
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between py-2">
+              <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting} disabled={!isAdmin}>
+                {isSubmitting ? "Updating..." : "Update Workspace"}
+              </Button>
+            </div>
+          </div>
+          {isAdmin && (
+            <Disclosure as="div" className="border-t border-custom-border-400">
+              {({ open }) => (
+                <div className="w-full">
+                  <Disclosure.Button
+                    as="button"
+                    type="button"
+                    className="flex items-center justify-between w-full py-4"
                   >
-                    {watch("logo") && watch("logo") !== null && watch("logo") !== "" ? (
-                      <>
-                        <Pencil className="h-3 w-3" />
-                        Edit logo
-                      </>
-                    ) : (
-                      "Upload logo"
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
+                    <span className="text-xl tracking-tight">Delete Workspace</span>
+                    {/* <Icon iconName={open ? "expand_less" : "expand_more"} className="!text-2xl" /> */}
+                    {open ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                  </Disclosure.Button>
 
-            <div className="flex flex-col gap-8 my-10">
-              <div className="grid grid-col grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 items-center justify-between gap-10 w-full">
-                <div className="flex flex-col gap-1 ">
-                  <h4 className="text-sm">Workspace Name</h4>
-                  <Controller
-                    control={control}
-                    name="name"
-                    rules={{
-                      required: "Name is required",
-                      maxLength: {
-                        value: 80,
-                        message: "Workspace name should not exceed 80 characters",
-                      },
-                    }}
-                    render={({ field: { value, onChange, ref } }) => (
-                      <Input
-                        id="name"
-                        name="name"
-                        type="text"
-                        value={value}
-                        onChange={onChange}
-                        ref={ref}
-                        hasError={Boolean(errors.name)}
-                        placeholder="Name"
-                        className="rounded-md font-medium w-full"
-                        disabled={!isAdmin}
-                      />
-                    )}
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1 ">
-                  <h4 className="text-sm">Company Size</h4>
-                  <Controller
-                    name="organization_size"
-                    control={control}
-                    render={({ field: { value, onChange } }) => (
-                      <CustomSelect
-                        value={value}
-                        onChange={onChange}
-                        label={ORGANIZATION_SIZE.find((c) => c === value) ?? "Select organization size"}
-                        width="w-full"
-                        input
-                        disabled={!isAdmin}
-                      >
-                        {ORGANIZATION_SIZE?.map((item) => (
-                          <CustomSelect.Option key={item} value={item}>
-                            {item}
-                          </CustomSelect.Option>
-                        ))}
-                      </CustomSelect>
-                    )}
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1 ">
-                  <h4 className="text-sm">Workspace URL</h4>
-                  <Controller
-                    control={control}
-                    name="url"
-                    render={({ field: { value, onChange, ref } }) => (
-                      <Input
-                        id="url"
-                        name="url"
-                        type="url"
-                        value={`${
-                          typeof window !== "undefined" &&
-                          window.location.origin.replace("http://", "").replace("https://", "")
-                        }/${activeWorkspace.slug}`}
-                        onChange={onChange}
-                        ref={ref}
-                        hasError={Boolean(errors.url)}
-                        className="w-full"
-                        disabled
-                      />
-                    )}
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between py-2">
-                <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting} disabled={!isAdmin}>
-                  {isSubmitting ? "Updating..." : "Update Workspace"}
-                </Button>
-              </div>
-            </div>
-            {isAdmin && (
-              <Disclosure as="div" className="border-t border-custom-border-400">
-                {({ open }) => (
-                  <div className="w-full">
-                    <Disclosure.Button
-                      as="button"
-                      type="button"
-                      className="flex items-center justify-between w-full py-4"
-                    >
-                      <span className="text-xl tracking-tight">Delete Workspace</span>
-                      {/* <Icon iconName={open ? "expand_less" : "expand_more"} className="!text-2xl" /> */}
-                      {open ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-                    </Disclosure.Button>
-
-                    <Transition
-                      show={open}
-                      enter="transition duration-100 ease-out"
-                      enterFrom="transform opacity-0"
-                      enterTo="transform opacity-100"
-                      leave="transition duration-75 ease-out"
-                      leaveFrom="transform opacity-100"
-                      leaveTo="transform opacity-0"
-                    >
-                      <Disclosure.Panel>
-                        <div className="flex flex-col gap-8">
-                          <span className="text-sm tracking-tight">
-                            The danger zone of the workspace delete page is a critical area that requires careful
-                            consideration and attention. When deleting a workspace, all of the data and resources within
-                            that workspace will be permanently removed and cannot be recovered.
-                          </span>
-                          <div>
-                            <Button variant="danger" onClick={() => setIsOpen(true)}>
-                              Delete my workspace
-                            </Button>
-                          </div>
+                  <Transition
+                    show={open}
+                    enter="transition duration-100 ease-out"
+                    enterFrom="transform opacity-0"
+                    enterTo="transform opacity-100"
+                    leave="transition duration-75 ease-out"
+                    leaveFrom="transform opacity-100"
+                    leaveTo="transform opacity-0"
+                  >
+                    <Disclosure.Panel>
+                      <div className="flex flex-col gap-8">
+                        <span className="text-sm tracking-tight">
+                          The danger zone of the workspace delete page is a critical area that requires careful
+                          consideration and attention. When deleting a workspace, all of the data and resources within
+                          that workspace will be permanently removed and cannot be recovered.
+                        </span>
+                        <div>
+                          <Button variant="danger" onClick={() => setIsOpen(true)}>
+                            Delete my workspace
+                          </Button>
                         </div>
-                      </Disclosure.Panel>
-                    </Transition>
-                  </div>
-                )}
-              </Disclosure>
-            )}
-          </div>
-        ) : (
-          <div className="flex items-center justify-center h-full w-full px-4 sm:px-0">
-            <Spinner />
-          </div>
-        )}
-      </div>
-    </WorkspaceAuthorizationLayout>
+                      </div>
+                    </Disclosure.Panel>
+                  </Transition>
+                </div>
+              )}
+            </Disclosure>
+          )}
+        </div>
+      ) : (
+        <div className="flex items-center justify-center h-full w-full px-4 sm:px-0">
+          <Spinner />
+        </div>
+      )}
+    </WorkspaceSettingLayout>
   );
 };
 
