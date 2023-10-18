@@ -49,11 +49,13 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "crum.CurrentRequestUserMiddleware",
     "django.middleware.gzip.GZipMiddleware",
- ]
+    "plane.middleware.api_log_middleware.APITokenLogMiddleware",
+]
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "plane.authentication.api_authentication.APIKeyAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
@@ -212,6 +214,9 @@ SIMPLE_JWT = {
 }
 
 CELERY_TIMEZONE = TIME_ZONE
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_IMPORTS = ("plane.bgtasks.issue_automation_task","plane.bgtasks.exporter_expired_task")
+CELERY_TASK_SERIALIZER = "json"
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_IMPORTS = (
+    "plane.bgtasks.issue_automation_task",
+    "plane.bgtasks.exporter_expired_task",
+)

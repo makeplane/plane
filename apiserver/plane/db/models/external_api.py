@@ -38,6 +38,7 @@ class APIToken(BaseModel):
     workspace = models.ForeignKey(
         "db.Workspace", related_name="api_tokens", on_delete=models.CASCADE, null=True
     )
+    expired_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         verbose_name = "API Token"
