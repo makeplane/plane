@@ -8,22 +8,25 @@ from sentry_sdk import capture_exception
 
 # Module import
 from .base import BaseAPIView
-from plane.db.models import APIToken
+from plane.db.models import APIToken, Workspace
 from plane.api.serializers import APITokenSerializer
+from plane.api.permissions import WorkspaceUserPermission
 
 
 class ApiTokenEndpoint(BaseAPIView):
-    def post(self, request):
+    permission_classes = [
+        WorkspaceUserPermission,
+    ]
+
+    def post(self, request, slug):
         label = request.data.get("label", str(uuid4().hex))
-        workspace = request.data.get("workspace", False)
-
-        if not workspace:
-            return Response(
-                {"error": "Workspace is required"}, status=status.HTTP_200_OK
-            )
-
+        description = request.data.get("description", "")
+        workspace = Workspace.objects.get(workspace__slug=slug)
         api_token = APIToken.objects.create(
-            label=label, user=request.user, workspace_id=workspace
+            label=label,
+            description=description,
+            user=request.user,
+            workspace=workspace,
         )
 
         serializer = APITokenSerializer(api_token)
@@ -33,15 +36,12 @@ class ApiTokenEndpoint(BaseAPIView):
             status=status.HTTP_201_CREATED,
         )
 
-
     def get(self, request):
         api_tokens = APIToken.objects.filter(user=request.user)
         serializer = APITokenSerializer(api_tokens, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
     def delete(self, request, pk):
         api_token = APIToken.objects.get(pk=pk)
         api_token.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-

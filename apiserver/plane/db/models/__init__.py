@@ -54,7 +54,7 @@ from .view import GlobalView, IssueView, IssueViewFavorite
 
 from .module import Module, ModuleMember, ModuleIssue, ModuleLink, ModuleFavorite
 
-from .api_token import APIToken
+from .external_api import APIToken, APIActivityLog
 
 from .integration import (
     WorkspaceIntegration,
