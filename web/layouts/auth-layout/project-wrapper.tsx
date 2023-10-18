@@ -63,7 +63,11 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     workspaceSlug && projectId && inboxStore.isInboxEnabled ? `PROJECT_INBOXES_${workspaceSlug}_${projectId}` : null,
     workspaceSlug && projectId && inboxStore.isInboxEnabled
       ? () => inboxStore.fetchInboxesList(workspaceSlug.toString(), projectId.toString())
-      : null
+      : null,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
   );
 
   // check if the project member apis is loading
