@@ -1,13 +1,8 @@
 #!/bin/bash
 
-ACTION=$1
-# BRANCH=dev/mg-self-host
 BRANCH=${BRANCH:-master}
-
-# cd plane-app
-
 PLANE_INSTALL_DIR=$PWD/plane-app
-mkdir -p $PLANE_INSTALL_DIR
+mkdir -p $PLANE_INSTALL_DIR/archive
 
 function install(){
     echo 
