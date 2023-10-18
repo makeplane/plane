@@ -55,7 +55,7 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
                     : "border-custom-border-200"
                 }`}
               >
-                <PriorityIcon priority={issue.priority ?? null} className="text-sm" />
+                <PriorityIcon priority={issue.priority ?? null} className="h-3.5 w-3.5" />
               </div>
             </Tooltip>
             <Tooltip
