@@ -1,123 +1,141 @@
-import { FC, useState, Fragment } from "react";
-import { Combobox, Transition, Listbox } from "@headlessui/react";
+import React, { FC, useState, Fragment } from "react";
+// popper js
+import { usePopper } from "react-popper";
+// ui
+import { Input, Tooltip } from "@plane/ui";
+import { Listbox } from "@headlessui/react";
+import { Avatar } from "components/ui";
+// icons
+import { Check, Search, User2 } from "lucide-react";
+// types
 import { IWorkspaceMember } from "types";
-import { ChevronDown, Check } from "lucide-react";
 
 export interface IWorkspaceMemberSelect {
-  value: IWorkspaceMember | null;
-  onChange: (value: IWorkspaceMember) => void;
-  options: IWorkspaceMember[];
+  value: string;
+  onChange: (value: string) => void;
+  workspaceMembers: IWorkspaceMember[];
   placeholder?: string;
+  disabled?: boolean;
 }
 
 export const WorkspaceMemberSelect: FC<IWorkspaceMemberSelect> = (props) => {
-  const { value, onChange, options, placeholder = "Select Member" } = props;
+  const { value, onChange, workspaceMembers, placeholder = "Select Member", disabled = false } = props;
   // states
   const [query, setQuery] = useState("");
 
+  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: "auto",
+  });
+
+  const options = workspaceMembers?.map((member: any) => ({
+    value: member.member.id,
+    query: member.member.display_name,
+    content: (
+      <div className="flex items-center gap-2">
+        <Avatar user={member.member} />
+        {member.member.display_name}
+      </div>
+    ),
+  }));
+
+  const selectedOption = workspaceMembers?.find((member) => member.member.id === value);
+
   const filteredOptions =
-    query === ""
-      ? options
-      : options.filter((option: any) =>
-          option.name.toLowerCase().replace(/\s+/g, "").includes(query.toLowerCase().replace(/\s+/g, ""))
-        );
+    query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
+
+  const label = (
+    <Tooltip
+      tooltipHeading="Assignee"
+      tooltipContent={
+        workspaceMembers && workspaceMembers.length > 0
+          ? workspaceMembers.map((assignee) => assignee?.member.display_name).join(", ")
+          : "No Assignee"
+      }
+      position="top"
+    >
+      <div
+        className="flex items-center justify-between gap-2 w-full text-xs px-2.5 py-1.5 rounded-md border border-custom-border-300 duration-300 focus:outline-none
+            "
+      >
+        {value ? (
+          <>
+            <Avatar height="18px" width="18px" user={selectedOption?.member} />
+            <span className="text-xs leading-4"> {selectedOption?.member.display_name}</span>
+          </>
+        ) : (
+          <>
+            <User2 className="h-[18px] w-[18px]" />
+            <span className="text-xs leading-4">{placeholder}</span>
+          </>
+        )}
+      </div>
+    </Tooltip>
+  );
 
   return (
-    // <Combobox value={value} onChange={onChange}>
-    //   <div className="relative mt-1">
-    //     <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
-    //       <Combobox.Input
-    //         placeholder={placeholder}
-    //         className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
-    //         displayValue={(option: IWorkspaceMember) => (option ? option.member.display_name : "")}
-    //         onChange={(event) => setQuery(event.target.value)}
-    //       />
-    //       <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
-    //         <ChevronDown className="h-5 w-5 text-gray-400" aria-hidden="true" />
-    //       </Combobox.Button>
-    //     </div>
-    //     <Transition
-    //       as={Fragment}
-    //       leave="transition ease-in duration-100"
-    //       leaveFrom="opacity-100"
-    //       leaveTo="opacity-0"
-    //       afterLeave={() => setQuery("")}
-    //     >
-    //       <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-    //         {filteredOptions.length === 0 && query !== "" ? (
-    //           <div className="relative cursor-default select-none py-2 px-4 text-gray-700">Nothing found.</div>
-    //         ) : (
-    //           filteredOptions.map((option) => (
-    //             <Combobox.Option
-    //               key={option.id}
-    //               className={({ active }) =>
-    //                 `relative cursor-default select-none py-2 pl-10 pr-4 ${
-    //                   active ? "bg-teal-600 text-white" : "text-gray-900"
-    //                 }`
-    //               }
-    //               value={option}
-    //             >
-    //               {({ selected, active }) => (
-    //                 <>
-    //                   <span className={`block truncate ${selected ? "font-medium" : "font-normal"}`}>
-    //                     {option.member.display_name}
-    //                   </span>
-    //                   {selected ? (
-    //                     <span
-    //                       className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-    //                         active ? "text-white" : "text-teal-600"
-    //                       }`}
-    //                     >
-    //                       <Check className="h-5 w-5" aria-hidden="true" />
-    //                     </span>
-    //                   ) : null}
-    //                 </>
-    //               )}
-    //             </Combobox.Option>
-    //           ))
-    //         )}
-    //       </Combobox.Options>
-    //     </Transition>
-    //   </div>
-    // </Combobox>
-
-    <Listbox value={value} onChange={onChange}>
-      <div className="relative mt-1">
-        <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
-          <span className="block truncate">{value ? value.member.display_name : placeholder}</span>
-          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-            <ChevronDown className="h-5 w-5 text-gray-400" aria-hidden="true" />
-          </span>
-        </Listbox.Button>
-        <Transition as={Fragment} leave="transition ease-in duration-100" leaveFrom="opacity-100" leaveTo="opacity-0">
-          <Listbox.Options className="z-10 min-w-[10rem] border border-custom-border-300 p-2 rounded-md bg-custom-background-90 text-xs shadow-custom-shadow-rg focus:outline-none my-1 whitespace-nowrap">
-            {filteredOptions.map((option) => (
-              <Listbox.Option
-                key={option.id}
-                className={({ active }) =>
-                  `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                    active ? "bg-amber-100 text-amber-900" : "text-gray-900"
-                  }`
-                }
-                value={option}
-              >
-                {({ selected }) => (
-                  <>
-                    <span className={`block truncate ${selected ? "font-medium" : "font-normal"}`}>
-                      {option.member.display_name}
-                    </span>
-                    {selected ? (
-                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
-                        <Check className="h-5 w-5" aria-hidden="true" />
-                      </span>
-                    ) : null}
-                  </>
-                )}
-              </Listbox.Option>
-            ))}
-          </Listbox.Options>
-        </Transition>
-      </div>
+    <Listbox as="div" className={`flex-shrink-0 text-left`} value={value} onChange={onChange} disabled={disabled}>
+      <Listbox.Button as={React.Fragment}>
+        <button
+          ref={setReferenceElement}
+          type="button"
+          className={`flex items-center justify-between gap-1 w-full text-xs ${
+            disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
+          } `}
+        >
+          {label}
+        </button>
+      </Listbox.Button>
+      <Listbox.Options>
+        <div
+          className={`z-10 border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-custom-shadow-rg focus:outline-none w-48 whitespace-nowrap my-1`}
+          ref={setPopperElement}
+          style={styles.popper}
+          {...attributes.popper}
+        >
+          <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
+            <Search className="h-3.5 w-3.5 text-custom-text-300" />
+            <Input
+              className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 placeholder:text-custom-text-400 border-none focus:outline-none"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search"
+            />
+          </div>
+          <div className={`mt-2 space-y-1 max-h-48 overflow-y-scroll`}>
+            {filteredOptions ? (
+              filteredOptions.length > 0 ? (
+                filteredOptions.map((option) => (
+                  <Listbox.Option
+                    key={option.value}
+                    value={option.value}
+                    className={({ active, selected }) =>
+                      `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
+                        active && !selected ? "bg-custom-background-80" : ""
+                      } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                    }
+                  >
+                    {({ selected }) => (
+                      <>
+                        {option.content}
+                        {selected && <Check className="h-3.5 w-3.5" />}
+                      </>
+                    )}
+                  </Listbox.Option>
+                ))
+              ) : (
+                <span className="flex items-center gap-2 p-1">
+                  <p className="text-left text-custom-text-200 ">No matching results</p>
+                </span>
+              )
+            ) : (
+              <p className="text-center text-custom-text-200">Loading...</p>
+            )}
+          </div>
+        </div>
+      </Listbox.Options>
     </Listbox>
   );
 };
