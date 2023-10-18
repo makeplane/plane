@@ -1,7 +1,7 @@
 import React from "react";
 
 // components
-import { StartDateColumn } from "components/issues";
+import { ViewStartDateSelect } from "components/issues";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
@@ -20,8 +20,13 @@ export const SpreadsheetStartDateColumn: React.FC<Props> = ({ issue, onChange, e
   const { subIssues, isLoading } = useSubIssue(issue.project_detail.id, issue.id, isExpanded);
 
   return (
-    <div>
-      <StartDateColumn issue={issue} onChange={(val) => onChange({ start_date: val })} disabled={disabled} />
+    <>
+      <ViewStartDateSelect
+        issue={issue}
+        onChange={(val) => onChange({ start_date: val })}
+        noBorder
+        disabled={disabled}
+      />
 
       {isExpanded &&
         !isLoading &&
@@ -36,6 +41,6 @@ export const SpreadsheetStartDateColumn: React.FC<Props> = ({ issue, onChange, e
             disabled={disabled}
           />
         ))}
-    </div>
+    </>
   );
 };

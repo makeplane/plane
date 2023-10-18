@@ -1,33 +1,30 @@
 import React from "react";
 
 // components
-import { LabelColumn } from "components/issues";
+import { ViewDueDateSelect } from "components/issues";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
-import { IIssue, IIssueLabels } from "types";
+import { IIssue } from "types";
 
 type Props = {
   issue: IIssue;
-  onChange: (formData: Partial<IIssue>) => void;
-  labels: IIssueLabels[] | undefined;
+  onChange: (data: Partial<IIssue>) => void;
   expandedIssues: string[];
   disabled: boolean;
 };
 
-export const SpreadsheetLabelColumn: React.FC<Props> = (props) => {
-  const { issue, onChange, labels, expandedIssues, disabled } = props;
-
+export const SpreadsheetDueDateColumn: React.FC<Props> = ({ issue, onChange, expandedIssues, disabled }) => {
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
   const { subIssues, isLoading } = useSubIssue(issue.project_detail.id, issue.id, isExpanded);
 
   return (
-    <div>
-      <LabelColumn
+    <>
+      <ViewDueDateSelect
         issue={issue}
-        onChange={(data) => onChange({ labels_list: data })}
-        labels={labels}
+        onChange={(val) => onChange({ target_date: val })}
+        noBorder
         disabled={disabled}
       />
 
@@ -36,15 +33,14 @@ export const SpreadsheetLabelColumn: React.FC<Props> = (props) => {
         subIssues &&
         subIssues.length > 0 &&
         subIssues.map((subIssue: IIssue) => (
-          <SpreadsheetLabelColumn
+          <SpreadsheetDueDateColumn
             key={subIssue.id}
             issue={subIssue}
             onChange={onChange}
-            labels={labels}
             expandedIssues={expandedIssues}
             disabled={disabled}
           />
         ))}
-    </div>
+    </>
   );
 };

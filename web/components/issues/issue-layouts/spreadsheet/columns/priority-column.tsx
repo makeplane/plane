@@ -1,7 +1,7 @@
 import React from "react";
 
 // components
-import { PriorityColumn } from "components/issues";
+import { PrioritySelect } from "components/project";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
@@ -21,7 +21,13 @@ export const SpreadsheetPriorityColumn: React.FC<Props> = ({ issue, onChange, ex
 
   return (
     <div>
-      <PriorityColumn issue={issue} onChange={(data) => onChange({ priority: data })} disabled={disabled} />
+      <PrioritySelect
+        value={issue.priority}
+        onChange={(data) => onChange({ priority: data })}
+        buttonClassName="!p-0 !rounded-none !shadow-none !border-0"
+        hideDropdownArrow
+        disabled={disabled}
+      />
 
       {isExpanded &&
         !isLoading &&
