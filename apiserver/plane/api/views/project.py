@@ -262,12 +262,9 @@ class ProjectViewSet(BaseViewSet):
                     ]
                 )
 
-                data = serializer.data
-                # Additional fields of the member
-                data["sort_order"] = project_member.sort_order
-                data["member_role"] = project_member.role
-                data["is_member"] = True
-                return Response(data, status=status.HTTP_201_CREATED)
+                project = self.get_queryset().filter(pk=serializer.data["id"]).first()
+                serializer = ProjectDetailSerializer(project)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(
                 serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST,
