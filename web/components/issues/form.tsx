@@ -1,11 +1,9 @@
 import React, { FC, useState, useEffect, useRef } from "react";
-
 import { useRouter } from "next/router";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
-import aiService from "services/ai.service";
+import { AIService } from "services/ai.service";
+import { FileService } from "services/file.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -23,24 +21,18 @@ import {
 import { CreateStateModal } from "components/states";
 import { CreateLabelModal } from "components/labels";
 // ui
-import { CustomMenu, Input, PrimaryButton, SecondaryButton, ToggleSwitch } from "components/ui";
-import { TipTapEditor } from "components/tiptap";
+import { CustomMenu } from "components/ui";
+import { Button, Input, ToggleSwitch } from "@plane/ui";
 // icons
-import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { LayoutPanelTop, Sparkle, X } from "lucide-react";
 // types
-import type { ICurrentUserResponse, IIssue, ISearchIssueResponse } from "types";
+import type { IUser, IIssue, ISearchIssueResponse } from "types";
+// components
+import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 
 const defaultValues: Partial<IIssue> = {
   project: "",
   name: "",
-  description: {
-    type: "doc",
-    content: [
-      {
-        type: "paragraph",
-      },
-    ],
-  },
   description_html: "<p></p>",
   estimate_point: null,
   state: "",
@@ -63,7 +55,7 @@ export interface IssueFormProps {
   setCreateMore: React.Dispatch<React.SetStateAction<boolean>>;
   handleDiscardClose: () => void;
   status: boolean;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   handleFormDirty: (payload: Partial<IIssue> | null) => void;
   fieldsToShow: (
     | "project"
@@ -80,6 +72,10 @@ export interface IssueFormProps {
     | "all"
   )[];
 }
+
+// services
+const aiService = new AIService();
+const fileService = new FileService();
 
 export const IssueForm: FC<IssueFormProps> = (props) => {
   const {
@@ -112,7 +108,6 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
   const { setToastAlert } = useToast();
 
   const {
-    register,
     formState: { errors, isSubmitting, isDirty },
     handleSubmit,
     reset,
@@ -210,9 +205,7 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
           setToastAlert({
             type: "error",
             title: "Error!",
-            message:
-              error ||
-              "You have reached the maximum number of requests of 50 requests per month per user.",
+            message: error || "You have reached the maximum number of requests of 50 requests per month per user.",
           });
         else
           setToastAlert({
@@ -308,10 +301,8 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
                   <span className="flex-shrink-0 text-custom-text-200">
                     {selectedParentIssue.project__identifier}-{selectedParentIssue.sequence_id}
                   </span>
-                  <span className="truncate font-medium">
-                    {selectedParentIssue.name.substring(0, 50)}
-                  </span>
-                  <XMarkIcon
+                  <span className="truncate font-medium">{selectedParentIssue.name.substring(0, 50)}</span>
+                  <X
                     className="h-3 w-3 cursor-pointer"
                     onClick={() => {
                       setValue("parent", null);
@@ -325,21 +316,29 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
             <div className="mt-2 space-y-3">
               {(fieldsToShow.includes("all") || fieldsToShow.includes("name")) && (
                 <div>
-                  <Input
-                    id="name"
+                  <Controller
+                    control={control}
                     name="name"
-                    className="resize-none text-xl"
-                    placeholder="Title"
-                    autoComplete="off"
-                    error={errors.name}
-                    register={register}
-                    validations={{
+                    rules={{
                       required: "Title is required",
                       maxLength: {
                         value: 255,
                         message: "Title should be less than 255 characters",
                       },
                     }}
+                    render={({ field: { value, onChange, ref } }) => (
+                      <Input
+                        id="name"
+                        name="name"
+                        type="text"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        hasError={Boolean(errors.name)}
+                        placeholder="Title"
+                        className="resize-none text-xl w-full"
+                      />
+                    )}
                   />
                 </div>
               )}
@@ -359,7 +358,7 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
                           "Generating response..."
                         ) : (
                           <>
-                            <SparklesIcon className="h-4 w-4" />I{"'"}m feeling lucky
+                            <Sparkle className="h-4 w-4" />I{"'"}m feeling lucky
                           </>
                         )}
                       </button>
@@ -369,36 +368,31 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
                       className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
                       onClick={() => setGptAssistantModal((prevData) => !prevData)}
                     >
-                      <SparklesIcon className="h-4 w-4" />
+                      <Sparkle className="h-4 w-4" />
                       AI
                     </button>
                   </div>
                   <Controller
                     name="description_html"
                     control={control}
-                    render={({ field: { value, onChange } }) => {
-                      if (!value && !watch("description_html")) return <></>;
-
-                      return (
-                        <TipTapEditor
-                          workspaceSlug={workspaceSlug as string}
-                          ref={editorRef}
-                          debouncedUpdatesEnabled={false}
-                          value={
-                            !value ||
-                            value === "" ||
-                            (typeof value === "object" && Object.keys(value).length === 0)
-                              ? watch("description_html")
-                              : value
-                          }
-                          customClassName="min-h-[150px]"
-                          onChange={(description: Object, description_html: string) => {
-                            onChange(description_html);
-                            setValue("description", description);
-                          }}
-                        />
-                      );
-                    }}
+                    render={({ field: { value, onChange } }) => (
+                      <RichTextEditorWithRef
+                        uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                        deleteFile={fileService.deleteImage}
+                        ref={editorRef}
+                        debouncedUpdatesEnabled={false}
+                        value={
+                          !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
+                            ? watch("description_html")
+                            : value
+                        }
+                        customClassName="min-h-[150px]"
+                        onChange={(description: Object, description_html: string) => {
+                          onChange(description_html);
+                          setValue("description", description);
+                        }}
+                      />
+                    )}
                   />
                   <GptAssistantModal
                     isOpen={gptAssistantModal}
@@ -446,11 +440,7 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
                     control={control}
                     name="assignees"
                     render={({ field: { value, onChange } }) => (
-                      <IssueAssigneeSelect
-                        projectId={projectId}
-                        value={value}
-                        onChange={onChange}
-                      />
+                      <IssueAssigneeSelect projectId={projectId} value={value} onChange={onChange} />
                     )}
                   />
                 )}
@@ -501,7 +491,7 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
                   </div>
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) && (
-                  <div>
+                  <>
                     <Controller
                       control={control}
                       name="estimate_point"
@@ -509,51 +499,76 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
                         <IssueEstimateSelect value={value} onChange={onChange} />
                       )}
                     />
-                  </div>
+                  </>
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
-                  <Controller
-                    control={control}
-                    name="parent"
-                    render={({ field: { onChange } }) => (
-                      <ParentIssuesListModal
-                        isOpen={parentIssueListModalOpen}
-                        handleClose={() => setParentIssueListModalOpen(false)}
-                        onChange={(issue) => {
-                          onChange(issue.id);
-                          setSelectedParentIssue(issue);
-                        }}
-                        projectId={projectId}
-                      />
-                    )}
-                  />
-                )}
-                {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
-                  <CustomMenu ellipsis>
-                    {watch("parent") ? (
-                      <>
+                  <>
+                    <CustomMenu
+                      customButton={
+                        <button className="flex cursor-pointer items-center rounded-md border border-custom-border-200 text-xs shadow-sm duration-200">
+                          <span className="flex items-center justify-center gap-2 px-2 py-1 text-xs text-custom-text-200 hover:bg-custom-background-80">
+                            {watch("parent") ? (
+                              <>
+                                <LayoutPanelTop className="h-3.5 w-3.5 flex-shrink-0" />
+                                <span className="whitespace-nowrap text-custom-text-100">
+                                  {selectedParentIssue &&
+                                    `${selectedParentIssue.project__identifier}-
+                                  ${selectedParentIssue.sequence_id}`}
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                <LayoutPanelTop className="h-3.5 w-3.5 flex-shrink-0" />
+                                <span className="whitespace-nowrap">Add Parent</span>
+                              </>
+                            )}
+                          </span>
+                        </button>
+                      }
+                    >
+                      {watch("parent") ? (
+                        <>
+                          <CustomMenu.MenuItem
+                            renderAs="button"
+                            className="!p-1"
+                            onClick={() => setParentIssueListModalOpen(true)}
+                          >
+                            Change parent issue
+                          </CustomMenu.MenuItem>
+                          <CustomMenu.MenuItem
+                            renderAs="button"
+                            className="!p-1"
+                            onClick={() => setValue("parent", null)}
+                          >
+                            Remove parent issue
+                          </CustomMenu.MenuItem>
+                        </>
+                      ) : (
                         <CustomMenu.MenuItem
                           renderAs="button"
+                          className="!p-1"
                           onClick={() => setParentIssueListModalOpen(true)}
                         >
-                          Change parent issue
+                          Select Parent Issue
                         </CustomMenu.MenuItem>
-                        <CustomMenu.MenuItem
-                          renderAs="button"
-                          onClick={() => setValue("parent", null)}
-                        >
-                          Remove parent issue
-                        </CustomMenu.MenuItem>
-                      </>
-                    ) : (
-                      <CustomMenu.MenuItem
-                        renderAs="button"
-                        onClick={() => setParentIssueListModalOpen(true)}
-                      >
-                        Select Parent Issue
-                      </CustomMenu.MenuItem>
-                    )}
-                  </CustomMenu>
+                      )}
+                    </CustomMenu>
+                    <Controller
+                      control={control}
+                      name="parent"
+                      render={({ field: { onChange } }) => (
+                        <ParentIssuesListModal
+                          isOpen={parentIssueListModalOpen}
+                          handleClose={() => setParentIssueListModalOpen(false)}
+                          onChange={(issue) => {
+                            onChange(issue.id);
+                            setSelectedParentIssue(issue);
+                          }}
+                          projectId={projectId}
+                        />
+                      )}
+                    />
+                  </>
                 )}
               </div>
             </div>
@@ -568,14 +583,15 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
             <ToggleSwitch value={createMore} onChange={() => {}} size="md" />
           </div>
           <div className="flex items-center gap-2">
-            <SecondaryButton
+            <Button
+              variant="neutral-primary"
               onClick={() => {
                 handleDiscardClose();
               }}
             >
               Discard
-            </SecondaryButton>
-            <PrimaryButton type="submit" loading={isSubmitting}>
+            </Button>
+            <Button variant="primary" type="submit" loading={isSubmitting}>
               {status
                 ? isSubmitting
                   ? "Updating Issue..."
@@ -583,7 +599,7 @@ export const IssueForm: FC<IssueFormProps> = (props) => {
                 : isSubmitting
                 ? "Adding Issue..."
                 : "Add Issue"}
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
       </form>

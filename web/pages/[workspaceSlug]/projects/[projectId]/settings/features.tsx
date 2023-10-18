@@ -1,70 +1,59 @@
 import React from "react";
-
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 import useSWR, { mutate } from "swr";
-
 // services
-import projectService from "services/project.service";
-import trackEventServices, { MiscellaneousEventType } from "services/track-event.service";
+import { ProjectService } from "services/project";
+import { TrackEventService, MiscellaneousEventType } from "services/track_event.service";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // components
 import { SettingsSidebar } from "components/project";
 // ui
-import { ToggleSwitch } from "components/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { BreadcrumbItem, Breadcrumbs, ContrastIcon, DiceIcon, ToggleSwitch } from "@plane/ui";
 // icons
-import { ModuleIcon } from "components/icons";
 import { FileText, Inbox, Layers } from "lucide-react";
-import { ContrastOutlined } from "@mui/icons-material";
 // types
-import { IProject } from "types";
+import { IProject, IUser } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+import { PROJECTS_LIST, PROJECT_DETAILS, USER_PROJECT_VIEW } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
 
 const featuresList = [
   {
     title: "Cycles",
-    description:
-      "Cycles are enabled for all the projects in this workspace. Access them from the sidebar.",
-    icon: (
-      <ContrastOutlined className="!text-base !leading-4 text-purple-500 flex-shrink-0 rotate-180" />
-    ),
+    description: "Cycles are enabled for all the projects in this workspace. Access them from the sidebar.",
+    icon: <ContrastIcon className="h-4 w-4 text-purple-500 flex-shrink-0 rotate-180" />,
 
     property: "cycle_view",
   },
   {
     title: "Modules",
-    description:
-      "Modules are enabled for all the projects in this workspace. Access it from the sidebar.",
-    icon: <ModuleIcon width={16} height={16} className="flex-shrink-0" />,
+    description: "Modules are enabled for all the projects in this workspace. Access it from the sidebar.",
+    icon: <DiceIcon width={16} height={16} className="flex-shrink-0" />,
     property: "module_view",
   },
   {
     title: "Views",
-    description:
-      "Views are enabled for all the projects in this workspace. Access it from the sidebar.",
+    description: "Views are enabled for all the projects in this workspace. Access it from the sidebar.",
     icon: <Layers className="h-4 w-4 text-cyan-500 flex-shrink-0" />,
     property: "issue_views_view",
   },
   {
     title: "Pages",
-    description:
-      "Pages are enabled for all the projects in this workspace. Access it from the sidebar.",
+    description: "Pages are enabled for all the projects in this workspace. Access it from the sidebar.",
     icon: <FileText className="h-4 w-4 text-red-400 flex-shrink-0" />,
     property: "page_view",
   },
   {
     title: "Inbox",
-    description:
-      "Inbox are enabled for all the projects in this workspace. Access it from the issues views page.",
+    description: "Inbox are enabled for all the projects in this workspace. Access it from the issues views page.",
     icon: <Inbox className="h-4 w-4 text-fuchsia-500 flex-shrink-0" />,
     property: "inbox_view",
   },
@@ -87,6 +76,10 @@ const getEventType = (feature: string, toggle: boolean): MiscellaneousEventType 
   }
 };
 
+// services
+const projectService = new ProjectService();
+const trackEventService = new TrackEventService();
+
 const FeaturesSettings: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -97,8 +90,13 @@ const FeaturesSettings: NextPage = () => {
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    workspaceSlug && projectId ? () => projectService.getProject(workspaceSlug as string, projectId as string) : null
+  );
+
+  const { data: memberDetails } = useSWR(
+    workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
     workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
+      ? () => projectService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
       : null
   );
 
@@ -129,25 +127,29 @@ const FeaturesSettings: NextPage = () => {
       message: "Project feature updated successfully.",
     });
 
-    await projectService
-      .updateProject(workspaceSlug as string, projectId as string, formData, user)
-      .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Project feature could not be updated. Please try again.",
-        })
-      );
+    await projectService.updateProject(workspaceSlug as string, projectId as string, formData, user).catch(() =>
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Project feature could not be updated. Please try again.",
+      })
+    );
   };
+
+  const isAdmin = memberDetails?.role === 20;
 
   return (
     <ProjectAuthorizationWrapper
       breadcrumbs={
-        <Breadcrumbs>
+        <Breadcrumbs onBack={() => router.back()}>
           <BreadcrumbItem
-            title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
-            link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
-            linkTruncate
+            link={
+              <Link href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}>
+                <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                  <p className="truncate">{`${truncateText(projectDetails?.name ?? "Project", 32)}`}</p>
+                </a>
+              </Link>
+            }
           />
           <BreadcrumbItem title="Features Settings" unshrinkTitle />
         </Breadcrumbs>
@@ -157,7 +159,7 @@ const FeaturesSettings: NextPage = () => {
         <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
           <SettingsSidebar />
         </div>
-        <section className="pr-9 py-8 w-full overflow-y-auto">
+        <section className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
           <div className="flex items-center py-3.5 border-b border-custom-border-200">
             <h3 className="text-xl font-medium">Features</h3>
           </div>
@@ -173,15 +175,13 @@ const FeaturesSettings: NextPage = () => {
                   </div>
                   <div className="">
                     <h4 className="text-sm font-medium">{feature.title}</h4>
-                    <p className="text-sm text-custom-text-200 tracking-tight">
-                      {feature.description}
-                    </p>
+                    <p className="text-sm text-custom-text-200 tracking-tight">{feature.description}</p>
                   </div>
                 </div>
                 <ToggleSwitch
                   value={projectDetails?.[feature.property as keyof IProject]}
                   onChange={() => {
-                    trackEventServices.trackMiscellaneousEvent(
+                    trackEventService.trackMiscellaneousEvent(
                       {
                         workspaceId: (projectDetails?.workspace as any)?.id,
                         workspaceSlug,
@@ -189,16 +189,14 @@ const FeaturesSettings: NextPage = () => {
                         projectIdentifier: projectDetails?.identifier,
                         projectName: projectDetails?.name,
                       },
-                      getEventType(
-                        feature.title,
-                        !projectDetails?.[feature.property as keyof IProject]
-                      ),
-                      user
+                      getEventType(feature.title, !projectDetails?.[feature.property as keyof IProject]),
+                      user as IUser
                     );
                     handleSubmit({
                       [feature.property]: !projectDetails?.[feature.property as keyof IProject],
                     });
                   }}
+                  disabled={!isAdmin}
                   size="sm"
                 />
               </div>

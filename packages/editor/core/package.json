@@ -1,0 +1,76 @@
+{
+  "name": "@plane/editor-core",
+  "version": "0.0.1",
+  "description": "Core Editor that powers Plane",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "files": [
+    "dist/**/*"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "module": "./dist/index.mjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "check-types": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "18.2.0",
+    "next": "12.3.2",
+    "next-themes": "^0.2.1"
+  },
+  "dependencies": {
+    "@blueprintjs/popover2": "^2.0.10",
+    "@tiptap/core": "^2.1.7",
+    "@tiptap/extension-color": "^2.1.11",
+    "@tiptap/extension-image": "^2.1.7",
+    "@tiptap/extension-link": "^2.1.7",
+    "@tiptap/extension-table": "^2.1.6",
+    "@tiptap/extension-table-cell": "^2.1.6",
+    "@tiptap/extension-table-header": "^2.1.6",
+    "@tiptap/extension-table-row": "^2.1.6",
+    "@tiptap/extension-task-item": "^2.1.7",
+    "@tiptap/extension-task-list": "^2.1.7",
+    "@tiptap/extension-text-style": "^2.1.11",
+    "@tiptap/extension-underline": "^2.1.7",
+    "@tiptap/pm": "^2.1.7",
+    "@tiptap/react": "^2.1.7",
+    "@tiptap/starter-kit": "^2.1.10",
+    "@types/react": "^18.2.5",
+    "@types/react-dom": "18.0.11",
+    "@types/node": "18.15.3",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^1.2.1",
+    "eslint": "8.36.0",
+    "eslint-config-next": "13.2.4",
+    "eventsource-parser": "^0.1.0",
+    "lucide-react": "^0.244.0",
+    "react-markdown": "^8.0.7",
+    "tailwind-merge": "^1.14.0",
+    "tippy.js": "^6.3.7",
+    "tiptap-markdown": "^0.8.2",
+    "use-debounce": "^9.0.4"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "postcss": "^8.4.29",
+    "tailwind-config-custom": "*",
+    "tsconfig": "*",
+    "tsup": "^7.2.0",
+    "typescript": "4.9.5"
+  },
+  "keywords": [
+    "editor",
+    "rich-text",
+    "markdown",
+    "nextjs",
+    "react"
+  ]
+}

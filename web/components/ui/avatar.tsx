@@ -2,13 +2,11 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
-
-// component
-import { Icon } from "components/ui";
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // icons
 import User from "public/user.png";
+import { Plus } from "lucide-react";
 // types
 import { IUser, IUserLite } from "types";
 // fetch-keys
@@ -22,13 +20,10 @@ type AvatarProps = {
   fontSize?: string;
 };
 
-export const Avatar: React.FC<AvatarProps> = ({
-  user,
-  index,
-  height = "24px",
-  width = "24px",
-  fontSize = "12px",
-}) => (
+// services
+const workspaceService = new WorkspaceService();
+
+export const Avatar: React.FC<AvatarProps> = ({ user, index, height = "24px", width = "24px", fontSize = "12px" }) => (
   <div
     className={`relative rounded border-[0.5px] ${
       index && index !== 0 ? "-ml-3.5 border-custom-border-200" : "border-transparent"
@@ -76,12 +71,7 @@ type AsigneesListProps = {
   showLength?: boolean;
 };
 
-export const AssigneesList: React.FC<AsigneesListProps> = ({
-  users,
-  userIds,
-  length = 3,
-  showLength = true,
-}) => {
+export const AssigneesList: React.FC<AsigneesListProps> = ({ users, userIds, length = 3, showLength = true }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -107,7 +97,7 @@ export const AssigneesList: React.FC<AsigneesListProps> = ({
           {users.length > length ? (
             <div className="-ml-3.5 relative h-6 w-6 rounded">
               <div className="flex items-center rounded bg-custom-background-80 text-xs capitalize h-6 w-6 text-custom-text-200 border-[0.5px] border-custom-border-300">
-                <Icon iconName="add" className="text-xs !leading-3 -mr-0.5" />
+                <Plus className="h-3 w-3 -mr-0.5" />
                 {users.length - length}
               </div>
             </div>
@@ -125,7 +115,7 @@ export const AssigneesList: React.FC<AsigneesListProps> = ({
             userIds.length > length ? (
               <div className="-ml-3.5 relative h-6 w-6 rounded">
                 <div className="flex items-center rounded bg-custom-background-80 text-xs capitalize h-6 w-6 text-custom-text-200 border-[0.5px] border-custom-border-300">
-                  <Icon iconName="add" className="text-xs !leading-3 -mr-0.5" />
+                  <Plus className="h-3 w-3 -mr-0.5" />
                   {userIds.length - length}
                 </div>
               </div>

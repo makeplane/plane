@@ -1,13 +1,11 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
 // services
-import modulesService from "services/modules.service";
+import { ModuleService } from "services/module.service";
 // ui
-import { Spinner, CustomSelect, Tooltip } from "components/ui";
+import { CustomSelect } from "components/ui";
+import { Spinner, Tooltip } from "@plane/ui";
 // helper
 import { truncateText } from "helpers/string.helper";
 // types
@@ -21,27 +19,23 @@ type Props = {
   disabled?: boolean;
 };
 
-export const SidebarModuleSelect: React.FC<Props> = ({
-  issueDetail,
-  handleModuleChange,
-  disabled = false,
-}) => {
+const moduleService = new ModuleService();
+
+export const SidebarModuleSelect: React.FC<Props> = ({ issueDetail, handleModuleChange, disabled = false }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
   const { data: modules } = useSWR(
     workspaceSlug && projectId ? MODULE_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => modulesService.getModules(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => moduleService.getModules(workspaceSlug as string, projectId as string) : null
   );
 
   const removeIssueFromModule = (bridgeId: string, moduleId: string) => {
     if (!workspaceSlug || !projectId) return;
 
-    modulesService
+    moduleService
       .removeIssueFromModule(workspaceSlug as string, projectId as string, moduleId, bridgeId)
-      .then((res) => {
+      .then(() => {
         mutate(ISSUE_DETAILS(issueId as string));
 
         mutate(MODULE_ISSUES(moduleId));
@@ -59,9 +53,7 @@ export const SidebarModuleSelect: React.FC<Props> = ({
         <div>
           <Tooltip
             position="left"
-            tooltipContent={`${
-              modules?.find((m) => m.id === issueModule?.module)?.name ?? "No module"
-            }`}
+            tooltipContent={`${modules?.find((m) => m.id === issueModule?.module)?.name ?? "No module"}`}
           >
             <button
               type="button"
@@ -69,11 +61,7 @@ export const SidebarModuleSelect: React.FC<Props> = ({
                 disabled ? "cursor-not-allowed" : ""
               }`}
             >
-              <span
-                className={`truncate ${
-                  issueModule ? "text-custom-text-100" : "text-custom-text-200"
-                }`}
-              >
+              <span className={`truncate ${issueModule ? "text-custom-text-100" : "text-custom-text-200"}`}>
                 {modules?.find((m) => m.id === issueModule?.module)?.name ?? "No module"}
               </span>
             </button>
@@ -87,7 +75,6 @@ export const SidebarModuleSelect: React.FC<Props> = ({
           : handleModuleChange(modules?.find((m) => m.id === value) as IModule);
       }}
       width="w-full"
-      position="right"
       maxHeight="rg"
       disabled={disabled}
     >

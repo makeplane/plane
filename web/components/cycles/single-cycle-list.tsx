@@ -6,24 +6,22 @@ import { useRouter } from "next/router";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomMenu, LinearProgressIndicator, Tooltip } from "components/ui";
+import { CustomMenu } from "components/ui";
+import { Tooltip, LinearProgressIndicator, ContrastIcon, RunningIcon } from "@plane/ui";
 // icons
-import { CalendarDaysIcon } from "@heroicons/react/20/solid";
 import {
-  TargetIcon,
-  ContrastIcon,
-  PersonRunningIcon,
-  ArrowRightIcon,
-  TriangleExclamationIcon,
-  AlarmClockIcon,
-} from "components/icons";
-import { LinkIcon, PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
+  AlarmClock,
+  AlertTriangle,
+  ArrowRight,
+  CalendarDays,
+  LinkIcon,
+  Pencil,
+  Star,
+  Target,
+  Trash2,
+} from "lucide-react";
 // helpers
-import {
-  getDateRangeStatus,
-  renderShortDateWithYearFormat,
-  findHowManyDaysLeft,
-} from "helpers/date-time.helper";
+import { getDateRangeStatus, renderShortDateWithYearFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
 import { ICycle } from "types";
@@ -125,12 +123,9 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
   const startDate = new Date(cycle.start_date ?? "");
 
   const handleCopyText = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`
-    ).then(() => {
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",
@@ -142,12 +137,13 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
   const progressIndicatorData = stateGroups.map((group, index) => ({
     id: index,
     name: group.title,
-    value:
-      cycle.total_issues > 0
-        ? ((cycle[group.key as keyof ICycle] as number) / cycle.total_issues) * 100
-        : 0,
+    value: cycle.total_issues > 0 ? ((cycle[group.key as keyof ICycle] as number) / cycle.total_issues) * 100 : 0,
     color: group.color,
   }));
+
+  const completedIssues = cycle.completed_issues + cycle.cancelled_issues;
+
+  const percentage = cycle.total_issues > 0 ? (completedIssues / cycle.total_issues) * 100 : 0;
 
   return (
     <div>
@@ -172,18 +168,10 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                     }`}
                   />
                   <div className="max-w-2xl">
-                    <Tooltip
-                      tooltipContent={cycle.name}
-                      className="break-words"
-                      position="top-left"
-                    >
-                      <h3 className="break-words w-full text-base font-semibold">
-                        {truncateText(cycle.name, 60)}
-                      </h3>
+                    <Tooltip tooltipContent={cycle.name} className="break-words" position="top-left">
+                      <h3 className="break-words w-full text-base font-semibold">{truncateText(cycle.name, 60)}</h3>
                     </Tooltip>
-                    <p className="mt-2 text-custom-text-200 break-words w-full">
-                      {cycle.description}
-                    </p>
+                    <p className="mt-2 text-custom-text-200 break-words w-full">{cycle.description}</p>
                   </div>
                 </div>
                 <div className="flex-shrink-0 flex items-center gap-4">
@@ -203,26 +191,24 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                   >
                     {cycleStatus === "current" ? (
                       <span className="flex gap-1 whitespace-nowrap">
-                        <PersonRunningIcon className="h-4 w-4" />
+                        <RunningIcon className="h-4 w-4" />
                         {findHowManyDaysLeft(cycle.end_date ?? new Date())} days left
                       </span>
                     ) : cycleStatus === "upcoming" ? (
                       <span className="flex gap-1">
-                        <AlarmClockIcon className="h-4 w-4" />
+                        <AlarmClock className="h-4 w-4" />
                         {findHowManyDaysLeft(cycle.start_date ?? new Date())} days left
                       </span>
                     ) : cycleStatus === "completed" ? (
                       <span className="flex items-center gap-1">
                         {cycle.total_issues - cycle.completed_issues > 0 && (
                           <Tooltip
-                            tooltipContent={`${
-                              cycle.total_issues - cycle.completed_issues
-                            } more pending ${
+                            tooltipContent={`${cycle.total_issues - cycle.completed_issues} more pending ${
                               cycle.total_issues - cycle.completed_issues === 1 ? "issue" : "issues"
                             }`}
                           >
                             <span>
-                              <TriangleExclamationIcon className="h-3.5 w-3.5 fill-current" />
+                              <AlertTriangle className="h-3.5 w-3.5" />
                             </span>
                           </Tooltip>
                         )}{" "}
@@ -236,12 +222,12 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                   {cycleStatus !== "draft" && (
                     <div className="flex items-center justify-start gap-2 text-custom-text-200">
                       <div className="flex items-start gap-1 whitespace-nowrap">
-                        <CalendarDaysIcon className="h-4 w-4" />
+                        <CalendarDays className="h-4 w-4" />
                         <span>{renderShortDateWithYearFormat(startDate)}</span>
                       </div>
-                      <ArrowRightIcon className="h-4 w-4" />
+                      <ArrowRight className="h-4 w-4" />
                       <div className="flex items-start gap-1 whitespace-nowrap">
-                        <TargetIcon className="h-4 w-4" />
+                        <Target className="h-4 w-4" />
                         <span>{renderShortDateWithYearFormat(endDate)}</span>
                       </div>
                     </div>
@@ -289,12 +275,8 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                         <span className="flex gap-1 whitespace-nowrap">
                           {cycle.total_issues > 0 ? (
                             <>
-                              <RadialProgressBar
-                                progress={(cycle.completed_issues / cycle.total_issues) * 100}
-                              />
-                              <span>
-                                {Math.floor((cycle.completed_issues / cycle.total_issues) * 100)} %
-                              </span>
+                              <RadialProgressBar progress={(cycle.completed_issues / cycle.total_issues) * 100} />
+                              <span>{Math.floor((cycle.completed_issues / cycle.total_issues) * 100)} %</span>
                             </>
                           ) : (
                             <span className="normal-case">No issues present</span>
@@ -307,13 +289,11 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                       ) : cycleStatus === "completed" ? (
                         <span className="flex gap-1">
                           <RadialProgressBar progress={100} />
-                          <span>{100} %</span>
+                          <span>{Math.round(percentage)} %</span>
                         </span>
                       ) : (
                         <span className="flex gap-1">
-                          <RadialProgressBar
-                            progress={(cycle.total_issues / cycle.completed_issues) * 100}
-                          />
+                          <RadialProgressBar progress={(cycle.total_issues / cycle.completed_issues) * 100} />
                           {cycleStatus}
                         </span>
                       )}
@@ -326,7 +306,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                         handleRemoveFromFavorites();
                       }}
                     >
-                      <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                      <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
                     </button>
                   ) : (
                     <button
@@ -335,7 +315,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                         handleAddToFavorites();
                       }}
                     >
-                      <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
+                      <Star className="h-4 w-4 " color="rgb(var(--color-text-200))" />
                     </button>
                   )}
                   <div className="flex items-center">
@@ -348,7 +328,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                           }}
                         >
                           <span className="flex items-center justify-start gap-2">
-                            <PencilIcon className="h-4 w-4" />
+                            <Pencil className="h-4 w-4" />
                             <span>Edit Cycle</span>
                           </span>
                         </CustomMenu.MenuItem>
@@ -361,7 +341,7 @@ export const SingleCycleList: React.FC<TSingleStatProps> = ({
                           }}
                         >
                           <span className="flex items-center justify-start gap-2">
-                            <TrashIcon className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4" />
                             <span>Delete cycle</span>
                           </span>
                         </CustomMenu.MenuItem>

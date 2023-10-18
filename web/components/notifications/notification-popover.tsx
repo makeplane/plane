@@ -1,22 +1,13 @@
 import React, { Fragment } from "react";
-
-// hooks
-import useTheme from "hooks/use-theme";
-
 import { Popover, Transition } from "@headlessui/react";
-
 // hooks
 import useUserNotification from "hooks/use-user-notifications";
-
 // components
-import { Loader, EmptyState, Tooltip } from "components/ui";
-import {
-  SnoozeNotificationModal,
-  NotificationCard,
-  NotificationHeader,
-} from "components/notifications";
+import { EmptyState } from "components/common";
+import { SnoozeNotificationModal, NotificationCard, NotificationHeader } from "components/notifications";
+import { Loader, Tooltip } from "@plane/ui";
 // icons
-import { NotificationsOutlined } from "@mui/icons-material";
+import { Bell } from "lucide-react";
 // images
 import emptyNotification from "public/empty-state/notification.svg";
 // helpers
@@ -54,20 +45,13 @@ export const NotificationPopover = () => {
     markAllNotificationsAsRead,
   } = useUserNotification();
 
-  // theme context
-  const { collapsed: sidebarCollapse } = useTheme();
-
   return (
     <>
       <SnoozeNotificationModal
         isOpen={selectedNotificationForSnooze !== null}
         onClose={() => setSelectedNotificationForSnooze(null)}
         onSubmit={markSnoozeNotification}
-        notification={
-          notifications?.find(
-            (notification) => notification.id === selectedNotificationForSnooze
-          ) || null
-        }
+        notification={notifications?.find((notification) => notification.id === selectedNotificationForSnooze) || null}
         onSuccess={() => {
           setSelectedNotificationForSnooze(null);
         }}
@@ -91,7 +75,7 @@ export const NotificationPopover = () => {
                       : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
                   } ${store?.theme?.sidebarCollapsed ? "justify-center" : ""}`}
                 >
-                  <NotificationsOutlined fontSize="small" />
+                  <Bell className="h-4 w-4" />
                   {store?.theme?.sidebarCollapsed ? null : <span>Notifications</span>}
                   {totalNotificationCount && totalNotificationCount > 0 ? (
                     store?.theme?.sidebarCollapsed ? (

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 // ui
-import { Tooltip } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // helpers
 import { renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
@@ -25,14 +25,7 @@ export const ActivityGraph: React.FC<Props> = ({ activities }) => {
   const fourMonthsAgo = new Date(today.getFullYear(), today.getMonth() - 4, 1);
   const fiveMonthsAgo = new Date(today.getFullYear(), today.getMonth() - 5, 1);
 
-  const recentMonths = [
-    fiveMonthsAgo,
-    fourMonthsAgo,
-    threeMonthsAgo,
-    twoMonthsAgo,
-    lastMonth,
-    today,
-  ];
+  const recentMonths = [fiveMonthsAgo, fourMonthsAgo, threeMonthsAgo, twoMonthsAgo, lastMonth, today];
 
   const getDatesOfMonth = (dateOfMonth: Date) => {
     const month = dateOfMonth.getMonth();
@@ -112,9 +105,7 @@ export const ActivityGraph: React.FC<Props> = ({ activities }) => {
                   } activities on ${renderShortDateWithYearFormat(date)}`}
                 >
                   <div
-                    className={`${
-                      date === "" ? "pointer-events-none opacity-0" : ""
-                    } h-4 w-4 rounded ${
+                    className={`${date === "" ? "pointer-events-none opacity-0" : ""} h-4 w-4 rounded ${
                       isActive
                         ? `bg-custom-primary ${activitiesIntensity(isActive.activity_count)}`
                         : "bg-custom-background-80"

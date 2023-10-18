@@ -10,31 +10,24 @@ import useToast from "hooks/use-toast";
 // components
 import { SingleProgressStats } from "components/core";
 // ui
-import { CustomMenu, LinearProgressIndicator, Tooltip } from "components/ui";
+import { Tooltip, LinearProgressIndicator, ContrastIcon, RunningIcon } from "@plane/ui";
+import { CustomMenu } from "components/ui";
 import { AssigneesList } from "components/ui/avatar";
 // icons
-import { CalendarDaysIcon } from "@heroicons/react/20/solid";
 import {
-  TargetIcon,
-  ContrastIcon,
-  PersonRunningIcon,
-  ArrowRightIcon,
-  TriangleExclamationIcon,
-  AlarmClockIcon,
-} from "components/icons";
-import {
-  ChevronDownIcon,
+  AlarmClock,
+  AlertTriangle,
+  ArrowRight,
+  CalendarDays,
+  ChevronDown,
   LinkIcon,
-  PencilIcon,
-  StarIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+  Pencil,
+  Star,
+  Target,
+  Trash2,
+} from "lucide-react";
 // helpers
-import {
-  getDateRangeStatus,
-  renderShortDateWithYearFormat,
-  findHowManyDaysLeft,
-} from "helpers/date-time.helper";
+import { getDateRangeStatus, renderShortDateWithYearFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
 import { ICycle } from "types";
@@ -93,12 +86,9 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
   const startDate = new Date(cycle.start_date ?? "");
 
   const handleCopyText = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`
-    ).then(() => {
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",
@@ -110,10 +100,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
   const progressIndicatorData = stateGroups.map((group, index) => ({
     id: index,
     name: group.title,
-    value:
-      cycle.total_issues > 0
-        ? ((cycle[group.key as keyof ICycle] as number) / cycle.total_issues) * 100
-        : 0,
+    value: cycle.total_issues > 0 ? ((cycle[group.key as keyof ICycle] as number) / cycle.total_issues) * 100 : 0,
     color: group.color,
   }));
 
@@ -150,9 +137,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                     />
                   </span>
                   <Tooltip tooltipContent={cycle.name} className="break-words" position="top-left">
-                    <h3 className="break-words text-lg font-semibold">
-                      {truncateText(cycle.name, 15)}
-                    </h3>
+                    <h3 className="break-words text-lg font-semibold">{truncateText(cycle.name, 15)}</h3>
                   </Tooltip>
                 </span>
                 <span className="flex items-center gap-1 capitalize">
@@ -172,26 +157,24 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                   >
                     {cycleStatus === "current" ? (
                       <span className="flex gap-1 whitespace-nowrap">
-                        <PersonRunningIcon className="h-4 w-4" />
+                        <RunningIcon className="h-4 w-4" />
                         {findHowManyDaysLeft(cycle.end_date ?? new Date())} Days Left
                       </span>
                     ) : cycleStatus === "upcoming" ? (
                       <span className="flex gap-1 whitespace-nowrap">
-                        <AlarmClockIcon className="h-4 w-4" />
+                        <AlarmClock className="h-4 w-4" />
                         {findHowManyDaysLeft(cycle.start_date ?? new Date())} Days Left
                       </span>
                     ) : cycleStatus === "completed" ? (
                       <span className="flex gap-1 whitespace-nowrap">
                         {cycle.total_issues - cycle.completed_issues > 0 && (
                           <Tooltip
-                            tooltipContent={`${
-                              cycle.total_issues - cycle.completed_issues
-                            } more pending ${
+                            tooltipContent={`${cycle.total_issues - cycle.completed_issues} more pending ${
                               cycle.total_issues - cycle.completed_issues === 1 ? "issue" : "issues"
                             }`}
                           >
                             <span>
-                              <TriangleExclamationIcon className="h-3.5 w-3.5 fill-current" />
+                              <AlertTriangle className="h-3.5 w-3.5" />
                             </span>
                           </Tooltip>
                         )}{" "}
@@ -208,7 +191,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                         handleRemoveFromFavorites();
                       }}
                     >
-                      <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                      <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
                     </button>
                   ) : (
                     <button
@@ -217,7 +200,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                         handleAddToFavorites();
                       }}
                     >
-                      <StarIcon className="h-4 w-4 " color="rgb(var(--color-text-200))" />
+                      <Star className="h-4 w-4 " color="rgb(var(--color-text-200))" />
                     </button>
                   )}
                 </span>
@@ -226,12 +209,12 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                 {cycleStatus !== "draft" && (
                   <>
                     <div className="flex items-start gap-1">
-                      <CalendarDaysIcon className="h-4 w-4" />
+                      <CalendarDays className="h-4 w-4" />
                       <span>{renderShortDateWithYearFormat(startDate)}</span>
                     </div>
-                    <ArrowRightIcon className="h-4 w-4" />
+                    <ArrowRight className="h-4 w-4" />
                     <div className="flex items-start gap-1">
-                      <TargetIcon className="h-4 w-4" />
+                      <Target className="h-4 w-4" />
                       <span>{renderShortDateWithYearFormat(endDate)}</span>
                     </div>
                   </>
@@ -280,7 +263,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                       }}
                       className="cursor-pointer rounded p-1 text-custom-text-200 duration-300 hover:bg-custom-background-80"
                     >
-                      <PencilIcon className="h-4 w-4" />
+                      <Pencil className="h-4 w-4" />
                     </button>
                   )}
 
@@ -293,7 +276,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                         }}
                       >
                         <span className="flex items-center justify-start gap-2">
-                          <TrashIcon className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4" />
                           <span>Delete cycle</span>
                         </span>
                       </CustomMenu.MenuItem>
@@ -357,10 +340,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                   </Tooltip>
                   <Disclosure.Button>
                     <span className="p-1">
-                      <ChevronDownIcon
-                        className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
-                        aria-hidden="true"
-                      />
+                      <ChevronDown className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`} aria-hidden="true" />
                     </span>
                   </Disclosure.Button>
                 </div>
@@ -370,10 +350,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                       <div className="col-span-2 space-y-3 px-4">
                         <div className="space-y-3 text-xs">
                           {stateGroups.map((group) => (
-                            <div
-                              key={group.key}
-                              className="flex items-center justify-between gap-2"
-                            >
+                            <div key={group.key} className="flex items-center justify-between gap-2">
                               <div className="flex  items-center gap-2">
                                 <span
                                   className="block h-2 w-2 rounded-full"
@@ -390,9 +367,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                                     -{" "}
                                     {cycle.total_issues > 0
                                       ? `${Math.round(
-                                          ((cycle[group.key as keyof ICycle] as number) /
-                                            cycle.total_issues) *
-                                            100
+                                          ((cycle[group.key as keyof ICycle] as number) / cycle.total_issues) * 100
                                         )}%`
                                       : "0%"}
                                   </span>

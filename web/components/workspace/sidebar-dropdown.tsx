@@ -7,16 +7,16 @@ import { Menu, Transition } from "@headlessui/react";
 import { useTheme } from "next-themes";
 // hooks
 import useUser from "hooks/use-user";
-import useThemeHook from "hooks/use-theme";
 import useWorkspaces from "hooks/use-workspaces";
 import useToast from "hooks/use-toast";
 // services
-import userService from "services/user.service";
-import authenticationService from "services/authentication.service";
+import { UserService } from "services/user.service";
+import { AuthService } from "services/auth.service";
 // components
-import { Avatar, Icon, Loader } from "components/ui";
+import { Avatar } from "components/ui";
+import { Loader } from "@plane/ui";
 // icons
-import { CheckIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { Check, LogOut, Plus, Settings, UserCircle2 } from "lucide-react";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
@@ -43,15 +43,18 @@ const userLinks = (workspaceSlug: string, userId: string) => [
 const profileLinks = (workspaceSlug: string, userId: string) => [
   {
     name: "View profile",
-    icon: "account_circle",
+    icon: UserCircle2,
     link: `/${workspaceSlug}/profile/${userId}`,
   },
   {
     name: "Settings",
-    icon: "settings",
+    icon: Settings,
     link: `/${workspaceSlug}/me/profile`,
   },
 ];
+
+const userService = new UserService();
+const authService = new AuthService();
 
 export const WorkspaceSidebarDropdown = () => {
   const store: any = useMobxStore();
@@ -86,7 +89,7 @@ export const WorkspaceSidebarDropdown = () => {
   };
 
   const handleSignOut = async () => {
-    await authenticationService
+    await authService
       .signOut()
       .then(() => {
         mutateUser(undefined);
@@ -149,7 +152,7 @@ export const WorkspaceSidebarDropdown = () => {
               {workspaces ? (
                 <div className="flex h-full w-full flex-col items-start justify-start gap-1.5">
                   {workspaces.length > 0 ? (
-                    workspaces.map((workspace) => (
+                    workspaces.map((workspace: IWorkspace) => (
                       <Menu.Item key={workspace.id}>
                         {() => (
                           <button
@@ -171,15 +174,13 @@ export const WorkspaceSidebarDropdown = () => {
                               </span>
 
                               <h5
-                                className={`text-sm ${
-                                  workspaceSlug === workspace.slug ? "" : "text-custom-text-200"
-                                }`}
+                                className={`text-sm ${workspaceSlug === workspace.slug ? "" : "text-custom-text-200"}`}
                               >
                                 {truncateText(workspace.name, 18)}
                               </h5>
                             </div>
                             <span className="p-1">
-                              <CheckIcon
+                              <Check
                                 className={`h-3 w-3.5 text-custom-sidebar-text-100 ${
                                   workspace.id === activeWorkspace?.id ? "opacity-100" : "opacity-0"
                                 }`}
@@ -200,7 +201,7 @@ export const WorkspaceSidebarDropdown = () => {
                     }}
                     className="flex w-full items-center gap-2 px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
                   >
-                    <PlusIcon className="h-4 w-4" />
+                    <Plus className="h-4 w-4" />
                     Create Workspace
                   </Menu.Item>
                 </div>
@@ -261,18 +262,16 @@ export const WorkspaceSidebarDropdown = () => {
             >
               <div className="flex flex-col gap-2.5 pb-2">
                 <span className="px-2 text-custom-sidebar-text-200">{user?.email}</span>
-                {profileLinks(workspaceSlug?.toString() ?? "", user?.id ?? "").map(
-                  (link, index) => (
-                    <Menu.Item key={index} as="button" type="button">
-                      <Link href={link.link}>
-                        <a className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
-                          <Icon iconName={link.icon} className="!text-lg !leading-5" />
-                          {link.name}
-                        </a>
-                      </Link>
-                    </Menu.Item>
-                  )
-                )}
+                {profileLinks(workspaceSlug?.toString() ?? "", user?.id ?? "").map((link, index) => (
+                  <Menu.Item key={index} as="button" type="button">
+                    <Link href={link.link}>
+                      <a className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
+                        <link.icon className="h-4 w-4 stroke-[1.5]" />
+                        {link.name}
+                      </a>
+                    </Link>
+                  </Menu.Item>
+                ))}
               </div>
               <div className="pt-2">
                 <Menu.Item
@@ -281,7 +280,7 @@ export const WorkspaceSidebarDropdown = () => {
                   className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80"
                   onClick={handleSignOut}
                 >
-                  <Icon iconName="logout" className="!text-lg !leading-5" />
+                  <LogOut className="h-4 w-4 stroke-[1.5]" />
                   Sign out
                 </Menu.Item>
               </div>

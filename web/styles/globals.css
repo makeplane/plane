@@ -58,8 +58,8 @@
     --color-border-300: 212, 212, 212; /* strong border- 1 */
     --color-border-400: 185, 185, 185; /* strong border- 2 */
 
-    --color-shadow-2xs: 0px 0px 1px 0px rgba(23, 23, 23, 0.06),
-      0px 1px 2px 0px rgba(23, 23, 23, 0.06), 0px 1px 2px 0px rgba(23, 23, 23, 0.14);
+    --color-shadow-2xs: 0px 0px 1px 0px rgba(23, 23, 23, 0.06), 0px 1px 2px 0px rgba(23, 23, 23, 0.06),
+      0px 1px 2px 0px rgba(23, 23, 23, 0.14);
     --color-shadow-xs: 0px 1px 2px 0px rgba(0, 0, 0, 0.16), 0px 2px 4px 0px rgba(16, 24, 40, 0.12),
       0px 1px 8px -1px rgba(16, 24, 40, 0.1);
     --color-shadow-sm: 0px 1px 4px 0px rgba(0, 0, 0, 0.01), 0px 4px 8px 0px rgba(0, 0, 0, 0.02),
@@ -72,8 +72,8 @@
       0px 1px 24px 0px rgba(16, 24, 40, 0.12);
     --color-shadow-xl: 0px 0px 18px 0px rgba(0, 0, 0, 0.16), 0px 0px 24px 0px rgba(16, 24, 40, 0.16),
       0px 0px 52px 0px rgba(16, 24, 40, 0.16);
-    --color-shadow-2xl: 0px 8px 16px 0px rgba(0, 0, 0, 0.12),
-      0px 12px 24px 0px rgba(16, 24, 40, 0.12), 0px 1px 32px 0px rgba(16, 24, 40, 0.12);
+    --color-shadow-2xl: 0px 8px 16px 0px rgba(0, 0, 0, 0.12), 0px 12px 24px 0px rgba(16, 24, 40, 0.12),
+      0px 1px 32px 0px rgba(16, 24, 40, 0.12);
     --color-shadow-3xl: 0px 12px 24px 0px rgba(0, 0, 0, 0.12), 0px 16px 32px 0px rgba(0, 0, 0, 0.12),
       0px 1px 48px 0px rgba(16, 24, 40, 0.12);
 
@@ -358,4 +358,128 @@ body {
 
 .disable-scroll {
   overflow: hidden !important;
+}
+
+.vertical-lr {
+  -webkit-writing-mode: vertical-lr;
+  -ms-writing-mode: vertical-lr;
+}
+
+div.web-view-spinner {
+  position: relative;
+  width: 54px;
+  height: 54px;
+  display: inline-block;
+  margin-left: 50%;
+  margin-right: 50%;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+div.web-view-spinner div {
+  width: 6%;
+  height: 16%;
+  background: rgb(var(--color-text-400));
+  position: absolute;
+  left: 49%;
+  top: 43%;
+  opacity: 0;
+  border-radius: 50px;
+  -webkit-border-radius: 50px;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+  animation: fade 1s linear infinite;
+  -webkit-animation: fade 1s linear infinite;
+}
+
+@keyframes fade {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.25;
+  }
+}
+@-webkit-keyframes fade {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.25;
+  }
+}
+
+div.web-view-spinner div.bar1 {
+  transform: rotate(0deg) translate(0, -130%);
+  -webkit-transform: rotate(0deg) translate(0, -130%);
+  animation-delay: 0s;
+  -webkit-animation-delay: 0s;
+}
+
+div.web-view-spinner div.bar2 {
+  transform: rotate(30deg) translate(0, -130%);
+  -webkit-transform: rotate(30deg) translate(0, -130%);
+  animation-delay: -0.9167s;
+  -webkit-animation-delay: -0.9167s;
+}
+
+div.web-view-spinner div.bar3 {
+  transform: rotate(60deg) translate(0, -130%);
+  -webkit-transform: rotate(60deg) translate(0, -130%);
+  animation-delay: -0.833s;
+  -webkit-animation-delay: -0.833s;
+}
+div.web-view-spinner div.bar4 {
+  transform: rotate(90deg) translate(0, -130%);
+  -webkit-transform: rotate(90deg) translate(0, -130%);
+  animation-delay: -0.7497s;
+  -webkit-animation-delay: -0.7497s;
+}
+div.web-view-spinner div.bar5 {
+  transform: rotate(120deg) translate(0, -130%);
+  -webkit-transform: rotate(120deg) translate(0, -130%);
+  animation-delay: -0.667s;
+  -webkit-animation-delay: -0.667s;
+}
+div.web-view-spinner div.bar6 {
+  transform: rotate(150deg) translate(0, -130%);
+  -webkit-transform: rotate(150deg) translate(0, -130%);
+  animation-delay: -0.5837s;
+  -webkit-animation-delay: -0.5837s;
+}
+div.web-view-spinner div.bar7 {
+  transform: rotate(180deg) translate(0, -130%);
+  -webkit-transform: rotate(180deg) translate(0, -130%);
+  animation-delay: -0.5s;
+  -webkit-animation-delay: -0.5s;
+}
+div.web-view-spinner div.bar8 {
+  transform: rotate(210deg) translate(0, -130%);
+  -webkit-transform: rotate(210deg) translate(0, -130%);
+  animation-delay: -0.4167s;
+  -webkit-animation-delay: -0.4167s;
+}
+div.web-view-spinner div.bar9 {
+  transform: rotate(240deg) translate(0, -130%);
+  -webkit-transform: rotate(240deg) translate(0, -130%);
+  animation-delay: -0.333s;
+  -webkit-animation-delay: -0.333s;
+}
+div.web-view-spinner div.bar10 {
+  transform: rotate(270deg) translate(0, -130%);
+  -webkit-transform: rotate(270deg) translate(0, -130%);
+  animation-delay: -0.2497s;
+  -webkit-animation-delay: -0.2497s;
+}
+div.web-view-spinner div.bar11 {
+  transform: rotate(300deg) translate(0, -130%);
+  -webkit-transform: rotate(300deg) translate(0, -130%);
+  animation-delay: -0.167s;
+  -webkit-animation-delay: -0.167s;
+}
+div.web-view-spinner div.bar12 {
+  transform: rotate(330deg) translate(0, -130%);
+  -webkit-transform: rotate(330deg) translate(0, -130%);
+  animation-delay: -0.0833s;
+  -webkit-animation-delay: -0.0833s;
 }

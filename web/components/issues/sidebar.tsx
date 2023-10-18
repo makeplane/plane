@@ -1,10 +1,6 @@
 import React, { useCallback, useState } from "react";
-
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
-// react-hook-form
 import { Controller, UseFormWatch } from "react-hook-form";
 // hooks
 import useToast from "hooks/use-toast";
@@ -12,8 +8,8 @@ import useUserAuth from "hooks/use-user-auth";
 import useUserIssueNotificationSubscription from "hooks/use-issue-notification-subscription";
 import useEstimateOption from "hooks/use-estimate-option";
 // services
-import issuesService from "services/issues.service";
-import modulesService from "services/modules.service";
+import { IssueService } from "services/issue";
+import { ModuleService } from "services/module.service";
 // contexts
 import { useProjectMyMembership } from "contexts/project-member.context";
 // components
@@ -34,27 +30,16 @@ import {
   SidebarRelatesSelect,
 } from "components/issues";
 // ui
-import { CustomDatePicker, Icon } from "components/ui";
+import { CustomDatePicker } from "components/ui";
 // icons
-import {
-  LinkIcon,
-  CalendarDaysIcon,
-  TrashIcon,
-  PlusIcon,
-  Squares2X2Icon,
-  ChartBarIcon,
-  UserGroupIcon,
-  PlayIcon,
-  UserIcon,
-  RectangleGroupIcon,
-} from "@heroicons/react/24/outline";
+import { Bell, CalendarDays, LinkIcon, Plus, Signal, Trash2, Triangle, User2 } from "lucide-react";
+import { ContrastIcon, DiceIcon, DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import type { ICycle, IIssue, IIssueLink, linkDetails, IModule } from "types";
 // fetch-keys
-import { ISSUE_DETAILS } from "constants/fetch-keys";
-import { ContrastIcon } from "components/icons";
+import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 type Props = {
   control: any;
@@ -84,6 +69,9 @@ type Props = {
   uneditable?: boolean;
 };
 
+const issueService = new IssueService();
+const moduleService = new ModuleService();
+
 export const IssueDetailsSidebar: React.FC<Props> = ({
   control,
   submitChanges,
@@ -103,8 +91,11 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
 
   const { isEstimateActive } = useEstimateOption();
 
-  const { loading, handleSubscribe, handleUnsubscribe, subscribed } =
-    useUserIssueNotificationSubscription(workspaceSlug, projectId, issueId);
+  const { loading, handleSubscribe, handleUnsubscribe, subscribed } = useUserIssueNotificationSubscription(
+    workspaceSlug,
+    projectId,
+    issueId
+  );
 
   const { memberRole } = useProjectMyMembership();
 
@@ -114,7 +105,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
     (cycleDetails: ICycle) => {
       if (!workspaceSlug || !projectId || !issueDetail) return;
 
-      issuesService
+      issueService
         .addIssueToCycle(
           workspaceSlug as string,
           projectId as string,
@@ -124,7 +115,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
           },
           user
         )
-        .then((res) => {
+        .then(() => {
           mutate(ISSUE_DETAILS(issueId as string));
         });
     },
@@ -135,7 +126,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
     (moduleDetail: IModule) => {
       if (!workspaceSlug || !projectId || !issueDetail) return;
 
-      modulesService
+      moduleService
         .addIssuesToModule(
           workspaceSlug as string,
           projectId as string,
@@ -145,7 +136,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
           },
           user
         )
-        .then((res) => {
+        .then(() => {
           mutate(ISSUE_DETAILS(issueId as string));
         });
     },
@@ -157,7 +148,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
 
     const payload = { metadata: {}, ...formData };
 
-    await issuesService
+    await issueService
       .createIssueLink(workspaceSlug as string, projectId as string, issueDetail.id, payload)
       .then(() => mutate(ISSUE_DETAILS(issueDetail.id)))
       .catch((err) => {
@@ -197,15 +188,9 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
       false
     );
 
-    await issuesService
-      .updateIssueLink(
-        workspaceSlug as string,
-        projectId as string,
-        issueDetail.id,
-        linkId,
-        payload
-      )
-      .then((res) => {
+    await issueService
+      .updateIssueLink(workspaceSlug as string, projectId as string, issueDetail.id, linkId, payload)
+      .then(() => {
         mutate(ISSUE_DETAILS(issueDetail.id));
       })
       .catch((err) => {
@@ -224,9 +209,9 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
       false
     );
 
-    await issuesService
+    await issueService
       .deleteIssueLink(workspaceSlug as string, projectId as string, issueDetail.id, linkId)
-      .then((res) => {
+      .then(() => {
         mutate(ISSUE_DETAILS(issueDetail.id));
       })
       .catch((err) => {
@@ -235,12 +220,9 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
   };
 
   const handleCopyText = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
-    copyTextToClipboard(
-      `${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issueDetail?.id}`
-    ).then(() => {
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issueDetail?.id}`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",
@@ -264,9 +246,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
     fieldsToShow.includes("dueDate");
 
   const showThirdSection =
-    fieldsToShow.includes("all") ||
-    fieldsToShow.includes("cycle") ||
-    fieldsToShow.includes("module");
+    fieldsToShow.includes("all") || fieldsToShow.includes("cycle") || fieldsToShow.includes("module");
 
   const startDate = watchIssue("start_date");
   const targetDate = watchIssue("target_date");
@@ -321,7 +301,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                     else handleSubscribe();
                   }}
                 >
-                  <Icon iconName="notifications" />
+                  <Bell className="h-3.5 w-3.5" />
                   {loading ? "Loading..." : subscribed ? "Unsubscribe" : "Subscribe"}
                 </button>
               )}
@@ -340,7 +320,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 className="rounded-md border border-red-500 p-2 text-red-500 shadow-sm duration-300 hover:bg-red-500/20 focus:outline-none"
                 onClick={() => setDeleteIssueModal(true)}
               >
-                <TrashIcon className="h-3.5 w-3.5" />
+                <Trash2 className="h-3.5 w-3.5" />
               </button>
             )}
           </div>
@@ -353,7 +333,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("state")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-                      <Squares2X2Icon className="h-4 w-4 flex-shrink-0" />
+                      <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
                       <p>State</p>
                     </div>
                     <div className="sm:basis-1/2">
@@ -395,7 +375,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("priority")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-                      <ChartBarIcon className="h-4 w-4 flex-shrink-0" />
+                      <Signal className="h-4 w-4 flex-shrink-0" />
                       <p>Priority</p>
                     </div>
                     <div className="sm:basis-1/2">
@@ -413,30 +393,27 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                     </div>
                   </div>
                 )}
-                {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) &&
-                  isEstimateActive && (
-                    <div className="flex flex-wrap items-center py-2">
-                      <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-                        <PlayIcon className="h-4 w-4 flex-shrink-0 -rotate-90" />
-                        <p>Estimate</p>
-                      </div>
-                      <div className="sm:basis-1/2">
-                        <Controller
-                          control={control}
-                          name="estimate_point"
-                          render={({ field: { value } }) => (
-                            <SidebarEstimateSelect
-                              value={value}
-                              onChange={(val: number | null) =>
-                                submitChanges({ estimate_point: val })
-                              }
-                              disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
-                            />
-                          )}
-                        />
-                      </div>
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) && isEstimateActive && (
+                  <div className="flex flex-wrap items-center py-2">
+                    <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
+                      <Triangle className="h-4 w-4 flex-shrink-0 " />
+                      <p>Estimate</p>
                     </div>
-                  )}
+                    <div className="sm:basis-1/2">
+                      <Controller
+                        control={control}
+                        name="estimate_point"
+                        render={({ field: { value } }) => (
+                          <SidebarEstimateSelect
+                            value={value}
+                            onChange={(val: number | null) => submitChanges({ estimate_point: val })}
+                            disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                          />
+                        )}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             )}
             {showSecondSection && (
@@ -444,7 +421,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-                      <UserIcon className="h-4 w-4 flex-shrink-0" />
+                      <User2 className="h-4 w-4 flex-shrink-0" />
                       <p>Parent</p>
                     </div>
                     <div className="sm:basis-1/2">
@@ -480,6 +457,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                         },
                         false
                       );
+                      mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
                     }}
                     watch={watchIssue}
                     disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
@@ -500,6 +478,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                         },
                         false
                       );
+                      mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
                     }}
                     watch={watchIssue}
                     disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
@@ -517,6 +496,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                           ...data,
                         };
                       });
+                      mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
                     }}
                     watch={watchIssue}
                     disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
@@ -534,6 +514,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                           ...data,
                         };
                       });
+                      mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
                     }}
                     watch={watchIssue}
                     disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
@@ -542,7 +523,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("startDate")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-                      <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
+                      <CalendarDays className="h-4 w-4 flex-shrink-0" />
                       <p>Start date</p>
                     </div>
                     <div className="sm:basis-1/2">
@@ -570,7 +551,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("dueDate")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-                      <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
+                      <CalendarDays className="h-4 w-4 flex-shrink-0" />
                       <p>Due date</p>
                     </div>
                     <div className="sm:basis-1/2">
@@ -617,7 +598,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("module")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
-                      <RectangleGroupIcon className="h-4 w-4 flex-shrink-0" />
+                      <DiceIcon className="h-4 w-4 flex-shrink-0" />
                       <p>Module</p>
                     </div>
                     <div className="space-y-1 sm:w-1/2">
@@ -655,7 +636,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                     onClick={() => setLinkModal(true)}
                     disabled={uneditable}
                   >
-                    <PlusIcon className="h-4 w-4" />
+                    <Plus className="h-4 w-4" />
                   </button>
                 )}
               </div>

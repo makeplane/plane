@@ -7,20 +7,13 @@ import { mutate } from "swr";
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
 // services
-import issuesService from "services/issues.service";
+import { IssueLabelService } from "services/issue";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
-import {
-  ChevronDownIcon,
-  XMarkIcon,
-  PlusIcon,
-  PencilIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
-import { Component, X } from "lucide-react";
+import { ChevronDown, Component, Pencil, Plus, Trash2, X } from "lucide-react";
 // types
-import { ICurrentUserResponse, IIssueLabels } from "types";
+import { IUser, IIssueLabels } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 
@@ -30,8 +23,11 @@ type Props = {
   addLabelToGroup: (parentLabel: IIssueLabels) => void;
   editLabel: (label: IIssueLabels) => void;
   handleLabelDelete: () => void;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
+
+// services
+const issueLabelService = new IssueLabelService();
 
 export const SingleLabelGroup: React.FC<Props> = ({
   label,
@@ -58,7 +54,7 @@ export const SingleLabelGroup: React.FC<Props> = ({
       false
     );
 
-    issuesService
+    issueLabelService
       .patchIssueLabel(
         workspaceSlug as string,
         projectId as string,
@@ -90,29 +86,27 @@ export const SingleLabelGroup: React.FC<Props> = ({
               <CustomMenu ellipsis buttonClassName="!text-custom-sidebar-text-400">
                 <CustomMenu.MenuItem onClick={() => addLabelToGroup(label)}>
                   <span className="flex items-center justify-start gap-2">
-                    <PlusIcon className="h-4 w-4" />
+                    <Plus className="h-4 w-4" />
                     <span>Add more labels</span>
                   </span>
                 </CustomMenu.MenuItem>
                 <CustomMenu.MenuItem onClick={() => editLabel(label)}>
                   <span className="flex items-center justify-start gap-2">
-                    <PencilIcon className="h-4 w-4" />
+                    <Pencil className="h-4 w-4" />
                     <span>Edit label</span>
                   </span>
                 </CustomMenu.MenuItem>
                 <CustomMenu.MenuItem onClick={handleLabelDelete}>
                   <span className="flex items-center justify-start gap-2">
-                    <TrashIcon className="h-4 w-4" />
+                    <Trash2 className="h-4 w-4" />
                     <span>Delete label</span>
                   </span>
                 </CustomMenu.MenuItem>
               </CustomMenu>
               <Disclosure.Button>
                 <span>
-                  <ChevronDownIcon
-                    className={`h-4 w-4 text-custom-sidebar-text-400 ${
-                      !open ? "rotate-90 transform" : ""
-                    }`}
+                  <ChevronDown
+                    className={`h-4 w-4 text-custom-sidebar-text-400 ${!open ? "rotate-90 transform" : ""}`}
                   />
                 </span>
               </Disclosure.Button>
@@ -138,8 +132,7 @@ export const SingleLabelGroup: React.FC<Props> = ({
                       <span
                         className="h-3.5 w-3.5 flex-shrink-0 rounded-full"
                         style={{
-                          backgroundColor:
-                            child.color && child.color !== "" ? child.color : "#000000",
+                          backgroundColor: child.color && child.color !== "" ? child.color : "#000000",
                         }}
                       />
                       {child.name}
@@ -155,13 +148,13 @@ export const SingleLabelGroup: React.FC<Props> = ({
                         >
                           <CustomMenu.MenuItem onClick={() => removeFromGroup(child)}>
                             <span className="flex items-center justify-start gap-2">
-                              <XMarkIcon className="h-4 w-4" />
+                              <X className="h-4 w-4" />
                               <span>Remove from group</span>
                             </span>
                           </CustomMenu.MenuItem>
                           <CustomMenu.MenuItem onClick={() => editLabel(child)}>
                             <span className="flex items-center justify-start gap-2">
-                              <PencilIcon className="h-4 w-4" />
+                              <Pencil className="h-4 w-4" />
                               <span>Edit label</span>
                             </span>
                           </CustomMenu.MenuItem>
@@ -169,11 +162,8 @@ export const SingleLabelGroup: React.FC<Props> = ({
                       </div>
 
                       <div className="flex items-center">
-                        <button
-                          className="flex items-center justify-start gap-2"
-                          onClick={handleLabelDelete}
-                        >
-                          <X className="h-[18px] w-[18px] text-custom-sidebar-text-400 flex-shrink-0" />
+                        <button className="flex items-center justify-start gap-2" onClick={handleLabelDelete}>
+                          <X className="h-4 w-4 text-custom-sidebar-text-400 flex-shrink-0" />
                         </button>
                       </div>
                     </div>

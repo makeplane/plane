@@ -1,22 +1,21 @@
-// swr
 import useSWR from "swr";
 
 // services
-import userService from "services/user.service";
-
+import { UserService } from "services/user.service";
 // fetch keys
 import { CURRENT_USER } from "constants/fetch-keys";
-
 // icons
 import { AlertCircle } from "lucide-react";
-
 // ui
-import { Spinner } from "components/ui";
+import { Spinner } from "@plane/ui";
 
 type Props = {
   children: React.ReactNode;
   fullScreen?: boolean;
 };
+
+// services
+const userService = new UserService();
 
 const getIfInWebview = (userAgent: NavigatorID["userAgent"]) => {
   const safari = /safari/.test(userAgent);
@@ -40,7 +39,6 @@ const WebViewLayout: React.FC<Props> = ({ children, fullScreen = true }) => {
     return (
       <div className="h-screen grid place-items-center p-4">
         <div className="flex flex-col items-center gap-3 text-center">
-          <h3 className="text-xl">Loading your profile...</h3>
           <Spinner />
         </div>
       </div>

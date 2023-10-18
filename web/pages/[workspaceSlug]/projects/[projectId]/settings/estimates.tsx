@@ -1,16 +1,13 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-
+import Link from "next/link";
 import useSWR, { mutate } from "swr";
-
 // services
-import estimatesService from "services/estimates.service";
-import projectService from "services/project.service";
+import { ProjectService, ProjectEstimateService } from "services/project";
 // hooks
 import useProjectDetails from "hooks/use-project-details";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import { CreateUpdateEstimateModal, SingleEstimate } from "components/estimates";
 import { SettingsSidebar } from "components/project";
@@ -18,10 +15,10 @@ import { SettingsSidebar } from "components/project";
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // ui
-import { EmptyState, Loader, PrimaryButton, SecondaryButton } from "components/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { BreadcrumbItem, Breadcrumbs, Button, Loader } from "@plane/ui";
+import { EmptyState } from "components/common";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Plus } from "lucide-react";
 // images
 import emptyEstimate from "public/empty-state/estimate.svg";
 // types
@@ -31,6 +28,10 @@ import type { NextPage } from "next";
 import { ESTIMATES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
+
+// services
+const projectService = new ProjectService();
+const projectEstimateService = new ProjectEstimateService();
 
 const EstimatesSettings: NextPage = () => {
   const [estimateFormOpen, setEstimateFormOpen] = useState(false);
@@ -49,7 +50,7 @@ const EstimatesSettings: NextPage = () => {
   const { data: estimatesList } = useSWR<IEstimate[]>(
     workspaceSlug && projectId ? ESTIMATES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => estimatesService.getEstimatesList(workspaceSlug as string, projectId as string)
+      ? () => projectEstimateService.getEstimatesList(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -67,15 +68,13 @@ const EstimatesSettings: NextPage = () => {
       false
     );
 
-    estimatesService
-      .deleteEstimate(workspaceSlug as string, projectId as string, estimateId, user)
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Error: Estimate could not be deleted. Please try again",
-        });
+    projectEstimateService.deleteEstimate(workspaceSlug as string, projectId as string, estimateId, user).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Error: Estimate could not be deleted. Please try again",
       });
+    });
   };
 
   const disableEstimates = () => {
@@ -91,15 +90,13 @@ const EstimatesSettings: NextPage = () => {
       false
     );
 
-    projectService
-      .updateProject(workspaceSlug as string, projectId as string, { estimate: null }, user)
-      .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Estimate could not be disabled. Please try again",
-        })
-      );
+    projectService.updateProject(workspaceSlug as string, projectId as string, { estimate: null }, user).catch(() =>
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Estimate could not be disabled. Please try again",
+      })
+    );
   };
 
   return (
@@ -115,11 +112,15 @@ const EstimatesSettings: NextPage = () => {
       />
       <ProjectAuthorizationWrapper
         breadcrumbs={
-          <Breadcrumbs>
+          <Breadcrumbs onBack={() => router.back()}>
             <BreadcrumbItem
-              title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
-              link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
-              linkTruncate
+              link={
+                <Link href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}>
+                  <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                    <p className="truncate">{`${truncateText(projectDetails?.name ?? "Project", 32)}`}</p>
+                  </a>
+                </Link>
+              }
             />
             <BreadcrumbItem title="Estimates Settings" unshrinkTitle />
           </Breadcrumbs>
@@ -134,16 +135,19 @@ const EstimatesSettings: NextPage = () => {
               <h3 className="text-xl font-medium">Estimates</h3>
               <div className="col-span-12 space-y-5 sm:col-span-7">
                 <div className="flex items-center gap-2">
-                  <PrimaryButton
+                  <Button
+                    variant="primary"
                     onClick={() => {
                       setEstimateToUpdate(undefined);
                       setEstimateFormOpen(true);
                     }}
                   >
                     Add Estimate
-                  </PrimaryButton>
+                  </Button>
                   {projectDetails?.estimate && (
-                    <SecondaryButton onClick={disableEstimates}>Disable Estimates</SecondaryButton>
+                    <Button variant="neutral-primary" onClick={disableEstimates}>
+                      Disable Estimates
+                    </Button>
                   )}
                 </div>
               </div>
@@ -168,7 +172,7 @@ const EstimatesSettings: NextPage = () => {
                     description="Estimates help you communicate the complexity of an issue."
                     image={emptyEstimate}
                     primaryButton={{
-                      icon: <PlusIcon className="h-4 w-4" />,
+                      icon: <Plus className="h-4 w-4" />,
                       text: "Add Estimate",
                       onClick: () => {
                         setEstimateToUpdate(undefined);

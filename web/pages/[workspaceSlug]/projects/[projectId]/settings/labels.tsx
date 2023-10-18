@@ -1,16 +1,17 @@
 import React, { useState, useRef } from "react";
 
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 import useSWR from "swr";
 
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // services
-import projectService from "services/project.service";
-import issuesService from "services/issues.service";
+import { ProjectService } from "services/project";
+import { IssueLabelService } from "services/issue";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import {
   CreateUpdateLabelInline,
@@ -21,10 +22,8 @@ import {
 } from "components/labels";
 import { SettingsSidebar } from "components/project";
 // ui
-import { EmptyState, Loader, PrimaryButton } from "components/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-// icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { BreadcrumbItem, Breadcrumbs, Button, Loader } from "@plane/ui";
+import { EmptyState } from "components/common";
 // images
 import emptyLabel from "public/empty-state/label.svg";
 // types
@@ -34,6 +33,10 @@ import type { NextPage } from "next";
 import { PROJECT_DETAILS, PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
+
+// services
+const projectService = new ProjectService();
+const issueLabelService = new IssueLabelService();
 
 const LabelsSettings: NextPage = () => {
   // create/edit label form
@@ -59,15 +62,13 @@ const LabelsSettings: NextPage = () => {
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => projectService.getProject(workspaceSlug as string, projectId as string) : null
   );
 
   const { data: issueLabels } = useSWR(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
+      ? () => issueLabelService.getProjectIssueLabels(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -103,11 +104,15 @@ const LabelsSettings: NextPage = () => {
       />
       <ProjectAuthorizationWrapper
         breadcrumbs={
-          <Breadcrumbs>
+          <Breadcrumbs onBack={() => router.back()}>
             <BreadcrumbItem
-              title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
-              link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
-              linkTruncate
+              link={
+                <Link href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}>
+                  <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                    <p className="truncate">{`${truncateText(projectDetails?.name ?? "Project", 32)}`}</p>
+                  </a>
+                </Link>
+              }
             />
             <BreadcrumbItem title="Labels Settings" unshrinkTitle />
           </Breadcrumbs>
@@ -121,13 +126,9 @@ const LabelsSettings: NextPage = () => {
             <div className="flex items-center justify-between pt-2 pb-3.5 border-b border-custom-border-200">
               <h3 className="text-xl font-medium">Labels</h3>
 
-              <PrimaryButton
-                onClick={newLabel}
-                size="sm"
-                className="flex items-center justify-center"
-              >
+              <Button variant="primary" onClick={newLabel} size="sm">
                 Add label
-              </PrimaryButton>
+              </Button>
             </div>
             <div className="space-y-3 py-6 h-full w-full">
               {labelForm && (

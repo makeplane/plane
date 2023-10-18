@@ -130,10 +130,7 @@ export const formatDateDistance = (date: string | Date) => {
   }
 };
 
-export const getDateRangeStatus = (
-  startDate: string | null | undefined,
-  endDate: string | null | undefined
-) => {
+export const getDateRangeStatus = (startDate: string | null | undefined, endDate: string | null | undefined) => {
   if (!startDate || !endDate) return "draft";
 
   const today = renderDateFormat(new Date());
@@ -155,20 +152,7 @@ export const renderShortDateWithYearFormat = (date: string | Date, placeholder?:
 
   date = new Date(date);
 
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const day = date.getDate();
   const month = months[date.getMonth()];
   const year = date.getFullYear();
@@ -181,20 +165,7 @@ export const renderShortDate = (date: string | Date, placeholder?: string) => {
 
   date = new Date(date);
 
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const day = date.getDate();
   const month = months[date.getMonth()];
 
@@ -234,8 +205,7 @@ export const render24HourFormatTime = (date: string | Date): string => {
   return hours + ":" + minutes;
 };
 
-export const isDateRangeValid = (startDate: string, endDate: string) =>
-  new Date(startDate) < new Date(endDate);
+export const isDateRangeValid = (startDate: string, endDate: string) => new Date(startDate) < new Date(endDate);
 
 export const isDateGreaterThanToday = (dateStr: string) => {
   const date = new Date(dateStr);
@@ -331,8 +301,7 @@ export const getDatesAfterCurrentDate = (): Array<{
  * @example checkIfStringIsDate("2021-01-32") // false
  */
 
-export const checkIfStringIsDate = (date: string): boolean =>
-  new Date(date).toString() !== "Invalid Date";
+export const checkIfStringIsDate = (date: string): boolean => new Date(date).toString() !== "Invalid Date";
 
 // return an array of dates starting from 12:00 to 23:30 with 30 minutes interval as dates
 export const getDatesWith30MinutesInterval = (): Array<Date> => {
@@ -384,11 +353,7 @@ export const getAllTimeIn30MinutesInterval = (): Array<{
  * @example checkIfStringIsDate("2021-01-01", "2021-01-08") // 8
  */
 
-export const findTotalDaysInRange = (
-  startDate: Date | string,
-  endDate: Date | string,
-  inclusive: boolean
-): number => {
+export const findTotalDaysInRange = (startDate: Date | string, endDate: Date | string, inclusive: boolean): number => {
   if (!startDate || !endDate) return 0;
 
   startDate = new Date(startDate);
@@ -405,3 +370,46 @@ export const findTotalDaysInRange = (
 };
 
 export const getUserTimeZoneFromWindow = () => Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+/**
+ * @returns {number} week number of date
+ * @description Returns week number of date
+ * @param {Date} date
+ * @example getWeekNumber(new Date("2023-09-01")) // 35
+ */
+export const getWeekNumberOfDate = (date: Date): number => {
+  const currentDate = new Date(date);
+
+  // Adjust the starting day to Sunday (0) instead of Monday (1)
+  const startDate = new Date(currentDate.getFullYear(), 0, 1);
+
+  // Calculate the number of days between currentDate and startDate
+  const days = Math.floor((currentDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000));
+
+  // Adjust the calculation for weekNumber
+  const weekNumber = Math.ceil((days + 1) / 7);
+
+  return weekNumber;
+};
+
+/**
+ * @returns {Date} first date of week
+ * @description Returns week number of date
+ * @param {Date} date
+ * @example getFirstDateOfWeek(35, 2023) // 2023-08-27T00:00:00.000Z
+ */
+export const getFirstDateOfWeek = (date: Date): Date => {
+  const year = date.getFullYear();
+  const weekNumber = getWeekNumberOfDate(date);
+
+  const januaryFirst: Date = new Date(year, 0, 1); // January is month 0
+  const daysToAdd: number = (weekNumber - 1) * 7; // Subtract 1 from the week number since weeks are 0-indexed
+  const firstDateOfWeek: Date = new Date(januaryFirst);
+  firstDateOfWeek.setDate(januaryFirst.getDate() + daysToAdd);
+
+  // Adjust the date to Sunday (week start)
+  const dayOfWeek: number = firstDateOfWeek.getDay();
+  firstDateOfWeek.setDate(firstDateOfWeek.getDate() - dayOfWeek); // Move back to Sunday
+
+  return firstDateOfWeek;
+};

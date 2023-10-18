@@ -1,5 +1,9 @@
+import { Placement } from "@popperjs/core";
+
 export type DropdownProps = {
+  customButtonClassName?: string;
   buttonClassName?: string;
+  customButtonClassName?: string;
   className?: string;
   customButton?: JSX.Element;
   disabled?: boolean;
@@ -9,8 +13,6 @@ export type DropdownProps = {
   noChevron?: boolean;
   onOpen?: () => void;
   optionsClassName?: string;
-  position?: "right" | "left";
-  selfPositioned?: boolean;
-  verticalPosition?: "top" | "bottom";
   width?: "auto" | string;
+  placement?: Placement;
 };

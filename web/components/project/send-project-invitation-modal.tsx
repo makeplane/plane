@@ -8,25 +8,19 @@ import { useForm, Controller, useFieldArray } from "react-hook-form";
 
 import { Dialog, Transition } from "@headlessui/react";
 // ui
-import {
-  Avatar,
-  CustomSearchSelect,
-  CustomSelect,
-  PrimaryButton,
-  SecondaryButton,
-} from "components/ui";
+import { Button } from "@plane/ui";
+import { Avatar, CustomSearchSelect, CustomSelect } from "components/ui";
 //icons
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { ChevronDown, Plus, X } from "lucide-react";
 // services
-import projectService from "services/project.service";
-import workspaceService from "services/workspace.service";
+import { ProjectService } from "services/project";
+import { WorkspaceService } from "services/workspace.service";
 // contexts
 import { useProjectMyMembership } from "contexts/project-member.context";
 // hooks
 import useToast from "hooks/use-toast";
 // types
-import { ICurrentUserResponse } from "types";
+import { IUser } from "types";
 // fetch-keys
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // constants
@@ -36,7 +30,7 @@ type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   members: any[];
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   onSuccess: () => void;
 };
 
@@ -57,6 +51,10 @@ const defaultValues: FormValues = {
     },
   ],
 };
+
+// services
+const projectService = new ProjectService();
+const workspaceService = new WorkspaceService();
 
 const SendProjectInvitationModal: React.FC<Props> = (props) => {
   const { isOpen, setIsOpen, members, user, onSuccess } = props;
@@ -178,24 +176,16 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
               <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-80 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="space-y-5">
-                    <Dialog.Title
-                      as="h3"
-                      className="text-lg font-medium leading-6 text-custom-text-100"
-                    >
+                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                       Invite Members
                     </Dialog.Title>
                     <div className="mt-2">
-                      <p className="text-sm text-custom-text-200">
-                        Invite members to work on your project.
-                      </p>
+                      <p className="text-sm text-custom-text-200">Invite members to work on your project.</p>
                     </div>
 
                     <div className="space-y-4 mb-3">
                       {fields.map((field, index) => (
-                        <div
-                          key={field.id}
-                          className="group grid grid-cols-12 gap-x-4 mb-1 text-sm items-start"
-                        >
+                        <div key={field.id} className="group grid grid-cols-12 gap-x-4 mb-1 text-sm items-start">
                           <div className="flex flex-col gap-1 col-span-7">
                             <Controller
                               control={control}
@@ -208,29 +198,19 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
                                     <button className="flex w-full items-center justify-between gap-1 rounded-md border border-custom-border-200 shadow-sm duration-300 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 focus:outline-none px-3 py-2 text-sm text-left">
                                       {value && value !== "" ? (
                                         <div className="flex items-center gap-2">
-                                          <Avatar
-                                            user={
-                                              people?.find((p) => p.member.id === value)?.member
-                                            }
-                                          />
-                                          {
-                                            people?.find((p) => p.member.id === value)?.member
-                                              .display_name
-                                          }
+                                          <Avatar user={people?.find((p) => p.member.id === value)?.member} />
+                                          {people?.find((p) => p.member.id === value)?.member.display_name}
                                         </div>
                                       ) : (
-                                        <div className="flex items-center gap-2 py-0.5">
-                                          Select co-worker
-                                        </div>
+                                        <div className="flex items-center gap-2 py-0.5">Select co-worker</div>
                                       )}
-                                      <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+                                      <ChevronDown className="h-3 w-3" aria-hidden="true" />
                                     </button>
                                   }
                                   onChange={(val: string) => {
                                     onChange(val);
                                   }}
                                   options={options}
-                                  position="left"
                                   width="w-full min-w-[12rem]"
                                 />
                               )}
@@ -252,12 +232,12 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
                                   <CustomSelect
                                     {...field}
                                     customButton={
-                                      <button className="flex w-full items-center justify-between gap-1 rounded-md border border-custom-border-200 shadow-sm duration-300 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 focus:outline-none px-3 py-2.5 text-sm text-left">
+                                      <div className="flex w-full items-center justify-between gap-1 rounded-md border border-custom-border-200 shadow-sm duration-300 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 focus:outline-none px-3 py-2.5 text-sm text-left">
                                         <span className="capitalize">
                                           {field.value ? ROLE[field.value] : "Select role"}
                                         </span>
-                                        <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
-                                      </button>
+                                        <ChevronDown className="h-3 w-3" aria-hidden="true" />
+                                      </div>
                                     }
                                     input
                                     width="w-full"
@@ -287,7 +267,7 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
                                   className="self-center place-items-center rounded"
                                   onClick={() => remove(index)}
                                 >
-                                  <XMarkIcon className="h-4 w-4 text-custom-text-200" />
+                                  <X className="h-4 w-4 text-custom-text-200" />
                                 </button>
                               )}
                             </div>
@@ -303,18 +283,18 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
                       className="flex items-center gap-2 outline-custom-primary bg-transparent text-custom-primary text-sm font-medium py-2 pr-3"
                       onClick={appendField}
                     >
-                      <PlusIcon className="h-4 w-4" />
+                      <Plus className="h-4 w-4" />
                       Add more
                     </button>
                     <div className="flex items-center gap-2">
-                      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                      <PrimaryButton type="submit" loading={isSubmitting}>
+                      <Button variant="neutral-primary" onClick={handleClose}>
+                        Cancel
+                      </Button>
+                      <Button variant="primary" type="submit" loading={isSubmitting}>
                         {isSubmitting
-                          ? `${
-                              fields && fields.length > 1 ? "Adding Members..." : "Adding Member..."
-                            }`
+                          ? `${fields && fields.length > 1 ? "Adding Members..." : "Adding Member..."}`
                           : `${fields && fields.length > 1 ? "Add Members" : "Add Member"}`}
-                      </PrimaryButton>
+                      </Button>
                     </div>
                   </div>
                 </form>

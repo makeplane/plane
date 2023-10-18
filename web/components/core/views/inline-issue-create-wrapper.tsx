@@ -1,21 +1,11 @@
 import { useEffect, useRef } from "react";
-
-// next
 import { useRouter } from "next/router";
-
-// swr
 import { mutate } from "swr";
-
-// react hook form
 import { useForm, FormProvider } from "react-hook-form";
-
-// headless ui
 import { Transition } from "@headlessui/react";
-
 // services
-import modulesService from "services/modules.service";
-import issuesService from "services/issues.service";
-
+import { ModuleService } from "services/module.service";
+import { IssueService, IssueDraftService } from "services/issue";
 // hooks
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
@@ -23,10 +13,9 @@ import useKeypress from "hooks/use-keypress";
 import useIssuesView from "hooks/use-issues-view";
 import useMyIssues from "hooks/my-issues/use-my-issues";
 import useGanttChartIssues from "hooks/gantt-chart/issue-view";
-import useCalendarIssuesView from "hooks/use-calendar-issues-view";
+// import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
-
+// import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
 // helpers
 import { getFetchKeysForIssueMutation } from "helpers/string.helper";
 
@@ -39,6 +28,7 @@ import {
   CYCLE_DETAILS,
   MODULE_DETAILS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
+  PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS,
 } from "constants/fetch-keys";
 
 // types
@@ -57,6 +47,10 @@ type Props = {
   children?: React.ReactNode;
 };
 
+const issueService = new IssueService();
+const issueDraftService = new IssueDraftService();
+const moduleService = new ModuleService();
+
 export const addIssueToCycle = async (
   workspaceSlug: string,
   projectId: string,
@@ -67,7 +61,7 @@ export const addIssueToCycle = async (
 ) => {
   if (!workspaceSlug || !projectId) return;
 
-  await issuesService
+  await issueService
     .addIssueToCycle(
       workspaceSlug as string,
       projectId.toString(),
@@ -93,7 +87,7 @@ export const addIssueToModule = async (
   user: any,
   params: any
 ) => {
-  await modulesService
+  await moduleService
     .addIssuesToModule(
       workspaceSlug as string,
       projectId.toString(),
@@ -119,19 +113,18 @@ export const InlineCreateIssueFormWrapper: React.FC<Props> = (props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
+  const isDraftIssues = router.pathname?.split("/")?.[4] === "draft-issues";
+
   const { user } = useUser();
 
   const { setToastAlert } = useToast();
 
   const { displayFilters, params } = useIssuesView();
-  const { params: calendarParams } = useCalendarIssuesView();
+  // const { params: calendarParams } = useCalendarIssuesView();
   const { ...viewGanttParams } = params;
-  const { params: spreadsheetParams } = useSpreadsheetIssuesView();
+  // const { params: spreadsheetParams } = useSpreadsheetIssuesView();
   const { groupedIssues, mutateMyIssues } = useMyIssues(workspaceSlug?.toString());
-  const { params: ganttParams } = useGanttChartIssues(
-    workspaceSlug?.toString(),
-    projectId?.toString()
-  );
+  const { params: ganttParams } = useGanttChartIssues(workspaceSlug?.toString(), projectId?.toString());
 
   const method = useForm<IIssue>({ defaultValues });
   const {
@@ -155,15 +148,6 @@ export const InlineCreateIssueFormWrapper: React.FC<Props> = (props) => {
   }, [isOpen, reset]);
 
   useEffect(() => {
-    if (isSubmitting)
-      setToastAlert({
-        type: "info",
-        title: "Creating issue...",
-        message: "Please wait while we create your issue.",
-      });
-  }, [isSubmitting, setToastAlert]);
-
-  useEffect(() => {
     if (!errors) return;
 
     Object.keys(errors).forEach((key) => {
@@ -177,13 +161,11 @@ export const InlineCreateIssueFormWrapper: React.FC<Props> = (props) => {
     });
   }, [errors, setToastAlert]);
 
-  const { calendarFetchKey, ganttFetchKey, spreadsheetFetchKey } = getFetchKeysForIssueMutation({
+  const { ganttFetchKey } = getFetchKeysForIssueMutation({
     cycleId: cycleId,
     moduleId: moduleId,
     viewId: viewId,
     projectId: projectId?.toString() ?? "",
-    calendarParams,
-    spreadsheetParams,
     viewGanttParams,
     ganttParams,
   });
@@ -193,33 +175,20 @@ export const InlineCreateIssueFormWrapper: React.FC<Props> = (props) => {
 
     reset({ ...defaultValues });
 
-    await issuesService
-      .createIssues(workspaceSlug.toString(), projectId.toString(), formData, user)
+    await (!isDraftIssues
+      ? issueService.createIssues(workspaceSlug.toString(), projectId.toString(), formData, user)
+      : issueDraftService.createDraftIssue(workspaceSlug.toString(), projectId.toString(), formData)
+    )
       .then(async (res) => {
-        mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params));
+        await mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params));
         if (formData.cycle && formData.cycle !== "")
-          await addIssueToCycle(
-            workspaceSlug.toString(),
-            projectId.toString(),
-            res.id,
-            formData.cycle,
-            user,
-            params
-          );
+          await addIssueToCycle(workspaceSlug.toString(), projectId.toString(), res.id, formData.cycle, user, params);
         if (formData.module && formData.module !== "")
-          await addIssueToModule(
-            workspaceSlug.toString(),
-            projectId.toString(),
-            res.id,
-            formData.module,
-            user,
-            params
-          );
+          await addIssueToModule(workspaceSlug.toString(), projectId.toString(), res.id, formData.module, user, params);
 
-        if (displayFilters.layout === "calendar") mutate(calendarFetchKey);
-        if (displayFilters.layout === "gantt_chart") mutate(ganttFetchKey);
-        if (displayFilters.layout === "spreadsheet") mutate(spreadsheetFetchKey);
-        if (groupedIssues) mutateMyIssues();
+        if (isDraftIssues) await mutate(PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS(projectId.toString() ?? "", params));
+        if (displayFilters.layout === "gantt_chart") await mutate(ganttFetchKey);
+        if (groupedIssues) await mutateMyIssues();
 
         setToastAlert({
           type: "success",
