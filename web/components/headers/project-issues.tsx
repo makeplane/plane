@@ -126,7 +126,7 @@ export const ProjectIssuesHeader: FC = observer(() => {
             </Breadcrumbs>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <LayoutSelection
             layouts={["list", "kanban", "calendar", "spreadsheet", "gantt_chart"]}
             onChange={(layout) => handleLayoutChange(layout)}
