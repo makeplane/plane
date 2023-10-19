@@ -17,7 +17,6 @@ import {
   LogOut,
   ChevronDown,
 } from "lucide-react";
-import { Tooltip, ArchiveIcon, PhotoFilterIcon, DiceIcon, ContrastIcon, LayersIcon } from "@plane/ui";
 // hooks
 import useToast from "hooks/use-toast";
 // helpers
@@ -27,7 +26,7 @@ import { IProject } from "types";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { CustomMenu } from "components/ui";
+import { CustomMenu, Tooltip, ArchiveIcon, PhotoFilterIcon, DiceIcon, ContrastIcon, LayersIcon } from "@plane/ui";
 import { LeaveProjectModal, DeleteProjectModal } from "components/project";
 import { PublishProjectModal } from "components/project/publish-project";
 

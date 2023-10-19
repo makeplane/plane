@@ -4,9 +4,9 @@ import useSWR from "swr";
 // services
 import { ProjectService } from "services/project";
 // ui
-import { AssigneesList, Avatar, CustomSearchSelect } from "components/ui";
+import { AssigneesList, Avatar } from "components/ui";
 // icons
-import { UserGroupIcon } from "@plane/ui";
+import { CustomSearchSelect, UserGroupIcon } from "@plane/ui";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 

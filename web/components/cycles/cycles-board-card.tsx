@@ -10,9 +10,8 @@ import { SingleProgressStats } from "components/core";
 import { CycleCreateEditModal } from "./cycle-create-edit-modal";
 import { CycleDeleteModal } from "./cycle-delete-modal";
 // ui
-import { CustomMenu } from "components/ui";
 import { AssigneesList } from "components/ui/avatar";
-import { Tooltip, LinearProgressIndicator, ContrastIcon, RunningIcon } from "@plane/ui";
+import { CustomMenu, Tooltip, LinearProgressIndicator, ContrastIcon, RunningIcon } from "@plane/ui";
 // icons
 import {
   AlarmClock,

@@ -6,8 +6,7 @@ import { IssueLabelService } from "services/issue";
 // component
 import { CreateLabelModal } from "components/labels";
 // ui
-import { CustomSearchSelect } from "components/ui";
-import { Tooltip } from "@plane/ui";
+import { CustomSearchSelect, Tooltip } from "@plane/ui";
 // icons
 import { Plus, Tag } from "lucide-react";
 // types

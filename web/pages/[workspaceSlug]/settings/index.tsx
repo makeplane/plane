@@ -20,8 +20,7 @@ import { DeleteWorkspaceModal } from "components/workspace";
 import { WorkspaceSettingHeader } from "components/headers";
 // ui
 import { Disclosure, Transition } from "@headlessui/react";
-import { CustomSelect } from "components/ui";
-import { Button, Input, Spinner } from "@plane/ui";
+import { Button, CustomSelect, Input, Spinner } from "@plane/ui";
 // icons
 import { ChevronDown, ChevronUp, Pencil } from "lucide-react";
 // types

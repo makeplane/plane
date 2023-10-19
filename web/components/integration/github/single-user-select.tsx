@@ -5,8 +5,8 @@ import useSWR from "swr";
 // services
 import { WorkspaceService } from "services/workspace.service";
 // ui
-import { Avatar, CustomSearchSelect, CustomSelect } from "components/ui";
-import { Input } from "@plane/ui";
+import { Avatar } from "components/ui";
+import { CustomSelect, CustomSearchSelect, Input } from "@plane/ui";
 // types
 import { IGithubRepoCollaborator } from "types";
 import { IUserDetails } from "./root";

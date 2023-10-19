@@ -2,8 +2,7 @@ import React from "react";
 // hooks
 import useEstimateOption from "hooks/use-estimate-option";
 // ui
-import { CustomSelect } from "components/ui";
-import { Tooltip } from "@plane/ui";
+import { CustomSelect, Tooltip } from "@plane/ui";
 // icons
 import { Triangle } from "lucide-react";
 // types

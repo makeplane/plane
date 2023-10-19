@@ -19,8 +19,7 @@ import SendProjectInvitationModal from "components/project/send-project-invitati
 import { MemberSelect } from "components/project";
 import { ProjectSettingHeader } from "components/headers";
 // ui
-import { Button, Loader } from "@plane/ui";
-import { CustomMenu, CustomSelect } from "components/ui";
+import { Button, CustomMenu, CustomSelect, Loader } from "@plane/ui";
 // icons
 import { ChevronDown, X } from "lucide-react";
 // types

@@ -9,8 +9,8 @@ import useToast from "hooks/use-toast";
 // components
 import { DeleteModuleModal } from "components/modules";
 // ui
-import { AssigneesList, CustomMenu } from "components/ui";
-import { Tooltip } from "@plane/ui";
+import { AssigneesList } from "components/ui";
+import { CustomMenu, Tooltip } from "@plane/ui";
 // icons
 import { CalendarDays, LinkIcon, Pencil, Star, Target, Trash2 } from "lucide-react";
 // helpers
