@@ -172,11 +172,7 @@ export class ModuleIssueStore implements IModuleIssueStore {
       this.loader = true;
       this.error = null;
 
-      this.rootStore.workspace.setWorkspaceSlug(workspaceSlug);
-      this.rootStore.project.setProjectId(projectId);
-      this.rootStore.module.setModuleId(moduleId);
-
-      const params = this.rootStore?.cycleIssueFilter?.appliedFilters;
+      const params = this.rootStore?.moduleFilter?.appliedFilters;
       const issueResponse = await this.moduleService.getModuleIssuesWithParams(
         workspaceSlug,
         projectId,

@@ -172,10 +172,6 @@ export class CycleIssueStore implements ICycleIssueStore {
       this.loader = true;
       this.error = null;
 
-      this.rootStore.workspace.setWorkspaceSlug(workspaceSlug);
-      this.rootStore.project.setProjectId(projectId);
-      this.rootStore.cycle.setCycleId(cycleId);
-
       const params = this.rootStore?.cycleIssueFilter?.appliedFilters;
       const issueResponse = await this.cycleService.getCycleIssuesWithParams(workspaceSlug, projectId, cycleId, params);
 
