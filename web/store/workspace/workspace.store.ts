@@ -15,8 +15,8 @@ export interface IWorkspaceStore {
   // observables
   workspaceSlug: string | null;
   workspaces: IWorkspace[];
-  labels: { [workspaceSlug: string]: IIssueLabels[] } | {}; // workspaceSlug: labels[]
-  members: { [workspaceSlug: string]: IWorkspaceMember[] } | {}; // workspaceSlug: members[]
+  labels: { [workspaceSlug: string]: IIssueLabels[] }; // workspaceSlug: labels[]
+  members: { [workspaceSlug: string]: IWorkspaceMember[] }; // workspaceSlug: members[]
 
   // actions
   setWorkspaceSlug: (workspaceSlug: string) => void;

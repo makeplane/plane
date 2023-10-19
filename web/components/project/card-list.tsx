@@ -22,8 +22,6 @@ export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
 
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
 
-  console.log("projects", projects);
-
   if (!projects) {
     return (
       <Loader className="grid grid-cols-3 gap-4">

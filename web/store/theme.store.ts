@@ -5,14 +5,14 @@ import { applyTheme, unsetCustomCssVariables } from "helpers/theme.helper";
 
 export interface IThemeStore {
   theme: string | null;
-  sidebarCollapsed: boolean | null;
+  sidebarCollapsed: boolean | undefined;
 
-  setSidebarCollapsed: (collapsed?: boolean) => void;
+  toggleSidebar: (collapsed?: boolean) => void;
   setTheme: (theme: any) => void;
 }
 
 class ThemeStore implements IThemeStore {
-  sidebarCollapsed: boolean | null = null;
+  sidebarCollapsed: boolean | undefined = undefined;
   theme: string | null = null;
   // root store
   rootStore;
@@ -23,7 +23,7 @@ class ThemeStore implements IThemeStore {
       sidebarCollapsed: observable.ref,
       theme: observable.ref,
       // action
-      setSidebarCollapsed: action,
+      toggleSidebar: action,
       setTheme: action,
       // computed
     });
@@ -31,17 +31,14 @@ class ThemeStore implements IThemeStore {
     this.rootStore = _rootStore;
     this.initialLoad();
   }
-
-  setSidebarCollapsed(collapsed?: boolean) {
-    if (!collapsed) {
-      let _sidebarCollapsed: string | boolean | null = localStorage.getItem("app_sidebar_collapsed");
-      _sidebarCollapsed = _sidebarCollapsed ? (_sidebarCollapsed === "true" ? true : false) : false;
-      this.sidebarCollapsed = _sidebarCollapsed;
+  toggleSidebar = (collapsed?: boolean) => {
+    if (collapsed === undefined) {
+      this.sidebarCollapsed = !this.sidebarCollapsed;
     } else {
       this.sidebarCollapsed = collapsed;
-      localStorage.setItem("app_sidebar_collapsed", collapsed.toString());
     }
-  }
+    localStorage.setItem("app_sidebar_collapsed", this.sidebarCollapsed.toString());
+  };
 
   setTheme = async (_theme: { theme: any }) => {
     try {

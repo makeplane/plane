@@ -68,7 +68,7 @@ export interface IProjectStore {
   joinProject: (workspaceSlug: string, projectIds: string[]) => Promise<void>;
   leaveProject: (workspaceSlug: string, projectId: string) => Promise<void>;
   createProject: (workspaceSlug: string, data: any) => Promise<any>;
-  updateProject: (workspaceSlug: string, projectId: string, data: any) => Promise<any>;
+  updateProject: (workspaceSlug: string, projectId: string, data: Partial<IProject>) => Promise<any>;
   deleteProject: (workspaceSlug: string, projectId: string) => Promise<void>;
 }
 
@@ -413,17 +413,39 @@ export class ProjectStore implements IProjectStore {
 
   addProjectToFavorites = async (workspaceSlug: string, projectId: string) => {
     try {
+      runInAction(() => {
+        this.projects = {
+          ...this.projects,
+          [workspaceSlug]: this.projects[workspaceSlug].map((project) => {
+            if (project.id === projectId) {
+              return { ...project, is_favorite: true };
+            }
+            return project;
+          }),
+        };
+      });
       const response = await this.projectService.addProjectToFavorites(workspaceSlug, projectId);
-      await this.fetchProjects(workspaceSlug);
       return response;
     } catch (error) {
       console.log("Failed to add project to favorite");
+      await this.fetchProjects(workspaceSlug);
       throw error;
     }
   };
 
   removeProjectFromFavorites = async (workspaceSlug: string, projectId: string) => {
     try {
+      runInAction(() => {
+        this.projects = {
+          ...this.projects,
+          [workspaceSlug]: this.projects[workspaceSlug].map((project) => {
+            if (project.id === projectId) {
+              return { ...project, is_favorite: false };
+            }
+            return project;
+          }),
+        };
+      });
       const response = await this.projectService.removeProjectFromFavorites(workspaceSlug, projectId);
       await this.fetchProjects(workspaceSlug);
       return response;
@@ -546,19 +568,26 @@ export class ProjectStore implements IProjectStore {
     }
   };
 
-  updateProject = async (workspaceSlug: string, projectId: string, data: any) => {
+  updateProject = async (workspaceSlug: string, projectId: string, data: Partial<IProject>) => {
     try {
+      runInAction(() => {
+        this.projects = {
+          ...this.projects,
+          [workspaceSlug]: this.projects[workspaceSlug].map((p) => (p.id === projectId ? { ...p, ...data } : p)),
+        };
+      });
+
       const response = await this.projectService.updateProject(
         workspaceSlug,
         projectId,
         data,
         this.rootStore.user.currentUser
       );
-      await this.fetchProjectDetails(workspaceSlug, projectId);
-      await this.fetchProjects(workspaceSlug);
       return response;
     } catch (error) {
       console.log("Failed to create project from project store");
+
+      this.fetchProjects(workspaceSlug);
       throw error;
     }
   };

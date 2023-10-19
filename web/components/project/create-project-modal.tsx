@@ -1,16 +1,14 @@
-import { useState, useEffect, Fragment, FC } from "react";
-import { useRouter } from "next/router";
+import { useState, useEffect, Fragment, FC, ChangeEvent } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 // icons
-import { Users2, X } from "lucide-react";
+import { X } from "lucide-react";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
 import useToast from "hooks/use-toast";
 import { useWorkspaceMyMembership } from "contexts/workspace-member.context";
-import useWorkspaceMembers from "hooks/use-workspace-members";
 // ui
-import { CustomSelect, Avatar, CustomSearchSelect } from "components/ui";
+import { CustomSelect } from "components/ui";
 import { Button, Input, TextArea } from "@plane/ui";
 // components
 import { ImagePickerPopover } from "components/core";
@@ -18,26 +16,17 @@ import EmojiIconPicker from "components/emoji-icon-picker";
 // helpers
 import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
 // types
-import { IProject } from "types";
+import { IWorkspaceMember } from "types";
 // constants
-import { NETWORK_CHOICES } from "constants/project";
+import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "constants/project";
+import { WorkspaceMemberSelect } from "components/workspace";
+import { observer } from "mobx-react-lite";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   setToFavorite?: boolean;
   workspaceSlug: string;
-};
-
-const defaultValues: Partial<IProject> = {
-  cover_image:
-    "https://images.unsplash.com/photo-1531045535792-b515d59c3d1f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80",
-  description: "",
-  emoji_and_icon: getRandomEmoji(),
-  identifier: "",
-  name: "",
-  network: 2,
-  project_lead: null,
 };
 
 interface IIsGuestCondition {
@@ -59,18 +48,30 @@ const IsGuestCondition: FC<IIsGuestCondition> = ({ onClose }) => {
   return null;
 };
 
-export const CreateProjectModal: React.FC<Props> = (props) => {
+export interface ICreateProjectForm {
+  name: string;
+  identifier: string;
+  description: string;
+  emoji_and_icon: string;
+  network: number;
+  project_lead_member: IWorkspaceMember;
+  project_lead: string;
+  cover_image: string;
+  icon_prop: any;
+  emoji: string;
+}
+
+export const CreateProjectModal: FC<Props> = observer((props) => {
   const { isOpen, onClose, setToFavorite = false, workspaceSlug } = props;
   // store
-  const { project: projectStore } = useMobxStore();
+  const { project: projectStore, workspace: workspaceStore } = useMobxStore();
+  const workspaceMembers = workspaceStore.members[workspaceSlug] || [];
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
-
+  // toast
   const { setToastAlert } = useToast();
-
-  const { memberDetails } = useWorkspaceMyMembership();
-  const { workspaceMembers } = useWorkspaceMembers(workspaceSlug?.toString() ?? "");
-
+  // form info
+  const cover_image = PROJECT_UNSPLASH_COVERS[Math.floor(Math.random() * PROJECT_UNSPLASH_COVERS.length)];
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
@@ -78,15 +79,29 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
     control,
     watch,
     setValue,
-  } = useForm<IProject>({
-    defaultValues,
+  } = useForm<ICreateProjectForm>({
+    defaultValues: {
+      cover_image,
+      description: "",
+      emoji_and_icon: getRandomEmoji(),
+      identifier: "",
+      name: "",
+      network: 2,
+      project_lead: undefined,
+    },
     reValidateMode: "onChange",
   });
+
+  const { memberDetails } = useWorkspaceMyMembership();
+
+  const currentNetwork = NETWORK_CHOICES.find((n) => n.key === watch("network"));
+
+  if (memberDetails && isOpen) if (memberDetails.role <= 10) return <IsGuestCondition onClose={onClose} />;
 
   const handleClose = () => {
     onClose();
     setIsChangeInIdentifierRequired(true);
-    reset(defaultValues);
+    reset();
   };
 
   const handleAddToFavorites = (projectId: string) => {
@@ -101,16 +116,16 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
     });
   };
 
-  const onSubmit = async (formData: IProject) => {
-    if (!workspaceSlug) return;
-
+  const onSubmit = async (formData: ICreateProjectForm) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { emoji_and_icon, ...payload } = formData;
+    const { emoji_and_icon, project_lead_member, ...payload } = formData;
 
     if (typeof formData.emoji_and_icon === "object") payload.icon_prop = formData.emoji_and_icon;
     else payload.emoji = formData.emoji_and_icon;
 
-    await projectStore
+    payload.project_lead = formData.project_lead_member?.member.id;
+
+    return projectStore
       .createProject(workspaceSlug.toString(), payload)
       .then((res) => {
         setToastAlert({
@@ -134,9 +149,11 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
       });
   };
 
-  const changeIdentifierOnNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!isChangeInIdentifierRequired) return;
-
+  const handleNameChange = (onChange: any) => (e: ChangeEvent<HTMLInputElement>) => {
+    if (!isChangeInIdentifierRequired) {
+      onChange(e);
+      return;
+    }
     if (e.target.value === "") setValue("identifier", "");
     else
       setValue(
@@ -146,31 +163,15 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
           .toUpperCase()
           .substring(0, 5)
       );
+    onChange(e);
   };
 
-  const handleIdentifierChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleIdentifierChange = (onChange: any) => (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-
     const alphanumericValue = value.replace(/[^a-zA-Z0-9]/g, "");
-
-    setValue("identifier", alphanumericValue.toUpperCase());
     setIsChangeInIdentifierRequired(false);
+    onChange(alphanumericValue.toUpperCase());
   };
-
-  const options = workspaceMembers?.map((member: any) => ({
-    value: member.member.id,
-    query: member.member.display_name,
-    content: (
-      <div className="flex items-center gap-2">
-        <Avatar user={member.member} />
-        {member.member.display_name}
-      </div>
-    ),
-  }));
-
-  const currentNetwork = NETWORK_CHOICES.find((n) => n.key === watch("network"));
-
-  if (memberDetails && isOpen) if (memberDetails.role <= 10) return <IsGuestCondition onClose={onClose} />;
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -255,20 +256,20 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                               message: "Title should be less than 255 characters",
                             },
                           }}
-                          render={({ field: { value, ref } }) => (
+                          render={({ field: { value, onChange } }) => (
                             <Input
                               id="name"
                               name="name"
                               type="text"
                               value={value}
-                              onChange={changeIdentifierOnNameChange}
-                              ref={ref}
+                              onChange={handleNameChange(onChange)}
                               hasError={Boolean(errors.name)}
                               placeholder="Project Title"
                               className="w-full"
                             />
                           )}
                         />
+                        <span className="text-xs text-red-500">{errors?.name?.message}</span>
                       </div>
                       <div>
                         <Controller
@@ -287,20 +288,20 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                               message: "Identifier must at most be of 12 characters",
                             },
                           }}
-                          render={({ field: { value, ref } }) => (
+                          render={({ field: { value, onChange } }) => (
                             <Input
                               id="identifier"
                               name="identifier"
                               type="text"
                               value={value}
-                              onChange={handleIdentifierChange}
-                              ref={ref}
-                              hasError={Boolean(errors.name)}
+                              onChange={handleIdentifierChange(onChange)}
+                              hasError={Boolean(errors.identifier)}
                               placeholder="Identifier"
-                              className="text-sm w-full"
+                              className="text-xs w-full"
                             />
                           )}
                         />
+                        <span className="text-xs text-red-500">{errors?.identifier?.message}</span>
                       </div>
                       <div className="md:col-span-4">
                         <Controller
@@ -314,7 +315,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                               placeholder="Description..."
                               onChange={onChange}
                               className="text-sm !h-24"
-                              hasError={Boolean(errors?.name)}
+                              hasError={Boolean(errors?.description)}
                             />
                           )}
                         />
@@ -330,12 +331,12 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                             <CustomSelect
                               value={value}
                               onChange={onChange}
-                              buttonClassName="border-[0.5px] !px-2 shadow-md"
+                              buttonClassName="border-[0.5px] shadow-md !py-1.5"
                               label={
-                                <div className="flex items-center gap-2 -mb-0.5 py-1">
+                                <div className="flex items-center gap-2">
                                   {currentNetwork ? (
                                     <>
-                                      <currentNetwork.icon className="h-3 w-3" />
+                                      <currentNetwork.icon className="h-[18px] w-[18px]" />
                                       {currentNetwork.label}
                                     </>
                                   ) : (
@@ -351,7 +352,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                                   value={network.key}
                                   className="flex items-center gap-1"
                                 >
-                                  <network.icon className="h-3 w-3" />
+                                  <network.icon className="h-4 w-4" />
                                   {network.label}
                                 </CustomSelect.Option>
                               ))}
@@ -361,39 +362,16 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                       </div>
                       <div className="flex-shrink-0">
                         <Controller
-                          name="project_lead"
+                          name="project_lead_member"
                           control={control}
-                          render={({ field: { value, onChange } }) => {
-                            const selectedMember = workspaceMembers?.find((m: any) => m.member.id === value);
-
-                            return (
-                              <CustomSearchSelect
-                                value={value}
-                                onChange={onChange}
-                                options={options}
-                                buttonClassName="border-[0.5px] !px-2 shadow-md"
-                                label={
-                                  <div className="flex items-center justify-center gap-2 py-[1px]">
-                                    {value ? (
-                                      <>
-                                        <Avatar user={selectedMember?.member} />
-                                        <span>{selectedMember?.member.display_name} </span>
-                                        <span onClick={() => onChange(null)}>
-                                          <X className="h-3 w-3 -mb-0.5 text-custom-text-200 hover:text-custom-text-100" />
-                                        </span>
-                                      </>
-                                    ) : (
-                                      <>
-                                        <Users2 className="h-3.5 w-3.5 text-custom-text-400" />
-                                        <span className="text-custom-text-400">Lead</span>
-                                      </>
-                                    )}
-                                  </div>
-                                }
-                                noChevron
-                              />
-                            );
-                          }}
+                          render={({ field: { value, onChange } }) => (
+                            <WorkspaceMemberSelect
+                              value={value}
+                              onChange={onChange}
+                              options={workspaceMembers}
+                              placeholder="Select Lead"
+                            />
+                          )}
                         />
                       </div>
                     </div>
@@ -415,4 +393,4 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+});
