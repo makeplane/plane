@@ -24,7 +24,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import serializers
 from rest_framework.permissions import AllowAny
-from sentry_sdk import capture_exception
 
 # Module imports
 from .base import BaseViewSet, BaseAPIView
@@ -35,7 +34,6 @@ from plane.api.serializers import (
     ProjectDetailSerializer,
     ProjectMemberInviteSerializer,
     ProjectFavoriteSerializer,
-    IssueLiteSerializer,
     ProjectDeployBoardSerializer,
     ProjectMemberAdminSerializer,
 )
@@ -77,6 +75,7 @@ from plane.bgtasks.project_invitation_task import project_invitation
 class ProjectViewSet(BaseViewSet):
     serializer_class = ProjectSerializer
     model = Project
+    webhook_event = "Project"
 
     permission_classes = [
         ProjectBasePermission,

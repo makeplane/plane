@@ -21,31 +21,53 @@ class WebhookEndpoint(BaseAPIView):
     ]
 
     def post(self, request, slug):
-            workspace = Workspace.objects.get(slug=slug)
+        workspace = Workspace.objects.get(slug=slug)
 
-            try:
-                serializer = WebhookSerializer(data=request.data)
-                if serializer.is_valid():
-                    serializer.save(workspace_id=workspace.id)
-                    return Response(serializer.data, status=status.HTTP_201_CREATED)
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            except IntegrityError as e:
-                if "already exists" in str(e):
-                     return Response({"error": "URL already exists for the workspace"}, status=status.HTTP_410_GONE)
-                raise IntegrityError
+        try:
+            serializer = WebhookSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(workspace_id=workspace.id)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except IntegrityError as e:
+            if "already exists" in str(e):
+                return Response(
+                    {"error": "URL already exists for the workspace"},
+                    status=status.HTTP_410_GONE,
+                )
+            raise IntegrityError
 
-    def get(self, request, slug):
-        webhooks = Webhook.objects.filter(workspace__slug=slug)
-        serializer = WebhookSerializer(
-            webhooks,
-            fields=(
-                "url",
-                "content_type",
-                "secret_key",
-                "is_active",
-                "created_at",
-                "updated_at",
-            ),
-            many=True,
-        )
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def get(self, request, slug, pk=None):
+        if pk == None:
+            webhooks = Webhook.objects.filter(workspace__slug=slug)
+            serializer = WebhookSerializer(
+                webhooks,
+                fields=(
+                    "id",
+                    "url",
+                    "content_type",
+                    "secret_key",
+                    "is_active",
+                    "created_at",
+                    "updated_at",
+                ),
+                many=True,
+            )
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            webhook = Webhook.objects.get(workspace__slug=slug, pk=pk)
+            serializer = WebhookSerializer(webhook)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request, slug, pk):
+        webhook = Webhook.objects.get(workspace__slug=slug, pk=pk)
+        serializer = WebhookSerializer(webhook, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, slug, pk):
+        webhook = Webhook.objects.get(pk=pk, workspace__slug=slug)
+        webhook.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
