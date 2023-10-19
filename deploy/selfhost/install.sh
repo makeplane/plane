@@ -13,7 +13,7 @@ function install(){
 function download(){
     cd $SCRIPT_DIR
     TS=$(date +%s)
-    if [ -f docker-compose.yaml ]
+    if [ -e docker-compose.yaml ]
     then
         mv $PLANE_INSTALL_DIR/docker-compose.yaml $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yaml
     fi
@@ -21,7 +21,7 @@ function download(){
     curl -s -o $PLANE_INSTALL_DIR/docker-compose.yaml  https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/docker-compose.yml
     curl -s -o $PLANE_INSTALL_DIR/variables.env https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/variables.env
 
-    if [ -f .env ]
+    if [ -e .env ]
     then
         cp $PLANE_INSTALL_DIR/.env $PLANE_INSTALL_DIR/archive/$TS.env
     else
