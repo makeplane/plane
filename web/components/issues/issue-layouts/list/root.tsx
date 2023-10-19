@@ -35,7 +35,10 @@ export const ListLayout: FC = observer(() => {
         issueStore.updateIssueStructure(group_by, null, issue);
         issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
       }
-      if (action === "delete") issueStore.deleteIssue(group_by, null, issue);
+      if (action === "delete") {
+        issueStore.deleteIssue(group_by, null, issue);
+        issueDetailStore.deleteIssue(workspaceSlug.toString(), issue.project, issue.id);
+      }
     },
     [issueStore, issueDetailStore, workspaceSlug]
   );

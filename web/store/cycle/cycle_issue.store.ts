@@ -34,6 +34,7 @@ export interface ICycleIssueStore {
   // action
   fetchIssues: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<any>;
   updateIssueStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
+  deleteIssue: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
 }
 
 export class CycleIssueStore implements ICycleIssueStore {
@@ -68,6 +69,7 @@ export class CycleIssueStore implements ICycleIssueStore {
       // actions
       fetchIssues: action,
       updateIssueStructure: action,
+      deleteIssue: action,
     });
 
     this.rootStore = _rootStore;
@@ -130,7 +132,7 @@ export class CycleIssueStore implements ICycleIssueStore {
       issues = issues as IIssueGroupedStructure;
       issues = {
         ...issues,
-        [group_id]: issues[group_id].map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i)),
+        [group_id]: issues[group_id].map((i) => (i?.id === issue?.id ? { ...i, ...issue } : i)),
       };
     }
     if (issueType === "groupWithSubGroups" && group_id && sub_group_id) {
@@ -139,27 +141,55 @@ export class CycleIssueStore implements ICycleIssueStore {
         ...issues,
         [sub_group_id]: {
           ...issues[sub_group_id],
-          [group_id]: issues[sub_group_id][group_id].map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i)),
+          [group_id]: issues[sub_group_id][group_id].map((i) => (i?.id === issue?.id ? { ...i, ...issue } : i)),
         },
       };
     }
     if (issueType === "ungrouped") {
       issues = issues as IIssueUnGroupedStructure;
-      issues = issues.map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i));
+      issues = issues.map((i) => (i?.id === issue?.id ? { ...i, ...issue } : i));
     }
 
     const orderBy = this.rootStore?.issueFilter?.userDisplayFilters?.order_by || "";
-    if (orderBy === "-created_at") {
-      issues = sortArrayByDate(issues as any, "created_at");
+    if (orderBy === "-created_at") issues = sortArrayByDate(issues as any, "created_at");
+    if (orderBy === "-updated_at") issues = sortArrayByDate(issues as any, "updated_at");
+    if (orderBy === "start_date") issues = sortArrayByDate(issues as any, "updated_at");
+    if (orderBy === "priority") issues = sortArrayByPriority(issues as any, "priority");
+
+    runInAction(() => {
+      this.issues = { ...this.issues, [cycleId]: { ...this.issues[cycleId], [issueType]: issues } };
+    });
+  };
+
+  deleteIssue = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
+    const cycleId: string | null = this.rootStore.cycle.cycleId;
+    const issueType = this.getIssueType;
+    if (!cycleId || !issueType) return null;
+
+    let issues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null =
+      this.getIssues;
+    if (!issues) return null;
+
+    if (issueType === "grouped" && group_id) {
+      issues = issues as IIssueGroupedStructure;
+      issues = {
+        ...issues,
+        [group_id]: issues[group_id].filter((i) => i?.id !== issue?.id),
+      };
     }
-    if (orderBy === "-updated_at") {
-      issues = sortArrayByDate(issues as any, "updated_at");
+    if (issueType === "groupWithSubGroups" && group_id && sub_group_id) {
+      issues = issues as IIssueGroupWithSubGroupsStructure;
+      issues = {
+        ...issues,
+        [sub_group_id]: {
+          ...issues[sub_group_id],
+          [group_id]: issues[sub_group_id][group_id].filter((i) => i?.id !== issue?.id),
+        },
+      };
     }
-    if (orderBy === "start_date") {
-      issues = sortArrayByDate(issues as any, "updated_at");
-    }
-    if (orderBy === "priority") {
-      issues = sortArrayByPriority(issues as any, "priority");
+    if (issueType === "ungrouped") {
+      issues = issues as IIssueUnGroupedStructure;
+      issues = issues.filter((i) => i?.id !== issue?.id);
     }
 
     runInAction(() => {

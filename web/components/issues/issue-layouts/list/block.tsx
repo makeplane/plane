@@ -1,18 +1,19 @@
 import { FC, useState } from "react";
+import { useRouter } from "next/router";
 import { Copy, Link, Pencil, Trash2 } from "lucide-react";
 // components
 import { KanBanProperties } from "./properties";
 import { IssuePeekOverview } from "components/issues/issue-peek-overview";
+import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
+// hooks
+import useToast from "hooks/use-toast";
 // ui
 import { Tooltip } from "@plane/ui";
 import { CustomMenu } from "components/ui";
+// helpers
+import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IIssue } from "types";
-import { DeleteIssueModal } from "components/issues/delete-issue-modal";
-import useToast from "hooks/use-toast";
-import { copyUrlToClipboard } from "helpers/string.helper";
-import { useRouter } from "next/router";
-import { CreateUpdateIssueModal } from "components/issues/modal";
 
 interface IssueBlockProps {
   columnId: string;
@@ -58,9 +59,7 @@ export const IssueBlock: FC<IssueBlockProps> = (props) => {
         data={issue}
         isOpen={deleteIssueModal}
         handleClose={() => setDeleteIssueModal(false)}
-        onSubmit={async () => {
-          handleIssues(!columnId && columnId === "null" ? null : columnId, issue, "delete");
-        }}
+        onSubmit={async () => handleIssues(!columnId && columnId === "null" ? null : columnId, issue, "delete")}
       />
       <CreateUpdateIssueModal
         isOpen={createUpdateIssueModal}

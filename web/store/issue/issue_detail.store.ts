@@ -31,7 +31,7 @@ export interface IIssueDetailStore {
   // updating issue
   updateIssue: (workspaceId: string, projectId: string, issueId: string, data: Partial<IIssue>) => void;
   // deleting issue
-  deleteIssue: (workspaceSlug: string, projectId: string, issueId: string) => void;
+  deleteIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
 }
 
 export class IssueDetailStore implements IIssueDetailStore {
@@ -199,12 +199,14 @@ export class IssueDetailStore implements IIssueDetailStore {
 
       if (!user) return;
 
-      await this.issueService.deleteIssue(workspaceSlug, projectId, issueId, user);
+      const response = await this.issueService.deleteIssue(workspaceSlug, projectId, issueId, user);
 
       runInAction(() => {
         this.loader = false;
         this.error = null;
       });
+
+      return response;
     } catch (error) {
       this.fetchIssueDetails(workspaceSlug, projectId, issueId);
 
