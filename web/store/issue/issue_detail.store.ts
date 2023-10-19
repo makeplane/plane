@@ -3,7 +3,7 @@ import { observable, action, makeObservable, runInAction, computed } from "mobx"
 import { IssueService } from "services/issue";
 // types
 import { RootStore } from "../root";
-import { IUser, IIssue } from "types";
+import { IIssue } from "types";
 
 export type IPeekMode = "side" | "modal" | "full";
 
@@ -27,17 +27,11 @@ export interface IIssueDetailStore {
   // fetch issue details
   fetchIssueDetails: (workspaceSlug: string, projectId: string, issueId: string) => void;
   // creating issue
-  createIssue: (workspaceSlug: string, projectId: string, data: Partial<IIssue>, user: IUser) => Promise<IIssue>;
+  createIssue: (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => Promise<IIssue>;
   // updating issue
-  updateIssue: (
-    workspaceId: string,
-    projectId: string,
-    issueId: string,
-    data: Partial<IIssue>,
-    user: IUser | undefined
-  ) => void;
+  updateIssue: (workspaceId: string, projectId: string, issueId: string, data: Partial<IIssue>) => void;
   // deleting issue
-  deleteIssue: (workspaceSlug: string, projectId: string, issueId: string, user: IUser) => void;
+  deleteIssue: (workspaceSlug: string, projectId: string, issueId: string) => void;
 }
 
 export class IssueDetailStore implements IIssueDetailStore {
@@ -118,12 +112,14 @@ export class IssueDetailStore implements IIssueDetailStore {
     }
   };
 
-  createIssue = async (workspaceSlug: string, projectId: string, data: Partial<IIssue>, user: IUser) => {
+  createIssue = async (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => {
     try {
       runInAction(() => {
         this.loader = true;
         this.error = null;
       });
+
+      const user = this.rootStore.user.currentUser ?? undefined;
 
       const response = await this.issueService.createIssue(workspaceSlug, projectId, data, user);
 
@@ -145,13 +141,7 @@ export class IssueDetailStore implements IIssueDetailStore {
     }
   };
 
-  updateIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    data: Partial<IIssue>,
-    user: IUser | undefined
-  ) => {
+  updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) => {
     const newIssues = { ...this.issues };
     newIssues[issueId] = {
       ...newIssues[issueId],
@@ -164,6 +154,10 @@ export class IssueDetailStore implements IIssueDetailStore {
         this.error = null;
         this.issues = newIssues;
       });
+
+      const user = this.rootStore.user.currentUser;
+
+      if (!user) return;
 
       const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data, user);
 
@@ -190,7 +184,7 @@ export class IssueDetailStore implements IIssueDetailStore {
     }
   };
 
-  deleteIssue = async (workspaceSlug: string, projectId: string, issueId: string, user: IUser) => {
+  deleteIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     const newIssues = { ...this.issues };
     delete newIssues[issueId];
 
@@ -200,6 +194,10 @@ export class IssueDetailStore implements IIssueDetailStore {
         this.error = null;
         this.issues = newIssues;
       });
+
+      const user = this.rootStore.user.currentUser;
+
+      if (!user) return;
 
       await this.issueService.deleteIssue(workspaceSlug, projectId, issueId, user);
 

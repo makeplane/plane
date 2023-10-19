@@ -5,13 +5,15 @@ import { ListGroupByHeaderRoot } from "./headers/group-by-root";
 import { IssueBlock } from "./block";
 // constants
 import { getValueFromObject } from "constants/issue";
+import { IIssue } from "types";
+import { IssueBlocksList } from "./blocks-list";
 
 export interface IGroupByList {
   issues: any;
   group_by: string | null;
   list: any;
   listKey: string;
-  handleIssues?: (group_by: string | null, issue: any) => void;
+  handleIssues?: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
   display_properties: any;
   is_list?: boolean;
   states: any;
@@ -59,7 +61,7 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
             </div>
             <div className={`w-full h-full relative transition-all`}>
               {issues && (
-                <IssueBlock
+                <IssueBlocksList
                   columnId={getValueFromObject(_list, listKey) as string}
                   issues={is_list ? issues : issues[getValueFromObject(_list, listKey) as string]}
                   handleIssues={handleIssues}
@@ -77,11 +79,12 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
   );
 });
 
+// TODO: update all the types
 export interface IList {
   issues: any;
   group_by: string | null;
   handleDragDrop?: (result: any) => void | undefined;
-  handleIssues?: (group_by: string | null, issue: any) => void;
+  handleIssues?: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
   display_properties: any;
   states: any;
   labels: any;
