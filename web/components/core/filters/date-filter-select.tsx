@@ -1,9 +1,8 @@
 import React from "react";
 
 // ui
-import { CustomSelect } from "components/ui";
+import { CustomSelect, CalendarAfterIcon, CalendarBeforeIcon } from "@plane/ui";
 // icons
-import { CalendarAfterIcon, CalendarBeforeIcon } from "@plane/ui";
 import { CalendarDays } from "lucide-react";
 // fetch-keys
 

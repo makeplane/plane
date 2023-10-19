@@ -9,7 +9,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 // services
 import { IssueLabelService } from "services/issue";
 // ui
-import { CustomMenu } from "components/ui";
+import { CustomMenu } from "@plane/ui";
 // icons
 import { ChevronDown, Component, Pencil, Plus, Trash2, X } from "lucide-react";
 // types

@@ -7,8 +7,8 @@ import { WORKSPACE_MEMBERS_WITH_EMAIL } from "constants/fetch-keys";
 // services
 import { WorkspaceService } from "services/workspace.service";
 // components
-import { CustomSelect, CustomSearchSelect, Avatar } from "components/ui";
-import { Input, ToggleSwitch } from "@plane/ui";
+import { Avatar } from "components/ui";
+import { CustomSelect, CustomSearchSelect, Input, ToggleSwitch } from "@plane/ui";
 // types
 import { IJiraImporterForm } from "types";
 

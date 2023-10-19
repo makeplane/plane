@@ -3,8 +3,7 @@ import { Controller, useForm } from "react-hook-form";
 import { TwitterPicker } from "react-color";
 import { Popover, Transition } from "@headlessui/react";
 // ui
-import { CustomMenu } from "components/ui";
-import { Button, Input } from "@plane/ui";
+import { Button, CustomMenu, Input } from "@plane/ui";
 // icons
 import { Component, Pencil } from "lucide-react";
 // types

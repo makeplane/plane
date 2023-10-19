@@ -6,3 +6,4 @@ export * from "./loader";
 export * from "./tooltip";
 export * from "./icons";
 export * from "./breadcrumbs";
+export * from "./dropdowns";

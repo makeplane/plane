@@ -8,8 +8,8 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import useToast from "hooks/use-toast";
 import { useWorkspaceMyMembership } from "contexts/workspace-member.context";
 // ui
-import { CustomSelect } from "components/ui";
-import { Button, Input, TextArea } from "@plane/ui";
+import { Button, CustomSelect, CustomSearchSelect, Input, TextArea } from "@plane/ui";
+import { Avatar } from "components/ui";
 // components
 import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";

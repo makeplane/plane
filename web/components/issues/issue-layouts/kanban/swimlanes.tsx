@@ -46,6 +46,7 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
           <div className="flex-shrink-0 flex flex-col w-[340px]">
             <KanBanGroupByHeaderRoot
               column_id={getValueFromObject(_list, listKey) as string}
+              column_value={_list}
               sub_group_by={sub_group_by}
               group_by={group_by}
               issues_count={calculateIssueCount(getValueFromObject(_list, listKey) as string)}
@@ -111,6 +112,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
               <div className="flex-shrink-0 sticky left-0 bg-custom-background-90 pr-2">
                 <KanBanSubGroupByHeaderRoot
                   column_id={getValueFromObject(_list, listKey) as string}
+                  column_value={_list}
                   sub_group_by={sub_group_by}
                   group_by={group_by}
                   issues_count={calculateIssueCount(getValueFromObject(_list, listKey) as string)}
