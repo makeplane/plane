@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState, FC } from "react";
 import { mutate } from "swr";
+import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 // services
 import { WorkspaceService } from "services/workspace.service";
@@ -63,6 +64,7 @@ export const CreateWorkspaceForm: FC<Props> = ({
   const [invalidSlug, setInvalidSlug] = useState(false);
 
   const { setToastAlert } = useToast();
+  const router = useRouter();
 
   const {
     handleSubmit,
@@ -171,7 +173,7 @@ export const CreateWorkspaceForm: FC<Props> = ({
                   ref={ref}
                   hasError={Boolean(errors.slug)}
                   placeholder="Enter workspace name..."
-                  className="block rounded-md bg-transparent py-2 !px-0 text-sm w-full"
+                  className="block rounded-md bg-transparent py-2 !px-0 text-sm w-full border-none"
                 />
               )}
             />
@@ -219,6 +221,9 @@ export const CreateWorkspaceForm: FC<Props> = ({
         {secondaryButton}
         <Button variant="primary" type="submit" size="md" disabled={!isValid} loading={isSubmitting}>
           {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
+        </Button>
+        <Button variant="neutral-primary" type="button" size="md" onClick={() => router.back()}>
+          Go back
         </Button>
       </div>
     </form>
