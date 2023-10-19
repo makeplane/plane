@@ -10,6 +10,7 @@ import { CreatedByHeader } from "./created_by";
 
 export interface IKanBanSubGroupByHeaderRoot {
   column_id: string;
+  column_value: any;
   sub_group_by: string | null;
   group_by: string | null;
   issues_count: number;
@@ -17,12 +18,15 @@ export interface IKanBanSubGroupByHeaderRoot {
   handleKanBanToggle: any;
 }
 
-export const KanBanSubGroupByHeaderRoot: React.FC<IKanBanSubGroupByHeaderRoot> = observer(
-  ({ column_id, sub_group_by, group_by, issues_count, kanBanToggle, handleKanBanToggle }) => (
+export const KanBanSubGroupByHeaderRoot: React.FC<IKanBanSubGroupByHeaderRoot> = observer((props) => {
+  const { column_id, column_value, sub_group_by, group_by, issues_count, kanBanToggle, handleKanBanToggle } = props;
+
+  return (
     <>
       {sub_group_by && sub_group_by === "state" && (
         <StateHeader
           column_id={column_id}
+          column_value={column_value}
           sub_group_by={sub_group_by}
           group_by={group_by}
           header_type={`sub_group_by`}
@@ -34,6 +38,7 @@ export const KanBanSubGroupByHeaderRoot: React.FC<IKanBanSubGroupByHeaderRoot> =
       {sub_group_by && sub_group_by === "state_detail.group" && (
         <StateGroupHeader
           column_id={column_id}
+          column_value={column_value}
           sub_group_by={sub_group_by}
           group_by={group_by}
           header_type={`sub_group_by`}
@@ -45,6 +50,7 @@ export const KanBanSubGroupByHeaderRoot: React.FC<IKanBanSubGroupByHeaderRoot> =
       {sub_group_by && sub_group_by === "priority" && (
         <PriorityHeader
           column_id={column_id}
+          column_value={column_value}
           sub_group_by={sub_group_by}
           group_by={group_by}
           header_type={`sub_group_by`}
@@ -56,6 +62,7 @@ export const KanBanSubGroupByHeaderRoot: React.FC<IKanBanSubGroupByHeaderRoot> =
       {sub_group_by && sub_group_by === "labels" && (
         <LabelHeader
           column_id={column_id}
+          column_value={column_value}
           sub_group_by={sub_group_by}
           group_by={group_by}
           header_type={`sub_group_by`}
@@ -67,6 +74,7 @@ export const KanBanSubGroupByHeaderRoot: React.FC<IKanBanSubGroupByHeaderRoot> =
       {sub_group_by && sub_group_by === "assignees" && (
         <AssigneesHeader
           column_id={column_id}
+          column_value={column_value}
           sub_group_by={sub_group_by}
           group_by={group_by}
           header_type={`sub_group_by`}
@@ -78,6 +86,7 @@ export const KanBanSubGroupByHeaderRoot: React.FC<IKanBanSubGroupByHeaderRoot> =
       {sub_group_by && sub_group_by === "created_by" && (
         <CreatedByHeader
           column_id={column_id}
+          column_value={column_value}
           sub_group_by={sub_group_by}
           group_by={group_by}
           header_type={`sub_group_by`}
@@ -87,5 +96,5 @@ export const KanBanSubGroupByHeaderRoot: React.FC<IKanBanSubGroupByHeaderRoot> =
         />
       )}
     </>
-  )
-);
+  );
+});

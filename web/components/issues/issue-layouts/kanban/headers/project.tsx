@@ -3,9 +3,10 @@ import { observer } from "mobx-react-lite";
 // components
 import { HeaderGroupByCard } from "./group-by-card";
 import { HeaderSubGroupByCard } from "./sub-group-by-card";
-import { StateGroupIcon } from "@plane/ui";
+// emoji helper
+import { renderEmoji } from "helpers/emoji.helper";
 
-export interface IStateGroupHeader {
+export interface IProjectHeader {
   column_id: string;
   column_value: any;
   sub_group_by: string | null;
@@ -16,13 +17,9 @@ export interface IStateGroupHeader {
   handleKanBanToggle: any;
 }
 
-export const Icon = ({ stateGroup, color }: { stateGroup: any; color?: any }) => (
-  <div className="w-[14px] h-[14px] rounded-full">
-    <StateGroupIcon stateGroup={stateGroup} color={color || null} width="14" height="14" />
-  </div>
-);
+const Icon = ({ emoji }: any) => <div className="w-6 h-6">{renderEmoji(emoji)}</div>;
 
-export const StateGroupHeader: FC<IStateGroupHeader> = observer((props) => {
+export const ProjectHeader: FC<IProjectHeader> = observer((props) => {
   const {
     column_id,
     column_value,
@@ -34,16 +31,16 @@ export const StateGroupHeader: FC<IStateGroupHeader> = observer((props) => {
     handleKanBanToggle,
   } = props;
 
-  const stateGroup = column_value || null;
+  const project = column_value ?? null;
 
   return (
     <>
-      {stateGroup &&
+      {project &&
         (sub_group_by && header_type === "sub_group_by" ? (
           <HeaderSubGroupByCard
             column_id={column_id}
-            icon={<Icon stateGroup={stateGroup?.key} />}
-            title={stateGroup?.key || ""}
+            icon={<Icon emoji={project?.emoji} />}
+            title={project?.name || ""}
             count={issues_count}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
@@ -53,8 +50,8 @@ export const StateGroupHeader: FC<IStateGroupHeader> = observer((props) => {
             sub_group_by={sub_group_by}
             group_by={group_by}
             column_id={column_id}
-            icon={<Icon stateGroup={stateGroup?.key} />}
-            title={stateGroup?.key || ""}
+            icon={<Icon emoji={project?.emoji} />}
+            title={project?.name || ""}
             count={issues_count}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
