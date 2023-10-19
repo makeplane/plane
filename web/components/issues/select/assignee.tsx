@@ -5,7 +5,8 @@ import useSWR from "swr";
 // services
 import { ProjectService } from "services/project";
 // ui
-import { AssigneesList, Avatar, CustomSearchSelect } from "components/ui";
+import { AssigneesList, Avatar } from "components/ui";
+import { CustomSearchSelect } from "@plane/ui";
 import { User2 } from "lucide-react";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";

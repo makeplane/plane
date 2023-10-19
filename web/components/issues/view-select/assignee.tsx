@@ -3,8 +3,8 @@ import { useRouter } from "next/router";
 // services
 import { TrackEventService } from "services/track_event.service";
 // ui
-import { AssigneesList, Avatar, CustomSearchSelect } from "components/ui";
-import { Tooltip } from "@plane/ui";
+import { AssigneesList, Avatar } from "components/ui";
+import { CustomSearchSelect, Tooltip } from "@plane/ui";
 import { User2 } from "lucide-react";
 // types
 import { IUser, IIssue } from "types";

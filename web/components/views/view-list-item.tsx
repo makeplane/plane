@@ -8,7 +8,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { DeleteProjectViewModal } from "components/views";
 // ui
-import { CustomMenu } from "components/ui";
+import { CustomMenu } from "@plane/ui";
 // icons
 import { PencilIcon, Sparkles, StarIcon, TrashIcon } from "lucide-react";
 // types

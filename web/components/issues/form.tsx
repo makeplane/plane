@@ -24,8 +24,7 @@ import {
 import { CreateStateModal } from "components/states";
 import { CreateLabelModal } from "components/labels";
 // ui
-import { CustomMenu } from "components/ui";
-import { Button, Input, ToggleSwitch } from "@plane/ui";
+import { Button, CustomMenu, Input, ToggleSwitch } from "@plane/ui";
 // icons
 import { LayoutPanelTop, Sparkle, X } from "lucide-react";
 // types
@@ -533,27 +532,15 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                     >
                       {watch("parent") ? (
                         <>
-                          <CustomMenu.MenuItem
-                            renderAs="button"
-                            className="!p-1"
-                            onClick={() => setParentIssueListModalOpen(true)}
-                          >
+                          <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueListModalOpen(true)}>
                             Change parent issue
                           </CustomMenu.MenuItem>
-                          <CustomMenu.MenuItem
-                            renderAs="button"
-                            className="!p-1"
-                            onClick={() => setValue("parent", null)}
-                          >
+                          <CustomMenu.MenuItem className="!p-1" onClick={() => setValue("parent", null)}>
                             Remove parent issue
                           </CustomMenu.MenuItem>
                         </>
                       ) : (
-                        <CustomMenu.MenuItem
-                          renderAs="button"
-                          className="!p-1"
-                          onClick={() => setParentIssueListModalOpen(true)}
-                        >
+                        <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueListModalOpen(true)}>
                           Select Parent Issue
                         </CustomMenu.MenuItem>
                       )}

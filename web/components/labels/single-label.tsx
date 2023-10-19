@@ -3,7 +3,7 @@ import React, { useRef, useState } from "react";
 //hook
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // ui
-import { CustomMenu } from "components/ui";
+import { CustomMenu } from "@plane/ui";
 // types
 import { IIssueLabels } from "types";
 //icons

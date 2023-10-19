@@ -7,8 +7,7 @@ import { useRouter } from "next/router";
 import useToast from "hooks/use-toast";
 
 // icons
-import { CustomMenu } from "components/ui";
-import { ArchiveIcon, Tooltip } from "@plane/ui";
+import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
 import { ArchiveRestore, Clock, MessageSquare, User2 } from "lucide-react";
 
 // helper
@@ -219,7 +218,6 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             {snoozeOptions.map((item) => (
               <CustomMenu.MenuItem
                 key={item.label}
-                renderAs="button"
                 onClick={(e) => {
                   e.stopPropagation();
 

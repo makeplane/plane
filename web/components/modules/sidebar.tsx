@@ -14,8 +14,7 @@ import useToast from "hooks/use-toast";
 import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
 import { DeleteModuleModal, SidebarLeadSelect, SidebarMembersSelect } from "components/modules";
 import ProgressChart from "components/core/sidebar/progress-chart";
-import { CustomMenu, CustomSelect } from "components/ui";
-import { Loader, ProgressBar } from "@plane/ui";
+import { CustomSelect, CustomMenu, Loader, ProgressBar } from "@plane/ui";
 // icon
 import {
   AlertCircle,

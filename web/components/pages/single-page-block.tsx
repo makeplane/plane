@@ -17,8 +17,7 @@ import { GptAssistantModal } from "components/core";
 import { CreateUpdateBlockInline } from "components/pages";
 import { RichTextEditor } from "@plane/rich-text-editor";
 // ui
-import { CustomMenu } from "components/ui";
-import { LayersIcon, TextArea } from "@plane/ui";
+import { CustomMenu, LayersIcon, TextArea } from "@plane/ui";
 // icons
 import { RefreshCw, LinkIcon, Zap, Check, MoreVertical, Pencil, Sparkle, Trash2 } from "lucide-react";
 // helpers
@@ -304,7 +303,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
                 {...provided.dragHandleProps}
               >
                 <MoreVertical className="h-4" />
-                <MoreVertical className="-ml-2.5 h-4" />
+                <MoreVertical className="-ml-5 h-4" />
               </button>
               <div
                 ref={actionSectionRef}

@@ -10,8 +10,7 @@ import useToast from "hooks/use-toast";
 // components
 import { SingleProgressStats } from "components/core";
 // ui
-import { Tooltip, LinearProgressIndicator, ContrastIcon, RunningIcon } from "@plane/ui";
-import { CustomMenu } from "components/ui";
+import { CustomMenu, Tooltip, LinearProgressIndicator, ContrastIcon, RunningIcon } from "@plane/ui";
 import { AssigneesList } from "components/ui/avatar";
 // icons
 import {

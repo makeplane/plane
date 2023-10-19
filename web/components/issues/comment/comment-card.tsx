@@ -8,7 +8,7 @@ import { Check, Globe2, Lock, MessageSquare, Pencil, Trash2, X } from "lucide-re
 // hooks
 import useUser from "hooks/use-user";
 // ui
-import { CustomMenu } from "components/ui";
+import { CustomMenu } from "@plane/ui";
 import { CommentReaction } from "components/issues";
 import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-text-editor";
 // helpers
@@ -156,7 +156,6 @@ export const CommentCard: React.FC<Props> = ({
             <>
               {comment.access === "INTERNAL" ? (
                 <CustomMenu.MenuItem
-                  renderAs="button"
                   onClick={() => onSubmit(comment.id, { access: "EXTERNAL" })}
                   className="flex items-center gap-1"
                 >
@@ -165,7 +164,6 @@ export const CommentCard: React.FC<Props> = ({
                 </CustomMenu.MenuItem>
               ) : (
                 <CustomMenu.MenuItem
-                  renderAs="button"
                   onClick={() => onSubmit(comment.id, { access: "INTERNAL" })}
                   className="flex items-center gap-1"
                 >

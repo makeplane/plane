@@ -6,8 +6,7 @@ import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect } from "components/ui";
-import { Button, Input } from "@plane/ui";
+import { Button, CustomSelect, Input } from "@plane/ui";
 // types
 import { IUser, IWorkspace } from "types";
 // fetch-keys
