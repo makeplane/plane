@@ -30,4 +30,14 @@ class ConfigurationEndpoint(BaseAPIView):
         data["email_password_login"] = (
             os.environ.get("ENABLE_EMAIL_PASSWORD", "0") == "1"
         )
+        data["mobile_google_client_id"] = os.environ.get("MOBILE_GOOGLE_CLIENT_ID", None)
+        data["mobile_google_server_client_id"] = os.environ.get("MOBILE_GOOGLE_SERVER_CLIENT_ID", None)
+        data["mobile_google_ios_client_id"] = os.environ.get("MOBILE_GOOGLE_IOS_CLIENT_ID", None)
+        data["mobile_reversed_google_ios_client_id"] = os.environ.get("MOBILE_REVERSED_GOOGLE_IOS_CLIENT_ID", None)
+        data["mobile_unsplash_api"] = os.environ.get("MOBILE_UNSPLASH_API", None)
+        data["mobile_sentry_dsn"] = os.environ.get("MOBILE_SENTRY_DSN", None)
+        data["mobile_posthog_api"] = os.environ.get("MOBILE_POSTHOG_API", None)
+        data["mobile_enable_track_events"] = os.environ.get("MOBILE_ENABLE_TRACK_EVENTS", "0") == "1"
+        data["mobile_web_url"] = os.environ.get("MOBILE_WEB_URL", None)
+        data["mobile_enable_o_auth"] = os.environ.get("MOBILE_ENABLE_O_AUTH", "0") == "1"
         return Response(data, status=status.HTTP_200_OK)
