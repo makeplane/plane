@@ -58,7 +58,7 @@ services:
     <<: *app-env
     platform: linux/amd64
     image: makeplane/plane-frontend:${APP_RELEASE:-latest}
-    restart: always
+    restart: unless-stopped
     command: /usr/local/bin/start.sh web/server.js web
     deploy:
       replicas: ${WEB_REPLICAS:-1}
@@ -70,7 +70,7 @@ services:
     <<: *app-env
     platform: linux/amd64
     image: makeplane/plane-space:${APP_RELEASE:-latest}
-    restart: always
+    restart: unless-stopped
     command: /usr/local/bin/start.sh space/server.js space
     deploy:
       replicas: ${SPACE_REPLICAS:-1}
@@ -83,7 +83,7 @@ services:
     <<: *app-env
     platform: linux/amd64
     image: makeplane/plane-backend:${APP_RELEASE:-latest}
-    restart: always
+    restart: unless-stopped
     command: ./bin/takeoff
     deploy:
       replicas: ${API_REPLICAS:-1}
@@ -96,7 +96,7 @@ services:
     container_name: bgworker
     platform: linux/amd64
     image: makeplane/plane-backend:${APP_RELEASE:-latest}
-    restart: always
+    restart: unless-stopped
     command: ./bin/worker
     depends_on:
       - api
@@ -108,7 +108,7 @@ services:
     container_name: beatworker
     platform: linux/amd64
     image: makeplane/plane-backend:${APP_RELEASE:-latest}
-    restart: always
+    restart: unless-stopped
     command: ./bin/beat
     depends_on:
       - api
@@ -119,7 +119,7 @@ services:
     <<: *app-env
     container_name: plane-db
     image: postgres:15.2-alpine
-    restart: always
+    restart: unless-stopped
     command: postgres -c 'max_connections=1000'
     volumes:
       - pgdata:/var/lib/postgresql/data
@@ -128,7 +128,7 @@ services:
     <<: *app-env
     container_name: plane-redis
     image: redis:6.2.7-alpine
-    restart: always
+    restart: unless-stopped
     volumes:
       - redisdata:/data
 
@@ -136,7 +136,7 @@ services:
     <<: *app-env
     container_name: plane-minio
     image: minio/minio
-    restart: always
+    restart: unless-stopped
     command: server /export --console-address ":9090"
     volumes:
       - uploads:/export
