@@ -25,7 +25,7 @@ function download(){
     then
         cp $PLANE_INSTALL_DIR/.env $PLANE_INSTALL_DIR/archive/$TS.env
     else
-        $PLANE_INSTALL_DIR/variables.env $PLANE_INSTALL_DIR/.env
+        mv $PLANE_INSTALL_DIR/variables.env $PLANE_INSTALL_DIR/.env
     fi
 
 
