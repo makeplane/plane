@@ -1,7 +1,7 @@
 import React from "react";
 
 // ui
-import { CustomSelect } from "components/ui";
+import { CustomSelect } from "@plane/ui";
 // icons
 import { Triangle } from "lucide-react";
 // fetch-keys

@@ -1,4 +1,4 @@
-import { observable, action, computed, makeObservable, runInAction } from "mobx";
+import { observable, action, computed, makeObservable, runInAction, autorun } from "mobx";
 // store
 import { RootStore } from "../root";
 // types
@@ -69,8 +69,24 @@ export class ModuleIssueStore implements IModuleIssueStore {
       fetchIssues: action,
       updateIssueStructure: action,
     });
+
     this.rootStore = _rootStore;
     this.moduleService = new ModuleService();
+
+    autorun(() => {
+      const workspaceSlug = this.rootStore.workspace.workspaceSlug;
+      const projectId = this.rootStore.project.projectId;
+      const moduleId = this.rootStore.module.moduleId;
+
+      if (
+        workspaceSlug &&
+        projectId &&
+        moduleId &&
+        this.rootStore.moduleFilter.moduleFilters &&
+        this.rootStore.issueFilter.userDisplayFilters
+      )
+        this.fetchIssues(workspaceSlug, projectId, moduleId);
+    });
   }
 
   get getIssueType() {
@@ -156,11 +172,7 @@ export class ModuleIssueStore implements IModuleIssueStore {
       this.loader = true;
       this.error = null;
 
-      this.rootStore.workspace.setWorkspaceSlug(workspaceSlug);
-      this.rootStore.project.setProjectId(projectId);
-      this.rootStore.module.setModuleId(moduleId);
-
-      const params = this.rootStore?.cycleIssueFilter?.appliedFilters;
+      const params = this.rootStore?.moduleFilter?.appliedFilters;
       const issueResponse = await this.moduleService.getModuleIssuesWithParams(
         workspaceSlug,
         projectId,

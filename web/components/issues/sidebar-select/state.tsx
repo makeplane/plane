@@ -7,8 +7,7 @@ import useSWR from "swr";
 // services
 import { ProjectStateService } from "services/project";
 // ui
-import { CustomSelect } from "components/ui";
-import { Spinner, StateGroupIcon } from "@plane/ui";
+import { CustomSelect, Spinner, StateGroupIcon } from "@plane/ui";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";

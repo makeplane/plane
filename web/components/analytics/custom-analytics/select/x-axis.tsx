@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 
 // ui
-import { CustomSelect } from "components/ui";
+import { CustomSelect } from "@plane/ui";
 // types
 import { TXAxisValues } from "types";
 // constants

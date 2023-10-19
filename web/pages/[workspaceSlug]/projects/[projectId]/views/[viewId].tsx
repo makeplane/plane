@@ -11,8 +11,7 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import { ProjectViewLayoutRoot } from "components/issues";
 // ui
-import { BreadcrumbItem, Breadcrumbs, PhotoFilterIcon } from "@plane/ui";
-import { CustomMenu } from "components/ui";
+import { BreadcrumbItem, Breadcrumbs, CustomMenu, PhotoFilterIcon } from "@plane/ui";
 import { EmptyState } from "components/common";
 // icons
 // images
@@ -77,8 +76,7 @@ const SingleView: React.FC = () => {
           {views?.map((view) => (
             <CustomMenu.MenuItem
               key={view.id}
-              renderAs="a"
-              href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}
+              onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/views/${view.id}`)}
             >
               {truncateText(view.name, 40)}
             </CustomMenu.MenuItem>

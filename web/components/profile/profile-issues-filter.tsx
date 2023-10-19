@@ -54,7 +54,7 @@ export const ProfileIssuesFilter = observer(() => {
         />
       </FiltersDropdown>
 
-      <FiltersDropdown title="View">
+      <FiltersDropdown title="Display">
         <DisplayFiltersSelection
           displayFilters={profileIssueFiltersStore.userDisplayFilters}
           displayProperties={profileIssueFiltersStore.userDisplayProperties}

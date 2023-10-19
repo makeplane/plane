@@ -53,7 +53,7 @@ const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
         cols={cols}
         className={`no-scrollbar w-full bg-transparent placeholder-custom-text-400 px-3 py-2 outline-none ${
           mode === "primary"
-            ? "rounded-md border border-custom-border-200"
+            ? "rounded-md border-[0.5px] border-custom-border-200"
             : mode === "transparent"
             ? "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-theme"
             : ""

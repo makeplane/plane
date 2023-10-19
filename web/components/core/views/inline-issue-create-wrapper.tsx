@@ -176,7 +176,7 @@ export const InlineCreateIssueFormWrapper: React.FC<Props> = (props) => {
     reset({ ...defaultValues });
 
     await (!isDraftIssues
-      ? issueService.createIssues(workspaceSlug.toString(), projectId.toString(), formData, user)
+      ? issueService.createIssue(workspaceSlug.toString(), projectId.toString(), formData, user)
       : issueDraftService.createDraftIssue(workspaceSlug.toString(), projectId.toString(), formData)
     )
       .then(async (res) => {

@@ -22,8 +22,8 @@ import {
 import { CreateStateModal } from "components/states";
 import { CreateLabelModal } from "components/labels";
 // ui
-import { CustomMenu } from "components/ui";
-import { Button, Input, ToggleSwitch } from "@plane/ui";
+import {} from "components/ui";
+import { Button, CustomMenu, Input, ToggleSwitch } from "@plane/ui";
 // icons
 import { Sparkle, X } from "lucide-react";
 // types
@@ -578,15 +578,15 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                   <CustomMenu ellipsis>
                     {watch("parent") ? (
                       <>
-                        <CustomMenu.MenuItem renderAs="button" onClick={() => setParentIssueListModalOpen(true)}>
+                        <CustomMenu.MenuItem onClick={() => setParentIssueListModalOpen(true)}>
                           Change parent issue
                         </CustomMenu.MenuItem>
-                        <CustomMenu.MenuItem renderAs="button" onClick={() => setValue("parent", null)}>
+                        <CustomMenu.MenuItem onClick={() => setValue("parent", null)}>
                           Remove parent issue
                         </CustomMenu.MenuItem>
                       </>
                     ) : (
-                      <CustomMenu.MenuItem renderAs="button" onClick={() => setParentIssueListModalOpen(true)}>
+                      <CustomMenu.MenuItem onClick={() => setParentIssueListModalOpen(true)}>
                         Select Parent Issue
                       </CustomMenu.MenuItem>
                     )}

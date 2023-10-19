@@ -1,4 +1,4 @@
-import { observable, action, makeObservable, runInAction, computed } from "mobx";
+import { observable, action, makeObservable, runInAction, computed, autorun } from "mobx";
 // services
 import { IssueService } from "services/issue";
 // helpers
@@ -79,8 +79,22 @@ export class ProjectViewIssuesStore implements IProjectViewIssuesStore {
     });
 
     this.rootStore = _rootStore;
-
     this.issueService = new IssueService();
+
+    autorun(() => {
+      const workspaceSlug = this.rootStore.workspace.workspaceSlug;
+      const projectId = this.rootStore.project.projectId;
+      const viewId = this.rootStore.projectViews.viewId;
+
+      if (
+        workspaceSlug &&
+        projectId &&
+        viewId &&
+        this.rootStore.projectViewFilters.storedFilters[viewId] &&
+        this.rootStore.issueFilter.userDisplayFilters
+      )
+        this.fetchViewIssues(workspaceSlug, projectId, viewId, this.rootStore.projectViewFilters.storedFilters[viewId]);
+    });
   }
 
   computedFilter = (filters: any, filteredParams: any) => {

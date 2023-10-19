@@ -6,8 +6,7 @@ import { useRouter } from "next/router";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomMenu } from "components/ui";
-import { Tooltip, LinearProgressIndicator, ContrastIcon, RunningIcon } from "@plane/ui";
+import { CustomMenu, Tooltip, LinearProgressIndicator, ContrastIcon, RunningIcon } from "@plane/ui";
 // icons
 import {
   AlarmClock,

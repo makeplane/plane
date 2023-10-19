@@ -8,8 +8,8 @@ import { useForm, Controller, useFieldArray } from "react-hook-form";
 
 import { Dialog, Transition } from "@headlessui/react";
 // ui
-import { Button } from "@plane/ui";
-import { Avatar, CustomSearchSelect, CustomSelect } from "components/ui";
+import { Button, CustomSelect, CustomSearchSelect } from "@plane/ui";
+import { Avatar } from "components/ui";
 //icons
 import { ChevronDown, Plus, X } from "lucide-react";
 // services

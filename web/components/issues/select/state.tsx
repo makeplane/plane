@@ -7,9 +7,8 @@ import useSWR from "swr";
 // services
 import { ProjectStateService } from "services/project";
 // ui
-import { CustomSearchSelect } from "components/ui";
+import { CustomSearchSelect, DoubleCircleIcon, StateGroupIcon } from "@plane/ui";
 // icons
-import { DoubleCircleIcon, StateGroupIcon } from "@plane/ui";
 import { Plus } from "lucide-react";
 // helpers
 import { getStatesList } from "helpers/state.helper";

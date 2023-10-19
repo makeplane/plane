@@ -1,8 +1,6 @@
 import { FC, ReactNode } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// services
-import { UserService } from "services/user.service";
 // ui
 import { Spinner } from "@plane/ui";
 // store
@@ -19,7 +17,7 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = (props) => {
   // router
   const router = useRouter();
   // fetching user information
-  const { data: currentUser, error } = useSWR("CURRENT_USER", () => userStore.fetchCurrentUser());
+  const { data: currentUser, error } = useSWR("CURRENT_USER_DETAILS", () => userStore.fetchCurrentUser());
   // fetching user settings
   useSWR("CURRENT_USER_SETTINGS", () => userStore.fetchCurrentUserSettings());
 

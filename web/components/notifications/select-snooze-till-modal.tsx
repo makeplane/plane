@@ -7,8 +7,8 @@ import { getAllTimeIn30MinutesInterval } from "helpers/date-time.helper";
 // hooks
 import useToast from "hooks/use-toast";
 // components
-import { Button } from "@plane/ui";
-import { CustomDatePicker, CustomSelect } from "components/ui";
+import { Button, CustomSelect } from "@plane/ui";
+import { CustomDatePicker } from "components/ui";
 import { X } from "lucide-react";
 // types
 import type { IUserNotification } from "types";
