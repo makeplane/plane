@@ -7,14 +7,14 @@ import useToast from "hooks/use-toast";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import { IIssue, Properties } from "types";
+import { IIssue, IIssueDisplayProperties } from "types";
 
 type Props = {
   issue: IIssue;
   projectId: string;
   expanded: boolean;
   handleToggleExpand: (issueId: string) => void;
-  properties: Properties;
+  properties: IIssueDisplayProperties;
   handleEditIssue: (issue: IIssue) => void;
   handleDeleteIssue: (issue: IIssue) => void;
   disableUserActions: boolean;

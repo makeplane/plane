@@ -157,99 +157,101 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-xl border border-custom-border-200 bg-custom-background-100 shadow-2xl transition-all">
-              <form>
-                <Combobox
-                  onChange={(val: string) => {
-                    const selectedIssues = watch("delete_issue_ids");
-                    if (selectedIssues.includes(val))
-                      setValue(
-                        "delete_issue_ids",
-                        selectedIssues.filter((i) => i !== val)
-                      );
-                    else setValue("delete_issue_ids", [...selectedIssues, val]);
-                  }}
-                >
-                  <div className="relative m-1">
-                    <Search
-                      className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-100 text-opacity-40"
-                      aria-hidden="true"
-                    />
-                    <input
-                      type="text"
-                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none focus:ring-0 sm:text-sm"
-                      placeholder="Search..."
-                      onChange={(event) => setQuery(event.target.value)}
-                    />
-                  </div>
-
-                  <Combobox.Options
-                    static
-                    className="max-h-80 scroll-py-2 divide-y divide-custom-border-200 overflow-y-auto"
+            <Dialog.Panel className="relative flex items-center justify-center w-full ">
+              <div className="w-full max-w-2xl transform   divide-y divide-custom-border-200 divide-opacity-10 rounded-xl border border-custom-border-200 bg-custom-background-100 shadow-2xl transition-all">
+                <form>
+                  <Combobox
+                    onChange={(val: string) => {
+                      const selectedIssues = watch("delete_issue_ids");
+                      if (selectedIssues.includes(val))
+                        setValue(
+                          "delete_issue_ids",
+                          selectedIssues.filter((i) => i !== val)
+                        );
+                      else setValue("delete_issue_ids", [...selectedIssues, val]);
+                    }}
                   >
-                    {filteredIssues.length > 0 ? (
-                      <li className="p-2">
-                        {query === "" && (
-                          <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-custom-text-100">
-                            Select issues to delete
-                          </h2>
-                        )}
-                        <ul className="text-sm text-custom-text-200">
-                          {filteredIssues.map((issue) => (
-                            <Combobox.Option
-                              key={issue.id}
-                              as="div"
-                              value={issue.id}
-                              className={({ active }) =>
-                                `flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2 ${
-                                  active ? "bg-custom-background-80 text-custom-text-100" : ""
-                                }`
-                              }
-                            >
-                              <div className="flex items-center gap-2">
-                                <input
-                                  type="checkbox"
-                                  checked={watch("delete_issue_ids").includes(issue.id)}
-                                  readOnly
-                                />
-                                <span
-                                  className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                  style={{
-                                    backgroundColor: issue.state_detail.color,
-                                  }}
-                                />
-                                <span className="flex-shrink-0 text-xs">
-                                  {issue.project_detail.identifier}-{issue.sequence_id}
-                                </span>
-                                <span>{issue.name}</span>
-                              </div>
-                            </Combobox.Option>
-                          ))}
-                        </ul>
-                      </li>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
-                        <LayersIcon height="56" width="56" />
-                        <h3 className="text-custom-text-200">
-                          No issues found. Create a new issue with{" "}
-                          <pre className="inline rounded bg-custom-background-80 px-2 py-1">C</pre>.
-                        </h3>
-                      </div>
-                    )}
-                  </Combobox.Options>
-                </Combobox>
+                    <div className="relative m-1">
+                      <Search
+                        className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-100 text-opacity-40"
+                        aria-hidden="true"
+                      />
+                      <input
+                        type="text"
+                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none focus:ring-0 sm:text-sm"
+                        placeholder="Search..."
+                        onChange={(event) => setQuery(event.target.value)}
+                      />
+                    </div>
 
-                {filteredIssues.length > 0 && (
-                  <div className="flex items-center justify-end gap-2 p-3">
-                    <Button variant="neutral-primary" onClick={handleClose}>
-                      Cancel
-                    </Button>
-                    <Button variant="danger" onClick={handleSubmit(handleDelete)} loading={isSubmitting}>
-                      {isSubmitting ? "Deleting..." : "Delete selected issues"}
-                    </Button>
-                  </div>
-                )}
-              </form>
+                    <Combobox.Options
+                      static
+                      className="max-h-80 scroll-py-2 divide-y divide-custom-border-200 overflow-y-auto"
+                    >
+                      {filteredIssues.length > 0 ? (
+                        <li className="p-2">
+                          {query === "" && (
+                            <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-custom-text-100">
+                              Select issues to delete
+                            </h2>
+                          )}
+                          <ul className="text-sm text-custom-text-200">
+                            {filteredIssues.map((issue) => (
+                              <Combobox.Option
+                                key={issue.id}
+                                as="div"
+                                value={issue.id}
+                                className={({ active }) =>
+                                  `flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2 ${
+                                    active ? "bg-custom-background-80 text-custom-text-100" : ""
+                                  }`
+                                }
+                              >
+                                <div className="flex items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    checked={watch("delete_issue_ids").includes(issue.id)}
+                                    readOnly
+                                  />
+                                  <span
+                                    className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                    style={{
+                                      backgroundColor: issue.state_detail.color,
+                                    }}
+                                  />
+                                  <span className="flex-shrink-0 text-xs">
+                                    {issue.project_detail.identifier}-{issue.sequence_id}
+                                  </span>
+                                  <span>{issue.name}</span>
+                                </div>
+                              </Combobox.Option>
+                            ))}
+                          </ul>
+                        </li>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
+                          <LayersIcon height="56" width="56" />
+                          <h3 className="text-custom-text-200">
+                            No issues found. Create a new issue with{" "}
+                            <pre className="inline rounded bg-custom-background-80 px-2 py-1">C</pre>.
+                          </h3>
+                        </div>
+                      )}
+                    </Combobox.Options>
+                  </Combobox>
+
+                  {filteredIssues.length > 0 && (
+                    <div className="flex items-center justify-end gap-2 p-3">
+                      <Button variant="neutral-primary" onClick={handleClose}>
+                        Cancel
+                      </Button>
+                      <Button variant="danger" onClick={handleSubmit(handleDelete)} loading={isSubmitting}>
+                        {isSubmitting ? "Deleting..." : "Delete selected issues"}
+                      </Button>
+                    </div>
+                  )}
+                </form>
+              </div>
             </Dialog.Panel>
           </Transition.Child>
         </div>
