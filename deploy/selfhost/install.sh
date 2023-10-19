@@ -13,23 +13,26 @@ function install(){
 function download(){
     cd $SCRIPT_DIR
     TS=$(date +%s)
-    if [ -e docker-compose.yaml ]
+    if [ -f docker-compose.yaml ]
     then
         mv $PLANE_INSTALL_DIR/docker-compose.yaml $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yaml
     fi
-    if [ -e .env ]
-    then
-        cp $PLANE_INSTALL_DIR/.env previous.env
-        mv $PLANE_INSTALL_DIR/.env $PLANE_INSTALL_DIR/archive/$TS.env
-    fi
 
     curl -s -o $PLANE_INSTALL_DIR/docker-compose.yaml  https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/docker-compose.yml
-    curl -s -o $PLANE_INSTALL_DIR/.env https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/variables.env
+    curl -s -o $PLANE_INSTALL_DIR/variables.env https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/variables.env
+
+    if [ -f .env ]
+    then
+        cp $PLANE_INSTALL_DIR/.env $PLANE_INSTALL_DIR/archive/$TS.env
+    else
+        $PLANE_INSTALL_DIR/variables.env $PLANE_INSTALL_DIR/.env
+    fi
+
 
     echo ""
     echo "Latest version is now available for you to use"
     echo "With the latest version, latest environment setting file also is available."
-    echo "In case of Upgrade, your previous setting file is availabe as 'previous.env'. Please compare and set the correct values to the new file."
+    echo "In case of Upgrade, your new setting file is availabe as 'variable.env'. Please compare and set the correct values to the '.env 'file."
 
     echo ""
 
