@@ -1452,6 +1452,7 @@ def issue_activity(
 
         project = Project.objects.get(pk=project_id)
         issue = Issue.objects.filter(pk=issue_id).first()
+        workspace_id = project.workspace_id
 
         if issue is not None:
             try:
