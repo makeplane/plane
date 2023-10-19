@@ -53,7 +53,7 @@ function restartServices(){
 }
 function upgrade(){
     echo "***** STOPPING SERVICES ****"
-    stop
+    stopServices
 
     echo
     echo "***** DOWNLOADING LATEST VERSION ****"
