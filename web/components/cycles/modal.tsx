@@ -193,7 +193,7 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = (props) => {
       setActiveProject(null);
       return;
     }
-    console.log("data", data);
+
     // if data is present, set active project to the project of the
     // issue. This has more priority than the project in the url.
     if (data && data.project) {

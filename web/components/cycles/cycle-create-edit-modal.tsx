@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // components
@@ -20,8 +20,10 @@ interface ICycleCreateEdit {
 
 export const CycleCreateEditModal: React.FC<ICycleCreateEdit> = observer((props) => {
   const { modal, modalClose, cycle = null, onSubmit, workspaceSlug, projectId } = props;
+  const [activeProject, setActiveProject] = useState<string | null>(null);
 
-  const { cycle: cycleStore } = useMobxStore();
+  const { project: projectStore, cycle: cycleStore } = useMobxStore();
+  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
 
   const { setToastAlert } = useToast();
 
@@ -96,6 +98,27 @@ export const CycleCreateEditModal: React.FC<ICycleCreateEdit> = observer((props)
       });
   };
 
+  useEffect(() => {
+    // if modal is closed, reset active project to null
+    // and return to avoid activeProject being set to some other project
+    if (!modal) {
+      setActiveProject(null);
+      return;
+    }
+
+    // if data is present, set active project to the project of the
+    // issue. This has more priority than the project in the url.
+    if (cycle && cycle.project) {
+      setActiveProject(cycle.project);
+      return;
+    }
+
+    // if data is not present, set active project to the project
+    // in the url. This has the least priority.
+    if (projects && projects.length > 0 && !activeProject)
+      setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
+  }, [activeProject, cycle, projectId, projects, modal]);
+
   return (
     <Transition.Root show={modal} as={Fragment}>
       <Dialog as="div" className="relative z-20" onClose={modalClose}>
@@ -123,7 +146,13 @@ export const CycleCreateEditModal: React.FC<ICycleCreateEdit> = observer((props)
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl p-5">
-                <CycleForm handleFormSubmit={formSubmit} handleClose={modalClose} data={cycle} />
+                <CycleForm
+                  handleFormSubmit={formSubmit}
+                  handleClose={modalClose}
+                  projectId={activeProject ?? ""}
+                  setActiveProject={setActiveProject}
+                  data={cycle}
+                />
               </Dialog.Panel>
             </Transition.Child>
           </div>
