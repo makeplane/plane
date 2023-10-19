@@ -117,7 +117,7 @@ from .module import (
     ModuleFavoriteViewSet,
 )
 
-from .external_api import ApiTokenEndpoint
+from .api import ApiTokenEndpoint
 
 from .integration import (
     WorkspaceIntegrationViewSet,

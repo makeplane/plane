@@ -13,7 +13,7 @@ def generate_label_token():
 
 
 def generate_token():
-    return uuid4().hex + uuid4().hex
+    return "plane_api_" + uuid4().hex
 
 
 class APIToken(BaseModel):
@@ -24,8 +24,10 @@ class APIToken(BaseModel):
     last_used = models.DateTimeField(null=True)
 
     # Token
-    token = models.CharField(max_length=255, unique=True, default=generate_token)
-    
+    token = models.CharField(
+        max_length=255, unique=True, default=generate_token, db_index=True
+    )
+
     # User Information
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -52,7 +54,7 @@ class APIToken(BaseModel):
 
 class APIActivityLog(BaseModel):
     token_identifier = models.CharField(max_length=255)
-    
+
     # Request Info
     path = models.CharField(max_length=255)
     method = models.CharField(max_length=10)

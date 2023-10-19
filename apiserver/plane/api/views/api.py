@@ -8,7 +8,7 @@ from rest_framework import status
 # Module import
 from .base import BaseAPIView
 from plane.db.models import APIToken, Workspace
-from plane.api.serializers import APITokenSerializer
+from plane.api.serializers import APITokenSerializer, APITokenReadSerializer
 from plane.api.permissions import WorkspaceUserPermission
 
 
@@ -21,11 +21,16 @@ class ApiTokenEndpoint(BaseAPIView):
         label = request.data.get("label", str(uuid4().hex))
         description = request.data.get("description", "")
         workspace = Workspace.objects.get(slug=slug)
+
+        # Check the user type
+        user_type = 1 if request.user.is_bot else 0
+
         api_token = APIToken.objects.create(
             label=label,
             description=description,
             user=request.user,
             workspace=workspace,
+            user_type=user_type,
         )
 
         serializer = APITokenSerializer(api_token)
@@ -40,7 +45,7 @@ class ApiTokenEndpoint(BaseAPIView):
             user=request.user,
             workspace__slug=slug,
         )
-        serializer = APITokenSerializer(api_tokens, many=True)
+        serializer = APITokenReadSerializer(api_tokens, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def delete(self, request, slug, pk):

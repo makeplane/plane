@@ -16,6 +16,13 @@ class APITokenSerializer(BaseSerializer):
         ]
 
 
+class APITokenReadSerializer(BaseSerializer):
+
+    class Meta:
+        model = APIToken
+        exclude = ('token',)
+
+
 class APIActivityLogSerializer(BaseSerializer):
 
     class Meta:

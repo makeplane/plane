@@ -71,7 +71,7 @@ from .module import (
     ModuleFavoriteSerializer,
 )
 
-from .external_api import APITokenSerializer
+from .api import APITokenSerializer, APITokenReadSerializer
 
 from .integration import (
     IntegrationSerializer,
