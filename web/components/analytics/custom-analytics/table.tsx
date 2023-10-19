@@ -69,6 +69,7 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
                   }`}
                 >
                   {params.x_axis === "priority" ? (
+                    // TODO: incorrect priority icon being rendered
                     <PriorityIcon priority={item.name as TIssuePriorities} />
                   ) : (
                     <span

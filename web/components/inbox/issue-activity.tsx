@@ -1,13 +1,13 @@
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
+import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { AddComment, IssueActivitySection } from "components/issues";
 // services
 import { IssueService, IssueCommentService } from "services/issue";
 // hooks
-import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
 // types
 import { IIssue, IIssueComment } from "types";
@@ -20,23 +20,25 @@ type Props = { issueDetails: IIssue };
 const issueService = new IssueService();
 const issueCommentService = new IssueCommentService();
 
-export const InboxIssueActivity: React.FC<Props> = ({ issueDetails }) => {
+export const InboxIssueActivity: React.FC<Props> = observer(({ issueDetails }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, inboxIssueId } = router.query;
 
+  const { user: userStore } = useMobxStore();
+
   const { setToastAlert } = useToast();
 
-  const { user } = useUser();
-
   const { data: issueActivity, mutate: mutateIssueActivity } = useSWR(
-    workspaceSlug && projectId && inboxIssueId ? PROJECT_ISSUES_ACTIVITY(inboxIssueId.toString()) : null,
-    workspaceSlug && projectId && inboxIssueId
-      ? () => issueService.getIssueActivities(workspaceSlug.toString(), projectId.toString(), inboxIssueId.toString())
+    workspaceSlug && projectId && issueDetails ? PROJECT_ISSUES_ACTIVITY(issueDetails.id) : null,
+    workspaceSlug && projectId && issueDetails
+      ? () => issueService.getIssueActivities(workspaceSlug.toString(), projectId.toString(), issueDetails.id)
       : null
   );
 
+  const user = userStore.currentUser;
+
   const handleCommentUpdate = async (commentId: string, data: Partial<IIssueComment>) => {
-    if (!workspaceSlug || !projectId || !inboxIssueId) return;
+    if (!workspaceSlug || !projectId || !inboxIssueId || !user) return;
 
     await issueCommentService
       .patchIssueComment(workspaceSlug as string, projectId as string, inboxIssueId as string, commentId, data, user)
@@ -44,7 +46,7 @@ export const InboxIssueActivity: React.FC<Props> = ({ issueDetails }) => {
   };
 
   const handleCommentDelete = async (commentId: string) => {
-    if (!workspaceSlug || !projectId || !inboxIssueId) return;
+    if (!workspaceSlug || !projectId || !inboxIssueId || !user) return;
 
     mutateIssueActivity((prevData: any) => prevData?.filter((p: any) => p.id !== commentId), false);
 
@@ -54,7 +56,7 @@ export const InboxIssueActivity: React.FC<Props> = ({ issueDetails }) => {
   };
 
   const handleAddComment = async (formData: IIssueComment) => {
-    if (!workspaceSlug || !issueDetails) return;
+    if (!workspaceSlug || !issueDetails || !user) return;
 
     await issueCommentService
       .createIssueComment(workspaceSlug.toString(), issueDetails.project, issueDetails.id, formData, user)
@@ -81,4 +83,4 @@ export const InboxIssueActivity: React.FC<Props> = ({ issueDetails }) => {
       <AddComment onSubmit={handleAddComment} />
     </div>
   );
-};
+});
