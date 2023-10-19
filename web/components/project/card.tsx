@@ -184,11 +184,12 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                   )}
                 </Tooltip>
                 {(isOwner || isMember) && (
-                  <Link href={`/${workspaceSlug}/projects/${project.id}/settings`}>
-                    <a className="flex items-center justify-center p-1 text-custom-text-400 hover:bg-custom-background-80 hover:text-custom-text-200 rounded">
-                      <Pencil className="h-3.5 w-3.5" />
-                    </a>
-                  </Link>
+                  <button
+                    className="flex items-center justify-center p-1 text-custom-text-400 hover:bg-custom-background-80 hover:text-custom-text-200 rounded"
+                    onClick={() => router.push(`/${workspaceSlug}/projects/${project.id}/settings`)}
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                  </button>
                 )}
 
                 {!project.is_member ? (
