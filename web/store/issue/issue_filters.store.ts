@@ -217,7 +217,7 @@ export class IssueFilterStore implements IIssueFilterStore {
         this.userDisplayProperties = newProperties;
       });
 
-      await this.issueService.patchIssueDisplayProperties(workspaceSlug, projectId, newProperties);
+      await this.issueService.updateIssueDisplayProperties(workspaceSlug, projectId, newProperties);
     } catch (error) {
       this.fetchUserProjectFilters(workspaceSlug, projectId);
 
@@ -225,7 +225,7 @@ export class IssueFilterStore implements IIssueFilterStore {
         this.error = error;
       });
 
-      console.log("Failed to update user filters in issue filter store", error);
+      console.log("Failed to update user display properties in issue filter store", error);
     }
   };
 }
