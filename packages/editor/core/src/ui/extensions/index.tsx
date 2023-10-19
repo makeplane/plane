@@ -16,6 +16,7 @@ import TableHeader from "./table/table-header/table-header";
 import Table from "./table/table";
 import TableCell from "./table/table-cell/table-cell";
 import TableRow from "./table/table-row/table-row";
+import DragAndDrop from "./drag-drop";
 
 export const CoreEditorExtensions = (
   deleteFile: DeleteImage,
@@ -92,4 +93,5 @@ export const CoreEditorExtensions = (
     TableHeader,
     TableCell,
     TableRow,
+    DragAndDrop,
   ];

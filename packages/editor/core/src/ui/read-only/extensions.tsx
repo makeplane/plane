@@ -84,6 +84,7 @@ export const CoreReadOnlyEditorExtensions  = [
     Markdown.configure({
       html: true,
       transformCopiedText: true,
+      transformPastedText: true
     }),
     // Table,
     // TableHeader,
