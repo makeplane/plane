@@ -5,6 +5,9 @@ import { NodeSelection, Plugin } from "@tiptap/pm/state";
 import { __serializeForClipboard, EditorView } from "@tiptap/pm/view";
 
 export interface DragHandleOptions {
+  /**
+   * The width of the drag handle
+   */
   dragHandleWidth: number;
 }
 function absoluteRect(node: Element) {
@@ -61,7 +64,8 @@ function DragHandle(options: DragHandleOptions) {
 
     if (!(node instanceof Element)) return;
 
-    // const nodePos = view.posAtCoords({ left: event.clientX + 50 + options.dragHandleWidth, top: event.clientY })?.inside;
+    // const nodePos = nodePosAtDOM(node, view);
+
     let nodePos = view.posAtCoords({
       left: event.clientX + 50 + options.dragHandleWidth,
       top: event.clientY,
@@ -82,8 +86,7 @@ function DragHandle(options: DragHandleOptions) {
       }
     }
 
-    // const nodePos = nodePosAtDOM(node, view);
-    if (!nodePos || nodePos < 0) return;
+    if (nodePos == null || nodePos < 0) return;
 
     view.dispatch(
       view.state.tr.setSelection(NodeSelection.create(view.state.doc, nodePos)),
@@ -114,18 +117,8 @@ function DragHandle(options: DragHandleOptions) {
 
     if (!(node instanceof Element)) return;
 
-    // const nodePos = view.posAtCoords({ left: event.clientX + 50 + options.dragHandleWidth, top: event.clientY })?.inside;
-    // console.log("sadfa", pos)
     const nodePos = nodePosAtDOM(node, view);
-    if (!nodePos || nodePos < 0) return;
-    console.log("nodePos:", nodePos);
-    console.log("content at nodePos:", view.state.doc.nodeAt(nodePos));
-
-    const parentPos = view.state.doc.resolve(nodePos).parentOffset;
-    const parentNode = view.state.doc.nodeAt(parentPos);
-
-    console.log("parentNode:", parentNode);
-    console.log("parentNode content expression:", parentNode?.type);
+    if (!nodePos) return;
 
     view.dispatch(
       view.state.tr.setSelection(NodeSelection.create(view.state.doc, nodePos)),
@@ -178,11 +171,11 @@ function DragHandle(options: DragHandleOptions) {
           }
 
           const node = nodeDOMAtCoords({
-            x: event.clientX + options.dragHandleWidth,
+            x: event.clientX + 50 + options.dragHandleWidth,
             y: event.clientY,
           });
 
-          if (!(node instanceof Element)) {
+          if (!(node instanceof Element) || node.matches("ul, ol")) {
             hideDragHandle();
             return;
           }

@@ -14,6 +14,15 @@
   height: 0;
 }
 
+.ProseMirror pre {
+  background-color: rgb(var(--color-background-400));
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid rgb(var(--color-border-200));
+  margin: 0.5rem 0;
+  overflow-x: auto;
+}
+
 /* Custom image styles */
 
 .ProseMirror img {
