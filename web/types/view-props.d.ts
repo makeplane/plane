@@ -84,19 +84,19 @@ export interface IIssueDisplayFilterOptions {
   type?: TIssueTypeFilters;
 }
 export interface IIssueDisplayProperties {
-  assignee: boolean;
-  start_date: boolean;
-  due_date: boolean;
-  labels: boolean;
-  key: boolean;
-  priority: boolean;
-  state: boolean;
-  sub_issue_count: boolean;
-  link: boolean;
-  attachment_count: boolean;
-  estimate: boolean;
-  created_on: boolean;
-  updated_on: boolean;
+  assignee?: boolean;
+  start_date?: boolean;
+  due_date?: boolean;
+  labels?: boolean;
+  key?: boolean;
+  priority?: boolean;
+  state?: boolean;
+  sub_issue_count?: boolean;
+  link?: boolean;
+  attachment_count?: boolean;
+  estimate?: boolean;
+  created_on?: boolean;
+  updated_on?: boolean;
 }
 
 export interface IWorkspaceIssueFilterOptions {
@@ -142,10 +142,10 @@ export interface IProjectViewProps {
 export interface IWorkspaceViewProps {
   filters: IIssueFilterOptions;
   display_filters: IIssueDisplayFilterOptions | undefined;
-  display_properties: Properties;
+  display_properties: IIssueDisplayProperties;
 }
 export interface IWorkspaceGlobalViewProps {
   filters: IWorkspaceIssueFilterOptions;
   display_filters: IWorkspaceIssueDisplayFilterOptions | undefined;
-  display_properties: Properties;
+  display_properties: IIssueDisplayProperties;
 }

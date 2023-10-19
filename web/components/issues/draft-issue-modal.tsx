@@ -304,7 +304,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
     if (!workspaceSlug || !activeProject) return;
 
     await issueService
-      .createIssues(workspaceSlug as string, activeProject ?? "", payload, user)
+      .createIssue(workspaceSlug as string, activeProject ?? "", payload, user)
       .then(async (res) => {
         mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
         if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res.id, payload.cycle);
