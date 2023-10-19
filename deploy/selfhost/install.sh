@@ -32,7 +32,7 @@ function download(){
     echo ""
     echo "Latest version is now available for you to use"
     echo ""
-    echo "In case of Upgrade, your new setting file is availabe as 'variables-upgrade.env'. Please compare and set the add/remove the values in '.env 'file."
+    echo "In case of Upgrade, your new setting file is availabe as 'variables-upgrade.env'. Please compare and set the required values in '.env 'file."
     echo ""
 
 }
@@ -70,9 +70,10 @@ function askForAction(){
     echo "   3) Stop"
     echo "   4) Restart"
     echo "   5) Upgrade"
+    echo "   6) Exit"
     echo 
     read -p "Action [2]: " ACTION
-    until [[ -z "$ACTION" || "$ACTION" =~ ^[1-5]$ ]]; do
+    until [[ -z "$ACTION" || "$ACTION" =~ ^[1-6]$ ]]; do
         echo "$ACTION: invalid selection."
         read -p "Action [2]: " ACTION
     done
@@ -86,16 +87,22 @@ function askForAction(){
     elif [ "$ACTION" == "2" ] || [ "$ACTION" == "" ]
     then
         startServices
+        askForAction
     elif [ "$ACTION" == "3" ] 
     then
         stopServices
+        askForAction
     elif [ "$ACTION" == "4" ] 
     then
         restartServices
+        askForAction
     elif [ "$ACTION" == "5" ] 
     then
         upgrade
         askForAction
+    elif [ "$ACTION" == "6" ] 
+    then
+        exit 0
     else
         echo "INVALID ACTION SUPPLIED"
     fi
