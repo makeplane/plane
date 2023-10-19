@@ -170,3 +170,5 @@ from .notification import NotificationViewSet, UnreadNotificationEndpoint, MarkA
 from .exporter import ExportIssuesEndpoint
 
 from .config import ConfigurationEndpoint
+
+from .webhook import WebhookEndpoint

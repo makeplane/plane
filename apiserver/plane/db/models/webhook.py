@@ -1,8 +1,31 @@
+# Python imports
+from uuid import uuid4
+from urllib.parse import urlparse
+
 # Django imports
 from django.db import models
+from django.core.exceptions import ValidationError
 
 # Module imports
 from plane.db.models import BaseModel
+
+
+def generate_token():
+    return "plane_wh_" + uuid4().hex
+
+
+def validate_schema(value):
+    parsed_url = urlparse(value)
+    print(parsed_url)
+    if parsed_url.scheme not in ["http", "https"]:
+        raise ValidationError("Invalid schema. Only HTTP and HTTPS are allowed.")
+
+
+def validate_domain(value):
+    parsed_url = urlparse(value)
+    domain = parsed_url.netloc
+    if domain in ["localhost", "127.0.0.1"]:
+        raise ValidationError("Local URLs are not allowed.")
 
 
 class Webhook(BaseModel):
@@ -11,9 +34,14 @@ class Webhook(BaseModel):
         on_delete=models.CASCADE,
         related_name="workspace_webhooks",
     )
-    url = models.URLField()
+    url = models.URLField(
+        validators=[
+            validate_schema,
+            validate_domain,
+        ]
+    )
     content_type = models.CharField(
-        max_length=30,
+        max_length=40,
         choices=(
             ("application/json", "application/json"),
             ("application/x-www-form-urlencoded", "application/x-www-form-urlencoded"),
@@ -27,6 +55,7 @@ class Webhook(BaseModel):
         return f"{self.workspace.slug} {self.url}"
 
     class Meta:
+        unique_together = ["workspace", "url"]
         verbose_name = "Webhook"
         verbose_name_plural = "Webhooks"
         db_table = "webhooks"

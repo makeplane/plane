@@ -27,6 +27,7 @@ class APIKeyAuthentication(authentication.BaseAuthentication):
             api_token = APIToken.objects.get(
                 Q(Q(expired_at__gt=timezone.now()) | Q(expired_at__isnull=True)),
                 token=token,
+                is_active=True,
             )
         except APIToken.DoesNotExist:
             raise AuthenticationFailed("Given API token is not valid")
