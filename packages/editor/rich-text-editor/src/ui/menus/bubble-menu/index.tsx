@@ -1,10 +1,17 @@
-import { BubbleMenu, BubbleMenuProps } from "@tiptap/react";
+import { BubbleMenu, BubbleMenuProps, isNodeSelection } from "@tiptap/react";
 import { FC, useState } from "react";
 import { BoldIcon } from "lucide-react";
 
 import { NodeSelector } from "./node-selector";
 import { LinkSelector } from "./link-selector";
-import { BoldItem, cn, CodeItem, ItalicItem, StrikeThroughItem, UnderLineItem } from "@plane/editor-core";
+import {
+  BoldItem,
+  cn,
+  CodeItem,
+  ItalicItem,
+  StrikeThroughItem,
+  UnderLineItem,
+} from "@plane/editor-core";
 
 export interface BubbleMenuItem {
   name: string;
@@ -26,14 +33,18 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
 
   const bubbleMenuProps: EditorBubbleMenuProps = {
     ...props,
-    shouldShow: ({ editor }) => {
-      if (!editor.isEditable) {
+    shouldShow: ({ state, editor }) => {
+      const { selection } = state;
+      const { empty } = selection;
+
+      // don't show bubble menu if:
+      // - the selected node is an image
+      // - the selection is empty
+      // - the selection is a node selection (for drag handles)
+      if (editor.isActive("image") || !editor.isEditable || empty || isNodeSelection(selection)) {
         return false;
       }
-      if (editor.isActive("image")) {
-        return false;
-      }
-      return editor.view.state.selection.content().size > 0;
+      return true;
     },
     tippyOptions: {
       moveTransition: "transform 0.15s ease-out",
@@ -80,7 +91,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
               "p-2 text-custom-text-300 hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5 transition-colors",
               {
                 "text-custom-text-100 bg-custom-primary-100/5": item.isActive(),
-              }
+              },
             )}
           >
             <item.icon
