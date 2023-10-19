@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import useLocalStorage from "hooks/use-local-storage";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
@@ -10,20 +12,12 @@ import { CycleIssuesHeader } from "components/headers";
 import { ExistingIssuesListModal } from "components/core";
 import { CycleDetailsSidebar, TransferIssues, TransferIssuesModal } from "components/cycles";
 import { CycleLayoutRoot } from "components/issues/issue-layouts";
-// services
-import { CycleService } from "services/cycle.service";
 // ui
 import { EmptyState } from "components/common";
-// images
+// assets
 import emptyCycle from "public/empty-state/cycle.svg";
 // helpers
 import { getDateRangeStatus } from "helpers/date-time.helper";
-// fetch-keys
-import { CYCLE_DETAILS } from "constants/fetch-keys";
-import useLocalStorage from "hooks/use-local-storage";
-
-// services
-const cycleService = new CycleService();
 
 const SingleCycle: React.FC = () => {
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
@@ -37,17 +31,10 @@ const SingleCycle: React.FC = () => {
   const { storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
   const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
 
-  useSWR(
+  const { data: cycleDetails, error } = useSWR(
     workspaceSlug && projectId && cycleId ? `CURRENT_CYCLE_DETAILS_${cycleId.toString()}` : null,
     workspaceSlug && projectId && cycleId
       ? () => cycleStore.fetchCycleWithId(workspaceSlug.toString(), projectId.toString(), cycleId.toString())
-      : null
-  );
-
-  const { data: cycleDetails, error } = useSWR(
-    workspaceSlug && projectId && cycleId ? CYCLE_DETAILS(cycleId.toString()) : null,
-    workspaceSlug && projectId && cycleId
-      ? () => cycleService.getCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString())
       : null
   );
 
@@ -97,7 +84,7 @@ const SingleCycle: React.FC = () => {
       ) : (
         <>
           <TransferIssuesModal handleClose={() => setTransferIssuesModal(false)} isOpen={transferIssuesModal} />
-          <div className={`relative w-full h-full flex overflow-auto`}>
+          <div className="relative w-full h-full flex overflow-auto">
             <div className={`flex flex-col h-full w-full ${isSidebarCollapsed ? "" : "mr-[24rem]"} duration-300`}>
               {cycleStatus === "completed" && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
               <div className="h-full w-full">
