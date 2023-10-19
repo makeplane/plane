@@ -115,7 +115,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
             states={projectStore.states?.[projectId?.toString() ?? ""] ?? undefined}
           />
         </FiltersDropdown>
-        <FiltersDropdown title="View">
+        <FiltersDropdown title="Display">
           <DisplayFiltersSelection
             displayFilters={issueFilterStore.userDisplayFilters}
             displayProperties={issueFilterStore.userDisplayProperties}

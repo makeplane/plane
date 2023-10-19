@@ -1,15 +1,12 @@
 import React, { useCallback, useState } from "react";
-
 import { useRouter } from "next/router";
-
-// react-dropzone
+import { observer } from "mobx-react-lite";
 import { useDropzone } from "react-dropzone";
-// headless ui
 import { Transition, Dialog } from "@headlessui/react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { FileService } from "services/file.service";
-// hooks
-import useWorkspaceDetails from "hooks/use-workspace-details";
 // ui
 import { Button } from "@plane/ui";
 // icons
@@ -28,22 +25,17 @@ type Props = {
 // services
 const fileService = new FileService();
 
-export const ImageUploadModal: React.FC<Props> = ({
-  value,
-  onSuccess,
-  isOpen,
-  onClose,
-  isRemoving,
-  handleDelete,
-  userImage,
-}) => {
+export const ImageUploadModal: React.FC<Props> = observer((props) => {
+  const { value, onSuccess, isOpen, onClose, isRemoving, handleDelete, userImage } = props;
+
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { workspaceDetails } = useWorkspaceDetails();
+  const { workspace: workspaceStore } = useMobxStore();
+  const { currentWorkspace: workspaceDetails } = workspaceStore;
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setImage(acceptedFiles[0]);
@@ -203,4 +195,4 @@ export const ImageUploadModal: React.FC<Props> = ({
       </Dialog>
     </Transition.Root>
   );
-};
+});

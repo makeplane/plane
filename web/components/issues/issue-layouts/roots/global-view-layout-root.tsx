@@ -6,10 +6,9 @@ import useSWR from "swr";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { SpreadsheetView } from "components/core";
-import { GlobalViewsAppliedFiltersRoot } from "components/issues";
+import { GlobalViewsAppliedFiltersRoot, SpreadsheetView } from "components/issues";
 // types
-import { IIssueDisplayFilterOptions, TStaticViewTypes } from "types";
+import { IIssue, IIssueDisplayFilterOptions, TStaticViewTypes } from "types";
 // fetch-keys
 import { GLOBAL_VIEW_ISSUES } from "constants/fetch-keys";
 
@@ -28,6 +27,7 @@ export const GlobalViewLayoutRoot: React.FC<Props> = observer((props) => {
     globalViewIssues: globalViewIssuesStore,
     globalViewFilters: globalViewFiltersStore,
     workspaceFilter: workspaceFilterStore,
+    workspace: workspaceStore,
   } = useMobxStore();
 
   const viewDetails = globalViewId ? globalViewsStore.globalViewDetails[globalViewId.toString()] : undefined;
@@ -63,6 +63,18 @@ export const GlobalViewLayoutRoot: React.FC<Props> = observer((props) => {
     [workspaceFilterStore, workspaceSlug]
   );
 
+  const handleUpdateIssue = useCallback(
+    (issue: IIssue, data: Partial<IIssue>) => {
+      if (!workspaceSlug) return;
+
+      console.log("issue", issue);
+      console.log("data", data);
+
+      // TODO: add update issue logic here
+    },
+    [workspaceSlug]
+  );
+
   const issues = type
     ? globalViewIssuesStore.viewIssues?.[type]
     : globalViewId
@@ -78,8 +90,10 @@ export const GlobalViewLayoutRoot: React.FC<Props> = observer((props) => {
           displayFilters={workspaceFilterStore.workspaceDisplayFilters}
           handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
           issues={issues}
+          members={workspaceStore.workspaceMembers ? workspaceStore.workspaceMembers.map((m) => m.member) : undefined}
+          labels={workspaceStore.workspaceLabels ? workspaceStore.workspaceLabels : undefined}
           handleIssueAction={() => {}}
-          handleUpdateIssue={() => {}}
+          handleUpdateIssue={handleUpdateIssue}
           disableUserActions={false}
         />
       </div>

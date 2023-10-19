@@ -5,13 +5,12 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 // icons
-import { Globe2, LinkIcon, Lock, Pencil, Star } from "lucide-react";
+import { LinkIcon, Lock, Pencil, Star } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
 import { Button, Tooltip } from "@plane/ui";
 // helpers
-import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // types
@@ -97,11 +96,11 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
       )}
 
       {/* Card Information */}
-      <div className="flex flex-col rounded bg-custom-background-100 shadow-custom-shadow-xs">
+      <div className="flex flex-col rounded bg-custom-background-100 border border-custom-border-200">
         <Link href={`/${workspaceSlug as string}/projects/${project.id}/issues`}>
           <a>
             <div className="relative h-[118px] w-full rounded-t ">
-              <div className="absolute z-[1] inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              <div className="absolute z-[1] inset-0 bg-gradient-to-t from-black/60 to-transparent" />
 
               <img
                 src={
@@ -124,24 +123,18 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                     </span>
                   </div>
 
-                  <div className="flex flex-col justify-center h-9">
-                    <h3 className="text-sm text-white font-semibold line-clamp-1">{project.name}</h3>
+                  <div className="flex flex-col gap-0.5 justify-center h-9">
+                    <h3 className="text-white font-semibold line-clamp-1">{project.name}</h3>
                     <span className="flex items-center gap-1.5">
-                      <p className="text-xs text-white">
-                        Created on {renderShortDateWithYearFormat(project?.created_at)}
-                      </p>
-                      {project.network === 0 ? (
-                        <Lock className="h-3 w-3 text-white" />
-                      ) : (
-                        <Globe2 className="h-3 w-3 text-white" />
-                      )}
+                      <p className="text-xs font-medium text-white">{project.identifier} </p>
+                      {project.network === 0 && <Lock className="h-2.5 w-2.5 text-white " />}
                     </span>
                   </div>
                 </div>
 
                 <div className="flex items-center h-full gap-2">
                   <button
-                    className="flex items-center justify-center h-6 w-6 rounded bg-white/30"
+                    className="flex items-center justify-center h-6 w-6 rounded bg-white/10"
                     onClick={(e) => {
                       e.stopPropagation();
                       e.preventDefault();
@@ -151,7 +144,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                     <LinkIcon className="h-3 w-3 text-white" />
                   </button>
                   <button
-                    className="flex items-center justify-center h-6 w-6 rounded bg-white/30"
+                    className="flex items-center justify-center h-6 w-6 rounded bg-white/10"
                     onClick={(e) => {
                       if (project.is_favorite) {
                         e.preventDefault();
@@ -165,21 +158,15 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                     }}
                   >
                     <Star
-                      className={`h-3 w-3 ${project.is_favorite ? "fill-orange-400 text-transparent" : "text-white"} `}
+                      className={`h-3 w-3 ${project.is_favorite ? "fill-amber-400 text-transparent" : "text-white"} `}
                     />
                   </button>
                 </div>
               </div>
-
-              <div className="absolute top-3 right-3">
-                <Button variant="primary" size="sm" className="text-[0.6rem] !py-0.5 rounded-full">
-                  Joined
-                </Button>
-              </div>
             </div>
 
             <div className="h-[104px] w-full flex flex-col justify-between p-4 rounded-b">
-              <p className="text-xs text-custom-text-200 break-words line-clamp-2">{project.description}</p>
+              <p className="text-sm text-custom-text-300 font-medium break-words line-clamp-2">{project.description}</p>
               <div className="flex item-center justify-between">
                 <Tooltip
                   tooltipHeading="Members"
@@ -188,9 +175,13 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                   }
                   position="top"
                 >
-                  <div className="flex items-center cursor-pointer gap-2 text-custom-text-200">
-                    <AssigneesList userIds={projectMembersIds} length={3} showLength={true} />
-                  </div>
+                  {projectMembersIds.length > 0 ? (
+                    <div className="flex items-center cursor-pointer gap-2 text-custom-text-200">
+                      <AssigneesList userIds={projectMembersIds} length={3} showLength={true} />
+                    </div>
+                  ) : (
+                    <span className="text-sm italic text-custom-text-400">No Member Yet</span>
+                  )}
                 </Tooltip>
                 {(isOwner || isMember) && (
                   <Link href={`/${workspaceSlug}/projects/${project.id}/settings`}>

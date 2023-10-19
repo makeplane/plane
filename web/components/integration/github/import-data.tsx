@@ -1,9 +1,9 @@
 import { FC } from "react";
-
-// react-hook-form
+import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import { Control, Controller, UseFormWatch } from "react-hook-form";
-// hooks
-import useProjects from "hooks/use-projects";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { SelectRepository, TFormValues, TIntegrationSteps } from "components/integration";
 // ui
@@ -21,8 +21,15 @@ type Props = {
   watch: UseFormWatch<TFormValues>;
 };
 
-export const GithubImportData: FC<Props> = ({ handleStepChange, integration, control, watch }) => {
-  const { projects } = useProjects();
+export const GithubImportData: FC<Props> = observer((props) => {
+  const { handleStepChange, integration, control, watch } = props;
+
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
+  const { project: projectStore } = useMobxStore();
+
+  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
 
   const options = projects
     ? projects.map((project) => ({
@@ -121,4 +128,4 @@ export const GithubImportData: FC<Props> = ({ handleStepChange, integration, con
       </div>
     </div>
   );
-};
+});
