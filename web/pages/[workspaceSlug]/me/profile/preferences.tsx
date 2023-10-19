@@ -5,11 +5,10 @@ import { useTheme } from "next-themes";
 import { useMobxStore } from "lib/mobx/store-provider";
 import useToast from "hooks/use-toast";
 // layouts
-import { AppLayout } from "layouts/app-layout";
+import { WorkspaceSettingLayout } from "layouts/setting-layout/workspace-setting-layout";
 // components
 import { CustomThemeSelector, ThemeSwitch } from "components/core";
-import { SettingsSidebar } from "components/project";
-import { ProfilePreferencesHeader } from "components/headers";
+import { WorkspaceSettingHeader } from "components/headers";
 // ui
 import { Spinner } from "@plane/ui";
 // constants
@@ -45,37 +44,29 @@ const ProfilePreferencesPage = observer(() => {
   };
 
   return (
-    <AppLayout header={<ProfilePreferencesHeader />}>
-      <>
-        {userStore.currentUser ? (
-          <div className="flex flex-row gap-2 h-full">
-            <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
-              <SettingsSidebar />
+    <WorkspaceSettingLayout header={<WorkspaceSettingHeader title="My Profile Preferences" />}>
+      {userStore.currentUser ? (
+        <div className="pr-9 py-8 w-full overflow-y-auto">
+          <div className="flex items-center py-3.5 border-b border-custom-border-200">
+            <h3 className="text-xl font-medium">Preferences</h3>
+          </div>
+          <div className="grid grid-cols-12 gap-4 sm:gap-16 py-6">
+            <div className="col-span-12 sm:col-span-6">
+              <h4 className="text-lg font-semibold text-custom-text-100">Theme</h4>
+              <p className="text-sm text-custom-text-200">Select or customize your interface color scheme.</p>
             </div>
-
-            <div className="pr-9 py-8 w-full overflow-y-auto">
-              <div className="flex items-center py-3.5 border-b border-custom-border-200">
-                <h3 className="text-xl font-medium">Preferences</h3>
-              </div>
-              <div className="grid grid-cols-12 gap-4 sm:gap-16 py-6">
-                <div className="col-span-12 sm:col-span-6">
-                  <h4 className="text-lg font-semibold text-custom-text-100">Theme</h4>
-                  <p className="text-sm text-custom-text-200">Select or customize your interface color scheme.</p>
-                </div>
-                <div className="col-span-12 sm:col-span-6">
-                  <ThemeSwitch value={currentTheme} onChange={handleThemeChange} />
-                </div>
-              </div>
-              {userTheme?.theme === "custom" && <CustomThemeSelector />}
+            <div className="col-span-12 sm:col-span-6">
+              <ThemeSwitch value={currentTheme} onChange={handleThemeChange} />
             </div>
           </div>
-        ) : (
-          <div className="grid h-full w-full place-items-center px-4 sm:px-0">
-            <Spinner />
-          </div>
-        )}
-      </>
-    </AppLayout>
+          {userTheme?.theme === "custom" && <CustomThemeSelector />}
+        </div>
+      ) : (
+        <div className="grid h-full w-full place-items-center px-4 sm:px-0">
+          <Spinner />
+        </div>
+      )}
+    </WorkspaceSettingLayout>
   );
 });
 

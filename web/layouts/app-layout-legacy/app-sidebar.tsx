@@ -1,6 +1,4 @@
 import dynamic from "next/dynamic";
-// hooks
-import useTheme from "hooks/use-theme";
 // components
 import { WorkspaceHelpSection, WorkspaceSidebarDropdown, WorkspaceSidebarMenu } from "components/workspace";
 

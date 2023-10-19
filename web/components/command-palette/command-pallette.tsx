@@ -53,7 +53,7 @@ export const CommandPalette: FC = observer(() => {
     isDeleteIssueModalOpen,
     toggleDeleteIssueModal,
   } = commandPalette;
-  const { setSidebarCollapsed } = themeStore;
+  const { toggleSidebar } = themeStore;
 
   const { user } = useUser();
 
@@ -109,22 +109,22 @@ export const CommandPalette: FC = observer(() => {
           copyIssueUrlToClipboard();
         } else if (keyPressed === "b") {
           e.preventDefault();
-          setSidebarCollapsed();
+          toggleSidebar();
         }
       } else {
         if (keyPressed === "c") {
           toggleCreateIssueModal(true);
         } else if (keyPressed === "p") {
           toggleCreateProjectModal(true);
-        } else if (keyPressed === "v") {
-          toggleCreateViewModal(true);
-        } else if (keyPressed === "d") {
-          toggleCreatePageModal(true);
         } else if (keyPressed === "h") {
           toggleShortcutModal(true);
-        } else if (keyPressed === "q") {
+        } else if (keyPressed === "v" && workspaceSlug && projectId) {
+          toggleCreateViewModal(true);
+        } else if (keyPressed === "d" && workspaceSlug && projectId) {
+          toggleCreatePageModal(true);
+        } else if (keyPressed === "q" && workspaceSlug && projectId) {
           toggleCreateCycleModal(true);
-        } else if (keyPressed === "m") {
+        } else if (keyPressed === "m" && workspaceSlug && projectId) {
           toggleCreateModuleModal(true);
         } else if (keyPressed === "backspace" || keyPressed === "delete") {
           e.preventDefault();
@@ -142,8 +142,10 @@ export const CommandPalette: FC = observer(() => {
       toggleCreateModuleModal,
       toggleBulkDeleteIssueModal,
       toggleCommandPaletteModal,
-      setSidebarCollapsed,
+      toggleSidebar,
       toggleCreateIssueModal,
+      projectId,
+      workspaceSlug,
     ]
   );
 
