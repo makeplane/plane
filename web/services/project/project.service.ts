@@ -136,14 +136,6 @@ export class ProjectService extends APIService {
       });
   }
 
-  async joinProjects(data: any): Promise<any> {
-    return this.post("/api/users/me/invitations/projects/", data)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
   async projectMembers(workspaceSlug: string, projectId: string): Promise<IProjectMember[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/project-members/`)
       .then((response) => response?.data)
