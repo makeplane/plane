@@ -1,6 +1,5 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
-// lucide icons
 import { AlertCircle, SignalHigh, SignalMedium, SignalLow, Ban } from "lucide-react";
 // components
 import { HeaderGroupByCard } from "./group-by-card";
@@ -45,7 +44,11 @@ export const PriorityHeader: FC<IPriorityHeader> = observer((props) => {
   return (
     <>
       {priority && (
-        <HeaderGroupByCard icon={<Icon priority={priority?.key} />} title={priority?.key || ""} count={issues_count} />
+        <HeaderGroupByCard
+          icon={<Icon priority={priority?.key} />}
+          title={priority?.title || ""}
+          count={issues_count}
+        />
       )}
     </>
   );
