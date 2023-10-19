@@ -14,6 +14,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# To access plane api through api tokens
+ENABLE_API = os.environ.get("ENABLE_API", "1") == "1"
 
 # Application definition
 
@@ -52,11 +54,15 @@ MIDDLEWARE = [
     "plane.middleware.api_log_middleware.APITokenLogMiddleware",
 ]
 
+DEFAULT_AUTH_CLASSES = [
+    "rest_framework_simplejwt.authentication.JWTAuthentication",
+]
+
+if ENABLE_API:
+    DEFAULT_AUTH_CLASSES.append("plane.authentication.api_authentication.APIKeyAuthentication")
+
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-        "plane.authentication.api_authentication.APIKeyAuthentication",
-    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": tuple(DEFAULT_AUTH_CLASSES),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
