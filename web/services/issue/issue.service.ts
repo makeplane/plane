@@ -2,7 +2,7 @@
 import { APIService } from "services/api.service";
 import { TrackEventService } from "services/track_event.service";
 // type
-import type { IUser, IIssue, IIssueActivity, ISubIssueResponse } from "types";
+import type { IUser, IIssue, IIssueActivity, ISubIssueResponse, IIssueDisplayProperties } from "types";
 // helper
 import { API_BASE_URL } from "helpers/common.helper";
 
@@ -56,14 +56,6 @@ export class IssueService extends APIService {
 
   async getIssueActivities(workspaceSlug: string, projectId: string, issueId: string): Promise<IIssueActivity[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/history/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getIssueProperties(workspaceSlug: string, projectId: string): Promise<any> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-properties/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -153,24 +145,20 @@ export class IssueService extends APIService {
       });
   }
 
-  async createIssueProperties(workspaceSlug: string, projectId: string, data: any): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-properties/`, data)
+  async getIssueDisplayProperties(workspaceSlug: string, projectId: string): Promise<any> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-display-properties/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async patchIssueProperties(
+  async patchIssueDisplayProperties(
     workspaceSlug: string,
     projectId: string,
-    issuePropertyId: string,
-    data: any
+    data: IIssueDisplayProperties
   ): Promise<any> {
-    return this.patch(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-properties/` + `${issuePropertyId}/`,
-      data
-    )
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-display-properties/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
