@@ -153,12 +153,14 @@ export class IssueService extends APIService {
       });
   }
 
-  async patchIssueDisplayProperties(
+  async updateIssueDisplayProperties(
     workspaceSlug: string,
     projectId: string,
     data: IIssueDisplayProperties
   ): Promise<any> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-display-properties/`, data)
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-display-properties/`, {
+      properties: data,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
