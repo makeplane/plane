@@ -29,6 +29,7 @@ from plane.db.models import (
     IssueComment,
 )
 from plane.api.serializers import IssueActivitySerializer
+from plane.bgtasks.notification_task import notifications
 
 
 # Track Chnages in name
@@ -1231,44 +1232,18 @@ def issue_activity(
     subscriber=True,
 ):
     try:
-
         issue_activities = []
 
         actor = User.objects.get(pk=actor_id)
         project = Project.objects.get(pk=project_id)
+        issue = Issue.objects.filter(pk=issue_id).first()
 
-        if type not in [
-            "cycle.activity.created",
-            "cycle.activity.deleted",
-            "module.activity.created",
-            "module.activity.deleted",
-            "issue_reaction.activity.created",
-            "issue_reaction.activity.deleted",
-            "comment_reaction.activity.created",
-            "comment_reaction.activity.deleted",
-            "issue_vote.activity.created",
-            "issue_vote.activity.deleted",
-            "issue_draft.activity.created",
-            "issue_draft.activity.updated",
-            "issue_draft.activity.deleted",
-        ]:
-            issue = Issue.objects.filter(pk=issue_id).first()
-
-            if issue is not None:
-                try:
-                    issue.updated_at = timezone.now()
-                    issue.save(update_fields=["updated_at"])
-                except Exception as e:
-                    pass
-
-            if subscriber:
-                # add the user to issue subscriber
-                try:
-                    _ = IssueSubscriber.objects.get_or_create(
-                        issue_id=issue_id, subscriber=actor
-                    )
-                except Exception as e:
-                    pass
+        if issue is not None:
+            try:
+                issue.updated_at = timezone.now()
+                issue.save(update_fields=["updated_at"])
+            except Exception as e:
+                pass
 
         ACTIVITY_MAPPER = {
             "issue.activity.created": create_issue_activity,
@@ -1332,89 +1307,17 @@ def issue_activity(
             except Exception as e:
                 capture_exception(e)
 
-        if type not in [
-            "cycle.activity.created",
-            "cycle.activity.deleted",
-            "module.activity.created",
-            "module.activity.deleted",
-            "issue_reaction.activity.created",
-            "issue_reaction.activity.deleted",
-            "comment_reaction.activity.created",
-            "comment_reaction.activity.deleted",
-            "issue_vote.activity.created",
-            "issue_vote.activity.deleted",
-            "issue_draft.activity.created",
-            "issue_draft.activity.updated",
-            "issue_draft.activity.deleted",
-        ]:
-            # Create Notifications
-            bulk_notifications = []
-
-            issue_subscribers = list(
-                IssueSubscriber.objects.filter(project=project, issue_id=issue_id)
-                .exclude(subscriber_id=actor_id)
-                .values_list("subscriber", flat=True)
-            )
-
-            issue_assignees = list(
-                IssueAssignee.objects.filter(project=project, issue_id=issue_id)
-                .exclude(assignee_id=actor_id)
-                .values_list("assignee", flat=True)
-            )
-
-            issue_subscribers = issue_subscribers + issue_assignees
-
-            issue = Issue.objects.filter(pk=issue_id).first()
-
-            # Add bot filtering
-            if (
-                issue is not None
-                and issue.created_by_id is not None
-                and not issue.created_by.is_bot
-                and str(issue.created_by_id) != str(actor_id)
-            ):
-                issue_subscribers = issue_subscribers + [issue.created_by_id]
-
-            for subscriber in list(set(issue_subscribers)):
-                for issue_activity in issue_activities_created:
-                    bulk_notifications.append(
-                        Notification(
-                            workspace=project.workspace,
-                            sender="in_app:issue_activities",
-                            triggered_by_id=actor_id,
-                            receiver_id=subscriber,
-                            entity_identifier=issue_id,
-                            entity_name="issue",
-                            project=project,
-                            title=issue_activity.comment,
-                            data={
-                                "issue": {
-                                    "id": str(issue_id),
-                                    "name": str(issue.name),
-                                    "identifier": str(issue.project.identifier),
-                                    "sequence_id": issue.sequence_id,
-                                    "state_name": issue.state.name,
-                                    "state_group": issue.state.group,
-                                },
-                                "issue_activity": {
-                                    "id": str(issue_activity.id),
-                                    "verb": str(issue_activity.verb),
-                                    "field": str(issue_activity.field),
-                                    "actor": str(issue_activity.actor_id),
-                                    "new_value": str(issue_activity.new_value),
-                                    "old_value": str(issue_activity.old_value),
-                                    "issue_comment": str(
-                                        issue_activity.issue_comment.comment_stripped
-                                        if issue_activity.issue_comment is not None
-                                        else ""
-                                    ),
-                                },
-                            },
-                        )
-                    )
-
-            # Bulk create notifications
-            Notification.objects.bulk_create(bulk_notifications, batch_size=100)
+        notifications.delay(
+            type=type,
+            issue_id=issue_id,
+            actor_id=actor_id,
+            project_id=project_id,
+            subscriber=subscriber,
+            issue_activities_created=json.dumps(
+                IssueActivitySerializer(issue_activities_created, many=True).data,
+                cls=DjangoJSONEncoder,
+            ),
+        )
 
         return
     except Exception as e:
