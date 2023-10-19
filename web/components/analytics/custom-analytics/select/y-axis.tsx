@@ -1,5 +1,5 @@
 // ui
-import { CustomSelect } from "components/ui";
+import { CustomSelect } from "@plane/ui";
 // types
 import { TYAxisValues } from "types";
 // constants

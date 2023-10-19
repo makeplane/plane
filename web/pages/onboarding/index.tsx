@@ -1,17 +1,15 @@
 import { useEffect, useState } from "react";
-
 import Image from "next/image";
-
+import { observer } from "mobx-react-lite";
 import useSWR, { mutate } from "swr";
-
-// next-themes
 import { useTheme } from "next-themes";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { UserService } from "services/user.service";
 import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
-import useWorkspaces from "hooks/use-workspaces";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // components
@@ -32,14 +30,16 @@ import { CURRENT_USER, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 const userService = new UserService();
 const workspaceService = new WorkspaceService();
 
-const Onboarding: NextPage = () => {
+const Onboarding: NextPage = observer(() => {
   const [step, setStep] = useState<number | null>(null);
+
+  const { workspace: workspaceStore } = useMobxStore();
 
   const { theme, setTheme } = useTheme();
 
   const { user, isLoading: userLoading } = useUserAuth("onboarding");
 
-  const { workspaces } = useWorkspaces();
+  const { workspaces } = workspaceStore;
   const userWorkspaces = workspaces?.filter((w) => w.created_by === user?.id);
 
   const { data: invitations } = useSWR(USER_WORKSPACE_INVITATIONS, () => workspaceService.userWorkspaceInvitations());
@@ -227,6 +227,6 @@ const Onboarding: NextPage = () => {
       </div>
     </DefaultLayout>
   );
-};
+});
 
 export default Onboarding;

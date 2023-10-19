@@ -3,8 +3,7 @@ import { Controller, useForm } from "react-hook-form";
 // components
 import EmojiIconPicker from "components/emoji-icon-picker";
 import { ImagePickerPopover } from "components/core";
-import { CustomSelect } from "components/ui";
-import { Button, Input, TextArea } from "@plane/ui";
+import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
 // types
 import { IProject, IWorkspace } from "types";
 // helpers

@@ -1,7 +1,8 @@
 import { enableStaticRendering } from "mobx-react-lite";
 // store imports
-import UserStore from "store/user.store";
-import ThemeStore from "store/theme.store";
+import CommandPaletteStore, { ICommandPaletteStore } from "./command-palette.store";
+import UserStore, { IUserStore } from "store/user.store";
+import ThemeStore, { IThemeStore } from "store/theme.store";
 import {
   DraftIssuesStore,
   IIssueDetailStore,
@@ -79,9 +80,10 @@ import {
 enableStaticRendering(typeof window === "undefined");
 
 export class RootStore {
-  user;
-  theme;
+  user: IUserStore;
+  theme: IThemeStore;
 
+  commandPalette: ICommandPaletteStore;
   workspace: IWorkspaceStore;
   workspaceFilter: IWorkspaceFilterStore;
 
@@ -129,6 +131,7 @@ export class RootStore {
   inboxFilters: IInboxFiltersStore;
 
   constructor() {
+    this.commandPalette = new CommandPaletteStore(this);
     this.user = new UserStore(this);
     this.theme = new ThemeStore(this);
 

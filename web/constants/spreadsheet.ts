@@ -1,80 +1,75 @@
-import { CalendarDaysIcon, PlayIcon, Squares2X2Icon, TagIcon, UserGroupIcon } from "@heroicons/react/24/outline";
+import { TIssueOrderByOptions } from "types";
 
-export const SPREADSHEET_COLUMN = [
-  {
-    propertyName: "title",
-    colName: "Title",
-    colSize: "440px",
+export const SPREADSHEET_PROPERTY_DETAILS: {
+  [key: string]: {
+    title: string;
+    ascendingOrderKey: TIssueOrderByOptions;
+    ascendingOrderTitle: string;
+    descendingOrderKey: TIssueOrderByOptions;
+    descendingOrderTitle: string;
+  };
+} = {
+  assignee: {
+    title: "Assignees",
+    ascendingOrderKey: "assignees__first_name",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "-assignees__first_name",
+    descendingOrderTitle: "Z",
   },
-  {
-    propertyName: "state",
-    colName: "State",
-    colSize: "128px",
-    icon: Squares2X2Icon,
-    ascendingOrder: "state__name",
-    descendingOrder: "-state__name",
+  created_on: {
+    title: "Created on",
+    ascendingOrderKey: "-created_at",
+    ascendingOrderTitle: "New",
+    descendingOrderKey: "created_at",
+    descendingOrderTitle: "Old",
   },
-  {
-    propertyName: "priority",
-    colName: "Priority",
-    colSize: "128px",
-    ascendingOrder: "priority",
-    descendingOrder: "-priority",
+  due_date: {
+    title: "Due date",
+    ascendingOrderKey: "-target_date",
+    ascendingOrderTitle: "New",
+    descendingOrderKey: "target_date",
+    descendingOrderTitle: "Old",
   },
-  {
-    propertyName: "assignee",
-    colName: "Assignees",
-    colSize: "128px",
-    icon: UserGroupIcon,
-    ascendingOrder: "assignees__id",
-    descendingOrder: "-assignees__id",
+  estimate: {
+    title: "Estimate",
+    ascendingOrderKey: "estimate_point",
+    ascendingOrderTitle: "Low",
+    descendingOrderKey: "-estimate_point",
+    descendingOrderTitle: "High",
   },
-  {
-    propertyName: "labels",
-    colName: "Labels",
-    colSize: "128px",
-    icon: TagIcon,
-    ascendingOrder: "labels__name",
-    descendingOrder: "-labels__name",
+  labels: {
+    title: "Labels",
+    ascendingOrderKey: "labels__name",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "-labels__name",
+    descendingOrderTitle: "Z",
   },
-  {
-    propertyName: "start_date",
-    colName: "Start Date",
-    colSize: "128px",
-    icon: CalendarDaysIcon,
-    ascendingOrder: "-start_date",
-    descendingOrder: "start_date",
+  priority: {
+    title: "Priority",
+    ascendingOrderKey: "priority",
+    ascendingOrderTitle: "None",
+    descendingOrderKey: "-priority",
+    descendingOrderTitle: "Urgent",
   },
-  {
-    propertyName: "due_date",
-    colName: "Due Date",
-    colSize: "128px",
-    icon: CalendarDaysIcon,
-    ascendingOrder: "-target_date",
-    descendingOrder: "target_date",
+  start_date: {
+    title: "Start date",
+    ascendingOrderKey: "-start_date",
+    ascendingOrderTitle: "New",
+    descendingOrderKey: "start_date",
+    descendingOrderTitle: "Old",
   },
-  {
-    propertyName: "estimate",
-    colName: "Estimate",
-    colSize: "128px",
-    icon: PlayIcon,
-    ascendingOrder: "estimate_point",
-    descendingOrder: "-estimate_point",
+  state: {
+    title: "State",
+    ascendingOrderKey: "state__name",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "-state__name",
+    descendingOrderTitle: "Z",
   },
-  {
-    propertyName: "created_on",
-    colName: "Created On",
-    colSize: "144px",
-    icon: CalendarDaysIcon,
-    ascendingOrder: "-created_at",
-    descendingOrder: "created_at",
+  updated_on: {
+    title: "Updated on",
+    ascendingOrderKey: "-updated_at",
+    ascendingOrderTitle: "New",
+    descendingOrderKey: "updated_at",
+    descendingOrderTitle: "Old",
   },
-  {
-    propertyName: "updated_on",
-    colName: "Updated On",
-    colSize: "144px",
-    icon: CalendarDaysIcon,
-    ascendingOrder: "-updated_at",
-    descendingOrder: "updated_at",
-  },
-];
+};

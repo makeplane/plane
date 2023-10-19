@@ -14,3 +14,4 @@ export * from "./card";
 export * from "./join-project-modal";
 export * from "./form";
 export * from "./form-loader";
+export * from "./delete-project-section";

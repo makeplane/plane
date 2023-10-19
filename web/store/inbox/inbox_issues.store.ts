@@ -1,4 +1,4 @@
-import { observable, action, makeObservable, runInAction } from "mobx";
+import { observable, action, makeObservable, runInAction, autorun } from "mobx";
 // types
 import { RootStore } from "../root";
 // services
@@ -51,6 +51,15 @@ export class InboxIssuesStore implements IInboxIssuesStore {
 
     this.rootStore = _rootStore;
     this.inboxService = new InboxService();
+
+    autorun(() => {
+      const workspaceSlug = this.rootStore.workspace.workspaceSlug;
+      const projectId = this.rootStore.project.projectId;
+      const inboxId = this.rootStore.inbox.inboxId;
+
+      if (workspaceSlug && projectId && inboxId && this.rootStore.inboxFilters.inboxFilters[inboxId])
+        this.fetchInboxIssues(workspaceSlug, projectId, inboxId);
+    });
   }
 
   fetchInboxIssues = async (workspaceSlug: string, projectId: string, inboxId: string) => {

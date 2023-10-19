@@ -1,20 +1,19 @@
 import React from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
 
 import useSWR, { mutate } from "swr";
 // services
 import { ProjectService } from "services/project";
 import { TrackEventService, MiscellaneousEventType } from "services/track_event.service";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
+import { ProjectSettingLayout } from "layouts/setting-layout/project-setting-layout";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // components
-import { SettingsSidebar } from "components/project";
+import { ProjectSettingHeader } from "components/headers";
 // ui
-import { BreadcrumbItem, Breadcrumbs, ContrastIcon, DiceIcon, ToggleSwitch } from "@plane/ui";
+import { ContrastIcon, DiceIcon, ToggleSwitch } from "@plane/ui";
 // icons
 import { FileText, Inbox, Layers } from "lucide-react";
 // types
@@ -22,8 +21,6 @@ import { IProject, IUser } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS, USER_PROJECT_VIEW } from "constants/fetch-keys";
-// helper
-import { truncateText } from "helpers/string.helper";
 
 const featuresList = [
   {
@@ -139,72 +136,52 @@ const FeaturesSettings: NextPage = () => {
   const isAdmin = memberDetails?.role === 20;
 
   return (
-    <ProjectAuthorizationWrapper
-      breadcrumbs={
-        <Breadcrumbs onBack={() => router.back()}>
-          <BreadcrumbItem
-            link={
-              <Link href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}>
-                <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
-                  <p className="truncate">{`${truncateText(projectDetails?.name ?? "Project", 32)}`}</p>
-                </a>
-              </Link>
-            }
-          />
-          <BreadcrumbItem title="Features Settings" unshrinkTitle />
-        </Breadcrumbs>
-      }
-    >
-      <div className="flex flex-row gap-2 h-full">
-        <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
-          <SettingsSidebar />
+    <ProjectSettingLayout header={<ProjectSettingHeader title="Features Settings" />}>
+      <section className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
+        <div className="flex items-center py-3.5 border-b border-custom-border-200">
+          <h3 className="text-xl font-medium">Features</h3>
         </div>
-        <section className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
-          <div className="flex items-center py-3.5 border-b border-custom-border-200">
-            <h3 className="text-xl font-medium">Features</h3>
-          </div>
-          <div>
-            {featuresList.map((feature) => (
-              <div
-                key={feature.property}
-                className="flex items-center justify-between gap-x-8 gap-y-2 border-b border-custom-border-200 bg-custom-background-100 p-4"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="flex items-center justify-center p-3 rounded bg-custom-background-90">
-                    {feature.icon}
-                  </div>
-                  <div className="">
-                    <h4 className="text-sm font-medium">{feature.title}</h4>
-                    <p className="text-sm text-custom-text-200 tracking-tight">{feature.description}</p>
-                  </div>
+        <div>
+          {featuresList.map((feature) => (
+            <div
+              key={feature.property}
+              className="flex items-center justify-between gap-x-8 gap-y-2 border-b border-custom-border-200 bg-custom-background-100 p-4"
+            >
+              <div className="flex items-start gap-3">
+                <div className="flex items-center justify-center p-3 rounded bg-custom-background-90">
+                  {feature.icon}
                 </div>
-                <ToggleSwitch
-                  value={projectDetails?.[feature.property as keyof IProject]}
-                  onChange={() => {
-                    trackEventService.trackMiscellaneousEvent(
-                      {
-                        workspaceId: (projectDetails?.workspace as any)?.id,
-                        workspaceSlug,
-                        projectId,
-                        projectIdentifier: projectDetails?.identifier,
-                        projectName: projectDetails?.name,
-                      },
-                      getEventType(feature.title, !projectDetails?.[feature.property as keyof IProject]),
-                      user as IUser
-                    );
-                    handleSubmit({
-                      [feature.property]: !projectDetails?.[feature.property as keyof IProject],
-                    });
-                  }}
-                  disabled={!isAdmin}
-                  size="sm"
-                />
+                <div className="">
+                  <h4 className="text-sm font-medium">{feature.title}</h4>
+                  <p className="text-sm text-custom-text-200 tracking-tight">{feature.description}</p>
+                </div>
               </div>
-            ))}
-          </div>
-        </section>
-      </div>
-    </ProjectAuthorizationWrapper>
+              <ToggleSwitch
+                value={projectDetails?.[feature.property as keyof IProject]}
+                onChange={() => {
+                  trackEventService.trackMiscellaneousEvent(
+                    {
+                      workspaceId: (projectDetails?.workspace as any)?.id,
+                      workspaceSlug,
+                      projectId,
+                      projectIdentifier: projectDetails?.identifier,
+                      projectName: projectDetails?.name,
+                    },
+                    getEventType(feature.title, !projectDetails?.[feature.property as keyof IProject]),
+                    user as IUser
+                  );
+                  handleSubmit({
+                    [feature.property]: !projectDetails?.[feature.property as keyof IProject],
+                  });
+                }}
+                disabled={!isAdmin}
+                size="sm"
+              />
+            </div>
+          ))}
+        </div>
+      </section>
+    </ProjectSettingLayout>
   );
 };
 

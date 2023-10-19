@@ -13,6 +13,7 @@ const MobxStoreInit = observer(() => {
     user: userStore,
     workspace: workspaceStore,
     project: projectStore,
+    cycle: cycleStore,
     module: moduleStore,
     globalViews: globalViewsStore,
     projectViews: projectViewsStore,
@@ -24,20 +25,17 @@ const MobxStoreInit = observer(() => {
   const { setTheme } = useTheme();
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, moduleId, globalViewId, viewId, inboxId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, globalViewId, viewId, inboxId } = router.query;
 
   // const dom = useMemo(() => window && window.document?.querySelector<HTMLElement>("[data-theme='custom']"), [document]);
 
   useEffect(() => {
     // sidebar collapsed toggle
-    if (localStorage && localStorage.getItem("app_sidebar_collapsed") && themeStore?.sidebarCollapsed === null)
-      themeStore.setSidebarCollapsed(
-        localStorage.getItem("app_sidebar_collapsed")
-          ? localStorage.getItem("app_sidebar_collapsed") === "true"
-            ? true
-            : false
-          : false
-      );
+    const localValue = localStorage && localStorage.getItem("app_sidebar_collapsed");
+    const localBoolValue = localValue ? (localValue === "true" ? true : false) : false;
+    if (localValue && themeStore?.sidebarCollapsed === undefined) {
+      themeStore.toggleSidebar(localBoolValue);
+    }
   }, [themeStore, userStore, setTheme]);
 
   useEffect(() => {
@@ -55,6 +53,7 @@ const MobxStoreInit = observer(() => {
   useEffect(() => {
     if (workspaceSlug) workspaceStore.setWorkspaceSlug(workspaceSlug.toString());
     if (projectId) projectStore.setProjectId(projectId.toString());
+    if (cycleId) cycleStore.setCycleId(cycleId.toString());
     if (moduleId) moduleStore.setModuleId(moduleId.toString());
     if (globalViewId) globalViewsStore.setGlobalViewId(globalViewId.toString());
     if (viewId) projectViewsStore.setViewId(viewId.toString());
@@ -62,12 +61,14 @@ const MobxStoreInit = observer(() => {
   }, [
     workspaceSlug,
     projectId,
+    cycleId,
     moduleId,
     globalViewId,
     viewId,
     inboxId,
     workspaceStore,
     projectStore,
+    cycleStore,
     moduleStore,
     globalViewsStore,
     projectViewsStore,

@@ -22,14 +22,17 @@ type Props = {
   handleClose: () => void;
   data?: IPage | null;
   user: IUser | undefined;
+  workspaceSlug: string;
+  projectId: string;
 };
 
 // services
 const pageService = new PageService();
 
-export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, data, user }) => {
+export const CreateUpdatePageModal: React.FC<Props> = (props) => {
+  const { isOpen, handleClose, data, user, workspaceSlug, projectId } = props;
+  // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
 

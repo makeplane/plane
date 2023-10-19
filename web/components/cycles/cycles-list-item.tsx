@@ -6,8 +6,7 @@ import useToast from "hooks/use-toast";
 import { CycleCreateEditModal } from "./cycle-create-edit-modal";
 import { CycleDeleteModal } from "./cycle-delete-modal";
 // ui
-import { RadialProgressBar, Tooltip, LinearProgressIndicator, ContrastIcon, RunningIcon } from "@plane/ui";
-import { CustomMenu } from "components/ui";
+import { CustomMenu, RadialProgressBar, Tooltip, LinearProgressIndicator, ContrastIcon, RunningIcon } from "@plane/ui";
 // icons
 import {
   AlarmClock,

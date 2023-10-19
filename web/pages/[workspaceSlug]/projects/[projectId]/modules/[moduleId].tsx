@@ -15,8 +15,7 @@ import { ModuleDetailsSidebar } from "components/modules";
 import { ModuleLayoutRoot } from "components/issues";
 import { ModuleIssuesHeader } from "components/headers";
 // ui
-import { BreadcrumbItem, Breadcrumbs, DiceIcon } from "@plane/ui";
-import { CustomMenu } from "components/ui";
+import { BreadcrumbItem, Breadcrumbs, CustomMenu, DiceIcon } from "@plane/ui";
 import { EmptyState } from "components/common";
 // images
 import emptyModule from "public/empty-state/module.svg";
@@ -121,8 +120,7 @@ const SingleModule: React.FC = () => {
             {modules?.map((module) => (
               <CustomMenu.MenuItem
                 key={module.id}
-                renderAs="a"
-                href={`/${workspaceSlug}/projects/${projectId}/modules/${module.id}`}
+                onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/modules/${module.id}`)}
               >
                 {truncateText(module.name, 40)}
               </CustomMenu.MenuItem>

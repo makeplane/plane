@@ -1,4 +1,4 @@
-import { observable, action, computed, makeObservable, runInAction } from "mobx";
+import { observable, action, computed, makeObservable, runInAction, autorun } from "mobx";
 // store
 import { RootStore } from "../root";
 // types
@@ -68,8 +68,22 @@ export class IssueStore implements IIssueStore {
       fetchIssues: action,
       updateIssueStructure: action,
     });
+
     this.rootStore = _rootStore;
     this.issueService = new IssueService();
+
+    autorun(() => {
+      const workspaceSlug = this.rootStore.workspace.workspaceSlug;
+      const projectId = this.rootStore.project.projectId;
+
+      if (
+        workspaceSlug &&
+        projectId &&
+        this.rootStore.issueFilter.userFilters &&
+        this.rootStore.issueFilter.userDisplayFilters
+      )
+        this.fetchIssues(workspaceSlug, projectId);
+    });
   }
 
   get getIssueType() {

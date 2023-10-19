@@ -1,8 +1,7 @@
 import React from "react";
 
 // components
-import { CustomMenu } from "components/ui";
-import { ArchiveIcon, Tooltip } from "@plane/ui";
+import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
 
 //icon
 import { ArrowLeft, CheckCheck, Clock, ListFilter, MoreVertical, RefreshCw, X } from "lucide-react";
@@ -102,14 +101,13 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
               </div>
             }
           >
-            <CustomMenu.MenuItem renderAs="button" onClick={markAllNotificationsAsRead}>
+            <CustomMenu.MenuItem onClick={markAllNotificationsAsRead}>
               <div className="flex items-center gap-2">
                 <CheckCheck className="h-3.5 w-3.5" />
                 Mark all as read
               </div>
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem
-              renderAs="button"
               onClick={() => {
                 setArchived(false);
                 setReadNotification(false);
@@ -122,7 +120,6 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
               </div>
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem
-              renderAs="button"
               onClick={() => {
                 setSnoozed(false);
                 setReadNotification(false);

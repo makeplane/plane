@@ -10,8 +10,7 @@ import useProjectDetails from "hooks/use-project-details";
 // components
 import { DeleteEstimateModal } from "components/estimates";
 // ui
-import { Button } from "@plane/ui";
-import { CustomMenu } from "components/ui";
+import { Button, CustomMenu } from "@plane/ui";
 //icons
 import { Pencil, Trash2 } from "lucide-react";
 // helpers

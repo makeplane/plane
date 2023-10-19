@@ -1,21 +1,21 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
+
 import useSWR, { mutate } from "swr";
 // services
 import { ProjectService, ProjectEstimateService } from "services/project";
 // hooks
 import useProjectDetails from "hooks/use-project-details";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
+import { ProjectSettingLayout } from "layouts/setting-layout/project-setting-layout";
 // components
 import { CreateUpdateEstimateModal, SingleEstimate } from "components/estimates";
-import { SettingsSidebar } from "components/project";
+import { ProjectSettingHeader } from "components/headers";
 //hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Button, Loader } from "@plane/ui";
+import { Button, Loader } from "@plane/ui";
 import { EmptyState } from "components/common";
 // icons
 import { Plus } from "lucide-react";
@@ -26,8 +26,6 @@ import { IEstimate, IProject } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { ESTIMATES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
-// helper
-import { truncateText } from "helpers/string.helper";
 
 // services
 const projectService = new ProjectService();
@@ -110,89 +108,70 @@ const EstimatesSettings: NextPage = () => {
         }}
         user={user}
       />
-      <ProjectAuthorizationWrapper
-        breadcrumbs={
-          <Breadcrumbs onBack={() => router.back()}>
-            <BreadcrumbItem
-              link={
-                <Link href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}>
-                  <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
-                    <p className="truncate">{`${truncateText(projectDetails?.name ?? "Project", 32)}`}</p>
-                  </a>
-                </Link>
-              }
-            />
-            <BreadcrumbItem title="Estimates Settings" unshrinkTitle />
-          </Breadcrumbs>
-        }
-      >
-        <div className="flex flex-row gap-2 h-full">
-          <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
-            <SettingsSidebar />
-          </div>
-          <div className="pr-9 py-8 flex flex-col w-full overflow-y-auto">
-            <section className="flex items-center justify-between pt-2 pb-3.5 border-b border-custom-border-200">
-              <h3 className="text-xl font-medium">Estimates</h3>
-              <div className="col-span-12 space-y-5 sm:col-span-7">
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="primary"
-                    onClick={() => {
+
+      <ProjectSettingLayout header={<ProjectSettingHeader title="Estimates Settings" />}>
+        <div className="pr-9 py-8 w-full overflow-y-auto">
+          <section className="flex items-center justify-between py-3.5 border-b border-custom-border-200">
+            <h3 className="text-xl font-medium">Estimates</h3>
+            <div className="col-span-12 space-y-5 sm:col-span-7">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="primary"
+                  onClick={() => {
+                    setEstimateToUpdate(undefined);
+                    setEstimateFormOpen(true);
+                  }}
+                >
+                  Add Estimate
+                </Button>
+                {projectDetails?.estimate && (
+                  <Button variant="neutral-primary" onClick={disableEstimates}>
+                    Disable Estimates
+                  </Button>
+                )}
+              </div>
+            </div>
+          </section>
+          {estimatesList ? (
+            estimatesList.length > 0 ? (
+              <section className="h-full bg-custom-background-100 overflow-y-auto">
+                {estimatesList.map((estimate) => (
+                  <SingleEstimate
+                    key={estimate.id}
+                    estimate={estimate}
+                    editEstimate={(estimate) => editEstimate(estimate)}
+                    handleEstimateDelete={(estimateId) => removeEstimate(estimateId)}
+                    user={user}
+                  />
+                ))}
+              </section>
+            ) : (
+              <div className="h-full w-full overflow-y-auto">
+                <EmptyState
+                  title="No estimates yet"
+                  description="Estimates help you communicate the complexity of an issue."
+                  image={emptyEstimate}
+                  primaryButton={{
+                    icon: <Plus className="h-4 w-4" />,
+                    text: "Add Estimate",
+                    onClick: () => {
                       setEstimateToUpdate(undefined);
                       setEstimateFormOpen(true);
-                    }}
-                  >
-                    Add Estimate
-                  </Button>
-                  {projectDetails?.estimate && (
-                    <Button variant="neutral-primary" onClick={disableEstimates}>
-                      Disable Estimates
-                    </Button>
-                  )}
-                </div>
+                    },
+                  }}
+                />
               </div>
-            </section>
-            {estimatesList ? (
-              estimatesList.length > 0 ? (
-                <section className="h-full bg-custom-background-100 overflow-y-auto">
-                  {estimatesList.map((estimate) => (
-                    <SingleEstimate
-                      key={estimate.id}
-                      estimate={estimate}
-                      editEstimate={(estimate) => editEstimate(estimate)}
-                      handleEstimateDelete={(estimateId) => removeEstimate(estimateId)}
-                      user={user}
-                    />
-                  ))}
-                </section>
-              ) : (
-                <div className="h-full w-full overflow-y-auto">
-                  <EmptyState
-                    title="No estimates yet"
-                    description="Estimates help you communicate the complexity of an issue."
-                    image={emptyEstimate}
-                    primaryButton={{
-                      icon: <Plus className="h-4 w-4" />,
-                      text: "Add Estimate",
-                      onClick: () => {
-                        setEstimateToUpdate(undefined);
-                        setEstimateFormOpen(true);
-                      },
-                    }}
-                  />
-                </div>
-              )
-            ) : (
-              <Loader className="mt-5 space-y-5">
-                <Loader.Item height="40px" />
-                <Loader.Item height="40px" />
-                <Loader.Item height="40px" />
-                <Loader.Item height="40px" />
-              </Loader>
-            )}
-          </div>
+            )
+          ) : (
+            <Loader className="mt-5 space-y-5">
+              <Loader.Item height="40px" />
+              <Loader.Item height="40px" />
+              <Loader.Item height="40px" />
+              <Loader.Item height="40px" />
+            </Loader>
+          )}
         </div>
-      </ProjectAuthorizationWrapper>
+      </ProjectSettingLayout>
     </>
   );
 };
