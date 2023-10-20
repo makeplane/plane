@@ -10,7 +10,7 @@ import useUserAuth from "hooks/use-user-auth";
 import { ProjectService } from "services/project";
 import { ModuleService } from "services/module.service";
 // components
-import { CreateUpdateModuleModal, ModulesListGanttChartView, SingleModuleCard } from "components/modules";
+import { CreateUpdateModuleModal, ModulesListGanttChartView, ModuleCardItem } from "components/modules";
 import { ModulesHeader } from "components/headers";
 // ui
 import { Loader } from "@plane/ui";
@@ -85,7 +85,7 @@ const ProjectModules: NextPage = () => {
               <div className="h-full overflow-y-auto p-8">
                 <div className="grid grid-cols-1 gap-9 lg:grid-cols-2 xl:grid-cols-3">
                   {modules.map((module) => (
-                    <SingleModuleCard
+                    <ModuleCardItem
                       key={module.id}
                       module={module}
                       handleEditModule={() => handleEditModule(module)}
