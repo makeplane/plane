@@ -278,6 +278,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
     ? Math.round((cycleDetails.completed_issues / cycleDetails.total_issues) * 100)
     : null;
 
+  if (!cycleDetails) return null;
+
   return (
     <>
       {cycleDetails && workspaceSlug && projectId && (

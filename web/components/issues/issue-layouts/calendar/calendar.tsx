@@ -14,11 +14,12 @@ import { IIssue } from "types";
 type Props = {
   issues: IIssueGroupedStructure | null;
   layout: "month" | "week" | undefined;
+  showWeekends: boolean;
   quickActions: (issue: IIssue) => React.ReactNode;
 };
 
 export const CalendarChart: React.FC<Props> = observer((props) => {
-  const { issues, layout, quickActions } = props;
+  const { issues, layout, showWeekends, quickActions } = props;
 
   const { calendar: calendarStore } = useMobxStore();
 
@@ -37,7 +38,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
     <>
       <div className="h-full w-full flex flex-col overflow-hidden">
         <CalendarHeader />
-        <CalendarWeekHeader />
+        <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />
         <div className="h-full w-full overflow-y-auto">
           {layout === "month" ? (
             <div className="h-full w-full grid grid-cols-1 divide-y-[0.5px] divide-custom-border-200">

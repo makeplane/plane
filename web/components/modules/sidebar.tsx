@@ -213,6 +213,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
     setModuleLinkModal(true);
   };
 
+  if (!moduleDetails) return null;
+
   return (
     <>
       <LinkModal

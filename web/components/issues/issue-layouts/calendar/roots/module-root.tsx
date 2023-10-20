@@ -46,9 +46,14 @@ export const ModuleCalendarLayout: React.FC = observer(() => {
         moduleIssueStore.deleteIssue(date, null, issue);
         issueDetailStore.deleteIssue(workspaceSlug.toString(), issue.project, issue.id);
       }
-      if (action === "remove") {
+      if (action === "remove" && issue.bridge_id) {
         moduleIssueStore.deleteIssue(date, null, issue);
-        moduleIssueStore.removeIssueFromModule(workspaceSlug.toString(), issue.project, moduleId.toString(), issue.id);
+        moduleIssueStore.removeIssueFromModule(
+          workspaceSlug.toString(),
+          issue.project,
+          moduleId.toString(),
+          issue.bridge_id
+        );
       }
     },
     [moduleIssueStore, issueDetailStore, moduleId, workspaceSlug]
@@ -60,6 +65,7 @@ export const ModuleCalendarLayout: React.FC = observer(() => {
         <CalendarChart
           issues={issues as IIssueGroupedStructure | null}
           layout={issueFilterStore.userDisplayFilters.calendar?.layout}
+          showWeekends={issueFilterStore.userDisplayFilters.calendar?.show_weekends ?? false}
           quickActions={(issue) => (
             <ModuleIssueQuickActions
               issue={issue}

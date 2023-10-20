@@ -42,9 +42,14 @@ export const ModuleListLayout: React.FC = observer(() => {
         moduleIssueStore.deleteIssue(group_by, null, issue);
         issueDetailStore.deleteIssue(workspaceSlug.toString(), issue.project, issue.id);
       }
-      if (action === "remove") {
+      if (action === "remove" && issue.bridge_id) {
         moduleIssueStore.deleteIssue(group_by, null, issue);
-        moduleIssueStore.removeIssueFromModule(workspaceSlug.toString(), issue.project, moduleId.toString(), issue.id);
+        moduleIssueStore.removeIssueFromModule(
+          workspaceSlug.toString(),
+          issue.project,
+          moduleId.toString(),
+          issue.bridge_id
+        );
       }
     },
     [moduleIssueStore, issueDetailStore, moduleId, workspaceSlug]
