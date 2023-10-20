@@ -30,7 +30,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const issueUpdate = (_data: Partial<IIssue>) => {
     if (handleIssue) {
       handleIssue(_data);
-      issueDetailStore.updateIssue(workspaceSlug, projectId, issueId, _data, undefined);
+      issueDetailStore.updateIssue(workspaceSlug, projectId, issueId, _data);
     }
   };
 

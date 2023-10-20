@@ -49,7 +49,7 @@ export const ProjectSpreadsheetLayout: React.FC = observer(() => {
       };
 
       issueStore.updateIssueStructure(null, null, payload);
-      issueDetailStore.updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, data, user);
+      issueDetailStore.updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, data);
     },
     [issueStore, issueDetailStore, projectId, user, workspaceSlug]
   );

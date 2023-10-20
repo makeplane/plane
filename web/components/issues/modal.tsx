@@ -16,13 +16,12 @@ import { IssueForm, ConfirmIssueDiscard } from "components/issues";
 // types
 import type { IIssue } from "types";
 // fetch-keys
-import { PROJECT_ISSUES_DETAILS, USER_ISSUE, SUB_ISSUES } from "constants/fetch-keys";
+import { USER_ISSUE, SUB_ISSUES } from "constants/fetch-keys";
 
 export interface IssuesModalProps {
   data?: IIssue | null;
   handleClose: () => void;
   isOpen: boolean;
-  isUpdatingSingleIssue?: boolean;
   prePopulateData?: Partial<IIssue>;
   fieldsToShow?: (
     | "project"
@@ -46,15 +45,7 @@ const issueService = new IssueService();
 const issueDraftService = new IssueDraftService();
 
 export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((props) => {
-  const {
-    data,
-    handleClose,
-    isOpen,
-    isUpdatingSingleIssue = false,
-    prePopulateData: prePopulateDataProps,
-    fieldsToShow = ["all"],
-    onSubmit,
-  } = props;
+  const { data, handleClose, isOpen, prePopulateData: prePopulateDataProps, fieldsToShow = ["all"], onSubmit } = props;
 
   // states
   const [createMore, setCreateMore] = useState(false);
@@ -211,10 +202,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   };
 
   const createIssue = async (payload: Partial<IIssue>) => {
-    if (!workspaceSlug || !activeProject || !user) return;
+    if (!workspaceSlug || !activeProject) return;
 
     await issueDetailStore
-      .createIssue(workspaceSlug.toString(), activeProject, payload, user)
+      .createIssue(workspaceSlug.toString(), activeProject, payload)
       .then(async (res) => {
         issueStore.fetchIssues(workspaceSlug.toString(), activeProject);
 
@@ -280,16 +271,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
 
     await issueService
       .patchIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload, user)
-      .then((res) => {
-        if (isUpdatingSingleIssue) {
-          mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
-        } else {
-          if (payload.parent) mutate(SUB_ISSUES(payload.parent.toString()));
-        }
-
-        if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
-        if (payload.module && payload.module !== "") addIssueToModule(res.id, payload.module);
-
+      .then(() => {
         if (!createMore) onFormSubmitClose();
 
         setToastAlert({

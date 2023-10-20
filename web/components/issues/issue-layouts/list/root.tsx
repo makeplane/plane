@@ -1,16 +1,26 @@
-import { FC } from "react";
+import { FC, useCallback } from "react";
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// components
-import { List } from "./default";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
+// components
+import { List } from "./default";
+import { ProjectIssueQuickActions } from "components/issues";
 // types
-import { RootStore } from "store/root";
+import { IIssue } from "types";
 // constants
 import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 
 export const ListLayout: FC = observer(() => {
-  const { project: projectStore, issue: issueStore, issueFilter: issueFilterStore }: RootStore = useMobxStore();
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
+  const {
+    project: projectStore,
+    issue: issueStore,
+    issueDetail: issueDetailStore,
+    issueFilter: issueFilterStore,
+  } = useMobxStore();
 
   const issues = issueStore?.getIssues;
 
@@ -18,9 +28,18 @@ export const ListLayout: FC = observer(() => {
 
   const display_properties = issueFilterStore?.userDisplayProperties || null;
 
-  const updateIssue = (group_by: string | null, issue: any) => {
-    issueStore.updateIssueStructure(group_by, null, issue);
-  };
+  const handleIssues = useCallback(
+    (group_by: string | null, issue: IIssue, action: "update" | "delete") => {
+      if (!workspaceSlug) return;
+
+      if (action === "update") {
+        issueStore.updateIssueStructure(group_by, null, issue);
+        issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
+      }
+      if (action === "delete") issueStore.deleteIssue(group_by, null, issue);
+    },
+    [issueStore, issueDetailStore, workspaceSlug]
+  );
 
   const states = projectStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
@@ -31,11 +50,18 @@ export const ListLayout: FC = observer(() => {
   const estimates = null;
 
   return (
-    <div className={`relative w-full h-full bg-custom-background-90`}>
+    <div className="relative w-full h-full bg-custom-background-90">
       <List
         issues={issues}
         group_by={group_by}
-        handleIssues={updateIssue}
+        handleIssues={handleIssues}
+        quickActions={(group_by, issue) => (
+          <ProjectIssueQuickActions
+            issue={issue}
+            handleDelete={async () => handleIssues(group_by, issue, "delete")}
+            handleUpdate={async (data) => handleIssues(group_by, data, "update")}
+          />
+        )}
         display_properties={display_properties}
         states={states}
         stateGroups={stateGroups}

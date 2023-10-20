@@ -31,21 +31,23 @@ export const ViewListLayout: React.FC = observer(() => {
   const projects = projectStore?.projectStates || null;
   const estimates = null;
 
-  return (
-    <div className={`relative w-full h-full bg-custom-background-90`}>
-      <List
-        issues={issues}
-        group_by={group_by}
-        handleIssues={updateIssue}
-        display_properties={display_properties}
-        states={states}
-        stateGroups={stateGroups}
-        priorities={priorities}
-        labels={labels}
-        members={members}
-        projects={projects}
-        estimates={estimates}
-      />
-    </div>
-  );
+  return null;
+
+  // return (
+  //   <div className={`relative w-full h-full bg-custom-background-90`}>
+  //     <List
+  //       issues={issues}
+  //       group_by={group_by}
+  //       handleIssues={updateIssue}
+  //       display_properties={display_properties}
+  //       states={states}
+  //       stateGroups={stateGroups}
+  //       priorities={priorities}
+  //       labels={labels}
+  //       members={members}
+  //       projects={projects}
+  //       estimates={estimates}
+  //     />
+  //   </div>
+  // );
 });

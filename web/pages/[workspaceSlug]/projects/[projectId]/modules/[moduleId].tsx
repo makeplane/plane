@@ -1,134 +1,73 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import useSWR from "swr";
-// services
-import { ModuleService } from "services/module.service";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
-import useToast from "hooks/use-toast";
-import useUserAuth from "hooks/use-user-auth";
+import useLocalStorage from "hooks/use-local-storage";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
+import { AppLayout } from "layouts/app-layout";
 // components
 import { ExistingIssuesListModal } from "components/core";
 import { ModuleDetailsSidebar } from "components/modules";
 import { ModuleLayoutRoot } from "components/issues";
 import { ModuleIssuesHeader } from "components/headers";
 // ui
-import { BreadcrumbItem, Breadcrumbs, CustomMenu, DiceIcon } from "@plane/ui";
 import { EmptyState } from "components/common";
-// images
+// assets
 import emptyModule from "public/empty-state/module.svg";
-// helpers
-import { truncateText } from "helpers/string.helper";
-// types
-import { ISearchIssueResponse } from "types";
-// fetch-keys
-import { MODULE_DETAILS, MODULE_ISSUES, MODULE_LIST } from "constants/fetch-keys";
-
-// services
-const moduleService = new ModuleService();
 
 const SingleModule: React.FC = () => {
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
-  const [moduleSidebar, setModuleSidebar] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
 
-  const { user } = useUserAuth();
+  const { module: moduleStore } = useMobxStore();
 
-  const { setToastAlert } = useToast();
+  const { storedValue } = useLocalStorage("module_sidebar_collapsed", "false");
+  const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
 
-  const { data: modules } = useSWR(
-    workspaceSlug && projectId ? MODULE_LIST(projectId as string) : null,
-    workspaceSlug && projectId ? () => moduleService.getModules(workspaceSlug as string, projectId as string) : null
-  );
-
-  const { data: moduleIssues } = useSWR(
-    workspaceSlug && projectId && moduleId ? MODULE_ISSUES(moduleId as string) : null,
+  const { error } = useSWR(
+    workspaceSlug && projectId && moduleId ? `CURRENT_MODULE_DETAILS_${moduleId.toString()}` : null,
     workspaceSlug && projectId && moduleId
-      ? () => moduleService.getModuleIssues(workspaceSlug as string, projectId as string, moduleId as string)
+      ? () => moduleStore.fetchModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString())
       : null
   );
 
-  const { data: moduleDetails, error } = useSWR(
-    moduleId ? MODULE_DETAILS(moduleId as string) : null,
-    workspaceSlug && projectId
-      ? () => moduleService.getModuleDetails(workspaceSlug as string, projectId as string, moduleId as string)
-      : null
-  );
+  // TODO: add this function to bulk add issues to cycle
+  // const handleAddIssuesToModule = async (data: ISearchIssueResponse[]) => {
+  //   if (!workspaceSlug || !projectId) return;
 
-  const handleAddIssuesToModule = async (data: ISearchIssueResponse[]) => {
-    if (!workspaceSlug || !projectId) return;
+  //   const payload = {
+  //     issues: data.map((i) => i.id),
+  //   };
 
-    const payload = {
-      issues: data.map((i) => i.id),
-    };
+  //   await moduleService
+  //     .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId as string, payload, user)
+  //     .catch(() =>
+  //       setToastAlert({
+  //         type: "error",
+  //         title: "Error!",
+  //         message: "Selected issues could not be added to the module. Please try again.",
+  //       })
+  //     );
+  // };
 
-    await moduleService
-      .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId as string, payload, user)
-      .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Selected issues could not be added to the module. Please try again.",
-        })
-      );
-  };
-
-  const openIssuesListModal = () => {
-    setModuleIssuesListModal(true);
-  };
+  // const openIssuesListModal = () => {
+  //   setModuleIssuesListModal(true);
+  // };
 
   return (
     <>
-      <ExistingIssuesListModal
-        isOpen={moduleIssuesListModal}
-        handleClose={() => setModuleIssuesListModal(false)}
-        searchParams={{ module: true }}
-        handleOnSubmit={handleAddIssuesToModule}
-      />
-      <ProjectAuthorizationWrapper
-        breadcrumbs={
-          <Breadcrumbs onBack={() => router.back()}>
-            <BreadcrumbItem
-              link={
-                <Link href={`/${workspaceSlug}/projects/${projectId}/modules`}>
-                  <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
-                    <p className="truncate">{`${truncateText(
-                      moduleDetails?.project_detail.name ?? "Project",
-                      32
-                    )} Modules`}</p>
-                  </a>
-                </Link>
-              }
-            />
-          </Breadcrumbs>
-        }
-        left={
-          <CustomMenu
-            label={
-              <>
-                <DiceIcon className="h-3 w-3" />
-                {moduleDetails?.name && truncateText(moduleDetails.name, 40)}
-              </>
-            }
-            className="ml-1.5"
-            width="auto"
-          >
-            {modules?.map((module) => (
-              <CustomMenu.MenuItem
-                key={module.id}
-                onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/modules/${module.id}`)}
-              >
-                {truncateText(module.name, 40)}
-              </CustomMenu.MenuItem>
-            ))}
-          </CustomMenu>
-        }
-        right={<ModuleIssuesHeader />}
-      >
+      <AppLayout header={<ModuleIssuesHeader />} withProjectWrapper>
+        {/* TODO: Update logic to bulk add issues to a cycle */}
+        <ExistingIssuesListModal
+          isOpen={moduleIssuesListModal}
+          handleClose={() => setModuleIssuesListModal(false)}
+          searchParams={{ module: true }}
+          handleOnSubmit={async () => {}}
+        />
         {error ? (
           <EmptyState
             image={emptyModule}
@@ -140,23 +79,14 @@ const SingleModule: React.FC = () => {
             }}
           />
         ) : (
-          <>
-            <div
-              className={`relative overflow-y-auto h-full flex flex-col ${
-                moduleSidebar ? "mr-[24rem]" : ""
-              } duration-300`}
-            >
+          <div className="flex h-full w-full">
+            <div className={`h-full w-full ${isSidebarCollapsed ? "" : "mr-[24rem]"} duration-300`}>
               <ModuleLayoutRoot />
             </div>
-            <ModuleDetailsSidebar
-              module={moduleDetails}
-              isOpen={moduleSidebar}
-              moduleIssues={moduleIssues}
-              user={user}
-            />
-          </>
+            {moduleId && <ModuleDetailsSidebar isOpen={!isSidebarCollapsed} moduleId={moduleId.toString()} />}
+          </div>
         )}
-      </ProjectAuthorizationWrapper>
+      </AppLayout>
     </>
   );
 };

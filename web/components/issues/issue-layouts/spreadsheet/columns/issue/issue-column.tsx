@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { Popover2 } from "@blueprintjs/popover2";
-import { MoreHorizontal, LinkIcon, Pencil, Trash2, ChevronRight } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash2, ChevronRight, Link } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
 // helpers
@@ -86,6 +86,20 @@ export const IssueColumn: React.FC<Props> = ({
                         type="button"
                         className="hover:text-custom-text-200 w-full select-none gap-2 rounded p-1 text-left text-custom-text-200 hover:bg-custom-background-80"
                         onClick={() => {
+                          handleCopyText();
+                          setIsOpen(false);
+                        }}
+                      >
+                        <div className="flex items-center gap-2">
+                          <Link className="h-3 w-3" />
+                          <span>Copy link</span>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        className="hover:text-custom-text-200 w-full select-none gap-2 rounded p-1 text-left text-custom-text-200 hover:bg-custom-background-80"
+                        onClick={() => {
                           handleEditIssue(issue);
                           setIsOpen(false);
                         }}
@@ -98,7 +112,7 @@ export const IssueColumn: React.FC<Props> = ({
 
                       <button
                         type="button"
-                        className="hover:text-custom-text-200 w-full select-none gap-2 rounded p-1 text-left text-custom-text-200 hover:bg-custom-background-80"
+                        className="w-full select-none gap-2 rounded p-1 text-left text-red-500 hover:bg-custom-background-80"
                         onClick={() => {
                           handleDeleteIssue(issue);
                           setIsOpen(false);
@@ -107,20 +121,6 @@ export const IssueColumn: React.FC<Props> = ({
                         <div className="flex items-center gap-2">
                           <Trash2 className="h-3 w-3" />
                           <span>Delete issue</span>
-                        </div>
-                      </button>
-
-                      <button
-                        type="button"
-                        className="hover:text-custom-text-200 w-full select-none gap-2 rounded p-1 text-left text-custom-text-200 hover:bg-custom-background-80"
-                        onClick={() => {
-                          handleCopyText();
-                          setIsOpen(false);
-                        }}
-                      >
-                        <div className="flex items-center gap-2">
-                          <LinkIcon className="h-3 w-3" />
-                          <span>Copy issue link</span>
                         </div>
                       </button>
                     </div>

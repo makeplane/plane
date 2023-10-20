@@ -62,45 +62,47 @@ export const ViewKanBanLayout: React.FC = observer(() => {
   const projects = projectStore?.projectStates || null;
   const estimates = null;
 
-  return (
-    <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
-      <DragDropContext onDragEnd={onDragEnd}>
-        {currentKanBanView === "default" ? (
-          <KanBan
-            issues={issues}
-            sub_group_by={sub_group_by}
-            group_by={group_by}
-            handleIssues={updateIssue}
-            display_properties={display_properties}
-            kanBanToggle={() => {}}
-            handleKanBanToggle={() => {}}
-            states={states}
-            stateGroups={stateGroups}
-            priorities={priorities}
-            labels={labels}
-            members={members}
-            projects={projects}
-            estimates={estimates}
-          />
-        ) : (
-          <KanBanSwimLanes
-            issues={issues}
-            sub_group_by={sub_group_by}
-            group_by={group_by}
-            handleIssues={updateIssue}
-            display_properties={display_properties}
-            kanBanToggle={() => {}}
-            handleKanBanToggle={() => {}}
-            states={states}
-            stateGroups={stateGroups}
-            priorities={priorities}
-            labels={labels}
-            members={members}
-            projects={projects}
-            estimates={estimates}
-          />
-        )}
-      </DragDropContext>
-    </div>
-  );
+  return null;
+
+  // return (
+  //   <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
+  //     <DragDropContext onDragEnd={onDragEnd}>
+  //       {currentKanBanView === "default" ? (
+  //         <KanBan
+  //           issues={issues}
+  //           sub_group_by={sub_group_by}
+  //           group_by={group_by}
+  //           handleIssues={updateIssue}
+  //           display_properties={display_properties}
+  //           kanBanToggle={() => {}}
+  //           handleKanBanToggle={() => {}}
+  //           states={states}
+  //           stateGroups={stateGroups}
+  //           priorities={priorities}
+  //           labels={labels}
+  //           members={members}
+  //           projects={projects}
+  //           estimates={estimates}
+  //         />
+  //       ) : (
+  //         <KanBanSwimLanes
+  //           issues={issues}
+  //           sub_group_by={sub_group_by}
+  //           group_by={group_by}
+  //           handleIssues={updateIssue}
+  //           display_properties={display_properties}
+  //           kanBanToggle={() => {}}
+  //           handleKanBanToggle={() => {}}
+  //           states={states}
+  //           stateGroups={stateGroups}
+  //           priorities={priorities}
+  //           labels={labels}
+  //           members={members}
+  //           projects={projects}
+  //           estimates={estimates}
+  //         />
+  //       )}
+  //     </DragDropContext>
+  //   </div>
+  // );
 });
