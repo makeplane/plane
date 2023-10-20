@@ -9,14 +9,16 @@ import { Spinner } from "@plane/ui";
 // types
 import { ICalendarWeek } from "./types";
 import { IIssueGroupedStructure } from "store/issue";
+import { IIssue } from "types";
 
 type Props = {
   issues: IIssueGroupedStructure | null;
   layout: "month" | "week" | undefined;
+  handleIssues: (date: string, issue: IIssue, action: "update" | "delete") => void;
 };
 
 export const CalendarChart: React.FC<Props> = observer((props) => {
-  const { issues, layout } = props;
+  const { issues, layout, handleIssues } = props;
 
   const { calendar: calendarStore } = useMobxStore();
 
@@ -41,11 +43,11 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
             <div className="h-full w-full grid grid-cols-1 divide-y-[0.5px] divide-custom-border-200">
               {allWeeksOfActiveMonth &&
                 Object.values(allWeeksOfActiveMonth).map((week: ICalendarWeek, weekIndex) => (
-                  <CalendarWeekDays key={weekIndex} week={week} issues={issues} />
+                  <CalendarWeekDays key={weekIndex} week={week} issues={issues} handleIssues={handleIssues} />
                 ))}
             </div>
           ) : (
-            <CalendarWeekDays week={calendarStore.allDaysOfActiveWeek} issues={issues} />
+            <CalendarWeekDays week={calendarStore.allDaysOfActiveWeek} issues={issues} handleIssues={handleIssues} />
           )}
         </div>
       </div>
