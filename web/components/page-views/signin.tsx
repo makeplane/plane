@@ -29,6 +29,7 @@ const authService = new AuthService();
 
 export const SignInView = observer(() => {
   const { user: userStore } = useMobxStore();
+  const { fetchCurrentUserSettings, fetchCurrentUser } = userStore;
   // router
   const router = useRouter();
   // states
@@ -37,29 +38,23 @@ export const SignInView = observer(() => {
   const { setToastAlert } = useToast();
   // fetch app config
   const { data, error: appConfigError } = useSWR("APP_CONFIG", () => appConfigService.envConfig());
-  // fetching user details
-  const { error } = useSWR("CURRENT_USER_DETAILS", () => userStore.fetchCurrentUser());
-  // fetching user settings
-  useSWR("CURRENT_USER_DETAILS_SETTINGS", () => userStore.fetchCurrentUserSettings());
   // computed
-  const { currentUser, currentUserSettings } = userStore;
   const enableEmailPassword =
     data &&
     (data?.email_password_login || !(data?.email_password_login || data?.magic_login || data?.google || data?.github));
 
   useEffect(() => {
-    if (currentUser && !error && currentUserSettings) {
+    fetchCurrentUserSettings().then((settings) => {
       setLoading(true);
       router.push(
         `/${
-          currentUserSettings.workspace.last_workspace_slug
-            ? currentUserSettings.workspace.last_workspace_slug
-            : currentUserSettings.workspace.fallback_workspace_slug
+          settings.workspace.last_workspace_slug
+            ? settings.workspace.last_workspace_slug
+            : settings.workspace.fallback_workspace_slug
         }`
       );
-      return;
-    }
-  }, [router, currentUser, error, currentUserSettings]);
+    });
+  }, [fetchCurrentUserSettings, router]);
 
   const handleLoginRedirection = () =>
     userStore
