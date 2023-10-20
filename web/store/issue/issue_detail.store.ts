@@ -1,6 +1,6 @@
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
 // services
-import { IssueService, IssueReactionService } from "services/issue";
+import { IssueService, IssueReactionService, IssueCommentService } from "services/issue";
 // types
 import { RootStore } from "../root";
 import { IIssue } from "types";
@@ -31,7 +31,7 @@ export interface IIssueDetailStore {
   getIssue: IIssue | null;
   getIssueReactions: any | null;
   getIssueComments: any | null;
-  getIssueCommentReactions: any | null;
+  getIssueCommentReactionsByCommentId: any | null;
 
   // fetch issue details
   fetchIssueDetails: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
@@ -59,23 +59,16 @@ export interface IIssueDetailStore {
   ) => Promise<void>;
   removeIssueComment: (workspaceSlug: string, projectId: string, issueId: string, commentId: string) => Promise<void>;
 
-  fetchIssueCommentReactions: (
+  fetchIssueCommentReactions: (workspaceSlug: string, projectId: string, commentId: string) => Promise<void>;
+  creationIssueCommentReaction: (
     workspaceSlug: string,
     projectId: string,
-    issueId: string,
-    commentId: string
-  ) => Promise<void>;
-  addIssueCommentReaction: (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
     commentId: string,
     reaction: string
   ) => Promise<void>;
   removeIssueCommentReaction: (
     workspaceSlug: string,
     projectId: string,
-    issueId: string,
     commentId: string,
     reaction: string
   ) => Promise<void>;
@@ -104,6 +97,7 @@ export class IssueDetailStore implements IIssueDetailStore {
   // service
   issueService;
   issueReactionService;
+  issueCommentService;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
@@ -120,9 +114,10 @@ export class IssueDetailStore implements IIssueDetailStore {
       getIssue: computed,
       getIssueReactions: computed,
       getIssueComments: computed,
-      getIssueCommentReactions: computed,
 
       setPeekId: action,
+
+      getIssueCommentReactionsByCommentId: action,
 
       fetchIssueDetails: action,
       createIssue: action,
@@ -141,13 +136,14 @@ export class IssueDetailStore implements IIssueDetailStore {
       removeIssueComment: action,
 
       fetchIssueCommentReactions: action,
-      addIssueCommentReaction: action,
+      creationIssueCommentReaction: action,
       removeIssueCommentReaction: action,
     });
 
     this.rootStore = _rootStore;
     this.issueService = new IssueService();
     this.issueReactionService = new IssueReactionService();
+    this.issueCommentService = new IssueCommentService();
   }
 
   get getIssue() {
@@ -168,11 +164,11 @@ export class IssueDetailStore implements IIssueDetailStore {
     return _comments || null;
   }
 
-  get getIssueCommentReactions() {
-    if (!this.peekId) return null;
-    const _reactions = this.issue_comment_reactions[this.peekId];
+  getIssueCommentReactionsByCommentId = (commentId: string) => {
+    if (!commentId) return null;
+    const _reactions = this.issue_comment_reactions[commentId];
     return _reactions || null;
-  }
+  };
 
   setPeekId = (issueId: string | null) => (this.peekId = issueId);
 
@@ -426,6 +422,16 @@ export class IssueDetailStore implements IIssueDetailStore {
   // comments
   fetchIssueComments = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
+      const _issueCommentResponse = await this.issueService.getIssueActivities(workspaceSlug, projectId, issueId);
+
+      const _issueComments = {
+        ...this.issue_comments,
+        [issueId]: [..._issueCommentResponse],
+      };
+
+      runInAction(() => {
+        this.issue_comments = _issueComments;
+      });
     } catch (error) {
       console.warn("error creating the issue comment", error);
       throw error;
@@ -433,6 +439,22 @@ export class IssueDetailStore implements IIssueDetailStore {
   };
   createIssueComment = async (workspaceSlug: string, projectId: string, issueId: string, data: any) => {
     try {
+      const _issueCommentResponse = await this.issueCommentService.createIssueComment(
+        workspaceSlug,
+        projectId,
+        issueId,
+        data,
+        undefined
+      );
+
+      const _issueComments = {
+        ...this.issue_comments,
+        [issueId]: [...this.issue_comments[issueId], _issueCommentResponse],
+      };
+
+      runInAction(() => {
+        this.issue_comments = _issueComments;
+      });
     } catch (error) {
       console.warn("error creating the issue comment", error);
       throw error;
@@ -446,6 +468,25 @@ export class IssueDetailStore implements IIssueDetailStore {
     data: any
   ) => {
     try {
+      const _issueCommentResponse = await this.issueCommentService.patchIssueComment(
+        workspaceSlug,
+        projectId,
+        issueId,
+        commentId,
+        data,
+        undefined
+      );
+
+      const _issueComments = {
+        ...this.issue_comments,
+        [issueId]: this.issue_comments[issueId].map((comment: any) =>
+          comment.id === commentId ? _issueCommentResponse : comment
+        ),
+      };
+
+      runInAction(() => {
+        this.issue_comments = _issueComments;
+      });
     } catch (error) {
       console.warn("error updating the issue comment", error);
       throw error;
@@ -453,6 +494,16 @@ export class IssueDetailStore implements IIssueDetailStore {
   };
   removeIssueComment = async (workspaceSlug: string, projectId: string, issueId: string, commentId: string) => {
     try {
+      const _issueComments = {
+        ...this.issue_comments,
+        [issueId]: this.issue_comments[issueId].filter((comment: any) => comment.id != commentId),
+      };
+
+      await this.issueCommentService.deleteIssueComment(workspaceSlug, projectId, issueId, commentId, undefined);
+
+      runInAction(() => {
+        this.issue_comments = _issueComments;
+      });
     } catch (error) {
       console.warn("error removing the issue comment", error);
       throw error;
@@ -460,21 +511,52 @@ export class IssueDetailStore implements IIssueDetailStore {
   };
 
   // comment reaction
-  fetchIssueCommentReactions = async (workspaceSlug: string, projectId: string, issueId: string, commentId: string) => {
+  fetchIssueCommentReactions = async (workspaceSlug: string, projectId: string, commentId: string) => {
     try {
+      const _reactions = await this.issueReactionService.listIssueCommentReactions(workspaceSlug, projectId, commentId);
+
+      const _issue_comment_reactions = {
+        ...this.issue_comment_reactions,
+        [commentId]: groupReactionEmojis(_reactions),
+      };
+
+      runInAction(() => {
+        this.issue_comment_reactions = _issue_comment_reactions;
+      });
     } catch (error) {
       console.warn("error removing the issue comment", error);
       throw error;
     }
   };
-  addIssueCommentReaction = async (
+  creationIssueCommentReaction = async (
     workspaceSlug: string,
     projectId: string,
-    issueId: string,
     commentId: string,
     reaction: string
   ) => {
+    let _currentReactions = this.getIssueCommentReactionsByCommentId(commentId);
+
     try {
+      const _reaction = await this.issueReactionService.createIssueCommentReaction(
+        workspaceSlug,
+        projectId,
+        commentId,
+        {
+          reaction,
+        }
+      );
+
+      _currentReactions = {
+        ..._currentReactions,
+        [reaction]: [..._currentReactions[reaction], { ..._reaction }],
+      };
+
+      runInAction(() => {
+        this.issue_comment_reactions = {
+          ...this.issue_comment_reactions,
+          [commentId]: _currentReactions,
+        };
+      });
     } catch (error) {
       console.warn("error removing the issue comment", error);
       throw error;
@@ -483,11 +565,29 @@ export class IssueDetailStore implements IIssueDetailStore {
   removeIssueCommentReaction = async (
     workspaceSlug: string,
     projectId: string,
-    issueId: string,
     commentId: string,
     reaction: string
   ) => {
+    let _currentReactions = this.getIssueCommentReactionsByCommentId(commentId);
+
     try {
+      const user = this.rootStore.user.currentUser;
+
+      if (user) {
+        _currentReactions = {
+          ..._currentReactions,
+          [reaction]: [..._currentReactions[reaction].filter((r: any) => r.actor !== user.id)],
+        };
+
+        runInAction(() => {
+          this.issue_comment_reactions = {
+            ...this.issue_comment_reactions,
+            [commentId]: _currentReactions,
+          };
+        });
+
+        await this.issueReactionService.deleteIssueCommentReaction(workspaceSlug, projectId, commentId, reaction);
+      }
     } catch (error) {
       console.warn("error removing the issue comment", error);
       throw error;

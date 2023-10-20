@@ -30,7 +30,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
   }, 1500);
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <div className="font-medium text-sm text-custom-text-200">
         {issue?.project_detail?.identifier}-{issue?.sequence_id}
       </div>
@@ -46,6 +46,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
           onChange={(description: Object, description_html: string) => {
             debouncedIssueDescription(description_html);
           }}
+          customClassName="p-3 min-h-[80px] shadow-sm"
         />
 
         <IssueReaction
