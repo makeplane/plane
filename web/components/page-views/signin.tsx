@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
@@ -20,8 +21,8 @@ import {
 import { Loader, Spinner } from "@plane/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
+// types
 import { IUserSettings } from "types";
-import { useState } from "react";
 
 const appConfigService = new AppConfigService();
 const authService = new AuthService();
@@ -35,13 +36,30 @@ export const SignInView = observer(() => {
   // toast
   const { setToastAlert } = useToast();
   // fetch app config
-  const { data, error } = useSWR("APP_CONFIG", () => appConfigService.envConfig());
-  // fetch user info
-  useSWR("USER_INFO", () => userStore.fetchCurrentUser());
+  const { data, error: appConfigError } = useSWR("APP_CONFIG", () => appConfigService.envConfig());
+  // fetching user details
+  const { error } = useSWR("CURRENT_USER_DETAILS", () => userStore.fetchCurrentUser());
+  // fetching user settings
+  useSWR("CURRENT_USER_DETAILS_SETTINGS", () => userStore.fetchCurrentUserSettings());
   // computed
+  const { currentUser, currentUserSettings } = userStore;
   const enableEmailPassword =
     data &&
     (data?.email_password_login || !(data?.email_password_login || data?.magic_login || data?.google || data?.github));
+
+  useEffect(() => {
+    if (currentUser && !error && currentUserSettings) {
+      setLoading(true);
+      router.push(
+        `/${
+          currentUserSettings.workspace.last_workspace_slug
+            ? currentUserSettings.workspace.last_workspace_slug
+            : currentUserSettings.workspace.fallback_workspace_slug
+        }`
+      );
+      return;
+    }
+  }, [router, currentUser, error, currentUserSettings]);
 
   const handleLoginRedirection = () =>
     userStore
@@ -166,7 +184,7 @@ export const SignInView = observer(() => {
                 Sign in to Plane
               </h1>
 
-              {!data && !error ? (
+              {!data && !appConfigError ? (
                 <div className="pt-10 w-ful">
                   <Loader className="space-y-4 w-full pb-4">
                     <Loader.Item height="46px" width="360px" />

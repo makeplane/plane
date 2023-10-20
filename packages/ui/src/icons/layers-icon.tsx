@@ -14,7 +14,7 @@ export const LayersIcon: React.FC<ISvgIcons> = ({
     xmlns="http://www.w3.org/2000/svg"
     {...rest}
   >
-    <g clip-path="url(#clip0_7258_81938)">
+    <g clipPath="url(#clip0_7258_81938)">
       <path
         d="M16.5953 6.69606L16.6072 5.17376L6.85812 8.92381L6.85812 19.4238L9.00319 18.6961"
         strokeLinecap="round"
