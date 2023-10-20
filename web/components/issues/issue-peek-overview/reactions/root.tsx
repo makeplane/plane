@@ -7,10 +7,11 @@ interface IIssueReaction {
   user: any;
   issueReactionCreate: (reaction: string) => void;
   issueReactionRemove: (reaction: string) => void;
+  position?: "top" | "bottom";
 }
 
 export const IssueReaction: FC<IIssueReaction> = (props) => {
-  const { issueReactions, user, issueReactionCreate, issueReactionRemove } = props;
+  const { issueReactions, user, issueReactionCreate, issueReactionRemove, position = "bottom" } = props;
 
   const handleReaction = (reaction: string) => {
     const isReactionAvailable =
@@ -22,7 +23,7 @@ export const IssueReaction: FC<IIssueReaction> = (props) => {
 
   return (
     <div className="relative flex items-center flex-wrap gap-2">
-      <IssueReactionSelector onSelect={handleReaction} position="bottom" />
+      <IssueReactionSelector onSelect={handleReaction} position={position} />
       <IssueReactionPreview issueReactions={issueReactions} user={user} handleReaction={handleReaction} />
     </div>
   );

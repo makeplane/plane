@@ -6,6 +6,7 @@ import useSWR from "swr";
 // components
 import { PeekOverviewIssueDetails } from "./issue-detail";
 import { PeekOverviewProperties } from "./properties";
+import { IssueComment } from "./activity";
 // types
 import { IIssue } from "types";
 import { RootStore } from "store/root";
@@ -19,6 +20,11 @@ interface IIssueView {
   issueUpdate: (issue: Partial<IIssue>) => void;
   issueReactionCreate: (reaction: string) => void;
   issueReactionRemove: (reaction: string) => void;
+  issueCommentCreate: (comment: any) => void;
+  issueCommentUpdate: (comment: any) => void;
+  issueCommentRemove: (commentId: string) => void;
+  issueCommentReactionCreate: (commentId: string, reaction: string) => void;
+  issueCommentReactionRemove: (commentId: string, reaction: string) => void;
   states: any;
   members: any;
   priorities: any;
@@ -53,6 +59,11 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     issueUpdate,
     issueReactionCreate,
     issueReactionRemove,
+    issueCommentCreate,
+    issueCommentUpdate,
+    issueCommentRemove,
+    issueCommentReactionCreate,
+    issueCommentReactionRemove,
     states,
     members,
     priorities,
@@ -108,6 +119,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
 
   const issue = issueDetailStore.getIssue;
   const issueReactions = issueDetailStore.getIssueReactions;
+  const issueComments = issueDetailStore.getIssueComments;
+
   const user = userStore?.currentUser;
 
   return (
@@ -178,7 +191,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
               issue && (
                 <>
                   {["side-peek", "modal"].includes(peekMode) ? (
-                    <div className="space-y-8 p-4 py-5">
+                    <div className="space-y-6 p-4 py-5">
                       <PeekOverviewIssueDetails
                         workspaceSlug={workspaceSlug}
                         issue={issue}
@@ -197,11 +210,23 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         priorities={priorities}
                       />
 
-                      {/* <div className="border border-red-500">Activity</div> */}
+                      <div className="border-t border-custom-border-400" />
+
+                      <IssueComment
+                        workspaceSlug={workspaceSlug}
+                        projectId={projectId}
+                        user={user}
+                        issueComments={issueComments}
+                        issueCommentCreate={issueCommentCreate}
+                        issueCommentUpdate={issueCommentUpdate}
+                        issueCommentRemove={issueCommentRemove}
+                        issueCommentReactionCreate={issueCommentReactionCreate}
+                        issueCommentReactionRemove={issueCommentReactionRemove}
+                      />
                     </div>
                   ) : (
                     <div className="w-full h-full flex">
-                      <div className="w-full h-full space-y-8 p-4 py-5">
+                      <div className="w-full h-full space-y-6 p-4 py-5">
                         <PeekOverviewIssueDetails
                           workspaceSlug={workspaceSlug}
                           issue={issue}
@@ -212,7 +237,19 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           issueReactionRemove={issueReactionRemove}
                         />
 
-                        {/* <div className="border border-red-500">Activity</div> */}
+                        <div className="border-t border-custom-border-400" />
+
+                        <IssueComment
+                          workspaceSlug={workspaceSlug}
+                          projectId={projectId}
+                          user={user}
+                          issueComments={issueComments}
+                          issueCommentCreate={issueCommentCreate}
+                          issueCommentUpdate={issueCommentUpdate}
+                          issueCommentRemove={issueCommentRemove}
+                          issueCommentReactionCreate={issueCommentReactionCreate}
+                          issueCommentReactionRemove={issueCommentReactionRemove}
+                        />
                       </div>
                       <div className="flex-shrink-0 !w-[400px] h-full border-l border-custom-border-200 p-4 py-5">
                         <PeekOverviewProperties
