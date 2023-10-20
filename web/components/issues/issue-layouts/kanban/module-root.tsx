@@ -63,10 +63,7 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
         moduleIssueStore.updateIssueStructure(group_by, sub_group_by, issue);
         issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
       }
-      if (action === "delete") {
-        moduleIssueStore.deleteIssue(group_by, sub_group_by, issue);
-        issueDetailStore.deleteIssue(workspaceSlug.toString(), issue.project, issue.id);
-      }
+      if (action === "delete") moduleIssueStore.deleteIssue(group_by, sub_group_by, issue);
       if (action === "remove" && issue.bridge_id) {
         moduleIssueStore.deleteIssue(group_by, null, issue);
         moduleIssueStore.removeIssueFromModule(

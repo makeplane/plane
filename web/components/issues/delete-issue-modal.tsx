@@ -1,6 +1,10 @@
 import { useEffect, useState, Fragment } from "react";
+import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Button } from "@plane/ui";
 // types
@@ -10,11 +14,16 @@ type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data: IIssue;
-  onSubmit: () => Promise<void>;
+  onSubmit?: () => Promise<void>;
 };
 
-export const DeleteIssueModal: React.FC<Props> = (props) => {
+export const DeleteIssueModal: React.FC<Props> = observer((props) => {
   const { data, isOpen, handleClose, onSubmit } = props;
+
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
+  const { issueDetail: issueDetailStore } = useMobxStore();
 
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
@@ -28,9 +37,13 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
   };
 
   const handleIssueDelete = async () => {
+    if (!workspaceSlug) return;
+
     setIsDeleteLoading(true);
 
-    await onSubmit().finally(() => setIsDeleteLoading(false));
+    await issueDetailStore.deleteIssue(workspaceSlug.toString(), data.project, data.id);
+
+    if (onSubmit) await onSubmit().finally(() => setIsDeleteLoading(false));
   };
 
   return (
@@ -95,4 +108,4 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+});

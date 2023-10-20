@@ -10,11 +10,13 @@ import { IssuePropertyEstimates } from "../properties/estimates";
 import { IssuePropertyDate } from "../properties/date";
 // ui
 import { Tooltip } from "@plane/ui";
+// types
+import { IIssue } from "types";
 
 export interface IKanBanProperties {
   columnId: string;
   issue: any;
-  handleIssues?: (group_by: string | null, issue: any) => void;
+  handleIssues?: (group_by: string | null, issue: IIssue) => void;
   display_properties: any;
   states: any;
   labels: any;

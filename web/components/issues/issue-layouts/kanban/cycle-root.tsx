@@ -63,10 +63,7 @@ export const CycleKanBanLayout: React.FC = observer(() => {
         cycleIssueStore.updateIssueStructure(group_by, null, issue);
         issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
       }
-      if (action === "delete") {
-        cycleIssueStore.deleteIssue(group_by, null, issue);
-        issueDetailStore.deleteIssue(workspaceSlug.toString(), issue.project, issue.id);
-      }
+      if (action === "delete") cycleIssueStore.deleteIssue(group_by, null, issue);
       if (action === "remove" && issue.bridge_id) {
         cycleIssueStore.deleteIssue(group_by, null, issue);
         cycleIssueStore.removeIssueFromCycle(

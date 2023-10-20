@@ -223,7 +223,6 @@ export const CommandPalette: FC = observer(() => {
           handleClose={() => toggleDeleteIssueModal(false)}
           isOpen={isDeleteIssueModalOpen}
           data={issueDetails}
-          user={user}
         />
       )}
 

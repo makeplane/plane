@@ -63,10 +63,7 @@ export const KanBanLayout: FC = observer(() => {
         issueStore.updateIssueStructure(group_by, sub_group_by, issue);
         issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
       }
-      if (action === "delete") {
-        issueStore.deleteIssue(group_by, sub_group_by, issue);
-        issueDetailStore.deleteIssue(workspaceSlug.toString(), issue.project, issue.id);
-      }
+      if (action === "delete") issueStore.deleteIssue(group_by, sub_group_by, issue);
     },
     [issueStore, issueDetailStore, workspaceSlug]
   );

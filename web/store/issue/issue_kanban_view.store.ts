@@ -2,7 +2,6 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 // types
 import { RootStore } from "../root";
 import { IIssueType } from "./issue.store";
-import { IUser } from "types";
 
 export interface IIssueKanBanViewStore {
   kanBanToggle: {
@@ -293,8 +292,7 @@ export class IssueKanBanViewStore implements IIssueKanBanViewStore {
         updateIssue.workspaceSlug,
         updateIssue.projectId,
         updateIssue.issueId,
-        updateIssue,
-        {} as IUser
+        updateIssue
       );
     }
   };
@@ -442,8 +440,7 @@ export class IssueKanBanViewStore implements IIssueKanBanViewStore {
         updateIssue.workspaceSlug,
         updateIssue.projectId,
         updateIssue.issueId,
-        updateIssue,
-        {} as IUser
+        updateIssue
       );
     }
   };

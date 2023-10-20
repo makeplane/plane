@@ -202,10 +202,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   };
 
   const createIssue = async (payload: Partial<IIssue>) => {
-    if (!workspaceSlug || !activeProject || !user) return;
+    if (!workspaceSlug || !activeProject) return;
 
     await issueDetailStore
-      .createIssue(workspaceSlug.toString(), activeProject, payload, user)
+      .createIssue(workspaceSlug.toString(), activeProject, payload)
       .then(async (res) => {
         issueStore.fetchIssues(workspaceSlug.toString(), activeProject);
 

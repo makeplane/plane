@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Popover, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
-
+import { usePopper } from "react-popper";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // icons
@@ -13,6 +13,21 @@ export const CalendarMonthsDropdown: React.FC = observer(() => {
   const { calendar: calendarStore, issueFilter: issueFilterStore } = useMobxStore();
 
   const calendarLayout = issueFilterStore.userDisplayFilters.calendar?.layout ?? "month";
+
+  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: "auto",
+    modifiers: [
+      {
+        name: "preventOverflow",
+        options: {
+          padding: 12,
+        },
+      },
+    ],
+  });
 
   const { activeMonthDate } = calendarStore.calendarFilters;
 
@@ -47,10 +62,17 @@ export const CalendarMonthsDropdown: React.FC = observer(() => {
 
   return (
     <Popover className="relative">
-      <Popover.Button className="outline-none text-xl font-semibold" disabled={calendarLayout === "week"}>
-        {calendarLayout === "month"
-          ? `${MONTHS_LIST[activeMonthDate.getMonth() + 1].title} ${activeMonthDate.getFullYear()}`
-          : getWeekLayoutHeader()}
+      <Popover.Button as={React.Fragment}>
+        <button
+          type="button"
+          ref={setReferenceElement}
+          className="outline-none text-xl font-semibold"
+          disabled={calendarLayout === "week"}
+        >
+          {calendarLayout === "month"
+            ? `${MONTHS_LIST[activeMonthDate.getMonth() + 1].title} ${activeMonthDate.getFullYear()}`
+            : getWeekLayoutHeader()}
+        </button>
       </Popover.Button>
       <Transition
         as={React.Fragment}
@@ -61,8 +83,13 @@ export const CalendarMonthsDropdown: React.FC = observer(() => {
         leaveFrom="opacity-100 translate-y-0"
         leaveTo="opacity-0 translate-y-1"
       >
-        <Popover.Panel>
-          <div className="absolute left-0 z-10 mt-1 bg-custom-background-100 border border-custom-border-200 shadow-custom-shadow-rg rounded w-56 p-3 divide-y divide-custom-border-200">
+        <Popover.Panel className="fixed z-50">
+          <div
+            ref={setPopperElement}
+            style={styles.popper}
+            {...attributes.popper}
+            className="bg-custom-background-100 border border-custom-border-200 shadow-custom-shadow-rg rounded w-56 p-3 divide-y divide-custom-border-200"
+          >
             <div className="flex items-center justify-between gap-2 pb-3">
               <button
                 type="button"

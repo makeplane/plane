@@ -22,8 +22,8 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
   const { columnId, issue, handleIssues, quickActions, display_properties, states, labels, members, priorities } =
     props;
 
-  const updateIssue = (_issue: IIssue) => {
-    if (_issue && handleIssues) handleIssues(!columnId && columnId === "null" ? null : columnId, _issue, "update");
+  const updateIssue = (group_by: string | null, issueToUpdate: IIssue) => {
+    if (issueToUpdate && handleIssues) handleIssues(group_by, issueToUpdate, "update");
   };
 
   return (

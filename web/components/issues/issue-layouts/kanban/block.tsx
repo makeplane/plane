@@ -23,14 +23,8 @@ interface IssueBlockProps {
 export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
   const { sub_group_id, columnId, index, issue, isDragDisabled, handleIssues, quickActions, displayProperties } = props;
 
-  const updateIssue = (_issue: IIssue) => {
-    if (_issue && handleIssues)
-      handleIssues(
-        !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
-        !columnId && columnId === "null" ? null : columnId,
-        _issue,
-        "update"
-      );
+  const updateIssue = (sub_group_by: string | null, group_by: string | null, issueToUpdate: IIssue) => {
+    if (issueToUpdate) handleIssues(sub_group_by, group_by, issueToUpdate, "update");
   };
 
   return (

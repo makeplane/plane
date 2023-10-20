@@ -39,10 +39,7 @@ export const CycleCalendarLayout: React.FC = observer(() => {
         cycleIssueStore.updateIssueStructure(date, null, issue);
         issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
       }
-      if (action === "delete") {
-        cycleIssueStore.deleteIssue(date, null, issue);
-        issueDetailStore.deleteIssue(workspaceSlug.toString(), issue.project, issue.id);
-      }
+      if (action === "delete") cycleIssueStore.deleteIssue(date, null, issue);
       if (action === "remove" && issue.bridge_id) {
         cycleIssueStore.deleteIssue(date, null, issue);
         cycleIssueStore.removeIssueFromCycle(

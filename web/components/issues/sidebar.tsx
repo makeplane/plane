@@ -277,12 +277,9 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
         createIssueLink={handleCreateLink}
         updateIssueLink={handleUpdateLink}
       />
-      <DeleteIssueModal
-        handleClose={() => setDeleteIssueModal(false)}
-        isOpen={deleteIssueModal}
-        data={issueDetail ?? null}
-        user={user}
-      />
+      {issueDetail && (
+        <DeleteIssueModal handleClose={() => setDeleteIssueModal(false)} isOpen={deleteIssueModal} data={issueDetail} />
+      )}
       <div className="h-full w-full flex flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
         <div className="flex items-center justify-between px-5 pb-3">
           <h4 className="text-sm font-medium">
