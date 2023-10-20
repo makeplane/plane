@@ -13,11 +13,12 @@ interface IssueBlocksListProps {
     issue: IIssue,
     action: "update" | "delete"
   ) => void;
+  quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
   display_properties: any;
 }
 
 export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = (props) => {
-  const { sub_group_id, columnId, issues, isDragDisabled, handleIssues, display_properties } = props;
+  const { sub_group_id, columnId, issues, isDragDisabled, handleIssues, quickActions, display_properties } = props;
 
   return (
     <>
@@ -29,6 +30,7 @@ export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = (props) => 
               index={index}
               issue={issue}
               handleIssues={handleIssues}
+              quickActions={quickActions}
               displayProperties={display_properties}
               columnId={columnId}
               sub_group_id={sub_group_id}

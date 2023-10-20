@@ -5,7 +5,7 @@ import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { CalendarChart } from "components/issues";
+import { CalendarChart, CycleIssueQuickActions } from "components/issues";
 // types
 import { IIssueGroupedStructure } from "store/issue";
 import { IIssue } from "types";
@@ -14,7 +14,7 @@ export const CycleCalendarLayout: React.FC = observer(() => {
   const { cycleIssue: cycleIssueStore, issueFilter: issueFilterStore, issueDetail: issueDetailStore } = useMobxStore();
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, cycleId } = router.query;
 
   // TODO: add drag and drop functionality
   const onDragEnd = (result: DropResult) => {
@@ -32,18 +32,28 @@ export const CycleCalendarLayout: React.FC = observer(() => {
   const issues = cycleIssueStore.getIssues;
 
   const handleIssues = useCallback(
-    (date: string, issue: IIssue, action: "update" | "delete") => {
-      if (!workspaceSlug) return;
+    (date: string, issue: IIssue, action: "update" | "delete" | "remove") => {
+      if (!workspaceSlug || !cycleId) return;
 
       if (action === "update") {
         cycleIssueStore.updateIssueStructure(date, null, issue);
         issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
-      } else {
+      }
+      if (action === "delete") {
         cycleIssueStore.deleteIssue(date, null, issue);
         issueDetailStore.deleteIssue(workspaceSlug.toString(), issue.project, issue.id);
       }
+      if (action === "remove" && issue.bridge_id) {
+        cycleIssueStore.deleteIssue(date, null, issue);
+        cycleIssueStore.removeIssueFromCycle(
+          workspaceSlug.toString(),
+          issue.project,
+          cycleId.toString(),
+          issue.bridge_id
+        );
+      }
     },
-    [cycleIssueStore, issueDetailStore, workspaceSlug]
+    [cycleIssueStore, issueDetailStore, cycleId, workspaceSlug]
   );
 
   return (
@@ -52,7 +62,14 @@ export const CycleCalendarLayout: React.FC = observer(() => {
         <CalendarChart
           issues={issues as IIssueGroupedStructure | null}
           layout={issueFilterStore.userDisplayFilters.calendar?.layout}
-          handleIssues={handleIssues}
+          quickActions={(issue) => (
+            <CycleIssueQuickActions
+              issue={issue}
+              handleDelete={async () => handleIssues(issue.target_date ?? "", issue, "delete")}
+              handleUpdate={async (data) => handleIssues(issue.target_date ?? "", data, "update")}
+              handleRemoveFromCycle={async () => handleIssues(issue.target_date ?? "", issue, "remove")}
+            />
+          )}
         />
       </DragDropContext>
     </div>

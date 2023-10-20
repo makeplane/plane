@@ -2,11 +2,12 @@ import { FC, useCallback } from "react";
 import { useRouter } from "next/router";
 import { DragDropContext } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { KanBanSwimLanes } from "./swimlanes";
 import { KanBan } from "./default";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { ProjectIssueQuickActions } from "components/issues";
 // types
 import { IIssue } from "types";
 // constants
@@ -91,6 +92,13 @@ export const KanBanLayout: FC = observer(() => {
             sub_group_by={sub_group_by}
             group_by={group_by}
             handleIssues={handleIssues}
+            quickActions={(sub_group_by, group_by, issue) => (
+              <ProjectIssueQuickActions
+                issue={issue}
+                handleDelete={async () => handleIssues(sub_group_by, group_by, issue, "delete")}
+                handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, "update")}
+              />
+            )}
             display_properties={display_properties}
             kanBanToggle={issueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
@@ -108,6 +116,13 @@ export const KanBanLayout: FC = observer(() => {
             sub_group_by={sub_group_by}
             group_by={group_by}
             handleIssues={handleIssues}
+            quickActions={(sub_group_by, group_by, issue) => (
+              <ProjectIssueQuickActions
+                issue={issue}
+                handleDelete={async () => handleIssues(sub_group_by, group_by, issue, "delete")}
+                handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, "update")}
+              />
+            )}
             display_properties={display_properties}
             kanBanToggle={issueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}

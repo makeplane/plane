@@ -2,18 +2,16 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Draggable } from "@hello-pangea/dnd";
-// components
-import { IssueQuickActions } from "components/issues";
 // types
 import { IIssue } from "types";
 
 type Props = {
   issues: IIssue[] | null;
-  handleIssues: (date: string, issue: IIssue, action: "update" | "delete") => void;
+  quickActions: (issue: IIssue) => React.ReactNode;
 };
 
 export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
-  const { issues, handleIssues } = props;
+  const { issues, quickActions } = props;
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -44,13 +42,12 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                   {issue.project_detail.identifier}-{issue.sequence_id}
                 </div>
                 <h6 className="text-xs flex-grow truncate">{issue.name}</h6>
-                <div className="hidden group-hover/calendar-block:block">
-                  <IssueQuickActions
+                <div className="hidden group-hover/calendar-block:block">{quickActions(issue)}</div>
+                {/* <IssueQuickActions
                     issue={issue}
                     handleDelete={async () => handleIssues(issue.target_date ?? "", issue, "delete")}
                     handleUpdate={async (data) => handleIssues(issue.target_date ?? "", data, "update")}
-                  />
-                </div>
+                  /> */}
               </a>
             </Link>
           )}

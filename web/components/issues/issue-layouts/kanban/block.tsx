@@ -1,7 +1,6 @@
 import { Draggable } from "@hello-pangea/dnd";
 // components
 import { KanBanProperties } from "./properties";
-import { IssueQuickActions } from "components/issues";
 // types
 import { IIssue } from "types";
 
@@ -17,11 +16,12 @@ interface IssueBlockProps {
     issue: IIssue,
     action: "update" | "delete"
   ) => void;
+  quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
   displayProperties: any;
 }
 
 export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
-  const { sub_group_id, columnId, index, issue, isDragDisabled, handleIssues, displayProperties } = props;
+  const { sub_group_id, columnId, index, issue, isDragDisabled, handleIssues, quickActions, displayProperties } = props;
 
   const updateIssue = (_issue: IIssue) => {
     if (_issue && handleIssues)
@@ -44,25 +44,11 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
             ref={provided.innerRef}
           >
             <div className="absolute top-3 right-3 hidden group-hover/kanban-block:block">
-              <IssueQuickActions
-                issue={issue}
-                handleDelete={async () =>
-                  handleIssues(
-                    !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
-                    !columnId && columnId === "null" ? null : columnId,
-                    issue,
-                    "delete"
-                  )
-                }
-                handleUpdate={async (data) =>
-                  handleIssues(
-                    !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
-                    !columnId && columnId === "null" ? null : columnId,
-                    data,
-                    "update"
-                  )
-                }
-              />
+              {quickActions(
+                !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
+                !columnId && columnId === "null" ? null : columnId,
+                issue
+              )}
             </div>
             <div
               className={`text-sm rounded p-2 px-3 shadow-custom-shadow-2xs space-y-[8px] border transition-all bg-custom-background-100 hover:cursor-grab ${

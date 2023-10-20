@@ -16,7 +16,6 @@ export * from "./label";
 export * from "./issue-reaction";
 export * from "./peek-overview";
 export * from "./confirm-issue-discard";
-export * from "./quick-actions";
 
 // draft issue
 export * from "./draft-issue-form";

@@ -1,10 +1,11 @@
 import { FC, useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// components
-import { List } from "./default";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
+// components
+import { List } from "./default";
+import { ProjectIssueQuickActions } from "components/issues";
 // types
 import { IIssue } from "types";
 // constants
@@ -57,6 +58,13 @@ export const ListLayout: FC = observer(() => {
         issues={issues}
         group_by={group_by}
         handleIssues={handleIssues}
+        quickActions={(group_by, issue) => (
+          <ProjectIssueQuickActions
+            issue={issue}
+            handleDelete={async () => handleIssues(group_by, issue, "delete")}
+            handleUpdate={async (data) => handleIssues(group_by, data, "update")}
+          />
+        )}
         display_properties={display_properties}
         states={states}
         stateGroups={stateGroups}

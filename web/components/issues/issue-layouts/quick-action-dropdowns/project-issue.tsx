@@ -17,7 +17,7 @@ type Props = {
   handleUpdate: (data: IIssue) => Promise<void>;
 };
 
-export const IssueQuickActions: React.FC<Props> = (props) => {
+export const ProjectIssueQuickActions: React.FC<Props> = (props) => {
   const { issue, handleDelete, handleUpdate } = props;
 
   const router = useRouter();

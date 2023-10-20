@@ -1,7 +1,6 @@
 // components
 import { KanBanProperties } from "./properties";
 import { IssuePeekOverview } from "components/issues/issue-peek-overview";
-import { IssueQuickActions } from "components/issues";
 // ui
 import { Tooltip } from "@plane/ui";
 // types
@@ -11,6 +10,7 @@ interface IssueBlockProps {
   columnId: string;
   issue: IIssue;
   handleIssues: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
+  quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   display_properties: any;
   states: any;
   labels: any;
@@ -19,7 +19,8 @@ interface IssueBlockProps {
 }
 
 export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
-  const { columnId, issue, handleIssues, display_properties, states, labels, members, priorities } = props;
+  const { columnId, issue, handleIssues, quickActions, display_properties, states, labels, members, priorities } =
+    props;
 
   const updateIssue = (_issue: IIssue) => {
     if (_issue && handleIssues) handleIssues(!columnId && columnId === "null" ? null : columnId, _issue, "update");
@@ -56,13 +57,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
             members={members}
             priorities={priorities}
           />
-          <IssueQuickActions
-            issue={issue}
-            handleDelete={async () => handleIssues(!columnId && columnId === "null" ? null : columnId, issue, "delete")}
-            handleUpdate={async (data) =>
-              handleIssues(!columnId && columnId === "null" ? null : columnId, data, "update")
-            }
-          />
+          {quickActions(!columnId && columnId === "null" ? null : columnId, issue)}
         </div>
       </div>
     </>

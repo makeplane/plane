@@ -7,6 +7,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { KanBanSwimLanes } from "./swimlanes";
 import { KanBan } from "./default";
+import { ModuleIssueQuickActions } from "components/issues";
 // types
 import { IIssue } from "types";
 // constants
@@ -24,7 +25,7 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
   } = useMobxStore();
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, moduleId } = router.query;
 
   const issues = moduleIssueStore?.getIssues;
 
@@ -55,8 +56,8 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
   };
 
   const handleIssues = useCallback(
-    (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: "update" | "delete") => {
-      if (!workspaceSlug) return;
+    (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: "update" | "delete" | "remove") => {
+      if (!workspaceSlug || !moduleId) return;
 
       if (action === "update") {
         moduleIssueStore.updateIssueStructure(group_by, sub_group_by, issue);
@@ -66,8 +67,12 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
         moduleIssueStore.deleteIssue(group_by, sub_group_by, issue);
         issueDetailStore.deleteIssue(workspaceSlug.toString(), issue.project, issue.id);
       }
+      if (action === "remove") {
+        moduleIssueStore.deleteIssue(group_by, null, issue);
+        moduleIssueStore.removeIssueFromModule(workspaceSlug.toString(), issue.project, moduleId.toString(), issue.id);
+      }
     },
-    [moduleIssueStore, issueDetailStore, workspaceSlug]
+    [moduleIssueStore, issueDetailStore, moduleId, workspaceSlug]
   );
 
   const handleKanBanToggle = (toggle: "groupByHeaderMinMax" | "subgroupByIssuesVisibility", value: string) => {
@@ -91,6 +96,14 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
             sub_group_by={sub_group_by}
             group_by={group_by}
             handleIssues={handleIssues}
+            quickActions={(sub_group_by, group_by, issue) => (
+              <ModuleIssueQuickActions
+                issue={issue}
+                handleDelete={async () => handleIssues(sub_group_by, group_by, issue, "delete")}
+                handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, "update")}
+                handleRemoveFromModule={async () => handleIssues(sub_group_by, group_by, issue, "remove")}
+              />
+            )}
             display_properties={display_properties}
             kanBanToggle={moduleIssueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
@@ -108,6 +121,14 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
             sub_group_by={sub_group_by}
             group_by={group_by}
             handleIssues={handleIssues}
+            quickActions={(sub_group_by, group_by, issue) => (
+              <ModuleIssueQuickActions
+                issue={issue}
+                handleDelete={async () => handleIssues(sub_group_by, group_by, issue, "delete")}
+                handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, "update")}
+                handleRemoveFromModule={async () => handleIssues(sub_group_by, group_by, issue, "remove")}
+              />
+            )}
             display_properties={display_properties}
             kanBanToggle={moduleIssueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}

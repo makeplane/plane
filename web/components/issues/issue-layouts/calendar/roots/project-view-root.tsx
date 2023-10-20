@@ -5,7 +5,7 @@ import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { CalendarChart } from "components/issues";
+import { CalendarChart, ProjectIssueQuickActions } from "components/issues";
 // types
 import { IIssueGroupedStructure } from "store/issue";
 import { IIssue } from "types";
@@ -56,7 +56,13 @@ export const ProjectViewCalendarLayout: React.FC = observer(() => {
         <CalendarChart
           issues={issues as IIssueGroupedStructure | null}
           layout={issueFilterStore.userDisplayFilters.calendar?.layout}
-          handleIssues={handleIssues}
+          quickActions={(issue) => (
+            <ProjectIssueQuickActions
+              issue={issue}
+              handleDelete={async () => handleIssues(issue.target_date ?? "", issue, "delete")}
+              handleUpdate={async (data) => handleIssues(issue.target_date ?? "", data, "update")}
+            />
+          )}
         />
       </DragDropContext>
     </div>

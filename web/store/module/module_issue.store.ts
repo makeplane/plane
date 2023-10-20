@@ -35,6 +35,8 @@ export interface IModuleIssueStore {
   fetchIssues: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<any>;
   updateIssueStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
   deleteIssue: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
+  addIssueToModule: (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => Promise<any>;
+  removeIssueFromModule: (workspaceSlug: string, projectId: string, moduleId: string, bridgeId: string) => Promise<any>;
 }
 
 export class ModuleIssueStore implements IModuleIssueStore {
@@ -53,9 +55,10 @@ export class ModuleIssueStore implements IModuleIssueStore {
       ungrouped: IIssue[];
     };
   } = {};
-  // service
-  moduleService;
+
+  // services
   rootStore;
+  moduleService;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
@@ -70,6 +73,8 @@ export class ModuleIssueStore implements IModuleIssueStore {
       fetchIssues: action,
       updateIssueStructure: action,
       deleteIssue: action,
+      addIssueToModule: action,
+      removeIssueFromModule: action,
     });
 
     this.rootStore = _rootStore;
@@ -240,6 +245,46 @@ export class ModuleIssueStore implements IModuleIssueStore {
       this.loader = false;
       this.error = error;
       return error;
+    }
+  };
+
+  addIssueToModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
+    try {
+      const user = this.rootStore.user.currentUser ?? undefined;
+
+      await this.moduleService.addIssuesToModule(
+        workspaceSlug,
+        projectId,
+        moduleId,
+        {
+          issues: [issueId],
+        },
+        user
+      );
+
+      this.fetchIssues(workspaceSlug, projectId, moduleId);
+    } catch (error) {
+      runInAction(() => {
+        this.loader = false;
+        this.error = error;
+      });
+
+      throw error;
+    }
+  };
+
+  removeIssueFromModule = async (workspaceSlug: string, projectId: string, moduleId: string, bridgeId: string) => {
+    try {
+      await this.moduleService.removeIssueFromModule(workspaceSlug, projectId, moduleId, bridgeId);
+    } catch (error) {
+      this.fetchIssues(workspaceSlug, projectId, moduleId);
+
+      runInAction(() => {
+        this.loader = false;
+        this.error = error;
+      });
+
+      throw error;
     }
   };
 }

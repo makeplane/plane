@@ -5,6 +5,7 @@ import { RootStore } from "../root";
 import { IIssue } from "types";
 // services
 import { CycleService } from "services/cycle.service";
+import { IssueService } from "services/issue";
 // constants
 import { sortArrayByDate, sortArrayByPriority } from "constants/kanban-helpers";
 
@@ -35,6 +36,8 @@ export interface ICycleIssueStore {
   fetchIssues: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<any>;
   updateIssueStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
   deleteIssue: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
+  addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => void;
+  removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, bridgeId: string) => void;
 }
 
 export class CycleIssueStore implements ICycleIssueStore {
@@ -53,9 +56,11 @@ export class CycleIssueStore implements ICycleIssueStore {
       ungrouped: IIssue[];
     };
   } = {};
-  // service
-  cycleService;
+
+  // services
   rootStore;
+  cycleService;
+  issueService;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
@@ -70,10 +75,13 @@ export class CycleIssueStore implements ICycleIssueStore {
       fetchIssues: action,
       updateIssueStructure: action,
       deleteIssue: action,
+      addIssueToCycle: action,
+      removeIssueFromCycle: action,
     });
 
     this.rootStore = _rootStore;
     this.cycleService = new CycleService();
+    this.issueService = new IssueService();
 
     autorun(() => {
       const workspaceSlug = this.rootStore.workspace.workspaceSlug;
@@ -227,6 +235,46 @@ export class CycleIssueStore implements ICycleIssueStore {
       this.loader = false;
       this.error = error;
       return error;
+    }
+  };
+
+  addIssueToCycle = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
+    try {
+      const user = this.rootStore.user.currentUser ?? undefined;
+
+      await this.issueService.addIssueToCycle(
+        workspaceSlug,
+        projectId,
+        cycleId,
+        {
+          issues: [issueId],
+        },
+        user
+      );
+
+      this.fetchIssues(workspaceSlug, projectId, cycleId);
+    } catch (error) {
+      runInAction(() => {
+        this.loader = false;
+        this.error = error;
+      });
+
+      throw error;
+    }
+  };
+
+  removeIssueFromCycle = async (workspaceSlug: string, projectId: string, cycleId: string, bridgeId: string) => {
+    try {
+      await this.issueService.removeIssueFromCycle(workspaceSlug, projectId, cycleId, bridgeId);
+    } catch (error) {
+      this.fetchIssues(workspaceSlug, projectId, cycleId);
+
+      runInAction(() => {
+        this.loader = false;
+        this.error = error;
+      });
+
+      throw error;
     }
   };
 }

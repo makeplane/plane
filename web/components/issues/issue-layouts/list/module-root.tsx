@@ -1,11 +1,11 @@
 import React, { useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { List } from "./default";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
+import { ModuleIssueQuickActions } from "components/issues";
 // types
 import { IIssue } from "types";
 // constants
@@ -15,14 +15,14 @@ export interface IModuleListLayout {}
 
 export const ModuleListLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, moduleId } = router.query;
 
   const {
     project: projectStore,
     issueFilter: issueFilterStore,
     moduleIssue: moduleIssueStore,
     issueDetail: issueDetailStore,
-  }: RootStore = useMobxStore();
+  } = useMobxStore();
 
   const issues = moduleIssueStore?.getIssues;
 
@@ -31,8 +31,8 @@ export const ModuleListLayout: React.FC = observer(() => {
   const display_properties = issueFilterStore?.userDisplayProperties || null;
 
   const handleIssues = useCallback(
-    (group_by: string | null, issue: IIssue, action: "update" | "delete") => {
-      if (!workspaceSlug) return;
+    (group_by: string | null, issue: IIssue, action: "update" | "delete" | "remove") => {
+      if (!workspaceSlug || !moduleId) return;
 
       if (action === "update") {
         moduleIssueStore.updateIssueStructure(group_by, null, issue);
@@ -42,8 +42,12 @@ export const ModuleListLayout: React.FC = observer(() => {
         moduleIssueStore.deleteIssue(group_by, null, issue);
         issueDetailStore.deleteIssue(workspaceSlug.toString(), issue.project, issue.id);
       }
+      if (action === "remove") {
+        moduleIssueStore.deleteIssue(group_by, null, issue);
+        moduleIssueStore.removeIssueFromModule(workspaceSlug.toString(), issue.project, moduleId.toString(), issue.id);
+      }
     },
-    [moduleIssueStore, issueDetailStore, workspaceSlug]
+    [moduleIssueStore, issueDetailStore, moduleId, workspaceSlug]
   );
 
   const states = projectStore?.projectStates || null;
@@ -60,6 +64,14 @@ export const ModuleListLayout: React.FC = observer(() => {
         issues={issues}
         group_by={group_by}
         handleIssues={handleIssues}
+        quickActions={(group_by, issue) => (
+          <ModuleIssueQuickActions
+            issue={issue}
+            handleDelete={async () => handleIssues(group_by, issue, "delete")}
+            handleUpdate={async (data) => handleIssues(group_by, data, "update")}
+            handleRemoveFromModule={async () => handleIssues(group_by, issue, "remove")}
+          />
+        )}
         display_properties={display_properties}
         states={states}
         stateGroups={stateGroups}

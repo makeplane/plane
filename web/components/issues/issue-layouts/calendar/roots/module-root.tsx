@@ -5,7 +5,7 @@ import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { CalendarChart } from "components/issues";
+import { CalendarChart, ModuleIssueQuickActions } from "components/issues";
 // types
 import { IIssueGroupedStructure } from "store/issue";
 import { IIssue } from "types";
@@ -18,7 +18,7 @@ export const ModuleCalendarLayout: React.FC = observer(() => {
   } = useMobxStore();
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, moduleId } = router.query;
 
   // TODO: add drag and drop functionality
   const onDragEnd = (result: DropResult) => {
@@ -36,8 +36,8 @@ export const ModuleCalendarLayout: React.FC = observer(() => {
   const issues = moduleIssueStore.getIssues;
 
   const handleIssues = useCallback(
-    (date: string, issue: IIssue, action: "update" | "delete") => {
-      if (!workspaceSlug) return;
+    (date: string, issue: IIssue, action: "update" | "delete" | "remove") => {
+      if (!workspaceSlug || !moduleId) return;
 
       if (action === "update") {
         moduleIssueStore.updateIssueStructure(date, null, issue);
@@ -46,8 +46,12 @@ export const ModuleCalendarLayout: React.FC = observer(() => {
         moduleIssueStore.deleteIssue(date, null, issue);
         issueDetailStore.deleteIssue(workspaceSlug.toString(), issue.project, issue.id);
       }
+      if (action === "remove") {
+        moduleIssueStore.deleteIssue(date, null, issue);
+        moduleIssueStore.removeIssueFromModule(workspaceSlug.toString(), issue.project, moduleId.toString(), issue.id);
+      }
     },
-    [moduleIssueStore, issueDetailStore, workspaceSlug]
+    [moduleIssueStore, issueDetailStore, moduleId, workspaceSlug]
   );
 
   return (
@@ -56,7 +60,14 @@ export const ModuleCalendarLayout: React.FC = observer(() => {
         <CalendarChart
           issues={issues as IIssueGroupedStructure | null}
           layout={issueFilterStore.userDisplayFilters.calendar?.layout}
-          handleIssues={handleIssues}
+          quickActions={(issue) => (
+            <ModuleIssueQuickActions
+              issue={issue}
+              handleDelete={async () => handleIssues(issue.target_date ?? "", issue, "delete")}
+              handleUpdate={async (data) => handleIssues(issue.target_date ?? "", data, "update")}
+              handleRemoveFromModule={async () => handleIssues(issue.target_date ?? "", issue, "remove")}
+            />
+          )}
         />
       </DragDropContext>
     </div>

@@ -7,7 +7,8 @@ import { IIssue } from "types";
 interface Props {
   columnId: string;
   issues: IIssue[];
-  handleIssues?: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
+  handleIssues: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
+  quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   display_properties: any;
   states: any;
   labels: any;
@@ -16,7 +17,8 @@ interface Props {
 }
 
 export const IssueBlocksList: FC<Props> = (props) => {
-  const { columnId, issues, handleIssues, display_properties, states, labels, members, priorities } = props;
+  const { columnId, issues, handleIssues, quickActions, display_properties, states, labels, members, priorities } =
+    props;
 
   return (
     <>
@@ -28,6 +30,7 @@ export const IssueBlocksList: FC<Props> = (props) => {
             columnId={columnId}
             issue={issue}
             handleIssues={handleIssues}
+            quickActions={quickActions}
             display_properties={display_properties}
             states={states}
             labels={labels}
