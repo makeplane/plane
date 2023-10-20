@@ -57,18 +57,25 @@ export const SignInView = observer(() => {
   }, [fetchCurrentUserSettings, router]);
 
   const handleLoginRedirection = () => {
-    userStore
-      .fetchCurrentUserSettings()
-      .then((userSettings: IUserSettings) => {
-        const workspaceSlug =
-          userSettings?.workspace?.last_workspace_slug || userSettings?.workspace?.fallback_workspace_slug;
-        if (workspaceSlug) router.push(`/${workspaceSlug}`);
-        else if (userSettings.workspace.invites > 0) router.push("/invitations");
-        else router.push("/create-workspace");
-      })
-      .catch(() => {
-        setLoading(false);
-      });
+    userStore.fetchCurrentUser().then((user) => {
+      const isOnboard = user.onboarding_step.profile_complete;
+      if (isOnboard) {
+        userStore
+          .fetchCurrentUserSettings()
+          .then((userSettings: IUserSettings) => {
+            const workspaceSlug =
+              userSettings?.workspace?.last_workspace_slug || userSettings?.workspace?.fallback_workspace_slug;
+            if (workspaceSlug) router.push(`/${workspaceSlug}`);
+            else if (userSettings.workspace.invites > 0) router.push("/invitations");
+            else router.push("/create-workspace");
+          })
+          .catch(() => {
+            setLoading(false);
+          });
+      } else {
+        router.push("/onboarding");
+      }
+    });
   };
 
   const handleGoogleSignIn = async ({ clientId, credential }: any) => {
@@ -82,13 +89,7 @@ export const SignInView = observer(() => {
         };
         const response = await authService.socialAuth(socialAuthPayload);
         if (response) {
-          userStore.fetchCurrentUser().then((user) => {
-            const isOnboard = user.onboarding_step.profile_complete;
-            if (isOnboard) handleLoginRedirection();
-            else {
-              router.push("/onboarding");
-            }
-          });
+          handleLoginRedirection();
         }
       } else {
         setLoading(false);
@@ -115,13 +116,7 @@ export const SignInView = observer(() => {
         };
         const response = await authService.socialAuth(socialAuthPayload);
         if (response) {
-          userStore.fetchCurrentUser().then((user) => {
-            const isOnboard = user.onboarding_step.profile_complete;
-            if (isOnboard) handleLoginRedirection();
-            else {
-              router.push("/onboarding");
-            }
-          });
+          handleLoginRedirection();
         }
       } else {
         setLoading(false);
@@ -164,13 +159,7 @@ export const SignInView = observer(() => {
     try {
       setLoading(true);
       if (response) {
-        userStore.fetchCurrentUser().then((user) => {
-          const isOnboard = user.onboarding_step.profile_complete;
-          if (isOnboard) handleLoginRedirection();
-          else {
-            router.push("/onboarding");
-          }
-        });
+        handleLoginRedirection();
       }
     } catch (err: any) {
       setLoading(false);
