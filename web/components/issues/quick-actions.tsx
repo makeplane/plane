@@ -61,7 +61,7 @@ export const IssueQuickActions: React.FC<Props> = (props) => {
           if (issueToEdit) handleUpdate({ ...issueToEdit, ...data });
         }}
       />
-      <CustomMenu className="relative z-20" ellipsis>
+      <CustomMenu ellipsis>
         <CustomMenu.MenuItem
           onClick={(e) => {
             e.preventDefault();
