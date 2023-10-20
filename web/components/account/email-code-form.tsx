@@ -203,7 +203,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
             variant="primary"
             type="submit"
             className="w-full"
-            size="md"
+            size="xl"
             onClick={handleSubmit(handleSignin)}
             disabled={!isValid && isDirty}
             loading={isLoading}
