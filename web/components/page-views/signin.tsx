@@ -29,7 +29,7 @@ const authService = new AuthService();
 
 export const SignInView = observer(() => {
   const { user: userStore } = useMobxStore();
-  const { fetchCurrentUserSettings, fetchCurrentUser } = userStore;
+  const { fetchCurrentUserSettings } = userStore;
   // router
   const router = useRouter();
   // states
@@ -56,17 +56,27 @@ export const SignInView = observer(() => {
     });
   }, [fetchCurrentUserSettings, router]);
 
-  const handleLoginRedirection = () =>
-    userStore
-      .fetchCurrentUserSettings()
-      .then((userSettings: IUserSettings) => {
-        const workspaceSlug =
-          userSettings?.workspace?.last_workspace_slug || userSettings?.workspace?.fallback_workspace_slug;
-        router.push(`/${workspaceSlug}`);
-      })
-      .catch(() => {
-        setLoading(false);
-      });
+  const handleLoginRedirection = () => {
+    userStore.fetchCurrentUser().then((user) => {
+      const isOnboard = user.onboarding_step.profile_complete;
+      if (isOnboard) {
+        userStore
+          .fetchCurrentUserSettings()
+          .then((userSettings: IUserSettings) => {
+            const workspaceSlug =
+              userSettings?.workspace?.last_workspace_slug || userSettings?.workspace?.fallback_workspace_slug;
+            if (workspaceSlug) router.push(`/${workspaceSlug}`);
+            else if (userSettings.workspace.invites > 0) router.push("/invitations");
+            else router.push("/create-workspace");
+          })
+          .catch(() => {
+            setLoading(false);
+          });
+      } else {
+        router.push("/onboarding");
+      }
+    });
+  };
 
   const handleGoogleSignIn = async ({ clientId, credential }: any) => {
     try {
@@ -127,7 +137,13 @@ export const SignInView = observer(() => {
     return authService
       .emailLogin(formData)
       .then(() => {
-        handleLoginRedirection();
+        userStore.fetchCurrentUser().then((user) => {
+          const isOnboard = user.onboarding_step.profile_complete;
+          if (isOnboard) handleLoginRedirection();
+          else {
+            router.push("/onboarding");
+          }
+        });
       })
       .catch((err) => {
         setLoading(false);
