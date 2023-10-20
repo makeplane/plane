@@ -3,6 +3,19 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 import { Command } from "cmdk";
 import { Dialog, Transition } from "@headlessui/react";
+import {
+  FileText,
+  FolderPlus,
+  LinkIcon,
+  MessageSquare,
+  Rocket,
+  Search,
+  Settings,
+  Signal,
+  Trash2,
+  UserMinus2,
+  UserPlus2,
+} from "lucide-react";
 // services
 import { WorkspaceService } from "services/workspace.service";
 import { IssueService } from "services/issue";
@@ -18,19 +31,6 @@ import {
   ChangeIssueState,
   commandGroups,
 } from "components/command-palette";
-// ui
-import {
-  FileText,
-  FolderPlus,
-  LinkIcon,
-  MessageSquare,
-  Rocket,
-  Settings,
-  Signal,
-  Trash2,
-  UserMinus2,
-  UserPlus2,
-} from "lucide-react";
 import {
   ContrastIcon,
   DiceIcon,
@@ -44,7 +44,6 @@ import {
 } from "@plane/ui";
 // icons
 import { DiscordIcon, GithubIcon, SettingIcon } from "components/icons";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
@@ -306,9 +305,10 @@ export const CommandModal: React.FC<Props> = (props) => {
                     )}
                   </div>
                   <div className="relative">
-                    <MagnifyingGlassIcon
-                      className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-200"
+                    <Search
+                      className="pointer-events-none absolute top-1/2 -translate-y-1/2 left-4 h-4 w-4 text-custom-text-200"
                       aria-hidden="true"
+                      strokeWidth={2}
                     />
                     <Command.Input
                       className="w-full border-0 border-b border-custom-border-200 bg-transparent p-4 pl-11 text-custom-text-100 placeholder:text-custom-text-400 outline-none focus:ring-0 text-sm"
