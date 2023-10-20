@@ -136,13 +136,17 @@ export const CreateWorkspaceForm: FC<Props> = ({
                 message: "Workspace name should not exceed 80 characters",
               },
             }}
-            render={({ field: { value, ref } }) => (
+            render={({ field: { value, ref, onChange } }) => (
               <Input
                 id="workspaceName"
                 name="name"
                 type="text"
                 value={value}
-                onChange={(e) => setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"))}
+                onChange={(e) => {
+                  onChange(e.target.value);
+                  setValue("name", e.target.value);
+                  setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"));
+                }}
                 ref={ref}
                 hasError={Boolean(errors.name)}
                 placeholder="Enter workspace name..."
@@ -166,7 +170,7 @@ export const CreateWorkspaceForm: FC<Props> = ({
                   id="workspaceUrl"
                   name="slug"
                   type="text"
-                  value={value}
+                  value={value.toLocaleLowerCase().trim().replace(/ /g, "-")}
                   onChange={(e) =>
                     /^[a-zA-Z0-9_-]+$/.test(e.target.value) ? setInvalidSlug(false) : setInvalidSlug(true)
                   }

@@ -11,6 +11,7 @@ import { IWorkspaceMember, IProjectMember } from "types";
 export interface IUserStore {
   loader: boolean;
 
+  isUserLoggedIn: boolean | null;
   currentUser: IUser | null;
   currentUserSettings: IUserSettings | null;
 
@@ -38,6 +39,7 @@ export interface IUserStore {
 class UserStore implements IUserStore {
   loader: boolean = false;
 
+  isUserLoggedIn: boolean | null = null;
   currentUser: IUser | null = null;
   currentUserSettings: IUserSettings | null = null;
 
@@ -85,10 +87,14 @@ class UserStore implements IUserStore {
       if (response) {
         runInAction(() => {
           this.currentUser = response;
+          this.isUserLoggedIn = true;
         });
       }
       return response;
     } catch (error) {
+      runInAction(() => {
+        this.isUserLoggedIn = false;
+      });
       throw error;
     }
   };
