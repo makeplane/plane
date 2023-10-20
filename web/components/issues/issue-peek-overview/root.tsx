@@ -34,6 +34,14 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     }
   };
 
+  const issueReactionCreate = (data: string) => {
+    issueDetailStore.createIssueReaction(workspaceSlug, projectId, issueId, data);
+  };
+
+  const issueReactionRemove = (data: string) => {
+    issueDetailStore.removeIssueReaction(workspaceSlug, projectId, issueId, data);
+  };
+
   return (
     <IssueView
       workspaceSlug={workspaceSlug}
@@ -43,6 +51,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       members={members}
       priorities={priorities}
       issueUpdate={issueUpdate}
+      issueReactionCreate={issueReactionCreate}
+      issueReactionRemove={issueReactionRemove}
     >
       {children}
     </IssueView>

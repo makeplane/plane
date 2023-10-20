@@ -2,6 +2,7 @@ import { FC, ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Maximize2, ArrowRight, Link, Trash, PanelRightOpen, Square, SquareCode } from "lucide-react";
 import { observer } from "mobx-react-lite";
+import useSWR from "swr";
 // components
 import { PeekOverviewIssueDetails } from "./issue-detail";
 import { PeekOverviewProperties } from "./properties";
@@ -16,6 +17,8 @@ interface IIssueView {
   projectId: string;
   issueId: string;
   issueUpdate: (issue: Partial<IIssue>) => void;
+  issueReactionCreate: (reaction: string) => void;
+  issueReactionRemove: (reaction: string) => void;
   states: any;
   members: any;
   priorities: any;
@@ -43,12 +46,23 @@ const peekOptions: { key: TPeekModes; icon: any; title: string }[] = [
 ];
 
 export const IssueView: FC<IIssueView> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, issueUpdate, states, members, priorities, children } = props;
+  const {
+    workspaceSlug,
+    projectId,
+    issueId,
+    issueUpdate,
+    issueReactionCreate,
+    issueReactionRemove,
+    states,
+    members,
+    priorities,
+    children,
+  } = props;
 
   const router = useRouter();
   const { peekIssueId } = router.query as { peekIssueId: string };
 
-  const { issueDetail: issueDetailStore }: RootStore = useMobxStore();
+  const { user: userStore, issueDetail: issueDetailStore }: RootStore = useMobxStore();
 
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
   const handlePeekMode = (_peek: TPeekModes) => {
@@ -81,12 +95,20 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     });
   };
 
-  useEffect(() => {
-    if (workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId)
-      issueDetailStore.fetchIssueDetails(workspaceSlug, projectId, issueId);
-  }, [workspaceSlug, projectId, issueId, peekIssueId, issueDetailStore]);
+  useSWR(
+    workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId
+      ? `ISSUE_PEEK_OVERVIEW_${workspaceSlug}_${projectId}_${peekIssueId}`
+      : null,
+    async () => {
+      if (workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId) {
+        await issueDetailStore.fetchPeekIssueDetails(workspaceSlug, projectId, issueId);
+      }
+    }
+  );
 
   const issue = issueDetailStore.getIssue;
+  const issueReactions = issueDetailStore.getIssueReactions;
+  const user = userStore?.currentUser;
 
   return (
     <div className="w-full !text-base">
@@ -96,14 +118,14 @@ export const IssueView: FC<IIssueView> = observer((props) => {
 
       {issueId === peekIssueId && (
         <div
-          className={`fixed z-50 overflow-hidden bg-custom-background-80 flex flex-col transition-all duration-200 border border-custom-border-200 rounded shadow-custom-shadow-2xl
+          className={`fixed z-50 overflow-hidden bg-custom-background-80 flex flex-col transition-all duration-300 border border-custom-border-200 rounded shadow-custom-shadow-2xl
           ${peekMode === "side-peek" ? `w-full md:w-[50%] top-0 right-0 bottom-0` : ``}
           ${peekMode === "modal" ? `top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] w-5/6 h-5/6` : ``}
           ${peekMode === "full-screen" ? `top-0 right-0 bottom-0 left-0 m-4` : ``}
           `}
         >
           {/* header */}
-          <div className="flex-shrink-0 w-full p-3 py-2.5 relative flex items-center gap-2 border-b border-custom-border-200">
+          <div className="flex-shrink-0 w-full p-4 py-3 relative flex items-center gap-2 border-b border-custom-border-200">
             <div
               className="flex-shrink-0 overflow-hidden w-6 h-6 flex justify-center items-center rounded-sm transition-all duration-100 border border-custom-border-200 cursor-pointer hover:bg-custom-background-100"
               onClick={removeRoutePeekId}
@@ -156,10 +178,16 @@ export const IssueView: FC<IIssueView> = observer((props) => {
               issue && (
                 <>
                   {["side-peek", "modal"].includes(peekMode) ? (
-                    <div className="space-y-8 p-3 py-5">
-                      <PeekOverviewIssueDetails workspaceSlug={workspaceSlug} issue={issue} issueUpdate={issueUpdate} />
-
-                      {/* reactions */}
+                    <div className="space-y-8 p-4 py-5">
+                      <PeekOverviewIssueDetails
+                        workspaceSlug={workspaceSlug}
+                        issue={issue}
+                        issueUpdate={issueUpdate}
+                        issueReactions={issueReactions}
+                        user={user}
+                        issueReactionCreate={issueReactionCreate}
+                        issueReactionRemove={issueReactionRemove}
+                      />
 
                       <PeekOverviewProperties
                         issue={issue}
@@ -169,22 +197,24 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         priorities={priorities}
                       />
 
-                      {/* activity */}
+                      {/* <div className="border border-red-500">Activity</div> */}
                     </div>
                   ) : (
                     <div className="w-full h-full flex">
-                      <div className="w-full h-full space-y-8 p-3 py-5">
+                      <div className="w-full h-full space-y-8 p-4 py-5">
                         <PeekOverviewIssueDetails
                           workspaceSlug={workspaceSlug}
                           issue={issue}
+                          issueReactions={issueReactions}
                           issueUpdate={issueUpdate}
+                          user={user}
+                          issueReactionCreate={issueReactionCreate}
+                          issueReactionRemove={issueReactionRemove}
                         />
 
-                        {/* reactions */}
-
-                        {/* activity */}
+                        {/* <div className="border border-red-500">Activity</div> */}
                       </div>
-                      <div className="flex-shrink-0 !w-[400px] h-full border-l border-custom-border-200 p-3 py-5">
+                      <div className="flex-shrink-0 !w-[400px] h-full border-l border-custom-border-200 p-4 py-5">
                         <PeekOverviewProperties
                           issue={issue}
                           issueUpdate={issueUpdate}
