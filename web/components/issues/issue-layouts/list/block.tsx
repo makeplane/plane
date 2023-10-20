@@ -8,8 +8,7 @@ import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Tooltip } from "@plane/ui";
-import { CustomMenu } from "components/ui";
+import { Tooltip, CustomMenu } from "@plane/ui";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
@@ -67,6 +66,10 @@ export const IssueBlock: FC<IssueBlockProps> = (props) => {
         // pre-populate date only if not editing
         prePopulateData={!issueToEdit ? { ...issue, name: `${issue.name} (copy)` } : {}}
         data={issueToEdit}
+        onSubmit={async (data) => {
+          if (issueToEdit)
+            handleIssues(!columnId && columnId === "null" ? null : columnId, { ...issueToEdit, ...data }, "update");
+        }}
       />
       <div className="text-sm p-3 shadow-custom-shadow-2xs bg-custom-background-100 flex items-center gap-3 border-b border-custom-border-200 hover:bg-custom-background-80">
         {display_properties && display_properties?.key && (
@@ -98,14 +101,13 @@ export const IssueBlock: FC<IssueBlockProps> = (props) => {
             priorities={priorities}
           />
           <CustomMenu ellipsis>
-            <CustomMenu.MenuItem renderAs="button" onClick={handleCopyIssueLink}>
+            <CustomMenu.MenuItem onClick={handleCopyIssueLink}>
               <div className="flex items-center gap-2">
                 <Link className="h-3 w-3" />
                 Copy link
               </div>
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem
-              renderAs="button"
               onClick={() => {
                 setIssueToEdit(issue);
                 setCreateUpdateIssueModal(true);
@@ -116,13 +118,13 @@ export const IssueBlock: FC<IssueBlockProps> = (props) => {
                 Edit issue
               </div>
             </CustomMenu.MenuItem>
-            <CustomMenu.MenuItem renderAs="button" onClick={() => setCreateUpdateIssueModal(true)}>
+            <CustomMenu.MenuItem onClick={() => setCreateUpdateIssueModal(true)}>
               <div className="flex items-center gap-2">
                 <Copy className="h-3 w-3" />
                 Make a copy
               </div>
             </CustomMenu.MenuItem>
-            <CustomMenu.MenuItem renderAs="button" onClick={() => setDeleteIssueModal(true)}>
+            <CustomMenu.MenuItem onClick={() => setDeleteIssueModal(true)}>
               <div className="flex items-center gap-2 text-red-500">
                 <Trash2 className="h-3 w-3" />
                 Delete issue

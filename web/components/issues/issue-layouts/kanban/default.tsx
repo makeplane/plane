@@ -1,16 +1,15 @@
 import React from "react";
-// react beautiful dnd
+import { observer } from "mobx-react-lite";
 import { Droppable } from "@hello-pangea/dnd";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { KanBanGroupByHeaderRoot } from "./headers/group-by-root";
-import { IssueBlock } from "./block";
+import { KanbanIssueBlocksList } from "components/issues";
+// types
+import { IIssue } from "types";
 // constants
 import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES, getValueFromObject } from "constants/issue";
-// mobx
-import { observer } from "mobx-react-lite";
-// mobx
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
 
 export interface IGroupByKanBan {
   issues: any;
@@ -20,7 +19,12 @@ export interface IGroupByKanBan {
   list: any;
   listKey: string;
   isDragDisabled: boolean;
-  handleIssues?: (sub_group_by: string | null, group_by: string | null, issue: any) => void;
+  handleIssues?: (
+    sub_group_by: string | null,
+    group_by: string | null,
+    issue: IIssue,
+    action: "update" | "delete"
+  ) => void;
   display_properties: any;
   kanBanToggle: any;
   handleKanBanToggle: any;
@@ -78,7 +82,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer(
                       ref={provided.innerRef}
                     >
                       {issues ? (
-                        <IssueBlock
+                        <KanbanIssueBlocksList
                           sub_group_id={sub_group_id}
                           columnId={getValueFromObject(_list, listKey) as string}
                           issues={issues[getValueFromObject(_list, listKey) as string]}
@@ -111,7 +115,12 @@ export interface IKanBan {
   group_by: string | null;
   sub_group_id?: string;
   handleDragDrop?: (result: any) => void | undefined;
-  handleIssues?: (sub_group_by: string | null, group_by: string | null, issue: any) => void;
+  handleIssues?: (
+    sub_group_by: string | null,
+    group_by: string | null,
+    issue: IIssue,
+    action: "update" | "delete"
+  ) => void;
   display_properties: any;
   kanBanToggle: any;
   handleKanBanToggle: any;
@@ -144,7 +153,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     estimates,
   } = props;
 
-  const { project: projectStore, issueKanBanView: issueKanBanViewStore }: RootStore = useMobxStore();
+  const { project: projectStore, issueKanBanView: issueKanBanViewStore } = useMobxStore();
 
   return (
     <div className="relative w-full h-full">
