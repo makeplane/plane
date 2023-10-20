@@ -29,7 +29,7 @@ const authService = new AuthService();
 
 export const SignInView = observer(() => {
   const { user: userStore } = useMobxStore();
-  const { fetchCurrentUserSettings, fetchCurrentUser } = userStore;
+  const { fetchCurrentUserSettings } = userStore;
   // router
   const router = useRouter();
   // states
@@ -56,17 +56,20 @@ export const SignInView = observer(() => {
     });
   }, [fetchCurrentUserSettings, router]);
 
-  const handleLoginRedirection = () =>
+  const handleLoginRedirection = () => {
     userStore
       .fetchCurrentUserSettings()
       .then((userSettings: IUserSettings) => {
         const workspaceSlug =
           userSettings?.workspace?.last_workspace_slug || userSettings?.workspace?.fallback_workspace_slug;
-        router.push(`/${workspaceSlug}`);
+        if (workspaceSlug) router.push(`/${workspaceSlug}`);
+        else if (userSettings.workspace.invites > 0) router.push("/invitations");
+        else router.push("/create-workspace");
       })
       .catch(() => {
         setLoading(false);
       });
+  };
 
   const handleGoogleSignIn = async ({ clientId, credential }: any) => {
     try {
@@ -79,7 +82,13 @@ export const SignInView = observer(() => {
         };
         const response = await authService.socialAuth(socialAuthPayload);
         if (response) {
-          handleLoginRedirection();
+          userStore.fetchCurrentUser().then((user) => {
+            const isOnboard = user.onboarding_step.profile_complete;
+            if (isOnboard) handleLoginRedirection();
+            else {
+              router.push("/onboarding");
+            }
+          });
         }
       } else {
         setLoading(false);
@@ -106,7 +115,13 @@ export const SignInView = observer(() => {
         };
         const response = await authService.socialAuth(socialAuthPayload);
         if (response) {
-          handleLoginRedirection();
+          userStore.fetchCurrentUser().then((user) => {
+            const isOnboard = user.onboarding_step.profile_complete;
+            if (isOnboard) handleLoginRedirection();
+            else {
+              router.push("/onboarding");
+            }
+          });
         }
       } else {
         setLoading(false);
@@ -127,7 +142,13 @@ export const SignInView = observer(() => {
     return authService
       .emailLogin(formData)
       .then(() => {
-        handleLoginRedirection();
+        userStore.fetchCurrentUser().then((user) => {
+          const isOnboard = user.onboarding_step.profile_complete;
+          if (isOnboard) handleLoginRedirection();
+          else {
+            router.push("/onboarding");
+          }
+        });
       })
       .catch((err) => {
         setLoading(false);
@@ -143,7 +164,13 @@ export const SignInView = observer(() => {
     try {
       setLoading(true);
       if (response) {
-        handleLoginRedirection();
+        userStore.fetchCurrentUser().then((user) => {
+          const isOnboard = user.onboarding_step.profile_complete;
+          if (isOnboard) handleLoginRedirection();
+          else {
+            router.push("/onboarding");
+          }
+        });
       }
     } catch (err: any) {
       setLoading(false);
