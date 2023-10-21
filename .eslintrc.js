@@ -4,7 +4,7 @@ module.exports = {
   extends: ["custom"],
   settings: {
     next: {
-      rootDir: ["apps/*"],
+      rootDir: ["web/", "space/"],
     },
   },
 };

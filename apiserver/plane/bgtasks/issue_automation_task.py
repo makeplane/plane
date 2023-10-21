@@ -32,7 +32,7 @@ def archive_old_issues():
             archive_in = project.archive_in
 
             # Get all the issues whose updated_at in less that the archive_in month
-            issues = Issue.objects.filter(
+            issues = Issue.issue_objects.filter(
                 Q(
                     project=project_id,
                     archived_at__isnull=True,
@@ -58,27 +58,32 @@ def archive_old_issues():
 
             # Check if Issues
             if issues:
+                # Set the archive time to current time
+                archive_at = timezone.now()
+
                 issues_to_update = []
                 for issue in issues:
-                    issue.archived_at = timezone.now()
+                    issue.archived_at = archive_at
                     issues_to_update.append(issue)
 
                 # Bulk Update the issues and log the activity
-                updated_issues = Issue.objects.bulk_update(
-                    issues_to_update, ["archived_at"], batch_size=100
-                )
-                [
-                    issue_activity.delay(
-                        type="issue.activity.updated",
-                        requested_data=json.dumps({"archived_at": str(issue.archived_at)}),
-                        actor_id=str(project.created_by_id),
-                        issue_id=issue.id,
-                        project_id=project_id,
-                        current_instance=None,
-                        subscriber=False,
+                if issues_to_update: 
+                    Issue.objects.bulk_update(
+                        issues_to_update, ["archived_at"], batch_size=100
                     )
-                    for issue in updated_issues
-                ]
+                    [
+                        issue_activity.delay(
+                            type="issue.activity.updated",
+                            requested_data=json.dumps({"archived_at": str(archive_at)}),
+                            actor_id=str(project.created_by_id),
+                            issue_id=issue.id,
+                            project_id=project_id,
+                            current_instance=None,
+                            subscriber=False,
+                            epoch=int(timezone.now().timestamp())
+                        )
+                        for issue in issues_to_update
+                    ]
         return
     except Exception as e:
         if settings.DEBUG:
@@ -99,7 +104,7 @@ def close_old_issues():
             close_in = project.close_in
 
             # Get all the issues whose updated_at in less that the close_in month
-            issues = Issue.objects.filter(
+            issues = Issue.issue_objects.filter(
                 Q(
                     project=project_id,
                     archived_at__isnull=True,
@@ -136,19 +141,21 @@ def close_old_issues():
                     issues_to_update.append(issue)
 
                 # Bulk Update the issues and log the activity
-                updated_issues = Issue.objects.bulk_update(issues_to_update, ["state"], batch_size=100)
-                [
-                    issue_activity.delay(
-                        type="issue.activity.updated",
-                        requested_data=json.dumps({"closed_to": str(issue.state_id)}),
-                        actor_id=str(project.created_by_id),
-                        issue_id=issue.id,
-                        project_id=project_id,
-                        current_instance=None,
-                        subscriber=False,
-                    )
-                    for issue in updated_issues
-                ]
+                if issues_to_update:
+                    Issue.objects.bulk_update(issues_to_update, ["state"], batch_size=100)
+                    [
+                        issue_activity.delay(
+                            type="issue.activity.updated",
+                            requested_data=json.dumps({"closed_to": str(issue.state_id)}),
+                            actor_id=str(project.created_by_id),
+                            issue_id=issue.id,
+                            project_id=project_id,
+                            current_instance=None,
+                            subscriber=False,
+                            epoch=int(timezone.now().timestamp())
+                        )
+                        for issue in issues_to_update
+                    ]
         return
     except Exception as e:
         if settings.DEBUG:

@@ -1,14 +1,13 @@
 """Production settings and globals."""
-from urllib.parse import urlparse
 import ssl
 import certifi
 
 import dj_database_url
-from urllib.parse import urlparse
 
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
+from urllib.parse import urlparse
 
 from .common import *  # noqa
 
@@ -197,7 +196,6 @@ else:
     STORAGES["default"] = {
         "BACKEND": "django_s3_storage.storage.S3Storage",
     }
-
 # AWS Settings End
 
 # Enable Connection Pooling (if desired)
@@ -265,15 +263,19 @@ if DOCKERIZED:
     CELERY_BROKER_URL = REDIS_URL
     CELERY_RESULT_BACKEND = REDIS_URL
 else:
-    CELERY_RESULT_BACKEND = broker_url
     CELERY_BROKER_URL = broker_url
+    CELERY_RESULT_BACKEND = broker_url
 
 GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)
 
-
+# Enable or Disable signups
 ENABLE_SIGNUP = os.environ.get("ENABLE_SIGNUP", "1") == "1"
 
 # Scout Settings
 SCOUT_MONITOR = os.environ.get("SCOUT_MONITOR", False)
 SCOUT_KEY = os.environ.get("SCOUT_KEY", "")
 SCOUT_NAME = "Plane"
+
+# Unsplash Access key
+UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")
+

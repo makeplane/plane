@@ -16,26 +16,50 @@ ROLE_CHOICES = (
 
 def get_default_props():
     return {
-        "filters": {"type": None},
-        "groupByProperty": None,
-        "issueView": "list",
-        "orderBy": "-created_at",
-        "properties": {
+        "filters": {
+            "priority": None,
+            "state": None,
+            "state_group": None,
+            "assignees": None,
+            "created_by": None,
+            "labels": None,
+            "start_date": None,
+            "target_date": None,
+            "subscriber": None,
+        },
+        "display_filters": {
+            "group_by": None,
+            "order_by": "-created_at",
+            "type": None,
+            "sub_issue": True,
+            "show_empty_groups": True,
+            "layout": "list",
+            "calendar_date_range": "",
+        },
+        "display_properties": {
             "assignee": True,
+            "attachment_count": True,
+            "created_on": True,
             "due_date": True,
+            "estimate": True,
             "key": True,
             "labels": True,
+            "link": True,
             "priority": True,
+            "start_date": True,
             "state": True,
             "sub_issue_count": True,
-            "attachment_count": True,
-            "link": True,
-            "estimate": True,
-            "created_on": True,
             "updated_on": True,
-            "start_date": True,
-        },
-        "showEmptyGroups": True,
+        }
+    }
+
+
+def get_issue_props():
+    return {
+        "subscribed": True,
+        "assigned": True,
+        "created": True,
+        "all_issues": True,
     }
 
 
@@ -74,6 +98,7 @@ class WorkspaceMember(BaseModel):
     company_role = models.TextField(null=True, blank=True)
     view_props = models.JSONField(default=get_default_props)
     default_props = models.JSONField(default=get_default_props)
+    issue_props = models.JSONField(default=get_issue_props)
 
     class Meta:
         unique_together = ["workspace", "member"]
