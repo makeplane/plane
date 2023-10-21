@@ -1,9 +1,9 @@
-import { useCallback, useState, FC } from "react";
+import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { ArrowLeft, Circle, ExternalLink, Plus } from "lucide-react";
-// hooks
+// mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
@@ -17,7 +17,7 @@ import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 // helper
 import { truncateText } from "helpers/string.helper";
 
-export const ProjectIssuesHeader: FC = observer(() => {
+export const ProjectIssuesHeader: React.FC = observer(() => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
 
   const router = useRouter();

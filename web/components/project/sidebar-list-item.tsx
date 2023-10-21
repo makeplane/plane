@@ -27,8 +27,7 @@ import { IProject } from "types";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CustomMenu, Tooltip, ArchiveIcon, PhotoFilterIcon, DiceIcon, ContrastIcon, LayersIcon } from "@plane/ui";
-import { LeaveProjectModal, DeleteProjectModal } from "components/project";
-import { PublishProjectModal } from "components/project/publish-project";
+import { LeaveProjectModal, DeleteProjectModal, PublishProjectModal } from "components/project";
 
 type Props = {
   project: IProject;
@@ -74,7 +73,7 @@ const navigation = (workspaceSlug: string, projectId: string) => [
 export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   const { project, provided, snapshot, handleCopyText, shortContextMenu = false } = props;
   // store
-  const { projectPublish, project: projectStore, theme: themeStore } = useMobxStore();
+  const { project: projectStore, theme: themeStore } = useMobxStore();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -83,6 +82,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
   const [deleteProjectModalOpen, setDeleteProjectModal] = useState(false);
+  const [publishModalOpen, setPublishModal] = useState(false);
 
   const isAdmin = project.member_role === 20;
   const isViewerOrGuest = project.member_role === 10 || project.member_role === 5;
@@ -132,7 +132,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <PublishProjectModal />
+      <PublishProjectModal isOpen={publishModalOpen} project={project} onClose={() => setPublishModal(false)} />
       <DeleteProjectModal project={project} isOpen={deleteProjectModalOpen} onClose={handleDeleteProjectModalClose} />
       <LeaveProjectModal project={project} isOpen={leaveProjectModalOpen} onClose={handleLeaveProjectModalClose} />
       <Disclosure key={project.id} defaultOpen={projectId === project.id}>
@@ -239,7 +239,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
 
                   {/* publish project settings */}
                   {isAdmin && (
-                    <CustomMenu.MenuItem onClick={() => projectPublish.handleProjectModal(project?.id)}>
+                    <CustomMenu.MenuItem onClick={() => setPublishModal(true)}>
                       <div className="flex-shrink-0 relative flex items-center justify-start gap-2">
                         <div className="rounded transition-all w-4 h-4 flex justify-center items-center text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 duration-300 cursor-pointer">
                           <Share2 className="h-3.5 w-3.5 stroke-[1.5]" />
