@@ -5,6 +5,7 @@ from urllib.parse import urlparse
 
 
 def redis_instance():
+    return
     # connect to redis
     if (
         settings.DOCKERIZED
