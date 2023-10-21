@@ -128,17 +128,16 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
             </Breadcrumbs>
           </div>
           {projectDetails?.is_deployed && deployUrl && (
-            <Link href={`${deployUrl}/${workspaceSlug}/${projectDetails?.id}`}>
-              <a
-                className="group bg-custom-primary-100/20 text-custom-primary-100 px-2.5 py-1 text-xs flex items-center gap-1.5 rounded font-medium"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Circle className="h-1.5 w-1.5 fill-custom-primary-100" strokeWidth={2} />
-                Public
-                <ExternalLink className="h-3 w-3 hidden group-hover:block" strokeWidth={2} />
-              </a>
-            </Link>
+            <a
+              href={`${deployUrl}/${workspaceSlug}/${projectDetails?.id}`}
+              className="group bg-custom-primary-100/20 text-custom-primary-100 px-2.5 py-1 text-xs flex items-center gap-1.5 rounded font-medium"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Circle className="h-1.5 w-1.5 fill-custom-primary-100" strokeWidth={2} />
+              Public
+              <ExternalLink className="h-3 w-3 hidden group-hover:block" strokeWidth={2} />
+            </a>
           )}
         </div>
         <div className="flex items-center gap-2">
