@@ -20,6 +20,8 @@ export const FilterGroupBy: React.FC<Props> = observer((props) => {
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
+  const activeGroupBy = selectedGroupBy ?? null;
+
   return (
     <>
       <FilterHeader
@@ -35,7 +37,7 @@ export const FilterGroupBy: React.FC<Props> = observer((props) => {
             return (
               <FilterOption
                 key={groupBy?.key}
-                isChecked={selectedGroupBy === groupBy?.key ? true : false}
+                isChecked={activeGroupBy === groupBy?.key ? true : false}
                 onClick={() => handleUpdate(groupBy.key)}
                 title={groupBy.title}
                 multiple={false}

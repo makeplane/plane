@@ -66,12 +66,18 @@ const ProjectModules: NextPage = () => {
     <AppLayout
       header={<ModulesHeader name={activeProject?.name} modulesView={modulesView} setModulesView={setModulesView} />}
     >
-      <CreateUpdateModuleModal
-        isOpen={createUpdateModule}
-        setIsOpen={setCreateUpdateModule}
-        data={selectedModule}
-        user={user}
-      />
+      {workspaceSlug && projectId && (
+        <CreateUpdateModuleModal
+          isOpen={createUpdateModule}
+          onClose={() => {
+            setCreateUpdateModule(false);
+          }}
+          data={selectedModule}
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={projectId.toString()}
+        />
+      )}
+
       {modules ? (
         modules.length > 0 ? (
           <>

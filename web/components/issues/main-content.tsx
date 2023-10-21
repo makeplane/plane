@@ -22,9 +22,8 @@ import {
 } from "components/issues";
 import { SubIssuesRoot } from "./sub-issues";
 // ui
-import { CustomMenu } from "components/ui";
+import { CustomMenu, LayersIcon } from "@plane/ui";
 // icons
-import { LayersIcon } from "@plane/ui";
 import { MinusCircle } from "lucide-react";
 // types
 import { IIssue, IIssueComment } from "types";
@@ -138,8 +137,9 @@ export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges,
                     {siblingIssuesList.map((issue) => (
                       <CustomMenu.MenuItem
                         key={issue.id}
-                        renderAs="a"
-                        href={`/${workspaceSlug}/projects/${projectId as string}/issues/${issue.id}`}
+                        onClick={() =>
+                          router.push(`/${workspaceSlug}/projects/${projectId as string}/issues/${issue.id}`)
+                        }
                         className="flex items-center gap-2 py-2"
                       >
                         <LayersIcon className="h-4 w-4" />
@@ -154,7 +154,6 @@ export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges,
                 )
               ) : null}
               <CustomMenu.MenuItem
-                renderAs="button"
                 onClick={() => submitChanges({ parent: null })}
                 className="flex items-center gap-2 text-red-500 py-2"
               >

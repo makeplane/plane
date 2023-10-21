@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
@@ -20,14 +21,15 @@ import {
 import { Loader, Spinner } from "@plane/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
+// types
 import { IUserSettings } from "types";
-import { useState } from "react";
 
 const appConfigService = new AppConfigService();
 const authService = new AuthService();
 
 export const SignInView = observer(() => {
   const { user: userStore } = useMobxStore();
+  const { fetchCurrentUserSettings } = userStore;
   // router
   const router = useRouter();
   // states
@@ -35,25 +37,46 @@ export const SignInView = observer(() => {
   // toast
   const { setToastAlert } = useToast();
   // fetch app config
-  const { data, error } = useSWR("APP_CONFIG", () => appConfigService.envConfig());
-  // fetch user info
-  useSWR("USER_INFO", () => userStore.fetchCurrentUser());
+  const { data, error: appConfigError } = useSWR("APP_CONFIG", () => appConfigService.envConfig());
   // computed
   const enableEmailPassword =
     data &&
     (data?.email_password_login || !(data?.email_password_login || data?.magic_login || data?.google || data?.github));
 
-  const handleLoginRedirection = () =>
-    userStore
-      .fetchCurrentUserSettings()
-      .then((userSettings: IUserSettings) => {
-        const workspaceSlug =
-          userSettings?.workspace?.last_workspace_slug || userSettings?.workspace?.fallback_workspace_slug;
-        router.push(`/${workspaceSlug}`);
-      })
-      .catch(() => {
-        setLoading(false);
-      });
+  useEffect(() => {
+    fetchCurrentUserSettings().then((settings) => {
+      setLoading(true);
+      router.push(
+        `/${
+          settings.workspace.last_workspace_slug
+            ? settings.workspace.last_workspace_slug
+            : settings.workspace.fallback_workspace_slug
+        }`
+      );
+    });
+  }, [fetchCurrentUserSettings, router]);
+
+  const handleLoginRedirection = () => {
+    userStore.fetchCurrentUser().then((user) => {
+      const isOnboard = user.onboarding_step.profile_complete;
+      if (isOnboard) {
+        userStore
+          .fetchCurrentUserSettings()
+          .then((userSettings: IUserSettings) => {
+            const workspaceSlug =
+              userSettings?.workspace?.last_workspace_slug || userSettings?.workspace?.fallback_workspace_slug;
+            if (workspaceSlug) router.push(`/${workspaceSlug}`);
+            else if (userSettings.workspace.invites > 0) router.push("/invitations");
+            else router.push("/create-workspace");
+          })
+          .catch(() => {
+            setLoading(false);
+          });
+      } else {
+        router.push("/onboarding");
+      }
+    });
+  };
 
   const handleGoogleSignIn = async ({ clientId, credential }: any) => {
     try {
@@ -114,7 +137,13 @@ export const SignInView = observer(() => {
     return authService
       .emailLogin(formData)
       .then(() => {
-        handleLoginRedirection();
+        userStore.fetchCurrentUser().then((user) => {
+          const isOnboard = user.onboarding_step.profile_complete;
+          if (isOnboard) handleLoginRedirection();
+          else {
+            router.push("/onboarding");
+          }
+        });
       })
       .catch((err) => {
         setLoading(false);
@@ -166,7 +195,7 @@ export const SignInView = observer(() => {
                 Sign in to Plane
               </h1>
 
-              {!data && !error ? (
+              {!data && !appConfigError ? (
                 <div className="pt-10 w-ful">
                   <Loader className="space-y-4 w-full pb-4">
                     <Loader.Item height="46px" width="360px" />

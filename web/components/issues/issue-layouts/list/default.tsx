@@ -5,13 +5,16 @@ import { ListGroupByHeaderRoot } from "./headers/group-by-root";
 import { IssueBlock } from "./block";
 // constants
 import { getValueFromObject } from "constants/issue";
+import { IIssue } from "types";
+import { IssueBlocksList } from "./blocks-list";
 
 export interface IGroupByList {
   issues: any;
   group_by: string | null;
   list: any;
   listKey: string;
-  handleIssues?: (group_by: string | null, issue: any) => void;
+  handleIssues: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
+  quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   display_properties: any;
   is_list?: boolean;
   states: any;
@@ -30,6 +33,7 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
     list,
     listKey,
     handleIssues,
+    quickActions,
     display_properties,
     is_list = false,
     states,
@@ -59,10 +63,11 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
             </div>
             <div className={`w-full h-full relative transition-all`}>
               {issues && (
-                <IssueBlock
+                <IssueBlocksList
                   columnId={getValueFromObject(_list, listKey) as string}
                   issues={is_list ? issues : issues[getValueFromObject(_list, listKey) as string]}
                   handleIssues={handleIssues}
+                  quickActions={quickActions}
                   display_properties={display_properties}
                   states={states}
                   labels={labels}
@@ -77,11 +82,13 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
   );
 });
 
+// TODO: update all the types
 export interface IList {
   issues: any;
   group_by: string | null;
   handleDragDrop?: (result: any) => void | undefined;
-  handleIssues?: (group_by: string | null, issue: any) => void;
+  handleIssues: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
+  quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   display_properties: any;
   states: any;
   labels: any;
@@ -97,6 +104,7 @@ export const List: React.FC<IList> = observer((props) => {
     issues,
     group_by,
     handleIssues,
+    quickActions,
     display_properties,
     states,
     labels,
@@ -116,6 +124,7 @@ export const List: React.FC<IList> = observer((props) => {
           list={[{ id: "null", title: "All Issues" }]}
           listKey={`id`}
           handleIssues={handleIssues}
+          quickActions={quickActions}
           display_properties={display_properties}
           is_list={true}
           states={states}
@@ -135,6 +144,7 @@ export const List: React.FC<IList> = observer((props) => {
           list={projects}
           listKey={`id`}
           handleIssues={handleIssues}
+          quickActions={quickActions}
           display_properties={display_properties}
           states={states}
           labels={labels}
@@ -153,6 +163,7 @@ export const List: React.FC<IList> = observer((props) => {
           list={states}
           listKey={`id`}
           handleIssues={handleIssues}
+          quickActions={quickActions}
           display_properties={display_properties}
           states={states}
           labels={labels}
@@ -171,6 +182,7 @@ export const List: React.FC<IList> = observer((props) => {
           list={stateGroups}
           listKey={`key`}
           handleIssues={handleIssues}
+          quickActions={quickActions}
           display_properties={display_properties}
           states={states}
           labels={labels}
@@ -189,6 +201,7 @@ export const List: React.FC<IList> = observer((props) => {
           list={priorities}
           listKey={`key`}
           handleIssues={handleIssues}
+          quickActions={quickActions}
           display_properties={display_properties}
           states={states}
           labels={labels}
@@ -207,6 +220,7 @@ export const List: React.FC<IList> = observer((props) => {
           list={labels}
           listKey={`id`}
           handleIssues={handleIssues}
+          quickActions={quickActions}
           display_properties={display_properties}
           states={states}
           labels={labels}
@@ -225,6 +239,7 @@ export const List: React.FC<IList> = observer((props) => {
           list={members}
           listKey={`member.id`}
           handleIssues={handleIssues}
+          quickActions={quickActions}
           display_properties={display_properties}
           states={states}
           labels={labels}
@@ -243,6 +258,7 @@ export const List: React.FC<IList> = observer((props) => {
           list={members}
           listKey={`member.id`}
           handleIssues={handleIssues}
+          quickActions={quickActions}
           display_properties={display_properties}
           states={states}
           labels={labels}

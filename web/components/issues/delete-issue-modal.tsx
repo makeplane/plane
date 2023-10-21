@@ -1,56 +1,31 @@
 import { useEffect, useState, Fragment } from "react";
 import { useRouter } from "next/router";
-import { mutate } from "swr";
+import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import { IssueService, IssueArchiveService } from "services/issue";
-// hooks
-import useIssuesView from "hooks/use-issues-view";
-import useToast from "hooks/use-toast";
-// icons
 import { AlertTriangle } from "lucide-react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { IIssue, IUser, ISubIssueResponse } from "types";
-// fetch-keys
-import {
-  CYCLE_ISSUES_WITH_PARAMS,
-  MODULE_ISSUES_WITH_PARAMS,
-  PROJECT_ARCHIVED_ISSUES_LIST_WITH_PARAMS,
-  PROJECT_ISSUES_LIST_WITH_PARAMS,
-  SUB_ISSUES,
-} from "constants/fetch-keys";
+import type { IIssue } from "types";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
-  data: IIssue | null;
-  user: IUser | undefined;
+  data: IIssue;
   onSubmit?: () => Promise<void>;
-  redirection?: boolean;
 };
 
-const issueService = new IssueService();
-const issueArchiveService = new IssueArchiveService();
-
-export const DeleteIssueModal: React.FC<Props> = ({
-  isOpen,
-  handleClose,
-  data,
-  user,
-  onSubmit,
-  redirection = true,
-}) => {
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+export const DeleteIssueModal: React.FC<Props> = observer((props) => {
+  const { data, isOpen, handleClose, onSubmit } = props;
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, issueId } = router.query;
-  const isArchivedIssues = router.pathname.includes("archived-issues");
+  const { workspaceSlug } = router.query;
 
-  const { displayFilters, params } = useIssuesView();
+  const { issueDetail: issueDetailStore } = useMobxStore();
 
-  const { setToastAlert } = useToast();
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   useEffect(() => {
     setIsDeleteLoading(false);
@@ -61,76 +36,15 @@ export const DeleteIssueModal: React.FC<Props> = ({
     handleClose();
   };
 
-  const handleDeletion = async () => {
-    if (!workspaceSlug || !data) return;
+  const handleIssueDelete = async () => {
+    if (!workspaceSlug) return;
 
     setIsDeleteLoading(true);
 
-    await issueService
-      .deleteIssue(workspaceSlug as string, data.project, data.id, user)
-      .then(() => {
-        if (displayFilters.layout === "spreadsheet") {
-          if (data.parent) {
-            mutate<ISubIssueResponse>(
-              SUB_ISSUES(data.parent.toString()),
-              (prevData) => {
-                if (!prevData) return prevData;
-                const updatedArray = (prevData.sub_issues ?? []).filter((i) => i.id !== data.id);
+    await issueDetailStore.deleteIssue(workspaceSlug.toString(), data.project, data.id);
 
-                return {
-                  ...prevData,
-                  sub_issues: updatedArray,
-                };
-              },
-              false
-            );
-          }
-        } else {
-          if (cycleId) mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
-          else if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
-          else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(data.project, params));
-        }
-
-        if (onSubmit) onSubmit();
-
-        handleClose();
-        setToastAlert({
-          title: "Success",
-          type: "success",
-          message: "Issue deleted successfully",
-        });
-
-        if (issueId && redirection) router.back();
-      })
-      .catch(() => {
-        setIsDeleteLoading(false);
-      });
-    if (onSubmit) await onSubmit();
+    if (onSubmit) await onSubmit().finally(() => setIsDeleteLoading(false));
   };
-
-  const handleArchivedIssueDeletion = async () => {
-    setIsDeleteLoading(true);
-    if (!workspaceSlug || !projectId || !data) return;
-
-    await issueArchiveService
-      .deleteArchivedIssue(workspaceSlug as string, projectId as string, data.id)
-      .then(() => {
-        mutate(PROJECT_ARCHIVED_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
-        handleClose();
-        setToastAlert({
-          title: "Success",
-          type: "success",
-          message: "Issue deleted successfully",
-        });
-        router.back();
-      })
-      .catch((error) => {
-        console.log(error);
-        setIsDeleteLoading(false);
-      });
-  };
-
-  const handleIssueDelete = () => (isArchivedIssues ? handleArchivedIssueDeletion() : handleDeletion());
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -194,4 +108,4 @@ export const DeleteIssueModal: React.FC<Props> = ({
       </Dialog>
     </Transition.Root>
   );
-};
+});

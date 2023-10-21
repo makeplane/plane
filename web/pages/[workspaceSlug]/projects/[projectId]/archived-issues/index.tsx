@@ -11,8 +11,6 @@ import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // helper
 import { truncateText } from "helpers/string.helper";
-// components
-import { IssuesFilterView, IssuesView } from "components/core";
 // ui
 import { ArchiveIcon, BreadcrumbItem, Breadcrumbs } from "@plane/ui";
 // icons
@@ -51,11 +49,11 @@ const ProjectArchivedIssues: NextPage = () => {
             <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Archived Issues`} />
           </Breadcrumbs>
         }
-        right={
-          <div className="flex items-center gap-2">
-            <IssuesFilterView />
-          </div>
-        }
+        // right={
+        //   <div className="flex items-center gap-2">
+        //     <IssuesFilterView />
+        //   </div>
+        // }
       >
         <div className="h-full w-full flex flex-col">
           <div className="flex items-center ga-1 px-4 py-2.5 shadow-sm border-b border-custom-border-200">
@@ -70,7 +68,7 @@ const ProjectArchivedIssues: NextPage = () => {
               <X className="h-3 w-3" />
             </button>
           </div>
-          <IssuesView />
+          {/* <IssuesView /> */}
         </div>
       </ProjectAuthorizationWrapper>
     </IssueViewContextProvider>

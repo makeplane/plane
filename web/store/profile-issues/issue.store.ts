@@ -36,6 +36,7 @@ export interface IProfileIssueStore {
   // action
   fetchIssues: (workspaceSlug: string, userId: string, type: "assigned" | "created" | "subscribed") => Promise<any>;
   updateIssueStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
+  deleteIssue: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
 }
 
 export class ProfileIssueStore implements IProfileIssueStore {
@@ -76,6 +77,7 @@ export class ProfileIssueStore implements IProfileIssueStore {
       // actions
       fetchIssues: action,
       updateIssueStructure: action,
+      deleteIssue: action,
     });
     this.rootStore = _rootStore;
     this.userService = new UserService();
@@ -158,6 +160,55 @@ export class ProfileIssueStore implements IProfileIssueStore {
     }
     if (orderBy === "priority") {
       issues = sortArrayByPriority(issues as any, "priority");
+    }
+
+    runInAction(() => {
+      this.issues = {
+        ...this.issues,
+        [workspaceSlug]: {
+          ...this.issues?.[workspaceSlug],
+          [userId]: {
+            ...this.issues?.[workspaceSlug]?.[userId],
+            [issueType]: issues,
+          },
+        },
+      };
+    });
+  };
+
+  deleteIssue = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
+    const workspaceSlug: string | null = this.rootStore?.workspace?.workspaceSlug;
+    const userId: string | null = this.userId;
+
+    const issueType = this.getIssueType;
+
+    if (!workspaceSlug || !userId || !issueType) return null;
+
+    let issues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null =
+      this.getIssues;
+
+    if (!issues) return null;
+
+    if (issueType === "grouped" && group_id) {
+      issues = issues as IIssueGroupedStructure;
+      issues = {
+        ...issues,
+        [group_id]: issues[group_id].filter((i: IIssue) => i?.id !== issue?.id),
+      };
+    }
+    if (issueType === "groupWithSubGroups" && group_id && sub_group_id) {
+      issues = issues as IIssueGroupWithSubGroupsStructure;
+      issues = {
+        ...issues,
+        [sub_group_id]: {
+          ...issues[sub_group_id],
+          [group_id]: issues[sub_group_id][group_id].filter((i: IIssue) => i?.id !== issue?.id),
+        },
+      };
+    }
+    if (issueType === "ungrouped") {
+      issues = issues as IIssueUnGroupedStructure;
+      issues = issues.filter((i: IIssue) => i?.id !== issue?.id);
     }
 
     runInAction(() => {

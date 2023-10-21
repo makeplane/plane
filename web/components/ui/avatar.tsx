@@ -18,12 +18,20 @@ type AvatarProps = {
   height?: string;
   width?: string;
   fontSize?: string;
+  showName?: boolean;
 };
 
 // services
 const workspaceService = new WorkspaceService();
 
-export const Avatar: React.FC<AvatarProps> = ({ user, index, height = "24px", width = "24px", fontSize = "12px" }) => (
+export const Avatar: React.FC<AvatarProps> = ({
+  user,
+  index,
+  height = "24px",
+  width = "24px",
+  fontSize = "12px",
+  showName,
+}) => (
   <div
     className={`relative rounded border-[0.5px] ${
       index && index !== 0 ? "-ml-3.5 border-custom-border-200" : "border-transparent"
@@ -61,6 +69,7 @@ export const Avatar: React.FC<AvatarProps> = ({ user, index, height = "24px", wi
         {user?.display_name?.charAt(0)}
       </div>
     )}
+    {showName && <span>{user?.display_name ? user?.display_name : user?.first_name}</span>}
   </div>
 );
 

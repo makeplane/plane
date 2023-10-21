@@ -108,12 +108,16 @@ export const ProjectSidebarList: FC = observer(() => {
 
   return (
     <>
-      <CreateProjectModal
-        isOpen={isProjectModalOpen}
-        setIsOpen={setIsProjectModalOpen}
-        setToFavorite={isFavoriteProjectCreate}
-        user={user}
-      />
+      {workspaceSlug && (
+        <CreateProjectModal
+          isOpen={isProjectModalOpen}
+          onClose={() => {
+            setIsProjectModalOpen(false);
+          }}
+          setToFavorite={isFavoriteProjectCreate}
+          workspaceSlug={workspaceSlug.toString()}
+        />
+      )}
       <div
         ref={containerRef}
         className={`h-full overflow-y-auto px-4 space-y-2 ${

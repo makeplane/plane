@@ -7,8 +7,7 @@ import { useRouter } from "next/router";
 import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
 // ui
-import { CustomMenu } from "components/ui";
-import { Tooltip } from "@plane/ui";
+import { CustomMenu, Tooltip } from "@plane/ui";
 // icons
 import { AlertCircle, FileText, LinkIcon, Lock, Pencil, Star, Trash2, Unlock } from "lucide-react";
 // helpers

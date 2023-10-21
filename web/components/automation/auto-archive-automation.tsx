@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 
 // component
-import { CustomSelect } from "components/ui";
-import { ToggleSwitch } from "@plane/ui";
+import { CustomSelect, ToggleSwitch } from "@plane/ui";
 import { SelectMonthModal } from "components/automation";
 // icon
 import { ArchiveRestore } from "lucide-react";

@@ -8,9 +8,10 @@ import { WorkspaceService } from "services/workspace.service";
 import { IUser, IUserSettings } from "types/users";
 import { IWorkspaceMember, IProjectMember } from "types";
 
-interface IUserStore {
+export interface IUserStore {
   loader: boolean;
 
+  isUserLoggedIn: boolean | null;
   currentUser: IUser | null;
   currentUserSettings: IUserSettings | null;
 
@@ -28,14 +29,17 @@ interface IUserStore {
 
   fetchUserWorkspaceInfo: (workspaceSlug: string) => Promise<IWorkspaceMember>;
   fetchUserProjectInfo: (workspaceSlug: string, projectId: string) => Promise<IProjectMember>;
+  fetchUserDashboardInfo: (workspaceSlug: string, month: number) => Promise<any>;
 
   updateTourCompleted: () => Promise<void>;
   updateCurrentUser: (data: Partial<IUser>) => Promise<IUser>;
+  updateCurrentUserTheme: (theme: string) => Promise<IUser>;
 }
 
 class UserStore implements IUserStore {
   loader: boolean = false;
 
+  isUserLoggedIn: boolean | null = null;
   currentUser: IUser | null = null;
   currentUserSettings: IUserSettings | null = null;
 
@@ -83,10 +87,14 @@ class UserStore implements IUserStore {
       if (response) {
         runInAction(() => {
           this.currentUser = response;
+          this.isUserLoggedIn = true;
         });
       }
       return response;
     } catch (error) {
+      runInAction(() => {
+        this.isUserLoggedIn = false;
+      });
       throw error;
     }
   };
@@ -137,7 +145,6 @@ class UserStore implements IUserStore {
     try {
       const response = await this.projectService.projectMemberMe(workspaceSlug, projectId);
 
-      console.log("response", response);
       runInAction(() => {
         this.projectMemberInfo = response;
         this.hasPermissionToWorkspace = true;

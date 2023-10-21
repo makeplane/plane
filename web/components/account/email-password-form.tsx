@@ -56,7 +56,7 @@ export const EmailPasswordForm: React.FC<IEmailPasswordForm> = (props) => {
                 onChange={onChange}
                 hasError={Boolean(errors.email)}
                 placeholder="Enter your email address..."
-                className="border-custom-border-300 h-[46px]"
+                className="border-custom-border-300 h-[46px] w-full"
               />
             )}
           />
@@ -77,7 +77,7 @@ export const EmailPasswordForm: React.FC<IEmailPasswordForm> = (props) => {
                 onChange={onChange}
                 hasError={Boolean(errors.password)}
                 placeholder="Enter your password..."
-                className="border-custom-border-300 h-[46px]"
+                className="border-custom-border-300 h-[46px] w-full"
               />
             )}
           />
@@ -93,8 +93,10 @@ export const EmailPasswordForm: React.FC<IEmailPasswordForm> = (props) => {
         </div>
         <div>
           <Button
+            variant="primary"
             type="submit"
-            className="w-full text-center h-[46px]"
+            className="w-full"
+            size="xl"
             disabled={!isValid && isDirty}
             loading={isSubmitting}
           >

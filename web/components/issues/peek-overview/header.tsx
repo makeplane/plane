@@ -3,9 +3,8 @@ import Link from "next/link";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect } from "components/ui";
+import { CustomSelect, FullScreenPeekIcon, ModalPeekIcon, SidePeekIcon } from "@plane/ui";
 // icons
-import { FullScreenPeekIcon, ModalPeekIcon, SidePeekIcon } from "@plane/ui";
 import { LinkIcon, MoveRight, Trash2 } from "lucide-react";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";

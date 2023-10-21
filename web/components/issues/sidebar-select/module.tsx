@@ -4,8 +4,7 @@ import useSWR, { mutate } from "swr";
 // services
 import { ModuleService } from "services/module.service";
 // ui
-import { CustomSelect } from "components/ui";
-import { Spinner, Tooltip } from "@plane/ui";
+import { CustomSelect, Spinner, Tooltip } from "@plane/ui";
 // helper
 import { truncateText } from "helpers/string.helper";
 // types

@@ -323,6 +323,10 @@ module.exports = {
           "0%": { right: "-20rem" },
           "100%": { right: "0" },
         },
+        "bar-loader": {
+          from: { left: "-100%" },
+          to: { left: "100%" },
+        },
       },
       typography: ({ theme }) => ({
         brand: {

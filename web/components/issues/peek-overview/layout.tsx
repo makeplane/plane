@@ -8,8 +8,6 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// hooks
-import useUser from "hooks/use-user";
 // components
 import { DeleteIssueModal, FullScreenPeekView, SidePeekView } from "components/issues";
 // types
@@ -40,8 +38,6 @@ export const IssuePeekOverview: React.FC<Props> = observer(({ handleMutation, pr
 
   const issue = issues[peekIssue?.toString() ?? ""];
 
-  const { user } = useUser();
-
   const handleClose = () => {
     const { query } = router;
     delete query.peekIssue;
@@ -53,17 +49,17 @@ export const IssuePeekOverview: React.FC<Props> = observer(({ handleMutation, pr
   };
 
   const handleUpdateIssue = async (formData: Partial<IIssue>) => {
-    if (!issue || !user) return;
+    if (!issue) return;
 
-    await updateIssue(workspaceSlug, projectId, issue.id, formData, user);
+    await updateIssue(workspaceSlug, projectId, issue.id, formData);
     mutate(PROJECT_ISSUES_ACTIVITY(issue.id));
     if (handleMutation) handleMutation();
   };
 
   const handleDeleteIssue = async () => {
-    if (!issue || !user) return;
+    if (!issue) return;
 
-    await deleteIssue(workspaceSlug, projectId, issue.id, user);
+    await deleteIssue(workspaceSlug, projectId, issue.id);
     if (handleMutation) handleMutation();
 
     handleClose();
@@ -92,13 +88,14 @@ export const IssuePeekOverview: React.FC<Props> = observer(({ handleMutation, pr
 
   return (
     <>
-      <DeleteIssueModal
-        isOpen={deleteIssueModal}
-        handleClose={() => setDeleteIssueModal(false)}
-        data={issue ? { ...issue } : null}
-        onSubmit={handleDeleteIssue}
-        user={user}
-      />
+      {issue && (
+        <DeleteIssueModal
+          isOpen={deleteIssueModal}
+          handleClose={() => setDeleteIssueModal(false)}
+          data={issue}
+          onSubmit={handleDeleteIssue}
+        />
+      )}
       <Transition.Root appear show={isSidePeekOpen} as={React.Fragment}>
         <Dialog as="div" className="relative z-20" onClose={handleClose}>
           <div className="fixed inset-0 z-20 h-full w-full overflow-y-auto">

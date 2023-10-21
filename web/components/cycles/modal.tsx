@@ -1,17 +1,17 @@
-import { Fragment } from "react";
-import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import { CycleService } from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CycleForm } from "components/cycles";
 // helper
 import { getDateRangeStatus } from "helpers/date-time.helper";
 // types
-import type { CycleDateCheckData, IUser, ICycle, IProject } from "types";
+import type { CycleDateCheckData, ICycle, IProject, IUser } from "types";
 // fetch keys
 import {
   COMPLETED_CYCLES_LIST,
@@ -27,23 +27,25 @@ type CycleModalProps = {
   isOpen: boolean;
   handleClose: () => void;
   data?: ICycle | null;
-  user: IUser | undefined;
+  workspaceSlug: string;
+  projectId: string;
 };
 
 // services
 const cycleService = new CycleService();
 
-export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({ isOpen, handleClose, data, user }) => {
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+export const CreateUpdateCycleModal: React.FC<CycleModalProps> = (props) => {
+  const { isOpen, handleClose, data, workspaceSlug, projectId } = props;
+  const [activeProject, setActiveProject] = useState<string | null>(null);
+
+  const { project: projectStore } = useMobxStore();
+  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
 
   const { setToastAlert } = useToast();
 
   const createCycle = async (payload: Partial<ICycle>) => {
-    if (!workspaceSlug || !projectId) return;
-
     await cycleService
-      .createCycle(workspaceSlug.toString(), projectId.toString(), payload, user)
+      .createCycle(workspaceSlug.toString(), projectId.toString(), payload, {} as IUser)
       .then((res) => {
         switch (getDateRangeStatus(res.start_date, res.end_date)) {
           case "completed":
@@ -91,10 +93,8 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({ isOpen, hand
   };
 
   const updateCycle = async (cycleId: string, payload: Partial<ICycle>) => {
-    if (!workspaceSlug || !projectId) return;
-
     await cycleService
-      .updateCycle(workspaceSlug.toString(), projectId.toString(), cycleId, payload, user)
+      .updateCycle(workspaceSlug.toString(), projectId.toString(), cycleId, payload, {} as IUser)
       .then((res) => {
         switch (getDateRangeStatus(data?.start_date, data?.end_date)) {
           case "completed":
@@ -177,7 +177,6 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({ isOpen, hand
     if (isDateValid) {
       if (data) await updateCycle(data.id, payload);
       else await createCycle(payload);
-
       handleClose();
     } else
       setToastAlert({
@@ -187,11 +186,32 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({ isOpen, hand
       });
   };
 
+  useEffect(() => {
+    // if modal is closed, reset active project to null
+    // and return to avoid activeProject being set to some other project
+    if (!isOpen) {
+      setActiveProject(null);
+      return;
+    }
+
+    // if data is present, set active project to the project of the
+    // issue. This has more priority than the project in the url.
+    if (data && data.project) {
+      setActiveProject(data.project);
+      return;
+    }
+
+    // if data is not present, set active project to the project
+    // in the url. This has the least priority.
+    if (projects && projects.length > 0 && !activeProject)
+      setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
+  }, [activeProject, data, projectId, projects, isOpen]);
+
   return (
-    <Transition.Root show={isOpen} as={Fragment}>
+    <Transition.Root show={isOpen} as={React.Fragment}>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
-          as={Fragment}
+          as={React.Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -201,10 +221,11 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({ isOpen, hand
         >
           <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
         </Transition.Child>
-        <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+
+        <div className="fixed inset-0 z-10 overflow-y-auto">
+          <div className="my-10 flex items-center justify-center p-4 text-center sm:p-0 md:my-20">
             <Transition.Child
-              as={Fragment}
+              as={React.Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               enterTo="opacity-100 translate-y-0 sm:scale-100"
@@ -212,8 +233,14 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({ isOpen, hand
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
-                <CycleForm handleFormSubmit={handleFormSubmit} handleClose={handleClose} data={data} />
+              <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+                <CycleForm
+                  handleFormSubmit={handleFormSubmit}
+                  handleClose={handleClose}
+                  projectId={activeProject ?? ""}
+                  setActiveProject={setActiveProject}
+                  data={data}
+                />
               </Dialog.Panel>
             </Transition.Child>
           </div>

@@ -19,7 +19,7 @@ const ProjectInbox: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query;
 
-  const { inboxIssues: inboxIssuesStore, inboxFilters: inboxFiltersStore, project: projectStore } = useMobxStore();
+  const { inboxFilters: inboxFiltersStore, project: projectStore } = useMobxStore();
 
   const projectDetails =
     workspaceSlug && projectId
@@ -27,12 +27,9 @@ const ProjectInbox: NextPage = () => {
       : undefined;
 
   useSWR(
-    workspaceSlug && projectId && inboxId ? `REVALIDATE_INBOX_${inboxId.toString()}` : null,
+    workspaceSlug && projectId && inboxId ? `INBOX_FILTERS_${inboxId.toString()}` : null,
     workspaceSlug && projectId && inboxId
-      ? async () => {
-          await inboxFiltersStore.fetchInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString());
-          await inboxIssuesStore.fetchInboxIssues(workspaceSlug.toString(), projectId.toString(), inboxId.toString());
-        }
+      ? () => inboxFiltersStore.fetchInboxFilters(workspaceSlug.toString(), projectId.toString(), inboxId.toString())
       : null
   );
 

@@ -51,7 +51,7 @@ export const EmailForgotPasswordForm: FC<IEmailForgotPasswordForm> = (props) => 
               onChange={onChange}
               hasError={Boolean(errors.email)}
               placeholder="Enter registered email address.."
-              className="border-custom-border-300 h-[46px]"
+              className="border-custom-border-300 h-[46px] w-full"
             />
           )}
         />

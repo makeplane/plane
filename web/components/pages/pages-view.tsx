@@ -38,14 +38,14 @@ const pageService = new PageService();
 const projectService = new ProjectService();
 
 export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
-  const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
-  const [selectedPageToUpdate, setSelectedPageToUpdate] = useState<IPage | null>(null);
-
-  const [deletePageModal, setDeletePageModal] = useState(false);
-  const [selectedPageToDelete, setSelectedPageToDelete] = useState<IPage | null>(null);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+  // states
+  const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
+  const [selectedPageToUpdate, setSelectedPageToUpdate] = useState<IPage | null>(null);
+  const [deletePageModal, setDeletePageModal] = useState(false);
+  const [selectedPageToDelete, setSelectedPageToDelete] = useState<IPage | null>(null);
 
   const { user } = useUserAuth();
 
@@ -188,18 +188,25 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
 
   return (
     <>
-      <CreateUpdatePageModal
-        isOpen={createUpdatePageModal}
-        handleClose={() => setCreateUpdatePageModal(false)}
-        data={selectedPageToUpdate}
-        user={user}
-      />
-      <DeletePageModal
-        isOpen={deletePageModal}
-        setIsOpen={setDeletePageModal}
-        data={selectedPageToDelete}
-        user={user}
-      />
+      {workspaceSlug && projectId && (
+        <>
+          <CreateUpdatePageModal
+            isOpen={createUpdatePageModal}
+            handleClose={() => setCreateUpdatePageModal(false)}
+            data={selectedPageToUpdate}
+            user={user}
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
+          />
+          <DeletePageModal
+            isOpen={deletePageModal}
+            setIsOpen={setDeletePageModal}
+            data={selectedPageToDelete}
+            user={user}
+          />
+        </>
+      )}
+
       {pages ? (
         <div className="space-y-4 h-full overflow-y-auto">
           {pages.length > 0 ? (

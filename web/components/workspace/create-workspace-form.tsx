@@ -1,13 +1,13 @@
 import { Dispatch, SetStateAction, useEffect, useState, FC } from "react";
 import { mutate } from "swr";
+import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 // services
 import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect } from "components/ui";
-import { Button, Input } from "@plane/ui";
+import { Button, CustomSelect, Input } from "@plane/ui";
 // types
 import { IUser, IWorkspace } from "types";
 // fetch-keys
@@ -64,6 +64,7 @@ export const CreateWorkspaceForm: FC<Props> = ({
   const [invalidSlug, setInvalidSlug] = useState(false);
 
   const { setToastAlert } = useToast();
+  const router = useRouter();
 
   const {
     handleSubmit,
@@ -135,13 +136,17 @@ export const CreateWorkspaceForm: FC<Props> = ({
                 message: "Workspace name should not exceed 80 characters",
               },
             }}
-            render={({ field: { value, ref } }) => (
+            render={({ field: { value, ref, onChange } }) => (
               <Input
                 id="workspaceName"
                 name="name"
                 type="text"
                 value={value}
-                onChange={(e) => setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"))}
+                onChange={(e) => {
+                  onChange(e.target.value);
+                  setValue("name", e.target.value);
+                  setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"));
+                }}
                 ref={ref}
                 hasError={Boolean(errors.name)}
                 placeholder="Enter workspace name..."
@@ -165,14 +170,14 @@ export const CreateWorkspaceForm: FC<Props> = ({
                   id="workspaceUrl"
                   name="slug"
                   type="text"
-                  value={value}
+                  value={value.toLocaleLowerCase().trim().replace(/ /g, "-")}
                   onChange={(e) =>
                     /^[a-zA-Z0-9_-]+$/.test(e.target.value) ? setInvalidSlug(false) : setInvalidSlug(true)
                   }
                   ref={ref}
                   hasError={Boolean(errors.slug)}
                   placeholder="Enter workspace name..."
-                  className="block rounded-md bg-transparent py-2 !px-0 text-sm w-full"
+                  className="block rounded-md bg-transparent py-2 !px-0 text-sm w-full border-none"
                 />
               )}
             />
@@ -220,6 +225,9 @@ export const CreateWorkspaceForm: FC<Props> = ({
         {secondaryButton}
         <Button variant="primary" type="submit" size="md" disabled={!isValid} loading={isSubmitting}>
           {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
+        </Button>
+        <Button variant="neutral-primary" type="button" size="md" onClick={() => router.back()}>
+          Go back
         </Button>
       </div>
     </form>

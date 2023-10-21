@@ -9,14 +9,16 @@ import { renderDateFormat } from "helpers/date-time.helper";
 // types
 import { ICalendarDate, ICalendarWeek } from "./types";
 import { IIssueGroupedStructure } from "store/issue";
+import { IIssue } from "types";
 
 type Props = {
   issues: IIssueGroupedStructure | null;
   week: ICalendarWeek | undefined;
+  quickActions: (issue: IIssue) => React.ReactNode;
 };
 
 export const CalendarWeekDays: React.FC<Props> = observer((props) => {
-  const { issues, week } = props;
+  const { issues, week, quickActions } = props;
 
   const { issueFilter: issueFilterStore } = useMobxStore();
 
@@ -34,7 +36,9 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
       {Object.values(week).map((date: ICalendarDate) => {
         if (!showWeekends && (date.date.getDay() === 0 || date.date.getDay() === 6)) return null;
 
-        return <CalendarDayTile key={renderDateFormat(date.date)} date={date} issues={issues} />;
+        return (
+          <CalendarDayTile key={renderDateFormat(date.date)} date={date} issues={issues} quickActions={quickActions} />
+        );
       })}
     </div>
   );
