@@ -41,7 +41,8 @@
       "persistent": true,
       "dependsOn": [
         "@plane/lite-text-editor#build",
-        "@plane/rich-text-editor#build"
+        "@plane/rich-text-editor#build",
+        "@plane/document-editor#build"
       ]
     },
     "space#develop": {
@@ -49,21 +50,24 @@
       "persistent": true,
       "dependsOn": [
         "@plane/lite-text-editor#build",
-        "@plane/rich-text-editor#build"
+        "@plane/rich-text-editor#build",
+        "@plane/document-editor#build"
       ]
     },
     "web#build": {
       "cache": true,
       "dependsOn": [
         "@plane/lite-text-editor#build",
-        "@plane/rich-text-editor#build"
+        "@plane/rich-text-editor#build",
+        "@plane/document-editor#build"
       ]
     },
     "space#build": {
       "cache": true,
       "dependsOn": [
         "@plane/lite-text-editor#build",
-        "@plane/rich-text-editor#build"
+        "@plane/rich-text-editor#build",
+        "@plane/document-editor#build"
       ]
     },
     "@plane/lite-text-editor#build": {
@@ -73,6 +77,12 @@
       ]
     },
     "@plane/rich-text-editor#build": {
+      "cache": true,
+      "dependsOn": [
+        "@plane/editor-core#build"
+      ]
+    },
+    "@plane/document-editor#build": {
       "cache": true,
       "dependsOn": [
         "@plane/editor-core#build"
