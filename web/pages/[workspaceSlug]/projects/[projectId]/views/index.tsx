@@ -24,7 +24,7 @@ const ProjectViews: NextPage = () => {
   );
 
   return (
-    <AppLayout header={<ProjectViewsHeader />}>
+    <AppLayout header={<ProjectViewsHeader />} withProjectWrapper>
       <ProjectViewsList />
     </AppLayout>
   );

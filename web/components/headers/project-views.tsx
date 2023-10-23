@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
-import { ArrowLeft, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
@@ -42,15 +42,6 @@ export const ProjectViewsHeader: React.FC = observer(() => {
         className={`relative flex w-full flex-shrink-0 flex-row z-10 items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4`}
       >
         <div className="flex items-center gap-2 flex-grow w-full whitespace-nowrap overflow-ellipsis">
-          <div className="block md:hidden">
-            <button
-              type="button"
-              className="grid h-8 w-8 place-items-center rounded border border-custom-border-200"
-              onClick={() => router.back()}
-            >
-              <ArrowLeft className="h-3 w-3" strokeWidth={2} />
-            </button>
-          </div>
           <div>
             <Breadcrumbs onBack={() => router.back()}>
               <BreadcrumbItem
