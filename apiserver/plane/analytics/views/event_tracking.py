@@ -3,7 +3,7 @@ import requests
 import json
 
 # Module imports
-from . import BaseAPIView
+from plane.api.views import BaseAPIView
 
 # Third party imports
 from rest_framework import status
@@ -42,6 +42,8 @@ class EventTrackingEndpoint(BaseAPIView):
                         "email": str(request.user.email),
                         "first_name": str(request.user.first_name),
                         "last_name": str(request.user.last_name),
+                        "last_login_ip": str(request.META.get("REMOTE_ADDR")),
+                        "last_login_uagent": str(request.META.get("HTTP_USER_AGENT"))
                     },
                 },
                 cls=DjangoJSONEncoder,

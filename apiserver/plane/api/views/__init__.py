@@ -170,5 +170,3 @@ from .notification import NotificationViewSet, UnreadNotificationEndpoint, MarkA
 from .exporter import ExportIssuesEndpoint
 
 from .config import ConfigurationEndpoint
-
-from .event_tracking import EventTrackingEndpoint
