@@ -96,16 +96,15 @@ def webhook_task(self, webhook, slug, event, response, action):
 
     except Exception as e:
         if self.request.retries >= self.max_retries:
-            Webhook.objects.filter(id=webhook.id).update(is_active=False)
+            Webhook.objects.filter(pk=webhook.id).update(is_active=False)
         return
 
 
 @shared_task()
 def send_webhook(event, response, action, slug):
     try:
-        webhooks = Webhook.objects.filter(workspace__slug=slug, is_active=True).filter(
-            retry_count__lte=5
-        )
+        webhooks = Webhook.objects.filter(workspace__slug=slug, is_active=True)
+
         if event == "Project":
             webhooks = webhooks.filter(project=True)
 

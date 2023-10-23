@@ -29,7 +29,6 @@ def validate_domain(value):
 
 
 class Webhook(BaseModel):
-    name = models.CharField(max_length=255, verbose_name="Webhook Name")
     workspace = models.ForeignKey(
         "db.Workspace",
         on_delete=models.CASCADE,
@@ -43,7 +42,6 @@ class Webhook(BaseModel):
     )
     is_active = models.BooleanField(default=True)
     secret_key = models.CharField(max_length=255, blank=True, null=True)
-    retry_count = models.PositiveSmallIntegerField(default=0)
     project = models.BooleanField(default=False)
     issue = models.BooleanField(default=False)
     module = models.BooleanField(default=False)
