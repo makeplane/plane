@@ -1,4 +1,5 @@
 import { FC } from "react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { ArrowLeft } from "lucide-react";
@@ -34,9 +35,17 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
         </div>
         <div>
           <Breadcrumbs onBack={() => router.back()}>
-            <span className="border-r-2 border-custom-sidebar-border-200 px-3 text-sm">
-              <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Draft Issues`} />
-            </span>
+            <BreadcrumbItem
+              link={
+                <Link href={`/${workspaceSlug}/projects`}>
+                  <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                    <p>Projects</p>
+                  </a>
+                </Link>
+              }
+            />
+
+            <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Draft Issues`} />
           </Breadcrumbs>
         </div>
       </div>
