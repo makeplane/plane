@@ -30,13 +30,8 @@ const ProjectViews: NextPage = () => {
       : null
   );
 
-  const projectDetails =
-    workspaceSlug && projectId
-      ? projectStore.getProjectById(workspaceSlug.toString(), projectId.toString())
-      : undefined;
-
   return (
-    <AppLayout header={<ProjectViewsHeader title={projectDetails?.name} />}>
+    <AppLayout header={<ProjectViewsHeader />}>
       <ProjectViewsList />
     </AppLayout>
   );
