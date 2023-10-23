@@ -678,8 +678,8 @@ class IssueUserDisplayPropertyEndpoint(BaseAPIView):
 
     def get(self, request, slug, project_id):
         try:
-            issue_property = IssueProperty.objects.get(
-                workspace__slug=slug, project_id=project_id, user=request.user
+            issue_property, _ = IssueProperty.objects.get_or_create(
+                user=request.user, project_id=project_id
             )
             serializer = IssuePropertySerializer(issue_property)
             return Response(serializer.data, status=status.HTTP_200_OK)
