@@ -8,7 +8,7 @@ import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
 // icons
 import { X } from "lucide-react";
-import { BlockerIcon, RelatedIcon } from "@plane/ui";
+import { RelatedIcon } from "@plane/ui";
 // components
 import { ExistingIssuesListModal } from "components/core";
 // services
@@ -116,7 +116,7 @@ export const SidebarRelatesSelect: React.FC<Props> = (props) => {
               ? relatedToIssueRelation.map((relation) => (
                   <div
                     key={relation.issue_detail?.id}
-                    className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-1.5 py-0.5 text-xs text-yellow-500 duration-300 hover:border-yellow-500/20 hover:bg-yellow-500/20"
+                    className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-1.5 py-0.5 text-xs duration-300"
                   >
                     <a
                       href={`/${workspaceSlug}/projects/${relation.issue_detail?.project_detail.id}/issues/${relation.issue_detail?.id}`}
@@ -124,7 +124,7 @@ export const SidebarRelatesSelect: React.FC<Props> = (props) => {
                       rel="noopener noreferrer"
                       className="flex items-center gap-1"
                     >
-                      <BlockerIcon height={10} width={10} />
+                      <RelatedIcon height={10} width={10} />
                       {`${relation.issue_detail?.project_detail.identifier}-${relation.issue_detail?.sequence_id}`}
                     </a>
                     <button
