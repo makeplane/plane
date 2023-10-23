@@ -15,7 +15,7 @@ import useToast from "hooks/use-toast";
 import { AppLayout } from "layouts/app-layout";
 // components
 import { IssueDetailsSidebar, IssueMainContent } from "components/issues";
-import { ProjectArchivedIssueHeader } from "components/headers";
+import { ProjectArchivedIssueDetailsHeader } from "components/headers";
 // ui
 import { ArchiveIcon, Loader } from "@plane/ui";
 // icons
@@ -141,7 +141,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
   };
 
   return (
-    <AppLayout header={<ProjectArchivedIssueHeader />} withProjectWrapper>
+    <AppLayout header={<ProjectArchivedIssueDetailsHeader />} withProjectWrapper>
       {issueDetails && projectId ? (
         <div className="flex h-full overflow-hidden">
           <div className="w-2/3 h-full overflow-y-auto space-y-2 divide-y-2 divide-custom-border-300 p-5">

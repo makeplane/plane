@@ -1,7 +1,7 @@
 import { Dispatch, FC, SetStateAction } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { ArrowLeft, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 // components
 // ui
 import { Breadcrumbs, BreadcrumbItem, Button, Tooltip } from "@plane/ui";
@@ -37,15 +37,6 @@ export const ModulesHeader: FC<IModulesHeader> = (props) => {
       className={`relative z-10 flex w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4`}
     >
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
-        <div className="block md:hidden">
-          <button
-            type="button"
-            className="grid h-8 w-8 place-items-center rounded border border-custom-border-200"
-            onClick={() => router.back()}
-          >
-            <ArrowLeft fontSize={14} strokeWidth={2} />
-          </button>
-        </div>
         <div>
           <Breadcrumbs onBack={() => router.back()}>
             <BreadcrumbItem
