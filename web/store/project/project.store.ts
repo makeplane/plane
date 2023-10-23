@@ -273,9 +273,9 @@ export class ProjectStore implements IProjectStore {
   };
 
   getProjectById = (workspaceSlug: string, projectId: string) => {
-    if (!this.projectId) return null;
     const projects = this.projects?.[workspaceSlug];
     if (!projects) return null;
+
     const projectInfo: IProject | null = projects.find((project) => project.id === projectId) || null;
     return projectInfo;
   };
