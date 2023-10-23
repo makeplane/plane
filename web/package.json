@@ -17,7 +17,6 @@
     "@headlessui/react": "^1.7.3",
     "@hello-pangea/dnd": "^16.3.0",
     "@jitsu/nextjs": "^3.1.5",
-    "@mui/icons-material": "^5.14.1",
     "@mui/material": "^5.14.1",
     "@nivo/bar": "0.80.0",
     "@nivo/calendar": "0.80.0",
