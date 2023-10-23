@@ -24,28 +24,25 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
   };
 
   const {
-    project: projectStore,
     issueFilter: issueFilterStore,
     moduleIssue: moduleIssueStore,
     moduleFilter: moduleIssueFilterStore,
   } = useMobxStore();
 
-  useSWR(workspaceSlug && projectId && moduleId ? `MODULE_INFORMATION_${moduleId.toString()}` : null, async () => {
-    if (workspaceSlug && projectId && moduleId) {
-      // fetching the project display filters and display properties
-      await issueFilterStore.fetchUserProjectFilters(workspaceSlug, projectId);
-      // fetching the module filters
-      await moduleIssueFilterStore.fetchModuleFilters(workspaceSlug, projectId, moduleId);
+  useSWR(
+    workspaceSlug && projectId && moduleId ? `MODULE_FILTERS_AND_ISSUES_${moduleId.toString()}` : null,
+    async () => {
+      if (workspaceSlug && projectId && moduleId) {
+        // fetching the project display filters and display properties
+        await issueFilterStore.fetchUserProjectFilters(workspaceSlug, projectId);
+        // fetching the module filters
+        await moduleIssueFilterStore.fetchModuleFilters(workspaceSlug, projectId, moduleId);
 
-      // fetching the project state, labels and members
-      await projectStore.fetchProjectStates(workspaceSlug, projectId);
-      await projectStore.fetchProjectLabels(workspaceSlug, projectId);
-      await projectStore.fetchProjectMembers(workspaceSlug, projectId);
-
-      // fetching the module issues
-      await moduleIssueStore.fetchIssues(workspaceSlug, projectId, moduleId);
+        // fetching the module issues
+        await moduleIssueStore.fetchIssues(workspaceSlug, projectId, moduleId);
+      }
     }
-  });
+  );
 
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
 

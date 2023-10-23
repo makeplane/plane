@@ -65,6 +65,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
       ? () => projectStore.fetchProjectStates(workspaceSlug.toString(), projectId.toString())
       : null
   );
+  // TODO: fetch project estimates
   // fetching project cycles
   useSWR(
     workspaceSlug && projectId ? `PROJECT_ALL_CYCLES_${workspaceSlug}_${projectId}` : null,
