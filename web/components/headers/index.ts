@@ -13,3 +13,8 @@ export * from "./cycles";
 export * from "./modules";
 export * from "./project-settings";
 export * from "./workspace-settings";
+export * from "./pages";
+export * from "./project-draft-issues";
+export * from "./project-archived-issue-details";
+export * from "./project-archived-issues";
+export * from "./project-issue-details";

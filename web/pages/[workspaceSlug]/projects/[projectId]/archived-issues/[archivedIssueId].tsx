@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
-import Link from "next/link";
 
 import useSWR, { mutate } from "swr";
 
@@ -13,11 +12,12 @@ import { IssueService, IssueArchiveService } from "services/issue";
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
+import { AppLayout } from "layouts/app-layout";
 // components
 import { IssueDetailsSidebar, IssueMainContent } from "components/issues";
+import { ProjectArchivedIssueDetailsHeader } from "components/headers";
 // ui
-import { ArchiveIcon, Breadcrumbs, Loader } from "@plane/ui";
+import { ArchiveIcon, Loader } from "@plane/ui";
 // icons
 import { History } from "lucide-react";
 // types
@@ -25,8 +25,6 @@ import { IIssue } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS } from "constants/fetch-keys";
-// helper
-import { truncateText } from "helpers/string.helper";
 
 const defaultValues: Partial<IIssue> = {
   name: "",
@@ -143,30 +141,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
   };
 
   return (
-    <ProjectAuthorizationWrapper
-      breadcrumbs={
-        <Breadcrumbs onBack={() => router.back()}>
-          <Breadcrumbs.BreadcrumbItem
-            link={
-              <Link href={`/${workspaceSlug}/projects/${projectId as string}/issues`}>
-                <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
-                  <p className="truncate">{`${truncateText(
-                    issueDetails?.project_detail.name ?? "Project",
-                    32
-                  )} Issues`}</p>
-                </a>
-              </Link>
-            }
-          />
-          <Breadcrumbs.BreadcrumbItem
-            title={`Issue ${issueDetails?.project_detail.identifier ?? "Project"}-${
-              issueDetails?.sequence_id ?? "..."
-            } Details`}
-            unshrinkTitle
-          />
-        </Breadcrumbs>
-      }
-    >
+    <AppLayout header={<ProjectArchivedIssueDetailsHeader />} withProjectWrapper>
       {issueDetails && projectId ? (
         <div className="flex h-full overflow-hidden">
           <div className="w-2/3 h-full overflow-y-auto space-y-2 divide-y-2 divide-custom-border-300 p-5">
@@ -217,7 +192,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
           </div>
         </Loader>
       )}
-    </ProjectAuthorizationWrapper>
+    </AppLayout>
   );
 };
 
