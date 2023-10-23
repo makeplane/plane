@@ -30,6 +30,7 @@ export interface IProjectViewIssuesStore {
 
   // actions
   updateIssueStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
+  deleteIssue: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
   fetchViewIssues: (
     workspaceSlug: string,
     projectId: string,
@@ -72,6 +73,7 @@ export class ProjectViewIssuesStore implements IProjectViewIssuesStore {
 
       // actions
       updateIssueStructure: action,
+      deleteIssue: action,
       fetchViewIssues: action,
 
       // computed
@@ -160,6 +162,42 @@ export class ProjectViewIssuesStore implements IProjectViewIssuesStore {
     }
     if (orderBy === "priority") {
       issues = sortArrayByPriority(issues as any, "priority");
+    }
+
+    runInAction(() => {
+      this.viewIssues = { ...this.viewIssues, [viewId]: { ...this.viewIssues[viewId], [issueType]: issues } };
+    });
+  };
+
+  deleteIssue = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
+    const viewId: string | null = this.rootStore.projectViews.viewId;
+    const issueType = this.rootStore.issue.getIssueType;
+    if (!viewId || !issueType) return null;
+
+    let issues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null =
+      this.getIssues;
+    if (!issues) return null;
+
+    if (issueType === "grouped" && group_id) {
+      issues = issues as IIssueGroupedStructure;
+      issues = {
+        ...issues,
+        [group_id]: issues[group_id].filter((i) => i?.id !== issue?.id),
+      };
+    }
+    if (issueType === "groupWithSubGroups" && group_id && sub_group_id) {
+      issues = issues as IIssueGroupWithSubGroupsStructure;
+      issues = {
+        ...issues,
+        [sub_group_id]: {
+          ...issues[sub_group_id],
+          [group_id]: issues[sub_group_id][group_id].filter((i) => i?.id !== issue?.id),
+        },
+      };
+    }
+    if (issueType === "ungrouped") {
+      issues = issues as IIssueUnGroupedStructure;
+      issues = issues.filter((i) => i?.id !== issue?.id);
     }
 
     runInAction(() => {

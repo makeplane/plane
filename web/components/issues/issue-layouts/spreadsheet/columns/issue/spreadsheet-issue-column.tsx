@@ -45,7 +45,7 @@ export const SpreadsheetIssuesColumn: React.FC<Props> = ({
   const { subIssues, isLoading } = useSubIssue(issue.project_detail.id, issue.id, isExpanded);
 
   return (
-    <div>
+    <>
       <IssueColumn
         issue={issue}
         projectId={projectId}
@@ -62,7 +62,7 @@ export const SpreadsheetIssuesColumn: React.FC<Props> = ({
         !isLoading &&
         subIssues &&
         subIssues.length > 0 &&
-        subIssues.map((subIssue: IIssue) => (
+        subIssues.map((subIssue) => (
           <SpreadsheetIssuesColumn
             key={subIssue.id}
             issue={subIssue}
@@ -75,6 +75,6 @@ export const SpreadsheetIssuesColumn: React.FC<Props> = ({
             nestingLevel={nestingLevel + 1}
           />
         ))}
-    </div>
+    </>
   );
 };

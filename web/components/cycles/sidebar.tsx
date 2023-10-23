@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
 import { useForm } from "react-hook-form";
-// headless ui
 import { Disclosure, Popover, Transition } from "@headlessui/react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { CycleService } from "services/cycle.service";
 // hooks
@@ -28,32 +30,39 @@ import {
   AlertCircle,
 } from "lucide-react";
 // helpers
-import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
-import { isDateGreaterThanToday, renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-time.helper";
+import { capitalizeFirstLetter, copyUrlToClipboard } from "helpers/string.helper";
+import {
+  getDateRangeStatus,
+  isDateGreaterThanToday,
+  renderDateFormat,
+  renderShortDateWithYearFormat,
+} from "helpers/date-time.helper";
 // types
-import { IUser, ICycle } from "types";
+import { ICycle } from "types";
 // fetch-keys
 import { CYCLE_DETAILS } from "constants/fetch-keys";
 
 type Props = {
-  cycle: ICycle | undefined;
   isOpen: boolean;
-  cycleStatus: string;
-  isCompleted: boolean;
-  user: IUser | undefined;
+  cycleId: string;
 };
 
+// services
 const cycleService = new CycleService();
 
-export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatus, isCompleted, user }) => {
+// TODO: refactor the whole component
+export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
+  const { isOpen, cycleId } = props;
+
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId } = router.query as {
-    workspaceSlug: string;
-    projectId: string;
-    cycleId: string;
-  };
+  const { workspaceSlug, projectId } = router.query;
+
+  const { user: userStore, cycle: cycleDetailsStore } = useMobxStore();
+
+  const user = userStore.currentUser ?? undefined;
+  const cycleDetails = cycleDetailsStore.cycle_details[cycleId] ?? undefined;
 
   const { setToastAlert } = useToast();
 
@@ -78,9 +87,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
   };
 
   const handleCopyText = () => {
-    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-
-    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/cycles/${cycle?.id}`)
+    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`)
       .then(() => {
         setToastAlert({
           type: "success",
@@ -96,11 +103,11 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
   };
 
   useEffect(() => {
-    if (cycle)
+    if (cycleDetails)
       reset({
-        ...cycle,
+        ...cycleDetails,
       });
-  }, [cycle, reset]);
+  }, [cycleDetails, reset]);
 
   const dateChecker = async (payload: any) => {
     try {
@@ -129,11 +136,11 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
         return;
       }
 
-      if (cycle?.start_date && cycle?.end_date) {
+      if (cycleDetails?.start_date && cycleDetails?.end_date) {
         const isDateValidForExistingCycle = await dateChecker({
           start_date: `${watch("start_date")}`,
           end_date: `${watch("end_date")}`,
-          cycle_id: cycle.id,
+          cycle_id: cycleDetails.id,
         });
 
         if (isDateValidForExistingCycle) {
@@ -203,11 +210,11 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
         return;
       }
 
-      if (cycle?.start_date && cycle?.end_date) {
+      if (cycleDetails?.start_date && cycleDetails?.end_date) {
         const isDateValidForExistingCycle = await dateChecker({
           start_date: `${watch("start_date")}`,
           end_date: `${watch("end_date")}`,
-          cycle_id: cycle.id,
+          cycle_id: cycleDetails.id,
         });
 
         if (isDateValidForExistingCycle) {
@@ -258,29 +265,39 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
     }
   };
 
-  const isStartValid = new Date(`${cycle?.start_date}`) <= new Date();
-  const isEndValid = new Date(`${cycle?.end_date}`) >= new Date(`${cycle?.start_date}`);
+  const cycleStatus =
+    cycleDetails?.start_date && cycleDetails?.end_date
+      ? getDateRangeStatus(cycleDetails?.start_date, cycleDetails?.end_date)
+      : "draft";
+  const isCompleted = cycleStatus === "completed";
 
-  const progressPercentage = cycle ? Math.round((cycle.completed_issues / cycle.total_issues) * 100) : null;
+  const isStartValid = new Date(`${cycleDetails?.start_date}`) <= new Date();
+  const isEndValid = new Date(`${cycleDetails?.end_date}`) >= new Date(`${cycleDetails?.start_date}`);
+
+  const progressPercentage = cycleDetails
+    ? Math.round((cycleDetails.completed_issues / cycleDetails.total_issues) * 100)
+    : null;
+
+  if (!cycleDetails) return null;
 
   return (
     <>
-      {cycle && (
+      {cycleDetails && workspaceSlug && projectId && (
         <CycleDeleteModal
-          cycle={cycle}
+          cycle={cycleDetails}
           modal={cycleDeleteModal}
           modalClose={() => setCycleDeleteModal(false)}
           onSubmit={() => {}}
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={projectId.toString()}
         />
       )}
       <div
-        className={`fixed top-[66px] z-20 ${
+        className={`absolute top-0 z-20 ${
           isOpen ? "right-0" : "-right-[24rem]"
-        } h-full w-[24rem] overflow-y-auto border-l border-custom-border-200 bg-custom-sidebar-background-100 pt-5 pb-10 duration-300`}
+        } h-full w-[24rem] overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 pt-5 pb-10 duration-300`}
       >
-        {cycle ? (
+        {cycleDetails ? (
           <>
             <div className="flex flex-col items-start justify-center">
               <div className="flex gap-2.5 px-5 text-sm">
@@ -296,13 +313,13 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
                         <Popover.Button
                           disabled={isCompleted ?? false}
                           className={`group flex h-full items-center gap-2 whitespace-nowrap rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 px-2 py-1 text-xs ${
-                            cycle.start_date ? "" : "text-custom-text-200"
+                            cycleDetails.start_date ? "" : "text-custom-text-200"
                           }`}
                         >
                           <CalendarDays className="h-3 w-3" />
                           <span>
                             {renderShortDateWithYearFormat(
-                              new Date(`${watch("start_date") ? watch("start_date") : cycle?.start_date}`),
+                              new Date(`${watch("start_date") ? watch("start_date") : cycleDetails?.start_date}`),
                               "Start date"
                             )}
                           </span>
@@ -319,7 +336,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
                         >
                           <Popover.Panel className="absolute top-10 -right-5 z-20  transform overflow-hidden">
                             <CustomRangeDatePicker
-                              value={watch("start_date") ? watch("start_date") : cycle?.start_date}
+                              value={watch("start_date") ? watch("start_date") : cycleDetails?.start_date}
                               onChange={(val) => {
                                 if (val) {
                                   handleStartDateChange(val);
@@ -344,14 +361,14 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
                         <Popover.Button
                           disabled={isCompleted ?? false}
                           className={`group flex items-center gap-2 whitespace-nowrap rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 px-2 py-1 text-xs ${
-                            cycle.end_date ? "" : "text-custom-text-200"
+                            cycleDetails.end_date ? "" : "text-custom-text-200"
                           }`}
                         >
                           <CalendarDays className="h-3 w-3" />
 
                           <span>
                             {renderShortDateWithYearFormat(
-                              new Date(`${watch("end_date") ? watch("end_date") : cycle?.end_date}`),
+                              new Date(`${watch("end_date") ? watch("end_date") : cycleDetails?.end_date}`),
                               "End date"
                             )}
                           </span>
@@ -368,7 +385,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
                         >
                           <Popover.Panel className="absolute top-10 -right-5 z-20 transform overflow-hidden">
                             <CustomRangeDatePicker
-                              value={watch("end_date") ? watch("end_date") : cycle?.end_date}
+                              value={watch("end_date") ? watch("end_date") : cycleDetails?.end_date}
                               onChange={(val) => {
                                 if (val) {
                                   handleEndDateChange(val);
@@ -391,7 +408,9 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
                 <div className="flex w-full flex-col items-start justify-start gap-2">
                   <div className="flex w-full items-start justify-between gap-2">
                     <div className="max-w-[300px]">
-                      <h4 className="text-xl font-semibold text-custom-text-100 break-words w-full">{cycle.name}</h4>
+                      <h4 className="text-xl font-semibold text-custom-text-100 break-words w-full">
+                        {cycleDetails.name}
+                      </h4>
                     </div>
                     <CustomMenu width="lg" ellipsis>
                       {!isCompleted && (
@@ -412,7 +431,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
                   </div>
 
                   <span className="whitespace-normal text-sm leading-5 text-custom-text-200 break-words w-full">
-                    {cycle.description}
+                    {cycleDetails.description}
                   </span>
                 </div>
 
@@ -424,20 +443,20 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
                     </div>
 
                     <div className="flex items-center gap-2.5">
-                      {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
+                      {cycleDetails.owned_by.avatar && cycleDetails.owned_by.avatar !== "" ? (
                         <img
-                          src={cycle.owned_by.avatar}
+                          src={cycleDetails.owned_by.avatar}
                           height={12}
                           width={12}
                           className="rounded-full"
-                          alt={cycle.owned_by.display_name}
+                          alt={cycleDetails.owned_by.display_name}
                         />
                       ) : (
                         <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-800 capitalize  text-white">
-                          {cycle.owned_by.display_name.charAt(0)}
+                          {cycleDetails.owned_by.display_name.charAt(0)}
                         </span>
                       )}
-                      <span className="text-custom-text-200">{cycle.owned_by.display_name}</span>
+                      <span className="text-custom-text-200">{cycleDetails.owned_by.display_name}</span>
                     </div>
                   </div>
 
@@ -449,9 +468,9 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
 
                     <div className="flex items-center gap-2.5 text-custom-text-200">
                       <span className="h-4 w-4">
-                        <ProgressBar value={cycle.completed_issues} maxValue={cycle.total_issues} />
+                        <ProgressBar value={cycleDetails.completed_issues} maxValue={cycleDetails.total_issues} />
                       </span>
-                      {cycle.completed_issues}/{cycle.total_issues}
+                      {cycleDetails.completed_issues}/{cycleDetails.total_issues}
                     </div>
                   </div>
                 </div>
@@ -498,7 +517,8 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
                                 </span>
                                 <span>
                                   Pending Issues -{" "}
-                                  {cycle.total_issues - (cycle.completed_issues + cycle.cancelled_issues)}
+                                  {cycleDetails.total_issues -
+                                    (cycleDetails.completed_issues + cycleDetails.cancelled_issues)}
                                 </span>
                               </div>
 
@@ -515,10 +535,10 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
                             </div>
                             <div className="relative">
                               <ProgressChart
-                                distribution={cycle.distribution.completion_chart}
-                                startDate={cycle.start_date ?? ""}
-                                endDate={cycle.end_date ?? ""}
-                                totalIssues={cycle.total_issues}
+                                distribution={cycleDetails.distribution.completion_chart}
+                                startDate={cycleDetails.start_date ?? ""}
+                                endDate={cycleDetails.end_date ?? ""}
+                                totalIssues={cycleDetails.total_issues}
                               />
                             </div>
                           </div>
@@ -540,7 +560,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
                         <span className="font-medium text-custom-text-200">Other Information</span>
                       </div>
 
-                      {cycle.total_issues > 0 ? (
+                      {cycleDetails.total_issues > 0 ? (
                         <Disclosure.Button>
                           <ChevronDown className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`} aria-hidden="true" />
                         </Disclosure.Button>
@@ -555,18 +575,18 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
                     </div>
                     <Transition show={open}>
                       <Disclosure.Panel>
-                        {cycle.total_issues > 0 ? (
+                        {cycleDetails.total_issues > 0 ? (
                           <div className="h-full w-full py-4">
                             <SidebarProgressStats
-                              distribution={cycle.distribution}
+                              distribution={cycleDetails.distribution}
                               groupedIssues={{
-                                backlog: cycle.backlog_issues,
-                                unstarted: cycle.unstarted_issues,
-                                started: cycle.started_issues,
-                                completed: cycle.completed_issues,
-                                cancelled: cycle.cancelled_issues,
+                                backlog: cycleDetails.backlog_issues,
+                                unstarted: cycleDetails.unstarted_issues,
+                                started: cycleDetails.started_issues,
+                                completed: cycleDetails.completed_issues,
+                                cancelled: cycleDetails.cancelled_issues,
                               }}
-                              totalIssues={cycle.total_issues}
+                              totalIssues={cycleDetails.total_issues}
                             />
                           </div>
                         ) : (
@@ -595,4 +615,4 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
       </div>
     </>
   );
-};
+});

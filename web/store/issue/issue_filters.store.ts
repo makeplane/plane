@@ -123,7 +123,7 @@ export class IssueFilterStore implements IIssueFilterStore {
       labels: this.userFilters?.labels || undefined,
       start_date: this.userFilters?.start_date || undefined,
       target_date: this.userFilters?.target_date || undefined,
-      group_by: this.userDisplayFilters?.group_by || "state",
+      group_by: this.userDisplayFilters?.group_by || undefined,
       order_by: this.userDisplayFilters?.order_by || "-created_at",
       sub_group_by: this.userDisplayFilters?.sub_group_by || undefined,
       type: this.userDisplayFilters?.type || undefined,
@@ -217,7 +217,7 @@ export class IssueFilterStore implements IIssueFilterStore {
         this.userDisplayProperties = newProperties;
       });
 
-      await this.issueService.patchIssueDisplayProperties(workspaceSlug, projectId, newProperties);
+      await this.issueService.updateIssueDisplayProperties(workspaceSlug, projectId, newProperties);
     } catch (error) {
       this.fetchUserProjectFilters(workspaceSlug, projectId);
 
@@ -225,7 +225,7 @@ export class IssueFilterStore implements IIssueFilterStore {
         this.error = error;
       });
 
-      console.log("Failed to update user filters in issue filter store", error);
+      console.log("Failed to update user display properties in issue filter store", error);
     }
   };
 }

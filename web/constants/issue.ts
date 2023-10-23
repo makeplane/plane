@@ -393,3 +393,25 @@ export const getValueFromObject = (object: Object, key: string): string | number
   for (const _key of keys) value = value[_key];
   return value;
 };
+
+// issue reactions
+export const issueReactionEmojis = ["128077", "128078", "128516", "128165", "128533", "129505", "9992", "128064"];
+
+export const groupReactionEmojis = (reactions: any) => {
+  let _groupedEmojis: any = {};
+
+  issueReactionEmojis.map((_r) => {
+    _groupedEmojis = { ..._groupedEmojis, [_r]: [] };
+  });
+
+  if (reactions && reactions.length > 0) {
+    reactions.map((_reaction: any) => {
+      _groupedEmojis = {
+        ..._groupedEmojis,
+        [_reaction.reaction]: [..._groupedEmojis[_reaction.reaction], _reaction],
+      };
+    });
+  }
+
+  return _groupedEmojis;
+};

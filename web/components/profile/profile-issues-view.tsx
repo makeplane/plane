@@ -230,15 +230,16 @@ export const ProfileIssuesView = () => {
           mutateProfileIssues();
         }}
       />
-      <DeleteIssueModal
-        handleClose={() => setDeleteIssueModal(false)}
-        isOpen={deleteIssueModal}
-        data={issueToDelete}
-        user={user}
-        onSubmit={async () => {
-          mutateProfileIssues();
-        }}
-      />
+      {issueToDelete && (
+        <DeleteIssueModal
+          handleClose={() => setDeleteIssueModal(false)}
+          isOpen={deleteIssueModal}
+          data={issueToDelete}
+          onSubmit={async () => {
+            mutateProfileIssues();
+          }}
+        />
+      )}
       {areFiltersApplied && (
         <>
           <div className="flex items-center justify-between gap-2 px-5 pt-3 pb-0">

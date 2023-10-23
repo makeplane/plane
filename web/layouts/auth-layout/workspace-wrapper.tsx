@@ -19,6 +19,8 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // fetching all workspaces
+  useSWR(`USER_WORKSPACES_LIST`, () => workspaceStore.fetchWorkspaces());
   // fetching user workspace information
   useSWR(
     workspaceSlug ? `WORKSPACE_MEMBERS_ME_${workspaceSlug}` : null,

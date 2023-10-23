@@ -17,8 +17,6 @@ import { Avatar } from "components/ui";
 import { Loader } from "@plane/ui";
 // icons
 import { Check, LogOut, Plus, Settings, UserCircle2 } from "lucide-react";
-// helpers
-import { truncateText } from "helpers/string.helper";
 // types
 import { IWorkspace } from "types";
 
@@ -104,15 +102,15 @@ export const WorkspaceSidebarDropdown = observer(() => {
   };
 
   return (
-    <div className="inline-flex items-center gap-2 px-4 pt-4">
-      <Menu as="div" className="relative col-span-4 inline-block w-full text-left">
-        <Menu.Button className="text-custom-sidebar-text-200 flex w-full items-center rounded-sm text-sm font-medium focus:outline-none">
+    <div className="flex items-center gap-2 px-4 pt-4">
+      <Menu as="div" className="relative col-span-4 text-left flex-grow truncate">
+        <Menu.Button className="text-custom-sidebar-text-200 rounded-sm text-sm font-medium focus:outline-none w-full truncate">
           <div
-            className={`flex w-full items-center gap-x-2 rounded-sm bg-custom-sidebar-background-80 p-1 ${
+            className={`flex items-center gap-x-2 rounded-sm bg-custom-sidebar-background-80 p-1 truncate ${
               themeStore.sidebarCollapsed ? "justify-center" : ""
             }`}
           >
-            <div className="relative grid h-6 w-6 place-items-center rounded bg-gray-700 uppercase text-white">
+            <div className="relative grid h-6 w-6 place-items-center rounded bg-gray-700 uppercase text-white flex-shrink-0">
               {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
                 <img
                   src={activeWorkspace.logo}
@@ -125,8 +123,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
             </div>
 
             {!themeStore.sidebarCollapsed && (
-              <h4 className="text-custom-text-100">
-                {activeWorkspace?.name ? truncateText(activeWorkspace.name, 14) : "Loading..."}
+              <h4 className="text-custom-text-100 truncate">
+                {activeWorkspace?.name ? activeWorkspace.name : "Loading..."}
               </h4>
             )}
           </div>
@@ -158,8 +156,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
                             onClick={() => handleWorkspaceNavigation(workspace)}
                             className="flex w-full items-center justify-between gap-1 p-1 rounded-md text-sm text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-80"
                           >
-                            <div className="flex items-center justify-start gap-2.5">
-                              <span className="relative flex h-6 w-6 items-center justify-center rounded bg-gray-700 p-2 text-xs uppercase text-white">
+                            <div className="flex items-center justify-start gap-2.5 truncate">
+                              <span className="relative flex h-6 w-6 items-center justify-center rounded bg-gray-700 p-2 text-xs uppercase text-white flex-shrink-0">
                                 {workspace?.logo && workspace.logo !== "" ? (
                                   <img
                                     src={workspace.logo}
@@ -172,18 +170,18 @@ export const WorkspaceSidebarDropdown = observer(() => {
                               </span>
 
                               <h5
-                                className={`text-sm ${workspaceSlug === workspace.slug ? "" : "text-custom-text-200"}`}
+                                className={`text-sm truncate ${
+                                  workspaceSlug === workspace.slug ? "" : "text-custom-text-200"
+                                }`}
                               >
-                                {truncateText(workspace.name, 18)}
+                                {workspace.name}
                               </h5>
                             </div>
-                            <span className="p-1">
-                              <Check
-                                className={`h-3 w-3.5 text-custom-sidebar-text-100 ${
-                                  workspace.id === activeWorkspace?.id ? "opacity-100" : "opacity-0"
-                                }`}
-                              />
-                            </span>
+                            {workspace.id === activeWorkspace?.id && (
+                              <span className="p-1 flex-shrink-0">
+                                <Check className="h-3 w-3.5 text-custom-sidebar-text-100" />
+                              </span>
+                            )}
                           </button>
                         )}
                       </Menu.Item>

@@ -11,11 +11,16 @@ import { renderDateFormat } from "helpers/date-time.helper";
 import { IIssueGroupedStructure } from "store/issue";
 // constants
 import { MONTHS_LIST } from "constants/calendar";
+import { IIssue } from "types";
 
-type Props = { date: ICalendarDate; issues: IIssueGroupedStructure | null };
+type Props = {
+  date: ICalendarDate;
+  issues: IIssueGroupedStructure | null;
+  quickActions: (issue: IIssue) => React.ReactNode;
+};
 
 export const CalendarDayTile: React.FC<Props> = observer((props) => {
-  const { date, issues } = props;
+  const { date, issues, quickActions } = props;
 
   const { issueFilter: issueFilterStore } = useMobxStore();
 
@@ -48,7 +53,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
               {date.date.getDate() === 1 && MONTHS_LIST[date.date.getMonth() + 1].shortTitle + " "}
               {date.date.getDate()}
             </div>
-            <CalendarIssueBlocks issues={issuesList} />
+            <CalendarIssueBlocks issues={issuesList} quickActions={quickActions} />
             {provided.placeholder}
           </>
         </div>

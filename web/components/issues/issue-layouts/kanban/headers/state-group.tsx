@@ -1,14 +1,13 @@
-// mobx
+import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // components
 import { HeaderGroupByCard } from "./group-by-card";
 import { HeaderSubGroupByCard } from "./sub-group-by-card";
 import { StateGroupIcon } from "@plane/ui";
-// constants
-import { issueStateGroupByKey } from "constants/issue";
 
 export interface IStateGroupHeader {
   column_id: string;
+  column_value: any;
   sub_group_by: string | null;
   group_by: string | null;
   header_type: "group_by" | "sub_group_by";
@@ -23,37 +22,44 @@ export const Icon = ({ stateGroup, color }: { stateGroup: any; color?: any }) =>
   </div>
 );
 
-export const StateGroupHeader: React.FC<IStateGroupHeader> = observer(
-  ({ column_id, sub_group_by, group_by, header_type, issues_count, kanBanToggle, handleKanBanToggle }) => {
-    const stateGroup = column_id && issueStateGroupByKey(column_id);
+export const StateGroupHeader: FC<IStateGroupHeader> = observer((props) => {
+  const {
+    column_id,
+    column_value,
+    sub_group_by,
+    group_by,
+    header_type,
+    issues_count,
+    kanBanToggle,
+    handleKanBanToggle,
+  } = props;
 
-    console.log("stateGroup", stateGroup);
+  const stateGroup = column_value || null;
 
-    return (
-      <>
-        {stateGroup &&
-          (sub_group_by && header_type === "sub_group_by" ? (
-            <HeaderSubGroupByCard
-              column_id={column_id}
-              icon={<Icon stateGroup={stateGroup?.key} />}
-              title={stateGroup?.key || ""}
-              count={issues_count}
-              kanBanToggle={kanBanToggle}
-              handleKanBanToggle={handleKanBanToggle}
-            />
-          ) : (
-            <HeaderGroupByCard
-              sub_group_by={sub_group_by}
-              group_by={group_by}
-              column_id={column_id}
-              icon={<Icon stateGroup={stateGroup?.key} />}
-              title={stateGroup?.key || ""}
-              count={issues_count}
-              kanBanToggle={kanBanToggle}
-              handleKanBanToggle={handleKanBanToggle}
-            />
-          ))}
-      </>
-    );
-  }
-);
+  return (
+    <>
+      {stateGroup &&
+        (sub_group_by && header_type === "sub_group_by" ? (
+          <HeaderSubGroupByCard
+            column_id={column_id}
+            icon={<Icon stateGroup={stateGroup?.key} />}
+            title={stateGroup?.key || ""}
+            count={issues_count}
+            kanBanToggle={kanBanToggle}
+            handleKanBanToggle={handleKanBanToggle}
+          />
+        ) : (
+          <HeaderGroupByCard
+            sub_group_by={sub_group_by}
+            group_by={group_by}
+            column_id={column_id}
+            icon={<Icon stateGroup={stateGroup?.key} />}
+            title={stateGroup?.key || ""}
+            count={issues_count}
+            kanBanToggle={kanBanToggle}
+            handleKanBanToggle={handleKanBanToggle}
+          />
+        ))}
+    </>
+  );
+});
