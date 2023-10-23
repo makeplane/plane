@@ -3,8 +3,7 @@ import Link from "next/link";
 // hooks
 import useToast from "hooks/use-toast";
 // components
-import { CycleCreateEditModal } from "./cycle-create-edit-modal";
-import { CycleDeleteModal } from "./cycle-delete-modal";
+import { CycleCreateUpdateModal, CycleDeleteModal } from "components/cycles";
 // ui
 import { CustomMenu, RadialProgressBar, Tooltip, LinearProgressIndicator, ContrastIcon, RunningIcon } from "@plane/ui";
 // icons
@@ -66,19 +65,14 @@ const stateGroups = [
 
 export const CyclesListItem: FC<TCyclesListItem> = (props) => {
   const { cycle, workspaceSlug, projectId } = props;
-
-  const [updateModal, setUpdateModal] = useState(false);
-  const updateModalCallback = () => {};
-
-  const [deleteModal, setDeleteModal] = useState(false);
-  const deleteModalCallback = () => {};
-
   // store
   const { cycle: cycleStore } = useMobxStore();
-
   // toast
   const { setToastAlert } = useToast();
-
+  // states
+  const [updateModal, setUpdateModal] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
+  // computed
   const cycleStatus = getDateRangeStatus(cycle.start_date, cycle.end_date);
   const isCompleted = cycleStatus === "completed";
   const endDate = new Date(cycle.end_date ?? "");
@@ -347,20 +341,18 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
         </div>
       </div>
 
-      <CycleCreateEditModal
-        cycle={cycle}
-        modal={updateModal}
-        modalClose={() => setUpdateModal(false)}
-        onSubmit={updateModalCallback}
+      <CycleCreateUpdateModal
+        data={cycle}
+        isOpen={updateModal}
+        handleClose={() => setUpdateModal(false)}
         workspaceSlug={workspaceSlug}
         projectId={projectId}
       />
 
       <CycleDeleteModal
         cycle={cycle}
-        modal={deleteModal}
-        modalClose={() => setDeleteModal(false)}
-        onSubmit={deleteModalCallback}
+        isOpen={deleteModal}
+        handleClose={() => setDeleteModal(false)}
         workspaceSlug={workspaceSlug}
         projectId={projectId}
       />
