@@ -1,13 +1,14 @@
 import { observable, action, computed, makeObservable, runInAction, autorun } from "mobx";
 // store
 import { RootStore } from "../root";
-// types
-import { IIssue } from "types";
 // services
 import { CycleService } from "services/cycle.service";
 import { IssueService } from "services/issue";
 // constants
 import { sortArrayByDate, sortArrayByPriority } from "constants/kanban-helpers";
+// types
+import { IIssue } from "types";
+import { IBlockUpdateData } from "components/gantt-chart";
 
 export type IIssueType = "grouped" | "groupWithSubGroups" | "ungrouped";
 export type IIssueGroupedStructure = { [group_id: string]: IIssue[] };
@@ -35,6 +36,7 @@ export interface ICycleIssueStore {
   // action
   fetchIssues: (workspaceSlug: string, projectId: string, cycleId: string) => Promise<any>;
   updateIssueStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
+  updateGanttIssueStructure: (workspaceSlug: string, cycleId: string, issue: IIssue, payload: IBlockUpdateData) => void;
   deleteIssue: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
   addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => void;
   removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, bridgeId: string) => void;
@@ -74,6 +76,7 @@ export class CycleIssueStore implements ICycleIssueStore {
       // actions
       fetchIssues: action,
       updateIssueStructure: action,
+      updateGanttIssueStructure: action,
       deleteIssue: action,
       addIssueToCycle: action,
       removeIssueFromCycle: action,
@@ -167,6 +170,50 @@ export class CycleIssueStore implements ICycleIssueStore {
     runInAction(() => {
       this.issues = { ...this.issues, [cycleId]: { ...this.issues[cycleId], [issueType]: issues } };
     });
+  };
+
+  updateGanttIssueStructure = async (
+    workspaceSlug: string,
+    cycleId: string,
+    issue: IIssue,
+    payload: IBlockUpdateData
+  ) => {
+    if (!issue || !workspaceSlug) return;
+
+    const issues = this.getIssues as IIssueUnGroupedStructure;
+
+    const newIssues = issues.map((i) => ({
+      ...i,
+      ...(i.id === issue.id
+        ? {
+            sort_order: payload.sort_order?.newSortOrder ?? i.sort_order,
+            start_date: payload.start_date,
+            target_date: payload.target_date,
+          }
+        : {}),
+    }));
+
+    if (payload.sort_order) {
+      const removedElement = newIssues.splice(payload.sort_order.sourceIndex, 1)[0];
+      removedElement.sort_order = payload.sort_order.newSortOrder;
+      newIssues.splice(payload.sort_order.destinationIndex, 0, removedElement);
+    }
+
+    runInAction(() => {
+      this.issues = {
+        ...this.issues,
+        [cycleId]: {
+          ...this.issues[cycleId],
+          ungrouped: newIssues,
+        },
+      };
+    });
+
+    const newPayload: any = { ...payload };
+
+    if (newPayload.sort_order && payload.sort_order) newPayload.sort_order = payload.sort_order.newSortOrder;
+
+    this.rootStore.issueDetail.updateIssue(workspaceSlug, issue.project, issue.id, newPayload);
   };
 
   deleteIssue = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
