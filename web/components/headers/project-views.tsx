@@ -1,7 +1,10 @@
-import { FC, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
-// icons
-import { ArrowLeft, Link, Plus } from "lucide-react";
+import Link from "next/link";
+import { observer } from "mobx-react-lite";
+import { ArrowLeft, Plus } from "lucide-react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CreateUpdateProjectViewModal } from "components/views";
 // components
@@ -11,17 +14,19 @@ import { PrimaryButton } from "components/ui";
 // helpers
 import { truncateText } from "helpers/string.helper";
 
-interface IProjectViewsHeader {
-  title: string | undefined;
-}
-
-export const ProjectViewsHeader: FC<IProjectViewsHeader> = (props) => {
-  const { title } = props;
+export const ProjectViewsHeader: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // states
   const [createViewModal, setCreateViewModal] = useState(false);
+
+  const { project: projectStore } = useMobxStore();
+
+  const projectDetails =
+    workspaceSlug && projectId
+      ? projectStore.getProjectById(workspaceSlug.toString(), projectId.toString())
+      : undefined;
 
   return (
     <>
@@ -43,7 +48,7 @@ export const ProjectViewsHeader: FC<IProjectViewsHeader> = (props) => {
               className="grid h-8 w-8 place-items-center rounded border border-custom-border-200"
               onClick={() => router.back()}
             >
-              <ArrowLeft fontSize={14} strokeWidth={2} />
+              <ArrowLeft className="h-3 w-3" strokeWidth={2} />
             </button>
           </div>
           <div>
@@ -57,20 +62,13 @@ export const ProjectViewsHeader: FC<IProjectViewsHeader> = (props) => {
                   </Link>
                 }
               />
-              <BreadcrumbItem title={`${truncateText(title ?? "Project", 32)} Cycles`} />
+              <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Views`} />
             </Breadcrumbs>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-shrink-0">
           <div>
-            <PrimaryButton
-              type="button"
-              className="flex items-center gap-2"
-              onClick={() => {
-                const e = new KeyboardEvent("keydown", { key: "v" });
-                document.dispatchEvent(e);
-              }}
-            >
+            <PrimaryButton type="button" className="flex items-center gap-2" onClick={() => setCreateViewModal(true)}>
               <Plus size={14} strokeWidth={2} />
               Create View
             </PrimaryButton>
@@ -79,4 +77,4 @@ export const ProjectViewsHeader: FC<IProjectViewsHeader> = (props) => {
       </div>
     </>
   );
-};
+});
