@@ -6,7 +6,7 @@ import { ProjectViewLayoutRoot } from "components/issues";
 import { ProjectViewIssueHeader } from "components/headers";
 
 const SingleView: React.FC = () => (
-  <AppLayout header={<ProjectViewIssueHeader />}>
+  <AppLayout header={<ProjectViewIssueHeader />} withProjectWrapper>
     <ProjectViewLayoutRoot />
   </AppLayout>
 );
