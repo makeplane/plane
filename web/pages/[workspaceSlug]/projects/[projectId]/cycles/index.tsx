@@ -10,8 +10,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { AppLayout } from "layouts/app-layout";
 // components
 import { CyclesHeader } from "components/headers";
-import { CyclesView, ActiveCycleDetails } from "components/cycles";
-import { CycleCreateEditModal } from "components/cycles/cycle-create-edit-modal";
+import { CyclesView, ActiveCycleDetails, CycleCreateUpdateModal } from "components/cycles";
 // ui
 import { EmptyState } from "components/common";
 // images
@@ -26,15 +25,12 @@ import { setLocalStorage, getLocalStorage } from "lib/local-storage";
 
 const ProjectCyclesPage: NextPage = observer(() => {
   const [createModal, setCreateModal] = useState(false);
-  const createOnSubmit = () => {};
-
   // store
   const { project: projectStore, cycle: cycleStore } = useMobxStore();
-
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
-
+  // fetching project details
   useSWR(
     workspaceSlug && projectId ? `PROJECT_DETAILS_${projectId}` : null,
     workspaceSlug && projectId ? () => projectStore.fetchProjectDetails(workspaceSlug, projectId) : null
@@ -84,14 +80,12 @@ const ProjectCyclesPage: NextPage = observer(() => {
 
   return (
     <AppLayout header={<CyclesHeader name={projectDetails?.name} />} withProjectWrapper>
-      <CycleCreateEditModal
+      <CycleCreateUpdateModal
         workspaceSlug={workspaceSlug}
         projectId={projectId}
-        modal={createModal}
-        modalClose={() => setCreateModal(false)}
-        onSubmit={createOnSubmit}
+        isOpen={createModal}
+        handleClose={() => setCreateModal(false)}
       />
-
       {projectDetails?.total_cycles === 0 ? (
         <div className="h-full grid place-items-center">
           <EmptyState

@@ -13,7 +13,7 @@ import useToast from "hooks/use-toast";
 // components
 import { SidebarProgressStats } from "components/core";
 import ProgressChart from "components/core/sidebar/progress-chart";
-import { CycleDeleteModal } from "components/cycles/cycle-delete-modal";
+import { CycleDeleteModal } from "components/cycles/delete-modal";
 // ui
 import { CustomRangeDatePicker } from "components/ui";
 import { CustomMenu, Loader, ProgressBar } from "@plane/ui";
@@ -285,9 +285,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
       {cycleDetails && workspaceSlug && projectId && (
         <CycleDeleteModal
           cycle={cycleDetails}
-          modal={cycleDeleteModal}
-          modalClose={() => setCycleDeleteModal(false)}
-          onSubmit={() => {}}
+          isOpen={cycleDeleteModal}
+          handleClose={() => setCycleDeleteModal(false)}
           workspaceSlug={workspaceSlug.toString()}
           projectId={projectId.toString()}
         />
