@@ -49,8 +49,8 @@ export interface IModuleStore {
     data: Partial<IModule>
   ) => Promise<IModule>;
   deleteModule: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<void>;
-  addModuleToFavorites: (workspaceSlug: string, projectId: string, moduleId: string) => void;
-  removeModuleFromFavorites: (workspaceSlug: string, projectId: string, moduleId: string) => void;
+  addModuleToFavorites: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<void>;
+  removeModuleFromFavorites: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<void>;
   updateModuleGanttStructure: (
     workspaceSlug: string,
     projectId: string,

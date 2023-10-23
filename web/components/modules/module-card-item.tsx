@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { mutate } from "swr";
-// services
-import { ModuleService } from "services/module.service";
+import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -14,20 +14,18 @@ import { CustomMenu, Tooltip } from "@plane/ui";
 // icons
 import { CalendarDays, LinkIcon, Pencil, Star, Target, Trash2 } from "lucide-react";
 // helpers
-import { copyTextToClipboard, truncateText } from "helpers/string.helper";
+import { copyUrlToClipboard, truncateText } from "helpers/string.helper";
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
 import { IModule } from "types";
-// fetch-key
-import { MODULE_LIST } from "constants/fetch-keys";
 
 type Props = {
   module: IModule;
 };
 
-const moduleService = new ModuleService();
+export const ModuleCardItem: React.FC<Props> = observer((props) => {
+  const { module } = props;
 
-export const ModuleCardItem: React.FC<Props> = ({ module }) => {
   const [editModuleModal, setEditModuleModal] = useState(false);
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
 
@@ -36,48 +34,26 @@ export const ModuleCardItem: React.FC<Props> = ({ module }) => {
 
   const { setToastAlert } = useToast();
 
+  const { module: moduleStore } = useMobxStore();
+
   const completionPercentage = ((module.completed_issues + module.cancelled_issues) / module.total_issues) * 100;
 
   const handleAddToFavorites = () => {
-    if (!workspaceSlug || !projectId || !module) return;
+    if (!workspaceSlug || !projectId) return;
 
-    mutate<IModule[]>(
-      MODULE_LIST(projectId as string),
-      (prevData) =>
-        (prevData ?? []).map((m) => ({
-          ...m,
-          is_favorite: m.id === module.id ? true : m.is_favorite,
-        })),
-      false
-    );
-
-    moduleService
-      .addModuleToFavorites(workspaceSlug as string, projectId as string, {
-        module: module.id,
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't add the module to favorites. Please try again.",
-        });
+    moduleStore.addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), module.id).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Couldn't add the module to favorites. Please try again.",
       });
+    });
   };
 
   const handleRemoveFromFavorites = () => {
-    if (!workspaceSlug || !projectId || !module) return;
+    if (!workspaceSlug || !projectId) return;
 
-    mutate<IModule[]>(
-      MODULE_LIST(projectId as string),
-      (prevData) =>
-        (prevData ?? []).map((m) => ({
-          ...m,
-          is_favorite: m.id === module.id ? false : m.is_favorite,
-        })),
-      false
-    );
-
-    moduleService.removeModuleFromFavorites(workspaceSlug as string, projectId as string, module.id).catch(() => {
+    moduleStore.removeModuleFromFavorites(workspaceSlug.toString(), projectId.toString(), module.id).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -87,9 +63,7 @@ export const ModuleCardItem: React.FC<Props> = ({ module }) => {
   };
 
   const handleCopyText = () => {
-    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-
-    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/modules/${module.id}`).then(() => {
+    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/modules/${module.id}`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",
@@ -206,4 +180,4 @@ export const ModuleCardItem: React.FC<Props> = ({ module }) => {
       </div>
     </>
   );
-};
+});
