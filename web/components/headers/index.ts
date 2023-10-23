@@ -15,3 +15,4 @@ export * from "./project-settings";
 export * from "./workspace-settings";
 export * from "./pages";
 export * from "./project-draft-issues";
+export * from "./project-archived-issues";
