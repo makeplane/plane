@@ -2,13 +2,11 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
-
-// component
-import { Icon } from "components/ui";
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // icons
 import User from "public/user.png";
+import { Plus } from "lucide-react";
 // types
 import { IUser, IUserLite } from "types";
 // fetch-keys
@@ -20,7 +18,11 @@ type AvatarProps = {
   height?: string;
   width?: string;
   fontSize?: string;
+  showName?: boolean;
 };
+
+// services
+const workspaceService = new WorkspaceService();
 
 export const Avatar: React.FC<AvatarProps> = ({
   user,
@@ -28,6 +30,7 @@ export const Avatar: React.FC<AvatarProps> = ({
   height = "24px",
   width = "24px",
   fontSize = "12px",
+  showName,
 }) => (
   <div
     className={`relative rounded border-[0.5px] ${
@@ -66,6 +69,7 @@ export const Avatar: React.FC<AvatarProps> = ({
         {user?.display_name?.charAt(0)}
       </div>
     )}
+    {showName && <span>{user?.display_name ? user?.display_name : user?.first_name}</span>}
   </div>
 );
 
@@ -76,12 +80,7 @@ type AsigneesListProps = {
   showLength?: boolean;
 };
 
-export const AssigneesList: React.FC<AsigneesListProps> = ({
-  users,
-  userIds,
-  length = 3,
-  showLength = true,
-}) => {
+export const AssigneesList: React.FC<AsigneesListProps> = ({ users, userIds, length = 3, showLength = true }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -107,7 +106,7 @@ export const AssigneesList: React.FC<AsigneesListProps> = ({
           {users.length > length ? (
             <div className="-ml-3.5 relative h-6 w-6 rounded">
               <div className="flex items-center rounded bg-custom-background-80 text-xs capitalize h-6 w-6 text-custom-text-200 border-[0.5px] border-custom-border-300">
-                <Icon iconName="add" className="text-xs !leading-3 -mr-0.5" />
+                <Plus className="h-3 w-3 -mr-0.5" />
                 {users.length - length}
               </div>
             </div>
@@ -125,7 +124,7 @@ export const AssigneesList: React.FC<AsigneesListProps> = ({
             userIds.length > length ? (
               <div className="-ml-3.5 relative h-6 w-6 rounded">
                 <div className="flex items-center rounded bg-custom-background-80 text-xs capitalize h-6 w-6 text-custom-text-200 border-[0.5px] border-custom-border-300">
-                  <Icon iconName="add" className="text-xs !leading-3 -mr-0.5" />
+                  <Plus className="h-3 w-3 -mr-0.5" />
                   {userIds.length - length}
                 </div>
               </div>

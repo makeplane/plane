@@ -1,42 +1,28 @@
 import React from "react";
-
-import { useRouter } from "next/router";
-
-// services
-import trackEventServices from "services/track-event.service";
 // hooks
 import useEstimateOption from "hooks/use-estimate-option";
 // ui
-import { CustomSelect, Tooltip } from "components/ui";
+import { CustomSelect, Tooltip } from "@plane/ui";
 // icons
-import { PlayIcon } from "@heroicons/react/24/outline";
+import { Triangle } from "lucide-react";
 // types
-import { ICurrentUserResponse, IIssue } from "types";
+import { IIssue } from "types";
 
 type Props = {
   issue: IIssue;
-  partialUpdateIssue: (formData: Partial<IIssue>, issue: IIssue) => void;
-  position?: "left" | "right";
+  onChange: (data: number) => void;
   tooltipPosition?: "top" | "bottom";
-  selfPositioned?: boolean;
   customButton?: boolean;
-  user: ICurrentUserResponse | undefined;
-  isNotAllowed: boolean;
+  disabled: boolean;
 };
 
 export const ViewEstimateSelect: React.FC<Props> = ({
   issue,
-  partialUpdateIssue,
-  position = "left",
+  onChange,
   tooltipPosition = "top",
-  selfPositioned = false,
   customButton = false,
-  user,
-  isNotAllowed,
+  disabled,
 }) => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
   const { isEstimateActive, estimatePoints } = useEstimateOption(issue.estimate_point);
 
   const estimateValue = estimatePoints?.find((e) => e.key === issue.estimate_point)?.value;
@@ -44,7 +30,7 @@ export const ViewEstimateSelect: React.FC<Props> = ({
   const estimateLabels = (
     <Tooltip tooltipHeading="Estimate" tooltipContent={estimateValue} position={tooltipPosition}>
       <div className="flex items-center gap-1 text-custom-text-200">
-        <PlayIcon className="h-3.5 w-3.5 -rotate-90" />
+        <Triangle className="h-3 w-3" />
         {estimateValue ?? "None"}
       </div>
     </Tooltip>
@@ -55,33 +41,17 @@ export const ViewEstimateSelect: React.FC<Props> = ({
   return (
     <CustomSelect
       value={issue.estimate_point}
-      onChange={(val: number) => {
-        partialUpdateIssue({ estimate_point: val }, issue);
-        trackEventServices.trackIssuePartialPropertyUpdateEvent(
-          {
-            workspaceSlug,
-            workspaceId: issue.workspace,
-            projectId: issue.project_detail.id,
-            projectIdentifier: issue.project_detail.identifier,
-            projectName: issue.project_detail.name,
-            issueId: issue.id,
-          },
-          "ISSUE_PROPERTY_UPDATE_ESTIMATE",
-          user
-        );
-      }}
+      onChange={onChange}
       {...(customButton ? { customButton: estimateLabels } : { label: estimateLabels })}
       maxHeight="md"
       noChevron
-      disabled={isNotAllowed}
-      position={position}
-      selfPositioned={selfPositioned}
+      disabled={disabled}
       width="w-full min-w-[8rem]"
     >
       <CustomSelect.Option value={null}>
         <>
           <span>
-            <PlayIcon className="h-4 w-4 -rotate-90" />
+            <Triangle className="h-3 w-3" />
           </span>
           None
         </>
@@ -89,9 +59,7 @@ export const ViewEstimateSelect: React.FC<Props> = ({
       {estimatePoints?.map((estimate) => (
         <CustomSelect.Option key={estimate.id} value={estimate.key}>
           <>
-            <span>
-              <PlayIcon className="h-4 w-4 -rotate-90" />
-            </span>
+            <Triangle className="h-3 w-3" />
             {estimate.value}
           </>
         </CustomSelect.Option>

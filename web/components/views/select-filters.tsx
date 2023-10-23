@@ -1,19 +1,13 @@
 import { useState } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // services
-import stateService from "services/state.service";
-import projectService from "services/project.service";
-import issuesService from "services/issues.service";
-// components
-import { DateFilterModal } from "components/core";
+import { ProjectStateService, ProjectService } from "services/project";
+import { IssueLabelService } from "services/issue";
 // ui
 import { Avatar, MultiLevelDropdown } from "components/ui";
 // icons
-import { PriorityIcon, StateGroupIcon } from "components/icons";
+import { PriorityIcon, StateGroupIcon } from "@plane/ui";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 import { checkIfArraysHaveSameElements } from "helpers/array.helper";
@@ -32,12 +26,11 @@ type Props = {
   height?: "sm" | "md" | "rg" | "lg";
 };
 
-export const SelectFilters: React.FC<Props> = ({
-  filters,
-  onSelect,
-  direction = "right",
-  height = "md",
-}) => {
+const projectService = new ProjectService();
+const projectStateService = new ProjectStateService();
+const issueLabelService = new IssueLabelService();
+
+export const SelectFilters: React.FC<Props> = ({ filters, onSelect, direction = "right", height = "md" }) => {
   const [isDateFilterModalOpen, setIsDateFilterModalOpen] = useState(false);
   const [dateFilterType, setDateFilterType] = useState<{
     title: string;
@@ -53,7 +46,7 @@ export const SelectFilters: React.FC<Props> = ({
   const { data: states } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
+      ? () => projectStateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
   const statesList = getStatesList(states);
@@ -68,7 +61,7 @@ export const SelectFilters: React.FC<Props> = ({
   const { data: issueLabels } = useSWR(
     projectId ? PROJECT_ISSUE_LABELS(projectId.toString()) : null,
     workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId.toString())
+      ? () => issueLabelService.getProjectIssueLabels(workspaceSlug as string, projectId.toString())
       : null
   );
 
@@ -191,7 +184,7 @@ export const SelectFilters: React.FC<Props> = ({
             key: "start_date",
             value: option.value,
           },
-          selected: checkIfArraysHaveSameElements(filters?.start_date ?? [], option.value),
+          selected: checkIfArraysHaveSameElements(filters?.start_date ?? [], [option.value]),
         })),
         {
           id: "custom",
@@ -227,7 +220,7 @@ export const SelectFilters: React.FC<Props> = ({
             key: "target_date",
             value: option.value,
           },
-          selected: checkIfArraysHaveSameElements(filters?.target_date ?? [], option.value),
+          selected: checkIfArraysHaveSameElements(filters?.target_date ?? [], [option.value]),
         })),
         {
           id: "custom",
@@ -253,16 +246,6 @@ export const SelectFilters: React.FC<Props> = ({
   ];
   return (
     <>
-      {isDateFilterModalOpen && (
-        <DateFilterModal
-          title={dateFilterType.title}
-          field={dateFilterType.type}
-          filters={filters as IIssueFilterOptions}
-          handleClose={() => setIsDateFilterModalOpen(false)}
-          isOpen={isDateFilterModalOpen}
-          onSelect={onSelect}
-        />
-      )}
       <MultiLevelDropdown
         label="Filters"
         onSelect={onSelect}

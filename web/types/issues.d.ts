@@ -2,19 +2,13 @@ import { KeyedMutator } from "swr";
 import type {
   IState,
   IUser,
-  IProject,
   ICycle,
   IModule,
   IUserLite,
   IProjectLite,
   IWorkspaceLite,
   IStateLite,
-  TStateGroups,
   Properties,
-  IIssueFilterOptions,
-  TIssueGroupByOptions,
-  TIssueViewOptions,
-  TIssueOrderByOptions,
   IIssueDisplayFilterOptions,
 } from "types";
 

@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { KeyedMutator } from "swr";
 
 // services
-import modulesService from "services/modules.service";
+import { ModuleService } from "services/module.service";
 // hooks
 import useUser from "hooks/use-user";
 import useProjectDetails from "hooks/use-project-details";
@@ -19,6 +19,9 @@ type Props = {
   modules: IModule[];
   mutateModules: KeyedMutator<IModule[]>;
 };
+
+// services
+const moduleService = new ModuleService();
 
 export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules }) => {
   const router = useRouter();
@@ -54,25 +57,15 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules })
 
     const newPayload: any = { ...payload };
 
-    if (newPayload.sort_order && payload.sort_order)
-      newPayload.sort_order = payload.sort_order.newSortOrder;
+    if (newPayload.sort_order && payload.sort_order) newPayload.sort_order = payload.sort_order.newSortOrder;
 
-    modulesService.patchModule(
-      workspaceSlug.toString(),
-      module.project,
-      module.id,
-      newPayload,
-      user
-    );
+    moduleService.patchModule(workspaceSlug.toString(), module.project, module.id, newPayload, user);
   };
 
   const blockFormat = (blocks: IModule[]) =>
     blocks && blocks.length > 0
       ? blocks
-          .filter(
-            (b) =>
-              b.start_date && b.target_date && new Date(b.start_date) <= new Date(b.target_date)
-          )
+          .filter((b) => b.start_date && b.target_date && new Date(b.start_date) <= new Date(b.target_date))
           .map((block) => ({
             data: block,
             id: block.id,

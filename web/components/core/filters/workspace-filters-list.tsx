@@ -1,8 +1,7 @@
-import React from "react";
-
+import { FC } from "react";
 // icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import { PriorityIcon, StateGroupIcon } from "components/icons";
+import { X } from "lucide-react";
+import { PriorityIcon, StateGroupIcon } from "@plane/ui";
 // ui
 import { Avatar } from "components/ui";
 // helpers
@@ -10,13 +9,7 @@ import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
-import {
-  IIssueLabels,
-  IProject,
-  IUserLite,
-  IWorkspaceIssueFilterOptions,
-  TStateGroups,
-} from "types";
+import { IIssueLabels, IProject, IUserLite, IWorkspaceIssueFilterOptions, TStateGroups } from "types";
 // constants
 import { STATE_GROUP_COLORS } from "constants/state";
 
@@ -30,20 +23,12 @@ type Props = {
   project?: IProject[] | undefined;
 };
 
-export const WorkspaceFiltersList: React.FC<Props> = ({
-  filters,
-  setFilters,
-  clearAllFilters,
-  labels,
-  members,
-  stateGroup,
-  project,
-}) => {
+export const WorkspaceFiltersList: FC<Props> = (props) => {
+  const { filters, setFilters, clearAllFilters, labels, members, project } = props;
+
   if (!filters) return <></>;
 
-  const nullFilters = Object.keys(filters).filter(
-    (key) => filters[key as keyof IWorkspaceIssueFilterOptions] === null
-  );
+  const nullFilters = Object.keys(filters).filter((key) => filters[key as keyof IWorkspaceIssueFilterOptions] === null);
 
   return (
     <div className="flex flex-1 flex-wrap items-center gap-2 text-xs">
@@ -90,7 +75,7 @@ export const WorkspaceFiltersList: React.FC<Props> = ({
                                 })
                               }
                             >
-                              <XMarkIcon className="h-3 w-3" />
+                              <X className="h-3 w-3" />
                             </span>
                           </p>
                         );
@@ -123,7 +108,7 @@ export const WorkspaceFiltersList: React.FC<Props> = ({
                               })
                             }
                           >
-                            <XMarkIcon className="h-3 w-3" />
+                            <X className="h-3 w-3" />
                           </span>
                         </p>
                       ))
@@ -145,7 +130,7 @@ export const WorkspaceFiltersList: React.FC<Props> = ({
                                 })
                               }
                             >
-                              <XMarkIcon className="h-3 w-3" />
+                              <X className="h-3 w-3" />
                             </span>
                           </div>
                         );
@@ -169,7 +154,7 @@ export const WorkspaceFiltersList: React.FC<Props> = ({
                                 })
                               }
                             >
-                              <XMarkIcon className="h-3 w-3" />
+                              <X className="h-3 w-3" />
                             </span>
                           </div>
                         );
@@ -189,13 +174,11 @@ export const WorkspaceFiltersList: React.FC<Props> = ({
                               className="cursor-pointer"
                               onClick={() =>
                                 setFilters({
-                                  created_by: filters.created_by?.filter(
-                                    (p: any) => p !== memberId
-                                  ),
+                                  created_by: filters.created_by?.filter((p: any) => p !== memberId),
                                 })
                               }
                             >
-                              <XMarkIcon className="h-3 w-3" />
+                              <X className="h-3 w-3" />
                             </span>
                           </div>
                         );
@@ -230,7 +213,7 @@ export const WorkspaceFiltersList: React.FC<Props> = ({
                                 })
                               }
                             >
-                              <XMarkIcon
+                              <X
                                 className="h-3 w-3"
                                 style={{
                                   color: color,
@@ -263,7 +246,7 @@ export const WorkspaceFiltersList: React.FC<Props> = ({
                                 })
                               }
                             >
-                              <XMarkIcon className="h-3 w-3" />
+                              <X className="h-3 w-3" />
                             </span>
                           </div>
                         );
@@ -291,7 +274,7 @@ export const WorkspaceFiltersList: React.FC<Props> = ({
                                 })
                               }
                             >
-                              <XMarkIcon className="h-3 w-3" />
+                              <X className="h-3 w-3" />
                             </span>
                           </div>
                         );
@@ -313,7 +296,7 @@ export const WorkspaceFiltersList: React.FC<Props> = ({
                                 })
                               }
                             >
-                              <XMarkIcon className="h-3 w-3" />
+                              <X className="h-3 w-3" />
                             </span>
                           </p>
                         );
@@ -327,7 +310,7 @@ export const WorkspaceFiltersList: React.FC<Props> = ({
                       })
                     }
                   >
-                    <XMarkIcon className="h-3 w-3" />
+                    <X className="h-3 w-3" />
                   </button>
                 </div>
               </div>
@@ -342,7 +325,7 @@ export const WorkspaceFiltersList: React.FC<Props> = ({
                     })
                   }
                 >
-                  <XMarkIcon className="h-3 w-3" />
+                  <X className="h-3 w-3" />
                 </button>
               </div>
             )}
@@ -356,7 +339,7 @@ export const WorkspaceFiltersList: React.FC<Props> = ({
           className="flex items-center gap-x-1 rounded-full border border-custom-border-200 bg-custom-background-80 px-3 py-1.5 text-xs"
         >
           <span>Clear all filters</span>
-          <XMarkIcon className="h-3 w-3" />
+          <X className="h-3 w-3" />
         </button>
       )}
     </div>

@@ -1,70 +1,56 @@
 import React from "react";
-
 import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
-
 // services
-import projectService from "services/project.service";
-import trackEventServices, { MiscellaneousEventType } from "services/track-event.service";
+import { ProjectService } from "services/project";
+import { TrackEventService, MiscellaneousEventType } from "services/track_event.service";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectSettingLayout } from "layouts/setting-layout/project-setting-layout";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // components
-import { SettingsSidebar } from "components/project";
+import { ProjectSettingHeader } from "components/headers";
 // ui
-import { ToggleSwitch } from "components/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { ContrastIcon, DiceIcon, ToggleSwitch } from "@plane/ui";
 // icons
-import { ModuleIcon } from "components/icons";
 import { FileText, Inbox, Layers } from "lucide-react";
-import { ContrastOutlined } from "@mui/icons-material";
 // types
-import { IProject } from "types";
+import { IProject, IUser } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS, USER_PROJECT_VIEW } from "constants/fetch-keys";
-// helper
-import { truncateText } from "helpers/string.helper";
 
 const featuresList = [
   {
     title: "Cycles",
-    description:
-      "Cycles are enabled for all the projects in this workspace. Access them from the sidebar.",
-    icon: (
-      <ContrastOutlined className="!text-base !leading-4 text-purple-500 flex-shrink-0 rotate-180" />
-    ),
+    description: "Cycles are enabled for all the projects in this workspace. Access them from the sidebar.",
+    icon: <ContrastIcon className="h-4 w-4 text-purple-500 flex-shrink-0 rotate-180" />,
 
     property: "cycle_view",
   },
   {
     title: "Modules",
-    description:
-      "Modules are enabled for all the projects in this workspace. Access it from the sidebar.",
-    icon: <ModuleIcon width={16} height={16} className="flex-shrink-0" />,
+    description: "Modules are enabled for all the projects in this workspace. Access it from the sidebar.",
+    icon: <DiceIcon width={16} height={16} className="flex-shrink-0" />,
     property: "module_view",
   },
   {
     title: "Views",
-    description:
-      "Views are enabled for all the projects in this workspace. Access it from the sidebar.",
+    description: "Views are enabled for all the projects in this workspace. Access it from the sidebar.",
     icon: <Layers className="h-4 w-4 text-cyan-500 flex-shrink-0" />,
     property: "issue_views_view",
   },
   {
     title: "Pages",
-    description:
-      "Pages are enabled for all the projects in this workspace. Access it from the sidebar.",
+    description: "Pages are enabled for all the projects in this workspace. Access it from the sidebar.",
     icon: <FileText className="h-4 w-4 text-red-400 flex-shrink-0" />,
     property: "page_view",
   },
   {
     title: "Inbox",
-    description:
-      "Inbox are enabled for all the projects in this workspace. Access it from the issues views page.",
+    description: "Inbox are enabled for all the projects in this workspace. Access it from the issues views page.",
     icon: <Inbox className="h-4 w-4 text-fuchsia-500 flex-shrink-0" />,
     property: "inbox_view",
   },
@@ -87,6 +73,10 @@ const getEventType = (feature: string, toggle: boolean): MiscellaneousEventType 
   }
 };
 
+// services
+const projectService = new ProjectService();
+const trackEventService = new TrackEventService();
+
 const FeaturesSettings: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -97,9 +87,7 @@ const FeaturesSettings: NextPage = () => {
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => projectService.getProject(workspaceSlug as string, projectId as string) : null
   );
 
   const { data: memberDetails } = useSWR(
@@ -136,87 +124,64 @@ const FeaturesSettings: NextPage = () => {
       message: "Project feature updated successfully.",
     });
 
-    await projectService
-      .updateProject(workspaceSlug as string, projectId as string, formData, user)
-      .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Project feature could not be updated. Please try again.",
-        })
-      );
+    await projectService.updateProject(workspaceSlug as string, projectId as string, formData, user).catch(() =>
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Project feature could not be updated. Please try again.",
+      })
+    );
   };
 
   const isAdmin = memberDetails?.role === 20;
 
   return (
-    <ProjectAuthorizationWrapper
-      breadcrumbs={
-        <Breadcrumbs>
-          <BreadcrumbItem
-            title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
-            link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
-            linkTruncate
-          />
-          <BreadcrumbItem title="Features Settings" unshrinkTitle />
-        </Breadcrumbs>
-      }
-    >
-      <div className="flex flex-row gap-2 h-full">
-        <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
-          <SettingsSidebar />
+    <ProjectSettingLayout header={<ProjectSettingHeader title="Features Settings" />}>
+      <section className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
+        <div className="flex items-center py-3.5 border-b border-custom-border-200">
+          <h3 className="text-xl font-medium">Features</h3>
         </div>
-        <section className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
-          <div className="flex items-center py-3.5 border-b border-custom-border-200">
-            <h3 className="text-xl font-medium">Features</h3>
-          </div>
-          <div>
-            {featuresList.map((feature) => (
-              <div
-                key={feature.property}
-                className="flex items-center justify-between gap-x-8 gap-y-2 border-b border-custom-border-200 bg-custom-background-100 p-4"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="flex items-center justify-center p-3 rounded bg-custom-background-90">
-                    {feature.icon}
-                  </div>
-                  <div className="">
-                    <h4 className="text-sm font-medium">{feature.title}</h4>
-                    <p className="text-sm text-custom-text-200 tracking-tight">
-                      {feature.description}
-                    </p>
-                  </div>
+        <div>
+          {featuresList.map((feature) => (
+            <div
+              key={feature.property}
+              className="flex items-center justify-between gap-x-8 gap-y-2 border-b border-custom-border-200 bg-custom-background-100 p-4"
+            >
+              <div className="flex items-start gap-3">
+                <div className="flex items-center justify-center p-3 rounded bg-custom-background-90">
+                  {feature.icon}
                 </div>
-                <ToggleSwitch
-                  value={projectDetails?.[feature.property as keyof IProject]}
-                  onChange={() => {
-                    trackEventServices.trackMiscellaneousEvent(
-                      {
-                        workspaceId: (projectDetails?.workspace as any)?.id,
-                        workspaceSlug,
-                        projectId,
-                        projectIdentifier: projectDetails?.identifier,
-                        projectName: projectDetails?.name,
-                      },
-                      getEventType(
-                        feature.title,
-                        !projectDetails?.[feature.property as keyof IProject]
-                      ),
-                      user
-                    );
-                    handleSubmit({
-                      [feature.property]: !projectDetails?.[feature.property as keyof IProject],
-                    });
-                  }}
-                  disabled={!isAdmin}
-                  size="sm"
-                />
+                <div className="">
+                  <h4 className="text-sm font-medium">{feature.title}</h4>
+                  <p className="text-sm text-custom-text-200 tracking-tight">{feature.description}</p>
+                </div>
               </div>
-            ))}
-          </div>
-        </section>
-      </div>
-    </ProjectAuthorizationWrapper>
+              <ToggleSwitch
+                value={projectDetails?.[feature.property as keyof IProject]}
+                onChange={() => {
+                  trackEventService.trackMiscellaneousEvent(
+                    {
+                      workspaceId: (projectDetails?.workspace as any)?.id,
+                      workspaceSlug,
+                      projectId,
+                      projectIdentifier: projectDetails?.identifier,
+                      projectName: projectDetails?.name,
+                    },
+                    getEventType(feature.title, !projectDetails?.[feature.property as keyof IProject]),
+                    user as IUser
+                  );
+                  handleSubmit({
+                    [feature.property]: !projectDetails?.[feature.property as keyof IProject],
+                  });
+                }}
+                disabled={!isAdmin}
+                size="sm"
+              />
+            </div>
+          ))}
+        </div>
+      </section>
+    </ProjectSettingLayout>
   );
 };
 

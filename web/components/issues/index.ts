@@ -7,7 +7,7 @@ export * from "./activity";
 export * from "./delete-issue-modal";
 export * from "./description-form";
 export * from "./form";
-export * from "./gantt-chart";
+export * from "./issue-layouts";
 export * from "./main-content";
 export * from "./modal";
 export * from "./parent-issues-list-modal";

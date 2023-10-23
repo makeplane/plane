@@ -1,16 +1,9 @@
-"use client";
-
 import { Fragment, useState, useRef } from "react";
-
-// next
 import Link from "next/link";
-
-// headless
 import { Popover, Transition } from "@headlessui/react";
-import { ChevronLeftIcon, CheckIcon } from "@heroicons/react/20/solid";
-
 // hooks
 import useOutSideClick from "hooks/use-outside-click";
+import { Check, ChevronLeft } from "lucide-react";
 
 type ItemOptionType = {
   display: React.ReactNode;
@@ -94,10 +87,10 @@ const DropdownItem: React.FC<DropdownItemProps> = (props) => {
             isSelected ? "bg-custom-background-80" : ""
           }`}
         >
-          {children && <ChevronLeftIcon className="h-5 w-5 transition-transform transform" />}
+          {children && <ChevronLeft className="h-4 w-4 transition-transform transform" strokeWidth={2} />}
           {!children && <span />}
           <span className="truncate text-xs">{display}</span>
-          <CheckIcon className={`h-3.5 w-3.5 opacity-0 ${isSelected ? "opacity-100" : ""}`} />
+          <Check className={`h-3 w-3 opacity-0 ${isSelected ? "opacity-100" : ""}`} strokeWidth={2} />
         </button>
       )}
 

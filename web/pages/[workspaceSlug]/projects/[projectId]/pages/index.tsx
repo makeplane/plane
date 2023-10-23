@@ -1,4 +1,5 @@
 import { useState, Fragment } from "react";
+import Link from "next/link";
 
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
@@ -8,21 +9,18 @@ import useSWR from "swr";
 // headless ui
 import { Tab } from "@headlessui/react";
 // services
-import projectService from "services/project.service";
+import { ProjectService } from "services/project";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
 import useUserAuth from "hooks/use-user-auth";
 // icons
-import { PlusIcon } from "components/icons";
+import { LayoutGrid, List, Plus } from "lucide-react";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // components
 import { RecentPagesList, CreateUpdatePageModal, TPagesListProps } from "components/pages";
 // ui
-import { PrimaryButton } from "components/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-// icons
-import { ListBulletIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
+import { BreadcrumbItem, Breadcrumbs, Button } from "@plane/ui";
 // types
 import { TPageViewProps } from "types";
 import type { NextPage } from "next";
@@ -31,43 +29,33 @@ import { PROJECT_DETAILS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
 
-const AllPagesList = dynamic<TPagesListProps>(
-  () => import("components/pages").then((a) => a.AllPagesList),
-  {
-    ssr: false,
-  }
-);
+const AllPagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.AllPagesList), {
+  ssr: false,
+});
 
-const FavoritePagesList = dynamic<TPagesListProps>(
-  () => import("components/pages").then((a) => a.FavoritePagesList),
-  {
-    ssr: false,
-  }
-);
+const FavoritePagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.FavoritePagesList), {
+  ssr: false,
+});
 
-const MyPagesList = dynamic<TPagesListProps>(
-  () => import("components/pages").then((a) => a.MyPagesList),
-  {
-    ssr: false,
-  }
-);
+const MyPagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.MyPagesList), {
+  ssr: false,
+});
 
-const OtherPagesList = dynamic<TPagesListProps>(
-  () => import("components/pages").then((a) => a.OtherPagesList),
-  {
-    ssr: false,
-  }
-);
+const OtherPagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.OtherPagesList), {
+  ssr: false,
+});
 
 const tabsList = ["Recent", "All", "Favorites", "Created by me", "Created by others"];
 
+// services
+const projectService = new ProjectService();
+
 const ProjectPages: NextPage = () => {
-  const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
-
-  const [viewType, setViewType] = useState<TPageViewProps>("list");
-
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+  // states
+  const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
+  const [viewType, setViewType] = useState<TPageViewProps>("list");
 
   const { user } = useUserAuth();
 
@@ -75,9 +63,7 @@ const ProjectPages: NextPage = () => {
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => projectService.getProject(workspaceSlug as string, projectId as string) : null
   );
 
   const currentTabValue = (tab: string | null) => {
@@ -100,31 +86,42 @@ const ProjectPages: NextPage = () => {
 
   return (
     <>
-      <CreateUpdatePageModal
-        isOpen={createUpdatePageModal}
-        handleClose={() => setCreateUpdatePageModal(false)}
-        user={user}
-      />
+      {workspaceSlug && projectId && (
+        <CreateUpdatePageModal
+          isOpen={createUpdatePageModal}
+          handleClose={() => setCreateUpdatePageModal(false)}
+          user={user}
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={projectId.toString()}
+        />
+      )}
+
       <ProjectAuthorizationWrapper
         breadcrumbs={
-          <Breadcrumbs>
-            <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
+          <Breadcrumbs onBack={() => router.back()}>
             <BreadcrumbItem
-              title={`${truncateText(projectDetails?.name ?? "Project", 32)} Pages`}
+              link={
+                <Link href={`/${workspaceSlug}/projects`}>
+                  <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                    <p>Projects</p>
+                  </a>
+                </Link>
+              }
             />
+            <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Pages`} />
           </Breadcrumbs>
         }
         right={
-          <PrimaryButton
-            className="flex items-center gap-2"
+          <Button
+            variant="primary"
+            prependIcon={<Plus />}
             onClick={() => {
               const e = new KeyboardEvent("keydown", { key: "d" });
               document.dispatchEvent(e);
             }}
           >
-            <PlusIcon className="h-4 w-4" />
             Create Page
-          </PrimaryButton>
+          </Button>
         }
       >
         <div className="space-y-5 p-8 h-full overflow-hidden flex flex-col">
@@ -138,7 +135,7 @@ const ProjectPages: NextPage = () => {
                 }`}
                 onClick={() => setViewType("list")}
               >
-                <ListBulletIcon className="h-4 w-4" />
+                <List className="h-4 w-4" />
               </button>
               <button
                 type="button"
@@ -147,7 +144,7 @@ const ProjectPages: NextPage = () => {
                 }`}
                 onClick={() => setViewType("detailed")}
               >
-                <Squares2X2Icon className="h-4 w-4" />
+                <LayoutGrid className="h-4 w-4" />
               </button>
             </div>
           </div>

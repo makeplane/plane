@@ -1,5 +1,62 @@
-from django.utils.timezone import make_aware
-from django.utils.dateparse import parse_datetime
+import re
+from datetime import timedelta
+from django.utils import timezone
+
+# The date from pattern
+pattern = re.compile(r"\d+_(weeks|months)$")
+
+
+# Get the 2_weeks, 3_months
+def string_date_filter(filter, duration, subsequent, term, date_filter, offset):
+    now = timezone.now().date()
+    if term == "months":
+        if subsequent == "after":
+            if offset == "fromnow":
+                filter[f"{date_filter}__gte"] = now + timedelta(days=duration * 30)
+            else:
+                filter[f"{date_filter}__gte"] = now - timedelta(days=duration * 30)
+        else:
+            if offset == "fromnow":
+                filter[f"{date_filter}__lte"] = now + timedelta(days=duration * 30)
+            else:
+                filter[f"{date_filter}__lte"] = now - timedelta(days=duration * 30)
+    if term == "weeks":
+        if subsequent == "after":
+            if offset == "fromnow":
+                filter[f"{date_filter}__gte"] = now + timedelta(weeks=duration)
+            else:
+                filter[f"{date_filter}__gte"] = now - timedelta(weeks=duration)
+        else:
+            if offset == "fromnow":
+                filter[f"{date_filter}__lte"] = now + timedelta(days=duration)
+            else:
+                filter[f"{date_filter}__lte"] = now - timedelta(days=duration)
+
+
+def date_filter(filter, date_term, queries):
+    """
+        Handle all date filters
+    """
+    for query in queries:
+        date_query = query.split(";")
+        if len(date_query) >= 2:
+            match = pattern.match(date_query[0])
+            if match:
+                if len(date_query) == 3:
+                    digit, term = date_query[0].split("_")
+                    string_date_filter(
+                        filter=filter,
+                        duration=int(digit),
+                        subsequent=date_query[1],
+                        term=term,
+                        date_filter="created_at__date",
+                        offset=date_query[2],
+                    )
+            else:
+                if "after" in date_query:
+                    filter[f"{date_term}__gte"] = date_query[0]
+                else:
+                    filter[f"{date_term}__lte"] = date_query[0]
 
 
 def filter_state(params, filter, method):
@@ -97,20 +154,10 @@ def filter_created_at(params, filter, method):
     if method == "GET":
         created_ats = params.get("created_at").split(",")
         if len(created_ats) and "" not in created_ats:
-            for query in created_ats:
-                created_at_query = query.split(";")
-                if len(created_at_query) == 2 and "after" in created_at_query:
-                    filter["created_at__date__gte"] = created_at_query[0]
-                else:
-                    filter["created_at__date__lte"] = created_at_query[0]
+            date_filter(filter=filter, date_term="created_at__date", queries=created_ats)
     else:
         if params.get("created_at", None) and len(params.get("created_at")):
-            for query in params.get("created_at"):
-                created_at_query = query.split(";")
-                if len(created_at_query) == 2 and "after" in created_at_query:
-                    filter["created_at__date__gte"] = created_at_query[0]
-                else:
-                    filter["created_at__date__lte"] = created_at_query[0]
+            date_filter(filter=filter, date_term="created_at__date", queries=params.get("created_at", []))
     return filter
 
 
@@ -118,20 +165,10 @@ def filter_updated_at(params, filter, method):
     if method == "GET":
         updated_ats = params.get("updated_at").split(",")
         if len(updated_ats) and "" not in updated_ats:
-            for query in updated_ats:
-                updated_at_query = query.split(";")
-                if len(updated_at_query) == 2 and "after" in updated_at_query:
-                    filter["updated_at__date__gte"] = updated_at_query[0]
-                else:
-                    filter["updated_at__date__lte"] = updated_at_query[0]
+            date_filter(filter=filter, date_term="created_at__date", queries=updated_ats)
     else:
         if params.get("updated_at", None) and len(params.get("updated_at")):
-            for query in params.get("updated_at"):
-                updated_at_query = query.split(";")
-                if len(updated_at_query) == 2 and "after" in updated_at_query:
-                    filter["updated_at__date__gte"] = updated_at_query[0]
-                else:
-                    filter["updated_at__date__lte"] = updated_at_query[0]
+            date_filter(filter=filter, date_term="created_at__date", queries=params.get("updated_at", []))
     return filter
 
 
@@ -139,20 +176,10 @@ def filter_start_date(params, filter, method):
     if method == "GET":
         start_dates = params.get("start_date").split(",")
         if len(start_dates) and "" not in start_dates:
-            for query in start_dates:
-                start_date_query = query.split(";")
-                if len(start_date_query) == 2 and "after" in start_date_query:
-                    filter["start_date__gte"] = start_date_query[0]
-                else:
-                    filter["start_date__lte"] = start_date_query[0]
+            date_filter(filter=filter, date_term="start_date", queries=start_dates)
     else:
         if params.get("start_date", None) and len(params.get("start_date")):
-            for query in params.get("start_date"):
-                start_date_query = query.split(";")
-                if len(start_date_query) == 2 and "after" in start_date_query:
-                    filter["start_date__gte"] = start_date_query[0]
-                else:
-                    filter["start_date__lte"] = start_date_query[0]
+            date_filter(filter=filter, date_term="start_date", queries=params.get("start_date", []))
     return filter
 
 
@@ -160,21 +187,10 @@ def filter_target_date(params, filter, method):
     if method == "GET":
         target_dates = params.get("target_date").split(",")
         if len(target_dates) and "" not in target_dates:
-            for query in target_dates:
-                target_date_query = query.split(";")
-                if len(target_date_query) == 2 and "after" in target_date_query:
-                    filter["target_date__gte"] = target_date_query[0]
-                else:
-                    filter["target_date__lte"] = target_date_query[0]
+            date_filter(filter=filter, date_term="target_date", queries=target_dates)
     else:
         if params.get("target_date", None) and len(params.get("target_date")):
-            for query in params.get("target_date"):
-                target_date_query = query.split(";")
-                if len(target_date_query) == 2 and "after" in target_date_query:
-                    filter["target_date__gte"] = target_date_query[0]
-                else:
-                    filter["target_date__lte"] = target_date_query[0]
-
+            date_filter(filter=filter, date_term="target_date", queries=params.get("target_date", []))
     return filter
 
 
@@ -182,20 +198,10 @@ def filter_completed_at(params, filter, method):
     if method == "GET":
         completed_ats = params.get("completed_at").split(",")
         if len(completed_ats) and "" not in completed_ats:
-            for query in completed_ats:
-                completed_at_query = query.split(";")
-                if len(completed_at_query) == 2 and "after" in completed_at_query:
-                    filter["completed_at__date__gte"] = completed_at_query[0]
-                else:
-                    filter["completed_at__lte"] = completed_at_query[0]
+            date_filter(filter=filter, date_term="completed_at__date", queries=completed_ats)
     else:
         if params.get("completed_at", None) and len(params.get("completed_at")):
-            for query in params.get("completed_at"):
-                completed_at_query = query.split(";")
-                if len(completed_at_query) == 2 and "after" in completed_at_query:
-                    filter["completed_at__date__gte"] = completed_at_query[0]
-                else:
-                    filter["completed_at__lte"] = completed_at_query[0]
+            date_filter(filter=filter, date_term="completed_at__date", queries=params.get("completed_at", []))
     return filter
 
 

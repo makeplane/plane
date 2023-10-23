@@ -1,0 +1,61 @@
+{
+  "name": "@plane/rich-text-editor",
+  "version": "0.0.1",
+  "description": "Rich Text Editor that powers Plane",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "files": [
+    "dist/**/*"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "module": "./dist/index.mjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "check-types": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "next": "12.3.2",
+    "next-themes": "^0.2.1",
+    "react": "^18.2.0",
+    "react-dom": "18.2.0",
+    "@tiptap/core": "^2.1.11"
+  },
+  "dependencies": {
+    "@plane/editor-core": "*",
+    "@tiptap/extension-code-block-lowlight": "^2.1.11",
+    "@tiptap/extension-horizontal-rule": "^2.1.11",
+    "@tiptap/extension-placeholder": "^2.1.11",
+    "class-variance-authority": "^0.7.0",
+    "@tiptap/suggestion": "^2.1.7",
+    "clsx": "^1.2.1",
+    "highlight.js": "^11.8.0",
+    "lowlight": "^3.0.0",
+    "lucide-react": "^0.244.0"
+  },
+  "devDependencies": {
+    "@types/node": "18.15.3",
+    "@types/react": "^18.2.5",
+    "@types/react-dom": "18.0.11",
+    "eslint": "^7.32.0",
+    "postcss": "^8.4.29",
+    "react": "^18.2.0",
+    "tailwind-config-custom": "*",
+    "tsconfig": "*",
+    "tsup": "^7.2.0",
+    "typescript": "4.9.5"
+  },
+  "keywords": [
+    "editor",
+    "rich-text",
+    "markdown",
+    "nextjs",
+    "react"
+  ]
+}
