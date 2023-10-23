@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 import { Disclosure, Popover, Transition } from "@headlessui/react";
 import DatePicker from "react-datepicker";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { ModuleService } from "services/module.service";
 // contexts
@@ -14,6 +17,7 @@ import useToast from "hooks/use-toast";
 import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
 import { DeleteModuleModal, SidebarLeadSelect, SidebarMembersSelect } from "components/modules";
 import ProgressChart from "components/core/sidebar/progress-chart";
+// ui
 import { CustomSelect, CustomMenu, Loader, ProgressBar } from "@plane/ui";
 // icon
 import {
@@ -29,9 +33,9 @@ import {
 } from "lucide-react";
 // helpers
 import { renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-time.helper";
-import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
+import { capitalizeFirstLetter, copyUrlToClipboard } from "helpers/string.helper";
 // types
-import { IUser, IIssue, linkDetails, IModule, ModuleLink } from "types";
+import { linkDetails, IModule, ModuleLink } from "types";
 // fetch-keys
 import { MODULE_DETAILS } from "constants/fetch-keys";
 // constant
@@ -46,21 +50,28 @@ const defaultValues: Partial<IModule> = {
 };
 
 type Props = {
-  module?: IModule;
   isOpen: boolean;
-  moduleIssues?: IIssue[];
-  user: IUser | undefined;
+  moduleId: string;
 };
 
+// services
 const moduleService = new ModuleService();
 
-export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIssues, user }) => {
+// TODO: refactor this component
+export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
+  const { isOpen, moduleId } = props;
+
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<linkDetails | null>(null);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
+
+  const { module: moduleStore, user: userStore } = useMobxStore();
+
+  const user = userStore.currentUser ?? undefined;
+  const moduleDetails = moduleStore.moduleDetails[moduleId] ?? undefined;
 
   const { memberRole } = useProjectMyMembership();
 
@@ -117,7 +128,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
 
     const payload = { metadata: {}, ...formData };
 
-    const updatedLinks = module.link_module.map((l) =>
+    const updatedLinks = moduleDetails.link_module.map((l) =>
       l.id === linkId
         ? {
             ...l,
@@ -146,7 +157,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
   const handleDeleteLink = async (linkId: string) => {
     if (!workspaceSlug || !projectId || !module) return;
 
-    const updatedLinks = module.link_module.filter((l) => l.id !== linkId);
+    const updatedLinks = moduleDetails.link_module.filter((l) => l.id !== linkId);
 
     mutate<IModule>(
       MODULE_DETAILS(module.id),
@@ -165,40 +176,44 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
   };
 
   const handleCopyText = () => {
-    // const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-
-    copyTextToClipboard(`${workspaceSlug}/projects/${projectId}/modules/${module?.id}`)
+    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/modules/${module?.id}`)
       .then(() => {
         setToastAlert({
           type: "success",
-          title: "Module link copied to clipboard",
+          title: "Link copied",
+          message: "Module link copied to clipboard",
         });
       })
       .catch(() => {
         setToastAlert({
           type: "error",
-          title: "Some error occurred",
+          title: "Error!",
+          message: "Some error occurred",
         });
       });
   };
 
   useEffect(() => {
-    if (module)
+    if (moduleDetails)
       reset({
-        ...module,
-        members_list: module.members_list ?? module.members_detail?.map((m) => m.id),
+        ...moduleDetails,
+        members_list: moduleDetails.members_list ?? moduleDetails.members_detail?.map((m) => m.id),
       });
-  }, [module, reset]);
+  }, [moduleDetails, reset]);
 
-  const isStartValid = new Date(`${module?.start_date}`) <= new Date();
-  const isEndValid = new Date(`${module?.target_date}`) >= new Date(`${module?.start_date}`);
+  const isStartValid = new Date(`${moduleDetails?.start_date}`) <= new Date();
+  const isEndValid = new Date(`${moduleDetails?.target_date}`) >= new Date(`${moduleDetails?.start_date}`);
 
-  const progressPercentage = module ? Math.round((module.completed_issues / module.total_issues) * 100) : null;
+  const progressPercentage = moduleDetails
+    ? Math.round((moduleDetails.completed_issues / moduleDetails.total_issues) * 100)
+    : null;
 
   const handleEditLink = (link: linkDetails) => {
     setSelectedLinkToUpdate(link);
     setModuleLinkModal(true);
   };
+
+  if (!moduleDetails) return null;
 
   return (
     <>
@@ -213,7 +228,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
         createIssueLink={handleCreateLink}
         updateIssueLink={handleUpdateLink}
       />
-      <DeleteModuleModal isOpen={moduleDeleteModal} setIsOpen={setModuleDeleteModal} data={module} user={user} />
+      <DeleteModuleModal isOpen={moduleDeleteModal} setIsOpen={setModuleDeleteModal} data={moduleDetails} user={user} />
       <div
         className={`fixed top-[66px] ${
           isOpen ? "right-0" : "-right-[24rem]"
@@ -254,11 +269,13 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                       <>
                         <Popover.Button
                           className={`group flex h-full items-center gap-2 whitespace-nowrap rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 px-2 py-1 text-xs ${
-                            module.start_date ? "" : "text-custom-text-200"
+                            moduleDetails.start_date ? "" : "text-custom-text-200"
                           }`}
                         >
                           <CalendarDays className="h-3 w-3" />
-                          <span>{renderShortDateWithYearFormat(new Date(`${module.start_date}`), "Start date")}</span>
+                          <span>
+                            {renderShortDateWithYearFormat(new Date(`${moduleDetails.start_date}`), "Start date")}
+                          </span>
                         </Popover.Button>
 
                         <Transition
@@ -298,12 +315,14 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                       <>
                         <Popover.Button
                           className={`group flex items-center gap-2 whitespace-nowrap rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 px-2 py-1 text-xs ${
-                            module.target_date ? "" : "text-custom-text-200"
+                            moduleDetails.target_date ? "" : "text-custom-text-200"
                           }`}
                         >
                           <CalendarDays className="h-3 w-3 " />
 
-                          <span>{renderShortDateWithYearFormat(new Date(`${module?.target_date}`), "End date")}</span>
+                          <span>
+                            {renderShortDateWithYearFormat(new Date(`${moduleDetails?.target_date}`), "End date")}
+                          </span>
                         </Popover.Button>
 
                         <Transition
@@ -342,7 +361,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                 <div className="flex w-full flex-col items-start justify-start gap-2">
                   <div className="flex w-full items-start justify-between gap-2  ">
                     <div className="max-w-[300px]">
-                      <h4 className="text-xl font-semibold break-words w-full text-custom-text-100">{module.name}</h4>
+                      <h4 className="text-xl font-semibold break-words w-full text-custom-text-100">
+                        {moduleDetails.name}
+                      </h4>
                     </div>
                     <CustomMenu width="lg" ellipsis>
                       <CustomMenu.MenuItem onClick={() => setModuleDeleteModal(true)}>
@@ -361,7 +382,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                   </div>
 
                   <span className="whitespace-normal text-sm leading-5 text-custom-text-200 break-words w-full">
-                    {module.description}
+                    {moduleDetails.description}
                   </span>
                 </div>
 
@@ -399,9 +420,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
 
                     <div className="flex items-center gap-2.5 text-custom-text-200">
                       <span className="h-4 w-4">
-                        <ProgressBar value={module.completed_issues} maxValue={module.total_issues} />
+                        <ProgressBar value={moduleDetails.completed_issues} maxValue={moduleDetails.total_issues} />
                       </span>
-                      {module.completed_issues}/{module.total_issues}
+                      {moduleDetails.completed_issues}/{moduleDetails.total_issues}
                     </div>
                   </div>
                 </div>
@@ -415,7 +436,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                     <div className="flex w-full items-center justify-between gap-2    ">
                       <div className="flex items-center justify-start gap-2 text-sm">
                         <span className="font-medium text-custom-text-200">Progress</span>
-                        {!open && moduleIssues && progressPercentage ? (
+                        {!open && progressPercentage ? (
                           <span className="rounded bg-[#09A953]/10 px-1.5 py-0.5 text-xs text-[#09A953]">
                             {progressPercentage ? `${progressPercentage}%` : ""}
                           </span>
@@ -439,7 +460,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                     </div>
                     <Transition show={open}>
                       <Disclosure.Panel>
-                        {isStartValid && isEndValid && moduleIssues ? (
+                        {isStartValid && isEndValid ? (
                           <div className=" h-full w-full py-4">
                             <div className="flex  items-start justify-between gap-4 py-2 text-xs">
                               <div className="flex items-center gap-1">
@@ -448,7 +469,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                                 </span>
                                 <span>
                                   Pending Issues -{" "}
-                                  {module.total_issues - (module.completed_issues + module.cancelled_issues)}{" "}
+                                  {moduleDetails.total_issues -
+                                    (moduleDetails.completed_issues + moduleDetails.cancelled_issues)}{" "}
                                 </span>
                               </div>
 
@@ -465,10 +487,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                             </div>
                             <div className="relative h-40 w-80">
                               <ProgressChart
-                                distribution={module.distribution.completion_chart}
-                                startDate={module.start_date ?? ""}
-                                endDate={module.target_date ?? ""}
-                                totalIssues={module.total_issues}
+                                distribution={moduleDetails.distribution.completion_chart}
+                                startDate={moduleDetails.start_date ?? ""}
+                                endDate={moduleDetails.target_date ?? ""}
+                                totalIssues={moduleDetails.total_issues}
                               />
                             </div>
                           </div>
@@ -491,7 +513,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                         <span className="font-medium text-custom-text-200">Other Information</span>
                       </div>
 
-                      {module.total_issues > 0 ? (
+                      {moduleDetails.total_issues > 0 ? (
                         <Disclosure.Button className="p-1">
                           <ChevronDown className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`} aria-hidden="true" />
                         </Disclosure.Button>
@@ -506,20 +528,20 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                     </div>
                     <Transition show={open}>
                       <Disclosure.Panel>
-                        {module.total_issues > 0 ? (
+                        {moduleDetails.total_issues > 0 ? (
                           <>
                             <div className=" h-full w-full py-4">
                               <SidebarProgressStats
-                                distribution={module.distribution}
+                                distribution={moduleDetails.distribution}
                                 groupedIssues={{
-                                  backlog: module.backlog_issues,
-                                  unstarted: module.unstarted_issues,
-                                  started: module.started_issues,
-                                  completed: module.completed_issues,
-                                  cancelled: module.cancelled_issues,
+                                  backlog: moduleDetails.backlog_issues,
+                                  unstarted: moduleDetails.unstarted_issues,
+                                  started: moduleDetails.started_issues,
+                                  completed: moduleDetails.completed_issues,
+                                  cancelled: moduleDetails.cancelled_issues,
                                 }}
-                                totalIssues={module.total_issues}
-                                module={module}
+                                totalIssues={moduleDetails.total_issues}
+                                module={moduleDetails}
                               />
                             </div>
                           </>
@@ -544,9 +566,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
                 </button>
               </div>
               <div className="mt-2 space-y-2 hover:bg-custom-background-80">
-                {memberRole && module.link_module && module.link_module.length > 0 ? (
+                {memberRole && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
                   <LinksList
-                    links={module.link_module}
+                    links={moduleDetails.link_module}
                     handleEditLink={handleEditLink}
                     handleDeleteLink={handleDeleteLink}
                     userAuth={memberRole}
@@ -571,4 +593,4 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ module, isOpen, moduleIs
       </div>
     </>
   );
-};
+});

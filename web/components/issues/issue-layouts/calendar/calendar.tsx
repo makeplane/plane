@@ -9,14 +9,17 @@ import { Spinner } from "@plane/ui";
 // types
 import { ICalendarWeek } from "./types";
 import { IIssueGroupedStructure } from "store/issue";
+import { IIssue } from "types";
 
 type Props = {
   issues: IIssueGroupedStructure | null;
   layout: "month" | "week" | undefined;
+  showWeekends: boolean;
+  quickActions: (issue: IIssue) => React.ReactNode;
 };
 
 export const CalendarChart: React.FC<Props> = observer((props) => {
-  const { issues, layout } = props;
+  const { issues, layout, showWeekends, quickActions } = props;
 
   const { calendar: calendarStore } = useMobxStore();
 
@@ -35,17 +38,17 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
     <>
       <div className="h-full w-full flex flex-col overflow-hidden">
         <CalendarHeader />
-        <CalendarWeekHeader />
+        <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />
         <div className="h-full w-full overflow-y-auto">
           {layout === "month" ? (
             <div className="h-full w-full grid grid-cols-1 divide-y-[0.5px] divide-custom-border-200">
               {allWeeksOfActiveMonth &&
                 Object.values(allWeeksOfActiveMonth).map((week: ICalendarWeek, weekIndex) => (
-                  <CalendarWeekDays key={weekIndex} week={week} issues={issues} />
+                  <CalendarWeekDays key={weekIndex} week={week} issues={issues} quickActions={quickActions} />
                 ))}
             </div>
           ) : (
-            <CalendarWeekDays week={calendarStore.allDaysOfActiveWeek} issues={issues} />
+            <CalendarWeekDays week={calendarStore.allDaysOfActiveWeek} issues={issues} quickActions={quickActions} />
           )}
         </div>
       </div>

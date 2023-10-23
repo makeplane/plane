@@ -19,7 +19,9 @@ type Props = {
 
 const cycleService = new CycleService();
 
-export const TransferIssues: React.FC<Props> = ({ handleClick }) => {
+export const TransferIssues: React.FC<Props> = (props) => {
+  const { handleClick } = props;
+
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
 
@@ -33,8 +35,9 @@ export const TransferIssues: React.FC<Props> = ({ handleClick }) => {
   const transferableIssuesCount = cycleDetails
     ? cycleDetails.backlog_issues + cycleDetails.unstarted_issues + cycleDetails.started_issues
     : 0;
+
   return (
-    <div className="-mt-2 mb-4 flex items-center justify-between px-8 pt-6">
+    <div className="-mt-2 mb-4 flex items-center justify-between px-4 pt-6">
       <div className="flex items-center gap-2 text-sm text-custom-text-200">
         <AlertCircle className="h-3.5 w-3.5 text-custom-text-200" />
         <span>Completed cycles are not editable.</span>

@@ -35,7 +35,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     React.useState<HTMLDivElement | null>(null);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: placement ?? "bottom-start",
+    placement: placement ?? "auto",
   });
   return (
     <Menu as="div" className={`relative w-min text-left ${className}`}>
@@ -100,9 +100,9 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
               )}
             </>
           )}
-          <Menu.Items>
+          <Menu.Items className="fixed z-10">
             <div
-              className={`z-10 overflow-y-scroll whitespace-nowrap rounded-md border border-custom-border-300 p-1 text-xs shadow-custom-shadow-rg focus:outline-none bg-custom-background-90 my-1 ${
+              className={`overflow-y-scroll whitespace-nowrap rounded-md border border-custom-border-300 p-1 text-xs shadow-custom-shadow-rg focus:outline-none bg-custom-background-90 my-1 ${
                 maxHeight === "lg"
                   ? "max-h-60"
                   : maxHeight === "md"

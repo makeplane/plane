@@ -34,6 +34,9 @@ export interface IModuleIssueStore {
   // action
   fetchIssues: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<any>;
   updateIssueStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
+  deleteIssue: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
+  addIssueToModule: (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => Promise<any>;
+  removeIssueFromModule: (workspaceSlug: string, projectId: string, moduleId: string, bridgeId: string) => Promise<any>;
 }
 
 export class ModuleIssueStore implements IModuleIssueStore {
@@ -52,9 +55,10 @@ export class ModuleIssueStore implements IModuleIssueStore {
       ungrouped: IIssue[];
     };
   } = {};
-  // service
-  moduleService;
+
+  // services
   rootStore;
+  moduleService;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
@@ -68,6 +72,9 @@ export class ModuleIssueStore implements IModuleIssueStore {
       // actions
       fetchIssues: action,
       updateIssueStructure: action,
+      deleteIssue: action,
+      addIssueToModule: action,
+      removeIssueFromModule: action,
     });
 
     this.rootStore = _rootStore;
@@ -167,6 +174,42 @@ export class ModuleIssueStore implements IModuleIssueStore {
     });
   };
 
+  deleteIssue = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
+    const moduleId: string | null = this.rootStore.module.moduleId;
+    const issueType = this.getIssueType;
+    if (!moduleId || !issueType) return null;
+
+    let issues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null =
+      this.getIssues;
+    if (!issues) return null;
+
+    if (issueType === "grouped" && group_id) {
+      issues = issues as IIssueGroupedStructure;
+      issues = {
+        ...issues,
+        [group_id]: issues[group_id].filter((i) => i?.id !== issue?.id),
+      };
+    }
+    if (issueType === "groupWithSubGroups" && group_id && sub_group_id) {
+      issues = issues as IIssueGroupWithSubGroupsStructure;
+      issues = {
+        ...issues,
+        [sub_group_id]: {
+          ...issues[sub_group_id],
+          [group_id]: issues[sub_group_id][group_id].filter((i) => i?.id !== issue?.id),
+        },
+      };
+    }
+    if (issueType === "ungrouped") {
+      issues = issues as IIssueUnGroupedStructure;
+      issues = issues.filter((i) => i?.id !== issue?.id);
+    }
+
+    runInAction(() => {
+      this.issues = { ...this.issues, [moduleId]: { ...this.issues[moduleId], [issueType]: issues } };
+    });
+  };
+
   fetchIssues = async (workspaceSlug: string, projectId: string, moduleId: string) => {
     try {
       this.loader = true;
@@ -202,6 +245,46 @@ export class ModuleIssueStore implements IModuleIssueStore {
       this.loader = false;
       this.error = error;
       return error;
+    }
+  };
+
+  addIssueToModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
+    try {
+      const user = this.rootStore.user.currentUser ?? undefined;
+
+      await this.moduleService.addIssuesToModule(
+        workspaceSlug,
+        projectId,
+        moduleId,
+        {
+          issues: [issueId],
+        },
+        user
+      );
+
+      this.fetchIssues(workspaceSlug, projectId, moduleId);
+    } catch (error) {
+      runInAction(() => {
+        this.loader = false;
+        this.error = error;
+      });
+
+      throw error;
+    }
+  };
+
+  removeIssueFromModule = async (workspaceSlug: string, projectId: string, moduleId: string, bridgeId: string) => {
+    try {
+      await this.moduleService.removeIssueFromModule(workspaceSlug, projectId, moduleId, bridgeId);
+    } catch (error) {
+      this.fetchIssues(workspaceSlug, projectId, moduleId);
+
+      runInAction(() => {
+        this.loader = false;
+        this.error = error;
+      });
+
+      throw error;
     }
   };
 }

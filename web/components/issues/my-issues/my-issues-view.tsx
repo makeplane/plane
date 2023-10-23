@@ -6,7 +6,6 @@ import { IssueLabelService } from "services/issue";
 // hooks
 import useMyIssues from "hooks/my-issues/use-my-issues";
 import useMyIssuesFilters from "hooks/my-issues/use-my-issues-filter";
-import useUserAuth from "hooks/use-user-auth";
 // components
 import { FiltersList } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
@@ -42,8 +41,6 @@ export const MyIssuesView: React.FC<Props> = () => {
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { user } = useUserAuth();
 
   const { mutateMyIssues } = useMyIssues(workspaceSlug?.toString());
   const { filters, setFilters } = useMyIssuesFilters(workspaceSlug?.toString());
@@ -220,15 +217,16 @@ export const MyIssuesView: React.FC<Props> = () => {
           mutateMyIssues();
         }}
       />
-      <DeleteIssueModal
-        handleClose={() => setDeleteIssueModal(false)}
-        isOpen={deleteIssueModal}
-        data={issueToDelete}
-        user={user}
-        onSubmit={async () => {
-          mutateMyIssues();
-        }}
-      />
+      {issueToDelete && (
+        <DeleteIssueModal
+          handleClose={() => setDeleteIssueModal(false)}
+          isOpen={deleteIssueModal}
+          data={issueToDelete}
+          onSubmit={async () => {
+            mutateMyIssues();
+          }}
+        />
+      )}
       {areFiltersApplied && (
         <>
           <div className="flex items-center justify-between gap-2 px-5 pt-3 pb-0">

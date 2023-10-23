@@ -20,10 +20,8 @@ export const CycleSpreadsheetLayout: React.FC = observer(() => {
     cycleIssue: cycleIssueStore,
     issueDetail: issueDetailStore,
     project: projectStore,
-    user: userStore,
   } = useMobxStore();
 
-  const user = userStore.currentUser;
   const issues = cycleIssueStore.getIssues;
 
   const handleDisplayFiltersUpdate = useCallback(
@@ -41,7 +39,7 @@ export const CycleSpreadsheetLayout: React.FC = observer(() => {
 
   const handleUpdateIssue = useCallback(
     (issue: IIssue, data: Partial<IIssue>) => {
-      if (!workspaceSlug || !projectId || !user) return;
+      if (!workspaceSlug || !projectId) return;
 
       const payload = {
         ...issue,
@@ -49,9 +47,9 @@ export const CycleSpreadsheetLayout: React.FC = observer(() => {
       };
 
       cycleIssueStore.updateIssueStructure(null, null, payload);
-      issueDetailStore.updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, data, user);
+      issueDetailStore.updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, data);
     },
-    [issueDetailStore, cycleIssueStore, projectId, user, workspaceSlug]
+    [issueDetailStore, cycleIssueStore, projectId, workspaceSlug]
   );
 
   return (

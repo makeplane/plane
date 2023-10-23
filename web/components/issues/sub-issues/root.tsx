@@ -335,18 +335,19 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
               />
             </>
           )}
-          {isEditable && issueCrudOperation?.delete?.toggle && issueCrudOperation?.delete?.issueId && (
-            <DeleteIssueModal
-              isOpen={issueCrudOperation?.delete?.toggle}
-              handleClose={() => {
-                mutateSubIssues(issueCrudOperation?.delete?.issueId);
-                handleIssueCrudOperation("delete", null, null);
-              }}
-              data={issueCrudOperation?.delete?.issue}
-              user={user}
-              redirection={false}
-            />
-          )}
+          {isEditable &&
+            issueCrudOperation?.delete?.toggle &&
+            issueCrudOperation?.delete?.issueId &&
+            issueCrudOperation?.delete?.issue && (
+              <DeleteIssueModal
+                isOpen={issueCrudOperation?.delete?.toggle}
+                handleClose={() => {
+                  mutateSubIssues(issueCrudOperation?.delete?.issueId);
+                  handleIssueCrudOperation("delete", null, null);
+                }}
+                data={issueCrudOperation?.delete?.issue}
+              />
+            )}
         </>
       )}
     </div>

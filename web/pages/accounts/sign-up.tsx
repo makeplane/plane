@@ -50,7 +50,7 @@ const SignUp: NextPage = () => {
         });
 
         if (response) await mutateUser();
-        router.push("/");
+        router.push("/onboarding");
       })
       .catch((err) =>
         setToastAlert({

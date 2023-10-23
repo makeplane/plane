@@ -123,7 +123,7 @@ export class IssueFilterStore implements IIssueFilterStore {
       labels: this.userFilters?.labels || undefined,
       start_date: this.userFilters?.start_date || undefined,
       target_date: this.userFilters?.target_date || undefined,
-      group_by: this.userDisplayFilters?.group_by || "state",
+      group_by: this.userDisplayFilters?.group_by || undefined,
       order_by: this.userDisplayFilters?.order_by || "-created_at",
       sub_group_by: this.userDisplayFilters?.sub_group_by || undefined,
       type: this.userDisplayFilters?.type || undefined,

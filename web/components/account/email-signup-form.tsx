@@ -122,6 +122,7 @@ export const EmailSignUpForm: React.FC<Props> = (props) => {
             variant="primary"
             type="submit"
             className="w-full"
+            size="xl"
             disabled={!isValid && isDirty}
             loading={isSubmitting}
           >

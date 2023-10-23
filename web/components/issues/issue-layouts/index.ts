@@ -1,5 +1,6 @@
 // filters
 export * from "./filters";
+export * from "./quick-action-dropdowns";
 
 // layouts
 export * from "./list";

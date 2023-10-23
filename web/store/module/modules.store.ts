@@ -38,7 +38,7 @@ export interface IModuleStore {
   getModuleById: (moduleId: string) => IModule | null;
 
   fetchModules: (workspaceSlug: string, projectId: string) => void;
-  fetchModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => void;
+  fetchModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<IModule>;
 
   createModule: (workspaceSlug: string, projectId: string, data: Partial<IModule>) => Promise<IModule>;
   updateModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string, data: Partial<IModule>) => void;
@@ -171,8 +171,6 @@ export class ModuleStore implements IModuleStore {
 
       const response = await this.moduleService.getModuleDetails(workspaceSlug, projectId, moduleId);
 
-      if (!response) return null;
-
       runInAction(() => {
         this.moduleDetails = {
           ...this.moduleDetails,
@@ -181,6 +179,8 @@ export class ModuleStore implements IModuleStore {
         this.loader = false;
         this.error = null;
       });
+
+      return response;
     } catch (error) {
       console.error("Failed to fetch module details in module store", error);
 
@@ -188,6 +188,8 @@ export class ModuleStore implements IModuleStore {
         this.loader = false;
         this.error = error;
       });
+
+      throw error;
     }
   };
 

@@ -1,8 +1,7 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// icons
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
-// mobx
+import { ChevronDown } from "lucide-react";
+// mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 // components
@@ -45,7 +44,7 @@ export const NavbarIssueFilter = observer(() => {
       button={
         <>
           <span>Filters</span>
-          <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+          <ChevronDown className="h-3 w-3" aria-hidden="true" />
         </>
       }
       items={[
