@@ -50,6 +50,11 @@ class WebhookEndpoint(BaseAPIView):
                     "is_active",
                     "created_at",
                     "updated_at",
+                    "project",
+                    "issue",
+                    "cycle",
+                    "module",
+                    "issue_comment",
                 ),
                 many=True,
             )
