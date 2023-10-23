@@ -3,16 +3,15 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Plus } from "lucide-react";
 // layouts
-import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout-legacy";
 // hooks
 import useMyIssuesFilters from "hooks/my-issues/use-my-issues-filter";
 // components
 import { MyIssuesView, MyIssuesViewOptions } from "components/issues";
 // ui
-import { PrimaryButton } from "components/ui";
-import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
+import { Breadcrumbs, BreadcrumbItem, Button } from "@plane/ui";
 // types
 import type { NextPage } from "next";
 import useUser from "hooks/use-user";
@@ -78,23 +77,23 @@ const MyIssuesPage: NextPage = () => {
   return (
     <WorkspaceAuthorizationLayout
       breadcrumbs={
-        <Breadcrumbs>
+        <Breadcrumbs onBack={() => router.back()}>
           <BreadcrumbItem title="My Issues" />
         </Breadcrumbs>
       }
       right={
         <div className="flex items-center gap-2">
           <MyIssuesViewOptions />
-          <PrimaryButton
-            className="flex items-center gap-2"
+          <Button
+            variant="primary"
+            prependIcon={<Plus />}
             onClick={() => {
               const e = new KeyboardEvent("keydown", { key: "c" });
               document.dispatchEvent(e);
             }}
           >
-            <PlusIcon className="h-4 w-4" />
             Add Issue
-          </PrimaryButton>
+          </Button>
         </div>
       }
     >
@@ -107,9 +106,7 @@ const MyIssuesPage: NextPage = () => {
                 type="button"
                 onClick={tab.onClick}
                 className={`border-b-2 p-4 text-sm font-medium outline-none whitespace-nowrap ${
-                  tab.selected
-                    ? "border-custom-primary-100 text-custom-primary-100"
-                    : "border-transparent"
+                  tab.selected ? "border-custom-primary-100 text-custom-primary-100" : "border-transparent"
                 }`}
               >
                 {tab.label}

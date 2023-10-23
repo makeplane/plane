@@ -17,6 +17,7 @@ from .project import (
     ProjectMemberEndpoint,
     WorkspaceProjectDeployBoardEndpoint,
     LeaveProjectEndpoint,
+    ProjectPublicCoverImagesEndpoint,
 )
 from .user import (
     UserEndpoint,
@@ -56,7 +57,7 @@ from .workspace import (
     LeaveWorkspaceEndpoint,
 )
 from .state import StateViewSet
-from .view import GlobalViewViewSet, GlobalViewIssuesViewSet, IssueViewViewSet, ViewIssuesEndpoint, IssueViewFavoriteViewSet
+from .view import GlobalViewViewSet, GlobalViewIssuesViewSet, IssueViewViewSet, IssueViewFavoriteViewSet
 from .cycle import (
     CycleViewSet,
     CycleIssueViewSet,
@@ -147,15 +148,12 @@ from .page import (
 from .search import GlobalSearchEndpoint, IssueSearchEndpoint
 
 
-from .gpt import GPTIntegrationEndpoint
+from .external import GPTIntegrationEndpoint, ReleaseNotesEndpoint, UnsplashEndpoint
 
 from .estimate import (
     ProjectEstimatePointEndpoint,
     BulkEstimatePointEndpoint,
 )
-
-
-from .release import ReleaseNotesEndpoint
 
 from .inbox import InboxViewSet, InboxIssueViewSet, InboxIssuePublicViewSet
 
@@ -170,3 +168,5 @@ from .analytic import (
 from .notification import NotificationViewSet, UnreadNotificationEndpoint, MarkAllReadNotificationViewSet
 
 from .exporter import ExportIssuesEndpoint
+
+from .config import ConfigurationEndpoint

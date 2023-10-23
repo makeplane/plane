@@ -3,7 +3,7 @@ import React, { useState } from "react";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // ui
-import { SecondaryButton, PrimaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 
 type Props = {
   isOpen: boolean;
@@ -58,29 +58,28 @@ export const ConfirmIssueDiscard: React.FC<Props> = (props) => {
                 <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
                     <div className="mt-3 text-center sm:mt-0 sm:text-left">
-                      <Dialog.Title
-                        as="h3"
-                        className="text-lg font-medium leading-6 text-custom-text-100"
-                      >
+                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                         Draft Issue
                       </Dialog.Title>
                       <div className="mt-2">
-                        <p className="text-sm text-custom-text-200">
-                          Would you like to save this issue in drafts?
-                        </p>
+                        <p className="text-sm text-custom-text-200">Would you like to save this issue in drafts?</p>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="flex justify-between gap-2 p-4 sm:px-6">
                   <div>
-                    <SecondaryButton onClick={onDiscard}>Discard</SecondaryButton>
+                    <Button variant="neutral-primary" onClick={onDiscard}>
+                      Discard
+                    </Button>
                   </div>
                   <div className="space-x-2">
-                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
-                    <PrimaryButton onClick={handleDeletion} loading={isLoading}>
+                    <Button variant="neutral-primary" onClick={onClose}>
+                      Cancel
+                    </Button>
+                    <Button variant="primary" onClick={handleDeletion} loading={isLoading}>
                       {isLoading ? "Saving..." : "Save Draft"}
-                    </PrimaryButton>
+                    </Button>
                   </div>
                 </div>
               </Dialog.Panel>

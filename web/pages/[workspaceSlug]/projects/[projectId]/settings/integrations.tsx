@@ -1,30 +1,33 @@
 import React from "react";
 
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 import useSWR from "swr";
 
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
 // services
-import IntegrationService from "services/integration";
-import projectService from "services/project.service";
+import { IntegrationService } from "services/integrations";
+import { ProjectService } from "services/project";
 // components
 import { SettingsSidebar, SingleIntegration } from "components/project";
 // ui
-import { EmptyState, IntegrationAndImportExportBanner, Loader } from "components/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-// icons
-import { PlusIcon, PuzzlePieceIcon } from "@heroicons/react/24/outline";
+import { EmptyState } from "components/common";
+import { BreadcrumbItem, Breadcrumbs, Loader } from "@plane/ui";
 // images
 import emptyIntegration from "public/empty-state/integration.svg";
 // types
 import { IProject } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { PROJECT_DETAILS, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
+import { PROJECT_DETAILS, USER_PROJECT_VIEW, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
+
+// services
+const integrationService = new IntegrationService();
+const projectService = new ProjectService();
 
 const ProjectIntegrations: NextPage = () => {
   const router = useRouter();
@@ -32,27 +35,35 @@ const ProjectIntegrations: NextPage = () => {
 
   const { data: projectDetails } = useSWR<IProject>(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => projectService.getProject(workspaceSlug as string, projectId as string) : null
   );
 
   const { data: workspaceIntegrations } = useSWR(
     workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug as string) : null,
-    () =>
-      workspaceSlug
-        ? IntegrationService.getWorkspaceIntegrationsList(workspaceSlug as string)
-        : null
+    () => (workspaceSlug ? integrationService.getWorkspaceIntegrationsList(workspaceSlug as string) : null)
   );
+
+  const { data: memberDetails } = useSWR(
+    workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
+      : null
+  );
+
+  const isAdmin = memberDetails?.role === 20;
 
   return (
     <ProjectAuthorizationWrapper
       breadcrumbs={
-        <Breadcrumbs>
+        <Breadcrumbs onBack={() => router.back()}>
           <BreadcrumbItem
-            title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
-            link={`/${workspaceSlug}/projects/${projectId}/issues`}
-            linkTruncate
+            link={
+              <Link href={`/${workspaceSlug}/projects/${projectId}/issues`}>
+                <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                  <p className="truncate">{`${truncateText(projectDetails?.name ?? "Project", 32)}`}</p>
+                </a>
+              </Link>
+            }
           />
           <BreadcrumbItem title="Integrations Settings" unshrinkTitle />
         </Breadcrumbs>
@@ -62,7 +73,7 @@ const ProjectIntegrations: NextPage = () => {
         <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
           <SettingsSidebar />
         </div>
-        <div className="pr-9 py-8 gap-10 w-full overflow-y-auto">
+        <div className={`pr-9 py-8 gap-10 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
           <div className="flex items-center py-3.5 border-b border-custom-border-200">
             <h3 className="text-xl font-medium">Integrations</h3>
           </div>
@@ -70,10 +81,7 @@ const ProjectIntegrations: NextPage = () => {
             workspaceIntegrations.length > 0 ? (
               <div>
                 {workspaceIntegrations.map((integration) => (
-                  <SingleIntegration
-                    key={integration.integration_detail.id}
-                    integration={integration}
-                  />
+                  <SingleIntegration key={integration.integration_detail.id} integration={integration} />
                 ))}
               </div>
             ) : (
@@ -85,6 +93,7 @@ const ProjectIntegrations: NextPage = () => {
                   text: "Configure now",
                   onClick: () => router.push(`/${workspaceSlug}/settings/integrations`),
                 }}
+                disabled={!isAdmin}
               />
             )
           ) : (

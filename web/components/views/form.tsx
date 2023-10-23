@@ -1,85 +1,48 @@
 import { useEffect } from "react";
+import { observer } from "mobx-react-lite";
+import { Controller, useForm } from "react-hook-form";
 
-import { useRouter } from "next/router";
-
-import useSWR from "swr";
-
-// react-hook-form
-import { useForm } from "react-hook-form";
-// services
-import stateService from "services/state.service";
-// hooks
-import useProjectMembers from "hooks/use-project-members";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { FiltersList } from "components/core";
-import { SelectFilters } from "components/views";
+import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "components/issues";
 // ui
 import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
-// helpers
-import { checkIfArraysHaveSameElements } from "helpers/array.helper";
-import { getStatesList } from "helpers/state.helper";
 // types
-import { IQuery, IView } from "types";
-import issuesService from "services/issues.service";
-// fetch-keys
-import { PROJECT_ISSUE_LABELS, STATES_LIST } from "constants/fetch-keys";
+import { IProjectView } from "types";
+// constants
+import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 
 type Props = {
-  handleFormSubmit: (values: IView) => Promise<void>;
+  data?: IProjectView | null;
   handleClose: () => void;
-  status: boolean;
-  data?: IView | null;
-  preLoadedData?: Partial<IView> | null;
+  handleFormSubmit: (values: IProjectView) => Promise<void>;
+  preLoadedData?: Partial<IProjectView> | null;
 };
 
-const defaultValues: Partial<IView> = {
+const defaultValues: Partial<IProjectView> = {
   name: "",
   description: "",
 };
 
-export const ViewForm: React.FC<Props> = ({
-  handleFormSubmit,
-  handleClose,
-  status,
-  data,
-  preLoadedData,
-}) => {
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, handleClose, data, preLoadedData }) => {
+  const { project: projectStore } = useMobxStore();
 
   const {
-    register,
+    control,
     formState: { errors, isSubmitting },
     handleSubmit,
+    register,
     reset,
-    watch,
     setValue,
-  } = useForm<IView>({
+    watch,
+  } = useForm<IProjectView>({
     defaultValues,
   });
-  const filters = watch("query");
 
-  const { data: stateGroups } = useSWR(
-    workspaceSlug && projectId && (filters?.state ?? []).length > 0
-      ? STATES_LIST(projectId as string)
-      : null,
-    workspaceSlug && (filters?.state ?? []).length > 0
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
-      : null
-  );
-  const states = getStatesList(stateGroups);
+  const selectedFilters = watch("query_data");
 
-  const { data: labels } = useSWR(
-    workspaceSlug && projectId && (filters?.labels ?? []).length > 0
-      ? PROJECT_ISSUE_LABELS(projectId.toString())
-      : null,
-    workspaceSlug && projectId && (filters?.labels ?? []).length > 0
-      ? () => issuesService.getIssueLabels(workspaceSlug.toString(), projectId.toString())
-      : null
-  );
-  const { members } = useProjectMembers(workspaceSlug?.toString(), projectId?.toString());
-
-  const handleCreateUpdateView = async (formData: IView) => {
+  const handleCreateUpdateView = async (formData: IProjectView) => {
     await handleFormSubmit(formData);
 
     reset({
@@ -88,16 +51,9 @@ export const ViewForm: React.FC<Props> = ({
   };
 
   const clearAllFilters = () => {
-    setValue("query", {
-      assignees: null,
-      created_by: null,
-      labels: null,
-      priority: null,
-      state: null,
-      start_date: null,
-      target_date: null,
-      type: null,
-    });
+    if (!selectedFilters) return;
+
+    setValue("query_data", {});
   };
 
   useEffect(() => {
@@ -108,18 +64,10 @@ export const ViewForm: React.FC<Props> = ({
     });
   }, [data, preLoadedData, reset]);
 
-  useEffect(() => {
-    if (status && data) {
-      setValue("query", data.query_data);
-    }
-  }, [data, status, setValue]);
-
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateView)}>
       <div className="space-y-5">
-        <h3 className="text-lg font-medium leading-6 text-custom-text-100">
-          {status ? "Update" : "Create"} View
-        </h3>
+        <h3 className="text-lg font-medium leading-6 text-custom-text-100">{data ? "Update" : "Create"} View</h3>
         <div className="space-y-3">
           <div>
             <Input
@@ -151,58 +99,57 @@ export const ViewForm: React.FC<Props> = ({
             />
           </div>
           <div>
-            <SelectFilters
-              filters={filters}
-              onSelect={(option) => {
-                const key = option.key as keyof typeof filters;
+            <Controller
+              control={control}
+              name="query_data"
+              render={({ field: { onChange, value: filters } }) => (
+                <FiltersDropdown title="Filters">
+                  <FilterSelection
+                    filters={filters ?? {}}
+                    handleFiltersUpdate={(key, value) => {
+                      const newValues = filters?.[key] ?? [];
 
-                if (key === "start_date" || key === "target_date") {
-                  const valueExists = checkIfArraysHaveSameElements(
-                    filters?.[key] ?? [],
-                    option.value
-                  );
+                      if (Array.isArray(value)) {
+                        value.forEach((val) => {
+                          if (!newValues.includes(val)) newValues.push(val);
+                        });
+                      } else {
+                        if (filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+                        else newValues.push(value);
+                      }
 
-                  setValue("query", {
-                    ...filters,
-                    [key]: valueExists ? null : option.value,
-                  } as IQuery);
-                } else {
-                  if (!filters?.[key]?.includes(option.value))
-                    setValue("query", {
-                      ...filters,
-                      [key]: [...((filters?.[key] as any[]) ?? []), option.value],
-                    });
-                  else {
-                    setValue("query", {
-                      ...filters,
-                      [key]: (filters?.[key] as any[])?.filter((item) => item !== option.value),
-                    });
-                  }
-                }
-              }}
+                      onChange({
+                        ...filters,
+                        [key]: newValues,
+                      });
+                    }}
+                    layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues.list}
+                    labels={projectStore.projectLabels ?? undefined}
+                    members={projectStore.projectMembers?.map((m) => m.member) ?? undefined}
+                    states={projectStore.projectStatesByGroups ?? undefined}
+                  />
+                </FiltersDropdown>
+              )}
             />
           </div>
-          <div>
-            <FiltersList
-              filters={filters}
-              labels={labels}
-              members={members?.map((m) => m.member)}
-              states={states}
-              clearAllFilters={clearAllFilters}
-              setFilters={(query: any) => {
-                setValue("query", {
-                  ...filters,
-                  ...query,
-                });
-              }}
-            />
-          </div>
+          {selectedFilters && Object.keys(selectedFilters).length > 0 && (
+            <div>
+              <AppliedFiltersList
+                appliedFilters={selectedFilters}
+                handleClearAllFilters={clearAllFilters}
+                handleRemoveFilter={() => {}}
+                labels={projectStore.projectLabels ?? undefined}
+                members={projectStore.projectMembers?.map((m) => m.member) ?? undefined}
+                states={projectStore.projectStatesByGroups ?? undefined}
+              />
+            </div>
+          )}
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
         <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
         <PrimaryButton type="submit" loading={isSubmitting}>
-          {status
+          {data
             ? isSubmitting
               ? "Updating View..."
               : "Update View"
@@ -213,4 +160,4 @@ export const ViewForm: React.FC<Props> = ({
       </div>
     </form>
   );
-};
+});

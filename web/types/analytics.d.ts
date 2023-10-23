@@ -2,14 +2,11 @@ export interface IAnalyticsResponse {
   total: number;
   distribution: IAnalyticsData;
   extras: {
-    colors: IAnalyticsExtra[];
-    assignee_details: {
-      assignees__id: string | null;
-      assignees__display_name: string | null;
-      assignees__avatar: string | null;
-      assignees__first_name: string;
-      assignees__last_name: string;
-    }[];
+    assignee_details: IAnalyticsAssigneeDetails[];
+    cycle_details: IAnalyticsCycleDetails[];
+    label_details: IAnalyticsLabelDetails[];
+    module_details: IAnalyticsModuleDetails[];
+    state_details: IAnalyticsStateDetails[];
   };
 }
 
@@ -22,19 +19,44 @@ export interface IAnalyticsData {
   }[];
 }
 
-export interface IAnalyticsExtra {
-  name: string;
-  color: string;
+export interface IAnalyticsAssigneeDetails {
+  assignees__avatar: string | null;
+  assignees__display_name: string | null;
+  assignees__first_name: string;
+  assignees__id: string | null;
+  assignees__last_name: string;
+}
+
+export interface IAnalyticsCycleDetails {
+  issue_cycle__cycle__name: string | null;
+  issue_cycle__cycle_id: string | null;
+}
+
+export interface IAnalyticsLabelDetails {
+  labels__color: string | null;
+  labels__id: string | null;
+  labels__name: string | null;
+}
+
+export interface IAnalyticsModuleDetails {
+  issue_module__module__name: string | null;
+  issue_module__module_id: string | null;
+}
+
+export interface IAnalyticsStateDetails {
+  state__color: string;
+  state__name: string;
+  state_id: string;
 }
 
 export type TXAxisValues =
-  | "state__name"
+  | "state_id"
   | "state__group"
-  | "labels__name"
+  | "labels__id"
   | "assignees__id"
   | "estimate_point"
-  | "issue_cycle__cycle__name"
-  | "issue_module__module__name"
+  | "issue_cycle__cycle_id"
+  | "issue_module__module_id"
   | "priority"
   | "start_date"
   | "target_date"

@@ -1,17 +1,14 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 import useSWRInfinite from "swr/infinite";
-
 // services
-import projectService from "services/project.service";
+import { ProjectService } from "services/project";
 // ui
 import { CustomSearchSelect } from "components/ui";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
-import { IWorkspaceIntegration, IGithubRepository } from "types";
+import { IWorkspaceIntegration } from "types";
 
 type Props = {
   integration: IWorkspaceIntegration;
@@ -21,22 +18,18 @@ type Props = {
   characterLimit?: number;
 };
 
-export const SelectRepository: React.FC<Props> = ({
-  integration,
-  value,
-  label,
-  onChange,
-  characterLimit = 25,
-}) => {
+const projectService = new ProjectService();
+
+export const SelectRepository: React.FC<Props> = (props) => {
+  const { integration, value, label, onChange, characterLimit = 25 } = props;
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
   const getKey = (pageIndex: number) => {
     if (!workspaceSlug || !integration) return;
 
-    return `${
-      process.env.NEXT_PUBLIC_API_BASE_URL
-    }/api/workspaces/${workspaceSlug}/workspace-integrations/${
+    return `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/workspaces/${workspaceSlug}/workspace-integrations/${
       integration.id
     }/github-repositories/?page=${++pageIndex}`;
   };
@@ -47,12 +40,7 @@ export const SelectRepository: React.FC<Props> = ({
     return data;
   };
 
-  const {
-    data: paginatedData,
-    size,
-    setSize,
-    isValidating,
-  } = useSWRInfinite(getKey, fetchGithubRepos);
+  const { data: paginatedData, size, setSize, isValidating } = useSWRInfinite(getKey, fetchGithubRepos);
 
   let userRepositories = (paginatedData ?? []).map((data) => data.repositories).flat();
   userRepositories = userRepositories.filter((data) => data?.id);
@@ -92,7 +80,6 @@ export const SelectRepository: React.FC<Props> = ({
           )}
         </>
       }
-      position="right"
       optionsClassName="w-full"
     />
   );

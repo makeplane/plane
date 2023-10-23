@@ -1,19 +1,66 @@
 import React from "react";
-
+import type { NextPage } from "next";
+import { useRouter } from "next/router";
+import useSWR from "swr";
+import { observer } from "mobx-react-lite";
 // contexts
 import { ProfileIssuesContextProvider } from "contexts/profile-issues-context";
+// layouts
 import { ProfileAuthWrapper } from "layouts/profile-layout";
 // components
-import { ProfileIssuesView } from "components/profile";
-// types
-import type { NextPage } from "next";
+import { ProfileIssuesListLayout } from "components/issues/issue-layouts/list/profile-issues-root";
+import { ProfileIssuesKanBanLayout } from "components/issues/issue-layouts/kanban/profile-issues-root";
+// hooks
+import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
-const ProfileAssignedIssues: NextPage = () => (
-  <ProfileIssuesContextProvider>
-    <ProfileAuthWrapper>
-      <ProfileIssuesView />
-    </ProfileAuthWrapper>
-  </ProfileIssuesContextProvider>
-);
+// types
+
+const ProfileAssignedIssues: NextPage = observer(() => {
+  const {
+    workspace: workspaceStore,
+    project: projectStore,
+    profileIssueFilters: profileIssueFiltersStore,
+    profileIssues: profileIssuesStore,
+  }: RootStore = useMobxStore();
+
+  const router = useRouter();
+  const { workspaceSlug, userId } = router.query as {
+    workspaceSlug: string;
+    userId: string;
+  };
+
+  useSWR(`PROFILE_ISSUES_${workspaceSlug}_${userId}`, async () => {
+    if (workspaceSlug && userId) {
+      // workspace labels
+      workspaceStore.setWorkspaceSlug(workspaceSlug);
+      await workspaceStore.fetchWorkspaceLabels(workspaceSlug);
+      await projectStore.fetchProjects(workspaceSlug);
+
+      //profile issues
+      await profileIssuesStore.fetchIssues(workspaceSlug, userId, "assigned");
+    }
+  });
+
+  const activeLayout = profileIssueFiltersStore.userDisplayFilters.layout;
+
+  return (
+    <ProfileIssuesContextProvider>
+      <ProfileAuthWrapper>
+        {profileIssuesStore.loader ? (
+          <div>Loading...</div>
+        ) : (
+          <div className="w-full h-full relative overflow-auto -z-1">
+            {activeLayout === "list" ? (
+              <ProfileIssuesListLayout />
+            ) : activeLayout === "kanban" ? (
+              <ProfileIssuesKanBanLayout />
+            ) : null}
+          </div>
+        )}
+      </ProfileAuthWrapper>
+    </ProfileIssuesContextProvider>
+  );
+});
 
 export default ProfileAssignedIssues;

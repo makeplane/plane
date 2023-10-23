@@ -5,10 +5,11 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // services
-import issuesService from "services/issues.service";
-import cyclesService from "services/cycles.service";
+import { IssueService } from "services/issue";
+import { CycleService } from "services/cycle.service";
 // ui
-import { Spinner, CustomSelect, Tooltip } from "components/ui";
+import { CustomSelect } from "components/ui";
+import { Spinner, Tooltip } from "@plane/ui";
 // helper
 import { truncateText } from "helpers/string.helper";
 // types
@@ -22,32 +23,27 @@ type Props = {
   disabled?: boolean;
 };
 
-export const SidebarCycleSelect: React.FC<Props> = ({
-  issueDetail,
-  handleCycleChange,
-  disabled = false,
-}) => {
+// services
+const issueService = new IssueService();
+const cycleService = new CycleService();
+
+export const SidebarCycleSelect: React.FC<Props> = ({ issueDetail, handleCycleChange, disabled = false }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
   const { data: incompleteCycles } = useSWR(
     workspaceSlug && projectId ? INCOMPLETE_CYCLES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () =>
-          cyclesService.getCyclesWithParams(
-            workspaceSlug as string,
-            projectId as string,
-            "incomplete"
-          )
+      ? () => cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string, "incomplete")
       : null
   );
 
   const removeIssueFromCycle = (bridgeId: string, cycleId: string) => {
     if (!workspaceSlug || !projectId) return;
 
-    issuesService
+    issueService
       .removeIssueFromCycle(workspaceSlug as string, projectId as string, cycleId, bridgeId)
-      .then((res) => {
+      .then(() => {
         mutate(ISSUE_DETAILS(issueId as string));
 
         mutate(CYCLE_ISSUES(cycleId));
@@ -63,21 +59,14 @@ export const SidebarCycleSelect: React.FC<Props> = ({
     <CustomSelect
       customButton={
         <div>
-          <Tooltip
-            position="left"
-            tooltipContent={`${issueCycle ? issueCycle.cycle_detail.name : "No cycle"}`}
-          >
+          <Tooltip position="left" tooltipContent={`${issueCycle ? issueCycle.cycle_detail.name : "No cycle"}`}>
             <button
               type="button"
               className={`bg-custom-background-80 text-xs rounded px-2.5 py-0.5 w-full flex ${
                 disabled ? "cursor-not-allowed" : ""
               }`}
             >
-              <span
-                className={`truncate ${
-                  issueCycle ? "text-custom-text-100" : "text-custom-text-200"
-                }`}
-              >
+              <span className={`truncate ${issueCycle ? "text-custom-text-100" : "text-custom-text-200"}`}>
                 {issueCycle ? issueCycle.cycle_detail.name : "No cycle"}
               </span>
             </button>
@@ -91,7 +80,6 @@ export const SidebarCycleSelect: React.FC<Props> = ({
           : handleCycleChange(incompleteCycles?.find((c) => c.id === value) as ICycle);
       }}
       width="w-full"
-      position="right"
       maxHeight="rg"
       disabled={disabled}
     >

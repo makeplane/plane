@@ -3,7 +3,7 @@ import React, { Fragment } from "react";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // icons
-import { Icon } from "components/ui";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 export const CustomPopover = ({
   children,
@@ -18,16 +18,10 @@ export const CustomPopover = ({
     <Popover className="relative">
       {({ open }) => (
         <>
-          <Popover.Button
-            className={`${open ? "" : ""}  relative flex items-center gap-1 ring-0 outline-none`}
-          >
+          <Popover.Button className={`${open ? "" : ""}  relative flex items-center gap-1 ring-0 outline-none`}>
             <div className="text-sm">{label ?? placeholder}</div>
             <div className="w-5 h-5 grid place-items-center">
-              {!open ? (
-                <Icon iconName="expand_more" className="!text-base" />
-              ) : (
-                <Icon iconName="expand_less" className="!text-base" />
-              )}
+              {!open ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
             </div>
           </Popover.Button>
 

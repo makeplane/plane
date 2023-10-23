@@ -1,5 +1,3 @@
-import { useState } from "react";
-// next
 import { useRouter } from "next/router";
 // react-beautiful-dnd
 import { DragDropContext, Draggable, DropResult } from "react-beautiful-dnd";
@@ -7,12 +5,11 @@ import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 // hooks
 import { useChart } from "./hooks";
 // ui
-import { Loader } from "components/ui";
+import { Loader } from "@plane/ui";
 // icons
-import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
-import { PlusIcon } from "lucide-react";
-// components
-import { GanttInlineCreateIssueForm } from "components/core/views/gantt-chart-view/inline-create-issue-form";
+import { MoreVertical } from "lucide-react";
+// helpers
+import { findTotalDaysInRange } from "helpers/date-time.helper";
 // types
 import { IBlockUpdateData, IGanttBlock } from "./types";
 
@@ -25,14 +22,13 @@ type Props = {
 };
 
 export const GanttSidebar: React.FC<Props> = (props) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { title, blockUpdateHandler, blocks, SidebarBlockRender, enableReorder } = props;
 
   const router = useRouter();
-  const { cycleId, moduleId } = router.query;
+  const { cycleId } = router.query;
 
   const { activeBlock, dispatch } = useChart();
-
-  const [isCreateIssueFormOpen, setIsCreateIssueFormOpen] = useState(false);
 
   // update the active block on hover
   const updateActiveBlock = (block: IGanttBlock | null) => {
@@ -60,8 +56,7 @@ export const GanttSidebar: React.FC<Props> = (props) => {
     // update the sort order to the lowest if dropped at the top
     if (destination.index === 0) updatedSortOrder = blocks[0].sort_order - 1000;
     // update the sort order to the highest if dropped at the bottom
-    else if (destination.index === blocks.length - 1)
-      updatedSortOrder = blocks[blocks.length - 1].sort_order + 1000;
+    else if (destination.index === blocks.length - 1) updatedSortOrder = blocks[blocks.length - 1].sort_order + 1000;
     // update the sort order to the average of the two adjacent blocks if dropped in between
     else {
       const destinationSortingOrder = blocks[destination.index].sort_order;
@@ -92,14 +87,17 @@ export const GanttSidebar: React.FC<Props> = (props) => {
       <StrictModeDroppable droppableId="gantt-sidebar">
         {(droppableProvided) => (
           <div
-            className="h-full overflow-y-auto pl-2.5"
+            id={`gantt-sidebar-${cycleId}`}
+            className="max-h-full overflow-y-auto pl-2.5 mt-3"
             ref={droppableProvided.innerRef}
             {...droppableProvided.droppableProps}
           >
             <>
               {blocks ? (
-                blocks.length > 0 ? (
-                  blocks.map((block, index) => (
+                blocks.map((block, index) => {
+                  const duration = findTotalDaysInRange(block.start_date ?? "", block.target_date ?? "", true);
+
+                  return (
                     <Draggable
                       key={`sidebar-block-${block.id}`}
                       draggableId={`sidebar-block-${block.id}`}
@@ -108,9 +106,7 @@ export const GanttSidebar: React.FC<Props> = (props) => {
                     >
                       {(provided, snapshot) => (
                         <div
-                          className={`h-11 ${
-                            snapshot.isDragging ? "bg-custom-background-80 rounded" : ""
-                          }`}
+                          className={`h-11 ${snapshot.isDragging ? "bg-custom-background-80 rounded" : ""}`}
                           onMouseEnter={() => updateActiveBlock(block)}
                           onMouseLeave={() => updateActiveBlock(null)}
                           ref={provided.innerRef}
@@ -128,23 +124,24 @@ export const GanttSidebar: React.FC<Props> = (props) => {
                                 className="rounded p-0.5 text-custom-sidebar-text-200 flex flex-shrink-0 opacity-0 group-hover:opacity-100"
                                 {...provided.dragHandleProps}
                               >
-                                <EllipsisVerticalIcon className="h-4" />
-                                <EllipsisVerticalIcon className="h-4 -ml-5" />
+                                <MoreVertical className="h-4" />
+                                <MoreVertical className="h-4 -ml-5" />
                               </button>
                             )}
-                            <div className="flex-grow truncate w-full h-full">
-                              <SidebarBlockRender data={block.data} />
+                            <div className="flex-grow truncate h-full flex items-center justify-between gap-2">
+                              <div className="flex-grow truncate">
+                                <SidebarBlockRender data={block.data} />
+                              </div>
+                              <div className="flex-shrink-0 text-sm text-custom-text-200">
+                                {duration} day{duration > 1 ? "s" : ""}
+                              </div>
                             </div>
                           </div>
                         </div>
                       )}
                     </Draggable>
-                  ))
-                ) : (
-                  <div className="text-custom-text-200 text-sm text-center mt-8">
-                    No <span className="lowercase">{title}</span> found
-                  </div>
-                )
+                  );
+                })
               ) : (
                 <Loader className="pr-2 space-y-3">
                   <Loader.Item height="34px" />
@@ -155,28 +152,6 @@ export const GanttSidebar: React.FC<Props> = (props) => {
               )}
               {droppableProvided.placeholder}
             </>
-
-            <GanttInlineCreateIssueForm
-              isOpen={isCreateIssueFormOpen}
-              handleClose={() => setIsCreateIssueFormOpen(false)}
-              prePopulatedData={{
-                start_date: new Date(Date.now()).toISOString().split("T")[0],
-                target_date: new Date(Date.now() + 86400000).toISOString().split("T")[0],
-                ...(cycleId && { cycle: cycleId.toString() }),
-                ...(moduleId && { module: moduleId.toString() }),
-              }}
-            />
-
-            {!isCreateIssueFormOpen && (
-              <button
-                type="button"
-                onClick={() => setIsCreateIssueFormOpen(true)}
-                className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-1 rounded-md mt-3"
-              >
-                <PlusIcon className="h-4 w-4" />
-                <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
-              </button>
-            )}
           </div>
         )}
       </StrictModeDroppable>

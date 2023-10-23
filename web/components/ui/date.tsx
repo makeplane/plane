@@ -1,9 +1,10 @@
 import React from "react";
 
 import { Popover, Transition } from "@headlessui/react";
-import { CalendarDaysIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // react-datepicker
 import DatePicker from "react-datepicker";
+// icons
+import { CalendarDays, X } from "lucide-react";
 // import "react-datepicker/dist/react-datepicker.css";
 import { renderDateFormat, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 
@@ -16,14 +17,7 @@ type Props = {
   closeOnSelect?: boolean;
 };
 
-export const DateSelect: React.FC<Props> = ({
-  value,
-  onChange,
-  label,
-  minDate,
-  maxDate,
-  closeOnSelect = true,
-}) => (
+export const DateSelect: React.FC<Props> = ({ value, onChange, label, minDate, maxDate, closeOnSelect = true }) => (
   <Popover className="relative flex items-center justify-center  rounded-lg">
     {({ close }) => (
       <>
@@ -33,12 +27,12 @@ export const DateSelect: React.FC<Props> = ({
               <>
                 <span className="text-custom-text-100">{renderShortDateWithYearFormat(value)}</span>
                 <button onClick={() => onChange(null)}>
-                  <XMarkIcon className="h-3 w-3" />
+                  <X className="h-3 w-3" />
                 </button>
               </>
             ) : (
               <>
-                <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
+                <CalendarDays className="h-4 w-4 flex-shrink-0" />
                 <span>{label}</span>
               </>
             )}

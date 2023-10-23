@@ -17,12 +17,23 @@ class GlobalView(BaseModel):
         default=1, choices=((0, "Private"), (1, "Public"))
     )
     query_data = models.JSONField(default=dict)
+    sort_order = models.FloatField(default=65535)
 
     class Meta:
         verbose_name = "Global View"
         verbose_name_plural = "Global Views"
         db_table = "global_views"
         ordering = ("-created_at",)
+    
+    def save(self, *args, **kwargs):
+        if self._state.adding:
+            largest_sort_order = GlobalView.objects.filter(
+                workspace=self.workspace
+            ).aggregate(largest=models.Max("sort_order"))["largest"]
+            if largest_sort_order is not None:
+                self.sort_order = largest_sort_order + 10000
+
+        super(GlobalView, self).save(*args, **kwargs)
 
     def __str__(self):
         """Return name of the View"""
