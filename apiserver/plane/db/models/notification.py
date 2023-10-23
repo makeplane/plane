@@ -1,8 +1,10 @@
 # Django imports
 from django.db import models
+from django.conf import settings
 
 # Third party imports
 from .base import BaseModel
+from plane.db.models import ProjectBaseModel
 
 
 class Notification(BaseModel):
@@ -20,8 +22,15 @@ class Notification(BaseModel):
     message_html = models.TextField(blank=True, default="<p></p>")
     message_stripped = models.TextField(blank=True, null=True)
     sender = models.CharField(max_length=255)
-    triggered_by = models.ForeignKey("db.User", related_name="triggered_notifications", on_delete=models.SET_NULL, null=True)
-    receiver = models.ForeignKey("db.User", related_name="received_notifications", on_delete=models.CASCADE)
+    triggered_by = models.ForeignKey(
+        "db.User",
+        related_name="triggered_notifications",
+        on_delete=models.SET_NULL,
+        null=True,
+    )
+    receiver = models.ForeignKey(
+        "db.User", related_name="received_notifications", on_delete=models.CASCADE
+    )
     read_at = models.DateTimeField(null=True)
     snoozed_till = models.DateTimeField(null=True)
     archived_at = models.DateTimeField(null=True)
@@ -35,3 +44,43 @@ class Notification(BaseModel):
     def __str__(self):
         """Return name of the notifications"""
         return f"{self.receiver.email} <{self.workspace.name}>"
+
+
+def get_default_preference():
+    return {
+        "property_change": {
+            "email": True,
+        },
+        "state": {
+            "email": True,
+        },
+        "comment": {
+            "email": True,
+        },
+        "mentions": {
+            "email": True,
+        },
+    }
+
+
+class NotificationPreference(ProjectBaseModel):
+    created_by = models.JSONField(default=get_default_preference)
+    assigned = models.JSONField(default=get_default_preference)
+    subscribed = models.JSONField(default=get_default_preference)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="notification_preferences",
+    )
+
+    class Meta:
+        unique_together = ["project", "user"]
+
+        verbose_name = "Notification Preference"
+        verbose_name_plural = "Notification Preferences"
+        db_table = "notification_preferences"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        """Return name of the notifications"""
+        return f"{self.user.email} <{self.workspace.name}>"
