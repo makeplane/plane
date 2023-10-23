@@ -1,13 +1,6 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import { ModuleService } from "services/module.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -15,42 +8,40 @@ import { Button } from "@plane/ui";
 // icons
 import { AlertTriangle } from "lucide-react";
 // types
-import type { IUser, IModule } from "types";
-// fetch-keys
-import { MODULE_LIST } from "constants/fetch-keys";
+import type { IModule } from "types";
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
+  data: IModule;
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  data?: IModule;
-  user: IUser | undefined;
+  onClose: () => void;
 };
 
-// services
-const moduleService = new ModuleService();
+export const DeleteModuleModal: React.FC<Props> = observer((props) => {
+  const { data, isOpen, onClose } = props;
 
-export const DeleteModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, user }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
 
+  const { module: moduleStore } = useMobxStore();
+
   const { setToastAlert } = useToast();
 
   const handleClose = () => {
-    setIsOpen(false);
+    onClose();
     setIsDeleteLoading(false);
   };
 
   const handleDeletion = async () => {
+    if (!workspaceSlug || !projectId) return;
+
     setIsDeleteLoading(true);
 
-    if (!workspaceSlug || !projectId || !data) return;
-
-    mutate<IModule[]>(MODULE_LIST(projectId as string), (prevData) => prevData?.filter((m) => m.id !== data.id), false);
-
-    await moduleService
-      .deleteModule(workspaceSlug as string, projectId as string, data.id, user)
+    await moduleStore
+      .deleteModule(workspaceSlug.toString(), projectId.toString(), data.id)
       .then(() => {
         if (moduleId) router.push(`/${workspaceSlug}/projects/${data.project}/modules`);
         handleClose();
@@ -61,6 +52,8 @@ export const DeleteModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, us
           title: "Error!",
           message: "Module could not be deleted. Please try again.",
         });
+      })
+      .finally(() => {
         setIsDeleteLoading(false);
       });
   };
@@ -126,4 +119,4 @@ export const DeleteModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, us
       </Dialog>
     </Transition.Root>
   );
-};
+});
