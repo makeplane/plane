@@ -152,6 +152,8 @@ export class ModuleFilterStore implements IModuleFilterStore {
         this.moduleFilters = newFilters;
       });
 
+      const user = this.rootStore.user.currentUser ?? undefined;
+
       this.moduleService.patchModule(
         workspaceSlug,
         projectId,
@@ -161,7 +163,7 @@ export class ModuleFilterStore implements IModuleFilterStore {
             filters: newFilters,
           },
         },
-        this.rootStore.user.currentUser
+        user
       );
     } catch (error) {
       this.fetchModuleFilters(workspaceSlug, projectId, moduleId);
