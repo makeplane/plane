@@ -2,7 +2,7 @@ import React from "react";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// hooks
+// mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { ProjectViewsHeader } from "components/headers";
@@ -14,14 +14,7 @@ const ProjectViews: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { project: projectStore, projectViews: projectViewsStore } = useMobxStore();
-
-  useSWR(
-    workspaceSlug && projectId ? `PROJECT_DETAILS_${projectId.toString()}` : null,
-    workspaceSlug && projectId
-      ? () => projectStore.fetchProjectDetails(workspaceSlug.toString(), projectId.toString())
-      : null
-  );
+  const { projectViews: projectViewsStore } = useMobxStore();
 
   useSWR(
     workspaceSlug && projectId ? `PROJECT_VIEWS_LIST_${workspaceSlug.toString()}_${projectId.toString()}` : null,

@@ -1,33 +1,30 @@
-import { FC, useCallback } from "react";
+import { useCallback } from "react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// hooks
+// mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// ui
-import { Breadcrumbs, BreadcrumbItem, CustomMenu, PhotoFilterIcon } from "@plane/ui";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
-// helper
+// ui
+import { BreadcrumbItem, Breadcrumbs, CustomMenu, PhotoFilterIcon } from "@plane/ui";
+// helpers
 import { truncateText } from "helpers/string.helper";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 
-export const ProjectViewIssueHeader: FC = observer(() => {
+export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, viewId } = router.query;
 
   const {
     issueFilter: issueFilterStore,
     projectViewFilters: projectViewFiltersStore,
-    projectViews: projectViewsStore,
     project: projectStore,
+    projectViews: projectViewsStore,
   } = useMobxStore();
-
-  const views = projectId && viewId ? projectViewsStore.viewsList[projectId.toString()] : undefined;
-
-  const viewDetails = viewId ? projectViewsStore.viewDetails[viewId.toString()] : undefined;
 
   const storedFilters = viewId ? projectViewFiltersStore.storedFilters[viewId.toString()] : undefined;
 
@@ -95,16 +92,23 @@ export const ProjectViewIssueHeader: FC = observer(() => {
       ? projectStore.getProjectById(workspaceSlug.toString(), projectId.toString())
       : undefined;
 
+  const viewsList = projectId ? projectViewsStore.viewsList[projectId.toString()] : undefined;
+  const viewDetails = viewId ? projectViewsStore.viewDetails[viewId.toString()] : undefined;
+
   return (
-    <div className="relative flex w-full flex-shrink-0 flex-row z-10 items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
-      <div className="flex items-center gap-2 flex-grow w-full whitespace-nowrap overflow-ellipsis">
-        <div>
-          <Breadcrumbs onBack={() => router.back()}>
-            <span className="border-r-2 border-custom-sidebar-border-200 px-3 text-sm">
-              <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Views`} />
-            </span>
-          </Breadcrumbs>
-        </div>
+    <div className="relative w-full flex items-center z-10 justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+      <div className="flex items-center gap-2">
+        <Breadcrumbs onBack={() => router.back()}>
+          <BreadcrumbItem
+            link={
+              <Link href={`/${workspaceSlug}/projects/${projectDetails?.id}/cycles`}>
+                <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
+                  <p className="truncate">{`${projectDetails?.name ?? "Project"} Views`}</p>
+                </a>
+              </Link>
+            }
+          />
+        </Breadcrumbs>
         <CustomMenu
           label={
             <>
@@ -113,9 +117,9 @@ export const ProjectViewIssueHeader: FC = observer(() => {
             </>
           }
           className="ml-1.5"
-          width="auto"
+          placement="bottom-start"
         >
-          {views?.map((view) => (
+          {viewsList?.map((view) => (
             <CustomMenu.MenuItem
               key={view.id}
               onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/views/${view.id}`)}
