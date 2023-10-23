@@ -15,7 +15,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 # To access plane api through api tokens
-ENABLE_API = os.environ.get("ENABLE_API", "1") == "1"
+ENABLE_WEBHOOK_API = os.environ.get("ENABLE_WEBHOOK_API", "1") == "1"
 
 # Application definition
 
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "taggit",
     "django_celery_beat",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -58,14 +59,17 @@ DEFAULT_AUTH_CLASSES = [
     "rest_framework_simplejwt.authentication.JWTAuthentication",
 ]
 
-if ENABLE_API:
-    DEFAULT_AUTH_CLASSES.append("plane.authentication.api_authentication.APIKeyAuthentication")
+if ENABLE_WEBHOOK_API:
+    DEFAULT_AUTH_CLASSES.append(
+        "plane.authentication.api_authentication.APIKeyAuthentication"
+    )
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": tuple(DEFAULT_AUTH_CLASSES),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 AUTHENTICATION_BACKENDS = (
@@ -226,3 +230,11 @@ CELERY_IMPORTS = (
     "plane.bgtasks.issue_automation_task",
     "plane.bgtasks.exporter_expired_task",
 )
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Plane API",
+    "DESCRIPTION": "🔥 🔥 🔥 Open Source JIRA, Linear and Height Alternative. Plane helps you track your issues, epics, and product roadmaps in the simplest way possible.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    # OTHER SETTINGS
+}

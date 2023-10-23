@@ -28,7 +28,7 @@ from .user import (
 
 from .oauth import OauthEndpoint
 
-from .base import BaseAPIView, BaseViewSet
+from .base import BaseAPIView, BaseViewSet, WebhookMixin
 
 from .workspace import (
     WorkSpaceViewSet,
@@ -171,4 +171,4 @@ from .exporter import ExportIssuesEndpoint
 
 from .config import ConfigurationEndpoint
 
-from .webhook import WebhookEndpoint
+from .webhook import WebhookEndpoint, WebhookLogsEndpoint

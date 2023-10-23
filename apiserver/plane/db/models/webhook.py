@@ -29,6 +29,7 @@ def validate_domain(value):
 
 
 class Webhook(BaseModel):
+    name = models.CharField(max_length=255, verbose_name="Webhook Name")
     workspace = models.ForeignKey(
         "db.Workspace",
         on_delete=models.CASCADE,
@@ -40,16 +41,14 @@ class Webhook(BaseModel):
             validate_domain,
         ]
     )
-    content_type = models.CharField(
-        max_length=40,
-        choices=(
-            ("application/json", "application/json"),
-            ("application/x-www-form-urlencoded", "application/x-www-form-urlencoded"),
-        ),
-        default="application/json",
-    )
     is_active = models.BooleanField(default=True)
     secret_key = models.CharField(max_length=255, blank=True, null=True)
+    retry_count = models.PositiveSmallIntegerField(default=0)
+    project = models.BooleanField(default=False)
+    issue = models.BooleanField(default=False)
+    module = models.BooleanField(default=False)
+    cycle = models.BooleanField(default=False)
+    issue_comment = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.workspace.slug} {self.url}"
@@ -63,18 +62,25 @@ class Webhook(BaseModel):
 
 
 class WebhookLog(BaseModel):
+    workspace = models.ForeignKey(
+        "db.Workspace", on_delete=models.CASCADE, related_name="webhook_logs"
+    )
     # Associated webhook
     webhook = models.ForeignKey(Webhook, on_delete=models.CASCADE, related_name="logs")
 
     # Basic request details
     event_type = models.CharField(max_length=255, blank=True, null=True)
-    request_headers = models.TextField()
-    request_body = models.TextField()
+    request_method = models.CharField(max_length=10, blank=True, null=True)
+    request_headers = models.TextField(blank=True, null=True)
+    request_body = models.TextField(blank=True, null=True)
 
     # Response details
-    response_status = models.PositiveSmallIntegerField()
-    response_headers = models.TextField()
-    response_body = models.TextField()
+    response_status = models.TextField(blank=True, null=True)
+    response_headers = models.TextField(blank=True, null=True)
+    response_body = models.TextField(blank=True, null=True)
+
+    # Retry Count
+    retry_count = models.PositiveSmallIntegerField(default=0)
 
     class Meta:
         verbose_name = "Webhook Log"

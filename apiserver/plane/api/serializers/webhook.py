@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 # Module imports
 from .base import DynamicBaseSerializer
-from plane.db.models import Webhook
+from plane.db.models import Webhook, WebhookLog
 from plane.db.models.webhook import validate_domain, validate_schema 
 
 class WebhookSerializer(DynamicBaseSerializer):
@@ -15,3 +15,15 @@ class WebhookSerializer(DynamicBaseSerializer):
         read_only_fields = [
             "workspace",
         ]
+
+
+class WebhookLogSerializer(DynamicBaseSerializer):
+
+    class Meta:
+        model = WebhookLog
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "webhook"
+        ]
+

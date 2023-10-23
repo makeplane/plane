@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from plane.db.models import Webhook, WebhookLog, Workspace
 from .base import BaseAPIView
 from plane.api.permissions import WorkspaceUserPermission
-from plane.api.serializers import WebhookSerializer
+from plane.api.serializers import WebhookSerializer, WebhookLogSerializer
 
 
 class WebhookEndpoint(BaseAPIView):
@@ -71,3 +71,16 @@ class WebhookEndpoint(BaseAPIView):
         webhook = Webhook.objects.get(pk=pk, workspace__slug=slug)
         webhook.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class WebhookLogsEndpoint(BaseAPIView):
+
+    permission_classes = [
+        WorkspaceUserPermission,
+    ]
+
+    def get(self, request, slug, webhook_id):
+        webhook_logs = WebhookLog.objects.filter(workspace__slug=slug, webhook_id=webhook_id)
+        serializer = WebhookLogSerializer(webhook_logs, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    

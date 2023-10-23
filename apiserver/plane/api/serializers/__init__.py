@@ -101,4 +101,4 @@ from .notification import NotificationSerializer
 
 from .exporter import ExporterHistorySerializer
 
-from .webhook import WebhookSerializer
+from .webhook import WebhookSerializer, WebhookLogSerializer

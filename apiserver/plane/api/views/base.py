@@ -1,5 +1,6 @@
 # Python imports
 import zoneinfo
+import json
 
 # Django imports
 from django.urls import resolve
@@ -7,6 +8,7 @@ from django.conf import settings
 from django.utils import timezone
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Third part imports
 from rest_framework import status
@@ -39,6 +41,25 @@ class TimezoneMixin:
             timezone.deactivate()
 
 
+class WebhookMixin:
+    webhook_event = None
+
+    def finalize_response(self, request, response, *args, **kwargs):
+        response = super().finalize_response(request, response, *args, **kwargs)
+        if (
+            self.webhook_event
+            and self.request.method in ["POST", "PATCH", "DELETE"]
+            and response.status_code in [200, 201, 204]
+            and settings.ENABLE_WEBHOOK_API
+        ):
+            send_webhook.delay(
+                event=self.webhook_event,
+                response=json.dumps(response.data, cls=DjangoJSONEncoder),
+                action=self.request.method,
+                slug=self.workspace_slug,
+            )
+
+        return response
 
 
 class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
@@ -117,20 +138,6 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
                 print(
                     f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}"
                 )
-
-            print(settings.ENABLE_API)
-
-            if (
-                self.webhook_event
-                and request.method in ["POST", "PATCH", "DELETE"]
-                and response.status_code in [200, 201, 204]
-                and settings.ENABLE_API
-            ):
-                print(dir(response.items()))
-                print(self.webhook_event. response.data)
-                # send_webhook.delay(
-                #     self.webhook_event, response, self.workspace_slug,
-                # )
 
             return response
         except Exception as exc:
