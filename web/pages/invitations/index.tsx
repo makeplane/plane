@@ -12,7 +12,7 @@ import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
 // layouts
 import DefaultLayout from "layouts/default-layout";
-import { UserAuthorizationLayout } from "layouts/auth-layout-legacy/user-authorization-wrapper";
+import { UserAuthWrapper } from "layouts/auth-layout";
 // ui
 import { Button } from "@plane/ui";
 // icons
@@ -103,7 +103,7 @@ const UserInvitationsPage: NextPage = () => {
   };
 
   return (
-    <UserAuthorizationLayout>
+    <UserAuthWrapper>
       <DefaultLayout>
         <div className="flex h-full flex-col gap-y-2 sm:gap-y-0 sm:flex-row overflow-hidden">
           <div className="relative h-1/6 flex-shrink-0 sm:w-2/12 md:w-3/12 lg:w-1/5">
@@ -210,7 +210,7 @@ const UserInvitationsPage: NextPage = () => {
           ) : null}
         </div>
       </DefaultLayout>
-    </UserAuthorizationLayout>
+    </UserAuthWrapper>
   );
 };
 

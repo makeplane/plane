@@ -4,14 +4,14 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 import useProjectDetails from "hooks/use-project-details";
 // components
-import { GanttChartRoot, renderIssueBlocksStructure } from "components/gantt-chart";
-import { IssueGanttBlock, IssueGanttSidebarBlock, IssuePeekOverview } from "components/issues";
+import { GanttChartRoot, IBlockUpdateData, renderIssueBlocksStructure } from "components/gantt-chart";
+import { IssueGanttBlock, IssueGanttSidebarBlock } from "components/issues";
 // types
 import { IIssueUnGroupedStructure } from "store/issue";
 
 export const CycleGanttLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, cycleId } = router.query;
 
   const { projectDetails } = useProjectDetails();
 
@@ -21,26 +21,23 @@ export const CycleGanttLayout: React.FC = observer(() => {
 
   const issues = cycleIssueStore.getIssues;
 
+  const updateIssue = (block: any, payload: IBlockUpdateData) => {
+    if (!workspaceSlug || !cycleId) return;
+
+    cycleIssueStore.updateGanttIssueStructure(workspaceSlug.toString(), cycleId.toString(), block, payload);
+  };
+
   const isAllowed = projectDetails?.member_role === 20 || projectDetails?.member_role === 15;
 
   return (
     <>
-      <IssuePeekOverview
-        projectId={projectId?.toString() ?? ""}
-        workspaceSlug={workspaceSlug?.toString() ?? ""}
-        readOnly={!isAllowed}
-      />
       <div className="w-full h-full">
         <GanttChartRoot
           border={false}
           title="Issues"
           loaderTitle="Issues"
           blocks={issues ? renderIssueBlocksStructure(issues as IIssueUnGroupedStructure) : null}
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          blockUpdateHandler={(block, payload) => {
-            // TODO: update mutation logic
-            // updateGanttIssue(block, payload, mutateGanttIssues, user, workspaceSlug?.toString())
-          }}
+          blockUpdateHandler={updateIssue}
           BlockRender={IssueGanttBlock}
           SidebarBlockRender={IssueGanttSidebarBlock}
           enableBlockLeftResize={isAllowed}

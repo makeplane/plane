@@ -40,14 +40,15 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
         <CalendarHeader />
         <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />
         <div className="h-full w-full overflow-y-auto">
-          {layout === "month" ? (
+          {layout === "month" && (
             <div className="h-full w-full grid grid-cols-1 divide-y-[0.5px] divide-custom-border-200">
               {allWeeksOfActiveMonth &&
                 Object.values(allWeeksOfActiveMonth).map((week: ICalendarWeek, weekIndex) => (
                   <CalendarWeekDays key={weekIndex} week={week} issues={issues} quickActions={quickActions} />
                 ))}
             </div>
-          ) : (
+          )}
+          {layout === "week" && (
             <CalendarWeekDays week={calendarStore.allDaysOfActiveWeek} issues={issues} quickActions={quickActions} />
           )}
         </div>

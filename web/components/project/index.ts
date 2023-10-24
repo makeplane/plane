@@ -15,3 +15,4 @@ export * from "./join-project-modal";
 export * from "./form";
 export * from "./form-loader";
 export * from "./delete-project-section";
+export * from "./publish-project";

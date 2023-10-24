@@ -25,88 +25,67 @@ export interface IProjectPublishStore {
   fetchSettingsLoader: boolean;
   error: any | null;
 
-  projectPublishModal: boolean;
-  project_id: string | null;
   projectPublishSettings: IProjectPublishSettings | "not-initialized";
 
-  handleProjectModal: (project_id: string | null) => void;
-
-  getProjectSettingsAsync: (workspace_slug: string, project_slug: string, user: any) => Promise<void>;
-  publishProject: (
-    workspace_slug: string,
-    project_slug: string,
-    data: IProjectPublishSettings,
-    user: any
-  ) => Promise<void>;
+  getProjectSettingsAsync: (workspaceSlug: string, projectId: string) => Promise<void>;
+  publishProject: (workspaceSlug: string, projectId: string, data: IProjectPublishSettings) => Promise<void>;
   updateProjectSettingsAsync: (
-    workspace_slug: string,
-    project_slug: string,
-    project_publish_id: string,
-    data: IProjectPublishSettings,
-    user: any
+    workspaceSlug: string,
+    projectId: string,
+    projectPublishId: string,
+    data: IProjectPublishSettings
   ) => Promise<void>;
-  unPublishProject: (
-    workspace_slug: string,
-    project_slug: string,
-    project_publish_id: string,
-    user: any
-  ) => Promise<void>;
+  unPublishProject: (workspaceSlug: string, projectId: string, projectPublishId: string) => Promise<void>;
 }
 
 export class ProjectPublishStore implements IProjectPublishStore {
+  // states
   generalLoader: boolean = false;
   fetchSettingsLoader: boolean = false;
   error: any | null = null;
 
-  projectPublishModal: boolean = false;
+  // actions
   project_id: string | null = null;
   projectPublishSettings: IProjectPublishSettings | "not-initialized" = "not-initialized";
 
   // root store
   rootStore;
-  // service
+
+  // services
   projectPublishService;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
-      // observable
+      // states
       generalLoader: observable,
       fetchSettingsLoader: observable,
       error: observable,
 
-      projectPublishModal: observable,
+      // observables
       project_id: observable,
       projectPublishSettings: observable.ref,
-      // action
-      handleProjectModal: action,
+
+      // actions
       getProjectSettingsAsync: action,
       publishProject: action,
       updateProjectSettingsAsync: action,
       unPublishProject: action,
-      // computed
     });
 
     this.rootStore = _rootStore;
+
+    // services
     this.projectPublishService = new ProjectPublishService();
   }
 
-  handleProjectModal = (project_id: string | null = null) => {
-    if (project_id) {
-      this.projectPublishModal = !this.projectPublishModal;
-      this.project_id = project_id;
-    } else {
-      this.projectPublishModal = !this.projectPublishModal;
-      this.project_id = null;
-      this.projectPublishSettings = "not-initialized";
-    }
-  };
-
-  getProjectSettingsAsync = async (workspace_slug: string, project_slug: string) => {
+  getProjectSettingsAsync = async (workspaceSlug: string, projectId: string) => {
     try {
-      this.fetchSettingsLoader = true;
-      this.error = null;
+      runInAction(() => {
+        this.fetchSettingsLoader = true;
+        this.error = null;
+      });
 
-      const response = await this.projectPublishService.getProjectSettingsAsync(workspace_slug, project_slug);
+      const response = await this.projectPublishService.getProjectSettingsAsync(workspaceSlug, projectId);
 
       if (response && response.length > 0) {
         const _projectPublishSettings: IProjectPublishSettings = {
@@ -131,24 +110,31 @@ export class ProjectPublishStore implements IProjectPublishStore {
           this.error = null;
         });
       } else {
-        this.projectPublishSettings = "not-initialized";
-        this.fetchSettingsLoader = false;
-        this.error = null;
+        runInAction(() => {
+          this.projectPublishSettings = "not-initialized";
+          this.fetchSettingsLoader = false;
+          this.error = null;
+        });
       }
       return response;
     } catch (error) {
-      this.fetchSettingsLoader = false;
-      this.error = error;
+      runInAction(() => {
+        this.fetchSettingsLoader = false;
+        this.error = error;
+      });
+
       return error;
     }
   };
 
-  publishProject = async (workspace_slug: string, project_slug: string, data: IProjectPublishSettings) => {
+  publishProject = async (workspaceSlug: string, projectId: string, data: IProjectPublishSettings) => {
     try {
-      this.generalLoader = true;
-      this.error = null;
+      runInAction(() => {
+        this.generalLoader = true;
+        this.error = null;
+      });
 
-      const response = await this.projectPublishService.createProjectSettingsAsync(workspace_slug, project_slug, data);
+      const response = await this.projectPublishService.createProjectSettingsAsync(workspaceSlug, projectId, data);
 
       if (response) {
         const _projectPublishSettings: IProjectPublishSettings = {
@@ -163,6 +149,20 @@ export class ProjectPublishStore implements IProjectPublishStore {
 
         runInAction(() => {
           this.projectPublishSettings = _projectPublishSettings;
+          this.rootStore.project.projects = {
+            ...this.rootStore.project.projects,
+            [workspaceSlug]: this.rootStore.project.projects[workspaceSlug].map((p) => ({
+              ...p,
+              is_deployed: p.id === projectId ? true : p.is_deployed,
+            })),
+          };
+          this.rootStore.project.project_details = {
+            ...this.rootStore.project.project_details,
+            [projectId]: {
+              ...this.rootStore.project.project_details[projectId],
+              is_deployed: true,
+            },
+          };
           this.generalLoader = false;
           this.error = null;
         });
@@ -170,26 +170,31 @@ export class ProjectPublishStore implements IProjectPublishStore {
         return response;
       }
     } catch (error) {
-      this.generalLoader = false;
-      this.error = error;
+      runInAction(() => {
+        this.generalLoader = false;
+        this.error = error;
+      });
+
       return error;
     }
   };
 
   updateProjectSettingsAsync = async (
-    workspace_slug: string,
-    project_slug: string,
-    project_publish_id: string,
+    workspaceSlug: string,
+    projectId: string,
+    projectPublishId: string,
     data: IProjectPublishSettings
   ) => {
     try {
-      this.generalLoader = true;
-      this.error = null;
+      runInAction(() => {
+        this.generalLoader = true;
+        this.error = null;
+      });
 
       const response = await this.projectPublishService.updateProjectSettingsAsync(
-        workspace_slug,
-        project_slug,
-        project_publish_id,
+        workspaceSlug,
+        projectId,
+        projectPublishId,
         data
       );
 
@@ -213,33 +218,55 @@ export class ProjectPublishStore implements IProjectPublishStore {
         return response;
       }
     } catch (error) {
-      this.generalLoader = false;
-      this.error = error;
+      runInAction(() => {
+        this.generalLoader = false;
+        this.error = error;
+      });
+
       return error;
     }
   };
 
-  unPublishProject = async (workspace_slug: string, project_slug: string, project_publish_id: string) => {
+  unPublishProject = async (workspaceSlug: string, projectId: string, projectPublishId: string) => {
     try {
-      this.generalLoader = true;
-      this.error = null;
+      runInAction(() => {
+        this.generalLoader = true;
+        this.error = null;
+      });
 
       const response = await this.projectPublishService.deleteProjectSettingsAsync(
-        workspace_slug,
-        project_slug,
-        project_publish_id
+        workspaceSlug,
+        projectId,
+        projectPublishId
       );
 
       runInAction(() => {
         this.projectPublishSettings = "not-initialized";
+        this.rootStore.project.projects = {
+          ...this.rootStore.project.projects,
+          [workspaceSlug]: this.rootStore.project.projects[workspaceSlug].map((p) => ({
+            ...p,
+            is_deployed: p.id === projectId ? false : p.is_deployed,
+          })),
+        };
+        this.rootStore.project.project_details = {
+          ...this.rootStore.project.project_details,
+          [projectId]: {
+            ...this.rootStore.project.project_details[projectId],
+            is_deployed: false,
+          },
+        };
         this.generalLoader = false;
         this.error = null;
       });
 
       return response;
     } catch (error) {
-      this.generalLoader = false;
-      this.error = error;
+      runInAction(() => {
+        this.generalLoader = false;
+        this.error = error;
+      });
+
       return error;
     }
   };

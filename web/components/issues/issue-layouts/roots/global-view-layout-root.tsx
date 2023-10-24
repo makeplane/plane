@@ -2,15 +2,12 @@ import React, { useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { GlobalViewsAppliedFiltersRoot, SpreadsheetView } from "components/issues";
 // types
 import { IIssue, IIssueDisplayFilterOptions, TStaticViewTypes } from "types";
-// fetch-keys
-import { GLOBAL_VIEW_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   type?: TStaticViewTypes;
@@ -35,7 +32,7 @@ export const GlobalViewLayoutRoot: React.FC<Props> = observer((props) => {
   const storedFilters = globalViewId ? globalViewFiltersStore.storedFilters[globalViewId.toString()] : undefined;
 
   useSWR(
-    workspaceSlug && globalViewId && viewDetails ? GLOBAL_VIEW_ISSUES(globalViewId.toString()) : null,
+    workspaceSlug && globalViewId && viewDetails ? `GLOBAL_VIEW_ISSUES_${globalViewId.toString()}` : null,
     workspaceSlug && globalViewId && viewDetails
       ? () => {
           globalViewIssuesStore.fetchViewIssues(workspaceSlug.toString(), globalViewId.toString(), storedFilters ?? {});
@@ -44,7 +41,7 @@ export const GlobalViewLayoutRoot: React.FC<Props> = observer((props) => {
   );
 
   useSWR(
-    workspaceSlug && type ? GLOBAL_VIEW_ISSUES(type) : null,
+    workspaceSlug && type ? `GLOBAL_VIEW_ISSUES_${type.toString()}` : null,
     workspaceSlug && type
       ? () => {
           globalViewIssuesStore.fetchStaticIssues(workspaceSlug.toString(), type);

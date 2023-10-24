@@ -1,9 +1,9 @@
-import { useCallback, useState, FC } from "react";
+import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { ArrowLeft, Plus } from "lucide-react";
-// hooks
+import { ArrowLeft, Circle, ExternalLink, Plus } from "lucide-react";
+// mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
@@ -17,7 +17,7 @@ import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 // helper
 import { truncateText } from "helpers/string.helper";
 
-export const ProjectIssuesHeader: FC = observer(() => {
+export const ProjectIssuesHeader: React.FC = observer(() => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
 
   const router = useRouter();
@@ -93,6 +93,8 @@ export const ProjectIssuesHeader: FC = observer(() => {
 
   const inboxDetails = projectId ? inboxStore.inboxesList?.[projectId.toString()]?.[0] : undefined;
 
+  const deployUrl = process.env.NEXT_PUBLIC_DEPLOY_URL;
+
   return (
     <>
       <ProjectAnalyticsModal
@@ -125,6 +127,18 @@ export const ProjectIssuesHeader: FC = observer(() => {
               <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Issues`} />
             </Breadcrumbs>
           </div>
+          {projectDetails?.is_deployed && deployUrl && (
+            <a
+              href={`${deployUrl}/${workspaceSlug}/${projectDetails?.id}`}
+              className="group bg-custom-primary-100/20 text-custom-primary-100 px-2.5 py-1 text-xs flex items-center gap-1.5 rounded font-medium"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Circle className="h-1.5 w-1.5 fill-custom-primary-100" strokeWidth={2} />
+              Public
+              <ExternalLink className="h-3 w-3 hidden group-hover:block" strokeWidth={2} />
+            </a>
+          )}
         </div>
         <div className="flex items-center gap-2">
           <LayoutSelection

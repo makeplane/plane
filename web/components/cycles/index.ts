@@ -16,3 +16,4 @@ export * from "./cycles-list-item";
 export * from "./cycles-board";
 export * from "./cycles-board-card";
 export * from "./cycles-gantt";
+export * from "./delete-modal";
