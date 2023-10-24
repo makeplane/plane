@@ -1,8 +1,8 @@
 import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
-import { useImperativeHandle, useRef, MutableRefObject } from "react";
+import { useImperativeHandle, useRef, MutableRefObject, useEffect } from "react";
 import { CoreReadOnlyEditorExtensions } from "../../ui/read-only/extensions";
 import { CoreReadOnlyEditorProps } from "../../ui/read-only/props";
-import { EditorProps } from '@tiptap/pm/view';
+import { EditorProps } from "@tiptap/pm/view";
 
 interface CustomReadOnlyEditorProps {
   value: string;
@@ -11,16 +11,32 @@ interface CustomReadOnlyEditorProps {
   editorProps?: EditorProps;
 }
 
-export const useReadOnlyEditor = ({ value, forwardedRef, extensions = [], editorProps = {} }: CustomReadOnlyEditorProps) => {
+export const useReadOnlyEditor = ({
+  value,
+  forwardedRef,
+  extensions = [],
+  editorProps = {},
+}: CustomReadOnlyEditorProps) => {
   const editor = useCustomEditor({
     editable: false,
-    content: (typeof value === "string" && value.trim() !== "") ? value : "<p></p>",
+    content:
+      typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
     editorProps: {
       ...CoreReadOnlyEditorProps,
       ...editorProps,
     },
     extensions: [...CoreReadOnlyEditorExtensions, ...extensions],
   });
+
+  const hasIntiliazedContent = useRef(false);
+
+  useEffect(() => {
+    if (editor && !value && !hasIntiliazedContent.current) {
+      console.log("setting content");
+      editor.commands.setContent(value);
+      hasIntiliazedContent.current = true;
+    }
+  }, [value]);
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
   editorRef.current = editor;
@@ -33,7 +49,6 @@ export const useReadOnlyEditor = ({ value, forwardedRef, extensions = [], editor
       editorRef.current?.commands.setContent(content);
     },
   }));
-
 
   if (!editor) {
     return null;
