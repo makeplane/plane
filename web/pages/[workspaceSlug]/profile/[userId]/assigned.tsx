@@ -3,11 +3,11 @@ import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
-// contexts
-import { ProfileIssuesContextProvider } from "contexts/profile-issues-context";
 // layouts
+import { AppLayout } from "layouts/app-layout";
 import { ProfileAuthWrapper } from "layouts/profile-layout";
 // components
+import { UserProfileHeader } from "components/headers";
 import { ProfileIssuesListLayout } from "components/issues/issue-layouts/list/profile-issues-root";
 import { ProfileIssuesKanBanLayout } from "components/issues/issue-layouts/kanban/profile-issues-root";
 // hooks
@@ -45,7 +45,7 @@ const ProfileAssignedIssues: NextPage = observer(() => {
   const activeLayout = profileIssueFiltersStore.userDisplayFilters.layout;
 
   return (
-    <ProfileIssuesContextProvider>
+    <AppLayout header={<UserProfileHeader />}>
       <ProfileAuthWrapper>
         {profileIssuesStore.loader ? (
           <div>Loading...</div>
@@ -59,7 +59,7 @@ const ProfileAssignedIssues: NextPage = observer(() => {
           </div>
         )}
       </ProfileAuthWrapper>
-    </ProfileIssuesContextProvider>
+    </AppLayout>
   );
 });
 
