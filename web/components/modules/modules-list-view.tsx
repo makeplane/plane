@@ -22,12 +22,12 @@ export const ModulesListView: React.FC = observer(() => {
   if (!modulesList)
     return (
       <Loader className="grid grid-cols-3 gap-4 p-8">
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
-        <Loader.Item height="100px" />
+        <Loader.Item height="176px" />
+        <Loader.Item height="176px" />
+        <Loader.Item height="176px" />
+        <Loader.Item height="176px" />
+        <Loader.Item height="176px" />
+        <Loader.Item height="176px" />
       </Loader>
     );
 
@@ -37,7 +37,7 @@ export const ModulesListView: React.FC = observer(() => {
         <>
           {modulesView === "grid" && (
             <div className="h-full overflow-y-auto p-8">
-              <div className="grid grid-cols-1 gap-9 lg:grid-cols-2 xl:grid-cols-3">
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4">
                 {modulesList.map((module) => (
                   <ModuleCardItem key={module.id} module={module} />
                 ))}
