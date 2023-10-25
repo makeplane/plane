@@ -474,7 +474,7 @@ export const createIssuePayload: (
     sort_order: 0,
     sprints: null,
     start_date: null,
-    state: "",
+    state: projectDetail.default_state,
     state_detail: {} as any,
     sub_issues_count: 0,
     target_date: null,
