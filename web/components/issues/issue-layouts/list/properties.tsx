@@ -36,11 +36,11 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
   };
 
   const handleLabel = (ids: string[]) => {
-    handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, labels: ids });
+    handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, labels_list: ids });
   };
 
   const handleAssignee = (ids: string[]) => {
-    handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, assignees: ids });
+    handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, assignees_list: ids });
   };
 
   const handleStartDate = (date: string) => {
@@ -83,10 +83,10 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       {display_properties && display_properties?.labels && labels && (
         <IssuePropertyLabels
           value={issue?.labels || null}
-          dropdownArrow={false}
-          onChange={(ids: string[]) => handleLabel(ids)}
+          onChange={handleLabel}
+          labels={labels}
           disabled={false}
-          list={labels}
+          hideDropdownArrow={true}
         />
       )}
 
@@ -107,7 +107,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
           value={issue?.start_date || null}
           onChange={(date: string) => handleStartDate(date)}
           disabled={false}
-          placeHolder={`Start date`}
+          placeHolder="Start date"
         />
       )}
 
@@ -117,7 +117,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
           value={issue?.target_date || null}
           onChange={(date: string) => handleTargetDate(date)}
           disabled={false}
-          placeHolder={`Target date`}
+          placeHolder="Target date"
         />
       )}
 
@@ -135,12 +135,10 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       {/* extra render properties */}
       {/* sub-issues */}
       {display_properties && display_properties?.sub_issue_count && (
-        <Tooltip tooltipHeading="Sub-issue" tooltipContent={`${issue.sub_issues_count}`}>
-          <div className="flex-shrink-0 border border-custom-border-300 min-w-[22px] h-[22px] overflow-hidden rounded-sm flex justify-center items-center cursor-pointer">
-            <div className="flex-shrink-0  w-[16px] h-[16px] flex justify-center items-center">
-              <Layers width={10} strokeWidth={2} />
-            </div>
-            <div className="pl-0.5 pr-1 text-xs">{issue.sub_issues_count}</div>
+        <Tooltip tooltipHeading="Sub-issues" tooltipContent={`${issue.sub_issues_count}`}>
+          <div className="flex-shrink-0 border-[0.5px] border-custom-border-300 overflow-hidden rounded flex justify-center items-center gap-2 px-2.5 py-1 h-5">
+            <Layers className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <div className="text-xs">{issue.sub_issues_count}</div>
           </div>
         </Tooltip>
       )}
@@ -148,11 +146,9 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       {/* attachments */}
       {display_properties && display_properties?.attachment_count && (
         <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
-          <div className="flex-shrink-0 border border-custom-border-300 min-w-[22px] h-[22px] overflow-hidden rounded-sm flex justify-center items-center cursor-pointer">
-            <div className="flex-shrink-0 w-[16px] h-[16px] flex justify-center items-center">
-              <Paperclip width={10} strokeWidth={2} />
-            </div>
-            <div className="pl-0.5 pr-1 text-xs">{issue.attachment_count}</div>
+          <div className="flex-shrink-0 border-[0.5px] border-custom-border-300 overflow-hidden rounded flex justify-center items-center gap-2 px-2.5 py-1 h-5">
+            <Paperclip className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <div className="text-xs">{issue.attachment_count}</div>
           </div>
         </Tooltip>
       )}
@@ -160,11 +156,9 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       {/* link */}
       {display_properties && display_properties?.link && (
         <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
-          <div className="flex-shrink-0 border border-custom-border-300 min-w-[22px] h-[22px] overflow-hidden rounded-sm flex justify-center items-center cursor-pointer">
-            <div className="flex-shrink-0  w-[16px] h-[16px] flex justify-center items-center">
-              <Link width={10} strokeWidth={2} />
-            </div>
-            <div className="pl-0.5 pr-1 text-xs">{issue.link_count}</div>
+          <div className="flex-shrink-0 border-[0.5px] border-custom-border-300 overflow-hidden rounded flex justify-center items-center gap-2 px-2.5 py-1 h-5">
+            <Link className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <div className="text-xs">{issue.link_count}</div>
           </div>
         </Tooltip>
       )}

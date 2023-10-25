@@ -20,6 +20,7 @@ export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observe
       value={value}
       onChange={onChange}
       estimatePoints={estimatePoints ?? undefined}
+      buttonClassName="h-5"
       disabled={disabled}
       hideDropdownArrow={hideDropdownArrow}
     />

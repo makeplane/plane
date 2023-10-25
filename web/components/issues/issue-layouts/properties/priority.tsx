@@ -13,5 +13,13 @@ export interface IIssuePropertyPriority {
 export const IssuePropertyPriority: React.FC<IIssuePropertyPriority> = observer((props) => {
   const { value, onChange, disabled, hideDropdownArrow = false } = props;
 
-  return <PrioritySelect value={value} onChange={onChange} disabled={disabled} hideDropdownArrow={hideDropdownArrow} />;
+  return (
+    <PrioritySelect
+      value={value}
+      onChange={onChange}
+      buttonClassName="!h-5 p-1.5"
+      disabled={disabled}
+      hideDropdownArrow={hideDropdownArrow}
+    />
+  );
 });

@@ -71,7 +71,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
                   {issue.project_detail.identifier}-{issue.sequence_id}
                 </div>
               )}
-              <div className="line-clamp-2 h-[40px] text-sm font-medium text-custom-text-100">{issue.name}</div>
+              <div className="line-clamp-2 text-sm font-medium text-custom-text-100">{issue.name}</div>
               <div>
                 <KanBanProperties
                   sub_group_id={sub_group_id}

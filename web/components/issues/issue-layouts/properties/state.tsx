@@ -20,6 +20,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
       value={value}
       onChange={onChange}
       states={states ?? undefined}
+      buttonClassName="h-5"
       disabled={disabled}
       hideDropdownArrow={hideDropdownArrow}
     />

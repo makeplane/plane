@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { usePopper } from "react-popper";
+import { Placement } from "@popperjs/core";
 import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, Search } from "lucide-react";
 // ui
 import { StateGroupIcon } from "@plane/ui";
-// types
 import { Tooltip } from "components/ui";
-import { Placement } from "@popperjs/core";
-// constants
+// types
 import { IState } from "types";
 
 type Props = {
@@ -89,7 +88,7 @@ export const StateSelect: React.FC<Props> = ({
         <button
           ref={setReferenceElement}
           type="button"
-          className={`flex items-center justify-between gap-1 w-full text-xs px-2.5 py-1 rounded-md shadow-sm border border-custom-border-300 duration-300 focus:outline-none ${
+          className={`flex items-center justify-between gap-1 w-full text-xs px-2.5 py-1 rounded border-[0.5px] border-custom-border-300 duration-300 focus:outline-none ${
             disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
           } ${buttonClassName}`}
         >
@@ -123,7 +122,7 @@ export const StateSelect: React.FC<Props> = ({
                     value={option.value}
                     className={({ active, selected }) =>
                       `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                        active && !selected ? "bg-custom-background-80" : ""
+                        active ? "bg-custom-background-80" : ""
                       } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                     }
                   >

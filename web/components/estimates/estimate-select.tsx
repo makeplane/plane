@@ -79,10 +79,8 @@ export const EstimateSelect: React.FC<Props> = (props) => {
   const selectedEstimate = estimatePoints?.find((e) => e.key === value);
   const label = (
     <Tooltip tooltipHeading="Estimate" tooltipContent={selectedEstimate?.value ?? "None"} position="top">
-      <div className="flex items-center cursor-pointer w-full gap-1.5 text-custom-text-200">
-        <span className="h-3.5 w-3.5">
-          <Triangle className="h-3 w-3" strokeWidth={2} />
-        </span>
+      <div className="flex items-center cursor-pointer w-full gap-2 text-custom-text-200">
+        <Triangle className="h-3 w-3" strokeWidth={2} />
         <span className="truncate">{selectedEstimate?.value ?? "None"}</span>
       </div>
     </Tooltip>
@@ -100,7 +98,7 @@ export const EstimateSelect: React.FC<Props> = (props) => {
         <button
           ref={setReferenceElement}
           type="button"
-          className={`flex items-center justify-between gap-1 w-full text-xs px-2.5 py-1 rounded-md shadow-sm border border-custom-border-300 duration-300 focus:outline-none ${
+          className={`flex items-center justify-between gap-1 w-full text-xs px-2.5 py-1 rounded border-[0.5px] border-custom-border-300 duration-300 focus:outline-none ${
             disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
           } ${buttonClassName}`}
         >

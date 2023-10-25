@@ -1,13 +1,10 @@
 import React, { useState } from "react";
 import { usePopper } from "react-popper";
 import { Placement } from "@popperjs/core";
-
-// headless ui
 import { Combobox } from "@headlessui/react";
+import { Check, ChevronDown, Search, User2 } from "lucide-react";
 // components
 import { AssigneesList, Avatar, Tooltip } from "components/ui";
-// icons
-import { Check, ChevronDown, Search, User2 } from "lucide-react";
 // types
 import { IUserLite } from "types";
 
@@ -88,15 +85,15 @@ export const MembersSelect: React.FC<Props> = ({
       }
       position="top"
     >
-      <div className="flex items-center cursor-pointer w-full gap-2 text-custom-text-200">
+      <div className="flex items-center cursor-pointer h-full w-full gap-2 text-custom-text-200">
         {value && value.length > 0 && Array.isArray(value) ? (
           <AssigneesList userIds={value} length={3} showLength={true} />
         ) : (
           <span
-            className="flex items-center justify-between gap-1 w-full text-xs px-2.5 py-1 rounded-md shadow-sm border border-custom-border-300 duration-300 focus:outline-none
+            className="flex items-center justify-between gap-1 h-full w-full text-xs px-2.5 py-1 rounded border-[0.5px] border-custom-border-300 duration-300 focus:outline-none
           "
           >
-            <User2 className="h-3.5 w-3.5" />
+            <User2 className="h-3 w-3" />
           </span>
         )}
       </div>
