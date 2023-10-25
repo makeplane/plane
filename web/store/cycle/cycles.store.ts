@@ -211,12 +211,14 @@ export class CycleStore implements ICycleStore {
 
   createCycle = async (workspaceSlug: string, projectId: string, data: any) => {
     try {
+      console.log("Cycle Creating");
       const response = await this.cycleService.createCycle(
         workspaceSlug,
         projectId,
         data,
         this.rootStore.user.currentUser
       );
+      console.log("Cycle created");
 
       runInAction(() => {
         this.cycle_details = {

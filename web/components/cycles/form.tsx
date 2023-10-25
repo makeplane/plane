@@ -10,7 +10,7 @@ type Props = {
   handleFormSubmit: (values: Partial<ICycle>) => Promise<void>;
   handleClose: () => void;
   projectId: string;
-  setActiveProject: React.Dispatch<React.SetStateAction<string | null>>;
+  setActiveProject: (projectId: string) => void;
   data?: ICycle | null;
 };
 

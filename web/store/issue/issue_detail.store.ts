@@ -41,7 +41,7 @@ export interface IIssueDetailStore {
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => Promise<IIssue>;
   optimisticallyCreateIssue: (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => Promise<IIssue>;
   // updating issue
-  updateIssue: (workspaceId: string, projectId: string, issueId: string, data: Partial<IIssue>) => void;
+  updateIssue: (workspaceId: string, projectId: string, issueId: string, data: Partial<IIssue>) => Promise<IIssue>;
   // deleting issue
   deleteIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
 
@@ -302,6 +302,8 @@ export class IssueDetailStore implements IIssueDetailStore {
           },
         };
       });
+
+      return response;
     } catch (error) {
       this.fetchIssueDetails(workspaceSlug, projectId, issueId);
 

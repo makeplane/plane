@@ -1,19 +1,16 @@
-import { Dispatch, FC, SetStateAction } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
-// components
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import useLocalStorage from "hooks/use-local-storage";
 // ui
 import { Breadcrumbs, BreadcrumbItem, Button, Tooltip } from "@plane/ui";
 import { Icon } from "components/ui";
 // helper
 import { replaceUnderscoreIfSnakeCase, truncateText } from "helpers/string.helper";
-
-export interface IModulesHeader {
-  name: string | undefined;
-  modulesView: string;
-  setModulesView: Dispatch<SetStateAction<"grid" | "gantt_chart">>;
-}
 
 const moduleViewOptions: { type: "grid" | "gantt_chart"; icon: any }[] = [
   {
@@ -26,11 +23,15 @@ const moduleViewOptions: { type: "grid" | "gantt_chart"; icon: any }[] = [
   },
 ];
 
-export const ModulesHeader: FC<IModulesHeader> = (props) => {
-  const { name, modulesView, setModulesView } = props;
+export const ModulesListHeader: React.FC = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId } = router.query;
+
+  const { project: projectStore } = useMobxStore();
+  const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : undefined;
+
+  const { storedValue: modulesView, setValue: setModulesView } = useLocalStorage("modules_view", "grid");
 
   return (
     <div
@@ -48,7 +49,7 @@ export const ModulesHeader: FC<IModulesHeader> = (props) => {
                 </Link>
               }
             />
-            <BreadcrumbItem title={`${truncateText(name ?? "Project", 32)} Modules`} />
+            <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Modules`} />
           </Breadcrumbs>
         </div>
       </div>
@@ -83,4 +84,4 @@ export const ModulesHeader: FC<IModulesHeader> = (props) => {
       </div>
     </div>
   );
-};
+});

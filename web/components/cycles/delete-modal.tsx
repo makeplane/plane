@@ -13,24 +13,23 @@ import { useMobxStore } from "lib/mobx/store-provider";
 
 interface ICycleDelete {
   cycle: ICycle;
-  modal: boolean;
-  modalClose: () => void;
-  onSubmit?: () => void;
+  isOpen: boolean;
+  handleClose: () => void;
   workspaceSlug: string;
   projectId: string;
 }
 
 export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
-  const { modal, modalClose, cycle, onSubmit, workspaceSlug, projectId } = props;
-
+  const { isOpen, handleClose, cycle, workspaceSlug, projectId } = props;
+  // store
   const { cycle: cycleStore } = useMobxStore();
-
+  // toast
   const { setToastAlert } = useToast();
-
+  // states
   const [loader, setLoader] = useState(false);
+
   const formSubmit = async () => {
     setLoader(true);
-
     if (cycle?.id)
       try {
         await cycleStore.removeCycle(workspaceSlug, projectId, cycle?.id);
@@ -39,8 +38,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
           title: "Success!",
           message: "Cycle deleted successfully.",
         });
-        if (modalClose) modalClose();
-        if (onSubmit) onSubmit();
+        handleClose();
       } catch (error) {
         setToastAlert({
           type: "error",
@@ -61,8 +59,8 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
   return (
     <div>
       <div>
-        <Transition.Root show={modal} as={Fragment}>
-          <Dialog as="div" className="relative z-20" onClose={modalClose}>
+        <Transition.Root show={isOpen} as={Fragment}>
+          <Dialog as="div" className="relative z-20" onClose={handleClose}>
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -103,7 +101,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
                         </p>
                       </span>
                       <div className="flex justify-end gap-2">
-                        <SecondaryButton onClick={modalClose}>Cancel</SecondaryButton>
+                        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
                         <DangerButton onClick={formSubmit} loading={loader}>
                           {loader ? "Deleting..." : "Delete Cycle"}
                         </DangerButton>
