@@ -5,6 +5,8 @@ import { Check } from "lucide-react";
 import useSWR from "swr";
 // services
 import { LicenseService } from "services/license.service";
+import { useMobxStore } from "lib/mobx/store-provider";
+import { observer } from "mobx-react-lite";
 const licenseService = new LicenseService();
 
 export interface IUpgradeWorkspaceModal {
@@ -12,12 +14,31 @@ export interface IUpgradeWorkspaceModal {
   handleClose: () => void;
 }
 
-export const UpgradeWorkspaceModal: FC<IUpgradeWorkspaceModal> = (props) => {
+export const UpgradeWorkspaceModal: FC<IUpgradeWorkspaceModal> = observer((props) => {
   const { isOpen, handleClose } = props;
-
+  // store
+  const { user: userStore, workspace: workspaceStore } = useMobxStore();
+  const { currentUser } = userStore;
+  const { workspaceMembers, currentWorkspace } = workspaceStore;
+  // fetching products
   const { data: products } = useSWR("UPGRADE_PRODUCTS", () => licenseService.getProducts());
 
   console.log("products", products);
+
+  const handleUpgrade = (product: any) => {
+    if (currentUser && workspaceMembers && workspaceMembers?.length >= 1 && currentWorkspace) {
+      // licenseService.createSubscription(currentUser, product?.default_price?.id).then((response) => {
+      //   console.log("subscription", response);
+      // });
+
+      licenseService
+        .createCheckoutSession(product?.default_price?.id, workspaceMembers?.length, currentWorkspace, currentUser)
+        .then((response) => {
+          console.log("subscription", response);
+          window.open(response.url, "_blank");
+        });
+    }
+  };
 
   return (
     <>
@@ -77,19 +98,20 @@ export const UpgradeWorkspaceModal: FC<IUpgradeWorkspaceModal> = (props) => {
                           <p className="mt-4 text-sm leading-6 text-gray-600">{product.description}</p>
                           <p className="mt-6 flex items-baseline gap-x-1">
                             <span className="text-4xl font-bold tracking-tight text-gray-900">
-                              {product.default_price.price}
+                              $ {product.default_price.unit_amount / 100}
                             </span>
-                            <span className="text-sm font-semibold leading-6 text-gray-600" />
+                            <span className="text-sm font-semibold leading-6 text-gray-600">/ per month</span>
                           </p>
-                          <a
+                          <button
+                            onClick={() => handleUpgrade(product)}
                             className={`${
                               product?.mostPopular
                                 ? "bg-[#3e76fe] text-white shadow-sm hover:bg-indigo-500"
                                 : "text-[#3e76fe] ring-1 ring-inset ring-indigo-200 hover:ring-indigo-300"
-                            } mt-6 block rounded-md px-3 py-2 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3e76fe]`}
+                            } mt-6 block rounded-md px-3 py-2 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3e76fe] cursor-pointer`}
                           >
                             Upgrade
-                          </a>
+                          </button>
                           <ul role="list" className="mt-8 space-y-3 text-sm leading-6 text-gray-600 xl:mt-10">
                             {product.features?.map((feature: any) => (
                               <li key={feature.name} className="flex gap-x-3">
@@ -110,4 +132,4 @@ export const UpgradeWorkspaceModal: FC<IUpgradeWorkspaceModal> = (props) => {
       </Transition.Root>
     </>
   );
-};
+});
