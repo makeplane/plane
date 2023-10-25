@@ -23,6 +23,7 @@ type IIssueCommentCard = {
   showAccessSpecifier?: boolean;
   workspaceSlug: string;
   projectId: string;
+  issueId: string;
   user: any;
   issueCommentReactionCreate: (commentId: string, reaction: string) => void;
   issueCommentReactionRemove: (commentId: string, reaction: string) => void;
@@ -36,6 +37,7 @@ export const IssueCommentCard: React.FC<IIssueCommentCard> = (props) => {
     showAccessSpecifier = false,
     workspaceSlug,
     projectId,
+    issueId,
     user,
     issueCommentReactionCreate,
     issueCommentReactionRemove,
@@ -157,6 +159,7 @@ export const IssueCommentCard: React.FC<IIssueCommentCard> = (props) => {
               <IssueCommentReaction
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
+                issueId={issueId}
                 user={user}
                 comment={comment}
                 issueCommentReactionCreate={issueCommentReactionCreate}

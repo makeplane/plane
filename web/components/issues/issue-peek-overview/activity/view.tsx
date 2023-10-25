@@ -6,6 +6,7 @@ import { IssueCommentEditor } from "./comment-editor";
 interface IIssueComment {
   workspaceSlug: string;
   projectId: string;
+  issueId: string;
   user: any;
   issueComments: any;
   issueCommentCreate: (comment: any) => void;
@@ -19,6 +20,7 @@ export const IssueComment: FC<IIssueComment> = (props) => {
   const {
     workspaceSlug,
     projectId,
+    issueId,
     user,
     issueComments,
     issueCommentCreate,
@@ -46,6 +48,7 @@ export const IssueComment: FC<IIssueComment> = (props) => {
         <IssueActivityCard
           workspaceSlug={workspaceSlug}
           projectId={projectId}
+          issueId={issueId}
           user={user}
           issueComments={issueComments}
           issueCommentUpdate={issueCommentUpdate}

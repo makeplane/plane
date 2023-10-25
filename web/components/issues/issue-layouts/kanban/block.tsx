@@ -2,7 +2,7 @@ import { Draggable } from "@hello-pangea/dnd";
 // components
 import { KanBanProperties } from "./properties";
 // types
-import { IIssue } from "types";
+import { IEstimatePoint, IIssue, IIssueLabels, IState, IUserLite } from "types";
 
 interface IssueBlockProps {
   sub_group_id: string;
@@ -18,10 +18,27 @@ interface IssueBlockProps {
   ) => void;
   quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
   displayProperties: any;
+  states: IState[] | null;
+  labels: IIssueLabels[] | null;
+  members: IUserLite[] | null;
+  estimates: IEstimatePoint[] | null;
 }
 
 export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
-  const { sub_group_id, columnId, index, issue, isDragDisabled, handleIssues, quickActions, displayProperties } = props;
+  const {
+    sub_group_id,
+    columnId,
+    index,
+    issue,
+    isDragDisabled,
+    handleIssues,
+    quickActions,
+    displayProperties,
+    states,
+    labels,
+    members,
+    estimates,
+  } = props;
 
   const updateIssue = (sub_group_by: string | null, group_by: string | null, issueToUpdate: IIssue) => {
     if (issueToUpdate) handleIssues(sub_group_by, group_by, issueToUpdate, "update");
@@ -54,7 +71,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
                   {issue.project_detail.identifier}-{issue.sequence_id}
                 </div>
               )}
-              <div className="line-clamp-2 h-[40px] text-sm font-medium text-custom-text-100">{issue.name}</div>
+              <div className="line-clamp-2 text-sm font-medium text-custom-text-100">{issue.name}</div>
               <div>
                 <KanBanProperties
                   sub_group_id={sub_group_id}
@@ -62,6 +79,10 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
                   issue={issue}
                   handleIssues={updateIssue}
                   display_properties={displayProperties}
+                  states={states}
+                  labels={labels}
+                  members={members}
+                  estimates={estimates}
                 />
               </div>
             </div>

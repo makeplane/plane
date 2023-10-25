@@ -5,8 +5,8 @@ import { DragDropContext } from "@hello-pangea/dnd";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { KanBanSwimLanes } from "./swimlanes";
-import { KanBan } from "./default";
+import { KanBanSwimLanes } from "../swimlanes";
+import { KanBan } from "../default";
 import { ProjectIssueQuickActions } from "components/issues";
 // constants
 import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
@@ -79,7 +79,6 @@ export const ProfileIssuesKanBanLayout: FC = observer(() => {
   const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
   const projects = projectStore?.workspaceProjects || null;
-  const estimates = null;
 
   return (
     <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
@@ -104,9 +103,9 @@ export const ProfileIssuesKanBanLayout: FC = observer(() => {
             stateGroups={stateGroups}
             priorities={priorities}
             labels={labels}
-            members={members}
+            members={members?.map((m) => m.member) ?? null}
             projects={projects}
-            estimates={estimates}
+            estimates={null}
           />
         ) : (
           <KanBanSwimLanes
@@ -128,9 +127,9 @@ export const ProfileIssuesKanBanLayout: FC = observer(() => {
             stateGroups={stateGroups}
             priorities={priorities}
             labels={labels}
-            members={members}
+            members={members?.map((m) => m.member) ?? null}
             projects={projects}
-            estimates={estimates}
+            estimates={null}
           />
         )}
       </DragDropContext>
