@@ -30,6 +30,29 @@ const defaultValues: Partial<IIssue> = {
   name: "",
 };
 
+const Inputs = (props: any) => {
+  const { register, setFocus, projectDetails } = props;
+
+  useEffect(() => {
+    setFocus("name");
+  }, [setFocus]);
+
+  return (
+    <>
+      <h4 className="text-sm font-medium leading-5 text-custom-text-400">{projectDetails?.identifier ?? "..."}</h4>
+      <input
+        type="text"
+        autoComplete="off"
+        placeholder="Issue Title"
+        {...register("name", {
+          required: "Issue title is required.",
+        })}
+        className="w-full px-2 py-3 rounded-md bg-transparent text-sm font-medium leading-5 text-custom-text-200 outline-none"
+      />
+    </>
+  );
+};
+
 export const SpreadsheetInlineCreateIssueForm: React.FC<Props> = observer((props) => {
   const { prePopulatedData, groupId } = props;
 
@@ -45,7 +68,6 @@ export const SpreadsheetInlineCreateIssueForm: React.FC<Props> = observer((props
   const {
     reset,
     handleSubmit,
-    getValues,
     setFocus,
     register,
     formState: { errors, isSubmitting },
@@ -72,21 +94,6 @@ export const SpreadsheetInlineCreateIssueForm: React.FC<Props> = observer((props
   }, [setFocus, isOpen]);
 
   useEffect(() => {
-    const values = getValues();
-
-    if (prePopulatedData)
-      reset({
-        ...defaultValues,
-        ...values,
-        ...prePopulatedData,
-        labels_list:
-          prePopulatedData.labels && prePopulatedData.labels.toString() !== "none"
-            ? [prePopulatedData.labels as any]
-            : [],
-      });
-  }, [reset, prePopulatedData, getValues]);
-
-  useEffect(() => {
     if (!isOpen) reset({ ...defaultValues });
   }, [isOpen, reset]);
 
@@ -110,7 +117,22 @@ export const SpreadsheetInlineCreateIssueForm: React.FC<Props> = observer((props
     // resetting the form so that user can add another issue quickly
     reset({ ...defaultValues });
 
-    const payload = createIssuePayload(workspaceDetail!, projectDetails!, formData);
+    const payload = createIssuePayload(workspaceDetail!, projectDetails!, {
+      ...(prePopulatedData ?? {}),
+      ...formData,
+      labels_list:
+        formData.labels_list?.length !== 0
+          ? formData.labels_list
+          : prePopulatedData?.labels && prePopulatedData?.labels.toString() !== "none"
+          ? [prePopulatedData.labels as any]
+          : [],
+      assignees_list:
+        formData.assignees_list?.length !== 0
+          ? formData.assignees_list
+          : prePopulatedData?.assignees && prePopulatedData?.assignees.toString() !== "none"
+          ? [prePopulatedData.assignees as any]
+          : [],
+    });
 
     try {
       issueDetailStore
@@ -141,24 +163,6 @@ export const SpreadsheetInlineCreateIssueForm: React.FC<Props> = observer((props
     }
   };
 
-  const Input = () => {
-    useEffect(() => {
-      setFocus("name");
-    }, []);
-
-    return (
-      <input
-        type="text"
-        autoComplete="off"
-        placeholder="Issue Title"
-        {...register("name", {
-          required: "Issue title is required.",
-        })}
-        className="w-full px-2 py-3 rounded-md bg-transparent text-sm font-medium leading-5 text-custom-text-200 outline-none"
-      />
-    );
-  };
-
   return (
     <div>
       <Transition
@@ -176,10 +180,7 @@ export const SpreadsheetInlineCreateIssueForm: React.FC<Props> = observer((props
             onSubmit={handleSubmit(onSubmitHandler)}
             className="flex border-[0.5px] border-t-0 border-custom-border-100 px-4 items-center gap-x-5 bg-custom-background-100 shadow-custom-shadow-sm z-10"
           >
-            <h4 className="text-sm font-medium leading-5 text-custom-text-400">
-              {projectDetails?.identifier ?? "..."}
-            </h4>
-            <Input />
+            <Inputs register={register} setFocus={setFocus} projectDetails={projectDetails} />
           </form>
         </div>
       </Transition>

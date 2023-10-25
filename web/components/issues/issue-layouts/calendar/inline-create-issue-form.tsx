@@ -57,6 +57,29 @@ const defaultValues: Partial<IIssue> = {
   name: "",
 };
 
+const Inputs = (props: any) => {
+  const { register, setFocus, projectDetails } = props;
+
+  useEffect(() => {
+    setFocus("name");
+  }, [setFocus]);
+
+  return (
+    <>
+      <h4 className="text-sm font-medium leading-5 text-custom-text-400">{projectDetails?.identifier ?? "..."}</h4>
+      <input
+        type="text"
+        autoComplete="off"
+        placeholder="Issue Title"
+        {...register("name", {
+          required: "Issue title is required.",
+        })}
+        className="w-full pr-2 py-2.5 rounded-md bg-transparent text-sm font-medium leading-5 text-custom-text-200 outline-none"
+      />
+    </>
+  );
+};
+
 export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) => {
   const { prePopulatedData, dependencies = [], groupId } = props;
 
@@ -80,7 +103,6 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
   const {
     reset,
     handleSubmit,
-    getValues,
     register,
     setFocus,
     formState: { errors, isSubmitting },
@@ -95,21 +117,6 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
 
   // derived values
   const workspaceDetail = workspaceStore.getWorkspaceBySlug(workspaceSlug?.toString()!);
-
-  useEffect(() => {
-    const values = getValues();
-
-    if (prePopulatedData)
-      reset({
-        ...defaultValues,
-        ...values,
-        ...prePopulatedData,
-        labels_list:
-          prePopulatedData.labels && prePopulatedData.labels.toString() !== "none"
-            ? [prePopulatedData.labels as any]
-            : [],
-      });
-  }, [reset, prePopulatedData, getValues]);
 
   useEffect(() => {
     if (!isOpen) reset({ ...defaultValues });
@@ -137,7 +144,22 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
     // resetting the form so that user can add another issue quickly
     reset({ ...defaultValues, ...(prePopulatedData ?? {}) });
 
-    const payload = createIssuePayload(workspaceDetail!, projectDetails!, formData);
+    const payload = createIssuePayload(workspaceDetail!, projectDetails!, {
+      ...(prePopulatedData ?? {}),
+      ...formData,
+      labels_list:
+        formData.labels_list?.length !== 0
+          ? formData.labels_list
+          : prePopulatedData?.labels && prePopulatedData?.labels.toString() !== "none"
+          ? [prePopulatedData.labels as any]
+          : [],
+      assignees_list:
+        formData.assignees_list?.length !== 0
+          ? formData.assignees_list
+          : prePopulatedData?.assignees && prePopulatedData?.assignees.toString() !== "none"
+          ? [prePopulatedData.assignees as any]
+          : [],
+    });
 
     try {
       issueDetailStore
@@ -168,27 +190,6 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
     }
   };
 
-  const Inputs = () => {
-    useEffect(() => {
-      setFocus("name");
-    }, []);
-
-    return (
-      <>
-        <h4 className="text-sm font-medium leading-5 text-custom-text-400">{projectDetails?.identifier ?? "..."}</h4>
-        <input
-          type="text"
-          autoComplete="off"
-          placeholder="Issue Title"
-          {...register("name", {
-            required: "Issue title is required.",
-          })}
-          className="w-full pr-2 py-2.5 rounded-md bg-transparent text-sm font-medium leading-5 text-custom-text-200 outline-none"
-        />
-      </>
-    );
-  };
-
   return (
     <>
       <Transition
@@ -210,7 +211,7 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
             onSubmit={handleSubmit(onSubmitHandler)}
             className="flex w-full px-1.5 border-[0.5px] border-custom-border-100 rounded z-50 items-center gap-x-2 bg-custom-background-100 shadow-custom-shadow-sm transition-opacity"
           >
-            <Inputs />
+            <Inputs register={register} setFocus={setFocus} projectDetails={projectDetails} />
           </form>
         </div>
       </Transition>
