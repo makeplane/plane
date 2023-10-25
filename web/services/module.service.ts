@@ -61,11 +61,11 @@ export class ModuleService extends APIService {
     projectId: string,
     moduleId: string,
     data: Partial<IModule>,
-    user: any
-  ): Promise<any> {
+    user: IUser | undefined
+  ): Promise<IModule> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`, data)
       .then((response) => {
-        trackEventService.trackModuleEvent(response?.data, "MODULE_UPDATE", user);
+        if (user) trackEventService.trackModuleEvent(response?.data, "MODULE_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {

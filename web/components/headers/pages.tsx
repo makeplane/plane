@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
@@ -7,15 +7,17 @@ import { Plus } from "lucide-react";
 import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Breadcrumbs, BreadcrumbItem, Button } from "@plane/ui";
-// components
-import { CreateInboxIssueModal } from "components/inbox";
 // helper
 import { truncateText } from "helpers/string.helper";
 
-export const ProjectInboxHeader: FC = observer(() => {
+export interface IPagesHeaderProps {
+  showButton?: boolean;
+}
+
+export const PagesHeader: FC<IPagesHeaderProps> = observer((props) => {
+  const { showButton = false } = props;
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  const [createIssueModal, setCreateIssueModal] = useState(false);
 
   const { project: projectStore } = useMobxStore();
 
@@ -38,17 +40,25 @@ export const ProjectInboxHeader: FC = observer(() => {
                 </Link>
               }
             />
-            <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Inbox`} />
+            <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Pages`} />
           </Breadcrumbs>
         </div>
       </div>
-
-      <div className="flex items-center gap-2">
-        <CreateInboxIssueModal isOpen={createIssueModal} onClose={() => setCreateIssueModal(false)} />
-        <Button variant="primary" prependIcon={<Plus />} size="sm" onClick={() => setCreateIssueModal(true)}>
-          Add Issue
-        </Button>
-      </div>
+      {showButton && (
+        <div className="flex items-center gap-2">
+          <Button
+            variant="primary"
+            prependIcon={<Plus />}
+            size="sm"
+            onClick={() => {
+              const e = new KeyboardEvent("keydown", { key: "d" });
+              document.dispatchEvent(e);
+            }}
+          >
+            Create Page
+          </Button>
+        </div>
+      )}
     </div>
   );
 });

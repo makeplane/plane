@@ -1,8 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 
 import { useRouter } from "next/router";
-import Link from "next/link";
-
 import useSWR, { mutate } from "swr";
 
 // react-hook-form
@@ -12,12 +10,13 @@ import { IssueService } from "services/issue";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
+import { AppLayout } from "layouts/app-layout";
 // components
+import { ProjectIssueDetailsHeader } from "components/headers";
 import { IssueDetailsSidebar, IssueMainContent } from "components/issues";
 // ui
 import { EmptyState } from "components/common";
-import { Breadcrumbs, Loader } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // images
 import emptyIssue from "public/empty-state/issue.svg";
 // types
@@ -26,7 +25,6 @@ import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS } from "constants/fetch-keys";
 // helper
-import { truncateText } from "helpers/string.helper";
 
 const defaultValues: Partial<IIssue> = {
   assignees_list: [],
@@ -118,30 +116,7 @@ const IssueDetailsPage: NextPage = () => {
   }, [issueDetails, reset, issueId]);
 
   return (
-    <ProjectAuthorizationWrapper
-      breadcrumbs={
-        <Breadcrumbs onBack={() => router.back()}>
-          <Breadcrumbs.BreadcrumbItem
-            link={
-              <Link href={`/${workspaceSlug}/projects/${projectId as string}/issues`}>
-                <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
-                  <p className="truncate">{`${truncateText(
-                    issueDetails?.project_detail.name ?? "Project",
-                    32
-                  )} Issues`}</p>
-                </a>
-              </Link>
-            }
-          />
-          <Breadcrumbs.BreadcrumbItem
-            title={`Issue ${issueDetails?.project_detail.identifier ?? "Project"}-${
-              issueDetails?.sequence_id ?? "..."
-            } Details`}
-            unshrinkTitle
-          />
-        </Breadcrumbs>
-      }
-    >
+    <AppLayout header={<ProjectIssueDetailsHeader />} withProjectWrapper>
       {error ? (
         <EmptyState
           image={emptyIssue}
@@ -182,7 +157,7 @@ const IssueDetailsPage: NextPage = () => {
           </div>
         </Loader>
       )}
-    </ProjectAuthorizationWrapper>
+    </AppLayout>
   );
 };
 

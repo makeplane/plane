@@ -8,7 +8,7 @@ import useUser from "hooks/use-user";
 // components
 import { CommandModal, ShortcutsModal } from "components/command-palette";
 import { BulkDeleteIssuesModal } from "components/core";
-import { CreateUpdateCycleModal } from "components/cycles";
+import { CycleCreateUpdateModal } from "components/cycles";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { CreateUpdateModuleModal } from "components/modules";
 import { CreateProjectModal } from "components/project";
@@ -180,7 +180,7 @@ export const CommandPalette: FC = observer(() => {
       )}
       {workspaceSlug && projectId && (
         <>
-          <CreateUpdateCycleModal
+          <CycleCreateUpdateModal
             isOpen={isCreateCycleModalOpen}
             handleClose={() => toggleCreateCycleModal(false)}
             workspaceSlug={workspaceSlug.toString()}

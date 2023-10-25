@@ -16,8 +16,10 @@ import { ModuleIssuesHeader } from "components/headers";
 import { EmptyState } from "components/common";
 // assets
 import emptyModule from "public/empty-state/module.svg";
+// types
+import { NextPage } from "next";
 
-const SingleModule: React.FC = () => {
+const ModuleIssuesPage: NextPage = () => {
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
 
   const router = useRouter();
@@ -91,4 +93,4 @@ const SingleModule: React.FC = () => {
   );
 };
 
-export default SingleModule;
+export default ModuleIssuesPage;
