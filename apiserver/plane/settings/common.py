@@ -37,8 +37,13 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
     "taggit",
-    "django_celery_beat"
+    "django_celery_beat",
 ]
+
+if ENABLE_WEBHOOK_API:
+    INSTALLED_APPS.append(
+        "plane.proxy",
+    )
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -54,20 +59,13 @@ MIDDLEWARE = [
     "plane.middleware.api_log_middleware.APITokenLogMiddleware",
 ]
 
-DEFAULT_AUTH_CLASSES = [
-    "rest_framework_simplejwt.authentication.JWTAuthentication",
-]
-
-if ENABLE_WEBHOOK_API:
-    DEFAULT_AUTH_CLASSES.append(
-        "plane.authentication.api_authentication.APIKeyAuthentication"
-    )
-
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": tuple(DEFAULT_AUTH_CLASSES),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
-    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",)
+    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
 }
 
 AUTHENTICATION_BACKENDS = (
@@ -228,3 +226,4 @@ CELERY_IMPORTS = (
     "plane.bgtasks.issue_automation_task",
     "plane.bgtasks.exporter_expired_task",
 )
+

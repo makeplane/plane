@@ -279,3 +279,4 @@ SCOUT_NAME = "Plane"
 # Unsplash Access key
 UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")
 
+BASE_API_URL = os.environ.get("BASE_API_URL", "")
