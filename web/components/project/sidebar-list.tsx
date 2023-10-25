@@ -6,7 +6,6 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // hooks
 import useToast from "hooks/use-toast";
-import useUserAuth from "hooks/use-user-auth";
 // components
 import { CreateProjectModal, ProjectSidebarListItem } from "components/project";
 
@@ -36,8 +35,6 @@ export const ProjectSidebarList: FC = observer(() => {
   const [isScrolled, setIsScrolled] = useState(false); // scroll animation state
   // refs
   const containerRef = useRef<HTMLDivElement | null>(null);
-  // user
-  const { user } = useUserAuth();
   // toast
   const { setToastAlert } = useToast();
 

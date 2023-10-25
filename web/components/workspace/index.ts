@@ -11,3 +11,4 @@ export * from "./sidebar-dropdown";
 export * from "./sidebar-menu";
 export * from "./sidebar-quick-action";
 export * from "./member-select";
+export * from "./upgrade-modal";

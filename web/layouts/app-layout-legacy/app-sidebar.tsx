@@ -34,7 +34,7 @@ const Sidebar: React.FC<SidebarProps> = observer(({ toggleSidebar, setToggleSide
         <WorkspaceSidebarQuickAction />
         <WorkspaceSidebarMenu />
         <ProjectSidebarList />
-        <WorkspaceHelpSection setSidebarActive={setToggleSidebar} />
+        <WorkspaceHelpSection />
       </div>
     </div>
   );

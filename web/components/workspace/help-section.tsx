@@ -12,6 +12,7 @@ import { FileText, HelpCircle, MessagesSquare, MoveLeft, Zap } from "lucide-reac
 import { DiscordIcon, GithubIcon } from "@plane/ui";
 // assets
 import packageJson from "package.json";
+import { UpgradeWorkspaceModal } from "./upgrade-modal";
 
 const helpOptions = [
   {
@@ -37,15 +38,14 @@ const helpOptions = [
   },
 ];
 
-export interface WorkspaceHelpSectionProps {
-  setSidebarActive?: React.Dispatch<React.SetStateAction<boolean>>;
-}
+export interface WorkspaceHelpSectionProps {}
 
 export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(() => {
   // store
   const { theme: themeStore } = useMobxStore();
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
+  const [isUpgradeModalOpen, setUpgradeModalOpen] = useState(false);
   // refs
   const helpOptionsRef = useRef<HTMLDivElement | null>(null);
 
@@ -53,15 +53,27 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
 
   const isCollapsed = themeStore.sidebarCollapsed || false;
 
+  const openUpgradeModal = () => {
+    setUpgradeModalOpen(true);
+  };
+
+  const handleUpgradeModalClose = () => {
+    setUpgradeModalOpen(false);
+  };
+
   return (
     <>
+      <UpgradeWorkspaceModal isOpen={isUpgradeModalOpen} handleClose={handleUpgradeModalClose} />
       <div
         className={`flex w-full items-center justify-between gap-1 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 py-2 px-4 ${
           isCollapsed ? "flex-col" : ""
         }`}
       >
         {!isCollapsed && (
-          <div className="w-1/2 text-center cursor-default rounded-md px-2.5 py-1.5 font-medium outline-none text-sm bg-green-500/10 text-green-500">
+          <div
+            className="w-1/2 cursor-pointer text-center rounded-md px-2.5 py-1.5 font-medium outline-none text-sm bg-green-500/10 text-green-500"
+            onClick={openUpgradeModal}
+          >
             Free Plan
           </div>
         )}
