@@ -20,7 +20,7 @@ export interface IUserStore {
   workspaceMemberInfo: any;
   hasPermissionToWorkspace: boolean | null;
 
-  projectMemberInfo: any;
+  projectMemberInfo: IProjectMember | null;
   projectNotFound: boolean;
   hasPermissionToProject: boolean | null;
 
@@ -48,7 +48,7 @@ class UserStore implements IUserStore {
   workspaceMemberInfo: any = null;
   hasPermissionToWorkspace: boolean | null = null;
 
-  projectMemberInfo: any = null;
+  projectMemberInfo: IProjectMember | null = null;
   projectNotFound: boolean = false;
   hasPermissionToProject: boolean | null = null;
   // root store
