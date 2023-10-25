@@ -420,8 +420,19 @@ export const groupReactionEmojis = (reactions: any) => {
   return _groupedEmojis;
 };
 
-// TODO: add function definition
-export const createIssuePayload = (workspaceDetail: IWorkspace, projectDetail: IProject, formData: Partial<IIssue>) => {
+/**
+ *
+ * @param workspaceDetail workspace detail to be added in the issue payload
+ * @param projectDetail project detail to be added in the issue payload
+ * @param formData partial issue data from the form. This will override the default values
+ * @returns full issue payload with some default values
+ */
+
+export const createIssuePayload: (
+  workspaceDetail: IWorkspace,
+  projectDetail: IProject,
+  formData: Partial<IIssue>
+) => IIssue = (workspaceDetail: IWorkspace, projectDetail: IProject, formData: Partial<IIssue>) => {
   const payload = {
     archived_at: null,
     assignees: [],
@@ -471,10 +482,10 @@ export const createIssuePayload = (workspaceDetail: IWorkspace, projectDetail: I
     updated_by: "",
     workspace: workspaceDetail.id,
     workspace_detail: workspaceDetail,
+    id: uuidv4(),
     // to be overridden by the form data
     ...formData,
-    id: uuidv4(),
-  };
+  } as IIssue;
 
   return payload;
 };
