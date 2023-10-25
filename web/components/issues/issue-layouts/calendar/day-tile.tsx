@@ -4,7 +4,7 @@ import { Droppable } from "@hello-pangea/dnd";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { CalendarIssueBlocks, ICalendarDate } from "components/issues";
+import { CalendarIssueBlocks, ICalendarDate, CalendarInlineCreateIssueForm } from "components/issues";
 // helpers
 import { renderDateFormat } from "helpers/date-time.helper";
 // types
@@ -17,10 +17,11 @@ type Props = {
   date: ICalendarDate;
   issues: IIssueGroupedStructure | null;
   quickActions: (issue: IIssue) => React.ReactNode;
+  enableQuickIssueCreate?: boolean;
 };
 
 export const CalendarDayTile: React.FC<Props> = observer((props) => {
-  const { date, issues, quickActions } = props;
+  const { date, issues, quickActions, enableQuickIssueCreate } = props;
 
   const { issueFilter: issueFilterStore } = useMobxStore();
 
@@ -32,7 +33,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
     <Droppable droppableId={renderDateFormat(date.date)}>
       {(provided, snapshot) => (
         <div
-          className={`flex-grow p-2 space-y-1 w-full flex flex-col overflow-hidden ${
+          className={`flex-grow group p-2 space-y-1 w-full flex flex-col overflow-hidden ${
             snapshot.isDraggingOver || date.date.getDay() === 0 || date.date.getDay() === 6
               ? "bg-custom-background-90"
               : "bg-custom-background-100"
@@ -53,6 +54,14 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
               {date.date.getDate() === 1 && MONTHS_LIST[date.date.getMonth() + 1].shortTitle + " "}
               {date.date.getDate()}
             </div>
+            {enableQuickIssueCreate && (
+              <CalendarInlineCreateIssueForm
+                groupId={renderDateFormat(date.date)}
+                prePopulatedData={{
+                  target_date: renderDateFormat(date.date),
+                }}
+              />
+            )}
             <CalendarIssueBlocks issues={issuesList} quickActions={quickActions} />
             {provided.placeholder}
           </>
