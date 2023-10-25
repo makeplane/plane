@@ -94,7 +94,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
         )
 
     model = Issue
-    webhook_event = "Issue"
+    webhook_event = "issue"
     permission_classes = [
         ProjectEntityPermission,
     ]
@@ -499,7 +499,7 @@ class IssueActivityEndpoint(BaseAPIView):
 class IssueCommentViewSet(WebhookMixin, BaseViewSet):
     serializer_class = IssueCommentSerializer
     model = IssueComment
-    webhook_event = "Issue"
+    webhook_event = "issue-comment"
     permission_classes = [
         ProjectLitePermission,
     ]

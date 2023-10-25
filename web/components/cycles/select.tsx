@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import useUserAuth from "hooks/use-user-auth";
 import { Listbox, Transition } from "@headlessui/react";
 // icons
 import { ContrastIcon } from "@plane/ui";
@@ -9,7 +8,7 @@ import { Plus } from "lucide-react";
 // services
 import { CycleService } from "services/cycle.service";
 // components
-import { CreateUpdateCycleModal } from "components/cycles";
+import { CycleCreateUpdateModal } from "components/cycles";
 // fetch-keys
 import { CYCLES_LIST } from "constants/fetch-keys";
 
@@ -28,8 +27,6 @@ export const CycleSelect: React.FC<IssueCycleSelectProps> = ({ projectId, value,
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { user } = useUserAuth();
 
   const { data: cycles } = useSWR(
     workspaceSlug && projectId ? CYCLES_LIST(projectId) : null,
@@ -51,7 +48,7 @@ export const CycleSelect: React.FC<IssueCycleSelectProps> = ({ projectId, value,
   return (
     <>
       {workspaceSlug && projectId && (
-        <CreateUpdateCycleModal
+        <CycleCreateUpdateModal
           isOpen={isCycleModalActive}
           handleClose={closeCycleModal}
           workspaceSlug={workspaceSlug.toString()}

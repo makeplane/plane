@@ -1,35 +1,32 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { mutate } from "swr";
-// services
-import { ModuleService } from "services/module.service";
+import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
 // components
-import { DeleteModuleModal } from "components/modules";
+import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
 // ui
 import { AssigneesList } from "components/ui";
 import { CustomMenu, Tooltip } from "@plane/ui";
 // icons
 import { CalendarDays, LinkIcon, Pencil, Star, Target, Trash2 } from "lucide-react";
 // helpers
-import { copyTextToClipboard, truncateText } from "helpers/string.helper";
+import { copyUrlToClipboard, truncateText } from "helpers/string.helper";
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
-import { IUser, IModule } from "types";
-// fetch-key
-import { MODULE_LIST } from "constants/fetch-keys";
+import { IModule } from "types";
 
 type Props = {
   module: IModule;
-  handleEditModule: () => void;
-  user: IUser | undefined;
 };
 
-const moduleService = new ModuleService();
+export const ModuleCardItem: React.FC<Props> = observer((props) => {
+  const { module } = props;
 
-export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, user }) => {
+  const [editModuleModal, setEditModuleModal] = useState(false);
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
 
   const router = useRouter();
@@ -37,54 +34,26 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
 
   const { setToastAlert } = useToast();
 
+  const { module: moduleStore } = useMobxStore();
+
   const completionPercentage = ((module.completed_issues + module.cancelled_issues) / module.total_issues) * 100;
 
-  const handleDeleteModule = () => {
-    if (!module) return;
-
-    setModuleDeleteModal(true);
-  };
-
   const handleAddToFavorites = () => {
-    if (!workspaceSlug || !projectId || !module) return;
+    if (!workspaceSlug || !projectId) return;
 
-    mutate<IModule[]>(
-      MODULE_LIST(projectId as string),
-      (prevData) =>
-        (prevData ?? []).map((m) => ({
-          ...m,
-          is_favorite: m.id === module.id ? true : m.is_favorite,
-        })),
-      false
-    );
-
-    moduleService
-      .addModuleToFavorites(workspaceSlug as string, projectId as string, {
-        module: module.id,
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't add the module to favorites. Please try again.",
-        });
+    moduleStore.addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), module.id).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Couldn't add the module to favorites. Please try again.",
       });
+    });
   };
 
   const handleRemoveFromFavorites = () => {
-    if (!workspaceSlug || !projectId || !module) return;
+    if (!workspaceSlug || !projectId) return;
 
-    mutate<IModule[]>(
-      MODULE_LIST(projectId as string),
-      (prevData) =>
-        (prevData ?? []).map((m) => ({
-          ...m,
-          is_favorite: m.id === module.id ? false : m.is_favorite,
-        })),
-      false
-    );
-
-    moduleService.removeModuleFromFavorites(workspaceSlug as string, projectId as string, module.id).catch(() => {
+    moduleStore.removeModuleFromFavorites(workspaceSlug.toString(), projectId.toString(), module.id).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -94,9 +63,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
   };
 
   const handleCopyText = () => {
-    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-
-    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/modules/${module.id}`).then(() => {
+    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/modules/${module.id}`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",
@@ -111,7 +78,16 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
 
   return (
     <>
-      <DeleteModuleModal isOpen={moduleDeleteModal} setIsOpen={setModuleDeleteModal} data={module} user={user} />
+      {workspaceSlug && projectId && (
+        <CreateUpdateModuleModal
+          isOpen={editModuleModal}
+          onClose={() => setEditModuleModal(false)}
+          data={module}
+          projectId={projectId.toString()}
+          workspaceSlug={workspaceSlug.toString()}
+        />
+      )}
+      <DeleteModuleModal data={module} isOpen={moduleDeleteModal} onClose={() => setModuleDeleteModal(false)} />
       <div className="flex flex-col divide-y divide-custom-border-200 overflow-hidden rounded-[10px] border border-custom-border-200 bg-custom-background-100 text-xs">
         <div className="p-4">
           <div className="flex w-full flex-col gap-5">
@@ -140,23 +116,23 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
                   </button>
                 )}
 
-                <CustomMenu width="auto" verticalEllipsis>
-                  <CustomMenu.MenuItem onClick={handleEditModule}>
+                <CustomMenu width="auto" verticalEllipsis placement="bottom-end">
+                  <CustomMenu.MenuItem onClick={handleCopyText}>
                     <span className="flex items-center justify-start gap-2">
-                      <Pencil className="h-4 w-4" />
+                      <LinkIcon className="h-3 w-3" strokeWidth={2} />
+                      <span>Copy link</span>
+                    </span>
+                  </CustomMenu.MenuItem>
+                  <CustomMenu.MenuItem onClick={() => setEditModuleModal(true)}>
+                    <span className="flex items-center justify-start gap-2">
+                      <Pencil className="h-3 w-3" strokeWidth={2} />
                       <span>Edit module</span>
                     </span>
                   </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem onClick={handleDeleteModule}>
+                  <CustomMenu.MenuItem onClick={() => setModuleDeleteModal(true)}>
                     <span className="flex items-center justify-start gap-2">
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-3 w-3" strokeWidth={2} />
                       <span>Delete module</span>
-                    </span>
-                  </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem onClick={handleCopyText}>
-                    <span className="flex items-center justify-start gap-2">
-                      <LinkIcon className="h-4 w-4" />
-                      <span>Copy module link</span>
                     </span>
                   </CustomMenu.MenuItem>
                 </CustomMenu>
@@ -204,4 +180,4 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule, us
       </div>
     </>
   );
-};
+});

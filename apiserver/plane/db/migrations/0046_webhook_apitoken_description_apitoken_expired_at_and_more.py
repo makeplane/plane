@@ -24,7 +24,6 @@ class Migration(migrations.Migration):
                 ('url', models.URLField(validators=[plane.db.models.webhook.validate_schema, plane.db.models.webhook.validate_domain])),
                 ('is_active', models.BooleanField(default=True)),
                 ('secret_key', models.CharField(blank=True, max_length=255, null=True)),
-                ('retry_count', models.PositiveSmallIntegerField(default=0)),
                 ('project', models.BooleanField(default=False)),
                 ('issue', models.BooleanField(default=False)),
                 ('module', models.BooleanField(default=False)),

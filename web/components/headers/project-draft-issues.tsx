@@ -1,21 +1,17 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { Plus } from "lucide-react";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
 // ui
-import { Breadcrumbs, BreadcrumbItem, Button } from "@plane/ui";
-// components
-import { CreateInboxIssueModal } from "components/inbox";
+import { Breadcrumbs, BreadcrumbItem } from "@plane/ui";
 // helper
 import { truncateText } from "helpers/string.helper";
 
-export const ProjectInboxHeader: FC = observer(() => {
+export const ProjectDraftIssueHeader: FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  const [createIssueModal, setCreateIssueModal] = useState(false);
 
   const { project: projectStore } = useMobxStore();
 
@@ -38,16 +34,10 @@ export const ProjectInboxHeader: FC = observer(() => {
                 </Link>
               }
             />
-            <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Inbox`} />
+
+            <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Draft Issues`} />
           </Breadcrumbs>
         </div>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <CreateInboxIssueModal isOpen={createIssueModal} onClose={() => setCreateIssueModal(false)} />
-        <Button variant="primary" prependIcon={<Plus />} size="sm" onClick={() => setCreateIssueModal(true)}>
-          Add Issue
-        </Button>
       </div>
     </div>
   );

@@ -10,18 +10,15 @@ import { AppLayout } from "layouts/app-layout";
 // components
 import { CycleIssuesHeader } from "components/headers";
 import { ExistingIssuesListModal } from "components/core";
-import { CycleDetailsSidebar, TransferIssues, TransferIssuesModal } from "components/cycles";
+import { CycleDetailsSidebar } from "components/cycles";
 import { CycleLayoutRoot } from "components/issues/issue-layouts";
 // ui
 import { EmptyState } from "components/common";
 // assets
 import emptyCycle from "public/empty-state/cycle.svg";
-// helpers
-import { getDateRangeStatus } from "helpers/date-time.helper";
 
 const SingleCycle: React.FC = () => {
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
-  const [transferIssuesModal, setTransferIssuesModal] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
@@ -31,17 +28,12 @@ const SingleCycle: React.FC = () => {
   const { storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
   const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
 
-  const { data: cycleDetails, error } = useSWR(
+  const { error } = useSWR(
     workspaceSlug && projectId && cycleId ? `CURRENT_CYCLE_DETAILS_${cycleId.toString()}` : null,
     workspaceSlug && projectId && cycleId
       ? () => cycleStore.fetchCycleWithId(workspaceSlug.toString(), projectId.toString(), cycleId.toString())
       : null
   );
-
-  const cycleStatus =
-    cycleDetails?.start_date && cycleDetails?.end_date
-      ? getDateRangeStatus(cycleDetails?.start_date, cycleDetails?.end_date)
-      : "draft";
 
   // TODO: add this function to bulk add issues to cycle
   // const handleAddIssuesToCycle = async (data: ISearchIssueResponse[]) => {
@@ -83,13 +75,9 @@ const SingleCycle: React.FC = () => {
         />
       ) : (
         <>
-          <TransferIssuesModal handleClose={() => setTransferIssuesModal(false)} isOpen={transferIssuesModal} />
           <div className="relative w-full h-full flex overflow-auto">
-            <div className={`flex flex-col h-full w-full ${isSidebarCollapsed ? "" : "mr-[24rem]"} duration-300`}>
-              {cycleStatus === "completed" && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
-              <div className="h-full w-full">
-                <CycleLayoutRoot />
-              </div>
+            <div className={`h-full w-full ${isSidebarCollapsed ? "" : "mr-[24rem]"} duration-300`}>
+              <CycleLayoutRoot />
             </div>
             {cycleId && <CycleDetailsSidebar isOpen={!isSidebarCollapsed} cycleId={cycleId.toString()} />}
           </div>

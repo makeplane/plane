@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import Link from "next/link";
 
 import { useRouter } from "next/router";
 
@@ -22,21 +21,22 @@ import { IssueLabelService } from "services/issue";
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
+import { AppLayout } from "layouts/app-layout";
 // components
 import { CreateUpdateBlockInline, SinglePageBlock } from "components/pages";
 import { CreateLabelModal } from "components/labels";
 import { CreateBlock } from "components/pages/create-block";
+import { PagesHeader } from "components/headers";
 // ui
 import { EmptyState } from "components/common";
-import { BreadcrumbItem, Breadcrumbs, CustomSearchSelect, TextArea, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
+import { CustomSearchSelect, TextArea, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // images
 import emptyPage from "public/empty-state/page.svg";
 // icons
 import { ArrowLeft, Lock, LinkIcon, Palette, Plus, Star, Unlock, X, ChevronDown } from "lucide-react";
 // helpers
 import { render24HourFormatTime, renderShortDate } from "helpers/date-time.helper";
-import { copyTextToClipboard, truncateText } from "helpers/string.helper";
+import { copyTextToClipboard } from "helpers/string.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
 import type { NextPage } from "next";
@@ -303,22 +303,7 @@ const SinglePage: NextPage = () => {
   }, [memberDetails]);
 
   return (
-    <ProjectAuthorizationWrapper
-      breadcrumbs={
-        <Breadcrumbs onBack={() => router.back()}>
-          <BreadcrumbItem
-            link={
-              <Link href={`/${workspaceSlug}/projects`}>
-                <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
-                  <p>Projects</p>
-                </a>
-              </Link>
-            }
-          />
-          <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Pages`} />
-        </Breadcrumbs>
-      }
-    >
+    <AppLayout header={<PagesHeader />} withProjectWrapper>
       {error ? (
         <EmptyState
           image={emptyPage}
@@ -644,7 +629,7 @@ const SinglePage: NextPage = () => {
           <Loader.Item height="200px" />
         </Loader>
       )}
-    </ProjectAuthorizationWrapper>
+    </AppLayout>
   );
 };
 

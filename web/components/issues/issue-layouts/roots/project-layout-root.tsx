@@ -18,24 +18,15 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { issue: issueStore, project: projectStore, issueFilter: issueFilterStore } = useMobxStore();
+  const { issue: issueStore, issueFilter: issueFilterStore } = useMobxStore();
 
-  useSWR(
-    workspaceSlug && projectId ? `REVALIDATE_PROJECT_ISSUES_${projectId.toString()}` : null,
-    async () => {
-      if (workspaceSlug && projectId) {
-        await issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
+  useSWR(workspaceSlug && projectId ? `PROJECT_FILTERS_AND_ISSUES_${projectId.toString()}` : null, async () => {
+    if (workspaceSlug && projectId) {
+      await issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
 
-        await projectStore.fetchProjectStates(workspaceSlug.toString(), projectId.toString());
-        await projectStore.fetchProjectLabels(workspaceSlug.toString(), projectId.toString());
-        await projectStore.fetchProjectMembers(workspaceSlug.toString(), projectId.toString());
-        await projectStore.fetchProjectEstimates(workspaceSlug.toString(), projectId.toString());
-
-        await issueStore.fetchIssues(workspaceSlug.toString(), projectId.toString());
-      }
-    },
-    { revalidateOnFocus: false }
-  );
+      await issueStore.fetchIssues(workspaceSlug.toString(), projectId.toString());
+    }
+  });
 
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
 

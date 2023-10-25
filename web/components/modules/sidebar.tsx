@@ -228,7 +228,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         createIssueLink={handleCreateLink}
         updateIssueLink={handleUpdateLink}
       />
-      <DeleteModuleModal isOpen={moduleDeleteModal} setIsOpen={setModuleDeleteModal} data={moduleDetails} user={user} />
+      <DeleteModuleModal isOpen={moduleDeleteModal} onClose={() => setModuleDeleteModal(false)} data={moduleDetails} />
       <div
         className={`fixed top-[66px] ${
           isOpen ? "right-0" : "-right-[24rem]"

@@ -52,7 +52,7 @@ from plane.utils.analytics_plot import burndown_plot
 class CycleViewSet(WebhookMixin, BaseViewSet):
     serializer_class = CycleSerializer
     model = Cycle
-    webhook_event = "Cycle"
+    webhook_event = "cycle"
     permission_classes = [
         ProjectEntityPermission,
     ]
@@ -503,7 +503,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
 class CycleIssueViewSet(WebhookMixin, BaseViewSet):
     serializer_class = CycleIssueSerializer
     model = CycleIssue
-    webhook_event = "Cycle"
+    webhook_event = "cycle"
     permission_classes = [
         ProjectEntityPermission,
     ]
