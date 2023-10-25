@@ -106,6 +106,7 @@ export const KanBanLayout: FC = observer(() => {
             members={members}
             projects={projects}
             estimates={estimates}
+            enableQuickIssueCreate
           />
         ) : (
           <KanBanSwimLanes
