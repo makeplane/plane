@@ -6,6 +6,8 @@ import { RootStore } from "../root";
 import { IIssue } from "types";
 // constants
 import { groupReactionEmojis } from "constants/issue";
+// uuid
+import { v4 as uuidv4 } from "uuid";
 
 export interface IIssueDetailStore {
   loader: boolean;
@@ -37,6 +39,7 @@ export interface IIssueDetailStore {
   fetchIssueDetails: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
   // creating issue
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => Promise<IIssue>;
+  optimisticallyCreateIssue: (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => Promise<IIssue>;
   // updating issue
   updateIssue: (workspaceId: string, projectId: string, issueId: string, data: Partial<IIssue>) => void;
   // deleting issue
@@ -121,6 +124,7 @@ export class IssueDetailStore implements IIssueDetailStore {
 
       fetchIssueDetails: action,
       createIssue: action,
+      optimisticallyCreateIssue: action,
       updateIssue: action,
       deleteIssue: action,
 
@@ -195,6 +199,44 @@ export class IssueDetailStore implements IIssueDetailStore {
         this.loader = false;
         this.error = error;
       });
+
+      throw error;
+    }
+  };
+
+  optimisticallyCreateIssue = async (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => {
+    const tempId = data?.id || uuidv4();
+
+    runInAction(() => {
+      this.loader = true;
+      this.error = null;
+      this.issues = {
+        ...this.issues,
+        [tempId]: data as IIssue,
+      };
+    });
+
+    try {
+      const response = await this.issueService.createIssue(
+        workspaceSlug,
+        projectId,
+        data,
+        this.rootStore.user.currentUser!
+      );
+
+      runInAction(() => {
+        this.loader = false;
+        this.error = null;
+        this.issues = {
+          ...this.issues,
+          [response.id]: response,
+        };
+      });
+
+      return response;
+    } catch (error) {
+      this.loader = false;
+      this.error = error;
 
       throw error;
     }
