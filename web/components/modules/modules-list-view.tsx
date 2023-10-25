@@ -5,7 +5,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
 // components
-import { ModuleCardItem, ModulesListGanttChartView } from "components/modules";
+import { ModuleCardItem, ModuleListItem, ModulesListGanttChartView } from "components/modules";
 import { EmptyState } from "components/common";
 // ui
 import { Loader } from "@plane/ui";
@@ -35,6 +35,15 @@ export const ModulesListView: React.FC = observer(() => {
     <>
       {modulesList.length > 0 ? (
         <>
+          {modulesView === "list" && (
+            <div className="h-full overflow-y-auto">
+              <div className="flex flex-col h-full w-full">
+                {modulesList.map((module) => (
+                  <ModuleListItem key={module.id} module={module} />
+                ))}
+              </div>
+            </div>
+          )}
           {modulesView === "grid" && (
             <div className="h-full overflow-y-auto p-8">
               <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4">

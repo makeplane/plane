@@ -7,3 +7,4 @@ export * from "./modal";
 export * from "./modules-list-view";
 export * from "./sidebar";
 export * from "./module-card-item";
+export * from "./module-list-item";
