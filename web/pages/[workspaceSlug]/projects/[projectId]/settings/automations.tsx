@@ -7,6 +7,7 @@ import useSWR, { mutate } from "swr";
 // services
 import { ProjectService } from "services/project";
 // layouts
+import { AppLayout } from "layouts/app-layout";
 import { ProjectSettingLayout } from "layouts/setting-layout/project-setting-layout";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
@@ -70,15 +71,17 @@ const AutomationsSettings: NextPage = () => {
   const isAdmin = memberDetails?.role === 20;
 
   return (
-    <ProjectSettingLayout header={<ProjectSettingHeader title="Automations Settings" />}>
-      <section className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
-        <div className="flex items-center py-3.5 border-b border-custom-border-200">
-          <h3 className="text-xl font-medium">Automations</h3>
-        </div>
-        <AutoArchiveAutomation projectDetails={projectDetails} handleChange={handleChange} disabled={!isAdmin} />
-        <AutoCloseAutomation projectDetails={projectDetails} handleChange={handleChange} disabled={!isAdmin} />
-      </section>
-    </ProjectSettingLayout>
+    <AppLayout header={<ProjectSettingHeader title="Automations Settings" />} withProjectWrapper>
+      <ProjectSettingLayout>
+        <section className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
+          <div className="flex items-center py-3.5 border-b border-custom-border-200">
+            <h3 className="text-xl font-medium">Automations</h3>
+          </div>
+          <AutoArchiveAutomation projectDetails={projectDetails} handleChange={handleChange} disabled={!isAdmin} />
+          <AutoCloseAutomation projectDetails={projectDetails} handleChange={handleChange} disabled={!isAdmin} />
+        </section>
+      </ProjectSettingLayout>
+    </AppLayout>
   );
 };
 
