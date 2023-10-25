@@ -7,7 +7,8 @@ import { ProjectService, ProjectEstimateService } from "services/project";
 // hooks
 import useProjectDetails from "hooks/use-project-details";
 // layouts
-import { ProjectSettingLayout } from "layouts/setting-layout/project-setting-layout";
+import { AppLayout } from "layouts/app-layout";
+import { ProjectSettingLayout } from "layouts/setting-layout";
 // components
 import { CreateUpdateEstimateModal, SingleEstimate } from "components/estimates";
 import { ProjectSettingHeader } from "components/headers";
@@ -98,18 +99,17 @@ const EstimatesSettings: NextPage = () => {
   };
 
   return (
-    <>
-      <CreateUpdateEstimateModal
-        isOpen={estimateFormOpen}
-        data={estimateToUpdate}
-        handleClose={() => {
-          setEstimateFormOpen(false);
-          setEstimateToUpdate(undefined);
-        }}
-        user={user}
-      />
-
-      <ProjectSettingLayout header={<ProjectSettingHeader title="Estimates Settings" />}>
+    <AppLayout header={<ProjectSettingHeader title="Estimates Settings" />} withProjectWrapper>
+      <ProjectSettingLayout>
+        <CreateUpdateEstimateModal
+          isOpen={estimateFormOpen}
+          data={estimateToUpdate}
+          handleClose={() => {
+            setEstimateFormOpen(false);
+            setEstimateToUpdate(undefined);
+          }}
+          user={user}
+        />
         <div className="pr-9 py-8 w-full overflow-y-auto">
           <section className="flex items-center justify-between py-3.5 border-b border-custom-border-200">
             <h3 className="text-xl font-medium">Estimates</h3>
@@ -172,7 +172,7 @@ const EstimatesSettings: NextPage = () => {
           )}
         </div>
       </ProjectSettingLayout>
-    </>
+    </AppLayout>
   );
 };
 

@@ -6,7 +6,8 @@ import useSWR, { mutate } from "swr";
 import { ProjectService } from "services/project";
 import { TrackEventService, MiscellaneousEventType } from "services/track_event.service";
 // layouts
-import { ProjectSettingLayout } from "layouts/setting-layout/project-setting-layout";
+import { AppLayout } from "layouts/app-layout";
+import { ProjectSettingLayout } from "layouts/setting-layout";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
@@ -136,52 +137,54 @@ const FeaturesSettings: NextPage = () => {
   const isAdmin = memberDetails?.role === 20;
 
   return (
-    <ProjectSettingLayout header={<ProjectSettingHeader title="Features Settings" />}>
-      <section className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
-        <div className="flex items-center py-3.5 border-b border-custom-border-200">
-          <h3 className="text-xl font-medium">Features</h3>
-        </div>
-        <div>
-          {featuresList.map((feature) => (
-            <div
-              key={feature.property}
-              className="flex items-center justify-between gap-x-8 gap-y-2 border-b border-custom-border-200 bg-custom-background-100 p-4"
-            >
-              <div className="flex items-start gap-3">
-                <div className="flex items-center justify-center p-3 rounded bg-custom-background-90">
-                  {feature.icon}
+    <AppLayout header={<ProjectSettingHeader title="Features Settings" />} withProjectWrapper>
+      <ProjectSettingLayout>
+        <section className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
+          <div className="flex items-center py-3.5 border-b border-custom-border-200">
+            <h3 className="text-xl font-medium">Features</h3>
+          </div>
+          <div>
+            {featuresList.map((feature) => (
+              <div
+                key={feature.property}
+                className="flex items-center justify-between gap-x-8 gap-y-2 border-b border-custom-border-200 bg-custom-background-100 p-4"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="flex items-center justify-center p-3 rounded bg-custom-background-90">
+                    {feature.icon}
+                  </div>
+                  <div className="">
+                    <h4 className="text-sm font-medium">{feature.title}</h4>
+                    <p className="text-sm text-custom-text-200 tracking-tight">{feature.description}</p>
+                  </div>
                 </div>
-                <div className="">
-                  <h4 className="text-sm font-medium">{feature.title}</h4>
-                  <p className="text-sm text-custom-text-200 tracking-tight">{feature.description}</p>
-                </div>
+                <ToggleSwitch
+                  value={projectDetails?.[feature.property as keyof IProject]}
+                  onChange={() => {
+                    trackEventService.trackMiscellaneousEvent(
+                      {
+                        workspaceId: (projectDetails?.workspace as any)?.id,
+                        workspaceSlug,
+                        projectId,
+                        projectIdentifier: projectDetails?.identifier,
+                        projectName: projectDetails?.name,
+                      },
+                      getEventType(feature.title, !projectDetails?.[feature.property as keyof IProject]),
+                      user as IUser
+                    );
+                    handleSubmit({
+                      [feature.property]: !projectDetails?.[feature.property as keyof IProject],
+                    });
+                  }}
+                  disabled={!isAdmin}
+                  size="sm"
+                />
               </div>
-              <ToggleSwitch
-                value={projectDetails?.[feature.property as keyof IProject]}
-                onChange={() => {
-                  trackEventService.trackMiscellaneousEvent(
-                    {
-                      workspaceId: (projectDetails?.workspace as any)?.id,
-                      workspaceSlug,
-                      projectId,
-                      projectIdentifier: projectDetails?.identifier,
-                      projectName: projectDetails?.name,
-                    },
-                    getEventType(feature.title, !projectDetails?.[feature.property as keyof IProject]),
-                    user as IUser
-                  );
-                  handleSubmit({
-                    [feature.property]: !projectDetails?.[feature.property as keyof IProject],
-                  });
-                }}
-                disabled={!isAdmin}
-                size="sm"
-              />
-            </div>
-          ))}
-        </div>
-      </section>
-    </ProjectSettingLayout>
+            ))}
+          </div>
+        </section>
+      </ProjectSettingLayout>
+    </AppLayout>
   );
 };
 
