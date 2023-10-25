@@ -127,3 +127,41 @@ OPENAI_API_BASE = os.environ.get("OPENAI_API_BASE", "https://api.openai.com/v1")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", False)
 GPT_ENGINE = os.environ.get("GPT_ENGINE", "gpt-3.5-turbo")
 
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
+        },
+        "json": {
+            '()': 'pythonjsonlogger.jsonlogger.JsonFormatter',
+            'fmt': '%(levelname)s %(asctime)s %(name)s %(message)s'
+        },
+    },
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+        "file": {
+            "level": "DEBUG",
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': "debug.log",
+            'when': 'midnight',
+            'interval': 1,  # One day
+            'backupCount': 5,  # Keep last 5 days of logs,
+            "formatter": "json"
+        },
+    },
+    "loggers": {
+        "plane": {
+            "handlers": ["console", "file"],
+            "propagate": True,
+        },
+    },
+}
+
