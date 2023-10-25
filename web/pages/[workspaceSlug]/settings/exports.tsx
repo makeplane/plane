@@ -1,12 +1,12 @@
 // layout
 import { AppLayout } from "layouts/app-layout";
+import { WorkspaceSettingLayout } from "layouts/setting-layout";
 // components
+import { WorkspaceSettingHeader } from "components/headers";
 import ExportGuide from "components/exporter/guide";
 // types
 import type { NextPage } from "next";
 // helper
-import { WorkspaceSettingLayout } from "layouts/setting-layout/workspace-setting-layout";
-import { WorkspaceSettingHeader } from "components/headers";
 
 const ImportExport: NextPage = () => (
   <AppLayout header={<WorkspaceSettingHeader title="Export Settings" />}>

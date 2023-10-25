@@ -11,7 +11,7 @@ import useProjectDetails from "hooks/use-project-details";
 import useUserAuth from "hooks/use-user-auth";
 // layouts
 import { AppLayout } from "layouts/app-layout";
-import { ProjectSettingLayout } from "layouts/setting-layout/project-setting-layout";
+import { ProjectSettingLayout } from "layouts/setting-layout";
 // components
 import { CreateUpdateStateInline, DeleteStateModal, SingleState, StateGroup } from "components/states";
 import { ProjectSettingHeader } from "components/headers";

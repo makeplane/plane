@@ -4,7 +4,7 @@ import Link from "next/link";
 // services
 import { UserService } from "services/user.service";
 // layouts
-import { WorkspaceSettingLayout } from "layouts/setting-layout/workspace-setting-layout";
+import { WorkspaceSettingLayout } from "layouts/setting-layout";
 import { AppLayout } from "layouts/app-layout";
 // components
 import { ActivityIcon, ActivityMessage } from "components/core";

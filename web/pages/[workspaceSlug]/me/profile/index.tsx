@@ -10,7 +10,7 @@ import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // layouts
 import { AppLayout } from "layouts/app-layout";
-import { WorkspaceSettingLayout } from "layouts/setting-layout/workspace-setting-layout";
+import { WorkspaceSettingLayout } from "layouts/setting-layout";
 // components
 import { ImagePickerPopover, ImageUploadModal } from "components/core";
 import { WorkspaceSettingHeader } from "components/headers";
@@ -160,7 +160,7 @@ const Profile: NextPage = () => {
           userImage
         />
         {myProfile ? (
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmit)} className="h-full w-full">
             <div className={`flex flex-col gap-8 pr-9 py-9 w-full overflow-y-auto`}>
               <div className="relative h-44 w-full mt-6">
                 <img

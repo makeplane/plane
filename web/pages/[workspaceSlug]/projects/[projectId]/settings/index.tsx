@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 // layouts
 import { AppLayout } from "layouts/app-layout";
-import { ProjectSettingLayout } from "layouts/setting-layout/project-setting-layout";
+import { ProjectSettingLayout } from "layouts/setting-layout";
 // components
 import { ProjectSettingHeader } from "components/headers";
 import {

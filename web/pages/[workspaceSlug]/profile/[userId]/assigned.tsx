@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // layouts
 import { AppLayout } from "layouts/app-layout";
-import { ProfileAuthWrapper } from "layouts/profile-layout/layout";
+import { ProfileAuthWrapper } from "layouts/profile-layout";
 // components
 import { UserProfileHeader } from "components/headers";
 import { ProfileIssuesListLayout } from "components/issues/issue-layouts/list/profile-issues-root";

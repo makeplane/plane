@@ -2,7 +2,7 @@ import React from "react";
 
 // layouts
 import { AppLayout } from "layouts/app-layout";
-import { ProfileAuthWrapper } from "layouts/profile-layout/layout";
+import { ProfileAuthWrapper } from "layouts/profile-layout";
 // components
 import { UserProfileHeader } from "components/headers";
 import { ProfileIssuesView } from "components/profile";

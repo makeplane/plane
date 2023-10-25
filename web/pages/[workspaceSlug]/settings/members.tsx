@@ -13,7 +13,7 @@ import useUser from "hooks/use-user";
 import useWorkspaceMembers from "hooks/use-workspace-members";
 // layouts
 import { AppLayout } from "layouts/app-layout";
-import { WorkspaceSettingLayout } from "layouts/setting-layout/workspace-setting-layout";
+import { WorkspaceSettingLayout } from "layouts/setting-layout";
 // components
 import ConfirmWorkspaceMemberRemove from "components/workspace/confirm-workspace-member-remove";
 import SendWorkspaceInvitationModal from "components/workspace/send-workspace-invitation-modal";

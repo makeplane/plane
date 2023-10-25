@@ -7,7 +7,7 @@ import { ProjectService } from "services/project";
 import { TrackEventService, MiscellaneousEventType } from "services/track_event.service";
 // layouts
 import { AppLayout } from "layouts/app-layout";
-import { ProjectSettingLayout } from "layouts/setting-layout/project-setting-layout";
+import { ProjectSettingLayout } from "layouts/setting-layout";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
