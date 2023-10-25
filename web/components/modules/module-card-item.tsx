@@ -81,6 +81,15 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
   const moduleStatus = MODULE_STATUS.find((status) => status.value === module.status);
 
+  const issueCount =
+    module.total_issues === 0
+      ? "0 Issue"
+      : module.total_issues === module.completed_issues
+      ? module.total_issues > 1
+        ? `${module.total_issues} Issues`
+        : `${module.total_issues} Issue`
+      : `${module.completed_issues}/${module.total_issues} Issues`;
+
   return (
     <>
       {workspaceSlug && projectId && (
@@ -94,10 +103,12 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
       )}
       <DeleteModuleModal data={module} isOpen={moduleDeleteModal} onClose={() => setModuleDeleteModal(false)} />
       <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
-        <a className="flex flex-col justify-between p-4 h-44 w-full min-w-[250px]  text-sm rounded bg-custom-background-100 border border-custom-border-200">
+        <a className="flex flex-col justify-between p-3 h-44 w-full min-w-[250px]  text-sm rounded bg-custom-background-100 border border-custom-border-200">
           <div>
-            <div className="flex items-center justify-between">
-              <span className="text-base font-medium">{module.name}</span>
+            <div className="flex items-center justify-between gap-2">
+              <Tooltip tooltipContent={module.name} position="auto">
+                <span className="text-base font-medium truncate">{module.name}</span>
+              </Tooltip>
               <div className="flex items-center gap-2">
                 {moduleStatus && (
                   <span className={`rounded-sm text-xs px-4 py-1 ${moduleStatus.textColor} ${moduleStatus.bgColor}`}>
@@ -105,7 +116,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
                   </span>
                 )}
 
-                <Info className="h-4 w-4" />
+                <Info className="h-4 w-4 text-custom-text-400" />
               </div>
             </div>
           </div>
@@ -113,8 +124,8 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-custom-text-200">
-                <LayersIcon className="h-4 w-4" />
-                <span>{`${module.completed_issues + module.cancelled_issues}/${module.total_issues} Issues`}</span>
+                <LayersIcon className="h-4 w-4 text-custom-text-300" />
+                <span className="text-xs text-custom-text-300">{issueCount}</span>
               </div>
               {module.members_detail.length > 0 && (
                 <Tooltip tooltipContent={`${module.members_detail.length} Members`}>
@@ -147,7 +158,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
             </Tooltip>
 
             <div className="flex items-center justify-between">
-              <span className="text-custom-text-200 spacing tracking-tight">
+              <span className="text-xs text-custom-text-300">
                 {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")} -{" "}
                 {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
               </span>
