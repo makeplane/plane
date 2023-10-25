@@ -70,6 +70,7 @@ export const ListLayout: FC = observer(() => {
         members={members}
         projects={projects}
         estimates={estimates}
+        enableQuickIssueCreate
       />
     </div>
   );

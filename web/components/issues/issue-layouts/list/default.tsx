@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 // components
 import { ListGroupByHeaderRoot } from "./headers/group-by-root";
 import { IssueBlock } from "./block";
+import { ListInlineCreateIssueForm } from "components/issues";
 // constants
 import { getValueFromObject } from "constants/issue";
 import { IIssue } from "types";
@@ -24,6 +25,7 @@ export interface IGroupByList {
   stateGroups: any;
   priorities: any;
   estimates: any;
+  enableQuickIssueCreate?: boolean;
 }
 
 const GroupByList: React.FC<IGroupByList> = observer((props) => {
@@ -43,6 +45,7 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
     stateGroups,
     priorities,
     estimates,
+    enableQuickIssueCreate,
   } = props;
 
   return (
@@ -76,6 +79,14 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
                 />
               )}
             </div>
+            {enableQuickIssueCreate && (
+              <ListInlineCreateIssueForm
+                groupId={getValueFromObject(_list, listKey) as string}
+                prePopulatedData={{
+                  [group_by!]: getValueFromObject(_list, listKey),
+                }}
+              />
+            )}
           </div>
         ))}
     </div>
@@ -97,6 +108,7 @@ export interface IList {
   stateGroups: any;
   priorities: any;
   estimates: any;
+  enableQuickIssueCreate?: boolean;
 }
 
 export const List: React.FC<IList> = observer((props) => {
@@ -113,6 +125,7 @@ export const List: React.FC<IList> = observer((props) => {
     stateGroups,
     priorities,
     estimates,
+    enableQuickIssueCreate,
   } = props;
 
   return (
@@ -134,6 +147,7 @@ export const List: React.FC<IList> = observer((props) => {
           stateGroups={stateGroups}
           priorities={priorities}
           estimates={estimates}
+          enableQuickIssueCreate={enableQuickIssueCreate}
         />
       )}
 
@@ -153,6 +167,7 @@ export const List: React.FC<IList> = observer((props) => {
           stateGroups={stateGroups}
           priorities={priorities}
           estimates={estimates}
+          enableQuickIssueCreate={enableQuickIssueCreate}
         />
       )}
 
@@ -172,6 +187,7 @@ export const List: React.FC<IList> = observer((props) => {
           stateGroups={stateGroups}
           priorities={priorities}
           estimates={estimates}
+          enableQuickIssueCreate={enableQuickIssueCreate}
         />
       )}
 
@@ -191,6 +207,7 @@ export const List: React.FC<IList> = observer((props) => {
           stateGroups={stateGroups}
           priorities={priorities}
           estimates={estimates}
+          enableQuickIssueCreate={enableQuickIssueCreate}
         />
       )}
 
@@ -210,6 +227,7 @@ export const List: React.FC<IList> = observer((props) => {
           stateGroups={stateGroups}
           priorities={priorities}
           estimates={estimates}
+          enableQuickIssueCreate={enableQuickIssueCreate}
         />
       )}
 
@@ -229,6 +247,7 @@ export const List: React.FC<IList> = observer((props) => {
           stateGroups={stateGroups}
           priorities={priorities}
           estimates={estimates}
+          enableQuickIssueCreate={enableQuickIssueCreate}
         />
       )}
 
@@ -248,6 +267,7 @@ export const List: React.FC<IList> = observer((props) => {
           stateGroups={stateGroups}
           priorities={priorities}
           estimates={estimates}
+          enableQuickIssueCreate={enableQuickIssueCreate}
         />
       )}
 
@@ -267,6 +287,7 @@ export const List: React.FC<IList> = observer((props) => {
           stateGroups={stateGroups}
           priorities={priorities}
           estimates={estimates}
+          enableQuickIssueCreate={enableQuickIssueCreate}
         />
       )}
     </div>
